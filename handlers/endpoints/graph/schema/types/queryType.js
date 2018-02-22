@@ -68,6 +68,9 @@ let userSigningStringType = require('./usersigningstring/userSigningStringType')
 let userACLType = require('./useracl/userACLType');
 let userACLListType = require('./useracl/userACLListType');
 
+let entityACLType = require('./entityacl/entityACLType');
+let entityACLListType = require('./entityacl/entityACLListType');
+
 let userDeviceTokenListType = require('./userdevicetoken/userDeviceTokenListType');
 let userDeviceTokenType = require('./userdevicetoken/userDeviceTokenType');
 
@@ -1096,6 +1099,18 @@ module.exports.graphObj = new GraphQLObjectType({
                 return userACLController.listByAccount({pagination: useracl.pagination, fatal:list_fatal, search: useracl.search});
             }
         },
+        entityacllist: {
+            type: entityACLListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: function(root, entityacl){
+                const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+
+                return entityACLController.listByAccount({pagination: entityacl.pagination, fatal:list_fatal, search: entityacl.search});
+            }
+        },
         rebilllist: {
             type: rebillListType.graphObj,
             args: {
@@ -1568,6 +1583,24 @@ module.exports.graphObj = new GraphQLObjectType({
             }else{
                 return null;
             }
+            }
+        },
+        entityacl: {
+            type: entityACLType.graphObj,
+            args: {
+                entity: {
+                    description: 'id of the entityacl',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, entityacl){
+            	if(_.has(entityacl, 'entity')){
+                    const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+
+                    return entityACLController.get({id: entityacl.entity, fatal: get_fatal});
+                } else {
+                    return null;
+                }
             }
         },
         usersetting: {

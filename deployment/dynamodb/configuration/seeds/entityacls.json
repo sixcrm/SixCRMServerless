@@ -1,0 +1,10 @@
+[
+  {
+      "entity":"bdaa3708-1c9d-4b47-a7af-c61d1311b81b",
+      "type": "emailtemplate",
+      "allow":["*"],
+      "deny":["*"],
+      "created_at":"2017-04-06T18:40:41.405Z",
+      "updated_at":"2017-04-06T18:41:12.521Z"
+  }
+]

@@ -1,9 +1,15 @@
 {
   "Name":"events",
-  "Subscriptions":[{
-    "Name":"events",
-    "Protocol":"lambda",
-    "TopicArn":"arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
-    "Endpoint":"arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-emails"
-  }]
+  "Subscriptions":[
+    {
+      "Protocol":"lambda",
+      "TopicArn":"arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
+      "Endpoint":"arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-customeremail"
+    },
+    {
+      "Protocol":"lambda",
+      "TopicArn":"arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
+      "Endpoint":"arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-redshiftevents"
+    }
+  ]
 }

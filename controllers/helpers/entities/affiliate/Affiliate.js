@@ -116,6 +116,10 @@ module.exports = class AffiliateHelperController {
 
     du.debug('Validate All Affiliates Replaced');
 
+    if(_.isUndefined(event) || _.isNull(event)){
+      eu.throwError('server', 'validateAllAffiliatesReplaced assumes event input.');
+    }
+
     arrayutilities.map(this.affiliate_fields, affiliate_field => {
       if(_.has(event.affiliates, affiliate_field)){
 
@@ -171,7 +175,14 @@ module.exports = class AffiliateHelperController {
 
     du.debug('Validate Assured Affiliates');
 
-    //Sanity Check
+    if(_.isUndefined(affiliate_ids) || _.isNull(affiliate_ids)){
+      eu.throwError('server', 'validateAssuredAffiliates assumes affiliate_ids input.');
+    }
+
+    if(_.isUndefined(assured_affiliates) || _.isNull(assured_affiliates)){
+      eu.throwError('server', 'validateAssuredAffiliates assumes assured_affiliates input.');
+    }
+
     arrayutilities.nonEmpty(assured_affiliates, true);
     arrayutilities.nonEmpty(affiliate_ids, true);
 
@@ -186,6 +197,14 @@ module.exports = class AffiliateHelperController {
   assureAffiliatesArrayTransform({affiliate_ids, affiliates}){
 
     du.debug('Assure Affiliates Array Transform');
+
+    if(_.isUndefined(affiliate_ids) || _.isNull(affiliate_ids)){
+      eu.throwError('server', 'assureAffiliatesArrayTransform assumes affiliate_ids input.');
+    }
+
+    if(_.isUndefined(affiliates) || _.isNull(affiliates)){
+      eu.throwError('server', 'assureAffiliatesArrayTransform assumes affiliates input.');
+    }
 
     let return_array = [];
 

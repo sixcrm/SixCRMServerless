@@ -50,11 +50,8 @@ class AcquireTokenController extends transactionEndpointController {
       .then(() => this.validateCampaign())
       .then(() => this.acquireToken())
       .then(() => {
-
         this.postProcessing();
-
         return this.parameters.get('transactionjwt');
-
       });
 
     }
@@ -106,10 +103,9 @@ class AcquireTokenController extends transactionEndpointController {
       du.debug('Post Processing');
 
       this.pushEvent();
+      this.handleAffiliateInformation();
 
-      return this.updateEventObjectWithAffiliateInformation()
-      .then(() => this.createEventPrototype())
-      .then(() => this.pushToRedshift());
+      return true;
 
     }
 
@@ -121,23 +117,9 @@ class AcquireTokenController extends transactionEndpointController {
 
     }
 
-    createEventPrototype(){
+    handleAffiliateInformation(){
 
-      du.debug('Create Event Prototype');
-
-      let updated_event = this.parameters.get('updatedevent');
-
-      let event_prototype = this.createEventObject(updated_event, 'click');
-
-      this.parameters.set('redshifteventobject', event_prototype);
-
-      return Promise.resolve(true);
-
-    }
-
-    updateEventObjectWithAffiliateInformation(){
-
-      du.debug('Update Event Object With Affiliate Information');
+      du.debug('Handle Affiliate Information');
 
       let event = this.parameters.get('event');
 
@@ -147,28 +129,7 @@ class AcquireTokenController extends transactionEndpointController {
         this.affiliateHelperController = new AffiliateHelperController();
       }
 
-      return this.affiliateHelperController.handleAffiliateInformation(event)
-      .then(updated_event => {
-
-        this.parameters.set('updatedevent', updated_event);
-
-        return true;
-
-      });
-
-    }
-
-    pushToRedshift(){
-
-      du.debug('Push To Redshift');
-
-      let redshifteventobject = this.parameters.get('redshifteventobject');
-
-      return this.pushRecordToRedshift('events', redshifteventobject).then(() => {
-
-        return true;
-
-      });
+      return this.affiliateHelperController.handleAffiliateInformation(event);
 
     }
 
