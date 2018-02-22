@@ -258,14 +258,16 @@ describe('acquireToken', () => {
     it('successfully updates the event with affiliate information', () => {
 
       let event = getValidEventBody();
-      let almost_updated_event = objectutilities.clone(event);
+      let updated_event = objectutilities.clone(event);
 
-      almost_updated_event.affiliates = getValidAffiliates();
+      let affiliates = getValidAffiliates();
+
+      updated_event.affiliates = affiliates;
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
         constructor(){}
         handleAffiliateInformation(){
-          return Promise.resolve(true);
+          return Promise.resolve({affiliates: affiliates});
         }
       });
 
@@ -273,7 +275,7 @@ describe('acquireToken', () => {
 
       let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
 
-      acquireTokenController.parameters.set('event', event);
+      acquireTokenController.parameters.set('event', updated_event);
       return acquireTokenController.handleAffiliateInformation().then(result => {
         expect(result).to.equal(true);
       });

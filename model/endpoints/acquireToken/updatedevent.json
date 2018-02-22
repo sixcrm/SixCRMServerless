@@ -5,8 +5,7 @@
 	"type":"object",
 	"properties": {
 		"campaign": {"$ref":"../../definitions/uuidv4.json"},
-		"affiliates": {"$ref":"../components/affiliates.json"},
-		"cid":{"$ref":"../../definitions/uuidv4.json"}
+		"affiliates": {"$ref":"../components/affiliates.json"}
 	},
 	"required":["campaign"]
 }

@@ -5,6 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
@@ -16,7 +17,9 @@ class RedshiftEventsController extends SNSEventController {
 
     this.parameter_definition = {};
 
-    this.parameter_validation = {};
+    this.parameter_validation = {
+      'redshiftobject': global.SixCRM.routes.path('model','kinesisfirehose/events.json')
+    };
 
     this.augmentParameters();
 
@@ -63,6 +66,7 @@ class RedshiftEventsController extends SNSEventController {
 
     let matching_event = arrayutilities.find(this.redshiftEventTypes, redshift_event_type => {
       let re = new RegExp(redshift_event_type);
+
       return stringutilities.isMatch(event_type, re);
     });
 
@@ -79,9 +83,8 @@ class RedshiftEventsController extends SNSEventController {
     du.debug('Assemble Redshift Object');
 
     let context = this.parameters.get('message').context;
-    let event_type = this.parameters.get('message').event_type;
 
-    let search_objects = ['session', 'products', 'product_schedules', 'affiliates']
+    let search_objects = ['campaign', 'session', 'products', 'product_schedules', 'affiliates', 'datetime'];
 
     let redshift_object = {};
 
@@ -120,7 +123,11 @@ class RedshiftEventsController extends SNSEventController {
       type: this.parameters.get('message').event_type
     };
 
+    return_object = this.transcribeAccount(redshift_object, return_object);
+    return_object = this.transcribeDatetime(redshift_object, return_object);
+    return_object = this.transcribeCampaignFields(redshift_object, return_object);
     return_object = this.transcribeSessionFields(redshift_object, return_object);
+    return_object = this.transcribeAffiliates(redshift_object, return_object);
 
     if(_.has(redshift_object, 'product_schedules')){
       return_object.product_schedules = this.flatten(redshift_object.product_schedules, 'productschedule');
@@ -138,6 +145,88 @@ class RedshiftEventsController extends SNSEventController {
 
   }
 
+  transcribeAffiliates(source_object, destination_object){
+
+    du.debug('Transcribe Affiliates');
+
+    if(_.has(source_object, 'affiliates')){
+      destination_object = this.affiliateHelperController.transcribeAffiliates(source_object.affiliates, destination_object);
+    }else if(_.has(source_object, 'session') && _.isObject(source_object.session)){
+      destination_object = this.affiliateHelperController.transcribeAffiliates(source_object.session, destination_object);
+    }
+
+    return destination_object;
+
+  }
+
+  transcribeAccount(source_object, destination_object){
+
+    du.debug('Transcribe Account');
+
+    if(!_.has(destination_object, 'account') && _.has(source_object, 'account') && stringutilities.isUUID(source_object.account)){
+      destination_object.account = source_object.account;
+    }
+
+    if(!_.has(destination_object, 'account') && objectutilities.hasRecursive(source_object, 'campaign.account') && stringutilities.isUUID(source_object.campaign.account)){
+      destination_object.account = source_object.campaign.account;
+    }
+
+    if(!_.has(destination_object, 'account') && objectutilities.hasRecursive(source_object, 'session.account') && stringutilities.isUUID(source_object.session.account)){
+      destination_object.account = source_object.campaign.account;
+    }
+
+    if(!_.has(destination_object, 'account')){
+      eu.throwError('server', 'Unable to identify account.');
+    }
+
+    return destination_object;
+
+  }
+
+  transcribeDatetime(source_object, destination_object){
+
+    du.debug('Transcribe Datetime');
+
+    if(!_.has(destination_object, 'datetime') && _.has(source_object, 'datetime')){
+      destination_object.datetime = source_object.datetime;
+    }
+
+    if(!_.has(destination_object, 'datetime') && objectutilities.hasRecursive(source_object, 'session.updated_at')){
+      destination_object.datetime = source_object.session.updated_at;
+    }
+
+    if(!_.has(destination_object, 'datetime')){
+      destination_object.datetime = timestamp.getISO8601();
+    }
+
+    return destination_object;
+
+  }
+
+  transcribeCampaignFields(source_object, destination_object){
+
+    du.debug('Transcribe Campaign Fields');
+
+    if(_.has(source_object, 'campaign')){
+
+      if(_.isObject(source_object.campaign) && _.has(source_object.campaign, 'id') && stringutilities.isUUID(source_object.campaign.id)){
+        destination_object.campaign = source_object.campaign.id
+      }
+
+      if(_.isString(source_object.campaign) && stringutilities.isUUID(source_object.campaign)){
+        destination_object.campaign = source_object.campaign;
+      }
+
+    }
+
+    if(!_.has(destination_object, 'campaign') || !stringutilities.isUUID(destination_object.campaign)){
+      eu.throwError('server', 'Unable to determine campaign field.');
+    }
+
+    return destination_object;
+
+  }
+
   transcribeSessionFields(source_object, destination_object){
 
     du.debug('Transcribe Session Fields');
@@ -152,24 +241,16 @@ class RedshiftEventsController extends SNSEventController {
           destination_object.session = session.id;
         }
 
-        if(_.has(session, 'account')){
-          destination_object.account= session.account;
-        }
-
-        if(_.has(session, 'campaign')){
-          destination_object.campaign = session.campaign;
-        }
-
-        if(_.has(session, 'updated_at')){
-          destination_object.datetime = session.updated_at;
-        }
-
       }
 
-      if(_.isString(source_object.session) && stringgutilities.isUUID(source_object.session)){
+      if(_.isString(source_object.session) && stringutilities.isUUID(source_object.session)){
         destination_object.session = source_object.session;
       }
 
+    }
+
+    if(!_.has(destination_object, 'session') || !stringutilities.isUUID(destination_object.session)){
+      destination_object.session = '';
     }
 
     return destination_object;
@@ -224,15 +305,10 @@ class RedshiftEventsController extends SNSEventController {
 
     du.debug('Push Object To Redshift');
 
-    let event_type = this.parameters.get('message').event_type;
     let redshift_object = this.parameters.get('redshiftobject');
 
     return this.kinesisfirehoseutilities.putRecord('events', redshift_object).then((result) => {
-
-      du.output('Kinesis Firehose Result', result);
-
       return result;
-
     });
 
   }
