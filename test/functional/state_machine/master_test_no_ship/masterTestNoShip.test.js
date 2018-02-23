@@ -8,6 +8,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const tab = '      ';
 
 describe('masterTestNoShip', () => {
@@ -50,6 +51,9 @@ describe('masterTestNoShip', () => {
             if (!config.skip) {
                 tests.push(test);
             }
+
+            test.description = stringutilities.replaceAll(test.description,', ', '\n' + tab);
+
         } else {
             console.log('Ignoring ' + test_path);
         }
