@@ -186,24 +186,16 @@ functions:
 ########################
   customeremail:
     handler: handlers/workers/sns/customeremail/handler.customeremail
-    events:
-      - sns:
-          arn: arn:aws:sns:${self:provider.environment.aws_region}:${self:provider.environment.aws_account}:events
+
   redshiftevents:
     handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
-    events:
-      - sns:
-          arn: arn:aws:sns:${self:provider.environment.aws_region}:${self:provider.environment.aws_account}:events
+
   trackingevents:
     handler: handlers/workers/sns/trackingevents/handler.trackingevents
-    events:
-      - sns:
-          arn: arn:aws:sns:${self:provider.environment.aws_region}:${self:provider.environment.aws_account}:events
+
   notificationevents:
     handler: handlers/workers/sns/notificationevents/handler.notificationevents
-    events:
-      - sns:
-          arn: arn:aws:sns:${self:provider.environment.aws_region}:${self:provider.environment.aws_account}:events
+    
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
