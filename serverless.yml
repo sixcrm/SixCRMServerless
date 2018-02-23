@@ -74,10 +74,8 @@ functions:
 
 
 ########################
-# State Machine Lambdas
+# State Machine Lambdas (ForwardMessage Relays)
 ########################
-
-# Relays (forwardmessage)
 
   billtohold:
     handler: handlers/workers/forwardmessage/billtohold/handler.billtohold
@@ -100,6 +98,7 @@ functions:
           rate: rate(1 minute)
           enabled: true
 
+# Technical Debt:  Do we need this?!
 #  pendingfailedtopending:
 #    handler: handlers/workers/forwardmessage/pendingfailedtopending/handler.pendingfailedtopending
 #    events:
@@ -191,8 +190,8 @@ functions:
     handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
   trackingevents:
     handler: handlers/workers/sns/tracking/handler.trackingevents
-#  notifications:
-#    handler: handlers/workers/notifications/handler.notifications
+  notifications:
+    handler: handlers/workers/sns/notifications/handler.notifications
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
@@ -316,7 +315,7 @@ functions:
 ########################
 # Resource definitions for required system resources
 ########################
-#Technical Debt:  Move this to the deployment directory
+#Technical Debt:  Move this to the deployment directory.  This is the role that the lambdas execute as.
 
 resources:
   Resources:
