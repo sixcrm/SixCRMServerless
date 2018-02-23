@@ -430,6 +430,7 @@ workflows:
           requires:
             - build
             - unit_tests
+            - lint
           filters:
             branches:
               only:
@@ -437,9 +438,8 @@ workflows:
       - pre_deploy:
           requires:
             - build
-            - lint
             - unit_tests
-            - functional_tests
+            - lint
       - backup_datastore:
           requires:
             - pre_deploy
