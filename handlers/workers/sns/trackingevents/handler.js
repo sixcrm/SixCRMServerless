@@ -2,12 +2,12 @@
 require('../../../SixCRM.js');
 
 const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-const trackingController = global.SixCRM.routes.include('controllers', 'workers/snsevent/tracking.js');
+const trackingEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/trackingEvents.js');
 
 /* eslint-disable promise/always-return, promise/catch-or-return */
-module.exports.tracking = (event, context, callback) => {
+module.exports.trackingevents = (event, context, callback) => {
 
-  trackingController.execute(event).then((result) => {
+  trackingEventsController.execute(event).then((result) => {
 
     new LambdaResponse().issueResponse(200, {
         message: result

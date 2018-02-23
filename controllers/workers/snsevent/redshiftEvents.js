@@ -25,7 +25,7 @@ class RedshiftEventsController extends SNSEventController {
 
     this.kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities.js');
 
-    this.redshiftEventTypes = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
+    this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
 
     this.affiliateHelperController = new AffiliateHelperController();
 
@@ -48,7 +48,7 @@ class RedshiftEventsController extends SNSEventController {
     du.debug('Push To Redshift');
 
     return Promise.resolve()
-    .then(() => this.isComplaintRedshiftEventType())
+    .then(() => this.isComplaintEventType())
     .then(() => this.assembleRedshiftObject())
     .then(() => this.pushObjectToRedshift())
     .catch(error => {
@@ -58,54 +58,18 @@ class RedshiftEventsController extends SNSEventController {
 
   }
 
-  isComplaintRedshiftEventType(){
-
-    du.debug('Is Complaint Redshift Event Type');
-
-    let event_type = this.parameters.get('message').event_type;
-
-    let matching_event = arrayutilities.find(this.redshiftEventTypes, redshift_event_type => {
-      let re = new RegExp(redshift_event_type);
-
-      return stringutilities.isMatch(event_type, re);
-    });
-
-    if(_.isString(matching_event)){
-      return true;
-    }
-
-    eu.throwError('server','Not a matching Redshift event type: '+event_type);
-
-  }
-
   assembleRedshiftObject(){
 
     du.debug('Assemble Redshift Object');
 
-    let context = this.parameters.get('message').context;
-
-    let search_objects = ['campaign', 'session', 'products', 'product_schedules', 'affiliates', 'datetime'];
-
-    let redshift_object = {};
-
-    arrayutilities.map(search_objects, search_object => {
-
-      let discovered_object = objectutilities.recurseByDepth(context, (key, value) => {
-
-        if(key == search_object){
-          if(_.isObject(value)){ return true; }
-          if(_.isString(value) && stringutilities.isUUID(value)){ return true; }
-        }
-
-        return false;
-
-      });
-
-      if(!_.isUndefined(discovered_object) && !_.isNull(discovered_object)){
-        redshift_object[search_object] = discovered_object;
-      }
-
-    });
+    let redshift_object = this.discoverObjectsFromContext([
+      'campaign',
+      'session',
+      'products',
+      'product_schedules',
+      'affiliates',
+      'datetime'
+    ]);
 
     redshift_object = this.transformRedshiftObject(redshift_object);
 
