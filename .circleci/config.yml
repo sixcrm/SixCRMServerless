@@ -446,7 +446,7 @@ workflows:
             branches:
               ignore:
                 - development
-      - deploy_serverless:
+      - deploy_sns:
           requires:
             - pre_deploy
             - lint
@@ -470,6 +470,9 @@ workflows:
             - lint
             - unit_tests
             - backup_datastore
+      - deploy_serverless:
+          requires:
+            - deploy_sns
       - deploy_sqs:
           requires:
             - deploy_security_groups
@@ -487,9 +490,6 @@ workflows:
             - deploy_security_groups
             - deploy_iam
       - deploy_kinesis:
-          requires:
-            - deploy_redshift
-      - deploy_sns:
           requires:
             - deploy_redshift
       - post_deployment:
