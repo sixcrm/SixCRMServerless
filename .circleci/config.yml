@@ -447,12 +447,6 @@ workflows:
             branches:
               ignore:
                 - development
-      - deploy_sns:
-          requires:
-            - pre_deploy
-            - lint
-            - unit_tests
-            - backup_datastore
       - deploy_security_groups:
           requires:
             - pre_deploy
@@ -473,7 +467,14 @@ workflows:
             - backup_datastore
       - deploy_serverless:
           requires:
-            - deploy_sns
+            - pre_deploy
+            - lint
+            - unit_tests
+            - backup_datastore
+      - deploy_sns:
+          requires:
+            - deploy_serverless
+            - deploy_iam
       - deploy_sqs:
           requires:
             - deploy_security_groups
