@@ -15,6 +15,11 @@
       "Protocol":"lambda",
       "TopicArn":"arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
       "Endpoint":"arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-trackingevents"
+    },
+    {
+      "Protocol":"lambda",
+      "TopicArn":"arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
+      "Endpoint":"arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-notifications"
     }
   ]
 }

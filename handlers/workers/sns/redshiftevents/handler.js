@@ -1,5 +1,5 @@
 'use strict';
-require('../../../SixCRM.js');
+require('../../../../SixCRM.js');
 
 const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
 const redshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');

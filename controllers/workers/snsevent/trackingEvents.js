@@ -36,7 +36,7 @@ class TrackingEventsController extends SNSEventController {
 
   triggerTracking(){
 
-    du.debug('Push To Redshift');
+    du.debug('Trigger Tracking');
 
     return Promise.resolve()
     .then(() => this.isComplaintEventType())
