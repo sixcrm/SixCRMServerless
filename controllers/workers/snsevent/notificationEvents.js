@@ -3,19 +3,14 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 //const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
+const NotificationsHelperController = global.SixCRM.routes.include('helpers', 'notifications/Notification.js');
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
-class NotificationsController extends SNSEventController {
+class NotificationEventsController extends SNSEventController {
 
   constructor(){
 
     super();
-
-    this.parameter_definition = {};
-
-    this.parameter_validation = {};
-
-    this.augmentParameters();
 
   }
 
@@ -37,7 +32,6 @@ class NotificationsController extends SNSEventController {
 
     return Promise.resolve()
     .then(() => this.isComplaintEventType())
-    .then(() => this.assembleNotificationObject())
     .then(() => this.executeNotification())
     .catch(error => {
       du.error(error);
@@ -46,31 +40,18 @@ class NotificationsController extends SNSEventController {
 
   }
 
-  assembleNotificationObject(){
-
-    du.debug('Assemble Notification Object');
-
-    let notification_object = {};
-
-    this.parameters.set('notificationobject', notification_object);
-
-    return true;
-
-  }
-
   executeNotification(){
 
     du.debug('Execute Notification');
 
+    let event_type = this.parameters.get('message').event_type;
     let context = this.parameters.get('message').context;
-    let notification_object = this.parameters.get('notificationobject');
 
-    let notificationProviderController = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
-
-    return notificationProviderController.createNotificationsForAccount(notification_object, context);
+    let notificationsHelperController = new NotificationsHelperController();
+    return notificationsHelperController.executeNotifications(event_type, context);
 
   }
 
 }
 
-module.exports = new NotificationsController();
+module.exports = new NotificationEventsController();
