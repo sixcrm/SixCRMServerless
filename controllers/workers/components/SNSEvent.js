@@ -1,9 +1,10 @@
 'use strict';
-
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -103,6 +104,73 @@ module.exports = class SNSEventController {
       this.parameters.set('message', message);
 
       return true;
+
+    }
+
+    isComplaintEventType(){
+
+      du.debug('Is Complaint Tracking Event Type');
+
+      if(_.has(this, 'compliant_event_types') && arrayutilities.nonEmpty(this.compliant_event_types)){
+
+        let event_type = this.parameters.get('message').event_type;
+
+        let matching_event = arrayutilities.find(this.compliant_event_types, compliant_event_type => {
+          let re = new RegExp(compliant_event_type);
+
+          return stringutilities.isMatch(event_type, re);
+        });
+
+        if(_.isString(matching_event)){
+          return true;
+        }
+
+        eu.throwError('server','Not a complaint event type: '+event_type);
+
+      }
+
+      return true;
+
+    }
+
+    discoverObjectsFromContext(search_objects, fatal){
+
+      du.debug('Discover Objects From Context');
+
+      fatal = (_.isUndefined(fatal) || _.isNull(fatal))?false:fatal;
+
+      let context = this.parameters.get('message').context;
+
+      let return_object = {};
+
+      arrayutilities.map(search_objects, search_object => {
+
+        let discovered_object = objectutilities.recurseByDepth(context, (key, value) => {
+
+          if(key == search_object){
+            if(_.isObject(value)){ return true; }
+            if(_.isString(value) && stringutilities.isUUID(value)){ return true; }
+          }
+
+          return false;
+
+        });
+
+        if(!_.isUndefined(discovered_object) && !_.isNull(discovered_object)){
+          return_object[search_object] = discovered_object;
+        }
+
+      });
+
+      if(fatal){
+        arrayutilities.map(search_objects, search_object => {
+          if(!_.has(return_object, search_object)){
+            eu.throwError('server','Unable to discover '+search_object+' in context.');
+          }
+        });
+      }
+
+      return return_object;
 
     }
 
