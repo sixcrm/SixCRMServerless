@@ -439,6 +439,7 @@ workflows:
             - build
             - lint
             - unit_tests
+            - functional_tests
       - backup_datastore:
           requires:
             - pre_deploy
