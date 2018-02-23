@@ -189,7 +189,7 @@ functions:
   redshiftevents:
     handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
   trackingevents:
-    handler: handlers/workers/sns/tracking/handler.trackingevents
+    handler: handlers/workers/sns/trackingevents/handler.trackingevents
   notifications:
     handler: handlers/workers/sns/notifications/handler.notifications
 #  eventhooks:
