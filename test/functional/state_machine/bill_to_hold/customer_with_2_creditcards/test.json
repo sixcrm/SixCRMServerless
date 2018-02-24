@@ -1,5 +1,4 @@
 {
-  "description": "Billable rebill goes to hold",
-  "order": 10,
-  "only": true
+  "description": "Billable rebill with 2 credit cards goes to hold",
+  "order": 20
 }

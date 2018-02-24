@@ -29,6 +29,215 @@ describe('controllers/Entity.js', () => {
         mockery.deregisterAll();
     });
 
+    describe('getShared', () => {
+        it('returns the entity if shared', () => {
+            let entity = MockEntities.getValidAccessKey('82478014-c96f-49ef-b31c-5408e99df66e');
+            let entityAcl = {
+                entity: '82478014-c96f-49ef-b31c-5408e99df66e',
+                type: 'accesskey',
+                allow: ['*'],
+                deny: ['*']
+            };
+
+            PermissionTestGenerators.givenAnyUser();
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table) => {
+                    if (table === 'entityacls') {
+                        return Promise.resolve({Items: [entityAcl]});
+                    }
+                    return Promise.resolve({Items: [entity]});
+                },
+                saveRecord: (tableName, entity) => {
+                    return Promise.resolve(entity);
+                }
+            });
+
+            let mock_preindexing_helper = class {
+              constructor(){
+
+              }
+              addToSearchIndex(){
+                return Promise.resolve(true);
+              }
+              removeFromSearchIndex(){
+                return Promise.resolve(true);
+              }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.getShared({id:entity.id}).then(result => {
+                expect(result).to.deep.equal(entity);
+            });
+        });
+
+        it('returns throws an error if not shared', () => {
+            let entity = MockEntities.getValidAccessKey('82478014-c96f-49ef-b31c-5408e99df66e');
+            let entityAcl = {
+                entity: '82478014-c96f-49ef-b31c-5408e99df66e',
+                type: 'accesskey',
+                allow: [],
+                deny: ['*']
+            };
+
+            PermissionTestGenerators.givenAnyUser();
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table) => {
+                    if (table === 'entityacls') {
+                        return Promise.resolve({Items: [entityAcl]});
+                    }
+                    return Promise.resolve({Items: [entity]});
+                },
+                saveRecord: (tableName, entity) => {
+                    return Promise.resolve(entity);
+                }
+            });
+
+            let mock_preindexing_helper = class {
+              constructor(){
+
+              }
+              addToSearchIndex(){
+                return Promise.resolve(true);
+              }
+              removeFromSearchIndex(){
+                return Promise.resolve(true);
+              }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.getShared({id: entity.id}).catch(error => {
+                expect(error.message).to.equal('[403] User is not authorized to perform this action.');
+            });
+        });
+    });
+
+    describe('listShared', () => {
+        it('returns a list of shared entities corresponding to type', () => {
+            PermissionTestGenerators.givenAnyUser();
+            const acls = [{
+                entity: 'ead02cb4-61f9-49de-bd08-e9192718e75d',
+                type: 'type',
+                allow: [],
+                deny: []
+            }, {
+                entity: '2a5f786d-69fb-44ea-ad2f-137bb515543c',
+                type: 'type',
+                allow: [],
+                deny: ['*']
+            }];
+            const sharedEntities = [{
+                id: 'ead02cb4-61f9-49de-bd08-e9192718e75d'
+            }];
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: () => Promise.resolve({ Count: acls.length, Items: acls }),
+                scanRecords: () => Promise.resolve({ Count: sharedEntities.length, Items: sharedEntities }),
+                createINQueryParameters: () => {
+                    return {
+                        filter_expression: 'a_filter',
+                        expression_attribute_values: 'an_expression_values'
+                    };
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.listShared({pagination: {limit: 10}}).then(result => {
+                expect(result).to.deep.equal({
+                    pagination: {
+                        count: sharedEntities.length,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entities: sharedEntities
+                });
+            });
+        });
+
+        it('paginates the shared entities', () => {
+            PermissionTestGenerators.givenAnyUser();
+            const params = {
+                pagination: {
+                    limit: 2
+                }
+            };
+            const acls = [{
+                entity: 'ead02cb4-61f9-49de-bd08-e9192718e75d',
+                type: 'type',
+                allow: [],
+                deny: []
+            }, {
+                entity: 'f683e149-874a-4572-85b0-afa7c1c5b4dd',
+                type: 'type',
+                allow: [],
+                deny: []
+            }, {
+                entity: '529c35d9-11f9-4a29-a10f-25eee877450f',
+                type: 'type',
+                allow: [],
+                deny: []
+            }];
+            const paginatedEntities = [{
+                id: 'ead02cb4-61f9-49de-bd08-e9192718e75d'
+            }, {
+                id: 'f683e149-874a-4572-85b0-afa7c1c5b4dd'
+            }];
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: () => Promise.resolve({ Count: acls.length, Items: acls }),
+                scanRecords: (table, parameters) => {
+                    expect(parameters.limit).to.equal(params.pagination.limit);
+                    return Promise.resolve({ Count: params.pagination.limit, Items: paginatedEntities })
+                },
+                createINQueryParameters: () => {
+                    return {
+                        filter_expression: 'a_filter',
+                        expression_attribute_values: 'an_expression_values'
+                    };
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.listShared(params).then(result => {
+                expect(result).to.deep.equal({
+                    pagination: {
+                        count: params.pagination.limit,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ""
+                    },
+                    entities: paginatedEntities
+                });
+            });
+        })
+    });
+
     describe('create', () => {
 
       beforeEach(() => {

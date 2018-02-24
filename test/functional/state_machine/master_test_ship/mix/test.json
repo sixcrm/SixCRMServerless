@@ -1,5 +1,5 @@
 {
-  "description": "Master test - ship scenario\n\tRebill goes to archive\n\tRebill with no ship products remains in hold\n\tRebill in processing is ignored\n\tRebill in future is ignored\n\tMissing rebill goes to bill error\n\tIncorrect rebill goes to bill error",
+  "description": "Master test - ship scenario, Rebill goes to archive, Rebill with no ship products remains in hold, Rebill in processing is ignored, Rebill in future is ignored, Missing rebill goes to bill error, Incorrect rebill goes to bill error, Rebill with a customer with 2 credit cards is archived, Rebill with 2 products is archived, Rebill without session goes to bill error, Rebill without product goes to bill error",
   "order": 10,
   "env": {
     "archivefilter": "all"

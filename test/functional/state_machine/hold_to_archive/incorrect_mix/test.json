@@ -1,6 +1,6 @@
 {
   "description": "7 rebills without products and 4 rebills without transactions go to error",
-  "order": 110,
+  "order": 120,
   "lambda_filter": ["holdtoarchive"],
   "env": {
     "archivefilter": "noship"

@@ -1,6 +1,6 @@
 {
   "description": "7 rebills are archived and updated and 4 rebills remain in hold state",
-  "order": 50,
+  "order": 60,
   "lambda_filter": ["holdtoarchive"],
   "env": {
     "archivefilter": "noship"

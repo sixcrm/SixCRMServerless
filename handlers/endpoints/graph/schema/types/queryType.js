@@ -1024,6 +1024,20 @@ module.exports.graphObj = new GraphQLObjectType({
                 return emailTemplateController.get({id: emailtemplate.id, fatal: get_fatal});
             }
         },
+        sharedemailtemplate: {
+            type: emailTemplateType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the email template',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, emailtemplate){
+                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+
+                return emailTemplateController.getShared({id: emailtemplate.id});
+            }
+        },
         smtpprovider: {
             type: SMTPProviderType.graphObj,
             args: {
@@ -1048,6 +1062,17 @@ module.exports.graphObj = new GraphQLObjectType({
                 const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 
                 return emailTemplateController.listByAccount({pagination: emailtemplates.pagination, fatal:list_fatal, search: emailtemplates.search});
+            }
+        },
+        sharedemailtemplatelist: {
+            type: emailTemplateListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, emailtemplates){
+                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+
+                return emailTemplateController.listShared({pagination: emailtemplates.pagination});
             }
         },
         emailtemplatelistbysmtpprovider: {

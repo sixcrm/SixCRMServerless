@@ -1,10 +1,18 @@
 [
   {
-      "entity":"bdaa3708-1c9d-4b47-a7af-c61d1311b81b",
+      "entity":"b44ce483-861c-4843-a7d6-b4c649d6bdde",
       "type": "emailtemplate",
       "allow":["*"],
       "deny":["*"],
       "created_at":"2017-04-06T18:40:41.405Z",
       "updated_at":"2017-04-06T18:41:12.521Z"
+  },
+  {
+    "entity":"8108d6a3-2d10-4013-9e8e-df71e2dc578b",
+    "type": "emailtemplate",
+    "allow":[],
+    "deny":["*"],
+    "created_at":"2017-04-06T18:40:41.405Z",
+    "updated_at":"2017-04-06T18:41:12.521Z"
   }
 ]
