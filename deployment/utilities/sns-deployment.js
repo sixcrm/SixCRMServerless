@@ -104,10 +104,9 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		du.debug('Add Subscription Permissions');
 
 		let parameters = {
-			Action: 'lambda:InvokeFunction',
+			Action: 'lambda:invokeFunction',
 		  FunctionName: subscription.Endpoint,
 		  Principal: 'sns.amazonaws.com',
-		  SourceAccount: global.SixCRM.configuration.site_config.aws.account,
 		  SourceArn: subscription.TopicArn,
 		  StatementId: "snssubscription-"+randomutilities.createRandomString(10)
 		};
