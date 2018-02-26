@@ -8,6 +8,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'RoleInput',
     fields: () => ({
         id:					{ type: new GraphQLNonNull(GraphQLString) },
+        account:			{ type: new GraphQLNonNull(GraphQLString) },
         name:				{ type: new GraphQLNonNull(GraphQLString) },
         active:				{ type: new GraphQLNonNull(GraphQLBoolean) }
     })

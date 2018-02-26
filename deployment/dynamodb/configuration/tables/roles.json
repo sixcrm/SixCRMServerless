@@ -11,6 +11,28 @@
       {
         "AttributeName":"id",
         "AttributeType":"S"
+      },
+      {
+        "AttributeName":"account",
+        "AttributeType":"S"
+      }
+    ],
+    "GlobalSecondaryIndexes":[
+      {
+        "IndexName":"account-index",
+        "KeySchema":[
+          {
+            "AttributeName":"account",
+            "KeyType":"HASH"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":10,
+          "WriteCapacityUnits":1
+        }
       }
     ],
     "ProvisionedThroughput":{

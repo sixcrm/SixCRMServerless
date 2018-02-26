@@ -16,6 +16,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The id of the role.',
         },
+        account: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The account associated with the role.',
+        },
         name: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The name of the role.',
@@ -26,7 +30,7 @@ module.exports.graphObj = new GraphQLObjectType({
         },
         permissions:{
             type: new GraphQLNonNull(permissionsType.graphObj),
-            description: 'The permsissions associated with the role.',
+            description: 'The permissions associated with the role.',
             resolve: role => roleController.getPermissions(role)
         },
         created_at: {
