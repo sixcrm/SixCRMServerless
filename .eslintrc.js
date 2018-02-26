@@ -18,7 +18,7 @@ module.exports = {
         //"newline-per-chained-call": ["warn", { "ignoreChainWithDepth": 2 }],
         "no-console": [ "error" ],
         "no-extra-semi": [ "off" ],
-        "no-trailing-spaces": [ "off" ],
+        "no-trailing-spaces": [ "warn" ],
         "no-mixed-spaces-and-tabs": "off",
         "no-unused-vars": [ "error" ],
         "promise/always-return": "warn",

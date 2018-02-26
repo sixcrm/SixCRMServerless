@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const chai = require('chai');
 const expect = chai.expect;
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -237,6 +236,192 @@ describe('lib/object-utilities', () => {
     it('should return true for array argument (three dimensional with array index notation)', () => {
 
       expect(objectutilities.hasRecursive({test:[{another_key:{yet_another_key:'1'}}]},'test.0.another_key.yet_another_key'), true).to.equal(true);
+
+    });
+
+  });
+  describe('getRecursive', () => {
+
+    it('should fail with null key argumentation', () => {
+
+      try{
+        objectutilities.getRecursive({});
+        expect.fail();
+      }catch(error){
+        expect(error.message).to.equal('[500] Key must be a array or a string.');
+      }
+
+    });
+
+    it('should fail with empty key argumentation', () => {
+
+      try{
+        objectutilities.getRecursive({},[]);
+        expect.fail();
+      }catch(error){
+        expect(error.message).to.equal('[500] key array must be of length 1 or greater.');
+      }
+
+    });
+
+    it('should fail with fatal argumentation', () => {
+
+      try{
+        objectutilities.getRecursive({},['test'], true);
+        expect.fail();
+      }catch(error){
+        expect(error.message).to.equal('[500] Expected object to have key "test"');
+      }
+
+    });
+
+    it('should return undefined', () => {
+
+      expect(objectutilities.getRecursive({},['test'])).to.equal(undefined);
+
+    });
+
+    it('should fail due to invalid argumentation (object)', () => {
+
+      try{
+
+        objectutilities.getRecursive({test:'hello'}, {}, true);
+        expect.fail();
+
+      }catch(error){
+
+        expect(error.message).to.equal('[500] Key must be a array or a string.');
+
+      }
+
+    });
+
+    it('should fail due to invalid argumentation (object in array)', () => {
+
+      try{
+
+        objectutilities.getRecursive({test:'hello'}, [{}], true);
+        expect.fail();
+
+      }catch(error){
+
+        expect(error.message).to.equal('[500] Non-string key observed.');
+
+      }
+
+    });
+
+    it('should return value for array argument (one dimensional)', () => {
+
+      expect(objectutilities.getRecursive({test:'hello'},['test'])).to.equal('hello');
+
+    });
+
+    it('should return value for string argument (one dimensional)', () => {
+
+      expect(objectutilities.getRecursive({test:'hello'},'test')).to.equal('hello');
+
+    });
+
+    it('should return value for string argument (one dimensional) with arbitrary property types', () => {
+
+      expect(objectutilities.getRecursive({test:{test2:'hello'}}, 'test')).to.deep.equal({test2:'hello'});
+      expect(objectutilities.getRecursive({test:'hello'}, 'test')).to.equal('hello');
+      expect(objectutilities.getRecursive({test:null}, 'test')).to.equal(null);
+      expect(objectutilities.getRecursive({test:false}, 'test')).to.equal(false);
+      expect(objectutilities.getRecursive({test:true}, 'test')).to.equal(true);
+      expect(objectutilities.getRecursive({test:{}}, 'test')).to.deep.equal({});
+      expect(objectutilities.getRecursive({test:['hello']}, 'test')).to.deep.equal(['hello']);
+      let cb = () => {return 'hello'; };
+
+      expect(objectutilities.getRecursive({test: cb}, 'test')).to.equal(cb);
+
+    });
+
+    it('should return value for array argument (one dimensional) with arbitrary property types', () => {
+
+      expect(objectutilities.getRecursive({test:{test2:'hello'}}, ['test'])).to.deep.equal({test2:'hello'});
+      expect(objectutilities.getRecursive({test:'hello'}, ['test'])).to.equal('hello');
+      expect(objectutilities.getRecursive({test:null}, ['test'])).to.equal(null);
+      expect(objectutilities.getRecursive({test:false}, ['test'])).to.equal(false);
+      expect(objectutilities.getRecursive({test:true}, ['test'])).to.equal(true);
+      expect(objectutilities.getRecursive({test:{}}, ['test'])).to.deep.equal({});
+      expect(objectutilities.getRecursive({test:['hello']}, ['test'])).to.deep.equal(['hello']);
+      let cb = () => {return 'hello'; };
+
+      expect(objectutilities.getRecursive({test: cb}, ['test'])).to.equal(cb);
+
+    });
+
+    it('should return value for array argument (two dimensional)', () => {
+
+      expect(objectutilities.getRecursive({test:{test2:'hello'}},['test', 'test2'])).to.equal('hello');
+
+    });
+
+    it('should return value for string argument (two dimensional)', () => {
+
+      expect(objectutilities.getRecursive({test:{test2:'hello'}},'test.test2')).to.equal('hello');
+
+    });
+
+    it('should return value for string argument (two dimensional) with arbitrary property types', () => {
+
+      expect(objectutilities.getRecursive({test:{test2:{test3: 'hello'}}}, 'test.test2')).to.deep.equal({test3: 'hello'});
+      expect(objectutilities.getRecursive({test:{test2:'hello'}}, 'test.test2')).to.equal('hello');
+      expect(objectutilities.getRecursive({test:{test2:null}}, 'test.test2')).to.equal(null);
+      expect(objectutilities.getRecursive({test:{test2:false}}, 'test.test2')).to.equal(false);
+      expect(objectutilities.getRecursive({test:{test2:true}}, 'test.test2')).to.equal(true);
+      expect(objectutilities.getRecursive({test:{test2:{}}}, 'test.test2')).to.deep.equal({});
+      expect(objectutilities.getRecursive({test:{test2:['hello']}}, 'test.test2')).to.deep.equal(['hello']);
+      let cb = () => {return 'hello'; };
+
+      expect(objectutilities.getRecursive({test:{test2: cb}}, 'test.test2')).to.equal(cb);
+
+    });
+
+    it('should return value for array argument (two dimensional) with arbitrary property types', () => {
+
+      expect(objectutilities.getRecursive({test:{test2:{test3: 'hello'}}}, ['test','test2'])).to.deep.equal({test3: 'hello'});
+      expect(objectutilities.getRecursive({test:{test2:'hello'}}, ['test','test2'])).to.equal('hello');
+      expect(objectutilities.getRecursive({test:{test2:null}}, ['test','test2'])).to.equal(null);
+      expect(objectutilities.getRecursive({test:{test2:false}}, ['test','test2'])).to.equal(false);
+      expect(objectutilities.getRecursive({test:{test2:true}}, ['test','test2'])).to.equal(true);
+      expect(objectutilities.getRecursive({test:{test2:{}}}, ['test','test2'])).to.deep.equal({});
+      expect(objectutilities.getRecursive({test:{test2:['hello']}}, ['test','test2'])).to.deep.equal(['hello']);
+      let cb = () => {return 'hello'; };
+
+      expect(objectutilities.getRecursive({test:{test2: cb}}, ['test','test2'])).to.equal(cb);
+
+    });
+
+    it('should return value for array argument (three dimensional)', () => {
+
+      expect(objectutilities.getRecursive({test:{test2:{test3:'hello'}}},['test', 'test2', 'test3'])).to.equal('hello');
+
+    });
+
+    it('should return value for string argument (two dimensional)', () => {
+
+      expect(objectutilities.getRecursive({test:{test2:{test3:'hello'}}},'test.test2.test3')).to.equal('hello');
+
+    });
+
+    it('should return undefined for array argument (three dimensional)', () => {
+
+      expect(objectutilities.getRecursive({test:{test2:{test4:'hello'}}},['test', 'test2', 'test3'])).to.deep.equal(undefined);
+
+    });
+
+    it('should return undefined for string argument (two dimensional)', () => {
+
+      expect(objectutilities.getRecursive({test:{test2:{test4:'hello'}}},'test.test2.test3')).to.deep.equal(undefined);
+
+    });
+
+    it('should return value for array argument (three dimensional with array index notation)', () => {
+
+      expect(objectutilities.getRecursive({test:[{another_key:{yet_another_key:'1'}}]},'test.0.another_key.yet_another_key'), true).to.equal('1');
 
     });
 

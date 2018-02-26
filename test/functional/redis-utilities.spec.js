@@ -1,10 +1,7 @@
 'use strict'
 
 const expect = require('chai').expect;
-// const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-
-// process.env.SIX_VERBOSE = 5;
 
 describe('Test redis utils functionality', () => {
 
