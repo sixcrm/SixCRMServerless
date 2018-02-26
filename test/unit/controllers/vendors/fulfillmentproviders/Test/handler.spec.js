@@ -109,14 +109,11 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
 
       fulfillment_provider.provider.name = 'Test';
 
-      /*
-      let three_pl_response = getValidThreePLResponse('FindOrders');
-      mockery.registerMock('request', {
-        post: (request_options, callback) => {
-         callback(null, three_pl_response);
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
+        postJSON:() => {
+          return Promise.resolve(getValidResponse());
         }
       });
-      */
 
       const TestController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/Test/handler.js');
       let testController = new TestController({fulfillment_provider: fulfillment_provider});
