@@ -314,7 +314,10 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Seed BIN Database');
 
-    return this.uploadBINDatabaseToS3().then(() => { return this.copyBINDatabaseToRedshift() });
+    //Technical Debt:  This is now in Dynamo
+    //return this.uploadBINDatabaseToS3().then(() => { return this.copyBINDatabaseToRedshift() });
+
+    return Promise.resolve(true);
 
   }
 
@@ -326,6 +329,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  /*
   uploadBINDatabaseToS3() {
 
     du.debug('Upload BIN Database');
@@ -335,6 +339,8 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       Bucket: 'sixcrm-' + global.SixCRM.configuration.stage + '-redshift',
       Key: database_filename
     };
+
+    //Technical Debt:  Is this necessary?
 
     return s3utilities.objectExists(parameters).then((exists) => {
 
@@ -354,9 +360,10 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
       }
 
-    })
+    });
 
   }
+  */
 
   uploadDateDatabaseToS3() {
 
@@ -386,10 +393,11 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
       }
 
-    })
+    });
 
   }
 
+  /*
   copyBINDatabaseToRedshift() {
 
     du.debug('Copy BIN Database');
@@ -413,6 +421,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     return this.execute(query_copy);
 
   }
+  */
 
   copyDateDatabaseToRedshift() {
 

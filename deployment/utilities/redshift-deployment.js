@@ -1,5 +1,5 @@
 'use strict';
-
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
@@ -22,12 +22,10 @@ module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
 
     du.debug('Get Configuration File');
 
-    if(process.env.stage == 'production'){
+    //Technical Debt:  Just make this look for a file that matches the stage name
+    if(_.contains(['local','development','staging','production'], process.env.stage)){
         this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/'+process.env.stage+'.json');
-    } else if(process.env.stage == 'local'){
-      this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/local.json');
-    }
-    else {
+    }else {
       this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/default.json');
     }
 
