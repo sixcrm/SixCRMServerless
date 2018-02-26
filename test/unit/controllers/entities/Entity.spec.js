@@ -131,6 +131,57 @@ describe('controllers/Entity.js', () => {
                 expect(error.message).to.equal('[403] User is not authorized to perform this action.');
             });
         });
+
+        it('queries entities belonging to master account', () => {
+            let entity = MockEntities.getValidAccessKey('82478014-c96f-49ef-b31c-5408e99df66e');
+            let entityAcl = {
+                entity: '82478014-c96f-49ef-b31c-5408e99df66e',
+                type: 'accesskey',
+                allow: ['*'],
+                deny: ['*']
+            };
+
+            PermissionTestGenerators.givenAnyUser();
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters) => {
+                    if (table === 'entityacls') {
+                        return Promise.resolve({Items: [entityAcl]});
+                    }
+                    expect(parameters.expression_attribute_values[':accountv']).to.equal('*');
+                    expect(parameters.filter_expression).to.equal('account = :accountv');
+                    return Promise.resolve({Items: [entity]});
+                },
+                saveRecord: (tableName, entity) => {
+                    return Promise.resolve(entity);
+                }
+            });
+
+            let mock_preindexing_helper = class {
+              constructor(){
+
+              }
+              addToSearchIndex(){
+                return Promise.resolve(true);
+              }
+              removeFromSearchIndex(){
+                return Promise.resolve(true);
+              }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.getShared({id: entity.id});
+        });
     });
 
     describe('listShared', () => {
@@ -157,7 +208,7 @@ describe('controllers/Entity.js', () => {
                 createINQueryParameters: () => {
                     return {
                         filter_expression: 'a_filter',
-                        expression_attribute_values: 'an_expression_values'
+                        expression_attribute_values: {}
                     };
                 }
             });
@@ -216,7 +267,7 @@ describe('controllers/Entity.js', () => {
                 createINQueryParameters: () => {
                     return {
                         filter_expression: 'a_filter',
-                        expression_attribute_values: 'an_expression_values'
+                        expression_attribute_values: {}
                     };
                 }
             });
@@ -235,7 +286,33 @@ describe('controllers/Entity.js', () => {
                     entities: paginatedEntities
                 });
             });
-        })
+        });
+
+
+        it('queries entities belonging to master account', () => {
+            PermissionTestGenerators.givenAnyUser();
+            const acls = [];
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: () => Promise.resolve({ Count: acls.length, Items: acls }),
+                scanRecords: (table, parameters) => {
+                    expect(parameters.expression_attribute_values[':accountv']).to.equal('*');
+                    expect(parameters.filter_expression).to.include('account = :accountv');
+                    return Promise.resolve({ Count: 0, Items: [] });
+                },
+                createINQueryParameters: () => {
+                    return {
+                        filter_expression: 'a_filter',
+                        expression_attribute_values: {}
+                    };
+                }
+            });
+
+            const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
+            let entityController = new EC('entity');
+
+            return entityController.listShared({pagination: {limit: 10}});
+        });
     });
 
     describe('create', () => {

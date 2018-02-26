@@ -69,7 +69,7 @@ module.exports = class entityController extends entityUtilitiesController {
                   expression_attribute_values: {':primary_keyv': this.getID(id)}
                 };
 
-                query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
+                query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
                 return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null);
             })
             .then(data => this.getItems(data))
@@ -92,6 +92,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
                 let query_parameters = this.createINQueryParameters({field: this.primary_key, list_array: shared});
 
+                query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
                 query_parameters = this.appendPagination({query_parameters, pagination});
                 return this.dynamoutilities.scanRecords(this.table_name, query_parameters);
             })

@@ -71,6 +71,9 @@ jobs:
           name: Execute Functional Connectivity Test
           command: npm run test-functional-connectivity
       - run:
+          name: Execute Functional Redis-Utility Test
+          command: npm run test-functional-redis-utilities
+      - run:
           name: Deploy Local Dynamo
           command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_tables.js
       - run:
