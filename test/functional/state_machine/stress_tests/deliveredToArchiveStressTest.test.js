@@ -1,16 +1,16 @@
 const expect = require('chai').expect;
-const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
 const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 const DynamoDbDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const timer = global.SixCRM.routes.include('lib', 'timer.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
+const tab = '      ';
 
 const max_test_cases = randomutilities.randomInt(900, 1100);
 
@@ -32,12 +32,19 @@ describe('deliveredToArchiveStressTest', () => {
 
     it(`${max_test_cases} rebills are archived`, () => {
         return beforeTest()
-            .then(() => timestamp.delay(32 * 1000)())
-            .then(() => verifySqs('delivered', max_test_cases))
+            .then(() => waitForNumberOfMessages('delivered', max_test_cases))
+            .then(() => console.log(tab + 'Waiting for flush to finish'))
+            .then(() => timer.set())
             .then(() => StateMachine.flush())
-            .then(() => timestamp.delay(32 * 1000)())
-            .then(() => verifySqs('delivered', 0))
-    })
+            .then(() => waitForNumberOfMessages('delivered', 0))
+            .then(() => {
+                let total = timer.get();
+
+                console.log(tab + 'Total processing time: ' + total + 'ms');
+                console.log(tab + numberUtilities.formatFloat(total/max_test_cases, 2) + 'ms per message');
+            });
+
+    });
 
     function beforeTest() {
         return Promise.resolve()
@@ -45,6 +52,20 @@ describe('deliveredToArchiveStressTest', () => {
             .then(() => DynamoDbDeployment.destroyTables())
             .then(() => DynamoDbDeployment.deployTables())
             .then(() => seed())
+    }
+
+    function waitForNumberOfMessages(queue_name, number) {
+
+        return SqSTestUtils.messageCountInQueue(queue_name)
+            .then((count) => {
+                console.log(tab + 'Waiting for ' + number + ' of messages to be in ' + queue_name + '. Got ' + count);
+                if (count !== number) {
+                    return timestamp.delay(1 * 1000)().then(() => waitForNumberOfMessages(queue_name, number, number))
+                } else {
+                    return Promise.resolve();
+                }
+            });
+
     }
 
     function seed() {
@@ -55,22 +76,13 @@ describe('deliveredToArchiveStressTest', () => {
         for (let i = 0; i < max_test_cases; i++) {
             let rebill = getRebill();
 
-            operations.push(rebillController.create(rebill));
+            operations.push(rebillController.create({entity: rebill}));
             operations.push(SqSTestUtils.sendMessageToQueue('delivered', '{"id":"' + rebill.id +'"}'));
         }
 
         return Promise.all(operations)
             .then(() => permissionutilities.enableACLs())
             .catch(() => permissionutilities.enableACLs());
-    }
-
-    function verifySqs(queue_name, expected) {
-
-        return SqSTestUtils.messageCountInQueue(queue_name)
-            .then(count => {
-                return expect(count).to.equal(expected, `Expected ${expected} messages in delivered but got ${count}`);
-            });
-
     }
 
     function getRebill() {
