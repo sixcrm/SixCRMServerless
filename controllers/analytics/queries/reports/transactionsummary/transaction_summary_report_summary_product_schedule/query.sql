@@ -67,7 +67,7 @@ SELECT
   ),0) AS chargeback_count,
   count(distinct case when type='new' then customer else null end) as current_active_customer,
   0 count_alert_count
-FROM f_transactions /*f_product_schedules*/
+FROM f_transactions
 WHERE 1=1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'

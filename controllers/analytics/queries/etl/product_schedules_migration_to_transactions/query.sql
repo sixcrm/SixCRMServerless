@@ -21,20 +21,20 @@ select
   prepaid,
   result,
   associated_transaction
-from f_transactions /*f_product_schedules*/
+from f_transactions
 where not exists(
   select 1 from f_transactions where
-  f_transactions.id                     = f_transactions /*f_product_schedules*/.transactions_id   and
-  f_transactions.product_schedule       = f_transactions /*f_product_schedules*/.product_schedule  and
-  f_transactions."datetime"             = f_transactions /*f_product_schedules*/."datetime"        and
-  f_transactions.customer               = f_transactions /*f_product_schedules*/.customer          and
-  f_transactions.creditcard             = f_transactions /*f_product_schedules*/.creditcard        and
-  f_transactions.merchant_provider      = f_transactions /*f_product_schedules*/.merchant_provider and
-  f_transactions.campaign               = f_transactions /*f_product_schedules*/.campaign          and
-  f_transactions.affiliate              = f_transactions /*f_product_schedules*/.affiliate         and
-  f_transactions.amount                 = f_transactions /*f_product_schedules*/.amount            and
-  f_transactions.processor_result       = f_transactions /*f_product_schedules*/.processor_result  and
-  f_transactions.account                = f_transactions /*f_product_schedules*/.account           and
-  f_transactions.type                   = f_transactions /*f_product_schedules*/.type              and
-  f_transactions.subtype                = f_transactions /*f_product_schedules*/.subtype
+  f_transactions.id                     = f_transactions.transactions_id   and
+  f_transactions.product_schedule       = f_transactions.product_schedule  and
+  f_transactions."datetime"             = f_transactions."datetime"        and
+  f_transactions.customer               = f_transactions.customer          and
+  f_transactions.creditcard             = f_transactions.creditcard        and
+  f_transactions.merchant_provider      = f_transactions.merchant_provider and
+  f_transactions.campaign               = f_transactions.campaign          and
+  f_transactions.affiliate              = f_transactions.affiliate         and
+  f_transactions.amount                 = f_transactions.amount            and
+  f_transactions.processor_result       = f_transactions.processor_result  and
+  f_transactions.account                = f_transactions.account           and
+  f_transactions.type                   = f_transactions.type              and
+  f_transactions.subtype                = f_transactions.subtype
 );

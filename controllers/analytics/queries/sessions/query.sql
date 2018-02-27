@@ -14,6 +14,6 @@ SELECT fs.id,
        fs.subaffiliate_5,
        fs.cid
 FROM f_sessions fs
-LEFT OUTER JOIN f_transactions /*f_product_schedules*/ fps ON (fs.id = fps.session_id)
+LEFT OUTER JOIN f_transactions fps ON (fs.id = fps.session_id)
 WHERE 1=1
   AND id = {{SESSION}};

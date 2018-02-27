@@ -31,7 +31,7 @@ FROM
                   WHEN date_trunc('month', CURRENT_TIMESTAMP) = date_trunc('month', datetime) THEN amount
                   ELSE 0
               END ) amount_transactions_month
-   FROM f_transactions /*f_product_schedules*/
+   FROM f_transactions
    WHERE 1=1
      {{filter}}
      AND datetime BETWEEN CURRENT_TIMESTAMP - interval '30 days' AND CURRENT_TIMESTAMP

@@ -30,7 +30,7 @@ FROM
             THEN 1
               ELSE 0
               END) AS transaction_count_prior
-        FROM f_transactions /*f_product_schedules*/
+        FROM f_transactions
         WHERE 1 = 1
               {{filter}}
               AND datetime BETWEEN TIMESTAMP '{{start}}' - (TIMESTAMP '{{end}}' - TIMESTAMP '{{start}}') AND TIMESTAMP '{{end}}'

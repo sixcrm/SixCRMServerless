@@ -148,7 +148,7 @@ TRANSACTIONS_SUB1 AS (SELECT sum(amount) sum_amount,
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_1
-   FROM f_transactions /*f_product_schedules*/
+   FROM f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -168,7 +168,7 @@ TRANSACTIONS_SUB2 AS (SELECT sum(amount) sum_amount,
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_2
-   FROM f_transactions /*f_product_schedules*/
+   FROM f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -190,7 +190,7 @@ TRANSACTIONS_SUB3 AS (SELECT sum(amount) sum_amount,
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_3
-   FROM f_transactions /*f_product_schedules*/
+   FROM f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -212,7 +212,7 @@ TRANSACTIONS_SUB4 AS (SELECT sum(amount) sum_amount,
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_4
-   FROM f_transactions /*f_product_schedules*/
+   FROM f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -234,7 +234,7 @@ TRANSACTIONS_SUB5 AS (SELECT sum(amount) sum_amount,
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_5 as subaffiliate
-   FROM f_transactions /*f_product_schedules*/
+   FROM f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
