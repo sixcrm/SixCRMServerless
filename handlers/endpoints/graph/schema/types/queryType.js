@@ -1279,6 +1279,17 @@ module.exports.graphObj = new GraphQLObjectType({
       	      return roleController.list({pagination: role.pagination, search: role.search, fatal:list_fatal});
             }
         },
+        sharedrolelist: {
+            type: roleListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj}
+            },
+            resolve: function(root, role){
+                const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+
+                return roleController.listShared({pagination: role.pagination});
+            }
+        },
         customerlist: {
             type: customerListType.graphObj,
             args: {
@@ -1571,6 +1582,20 @@ module.exports.graphObj = new GraphQLObjectType({
                 const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
                 return roleController.get({id: role.id, fatal: get_fatal});
+            }
+        },
+        sharedrole: {
+            type: roleType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the role',
+                    type: GraphQLString
+                }
+            },
+            resolve: function(root, role){
+                const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+
+                return roleController.getShared({id: role.id});
             }
         },
         user: {
