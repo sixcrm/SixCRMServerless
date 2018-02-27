@@ -21,7 +21,7 @@ select
   prepaid,
   result,
   associated_transaction
-from f_transactions
+from f_product_schedules
 where not exists(
   select 1 from f_transactions where
   f_transactions.id                     = f_transactions.transactions_id   and
