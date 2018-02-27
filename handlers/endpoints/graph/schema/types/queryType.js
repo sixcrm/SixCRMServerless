@@ -1270,12 +1270,13 @@ module.exports.graphObj = new GraphQLObjectType({
         rolelist: {
             type: roleListType.graphObj,
             args: {
-                pagination: {type: paginationInputType.graphObj}
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, role){
               const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
-      	      return roleController.list({pagination: role.pagination, fatal:list_fatal});
+      	      return roleController.list({pagination: role.pagination, search: role.search, fatal:list_fatal});
             }
         },
         customerlist: {

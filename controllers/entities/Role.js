@@ -7,6 +7,8 @@ class roleController extends entityController {
 
     constructor(){
         super('role');
+
+        this.search_fields = ['name'];
     }
 
     //Technical Debt: finish!
