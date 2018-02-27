@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS f_transactions
     subaffiliate_3      VARCHAR(36),
     subaffiliate_4      VARCHAR(36),
     subaffiliate_5      VARCHAR(36),
-    prepaid             TINYINT(1)     ,
+    prepaid             BOOLEAN     ,
     result              VARCHAR(16),
     associated_transaction VARCHAR(36),
     UNIQUE (account, datetime)
