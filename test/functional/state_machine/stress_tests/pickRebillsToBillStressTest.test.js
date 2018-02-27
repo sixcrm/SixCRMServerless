@@ -12,7 +12,7 @@ const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const tab = '      ';
 
-const max_test_cases = randomutilities.randomInt(500, 600);
+const max_test_cases = randomutilities.randomInt(100, 200);
 
 describe('pickRebillsToBillStressTest', () => {
 
