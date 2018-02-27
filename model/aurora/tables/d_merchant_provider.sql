@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS d_merchant_provider;
 
 CREATE TABLE IF NOT EXISTS d_merchant_provider
 (
-  merchant_provider_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  merchant_provider_id SERIAL PRIMARY KEY,
   merchant_provider VARCHAR(36),
   activity_flag     ENUM('Active','Inactive')
 );

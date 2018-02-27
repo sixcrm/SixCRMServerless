@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS f_sessions
   account        VARCHAR(36) NOT NULL,
   customer       VARCHAR(36) NOT NULL,
   campaign       VARCHAR(36) NOT NULL,
-  completed      TINYINT(1)  NOT NULL,
+  completed      BOOLEAN  NOT NULL,
   created_at     TIMESTAMP,
   updated_at     TIMESTAMP,
   affiliate      VARCHAR(36),

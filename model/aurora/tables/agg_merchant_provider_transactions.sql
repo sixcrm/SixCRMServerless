@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS aggregation_dm.agg_merchant_provider_transactions
   account VARCHAR(36)  NOT NULL,
   datetime DATE   NOT NULL,
   num_transactions_day NUMERIC,
-  amount_transactions_day NUMERIC
-  )
-    PRIMARY KEY (account, datetime);
+  amount_transactions_day NUMERIC,
+    PRIMARY KEY (account, datetime)
+  );
 
 COMMENT ON TABLE aggregation_dm.agg_merchant_provider_transactions IS 'Aggregated table for merchant provider transactions on everyday';
