@@ -16,3 +16,7 @@ services:
     image: vsouza/sqs-local
     ports:
       - 9324:9324
+  sns:
+    image: s12v/sns
+    ports:
+      - 9911:9911

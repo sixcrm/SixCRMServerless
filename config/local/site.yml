@@ -35,6 +35,9 @@ sqs:
   max_receive_count: 5
   endpoint: http://localhost:9324
 
+sns:
+  endpoint: http://localhost:9911
+
 cloudsearch:
   domainname: 'sixcrm'
   domainendpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'

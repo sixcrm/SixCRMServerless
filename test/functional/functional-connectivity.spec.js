@@ -80,4 +80,19 @@ describe('Test connections to Docker Services', () => {
 
   });
 
+    describe('SNS Utilities', () => {
+
+        it('successfully connects to the Docker SNS Instance', () => {
+
+            let snsutilities = global.SixCRM.routes.include('lib', 'sns-utilities.js');
+
+            return snsutilities.createTopic({"Name": "events"})
+                .then((response) => {
+                    expect(response).to.have.property('ResponseMetadata');
+                })
+
+        });
+
+    });
+
 });
