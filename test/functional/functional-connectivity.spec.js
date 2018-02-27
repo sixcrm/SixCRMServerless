@@ -2,7 +2,6 @@
 require('../../SixCRMLite.js');
 
 const expect = require('chai').expect;
-const TestUtils = require('./test-utils.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
 
