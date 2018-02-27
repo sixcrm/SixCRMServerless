@@ -263,7 +263,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: RDS Create Cluster
-          command: ./tools/changesInDirectory.sh deployment/rds && node ./deployment/rds/deploy_cluster.js
+          command: ./tools/changesInDirectory.sh deployment/rds && node ./deployment/rds/deploy_cluster.js || echo "No changes, skipping."
   deploy_kinesis:
     <<: *job-defaults
     steps:
