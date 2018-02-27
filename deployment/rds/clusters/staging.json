@@ -1,1 +1,27 @@
-{}
+{
+  "DBClusterIdentifier":"sixcrm-{{stage}}-analytics",
+  "Engine": "aurora-postgresql",
+  "AvailabilityZones": ["{{region}}a","{{region}}b","{{region}}c"],
+  "BackupRetentionPeriod": 7,
+  "DatabaseName": "analytics_{{stage}}",
+  "EnableIAMDatabaseAuthentication": false,
+  "EngineVersion": "9.6.3",
+  "MasterUserPassword": "somemasterpasswo",
+  "MasterUsername": "somemasteruserna",
+  "Port": 3306,
+  "StorageEncrypted": true,
+  "PreferredBackupWindow": "09:45-10:15",
+  "PreferredMaintenanceWindow": "sat:06:57-sat:07:27",
+  "Instances":[{
+    "DBInstanceIdentifier":"sixcrm-{{stage}}-analytics-1",
+    "DBInstanceClass": "db.r4.large",
+    "Engine": "aurora-postgresql",
+    "DBClusterIdentifier":"sixcrm-{{stage}}-analytics"
+  },
+  {
+    "DBInstanceIdentifier":"sixcrm-{{stage}}-analytics-2",
+    "DBInstanceClass": "db.r4.large",
+    "Engine": "aurora-postgresql",
+    "DBClusterIdentifier":"sixcrm-{{stage}}-analytics"
+  }]
+}
