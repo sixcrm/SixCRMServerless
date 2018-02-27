@@ -71,7 +71,7 @@ SELECT
         ELSE 0
       END
   ),0) AS main_sale_amount
-FROM f_product_schedules
+FROM f_transactions
 WHERE 1=1
   {{filter}}
   AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}';
