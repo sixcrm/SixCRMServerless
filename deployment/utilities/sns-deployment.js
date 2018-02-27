@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -17,6 +18,7 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		super();
 
 		this.snsutilities = global.SixCRM.routes.include('lib', 'sns-utilities.js');
+		this.lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 
 	}
 
@@ -69,7 +71,9 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		});
 
 		return arrayutilities.reduce(subscription_promises, (current, subscription_promise) => {
-			return subscription_promise();
+			return subscription_promise().then(result => {
+				return result;
+			});
 		}).then(() => {
 			return du.output('Complete');
 		});
@@ -85,11 +89,29 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		subscription_file_contents = this.parseTokensIntoSubscriptionParameters(subscription_file_contents);
 
 		return arrayutilities.reduce(subscription_file_contents.Subscriptions, (current, subscription) => {
-			return this.snsutilities.subscribe(subscription).then((result) => {
+			return this.snsutilities.subscribe(subscription)
+			.then(() => this.addSubscriptionPermissions(subscription))
+			.then((result) => {
 				du.debug(result);
 				return true;
 			});
 		}, Promise.resolve());
+
+	}
+
+	addSubscriptionPermissions(subscription){
+
+		du.debug('Add Subscription Permissions');
+
+		let parameters = {
+			Action: 'lambda:invokeFunction',
+		  FunctionName: subscription.Endpoint,
+		  Principal: 'sns.amazonaws.com',
+		  SourceArn: subscription.TopicArn,
+		  StatementId: "snssubscription-"+randomutilities.createRandomString(10)
+		};
+
+		return this.lambdautilities.putPermission(parameters);
 
 	}
 

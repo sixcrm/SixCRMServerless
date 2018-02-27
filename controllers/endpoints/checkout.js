@@ -64,7 +64,13 @@ class checkoutController extends transactionEndpointController{
     .then(() => this.setSession())
     .then(() => this.createOrder())
     .then(() => this.confirmOrder())
-    .then(() => this.postProcessing());
+    .then(() => {
+
+      let info = this.parameters.get('confirmation');
+
+      return info;
+
+    });
 
   }
 
@@ -126,16 +132,6 @@ class checkoutController extends transactionEndpointController{
       this.parameters.set('session', result);
       return Promise.resolve(true);
     });
-
-  }
-
-  postProcessing(){
-
-    du.debug('Post Processing');
-
-    let info = this.parameters.get('confirmation');
-
-    return info;
 
   }
 

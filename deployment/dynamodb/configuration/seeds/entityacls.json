@@ -1,8 +1,16 @@
 [
   {
-      "entity":"bdaa3708-1c9d-4b47-a7af-c61d1311b81b",
+      "entity":"37c4717c-4b5f-4332-9580-932d356a7f5b",
       "type": "emailtemplate",
       "allow":["*"],
+      "deny":["*"],
+      "created_at":"2017-04-06T18:40:41.405Z",
+      "updated_at":"2017-04-06T18:41:12.521Z"
+  },
+  {
+      "entity":"3bfdec8c-3882-482d-910c-20f434336d92",
+      "type": "emailtemplate",
+      "allow":[],
       "deny":["*"],
       "created_at":"2017-04-06T18:40:41.405Z",
       "updated_at":"2017-04-06T18:41:12.521Z"

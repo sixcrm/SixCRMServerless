@@ -31,5 +31,27 @@
 		"type":"lead",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id": "37c4717c-4b5f-4332-9580-932d356a7f5b",
+		"account":"*",
+		"name": "Shared Email",
+		"subject":"This is the subject line.",
+		"body":"This is the body.",
+		"smtp_provider":"18213d0b-cd6d-4cea-91b9-993d7443468b",
+		"type":"lead",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id": "3bfdec8c-3882-482d-910c-20f434336d92",
+		"account":"*",
+		"name": "Unshared Email",
+		"subject":"This is the subject line.",
+		"body":"This is the body.",
+		"smtp_provider":"18213d0b-cd6d-4cea-91b9-993d7443468b",
+		"type":"lead",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
 	}
 ]

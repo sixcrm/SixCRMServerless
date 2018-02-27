@@ -9,24 +9,17 @@
         }
       },
       "required": ["handler"]
-
     }
   },
   "properties": {
     "provider": {
       "required": ["name", "runtime", "stage", "region", "profile", "environment"]
     },
-    "site_config": {
-      "pattern": ".+\/site.yml"
-    },
     "functions": {
       "patternProperties": {
-
         ".+": { "$ref": "#/definitions/lambda" }
-
       }
     }
-
   },
-  "required": ["service", "package", "provider", "plugins", "site_config", "functions", "resources"]
+  "required": ["service", "package", "provider", "plugins", "functions", "resources"]
 }

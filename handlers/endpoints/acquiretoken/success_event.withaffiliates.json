@@ -12,7 +12,9 @@
 		"campaign": "5c593d31-5001-4faf-8ea2-e8c1a1f85f04",
 		"affiliates":{
 			"affiliate":"anotherrandothing",
-			"subaffiliate1":"somethingelserando"
+			"subaffiliate_1":"somethingelserando",
+			"subaffiliate_3":"somethingelserando1",
+			"cid":"somerandocid"
 		}
 	}
 }

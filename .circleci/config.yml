@@ -71,6 +71,9 @@ jobs:
           name: Execute Functional Connectivity Test
           command: npm run test-functional-connectivity
       - run:
+          name: Execute Functional Redis-Utility Test
+          command: npm run test-functional-redis-utilities
+      - run:
           name: Deploy Local Dynamo
           command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_tables.js
       - run:
@@ -430,6 +433,7 @@ workflows:
           requires:
             - build
             - unit_tests
+            - lint
           filters:
             branches:
               only:
@@ -437,8 +441,8 @@ workflows:
       - pre_deploy:
           requires:
             - build
-            - lint
             - unit_tests
+            - lint
       - backup_datastore:
           requires:
             - pre_deploy
@@ -446,12 +450,6 @@ workflows:
             branches:
               ignore:
                 - development
-      - deploy_serverless:
-          requires:
-            - pre_deploy
-            - lint
-            - unit_tests
-            - backup_datastore
       - deploy_security_groups:
           requires:
             - pre_deploy
@@ -470,6 +468,16 @@ workflows:
             - lint
             - unit_tests
             - backup_datastore
+      - deploy_serverless:
+          requires:
+            - pre_deploy
+            - lint
+            - unit_tests
+            - backup_datastore
+      - deploy_sns:
+          requires:
+            - deploy_serverless
+            - deploy_iam
       - deploy_sqs:
           requires:
             - deploy_security_groups
@@ -487,9 +495,6 @@ workflows:
             - deploy_security_groups
             - deploy_iam
       - deploy_kinesis:
-          requires:
-            - deploy_redshift
-      - deploy_sns:
           requires:
             - deploy_redshift
       - post_deployment:

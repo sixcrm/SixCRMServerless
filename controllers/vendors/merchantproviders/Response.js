@@ -37,6 +37,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
     this.result_messages = {
       'success':'Success',
+      'declined': 'Failed',
       'fail': 'Failed',
       'error': 'Error'
     };
@@ -144,7 +145,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
       }
 
-      return 'fail';
+      return 'declined';
 
     }
 

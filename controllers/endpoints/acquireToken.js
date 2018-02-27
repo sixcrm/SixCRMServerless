@@ -5,6 +5,7 @@ const jwtutilities  = global.SixCRM.routes.include('lib', 'jwt-utilities');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
+const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class AcquireTokenController extends transactionEndpointController {
@@ -35,8 +36,11 @@ class AcquireTokenController extends transactionEndpointController {
         'event':global.SixCRM.routes.path('model', 'endpoints/acquireToken/event.json'),
         'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
         'transactionjwt':global.SixCRM.routes.path('model', 'definitions/jwt.json'),
-        'redshifteventobject':global.SixCRM.routes.path('model', 'kinesisfirehose/events.json')
+        'redshifteventobject':global.SixCRM.routes.path('model', 'kinesisfirehose/events.json'),
+        'affiliates':global.SixCRM.routes.path('model','endpoints/components/affiliates.json')
       };
+
+      this.event_type = 'click';
 
       this.initialize();
 
@@ -102,18 +106,9 @@ class AcquireTokenController extends transactionEndpointController {
 
       du.debug('Post Processing');
 
-      this.pushEvent();
-      this.handleAffiliateInformation();
+      this.handleAffiliateInformation().then(() => this.pushEvent());
 
       return true;
-
-    }
-
-    pushEvent(){
-
-      du.debug('Push Event');
-
-      this.eventHelperController.pushEvent({event_type: 'click', context: this.parameters.store});
 
     }
 
@@ -124,12 +119,22 @@ class AcquireTokenController extends transactionEndpointController {
       let event = this.parameters.get('event');
 
       if(!_.has(this, 'affiliateHelperController')){
-        const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
-
         this.affiliateHelperController = new AffiliateHelperController();
       }
 
-      return this.affiliateHelperController.handleAffiliateInformation(event);
+      return this.affiliateHelperController.handleAffiliateInformation(event).then(results => {
+
+        if(_.has(results, 'affiliates')){
+
+          this.parameters.set('affiliates', results.affiliates);
+
+          return true;
+
+        }
+
+        return false;
+
+      });
 
     }
 

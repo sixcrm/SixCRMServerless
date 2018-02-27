@@ -10,7 +10,7 @@
     "allow_version_upgrade": true,
     "automated_snapshot_retention_period": 3,
     "cluster_type": "multi-node",
-    "number_of_nodes": 2,
+    "number_of_nodes": 3,
     "publicly_accessible": true,
     "skip_final_cluster_snapshot": true,
     "final_cluster_snapshot_identifier": "",

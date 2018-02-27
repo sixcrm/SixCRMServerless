@@ -91,9 +91,9 @@ class CreateOrderController extends transactionEndpointController{
 
     this.sessionHelperController = new SessionHelperController();
 
-    this.initialize(() => {
-      //this.parameters.set('sessionlength', global.SixCRM.configuration.site_config.jwt.transaction.expiration);
-    });
+    this.event_type = 'order';
+
+    this.initialize();
 
   }
 
@@ -117,9 +117,9 @@ class CreateOrderController extends transactionEndpointController{
     .then(() => this.createRebill())
     .then(() => this.processRebill())
     .then(() => this.buildInfoObject())
-    .then(() => this.postProcessing())
     .then(() => {
 
+      this.postProcessing();
       //Technical Debt:  We're going to want to prune this a bit...
       return this.parameters.get('info');
 
@@ -401,19 +401,12 @@ class CreateOrderController extends transactionEndpointController{
 
     du.debug('Post Processing');
 
-    let promises = [
-      this.pushEvent(),
-      this.incrementMerchantProviderSummary(),
-      this.updateSessionWithWatermark(),
-      this.pushEventsRecord(),
-      this.addRebillToStateMachine()
-    ];
+    this.pushEvent();
+    this.incrementMerchantProviderSummary();
+    this.updateSessionWithWatermark();
+    this.addRebillToStateMachine();
 
-    return Promise.all(promises).then(() => {
-
-      return true;
-
-    });
+    return true;
 
   }
 
@@ -421,7 +414,8 @@ class CreateOrderController extends transactionEndpointController{
 
     du.debug('Push Event');
 
-    this.eventHelperController.pushEvent({event_type:'order', context: this.parameters.store});
+    //Technical Debt: determine if this is a order, a downsell, or an upsell
+    super.pushEvent('order');
 
   }
 
@@ -537,38 +531,6 @@ class CreateOrderController extends transactionEndpointController{
 
     return this.rebillHelperController.updateRebillState({rebill: rebill, new_state: 'hold'}).then(() => {
       return true;
-    });
-
-  }
-
-  pushEventsRecord(){
-
-    du.debug('Push Events Record');
-
-    let session = this.parameters.get('session');
-    let product_schedules = this.parameters.get('productschedules', null, false);
-    let rebill = this.parameters.get('rebill');
-
-    if(_.isArray(product_schedules)){
-      product_schedules = arrayutilities.map(product_schedules, product_schedule_group => {
-        return product_schedule_group.product_schedule.id
-      });
-    }else{
-      product_schedules = [];
-    }
-
-    let products = arrayutilities.map(rebill.products, product_group => product_group.product);
-
-    //Technical Debt:  Note that this is missing the result of the transactions...
-    return this.pushEventToRedshift({
-      event_type: 'order',
-      session: session,
-      product_schedules: product_schedules,
-      products: products
-    }).then(() => {
-
-      return true;
-
     });
 
   }

@@ -7,6 +7,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
+const EntityPermissionsHelper = global.SixCRM.routes.include('helpers', 'entityacl/EntityPermissions.js');
 const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
@@ -47,6 +48,55 @@ module.exports = class entityController extends entityUtilitiesController {
 
         this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
 
+    }
+
+    getShared({id}) {
+        let query_parameters = {
+            key_condition_expression: 'entity = :primary_keyv',
+            expression_attribute_values: {':primary_keyv': this.getID(id)}
+        };
+
+        return this.dynamoutilities.queryRecords('entityacls', query_parameters, null)
+            .then(data => this.getItems(data))
+            .then(items => this.assureSingular(items))
+            .then(acl => {
+                if (_.isNull(acl) || !EntityPermissionsHelper.isShared('read', acl)) {
+                    eu.throwError('forbidden');
+                }
+
+                let query_parameters = {
+                  key_condition_expression: this.primary_key+' = :primary_keyv',
+                  expression_attribute_values: {':primary_keyv': this.getID(id)}
+                };
+
+                query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
+                return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null);
+            })
+            .then(data => this.getItems(data))
+            .then(items => this.assureSingular(items));
+    }
+
+    listShared({pagination}) {
+        let query_parameters = {
+             key_condition_expression: '#type = :type',
+             expression_attribute_values: {':type': this.descriptive_name},
+             expression_attribute_names: { '#type': 'type' }
+        };
+
+        return this.dynamoutilities.queryRecords('entityacls', query_parameters, 'type-index')
+            .then(data => this.getItems(data))
+            .then(acls => {
+                const shared = _(acls)
+                    .filter(acl => EntityPermissionsHelper.isShared('read', acl))
+                    .map(acl => acl.entity);
+
+                let query_parameters = this.createINQueryParameters({field: this.primary_key, list_array: shared});
+
+                query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
+                query_parameters = this.appendPagination({query_parameters, pagination});
+                return this.dynamoutilities.scanRecords(this.table_name, query_parameters);
+            })
+            .then(data => this.buildResponse(data));
     }
 
     //NOTE:  We need to make a designation when it's appropriate to list by account and when it's appropriate to list by user.

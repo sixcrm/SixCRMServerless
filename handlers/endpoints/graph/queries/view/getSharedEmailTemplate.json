@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"{sharedemailtemplate (id: \"37c4717c-4b5f-4332-9580-932d356a7f5b\") { id, name, subject, body, type, smtp_provider{ id, name, hostname, username, password, port }, created_at, updated_at } }"
+}
