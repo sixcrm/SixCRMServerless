@@ -49,7 +49,7 @@ jobs:
       - run:
           name: 'Unit Tests'
           command: npm run test-unit
-  functional_tests_docker_preparation:
+  functional_tests:
     <<: *functional-tests-default
     steps:
       - checkout
@@ -79,26 +79,35 @@ jobs:
       - run:
           name: Deploy Local SQS
           command: SIX_VERBOSE=2 stage=local node ./deployment/sqs/deploy_queues.js
-#      - run:
-#          name: Seed Local Dynamo
-#          command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_seeds.js
-  functional_tests_state_machine:
+      - run:
+          name: Execute State Machine Tests In Docker
+          command: SIX_VERBOSE=0 stage=local npm run test-functional-state-machine-docker
+  query_tests:
       <<: *functional-tests-default
       steps:
         - checkout
         - restore_cache:
             key: dependency-cache-{{ checksum "package.json" }}
         - run:
-            name: Execute State Machine Tests In Docker
-            command: SIX_VERBOSE=0 stage=local npm run test-functional-state-machine-docker
-  functional_tests_queries:
-      <<: *functional-tests-default
-      steps:
-        - checkout
-        - restore_cache:
-            key: dependency-cache-{{ checksum "package.json" }}
+            name: Install Docker Compose
+            command: |
+              curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+              chmod +x ~/docker-compose
+              sudo mv ~/docker-compose /usr/local/bin/docker-compose
         - run:
-            name: Execute Anaylitcs Query Tests
+            name: Start Docker Cluster
+            command: |
+              set -x
+              docker-compose --file tools/docker/docker-compose.yml up -d
+        - run: echo "Pausing to allow Redshift to catch up..." && sleep 30
+        - run:
+            name: Execute Functional Connectivity Test
+            command: npm run test-functional-connectivity
+        - run:
+            name: Deploy Local Dynamo
+            command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_tables.js
+        - run:
+            name: Execute Redshift Analytics Tests In Docker
             command: SIX_VERBOSE=0 stage=local npm run test-queries
   pre_deploy:
     <<: *job-defaults
@@ -458,7 +467,7 @@ workflows:
             branches:
               only:
                 - development
-      - functional_tests_docker_preparation:
+      - functional_tests:
           requires:
             - build
             - unit_tests
@@ -467,16 +476,11 @@ workflows:
             branches:
               only:
                 - development
-      - functional_tests_state_machine:
+      - query_tests:
           requires:
-            - functional_tests_docker_preparation
-          filters:
-            branches:
-              only:
-                - development
-      - functional_tests_queries:
-          requires:
-            - functional_tests_docker_preparation
+            - build
+            - unit_tests
+            - lint
           filters:
             branches:
               only:
