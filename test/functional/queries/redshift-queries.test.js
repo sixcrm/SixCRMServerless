@@ -1,3 +1,5 @@
+global.SixCRM.configuration.site_config.redshift.port = 5440;
+
 const fs = require('fs');
 const chai = require('chai');
 

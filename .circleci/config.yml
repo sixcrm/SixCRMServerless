@@ -49,7 +49,7 @@ jobs:
       - run:
           name: 'Unit Tests'
           command: npm run test-unit
-  functional_tests:
+  functional_tests_docker_preparation:
     <<: *functional-tests-default
     steps:
       - checkout
@@ -82,9 +82,24 @@ jobs:
 #      - run:
 #          name: Seed Local Dynamo
 #          command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_seeds.js
-      - run:
-          name: Execute State Machine Tests In Docker
-          command: SIX_VERBOSE=0 stage=local npm run test-functional-state-machine-docker
+  functional_tests_state_machine:
+      <<: *functional-tests-default
+      steps:
+        - checkout
+        - restore_cache:
+            key: dependency-cache-{{ checksum "package.json" }}
+        - run:
+            name: Execute State Machine Tests In Docker
+            command: SIX_VERBOSE=0 stage=local npm run test-functional-state-machine-docker
+  functional_tests_queries:
+      <<: *functional-tests-default
+      steps:
+        - checkout
+        - restore_cache:
+            key: dependency-cache-{{ checksum "package.json" }}
+        - run:
+            name: Execute Anaylitcs Query Tests
+            command: SIX_VERBOSE=0 stage=local npm run test-queries
   pre_deploy:
     <<: *job-defaults
     steps:
@@ -443,11 +458,25 @@ workflows:
             branches:
               only:
                 - development
-      - functional_tests:
+      - functional_tests_docker_preparation:
           requires:
             - build
             - unit_tests
             - lint
+          filters:
+            branches:
+              only:
+                - development
+      - functional_tests_state_machine:
+          requires:
+            - functional_tests_docker_preparation
+          filters:
+            branches:
+              only:
+                - development
+      - functional_tests_queries:
+          requires:
+            - functional_tests_docker_preparation
           filters:
             branches:
               only:

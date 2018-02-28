@@ -20,3 +20,7 @@ services:
     image: s12v/sns
     ports:
       - 9911:9911
+  postgres:
+    image: circleci/postgres:9.6
+    ports:
+      - 5440:5432
