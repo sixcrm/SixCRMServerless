@@ -73,7 +73,7 @@ describe('pickRebillsToBillStressTest', () => {
 
         return SqSTestUtils.messageCountInQueue(queue_name)
             .then((count) => {
-                console.log(tab + 'Waiting for ' + number + ' of messages to be in ' + queue_name + '. Got ' + count);
+                console.log(tab + 'Waiting for ' + number + ' messages to be in ' + queue_name + '. Got ' + count);
                 if (count !== number) {
                     return timestamp.delay(1 * 1000)().then(() => waitForNumberOfMessages(queue_name, number, number))
                 } else {
