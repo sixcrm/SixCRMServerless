@@ -176,11 +176,10 @@ In order to run functional tests, you need working local SQS instace. Refer to t
 
 ### Redshift query tests
 
-We have tests that cover our analytics queries. In order to run them you need a local PostgreSQL instance.
+We have tests that cover our analytics queries. In order to run them you need a running docker cluster.
 
-1. `docker pull circleci/postgres:9.6`
-2. `docker run -p 5432:5432 circleci/postgres:9.6` (keep running in a separate terminal)
-3. `npm run test-queries`
+1. `sudo docker-compose --file tools/docker/docker-compose.yml up -d`
+2. `npm run test-queries`
 
 ### Integration tests
 
