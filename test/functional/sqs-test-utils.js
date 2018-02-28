@@ -3,7 +3,7 @@ const request = require('supertest');
 class SqsTestUtils {
 
     constructor() {
-        this.baseUrl = 'http://localhost:9324/';
+        this.baseUrl = global.SixCRM.configuration.site_config.sqs.endpoint;
         this.queuePrefix = 'queue';
         this.queueNames = ['bill', 'recover', 'hold', 'pending', 'shipped', 'delivered'];
     }

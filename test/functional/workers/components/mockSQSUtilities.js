@@ -12,7 +12,7 @@ class mockSQSUtilities extends AWSUtilities {
     constructor(){
       super();
 
-      this.localhost_endpoint = 'http://localhost:9324';
+      this.localhost_endpoint = global.SixCRM.configuration.site_config.sqs.endpoint;
 
       if (process.env.stage !== 'local') {
         this.sqs = new AWS.SQS({
