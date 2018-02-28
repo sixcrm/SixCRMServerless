@@ -1124,6 +1124,18 @@ module.exports.graphObj = new GraphQLObjectType({
                 return userACLController.listByAccount({pagination: useracl.pagination, fatal:list_fatal, search: useracl.search});
             }
         },
+        useracllistbyrole: {
+          type: userACLListType.graphObj,
+          args: {
+            role: {type: new GraphQLNonNull(GraphQLString)},
+            pagination: {type: paginationInputType.graphObj}
+          },
+          resolve: function(root, useracl){
+            const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+
+            return userACLController.listByRole({pagination: useracl.pagination, fatal:list_fatal, role: useracl.role});
+          }
+        },
         entityacllist: {
             type: entityACLListType.graphObj,
             args: {

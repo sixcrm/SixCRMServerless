@@ -216,6 +216,20 @@ class userACLController extends entityController {
 
     }
 
+    listByRole({pagination, fatal, role}){
+
+      du.debug('Get ACL By Role');
+
+      const query_parameters = {
+        filter_expression: '#role = :rolev',
+        expression_attribute_values: { ':rolev': this.getID(role) },
+        expression_attribute_names: { '#role': 'role' }
+      };
+
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal, role: role});
+
+    }
+
 }
 
 module.exports = new userACLController();
