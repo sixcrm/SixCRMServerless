@@ -16,10 +16,6 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The id of the role.',
         },
-        account: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The account associated with the role.',
-        },
         name: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The name of the role.',
