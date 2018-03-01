@@ -54,18 +54,28 @@ describe('deliveredToArchiveStressTest', () => {
             .then(() => seed())
     }
 
-    function waitForNumberOfMessages(queue_name, number) {
+    function waitForNumberOfMessages(queue_name, number, retries) {
+
+        if (retries === undefined) {
+            retries = 0;
+        }
+
+        if (retries > 3) {
+            return Promise.reject('Too many retries');
+        }
 
         return SqSTestUtils.messageCountInQueue(queue_name)
             .then((count) => {
                 console.log(tab + 'Waiting for ' + number + ' messages to be in ' + queue_name + '. Got ' + count);
-                if (count !== number) {
-                    return timestamp.delay(1 * 1000)().then(() => waitForNumberOfMessages(queue_name, number, number))
+                if ((number === 0 && count > 0) || (number > 0 && count < number)) {
+                    return timestamp.delay(1 * 1000)().then(() => waitForNumberOfMessages(queue_name, number, ++retries))
+                } else if (number > 0 && count > number) {
+                    console.log('Too many messages in queue ' + queue_name);
+                    return Promise.reject('Too many messages in queue ' + queue_name);
                 } else {
                     return Promise.resolve();
                 }
             });
-
     }
 
     function seed() {

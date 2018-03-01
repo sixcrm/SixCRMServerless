@@ -18,12 +18,12 @@ const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const tab = '      ';
 
-// Technical Debt: Fails with larger number - some messages go to error. Investigate!
 const max_test_cases = randomutilities.randomInt(5, 9);
 
 describe('holdToPendingStressTest', () => {
 
     let number_of_incorrect = 0;
+    let lambda_filter = ["holdtopending"];
 
     before((done) => {
         process.env.require_local = true;
@@ -44,7 +44,7 @@ describe('holdToPendingStressTest', () => {
             .then(() => waitForNumberOfMessages('hold', max_test_cases))
             .then(() => console.log(tab + 'Waiting for flush to finish'))
             .then(() => timer.set())
-            .then(() => StateMachine.flush())
+            .then(() => StateMachine.flush(lambda_filter))
             .then(() => waitForNumberOfMessages('hold', 0))
             .then(() => waitForNumberOfMessages('hold_error', number_of_incorrect))
             .then(() => waitForNumberOfMessages('pending', max_test_cases - number_of_incorrect))
@@ -94,13 +94,14 @@ describe('holdToPendingStressTest', () => {
 
         let operations = [];
 
+        let fulfillment_provider = getValidFulfillmentProvider();
+
         for (let i = 0; i < max_test_cases; i++) {
             let rebill = getRebill();
             let customer = MockEntities.getValidCustomer();
             let session = MockEntities.getValidSession();
             let product = MockEntities.getValidProduct();
             let transaction = MockEntities.getValidTransaction();
-            let fulfillment_provider = getValidFulfillmentProvider();
             let rebill_id = [rebill.id/*, "-garbage-"*/];
 
             //prepare data
@@ -120,13 +121,14 @@ describe('holdToPendingStressTest', () => {
             if (rebill.id === "-garbage-") number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
-            operations.push(fulfillmentProviderController.create({entity: fulfillment_provider}));
             operations.push(customerController.create({entity: customer}));
             operations.push(sessionController.create({entity: session}));
             operations.push(productController.create({entity: product}));
             operations.push(transactionController.create({entity: transaction}));
             operations.push(SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill.id +'"}'));
         }
+
+        operations.push(fulfillmentProviderController.create({entity: fulfillment_provider}));
 
         return Promise.all(operations)
             .then(() => permissionutilities.enableACLs())

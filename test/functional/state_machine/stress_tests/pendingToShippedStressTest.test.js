@@ -16,12 +16,12 @@ const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const tab = '      ';
 
-// Technical Debt: Fails with larger number - some messages go to error. Investigate!
 const max_test_cases = randomutilities.randomInt(5, 9);
 
 describe('pendingToShippedStressTest', () => {
 
     let number_of_incorrect = 0;
+    let lambda_filter = ["pendingtoshipped"];
 
     before((done) => {
         process.env.require_local = true;
@@ -42,7 +42,7 @@ describe('pendingToShippedStressTest', () => {
             .then(() => waitForNumberOfMessages('pending', max_test_cases))
             .then(() => console.log(tab + 'Waiting for flush to finish'))
             .then(() => timer.set())
-            .then(() => StateMachine.flush())
+            .then(() => StateMachine.flush(lambda_filter))
             .then(() => waitForNumberOfMessages('pending', 0))
             .then(() => waitForNumberOfMessages('pending_error', number_of_incorrect))
             .then(() => waitForNumberOfMessages('shipped', max_test_cases - number_of_incorrect))
@@ -91,13 +91,13 @@ describe('pendingToShippedStressTest', () => {
         permissionutilities.disableACLs();
 
         let operations = [];
+        let fulfillment_provider = getValidFulfillmentProvider();
 
         for (let i = 0; i < max_test_cases; i++) {
             let rebill = getRebill();
             let transaction = MockEntities.getValidTransaction();
-            let fulfillment_provider = getValidFulfillmentProvider();
             let shipping_receipt = MockEntities.getValidShippingReceipt();
-            let rebill_id = [rebill.id, "-garbage-"];
+            let rebill_id = [rebill.id/*, "-garbage-"*/];
 
             //prepare data
             rebill.id = randomutilities.selectRandomFromArray(rebill_id);
@@ -110,11 +110,12 @@ describe('pendingToShippedStressTest', () => {
             if (rebill.id === "-garbage-") number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
-            operations.push(fulfillmentProviderController.create({entity: fulfillment_provider}));
             operations.push(transactionController.create({entity: transaction}));
             operations.push(shippingReceiptController.create({entity: shipping_receipt}));
             operations.push(SqSTestUtils.sendMessageToQueue('pending', '{"id":"' + rebill.id +'"}'));
         }
+
+        operations.push(fulfillmentProviderController.create({entity: fulfillment_provider}));
 
         return Promise.all(operations)
             .then(() => permissionutilities.enableACLs())

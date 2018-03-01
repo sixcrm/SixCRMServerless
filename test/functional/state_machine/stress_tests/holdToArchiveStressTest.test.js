@@ -9,24 +9,23 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const timer = global.SixCRM.routes.include('lib', 'timer.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-const shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
-const fulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
-const transactionController = global.SixCRM.routes.include('entities', 'Transaction.js');
 const productController = global.SixCRM.routes.include('entities', 'Product.js');
+const transactionController = global.SixCRM.routes.include('entities', 'Transaction.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const tab = '      ';
 
 const max_test_cases = randomutilities.randomInt(5, 9);
 
-describe('shippedToDeliveredStressTest', () => {
+describe('holdToArchiveStressTest', () => {
 
     let number_of_incorrect = 0;
+    let lambda_filter = ["holdtoarchive"];
 
     before((done) => {
         process.env.require_local = true;
         process.env.stage = 'local';
-        process.env.archivefilter = 'all';
+        process.env.archivefilter = 'noship';
 
         Promise.resolve()
             .then(() => DynamoDbDeployment.initializeControllers())
@@ -38,15 +37,14 @@ describe('shippedToDeliveredStressTest', () => {
 
     });
 
-    it(`${max_test_cases} rebills are sent to delivered`, () => {
+    it(`${max_test_cases} rebills are sent to archive`, () => {
         return beforeTest()
-            .then(() => waitForNumberOfMessages('shipped', max_test_cases))
+            .then(() => waitForNumberOfMessages('hold', max_test_cases))
             .then(() => console.log(tab + 'Waiting for flush to finish'))
             .then(() => timer.set())
-            .then(() => StateMachine.flush())
-            .then(() => waitForNumberOfMessages('shipped', 0))
-            .then(() => waitForNumberOfMessages('shipped_error', number_of_incorrect))
-            .then(() => waitForNumberOfMessages('delivered', max_test_cases - number_of_incorrect))
+            .then(() => StateMachine.flush(lambda_filter))
+            .then(() => waitForNumberOfMessages('hold', 0))
+            .then(() => waitForNumberOfMessages('hold_error', number_of_incorrect))
             .then(() => {
                 let total = timer.get();
 
@@ -92,70 +90,34 @@ describe('shippedToDeliveredStressTest', () => {
         permissionutilities.disableACLs();
 
         let operations = [];
-        let fulfillment_provider = getValidFulfillmentProvider();
 
         for (let i = 0; i < max_test_cases; i++) {
-            let rebill = getRebill();
-            let transaction = MockEntities.getValidTransaction();
+            let rebill = MockEntities.getValidRebill();
             let product = MockEntities.getValidProduct();
-            let shipping_receipt = MockEntities.getValidShippingReceipt();
+            let transaction = MockEntities.getValidTransaction();
             let rebill_id = [rebill.id/*, "-garbage-"*/];
 
             //prepare data
             rebill.id = randomutilities.selectRandomFromArray(rebill_id);
+            rebill.state = "hold";
+            rebill.processing = true;
+            product.ship = false;
             transaction.rebill = rebill.id;
-            transaction.merchant_provider = "a32a3f71-1234-4d9e-a9a1-98ecedb88f24";
+            transaction.products[0].product.id = product.id;
             transaction.products = [transaction.products[0]];
-            transaction.products[0].shipping_receipt = shipping_receipt.id;
-            transaction.products[0].product.ship = true;
-            shipping_receipt.tracking.carrier = "Test";
-            shipping_receipt.tracking.id = "09812304981039480219";
-            product.id = transaction.products[0].product.id;
-            product.ship = true;
 
             //rebills with "-garbage-" id go to error
             if (rebill.id === "-garbage-") number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
-            operations.push(transactionController.create({entity: transaction}));
             operations.push(productController.create({entity: product}));
-            operations.push(shippingReceiptController.create({entity: shipping_receipt}));
-            operations.push(SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + rebill.id +'"}'));
+            operations.push(transactionController.create({entity: transaction}));
+            operations.push(SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill.id +'"}'));
         }
-
-        operations.push(fulfillmentProviderController.create({entity: fulfillment_provider}));
 
         return Promise.all(operations)
             .then(() => permissionutilities.enableACLs())
             .catch(() => permissionutilities.enableACLs());
-    }
-
-    function getRebill() {
-        return {
-            "bill_at": "2017-04-06T18:40:41.405Z",
-            "id": uuidV4(),
-            "state": "shipped",
-            "processing": true,
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-            "product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
-            "amount": 34.99,
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
-        };
-    }
-
-    function getValidFulfillmentProvider() {
-        return {
-            "id":"5d18d0fa-5812-4c37-b98c-7b1debdcb435",
-            "account":"eefdeca6-41bc-4af9-a561-159acb449b5e",
-            "name":"Integration Test Fulfillment Provider",
-            "provider":{
-                "name":"Test"
-            },
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
-        }
     }
 });
 

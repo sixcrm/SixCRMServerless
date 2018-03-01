@@ -73,7 +73,7 @@
     "test-local-integration": "ENV=local mocha ./test/integration/local/createOrder/createOrder.test.js",
     "test-functional": "ENV=local stage=local AWS_PROFILE=six istanbul cover node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/*.test.js'",
     "test-functional-state-machine": "ENV=local stage=local AWS_PROFILE=six node ./node_modules/mocha/bin/mocha --retries 3 --require test/config/global.js ./test/functional/stateMachine.test.js",
-    "test-functional-state-machine-docker": "ENV=local stage=local AWS_PROFILE=six node ./node_modules/mocha/bin/mocha --retries 0 --require test/config/global.js ./test/functional/state_machine/**/*.test.js",
+    "test-functional-state-machine-docker": "ENV=local stage=local AWS_PROFILE=six node --max_old_space_size=4096 ./node_modules/mocha/bin/mocha --retries 0 --require test/config/global.js ./test/functional/state_machine/**/*.test.js",
     "test-functional-connectivity": "ENV=local stage=local AWS_PROFILE=six node ./node_modules/mocha/bin/mocha --retries 3 ./test/functional/functional-connectivity.spec.js",
     "test-functional-redis-utilities": "stage=local node ./node_modules/mocha/bin/mocha --require test/unit/dependencies.js ./test/functional/redis-utilities.spec.js",
     "test-queries": "ENV=local stage=local AWS_PROFILE=six istanbul cover node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/queries/**/*.test.js'",
