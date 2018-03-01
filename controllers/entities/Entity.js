@@ -41,7 +41,6 @@ module.exports = class entityController extends entityUtilitiesController {
           'notificationsetting', //userbound,
           'usersetting', //userbound
           'usersigningstring', //userbound
-          'role', //global, available across accounts
 					'account', //self-referntial, implicit
 					'bin' //not a cruddy endpoint
         ];
