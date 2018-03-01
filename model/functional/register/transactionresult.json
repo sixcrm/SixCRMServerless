@@ -3,5 +3,5 @@
 	"id":"/transactionresult.json",
 	"title": "Transaction Result",
 	"type":"string",
-  "enum":["success","declined","error"]
+  "enum":["success","declined","fail","error"]
 }

@@ -210,6 +210,9 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
         if(this.productController.isUUID(product_group.product)){
 
           return this.productController.get({id: product_group.product}).then(result => {
+            if(_.isNull(result)){
+              eu.throwError('not_found', 'Product does not exist: '+product_group.product);
+            }
             product_group.product = result;
             return product_group;
           });

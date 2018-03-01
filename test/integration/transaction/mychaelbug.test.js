@@ -287,9 +287,12 @@ function createOrderBody(session, sale_object){
 }
 
 let config = global.SixCRM.routes.include('test', 'integration/config/'+process.env.stage+'.yml');
-let campaign = '70a6689a-5814-438b-b9fd-dd484d0812f9';
 
-describe('Transaction Endpoints Round Trip Test',() => {
+config.account = 'cb4a1482-1093-4d8e-ad09-fdd4d840b497';
+
+let campaign = '71c3cac1-d084-4e12-ac75-cdb28987ae16';
+
+xdescribe('Transaction Endpoints Round Trip Test',() => {
 
   describe('Test Case 1', () => {
 

@@ -33,6 +33,9 @@
 		},
 		"second_attempt":{
 			"type":"boolean"
+		},
+		"no_process":{
+			"type":"boolean"
 		}
 	},
 	"required":["account", "amount", "bill_at", "created_at", "updated_at", "parentsession"]

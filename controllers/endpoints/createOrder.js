@@ -332,7 +332,6 @@ class CreateOrderController extends transactionEndpointController{
       argumentation.products = products;
     }
 
-
     return this.rebillCreatorHelperController.createRebill(argumentation)
     .then(rebill => {
       this.parameters.set('rebill', rebill);
@@ -503,7 +502,11 @@ class CreateOrderController extends transactionEndpointController{
 
     }else{
 
-      return this.rebllController.delete({id: this.parameters.get('rebill').id}).then(() => {
+      let rebill = this.parameters.get('rebill');
+
+      rebill.no_process = true;
+
+      return this.rebillController.update({entity: rebill}).then(() => {
         return true;
       });
 
