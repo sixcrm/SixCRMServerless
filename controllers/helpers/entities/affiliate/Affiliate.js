@@ -202,8 +202,12 @@ module.exports = class AffiliateHelperController {
       eu.throwError('server', 'assureAffiliatesArrayTransform assumes affiliate_ids input.');
     }
 
-    if(_.isUndefined(affiliates) || _.isNull(affiliates)){
+    if(_.isUndefined(affiliates)){
       eu.throwError('server', 'assureAffiliatesArrayTransform assumes affiliates input.');
+    }
+
+    if(_.isNull(affiliates)){
+      affiliates = [];
     }
 
     let return_array = [];
