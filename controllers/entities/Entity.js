@@ -49,6 +49,19 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    getUnsharedOrShared({id}) {
+      du.debug('Get Unshared Or Shared');
+
+      return this.get({id: id})
+        .then(entity => {
+          if (!entity) {
+            return this.getShared({id: id});
+          }
+
+          return entity;
+        })
+    }
+
     getShared({id}) {
         let query_parameters = {
             key_condition_expression: 'entity = :primary_keyv',

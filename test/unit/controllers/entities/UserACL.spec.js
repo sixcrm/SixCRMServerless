@@ -66,7 +66,7 @@ describe('controllers/entities/UserACL.js', () => {
             let role = getValidRole();
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Role.js'), {
-                get: (a_role) => {
+                getUnsharedOrShared: (a_role) => {
                     expect(a_role.id).to.equal(userACL.role);
                     return Promise.resolve(role);
                 }
@@ -97,7 +97,7 @@ describe('controllers/entities/UserACL.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Role.js'), {
-                get: (a_role) => {
+                getUnsharedOrShared: (a_role) => {
                     expect(a_role.id).to.equal(userACL.role);
                     return Promise.resolve(role);
                 }
@@ -202,7 +202,7 @@ describe('controllers/entities/UserACL.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'useracl');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: (table, parameters, index) => {
                     expect(table).to.equal('useracls');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -236,10 +236,10 @@ describe('controllers/entities/UserACL.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('create', 'useracl');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: () => {
                     return Promise.resolve([]);
                 },
-                saveRecord: (tableName, entity, callback) => {
+                saveRecord: (tableName, entity) => {
                     return Promise.resolve(entity);
                 }
             });
@@ -248,10 +248,10 @@ describe('controllers/entities/UserACL.js', () => {
                 constructor(){
 
                 }
-                addToSearchIndex(entity){
+                addToSearchIndex(){
                     return Promise.resolve(true);
                 }
-                removeFromSearchIndex(entity){
+                removeFromSearchIndex(){
                     return Promise.resolve(true);
                 }
             };
@@ -265,7 +265,7 @@ describe('controllers/entities/UserACL.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/notification/notification-provider.js'), {
-                createNotificationForAccountAndUser: (notification) => {
+                createNotificationForAccountAndUser: () => {
                     return Promise.resolve({});
                 }
             });
@@ -300,10 +300,10 @@ describe('controllers/entities/UserACL.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('update', 'useracl');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: () => {
                     return Promise.resolve({Items: [params.entity]});
                 },
-                saveRecord: (tableName, entity, callback) => {
+                saveRecord: (tableName, entity) => {
                     return Promise.resolve(entity);
                 }
             });
@@ -312,10 +312,10 @@ describe('controllers/entities/UserACL.js', () => {
                 constructor(){
 
                 }
-                addToSearchIndex(entity){
+                addToSearchIndex(){
                     return Promise.resolve(true);
                 }
-                removeFromSearchIndex(entity){
+                removeFromSearchIndex(){
                     return Promise.resolve(true);
                 }
             };
@@ -329,7 +329,7 @@ describe('controllers/entities/UserACL.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/notification/notification-provider.js'), {
-                createNotificationForAccountAndUser: (notification) => {
+                createNotificationForAccountAndUser: () => {
                     return Promise.resolve({});
                 }
             });
