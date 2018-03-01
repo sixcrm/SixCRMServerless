@@ -104,6 +104,20 @@
 },
 {
 	"id":"8df25fe5-e4cd-495f-ae7f-eb806e5a987c",
+	"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"name": "Account-Bound Role",
+	"active":true,
+	"permissions":{
+		"allow":[
+			"analytics/*"
+		],
+		"deny":["*"]
+	},
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+	"id":"8df25fe5-e4cd-495f-ae7f-eb806e5a987c",
 	"account": "*",
 	"name": "Shared Role",
 	"active":true,
