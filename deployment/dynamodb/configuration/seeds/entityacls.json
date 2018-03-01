@@ -16,14 +16,6 @@
       "updated_at":"2017-04-06T18:41:12.521Z"
   },
   {
-      "entity":"8df25fe5-e4cd-495f-ae7f-eb806e5a987c",
-      "type": "role",
-      "allow":["*"],
-      "deny":["*"],
-      "created_at":"2017-04-06T18:40:41.405Z",
-      "updated_at":"2017-04-06T18:41:12.521Z"
-  },
-  {
       "entity":"e9e22cf0-3aa7-4dd6-b2f0-3337657e150f",
       "type": "role",
       "allow":[],
@@ -64,4 +56,3 @@
       "updated_at":"2017-04-06T18:41:12.521Z"
   }
 ]
-
