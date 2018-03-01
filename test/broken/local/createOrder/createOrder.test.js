@@ -6,7 +6,7 @@ var expect = require('chai').expect;
 chai.use(require('../../../unit/chaiAssertionHelper'));
 require('require-yaml');
 
-var config = require('../../config/'+process.env.ENV);
+var config = require('../../config/'+process.env.stage);
 var endpoint = config.endpoint;
 
 
