@@ -68,7 +68,7 @@ describe('queries/redshift-queries.js', () => {
                     if (_.isObject(expected[key])) {
                         return equalObjects(object[key], expected[key])
                     } else {
-                        if (key === 'datetime') {
+                        if (key === 'datetime' || key === 'period') {
                             return expect(object[key]).to.be.defined; // Technical Debt: At least verify it's in the correct format.
                         } else {
                             return expect(object[key]).to.deep.equal(expected[key]);
