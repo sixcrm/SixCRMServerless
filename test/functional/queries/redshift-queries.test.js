@@ -2,6 +2,7 @@ global.SixCRM.configuration.site_config.redshift.port = 5440;
 
 const fs = require('fs');
 const chai = require('chai');
+const _ = require('underscore');
 
 chai.use(require('chai-shallow-deep-equal'));
 const expect = chai.expect;
@@ -52,8 +53,8 @@ describe('queries/redshift-queries.js', () => {
 
                             expect(result_value).to.not.equal(
                                 undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
-                            expect(result_value).to.deep.equal(
-                                test.expect, JSON.stringify(result_value) + ' does not equal ' + JSON.stringify(test.expect));
+
+                            return equalObjects(result_value, test.expect);
                         });
                     });
 
@@ -61,6 +62,20 @@ describe('queries/redshift-queries.js', () => {
                 });
 
             });
+
+            function equalObjects(object, expected) {
+                for (let key in expected) {
+                    if (_.isObject(expected[key])) {
+                        return equalObjects(object[key], expected[key])
+                    } else {
+                        if (key === 'datetime') {
+                            return expect(object[key]).to.be.defined; // Technical Debt: At least verify it's in the correct format.
+                        } else {
+                            return expect(object[key]).to.deep.equal(expected[key]);
+                        }
+                    }
+                }
+            }
 
             function prepareDatabase(test) {
                 return dropDatabase()
