@@ -217,15 +217,7 @@ describe('controllers/Entity.js', () => {
             let entityController = new EC('entity');
 
             return entityController.listShared({pagination: {limit: 10}}).then(result => {
-                expect(result).to.deep.equal({
-                    pagination: {
-                        count: sharedEntities.length,
-                        end_cursor: '',
-                        has_next_page: 'false',
-                        last_evaluated: ""
-                    },
-                    entities: sharedEntities
-                });
+                expect(result.entities).to.deep.equal(sharedEntities);
             });
         });
 
@@ -246,23 +238,20 @@ describe('controllers/Entity.js', () => {
                 type: 'type',
                 allow: [],
                 deny: []
-            }, {
-                entity: '529c35d9-11f9-4a29-a10f-25eee877450f',
-                type: 'type',
-                allow: [],
-                deny: []
             }];
-            const paginatedEntities = [{
+            const entities = [{
                 id: 'ead02cb4-61f9-49de-bd08-e9192718e75d'
             }, {
                 id: 'f683e149-874a-4572-85b0-afa7c1c5b4dd'
             }];
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => Promise.resolve({ Count: acls.length, Items: acls }),
-                scanRecords: (table, parameters) => {
+                queryRecords: (table, parameters) => {
                     expect(parameters.limit).to.equal(params.pagination.limit);
-                    return Promise.resolve({ Count: params.pagination.limit, Items: paginatedEntities })
+                    return Promise.resolve({ Count: acls.length, LastEvaluatedKey: acls[acls.length - 1], Items: acls })
+                },
+                scanRecords: () => {
+                    return Promise.resolve({ Count: entities.length, Items: entities })
                 },
                 createINQueryParameters: () => {
                     return {
@@ -278,12 +267,12 @@ describe('controllers/Entity.js', () => {
             return entityController.listShared(params).then(result => {
                 expect(result).to.deep.equal({
                     pagination: {
-                        count: params.pagination.limit,
-                        end_cursor: '',
-                        has_next_page: 'false',
-                        last_evaluated: ""
+                        count: 2,
+                        end_cursor: 'f683e149-874a-4572-85b0-afa7c1c5b4dd',
+                        has_next_page: 'true',
+                        last_evaluated: '{"entity":"f683e149-874a-4572-85b0-afa7c1c5b4dd","type":"type","allow":[],"deny":[]}'
                     },
-                    entities: paginatedEntities
+                    entities: entities
                 });
             });
         });

@@ -784,8 +784,8 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
             pagination_object.last_evaluated = JSON.stringify(data.LastEvaluatedKey);
 
-            if(_.has(data.LastEvaluatedKey, "id")){
-                pagination_object.end_cursor = data.LastEvaluatedKey.id;
+            if(_.has(data.LastEvaluatedKey, this.primary_key)){
+                pagination_object.end_cursor = data.LastEvaluatedKey[this.primary_key];
             }
 
         }

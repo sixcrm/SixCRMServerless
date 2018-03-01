@@ -41,8 +41,9 @@ module.exports = class entityController extends entityUtilitiesController {
           'notificationsetting', //userbound,
           'usersetting', //userbound
           'usersigningstring', //userbound
-					'account', //self-referntial, implicit
-					'bin' //not a cruddy endpoint
+          'account', //self-referntial, implicit
+          'bin', //not a cruddy endpoint
+          'entityacl'
         ];
 
         this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
@@ -95,9 +96,10 @@ module.exports = class entityController extends entityUtilitiesController {
              expression_attribute_names: { '#type': 'type' }
         };
 
+        query_parameters = this.appendPagination({query_parameters, pagination});
         return this.dynamoutilities.queryRecords('entityacls', query_parameters, 'type-index')
-            .then(data => this.getItems(data))
-            .then(acls => {
+            .then(data => {
+                const acls = this.getItems(data);
                 const shared = _(acls)
                     .filter(acl => EntityPermissionsHelper.isShared('read', acl))
                     .map(acl => acl.entity);
@@ -105,10 +107,17 @@ module.exports = class entityController extends entityUtilitiesController {
                 let query_parameters = this.createINQueryParameters({field: this.primary_key, list_array: shared});
 
                 query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
-                query_parameters = this.appendPagination({query_parameters, pagination});
-                return this.dynamoutilities.scanRecords(this.table_name, query_parameters);
+                return Promise.all([
+                    this.executeAssociatedEntityFunction('EntityACLController', 'buildPaginationObject', data),
+                    this.dynamoutilities.scanRecords(this.table_name, query_parameters)
+                ]);
             })
-            .then(data => this.buildResponse(data));
+            .then(([pagination, data]) => {
+                const response = this.buildResponse(data);
+
+                response.pagination = pagination;
+                return response;
+            });
     }
 
     //NOTE:  We need to make a designation when it's appropriate to list by account and when it's appropriate to list by user.

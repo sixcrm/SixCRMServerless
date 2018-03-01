@@ -1305,6 +1305,7 @@ describe('controllers/EntityUtilities.js', () => {
             let entityUtilitiesController = new EUC();
 
             entityUtilitiesController.descriptive_name = 'a_name';
+            entityUtilitiesController.setPrimaryKey();
 
             expect(entityUtilitiesController.buildResponse(data)).to.deep.equal({
                 a_names: data.Items,
@@ -1342,6 +1343,7 @@ describe('controllers/EntityUtilities.js', () => {
             let entityUtilitiesController = new EUC();
 
             entityUtilitiesController.descriptive_name = 'a_name';
+            entityUtilitiesController.setPrimaryKey();
 
             expect(entityUtilitiesController.buildResponse(data)).to.deep.equal({
                 a_names: data.Items,
@@ -1366,6 +1368,8 @@ describe('controllers/EntityUtilities.js', () => {
 
             const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
             let entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.setPrimaryKey();
 
             expect(entityUtilitiesController.buildPaginationObject(data)).to.deep.equal({
                 count: 1,
