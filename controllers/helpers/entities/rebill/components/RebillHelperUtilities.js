@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 
 module.exports = class RebillHelperUtilities {
 
@@ -51,10 +52,10 @@ module.exports = class RebillHelperUtilities {
     let products = this.parameters.get('transactionproducts', null, false);
 
     let amount = arrayutilities.reduce(products, (sum, object) => {
-      return (parseFloat(sum) + parseFloat(object.amount * object.quantity));
-    });
+      return sum + numberutilities.formatFloat((object.amount * object.quantity), 2);
+    }, 0.00);
 
-    this.parameters.set('amount', amount);
+    this.parameters.set('amount', numberutilities.formatFloat(amount, 2));
 
     return Promise.resolve(true);
 

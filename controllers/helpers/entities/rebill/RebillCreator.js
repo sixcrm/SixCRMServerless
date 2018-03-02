@@ -33,6 +33,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
         },
         optional:{
           day:'day',
+          //Technical Debt:  Why are these here?
           productschedules: 'product_schedules',
           products: 'products'
         }
@@ -103,39 +104,25 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
     let session = this.parameters.get('session');
     let day = this.parameters.get('day', null, false);
-    let product_schedules = this.parameters.get('productschedules', null, false);
-    let products = this.parameters.get('products', null, false);
 
     if(_.isNull(day)){
       this.calculateDayInCycle(session.created_at);
+      day = this.parameters.get('day', null, false);
     }
 
-    if(_.isNull(products) && _.isNull(product_schedules)){
+    let product_schedules = (objectutilities.hasRecursive(session, 'watermark.product_schedules'))?session.watermark.product_schedules:null;
+    let products = (objectutilities.hasRecursive(session, 'watermark.products'))?session.watermark.products:null;
 
-      //Note: State Machine
-
-      if(!_.has(this, 'sessionController')){
-        this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
-      }
-
-      //Technical Debt:  This needs to be updated to pull from watermarked product schedules
-      //Critical
-      return this.sessionController.listProductSchedules(session)
-      .then(results => this.sessionController.getResult(results, 'productschedules'))
-      .then(product_schedules => {
-        if(!_.isNull(product_schedules)){
-          this.parameters.set('productschedules', product_schedules);
-          return true;
-        }
-        eu.throwError('server', 'Session does not have product schedules.');
-        return false;
-      });
-
-    }else{
-
-      //Note:  Transaction Endpoint
-
+    if(!_.isNull(product_schedules)){
+      this.parameters.set('productschedules', product_schedules);
     }
+
+    //Technical Debt:  Double Check this.  It's intended to distinguish between rebills in state machine and rebills for the transactional endpoint
+    if(day < 0 && !_.isNull(products)){
+      this.parameters.set('products', products);
+    }
+
+    return true;
 
   }
 
