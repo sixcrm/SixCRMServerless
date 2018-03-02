@@ -280,6 +280,43 @@ function getValidListChargesResponse(response_type){
 
 }
 
+function getValidCreditCardTokenResponse(){
+
+  return {
+    id: 'tok_1C1HFO2eZvKYlo2CFjOABvIr',
+    object: 'token',
+    card:
+     { id: 'card_1C1HFO2eZvKYlo2CNa4aHEwG',
+       object: 'card',
+       address_city: null,
+       address_country: null,
+       address_line1: null,
+       address_line1_check: null,
+       address_line2: null,
+       address_state: null,
+       address_zip: null,
+       address_zip_check: null,
+       brand: 'Visa',
+       country: 'US',
+       cvc_check: 'unchecked',
+       dynamic_last4: null,
+       exp_month: 7,
+       exp_year: 2018,
+       fingerprint: 'Xt5EWLLDS7FJjR1c',
+       funding: 'credit',
+       last4: '4242',
+       metadata: {},
+       name: null,
+       tokenization_method: null },
+    client_ip: '71.193.160.163',
+    created: 1520010042,
+    livemode: false,
+    type: 'card',
+    used: false
+  };
+
+}
+
 describe('vendors/merchantproviders/Stripe.js', () => {
 
   before(() => {
@@ -383,10 +420,13 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
       let customer = getValidCustomer();
       let creditcard = getValidCreditCard();
-      //creditcard.number = '4242424242424242';
-      let amount = 30.00;
 
-      let response = getValidCreateChargeResponse('success');
+      creditcard.number = '4242424242424242'
+
+      let amount = 2.00;
+
+      let charge_response = getValidCreateChargeResponse('success');
+      let token_response = getValidCreditCardTokenResponse();
 
       const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
       let stripeController = new StripeController({merchant_provider: merchant_provider});
@@ -394,10 +434,16 @@ describe('vendors/merchantproviders/Stripe.js', () => {
       stripeController.stripe = {
         charges: {
           create: (input, callback) => {
-            callback(null, response);
+            callback(null, charge_response);
+          }
+        },
+        tokens:{
+          create: (input, callback) => {
+            callback(null, token_response)
           }
         }
       }
+
 
       return stripeController.process({customer: customer, creditcard: creditcard, amount: amount}).then(result => {
         expect(result.getResult()).to.have.property('code');
@@ -424,7 +470,8 @@ describe('vendors/merchantproviders/Stripe.js', () => {
     creditcard.number = '4000000000000002';
     let amount = 30.00;
 
-    let response = getValidCreateChargeResponse('decline');
+    let charge_response = getValidCreateChargeResponse('decline');
+    let token_response = getValidCreditCardTokenResponse();
 
     const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
     let stripeController = new StripeController({merchant_provider: merchant_provider});
@@ -432,7 +479,12 @@ describe('vendors/merchantproviders/Stripe.js', () => {
     stripeController.stripe = {
       charges: {
         create: (input, callback) => {
-          callback(response, null);
+          callback(null, charge_response);
+        }
+      },
+      tokens:{
+        create: (input, callback) => {
+          callback(null, token_response)
         }
       }
     }

@@ -22,6 +22,10 @@ class StripeController extends MerchantProvider {
         reverse: 'RefundsCreate'
       };
 
+      this.parameter_validation = {
+        'creditcardtoken':global.SixCRM.routes.path('model', 'vendors/merchantproviders/Stripe/creditcardtokenresponse.json')
+      };
+
       this.parameter_definition = {
         process:{
           required:{
@@ -80,6 +84,7 @@ class StripeController extends MerchantProvider {
       return Promise.resolve()
       .then(() => this.parameters.setParameters({argumentation: argumentation, action: 'process'}))
       .then(() => this.setMethod())
+      .then(() => this.createCardToken())
       .then(() => this.createParametersObject())
       .then(() => this.issueRequest())
       .then(() => this.respond({}));
@@ -146,6 +151,68 @@ class StripeController extends MerchantProvider {
 
     }
 
+    createCardToken(){
+
+      du.debug('Create Card Token');
+
+      let parameters_object = this.createCreditCardTokenParameters();
+
+      return new Promise((resolve, reject) => {
+
+        this.stripe.tokens.create(
+          parameters_object,
+          (error, token) => {
+            if(error){
+              du.error(error);
+              return reject(error);
+            }
+            return resolve(token);
+          }
+        );
+
+      }).catch(error => {
+
+        return {
+          error: error,
+          response: {
+            statusCode: error.statusCode,
+            body: error.message
+          },
+          body: error.message
+        };
+
+      }).then(response => {
+        this.parameters.set('creditcardtoken', response);
+        return true;
+      });
+
+    }
+
+    createCreditCardTokenParameters(){
+
+      let creditcard = this.parameters.get('creditcard');
+
+      let token_request_object = objectutilities.transcribe(
+        {
+          number: 'number',
+          cvc: 'ccv'
+        },
+        creditcard,
+        {}
+      );
+
+      let CreditCardHelper = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+      let creditCardHelper = new CreditCardHelper();
+
+      token_request_object.exp_month = creditCardHelper.getExpirationMonth(creditcard);
+      token_request_object.exp_year = creditCardHelper.getExpirationYear(creditcard);
+
+      return {
+        card: token_request_object
+      };
+
+    }
+
     getRefundsCreateRequestParameters(){
 
       du.debug('Get Refunds Create Request Parameters');
@@ -176,34 +243,14 @@ class StripeController extends MerchantProvider {
       du.debug('Get List Charges Request Parameters');
 
       let amount = this.parameters.get('amount');
+      let credit_card_token = this.parameters.get('creditcardtoken').id;
 
       amount = amount * 100;
-
-      let creditcard = this.parameters.get('creditcard');
-
-      let source = {
-        object: 'card'
-      }
-
-      source = objectutilities.transcribe(
-        {
-          number: 'number',
-          cvc: 'ccv'
-        },
-        creditcard,
-        source
-      );
-
-      let CreditCardHelper = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
-      let creditCardHelper = new CreditCardHelper();
-
-      source.exp_month = creditCardHelper.getExpirationMonth(creditcard);
-      source.exp_year = creditCardHelper.getExpirationYear(creditcard);
 
       return {
         amount: amount,
         currency: 'usd',
-        source: source
+        source: credit_card_token
       };
 
     }
@@ -245,13 +292,12 @@ class StripeController extends MerchantProvider {
           error: error,
           response: {
             statusCode: error.statusCode,
-            body: null
+            body: error.message
           },
-          body: null
+          body: error.message
         };
 
       }).then(response => {
-        du.info(response);
         this.parameters.set('vendorresponse', response);
         return true;
       });
@@ -296,9 +342,9 @@ class StripeController extends MerchantProvider {
           error: error,
           response: {
             statusCode: error.statusCode,
-            body: null
+            body: error.message
           },
-          body: null
+          body: error.message
         };
 
       }).then(response => {
@@ -330,7 +376,6 @@ class StripeController extends MerchantProvider {
 
       }).then(response => {
 
-        du.info(response);
         return {
           error: null,
           response: {
@@ -343,14 +388,13 @@ class StripeController extends MerchantProvider {
 
       }).catch(error => {
 
-        du.info(error);
         return {
           error: error,
           response: {
             statusCode: error.statusCode,
-            body: null
+            body: error.message
           },
-          body: null
+          body: error.message
         };
 
       }).then(response => {
