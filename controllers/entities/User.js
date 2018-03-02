@@ -399,63 +399,36 @@ class userController extends entityController {
     }
 
     getHydrated(id){
+        return this.get({id}).then((user) => {
+            du.debug('Prehydrated User:', user);
+            if (!_.has(user, 'id')) {
+                const error = new Error();
 
-        return new Promise((resolve, reject) => {
-
-            this.get({id: id}).then((user) => {
-
-                du.debug('Prehydrated User:', user);
-
-                if(_.has(user, 'id')){
-
-                    return this.getACLPartiallyHydrated(user).then((acl) => {
-
-                        du.deep('Partially hydrated User ACL object:', acl);
-
-                        user.acl = acl;
-
-                        return this.isPartiallyHydratedUser(user).then((validated) => {
-
-                            if(validated){
-
-                                return resolve(user);
-
-                            }else{
-
-                                return reject(eu.getError('server','The user is not partially hydrated.'));
-
-                            }
-
-                        }).error((error) => {
-
-                            return reject(error);
-
-                        });
-
-                    }).catch((error) => {
-
-                        return reject(error);
-
-                    });
-
-                }else{
-
-                    return resolve(null);
-
-                }
-
-            }).catch((error) => {
-
-                return reject(error);
-
-            });
-
+                error.name = 'NullUserError';
+                throw error;
+            }
+            return Promise.all([user, this.getACLPartiallyHydrated(user)]);
+        })
+        .then(([user, acl]) => {
+            du.deep('Partially hydrated User ACL object:', acl);
+            user.acl = acl;
+            return Promise.all([user, this.isPartiallyHydratedUser(user)]);
+        })
+        .then(([user, validated]) => {
+            if (!validated) {
+                eu.throwError('server','The user is not partially hydrated.');
+            }
+            return user;
+        })
+        .catch(error => {
+            if (error.name === 'NullUserError') {
+                return null;
+            }
+            throw error;
         });
-
     }
 
     getACL(user){
-
       du.debug('Get ACL');
 
       if(_.has(user, 'acl') && _.isArray(user.acl)){
@@ -468,13 +441,11 @@ class userController extends entityController {
     }
 
     getACLPartiallyHydrated(user){
-
       du.debug('Get ACL Partially Hydrated');
 
       return this.executeAssociatedEntityFunction('userACLController','queryBySecondaryIndex', {field: 'user', index_value: user.id, index_name: 'user-index'})
       .then((response) => this.getResult(response, 'useracls'))
       .then((acls) => {
-
         du.debug('ACLs: ', acls);
 
         if(!arrayutilities.nonEmpty(acls)){
@@ -486,12 +457,8 @@ class userController extends entityController {
           return this.executeAssociatedEntityFunction('userACLController','getPartiallyHydratedACLObject', acl);
         });
 
-        return Promise.all(acl_promises).then((acl_promises) => {
-          return acl_promises;
-        });
-
+        return Promise.all(acl_promises);
       });
-
     }
 
     getAccount(id){

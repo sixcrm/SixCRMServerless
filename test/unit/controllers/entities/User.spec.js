@@ -127,6 +127,110 @@ describe('controllers/User.js', () => {
         });
     });
 
+    describe('getHydrated', () => {
+        it('returns hydrated user', () => {
+            let user = getValidUser();
+            let acl = {};
+            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+
+            userController.get = () => Promise.resolve(user);
+            userController.getACLPartiallyHydrated = () => Promise.resolve(acl);
+
+            return userController.getHydrated(user.id)
+            .then(result => {
+                const expected = Object.assign({acl}, user);
+
+                expect(result).to.deep.equal(expected);
+            });
+        });
+
+        it('returns null if user not found', () => {
+            let user = getValidUser();
+            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+
+            userController.get = () => Promise.resolve(null);
+
+            return userController.getHydrated(user.id)
+            .then(result => {
+                expect(result).to.be.null;
+            });
+        });
+
+        it('rejects with server error if hydration fails', () => {
+            let user = getValidUser();
+            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+
+            userController.get = () => Promise.resolve(user);
+            userController.getACLPartiallyHydrated = () => Promise.resolve({});
+            userController.isPartiallyHydratedUser = () => Promise.resolve(false);
+            return userController.getHydrated(user.id)
+            .then(() => expect.fail())
+            .catch(error => {
+                expect(error.message).to.equal('[500] The user is not partially hydrated.');
+            });
+        });
+    });
+
+    describe.only('getACLPartiallyHydrated', () => {
+        it('resolves with a list of hydrated acls', () => {
+            let user = getValidUser();
+            let acls = [
+                {id: 'fake-1'},
+                {id: 'fake-2'}
+            ];
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), {
+                queryBySecondaryIndex: ({index_name, field, index_value}) => {
+                    expect(index_name).to.equal('user-index');
+                    expect(field).to.equal('user');
+                    expect(index_value).to.equal(user.id);
+                    return Promise.resolve({
+                        useracls: acls,
+                        pagination: {}
+                    });
+                },
+                getPartiallyHydratedACLObject: (acl) => {
+                    acl.role = 'role';
+                    acl.account = 'account';
+                    return Promise.resolve(acl);
+                }
+            });
+
+            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+
+            return userController.getACLPartiallyHydrated(user).then(result => {
+                expect(result).to.deep.equal([{
+                    id: 'fake-1',
+                    role: 'role',
+                    account: 'account'
+                }, {
+                    id: 'fake-2',
+                    role: 'role',
+                    account: 'account'
+                }]);
+            });
+        });
+
+        it('returns null if no acls found', () => {
+            let user = getValidUser();
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), {
+                queryBySecondaryIndex: () => {
+                    return Promise.resolve({
+                        useracls: [],
+                        pagination: {}
+                    });
+                }
+            });
+
+            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+
+            return userController.getACLPartiallyHydrated(user).then(result => {
+                expect(result).to.be.null;
+            });
+        });
+    });
+
     describe('getACL', () => {
 
         it('successfully retrieves user ACL by user id', () => {
@@ -266,7 +370,7 @@ describe('controllers/User.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('create', 'user');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
                     return Promise.resolve([]);
@@ -295,7 +399,7 @@ describe('controllers/User.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('create', 'user');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
                     return Promise.resolve([]);
@@ -333,7 +437,7 @@ describe('controllers/User.js', () => {
             user.id = global.user.id;
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
                     return Promise.resolve([]);
@@ -360,7 +464,7 @@ describe('controllers/User.js', () => {
             user.id = global.user.id;
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
                     return Promise.resolve([]);
@@ -388,7 +492,7 @@ describe('controllers/User.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('*', 'user');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
                     return Promise.resolve({
@@ -411,7 +515,7 @@ describe('controllers/User.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('*', 'user');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_id);
                     return Promise.resolve({});
@@ -470,7 +574,7 @@ describe('controllers/User.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('*', 'user');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_id);
                     return Promise.resolve({});
@@ -522,7 +626,7 @@ describe('controllers/User.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('*', 'user');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_id);
                     return Promise.reject(new Error('User retrieving failed.'));
@@ -582,7 +686,7 @@ describe('controllers/User.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_invite.email);
                     return Promise.resolve({})
@@ -652,7 +756,7 @@ describe('controllers/User.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_invite.email);
                     return Promise.reject(new Error('User retrieving failed.'));
@@ -694,7 +798,7 @@ describe('controllers/User.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_invite.email);
                     return Promise.resolve({})
@@ -736,7 +840,7 @@ describe('controllers/User.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_invite.email);
                     return Promise.resolve({})
@@ -778,7 +882,7 @@ describe('controllers/User.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_invite.email);
                     return Promise.resolve({})
@@ -820,7 +924,7 @@ describe('controllers/User.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_invite.email);
                     return Promise.resolve({})
@@ -1006,4 +1110,3 @@ describe('controllers/User.js', () => {
         });
     });
 });
-
