@@ -104,14 +104,20 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
     let session = this.parameters.get('session');
     let day = this.parameters.get('day', null, false);
+    let products = this.parameters.get('products', null, false);
+    let product_schedules = this.parameters.get('productschedules', null, false);
 
     if(_.isNull(day)){
       this.calculateDayInCycle(session.created_at);
       day = this.parameters.get('day', null, false);
     }
 
-    let product_schedules = (objectutilities.hasRecursive(session, 'watermark.product_schedules'))?session.watermark.product_schedules:null;
-    let products = (objectutilities.hasRecursive(session, 'watermark.products'))?session.watermark.products:null;
+    if(_.isNull(product_schedules)){
+      if(day >= 0){
+        //we only do this for state-machine billing
+        product_schedules = (objectutilities.hasRecursive(session, 'watermark.product_schedules'))?session.watermark.product_schedules:null;
+      }
+    }
 
     if(!_.isNull(product_schedules)){
       this.parameters.set('productschedules', product_schedules);
@@ -120,6 +126,10 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
     //Technical Debt:  Double Check this.  It's intended to distinguish between rebills in state machine and rebills for the transactional endpoint
     if(day < 0 && !_.isNull(products)){
       this.parameters.set('products', products);
+    }
+
+    if(_.isNull(products) && _.isNull(product_schedules)){
+      eu.throwError('server', 'Nothing to add to the rebill.');
     }
 
     return true;

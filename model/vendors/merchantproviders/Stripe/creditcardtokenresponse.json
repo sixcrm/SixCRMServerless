@@ -1,0 +1,16 @@
+{
+  "id":"/vendors/merchantproviders/Stripe/creditcardtokenresponse.json",
+  "title":"Stripe Credit Card Token Response",
+  "type":"object",
+  "properties":{
+    "id": {
+      "type":"string",
+      "pattern":"^tok_.*"
+    },
+    "object":{
+      "type":"string",
+      "enum":["token"]
+    }
+  },
+  "required":["id", "object"]
+}

@@ -332,6 +332,10 @@ class CreateOrderController extends transactionEndpointController{
       argumentation.products = products;
     }
 
+    if(_.isNull(product_schedules) && _.isNull(products)){
+      eu.throwError('server', 'Nothing to add to the rebill.');
+    }
+
     return this.rebillCreatorHelperController.createRebill(argumentation)
     .then(rebill => {
       this.parameters.set('rebill', rebill);

@@ -7,6 +7,7 @@ const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
@@ -18,43 +19,7 @@ const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/
 const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
 
 function getValidRebill(id){
-
   return MockEntities.getValidRebill(id);
-
-  /*
-    parentsession: uuidV4(),
-    bill_at: '2017-04-06T18:40:41.405Z',
-    amount: 12.22,
-    product_schedules:
-     [ uuidV4(),
-       uuidV4(),
-       uuidV4() ],
-    products:
-     [ { product: uuidV4(),
-         amount: 3.22 },
-       { product: uuidV4(), amount: 9 } ],
-    id: uuidV4(),
-    account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-    created_at: '2017-11-12T06:03:35.571Z',
-    updated_at: '2017-11-12T06:03:35.571Z',
-    entity_type: 'rebill',
-    state: 'hold',
-    previous_state: 'bill',
-    state_changed_at: '2017-11-12T06:05:35.571Z',
-    history: [
-      {
-        state: 'bill',
-        entered_at: '2017-11-12T06:03:35.571Z',
-        exited_at: '2017-11-12T06:05:35.571Z',
-      },
-      {
-        state: 'hold',
-        entered_at: '2017-11-12T06:05:35.571Z',
-      }
-    ]
-  };
-  */
-
 }
 
 function getValidRebillPrototype(){
@@ -75,9 +40,7 @@ function getValidBillDate(){
 }
 
 function getValidSession(id){
-
   return MockEntities.getValidSession(id)
-
 }
 
 function getValidProduct(id){
@@ -85,16 +48,8 @@ function getValidProduct(id){
 }
 
 function getValidProductSchedule(id){
-
   return MockEntities.getValidProductSchedule(id);
-
 }
-
-/*
-function getValidNormalizedProductSchedule(){
-  return MockEntities.getValidProductSchedule();
-}
-*/
 
 function getValidProductSchedules(ids){
 
@@ -103,16 +58,6 @@ function getValidProductSchedules(ids){
   return arrayutilities.map(ids, id => getValidProductSchedule(id));
 
 }
-
-/*
-function getValidProductScheduleIDs(){
-
-  return arrayutilities.map(getValidProductSchedules(), product_schedule => {
-    return product_schedule.id;
-  });
-
-}
-*/
 
 describe('/helpers/entities/Rebill.js', () => {
 
@@ -1137,8 +1082,9 @@ describe('/helpers/entities/Rebill.js', () => {
       session.product_schedules = [];
       rebillCreatorHelper.parameters.set('session', session);
 
-      return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
+      return rebillCreatorHelper.createRebill({session: session, day: day, product_schedules: session.watermark.product_schedules}).then(result => {
 
+        du.info(result);
         delete result.created_at;
         delete result.updated_at;
         delete result.id;
@@ -1500,7 +1446,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
-      return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
+      return rebillCreatorHelper.createRebill({session: session, day: day, product_schedules: session.watermark.product_schedules, products: session.watermark.products}).then(result => {
 
         delete result.created_at;
         delete result.updated_at;
