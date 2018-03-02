@@ -29,6 +29,10 @@ class MerchantProviderGeneralFilter {
       }
     };
 
+    this.brandaliases = {
+      'amex':'americanexpress'
+    };
+
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
   }
@@ -135,7 +139,6 @@ class MerchantProviderGeneralFilter {
 
         if((proposed_total >= cap)){
           du.warning('CAP Shortage')
-          du.info(merchant_provider, amount);
           return false;
         }
 
@@ -210,7 +213,7 @@ class MerchantProviderGeneralFilter {
     let transformed_string = stringutilities.removeWhitespace(a_string).toLowerCase();
 
     if(_.has(this.brandaliases, transformed_string)){
-      return this.brandaliases[transformed_string];
+      transformed_string = this.brandaliases[transformed_string];
     }
 
     return transformed_string;

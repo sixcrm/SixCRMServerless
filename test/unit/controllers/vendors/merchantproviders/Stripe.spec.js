@@ -444,7 +444,6 @@ describe('vendors/merchantproviders/Stripe.js', () => {
         }
       }
 
-
       return stripeController.process({customer: customer, creditcard: creditcard, amount: amount}).then(result => {
         expect(result.getResult()).to.have.property('code');
         expect(result.getResult()).to.have.property('message');

@@ -25,7 +25,9 @@ module.exports = class TransactionUtilities {
       let transformed_string = stringutilities.removeWhitespace(a_string).toLowerCase();
 
       if(_.has(this.brandaliases, transformed_string)){
-        return this.brandaliases[transformed_string];
+
+        transformed_string = this.brandaliases[transformed_string];
+
       }
 
       return transformed_string;

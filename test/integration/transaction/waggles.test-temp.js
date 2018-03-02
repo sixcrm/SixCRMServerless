@@ -133,12 +133,12 @@ function createUpsell(token, session, sale_object){
 
 }
 */
-function createOrder(token, session, sale_object){
+function createOrder(token, session, sale_object, creditcard){
 
   du.output('Create Order');
 
   let account = config.account;
-  let post_body = createOrderBody(session, sale_object);
+  let post_body = createOrderBody(session, sale_object, creditcard);
 
   let argument_object = {
     url: config.endpoint+'order/create/'+account,
@@ -168,11 +168,11 @@ function createOrder(token, session, sale_object){
 
 }
 
-function createLead(token, campaign){
+function createLead(token, campaign, customer){
 
   du.output('Create Lead');
   let account = config.account;
-  let post_body = createLeadBody(campaign);
+  let post_body = createLeadBody(campaign, customer);
 
   let argument_object = {
     url: config.endpoint+'lead/create/'+account,
@@ -234,32 +234,40 @@ function acquireToken(campaign){
 
 }
 
-function createCustomer(){
+function createCustomer(customer){
 
-  let customer = MockEntities.getValidCustomer();
+  if(_.isUndefined(customer) || _.isNull(customer)){
 
-  delete customer.id;
-  delete customer.account;
-  delete customer.created_at;
-  delete customer.updated_at;
-  delete customer.creditcards;
-  customer.billing = customer.address;
+    customer = MockEntities.getValidCustomer();
+
+    delete customer.id;
+    delete customer.account;
+    delete customer.created_at;
+    delete customer.updated_at;
+    delete customer.creditcards;
+    customer.billing = customer.address;
+
+  }
 
   return customer;
 
 }
 
-function createCreditCard(){
+function createCreditCard(creditcard){
 
-  let creditcard = MockEntities.getValidTransactionCreditCard();
+  if(_.isUndefined(creditcard) || _.isNull(creditcard)){
 
-  creditcard.number = "4111111111111111";
+    creditcard = MockEntities.getValidTransactionCreditCard();
+
+    creditcard.number = "4111111111111111";
+
+  }
 
   return creditcard;
 
 }
 
-function createLeadBody(campaign){
+function createLeadBody(campaign, customer){
 
   let return_object = {
     campaign:(_.has(campaign, 'id'))?campaign.id:campaign,
@@ -274,12 +282,12 @@ function createLeadBody(campaign){
 
 }
 
-function createOrderBody(session, sale_object){
+function createOrderBody(session, sale_object, creditcard){
 
   let return_object = objectutilities.clone(sale_object);
 
   return_object.session = session;
-  return_object.creditcard = createCreditCard();
+  return_object.creditcard = createCreditCard(creditcard);
   return_object.transaction_subtype = 'main';
 
   return return_object;
@@ -287,12 +295,20 @@ function createOrderBody(session, sale_object){
 }
 
 let config = global.SixCRM.routes.include('test', 'integration/config/'+process.env.stage+'.yml');
-
-//config.account = 'cb4a1482-1093-4d8e-ad09-fdd4d840b497';
-
 let campaign = '71c3cac1-d084-4e12-ac75-cdb28987ae16';
 
-xdescribe('Transaction Endpoints Round Trip Test',() => {
+describe('Transaction Endpoints Round Trip Test',() => {
+
+  let correct_config = config;
+
+  before(() => {
+    config = global.SixCRM.routes.include('test', 'integration/config/production.yml');
+    config.account = 'cb4a1482-1093-4d8e-ad09-fdd4d840b497';
+  });
+
+  after(() =>{
+    config = correct_config;
+  });
 
   describe('Test Case 1', () => {
 
@@ -345,12 +361,47 @@ xdescribe('Transaction Endpoints Round Trip Test',() => {
   			}
   		]};
 
+      let customer = {
+        "firstname": "Kristopher",
+  			"lastname": "Trujillo",
+  			"email": "kris@sixcrm.com",
+  			"phone": "1234567890",
+  			"billing": {
+  				"line1": "4120 Canal Rd.",
+  				"city": "Lake Oswego",
+  				"state": "OR",
+  				"zip": "97034",
+  				"country": "US"
+  			},
+  			"address": {
+  				"line1": "4120 Canal Rd.",
+  				"city": "Lake Oswego",
+  				"state": "OR",
+  				"zip": "97034",
+  				"country": "US"
+  			}
+      };
+
+      let creditcard = {
+        "number":"",
+  			"expiration":"",
+  			"ccv":"",
+  			"name":"Kristopher Trujillo",
+  			"address":{
+  				"line1": "4120 Canal Rd.",
+  				"city": "Lake Oswego",
+  				"state": "OR",
+  				"zip": "97034",
+  				"country": "US"
+  			}
+      }
+
       return acquireToken(campaign)
       .then((token) => {
 
-        return createLead(token, campaign)
+        return createLead(token, campaign, customer)
         .then((session) => {
-          return createOrder(token, session, sale_object)
+          return createOrder(token, session, sale_object, creditcard)
           .then(() => confirmOrder(token, session))
           .then((result) => {
             du.warning(result);
