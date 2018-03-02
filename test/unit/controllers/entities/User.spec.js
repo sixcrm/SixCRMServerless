@@ -171,7 +171,7 @@ describe('controllers/User.js', () => {
         });
     });
 
-    describe.only('getACLPartiallyHydrated', () => {
+    describe('getACLPartiallyHydrated', () => {
         it('resolves with a list of hydrated acls', () => {
             let user = getValidUser();
             let acls = [
