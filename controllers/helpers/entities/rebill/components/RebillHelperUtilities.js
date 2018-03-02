@@ -51,9 +51,13 @@ module.exports = class RebillHelperUtilities {
 
     let products = this.parameters.get('transactionproducts', null, false);
 
-    let amount = arrayutilities.reduce(products, (sum, object) => {
-      return sum + numberutilities.formatFloat((object.amount * object.quantity), 2);
-    }, 0.00);
+    let amount = 0.0;
+
+    if(!_.isNull(products) && arrayutilities.nonEmpty(products)){
+      amount = arrayutilities.reduce(products, (sum, object) => {
+        return sum + numberutilities.formatFloat((object.amount * object.quantity), 2);
+      }, amount);
+    }
 
     this.parameters.set('amount', numberutilities.formatFloat(amount, 2));
 
