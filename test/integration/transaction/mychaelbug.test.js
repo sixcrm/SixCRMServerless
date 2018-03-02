@@ -288,7 +288,7 @@ function createOrderBody(session, sale_object){
 
 let config = global.SixCRM.routes.include('test', 'integration/config/'+process.env.stage+'.yml');
 
-config.account = 'cb4a1482-1093-4d8e-ad09-fdd4d840b497';
+//config.account = 'cb4a1482-1093-4d8e-ad09-fdd4d840b497';
 
 let campaign = '71c3cac1-d084-4e12-ac75-cdb28987ae16';
 

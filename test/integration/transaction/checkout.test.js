@@ -10,7 +10,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 const random = global.SixCRM.routes.include('lib','random.js');
 const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
-const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+//const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -86,6 +86,8 @@ function acquireToken(campaign){
   let authorization_string = createSignature();
   var post_body = getValidAcquireTokenPostBody(campaign);
 
+  du.warning(config);
+
   let argument_object = {
     url: config.endpoint+'token/acquire/'+account,
     body: post_body,
@@ -93,6 +95,8 @@ function acquireToken(campaign){
       Authorization: authorization_string
     }
   };
+
+  du.info(argument_object);
 
   return httputilities.postJSON(argument_object)
   .then((result) => {
@@ -151,6 +155,9 @@ function createCheckoutBody(campaign, sale_object){
 }
 
 let config = global.SixCRM.routes.include('test', 'integration/config/'+process.env.stage+'.yml');
+
+du.info(config);
+
 let campaign = '70a6689a-5814-438b-b9fd-dd484d0812f9';
 
 describe('Checkout', () => {

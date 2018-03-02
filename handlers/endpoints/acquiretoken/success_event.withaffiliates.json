@@ -6,10 +6,10 @@
 		}
 	},
 	"pathParameters":{
-		"account": "eefdeca6-41bc-4af9-a561-159acb449b5e"
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
 	},
 	"body": {
-		"campaign": "5c593d31-5001-4faf-8ea2-e8c1a1f85f04",
+		"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
 		"affiliates":{
 			"affiliate":"anotherrandothing",
 			"subaffiliate_1":"somethingelserando",
