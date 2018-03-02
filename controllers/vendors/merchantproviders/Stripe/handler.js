@@ -108,7 +108,7 @@ class StripeController extends MerchantProvider {
 
     }
 
-    reverse(){
+    reverse(){ 
 
       du.debug('Reverse');
 
