@@ -55,7 +55,6 @@ describe('pickRebillToBill', () => {
 
     before((done) => {
         process.env.require_local = true;
-        process.env.stage = 'local';
 
         Promise.resolve()
             .then(() => DynamoDbDeployment.initializeControllers())

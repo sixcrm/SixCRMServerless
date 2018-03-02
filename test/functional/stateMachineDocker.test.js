@@ -32,7 +32,6 @@ describe('stateMachineDocker', () => {
 
     before((done) => {
         process.env.require_local = true;
-        process.env.stage = 'local';
 
         configureLambdas();
 

@@ -28,7 +28,6 @@ jwt:
     expiration: 3600
 
 dynamodb:
-  endpoint: ''
 
 sqs:
   deadletter_postfix: '_deadletter'
@@ -39,7 +38,6 @@ cloudsearch:
   domainendpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
 
 lambda:
-  endpoint: ''
 
 redshift:
   default_cluster_identifier: 'sixcrm'

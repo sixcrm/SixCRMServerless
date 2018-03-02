@@ -36,9 +36,6 @@ describe('queries/redshift-queries.js', () => {
             before(() => {
                 global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
                 global.user = 'admin.user@test.com';
-
-                process.env.stage = 'local';
-                global.SixCRM.configuration.stage = 'local';
             });
 
             arrayutilities.map(tests, (test) => {

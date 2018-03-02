@@ -48,7 +48,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: 'Unit Tests'
-          command: npm run test-unit
+          command: stage=circle  npm run test-unit
   functional_tests:
     <<: *functional-tests-default
     steps:
@@ -69,19 +69,19 @@ jobs:
       - run: echo "Pausing to allow Redshift to catch up..." && sleep 30
       - run:
           name: Execute Functional Connectivity Test
-          command: npm run test-functional-connectivity
+          command: stage=circle npm run test-functional-connectivity
       - run:
           name: Execute Functional Redis-Utility Test
-          command: npm run test-functional-redis-utilities
+          command: stage=circle npm run test-functional-redis-utilities
       - run:
           name: Deploy Local Dynamo
-          command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_tables.js
+          command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
       - run:
           name: Deploy Local SQS
-          command: SIX_VERBOSE=2 stage=local node ./deployment/sqs/deploy_queues.js
+          command: SIX_VERBOSE=2 stage=circle node ./deployment/sqs/deploy_queues.js
       - run:
           name: Execute State Machine Tests In Docker
-          command: SIX_VERBOSE=0 stage=local npm run test-functional-state-machine-docker
+          command: SIX_VERBOSE=0 stage=circle npm run test-functional-state-machine-docker
   query_tests:
       <<: *functional-tests-default
       steps:
@@ -102,13 +102,13 @@ jobs:
         - run: echo "Pausing to allow Redshift to catch up..." && sleep 30
         - run:
             name: Execute Functional Connectivity Test
-            command: npm run test-functional-connectivity
+            command: stage=circle npm run test-functional-connectivity
         - run:
             name: Deploy Local Dynamo
-            command: SIX_VERBOSE=2 stage=local node ./deployment/dynamodb/deploy_tables.js
+            command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
         - run:
             name: Execute Redshift Analytics Tests In Docker
-            command: SIX_VERBOSE=0 stage=local npm run test-queries
+            command: SIX_VERBOSE=0 stage=circle npm run test-queries
   pre_deploy:
     <<: *job-defaults
     steps:

@@ -24,7 +24,6 @@ describe('holdToArchiveStressTest', () => {
 
     before((done) => {
         process.env.require_local = true;
-        process.env.stage = 'local';
         process.env.archivefilter = 'noship';
 
         Promise.resolve()

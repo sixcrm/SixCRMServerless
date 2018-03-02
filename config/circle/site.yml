@@ -1,6 +1,6 @@
 aws:
   region: 'us-east-1'
-  account: '821071795213'
+  account: ''
 
 s3:
   account_resources_bucket: 'account-resources'
@@ -11,15 +11,14 @@ sts:
 ses:
   hostname: email-smtp.us-east-1.amazonaws.com
   port: 465
-  username: 'ses-smtp-user.20170828-134737'
-  smtp_username: 'AKIAJBWKAMDAKGAY54KA'
-  smtp_password: 'AhBhoxx0EgAKvlqh3pLTl8W51I/af2HfkvS6OryDJuoj'
-  default_sender_email: 'info@staging.sixcrm.com'
-  default_sender_name: 'Staging SixCRM'
+  username: 'ses-smtp-user.20170828-134442'
+  smtp_username: 'AKIAJEYLHSMCFIJYFMXQ'
+  smtp_password: 'AhiiqjfmaJ9M2fD3zhzbjt17Da6xkOpYD2b1bkiovvrm'
+  default_sender_email: 'info@development.sixcrm.com'
+  default_sender_name: 'Development SixCRM'
 
-#Technical Debt:  This sort of thing should be encrypted...
 jwt:
-  issuer: 'https://staging-api.sixcrm.com'
+  issuer: 'https://api.sixcrm.com'
   site: #This is the key for all graph requests (AKA Six users)
     secret_key: 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV'
     domain: ''
@@ -29,28 +28,36 @@ jwt:
     expiration: 3600
 
 dynamodb:
+  region: 'localhost'
+  endpoint: http://0.0.0.0:8000
 
 sqs:
+  region: 'localhost'
   deadletter_postfix: '_deadletter'
   max_receive_count: 5
+  endpoint: http://localhost:9324
+
+sns:
+  region: 'localhost'
+  endpoint: http://localhost:9911
 
 cloudsearch:
   domainname: 'sixcrm'
-  domainendpoint: 'doc-sixcrm-ep6nfe6jetlzhhawthdojiwqtq.us-east-1.cloudsearch.amazonaws.com'
+  domainendpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
 
 lambda:
-
-#Technical Debt: This all needs to be configured elsewhere?
-#Technical Debt:  Username and Password combinations need to be encrypted...
+  region: 'localhost'
 
 redshift:
+  region: 'localhost'
   default_cluster_identifier: 'sixcrm'
-  user: 'admin'
-  database: 'analytics'
-  password: 'Jagodica9'
+  user: 'postgres'
+  database: 'postgres'
+  password: ''
+  host: 0.0.0.0
   port: 5439
   max: 10
-  idle_timeout: 30000
+  idle_timeout: 3000
   randomdata:
     interval: 300
 
@@ -64,17 +71,17 @@ notifications:
 #Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
 cache:
   usecache: 1
-  cachebuster: 'somerandomthing1'
+  cachebuster: 'somerandomthing1236901cacdda'
 
 elasticache:
   max_attempts: 3
   retry_time: 1800000
-  endpoint: '52.44.119.23'
+  endpoint: 'localhost'
   port: 6379
   default_expiration: 300
 
 logging:
-  loglevel: 0
+  loglevel: 2
 
 slack:
   channels:

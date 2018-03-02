@@ -12,23 +12,13 @@ class mockSQSUtilities extends AWSUtilities {
     constructor(){
       super();
 
-      this.localhost_endpoint = `${global.SixCRM.configuration.site_config.sqs.endpoint}/`;
-
-      if (process.env.stage !== 'local') {
-        this.sqs = new AWS.SQS({
-            region: global.SixCRM.configuration.site_config.aws.region
-        });
-      } else {
-        this.sqs = new AWS.SQS({
-            region: 'localhost',
-            endpoint: this.localhost_endpoint
-        });
-      }
+      this.sqs = new AWS.SQS({
+        region: global.SixCRM.configuration.site_config.sqs.region || global.SixCRM.configuration.site_config.aws.region,
+        endpoint: global.SixCRM.configuration.site_config.sqs.endpoint
+      });
 
       this.deadletter_postfix = '_deadletter';
-
       this.queue_url_template = 'https://sqs.{{region}}.amazonaws.com/{{account}}/{{queue_name}}';
-
       this.queue_arn_template = 'arn:aws:sqs:{{region}}:{{account}}:{{queue_name}}';
 
     }
@@ -49,7 +39,7 @@ class mockSQSUtilities extends AWSUtilities {
         eu.throwError('server', 'Improper argumentation for getQueueARN');
       }
 
-      if (process.env.stage === 'local') {
+      if (global.SixCRM.configuration.site_config.sqs.region === 'localhost') {
         return queue_name;
       }
 
@@ -71,8 +61,8 @@ class mockSQSUtilities extends AWSUtilities {
         }
       }
 
-      if (process.env.stage === 'local') {
-          return this.localhost_endpoint + '/queue/' + queue_name;
+      if (global.SixCRM.configuration.site_config.sqs.region === 'localhost') {
+          return global.SixCRM.configuration.site_config.sqs.endpoint + '/queue/' + queue_name;
       }
 
       let parameters = this.getQueueParameters(queue_name);

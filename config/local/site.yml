@@ -28,14 +28,17 @@ jwt:
     expiration: 3600
 
 dynamodb:
-  endpoint: http://0.0.0.0:8000
+  region: 'localhost'
+  endpoint: http://localhost:8000
 
 sqs:
+  region: 'localhost'
   deadletter_postfix: '_deadletter'
   max_receive_count: 5
   endpoint: http://localhost:9324
 
 sns:
+  region: 'localhost'
   endpoint: http://localhost:9911
 
 cloudsearch:
@@ -43,9 +46,10 @@ cloudsearch:
   domainendpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
 
 lambda:
-  endpoint: 'http://localhost:3000'
+  region: 'localhost'
 
 redshift:
+  region: 'localhost'
   default_cluster_identifier: 'sixcrm'
   user: 'postgres'
   database: 'postgres'

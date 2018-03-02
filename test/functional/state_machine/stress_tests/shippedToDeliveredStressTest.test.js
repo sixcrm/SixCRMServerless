@@ -25,7 +25,6 @@ describe('shippedToDeliveredStressTest', () => {
 
     before((done) => {
         process.env.require_local = true;
-        process.env.stage = 'local';
         process.env.archivefilter = 'all';
 
         Promise.resolve()

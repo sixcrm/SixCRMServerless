@@ -26,7 +26,6 @@ describe('stateMachine', () => {
 
     before((done) => {
         process.env.require_local = true;
-        process.env.stage = 'local';
 
         mockery.enable({
             useCleanCache: true,

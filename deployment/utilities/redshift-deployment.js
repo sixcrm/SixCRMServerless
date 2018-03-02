@@ -23,7 +23,7 @@ module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
     du.debug('Get Configuration File');
 
     //Technical Debt:  Just make this look for a file that matches the stage name
-    if(_.contains(['local','development','staging','production'], process.env.stage)){
+    if(_.contains(['local','circle','development','staging','production'], process.env.stage)){
         this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/'+process.env.stage+'.json');
     }else {
       this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/default.json');

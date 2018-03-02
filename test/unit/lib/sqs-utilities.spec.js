@@ -6,16 +6,21 @@ const account = global.SixCRM.configuration.site_config.aws.account;
 
 describe('lib/sqs-utilities', () => {
 
+    let copy_stage = process.env.stage;
+
     beforeEach(() => {
         // cleanup
         delete require.cache[require.resolve(global.SixCRM.routes.path('lib', 'sqs-utilities.js'))];
     });
 
+   after(() => {
+       process.env.stage = copy_stage;
+    });
+
+
     describe('getQueueARN', () => {
 
         it('successfully returns queue name', () => {
-
-            process.env.stage = 'local';
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
@@ -33,7 +38,7 @@ describe('lib/sqs-utilities', () => {
             }
         });
 
-        it('returns error when argumentation for gueueARN is not a string', () => {
+        it('returns error when argumentation for queueARN is not a string', () => {
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
@@ -48,7 +53,11 @@ describe('lib/sqs-utilities', () => {
 
             let queue_name = 'sampleQueueName';
 
-            process.env.stage = 'not local';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
+
+            const region = global.SixCRM.configuration.site_config.aws.region;
+            const account = global.SixCRM.configuration.site_config.aws.account;
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
@@ -65,7 +74,11 @@ describe('lib/sqs-utilities', () => {
 
         it('returns queue url template with appointed queue name', () => {
 
-            process.env.stage = 'not local';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
+
+            const region = global.SixCRM.configuration.site_config.aws.region;
+            const account = global.SixCRM.configuration.site_config.aws.account;
 
             let input = 'example';
 
@@ -82,7 +95,11 @@ describe('lib/sqs-utilities', () => {
 
         it('returns url template with queue name from appointed input', () => {
 
-            process.env.stage = 'not local';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
+
+            const region = global.SixCRM.configuration.site_config.aws.region;
+            const account = global.SixCRM.configuration.site_config.aws.account;
 
             let input = {queue:'example'};
 
@@ -99,7 +116,11 @@ describe('lib/sqs-utilities', () => {
 
         it('returns localhost endpoint with appointed queue name', () => {
 
-            process.env.stage = 'local';
+            global.SixCRM.configuration.handleStage('local');
+            global.SixCRM.configuration.setConfigurationFiles();
+
+            const region = global.SixCRM.configuration.site_config.aws.region;
+            const account = global.SixCRM.configuration.site_config.aws.account;
 
             let endpoint = global.SixCRM.configuration.site_config.sqs.endpoint;
             let input = 'example';
@@ -163,7 +184,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns received message', () => {
 
-            process.env.stage = 'not local';
+            process.env.stage = 'development';
 
             let params = {
                 queue:'example',
@@ -185,7 +206,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns error when message wasn\'t received', () => {
 
-            process.env.stage = 'not local';
+            process.env.stage = 'development';
 
             let params = {
                 queue:'example',
@@ -210,7 +231,7 @@ describe('lib/sqs-utilities', () => {
 
         it('successfully deletes message', () => {
 
-            process.env.stage = 'not local';
+            process.env.stage = 'development';
 
             let input = {queue:'example'};
 
@@ -232,7 +253,7 @@ describe('lib/sqs-utilities', () => {
 
         it('successfully sends message', () => {
 
-            process.env.stage = 'not local';
+            process.env.stage = 'development';
 
             let input = {queue:'example'};
 
@@ -254,7 +275,7 @@ describe('lib/sqs-utilities', () => {
 
         it('successfully deletes messages', () => {
 
-            process.env.stage = 'not local';
+            process.env.stage = 'development';
 
             let input = {
                 queue: 'example',
@@ -279,7 +300,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns response from deleted message batch', () => {
 
-            process.env.stage = 'not local';
+            process.env.stage = 'development';
 
             let input = {
                 queue: 'example',
@@ -306,7 +327,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns error when messages haven\'t been removed', () => {
 
-            process.env.stage = 'not local';
+            process.env.stage = 'development';
 
             let fail = new Error('fail');
 
@@ -333,7 +354,7 @@ describe('lib/sqs-utilities', () => {
 
         it('returns false when there aren\'t any messages to delete', () => {
 
-            process.env.stage = 'not local';
+            process.env.stage = 'development';
 
             let input = {queue: 'example'};
 

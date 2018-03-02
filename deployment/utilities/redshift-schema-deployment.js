@@ -613,7 +613,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Execute Query');
 
-    if(global.SixCRM.configuration.stage === 'local') {
+    if(global.SixCRM.configuration.stage === 'local' || global.SixCRM.configuration.stage === 'circle') { // Technical Debt: This REALLY shouldn't be hardcoded here.
       query = this.transformQuery(query);
       du.info(query);
     }

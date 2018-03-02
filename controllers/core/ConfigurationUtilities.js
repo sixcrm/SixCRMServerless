@@ -132,17 +132,15 @@ module.exports = class ConfigurationUtilities {
 
         stage = process.env.stage;
 
-        if(stage !== 'local'){
+        let stages = global.SixCRM.routes.include('config', 'stages.yml');
 
-          let stages = global.SixCRM.routes.include('config', 'stages.yml');
+        let stage_names = objectutilities.getKeys(stages);
+        stage_names.push('local'); // Technical Debt: avoid
+        stage_names.push('circle');
 
-          let stage_names = objectutilities.getKeys(stages);
+        if(!_.contains(stage_names, stage)){
 
-          if(!_.contains(stage_names, stage)){
-
-            eu.throwError('server', 'Configuration.resolveStage unable to validate stage name: '+stage);
-
-          }
+          eu.throwError('server', 'Configuration.resolveStage unable to validate stage name: '+stage);
 
         }
 

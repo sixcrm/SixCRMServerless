@@ -29,7 +29,6 @@ jwt:
     expiration: 3600
 
 dynamodb:
-  endpoint: ''
 
 sqs:
   deadletter_postfix: '_deadletter'
@@ -39,9 +38,7 @@ cloudsearch:
   domainname: 'sixcrm'
   domainendpoint: 'doc-sixcrm-rl5yyjlfnghqtgvz5re6ig5xnq.us-east-1.cloudsearch.amazonaws.com'
 
-#Technical Debt:  Let's eliminate this.
 lambda:
-  endpoint: ''
 
 #Technical Debt:  Username and Password combinations need to be encrypted...
 redshift:
