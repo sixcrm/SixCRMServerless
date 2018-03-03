@@ -1,6 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
+//Technical Debt:  Bad references to the config like this...
 const region = global.SixCRM.configuration.site_config.aws.region;
 const account = global.SixCRM.configuration.site_config.aws.account;
 
@@ -118,9 +119,6 @@ describe('lib/sqs-utilities', () => {
 
             global.SixCRM.configuration.handleStage('local');
             global.SixCRM.configuration.setConfigurationFiles();
-
-            const region = global.SixCRM.configuration.site_config.aws.region;
-            const account = global.SixCRM.configuration.site_config.aws.account;
 
             let endpoint = global.SixCRM.configuration.site_config.sqs.endpoint;
             let input = 'example';
@@ -474,7 +472,7 @@ describe('lib/sqs-utilities', () => {
 
             let data = {QueueUrls: []};
 
-            let fail = {code: 'AWS.SimpleQueueService.NonExistentQueue'};
+            //let fail = {code: 'AWS.SimpleQueueService.NonExistentQueue'};
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 

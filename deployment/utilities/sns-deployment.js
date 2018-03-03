@@ -120,12 +120,13 @@ class SNSDeployment extends AWSDeploymentUtilities {
 		du.debug('Parse Tokens Into Subscription Parameters');
 
 		let data = {
-			region: global.SixCRM.configuration.site_config.aws.region,
+			region: this.snsutilities.getRegion(),
 			account: global.SixCRM.configuration.site_config.aws.account,
 		 	stage: global.SixCRM.configuration.stage,
 			topic_name: subscription_file_contents.Name
 		};
 
+		//Technical Debt:  This assumes that the lambda and the sns topic share the above data
 		arrayutilities.map(subscription_file_contents.Subscriptions, (subscription, index) => {
 			objectutilities.map(subscription, key => {
 			 	subscription_file_contents.Subscriptions[index][key] = parserutilities.parse(subscription[key], data);

@@ -45,6 +45,7 @@ describe('helpers/events/Event.spec.js', () => {
 
       let topic_arn = eventHelperController.parseTopicARN();
 
+      //Technical Debt:  Bad to make hard references to the config like this...
       expect(topic_arn).to.equal('arn:aws:sns:'+global.SixCRM.configuration.site_config.aws.region+':'+global.SixCRM.configuration.site_config.aws.account+':events');
 
     });
@@ -94,6 +95,9 @@ describe('helpers/events/Event.spec.js', () => {
               RequestId: "a7adb36f-c590-5fb2-89a1-e06aae9e9e99"
             }
           })
+        },
+        getRegion(){
+          return 'us-east-1';
         }
       });
 

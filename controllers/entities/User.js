@@ -538,19 +538,21 @@ class userController extends entityController {
 
     appendAlias(user){
 
-        if(!_.has(user, 'alias')){
+      du.debug('Append Alias');
 
-            user['alias'] = mungeutilities.munge(user.id);
+      if(!_.has(user, 'alias')){
+        user['alias'] = mungeutilities.munge(user.id);
+      }
 
-        }
-
-        return user;
+      return user;
 
     }
 
     getUserByAccessKeyId(access_key_id){
 
-        return this.getBySecondaryIndex({field: 'access_key_id', index_value: access_key_id, index_name: 'access_key_id-index'});
+      du.debug('Get User By Access Key ID');
+
+      return this.getBySecondaryIndex({field: 'access_key_id', index_value: access_key_id, index_name: 'access_key_id-index'});
 
     }
 

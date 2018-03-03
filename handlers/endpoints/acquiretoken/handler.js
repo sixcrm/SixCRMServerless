@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = (event, context, callback) => {
+module.exports.acquiretoken = (event, context, callback) => {
 
   require('../../../SixCRM.js');
 

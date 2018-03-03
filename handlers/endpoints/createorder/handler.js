@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = (event, context, callback) => {
+module.exports.createorder = (event, context, callback) => {
 
   require('../../../SixCRM.js');
   global.SixCRM.clearState();

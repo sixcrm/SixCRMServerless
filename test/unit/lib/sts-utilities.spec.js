@@ -35,8 +35,6 @@ describe('lib/sts-utilities', () => {
 
     it('fails when missing RoleARN', () => {
 
-      let response = {};
-
       let stsutilities = global.SixCRM.routes.include('lib','sts-utilities.js');
       let parameters = {};
 
@@ -62,14 +60,24 @@ describe('lib/sts-utilities', () => {
         }
       };
 
-      mockery.registerMock('aws-sdk', {
-        STS: class {
-          constructor(){
-            console.log('here');
+      mockery.registerMock(global.SixCRM.routes.path('lib','aws-utilities.js'), class {
+        constructor(){
+          this.AWS = {
+            STS: class {
+              constructor(){
+
+              }
+              assumeRole(parameters, callback){
+                return callback(null, response);
+              }
+            }
           }
-          assumeRole(parameters, callback){
-            return callback(null, response);
+        }
+        AWSCallback(error, data){
+          if(error){
+            //eu.throwError('server', error);
           }
+          return data;
         }
       });
 

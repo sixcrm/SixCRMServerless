@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = (event, context, callback) => {
+module.exports.sendnotificationstoarchive = (event, context, callback) => {
 
   require('../../../../SixCRM.js');
 

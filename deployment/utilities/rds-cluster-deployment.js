@@ -89,7 +89,7 @@ class RDSClusterDeployment {
     du.debug('Parse Parameters');
 
     let parser_data = {
-      region: global.SixCRM.configuration.site_config.aws.region,
+      region: this.rdsutilities.getRegion(),
       stage:global.SixCRM.configuration.stage,
       account: global.SixCRM.configuration.site_config.aws.account
     };

@@ -1,10 +1,10 @@
 'use strict'
-const AWS = require("aws-sdk");
 const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const AWSUtilities = global.SixCRM.routes.include('lib', 'aws-utilities.js');
 
 class mockSQSUtilities extends AWSUtilities {
@@ -12,16 +12,32 @@ class mockSQSUtilities extends AWSUtilities {
     constructor(){
       super();
 
-      this.sqs = new AWS.SQS({
-        region: global.SixCRM.configuration.site_config.sqs.region || global.SixCRM.configuration.site_config.aws.region,
-        endpoint: global.SixCRM.configuration.site_config.sqs.endpoint
-      });
-
       this.deadletter_postfix = '_deadletter';
       this.queue_url_template = 'https://sqs.{{region}}.amazonaws.com/{{account}}/{{queue_name}}';
       this.queue_arn_template = 'arn:aws:sqs:{{region}}:{{account}}:{{queue_name}}';
 
+      this.instantiateSQS();
+
     }
+
+    instantiateSQS(){
+
+      du.debug('Instantiate SQS');
+
+      let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sqs.region'))?global.SixCRM.configuration.site_config.sqs.region:this.getRegion();
+
+      let parameters = {
+        region: region
+      };
+
+      if(objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sqs.endpoint')){
+        parameters.endpoint = global.SixCRM.configuration.site_config.sqs.endpoint;
+      }
+
+      this.sqs = new this.AWS.SQS(parameters);
+
+    }
+
 
     getQueueARN(queue_name){
 
@@ -80,7 +96,7 @@ class mockSQSUtilities extends AWSUtilities {
       }
 
       let parameters = {
-        'region': global.SixCRM.configuration.site_config.aws.region,
+        'region': this.getRegion(),
         'account': global.SixCRM.configuration.site_config.aws.account,
         'queue_name': queue_name
       };

@@ -56,8 +56,9 @@ module.exports = class EventHelperController {
     du.debug('Parse Topic ARN');
 
     return parserutilities.parse(this.topic_arn, {
+      //Technical Debt:  These explicit references are a no-no
       account: global.SixCRM.configuration.site_config.aws.account,
-      region: global.SixCRM.configuration.site_config.aws.region
+      region: this.snsutilities.getRegion()
     });
 
   }

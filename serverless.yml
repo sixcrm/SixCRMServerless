@@ -19,6 +19,7 @@ provider:
   stage: ${opt:stage, 'development'}
   region: ${file(./config/${opt:stage}/site.yml):aws.region}
   profile: six
+  tracing: true
   environment:
     stage: ${opt:stage, self:provider.stage}
     #Technical Debt:  Are these necessary here?
@@ -28,6 +29,7 @@ provider:
 plugins:
   - serverless-dynamodb-local
   - serverless-prune-plugin
+  - serverless-plugin-tracing
 
 functions:
 
@@ -36,17 +38,17 @@ functions:
 ########################
 
   verifysignature:
-    handler: handlers/authorizers/verifysignature/handler
+    handler: handlers/authorizers/verifysignature/handler.verifysignature
 
   verifytransactionjwt:
-    handler: handlers/authorizers/verifytransactionjwt/handler
+    handler: handlers/authorizers/verifytransactionjwt/handler.verifytransactionjwt
     environment:
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
       transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
 
   verifysitejwt:
-    handler: handlers/authorizers/verifysitejwt/handler
+    handler: handlers/authorizers/verifysitejwt/handler.verifysitejwt
     environment:
       site_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site.secret_key}
       site_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.site.expiration}
@@ -57,7 +59,7 @@ functions:
 ########################
 
   graph:
-    handler: handlers/endpoints/graph/handler
+    handler: handlers/endpoints/graph/handler.graph
     events:
       - http:
           path: graph/{account}
@@ -78,21 +80,21 @@ functions:
 ########################
 
   billtohold:
-    handler: handlers/workers/forwardmessage/billtohold/handler
+    handler: handlers/workers/forwardmessage/billtohold/handler.billtohold
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
 
   recovertohold:
-    handler: handlers/workers/forwardmessage/recovertohold/handler
+    handler: handlers/workers/forwardmessage/recovertohold/handler.recovertohold
     events:
       - schedule:
           rate: cron(0 1 ? * FRI *)
           enabled: true
 
   holdtopending:
-    handler: handlers/workers/forwardmessage/holdtopending/handler
+    handler: handlers/workers/forwardmessage/holdtopending/handler.hodltopending
     events:
       - schedule:
           rate: rate(1 minute)
@@ -107,21 +109,21 @@ functions:
 #          enabled: true
 
   pendingtoshipped:
-    handler: handlers/workers/forwardmessage/pendingtoshipped/handler
+    handler: handlers/workers/forwardmessage/pendingtoshipped/handler.pendingtoshipped
     events:
       - schedule:
           rate: rate(6 hours)
           enabled: true
 
   shippedtodelivered:
-    handler: handlers/workers/forwardmessage/shippedtodelivered/handler
+    handler: handlers/workers/forwardmessage/shippedtodelivered/handler.shippedtodelivered
     events:
       - schedule:
           rate: rate(6 hours)
           enabled: true
 
   deliveredtoarchive:
-    handler: handlers/workers/forwardmessage/deliveredtoarchive/handler
+    handler: handlers/workers/forwardmessage/deliveredtoarchive/handler.deliveredtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -130,7 +132,7 @@ functions:
       archivefilter: 'all'
 
   holdtoarchive:
-    handler: handlers/workers/forwardmessage/holdtoarchive/handler
+    handler: handlers/workers/forwardmessage/holdtoarchive/handler.holdtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -139,7 +141,7 @@ functions:
       archivefilter: 'noship'
 
   rebilltoarchive:
-    handler: handlers/workers/forwardmessage/rebilltoarchive/handler
+    handler: handlers/workers/forwardmessage/rebilltoarchive/handler.rebilltoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -148,7 +150,7 @@ functions:
       archivefilter: 'all'
 
   recovertoarchive:
-    handler: handlers/workers/forwardmessage/recovertoarchive/handler
+    handler: handlers/workers/forwardmessage/recovertoarchive/handler.recovertoarchive
     events:
       - schedule:
           rate: rate(6 hours)
@@ -157,7 +159,7 @@ functions:
       archivefilter: 'twoattempts'
 
   indextoarchive:
-    handler: handlers/workers/forwardmessage/indextoarchive/handler
+    handler: handlers/workers/forwardmessage/indextoarchive/handler.indextoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -166,7 +168,7 @@ functions:
       archivefilter: 'all'
 
   sendnotificationstoarchive:
-    handler: handlers/workers/forwardmessage/sendnotificationstoarchive/handler
+    handler: handlers/workers/forwardmessage/sendnotificationstoarchive/handler.sendnotificationstoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -175,7 +177,7 @@ functions:
       archivefilter: 'all'
 
   pickrebillstobill:
-    handler: handlers/workers/forwardmessage/pickrebillstobill/handler
+    handler: handlers/workers/forwardmessage/pickrebillstobill/handler.pickrebillstobill
     events:
       - schedule:
           rate: rate(10 minutes)
@@ -185,23 +187,23 @@ functions:
 # SNS Workers
 ########################
   customeremail:
-    handler: handlers/workers/sns/customeremail/handler
+    handler: handlers/workers/sns/customeremail/handler.customeremail
 
   redshiftevents:
-    handler: handlers/workers/sns/redshiftevents/handler
+    handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
 
   trackingevents:
-    handler: handlers/workers/sns/trackingevents/handler
+    handler: handlers/workers/sns/trackingevents/handler.trackingevents
 
   notificationevents:
-    handler: handlers/workers/sns/notificationevents/handler
+    handler: handlers/workers/sns/notificationevents/handler.notificationevents
 
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
 
   reindex:
-    handler: handlers/workers/reindex/handler
+    handler: handlers/workers/reindex/handler.reindex
     events:
       - schedule:
         rate: rate(60 minutes)
@@ -220,7 +222,7 @@ functions:
 ########################
 
   acquiretoken:
-    handler: handlers/endpoints/acquiretoken/handler
+    handler: handlers/endpoints/acquiretoken/handler.acquiretoken
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -237,7 +239,7 @@ functions:
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
 
   createlead:
-    handler: handlers/endpoints/createlead/handler
+    handler: handlers/endpoints/createlead/handler.createlead
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -250,7 +252,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   createorder:
-    handler: handlers/endpoints/createorder/handler
+    handler: handlers/endpoints/createorder/handler.createorder
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -263,7 +265,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   confirmorder:
-    handler: handlers/endpoints/confirmorder/handler
+    handler: handlers/endpoints/confirmorder/handler.confirmorder
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -276,7 +278,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   info:
-    handler: handlers/endpoints/info/handler
+    handler: handlers/endpoints/info/handler.info
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -289,7 +291,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   tracking:
-    handler: handlers/endpoints/tracking/handler
+    handler: handlers/endpoints/tracking/handler.tracking
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -302,7 +304,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   checkout:
-    handler: handlers/endpoints/checkout/handler
+    handler: handlers/endpoints/checkout/handler.checkout
     timeout: 29
     events:
       - http:
@@ -330,41 +332,47 @@ resources:
         PolicyDocument:
           Version: '2012-10-17'
           Statement:
-           - Effect: Allow
-             Action:
-               - dynamodb:*
-             Resource: arn:aws:dynamodb:*:*:table/*
-           - Effect: Allow
-             Action:
-               - sqs:*
-             Resource: arn:aws:sqs:*:*:*
-           - Effect: Allow
-             Action:
-               - lambda:*
-             Resource: arn:aws:lambda:us-east-1:*:*:*
-           - Effect: Allow
-             Action:
-               - ses:*
-             Resource: arn:aws:ses:us-east-1:*:identity/*
-           - Effect: Allow
-             Action:
-               - cloudsearch:*
-             Resource: 	arn:aws:cloudsearch:us-east-1:*:*
-           - Effect: Allow
-             Action:
-               - s3:*
-             Resource: "*"
-           - Effect: Allow
-             Action:
-               - firehose:*
-             Resource: "*"
-           - Effect: Allow
-             Action:
-               - sns:*
-             Resource: "*"
-           - Effect: Allow
-             Action:
-               - redshift:*
-             Resource: "*"
-        Roles:
-          - Ref: IamRoleLambdaExecution
+            - Effect: "Allow"
+              Action:
+                - "xray:PutTraceSegments"
+                - "xray:PutTelemetryRecords"
+              Resource:
+                - "*"
+            - Effect: Allow
+              Action:
+                - dynamodb:*
+              Resource: arn:aws:dynamodb:*:*:table/*
+            - Effect: Allow
+              Action:
+              - sqs:*
+              Resource: arn:aws:sqs:*:*:*
+            - Effect: Allow
+              Action:
+              - lambda:*
+              Resource: arn:aws:lambda:us-east-1:*:*:*
+            - Effect: Allow
+              Action:
+              - ses:*
+              Resource: arn:aws:ses:us-east-1:*:identity/*
+            - Effect: Allow
+              Action:
+              - cloudsearch:*
+              Resource: 	arn:aws:cloudsearch:us-east-1:*:*
+            - Effect: Allow
+              Action:
+              - s3:*
+              Resource: "*"
+            - Effect: Allow
+              Action:
+              - firehose:*
+              Resource: "*"
+            - Effect: Allow
+              Action:
+              - sns:*
+              Resource: "*"
+            - Effect: Allow
+              Action:
+              - redshift:*
+              Resource: "*"
+          Roles:
+            - Ref: IamRoleLambdaExecution
