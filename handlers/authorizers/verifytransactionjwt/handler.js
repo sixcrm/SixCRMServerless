@@ -1,29 +1,29 @@
 'use strict';
 const _ = require('underscore');
 
-require('../../../SixCRM.js');
-
-var policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
-var verifyTransactionJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifyTransactionJWT.js');
-
 module.exports.verifyjwt = (event, context, callback) => {
 
-    verifyTransactionJWTController.execute(event).then((response) => {
+  require('../../../SixCRM.js');
 
-        if(_.isString(response)){
+  var policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
+  var verifyTransactionJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifyTransactionJWT.js');
 
-            return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, response));
+  verifyTransactionJWTController.execute(event).then((response) => {
 
-        }else{
+      if(_.isString(response)){
 
-            return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+          return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, response));
 
-        }
+      }else{
 
-    }).catch(() =>{
+          return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
 
-        return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+      }
 
-    });
+  }).catch(() =>{
+
+      return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+
+  });
 
 };

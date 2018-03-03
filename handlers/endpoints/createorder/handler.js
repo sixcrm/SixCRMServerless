@@ -2,18 +2,19 @@
 
 module.exports.createorder = (event, context, callback) => {
 
-    require('../../../SixCRM.js');
-    var LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-    let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+  require('../../../SixCRM.js');
 
-    createOrderController.execute(event).then((response) => {
+  let LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 
-        return new LambdaResponse().issueSuccess(response, callback);
+  createOrderController.execute(event).then((response) => {
 
-    }).catch((error) =>{
+      return new LambdaResponse().issueSuccess(response, callback);
 
-        return new LambdaResponse().issueError(error, event, callback);
+  }).catch((error) =>{
 
-    });
+      return new LambdaResponse().issueError(error, event, callback);
+
+  });
 
 };
