@@ -271,7 +271,7 @@ function createLeadBody(campaign, customer){
 
   let return_object = {
     campaign:(_.has(campaign, 'id'))?campaign.id:campaign,
-    customer: createCustomer()
+    customer: createCustomer(customer)
   };
 
   let affiliates = createAffiliates();
