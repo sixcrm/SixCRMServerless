@@ -5,7 +5,7 @@
     "lambda": {
       "properties": {
         "handler": {
-          "pattern": ".+\/handler\\..+"
+          "type":"string"
         }
       },
       "required": ["handler"]

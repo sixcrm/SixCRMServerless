@@ -1,15 +1,15 @@
 'use strict';
-require('../../../../SixCRM.js');
 
-const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-const notificationEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/notificationEvents.js');
+module.exports = (event, context, callback) => {
 
-/* eslint-disable promise/always-return, promise/catch-or-return */
-module.exports.notificationevents = (event, context, callback) => {
+  require('../../../../SixCRM.js');
 
-  notificationEventsController.execute(event).then((result) => {
+  const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  const notificationEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/notificationEvents.js');
 
-    new LambdaResponse().issueResponse(200, {
+  return notificationEventsController.execute(event).then((result) => {
+
+    return new LambdaResponse().issueResponse(200, {
         message: result
     }, callback);
 

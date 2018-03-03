@@ -10,6 +10,12 @@ const Six = class SixCRM {
 
   }
 
+  clearState(){
+
+    this.instantiate();
+
+  }
+
   instantiate(){
 
     let Configuration = this.routes.include('core', 'Configuration.js');

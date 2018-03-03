@@ -1,19 +1,20 @@
 'use strict';
-require('../../../SixCRM.js');
 
-var LambdaResponse = global.SixCRM.routes.include('lib','lambda-response.js');
-var acquireTokenController = global.SixCRM.routes.include('controllers','endpoints/acquireToken.js');
+module.exports = (event, context, callback) => {
 
-module.exports.acquiretoken = (event, context, callback) => {
+  require('../../../SixCRM.js');
 
-    acquireTokenController.execute(event).then((response) => {
+  let LambdaResponse = global.SixCRM.routes.include('lib','lambda-response.js');
+  let acquireTokenController = global.SixCRM.routes.include('controllers','endpoints/acquireToken.js');
 
-        return new LambdaResponse().issueSuccess(response, callback);
+  acquireTokenController.execute(event).then((response) => {
 
-    }).catch((error) =>{
+      return new LambdaResponse().issueSuccess(response, callback);
 
-        return new LambdaResponse().issueError(error, event, callback);
+  }).catch((error) =>{
 
-    });
+      return new LambdaResponse().issueError(error, event, callback);
+
+  });
 
 }

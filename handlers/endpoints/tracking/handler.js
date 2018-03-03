@@ -1,10 +1,11 @@
 'use strict';
-require('../../../SixCRM.js');
 
-const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+module.exports = (event, context, callback) => {
 
-module.exports.tracking = (event, context, callback) => {
+  require('../../../SixCRM.js');
+
+  const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
 
   trackingController.execute(event).then((response) => {
 

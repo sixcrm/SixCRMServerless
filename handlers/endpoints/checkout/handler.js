@@ -1,10 +1,11 @@
 'use strict';
-require('../../../SixCRM.js');
 
-var LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-var checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+module.exports = (event, context, callback) => {
 
-module.exports.checkout = (event, context, callback) => {
+  require('../../../SixCRM.js');
+
+  let LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
 
   checkoutController.execute(event).then((response) => {
 

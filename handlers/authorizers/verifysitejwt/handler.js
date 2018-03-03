@@ -1,33 +1,34 @@
 'use strict';
-const validator = require('validator');
 
-require('../../../SixCRM.js');
+module.exports = (event, context, callback) => {
 
-var policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
-var verifySiteJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifySiteJWT.js');
+  require('../../../SixCRM.js');
 
-module.exports.verifyjwt = (event, context, callback) => {
+  const validator = require('validator');
 
-    verifySiteJWTController.execute(event).then((response) => {
+  var policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
+  var verifySiteJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifySiteJWT.js');
 
-        if(validator.isEmail(response)){
+  verifySiteJWTController.execute(event).then((response) => {
 
-            return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, response));
+      if(validator.isEmail(response)){
 
-        }else if(response == verifySiteJWTController.messages.bypass){
+          return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, response));
 
-            return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, null));
+      }else if(response == verifySiteJWTController.messages.bypass){
 
-        }else{
+          return callback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, null));
 
-            return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+      }else{
 
-        }
+          return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
 
-    }).catch(() =>{
+      }
 
-        return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+  }).catch(() =>{
 
-    });
+      return callback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+
+  });
 
 };

@@ -1,19 +1,20 @@
 'use strict';
-require('../../../SixCRM.js');
 
-const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-const ReIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/ReIndexing.js');
+module.exports = (event, context, callback) => {
 
-module.exports.reindex = (event, context, callback) => {
+  require('../../../SixCRM.js');
 
-    new ReIndexingHelperController().execute(true).then((result) => {
+  const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  const ReIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/ReIndexing.js');
 
-        return new LambdaResponse().issueResponse(200, {message: result}, callback);
+  new ReIndexingHelperController().execute(true).then((result) => {
 
-    }).catch((error) =>{
+    return new LambdaResponse().issueResponse(200, {message: result}, callback);
 
-        return new LambdaResponse().issueError(error.message, event, callback);
+  }).catch((error) =>{
 
-    });
+    return new LambdaResponse().issueError(error.message, event, callback);
+
+  });
 
 };

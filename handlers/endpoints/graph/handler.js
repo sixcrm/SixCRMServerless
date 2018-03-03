@@ -1,22 +1,23 @@
 'use strict';
-require('../../../SixCRM.js');
 
-const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-const graphController = global.SixCRM.routes.include('controllers', 'endpoints/graph.js');
+module.exports = (event, context, callback) => {
 
-module.exports.graph = (event, context, callback) => {
+  require('../../../SixCRM.js');
 
-    let gc = new graphController();
+  const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  const graphController = global.SixCRM.routes.include('controllers', 'endpoints/graph.js');
 
-    gc.execute(event).then((result) => {
+  let gc = new graphController();
 
-      return new LambdaResponse().issueSuccess(result, callback);
+  gc.execute(event).then((result) => {
 
-    })
-    .catch((error) =>{
+    return new LambdaResponse().issueSuccess(result, callback);
 
-      return new LambdaResponse().issueError(error, event, callback);
+  })
+  .catch((error) =>{
 
-    });
+    return new LambdaResponse().issueError(error, event, callback);
+
+  });
 
 }

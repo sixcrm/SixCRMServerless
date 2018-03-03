@@ -1,7 +1,7 @@
 'use strict';
 const _ = require('underscore');
 
-module.exports.verifyjwt = (event, context, callback) => {
+module.exports = (event, context, callback) => {
 
   require('../../../SixCRM.js');
 

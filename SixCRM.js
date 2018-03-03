@@ -10,12 +10,21 @@ const Six = class SixCRM {
 
   }
 
+  clearState(){
+
+    this.instantiate();
+    this.setConfigurationFile();
+
+  }
+
   instantiate(){
 
     let Configuration = this.routes.include('core', 'Configuration.js');
-    let LocalCache = this.routes.include('core', 'LocalCache.js');
 
     this.configuration = new Configuration();
+
+    let LocalCache = this.routes.include('core', 'LocalCache.js');
+
     this.localcache = new LocalCache();
 
   }

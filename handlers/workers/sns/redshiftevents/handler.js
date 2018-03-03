@@ -1,15 +1,15 @@
 'use strict';
-require('../../../../SixCRM.js');
 
-const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-const redshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');
+module.exports = (event, context, callback) => {
 
-/* eslint-disable promise/always-return, promise/catch-or-return */
-module.exports.redshiftevents = (event, context, callback) => {
+  require('../../../../SixCRM.js');
 
-  redshiftEventsController.execute(event).then((result) => {
+  const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  const redshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');
 
-    new LambdaResponse().issueResponse(200, {
+  return redshiftEventsController.execute(event).then((result) => {
+
+    return new LambdaResponse().issueResponse(200, {
         message: result
     }, callback);
 

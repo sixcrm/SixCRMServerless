@@ -1,19 +1,20 @@
 'use strict';
-require('../../../SixCRM.js');
 
-var LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-var createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+module.exports = (event, context, callback) => {
 
-module.exports.createlead = (event, context, callback) => {
+  require('../../../SixCRM.js');
 
-    createLeadController.execute(event).then((response) => {
+  var LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  var createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 
-        return new LambdaResponse().issueSuccess(response, callback);
+  createLeadController.execute(event).then((response) => {
 
-    }).catch((error) =>{
+      return new LambdaResponse().issueSuccess(response, callback);
 
-        return new LambdaResponse().issueError(error, event, callback);
+  }).catch((error) =>{
 
-    });
+      return new LambdaResponse().issueError(error, event, callback);
+
+  });
 
 };
