@@ -3,11 +3,11 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+//const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+//const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const PermissionedController = global.SixCRM.routes.include('controllers','entities/Entity');
-const PermissionTestGenerators = require('../../../../unit/lib/permission-test-generators');
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 
 
 describe('controllers/helpers/permission/Permissioned.js', () => {
@@ -27,8 +27,8 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
   });
 
   afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
+    mockery.resetCache();
+    mockery.deregisterAll();
   });
 
   describe('can', () => {
