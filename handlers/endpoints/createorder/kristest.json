@@ -1,0 +1,79 @@
+{
+	"requestContext":{
+		"authorizer":{
+			"user":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37693"
+		}
+	},
+	"pathParameters":{
+		"account": "cb4a1482-1093-4d8e-ad09-fdd4d840b497"
+	},
+	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2RldmVsb3BtZW50LWFwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNTE3NzE4ODA5LCJleHAiOjE1MTc3MjI0MDksInVzZXJfYWxpYXMiOiI2MGZjOGNjYzg1ZDhiN2U2ZWFhZTMzM2JiMjBkMmRiNTFhYTM3NjkzIn0.55k5yQNf-5nsUDwFiG8I57Z40KKXiLWXdNG9Wijf5IU",
+	"body":{
+		"session":"4f5c7d11-6632-4fb3-a2cb-f6f7c6f52560",
+		"product_schedules":[
+			{
+				"quantity":1,
+				"product_schedule":{
+					"schedule":[
+						{
+							"product":{
+								"id":"92bd4679-8fb5-47ff-93f5-8679c46bcaad",
+								"name":"Smack Dog - Caribbean Salmon Fusion 1.5 kg/3.30 lb"
+							},
+					    "price":62.35,
+					    "start":0,
+					    "period":14
+						}
+					]
+				}
+			},
+			{
+				"quantity":1,
+				"product_schedule":{
+					"schedule":[
+						{
+							"product":{
+								"id":"6c6ec904-5315-4214-a057-79a7ff308cde",
+								"name":"Smack Dog - Caribbean Salmon Fusion 2.5 kg/5.5 lb"
+							},
+					    "price":101.35,
+					    "start":0,
+					    "period":14
+						}
+					]
+				}
+			}
+		],
+		"products":[
+			{
+				"quantity": 1,
+				"product": "4efa7820-38d4-4643-9745-ba581a665557",
+				"price": 5.98
+			},
+			{
+				"quantity": 1,
+				"product": "78c02d93-e9e0-4077-817e-eaf6d3316b10",
+				"price": 15.96
+			},
+			{
+				"quantity": 1,
+				"product": "ab9aa4d0-0c2e-47f3-a458-b4d0bc8f371e",
+				"price": 20.97
+			}
+		],
+		"creditcard":{
+			"number":"371296214452000",
+			"expiration":"0123",
+			"ccv":"4595",
+			"name":"Kristopher Trujillo",
+			"address":{
+				"line1":"4120 Canal Rd.",
+				"city":"Lake Oswego",
+				"state":"OR",
+				"zip":"97034",
+				"country":"US"
+			}
+		},
+		"transaction_subtype":"main"
+	}
+}
