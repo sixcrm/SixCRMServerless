@@ -3,6 +3,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const random = global.SixCRM.routes.include('lib','random.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
@@ -58,6 +59,121 @@ class IAMDeployment extends AWSDeploymentUtilities {
 
     }
 
+    deployPolicies(){
+
+      du.debug('Deploy Policies');
+
+      return this.getPolicyDefinitionFilenames().then(policy_definition_filenames => {
+
+        let policy_definition_file_promises = arrayutilities.map(policy_definition_filenames, policy_definition_filename => {
+          let policy_definition = this.acquirePolicyFile(policy_definition_filename);
+
+          return this.deployPolicy(policy_definition);
+        });
+
+        return Promise.all(policy_definition_file_promises).then(() => {
+          return 'Complete';
+        });
+
+      });
+
+    }
+
+    getPolicyDefinitionFilenames(){
+
+      du.debug('Get Policy Definition Filenames');
+
+      return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'iam/policies')).then((filenames) => { return filenames; });
+
+    }
+
+    acquirePolicyFile(policy_definition_filename){
+
+      du.debug('Acquire Policy File');
+
+      return global.SixCRM.routes.include('deployment', 'iam/policies/'+policy_definition_filename);
+
+    }
+
+    deployPolicy(policy_definition){
+
+      du.debug('Deploy Policy');
+
+      return this.policyExists(policy_definition).then((role) => {
+
+        if(role == false){
+          return this.createPolicy(policy_definition);
+        }else{
+          return this.deletePolicy(policy_definition).then(() => this.createPolicy(policy_definition));
+        }
+      });
+
+    }
+
+    policyExists(policy_definition){
+
+      du.debug('Policy Exists');
+
+      let policy_arn = parserutilities.parse(
+        'arn:aws:iam::{{account}}:policy/{{policy_name}}',
+        {
+            account: global.SixCRM.configuration.site_config.aws.account,
+            policy_name: policy_definition.PolicyName
+        }
+      );
+
+      let parameters = {
+        PolicyArn:policy_arn
+      };
+
+      return this.iamutilities.getPolicy(parameters).then(policy => {
+        du.info(policy);
+        return !(_.isNull(policy));
+      });
+
+    }
+
+    createPolicy(policy_definition){
+
+      du.debug('Create Policy');
+
+      let stringified_policy_document = parserutilities.parse(
+        JSON.stringify(policy_definition.PolicyDocument),
+        {
+          random: random.createRandomString(10)
+        }
+      );
+
+      let parameters = {
+        PolicyName: policy_definition.PolicyName,
+        Description: policy_definition.Description,
+        PolicyDocument: stringified_policy_document
+      };
+
+      return this.iamutilities.createPolicy(parameters);
+
+    }
+
+    deletePolicy(policy_definition){
+
+      du.debug('Delete Policy');
+
+      let policy_arn = parserutilities.parse(
+        'arn:aws:iam::{{account}}:policy/{{policy_name}}',
+        {
+            account: global.SixCRM.configuration.site_config.aws.account,
+            policy_name: policy_definition.PolicyName
+        }
+      );
+
+      let parameters = {
+        PolicyArn:policy_arn
+      };
+
+      return this.iamutilities.deletePolicy(parameters);
+    }
+
+
     deployRoles(){
 
       du.debug('Deploy Roles');
@@ -108,9 +224,10 @@ class IAMDeployment extends AWSDeploymentUtilities {
 
         if(role == false){
           return this.createRole(role_definition);
-        }else{
-          return this.updateRole(role_definition);
         }
+
+        return this.updateRole(role_definition);
+
       });
 
     }
@@ -197,6 +314,12 @@ class IAMDeployment extends AWSDeploymentUtilities {
 
         let policy_promises = arrayutilities.map(role_definition.ManagedPolicies, (policy_arn) => {
 
+          policy_arn = parserutilities.parse(policy_arn, {account: global.SixCRM.configuration.site_config.aws.account});
+
+          du.info({
+            RoleName: role_name,
+            PolicyArn: policy_arn
+          });
           return this.iamutilities.attachRolePolicy({
             RoleName: role_name,
             PolicyArn: policy_arn

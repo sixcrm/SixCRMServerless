@@ -1,0 +1,139 @@
+{
+  "PolicyName":"SixCRMLambdaExecutionPolicy",
+  "Description":"The SixCRM Lambda Execution Policy",
+  "PolicyDocument":{
+    "Version": "2012-10-17", 
+    "Statement": [
+        {
+            "Sid": "stmnt{{random}}1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}2",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}3",
+            "Effect": "Allow",
+            "Action": [
+                "xray:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}4",
+            "Effect": "Allow",
+            "Action": [
+                "sqs:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}5",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}6",
+            "Effect": "Allow",
+            "Action": [
+                "ses:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}7",
+            "Effect": "Allow",
+            "Action": [
+                "cloudsearch:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}8",
+            "Effect": "Allow",
+            "Action": [
+                "sns:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}9",
+            "Effect": "Allow",
+            "Action": [
+                "cloudwatch:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}10",
+            "Effect": "Allow",
+            "Action": [
+                "logs:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}11",
+            "Effect": "Allow",
+            "Action": [
+                "events:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}12",
+            "Effect": "Allow",
+            "Action": [
+                "redshift:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}13",
+            "Effect": "Allow",
+            "Action": [
+                "firehose:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+  }
+}

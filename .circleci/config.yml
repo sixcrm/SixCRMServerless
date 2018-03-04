@@ -238,6 +238,9 @@ jobs:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
+          name: IAM Deploy Policies
+          command: node ./deployment/iam/deploy_policies.js
+      - run:
           name: IAM Deploy Roles
           command: node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
   deploy_dynamodb:
