@@ -3,6 +3,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const random = global.SixCRM.routes.include('lib','random.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -170,9 +171,46 @@ class IAMDeployment extends AWSDeploymentUtilities {
         PolicyArn:policy_arn
       };
 
-      return this.iamutilities.deletePolicy(parameters);
+      return this.removeAssociatedRoles(parameters)
+      .then(() => this.iamutilities.deletePolicy(parameters));
+
     }
 
+    removeAssociatedRoles(parameters){
+
+      du.debug('Remove Associated Roles');
+
+      let parameter_clone = objectutilities.clone(parameters);
+
+      parameter_clone.EntityFilter = 'Role';
+
+      return this.iamutilities.listEntitiesForPolicy(parameters).then(entities => {
+
+        if(_.has(entities, 'PolicyRoles') && arrayutilities.nonEmpty(entities.PolicyRoles)){
+
+          let role_removal_promises = arrayutilities.map(entities.PolicyRoles, role => {
+
+            let detach_parameters = {
+              PolicyArn: parameters.PolicyArn,
+              RoleName: role.RoleName
+            };
+
+            return this.iamutilities.detachRolePolicy(detach_parameters);
+
+          });
+
+          return Promise.all(role_removal_promises).then(() => {
+
+            return true;
+
+          });
+
+        }
+
+        return true;
+      });
+
+    }
 
     deployRoles(){
 
@@ -316,10 +354,6 @@ class IAMDeployment extends AWSDeploymentUtilities {
 
           policy_arn = parserutilities.parse(policy_arn, {account: global.SixCRM.configuration.site_config.aws.account});
 
-          du.info({
-            RoleName: role_name,
-            PolicyArn: policy_arn
-          });
           return this.iamutilities.attachRolePolicy({
             RoleName: role_name,
             PolicyArn: policy_arn
