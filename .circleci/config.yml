@@ -521,6 +521,7 @@ workflows:
             - lint
             - unit_tests
             - backup_datastore
+            - deploy_iam
       - deploy_sns:
           requires:
             - deploy_serverless

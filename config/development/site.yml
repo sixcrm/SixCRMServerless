@@ -27,8 +27,6 @@ jwt:
     secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
     expiration: 3600
 
-dynamodb:
-
 sqs:
   deadletter_postfix: '_deadletter'
   max_receive_count: 5
@@ -36,8 +34,6 @@ sqs:
 cloudsearch:
   domainname: 'sixcrm'
   domainendpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
-
-lambda:
 
 redshift:
   default_cluster_identifier: 'sixcrm'
@@ -67,9 +63,6 @@ elasticache:
   endpoint: '34.204.230.178'
   port: 6379
   default_expiration: 300
-
-logging:
-  loglevel: 0
 
 slack:
   channels:

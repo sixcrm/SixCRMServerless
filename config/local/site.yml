@@ -4,7 +4,7 @@ aws:
 
 s3:
   account_resources_bucket: 'account-resources'
-  
+
 sts:
   deployment_role_name: 'SixCRMDeployment'
 
@@ -79,9 +79,6 @@ elasticache:
   endpoint: 'localhost'
   port: 6379
   default_expiration: 300
-
-logging:
-  loglevel: 2
 
 slack:
   channels:

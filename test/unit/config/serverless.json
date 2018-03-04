@@ -13,7 +13,7 @@
   },
   "properties": {
     "provider": {
-      "required": ["name", "runtime", "stage", "region", "profile", "environment"]
+      "required": ["name", "runtime", "stage", "region", "environment", "account"]
     },
     "functions": {
       "patternProperties": {
@@ -21,5 +21,5 @@
       }
     }
   },
-  "required": ["service", "package", "provider", "plugins", "functions", "resources"]
+  "required": ["service", "package", "provider", "plugins", "functions"]
 }

@@ -18,13 +18,14 @@ provider:
   timeout: 90
   stage: ${opt:stage, 'development'}
   region: ${file(./config/${opt:stage}/site.yml):aws.region}
-  profile: six
+  account: ${file(./config/${opt:stage}/site.yml):aws.account}
+  role: arn:aws:iam::${self:provider.account}:role/sixcrm_lambda_role
   tracing: true
   environment:
     stage: ${opt:stage, self:provider.stage}
     #Technical Debt:  Are these necessary here?
     aws_region: ${opt:region, self:provider.region}
-    aws_account: ${file(./config/${opt:stage}/site.yml):aws.account}
+    aws_account: ${self:provider.account}
 
 plugins:
   - serverless-dynamodb-local
@@ -72,7 +73,6 @@ functions:
     environment:
       usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
       cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
-      logging: ${file(./config/${opt:stage}/site.yml):logging.loglevel}
 
 
 ########################
@@ -316,63 +316,3 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
-
-
-########################
-# Resource definitions for required system resources
-########################
-#Technical Debt:  Move this to the deployment directory.  This is the role that the lambdas execute as.
-
-resources:
-  Resources:
-    DynamoDBIamPolicy:
-      Type: AWS::IAM::Policy
-      Properties:
-        PolicyName: lambda-dynamodb
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            - Effect: "Allow"
-              Action:
-                - "xray:PutTraceSegments"
-                - "xray:PutTelemetryRecords"
-              Resource:
-                - "*"
-            - Effect: Allow
-              Action:
-                - dynamodb:*
-              Resource: arn:aws:dynamodb:*:*:table/*
-            - Effect: Allow
-              Action:
-              - sqs:*
-              Resource: arn:aws:sqs:*:*:*
-            - Effect: Allow
-              Action:
-              - lambda:*
-              Resource: arn:aws:lambda:us-east-1:*:*:*
-            - Effect: Allow
-              Action:
-              - ses:*
-              Resource: arn:aws:ses:us-east-1:*:identity/*
-            - Effect: Allow
-              Action:
-              - cloudsearch:*
-              Resource: 	arn:aws:cloudsearch:us-east-1:*:*
-            - Effect: Allow
-              Action:
-              - s3:*
-              Resource: "*"
-            - Effect: Allow
-              Action:
-              - firehose:*
-              Resource: "*"
-            - Effect: Allow
-              Action:
-              - sns:*
-              Resource: "*"
-            - Effect: Allow
-              Action:
-              - redshift:*
-              Resource: "*"
-          Roles:
-            - Ref: IamRoleLambdaExecution

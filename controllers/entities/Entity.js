@@ -15,10 +15,8 @@ const entityUtilitiesController = global.SixCRM.routes.include('controllers','en
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
 //Technical Debt:  Much of this stuff can be abstracted to a Query Builder class...
 //Technical Debt:  Methods that use "primary key" as argumentation should derive that value from patent class
-//Technical Debt:  Need accountrole table?
 //Technical Debt:  Need notification settings to be bound to the accounts that they refer to?
 //Technical Debt:  Need accesskey to be specific to the account?
-//Technical Debt:  User signing strings should be bound to a specific account?
 
 module.exports = class entityController extends entityUtilitiesController {
 
@@ -51,73 +49,93 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     getUnsharedOrShared({id}) {
+
       du.debug('Get Unshared Or Shared');
 
       return this.get({id: id})
-        .then(entity => {
-          if (!entity) {
-            return this.getShared({id: id});
-          }
+      .then(entity => {
+        //Nick:  Let's make sure we do explicit checks.
+        if (_.isNull(entity)) {
+          return this.getShared({id: id});
+        }
 
-          return entity;
-        })
+        return entity;
+
+      });
+
     }
 
     getShared({id}) {
+
+      //Nick:  Please put this in most functions so that the debug methods have robust output
+      du.debug('Get Shared');
+
+      let query_parameters = {
+          key_condition_expression: 'entity = :primary_keyv',
+          expression_attribute_values: {':primary_keyv': this.getID(id)}
+      };
+
+      return this.dynamoutilities.queryRecords('entityacls', query_parameters, null)
+      .then(data => this.getItems(data))
+      .then(items => this.assureSingular(items))
+      .then(acl => {
+        if(_.isNull(acl) || !EntityPermissionsHelper.isShared('read', acl)){
+          eu.throwError('forbidden');
+        }
+        //Nick: Isn't this already defined?
         let query_parameters = {
-            key_condition_expression: 'entity = :primary_keyv',
-            expression_attribute_values: {':primary_keyv': this.getID(id)}
+          key_condition_expression: this.primary_key+' = :primary_keyv',
+          expression_attribute_values: {':primary_keyv': this.getID(id)}
         };
 
-        return this.dynamoutilities.queryRecords('entityacls', query_parameters, null)
-            .then(data => this.getItems(data))
-            .then(items => this.assureSingular(items))
-            .then(acl => {
-                if (_.isNull(acl) || !EntityPermissionsHelper.isShared('read', acl)) {
-                    eu.throwError('forbidden');
-                }
+        query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
+        return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null);
 
-                let query_parameters = {
-                  key_condition_expression: this.primary_key+' = :primary_keyv',
-                  expression_attribute_values: {':primary_keyv': this.getID(id)}
-                };
+      })
+      .then(data => this.getItems(data))
+      .then(items => this.assureSingular(items));
 
-                query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
-                return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null);
-            })
-            .then(data => this.getItems(data))
-            .then(items => this.assureSingular(items));
     }
 
     listShared({pagination}) {
-        let query_parameters = {
-             key_condition_expression: '#type = :type',
-             expression_attribute_values: {':type': this.descriptive_name},
-             expression_attribute_names: { '#type': 'type' }
-        };
 
-        query_parameters = this.appendPagination({query_parameters, pagination});
-        return this.dynamoutilities.queryRecords('entityacls', query_parameters, 'type-index')
-            .then(data => {
-                const acls = this.getItems(data);
-                const shared = _(acls)
-                    .filter(acl => EntityPermissionsHelper.isShared('read', acl))
-                    .map(acl => acl.entity);
+      du.debug('List Shared');
 
-                let query_parameters = this.createINQueryParameters({field: this.primary_key, list_array: shared});
+      let query_parameters = {
+         key_condition_expression: '#type = :type',
+         expression_attribute_values: {':type': this.descriptive_name},
+         expression_attribute_names: { '#type': 'type' }
+      };
 
-                query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
-                return Promise.all([
-                    this.executeAssociatedEntityFunction('EntityACLController', 'buildPaginationObject', data),
-                    this.dynamoutilities.scanRecords(this.table_name, query_parameters)
-                ]);
-            })
-            .then(([pagination, data]) => {
-                const response = this.buildResponse(data);
+      query_parameters = this.appendPagination({query_parameters, pagination});
 
-                response.pagination = pagination;
-                return response;
-            });
+      return this.dynamoutilities.queryRecords('entityacls', query_parameters, 'type-index')
+      .then(data => {
+          const acls = this.getItems(data);
+
+          //Nick:  Please use the arrayutilities.filter and arrayutilities.map methods
+          const shared = _(acls)
+              .filter(acl => EntityPermissionsHelper.isShared('read', acl))
+              .map(acl => acl.entity);
+
+          //Hasn't this already been defined?
+          let query_parameters = this.createINQueryParameters({field: this.primary_key, list_array: shared});
+
+          query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
+
+          return Promise.all([
+              this.executeAssociatedEntityFunction('EntityACLController', 'buildPaginationObject', data),
+              this.dynamoutilities.scanRecords(this.table_name, query_parameters)
+          ]);
+
+      })
+      .then(([pagination, data]) => {
+          const response = this.buildResponse(data);
+
+          response.pagination = pagination;
+          return response;
+      });
+
     }
 
     //NOTE:  We need to make a designation when it's appropriate to list by account and when it's appropriate to list by user.
@@ -145,6 +163,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Nick:  Please eliminate this function
     //Technical Debt:  Deprecate!
 		//NOTE: Expensive (and incomplete)
 		/* eslint-disable */
@@ -177,6 +196,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Nick:  Please eliminate this function
     //Technical Debt:  Deprecate!
     //NOTE: Expensive
     listBy({list_array, field, fatal}){
@@ -239,7 +259,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    //NOTE:  Cheap!  Complete!
     listByUser({query_parameters, user, pagination, reverse_order, fatal, search, append_account_filter}){
 
       du.debug('List By User');
@@ -304,6 +323,8 @@ module.exports = class entityController extends entityUtilitiesController {
       .catch((error) => this.handleErrors(error, fatal));
 
     }
+
+    //Nick:  Let's get rid of these eslint-disable statements
 		/* eslint-disable */
     getListByAccount({ids, query_parameters, account, pagination, reverse_order, fatal, search}){
 		/* eslint-enable */
@@ -323,6 +344,7 @@ module.exports = class entityController extends entityUtilitiesController {
       return this.listByAccount(argumentation);
 
     }
+
 		/* eslint-disable */
     getListByUser({ids, query_parameters, account, pagination, reverse_order, fatal, search}){
 		/* eslint-enable */
@@ -435,7 +457,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    //NOTE: Returns an entity
     get({id, fatal}){
 
       du.debug('Get');
@@ -518,6 +539,15 @@ module.exports = class entityController extends entityUtilitiesController {
 
         if(existing_entity === null){
           eu.throwError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist.');
+        }
+
+        return existing_entity;
+
+      })
+      .then((existing_entity) => {
+
+        if(entity.updated_at !== existing_entity.updated_at){
+          eu.throwError('bad_request', 'Mismatched updated_at timestamps - can not update.');
         }
 
         return existing_entity;

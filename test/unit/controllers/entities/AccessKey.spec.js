@@ -27,18 +27,19 @@ describe('controllers/AccessKey.js', () => {
 
         it('successfully updates access key', () => {
 
+          let access_key = getValidAccessKey();
+
             let params = {
                 entity: {
-                    id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa' //valid id format
+                  id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', //valid id format
+                  updated_at: access_key.updated_at
                 }
             };
-
-            let access_key = getValidAccessKey();
 
             PermissionTestGenerators.givenUserWithAllowed('*', 'accesskey');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('accesskeys');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(params.entity.id);
                     return Promise.resolve({
@@ -46,7 +47,7 @@ describe('controllers/AccessKey.js', () => {
                         Items: [access_key]
                     });
                 },
-                saveRecord: (tableName, entity, callback) => {
+                saveRecord: (tableName, entity) => {
                     expect(tableName).to.equal('accesskeys');
                     expect(entity.access_key).to.equal(access_key.access_key);
                     expect(entity.secret_key).to.equal(access_key.secret_key);
@@ -54,15 +55,12 @@ describe('controllers/AccessKey.js', () => {
                 }
             });
 
-            let mock_preindexing_helper = class {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), class {
                 constructor(){}
-
-                addToSearchIndex(entity){
+                addToSearchIndex(){
                     return Promise.resolve(true);
                 }
-            };
-
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+            });
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
                 createActivity: () => {

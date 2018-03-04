@@ -28,8 +28,6 @@ jwt:
     secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
     expiration: 3600
 
-dynamodb:
-
 sqs:
   deadletter_postfix: '_deadletter'
   max_receive_count: 5
@@ -37,8 +35,6 @@ sqs:
 cloudsearch:
   domainname: 'sixcrm'
   domainendpoint: 'doc-sixcrm-ep6nfe6jetlzhhawthdojiwqtq.us-east-1.cloudsearch.amazonaws.com'
-
-lambda:
 
 #Technical Debt: This all needs to be configured elsewhere?
 #Technical Debt:  Username and Password combinations need to be encrypted...
@@ -72,9 +68,6 @@ elasticache:
   endpoint: '52.44.119.23'
   port: 6379
   default_expiration: 300
-
-logging:
-  loglevel: 0
 
 slack:
   channels:

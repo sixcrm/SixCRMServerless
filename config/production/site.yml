@@ -4,7 +4,7 @@ aws:
 
 s3:
   account_resources_bucket: 'account-resources'
-  
+
 sts:
   deployment_role_name: 'SixCRMDeployment'
 
@@ -27,9 +27,7 @@ jwt:
   transaction: #This is the key for the transactional endpoint requests (AKA non-Six users...)
     secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
     expiration: 3600
-
-dynamodb:
-
+    
 sqs:
   deadletter_postfix: '_deadletter'
   max_receive_count: 5
@@ -37,8 +35,6 @@ sqs:
 cloudsearch:
   domainname: 'sixcrm'
   domainendpoint: 'doc-sixcrm-rl5yyjlfnghqtgvz5re6ig5xnq.us-east-1.cloudsearch.amazonaws.com'
-
-lambda:
 
 #Technical Debt:  Username and Password combinations need to be encrypted...
 redshift:
@@ -72,9 +68,6 @@ elasticache:
   endpoint: '34.231.222.227'
   port: 6379
   default_expiration: 300
-
-logging:
-  loglevel: 0
 
 slack:
   channels:
