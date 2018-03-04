@@ -4,13 +4,8 @@
 1.  Rewrite the ReadMe
 2.  Refactor ACL
   - User Groups
-  - User Roles
   - More Granular Permissions
-  - Immutable Objects
 3.  Bulk Operations
-4.  Dynamo Search
-5.  Eliminate all Analytics from transaction endpoints
-6.  Transaction Endpoints to accept Products
 7.  State Machine to accept products
 8.  Blue/Green Deployment
 9.  Feature Flags / Feature Flags API
@@ -29,6 +24,9 @@
 22.  Enterprise Auth0 integration (separate keys)
 23.  Automated Bill Creation
 
+#Easy Tech Debt:
+
+Remove from codebase: 'js-yaml', 'validator'
 
 
 ## Local Development

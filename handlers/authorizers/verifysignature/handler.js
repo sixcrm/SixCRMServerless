@@ -1,8 +1,8 @@
 'use strict';
 
-module.exports = (event, context, callback) => {
+const _ = require("underscore");
 
-  const _ = require("underscore");
+module.exports.verifysignature = (event, context, callback) => {
 
   require('../../../SixCRM.js');
 
