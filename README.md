@@ -161,7 +161,7 @@ Six comes with a robust testing package.
 
 ### Unit tests
 
-To run unit tests execute `npm run test-unit` in the root of the project. Tests are also run automatically before each
+To run unit tests execute `stage= X npm run test-unit` in the root of the project. Tests are also run automatically before each
 commit. You can access the code coverage report at `coverage/lcov-report/index.html`.
 
 ### State machine tests
