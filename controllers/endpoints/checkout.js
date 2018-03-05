@@ -92,6 +92,7 @@ class checkoutController extends transactionEndpointController{
 
   confirmOrder(){
 
+
     du.debug('Confirm Order');
 
     let event = this.parameters.get('event');

@@ -382,7 +382,7 @@ class sessionController extends entityController {
 
       session.completed = true;
 
-      return this.update({entity: session});
+      return this.updateProperties({id: session, properties: {completed: true}});
 
     }
 

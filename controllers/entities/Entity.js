@@ -597,6 +597,7 @@ module.exports = class entityController extends entityUtilitiesController {
       })
       .then((existing_entity) => {
 
+        du.info(existing_entity, entity);
         if(entity.updated_at !== existing_entity.updated_at){
           eu.throwError('bad_request', 'Mismatched updated_at timestamps - can not update.');
         }
