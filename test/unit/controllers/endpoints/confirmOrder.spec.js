@@ -345,6 +345,12 @@ describe('confirmOrder', function () {
 
     it('successfully executes post processing', () => {
 
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+            publish: () => {
+                return Promise.resolve();
+            }
+        });
+
       let session = getValidSession();
 
       let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
@@ -414,6 +420,12 @@ describe('confirmOrder', function () {
         constructor(){}
         getTransactionProducts(){
           return products;
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
         }
       });
 
@@ -492,6 +504,12 @@ describe('confirmOrder', function () {
         constructor(){}
         getTransactionProducts(){
           return products;
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
         }
       });
 
