@@ -8,6 +8,7 @@ let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/pe
 const uuidV4 = require('uuid/v4');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 describe('controllers/Entity.js', () => {
@@ -449,6 +450,52 @@ describe('controllers/Entity.js', () => {
                 expect(error.message).to.equal('[500] Reading failed.');
             });
         });
+    });
+
+    //Technical Debt:  Need better testing on this.
+    describe('updateProperties', () => {
+
+      beforeEach(() => {
+        delete global.user;
+      });
+
+      it('successfully updates a entity property', () => {
+
+        let anEntity = MockEntities.getValidProduct('e3db1095-c6dd-4ca7-b9b0-fe38ddad3f8a');
+
+        PermissionTestGenerators.givenUserWithAllowed('update', 'product');
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+            queryRecords: () => {
+                return Promise.resolve({Items: [anEntity]});
+            },
+            saveRecord: (tableName, entity) => {
+                return Promise.resolve(entity);
+            }
+        });
+
+        const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+        let entityController = new EC('product');
+
+        let update_properties = {
+          name: 'A new name',
+          sku: 'A-brand-new-sku'
+        };
+
+        return entityController.updateProperties({id: anEntity.id, properties: update_properties}).then((result) => {
+
+          expect(result.id).to.equal(anEntity.id);
+          expect(result.created_at).to.equal(anEntity.created_at);
+          expect(result.account).to.equal(anEntity.account);
+          //expect(result.updated_at).to.not.equal(anEntity.updated_at);
+          objectutilities.map(update_properties, key => {
+            expect(result[key]).to.equal(update_properties[key]);
+          });
+
+        });
+
+      });
+
     });
 
     describe('update', () => {
