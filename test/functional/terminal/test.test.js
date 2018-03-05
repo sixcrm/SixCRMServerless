@@ -12,7 +12,7 @@ const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-
 // it will be connected to DYNAMO
 // prepare input for fullfil
 
-describe('providers/terminal/Test', () => {
+xdescribe('providers/terminal/Test', () => {
   let terminalController = null;
 
   before(() => {

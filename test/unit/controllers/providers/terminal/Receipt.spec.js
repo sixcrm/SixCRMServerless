@@ -56,7 +56,7 @@ function getValidAugmentedTransactionProducts(){
 
 }
 
-xdescribe('/providers/terminal/Receipt.js', () => {
+describe('/providers/terminal/Receipt.js', () => {
 
   before(() => {
     mockery.enable({
@@ -84,7 +84,7 @@ xdescribe('/providers/terminal/Receipt.js', () => {
 
   });
 
-  describe('issueReceipt', () => {
+  xdescribe('issueReceipt', () => {
 
     it('successfully issues a new shipping receipt', () => {
 
