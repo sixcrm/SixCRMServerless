@@ -135,7 +135,9 @@ module.exports = class ConfigurationUtilities {
         let stages = global.SixCRM.routes.include('config', 'stages.yml');
 
         let stage_names = objectutilities.getKeys(stages);
+
         stage_names.push('local'); // Technical Debt: avoid
+        stage_names.push('local-docker'); // Technical Debt: avoid
         stage_names.push('circle');
 
         if(!_.contains(stage_names, stage)){
