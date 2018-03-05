@@ -474,6 +474,12 @@ describe('controllers/Entity.js', () => {
             }
         });
 
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+          sendMessage:() => {
+            return Promise.resolve(true);
+          }
+        });
+
         const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
         let entityController = new EC('product');
 
