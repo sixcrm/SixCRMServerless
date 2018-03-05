@@ -524,6 +524,57 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    updateProperties({id, properties}){
+
+      du.debug('Update');
+
+      return this.can({action: 'update', object: this.descriptive_name, id: this.getID(id), fatal: true})
+      .then(() => this.exists({entity: id, return_entity: true}))
+      .then((existing_entity) => {
+
+        if(existing_entity === null){
+          eu.throwError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist.');
+        }
+
+        return existing_entity;
+
+      }).then((existing_entity) => {
+
+        objectutilities.map(properties, key => {
+          if(!_.contains(['account', 'user', 'created_at', this.primary_key], key)){
+            existing_entity[key] = properties[key];
+          }else{
+            eu.throwError('bad_request', 'You can not use updateProperties to update a entity\'s '+key+' property');
+          }
+        });
+
+        existing_entity = this.setUpdatedAt(existing_entity);
+
+        return existing_entity;
+
+      }).then((existing_entity) => {
+
+        this.validate(existing_entity);
+        return existing_entity;
+
+      }).then((existing_entity) => {
+
+        return this.dynamoutilities.saveRecord(this.table_name, existing_entity).then(() => {
+          return existing_entity;
+        });
+
+      }).then((existing_entity) => {
+
+        this.createRedshiftActivityRecord(null, 'updated', {entity: existing_entity, type: this.descriptive_name}, null);
+
+        this.addToSearchIndex(existing_entity, this.descriptive_name);
+
+        return existing_entity;
+
+      });
+
+    }
+
 		//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
     update({entity}){
 
@@ -669,15 +720,22 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Exists');
 
-      if(!_.has(entity, this.primary_key)){
-        eu.throwError('server', 'Unable to create '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
+      let primary_key;
+
+      if(_.isObject(entity)){
+        if(!_.has(entity, this.primary_key)){
+          eu.throwError('server', 'Unable to create '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
+        }
+        primary_key = entity[this.primary_key];
+      }else{
+        primary_key = entity;
       }
 
       return_entity = _.isUndefined(return_entity)?false:return_entity;
 
       let query_parameters = {
-          key_condition_expression: this.primary_key+' = :primary_keyv',
-          expression_attribute_values: {':primary_keyv': entity[this.primary_key]}
+        key_condition_expression: this.primary_key+' = :primary_keyv',
+        expression_attribute_values: {':primary_keyv': primary_key}
       };
 
       query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
