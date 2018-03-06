@@ -1142,13 +1142,18 @@ module.exports.graphObj = new GraphQLObjectType({
         entityacllist: {
             type: entityACLListType.graphObj,
             args: {
+                type: {
+                    type: new GraphQLNonNull(GraphQLString),
+                    description: 'type of entities'
+                },
                 pagination: {type: paginationInputType.graphObj},
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, entityacl){
                 const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+                const {type, pagination, search} = entityacl;
 
-                return entityACLController.listByAccount({pagination: entityacl.pagination, fatal:list_fatal, search: entityacl.search});
+                return entityACLController.listByType({type, pagination, search, fatal:list_fatal});
             }
         },
         rebilllist: {
