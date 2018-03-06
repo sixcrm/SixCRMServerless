@@ -265,12 +265,14 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
     let parameters = {
       orderNumber: order_identifier,
       orderKey: order_identifier,
-      orderDate: timestamp.getISO8601(),
+      orderDate: timestamp.convertToFormat(timestamp.getISO8601(), 'YYYY-MM-DDTHH:MM:ss.SSSSS'),
       orderStatus: 'awaiting_shipment',
       billTo: this.createBillTo(customer),
       shipTo: this.createShipTo(customer),
       items: this.createItems(products)
     }
+
+    du.highlight(parameters);
 
     return parameters;
 
@@ -310,6 +312,13 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
       false
     );
 
+    let addnulls = ['company', 'street2','street3', 'phone'];
+    arrayutilities.map(addnulls, (addnull_field) => {
+      if(!_.has(parameters, addnull_field)){
+        parameters[addnull_field] = null;
+      }
+    });
+
     return parameters;
 
   }
@@ -342,6 +351,13 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
       false
     );
 
+    let addnulls = ['company', 'street2','street3', 'phone'];
+    arrayutilities.map(addnulls, (addnull_field) => {
+      if(!_.has(parameters, addnull_field)){
+        parameters[addnull_field] = null;
+      }
+    });
+
     return parameters;
 
   }
@@ -358,7 +374,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
         "sku": product.sku,
         "name": product.name,
         "quantity": quantity,
-        "fulfillmentSku": product.sku,
+        "fulfillmentSku": null,
       }
     });
 
@@ -369,6 +385,8 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
     du.debug('Issue Create Order Request');
 
     let parameters = this.parameters.get('parametersobject');
+
+    du.info(parameters);
 
     let url = parameters.endpoint+parameters.path;
 
@@ -384,6 +402,8 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
     };
 
     return httputilities.postJSON(options).then(result => {
+
+      du.info(result);  process.exit();
 
       this.parameters.set('vendorresponse', result);
 

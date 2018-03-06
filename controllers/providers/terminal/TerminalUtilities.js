@@ -206,9 +206,10 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
     let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
     let shipable_product_ids = this.parameters.get('shipableproductids');
 
-    du.warning(augmented_transaction_products, shipable_product_ids);
 
     let shipable_transaction_product_group = arrayutilities.filter(augmented_transaction_products, augmented_transaction_product => {
+
+      du.highlight(augmented_transaction_product);
 
       if(_.has(augmented_transaction_product, 'shipping_receipt')){
         return false;
@@ -233,6 +234,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
     du.debug('Group Shipable Transaction Product Group By Fulfillment Provider');
 
     let shipable_transaction_products = this.parameters.get('shipabletransactionproductgroup');
+
     let products = this.parameters.get('products');
 
     let grouped_shipable_transaction_products_object = arrayutilities.group(shipable_transaction_products, (shipable_transaction_product) => {
