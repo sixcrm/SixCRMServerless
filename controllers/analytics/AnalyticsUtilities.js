@@ -98,11 +98,9 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
                     du.highlight('Query:', query);
 
-                    let redshift_query = () => this.redshiftqueryutilities.query(query, []);
-
                     let transformation_function = this.getTransformationFunction(query_name);
 
-                    return this.cacheController.useCache(query, redshift_query)
+                    return this.cacheController.useCache(query, () => this.redshiftqueryutilities.queryWithArgs(query, []))
                     .then((results) => transformation_function(results, parameters))
                     .then((transformed_results) => { return resolve(transformed_results);});
 
