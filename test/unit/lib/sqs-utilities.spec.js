@@ -21,11 +21,16 @@ describe('lib/sqs-utilities', () => {
 
     describe('getQueueARN', () => {
 
-        it('successfully returns queue name', () => {
+        it('successfully returns queue arn', () => {
 
-            const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+          const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
-            expect(sqsutilities.getQueueARN({QueueName: 'sampleQueueName'})).to.equal('sampleQueueName');
+          let argumentation = {QueueName: 'sampleQueueName'};
+
+          let queue_arn = sqsutilities.getQueueARN(argumentation);
+
+          expect(queue_arn).to.match(/^arn:aws:sqs:us-[a-zA-Z]+-[0-9]:[0-9]+:sampleQueueName$/);
+
         });
 
         it('returns error when queue name does not exist', () => {
@@ -57,9 +62,6 @@ describe('lib/sqs-utilities', () => {
             global.SixCRM.configuration.handleStage('development');
             global.SixCRM.configuration.setConfigurationFiles();
 
-            const region = global.SixCRM.configuration.site_config.aws.region;
-            const account = global.SixCRM.configuration.site_config.aws.account;
-
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
             expect(sqsutilities.getQueueARN({QueueName: queue_name})).to.equal(
@@ -78,9 +80,6 @@ describe('lib/sqs-utilities', () => {
             global.SixCRM.configuration.handleStage('development');
             global.SixCRM.configuration.setConfigurationFiles();
 
-            const region = global.SixCRM.configuration.site_config.aws.region;
-            const account = global.SixCRM.configuration.site_config.aws.account;
-
             let input = 'example';
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
@@ -98,9 +97,6 @@ describe('lib/sqs-utilities', () => {
 
             global.SixCRM.configuration.handleStage('development');
             global.SixCRM.configuration.setConfigurationFiles();
-
-            const region = global.SixCRM.configuration.site_config.aws.region;
-            const account = global.SixCRM.configuration.site_config.aws.account;
 
             let input = {queue:'example'};
 
@@ -149,11 +145,16 @@ describe('lib/sqs-utilities', () => {
 
         it('returns queue parameters with appointed queue name', () => {
 
+          global.SixCRM.configuration.handleStage('development');
+          global.SixCRM.configuration.setConfigurationFiles();
+
             let queue_name = 'test';
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
-            expect(sqsutilities.getQueueParameters(queue_name)).to.deep.equal({
+            let queue_parameters = sqsutilities.getQueueParameters(queue_name);
+
+            expect(queue_parameters).to.deep.equal({
                 "account": account,
                 "queue_name": queue_name,
                 "region": region

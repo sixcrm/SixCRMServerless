@@ -30,8 +30,12 @@ provider:
 plugins:
   - serverless-dynamodb-local
   - serverless-plugin-tracing
-  #Technical Debt:  Is this plugin being used though?!
   - serverless-prune-plugin
+
+custom:
+  prune:
+    automatic: true
+    number: 3
 
 
 functions:

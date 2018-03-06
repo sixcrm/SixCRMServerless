@@ -153,20 +153,6 @@ jobs:
       - run:
           name: Backup Redshift
           command:  node ./deployment/redshift/backup_cluster.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
-  prune_old_lambdas:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Prune Old Lambdas
-          command: node ./node_modules/serverless/bin/serverless prune -n 3 --stage $CIRCLE_BRANCH
   deploy_serverless:
     <<: *job-defaults
     steps:
@@ -580,9 +566,6 @@ workflows:
             - deploy_rds
             - deploy_kinesis
             - deploy_sns
-      - prune_old_lambdas:
-          requires:
-             - post_deployment
       - seed:
           requires:
             - post_deployment
@@ -607,7 +590,6 @@ workflows:
       - hold:
           type: approval
           requires:
-             - prune_old_lambdas
              - transactional_integration_tests
              - entity_integration_tests
              - deleteblock_integration_tests
@@ -619,7 +601,6 @@ workflows:
       - merge:
           requires:
             - hold
-            - prune_old_lambdas
             - transactional_integration_tests
             - entity_integration_tests
             - deleteblock_integration_tests
