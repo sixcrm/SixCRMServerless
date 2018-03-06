@@ -1,26 +1,27 @@
 # SixCRM
 
+# In progress:
+21.  Encrypted personal data
+15.  Developer Site
+13.  All reports complete
+
 #Todo:
 1.  Rewrite the ReadMe
 2.  Refactor ACL
   - User Groups
   - More Granular Permissions
 3.  Bulk Operations
-7.  State Machine to accept products
 8.  Blue/Green Deployment
 9.  Feature Flags / Feature Flags API
 10. Integrated Workflows on FE
 11.  iOS launch and upgrades
 12.  E2E tests on all features across sites
-13.  All reports complete
 14.  Integrate POC Predictive analytics
-15.  Developer Site
 16.  More Templating for checkout, perfomancemarketing example etc
 17.  Function pruning in deploys
 18.  Security enhancements
 19.  Deployment Encryption validation
 20.  Penetration Testing
-21.  Encrypted personal data
 22.  Enterprise Auth0 integration (separate keys)
 23.  Automated Bill Creation
 

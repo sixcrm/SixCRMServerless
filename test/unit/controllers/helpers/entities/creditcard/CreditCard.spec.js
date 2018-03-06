@@ -47,7 +47,7 @@ describe('controllers/helpers/entities/creditcard/CreditCard.js', () => {
 
   describe('lastFour', () => {
 
-    it.only('successfully returns a asterisk version of first characters', () => {
+    it('successfully returns a asterisk version of first characters', () => {
 
       let numbers = [
         '4111111111119876',

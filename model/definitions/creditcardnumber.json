@@ -4,6 +4,6 @@
   "title": "CreditCardNumber",
   "description": "Credit Card Number",
   "type":"string",
-  "pattern":"^[0-9\s]{12,20}$",
+  "pattern":"^[0-9\\s]{12,20}$",
   "minLength":12
 }
