@@ -441,6 +441,12 @@ jobs:
             elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
               ./deployment/utilities/merge_branches.sh staging production
             fi
+  prune_old_lambdas:
+    <<: *job-defaults
+    steps:
+      - run:
+          name: Prune Old Lambdas
+          command: node ./node_modules/serverless/bin/serverless prune -n 3 --stage $CIRCLE_BRANCH
 
 workflows:
   version: 2
@@ -566,6 +572,9 @@ workflows:
             - deploy_rds
             - deploy_kinesis
             - deploy_sns
+      - prune_old_lambdas:
+          requires:
+             - post_deployment
       - seed:
           requires:
             - post_deployment
@@ -590,6 +599,7 @@ workflows:
       - hold:
           type: approval
           requires:
+             - prune_old_lambdas
              - transactional_integration_tests
              - entity_integration_tests
              - deleteblock_integration_tests
@@ -601,6 +611,7 @@ workflows:
       - merge:
           requires:
             - hold
+            - prune_old_lambdas
             - transactional_integration_tests
             - entity_integration_tests
             - deleteblock_integration_tests
