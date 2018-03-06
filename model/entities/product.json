@@ -24,6 +24,7 @@
 		"merchantprovidergroup":{"$ref": "../definitions/uuidv4.json"},
 		"fulfillment_provider":{"$ref": "../definitions/uuidv4.json"},
 		"default_price":{"$ref": "../definitions/currency.json"},
+		"dynamic_pricing":{"$ref": "./components/productdynamicpricing.json"},
 		"attributes":{"$ref": "./components/productattributes.json"},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"created_at":{"$ref": "../definitions/iso8601.json"},

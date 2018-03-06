@@ -7,6 +7,7 @@ const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLString = require('graphql').GraphQLString;
 
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
+let dynamicPricingType = require('./components/dynamicPricingType');
 let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
 let productAttributesType = require('./components/attributesType');
 
@@ -43,6 +44,10 @@ module.exports.graphObj = new GraphQLObjectType({
       default_price: {
           type: GraphQLFloat,
           description: 'A default price for product.',
+      },
+      dynamic_pricing: {
+          type: dynamicPricingType.graphObj,
+          description: 'The dynamic pricing range for product.',
       },
       fulfillment_provider: {
           type: fulfillmentProviderType.graphObj,
