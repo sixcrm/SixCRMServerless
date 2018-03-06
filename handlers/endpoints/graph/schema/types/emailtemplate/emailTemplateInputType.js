@@ -11,6 +11,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         subject:			 { type: new GraphQLNonNull(GraphQLString) },
         body:				   { type: GraphQLString },
         type:				   { type: new GraphQLNonNull(GraphQLString) },
-        smtp_provider: { type: new GraphQLNonNull(GraphQLString) }
+        smtp_provider: { type: new GraphQLNonNull(GraphQLString) },
+        updated_at:    { type: GraphQLString }
     })
 });

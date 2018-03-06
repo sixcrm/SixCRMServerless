@@ -19,6 +19,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         shipping_delay: 		{ type: GraphQLInt },
         fulfillment_provider: 	{ type: GraphQLString },
         default_price:       	{ type: GraphQLFloat },
-        attributes: {type: attributesInputType.graphObj}
+        attributes: {type: attributesInputType.graphObj},
+        updated_at: { type: GraphQLString }
     })
 });

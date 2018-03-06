@@ -10,6 +10,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     pending:				{ type: GraphQLString },
   	user:					{ type: new GraphQLNonNull(GraphQLString) },
     account:				{ type: new GraphQLNonNull(GraphQLString) },
-    role:					{ type: new GraphQLNonNull(GraphQLString) }
+    role:					{ type: new GraphQLNonNull(GraphQLString) },
+    updated_at: { type: GraphQLString }
     })
 });

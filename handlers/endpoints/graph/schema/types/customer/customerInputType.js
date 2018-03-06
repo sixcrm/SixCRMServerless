@@ -15,6 +15,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         email:				{ type: new GraphQLNonNull(GraphQLString) },
         phone:				{ type: new GraphQLNonNull(GraphQLString) },
         address:			{ type: new GraphQLNonNull(addressInputType.graphObj) },
-        creditcards:		{ type: new GraphQLList(GraphQLString) }
+        creditcards:		{ type: new GraphQLList(GraphQLString) },
+        updated_at:     { type: GraphQLString }
     })
 });

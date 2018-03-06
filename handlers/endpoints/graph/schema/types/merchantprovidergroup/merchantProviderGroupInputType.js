@@ -11,6 +11,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     fields: () => ({
         id:	{ type: GraphQLString },
         name:	{ type: GraphQLString },
-        merchantproviders:	{ type: new GraphQLList(merchantProviderConfigurationInputType.graphObj) }
+        merchantproviders:	{ type: new GraphQLList(merchantProviderConfigurationInputType.graphObj) },
+        updated_at: { type: GraphQLString }
     })
 });

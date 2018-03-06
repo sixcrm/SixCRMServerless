@@ -7,6 +7,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     name: 'NotificationSettingInput',
     fields: () => ({
         id:			{ type: new GraphQLNonNull(GraphQLString) },
-        settings:	{ type: new GraphQLNonNull(GraphQLString) }
+        settings:	{ type: new GraphQLNonNull(GraphQLString) },
+        updated_at: { type: GraphQLString }
     })
 });

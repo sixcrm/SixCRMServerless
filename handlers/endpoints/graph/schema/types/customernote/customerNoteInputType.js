@@ -10,6 +10,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         user:				{ type: new GraphQLNonNull(GraphQLString) },
         customer:			{ type: new GraphQLNonNull(GraphQLString) },
         account:			{ type: GraphQLString },
-        body:				{ type: new GraphQLNonNull(GraphQLString) }
+        body:				{ type: new GraphQLNonNull(GraphQLString) },
+        updated_at: { type: GraphQLString }
     })
 });

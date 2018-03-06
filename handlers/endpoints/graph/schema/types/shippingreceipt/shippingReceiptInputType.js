@@ -14,6 +14,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         type: shippingReceiptTrackingInputType.graphObj,
         description: "Shipping receipt tracking input type"
       },
-      status: { type: new GraphQLNonNull(GraphQLString) }
+      status: { type: new GraphQLNonNull(GraphQLString) },
+      updated_at: { type: GraphQLString }
     })
 });

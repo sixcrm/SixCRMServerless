@@ -15,6 +15,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         affiliate_allow:   { type: new GraphQLList(GraphQLString) },
         affiliate_deny:    { type: new GraphQLList(GraphQLString) },
         allow_prepaid:     { type: new GraphQLNonNull(GraphQLBoolean) },
-        show_prepaid:      { type: new GraphQLNonNull(GraphQLBoolean) }
+        show_prepaid:      { type: new GraphQLNonNull(GraphQLBoolean) },
+        updated_at:        { type: GraphQLString }
     })
 });

@@ -13,6 +13,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         expiration:			{ type: new GraphQLNonNull(GraphQLString) },
         ccv:				{ type: new GraphQLNonNull(GraphQLString) },
         name:				{ type: new GraphQLNonNull(GraphQLString) },
-        address:			{ type: new GraphQLNonNull(addressInputType.graphObj) }
+        address:			{ type: new GraphQLNonNull(addressInputType.graphObj) },
+        updated_at:   { type: GraphQLString }
     })
 });

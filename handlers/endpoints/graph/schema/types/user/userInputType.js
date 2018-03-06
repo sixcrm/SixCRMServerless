@@ -20,6 +20,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         active: 	{ type: new GraphQLNonNull(GraphQLBoolean) },
         termsandconditions: 	{ type: GraphQLString },
         address:	{ type: addressInputType.graphObj },
-        acl:		{ type: new GraphQLList(userACLInputType.graphObj) }
+        acl:		{ type: new GraphQLList(userACLInputType.graphObj) },
+        updated_at: { type: GraphQLString }
     })
 });
