@@ -450,6 +450,12 @@ describe('controllers/Session.js', () => {
                 }
             });
 
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
+
             let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
 
             return sessionController.closeSession(session).then((result) => {

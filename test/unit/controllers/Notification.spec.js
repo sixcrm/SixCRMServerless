@@ -30,17 +30,17 @@ describe('controllers/Notification.js', () => {
 
             //Technical Debt:  Fix...
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                get: (table, key) => {
+                get: () => {
                   return Promise.resolve({
                     id: "nikola.bosic@toptal.com/*",
                     created_at: "2017-04-06T18:40:41.405Z",
                     updated_at: "2017-04-06T18:41:12.521Z"
                   })
                 },
-                queryRecords: (table, parameters, index) => {
+                queryRecords: () => {
                     return Promise.resolve({ Count: 2})
                 },
-                saveRecord: (table, item) => {
+                saveRecord: () => {
                     return Promise.resolve({});
                 },
                 countRecords: () => {
@@ -52,15 +52,21 @@ describe('controllers/Notification.js', () => {
               constructor(){
 
               }
-              addToSearchIndex(entity){
+              addToSearchIndex(){
                 return Promise.resolve(true);
               }
-              removeFromSearchIndex(entity){
+              removeFromSearchIndex(){
                 return Promise.resolve(true);
               }
             }
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities.js'), {
                 putRecord: () => {

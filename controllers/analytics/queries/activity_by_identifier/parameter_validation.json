@@ -41,7 +41,7 @@
 		},
 		"SixEntityTypes":{
 			"type":"string",
-			"enum":["accesskey","account","affiliate","campaign","creditcard","customer","customernote","emailtemplate","fulfillmentprovider","merchantprovidergroup","merchantprovider","notification","notificationread","notificationsetting","product","productschedule","rebill","role","session","shippingreceipt","smtpprovider","tracker","transaction","user","useracl","userdevicetoken","usersetting","usersigningstring"]
+			"enum":["accesskey","account","affiliate","campaign","creditcard","customer","customernote","emailtemplate","fulfillmentprovider","merchantprovidergroup","merchantprovider","notification","notificationread","notificationsetting","product","productschedule","rebill","role","session","shippingreceipt","smtpprovider","tag","tracker","transaction","user","useracl","userdevicetoken","usersetting","usersigningstring"]
 		},
 		"SixIdentifierArray":{
 			"type":"array",

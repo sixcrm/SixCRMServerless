@@ -288,6 +288,15 @@ describe('checkout', function () {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+          publish: () => {
+              return Promise.resolve({});
+          },
+          getRegion: () => {
+              return 'localhost';
+          }
+      });
+
       let mock_tracker_helper_controller = class {
         constructor(){ }
         handleTracking(id, info){
@@ -365,6 +374,15 @@ describe('checkout', function () {
         getScheduleElementOnDayInSchedule({product_schedule}){
           return product_schedule[0];
         }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+          publish: () => {
+              return Promise.resolve({});
+          },
+          getRegion: () => {
+              return 'localhost';
+          }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
@@ -540,6 +558,15 @@ describe('checkout', function () {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+          publish: () => {
+              return Promise.resolve({});
+          },
+          getRegion: () => {
+              return 'localhost';
+          }
+      });
+
       let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
 
       checkoutController.parameters.set('event', event);
@@ -560,6 +587,15 @@ describe('checkout', function () {
       let event_body = getValidEventBody();
       let session = getValidSession();
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+          publish: () => {
+              return Promise.resolve({});
+          },
+          getRegion: () => {
+              return 'localhost';
+          }
+      });
+
       let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
 
       checkoutController.parameters.set('event', event_body);
@@ -579,6 +615,15 @@ describe('checkout', function () {
     it('successfully executes all post processing functions', () => {
 
       let confirmation = getValidConfirmation();
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+          publish: () => {
+              return Promise.resolve({});
+          },
+          getRegion: () => {
+              return 'localhost';
+          }
+      });
 
       let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
 
@@ -613,6 +658,24 @@ describe('checkout', function () {
       let processor_response = getValidProcessorResponse();
       let response_type = 'success';
       let product_schedules = getValidProductSchedules(null, true);
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities'), {
+            publish: () => {
+                return Promise.resolve({});
+            },
+            getRegion: () => {
+                return 'localhost';
+            }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+            publish: () => {
+                return Promise.resolve({});
+            },
+            getRegion: () => {
+                return 'localhost';
+            }
+        });
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
         getHydrated(){

@@ -345,6 +345,13 @@ describe('confirmOrder', function () {
 
     it('successfully executes post processing', () => {
 
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+            publish: () => {
+                return Promise.resolve();
+            },
+            getRegion: () => 'localhost'
+        });
+
       let session = getValidSession();
 
       let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
@@ -415,6 +422,13 @@ describe('confirmOrder', function () {
         getTransactionProducts(){
           return products;
         }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
+        },
+        getRegion: () => 'localhost'
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
@@ -493,6 +507,13 @@ describe('confirmOrder', function () {
         getTransactionProducts(){
           return products;
         }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
+        },
+        getRegion: () => 'localhost'
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');

@@ -383,6 +383,12 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
+
             let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
             return userController.createUserWithAlias(user).then((result) => {
@@ -418,6 +424,12 @@ describe('controllers/entities/User.js', () => {
                     expect(tableName).to.equal('users');
                     expect(entity).to.deep.equal(user);
                     return Promise.resolve(entity);
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
                 }
             });
 
@@ -469,6 +481,12 @@ describe('controllers/entities/User.js', () => {
                     expect(tableName).to.equal('users');
                     expect(entity).to.deep.equal(user);
                     return Promise.resolve(entity);
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
                 }
             });
 
@@ -604,6 +622,12 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
+
             let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 
             return userController.assureUser(user_id).then((result) => {
@@ -675,6 +699,12 @@ describe('controllers/entities/User.js', () => {
                         { name: 'ios', receive: false }
                     ]);
                     return Promise.reject(new Error('User settings creating failed.'));
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
                 }
             });
 
@@ -1007,6 +1037,12 @@ describe('controllers/entities/User.js', () => {
             let user_invite = {
                 email: 'an invalid email address'
             };
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: () => {
+                    return Promise.resolve({});
+                }
+            });
 
             let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 

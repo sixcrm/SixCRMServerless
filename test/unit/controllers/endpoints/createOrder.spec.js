@@ -343,6 +343,13 @@ describe('createOrder', function () {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
+        },
+        getRegion: () => 'localhost'
+      });
+
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
@@ -491,6 +498,13 @@ describe('createOrder', function () {
         update:({entity}) => {
           return Promise.resolve(entity);
         }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
+        },
+        getRegion: () => 'localhost'
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
@@ -969,6 +983,13 @@ describe('createOrder', function () {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
+        },
+        getRegion: () => 'localhost'
+      });
+
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 
       createOrderController.parameters.set('rebill', rebill);
@@ -1429,6 +1450,13 @@ describe('createOrder', function () {
         update:({entity}) => {
           return Promise.resolve(entity);
         }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
+        },
+        getRegion: () => 'localhost'
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');

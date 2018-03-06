@@ -1,0 +1,17 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/tag",
+	"title": "Tag",
+	"type": "object",
+	"description": "Entity tags",
+	"properties": {
+		"id":{"$ref": "../definitions/uuidv4.json"},
+		"entity":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+		"key":{"type": "string"},
+		"value":{"type": "string"},
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
+	},
+	"required":["entity", "account", "key", "value", "created_at", "updated_at"]
+}

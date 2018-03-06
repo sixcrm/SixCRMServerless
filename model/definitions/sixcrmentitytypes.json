@@ -25,6 +25,7 @@
     "session",
     "shippingreceipt",
     "smtpprovider",
+    "tag",
     "tracker",
     "transaction",
     "user",
