@@ -4,6 +4,7 @@
   "description": "Backend Processing Lambda Endpoints",
   "main": "index.js",
   "dependencies": {
+    "@adexchange/aeg-redshift": "0.0.81",
     "apn": "^2.1.4",
     "aws-xray-sdk": "^1.2.0",
     "base-64": "^0.1.0",
