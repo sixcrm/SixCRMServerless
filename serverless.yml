@@ -99,7 +99,7 @@ functions:
           enabled: true
 
   holdtopending:
-    handler: handlers/workers/forwardmessage/holdtopending/handler.hodltopending
+    handler: handlers/workers/forwardmessage/holdtopending/handler.holdtopending
     events:
       - schedule:
           rate: rate(1 minute)

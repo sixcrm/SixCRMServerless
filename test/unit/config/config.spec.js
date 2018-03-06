@@ -25,6 +25,20 @@ describe('config', () => {
             mvu.validateModel(serverless_file, global.SixCRM.routes.path('test', 'unit/config/serverless.json'))
         });
 
+        it('names of lambda handlers should be correct', () => {
+
+            let serverless_file = global.SixCRM.configuration.serverless_config;
+
+            // Name of the handler must match name of the function, for example:
+            //     billtohold:
+            //         handler: handlers/workers/forwardmessage/billtohold/handler.billtohold
+            // In the above example 'billtohold' must be spelled the same in both lines.
+            for (let lambda_name in serverless_file.functions) {
+                expect(lambda_name).to.equal(serverless_file.functions[lambda_name].handler.match(/\.[^/.]+$/)[0].replace('.',''));
+            }
+
+        });
+
     });
 
     describe('site config', () => {
