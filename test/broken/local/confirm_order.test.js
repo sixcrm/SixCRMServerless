@@ -6,7 +6,7 @@ var fs = require('fs');
 var querystring = require('querystring');
 
 try {
-  var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+environment+'.yml', 'utf8'));
+  var config = global.SixCRM.configuration.site_config;
 } catch (e) {
   console.log(e);
 }

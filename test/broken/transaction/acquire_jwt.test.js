@@ -11,7 +11,7 @@ const tu =  require('../../../lib/test-utilities.js');
 const signature = require('../../../lib/signature.js');
 
 try {
-  var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+environment+'.yml', 'utf8'));
+  var config = global.SixCRM.configuration.site_config;
 } catch (e) {
   console.log(e);
 }

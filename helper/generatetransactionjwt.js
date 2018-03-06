@@ -1,5 +1,4 @@
 'use strict'
-const fs = require('fs');
 const _ = require('underscore');
 
 require('../SixCRM.js');
@@ -7,7 +6,7 @@ require('../SixCRM.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
 
-let site_config = yaml.safeLoad(fs.readFileSync(global.SixCRM.routes.path('config', 'development/site.yml'), 'utf8'));
+let site_config = global.SixCRM.configuration.site_config;
 
 process.env.SIX_VERBOSE = 2;
 process.env.transaction_jwt_expiration = site_config.jwt.transaction.expiration;

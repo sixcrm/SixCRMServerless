@@ -11,7 +11,7 @@ const random = global.SixCRM.routes.include('lib','random.js');
 const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
 
 try {
-    var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+process.env.stage+'.yml', 'utf8'));
+    var config = global.SixCRM.configuration.site_config;
 } catch (e) {
     du.warning(e);
 }
