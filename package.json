@@ -15,7 +15,6 @@
     "graphql": "^0.9.0",
     "graphql-type-json": "^0.1.4",
     "image-type": "^3.0.0",
-    "js-yaml": "^3.7.0",
     "js2xmlparser2": "^0.2.0",
     "json2csv": "^3.7.3",
     "jsonschema": "^1.1.1",

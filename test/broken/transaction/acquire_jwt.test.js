@@ -1,10 +1,9 @@
 const request = require('supertest');
 const chai = require('chai');
 chai.use(require('chai-json-schema'));
-const assert = require('chai').assert
+const assert = require('chai').assert;
 
 const fs = require('fs');
-const yaml = require('js-yaml');
 const crypto = require('crypto');
 
 const du =  require('../../../lib/debug-utilities.js');

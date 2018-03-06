@@ -4,7 +4,6 @@ var chai = require('chai');
 chai.use(require('chai-json-schema'));
 var assert = require('chai').assert
 var fs = require('fs');
-var yaml = require('js-yaml');
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');

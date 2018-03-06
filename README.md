@@ -27,7 +27,7 @@
 
 #Easy Tech Debt:
 
-Remove from codebase: 'js-yaml', 'validator'
+Remove from codebase: 'validator'
 
 
 ## Local Development

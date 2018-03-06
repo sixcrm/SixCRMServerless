@@ -2,9 +2,7 @@ var request = require('supertest');
 var chai = require('chai');
 chai.use(require('chai-json-schema'));
 var assert = require('chai').assert;
-var expect = require('chai').expect;
 var fs = require('fs');
-var yaml = require('js-yaml');
 var querystring = require('querystring');
 
 try {

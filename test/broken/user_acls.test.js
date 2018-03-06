@@ -1,8 +1,6 @@
 const request = require('supertest');
 const chai = require('chai');
-const assert = require('chai').assert
 const fs = require('fs');
-const yaml = require('js-yaml');
 const tu = require('../../../lib/test-utilities.js');
 
 chai.use(require('chai-json-schema'));
