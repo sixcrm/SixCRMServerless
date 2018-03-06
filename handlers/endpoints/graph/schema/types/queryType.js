@@ -106,6 +106,9 @@ let billListType = require('./bill/billListType');
 
 let tokenListType = require('./token/tokenListType');
 
+let tagType = require('./tag/tagType');
+let tagListType = require('./tag/tagListType');
+
 let suggestInputType = require('./search/suggestInputType');
 let suggestResultsType = require('./search/suggestResultsType');
 let searchInputType = require('./search/searchInputType');
@@ -1826,6 +1829,67 @@ module.exports.graphObj = new GraphQLObjectType({
                 }else{
                     return null;
                 }
+            }
+        },
+        tag: {
+            type: tagType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the associated entity',
+                    type: GraphQLString
+                }
+            },
+            resolve: (root, tag) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+
+                return tagController.get({id: tag.id, fatal: get_fatal});
+            }
+        },
+        taglist: {
+            type: tagListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: (root, tags) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const {pagination, search} = tags;
+
+                return tagController.listByAccount({pagination, search, fatal: list_fatal});
+            }
+        },
+        taglistbykey: {
+            type: tagListType.graphObj,
+            args: {
+                key: {
+                    type: new GraphQLNonNull(GraphQLString),
+                    description: 'key of the tag'
+                },
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: (root, tags) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const {key, pagination, search} = tags;
+
+                return tagController.listByKey({key, pagination, search});
+            }
+        },
+        taglistbykeyfuzzy: {
+            type: tagListType.graphObj,
+            args: {
+                key: {
+                    type: new GraphQLNonNull(GraphQLString),
+                    description: 'key of the tag'
+                },
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: (root, tags) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const {key, pagination, search} = tags;
+
+                return tagController.listByKeyFuzzy({key, pagination, search});
             }
         }
     })

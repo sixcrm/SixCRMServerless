@@ -97,6 +97,9 @@ let sessionInputType = require('./session/sessionInputType');
 let sessionType = require('./session/sessionType');
 let sessionCancelInputType = require('./session/sessionCancelInputType');
 
+const tagInputType = require('./tag/tagInputType');
+const tagType = require('./tag/tagType');
+
 //Register
 let refundType = require('./register/refund/refundType');
 let refundInputType = require('./register/refund/refundInputType');
@@ -1512,6 +1515,45 @@ module.exports.graphObj = new GraphQLObjectType({
                 const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 
                 return userSigningStringController.delete({id: usersigningstring.id});
+            }
+        },
+        createtag: {
+            type: tagType.graphObj,
+            description: 'Creates a tag.',
+            args: {
+                tag: { type: tagInputType.graphObj }
+            },
+            resolve: (value, tag) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+
+                return tagController.create({entity: tag.tag});
+            }
+        },
+        updatetag: {
+            type: tagType.graphObj,
+            description: 'Updates a tag.',
+            args: {
+                tag: { type: tagInputType.graphObj }
+            },
+            resolve: (value, tag) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+
+                return tagController.update({entity: tag.tag});
+            }
+        },
+        deletetag: {
+            type: deleteOutputType.graphObj,
+            description: 'Deletes a tag.',
+            args: {
+                id: {
+                    description: 'id of the tag',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, tag) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+
+                return tagController.delete({id: tag.id});
             }
         }
     })

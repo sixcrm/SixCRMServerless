@@ -41,7 +41,7 @@
 		},
 		"SixEntityTypes":{
 			"type":"string",
-			"enum":["bill","accesskey","account","affiliate","campaign","creditcard","customer","customernote","emailtemplate","fulfillmentprovider","merchantprovidergroup","merchantprovidergroupassociation","merchantprovider","merchantprovidersummary","notification","notificationread","notificationsetting","product","productschedule","rebill","role","session","shippingreceipt","smtpprovider","tracker","transaction","user","useracl","userdevicetoken","usersetting","usersigningstring"]
+			"enum":["bill","accesskey","account","affiliate","campaign","creditcard","customer","customernote","emailtemplate","fulfillmentprovider","merchantprovidergroup","merchantprovidergroupassociation","merchantprovider","merchantprovidersummary","notification","notificationread","notificationsetting","product","productschedule","rebill","role","session","shippingreceipt","smtpprovider","tag","tracker","transaction","user","useracl","userdevicetoken","usersetting","usersigningstring"]
 		}
 	},
 	"properties": {
