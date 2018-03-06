@@ -94,23 +94,21 @@ module.exports = class graphController extends authenticatedController {
 
       du.debug('Sanitize Query');
 
-      du.info(query);
-
       return query.replace(/[\n\r\t]+/g, '');
 
     }
 
     graphQuery() {
 
-        du.debug('Graph Query');
+      du.debug('Graph Query');
 
-        let graph_resolver = () => {
+      let graph_resolver = () => {
 
-            return graphql(this.sixSchema, this.query, null, null, this.query_parameters);
+        return graphql(this.sixSchema, this.query, null, null, this.query_parameters);
 
-        };
+      };
 
-        return this.resolveController.resolve(graph_resolver);
+      return this.resolveController.resolve(graph_resolver);
 
     }
 
