@@ -160,9 +160,25 @@ describe('providers/terminal/Fulfillment', () => {
   arrayutilities.map(tests, (test) => {
     it(test.description, () => {
       return beforeTest(test)
-        .then(() => StateMachine.flush(test.lambda_filter))
+        // .then(() => StateMachine.flush(test.lambda_filter))
         .then(() => {
-          console.log('Done!');
+          let rebill = {
+            "bill_at": "2017-04-06T18:40:41.405Z",
+            "id": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
+            "state": "hold",
+            "processing": true,
+            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
+            "product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
+            "amount": 34.99,
+            "created_at":"2017-04-06T18:40:41.405Z",
+            "updated_at":"2017-04-06T18:41:12.521Z"
+          };
+
+          terminalController = new TerminalController();
+          return terminalController.fulfill({rebill: rebill}).then(result => {
+            console.log('Done!', result);
+          });
         })
         // .then(() => verifyRebills(test))
         // .then(() => verifySqs(test))
