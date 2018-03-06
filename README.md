@@ -25,11 +25,6 @@
 22.  Enterprise Auth0 integration (separate keys)
 23.  Automated Bill Creation
 
-#Easy Tech Debt:
-
-Remove from codebase: 'validator'
-
-
 ## Local Development
 
 ### AWS credentials:
