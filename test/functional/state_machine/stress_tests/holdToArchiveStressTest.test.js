@@ -20,6 +20,7 @@ const max_test_cases = randomutilities.randomInt(5, 9);
 describe('holdToArchiveStressTest', () => {
 
     let number_of_incorrect = 0;
+    let number_of_ignored = 0;
     let lambda_filter = ["holdtoarchive"];
 
     before((done) => {
@@ -42,7 +43,7 @@ describe('holdToArchiveStressTest', () => {
             .then(() => console.log(tab + 'Waiting for flush to finish'))
             .then(() => timer.set())
             .then(() => StateMachine.flush(lambda_filter))
-            .then(() => waitForNumberOfMessages('hold', 0))
+            .then(() => waitForNumberOfMessages('hold', number_of_ignored))
             .then(() => waitForNumberOfMessages('hold_error', number_of_incorrect))
             .then(() => {
                 let total = timer.get();
@@ -92,26 +93,36 @@ describe('holdToArchiveStressTest', () => {
 
         for (let i = 0; i < max_test_cases; i++) {
             let rebill = MockEntities.getValidRebill();
-            let product = MockEntities.getValidProduct();
             let transaction = MockEntities.getValidTransaction();
-            let rebill_id = [rebill.id/*, "-garbage-"*/];
+            let product_ship = randomutilities.randomBoolean();
+            let rebill_id = [rebill.id, uuidV4()];
+            let transaction_rebill = [transaction.rebill, rebill.id];
 
             //prepare data
-            rebill.id = randomutilities.selectRandomFromArray(rebill_id);
+            rebill_id = randomutilities.selectRandomFromArray(rebill_id);
+            transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill);
             rebill.state = "hold";
             rebill.processing = true;
-            product.ship = false;
-            transaction.rebill = rebill.id;
-            transaction.products[0].product.id = product.id;
-            transaction.products = [transaction.products[0]];
 
-            //rebills with "-garbage-" id go to error
-            if (rebill.id === "-garbage-") number_of_incorrect++;
+            transaction.products.forEach(transaction_product => {
+                let product = MockEntities.getValidProduct(transaction_product.product.id);
+
+                product.ship = product_ship;
+                operations.push(productController.create({entity: product}));
+            });
+
+            //missing rebill goes to error
+            //rebill without transaction goes to error
+            if ((rebill.id !== rebill_id) ||
+                (transaction.rebill !== rebill.id))
+                number_of_incorrect++;
+
+            //rebill is not archived if product should be shipped
+            else if (product_ship) number_of_ignored++;
 
             operations.push(rebillController.create({entity: rebill}));
-            operations.push(productController.create({entity: product}));
             operations.push(transactionController.create({entity: transaction}));
-            operations.push(SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill.id +'"}'));
+            operations.push(SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill_id +'"}'));
         }
 
         return Promise.all(operations)

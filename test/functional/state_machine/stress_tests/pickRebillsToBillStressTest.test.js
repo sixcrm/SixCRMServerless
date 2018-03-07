@@ -35,7 +35,7 @@ describe('pickRebillsToBillStressTest', () => {
             .then(() => console.log(tab + 'Waiting for flush to finish'))
             .then(() => timer.set())
             .then(() => StateMachine.flush())
-            .then(() => waitForNumberOfMessages('bill', max_test_cases))
+            .then(() => waitForNumberOfMessages('bill', max_test_cases - number_of_ignored))
             .then(() => {
                 let total = timer.get();
 
