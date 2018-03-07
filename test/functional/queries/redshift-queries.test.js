@@ -12,7 +12,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
+const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
 const redshiftSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-schema-deployment.js');
 
 describe('queries/redshift-queries.js', () => {
@@ -105,7 +105,7 @@ describe('queries/redshift-queries.js', () => {
                 arrayutilities.map(seeds, (seed) => {
                     let query = fileutilities.getFileContentsSync(test.seeds + seed);
 
-                    seed_promises.push(() => redshiftqueryutilities.query(query));
+                    seed_promises.push(() => redshiftContext.connection.query(query));
                 });
 
                 return arrayutilities.serial(seed_promises);
