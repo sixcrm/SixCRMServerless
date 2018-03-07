@@ -22,7 +22,7 @@ module.exports = class EndpointController {
   execute(event) {
 
     return this.preamble(event)
-      .then(() => this.execute(event))
+      .then(() => this.body(event))
       .then(() => this.epilogue())
 
   }
