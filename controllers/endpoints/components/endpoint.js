@@ -10,21 +10,58 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 module.exports = class EndpointController {
 
-  constructor(){
+  constructor() {
 
-      this.clearState();
+    this.clearState();
 
   }
 
-  normalizeEvent(event){
+  /* lambda lifecycle */
+
+  // run the lambda lifecycle
+  execute(event) {
+
+    return this.preamble(event)
+      .then(() => this.execute(event))
+      .then(() => this.epilogue())
+
+  }
+
+  // override
+  // eslint-disable-next-line no-unused-vars
+  preamble(event) {
+
+    return Promise.resolve();
+
+  }
+
+
+  // override
+  // eslint-disable-next-line no-unused-vars
+  body(event) {
+
+    return Promise.resolve();
+
+  }
+
+  // override
+  epilogue() {
+
+    return Promise.resolve();
+
+  }
+
+  /* end lambda lifecycle */
+
+  normalizeEvent(event) {
 
     du.debug('Normalize Event');
 
     let normalized = event;
 
-    try{
+    try {
       normalized = JSON.parse(event);
-    }catch(error){
+    } catch (error) {
       //do nothing
     }
 
@@ -33,7 +70,7 @@ module.exports = class EndpointController {
   }
 
   //Technical Debt:  This is gross.  Refactor!
-  clearState(){
+  clearState() {
 
     du.debug('Clear State');
 
@@ -42,7 +79,7 @@ module.exports = class EndpointController {
 
   }
 
-  acquireRequestProperties(event){
+  acquireRequestProperties(event) {
 
     du.debug('Acquire Request Properties');
 
@@ -57,25 +94,25 @@ module.exports = class EndpointController {
 
   }
 
-  acquireBody(event){
+  acquireBody(event) {
 
     du.debug('Acquire Body');
 
     let return_object = {};
 
-    if(_.has(event, 'body')){
+    if (_.has(event, 'body')) {
 
-      if(objectutilities.isObject(event.body)){
+      if (objectutilities.isObject(event.body)) {
 
         return_object = event.body;
 
-      }else if(stringutilities.isString(event.body)){
+      } else if (stringutilities.isString(event.body)) {
 
         try {
 
           return_object = stringutilities.parseJSONString(event.body, true);
 
-        }catch(e) {
+        } catch (e) {
 
           du.error(e);
           //Thing is not a sting or does not parse...
@@ -90,13 +127,13 @@ module.exports = class EndpointController {
 
   }
 
-  acquirePathParameters(event){
+  acquirePathParameters(event) {
 
     du.debug('Acquire Path Parameters');
 
     let return_object = {};
 
-    if(_.has(event, 'pathParameters') && objectutilities.isObject(event.pathParameters)){
+    if (_.has(event, 'pathParameters') && objectutilities.isObject(event.pathParameters)) {
       return_object = event.pathParameters;
     }
 
@@ -104,25 +141,25 @@ module.exports = class EndpointController {
 
   }
 
-  acquireQueryStringParameters(event){
+  acquireQueryStringParameters(event) {
 
     du.debug('Acquire Query String');
 
     let return_object = {};
 
-    if(_.has(event, 'queryStringParameters')){
+    if (_.has(event, 'queryStringParameters')) {
 
-      if(_.isObject(event.queryStringParameters)){
+      if (_.isObject(event.queryStringParameters)) {
 
         return_object = event.queryStringParameters;
 
-      }else{
+      } else {
 
-        try{
+        try {
 
           return_object = querystring.parse(event.queryStringParameters);
 
-        }catch(error){
+        } catch (error) {
 
           //du.error(error);
           //this.throwUnexpectedEventStructureError(event);
@@ -138,15 +175,15 @@ module.exports = class EndpointController {
   }
 
 
-  validateEvent(event){
+  validateEvent(event) {
 
     du.debug('Validate Event');
 
     //mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
 
-    try{
+    try {
       mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
-    }catch(error){
+    } catch (error) {
       du.error(error);
       this.throwUnexpectedEventStructureError(event);
     }
@@ -155,19 +192,19 @@ module.exports = class EndpointController {
 
   }
 
-  parseEventQueryString(event){
+  parseEventQueryString(event) {
 
     du.debug('Parse Event Query String');
 
-    if(_.has(event, 'queryStringParameters') && !_.isObject(event.queryStringParameters)){
+    if (_.has(event, 'queryStringParameters') && !_.isObject(event.queryStringParameters)) {
 
-      try{
+      try {
 
         event.queryStringParameters = querystring.parse(event.queryStringParameters);
 
         return this.parseEventQueryString(event);
 
-      }catch(error){
+      } catch (error) {
 
         du.error(error);
 
@@ -181,7 +218,7 @@ module.exports = class EndpointController {
 
   }
 
-  throwUnexpectedEventStructureError(event){
+  throwUnexpectedEventStructureError(event) {
 
     du.debug('Throw Unexpected Event Structure Error');
 

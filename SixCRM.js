@@ -1,23 +1,24 @@
-'use strict'
+'use strict';
 require('./routes.js');
 const _ = require('underscore');
 
 const Six = class SixCRM {
 
-  constructor(){
+  constructor() {
 
     this.routes = global.routes;
+    this._resources = {};
 
   }
 
-  clearState(){
+  clearState() {
 
     this.instantiate();
     this.setConfigurationFile();
 
   }
 
-  instantiate(){
+  instantiate() {
 
     let Configuration = this.routes.include('core', 'Configuration.js');
 
@@ -29,15 +30,27 @@ const Six = class SixCRM {
 
   }
 
-  setConfigurationFile(){
+  setConfigurationFile() {
 
     this.configuration.setEnvironmentConfigurationFile();
 
   }
 
-}
+  setResource(identifer, resource) {
 
-if(!_.has(global, 'SixCRM')){
+    this._resources[identifer] = resource;
+
+  }
+
+  getResource(identifier) {
+
+    return this._resources[identifier];
+
+  }
+
+};
+
+if (!_.has(global, 'SixCRM')) {
   global.SixCRM = new Six();
   global.SixCRM.instantiate();
   global.SixCRM.setConfigurationFile();

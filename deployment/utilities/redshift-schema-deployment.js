@@ -11,6 +11,7 @@ const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js
 const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
+const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
 
 class RedshiftSchemaDeployment extends RedshiftDeployment {
 
@@ -31,15 +32,16 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     du.debug('Deploy Redshift tables');
 
     //Note:  Aldo, please see structure herein
-    return this.deployNonVersionedTables()
-    .then(() => this.deployVersionedTables())
-    .then(() => {
-      return 'Complete';
-    });
+    return redshiftContext.init()
+      .then(() => this.deployNonVersionedTables())
+      .then(() => this.deployVersionedTables())
+      .then(() => {
+        return 'Complete';
+      });
 
   }
 
-  deployNonVersionedTables(){
+  deployNonVersionedTables() {
 
     du.debug('Deploy Non-Versioned Tables');
 
@@ -49,11 +51,13 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     });
 
-    return arrayutilities.serial(deployment_promises).then(() => { return true; });
+    return arrayutilities.serial(deployment_promises).then(() => {
+      return true;
+    });
 
   }
 
-  deployVersionedTables(){
+  deployVersionedTables() {
 
     du.debug('Deploy Versioned Tables');
 
@@ -67,7 +71,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  deployForwardMigrationScripts(){
+  deployForwardMigrationScripts() {
 
     du.debug('Deploy Forward Migration Scripts');
 
@@ -81,18 +85,18 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  deployDirectoryForwardMigrationScripts(directory){
+  deployDirectoryForwardMigrationScripts(directory) {
 
     du.debug('Deploy Versioned Tables Directory');
 
     return this.getDirectorySQLFilepaths(directory)
-    .then((filepaths) => this.getScriptQueries(filepaths))
-    .then((queries) => this.executeQueries(queries))
-    .then((result) => {
+      .then((filepaths) => this.getScriptQueries(filepaths))
+      .then((queries) => this.executeQueries(queries))
+      .then((result) => {
 
-      return result;
+        return result;
 
-    });
+      });
 
   }
 
@@ -101,13 +105,13 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     du.debug('Deploy Directory SQL');
 
     return this.getDirectorySQLFilepaths(directory)
-    .then((filepaths) => this.getQueries(filepaths, versioned))
-    .then((queries) => this.executeQueries(queries))
-    .then((result) => {
+      .then((filepaths) => this.getQueries(filepaths, versioned))
+      .then((queries) => this.executeQueries(queries))
+      .then((result) => {
 
-      return result;
+        return result;
 
-    });
+      });
 
   }
 
@@ -124,7 +128,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       });
 
       files = arrayutilities.map(files, (file) => {
-        return directory_filepath+'/'+file;
+        return directory_filepath + '/' + file;
       });
 
       return files;
@@ -175,7 +179,9 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Get Query From Path');
 
-    if(_.isUndefined(versioned)){ versioned = true; }
+    if (_.isUndefined(versioned)) {
+      versioned = true;
+    }
 
     return fileutilities.getFileContents(filepath).then((query) => {
 
@@ -194,13 +200,13 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
         let local_version = versions[1];
 
         du.debug(
-            'filepath: ' + filepath,
-            'Database Version Number: ' + version_in_database,
-            'File Version Number ' + local_version);
+          'filepath: ' + filepath,
+          'Database Version Number: ' + version_in_database,
+          'File Version Number ' + local_version);
 
         if (version_in_database < local_version) {
 
-            return Promise.resolve(query);
+          return Promise.resolve(query);
 
         }
 
@@ -224,13 +230,13 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
         let local_version = versions[1];
 
         du.debug(
-            'filepath: ' + filepath,
-            'Database Version Number: ' + version_in_database,
-            'File Version Number ' + local_version);
+          'filepath: ' + filepath,
+          'Database Version Number: ' + version_in_database,
+          'File Version Number ' + local_version);
 
         if (version_in_database < local_version) {
 
-            return Promise.resolve(query);
+          return Promise.resolve(query);
 
         }
 
@@ -242,19 +248,21 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  executeQueries(queries){
+  executeQueries(queries) {
 
     du.debug('Execute Queries');
 
     let query_promises = arrayutilities.map(queries, (query) => {
 
-      if(!_.isNull(query) && query !== '' && query !== false){
+      if (!_.isNull(query) && query !== '' && query !== false) {
 
-          return () => this.execute(query);
+        return () => this.execute(query);
 
       }
 
-      return () => { return Promise.resolve(null); };
+      return () => {
+        return Promise.resolve(null);
+      };
 
     })
 
@@ -266,51 +274,51 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  destroy(){
+  destroy() {
 
     du.debug('Destroy');
 
     return this.getDestroyQuery()
-    .then((destroy_query) => this.execute(destroy_query))
-    .then(() => {
+      .then((destroy_query) => this.execute(destroy_query))
+      .then(() => {
 
-      return 'Complete';
+        return 'Complete';
 
-    });
+      });
 
   }
 
-  seed(){
+  seed() {
 
     du.debug('Seed');
 
     return this.getSeedQueries()
-    .then((seed_queries) => {
-      arrayutilities.isArray(seed_queries, true);
-      if(seed_queries.length > 0){
-        return this.executeQueries(seed_queries);
-      }
-      return Promise.resolve(true);
-    })
-    .then(() => {
-      return 'Complete';
-    });
+      .then((seed_queries) => {
+        arrayutilities.isArray(seed_queries, true);
+        if (seed_queries.length > 0) {
+          return this.executeQueries(seed_queries);
+        }
+        return Promise.resolve(true);
+      })
+      .then(() => {
+        return 'Complete';
+      });
 
   }
 
-  seed_referential(){
+  seed_referential() {
 
     du.debug('Seed Referential data');
 
     return this.seedBINDatabase()
-    .then(() => this.seedDateDatabase())
-    .then(() => {
-      return 'Complete';
-    });
+      .then(() => this.seedDateDatabase())
+      .then(() => {
+        return 'Complete';
+      });
 
   }
 
-  seedBINDatabase(){
+  seedBINDatabase() {
 
     du.debug('Seed BIN Database');
 
@@ -321,11 +329,13 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  seedDateDatabase(){
+  seedDateDatabase() {
 
     du.debug('Seed Date Database');
 
-    return this.uploadDateDatabaseToS3().then(() => { return this.copyDateDatabaseToRedshift() });
+    return this.uploadDateDatabaseToS3().then(() => {
+      return this.copyDateDatabaseToRedshift()
+    });
 
   }
 
@@ -447,7 +457,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  getSeedQueries(){
+  getSeedQueries() {
 
     du.debug('Get Seed Queries');
 
@@ -465,7 +475,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  getDestroyQuery(){
+  getDestroyQuery() {
 
     du.debug('Get Destroy Query');
 
@@ -486,15 +496,15 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
       let merged_queries_array = []
 
-      if(table_drop_queries.length > 0){
+      if (table_drop_queries.length > 0) {
         merged_queries_array = arrayutilities.merge(merged_queries_array, table_drop_queries);
       }
 
-      if(schema_drop_queries.length > 0){
+      if (schema_drop_queries.length > 0) {
         merged_queries_array = arrayutilities.merge(merged_queries_array, schema_drop_queries);
       }
 
-      if(merged_queries_array.length > 0){
+      if (merged_queries_array.length > 0) {
         return arrayutilities.compress(merged_queries_array, ' ', '');
       }
 
@@ -505,7 +515,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  getTableDropQueries(){
+  getTableDropQueries() {
 
     du.debug('Get Table Drop Queries');
 
@@ -515,7 +525,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
         let table_name = this.getTableNameFromFilename(table_filename);
 
-        return 'DROP TABLE IF EXISTS '+table_name+';';
+        return 'DROP TABLE IF EXISTS ' + table_name + ';';
 
       });
 
@@ -523,7 +533,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  getSchemaDropQueries(){
+  getSchemaDropQueries() {
 
     du.debug('Get Schema Drop Queries');
 
@@ -533,7 +543,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
         let schema_name = this.getTableNameFromFilename(schema_filename);
 
-        return 'DROP SCHEMA IF EXISTS '+schema_name+' CASCADE;';
+        return 'DROP SCHEMA IF EXISTS ' + schema_name + ' CASCADE;';
 
       });
 
@@ -541,48 +551,48 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  purge(){
+  purge() {
 
-     du.debug('Purge');
+    du.debug('Purge');
 
-     let directory_purge_promises = arrayutilities.map(this.versioned_table_directories, (directory) => {
+    let directory_purge_promises = arrayutilities.map(this.versioned_table_directories, (directory) => {
 
-       return () => this.purgeTableDirectory(directory);
+      return () => this.purgeTableDirectory(directory);
 
-     });
+    });
 
-     return arrayutilities.serial(
-       directory_purge_promises
-     ).then(() => {
-       return 'Complete';
-     });
-
-   }
-
-  purgeTableDirectory(directory){
-
-    du.debug('Purge Table Directory');
-
-    return this.getTableFilenames(directory)
-    .then((filenames) => this.getPurgeQueries(filenames))
-    .then((queries) => this.executePurgeQueries(queries))
-    .then(() => {
-
+    return arrayutilities.serial(
+      directory_purge_promises
+    ).then(() => {
       return 'Complete';
-
     });
 
   }
 
-  executePurgeQueries(queries){
+  purgeTableDirectory(directory) {
+
+    du.debug('Purge Table Directory');
+
+    return this.getTableFilenames(directory)
+      .then((filenames) => this.getPurgeQueries(filenames))
+      .then((queries) => this.executePurgeQueries(queries))
+      .then(() => {
+
+        return 'Complete';
+
+      });
+
+  }
+
+  executePurgeQueries(queries) {
 
     du.debug('Execute Purge Queries');
 
-    if(!_.isArray(queries)){
-      eu.throwError('server', 'Not an array: '+queries);
+    if (!_.isArray(queries)) {
+      eu.throwError('server', 'Not an array: ' + queries);
     }
 
-    if(queries.length < 1){
+    if (queries.length < 1) {
 
       du.highlight('No purge queries to execute');
       return Promise.resolve(false);
@@ -595,7 +605,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  getTableFilenames(directory){
+  getTableFilenames(directory) {
 
     du.debug('Get Table Filenames');
 
@@ -613,12 +623,12 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Execute Query');
 
-    if(_.contains(['local', 'local-docker', 'circle'], global.SixCRM.configuration.stage)) { // Technical Debt: This REALLY shouldn't be hardcoded here.
+    if (_.contains(['local', 'local-docker', 'circle'], global.SixCRM.configuration.stage)) { // Technical Debt: This REALLY shouldn't be hardcoded here.
       query = this.transformQuery(query);
       du.info(query);
     }
 
-    return this.redshiftContext.connection.query(query);
+    return redshiftContext.connection.query(query);
 
   }
 
@@ -630,7 +640,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
       let table_name = this.getTableNameFromFilename(table_filename);
 
-      return 'TRUNCATE TABLE '+table_name+';';
+      return 'TRUNCATE TABLE ' + table_name + ';';
 
     });
 
@@ -686,13 +696,13 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
         return line.match(/TABLE_VERSION/);
       });
 
-      if(version_number.length > 0){
+      if (version_number.length > 0) {
 
         version_number = numberutilities.toNumber(version_number.pop().replace(/[^0-9]/g, ''));
 
         return version_number;
 
-      }else{
+      } else {
 
         return null;
 
@@ -754,29 +764,29 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  transformQuery(query){
+  transformQuery(query) {
     /* Transforms query to PostgreSQL format by clearing Redshift specifics */
 
-      return arrayutilities.map(query.split(/\r?\n/), (data) =>
-          data.replace(/(getdate.*|integer identity.*|DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*|ENCODE[A-Za-z0-9 ]*)(\,)?/,(match, p1, p2) => { // eslint-disable-line no-useless-escape
+    return arrayutilities.map(query.split(/\r?\n/), (data) =>
+      data.replace(/(getdate.*|integer identity.*|DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*|ENCODE[A-Za-z0-9 ]*)(\,)?/, (match, p1, p2) => { // eslint-disable-line no-useless-escape
 
-            if(p2 == ','){
-                return `${p2}`;
-            } else if(p1.startsWith('encode')){
-               return ''
-            } else if(p1.startsWith('ENCODE')){
-               return ''
-            } else if(p1.startsWith('getdate')){
-               return 'now();'
-             } else if(p1.startsWith('integer identity')){
-                return 'serial ,'
-             }
-            else {
-              return ';'
-            }
+        if (p2 == ',') {
+          return `${p2}`;
+        } else if (p1.startsWith('encode')) {
+          return ''
+        } else if (p1.startsWith('ENCODE')) {
+          return ''
+        } else if (p1.startsWith('getdate')) {
+          return 'now();'
+        } else if (p1.startsWith('integer identity')) {
+          return 'serial ,'
+        }
+        else {
+          return ';'
+        }
 
-          })
-      ).join('\n');
+      })
+    ).join('\n');
 
   }
 
