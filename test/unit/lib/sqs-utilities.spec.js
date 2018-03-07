@@ -5,7 +5,7 @@ const expect = chai.expect;
 const region = global.SixCRM.configuration.site_config.aws.region;
 const account = global.SixCRM.configuration.site_config.aws.account;
 
-describe('lib/sqs-utilities', () => {
+xdescribe('lib/sqs-utilities', () => {
 
     let copy_stage = process.env.stage;
 
