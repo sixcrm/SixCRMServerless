@@ -44,7 +44,7 @@ describe('Test connections to Docker Services', () => {
 
     it('successfully connects to the Docker Redshift Instance', () => {
 
-      const redshiftContext = global.SixCRM.routes.include('lib', 'redshift-context.js');
+      const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
 
       return redshiftContext.connection.query('SELECT 1').then(result => {
         expect(result[0]['?column?']).to.equal(1);
