@@ -37,6 +37,9 @@ let emailTemplateType = require('./emailtemplate/emailTemplateType');
 let fulfillmentProviderListType = require('./fulfillmentprovider/fulfillmentProviderListType');
 let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
 
+let eventHookListType = require('./eventhook/eventHookListType');
+let eventHookType = require('./eventhook/eventHookType');
+
 let merchantProviderGroupType = require('./merchantprovidergroup/merchantProviderGroupType');
 let merchantProviderGroupListType = require('./merchantprovidergroup/merchantProviderGroupListType');
 
@@ -1263,6 +1266,18 @@ module.exports.graphObj = new GraphQLObjectType({
       	       return fulfillmentProviderController.listByAccount({pagination: fulfillmentprovider.pagination, fatal:list_fatal, search: fulfillmentprovider.search});
             }
         },
+        eventhooklist: {
+            type: eventHookListType.graphObj,
+            args: {
+              pagination: {type: paginationInputType.graphObj},
+              search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: function(root, eventhook){
+              const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+              return eventHookController.listByAccount({pagination: eventhook.pagination, fatal:list_fatal, search: eventhook.search});
+            }
+        },
         accesskeylist: {
           type: accessKeyListType.graphObj,
           args: {
@@ -1463,6 +1478,20 @@ module.exports.graphObj = new GraphQLObjectType({
 
                 return fulfillmentProviderController.get({id: fulfillmentprovider.id, fatal: get_fatal});
             }
+        },
+        eventhook: {
+          type: eventHookType.graphObj,
+          args: {
+            id: {
+              description: 'id of the event hook',
+              type: new GraphQLNonNull(GraphQLString)
+            }
+          },
+          resolve: function(root, eventhook){
+            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+            return eventHookController.get({id: eventhook.id, fatal: get_fatal});
+          }
         },
         merchantprovidergroup: {
             type: merchantProviderGroupType.graphObj,

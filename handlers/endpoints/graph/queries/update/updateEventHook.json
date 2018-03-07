@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+  "body":"mutation { updateeventhook ( eventhook: { id: \"2bdaf2c3-aab2-4c25-ab74-65e7089ff1fb\", name: \"test event hook2\", event_type: [\"test\"], hook:\"somebase64encodedstringhereandthensome\", active: false}) {id, name, event_type, hook, active, created_at, updated_at}}"
+}

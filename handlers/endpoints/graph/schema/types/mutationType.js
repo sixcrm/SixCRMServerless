@@ -33,6 +33,9 @@ let emailTemplateType = require('./emailtemplate/emailTemplateType');
 let fulfillmentProviderInputType = require('./fulfillmentprovider/fulfillmentProviderInputType');
 let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
 
+let eventHookInputType = require('./eventhook/eventHookInputType');
+let eventHookType = require('./eventhook/eventHookType');
+
 let fulfillmentProviderValidationType = require('./fulfillmentprovider/fulfillmentProviderValidationType');
 
 let deleteOutputType = require('./general/deleteOutputType');
@@ -713,6 +716,46 @@ module.exports.graphObj = new GraphQLObjectType({
 
                 return merchantProviderController.delete({id:id});
             }
+        },
+        createeventhook:{
+          type: eventHookType.graphObj,
+          description: 'Adds a new Event Hook.',
+          args: {
+            eventhook: { type: eventHookInputType.graphObj}
+          },
+          resolve: (value, eventhook) => {
+            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+            return eventHookController.create({entity: eventhook.eventhook});
+          }
+        },
+        updateeventhook:{
+          type: eventHookType.graphObj,
+          description: 'Updates a Event Hook.',
+          args: {
+            eventhook: { type: eventHookInputType.graphObj }
+          },
+          resolve: (value, eventhook) => {
+            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+            return eventHookController.update({entity:eventhook.eventhook});
+          }
+        },
+        deleteeventhook:{
+          type: deleteOutputType.graphObj,
+          description: 'Deletes a Event Hook.',
+          args: {
+            id: {
+              description: 'id of the event hook',
+              type: new GraphQLNonNull(GraphQLString)
+            }
+          },
+          resolve: (value, eventhook) => {
+            var id = eventhook.id;
+            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+            return eventHookController.delete({id:id});
+          }
         },
         createfulfillmentprovider:{
             type: fulfillmentProviderType.graphObj,
