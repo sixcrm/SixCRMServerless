@@ -267,12 +267,12 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
       orderKey: order_identifier,
       orderDate: timestamp.convertToFormat(timestamp.getISO8601(), 'YYYY-MM-DDTHH:MM:ss.SSSSS'),
       orderStatus: 'awaiting_shipment',
+      customerEmail: customer.email,
+      customerUsername: customer.email,
       billTo: this.createBillTo(customer),
       shipTo: this.createShipTo(customer),
       items: this.createItems(products)
     }
-
-    du.highlight(parameters);
 
     return parameters;
 
@@ -313,6 +313,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
     );
 
     let addnulls = ['company', 'street2','street3', 'phone'];
+
     arrayutilities.map(addnulls, (addnull_field) => {
       if(!_.has(parameters, addnull_field)){
         parameters[addnull_field] = null;
@@ -352,6 +353,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
     );
 
     let addnulls = ['company', 'street2','street3', 'phone'];
+
     arrayutilities.map(addnulls, (addnull_field) => {
       if(!_.has(parameters, addnull_field)){
         parameters[addnull_field] = null;
@@ -386,8 +388,6 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
     let parameters = this.parameters.get('parametersobject');
 
-    du.info(parameters);
-
     let url = parameters.endpoint+parameters.path;
 
     delete parameters.endpoint;
@@ -398,12 +398,10 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
       headers: {
         'Authorization': this.createAuthorizationString(),
       },
-      body: JSON.stringify(parameters)
+      body: parameters
     };
 
     return httputilities.postJSON(options).then(result => {
-
-      du.info(result);  process.exit();
 
       this.parameters.set('vendorresponse', result);
 
