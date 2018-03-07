@@ -526,7 +526,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     updateProperties({id, properties}){
 
-      du.debug('Update');
+      du.debug('Update Properties');
 
       return this.can({action: 'update', object: this.descriptive_name, id: this.getID(id), fatal: true})
       .then(() => this.exists({entity: id, return_entity: true}))
