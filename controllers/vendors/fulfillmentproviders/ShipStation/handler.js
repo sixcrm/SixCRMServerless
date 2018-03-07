@@ -303,7 +303,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
     parameters = objectutilities.transcribe(
       {
-        street2: 'addres.line2',
+        street2: 'address.line2',
         phone: 'phone',
         email: 'email'
       },
@@ -343,7 +343,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
     parameters = objectutilities.transcribe(
       {
-        street2: 'addres.line2',
+        street2: 'address.line2',
         phone: 'phone',
         email: 'email'
       },

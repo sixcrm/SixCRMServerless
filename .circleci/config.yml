@@ -267,10 +267,10 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: DynamoDB Deploy Tables
-          command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/tables && node ./deployment/dynamodb/deploy_tables.js || echo "No changes, skipping."
+          command: node ./deployment/dynamodb/deploy_tables.js
       - run:
           name: DynamoDB Autoscale Tables
-          command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/autoscaling && node ./deployment/dynamodb/deploy_autoscaling.js || echo "No changes, skipping."
+          command: node ./deployment/dynamodb/deploy_autoscaling.js
   deploy_redshift:
     <<: *job-defaults
     steps:
