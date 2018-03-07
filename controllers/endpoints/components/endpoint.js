@@ -25,11 +25,6 @@ module.exports = class EndpointController {
       .then(() => this.body(event))
       .then((res) => this.epilogue().then(() => Promise.resolve(res)))
       .then((res) => Promise.resolve(res))
-      .catch((ex) => {
-
-        eu.throwError('server', 'endpoint execute error', {innerError: ex});
-
-      })
 
   }
 
