@@ -10,7 +10,7 @@ module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
 
     super();
 
-    this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
+    this.redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
 
     this.redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
 

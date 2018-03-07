@@ -29,7 +29,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
         {name:"year", seconds: 30412800}
       ];
 
-      this.redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
+      this.redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
 
       this.cacheController = new cacheController();
 
@@ -100,7 +100,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
                     let transformation_function = this.getTransformationFunction(query_name);
 
-                    return this.cacheController.useCache(query, () => this.redshiftqueryutilities.queryWithArgs(query, []))
+                    return this.cacheController.useCache(query, () => this.redshiftContext.connection.queryWithArgs(query, []))
                     .then((results) => transformation_function(results, parameters))
                     .then((transformed_results) => { return resolve(transformed_results);});
 
