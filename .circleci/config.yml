@@ -442,7 +442,13 @@ workflows:
   version: 2
   build_deploy_test_and_merge:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
       - lint:
           requires:
             - build
