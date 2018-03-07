@@ -24,7 +24,7 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
           },
-          "ScaleInCooldown": 0,
+          "ScaleInCooldown": 10,
           "ScaleOutCooldown": 10,
           "TargetValue": 50.0
         }
@@ -37,7 +37,7 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
           },
-          "ScaleInCooldown": 0,
+          "ScaleInCooldown": 10,
           "ScaleOutCooldown": 10,
           "TargetValue": 50.0
         }
@@ -69,7 +69,7 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
           },
-          "ScaleInCooldown": 0,
+          "ScaleInCooldown": 10,
           "ScaleOutCooldown": 10,
           "TargetValue": 50.0
         }
@@ -82,7 +82,7 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
           },
-          "ScaleInCooldown": 0,
+          "ScaleInCooldown": 10,
           "ScaleOutCooldown": 10,
           "TargetValue": 50.0
         }
@@ -114,7 +114,7 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
           },
-          "ScaleInCooldown": 0,
+          "ScaleInCooldown": 10,
           "ScaleOutCooldown": 10,
           "TargetValue": 50.0
         }
@@ -127,7 +127,7 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
           },
-          "ScaleInCooldown": 0,
+          "ScaleInCooldown": 10,
           "ScaleOutCooldown": 10,
           "TargetValue": 50.0
         }
@@ -159,7 +159,7 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
           },
-          "ScaleInCooldown": 0,
+          "ScaleInCooldown": 10,
           "ScaleOutCooldown": 10,
           "TargetValue": 50.0
         }
@@ -172,7 +172,7 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
           },
-          "ScaleInCooldown": 0,
+          "ScaleInCooldown": 10,
           "ScaleOutCooldown": 10,
           "TargetValue": 50.0
         }
