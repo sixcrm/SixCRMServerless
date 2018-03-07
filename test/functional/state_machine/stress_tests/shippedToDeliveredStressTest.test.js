@@ -98,11 +98,12 @@ describe('shippedToDeliveredStressTest', () => {
             let transaction = MockEntities.getValidTransaction();
             let product = MockEntities.getValidProduct();
             let shipping_receipt = MockEntities.getValidShippingReceipt();
-            let rebill_id = [rebill.id/*, "-garbage-"*/];
+            let rebill_id = [rebill.id, uuidV4()];
+            let transaction_rebill = [transaction.rebill, rebill.id];
 
             //prepare data
-            rebill.id = randomutilities.selectRandomFromArray(rebill_id);
-            transaction.rebill = rebill.id;
+            rebill_id = randomutilities.selectRandomFromArray(rebill_id);
+            transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill);
             transaction.merchant_provider = "a32a3f71-1234-4d9e-a9a1-98ecedb88f24";
             transaction.products = [transaction.products[0]];
             transaction.products[0].shipping_receipt = shipping_receipt.id;
@@ -112,14 +113,17 @@ describe('shippedToDeliveredStressTest', () => {
             product.id = transaction.products[0].product.id;
             product.ship = true;
 
-            //rebills with "-garbage-" id go to error
-            if (rebill.id === "-garbage-") number_of_incorrect++;
+            //missing rebill goes to error
+            //rebill without transaction goes to error
+            if ((rebill.id !== rebill_id) ||
+                (transaction.rebill !== rebill.id))
+                number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
             operations.push(transactionController.create({entity: transaction}));
             operations.push(productController.create({entity: product}));
             operations.push(shippingReceiptController.create({entity: shipping_receipt}));
-            operations.push(SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + rebill.id +'"}'));
+            operations.push(SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + rebill_id +'"}'));
         }
 
         operations.push(fulfillmentProviderController.create({entity: fulfillment_provider}));

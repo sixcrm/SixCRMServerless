@@ -54,18 +54,18 @@ module.exports = class forwardMessageController extends RelayController {
 
       if(params.bulk){
 
-        worker_promises.push(this.invokeWorker(messages));
+        worker_promises.push(() => this.invokeWorker(messages));
 
       }else{
 
         arrayutilities.map(messages, (message) => {
-          worker_promises.push(this.invokeWorker(message));
+            worker_promises.push(() => this.invokeWorker(message));
         });
 
       }
 
-      return Promise.all(worker_promises).then((worker_promises) => {
-        this.parameters.set('workerresponses', worker_promises);
+      return arrayutilities.serialAll(worker_promises).then((worker_responses) => {
+        this.parameters.set('workerresponses', worker_responses);
 
         return true;
       });

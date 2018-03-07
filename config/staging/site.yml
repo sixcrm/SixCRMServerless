@@ -45,6 +45,7 @@ redshift:
   database: 'analytics'
   password: 'Jagodica9'
   port: 5439
+  host: 'sixcrm.ceigagt6gafq.us-east-1.redshift.amazonaws.com'
   max: 10
   idle_timeout: 30000
   randomdata:

@@ -18,6 +18,7 @@ let campaignInputType = require('./campaign/campaignInputType');
 let campaignType = require('./campaign/campaignType');
 
 let creditCardInputType = require('./creditcard/creditCardInputType');
+let creditCardPartialInputType = require('./creditcard/creditCardPartialInputType');
 let creditCardType = require('./creditcard/creditCardType');
 
 let customerInputType = require('./customer/customerInputType');
@@ -797,7 +798,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: creditCardType.graphObj,
             description: 'Adds a new credit card.',
             args: {
-                creditcard: { type: creditCardInputType .graphObj}
+                creditcard: { type: creditCardInputType.graphObj}
             },
             resolve: (value, creditcard) => {
                 const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
@@ -815,6 +816,19 @@ module.exports.graphObj = new GraphQLObjectType({
                 const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 
                 return creditCardController.update({entity:creditcard.creditcard});
+            }
+        },
+        updatecreditcardpartial:{
+            type: creditCardType.graphObj,
+            description: 'Updates a Credit Card Partially.',
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLString) },
+                creditcard: { type: creditCardPartialInputType.graphObj }
+            },
+            resolve: (value, args) => {
+                const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+
+                return creditCardController.updateProperties({id: args.id, properties: args.creditcard});
             }
         },
         deletecreditcard:{
