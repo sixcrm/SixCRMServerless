@@ -105,7 +105,7 @@ describe('queries/redshift-queries.js', () => {
                 arrayutilities.map(seeds, (seed) => {
                     let query = fileutilities.getFileContentsSync(test.seeds + seed);
 
-                    seed_promises.push(() => redshiftqueryutilities.query(query));
+                    seed_promises.push(() => redshiftqueryutilities.connection.query(query));
                 });
 
                 return arrayutilities.serial(seed_promises);
