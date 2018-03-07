@@ -51,13 +51,14 @@ class userACLController extends entityController {
 
     }
 
-    update({entity, primary_key}) {
+    update({entity, primary_key, ignore_updated_at}) {
 
       du.debug('UserACLController Update');
 
-      return super.update({entity: entity, primary_key: primary_key}).then((acl) => {
+      return super.update({entity: entity, primary_key: primary_key, ignore_updated_at: ignore_updated_at}).then((acl) => {
 
         this.createNotification(acl, 'updated', 'Your role on account has been updated.');
+
         return acl;
 
       });

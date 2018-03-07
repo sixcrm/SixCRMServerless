@@ -381,7 +381,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Entity Seed
-          command: ./tools/changesInDirectory.sh deployment/dynamodb/configuration/seeds && node ./deployment/dynamodb/deploy_seeds.js || echo "No changes, skipping."
+          command: node ./deployment/dynamodb/deploy_seeds.js
   deleteblock_integration_tests:
     <<: *job-defaults
     steps:

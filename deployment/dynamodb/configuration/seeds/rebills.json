@@ -15,7 +15,12 @@
 					"id": "1bdaa67c-5121-49cf-82af-7fc8b73a2694",
 					"merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
 					"updated_at": "2018-02-14T05:51:12.300Z"
-				}
+				},
+        "product":{
+          "id":"668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          "name":"Test Product"
+        },
+        "quantity":1
 			}
 		],
     "product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],

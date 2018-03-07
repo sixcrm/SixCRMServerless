@@ -1,61 +1,31 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/RedshiftActivityRowObject",
+	"id":"/kinesisfirehose/activity",
 	"type": "object",
 	"definitions": {
-		"UUIDv4": {
-			"type": "string",
-			"pattern":"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$"
-		},
-		"ISO8601": {
-			"type": "string",
-			"pattern":"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(.[0-9]+)?(([+-][0-9]{2}:[0-9]{2})|Z)?$"
-		},
-		"DeviceToken":{
-			"type": "string",
-			"pattern":"^[a-fA-F0-9]{8}\\s[a-fA-F0-9]{8}\\s[a-fA-F0-9]{8}\\s[a-fA-F0-9]{8}\\s[a-fA-F0-9]{8}\\s[a-fA-F0-9]{8}\\s[a-fA-F0-9]{8}\\s[a-fA-F0-9]{8}$"
-		},
-		"OptionalUUIDv4":{
-			"anyOf":[
-				{"type":"string", "enum":[""]},
-				{"$ref": "#/definitions/UUIDv4"}
-			]
-		},
-		"SixDynamoIdentifier":{
-			"anyOf":[
-				{"$ref": "#/definitions/UUIDv4"},
-				{"$ref": "#/definitions/DeviceToken"},
-				{"type":"string", "format":"email"},
-				{"type":"string", "enum":["*","system"]}
-			]
-		},
 		"OptionalSixDynamoIdentifier":{
 			"anyOf":[
 				{"type":"string", "enum":[""]},
-				{"$ref": "#/definitions/SixDynamoIdentifier"}
+				{"$ref": "../definitions/sixcrmidentifier.json"}
 			]
 		},
 		"SixActivityActorTypes":{
 			"type":"string",
 			"enum":["customer","user","system"]
-		},
-		"SixEntityTypes":{
-			"type":"string",
-			"enum":["bill","accesskey","account","affiliate","campaign","creditcard","customer","customernote","emailtemplate","fulfillmentprovider","merchantprovidergroup","merchantprovidergroupassociation","merchantprovider","merchantprovidersummary","notification","notificationread","notificationsetting","product","productschedule","rebill","role","session","shippingreceipt","smtpprovider","tag","tracker","transaction","user","useracl","userdevicetoken","usersetting","usersigningstring"]
 		}
 	},
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"datetime":{"$ref": "../definitions/iso8601.json"},
-		"actor": {"$ref": "#/definitions/SixDynamoIdentifier"},
+		"actor": {"$ref": "../definitions/sixcrmidentifier.json"},
 		"actor_type": {"$ref": "#/definitions/SixActivityActorTypes"},
 		"action":{
 			"type":"string"
 		},
 		"acted_upon":{"$ref": "#/definitions/OptionalSixDynamoIdentifier"},
-		"acted_upon_type": {"$ref": "#/definitions/SixEntityTypes"},
+		"acted_upon_type": {"$ref": "../definitions/sixcrmentitytypes.json"},
 		"associated_with": {"$ref": "#/definitions/OptionalSixDynamoIdentifier"},
-		"associated_with_type": {"$ref": "#/definitions/SixEntityTypes"}
+		"associated_with_type": {"$ref": "../definitions/sixcrmentitytypes.json"}
 	},
 	"required":["datetime","actor","actor_type","action"]
 }

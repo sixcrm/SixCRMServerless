@@ -576,7 +576,7 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
 		//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
-    update({entity}){
+    update({entity, ignore_updated_at}){
 
       du.debug('Update');
 
@@ -597,9 +597,12 @@ module.exports = class entityController extends entityUtilitiesController {
       })
       .then((existing_entity) => {
 
-        du.info(existing_entity, entity);
-        if(entity.updated_at !== existing_entity.updated_at){
-          eu.throwError('bad_request', 'Mismatched updated_at timestamps - can not update.');
+        if(_.isUndefined(ignore_updated_at) || ignore_updated_at !== true){
+
+          if(entity.updated_at !== existing_entity.updated_at){
+            eu.throwError('bad_request', 'Mismatched updated_at timestamps - can not update.');
+          }
+
         }
 
         return existing_entity;
@@ -654,9 +657,11 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     //Technical Debt:  Nomenclature should be "assure"
-    store({entity}){
+    store({entity, ignore_updated_at}){
 
         du.debug('Store');
+
+        ignore_updated_at = (_.isUndefined(ignore_updated_at) || _.isNull(ignore_updated_at))?false:ignore_updated_at;
 
         if(!_.has(entity, this.primary_key)){
 
@@ -674,7 +679,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
             }else{
 
-              return this.update({entity: entity});
+              return this.update({entity: entity, ignore_updated_at: ignore_updated_at});
 
             }
 

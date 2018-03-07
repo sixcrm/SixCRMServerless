@@ -75,7 +75,7 @@ class sessionController extends entityController {
 
     }
 
-    update({entity}){
+    update({entity, ignore_updated_at}){
 
       du.debug('Update (Session Update)');
 
@@ -83,7 +83,7 @@ class sessionController extends entityController {
         entity.alias = this.createAlias();
       }
 
-      return super.update({entity: entity});
+      return super.update({entity: entity, ignore_updated_at: ignore_updated_at});
 
     }
 
