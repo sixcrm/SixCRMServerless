@@ -239,7 +239,20 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
     du.debug('Validate Arguments');
 
-    // let normalized_product_schedules = this.parameters.get('normalizedproductschedules', false, null);
+    let normalized_product_schedules = this.parameters.get('normalizedproductschedules', false, null);
+
+    if(arrayutilities.nonEmpty(normalized_product_schedules)){
+      arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
+        if(!objectutilities.hasRecursive(normalized_product_schedule, 'product_schedule.schedule')){
+          eu.throwError('bad_request','Normalized product schedule is missing product_schedule.schedule element');
+        }
+        arrayutilities.map(normalized_product_schedule.product_schedule.schedule, schedule_element => {
+          if(_.has(schedule_element, 'end') && schedule_element.end <= schedule_element.start){
+            eu.throwError('bad_request','A schedule element end can not be less than or equal to a schedule element start.');
+          }
+        })
+      });
+    }
     // let normalized_products = this.parameters.get('normalizedproducts', false, null);
     // let session = this.parameters.get('session');
     // let day = this.parameters.get('day');
@@ -350,18 +363,28 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
     if(_.isNull(normalized_product_schedules)){ return Promise.resolve(true); }
 
-    let schedule_elements = arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
+    let schedule_elements = [];
 
-      return {
-        quantity: normalized_product_schedule.quantity,
-        schedule_element: this.productScheduleHelperController.getScheduleElementOnDayInSchedule({day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
-      };
+    arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
+
+      let sub_elements = this.productScheduleHelperController.getScheduleElementsOnDayInSchedule({day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
+
+      if(!_.isNull(sub_elements) && arrayutilities.nonEmpty(sub_elements)){
+
+        arrayutilities.map(sub_elements, sub_element => {
+          schedule_elements.push({
+            quantity: normalized_product_schedule.quantity,
+            schedule_element:sub_element
+          });
+        });
+
+      }
 
     });
 
     schedule_elements = arrayutilities.filter(schedule_elements, (schedule_element) => {
       return objectutilities.isObject(schedule_element.schedule_element);
-    })
+    });
 
     if(arrayutilities.nonEmpty(schedule_elements)){
 
