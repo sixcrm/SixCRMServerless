@@ -15,479 +15,487 @@ const PermissionedController = global.SixCRM.routes.include('helpers', 'permissi
 
 module.exports = class AnalyticsUtilities extends PermissionedController {
 
-    constructor(){
+  constructor() {
 
-      super();
+    super();
 
-      this.period_options = [
-        {name:"minute", seconds: 60},
-        {name:"hour", seconds: 3600},
-        {name:"day", seconds: 86400},
-        {name:"week", seconds: 604800},
-        {name:"month", seconds: 2678400},
-        {name:"quarter", seconds: 7776000},
-        {name:"year", seconds: 30412800}
-      ];
+    this.period_options = [
+      {name: "minute", seconds: 60},
+      {name: "hour", seconds: 3600},
+      {name: "day", seconds: 86400},
+      {name: "week", seconds: 604800},
+      {name: "month", seconds: 2678400},
+      {name: "quarter", seconds: 7776000},
+      {name: "year", seconds: 30412800}
+    ];
 
-      this.cacheController = new cacheController();
+    this.cacheController = new cacheController();
 
-      this.period_count_default = 30;
+    this.period_count_default = 30;
 
-      this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+    this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+
+  }
+
+  executeAnalyticsFunction(argumentation, function_name) {
+
+    if (_.isFunction(this[function_name])) {
+
+      return this.can({action: function_name, object: 'analytics', fatal: false}).then((permission) => {
+
+        if (permission !== true) {
+
+          eu.throwError('forbidden', 'Invalid Permissions: user can not perform this action on class Analytics.');
+
+        }
+
+        this.setCacheSettings(argumentation);
+
+        return this[function_name](argumentation);
+
+      });
 
     }
 
-    executeAnalyticsFunction(argumentation, function_name){
+    eu.throwError('server', 'AnalyticsController.' + function_name + ' is not defined.');
 
-      if(_.isFunction(this[function_name])){
+  }
 
-        return this.can({action: function_name, object: 'analytics', fatal: false}).then((permission) => {
+  setCacheSettings(parameters) {
 
-          if(permission !== true){
+    du.debug('Set Cache Settings');
 
-            eu.throwError('forbidden', 'Invalid Permissions: user can not perform this action on class Analytics.');
+    if (_.has(parameters, 'cache')) {
 
-          }
+      if (_.has(parameters.cache, 'use_cache') && parameters.cache.use_cache == false) {
 
-          this.setCacheSettings(argumentation);
-
-          return this[function_name](argumentation);
-
-        });
+        this.cacheController.setDisable(true);
 
       }
 
-      eu.throwError('server', 'AnalyticsController.'+function_name+' is not defined.');
-
     }
 
-    setCacheSettings(parameters){
+  }
 
-        du.debug('Set Cache Settings');
+  //Technical Debt:  Messy.  Refactor.
+  getResults(query_name, parameters, query_filters) {
 
-        if(_.has(parameters, 'cache')){
+    du.debug('Get Results');
 
-            if(_.has(parameters.cache, 'use_cache') && parameters.cache.use_cache == false){
+    return new Promise((resolve, reject) => {
 
-                this.cacheController.setDisable(true);
+      parameters = this.appendAccount(parameters);
 
-            }
+      parameters = this.createQueryFilter(parameters, query_filters);
 
-        }
+      this.validateQueryParameters(query_name, parameters).then(() => {
 
-    }
+        return this.getQueryString(query_name).then((query) => {
 
-    //Technical Debt:  Messy.  Refactor.
-    getResults(query_name, parameters, query_filters){
+          query = this.parseQueryParameters(query, parameters);
 
-        du.debug('Get Results');
+          du.highlight('Query:', query);
 
-        return new Promise((resolve, reject) => {
+          let transformation_function = this.getTransformationFunction(query_name);
 
-            parameters = this.appendAccount(parameters);
+          const redshiftContext = global.SixCRM.getResource('redshiftContext');
 
-            parameters = this.createQueryFilter(parameters, query_filters);
+          return this.cacheController.useCache(query, () => redshiftContext.connection.queryWithArgs(query, []).then(result => result.rows))
+            .then((results) => transformation_function(results, parameters))
+            .then((transformed_results) => {
+              return resolve(transformed_results);
+            });
 
-            this.validateQueryParameters(query_name, parameters).then(() => {
-
-                return this.getQueryString(query_name).then((query) => {
-
-                    query = this.parseQueryParameters(query, parameters);
-
-                    du.highlight('Query:', query);
-
-                    let transformation_function = this.getTransformationFunction(query_name);
-
-                    const redshiftContext = global.SixCRM.getResource('redshiftContext');
-
-                    return this.cacheController.useCache(query, () => redshiftContext.connection.queryWithArgs(query, []))
-                    .then((results) => transformation_function(results, parameters))
-                    .then((transformed_results) => { return resolve(transformed_results);});
-
-                })
-              .catch((error) => {
-
-                  return reject(error);
-
-              });
-
-            })
+        })
           .catch((error) => {
 
-              return reject(error);
+            return reject(error);
 
           });
 
+      })
+        .catch((error) => {
+
+          return reject(error);
+
         });
+
+    });
+
+  }
+
+  periodSelection(start, end, target_period_count) {
+
+    du.debug('Period Selection');
+    du.debug('Parameters: ', start, end, target_period_count);
+
+    let start_timestamp = timestamp.dateToTimestamp(start);
+    let end_timestamp = timestamp.dateToTimestamp(end);
+    let best_period = null;
+    let best_period_score = null;
+
+    this.period_options.forEach((period) => {
+
+      let seconds_difference = (end_timestamp - start_timestamp);
+
+      let period_seconds = period.seconds;
+
+      let this_period_delta = Math.pow(((seconds_difference / period_seconds) - target_period_count), 2);
+
+      if (_.isNull(best_period_score) || this_period_delta < best_period_score) {
+
+        best_period_score = this_period_delta;
+
+        best_period = period;
+
+      }
+
+    });
+
+    du.debug('Selected Period: ', best_period);
+
+    return best_period;
+
+  }
+
+  getTargetPeriodCount(parameters) {
+
+    du.debug('Get Target Period Count');
+
+    if (_.has(parameters, 'targetperiodcount')) {
+
+      return parameters.targetperiodcount;
 
     }
 
-    periodSelection(start, end, target_period_count){
+    return this.period_count_default;
 
-        du.debug('Period Selection');
-        du.debug('Parameters: ', start, end, target_period_count);
+  }
 
-        let start_timestamp = timestamp.dateToTimestamp(start);
-        let end_timestamp = timestamp.dateToTimestamp(end);
-        let best_period = null;
-        let best_period_score = null;
+  createQueryFilter(parameters, filters_array) {
 
-        this.period_options.forEach((period) => {
+    du.debug('Create Query Filter', parameters, filters_array);
 
-            let seconds_difference = (end_timestamp - start_timestamp);
+    let filter_array = [];
 
-            let period_seconds = period.seconds;
+    filters_array.forEach((filter) => {
 
-            let this_period_delta = Math.pow(((seconds_difference/period_seconds) - target_period_count), 2);
+      if (_.has(parameters, filter)) {
 
-            if(_.isNull(best_period_score) || this_period_delta < best_period_score){
+        du.highlight(filter, parameters[filter]);
 
-                best_period_score = this_period_delta;
+        if (_.isArray(parameters[filter])) {
 
-                best_period = period;
+          filter_array.push(filter + " IN (" + arrayutilities.compress(parameters[filter]) + ")");
 
+        } else {
+
+          filter_array.push(filter + " IN (" + parameters[filter] + ")");
+
+        }
+
+      }
+
+    });
+
+    if (_.has(parameters, 'additional_filters') && _.isArray(parameters.additional_filters) && parameters.additional_filters.length > 0) {
+
+      filter_array = filter_array.concat(parameters.additional_filters);
+
+      delete parameters.additional_filters;
+
+    }
+
+    if (filter_array.length > 0) {
+      parameters['filter'] = ' AND ' + filter_array.join(' AND ');
+    } else {
+      parameters['filter'] = ' AND 1 '
+    }
+
+    return parameters;
+
+  }
+
+  createQueryList(parameters) {
+
+    du.debug('Create Filter List');
+
+    du.debug(parameters);
+    if (!_.isArray(parameters)) {
+      eu.throwError('server', 'Create Filter List only supports array arguments.');
+    }
+
+    return arrayutilities.compress(parameters);
+
+  }
+
+  compressParameters(parameters) {
+    for (var key in parameters) {
+      if (_.isArray(parameters[key])) {
+        parameters[key] = arrayutilities.compress(parameters[key]);
+      }
+    }
+    return parameters;
+  }
+
+  parseQueryParameters(query, parameters) {
+
+    du.debug('Parse Query Parameters');
+
+    let compressed_query_parameters = this.compressParameters(parameters);
+
+    return parserutilities.parse(query, compressed_query_parameters);
+
+  }
+
+  //Technical Debt:  Refactor
+  validateQueryParameters(query_name, object) {
+
+    //Technical Debt:  Why is this necessary?
+    object = JSON.parse(JSON.stringify(object));
+
+    du.debug('Validating:', query_name + ' query parameters', object);
+
+    return new Promise((resolve, reject) => {
+
+      return this.getQueryParameterValidationString(query_name).then((query_validation_string) => {
+
+        var v, validation;
+
+        du.debug(object, query_validation_string);
+
+        try {
+
+          v = new Validator();
+
+          validation = v.validate(object, query_validation_string);
+
+        } catch (e) {
+
+          return reject(eu.getError('server', 'Unable to instantiate validator.'));
+
+        }
+
+        if (_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0) {
+
+          du.warning(validation.errors);
+
+          return reject(eu.getError(
+            'bad_request',
+            'One or more validation errors occurred.',
+            {
+              issues: validation.errors.map((e) => {
+                return e.property + ' ' + e.message;
+              })
             }
-
-        });
-
-        du.debug('Selected Period: ', best_period);
-
-        return best_period;
-
-    }
-
-    getTargetPeriodCount(parameters){
-
-        du.debug('Get Target Period Count');
-
-        if(_.has(parameters,'targetperiodcount')){
-
-            return parameters.targetperiodcount;
+          ));
 
         }
 
-        return this.period_count_default;
+        du.highlight('Input parameters validate.');
 
-    }
+        return resolve(true);
 
-    createQueryFilter(parameters, filters_array){
+      });
 
-        du.debug('Create Query Filter', parameters, filters_array);
+    });
 
-        let filter_array = [];
+  }
 
-        filters_array.forEach((filter) => {
+  getQueryString(query_name) {
 
-            if (_.has(parameters, filter)) {
+    du.debug('Get Query String');
 
-                du.highlight(filter, parameters[filter]);
+    return new Promise((resolve, reject) => {
 
-                if(_.isArray(parameters[filter])){
+      let query_filepath = this.getQueryFilepath(query_name);
 
-                  filter_array.push(filter+" IN ("+arrayutilities.compress(parameters[filter])+")");
+      du.debug('Filepath: ', query_filepath);
 
-                }else{
+      fs.readFile(query_filepath, 'utf8', (error, data) => {
 
-                  filter_array.push(filter+" IN ("+parameters[filter]+")");
-
-                }
-
-            }
-
-        });
-
-        if(_.has(parameters, 'additional_filters') && _.isArray(parameters.additional_filters) && parameters.additional_filters.length > 0){
-
-            filter_array = filter_array.concat(parameters.additional_filters);
-
-            delete parameters.additional_filters;
-
+        if (error) {
+          return reject(error);
         }
 
-        if(filter_array.length > 0){
-            parameters['filter'] = ' AND '+filter_array.join(' AND ');
-        }else{
-            parameters['filter'] = ' AND 1 '
-        }
+        return resolve(data);
 
-        return parameters;
+      });
+
+    });
+
+  }
+
+  getQueryParameterValidationString(query_name) {
+
+    du.debug('Get Query Parameter Validation String');
+
+    return new Promise((resolve) => {
+
+      let query_validation_filepath = this.getQueryParameterValidationFilepath(query_name);
+
+      du.debug('Filepath: ', query_validation_filepath);
+
+      let schema = require(query_validation_filepath);
+
+      return resolve(schema);
+
+    });
+
+  }
+
+  getQueryFilepath(query_name) {
+
+    du.debug('Get Query Filepath');
+
+    let query_filepath = __dirname + '/queries/' + query_name + '/query.sql';
+
+    return query_filepath;
+
+  }
+
+  getTransformationFunctionFilepath(query_name) {
+
+    du.debug('Get Transformation Function Filepath');
+
+    let transformation_function_filepath = __dirname + '/queries/' + query_name + '/transform.js';
+    let default_transformation_function_filepath = __dirname + '/queries/default/transform.js';
+
+    if (fs.existsSync(transformation_function_filepath)) {
+      return transformation_function_filepath;
+    } else {
+      du.warning('Using default query transformation function');
+      return default_transformation_function_filepath;
+    }
+
+  }
+
+  getQueryParameterValidationFilepath(query_name) {
+
+    du.debug('Get Query Parameter Validation Filepath');
+
+    let query_parameter_validation_filepath = __dirname + '/queries/' + query_name + '/parameter_validation.json';
+    let default_query_parameter_validation_filepath = __dirname + '/queries/default/parameter_validation.json';
+
+    if (fs.existsSync(query_parameter_validation_filepath)) {
+      return query_parameter_validation_filepath;
+    } else {
+      du.warning('Using default query parameter validation');
+      return default_query_parameter_validation_filepath;
+    }
+
+  }
+
+  getTransformationFunction(query_name) {
+
+    du.debug('Get Transformation Function');
+
+    let transformation_function_filepath = this.getTransformationFunctionFilepath(query_name);
+
+    return require(transformation_function_filepath);
+
+  }
+
+  collapseActivityFilterObject(activity_filter_object) {
+
+    let return_object = {};
+
+    for (var key in activity_filter_object) {
+
+      return_object = this.collapseActivityFilterKey(return_object, key, activity_filter_object);
 
     }
 
-    createQueryList(parameters){
+    return return_object;
 
-        du.debug('Create Filter List');
+  }
 
-        du.debug(parameters);
-        if(!_.isArray(parameters)){
-            eu.throwError('server','Create Filter List only supports array arguments.');
-        }
+  collapseActivityFilterKey(return_object, key, activity_filter_object) {
 
-        return arrayutilities.compress(parameters);
+    if (_.isArray(activity_filter_object[key]) && activity_filter_object[key].length > 0) {
 
-    }
+      return_object[key] = arrayutilities.compress(activity_filter_object[key]);
 
-    compressParameters(parameters){
-        for(var key in parameters){
-            if(_.isArray(parameters[key])){
-                parameters[key] = arrayutilities.compress(parameters[key]);
-            }
-        }
-        return parameters;
-    }
+    } else if (_.isString(activity_filter_object[key])) {
 
-    parseQueryParameters(query, parameters){
-
-        du.debug('Parse Query Parameters');
-
-        let compressed_query_parameters = this.compressParameters(parameters);
-
-        return parserutilities.parse(query, compressed_query_parameters);
+      return_object[key] = activity_filter_object[key];
 
     }
 
-    //Technical Debt:  Refactor
-    validateQueryParameters(query_name, object){
+    return return_object;
 
-      //Technical Debt:  Why is this necessary?
-        object = JSON.parse(JSON.stringify(object));
+  }
 
-        du.debug('Validating:', query_name+' query parameters', object);
+  //Technical Debt:  This does not allow for multi-account filters...
+  appendAccount(parameters) {
 
-        return new Promise((resolve, reject) => {
+    du.debug('Append Account');
 
-            return this.getQueryParameterValidationString(query_name).then((query_validation_string) => {
+    if (this.permissionutilities.areACLsDisabled() != true && global.account !== '*') {
 
-                var v, validation;
-
-                du.debug(object, query_validation_string);
-
-                try{
-
-                    v = new Validator();
-
-                    validation = v.validate(object, query_validation_string);
-
-                }catch(e){
-
-                    return reject(eu.getError('server','Unable to instantiate validator.'));
-
-                }
-
-                if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
-
-                    du.warning(validation.errors);
-
-                    return reject(eu.getError(
-                      'bad_request',
-                      'One or more validation errors occurred.',
-                      {issues: validation.errors.map((e) => { return e.property+' '+e.message; })}
-                    ));
-
-                }
-
-                du.highlight('Input parameters validate.');
-
-                return resolve(true);
-
-            });
-
-        });
+      parameters['account'] = [global.account];
 
     }
 
-    getQueryString(query_name){
+    return parameters;
 
-        du.debug('Get Query String');
+  }
 
-        return new Promise((resolve, reject) => {
+  appendPeriod(parameters, period) {
 
-            let query_filepath = this.getQueryFilepath(query_name);
+    du.debug('Append Period');
 
-            du.debug('Filepath: ', query_filepath);
+    parameters['period'] = period.name;
 
-            fs.readFile(query_filepath, 'utf8', (error, data) => {
+    return parameters;
 
-                if(error) { return reject(error); }
+  }
 
-                return resolve(data);
+  appendCurrentQueueName(parameters, queue_name) {
 
-            });
+    du.debug('Append Queue Name', parameters, queue_name);
 
-        });
+    // This could be taken care-off elsewhere
 
+    if (_.isArray(queue_name)) {
+      parameters['current_queuename'] = queue_name;
+    }
+    else {
+      parameters['current_queuename'] = `'${queue_name}'`;
     }
 
-    getQueryParameterValidationString(query_name){
+    return parameters;
 
-        du.debug('Get Query Parameter Validation String');
+  }
 
-        return new Promise((resolve) => {
+  appendQueueName(parameters, queuename) {
 
-            let query_validation_filepath = this.getQueryParameterValidationFilepath(query_name);
+    du.debug('Append Queue Name', parameters, queuename);
 
-            du.debug('Filepath: ', query_validation_filepath);
+    parameters['queuename'] = `'${queuename}'`;
 
-            let schema = require(query_validation_filepath);
+    return parameters;
 
-            return resolve(schema);
+  }
 
-        });
+  disableACLs() {
 
-    }
+    du.debug('Disable ACLs');
 
-    getQueryFilepath(query_name){
+    this.permissionutilities.disableACLs();
 
-        du.debug('Get Query Filepath');
+    return;
 
-        let query_filepath = __dirname+'/queries/'+query_name+'/query.sql';
+  }
 
-        return query_filepath;
+  enableACLs() {
 
-    }
+    du.debug('Disable ACLs');
 
-    getTransformationFunctionFilepath(query_name){
+    this.permissionutilities.enableACLs();
 
-        du.debug('Get Transformation Function Filepath');
+    return;
 
-        let transformation_function_filepath = __dirname+'/queries/'+query_name+'/transform.js';
-        let default_transformation_function_filepath =  __dirname+'/queries/default/transform.js';
-
-        if(fs.existsSync(transformation_function_filepath)){
-            return transformation_function_filepath;
-        }else{
-            du.warning('Using default query transformation function');
-            return default_transformation_function_filepath;
-        }
-
-    }
-
-    getQueryParameterValidationFilepath(query_name){
-
-        du.debug('Get Query Parameter Validation Filepath');
-
-        let query_parameter_validation_filepath = __dirname+'/queries/'+query_name+'/parameter_validation.json';
-        let default_query_parameter_validation_filepath = __dirname+'/queries/default/parameter_validation.json';
-
-        if(fs.existsSync(query_parameter_validation_filepath)){
-            return query_parameter_validation_filepath;
-        }else{
-            du.warning('Using default query parameter validation');
-            return default_query_parameter_validation_filepath;
-        }
-
-    }
-
-    getTransformationFunction(query_name){
-
-        du.debug('Get Transformation Function');
-
-        let transformation_function_filepath = this.getTransformationFunctionFilepath(query_name);
-
-        return require(transformation_function_filepath);
-
-    }
-
-    collapseActivityFilterObject(activity_filter_object){
-
-        let return_object = {};
-
-        for(var key in activity_filter_object){
-
-            return_object = this.collapseActivityFilterKey(return_object, key, activity_filter_object);
-
-        }
-
-        return return_object;
-
-    }
-
-    collapseActivityFilterKey(return_object, key, activity_filter_object){
-
-        if(_.isArray(activity_filter_object[key]) && activity_filter_object[key].length > 0){
-
-            return_object[key] = arrayutilities.compress(activity_filter_object[key]);
-
-        }else if(_.isString(activity_filter_object[key])){
-
-            return_object[key] = activity_filter_object[key];
-
-        }
-
-        return return_object;
-
-    }
-
-    //Technical Debt:  This does not allow for multi-account filters...
-    appendAccount(parameters){
-
-        du.debug('Append Account');
-
-        if(this.permissionutilities.areACLsDisabled() != true && global.account !== '*'){
-
-            parameters['account'] = [global.account];
-
-        }
-
-        return parameters;
-
-    }
-
-    appendPeriod(parameters, period){
-
-        du.debug('Append Period');
-
-        parameters['period'] = period.name;
-
-        return parameters;
-
-    }
-
-    appendCurrentQueueName(parameters, queue_name){
-
-        du.debug('Append Queue Name', parameters, queue_name);
-
-        // This could be taken care-off elsewhere
-
-        if(_.isArray(queue_name)){
-          parameters['current_queuename'] = queue_name;
-        }
-        else {
-          parameters['current_queuename'] = `'${queue_name}'`;
-        }
-
-        return parameters;
-
-    }
-
-    appendQueueName(parameters, queuename){
-
-        du.debug('Append Queue Name', parameters, queuename);
-
-        parameters['queuename'] = `'${queuename}'`;
-
-        return parameters;
-
-    }
-
-    disableACLs(){
-
-      du.debug('Disable ACLs');
-
-      this.permissionutilities.disableACLs();
-
-      return;
-
-    }
-
-    enableACLs(){
-
-      du.debug('Disable ACLs');
-
-      this.permissionutilities.enableACLs();
-
-      return;
-
-    }
+  }
 
 }

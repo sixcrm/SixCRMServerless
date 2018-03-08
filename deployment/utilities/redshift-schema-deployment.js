@@ -630,7 +630,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     return redshiftContext.withConnection((connection => {
 
-      return connection.query(query);
+      return connection.query(query).then(result => result.rows);
 
     }));
 
