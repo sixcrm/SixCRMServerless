@@ -54,7 +54,7 @@ module.exports = class EndpointController {
 
   /* end lambda lifecycle */
 
-  normalizeEvent(event) {
+   normalizeEvent(event) {
 
     du.debug('Normalize Event');
 
