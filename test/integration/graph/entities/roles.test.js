@@ -71,35 +71,35 @@ describe('Graph '+entity+' Test', function() {
     });
 
     it('Test role index endpoint should return account-bound roles', done => {
-        let account = global.test_accounts[0];
-        let test_user = global.test_users[0];
+        let account = global.test_accounts[1];
+        let test_user = global.test_users[1];
         let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-        let query = 'query { rolelist(pagination:{limit: \"10\"}) { roles { id } }';
+        let query = 'query { rolelist(pagination:{limit: \"10\"}) { roles { id } } }';
 
-        this_request.post('graph/'+account)
+        this_request.post('graph/'+account.id)
         .set('Authorization', test_jwt)
         .send(query)
         .expect(200)
         .end((error, response) => {
-            assert.notInclude(response.body.data.rolelist.roles, { id: "e09ac44b-6cde-4572-8162-609f6f0aeca8" });
+            assert.notInclude(response.body.response.data.rolelist.roles, { id: "e09ac44b-6cde-4572-8162-609f6f0aeca8" });
             done();
         });
     });
 
     it('Test role view endpoint should return only account-bound roles', done => {
-        let account = global.test_accounts[0];
-        let test_user = global.test_users[0];
+        let account = global.test_accounts[1];
+        let test_user = global.test_users[1];
         let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
         let query = 'query { role(id: "e09ac44b-6cde-4572-8162-609f6f0aeca8") { id } }';
 
-        this_request.post('graph/'+account)
+        this_request.post('graph/'+account.id)
         .set('Authorization', test_jwt)
         .send(query)
         .expect(200)
         .end((error, response) => {
-            assert.isNull(response.body.data.role);
+            assert.isNull(response.body.response.data.role);
             done();
         });
     });
