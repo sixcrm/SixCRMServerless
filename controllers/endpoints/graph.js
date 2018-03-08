@@ -23,6 +23,8 @@ module.exports = class graphController extends authenticatedController {
 
   preamble() {
 
+    du.debug('GraphController.preamble()');
+
     global.SixCRM.setResource('redshiftContext', redshiftContext);
     return redshiftContext.init();
 
@@ -30,7 +32,7 @@ module.exports = class graphController extends authenticatedController {
 
   body(event) {
 
-    du.debug('Execute');
+    du.debug('GraphController.body()');
 
     return this.preprocessing(event)
       .then((event) => this.parseEventQueryString(event))
