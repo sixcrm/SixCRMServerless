@@ -24,7 +24,6 @@ module.exports = class EndpointController {
     return this.preamble(event)
       .then(() => this.body(event))
       .then((res) => this.epilogue().then(() => Promise.resolve(res)))
-      .then((res) => Promise.resolve(res))
 
   }
 
