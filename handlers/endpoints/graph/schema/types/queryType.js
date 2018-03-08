@@ -1703,6 +1703,20 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             }
         },
+        entityaclbyentity: {
+          type: entityACLType.graphObj,
+          args: {
+              id: {
+                  description: 'id of the associated entity',
+                  type: new GraphQLNonNull(GraphQLString)
+              }
+          },
+          resolve: function(root, entityacl){
+            const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+
+            return entityACLController.getByEntity({id: entityacl.id});
+          }
+        },
         usersetting: {
             type: userSettingType.graphObj,
             args: {
