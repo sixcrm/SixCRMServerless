@@ -1869,7 +1869,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: tagType.graphObj,
             args: {
                 id: {
-                    description: 'id of the associated entity',
+                    description: 'id of the tag',
                     type: GraphQLString
                 }
             },
@@ -1891,6 +1891,23 @@ module.exports.graphObj = new GraphQLObjectType({
 
                 return tagController.listByAccount({pagination, search, fatal: list_fatal});
             }
+        },
+        taglistbyentity: {
+          type: tagListType.graphObj,
+          args: {
+            id: {
+              type: new GraphQLNonNull(GraphQLString),
+              description: 'id of the associated entity'
+            },
+            pagination: {type: paginationInputType.graphObj},
+            search: {type: entitySearchInputType.graphObj}
+          },
+          resolve: (root, tags) => {
+            const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+            const {id, pagination, search} = tags;
+
+            return tagController.listByAccount({id, pagination, search, fatal: list_fatal});
+          }
         },
         taglistbykey: {
             type: tagListType.graphObj,
