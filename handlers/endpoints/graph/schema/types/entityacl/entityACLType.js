@@ -10,6 +10,10 @@ module.exports.graphObj = new GraphQLObjectType({
     name: 'EntityACL',
     description: 'A entity access control list object.',
     fields: () => ({
+        id: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The id of the entity.',
+        },
         entity: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The id of the entity.',
