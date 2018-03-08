@@ -63,11 +63,19 @@ describe('Test connections to Docker Services', () => {
 
     it('successfully connects to the Docker Redshift Instance', () => {
 
-      return redshiftContext.connection.query('SELECT 1').then(result => {
-        expect(result[0]['?column?']).to.equal(1);
-      }).catch(error => {
-        du.error(error);
-      });
+      return redshiftContext.withConnection((connection => {
+
+        return connection.query('SELECT 1').then(result => {
+
+          return expect(result[0]['?column?']).to.equal(1);
+
+        }).catch(error => {
+
+          du.error(error);
+
+        });
+
+      }));
 
     });
 

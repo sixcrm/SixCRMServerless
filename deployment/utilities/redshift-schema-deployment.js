@@ -628,7 +628,11 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       du.info(query);
     }
 
-    return redshiftContext.connection.query(query);
+    return redshiftContext.withConnection((connection => {
+
+      return connection.query(query);
+
+    }));
 
   }
 
