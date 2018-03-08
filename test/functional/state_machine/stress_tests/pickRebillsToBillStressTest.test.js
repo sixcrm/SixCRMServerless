@@ -10,11 +10,14 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const timer = global.SixCRM.routes.include('lib', 'timer.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
+const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const tab = '      ';
 
-const max_test_cases = randomutilities.randomInt(100, 200);
+const max_test_cases = randomutilities.randomInt(10, 20);
 
 describe('pickRebillsToBillStressTest', () => {
+
+    let number_of_ignored = 0;
 
     before((done) => {
         process.env.require_local = true;
@@ -35,7 +38,7 @@ describe('pickRebillsToBillStressTest', () => {
             .then(() => console.log(tab + 'Waiting for flush to finish'))
             .then(() => timer.set())
             .then(() => StateMachine.flush())
-            .then(() => waitForNumberOfMessages('bill', max_test_cases))
+            .then(() => waitForNumberOfMessages('bill', max_test_cases - number_of_ignored))
             .then(() => {
                 let total = timer.get();
 
@@ -59,6 +62,11 @@ describe('pickRebillsToBillStressTest', () => {
 
         for (let i = 0; i < max_test_cases; i++) {
             let rebill = getRebill();
+
+            rebill.processing = randomutilities.randomBoolean();
+
+            //rebill in processing is ignored
+            if (rebill.processing) number_of_ignored++;
 
             operations.push(rebillController.create({entity: rebill}));
         }

@@ -93,20 +93,26 @@ describe('pendingToShippedStressTest', () => {
         let fulfillment_provider = getValidFulfillmentProvider();
 
         for (let i = 0; i < max_test_cases; i++) {
-            let rebill = getRebill();
+            let rebill = MockEntities.getValidRebill();
             let transaction = MockEntities.getValidTransaction();
             let shipping_receipt = MockEntities.getValidShippingReceipt();
-            let rebill_id = [rebill.id/*, "-garbage-"*/];
+            let transaction_rebill_id = [transaction.rebill, rebill.id];
+            let shipping_receipt_id = [shipping_receipt.id, uuidV4()];
 
             //prepare data
-            rebill.id = randomutilities.selectRandomFromArray(rebill_id);
-            transaction.rebill = rebill.id;
+            rebill.state = "pending";
+            rebill.processing = true;
+            transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill_id);
             transaction.merchant_provider = "a32a3f71-1234-4d9e-a9a1-98ecedb88f24";
             transaction.products = [transaction.products[0]];
-            transaction.products[0].shipping_receipt = shipping_receipt.id;
+            transaction.products[0].shipping_receipt = randomutilities.selectRandomFromArray(shipping_receipt_id);
+            shipping_receipt.fulfillment_provider = fulfillment_provider.id;
 
-            //rebills with "-garbage-" id go to error
-            if (rebill.id === "-garbage-") number_of_incorrect++;
+            //rebill without transaction goes to error
+            //rebill with transaction that has no shipping receipt goes to error
+            if ((transaction.rebill !== rebill.id) ||
+                transaction.products[0].shipping_receipt !== shipping_receipt.id)
+                number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
             operations.push(transactionController.create({entity: transaction}));
@@ -119,21 +125,6 @@ describe('pendingToShippedStressTest', () => {
         return Promise.all(operations)
             .then(() => permissionutilities.enableACLs())
             .catch(() => permissionutilities.enableACLs());
-    }
-
-    function getRebill() {
-        return {
-            "bill_at": "2017-04-06T18:40:41.405Z",
-            "id": uuidV4(),
-            "state": "pending",
-            "processing": true,
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-            "product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
-            "amount": 34.99,
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
-        };
     }
 
     function getValidFulfillmentProvider() {
