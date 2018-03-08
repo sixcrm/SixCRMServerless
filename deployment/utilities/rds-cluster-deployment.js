@@ -35,7 +35,7 @@ class RDSClusterDeployment {
 
           global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
 
-          console.log(global.SixCRM.configuration.site_config.aurora);
+          du.info('Aurora host resolved', global.SixCRM.configuration.site_config.aurora);
 
           return parameters;
 
