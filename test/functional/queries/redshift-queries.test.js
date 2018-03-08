@@ -15,6 +15,42 @@ const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-
 const redshiftSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-schema-deployment.js');
 const BBPromise = require('bluebird');
 
+before((done) => {
+
+  global.SixCRM.setResource('redshiftContext', redshiftContext);
+
+  redshiftContext.init()
+    .then(() => {
+
+      return done();
+
+    })
+    .catch((ex) => {
+
+      done(ex);
+
+    });
+
+});
+
+after((done) => {
+
+  const redshiftContext = global.SixCRM.getResource('redshiftContext');
+
+  redshiftContext.dispose()
+    .then(() => {
+
+      return done();
+
+    })
+    .catch((ex) => {
+
+      done(ex);
+
+    });
+
+});
+
 describe('queries/redshift-queries.js', () => {
 
   const suite_directory = __dirname + '/tests';
