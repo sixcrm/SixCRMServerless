@@ -25,7 +25,7 @@ describe('pendingToShipped', () => {
             test.path = test_path;
             test.lambda_filter = config.lambda_filter;
             test.order = config.order || Number.MAX_SAFE_INTEGER;
-
+            test.only = config.only;
 
             if (fileutilities.fileExists(test_path + '/seeds')) {
                 if (fileutilities.fileExists(test_path + '/seeds/dynamodb')) {
@@ -45,13 +45,18 @@ describe('pendingToShipped', () => {
                 }
             }
 
-            tests.push(test);
+            if (!config.skip) {
+                tests.push(test);
+            }
         } else {
             console.log('Ignoring ' + test_path);
         }
 
     });
     tests.sort((a, b) => a.order - b.order);
+    if (arrayutilities.filter(tests, test => test.only).length > 0 ) {
+        tests = arrayutilities.filter(tests, test => test.only);
+    }
 
     before((done) => {
         process.env.require_local = true;
