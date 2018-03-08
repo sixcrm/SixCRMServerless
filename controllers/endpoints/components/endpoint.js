@@ -21,6 +21,8 @@ module.exports = class EndpointController {
   // run the lambda lifecycle
   execute(event) {
 
+    du.debug('EndpointController.execute()');
+
     return this.preamble(event)
       .then(() => this.body(event))
       .then((res) => this.epilogue().then(() => Promise.resolve(res)))
@@ -31,6 +33,8 @@ module.exports = class EndpointController {
   // eslint-disable-next-line no-unused-vars
   preamble(event) {
 
+    du.debug('EndpointController.preamble()');
+
     return Promise.resolve();
 
   }
@@ -40,12 +44,16 @@ module.exports = class EndpointController {
   // eslint-disable-next-line no-unused-vars
   body(event) {
 
+    du.debug('EndpointController.body()');
+
     return Promise.resolve();
 
   }
 
   // override
   epilogue() {
+
+    du.debug('EndpointController.epilogue()');
 
     return Promise.resolve();
 
