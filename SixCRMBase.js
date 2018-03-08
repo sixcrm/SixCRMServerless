@@ -1,6 +1,5 @@
 'use strict';
 require('./routes.js');
-const _ = require('underscore');
 
 class SixCRMBase {
 
