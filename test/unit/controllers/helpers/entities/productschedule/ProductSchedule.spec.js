@@ -1,19 +1,14 @@
 'use strict'
 
 const _ = require('underscore');
-const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 
 function getValidProductSchedules(){
@@ -204,43 +199,43 @@ describe('getScheduleElementOnDayInSchedule', () => {
     let cases = [
       {
         day: 0,
-        expect: product_schedule.schedule[0]
+        expect: [product_schedule.schedule[0]]
       },
       {
         day: 1,
-        expect: product_schedule.schedule[0]
+        expect: [product_schedule.schedule[0]]
       },
       {
         day: -1,
-        expect: null
+        expect: []
       },
       {
         day: 13,
-        expect: product_schedule.schedule[0]
+        expect: [product_schedule.schedule[0]]
       },
       {
         day: 14,
-        expect: product_schedule.schedule[1]
+        expect: [product_schedule.schedule[1]]
       },
       {
         day: 15,
-        expect: product_schedule.schedule[1]
+        expect: [product_schedule.schedule[1]]
       },
       {
         day: 28,
-        expect: product_schedule.schedule[2]
+        expect: [product_schedule.schedule[2]]
       },
       {
         day: 3000,
-        expect: product_schedule.schedule[2]
+        expect: [product_schedule.schedule[2]]
       }
     ];
 
     arrayutilities.map(cases, (test_case) => {
 
-      let scheduled_product = productScheduleHelper.getScheduleElementOnDayInSchedule({product_schedule: product_schedule, day: test_case.day});
+      let scheduled_product = productScheduleHelper.getScheduleElementsOnDayInSchedule({product_schedule: product_schedule, day: test_case.day});
 
-      expect(scheduled_product).to.equal(test_case.expect);
+      expect(scheduled_product).to.deep.equal(test_case.expect);
 
     });
 

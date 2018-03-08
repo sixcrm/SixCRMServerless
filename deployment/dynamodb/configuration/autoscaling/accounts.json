@@ -4,13 +4,13 @@
     "scalable_targets":[
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 5,
+        "MinCapacity": 10,
         "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
         "ServiceNamespace": "dynamodb"
       },
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 5,
+        "MinCapacity": 10,
         "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
         "ServiceNamespace": "dynamodb"
       }

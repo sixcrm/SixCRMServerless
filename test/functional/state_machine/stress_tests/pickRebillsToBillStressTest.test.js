@@ -1,4 +1,4 @@
-const expect = require('chai').expect;
+
 const uuidV4 = require('uuid/v4');
 const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
@@ -10,11 +10,14 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const timer = global.SixCRM.routes.include('lib', 'timer.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const tab = '      ';
 
-const max_test_cases = randomutilities.randomInt(100, 200);
+const max_test_cases = randomutilities.randomInt(10, 20);
 
 describe('pickRebillsToBillStressTest', () => {
+
+    let number_of_ignored = 0;
 
     before((done) => {
         process.env.require_local = true;
@@ -32,15 +35,15 @@ describe('pickRebillsToBillStressTest', () => {
     it(`${max_test_cases} rebills are picked from dynamo`, () => {
         return beforeTest()
             .then(() => waitForNumberOfMessages('bill', 0))
-            .then(() => console.log(tab + 'Waiting for flush to finish'))
+            .then(() => du.output(tab + 'Waiting for flush to finish'))
             .then(() => timer.set())
             .then(() => StateMachine.flush())
-            .then(() => waitForNumberOfMessages('bill', max_test_cases))
+            .then(() => waitForNumberOfMessages('bill', max_test_cases - number_of_ignored))
             .then(() => {
                 let total = timer.get();
 
-                console.log(tab + 'Total processing time: ' + total + ' ms');
-                console.log(tab + numberUtilities.formatFloat(total/max_test_cases, 2) + 'ms per message');
+                du.output(tab + 'Total processing time: ' + total + ' ms');
+                du.output(tab + numberUtilities.formatFloat(total/max_test_cases, 2) + 'ms per message');
             });
     });
 
@@ -59,6 +62,11 @@ describe('pickRebillsToBillStressTest', () => {
 
         for (let i = 0; i < max_test_cases; i++) {
             let rebill = getRebill();
+
+            rebill.processing = randomutilities.randomBoolean();
+
+            //rebill in processing is ignored
+            if (rebill.processing) number_of_ignored++;
 
             operations.push(rebillController.create({entity: rebill}));
         }
@@ -80,11 +88,11 @@ describe('pickRebillsToBillStressTest', () => {
 
         return SqSTestUtils.messageCountInQueue(queue_name)
             .then((count) => {
-                console.log(tab + 'Waiting for ' + number + ' messages to be in ' + queue_name + '. Got ' + count);
+                du.output(tab + 'Waiting for ' + number + ' messages to be in ' + queue_name + '. Got ' + count);
                 if ((number === 0 && count > 0) || (number > 0 && count < number)) {
                     return timestamp.delay(1 * 1000)().then(() => waitForNumberOfMessages(queue_name, number, ++retries))
                 } else if (number > 0 && count > number) {
-                    console.log('Too many messages in queue ' + queue_name);
+                    du.output('Too many messages in queue ' + queue_name);
                     return Promise.reject('Too many messages in queue ' + queue_name);
                 } else {
                     return Promise.resolve();
@@ -108,4 +116,3 @@ describe('pickRebillsToBillStressTest', () => {
     }
 
 });
-

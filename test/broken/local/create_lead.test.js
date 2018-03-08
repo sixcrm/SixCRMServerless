@@ -1,15 +1,10 @@
-var request = require('supertest');
-var chai = require('chai');
-chai.use(require('chai-json-schema'));
-var assert = require('chai').assert;
-var fs = require('fs');
-var querystring = require('querystring');
+const request = require('supertest');
+const chai = require('chai');
 
-try {
-  var config = global.SixCRM.configuration.site_config;
-} catch (e) {
-  console.log(e);
-}
+chai.use(require('chai-json-schema'));
+const assert = require('chai').assert;
+
+var config = global.SixCRM.routes.include('test', '/integration/config/'+process.env.stage+'.yml');
 
 var endpoint = config.endpoint;
 
@@ -33,7 +28,7 @@ describe('Create Lead Integration Test', function() {
 				"country":"US"
 			}
 		};
-		
+
 		this_request.post('lead/create/')
 			.send(post_body)
 			.set('Content-Type', 'application/json')
@@ -52,12 +47,12 @@ describe('Create Lead Integration Test', function() {
 				assert.property(response.body.results.session, "id");
 				assert.isString(response.body.results.session.id);
 				assert.isObject(response.body.results.customer);
-				
+
 				//more testing...
-					  
+
 				done();
 			}, done);
-		
+
 		});
 	});
 });
