@@ -1,15 +1,10 @@
-var request = require('supertest');
-var chai = require('chai');
-chai.use(require('chai-json-schema'));
-var assert = require('chai').assert;
-var fs = require('fs');
-var querystring = require('querystring');
+const request = require('supertest');
+const chai = require('chai');
 
-try {
-  var config = global.SixCRM.configuration.site_config;
-} catch (e) {
-  console.log(e);
-}
+chai.use(require('chai-json-schema'));
+const assert = require('chai').assert;
+
+var config = global.SixCRM.routes.include('test', '/integration/config/'+process.env.stage+'.yml');
 
 var endpoint = config.endpoint;
 
@@ -18,6 +13,7 @@ describe('Confirm Order Integration Test', function() {
     it('should confirm a order', function (done) {
 		var this_request = request(endpoint);
 		var session_id = "668ad918-0d09-4116-a6fe-0e8a9eda36f7";
+
 		this_request.get('order/confirm/')
 			.query('session_id='+session_id)
 			.set('Content-Type', 'application/json')
@@ -28,13 +24,12 @@ describe('Confirm Order Integration Test', function() {
 			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
-				console.log(response.body);
 				assert.isObject(response.body);
 				assert.property(response.body, "message");
 				assert.equal(response.body.message, "Success");
 				done();
 			}, done);
-		
+
 		});
 	});
 });

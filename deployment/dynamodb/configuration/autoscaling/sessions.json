@@ -4,7 +4,7 @@
     "scalable_targets":[
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 1,
+        "MinCapacity": 3,
         "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
         "ServiceNamespace": "dynamodb"
       },
@@ -49,13 +49,13 @@
     "scalable_targets":[
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 1,
+        "MinCapacity": 3,
         "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
         "ServiceNamespace": "dynamodb"
       },
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 1,
+        "MinCapacity": 3,
         "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
         "ServiceNamespace": "dynamodb"
       }
@@ -94,13 +94,13 @@
     "scalable_targets":[
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 1,
+        "MinCapacity": 3,
         "ScalableDimension": "dynamodb:index:WriteCapacityUnits",
         "ServiceNamespace": "dynamodb"
       },
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 1,
+        "MinCapacity": 3,
         "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
         "ServiceNamespace": "dynamodb"
       }

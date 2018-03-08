@@ -21,21 +21,21 @@ module.exports = class graphController extends authenticatedController {
 
   }
 
-  preamble(event) {
+  preamble() {
+
+    du.debug('GraphController.preamble()');
 
     global.SixCRM.setResource('redshiftContext', redshiftContext);
-
-    return redshiftContext.init()
-      .then(() => this.preprocessing(event))
+    return redshiftContext.init();
 
   }
 
   body(event) {
 
-    du.debug('Execute');
+    du.debug('GraphController.body()');
 
-    //Technical Debt:  Alter to use preamble
-    return this.parseEventQueryString(event)
+    return this.preprocessing(event)
+      .then((event) => this.parseEventQueryString(event))
       .then((event) => this.acquireQuery(event))
       .then((event) => this.acquireOutputParameters(event))
       .then((event) => this.setCacheParameters(event))
@@ -43,6 +43,15 @@ module.exports = class graphController extends authenticatedController {
       .then((response) => this.handleGraphErrors(response));
 
   }
+
+  epilogue() {
+    du.debug('GraphController.epilogue()');
+
+    global.SixCRM.getResource('redshiftContext');
+    return redshiftContext.dispose();
+
+  }
+
 
   parseEventQueryString(event) {
 

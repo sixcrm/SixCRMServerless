@@ -1,17 +1,15 @@
-var request = require('supertest');
-var chai = require('chai');
+const request = require('supertest');
+const chai = require('chai');
 
 chai.use(require('chai-json-schema'));
-var assert = require('chai').assert
-var fs = require('fs');
+const assert = require('chai').assert
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');
-const random = global.SixCRM.routes.include('lib','random.js');
 const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
 
 try {
-    var config = global.SixCRM.configuration.site_config;
+    var config = global.SixCRM.routes.include('test', '/integration/config/'+process.env.stage+'.yml');
 } catch (e) {
     du.warning(e);
 }
@@ -52,7 +50,6 @@ describe('Tracking Test', () => {
   it('Returns trackers that match POSTed parameters', (done) => {
 
     let account = config.account;
-    let affiliate_id = 'whatever';
 
     let authorization_string = getValidAuthorizationString();
 
