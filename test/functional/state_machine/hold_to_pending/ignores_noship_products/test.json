@@ -1,4 +1,5 @@
 {
   "description": "Rebill with noship products remains in hold state",
-  "order": 30
+  "order": 50,
+  "lambda_filter": ["holdtopending"]
 }

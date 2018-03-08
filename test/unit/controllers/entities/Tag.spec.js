@@ -130,4 +130,62 @@ describe('controllers/entities/EntityACL.js', () => {
             });
         });
     });
+
+    describe('listByEntity', () => {
+        it('returns list of tags matching entity', () => {
+            const entities = [{
+                id: '',
+                account: '',
+                entity: '',
+                key: 'Test Key',
+                value: 'yes'
+            }];
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'tag');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+                queryRecords: (table, parameters) => {
+                    expect(parameters.key_condition_expression).to.include('#entity = :entityv');
+                    expect(parameters.expression_attribute_names['#entity']).to.equal('entity');
+                    expect(parameters.expression_attribute_values[':entityv']).to.equal('TestID');
+                    expect(parameters.limit).to.equal(10);
+                    return Promise.resolve({ Count: 1, Items: entities });
+                }
+            });
+
+            let mock_preindexing_helper = class {
+                constructor(){
+
+                }
+                addToSearchIndex(){
+                    return Promise.resolve(true);
+                }
+                removeFromSearchIndex(){
+                    return Promise.resolve(true);
+                }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+                createActivity: () => {
+                    return Promise.resolve();
+                }
+            });
+
+            const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+
+            return tagController.listByEntity({id:'TestID', pagination: {limit: 10}}).then(result => {
+                expect(result).to.deep.equal({
+                    tags: entities,
+                    pagination: {
+                        count: 1,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ''
+                    }
+                });
+            });
+        });
+    });
 });

@@ -33,6 +33,20 @@ class TagController extends entityController {
 
         return this.listByAccount({query_parameters, pagination, search, reverse_order, fatal});
     }
+
+    listByEntity({id, pagination, search, reverse_order, fatal}) {
+        const query_parameters = {
+            key_condition_expression: '#entity = :entityv',
+            expression_attribute_names: {
+                '#entity': 'entity'
+            },
+            expression_attribute_values: {
+                ':entityv': id
+            }
+        };
+
+        return this.listByAccount({query_parameters, pagination, search, reverse_order, fatal});
+    }
 }
 
 module.exports = new TagController();
