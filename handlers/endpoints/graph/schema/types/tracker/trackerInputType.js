@@ -13,6 +13,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         type:       { type: new GraphQLNonNull(GraphQLString) },
         event_type: { type: new GraphQLList(GraphQLString) },
         body:       { type: new GraphQLNonNull(GraphQLString) },
-        name:       { type: GraphQLString }
+        name:       { type: GraphQLString },
+        updated_at: { type: GraphQLString }
     })
 });

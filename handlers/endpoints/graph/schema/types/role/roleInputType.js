@@ -12,6 +12,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         id:					{ type: GraphQLString },
         name:				{ type: new GraphQLNonNull(GraphQLString) },
         active:				{ type: new GraphQLNonNull(GraphQLBoolean) },
-        permissions: { type: new GraphQLNonNull(permissionsInputType.graphObj)}
+        permissions: { type: new GraphQLNonNull(permissionsInputType.graphObj)},
+        updated_at: { type: GraphQLString }
     })
 });

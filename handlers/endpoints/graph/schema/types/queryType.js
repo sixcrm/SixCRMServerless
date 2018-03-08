@@ -37,6 +37,9 @@ let emailTemplateType = require('./emailtemplate/emailTemplateType');
 let fulfillmentProviderListType = require('./fulfillmentprovider/fulfillmentProviderListType');
 let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
 
+let eventHookListType = require('./eventhook/eventHookListType');
+let eventHookType = require('./eventhook/eventHookType');
+
 let merchantProviderGroupType = require('./merchantprovidergroup/merchantProviderGroupType');
 let merchantProviderGroupListType = require('./merchantprovidergroup/merchantProviderGroupListType');
 
@@ -105,6 +108,9 @@ let billType = require('./bill/billType');
 let billListType = require('./bill/billListType');
 
 let tokenListType = require('./token/tokenListType');
+
+let tagType = require('./tag/tagType');
+let tagListType = require('./tag/tagListType');
 
 let suggestInputType = require('./search/suggestInputType');
 let suggestResultsType = require('./search/suggestResultsType');
@@ -1139,13 +1145,18 @@ module.exports.graphObj = new GraphQLObjectType({
         entityacllist: {
             type: entityACLListType.graphObj,
             args: {
+                type: {
+                    type: new GraphQLNonNull(GraphQLString),
+                    description: 'type of entities'
+                },
                 pagination: {type: paginationInputType.graphObj},
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, entityacl){
                 const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+                const {type, pagination, search} = entityacl;
 
-                return entityACLController.listByAccount({pagination: entityacl.pagination, fatal:list_fatal, search: entityacl.search});
+                return entityACLController.listByType({type, pagination, search, fatal:list_fatal});
             }
         },
         rebilllist: {
@@ -1253,6 +1264,18 @@ module.exports.graphObj = new GraphQLObjectType({
                 const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 
       	       return fulfillmentProviderController.listByAccount({pagination: fulfillmentprovider.pagination, fatal:list_fatal, search: fulfillmentprovider.search});
+            }
+        },
+        eventhooklist: {
+            type: eventHookListType.graphObj,
+            args: {
+              pagination: {type: paginationInputType.graphObj},
+              search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: function(root, eventhook){
+              const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+              return eventHookController.listByAccount({pagination: eventhook.pagination, fatal:list_fatal, search: eventhook.search});
             }
         },
         accesskeylist: {
@@ -1455,6 +1478,20 @@ module.exports.graphObj = new GraphQLObjectType({
 
                 return fulfillmentProviderController.get({id: fulfillmentprovider.id, fatal: get_fatal});
             }
+        },
+        eventhook: {
+          type: eventHookType.graphObj,
+          args: {
+            id: {
+              description: 'id of the event hook',
+              type: new GraphQLNonNull(GraphQLString)
+            }
+          },
+          resolve: function(root, eventhook){
+            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+            return eventHookController.get({id: eventhook.id, fatal: get_fatal});
+          }
         },
         merchantprovidergroup: {
             type: merchantProviderGroupType.graphObj,
@@ -1826,6 +1863,84 @@ module.exports.graphObj = new GraphQLObjectType({
                 }else{
                     return null;
                 }
+            }
+        },
+        tag: {
+            type: tagType.graphObj,
+            args: {
+                id: {
+                    description: 'id of the tag',
+                    type: GraphQLString
+                }
+            },
+            resolve: (root, tag) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+
+                return tagController.get({id: tag.id, fatal: get_fatal});
+            }
+        },
+        taglist: {
+            type: tagListType.graphObj,
+            args: {
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: (root, tags) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const {pagination, search} = tags;
+
+                return tagController.listByAccount({pagination, search, fatal: list_fatal});
+            }
+        },
+        taglistbyentity: {
+          type: tagListType.graphObj,
+          args: {
+            id: {
+              type: new GraphQLNonNull(GraphQLString),
+              description: 'id of the associated entity'
+            },
+            pagination: {type: paginationInputType.graphObj},
+            search: {type: entitySearchInputType.graphObj}
+          },
+          resolve: (root, tags) => {
+            const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+            const {id, pagination, search} = tags;
+
+            return tagController.listByAccount({id, pagination, search, fatal: list_fatal});
+          }
+        },
+        taglistbykey: {
+            type: tagListType.graphObj,
+            args: {
+                key: {
+                    type: new GraphQLNonNull(GraphQLString),
+                    description: 'key of the tag'
+                },
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: (root, tags) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const {key, pagination, search} = tags;
+
+                return tagController.listByKey({key, pagination, search});
+            }
+        },
+        taglistbykeyfuzzy: {
+            type: tagListType.graphObj,
+            args: {
+                key: {
+                    type: new GraphQLNonNull(GraphQLString),
+                    description: 'key of the tag'
+                },
+                pagination: {type: paginationInputType.graphObj},
+                search: {type: entitySearchInputType.graphObj}
+            },
+            resolve: (root, tags) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const {key, pagination, search} = tags;
+
+                return tagController.listByKeyFuzzy({key, pagination, search});
             }
         }
     })

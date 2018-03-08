@@ -44,4 +44,29 @@ describe('controllers/helpers/entities/creditcard/CreditCard.js', () => {
 
     });
   });
+
+  describe('lastFour', () => {
+
+    it('successfully returns a asterisk version of first characters', () => {
+
+      let numbers = [
+        '4111111111119876',
+        '4111 1111 1111 9876',
+        '411111111119876',
+        '411111 111111 9876',
+      ];
+
+      let creditCardHelperController = new CreditCardHelperController();
+
+      arrayutilities.map(numbers, number => {
+        let munged_string = creditCardHelperController.lastFour(number);
+
+        expect(munged_string.substr(-4)).to.equal('9876');
+        expect(munged_string.length).to.equal(number.replace(/^[0-9]/gi, '').length);
+      });
+
+    });
+
+  });
+
 });

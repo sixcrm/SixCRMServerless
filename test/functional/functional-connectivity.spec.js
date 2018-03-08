@@ -1,9 +1,28 @@
-'use strict'
+'use strict';
 require('../../SixCRMLite.js');
 
 const expect = require('chai').expect;
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
+const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
+
+before((done) => {
+
+  global.SixCRM.setResource('redshiftContext', redshiftContext);
+
+  redshiftContext.init()
+    .then(() => {
+
+      return done();
+
+    })
+    .catch((ex) => {
+
+      done(ex);
+
+    });
+
+});
 
 describe('Test connections to Docker Services', () => {
 
@@ -44,9 +63,7 @@ describe('Test connections to Docker Services', () => {
 
     it('successfully connects to the Docker Redshift Instance', () => {
 
-      let redshiftqueryutilities = global.SixCRM.routes.include('lib', 'redshift-query-utilities.js');
-
-      return redshiftqueryutilities.query('SELECT 1').then(result => {
+      return redshiftContext.connection.query('SELECT 1').then(result => {
         expect(result[0]['?column?']).to.equal(1);
       }).catch(error => {
         du.error(error);
@@ -66,32 +83,32 @@ describe('Test connections to Docker Services', () => {
 
       let test_value = random.createRandomString(20);
 
-      return redisutilities.set('test', {'abc':test_value})
-      .then((result) => {
-        expect(result).to.equal('OK');
-        return redisutilities.get('test');
-      })
-      .then((result) => {
-        expect(result.abc).to.equal(test_value);
-      })
+      return redisutilities.set('test', {'abc': test_value})
+        .then((result) => {
+          expect(result).to.equal('OK');
+          return redisutilities.get('test');
+        })
+        .then((result) => {
+          expect(result.abc).to.equal(test_value);
+        })
 
     });
 
   });
 
-    describe('SNS Utilities', () => {
+  describe('SNS Utilities', () => {
 
-        it('successfully connects to the Docker SNS Instance', () => {
+    it('successfully connects to the Docker SNS Instance', () => {
 
-            let snsutilities = global.SixCRM.routes.include('lib', 'sns-utilities.js');
+      let snsutilities = global.SixCRM.routes.include('lib', 'sns-utilities.js');
 
-            return snsutilities.createTopic({"Name": "events"})
-                .then((response) => {
-                    expect(response).to.have.property('ResponseMetadata');
-                })
-
-        });
+      return snsutilities.createTopic({"Name": "events"})
+        .then((response) => {
+          expect(response).to.have.property('ResponseMetadata');
+        })
 
     });
+
+  });
 
 });

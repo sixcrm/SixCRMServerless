@@ -10,7 +10,7 @@ class accessKeyController extends entityController {
         super('accesskey');
     }
 
-    create({entity: entity}){
+    create({entity}){
 
       du.debug('Access Key Controller: Create');
 
@@ -29,7 +29,7 @@ class accessKeyController extends entityController {
 
     }
 
-    update({entity: entity}){
+    update({entity, ignore_updated_at}){
 
       du.debug('Access Key Controller: Update');
 
@@ -39,7 +39,7 @@ class accessKeyController extends entityController {
           entity = objectutilities.transcribe({access_key: 'access_key', secret_key: 'secret_key'}, existing_access_key, entity, false);
         }
 
-        return super.update({entity: entity});
+        return super.update({entity: entity, ignore_updated_at: ignore_updated_at});
 
       });
 

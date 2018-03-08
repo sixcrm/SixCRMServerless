@@ -10,6 +10,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
     fields: () => ({
         id:					{ type: GraphQLString },
         name:				{ type: new GraphQLNonNull(GraphQLString) },
-        provider:		{ type: new GraphQLNonNull(providerInputType.graphObj) }
+        provider:		{ type: new GraphQLNonNull(providerInputType.graphObj) },
+        updated_at: { type: GraphQLString }
     })
 });

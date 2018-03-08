@@ -11,6 +11,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         bill_at:			{ type: new GraphQLNonNull(GraphQLString) },
         parentsession:		{ type: new GraphQLNonNull(GraphQLString) },
         amount:				{ type: new GraphQLNonNull(GraphQLString) },
-        product_schedules:	{ type: new GraphQLList(GraphQLString) }
+        product_schedules:	{ type: new GraphQLList(GraphQLString) },
+        updated_at: { type: GraphQLString }
     })
 });

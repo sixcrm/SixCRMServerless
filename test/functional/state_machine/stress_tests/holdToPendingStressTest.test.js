@@ -23,6 +23,7 @@ const max_test_cases = randomutilities.randomInt(5, 9);
 describe('holdToPendingStressTest', () => {
 
     let number_of_incorrect = 0;
+    let number_of_ignored = 0;
     let lambda_filter = ["holdtopending"];
 
     before((done) => {
@@ -44,9 +45,9 @@ describe('holdToPendingStressTest', () => {
             .then(() => console.log(tab + 'Waiting for flush to finish'))
             .then(() => timer.set())
             .then(() => StateMachine.flush(lambda_filter))
-            .then(() => waitForNumberOfMessages('hold', 0))
+            .then(() => waitForNumberOfMessages('hold', number_of_ignored))
             .then(() => waitForNumberOfMessages('hold_error', number_of_incorrect))
-            .then(() => waitForNumberOfMessages('pending', max_test_cases - number_of_incorrect))
+            .then(() => waitForNumberOfMessages('pending', max_test_cases - number_of_incorrect - number_of_ignored))
             .then(() => {
                 let total = timer.get();
 
@@ -101,30 +102,37 @@ describe('holdToPendingStressTest', () => {
             let session = MockEntities.getValidSession();
             let product = MockEntities.getValidProduct();
             let transaction = MockEntities.getValidTransaction();
-            let rebill_id = [rebill.id/*, "-garbage-"*/];
+            let rebill_id = [rebill.id, uuidV4()];
+            let transaction_rebill = [transaction.rebill, rebill.id];
 
             //prepare data
-            rebill.id = randomutilities.selectRandomFromArray(rebill_id);
+            rebill_id = randomutilities.selectRandomFromArray(rebill_id);
             session.customer = customer.id;
             session.completed = false;
             session.id = rebill.parentsession;
             session.product_schedules = rebill.product_schedules;
             product.fulfillment_provider = fulfillment_provider.id;
-            product.ship = true;
+            product.ship = randomutilities.randomBoolean();
             product.id = rebill.products[0].product.id;
-            transaction.rebill = rebill.id;
+            transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill);
             transaction.merchant_provider = "a32a3f71-1234-4d9e-a9a1-98ecedb88f24";
             transaction.products = rebill.products;
 
-            //rebills with "-garbage-" id go to error
-            if (rebill.id === "-garbage-") number_of_incorrect++;
+            //missing rebill goes to error
+            //rebill without transaction goes to error
+            if ((rebill.id !== rebill_id) ||
+                (transaction.rebill !== rebill.id))
+                number_of_incorrect++;
+
+            //rebill remains in hold when product should be not shipped
+            else if (!product.ship) number_of_ignored++;
 
             operations.push(rebillController.create({entity: rebill}));
             operations.push(customerController.create({entity: customer}));
             operations.push(sessionController.create({entity: session}));
             operations.push(productController.create({entity: product}));
             operations.push(transactionController.create({entity: transaction}));
-            operations.push(SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill.id +'"}'));
+            operations.push(SqSTestUtils.sendMessageToQueue('hold', '{"id":"' + rebill_id +'"}'));
         }
 
         operations.push(fulfillmentProviderController.create({entity: fulfillment_provider}));

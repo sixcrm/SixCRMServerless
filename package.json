@@ -4,6 +4,7 @@
   "description": "Backend Processing Lambda Endpoints",
   "main": "index.js",
   "dependencies": {
+    "@adexchange/aeg-redshift": "0.0.84",
     "apn": "^2.1.4",
     "aws-xray-sdk": "^1.2.0",
     "base-64": "^0.1.0",
@@ -15,7 +16,6 @@
     "graphql": "^0.9.0",
     "graphql-type-json": "^0.1.4",
     "image-type": "^3.0.0",
-    "js-yaml": "^3.7.0",
     "js2xmlparser2": "^0.2.0",
     "json2csv": "^3.7.3",
     "jsonschema": "^1.1.1",
@@ -35,7 +35,6 @@
     "striptags": "^3.0.1",
     "underscore": "^1.8.3",
     "uuid": "^3.0.1",
-    "validator": "^6.2.0",
     "xlsx": "^0.10.5",
     "xml2js": "^0.4.17"
   },

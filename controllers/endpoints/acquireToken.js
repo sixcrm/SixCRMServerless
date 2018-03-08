@@ -1,11 +1,10 @@
 'use strict';
-const _ = require("underscore");
+const _ = require('underscore');
 
 const jwtutilities  = global.SixCRM.routes.include('lib', 'jwt-utilities');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class AcquireTokenController extends transactionEndpointController {
@@ -119,6 +118,8 @@ class AcquireTokenController extends transactionEndpointController {
       let event = this.parameters.get('event');
 
       if(!_.has(this, 'affiliateHelperController')){
+        const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
+
         this.affiliateHelperController = new AffiliateHelperController();
       }
 

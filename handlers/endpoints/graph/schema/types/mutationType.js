@@ -18,6 +18,7 @@ let campaignInputType = require('./campaign/campaignInputType');
 let campaignType = require('./campaign/campaignType');
 
 let creditCardInputType = require('./creditcard/creditCardInputType');
+let creditCardPartialInputType = require('./creditcard/creditCardPartialInputType');
 let creditCardType = require('./creditcard/creditCardType');
 
 let customerInputType = require('./customer/customerInputType');
@@ -31,6 +32,9 @@ let emailTemplateType = require('./emailtemplate/emailTemplateType');
 
 let fulfillmentProviderInputType = require('./fulfillmentprovider/fulfillmentProviderInputType');
 let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
+
+let eventHookInputType = require('./eventhook/eventHookInputType');
+let eventHookType = require('./eventhook/eventHookType');
 
 let fulfillmentProviderValidationType = require('./fulfillmentprovider/fulfillmentProviderValidationType');
 
@@ -96,6 +100,9 @@ let userSigningStringInputType = require('./usersigningstring/userSigningStringI
 let sessionInputType = require('./session/sessionInputType');
 let sessionType = require('./session/sessionType');
 let sessionCancelInputType = require('./session/sessionCancelInputType');
+
+const tagInputType = require('./tag/tagInputType');
+const tagType = require('./tag/tagType');
 
 //Register
 let refundType = require('./register/refund/refundType');
@@ -710,6 +717,46 @@ module.exports.graphObj = new GraphQLObjectType({
                 return merchantProviderController.delete({id:id});
             }
         },
+        createeventhook:{
+          type: eventHookType.graphObj,
+          description: 'Adds a new Event Hook.',
+          args: {
+            eventhook: { type: eventHookInputType.graphObj}
+          },
+          resolve: (value, eventhook) => {
+            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+            return eventHookController.create({entity: eventhook.eventhook});
+          }
+        },
+        updateeventhook:{
+          type: eventHookType.graphObj,
+          description: 'Updates a Event Hook.',
+          args: {
+            eventhook: { type: eventHookInputType.graphObj }
+          },
+          resolve: (value, eventhook) => {
+            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+            return eventHookController.update({entity:eventhook.eventhook});
+          }
+        },
+        deleteeventhook:{
+          type: deleteOutputType.graphObj,
+          description: 'Deletes a Event Hook.',
+          args: {
+            id: {
+              description: 'id of the event hook',
+              type: new GraphQLNonNull(GraphQLString)
+            }
+          },
+          resolve: (value, eventhook) => {
+            var id = eventhook.id;
+            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+            return eventHookController.delete({id:id});
+          }
+        },
         createfulfillmentprovider:{
             type: fulfillmentProviderType.graphObj,
             description: 'Adds a new Fulfillment Provider.',
@@ -794,7 +841,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: creditCardType.graphObj,
             description: 'Adds a new credit card.',
             args: {
-                creditcard: { type: creditCardInputType .graphObj}
+                creditcard: { type: creditCardInputType.graphObj}
             },
             resolve: (value, creditcard) => {
                 const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
@@ -812,6 +859,19 @@ module.exports.graphObj = new GraphQLObjectType({
                 const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 
                 return creditCardController.update({entity:creditcard.creditcard});
+            }
+        },
+        updatecreditcardpartial:{
+            type: creditCardType.graphObj,
+            description: 'Updates a Credit Card Partially.',
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLString) },
+                creditcard: { type: creditCardPartialInputType.graphObj }
+            },
+            resolve: (value, args) => {
+                const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+
+                return creditCardController.updateProperties({id: args.id, properties: args.creditcard});
             }
         },
         deletecreditcard:{
@@ -1512,6 +1572,45 @@ module.exports.graphObj = new GraphQLObjectType({
                 const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 
                 return userSigningStringController.delete({id: usersigningstring.id});
+            }
+        },
+        createtag: {
+            type: tagType.graphObj,
+            description: 'Creates a tag.',
+            args: {
+                tag: { type: tagInputType.graphObj }
+            },
+            resolve: (value, tag) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+
+                return tagController.create({entity: tag.tag});
+            }
+        },
+        updatetag: {
+            type: tagType.graphObj,
+            description: 'Updates a tag.',
+            args: {
+                tag: { type: tagInputType.graphObj }
+            },
+            resolve: (value, tag) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+
+                return tagController.update({entity: tag.tag});
+            }
+        },
+        deletetag: {
+            type: deleteOutputType.graphObj,
+            description: 'Deletes a tag.',
+            args: {
+                id: {
+                    description: 'id of the tag',
+                    type: new GraphQLNonNull(GraphQLString)
+                }
+            },
+            resolve: (value, tag) => {
+                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+
+                return tagController.delete({id: tag.id});
             }
         }
     })

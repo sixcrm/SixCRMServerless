@@ -1,10 +1,9 @@
 const request = require('supertest');
 const chai = require('chai');
 chai.use(require('chai-json-schema'));
-const assert = require('chai').assert
+const assert = require('chai').assert;
 
 const fs = require('fs');
-const yaml = require('js-yaml');
 const crypto = require('crypto');
 
 const du =  require('../../../lib/debug-utilities.js');
@@ -12,7 +11,7 @@ const tu =  require('../../../lib/test-utilities.js');
 const signature = require('../../../lib/signature.js');
 
 try {
-  var config = yaml.safeLoad(fs.readFileSync('./test/integration/config/'+environment+'.yml', 'utf8'));
+  var config = global.SixCRM.configuration.site_config;
 } catch (e) {
   console.log(e);
 }

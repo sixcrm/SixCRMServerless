@@ -11,7 +11,7 @@ class userSigningStringController extends entityController {
       super('usersigningstring');
   }
 
-  create({entity: entity}){
+  create({entity}){
 
     du.debug('User Signing String Controller: Create');
 
@@ -25,7 +25,7 @@ class userSigningStringController extends entityController {
 
   }
 
-  update({entity: entity}){
+  update({entity, ignore_updated_at}){
 
     du.debug('User Signing String Controller: Update');
 
@@ -35,7 +35,7 @@ class userSigningStringController extends entityController {
         entity = objectutilities.transcribe({signing_string: 'signing_string'}, existing_user_signing_string, entity, false);
       }
 
-      return super.update({entity: entity});
+      return super.update({entity: entity, ignore_updated_at: ignore_updated_at});
 
     });
 

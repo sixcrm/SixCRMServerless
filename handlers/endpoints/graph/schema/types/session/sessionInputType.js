@@ -26,6 +26,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
       cid:			{ type: GraphQLString },
       product_schedules:	{
         type: new GraphQLList(GraphQLString)
-      }
+      },
+      updated_at: { type: GraphQLString }
     })
 });

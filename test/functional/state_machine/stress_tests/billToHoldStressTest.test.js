@@ -15,15 +15,15 @@ const creditCardController = global.SixCRM.routes.include('entities', 'CreditCar
 const merchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
 const merchantProviderGroupController = global.SixCRM.routes.include('entities', 'MerchantProviderGroup.js');
 const merchantProviderGroupAssociationController = global.SixCRM.routes.include('entities', 'MerchantProviderGroupAssociation.js');
+const merchantProviderSummaryController = global.SixCRM.routes.include('entities', 'MerchantProviderSummary.js');
 const sessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const tab = '      ';
 
-// Technical Debt: Fails with larger number - some messages go to error. Investigate!
-const max_test_cases = randomutilities.randomInt(5, 9);
+const max_test_cases = randomutilities.randomInt(10, 20);
 
-xdescribe('billToHoldStressTest', () => {
+describe('billToHoldStressTest', () => {
 
     let number_of_incorrect = 0;
 
@@ -96,19 +96,20 @@ xdescribe('billToHoldStressTest', () => {
         let operations = [];
         let merchantProvider = getMerchantProvider();
         let merchantProviderGroup = getMerchantProviderGroup();
-        let creditCard = getCreditCard();
-        let customer = getCustomer();
-        let bin = getBin();
-        let session = getSession();
-        let merchantProviderGroupAssociation = getMerchantProviderGroupAssociation();
+        let merchantProviderSummary = getMerchantProviderSummary();
 
         for (let i = 0; i < max_test_cases; i++) {
             let rebill = getRebill();
+            let creditCard = MockEntities.getValidCreditCard();
+            let customer = MockEntities.getValidCustomer();
+            let bin = getBin();
+            let session = MockEntities.getValidSession();
+            let merchantProviderGroupAssociation = getMerchantProviderGroupAssociation();
 
-            //let credit_card_number = [creditCard.number, "1111111111111111"];
+            let credit_card_number = [creditCard.number/*, "1111111111111111"*/];
 
             //prepare data
-            /*merchantProviderGroupAssociation.entity = rebill.products[0].product.id;
+            merchantProviderGroupAssociation.entity = rebill.products[0].product.id;
             merchantProviderGroupAssociation.campaign = session.campaign;
             session.customer = customer.id;
             session.completed = false;
@@ -117,22 +118,23 @@ xdescribe('billToHoldStressTest', () => {
             customer.creditcards[0] = creditCard.id;
             credit_card_number = randomutilities.selectRandomFromArray(credit_card_number);
             creditCard.number = credit_card_number;
-            bin.binnumber = parseInt(credit_card_number.slice(0,6));*/
+            bin.binnumber = parseInt(credit_card_number.slice(0,6));
 
-            //credit cards with number "1111111111111111" go to error
+            //credit cards with number "1111111111111111" go to recover
             //if (credit_card_number === "1111111111111111" ) number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
+            operations.push(binController.create({entity: bin}));
+            operations.push(creditCardController.create({entity: creditCard}));
+            operations.push(customerController.create({entity: customer}));
+            operations.push(sessionController.create({entity: session}));
+            operations.push(merchantProviderGroupAssociationController.create({entity: merchantProviderGroupAssociation}));
             operations.push(SqSTestUtils.sendMessageToQueue('bill', '{"id":"' + rebill.id +'"}'));
         }
 
-        operations.push(binController.create({entity: bin}));
-        operations.push(creditCardController.create({entity: creditCard}));
-        operations.push(customerController.create({entity: customer}));
-        operations.push(sessionController.create({entity: session}));
-        operations.push(merchantProviderGroupAssociationController.create({entity: merchantProviderGroupAssociation}));
         operations.push(merchantProviderGroupController.create({entity: merchantProviderGroup}));
         operations.push(merchantProviderController.create({entity: merchantProvider}));
+        operations.push(merchantProviderSummaryController.create({entity: merchantProviderSummary}));
 
         return Promise.all(operations)
             .then(() => permissionutilities.enableACLs())
@@ -146,11 +148,11 @@ xdescribe('billToHoldStressTest', () => {
             "state": "bill",
             "processing": true,
             "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
+            "parentsession": uuidV4(),
             "products":[{
                 "quantity":1,
                 "product":{
-                    "id": "1b7ecefe-8be6-44cd-addb-d4e4350d7738",
+                    "id": uuidV4(),
                     "name": "Test Product",
                     "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
                     "sku":"123",
@@ -162,7 +164,7 @@ xdescribe('billToHoldStressTest', () => {
                 },
                 "amount":34.99
             }],
-            "product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
+            "product_schedules": [uuidV4()],
             "amount": 34.99,
             "created_at":"2017-04-06T18:40:41.405Z",
             "updated_at":"2017-04-06T18:41:12.521Z"
@@ -188,7 +190,7 @@ xdescribe('billToHoldStressTest', () => {
 
     function getMerchantProviderGroupAssociation() {
         return {
-            "id":"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+            "id":uuidV4(),
             "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
             "merchantprovidergroup":"45367480-f1c1-4f61-a3d6-413c22a44dc3",
             "campaign":"70a6689a-5814-438b-b9fd-dd484d0812f9",
@@ -254,68 +256,18 @@ xdescribe('billToHoldStressTest', () => {
         }
     }
 
-    function getCreditCard() {
+    function getMerchantProviderSummary() {
         return {
-            "id": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72",
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "address": {
-                "city": "Portland",
-                "country": "US",
-                "line1": "10 Skid Rw.",
-                "line2": "Suite 100",
-                "state": "OR",
-                "zip": "97213"
-            },
-            "number": "4111111111111111",
-            "ccv": "999",
-            "expiration": "10/2025",
-            "name": "Rama Damunaste",
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
+            "id":"b0fc8f07-6e1a-4655-818b-dd1c1a084307",
+            "account":"eefdeca6-41bc-4af9-a561-159acb449b5e",
+            "merchant_provider":"a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
+            "day": timestamp.getISO8601(),
+            "count":1,
+            "type":"recurring",
+            "total":randomutilities.randomDouble(1.0, 100.00),
+            "created_at":"2018-03-05T10:42:03.665Z",
+            "updated_at":"2018-03-05T11:42:03.665Z"
         }
     }
-
-    function getCustomer() {
-        return {
-            "id":"24f7c851-29d4-4af9-87c5-0298fa74c689",
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "email":"rama@damunaste.org",
-            "firstname":"Rama",
-            "lastname":"Damunaste",
-            "phone":"1234567890",
-            "address":{
-                "line1":"10 Downing St.",
-                "city":"London",
-                "state":"OR",
-                "zip":"97213",
-                "country":"US"
-            },
-            "creditcards":["df84f7bb-06bd-4daa-b1a3-6a2c113edd72"],
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
-        }
-    }
-
-    function getSession() {
-        return {
-            "id": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "alias":"SASDFG123P",
-            "customer": "24f7c851-29d4-4af9-87c5-0298fa74c689",
-            "campaign":"70a6689a-5814-438b-b9fd-dd484d0812f9",
-            "product_schedules":["12529a17-ac32-4e46-b05b-83862843055d"],
-            "completed": false,
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z",
-            "affiliate":	"332611c7-8940-42b5-b097-c49a765e055a",
-            "subaffiliate_1":	"6b6331f6-7f84-437a-9ac6-093ba301e455",
-            "subaffiliate_2":	"22524f47-9db7-42f9-9540-d34a8909b072",
-            "subaffiliate_3":	"fd2548db-66a8-481e-aacc-b2b76a88fea7",
-            "subaffiliate_4":	"d515c0df-f9e4-4a87-8fe8-c53dcace0995",
-            "subaffiliate_5":	"45f025bb-a9dc-45c7-86d8-d4b7a4443426",
-            "cid":"fb10d33f-da7d-4765-9b2b-4e5e42287726"
-        }
-    }
-
 });
 

@@ -50,6 +50,7 @@ module.exports = class TerminalController extends TerminalUtilities  {
       let fulfillmentController = new FulfillmentController();
       let terminalReceiptController = new TerminalReceiptController();
 
+
       return fulfillmentController.execute({
         fulfillment_provider_id: fulfillment_provider,
         augmented_transaction_products: grouped_shipable_transaction_products[fulfillment_provider]

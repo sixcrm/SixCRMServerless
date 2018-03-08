@@ -93,7 +93,7 @@ function confirmOrder(token, session){
   });
 
 }
-/*
+
 function createUpsell(token, session, sale_object){
 
   du.output('Create Upsell');
@@ -132,7 +132,7 @@ function createUpsell(token, session, sale_object){
   });
 
 }
-*/
+
 function createOrder(token, session, sale_object, creditcard){
 
   du.output('Create Order');
@@ -314,6 +314,16 @@ describe('Transaction Endpoints Round Trip Test',() => {
 
     it('successfully executes', () => {
 
+      let upsell_object = {
+        products:[
+    			{
+    				quantity: 1,
+    				product: "6c6ec904-5315-4214-a057-79a7ff308cde",
+    				price: 1.01
+    			}
+        ]
+      };
+
       let sale_object = {
         product_schedules:[{
   				quantity:1,
@@ -324,9 +334,8 @@ describe('Transaction Endpoints Round Trip Test',() => {
   								id:"6c6ec904-5315-4214-a057-79a7ff308cde",
   								name:"Smack Dog - Caribbean Salmon Fusion 2.5 kg/5.5 lb"
   							},
-  					    price:101.35,
+  					    price:1.00,
   					    start:0,
-  					    end:0,
   					    period:14
   						},
   						{
@@ -334,32 +343,15 @@ describe('Transaction Endpoints Round Trip Test',() => {
   								id:"92bd4679-8fb5-47ff-93f5-8679c46bcaad",
   								name:"Smack Dog - Caribbean Salmon Fusion 1.5 kg/3.30 lb"
   							},
-  					    price:62.35,
+  					    price:1.00,
   					    start:0,
-  					    end:0,
   					    period:14
   						}
   					]
   				}
   			}
-  		],
-  	  products:[
-  			{
-  				quantity: 1,
-  				product: "4efa7820-38d4-4643-9745-ba581a665557",
-  				price: 5.98
-  			},
-  			{
-  				quantity: 1,
-  				product: "78c02d93-e9e0-4077-817e-eaf6d3316b10",
-  				price: 15.96
-  			},
-  			{
-  				quantity: 1,
-  				product: "ab9aa4d0-0c2e-47f3-a458-b4d0bc8f371e",
-  				price: 20.97
-  			}
-  		]};
+  		]
+    };
 
       let customer = {
         "firstname": "Kristopher",
@@ -383,9 +375,9 @@ describe('Transaction Endpoints Round Trip Test',() => {
       };
 
       let creditcard = {
-        "number":"",
-  			"expiration":"",
-  			"ccv":"",
+        "number":"4737023965504065",
+  			"expiration":"04/2021",
+  			"ccv":"652",
   			"name":"Kristopher Trujillo",
   			"address":{
   				"line1": "4120 Canal Rd.",
@@ -402,6 +394,17 @@ describe('Transaction Endpoints Round Trip Test',() => {
         return createLead(token, campaign, customer)
         .then((session) => {
           return createOrder(token, session, sale_object, creditcard)
+          .then((create_order_result) => {
+            expect(create_order_result.response).to.have.property('amount');
+            du.info('First Request: '+create_order_result.response.amount);
+            expect(create_order_result.response.amount).to.equal(2.00);
+          })
+          .then(() => createUpsell(token, session, upsell_object))
+          .then((create_order_result) => {
+            expect(create_order_result.response).to.have.property('amount');
+            du.info('Second Request: '+create_order_result.response.amount);
+            expect(create_order_result.response.amount).to.equal(1.01);
+          })
           .then(() => confirmOrder(token, session))
           .then((result) => {
             du.warning(result);

@@ -21,6 +21,12 @@ module.exports.graphObj = new GraphQLObjectType({
         number: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The creditcard number',
+            resolve: (creditcard) => {
+              const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+              let creditCardHelperController = new CreditCardHelperController();
+
+              return creditCardHelperController.lastFour(creditcard.number);
+            }
         },
         expiration: {
             type: new GraphQLNonNull(GraphQLString),

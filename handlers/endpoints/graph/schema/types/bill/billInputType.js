@@ -18,6 +18,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
       outstanding:    { type: GraphQLBoolean },
       period_end_at:  { type: new GraphQLNonNull(GraphQLString) },
       period_start_at:{ type: new GraphQLNonNull(GraphQLString) },
-      available_at:   { type: new GraphQLNonNull(GraphQLString) }
+      available_at:   { type: new GraphQLNonNull(GraphQLString) },
+      updated_at:     { type: GraphQLString }
     })
 });

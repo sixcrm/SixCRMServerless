@@ -10,21 +10,9 @@ const authenticatedController = global.SixCRM.routes.include('controllers', 'end
 
 module.exports = class transactionEndpointController extends authenticatedController {
 
-    constructor(parameters){
+    constructor(){
 
-      super(parameters);
-
-      const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
-
-      this.affiliateHelperController = new AffiliateHelperController();
-
-      const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-
-      this.eventHelperController = new EventHelperController();
-
-      const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
-
-      this.creditCardHelperController = new CreditCardHelperController();
+      super();
 
     }
 
@@ -137,6 +125,12 @@ module.exports = class transactionEndpointController extends authenticatedContro
         product_schedules:info.product_schedules
       };
 
+      if(!_.has(this, 'affiliateHelperController')){
+        const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
+
+        this.affiliateHelperController = new AffiliateHelperController();
+      }
+
       return this.affiliateHelperController.transcribeAffiliates(info.session, transaction_object);
 
     }
@@ -160,6 +154,12 @@ module.exports = class transactionEndpointController extends authenticatedContro
     pushEvent(event_type){
 
       du.debug('Push Event');
+
+      if(!_.has(this, 'eventHelperController')){
+        const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+
+        this.eventHelperController = new EventHelperController();
+      }
 
       this.eventHelperController.pushEvent({event_type: event_type, context:this.parameters.store});
 

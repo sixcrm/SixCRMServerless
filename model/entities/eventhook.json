@@ -1,0 +1,25 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+	"id":"/entities/eventhook.json",
+	"title": "Event Hook",
+	"type": "object",
+	"description": "A event hook",
+	"properties": {
+		"id":{"$ref": "../definitions/uuidv4.json"},
+		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+		"event_type":{
+			"type":"array",
+			"items":{"$ref":"../definitions/sixcrmeventtype.json"}
+		},
+		"name": {
+			"type":"string"
+		},
+		"hook":{
+			"type":"string"
+		},
+		"active":{"$ref":"../definitions/active.json"},
+		"created_at":{"$ref": "../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../definitions/iso8601.json"}
+	},
+	"required":[ "name", "event_type", "created_at", "updated_at", "account", "active"]
+}

@@ -346,7 +346,7 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       let seed_promises = arrayutilities.map(seed_definitions, (seed_definition) => {
 
-        return controller.store({entity: seed_definition}).then(() => {
+        return controller.store({entity: seed_definition, ignore_updated_at: true}).then(() => {
           return true;
         }).catch(error => {
           du.warning(error);

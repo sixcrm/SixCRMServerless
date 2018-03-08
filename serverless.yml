@@ -30,8 +30,12 @@ provider:
 plugins:
   - serverless-dynamodb-local
   - serverless-plugin-tracing
-  #Technical Debt:  Is this plugin being used though?!
   - serverless-prune-plugin
+
+custom:
+  prune:
+    automatic: true
+    number: 3
 
 
 functions:
@@ -99,7 +103,7 @@ functions:
           enabled: true
 
   holdtopending:
-    handler: handlers/workers/forwardmessage/holdtopending/handler.hodltopending
+    handler: handlers/workers/forwardmessage/holdtopending/handler.holdtopending
     events:
       - schedule:
           rate: rate(1 minute)

@@ -22,6 +22,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
             description: 'The name that the emails from this SMTP Provider will be sent as.',
             example: "Do Not Reply"
         },
-        port:				{ type: GraphQLInt }
+        port:				{ type: GraphQLInt },
+        updated_at: { type: GraphQLString }
     })
 });

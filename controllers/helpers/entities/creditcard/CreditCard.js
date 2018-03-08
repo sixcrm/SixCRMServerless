@@ -53,4 +53,15 @@ module.exports = class CreditCardHelper {
 
   }
 
+  lastFour(creditcard_number){
+
+    du.debug('Last Four');
+
+    let last = creditcard_number.substr(-4);
+    let first = creditcard_number.replace(/[^0-9]/g,'').substr(0, creditcard_number.length - 5).replace(/[0-9]/g, '*');
+
+    return first+last;
+
+  }
+
 };

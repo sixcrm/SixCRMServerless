@@ -15,8 +15,6 @@ module.exports = class AuthenticatedController extends endpointController {
 
       super();
 
-      this.userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-
     }
 
     preprocessing(event){
@@ -64,6 +62,10 @@ module.exports = class AuthenticatedController extends endpointController {
 
         eu.throwError('server','Event request context authorizer user is an unrecognized format.');
 
+      }
+
+      if(!_.has(this, 'userController')){
+        this.userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
       }
 
       if(this.userController.isEmail(user_string)){

@@ -106,6 +106,68 @@ describe('lib/string-utilities', () => {
 
     });
 
+    describe('isUUID', () => {
+        it('returns true for valid UUIDs', () => {
+            let uuids = [
+                '1971204d-5b76-4c57-a3ad-cf54f994759c',
+                '028fb88c-7fdf-4637-af1e-2b48683c9688'
+            ];
+
+            uuids.forEach((uuid) => {
+                expect(stringutilities.isUUID(uuid)).to.equal(true, uuid + ' should be valid');
+            });
+
+        });
+
+        it('returns false for invalid UUIDs', () => {
+            let uuids = [
+                [],
+                null,
+                {},
+                { uuid: '1971204d-5b76-4c57-a3ad-cf54f994759c'},
+                '1234',
+                '1971204d-5b76-4c57-a3ad-cf54f994759c-0000'
+            ];
+
+            uuids.forEach((uuid) => {
+                expect(stringutilities.isUUID(uuid)).to.equal(false, uuid + ' should not be valid');
+            });
+
+        });
+
+    });
+
+    describe('isEmail', () => {
+        it('returns true for valid emails', () => {
+            let emails = [
+                'email@example.com',
+                'test.name@sixcrm.com'
+            ];
+
+            emails.forEach((email) => {
+                expect(stringutilities.isEmail(email)).to.equal(true, email + ' should be valid');
+            });
+
+        });
+
+        it('returns false for invalid emails', () => {
+            let emails = [
+                [],
+                null,
+                {},
+                { email: 'test@example.com'},
+                'test.name@',
+                '@example.com'
+            ];
+
+            emails.forEach((email) => {
+                expect(stringutilities.isEmail(email)).to.equal(false, email + ' should not be valid');
+            });
+
+        });
+
+    });
+
     describe('matchGroup', () => {
       it('returns match if there is one', () => {
         expect(stringutilities.matchGroup('abcdef', /abc(def)/g, 1)).to.deep.equal(['def']);

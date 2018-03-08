@@ -1,7 +1,6 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-const uuidV4 = require('uuid/v4');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 
 describe('controllers/entities/EntityACL.js', () => {
@@ -19,88 +18,62 @@ describe('controllers/entities/EntityACL.js', () => {
         mockery.deregisterAll();
     });
 
-    describe('assure', () => {
-        it('retrieves existing acl', () => {
-            const params = {
-                entity: uuidV4(),
-                type: "emailtemplate",
+    describe('listByType', () => {
+        it('retrieves a list of entityacls by type', () => {
+            const acls = [{
+                entity: 'af968812-beec-4749-b9e1-c0ae27675c46',
+                type: 'emailtemplate',
                 allow: ['*'],
-                deny: ['*']
-            };
+                deny: ['*'],
+                created_at: '2017-04-06T18:40:41.405Z',
+                updated_at: '2017-04-06T18:41:12.521Z'
+            }];
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entityacl');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => Promise.resolve({Items: [params]})
-            });
-
-            const mock_preindexing_helper = class {
-                constructor(){
-
+                queryRecords: (table, parameters, index_name) => {
+                    expect(index_name).to.equal('type-index');
+                    expect(parameters.key_condition_expression).to.include('#type = :index_valuev');
+                    expect(parameters.expression_attribute_names['#type']).to.equal('type');
+                    expect(parameters.expression_attribute_values[':index_valuev']).to.equal('emailtemplate');
+                    expect(parameters.limit).to.equal(10);
+                    return Promise.resolve({ Count: 1, Items: acls });
                 }
-                addToSearchIndex(){
-                    return Promise.resolve(true);
-                }
-                removeFromSearchIndex(){
-                    return Promise.resolve(true);
-                }
-            };
-
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
-
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-                createActivity: () => Promise.resolve()
-            });
-
-            const entityACLController = global.SixCRM.routes.include('controllers','entities/EntityACL.js');
-
-            return entityACLController.assure(params).then(result => {
-                expect(result.entity).to.equal(params.entity);
-                expect(result.type).to.equal(params.type);
-                expect(result.allow).to.deep.equal(params.allow);
-                expect(result.deny).to.deep.equal(params.deny);
-            });
-        });
-
-        it('creates acl if it does not exist', () => {
-            let params = {
-                entity: uuidV4(),
-                type: "emailtemplate",
-                allow: ['*'],
-                deny: ['*']
-            };
-
-            PermissionTestGenerators.givenUserWithAllowed('create', 'entityacl');
-
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => Promise.resolve([]),
-                saveRecord: (tableName, entity) => Promise.resolve(entity)
             });
 
             let mock_preindexing_helper = class {
-                constructor(){}
-                addToSearchIndex(){
-                    return Promise.resolve(true);
-                }
-                removeFromSearchIndex(){
-                    return Promise.resolve(true);
-                }
-            };
+              constructor(){
+
+              }
+              addToSearchIndex(){
+                return Promise.resolve(true);
+              }
+              removeFromSearchIndex(){
+                return Promise.resolve(true);
+              }
+            }
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-                createActivity: () => Promise.resolve()
+                createActivity: () => {
+                    return Promise.resolve();
+                }
             });
 
-            let entityACLController = global.SixCRM.routes.include('controllers','entities/EntityACL.js');
+            const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
 
-            return entityACLController.assure(params).then(result => {
-                expect(result.entity_type).to.equal('entityacl');
-                expect(result.entity).to.equal(params.entity);
-                expect(result.allow).to.deep.equal(params.allow);
-                expect(result.deny).to.deep.equal(params.deny);
-                expect(result.created_at).to.equal(result.updated_at);
+            return entityACLController.listByType({type: 'emailtemplate', pagination: {limit: 10}}).then(result => {
+                expect(result).to.deep.equal({
+                    entityacls: acls,
+                    pagination: {
+                        count: 1,
+                        end_cursor: '',
+                        has_next_page: 'false',
+                        last_evaluated: ''
+                    }
+                });
             });
         });
     });

@@ -16,5 +16,6 @@ module.exports.graphObj = new GraphQLInputObjectType({
         language:	    { type: GraphQLString },
         column_preferences: { type: new GraphQLList(GraphQLString) },
         notifications:	{ type: new GraphQLList(userNotificationSettingInputType.graphObj), },
+        updated_at: { type: GraphQLString }
     })
 });
