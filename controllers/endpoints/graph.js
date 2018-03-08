@@ -21,12 +21,10 @@ module.exports = class graphController extends authenticatedController {
 
   }
 
-  preamble(event) {
+  preamble() {
 
     global.SixCRM.setResource('redshiftContext', redshiftContext);
-
-    return redshiftContext.init()
-      .then(() => this.preprocessing(event))
+    return redshiftContext.init();
 
   }
 
@@ -34,8 +32,8 @@ module.exports = class graphController extends authenticatedController {
 
     du.debug('Execute');
 
-    //Technical Debt:  Alter to use preamble
-    return this.parseEventQueryString(event)
+    return this.preprocessing(event)
+      .then((event) => this.parseEventQueryString(event))
       .then((event) => this.acquireQuery(event))
       .then((event) => this.acquireOutputParameters(event))
       .then((event) => this.setCacheParameters(event))
