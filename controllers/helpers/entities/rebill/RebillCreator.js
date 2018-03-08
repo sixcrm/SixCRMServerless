@@ -76,6 +76,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
     du.debug('Create Rebill');
 
+    du.debug(arguments[0]);
 
     return this.setParameters({argumentation: arguments[0], action: 'createRebill'})
     .then(() => this.hydrateArguments())

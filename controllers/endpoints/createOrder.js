@@ -338,7 +338,6 @@ class CreateOrderController extends transactionEndpointController{
 
     if(!_.has(this, 'rebillCreatorHelperController')){
       const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
-
       this.rebillCreatorHelperController = new RebillCreatorHelperController();
     }
 
