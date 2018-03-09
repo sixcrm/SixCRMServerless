@@ -23,6 +23,10 @@ class RDSClusterDeployment {
     return this._getParameterConfigurationFromFile()
       .then((parameters) => this._parseParameters(parameters))
       .then((parameters) => {
+
+        parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
+        parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
+
         return this._rdsutilities.putCluster(parameters).then(data => {
 
           du.info(data);
