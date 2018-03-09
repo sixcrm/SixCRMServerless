@@ -1303,7 +1303,7 @@ describe('/helpers/entities/Rebill.js', () => {
       mockery.deregisterAll();
     });
 
-    it.only('successfully creates a rebill based off of failing test case', () => {
+    xit('successfully creates a rebill based off of failing test case', () => {
 
       let session = {
         "account": "cb4a1482-1093-4d8e-ad09-fdd4d840b497",
