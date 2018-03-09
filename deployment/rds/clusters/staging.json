@@ -6,8 +6,6 @@
   "DatabaseName": "analytics_{{stage}}",
   "EnableIAMDatabaseAuthentication": false,
   "EngineVersion": "9.6.3",
-  "MasterUserPassword": "somemasterpasswo",
-  "MasterUsername": "somemasteruserna",
   "Port": 5432,
   "StorageEncrypted": true,
   "PreferredBackupWindow": "09:45-10:15",
