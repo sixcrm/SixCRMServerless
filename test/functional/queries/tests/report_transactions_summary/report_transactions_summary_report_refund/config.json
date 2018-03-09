@@ -1,0 +1,23 @@
+{
+  "method": "getTransactionSummaryReport",
+  "test_case": "input to get refund transactions",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-01-30T00:00:00.000Z" },
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "periods",
+  "expect": [{"period":"2017-01-01T23:00:00.000Z",
+              "sale_count":"0",
+              "sale_revenue":"0",
+              "rebill_count":"0",
+              "rebill_revenue":"0",
+              "refund_expenses":"34.00",
+              "refund_count":"2",
+              "gross_revenue":"0",
+              "declines_count":"0",
+              "declines_revenue":"0",
+              "chargeback_count":"0",
+              "current_active_customer":"0",
+              "count_alert_count":0}]
+}
