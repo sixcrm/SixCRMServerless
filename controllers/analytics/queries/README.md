@@ -16,8 +16,6 @@
 
 ### campaigns_by_amount
 
-### default
-
 ### deprecated
 
 ### event_funnel
