@@ -95,12 +95,15 @@ describe('holdToArchiveStressTest', () => {
             let rebill = MockEntities.getValidRebill();
             let transaction = MockEntities.getValidTransaction();
             let product_ship = randomutilities.randomBoolean();
+
             let rebill_id = [rebill.id, uuidV4()];
             let transaction_rebill = [transaction.rebill, rebill.id];
 
-            //prepare data
+            //create random scenarios
             rebill_id = randomutilities.selectRandomFromArray(rebill_id);
             transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill);
+
+            //prepare data
             rebill.state = "hold";
             rebill.processing = true;
 

@@ -12,7 +12,6 @@ const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 const fulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
 const transactionController = global.SixCRM.routes.include('entities', 'Transaction.js');
-const productController = global.SixCRM.routes.include('entities', 'Product.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const tab = '      ';
@@ -94,34 +93,38 @@ describe('shippedToDeliveredStressTest', () => {
         let fulfillment_provider = getValidFulfillmentProvider();
 
         for (let i = 0; i < max_test_cases; i++) {
-            let rebill = getRebill();
+            let rebill = MockEntities.getValidRebill();
             let transaction = MockEntities.getValidTransaction();
-            let product = MockEntities.getValidProduct();
             let shipping_receipt = MockEntities.getValidShippingReceipt();
+
             let rebill_id = [rebill.id, uuidV4()];
             let transaction_rebill = [transaction.rebill, rebill.id];
+            let shipping_receipt_id = [shipping_receipt.id, uuidV4()];
 
-            //prepare data
+            //create random scenarios
             rebill_id = randomutilities.selectRandomFromArray(rebill_id);
             transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill);
+            transaction.products[0].shipping_receipt = randomutilities.selectRandomFromArray(shipping_receipt_id);
+
+            //prepare data
+            rebill.state = "shipped";
+            rebill.processing = true;
             transaction.merchant_provider = "a32a3f71-1234-4d9e-a9a1-98ecedb88f24";
             transaction.products = [transaction.products[0]];
-            transaction.products[0].shipping_receipt = shipping_receipt.id;
             transaction.products[0].product.ship = true;
             shipping_receipt.tracking.carrier = "Test";
-            shipping_receipt.tracking.id = "09812304981039480219";
-            product.id = transaction.products[0].product.id;
-            product.ship = true;
+            shipping_receipt.tracking.id = randomutilities.createRandomString(20);
 
             //missing rebill goes to error
             //rebill without transaction goes to error
+            //rebill without shipping receipt goes to error
             if ((rebill.id !== rebill_id) ||
-                (transaction.rebill !== rebill.id))
+                (transaction.rebill !== rebill.id)||
+                (transaction.products[0].shipping_receipt !== shipping_receipt.id))
                 number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
             operations.push(transactionController.create({entity: transaction}));
-            operations.push(productController.create({entity: product}));
             operations.push(shippingReceiptController.create({entity: shipping_receipt}));
             operations.push(SqSTestUtils.sendMessageToQueue('shipped', '{"id":"' + rebill_id +'"}'));
         }
@@ -131,21 +134,6 @@ describe('shippedToDeliveredStressTest', () => {
         return Promise.all(operations)
             .then(() => permissionutilities.enableACLs())
             .catch(() => permissionutilities.enableACLs());
-    }
-
-    function getRebill() {
-        return {
-            "bill_at": "2017-04-06T18:40:41.405Z",
-            "id": uuidV4(),
-            "state": "shipped",
-            "processing": true,
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-            "product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
-            "amount": 34.99,
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
-        };
     }
 
     function getValidFulfillmentProvider() {

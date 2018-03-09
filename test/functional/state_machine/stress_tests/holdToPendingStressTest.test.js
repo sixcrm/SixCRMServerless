@@ -18,7 +18,7 @@ const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const tab = '      ';
 
-const max_test_cases = randomutilities.randomInt(5, 9);
+const max_test_cases = randomutilities.randomInt(50, 90);
 
 describe('holdToPendingStressTest', () => {
 
@@ -97,31 +97,39 @@ describe('holdToPendingStressTest', () => {
         let fulfillment_provider = getValidFulfillmentProvider();
 
         for (let i = 0; i < max_test_cases; i++) {
-            let rebill = getRebill();
+            let rebill = MockEntities.getValidRebill();
             let customer = MockEntities.getValidCustomer();
             let session = MockEntities.getValidSession();
             let product = MockEntities.getValidProduct();
             let transaction = MockEntities.getValidTransaction();
+
             let rebill_id = [rebill.id, uuidV4()];
             let transaction_rebill = [transaction.rebill, rebill.id];
+            let product_id = [product.id, transaction.products[0].product.id];
+
+            //create random scenarios
+            rebill_id = randomutilities.selectRandomFromArray(rebill_id);
+            product.id = randomutilities.selectRandomFromArray(product_id);
+            transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill);
 
             //prepare data
-            rebill_id = randomutilities.selectRandomFromArray(rebill_id);
+            rebill.state = "hold";
+            rebill.processing = true;
             session.customer = customer.id;
             session.completed = false;
             session.id = rebill.parentsession;
             session.product_schedules = rebill.product_schedules;
             product.fulfillment_provider = fulfillment_provider.id;
             product.ship = randomutilities.randomBoolean();
-            product.id = rebill.products[0].product.id;
-            transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill);
             transaction.merchant_provider = "a32a3f71-1234-4d9e-a9a1-98ecedb88f24";
-            transaction.products = rebill.products;
+            transaction.products = [transaction.products[0]];
 
             //missing rebill goes to error
             //rebill without transaction goes to error
+            //rebill without product goes to error
             if ((rebill.id !== rebill_id) ||
-                (transaction.rebill !== rebill.id))
+                (transaction.rebill !== rebill.id) ||
+                (transaction.products[0].product.id !== product.id))
                 number_of_incorrect++;
 
             //rebill remains in hold when product should be not shipped
@@ -140,36 +148,6 @@ describe('holdToPendingStressTest', () => {
         return Promise.all(operations)
             .then(() => permissionutilities.enableACLs())
             .catch(() => permissionutilities.enableACLs());
-    }
-
-    function getRebill() {
-        return {
-            "bill_at": "2017-04-06T18:40:41.405Z",
-            "id": uuidV4(),
-            "state": "hold",
-            "processing": true,
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "parentsession": uuidV4(),
-            "products":[{
-                "quantity":1,
-                "product":{
-                    "id": uuidV4(),
-                    "name": "Test Product",
-                    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-                    "sku":"123",
-                    "ship":true,
-                    "shipping_delay":3600,
-                    "fulfillment_provider":"5d18d0fa-5812-4c37-b98c-7b1debdcb435",
-                    "created_at":"2017-04-06T18:40:41.405Z",
-                    "updated_at":"2017-04-06T18:41:12.521Z"
-                },
-                "amount":34.99
-            }],
-            "product_schedules": [uuidV4()],
-            "amount": 34.99,
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
-        };
     }
 
     function getValidFulfillmentProvider() {
