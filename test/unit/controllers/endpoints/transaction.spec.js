@@ -30,7 +30,7 @@ describe('controllers/endpoints/transaction', () => {
         expect(transactionController.initialize()).to.be.true;
       });
 
-      it('successfully initialize the transaction class with callback function', () => {
+      xit('successfully initialize the transaction class with callback function', () => {
 
         let a_function = () => {return 'result from function'}; //any function
 

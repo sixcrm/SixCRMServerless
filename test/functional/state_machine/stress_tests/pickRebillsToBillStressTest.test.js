@@ -1,5 +1,3 @@
-
-const uuidV4 = require('uuid/v4');
 const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
@@ -11,9 +9,10 @@ const timer = global.SixCRM.routes.include('lib', 'timer.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const tab = '      ';
 
-const max_test_cases = randomutilities.randomInt(10, 20);
+const max_test_cases = randomutilities.randomInt(100, 200);
 
 describe('pickRebillsToBillStressTest', () => {
 
@@ -61,12 +60,19 @@ describe('pickRebillsToBillStressTest', () => {
         let operations = [];
 
         for (let i = 0; i < max_test_cases; i++) {
-            let rebill = getRebill();
+            let rebill = MockEntities.getValidRebill();
+            let day_in_the_future = "3017-04-06T18:40:41.405Z";
+            let bill_at = [timestamp.yesterday(), day_in_the_future];
 
+            //create random scenarios
             rebill.processing = randomutilities.randomBoolean();
+            rebill.bill_at = randomutilities.selectRandomFromArray(bill_at);
 
             //rebill in processing is ignored
-            if (rebill.processing) number_of_ignored++;
+            //rebill in future is ignored
+            if (rebill.processing ||
+                rebill.bill_at === day_in_the_future)
+                number_of_ignored++;
 
             operations.push(rebillController.create({entity: rebill}));
         }
@@ -98,21 +104,6 @@ describe('pickRebillsToBillStressTest', () => {
                     return Promise.resolve();
                 }
             });
-    }
-
-    function getRebill() {
-
-        return {
-            "bill_at": "2017-04-06T18:40:41.405Z",
-            "id": uuidV4(),
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-            "product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
-            "amount": 34.99,
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
-        };
-
     }
 
 });

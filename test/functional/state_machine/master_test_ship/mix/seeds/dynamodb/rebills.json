@@ -199,4 +199,53 @@
     "amount": 34.99,
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
+}, {
+    "bill_at": "2017-04-06T18:40:41.405Z",
+    "id": "3848d184-3ff1-4e8f-a85e-187f7d42f429",
+    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "parentsession": "412ee1cd-bc86-40d2-a6ed-5e4c982318cd",
+    "product_schedules": ["b7c59e32-5191-4256-a8f7-ea9af55f0c44"],
+    "products":[{
+        "quantity":1,
+        "product":{
+            "id": "0c88b9f7-cbf4-4d4f-b891-eb497986d95c",
+            "name": "Test Product",
+            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            "sku":"123",
+            "ship":true,
+            "shipping_delay":3600,
+            "fulfillment_provider":"5d18d0fa-5812-4c37-b98c-7b1debdcb435",
+            "created_at":"2017-04-06T18:40:41.405Z",
+            "updated_at":"2017-04-06T18:41:12.521Z"
+        },
+        "amount":34.99
+    }],
+    "amount": 34.99,
+    "second_attempt": true,
+    "created_at":"2017-04-06T18:40:41.405Z",
+    "updated_at":"2017-04-06T18:41:12.521Z"
+}, {
+    "bill_at": "2017-04-06T18:40:41.405Z",
+    "id": "fd724fd7-0ac9-43fa-8e27-ff10bd6c9381",
+    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "parentsession": "de71e9ac-224a-487f-8dd9-0945b6cbbc17",
+    "product_schedules": ["649471d5-d1a4-4491-96df-4e75485cd208"],
+    "products":[{
+        "quantity":1,
+        "product":{
+            "id": "d329a8b9-a749-445d-adb4-8fcfa4042ed7",
+            "name": "Test Product",
+            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            "sku":"123",
+            "ship":true,
+            "shipping_delay":3600,
+            "fulfillment_provider":"5d18d0fa-5812-4c37-b98c-7b1debdcb435",
+            "created_at":"2017-04-06T18:40:41.405Z",
+            "updated_at":"2017-04-06T18:41:12.521Z"
+        },
+        "amount":34.99
+    }],
+    "amount": 34.99,
+    "created_at":"2017-04-06T18:40:41.405Z",
+    "updated_at":"2017-04-06T18:41:12.521Z"
 }]

@@ -35,6 +35,17 @@ cloudsearch:
   domainname: 'sixcrm'
   domainendpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
 
+aurora:
+  default_cluster_identifier: 'sixcrm'
+  user: 'admin'
+  database: 'analytics'
+  password: 'Jagodica9'
+  port: 5440
+  max: 10
+  idle_timeout: 30000
+  randomdata:
+    interval: 300
+
 redshift:
   default_cluster_identifier: 'sixcrm'
   user: 'admin'
