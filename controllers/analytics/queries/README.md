@@ -20,13 +20,7 @@
 
 ### event_funnel
 
-### events
-
-### events_by_affiliate
-
 ### events_by_facet
-
-### events_by_facet_timeseries
 
 ### merchant_provider_amount
 
