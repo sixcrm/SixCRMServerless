@@ -54,8 +54,6 @@
 
 #### reports merchantprovider
 
-#### reports transactions
-
 ### sessions
 
 ### sub_affiliates_overview
