@@ -100,4 +100,21 @@
   "subaffiliate_4":	"d515c0df-f9e4-4a87-8fe8-c53dcace0995",
   "subaffiliate_5":	"45f025bb-a9dc-45c7-86d8-d4b7a4443426",
   "cid":"fb10d33f-da7d-4765-9b2b-4e5e42287726"
+}, {
+  "id": "412ee1cd-bc86-40d2-a6ed-5e4c982318cd",
+  "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+  "alias":"SASDFG123P",
+  "customer": "80b95d38-b196-4112-b9cb-d07c23362857",
+  "campaign":"555f995f-38f7-406c-8690-c98bbc5b3003",
+  "product_schedules":["b7c59e32-5191-4256-a8f7-ea9af55f0c44"],
+  "completed": false,
+  "created_at":"2017-04-06T18:40:41.405Z",
+  "updated_at":"2017-04-06T18:41:12.521Z",
+  "affiliate":	"332611c7-8940-42b5-b097-c49a765e055a",
+  "subaffiliate_1":	"6b6331f6-7f84-437a-9ac6-093ba301e455",
+  "subaffiliate_2":	"22524f47-9db7-42f9-9540-d34a8909b072",
+  "subaffiliate_3":	"fd2548db-66a8-481e-aacc-b2b76a88fea7",
+  "subaffiliate_4":	"d515c0df-f9e4-4a87-8fe8-c53dcace0995",
+  "subaffiliate_5":	"45f025bb-a9dc-45c7-86d8-d4b7a4443426",
+  "cid":"fb10d33f-da7d-4765-9b2b-4e5e42287726"
 }]
