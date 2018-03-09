@@ -58,8 +58,6 @@
 
 #### reports transactions
 
-#### reports transactionsummary
-
 ### sessions
 
 ### sub_affiliates_overview
@@ -106,8 +104,6 @@ transactionsbyfacet -> getTransactionsByFacet -> transactions_by_facet
 
 transactionoverview -> getTransactionOverview -> transaction_summary
 
-transactionsummary -> getTransactionSummary -> aggregation_processor_amount
-
 ### queue
 
 rebillsummary -> getRebillSummary -> order_engine/rebill_pagination
@@ -123,9 +119,5 @@ affiliatereport -> getAffiliateReport -> reports/affiliate/affiliate_report
 affiliatereportsummary -> getAffiliateReportSummary -> reports/affiliate/affiliate_report_summary
 
 merchantreport -> getMerchantReport -> reports/merchantprovider/merchantprovider_report | reports/merchantprovider/merchantprovider_report_product_schedule
-
-transactionsummaryreportsummary -> getTransactionSummaryReportSummary -> reports/transactionsummary/transaction_summary_report_summary
-
-transactionsummaryreport -> getTransactionSummaryReport -> reports/transactionsummary/transaction_summary_report
 
 transactionsreport -> getTransactionsReport -> reports/transactions/transactions_report
