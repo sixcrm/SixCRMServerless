@@ -4,8 +4,6 @@
 
 ## Queries :
 
-### activity
-
 ### activity_by_identifier
 
 ### aggregation_event_type_count
@@ -57,8 +55,6 @@
 #### reports merchantprovider
 
 #### reports transactions
-
-#### reports transactionsummary
 
 ### sessions
 
