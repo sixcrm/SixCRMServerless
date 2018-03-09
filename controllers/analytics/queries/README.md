@@ -10,8 +10,6 @@
 
 ### aggregation_event_type_count
 
-### aggregation_processor_amount
-
 ### bin
 
 ### bin_query
