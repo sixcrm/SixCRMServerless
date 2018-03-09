@@ -108,12 +108,14 @@ describe('billToHoldStressTest', () => {
 
             let rebill_id = [rebill.id, uuidV4()];
             let credit_card_number = [creditCard.number/*, "1111111111111111"*/];
+            let customer_credit_card_id = [creditCard.id, uuidV4()];
             let second_attempt = randomutilities.randomBoolean();
             let first_attempt = randomutilities.randomBoolean();
 
             //create random scenarios
             rebill_id = randomutilities.selectRandomFromArray(rebill_id);
             credit_card_number = randomutilities.selectRandomFromArray(credit_card_number);
+            customer.creditcards[0] = randomutilities.selectRandomFromArray(customer_credit_card_id);
             if (first_attempt) rebill.first_attempt = timestamp.createTimestampSeconds();
             if (second_attempt) rebill.second_attempt = true;
 
@@ -127,7 +129,6 @@ describe('billToHoldStressTest', () => {
             session.completed = false;
             session.id = rebill.parentsession;
             session.product_schedules = rebill.product_schedules;
-            customer.creditcards[0] = creditCard.id;
             creditCard.number = credit_card_number;
             bin.binnumber = parseInt(credit_card_number.slice(0,6));
 
@@ -137,9 +138,12 @@ describe('billToHoldStressTest', () => {
             //missing rebill goes to error
             //rebill with second attempt goes to error
             //rebill with recent first attempt goes to error
+            //rebill with customer that has no credit card
             if ((rebill.id !== rebill_id) ||
                 second_attempt ||
-                first_attempt) number_of_incorrect++;
+                first_attempt ||
+                customer.creditcards[0] !== creditCard.id)
+                number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
             operations.push(binController.create({entity: bin}));
