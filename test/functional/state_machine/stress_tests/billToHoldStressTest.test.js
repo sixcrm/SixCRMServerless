@@ -15,7 +15,6 @@ const creditCardController = global.SixCRM.routes.include('entities', 'CreditCar
 const merchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
 const merchantProviderGroupController = global.SixCRM.routes.include('entities', 'MerchantProviderGroup.js');
 const merchantProviderGroupAssociationController = global.SixCRM.routes.include('entities', 'MerchantProviderGroupAssociation.js');
-const merchantProviderSummaryController = global.SixCRM.routes.include('entities', 'MerchantProviderSummary.js');
 const sessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
@@ -26,6 +25,7 @@ const max_test_cases = randomutilities.randomInt(10, 20);
 describe('billToHoldStressTest', () => {
 
     let number_of_incorrect = 0;
+    let number_of_failing = 0;
 
     before((done) => {
         process.env.require_local = true;
@@ -47,8 +47,9 @@ describe('billToHoldStressTest', () => {
             .then(() => timer.set())
             .then(() => StateMachine.flush())
             .then(() => waitForNumberOfMessages('bill', 0))
-            .then(() => waitForNumberOfMessages('recover', number_of_incorrect))
-            .then(() => waitForNumberOfMessages('hold', max_test_cases - number_of_incorrect))
+            .then(() => waitForNumberOfMessages('bill_error', number_of_incorrect))
+            .then(() => waitForNumberOfMessages('recover', number_of_failing))
+            .then(() => waitForNumberOfMessages('hold', max_test_cases - number_of_incorrect - number_of_failing))
             .then(() => {
                 let total = timer.get();
 
@@ -96,19 +97,30 @@ describe('billToHoldStressTest', () => {
         let operations = [];
         let merchantProvider = getMerchantProvider();
         let merchantProviderGroup = getMerchantProviderGroup();
-        let merchantProviderSummary = getMerchantProviderSummary();
 
         for (let i = 0; i < max_test_cases; i++) {
-            let rebill = getRebill();
+            let rebill = MockEntities.getValidRebill();
             let creditCard = MockEntities.getValidCreditCard();
             let customer = MockEntities.getValidCustomer();
             let bin = getBin();
             let session = MockEntities.getValidSession();
             let merchantProviderGroupAssociation = getMerchantProviderGroupAssociation();
 
+            let rebill_id = [rebill.id, uuidV4()];
             let credit_card_number = [creditCard.number/*, "1111111111111111"*/];
+            let second_attempt = randomutilities.randomBoolean();
+            let first_attempt = randomutilities.randomBoolean();
+
+            //create random scenarios
+            rebill_id = randomutilities.selectRandomFromArray(rebill_id);
+            credit_card_number = randomutilities.selectRandomFromArray(credit_card_number);
+            if (first_attempt) rebill.first_attempt = timestamp.createTimestampSeconds();
+            if (second_attempt) rebill.second_attempt = true;
 
             //prepare data
+            rebill.state = "bill";
+            rebill.processing = true;
+            rebill.products = [rebill.products[0]];
             merchantProviderGroupAssociation.entity = rebill.products[0].product.id;
             merchantProviderGroupAssociation.campaign = session.campaign;
             session.customer = customer.id;
@@ -116,12 +128,18 @@ describe('billToHoldStressTest', () => {
             session.id = rebill.parentsession;
             session.product_schedules = rebill.product_schedules;
             customer.creditcards[0] = creditCard.id;
-            credit_card_number = randomutilities.selectRandomFromArray(credit_card_number);
             creditCard.number = credit_card_number;
             bin.binnumber = parseInt(credit_card_number.slice(0,6));
 
             //credit cards with number "1111111111111111" go to recover
-            //if (credit_card_number === "1111111111111111" ) number_of_incorrect++;
+            //if (credit_card_number === "1111111111111111" ) number_of_failing++;
+
+            //missing rebill goes to error
+            //rebill with second attempt goes to error
+            //rebill with recent first attempt goes to error
+            if ((rebill.id !== rebill_id) ||
+                second_attempt ||
+                first_attempt) number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
             operations.push(binController.create({entity: bin}));
@@ -129,46 +147,15 @@ describe('billToHoldStressTest', () => {
             operations.push(customerController.create({entity: customer}));
             operations.push(sessionController.create({entity: session}));
             operations.push(merchantProviderGroupAssociationController.create({entity: merchantProviderGroupAssociation}));
-            operations.push(SqSTestUtils.sendMessageToQueue('bill', '{"id":"' + rebill.id +'"}'));
+            operations.push(SqSTestUtils.sendMessageToQueue('bill', '{"id":"' + rebill_id +'"}'));
         }
 
         operations.push(merchantProviderGroupController.create({entity: merchantProviderGroup}));
         operations.push(merchantProviderController.create({entity: merchantProvider}));
-        operations.push(merchantProviderSummaryController.create({entity: merchantProviderSummary}));
 
         return Promise.all(operations)
             .then(() => permissionutilities.enableACLs())
             .catch(() => permissionutilities.enableACLs());
-    }
-
-    function getRebill() {
-        return {
-            "bill_at": "2017-04-06T18:40:41.405Z",
-            "id": uuidV4(),
-            "state": "bill",
-            "processing": true,
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "parentsession": uuidV4(),
-            "products":[{
-                "quantity":1,
-                "product":{
-                    "id": uuidV4(),
-                    "name": "Test Product",
-                    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-                    "sku":"123",
-                    "ship":false,
-                    "shipping_delay":3600,
-                    "fulfillment_provider":"5d18d0fa-5812-4c37-b98c-7b1debdcb435",
-                    "created_at":"2017-04-06T18:40:41.405Z",
-                    "updated_at":"2017-04-06T18:41:12.521Z"
-                },
-                "amount":34.99
-            }],
-            "product_schedules": [uuidV4()],
-            "amount": 34.99,
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
-        };
     }
 
     function getBin() {
@@ -253,20 +240,6 @@ describe('billToHoldStressTest', () => {
             },
             "created_at":"2017-04-06T18:40:41.405Z",
             "updated_at":"2017-04-06T18:41:12.521Z"
-        }
-    }
-
-    function getMerchantProviderSummary() {
-        return {
-            "id":"b0fc8f07-6e1a-4655-818b-dd1c1a084307",
-            "account":"eefdeca6-41bc-4af9-a561-159acb449b5e",
-            "merchant_provider":"a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
-            "day": timestamp.getISO8601(),
-            "count":1,
-            "type":"recurring",
-            "total":randomutilities.randomDouble(1.0, 100.00),
-            "created_at":"2018-03-05T10:42:03.665Z",
-            "updated_at":"2018-03-05T11:42:03.665Z"
         }
     }
 });
