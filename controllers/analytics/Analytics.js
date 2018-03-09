@@ -240,24 +240,6 @@ class AnalyticsController extends AnalyticsUtilities{
         })
     }
 
-    getTransactionSummary(parameters){
-
-        du.debug('Get Transaction Summary');
-
-        let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
-
-        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
-
-        parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
-
-        if(!_.has(parameters.analyticsfilter, 'product_schedule')){
-          return this.getResults('aggregation_processor_amount', parameters, this.default_query_filters);
-        } else {
-          return this.getResults('aggregation_processor_amount_product_schedule', parameters, this.default_query_filters);
-        }
-
-    }
-
     getQueueSummary(parameters){
 
       du.debug('Get Queue Summary');
@@ -454,45 +436,6 @@ class AnalyticsController extends AnalyticsUtilities{
           return this.getResults('reports/merchantprovider/merchantprovider_report', parameters, this.default_query_filters);
         } else {
           return this.getResults('reports/merchantprovider/merchantprovider_report_product_schedule', parameters, this.default_query_filters);
-        }
-
-    }
-
-    getTransactionSummaryReportSummary(parameters){
-
-        du.debug('Get Transactions Report Summary');
-
-        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, 1);
-
-        parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
-
-        if(!_.has(parameters, 'product_schedule')){
-          return this.getResults('reports/transactionsummary/transaction_summary_report_summary', parameters, this.default_query_filters);
-        } else {
-          return this.getResults('reports/transactionsummary/transaction_summary_report_summary_product_schedule', parameters, this.default_query_filters);
-        }
-
-    }
-
-    getTransactionSummaryReport(parameters){
-
-        du.debug('Get Transactions Report Timeseries');
-        du.info(parameters);
-
-        let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
-
-        let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
-
-        parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-        parameters = this.appendPeriod(parameters, period_selection);
-
-        /* In case product schedule is use as a parameter use a different query */
-
-        if(!_.has(parameters, 'product_schedule')){
-          return this.getResults('reports/transactionsummary/transaction_summary_report', parameters, this.default_query_filters);
-        } else {
-          return this.getResults('reports/transactionsummary/transaction_summary_report_product_schedule', parameters, this.default_query_filters);
         }
 
     }

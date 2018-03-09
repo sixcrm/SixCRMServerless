@@ -48,6 +48,19 @@ cloudsearch:
 lambda:
   region: 'localhost'
 
+aurora:
+  region: 'localhost'
+  default_cluster_identifier: 'sixcrm'
+  user: 'postgres'
+  database: 'postgres'
+  password: ''
+  host: 192.168.99.100
+  port: 5440
+  max: 10
+  idle_timeout: 3000
+  randomdata:
+    interval: 300
+
 redshift:
   region: 'localhost'
   default_cluster_identifier: 'sixcrm'

@@ -320,6 +320,7 @@ module.exports = class Register extends RegisterUtilities {
       creditcard: creditcard
     });
 
+    du.info(register_response);
 
     return Promise.resolve(register_response);
 
@@ -441,17 +442,6 @@ module.exports = class Register extends RegisterUtilities {
       }).then((transaction_receipt) => {
 
         this.parameters.push('transactionreceipts', transaction_receipt);
-
-        return transaction_receipt;
-
-      }).then(transaction_receipt => {
-
-        this.pushTransactionsRecordToRedshift({
-          processor_result: processor_result,
-          transaction_receipt: transaction_receipt,
-          merchant_provider: merchant_provider,
-          amount: amount
-        });
 
         return true;
 

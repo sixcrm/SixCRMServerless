@@ -1,4 +1,3 @@
-const expect = require('chai').expect;
 const uuidV4 = require('uuid/v4');
 const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
@@ -7,6 +6,7 @@ const permissionutilities = global.SixCRM.routes.include('lib', 'permission-util
 const DynamoDbDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timer = global.SixCRM.routes.include('lib', 'timer.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const productController = global.SixCRM.routes.include('entities', 'Product.js');
@@ -40,7 +40,7 @@ describe('holdToArchiveStressTest', () => {
     it(`${max_test_cases} rebills are sent to archive`, () => {
         return beforeTest()
             .then(() => waitForNumberOfMessages('hold', max_test_cases))
-            .then(() => console.log(tab + 'Waiting for flush to finish'))
+            .then(() => du.output(tab + 'Waiting for flush to finish'))
             .then(() => timer.set())
             .then(() => StateMachine.flush(lambda_filter))
             .then(() => waitForNumberOfMessages('hold', number_of_ignored))
@@ -48,8 +48,8 @@ describe('holdToArchiveStressTest', () => {
             .then(() => {
                 let total = timer.get();
 
-                console.log(tab + 'Total processing time: ' + total + 'ms');
-                console.log(tab + numberUtilities.formatFloat(total/max_test_cases, 2) + 'ms per message');
+                du.output(tab + 'Total processing time: ' + total + 'ms');
+                du.output(tab + numberUtilities.formatFloat(total/max_test_cases, 2) + 'ms per message');
             });
 
     });
@@ -74,11 +74,11 @@ describe('holdToArchiveStressTest', () => {
 
         return SqSTestUtils.messageCountInQueue(queue_name)
             .then((count) => {
-                console.log(tab + 'Waiting for ' + number + ' messages to be in ' + queue_name + '. Got ' + count);
+                du.output(tab + 'Waiting for ' + number + ' messages to be in ' + queue_name + '. Got ' + count);
                 if ((number === 0 && count > 0) || (number > 0 && count < number)) {
                     return timestamp.delay(1 * 1000)().then(() => waitForNumberOfMessages(queue_name, number, ++retries))
                 } else if (number > 0 && count > number) {
-                    console.log('Too many messages in queue ' + queue_name);
+                    du.output('Too many messages in queue ' + queue_name);
                     return Promise.reject('Too many messages in queue ' + queue_name);
                 } else {
                     return Promise.resolve();
@@ -95,12 +95,15 @@ describe('holdToArchiveStressTest', () => {
             let rebill = MockEntities.getValidRebill();
             let transaction = MockEntities.getValidTransaction();
             let product_ship = randomutilities.randomBoolean();
+
             let rebill_id = [rebill.id, uuidV4()];
             let transaction_rebill = [transaction.rebill, rebill.id];
 
-            //prepare data
+            //create random scenarios
             rebill_id = randomutilities.selectRandomFromArray(rebill_id);
             transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill);
+
+            //prepare data
             rebill.state = "hold";
             rebill.processing = true;
 

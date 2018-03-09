@@ -12,6 +12,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
         entity: { type: new GraphQLNonNull(GraphQLString) },
         type: { type: new GraphQLNonNull(GraphQLString) },
         allow:   { type: new GraphQLList(GraphQLString) },
-        deny:   { type: new GraphQLList(GraphQLString) }
+        deny:   { type: new GraphQLList(GraphQLString) },
+        updated_at: { type: GraphQLString }
     })
 });

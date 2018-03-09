@@ -1,4 +1,3 @@
-
 const uuidV4 = require('uuid/v4');
 const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
@@ -97,28 +96,35 @@ describe('pendingToShippedStressTest', () => {
             let rebill = MockEntities.getValidRebill();
             let transaction = MockEntities.getValidTransaction();
             let shipping_receipt = MockEntities.getValidShippingReceipt();
+
             let transaction_rebill_id = [transaction.rebill, rebill.id];
             let shipping_receipt_id = [shipping_receipt.id, uuidV4()];
+            let rebill_id = [rebill.id, uuidV4()];
+
+            //create random scenarios
+            rebill_id = randomutilities.selectRandomFromArray(rebill_id);
+            transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill_id);
+            transaction.products[0].shipping_receipt = randomutilities.selectRandomFromArray(shipping_receipt_id);
 
             //prepare data
             rebill.state = "pending";
             rebill.processing = true;
-            transaction.rebill = randomutilities.selectRandomFromArray(transaction_rebill_id);
             transaction.merchant_provider = "a32a3f71-1234-4d9e-a9a1-98ecedb88f24";
             transaction.products = [transaction.products[0]];
-            transaction.products[0].shipping_receipt = randomutilities.selectRandomFromArray(shipping_receipt_id);
             shipping_receipt.fulfillment_provider = fulfillment_provider.id;
 
+            //missing rebill goes to error
             //rebill without transaction goes to error
             //rebill with transaction that has no shipping receipt goes to error
-            if ((transaction.rebill !== rebill.id) ||
+            if ((rebill.id !== rebill_id) ||
+                (transaction.rebill !== rebill.id) ||
                 transaction.products[0].shipping_receipt !== shipping_receipt.id)
                 number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
             operations.push(transactionController.create({entity: transaction}));
             operations.push(shippingReceiptController.create({entity: shipping_receipt}));
-            operations.push(SqSTestUtils.sendMessageToQueue('pending', '{"id":"' + rebill.id +'"}'));
+            operations.push(SqSTestUtils.sendMessageToQueue('pending', '{"id":"' + rebill_id +'"}'));
         }
 
         operations.push(fulfillmentProviderController.create({entity: fulfillment_provider}));

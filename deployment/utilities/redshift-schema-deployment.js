@@ -32,8 +32,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     du.debug('Deploy Redshift tables');
 
     //Note:  Aldo, please see structure herein
-    return redshiftContext.init()
-      .then(() => this.deployNonVersionedTables())
+    return this.deployNonVersionedTables()
       .then(() => this.deployVersionedTables())
       .then(() => {
         return 'Complete';

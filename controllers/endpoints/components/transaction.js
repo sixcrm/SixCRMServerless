@@ -16,7 +16,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
     }
 
-    initialize(callback){
+    initialize(){
 
       du.debug('Initialize');
 
@@ -24,10 +24,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
         validation: this.parameter_validation,
         definition: this.parameter_definitions
       });
-
-      if(_.isFunction(callback)){
-        return callback();
-      }
 
       return true;
 

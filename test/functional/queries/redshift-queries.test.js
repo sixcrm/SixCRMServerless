@@ -33,6 +33,24 @@ before((done) => {
 
 });
 
+after((done) => {
+
+  const redshiftContext = global.SixCRM.getResource('redshiftContext');
+
+  redshiftContext.dispose()
+    .then(() => {
+
+      return done();
+
+    })
+    .catch((ex) => {
+
+      done(ex);
+
+    });
+
+});
+
 describe('queries/redshift-queries.js', () => {
 
   const suite_directory = __dirname + '/tests';
@@ -140,9 +158,6 @@ describe('queries/redshift-queries.js', () => {
         return redshiftSchemaDeployment.deployTables();
       }
 
-      function deployMigration() {
-        return redshiftSchemaDeployment.deployForwardMigrationScripts();
-      }
     });
 
   });
