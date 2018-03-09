@@ -123,9 +123,3 @@ affiliatereport -> getAffiliateReport -> reports/affiliate/affiliate_report
 affiliatereportsummary -> getAffiliateReportSummary -> reports/affiliate/affiliate_report_summary
 
 merchantreport -> getMerchantReport -> reports/merchantprovider/merchantprovider_report | reports/merchantprovider/merchantprovider_report_product_schedule
-
-transactionsummaryreportsummary -> getTransactionSummaryReportSummary -> reports/transactionsummary/transaction_summary_report_summary
-
-transactionsummaryreport -> getTransactionSummaryReport -> reports/transactionsummary/transaction_summary_report
-
-transactionsreport -> getTransactionsReport -> reports/transactions/transactions_report
