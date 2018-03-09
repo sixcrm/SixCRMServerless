@@ -1,6 +1,0 @@
-{
-  "requestContext":{"authorizer":{"user":"admin.user@test.com"}},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":
-    "query {transactionsreport (analyticsfilter:{start:\"2017-10-12T00:00:00.000Z\", end:\"2017-10-13T00:00:00.000Z\"}, pagination:{ order:\"asc\", limit:10, offset:0}) {transactions {id, datetime, customer{id},merchant_provider {id}, campaign {id},affiliate {id}, amount, processor_result, transaction_type, cycle, recycle, gateway_response, transaction_id_gateway}}}"
-}
