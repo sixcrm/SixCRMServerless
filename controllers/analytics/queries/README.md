@@ -12,8 +12,6 @@
 
 ### bin
 
-### bin_query
-
 ### campaign_delta
 
 ### campaigns_by_amount
