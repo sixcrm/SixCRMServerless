@@ -480,16 +480,6 @@ class AnalyticsController extends AnalyticsUtilities {
 
   }
 
-  getActivity(args) {
-
-    du.debug('Get Activity');
-
-    let parameters = paginationutilities.mergePagination(args.activityfilter, paginationutilities.createSQLPaginationInput(args.pagination));
-
-    return this.getResults('activity', parameters, this.default_activity_query_filters);
-
-  }
-
   getActivityByIdentifier(args) {
 
     du.debug('Get Activity By Identifier');

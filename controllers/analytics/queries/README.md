@@ -4,8 +4,6 @@
 
 ## Queries :
 
-### activity
-
 ### activity_by_identifier
 
 ### aggregation_event_type_count
@@ -14,13 +12,9 @@
 
 ### bin
 
-### bin_query
-
 ### campaign_delta
 
 ### campaigns_by_amount
-
-### default
 
 ### deprecated
 
@@ -55,10 +49,6 @@
 #### reports affiliate
 
 #### reports merchantprovider
-
-#### reports transactions
-
-#### reports transactionsummary
 
 ### sessions
 
