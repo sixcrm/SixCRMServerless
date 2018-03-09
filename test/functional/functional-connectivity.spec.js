@@ -5,24 +5,7 @@ const expect = require('chai').expect;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
 const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
-
-before((done) => {
-
-  global.SixCRM.setResource('redshiftContext', redshiftContext);
-
-  redshiftContext.init()
-    .then(() => {
-
-      return done();
-
-    })
-    .catch((ex) => {
-
-      done(ex);
-
-    });
-
-});
+const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
 
 describe('Test connections to Docker Services', () => {
 
@@ -59,15 +42,53 @@ describe('Test connections to Docker Services', () => {
 
   });
 
-  describe('Redshift Query Utilities', () => {
+  describe('Aurora', () => {
+
+    it('successfully connects to the Docker Aurora Instance', () => {
+
+      return auroraContext.withConnection((connection => {
+
+        return connection.query('SELECT 1')
+          .then((result) => {
+
+            return expect(result.rows[0]['?column?']).to.equal(1);
+
+          })
+          .catch(ex => {
+
+            du.error(ex);
+
+            throw ex;
+
+          });
+
+      }));
+
+    });
+
+  });
+
+  describe('Redshift', () => {
 
     it('successfully connects to the Docker Redshift Instance', () => {
 
-      return redshiftContext.connection.query('SELECT 1').then(result => {
-        expect(result[0]['?column?']).to.equal(1);
-      }).catch(error => {
-        du.error(error);
-      });
+      return redshiftContext.withConnection((connection => {
+
+        return connection.query('SELECT 1')
+          .then((result) => {
+
+            return expect(result.rows[0]['?column?']).to.equal(1);
+
+          })
+          .catch(ex => {
+
+            du.error(ex);
+
+            throw ex;
+
+          });
+
+      }));
 
     });
 

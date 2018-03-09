@@ -13,12 +13,31 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
 const redshiftSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-schema-deployment.js');
+const BBPromise = require('bluebird');
 
 before((done) => {
 
   global.SixCRM.setResource('redshiftContext', redshiftContext);
 
   redshiftContext.init()
+    .then(() => {
+
+      return done();
+
+    })
+    .catch((ex) => {
+
+      done(ex);
+
+    });
+
+});
+
+after((done) => {
+
+  const redshiftContext = global.SixCRM.getResource('redshiftContext');
+
+  redshiftContext.dispose()
     .then(() => {
 
       return done();
@@ -108,24 +127,27 @@ describe('queries/redshift-queries.js', () => {
       }
 
       function seedDatabase(test) {
+
         du.debug(`Seeding Test database with ${test.method}`);
 
         if (!fileutilities.fileExists(test.seeds)) {
-          du.debug('Nothing to seed');
-          return;
+
+          return du.debug('Nothing to seed');
+
         }
 
-        let seeds = fileutilities.getDirectoryFilesSync(test.seeds);
+        return redshiftContext.withConnection((connection => {
 
-        let seed_promises = [];
+          const seeds = fileutilities.getDirectoryFilesSync(test.seeds);
 
-        arrayutilities.map(seeds, (seed) => {
-          let query = fileutilities.getFileContentsSync(test.seeds + seed);
+          return BBPromise.each(seeds.map((seed) => {
 
-          seed_promises.push(() => redshiftContext.connection.query(query));
-        });
+            return connection.query(fileutilities.getFileContentsSync(test.seeds + seed));
 
-        return arrayutilities.serial(seed_promises);
+          }), (p) => p);
+
+        }));
+
       }
 
       function dropDatabase() {
@@ -136,9 +158,6 @@ describe('queries/redshift-queries.js', () => {
         return redshiftSchemaDeployment.deployTables();
       }
 
-      function deployMigration() {
-        return redshiftSchemaDeployment.deployForwardMigrationScripts();
-      }
     });
 
   });

@@ -45,6 +45,7 @@ module.exports = class graphController extends authenticatedController {
   }
 
   epilogue() {
+
     du.debug('GraphController.epilogue()');
 
     global.SixCRM.getResource('redshiftContext');
