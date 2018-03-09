@@ -10,11 +10,14 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const timer = global.SixCRM.routes.include('lib', 'timer.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
+const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const tab = '      ';
 
 const max_test_cases = randomutilities.randomInt(100, 200);
 
 describe('deliveredToArchiveStressTest', () => {
+
+    let number_of_incorrect = 0;
 
     before((done) => {
         process.env.require_local = true;
@@ -36,6 +39,7 @@ describe('deliveredToArchiveStressTest', () => {
             .then(() => timer.set())
             .then(() => StateMachine.flush())
             .then(() => waitForNumberOfMessages('delivered', 0))
+            .then(() => waitForNumberOfMessages('delivered_error', number_of_incorrect))
             .then(() => {
                 let total = timer.get();
 
@@ -83,32 +87,27 @@ describe('deliveredToArchiveStressTest', () => {
         let operations = [];
 
         for (let i = 0; i < max_test_cases; i++) {
-            let rebill = getRebill();
+            let rebill = MockEntities.getValidRebill();
+            let rebill_id = [rebill.id, uuidV4()];
+
+            //create random scenario
+            rebill_id = randomutilities.selectRandomFromArray(rebill_id);
+
+            //prepare data
+            rebill.state = "delivered";
+            rebill.processing = true;
+
+            //missing rebill goes to error
+            if (rebill.id !== rebill_id)
+                number_of_incorrect++;
 
             operations.push(rebillController.create({entity: rebill}));
-            operations.push(SqSTestUtils.sendMessageToQueue('delivered', '{"id":"' + rebill.id +'"}'));
+            operations.push(SqSTestUtils.sendMessageToQueue('delivered', '{"id":"' + rebill_id +'"}'));
         }
 
         return Promise.all(operations)
             .then(() => permissionutilities.enableACLs())
             .catch(() => permissionutilities.enableACLs());
-    }
-
-    function getRebill() {
-
-        return {
-            "bill_at": "2017-04-06T18:40:41.405Z",
-            "id": uuidV4(),
-            "state": "delivered",
-            "processing": true,
-            "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-            "parentsession": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-            "product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
-            "amount": 34.99,
-            "created_at":"2017-04-06T18:40:41.405Z",
-            "updated_at":"2017-04-06T18:41:12.521Z"
-        };
-
     }
 
 });
