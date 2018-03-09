@@ -56,7 +56,7 @@ class RDSClusterDeployment {
 
     du.debug('Get Parameter Configuration From File.');
 
-    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'rds/clusters/')).then(directory_files => {
+    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'rds/config/')).then(directory_files => {
 
       let dpcf = arrayutilities.find(directory_files, (directory_file) => {
         return (directory_file == global.SixCRM.configuration.stage + '.json');
@@ -64,7 +64,7 @@ class RDSClusterDeployment {
 
       dpcf = (_.isUndefined(dpcf) || _.isNull(dpcf)) ? 'default.json' : dpcf;
 
-      return global.SixCRM.routes.include('deployment', 'rds/clusters/' + dpcf);
+      return global.SixCRM.routes.include('deployment', 'rds/config/' + dpcf);
 
     });
 
