@@ -12,5 +12,6 @@ module.exports.graphObj = new GraphQLInputObjectType({
         entity: { type: new GraphQLNonNull(GraphQLString) },
         key: { type: new GraphQLNonNull(GraphQLString) },
         value: { type: new GraphQLNonNull(GraphQLString) },
+        updated_at: { type: GraphQLString }
     })
 });
