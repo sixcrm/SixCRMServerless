@@ -64,11 +64,11 @@ module.exports = class ProductScheduleHelper {
   }
 
   //Tested
-  getScheduleElementOnDayInSchedule({product_schedule, day}){
+  getScheduleElementsOnDayInSchedule({product_schedule, day}){
 
     du.debug('Get Schedule Element By Day In Schedule');
 
-    let scheduled_element = arrayutilities.find(product_schedule.schedule, (scheduled_product) => {
+    let scheduled_elements = arrayutilities.filter(product_schedule.schedule, (scheduled_product) => {
 
       if(parseInt(day) >= parseInt(scheduled_product.start)){
 
@@ -84,7 +84,7 @@ module.exports = class ProductScheduleHelper {
 
     });
 
-    return (_.isUndefined(scheduled_element))?null:scheduled_element;
+    return (_.isUndefined(scheduled_elements) || _.isNull(scheduled_elements))?null:scheduled_elements;
 
   }
 
