@@ -94,12 +94,12 @@ function confirmOrder(token, session){
 
 }
 
-function createUpsell(token, session, sale_object){
+function createUpsell(token, session, upsell_object){
 
   du.output('Create Upsell');
 
   let account = config.account;
-  let post_body = createOrderBody(session, sale_object);
+  let post_body = createOrderBody(session, upsell_object);
 
   delete post_body.creditcard;
   post_body.transaction_subtype = 'upsell1';
@@ -111,6 +111,8 @@ function createUpsell(token, session, sale_object){
       Authorization: token
     }
   };
+
+  du.info('Upsell', argument_object);
 
   return httputilities.postJSON(argument_object)
   .then((result) => {
@@ -147,6 +149,8 @@ function createOrder(token, session, sale_object, creditcard){
       Authorization: token
     }
   };
+
+  du.info('Order', argument_object);
 
   return httputilities.postJSON(argument_object)
   .then((result) => {
@@ -310,6 +314,7 @@ describe('Transaction Endpoints Round Trip Test',() => {
     config = correct_config;
   });
 
+
   describe('Test Case 1', () => {
 
     it('successfully executes', () => {
@@ -393,6 +398,7 @@ describe('Transaction Endpoints Round Trip Test',() => {
 
         return createLead(token, campaign, customer)
         .then((session) => {
+          //du.info(session);  process.exit();
           return createOrder(token, session, sale_object, creditcard)
           .then((create_order_result) => {
             expect(create_order_result.response).to.have.property('amount');

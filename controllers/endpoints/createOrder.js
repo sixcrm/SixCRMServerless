@@ -7,7 +7,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
-class CreateOrderController extends transactionEndpointController{
+class CreateOrderController extends transactionEndpointController {
 
   constructor(){
 
@@ -68,6 +68,8 @@ class CreateOrderController extends transactionEndpointController{
   execute(event){
 
     du.debug('Execute');
+
+    this.parameters.store = {};
 
     return this.preamble(event)
     .then(() => this.createOrder());
@@ -338,6 +340,7 @@ class CreateOrderController extends transactionEndpointController{
 
     if(!_.has(this, 'rebillCreatorHelperController')){
       const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+
       this.rebillCreatorHelperController = new RebillCreatorHelperController();
     }
 

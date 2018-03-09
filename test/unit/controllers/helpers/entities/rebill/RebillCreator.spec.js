@@ -1303,6 +1303,155 @@ describe('/helpers/entities/Rebill.js', () => {
       mockery.deregisterAll();
     });
 
+    it.only('successfully creates a rebill based off of failing test case', () => {
+
+      let session = {
+        "account": "cb4a1482-1093-4d8e-ad09-fdd4d840b497",
+        "alias": "SS4AEASQ52",
+        "campaign": "71c3cac1-d084-4e12-ac75-cdb28987ae16",
+        "completed": false,
+        "created_at": "2018-03-08T22:09:49.046Z",
+        "customer": "b5be7968-f2b5-4fbe-adbb-185fe2f236b8",
+        "id": "f827baa6-0cd3-4645-8d49-e12be6c33fbe",
+        "updated_at": "2018-03-08T22:09:55.473Z",
+        "watermark": {
+          "product_schedules": [
+            {
+              "product_schedule": {
+                "schedule": [
+                  {
+                    "period": 14,
+                    "price": 1,
+                    "product": {
+                      "id": "6c6ec904-5315-4214-a057-79a7ff308cde",
+                      "name": "Smack Dog - Caribbean Salmon Fusion 2.5 kg/5.5 lb"
+                    },
+                    "start": 0
+                  },
+                  {
+                    "period": 14,
+                    "price": 1,
+                    "product": {
+                      "id": "92bd4679-8fb5-47ff-93f5-8679c46bcaad",
+                      "name": "Smack Dog - Caribbean Salmon Fusion 1.5 kg/3.30 lb"
+                    },
+                    "start": 0
+                  }
+                ]
+              },
+              "quantity": 1
+            }
+          ]
+        }
+      };
+
+      let product_schedules = [{
+        quantity:1,
+        product_schedule:{
+          schedule:[
+            {
+              product:{
+                id:"6c6ec904-5315-4214-a057-79a7ff308cde",
+                name:"Smack Dog - Caribbean Salmon Fusion 2.5 kg/5.5 lb"
+              },
+              price:1.00,
+              start:0,
+              period:14
+            },
+            {
+              product:{
+                id:"92bd4679-8fb5-47ff-93f5-8679c46bcaad",
+                name:"Smack Dog - Caribbean Salmon Fusion 1.5 kg/3.30 lb"
+              },
+              price:1.00,
+              start:0,
+              period:14
+            }
+          ]
+        }
+      }];
+
+      /*
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+        queryRecords: () => {
+          return Promise.resolve([]);
+        },
+        saveRecord: (tableName, entity) => {
+          return Promise.resolve(entity);
+        },
+        createINQueryParameters: (field_name, in_array) => {
+          arrayutilities.nonEmpty(in_array, true);
+          if(!arrayutilities.assureEntries(in_array, 'string')){
+            eu.throwError('server', 'All entries in the "in_array" must be of type string.');
+          }
+          let in_object = {};
+
+          arrayutilities.map(in_array, (value) => {
+            var in_key = ":"+randomutilities.createRandomString(10);
+
+            while(_.has(in_object, in_key)){
+              in_key = ":"+randomutilities.createRandomString(10);
+            }
+            in_object[in_key.toString()] = value;
+          });
+          return {
+            filter_expression : field_name+" IN ("+Object.keys(in_object).toString()+ ")",
+            expression_attribute_values : in_object
+          };
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        listProductSchedules:() => {
+          return Promise.resolve({productschedules:product_schedules});
+        },
+        getResult: () => {
+          return product_schedules;
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
+        listProductSchedulesByList:({product_schedules}) => {
+          return Promise.resolve({productschedules: product_schedules});
+        },
+        getResult: () => {
+          return product_schedules;
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), class {
+        constructor(){
+
+        }
+        addToSearchIndex(){
+          return Promise.resolve(true);
+        }
+        removeFromSearchIndex(){
+          return Promise.resolve(true);
+        }
+      });
+      */
+
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'cb4a1482-1093-4d8e-ad09-fdd4d840b497');
+
+      let day = -1;
+
+      let rebillCreatorHelper = new RebillCreatorHelperController();
+
+      return rebillCreatorHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
+
+        du.info(result);
+
+        delete result.created_at;
+        delete result.updated_at;
+        delete result.id;
+
+        expect(result.amount).to.equal(2.00);
+
+      });
+
+    });
+
     it('successfully creates a rebill for odd test case', () => {
 
       let product_schedules = null;
