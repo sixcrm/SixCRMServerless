@@ -1,14 +1,13 @@
 const expect = require('chai').expect;
-const mockery = require('mockery');
 const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 const DynamoDbDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 describe('shippedToDelivered', () => {
 
@@ -51,7 +50,7 @@ describe('shippedToDelivered', () => {
                 tests.push(test);
             }
         } else {
-            console.log('Ignoring ' + test_path);
+            du.output('Ignoring ' + test_path);
         }
 
     });

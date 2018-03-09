@@ -9,6 +9,7 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const tab = '      ';
 
 describe('masterTestShip', () => {
@@ -55,7 +56,7 @@ describe('masterTestShip', () => {
             test.description = stringutilities.replaceAll(test.description,', ', '\n' + tab);
 
         } else {
-            console.log('Ignoring ' + test_path);
+            du.output('Ignoring ' + test_path);
         }
 
     });
@@ -81,19 +82,19 @@ describe('masterTestShip', () => {
         it(test.description, () => {
             return beforeTest(test)
                 .then(() => StateMachine.flush(test.lambda_filter)) //bill
-                .then(() => console.log(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+                .then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
                 .then(() => timestamp.delay(32 * 1000)())
                 .then(() => StateMachine.flush(test.lambda_filter)) //hold
-                .then(() => console.log(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+                .then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
                 .then(() => timestamp.delay(32 * 1000)())
                 .then(() => StateMachine.flush(test.lambda_filter)) //pending
-                .then(() => console.log(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+                .then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
                 .then(() => timestamp.delay(32 * 1000)())
                 .then(() => StateMachine.flush(test.lambda_filter)) //shipped
-                .then(() => console.log(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+                .then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
                 .then(() => timestamp.delay(32 * 1000)())
                 .then(() => StateMachine.flush(test.lambda_filter)) //delivered
-                .then(() => console.log(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+                .then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
                 .then(() => timestamp.delay(32 * 1000)())
                 .then(() => StateMachine.flush(test.lambda_filter)) //archived
                 .then(() => verifyRebills(test))

@@ -1,5 +1,4 @@
 const expect = require('chai').expect;
-const mockery = require('mockery');
 const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
@@ -9,7 +8,9 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const tab = '      ';
+
 describe('shippedToDeliveredToArchive', () => {
 
     let tests = [];
@@ -21,6 +22,7 @@ describe('shippedToDeliveredToArchive', () => {
         if (fileutilities.fileExists(test_path + '/test.json')) {
             let config = require(test_path + '/test.json');
             let test = { seeds: {}, expectations: {} };
+
             test.description = config.description;
             test.path = test_path;
             test.lambda_filter = config.lambda_filter;
@@ -47,7 +49,7 @@ describe('shippedToDeliveredToArchive', () => {
 
             tests.push(test);
         } else {
-            console.log('Ignoring ' + test_path);
+            du.output('Ignoring ' + test_path);
         }
 
     });
@@ -70,7 +72,7 @@ describe('shippedToDeliveredToArchive', () => {
         it(test.description, () => {
             return beforeTest(test)
                 .then(() => StateMachine.flush(test.lambda_filter))
-                .then(() => console.log(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+                .then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
                 .then(() => timestamp.delay(32 * 1000)())
                 .then(() => StateMachine.flush(test.lambda_filter))
                 .then(() => verifyRebills(test))
@@ -95,9 +97,11 @@ describe('shippedToDeliveredToArchive', () => {
         permissionutilities.disableACLs();
 
         let promises = [];
+
         test.seeds.dynamodb.forEach(seed => {
             let table_name = seed.replace('.json', '');
             let seed_file_path = test.path + '/seeds/dynamodb/' + seed;
+
             promises.push(DynamoDbDeployment.executeSeedViaController(
                 { Table: {
                     TableName: table_name
@@ -117,6 +121,7 @@ describe('shippedToDeliveredToArchive', () => {
         }
 
         let promises = [];
+
         test.seeds.sqs.forEach(seed => {
             let queue_name = seed.replace('.json', '');
             let seed_file_path = test.path + '/seeds/sqs/' + seed;
