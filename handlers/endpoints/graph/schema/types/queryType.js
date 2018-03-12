@@ -141,7 +141,6 @@ let listActivityType = require('./analytics/listActivityType');
 let eventsByFacetType =  require('./analytics/eventsByFacetType');
 let transactionsByFacetType =  require('./analytics/transactionsByFacetType');
 
-let merchantProviderAmountType =  require('./analytics/merchantProviderAmountType');
 let analyticsFilterInputType = require('./analytics/filterInputType');
 let analyticsPaginationInputType = require('./analytics/paginationInputType');
 let analyticsActivityFilterInputType = require('./analytics/activityFilterInputType');
