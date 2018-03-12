@@ -67,7 +67,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
     if (_.has(parameters, 'cache')) {
 
-      if (_.has(parameters.cache, 'use_cache') && parameters.cache.use_cache == false) {
+      if (_.has(parameters.cache, 'use_cache') && parameters.cache.use_cache === false) {
 
         this.cacheController.setDisable(true);
 
@@ -216,26 +216,24 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
   }
 
-  createQueryList(parameters) {
-
-    du.debug('Create Filter List');
-
-    du.debug(parameters);
-    if (!_.isArray(parameters)) {
-      eu.throwError('server', 'Create Filter List only supports array arguments.');
-    }
-
-    return arrayutilities.compress(parameters);
-
-  }
-
   compressParameters(parameters) {
-    for (var key in parameters) {
-      if (_.isArray(parameters[key])) {
-        parameters[key] = arrayutilities.compress(parameters[key]);
+
+    for (let key in parameters) {
+
+      if (parameters.hasOwnProperty(key)) {
+
+        if (_.isArray(parameters[key])) {
+
+          parameters[key] = arrayutilities.compress(parameters[key]);
+
+        }
+
       }
+
     }
+
     return parameters;
+
   }
 
   parseQueryParameters(query, parameters) {
@@ -260,7 +258,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
       return this.getQueryParameterValidationString(query_name).then((query_validation_string) => {
 
-        var v, validation;
+        let v, validation;
 
         du.debug(object, query_validation_string);
 
@@ -348,9 +346,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
     du.debug('Get Query Filepath');
 
-    let query_filepath = __dirname + '/queries/' + query_name + '/query.sql';
-
-    return query_filepath;
+    return `${__dirname}/queries/${query_name}/query.sql`;
 
   }
 
@@ -396,42 +392,12 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
   }
 
-  collapseActivityFilterObject(activity_filter_object) {
-
-    let return_object = {};
-
-    for (var key in activity_filter_object) {
-
-      return_object = this.collapseActivityFilterKey(return_object, key, activity_filter_object);
-
-    }
-
-    return return_object;
-
-  }
-
-  collapseActivityFilterKey(return_object, key, activity_filter_object) {
-
-    if (_.isArray(activity_filter_object[key]) && activity_filter_object[key].length > 0) {
-
-      return_object[key] = arrayutilities.compress(activity_filter_object[key]);
-
-    } else if (_.isString(activity_filter_object[key])) {
-
-      return_object[key] = activity_filter_object[key];
-
-    }
-
-    return return_object;
-
-  }
-
   //Technical Debt:  This does not allow for multi-account filters...
   appendAccount(parameters) {
 
     du.debug('Append Account');
 
-    if (this.permissionutilities.areACLsDisabled() != true && global.account !== '*') {
+    if (this.permissionutilities.areACLsDisabled() !== true && global.account !== '*') {
 
       parameters['account'] = [global.account];
 
@@ -484,8 +450,6 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
     this.permissionutilities.disableACLs();
 
-    return;
-
   }
 
   enableACLs() {
@@ -494,8 +458,6 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
     this.permissionutilities.enableACLs();
 
-    return;
-
   }
 
-}
+};
