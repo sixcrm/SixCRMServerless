@@ -141,7 +141,6 @@ let listActivityType = require('./analytics/listActivityType');
 let eventsByFacetType =  require('./analytics/eventsByFacetType');
 let transactionsByFacetType =  require('./analytics/transactionsByFacetType');
 
-let merchantProviderAmountType =  require('./analytics/merchantProviderAmountType');
 let analyticsFilterInputType = require('./analytics/filterInputType');
 let analyticsPaginationInputType = require('./analytics/paginationInputType');
 let analyticsActivityFilterInputType = require('./analytics/activityFilterInputType');
@@ -798,18 +797,6 @@ module.exports.graphObj = new GraphQLObjectType({
                 const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionsByFacet');
-            }
-        },
-        merchantprovideramount: {
-            type: merchantProviderAmountType.graphObj,
-            args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj },
-                cache: {type: cacheInputType.graphObj}
-            },
-            resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-                return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderAmount');
             }
         },
         listactivitybyidentifier: {
