@@ -5,13 +5,8 @@ const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 function getValidVendorResponseClass(action){
@@ -1154,6 +1149,36 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
     });
 
+  });
+
+  describe('transformTestResponse', () => {
+
+      it('transforms test response when vendor response code is a success', () => {
+
+          let vendor_response_class = getValidVendorResponseClass('info');
+
+          const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+          let terminalController = new TerminalController();
+
+          terminalController.parameters.set('vendorresponseclass', vendor_response_class);
+
+          expect(terminalController.transformTestResponse()).to.equal(true);
+          expect(terminalController.parameters.store['responsecode']).to.deep.equal('success');
+      });
+
+      it('transforms test response when vendor response code is an error', () => {
+
+          let vendor_response_class = getValidVendorResponseClass('test');
+
+          const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+          let terminalController = new TerminalController();
+
+          vendor_response_class.setCode('error');
+          terminalController.parameters.set('vendorresponseclass', vendor_response_class);
+
+          expect(terminalController.transformTestResponse()).to.equal(true);
+          expect(terminalController.parameters.store['responsecode']).to.deep.equal('error');
+      });
   });
 
 });
