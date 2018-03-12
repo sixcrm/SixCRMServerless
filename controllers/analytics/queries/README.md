@@ -78,7 +78,7 @@ transactionsummary -> getTransactionSummary -> aggregation_processor_amount
 
 rebillsummary -> getRebillSummary -> order_engine/rebill_pagination
 
-queuestate -> getQueueState -> order_engine/rebill_pagination | order_engine/queue_rate | order_engine/queue_average_time
+queuestate -> getQueueState -> order_engine/rebill_pagination
 
 ### reports
 
