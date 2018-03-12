@@ -119,7 +119,6 @@ let searchResultsType = require('./search/searchResultsType');
 
 let listMerchantProviderSummariesType = require('./analytics/listMerchantProviderSummariesType');
 let transactionSummaryType = require('./analytics/transactionSummaryType');
-let listTransactionsType = require('./analytics/listTransactionsType');
 let listEventsType = require('./analytics/listEventsType');
 let eventSummaryType = require('./analytics/eventSummaryType');
 let transactionOverviewType =  require('./analytics/transactionOverviewType');
