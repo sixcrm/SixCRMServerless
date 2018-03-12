@@ -1,10 +1,14 @@
 'use strict';
 const _ = require('underscore');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
+
+const helper = new CreditCardHelperController();
 
 class creditCardController extends entityController {
 
@@ -14,6 +18,38 @@ class creditCardController extends entityController {
 
       this.search_fields = ['name'];
 
+      this.encryptedAttributePaths = [
+          'number',
+          'ccv'
+      ];
+    }
+
+    censorEncryptedAttribute(attr_path, attr_value) {
+        if (attr_path === 'number') {
+            return helper.lastFour(this.decryptAttribute(attr_value));
+        }
+        return super.censorEncryptedAttribute(attr_path, attr_value);
+    }
+
+    setLastFour(attributes) {
+        if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
+            attributes.last_four = attributes.number.slice(-4);
+        }
+    }
+
+    create({entity}) {
+        this.setLastFour(entity);
+        return super.create({entity});
+    }
+
+    update({entity}) {
+        this.setLastFour(entity);
+        return super.update({entity});
+    }
+
+    updateProperties({id, properties}) {
+        this.setLastFour(properties);
+        return super.updateProperties({id, properties});
     }
 
     associatedEntitiesCheck({id}){
@@ -46,7 +82,9 @@ class creditCardController extends entityController {
 
       du.debug('Assure Credit Card');
 
-      return this.queryBySecondaryIndex({field:'number', index_value: creditcard.number, index_name: 'number-index'}).then(results => {
+      const encryptedNumber = this.encryptAttribute(creditcard.number);
+
+      return this.queryBySecondaryIndex({field:'number', index_value: encryptedNumber, index_name: 'number-index'}).then(results => {
 
         if(_.has(results, 'creditcards')){
 

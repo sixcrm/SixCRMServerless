@@ -57,8 +57,8 @@ module.exports = class CreditCardHelper {
 
     du.debug('Last Four');
 
-    let last = creditcard_number.substr(-4);
-    let first = creditcard_number.replace(/[^0-9]/g,'').substr(0, creditcard_number.length - 5).replace(/[0-9]/g, '*');
+    let last = creditcard_number.slice(-4);
+    let first = creditcard_number.replace(/[^0-9]/g,'').slice(0, -4).replace(/[0-9]/g, '*');
 
     return first+last;
 

@@ -245,6 +245,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
     let customer = this.parameters.get('customer');
 
     return this.customerController.getCreditCards(customer).then(creditcards => {
+      creditcards = creditcards.map(creditcard => this.creditCardController.decryptAttributes(creditcard));
 
       return this.parameters.set('creditcards', creditcards);
 
@@ -257,7 +258,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
     du.debug('Acquire Merchant Provider');
 
     return this.merchantProviderController.get({id: id}).then(result => {
-
+      this.merchantProviderController.decryptAttributes(result);
       return result;
 
     });

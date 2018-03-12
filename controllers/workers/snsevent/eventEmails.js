@@ -29,6 +29,7 @@ class EventEmailsController extends SNSEventController {
 
     this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
     this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
+    this.smtpProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
     this.emailTemplatesController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 
     this.augmentParameters();
@@ -175,6 +176,7 @@ class EventEmailsController extends SNSEventController {
         let smtp_providers = arrayutilities.filter(results, result => {
           return !_.isNull(result);
         })
+        .map(smtp_provider => this.smtpProviderController.decryptAttributes(smtp_provider));
 
         this.parameters.set('smtpproviders', smtp_providers);
         return true;

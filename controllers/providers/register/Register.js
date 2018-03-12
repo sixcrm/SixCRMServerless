@@ -80,6 +80,7 @@ module.exports = class Register extends RegisterUtilities {
     }
 
     this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
+    this.creditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
   }

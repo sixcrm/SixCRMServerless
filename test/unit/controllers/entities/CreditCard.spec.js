@@ -1,5 +1,6 @@
 let chai = require('chai');
 let expect = chai.expect;
+const mockery = require('mockery');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidCreditCard() {
@@ -7,6 +8,18 @@ function getValidCreditCard() {
 }
 
 describe('controllers/entities/CreditCard.js', () => {
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
 
     it('creates credit card object', () => {
         // given
@@ -200,6 +213,38 @@ describe('controllers/entities/CreditCard.js', () => {
             return creditCardController.getAddress(creditCard).then((result) => {
                 expect(result).to.equal(creditCard.address);
             });
+        });
+    });
+
+    describe('censorEncryptedAttribute', () => {
+        it('returns the last 4 digits of number', () => {
+            const number = '4111 1111 1111 1111';
+
+            class mockHelper {
+                lastFour(input) {
+                    expect(input).to.equal(number);
+                    return '************1111';
+                }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/creditcard/CreditCard.js'), mockHelper);
+
+            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+
+            creditCardController.decryptAttribute = (attr) => {
+                expect(attr).to.equal('encrypted_number');
+                return number;
+            }
+
+            expect(creditCardController.censorEncryptedAttribute('number', 'encrypted_number')).to.equal('************1111')
+        });
+
+        it('returns generic censor for other attributes', () => {
+            const ccv = '123';
+
+            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+
+            expect(creditCardController.censorEncryptedAttribute('ccv', ccv)).to.equal('********')
         });
     });
 });

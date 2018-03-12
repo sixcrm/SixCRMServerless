@@ -14,6 +14,12 @@ class merchantProviderController extends entityController {
 
       this.search_fields = ['name'];
 
+      this.encryptedAttributePaths = [
+          'gateway.username',
+          'gateway.password',
+          'gateway.api_key'
+      ];
+
     }
 
     associatedEntitiesCheck({id}){

@@ -1,5 +1,4 @@
 'use strict'
-const _ = require('underscore');
 const chai = require("chai");
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
@@ -92,9 +91,10 @@ describe('/providers/terminal/Receipt.js', () => {
       let shipping_receipt_id = uuidV4();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(fulfillment_provider);
-        }
+        },
+        decryptAttributes: () => {}
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
