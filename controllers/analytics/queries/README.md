@@ -50,8 +50,6 @@
 
 ### transactions_by_facet
 
-### transactions_facet_timeseries
-
 --------------------------------------------------------------------------------
 
 ## Notes:
