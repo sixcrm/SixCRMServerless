@@ -187,4 +187,83 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
   });
 
+  describe('getMerchantProviderSummaries', () => {
+
+    it('successfully retrieves merchant provider summaries', () => {
+
+      let merchant_provider = getValidMerchantProvider();
+
+      let merchant_provider_summary = getValidMerchantProviderSummary();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+          listByMerchantProviderAndDateRange:() => {
+              return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
+          },
+          getResult:() => {
+              return [merchant_provider_summary];
+          }
+      });
+
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      return merchantProviderSummaryHelperController.getMerchantProviderSummaries({merchant_providers: [merchant_provider]}).then(result => {
+        expect(merchantProviderSummaryHelperController.parameters.store['merchantprovidersummaries']).to.deep.equal([merchant_provider_summary]);
+        expect(result).to.deep.equal({merchant_providers: [{
+            merchant_provider: {
+              id: merchant_provider
+            },
+            summary: {
+              thismonth: {
+                  amount: 0,
+                  count: 0
+              },
+              thisweek: {
+                  amount: 0,
+                  count: 0
+              },
+              today: {
+                  amount: 0,
+                  count: 0
+              }
+            }
+          }]
+        });
+      });
+
+    });
+
+  });
+
+  describe('acquireMerchantProviderSummaries', () => {
+
+    it('successfully acquires merchant provider summaries', () => {
+
+      let merchant_provider = getValidMerchantProvider();
+
+      let merchant_provider_summary = getValidMerchantProviderSummary();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+          listByMerchantProviderAndDateRange:() => {
+              return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
+          },
+          getResult:() => {
+              return merchant_provider_summary;
+          }
+      });
+
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      merchantProviderSummaryHelperController.parameters.set('merchantproviders', [merchant_provider]);
+
+      return merchantProviderSummaryHelperController.acquireMerchantProviderSummaries().then(result => {
+        expect(merchantProviderSummaryHelperController.parameters.store['merchantprovidersummaries']).to.deep.equal(merchant_provider_summary);
+        expect(result).to.equal(true);
+      });
+
+    });
+
+  });
+
 });
