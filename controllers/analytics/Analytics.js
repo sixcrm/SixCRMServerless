@@ -53,12 +53,6 @@ class AnalyticsController extends AnalyticsUtilities {
       'phone'
     ];
 
-    this.default_queue_filters = [
-      'queuename',
-      'current_queuename',
-      'account'
-    ];
-
     this.default_queue_account_filter = [
       'account'
     ];
@@ -284,34 +278,6 @@ class AnalyticsController extends AnalyticsUtilities {
 
   }
 
-  getQueueRates(parameters) {
-    du.debug('Get Queue Failure');
-
-    const queue_name = parameters.queuename;
-
-    parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-    if (!_.isUndefined(queue_name)) {
-      parameters = this.appendQueueName(parameters, queue_name);
-    }
-
-    return this.getResults('order_engine/queue_rate', parameters, this.default_queue_account_filter);
-  }
-
-  getQueueAverageTime(parameters) {
-    du.debug('Get Average Time of Messages in Queue');
-
-    const queue_name = parameters.queuename;
-
-    parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-    if (!_.isUndefined(queue_name)) {
-      parameters = this.appendQueueName(parameters, queue_name);
-    }
-    du.debug(queue_name)
-    return this.getResults('order_engine/queue_average_time', parameters, this.default_queue_account_filter);
-  }
-
   getRebillsInQueue(parameters) {
 
     const queue_name = parameters.queuename;
@@ -348,26 +314,6 @@ class AnalyticsController extends AnalyticsUtilities {
       return this.getResults('reports/affiliate/affiliate_report_subaffiliates', parameters, this.default_query_filters);
     } else {
       return this.getResults('reports/affiliate/affiliate_report_subaffiliates_product_schedule', parameters, this.default_query_filters);
-    }
-
-  }
-
-  getAffiliateReportSubaffiliatesOverview(parameters) {
-
-    du.debug('Get Affiliate Report Subaffiliates Overview');
-
-    let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
-
-    let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
-
-    parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-    parameters = this.appendPeriod(parameters, period_selection);
-
-    if (!_.has(parameters, 'product_schedule')) {
-      return this.getResults('reports/affiliate/affiliate_report_subaffiliates_overview', parameters, this.default_query_filters);
-    } else {
-      return this.getResults('reports/affiliate/affiliate_report_subaffiliates_overview_product_schedule', parameters, this.default_query_filters);
     }
 
   }
@@ -490,16 +436,6 @@ class AnalyticsController extends AnalyticsUtilities {
 
     if (_.has(parameters, 'binnumber')) {
       return parameters.binnumber;
-    }
-
-    return null;
-
-  }
-
-  getAnalyticsFilter(parameters) {
-
-    if (_.has(parameters, 'analyticsfilter')) {
-      return parameters.analyticsfilter;
     }
 
     return null;
