@@ -35,7 +35,5 @@ Other queries that are found in the analytics directory
 
 ### Queries that are not integrated into Analytics.js
 
-* transactions_by_affiliate
 * merchant_report_summary
-* sessions
 

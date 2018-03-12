@@ -46,8 +46,6 @@
 
 ### transactions
 
-### transactions_by_affiliate
-
 ### transactions_by_facet
 
 --------------------------------------------------------------------------------
