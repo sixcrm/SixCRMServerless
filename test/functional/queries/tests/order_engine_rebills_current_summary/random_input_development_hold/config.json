@@ -1,9 +1,0 @@
-{
-  "method": "getCurrentQueueSummary",
-  "test_case": "random input with development data with hold filtering",
-  "input": {
-    "queuename":"hold",
-    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
-  "result_name": "summary",
-  "expect": [{"queuename":"hold","avg_time":64800,"number_of_rebills":"2","failure_rate":"0"}] 
-}
