@@ -108,16 +108,6 @@ class AnalyticsController extends AnalyticsUtilities {
 
   }
 
-  getTransactions(parameters) {
-
-    du.debug('Get Transactions');
-
-    parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-    return this.getResults('transactions', parameters, this.default_query_filters);
-
-  }
-
   getEvents(parameters) {
 
     du.debug('Get Events');

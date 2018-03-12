@@ -1,8 +1,0 @@
-{
-  "method": "getCurrentQueueSummary",
-  "test_case": "random input with development data with hold filtering, database extract on 09.02.2018, account d3fa3bf3-7824-49f4-8261-87674482bf1c changed to d26c1887-7ad4-4a44-be0b-e80dbce22774",
-  "input": {
-    "queuename":"hold"},
-  "result_name": "summary",
-  "expect": [{"queuename":"hold","avg_time":3633,"number_of_rebills":"498","failure_rate":"0"}]
-}

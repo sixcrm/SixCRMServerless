@@ -664,19 +664,6 @@ module.exports.graphObj = new GraphQLObjectType({
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionSummary');
             }
         },
-        listtransactions: {
-            type: listTransactionsType.graphObj,
-            args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj },
-                pagination: {type: analyticsPaginationInputType.graphObj},
-                cache: {type: cacheInputType.graphObj}
-            },
-            resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-                return analyticsController.executeAnalyticsFunction(args, 'getTransactions');
-            }
-        },
         listevents: {
             type: listEventsType.graphObj,
             args: {
