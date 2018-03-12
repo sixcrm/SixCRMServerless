@@ -151,15 +151,6 @@ class AnalyticsController extends AnalyticsUtilities {
 
   }
 
-  //Technical Debt:  update to transaction facet timeseries
-  getMerchantProviderAmount(parameters) {
-
-    du.debug('Get Merchant Provider Amount');
-
-    return this.getResults('merchant_provider_amount', parameters.analyticsfilter, this.default_query_filters);
-
-  }
-
   getEventSummary(parameters) {
 
     du.debug('Get Event Summary');

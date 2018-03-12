@@ -22,8 +22,6 @@
 
 ### events_by_facet
 
-### merchant_provider_amount
-
 ### merchant_provider_summary
 
 ### merchant_report_summary
