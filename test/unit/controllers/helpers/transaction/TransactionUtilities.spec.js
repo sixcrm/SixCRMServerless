@@ -2,15 +2,9 @@
 const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
-const uuidV4 = require('uuid/v4');
-
 let expect = chai.expect;
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-let mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-
+const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const TransactionUtilitiesHelperController = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 
 function getInvalidArgumentsArray(omit){
@@ -37,106 +31,8 @@ function getValidGatewayConstructorNames(){
 function getValidSelectedMerchantProvidersArray(){
 
   return [
-    {
-    	id:"6c40761d-8919-4ad6-884d-6a46a776cfb9",
-    	account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    	name:"NMI Account 1",
-    	processor:{
-    		name:"NMA",
-    		id:"someIDValue"
-    	},
-    	processing:{
-    		monthly_cap: 50000.00,
-    		discount_rate:0.9,
-    		transaction_fee:0.06,
-    		reserve_rate: 0.5,
-    		maximum_chargeback_ratio:0.17,
-    		transaction_counts:{
-    			daily:30,
-    			monthly:30,
-    			weekly:30
-    		}
-    	},
-    	enabled:true,
-    	gateway: {
-    		name:"NMI",
-    		username:"demo",
-    		password:"password",
-    	},
-    	allow_prepaid:true,
-    	accepted_payment_methods:["Visa", "Mastercard", "American Express"],
-    	customer_service:{
-    		email:"customer.service@mid.com",
-    		url:"http://mid.com",
-    		description:"Some string here..."
-    	},
-      summary: {
-        today: {
-          count: 0,
-          amount: 0.00
-        },
-        thisweek: {
-          count: 0,
-          amount: 0.00
-        },
-        thismonth: {
-          count: 0,
-          amount: 400.00
-        }
-      },
-    	created_at:"2017-04-06T18:40:41.405Z",
-    	updated_at:"2017-04-06T18:41:12.521Z"
-    },
-    {
-    	id:"79189a4a-ed89-4742-aa96-afcd7f6c08fb",
-    	account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    	name:"NMI Account 2",
-    	processor:{
-    		name:"NMA",
-    		id:"someIDValue"
-    	},
-    	processing:{
-    		monthly_cap: 50000.00,
-    		discount_rate:0.9,
-    		transaction_fee:0.06,
-    		reserve_rate: 0.5,
-    		maximum_chargeback_ratio:0.17,
-    		transaction_counts:{
-    			daily:30,
-    			monthly:30,
-    			weekly:30
-    		}
-    	},
-    	enabled:true,
-    	gateway: {
-    		name:"NMI",
-    		username:"demo",
-    		password:"password"
-    	},
-    	allow_prepaid:true,
-    	accepted_payment_methods:["Visa", "Mastercard", "American Express"],
-    	customer_service:{
-    		email:"customer.service@mid.com",
-    		url:"http://mid.com",
-    		description:"Some string here..."
-    	},
-      summary: {
-        today: {
-          count: 0,
-          amount: 0.00
-        },
-        thisweek: {
-          count: 0,
-          amount: 0.00
-        },
-        thismonth: {
-          count: 0,
-          amount: 34.29
-        }
-      },
-    	created_at:"2017-04-06T18:40:41.405Z",
-    	updated_at:"2017-04-06T18:41:12.521Z"
-    }
+      MockEntities.getValidMerchantProvider(),
+      MockEntities.getValidMerchantProvider()
   ];
 
 }
@@ -236,11 +132,38 @@ describe('helpers/transaction/TransactionUtilities.spec.js', () => {
     });
 
   });
+  */
 
   describe('instantiateParameters', () => {
 
+    it('successfully instantiates parameters', () => {
+
+        let transactionUtilitiesController = new TransactionUtilitiesHelperController();
+
+        //example of properly set parameter validation
+        transactionUtilitiesController.parameter_validation = {
+            'transaction': global.SixCRM.routes.path('model', 'transaction/transaction.json')
+        };
+
+        transactionUtilitiesController.instantiateParameters();
+
+        expect(transactionUtilitiesController.parameters.parameter_validation)
+            .to.deep.equal(transactionUtilitiesController.parameter_validation);
+    });
+
+    it('returns empty object when parameter_validation hasn\'t previously existed', () => {
+
+        let transactionUtilitiesController = new TransactionUtilitiesHelperController();
+
+        //making sure that parameter validation is not set
+        delete transactionUtilitiesController.parameter_validation;
+
+        transactionUtilitiesController.instantiateParameters();
+
+        expect(transactionUtilitiesController.parameters.parameter_validation)
+            .to.deep.equal({});
+    });
   });
-  */
 
   describe('instantiateGateway', () => {
 
