@@ -42,8 +42,6 @@
 
 #### reports merchantprovider
 
-### sessions
-
 ### transaction_summary
 
 ### transactions
