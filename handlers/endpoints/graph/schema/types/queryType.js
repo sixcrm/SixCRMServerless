@@ -624,6 +624,21 @@ module.exports.graphObj = new GraphQLObjectType({
             const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
             return analyticsController.executeAnalyticsFunction(args, 'getCurrentQueueSummary');
+          }
+        },
+        listmerchantprovidersummaries: {
+            type: listMerchantProviderSummariesType.graphObj,
+            args: {
+                analyticsfilter: { type: analyticsFilterInputType.graphObj },
+                cache: {type: cacheInputType.graphObj},
+                pagination: {type: analyticsPaginationInputType.graphObj}
+            },
+            resolve: function(root, args){
+
+              const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+              return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderSummaries');
+
             }
 				},
 				listbins: {
@@ -783,18 +798,6 @@ module.exports.graphObj = new GraphQLObjectType({
                 const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionsByFacet');
-            }
-        },
-        merchantprovideramount: {
-            type: merchantProviderAmountType.graphObj,
-            args: {
-                analyticsfilter: { type: analyticsFilterInputType.graphObj },
-                cache: {type: cacheInputType.graphObj}
-            },
-            resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-                return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderAmount');
             }
         },
         listactivitybyidentifier: {
