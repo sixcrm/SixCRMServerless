@@ -171,7 +171,7 @@ module.exports.graphObj = new GraphQLObjectType({
         /*
         * Esoteric requests
         */
-    	   search:{
+    	   re:{
     	      type: searchResultsType.graphObj,
   	        description: 'Executes a search query.',
   	        args: {
