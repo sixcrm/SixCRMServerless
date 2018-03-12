@@ -505,21 +505,32 @@ class MockEntities {
 
   }
 
+  static getValidHistoryElement() {
+
+      let random_status = ['unknown', 'intransit', 'delivered', 'returned'];
+
+      return {
+          created_at: timestamp.getISO8601(),
+          status: randomutilities.selectRandomFromArray(random_status),
+          detail: randomutilities.createRandomString(20)
+      }
+  }
+
   static getValidShippingReceipt(id){
 
     return {
-        id: this.getValidId(id),
-  		account: this.getTestAccountID(),
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
       tracking:{
         carrier: 'UPS',
         id: randomutilities.createRandomString(10)
       },
-      history:[],
+      history: [ this.getValidHistoryElement() ],
       status:"intransit",
       fulfillment_provider: uuidV4(),
       fulfillment_provider_reference: uuidV4(),
-  		created_at: timestamp.getISO8601(),
-  		updated_at:timestamp.getISO8601()
+      created_at: timestamp.getISO8601(),
+      updated_at:timestamp.getISO8601()
     };
 
   }
