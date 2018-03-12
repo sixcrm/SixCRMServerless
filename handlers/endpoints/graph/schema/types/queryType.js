@@ -1832,9 +1832,9 @@ module.exports.graphObj = new GraphQLObjectType({
           },
           resolve: (root, tags) => {
             const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
-            const {id, pagination, search} = tags;
+            const {id, pagination} = tags;
 
-            return tagController.listByAccount({id, pagination, search, fatal: list_fatal});
+            return tagController.listByEntity({id, pagination, fatal: list_fatal});
           }
         },
         taglistbykey: {

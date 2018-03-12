@@ -19,6 +19,10 @@
       {
         "AttributeName":"key",
         "AttributeType":"S"
+      },
+      {
+        "AttributeName":"entity",
+        "AttributeType":"S"
       }
     ],
     "GlobalSecondaryIndexes":[
@@ -32,6 +36,22 @@
           {
             "AttributeName":"key",
             "KeyType":"RANGE"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":1,
+          "WriteCapacityUnits":1
+        }
+      },
+      {
+        "IndexName":"entity-index",
+        "KeySchema":[
+          {
+            "AttributeName":"entity",
+            "KeyType":"HASH"
           }
         ],
         "Projection":{

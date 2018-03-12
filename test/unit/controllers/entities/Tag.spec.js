@@ -3,7 +3,7 @@ const expect = chai.expect;
 const mockery = require('mockery');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 
-describe('controllers/entities/EntityACL.js', () => {
+describe('controllers/entities/Tag.js', () => {
     before(() => {
         mockery.enable({
             useCleanCache: true,
@@ -145,9 +145,9 @@ describe('controllers/entities/EntityACL.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
                 queryRecords: (table, parameters) => {
-                    expect(parameters.key_condition_expression).to.include('#entity = :entityv');
+                    expect(parameters.key_condition_expression).to.include('#entity = :index_valuev');
                     expect(parameters.expression_attribute_names['#entity']).to.equal('entity');
-                    expect(parameters.expression_attribute_values[':entityv']).to.equal('TestID');
+                    expect(parameters.expression_attribute_values[':index_valuev']).to.equal('TestID');
                     expect(parameters.limit).to.equal(10);
                     return Promise.resolve({ Count: 1, Items: entities });
                 }
