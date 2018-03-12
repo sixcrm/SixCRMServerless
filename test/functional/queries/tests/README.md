@@ -39,4 +39,4 @@ Other queries that are found in the analytics directory
 * transactions_facet_timeseries
 * merchant_report_summary
 * sessions
-* sub_affiliates_overview
+

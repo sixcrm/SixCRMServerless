@@ -44,8 +44,6 @@
 
 ### sessions
 
-### sub_affiliates_overview
-
 ### transaction_summary
 
 ### transactions
