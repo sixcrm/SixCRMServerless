@@ -16,15 +16,11 @@
 
 ### campaigns_by_amount
 
-### deprecated
-
 ### event_funnel
 
 ### events_by_facet
 
 ### merchant_provider_summary
-
-### merchant_report_summary
 
 ### order_engine
 
@@ -43,8 +39,6 @@
 #### reports merchantprovider
 
 ### transaction_summary
-
-### transactions
 
 ### transactions_by_facet
 
