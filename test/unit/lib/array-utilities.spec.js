@@ -1,6 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const randomutilities = global.SixCRM.routes.include('lib', 'random.js')
 
 describe('lib/array-utilities', () => {
 
@@ -8,6 +9,17 @@ describe('lib/array-utilities', () => {
     expect(arrayutilities.flatten(['a', ['b','c']])).to.deep.equal(['a','b','c']);
     expect(arrayutilities.flatten(['a', ['b','c',['d','e']]])).to.deep.equal(['a','b','c','d','e']);
   });
+
+    it('throws error when flatten recursion depth exceeded', () => {
+
+        let multidimensional_array = [[[[[[[[[[[[[[[[[[[[[1, 2, 3]]]]]]]]]]]]]]]]]]]]]; //depth over 20 for any array
+
+        try {
+            arrayutilities.flatten(multidimensional_array)
+        }catch (error) {
+            expect(error.message).to.equal('[500] Array Utilities flatten recursion depth exceeded.');
+        }
+    });
 
     it('isArray', () => {
         expect(arrayutilities.isArray([])).to.be.true;
@@ -259,4 +271,108 @@ describe('lib/array-utilities', () => {
         expect(arrayutilities.sort([2, 3, 1])).to.deep.equal([1, 2, 3]);
     });
 
+    it('throws error when first argument is not an array', () => {
+
+        let params = ['any_string', '123', 'any_string123', 123, 123.123, -123, -123.123, {}, () => {}, true];
+
+        params.forEach((param) => {
+            try {
+                arrayutilities.group(param, () => {});
+            } catch (error) {
+                expect(error.message).to.equal('[500] ArrayUtilities.isArray thing argument is not an array.');
+            }
+        })
+    });
+
+    it('throws error when second argument is not a function', () => {
+
+        let params = ['any_string', '123', 'any_string123', 123, 123.123, -123, -123.123, {}, [], true];
+
+        params.forEach((param) => {
+            try {
+                arrayutilities.group([], param);
+            } catch (error) {
+                expect(error.message).to.equal('[500] ArrayUtilities.group differentiator_acquisition_function is not a function.');
+            }
+        })
+    });
+
+    it('successfully groups with random data', () => {
+
+        let params =  [];
+
+        let count1 = randomutilities.randomInt(2, 10);
+        let count2 = randomutilities.randomInt(2, 10);
+        let count3 = randomutilities.randomInt(2, 10);
+
+        let param1 = randomutilities.createRandomString(20);
+        let param2 = randomutilities.createRandomString(20);
+        let param3 = randomutilities.createRandomString(20);
+
+        for(let i = 0; i < count1; i++) {
+            params.push({data: param1});
+        }
+
+        for(let i = 0; i < count2; i++) {
+            params.push({data: param2});
+        }
+
+        for(let i = 0; i < count3; i++) {
+            params.push({data: param3});
+        }
+
+        let result = arrayutilities.group(params, (param) => {return param.data});
+
+        expect(params.length).to.equal(count1 + count2 + count3);
+        expect(result[param1].length).to.equal(count1);
+        expect(result[param2].length).to.equal(count2);
+        expect(result[param3].length).to.equal(count3);
+    });
+
+    it('successfully groups', () => {
+
+        let params =  [
+            { data: 'test1' },
+            { data: 'test2' },
+            { data: 'test1' },
+            { data: 'test3' },
+            { data: 'test2' },
+            { data: 'test2' },
+            { data: 'test1' },
+            { data: 'test2' },
+            { data: 'test3' },
+            { data: 'test1' },
+            { data: 'test2' },
+            { data: 'test3' },
+            { data: 'test3' },
+            { data: 'test3' },
+            { data: 'test2' },
+        ];
+
+        let result = arrayutilities.group(params, (param) => {return param.data});
+
+        expect(result).to.deep.equal({
+            test1: [
+                { data: 'test1' },
+                { data: 'test1' },
+                { data: 'test1' },
+                { data: 'test1' }
+            ],
+            test2: [
+                { data: 'test2' },
+                { data: 'test2' },
+                { data: 'test2' },
+                { data: 'test2' },
+                { data: 'test2' },
+                { data: 'test2' }
+            ],
+            test3: [
+                { data: 'test3' },
+                { data: 'test3' },
+                { data: 'test3' },
+                { data: 'test3' },
+                { data: 'test3' }
+            ]}
+        );
+    });
 });

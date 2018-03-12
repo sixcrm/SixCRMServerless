@@ -1,6 +1,0 @@
-{
-  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":
-    "query {listactivity (activityfilter:{start:\"2017-03-01T17:23:43.043Z\", end:\"2017-03-02T17:23:43.043Z\", action:[ \"continued\" ]}, pagination: {order:\"asc\", limit:10, offset:0}) {activity {id, datetime, actor, actor_type, action, acted_upon, acted_upon_type, associated_with, associated_with_type, english}pagination {order, limit, offset, count}}}"
-}

@@ -5,545 +5,438 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 describe('controllers/Analytics.js', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
+  before(() => {
+    mockery.enable({
+      useCleanCache: true,
+      warnOnReplace: false,
+      warnOnUnregistered: false
+    });
+  });
+
+  afterEach(() => {
+    mockery.resetCache();
+    mockery.deregisterAll();
+  });
+
+  describe('getActivityFilter', () => {
+
+    it('returns null when activity filter is not set', () => {
+
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+      expect(analyticsController.getActivityFilter({})).to.equal(null);
     });
 
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
+    it('successfully returns activity filter', () => {
+
+      let params = {
+        activityfilter: 'an_activity_filter'
+      };
+
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+      expect(analyticsController.getActivityFilter(params)).to.equal(params.activityfilter);
+    });
+  });
+
+  describe('getPagination', () => {
+
+    it('returns null when pagination is not set', () => {
+
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+      expect(analyticsController.getPagination({})).to.equal(null);
     });
 
-    describe('getActivityFilter', () => {
+    it('successfully returns pagination', () => {
 
-        it('returns null when activity filter is not set', () => {
+      let params = {
+        pagination: 'any_pagination'
+      };
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            expect(analyticsController.getActivityFilter({})).to.equal(null);
-        });
-
-        it('successfully returns activity filter', () => {
-
-            let params = {
-                activityfilter: 'an_activity_filter'
-            };
-
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-            expect(analyticsController.getActivityFilter(params)).to.equal(params.activityfilter);
-        });
+      expect(analyticsController.getPagination(params)).to.equal(params.pagination);
     });
+  });
 
-    describe('getPagination', () => {
+  describe('getActivityByIdentifier', () => {
 
-        it('returns null when pagination is not set', () => {
+    it('successfully returns activity by identifier', () => {
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let params = {
+        activityfilter: {
+          an_activity_filter: 'an_activity_filter'
+        },
+        pagination: {
+          order: 'sample data'
+        }
+      };
 
-            expect(analyticsController.getPagination({})).to.equal(null);
-        });
+      let mock_analytics_utilities = class {
+        constructor() {
+        }
 
-        it('successfully returns pagination', () => {
+        getResults(query_name, parameters, query_filters) {
+          expect(query_name).to.equal('activity_by_identifier');
+          expect(parameters).to.deep.equal({
+            an_activity_filter: params.activityfilter.an_activity_filter,
+            order: params.pagination.order,
+            offset: 0,
+            limit: 50
+          });
+          expect(query_filters).to.deep.equal(['action', 'account']);
+          return Promise.resolve('any_results')
+        }
+      };
 
-            let params = {
-                pagination: 'any_pagination'
-            };
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            expect(analyticsController.getPagination(params)).to.equal(params.pagination);
-        });
+      return analyticsController.getActivityByIdentifier(params).then((result) => {
+        expect(result).to.equal('any_results');
+      });
     });
+  });
 
-    describe('getActivity', () => {
+  describe('getCampaignDelta', () => {
 
-        it('successfully returns activity', () => {
+    it('successfully returns campaign delta', () => {
 
-            let params = {
-                activityfilter: {
-                    an_activity_filter: 'an_activity_filter'
-                },
-                pagination: {
-                    order: 'sample data'
-                }
-            };
+      let params = {
+        analyticsfilter: {
+          an_analytics_filter: 'an_analytics_filter'
+        }
+      };
 
-            let mock_analytics_utilities = class {
-                constructor(){}
+      let mock_analytics_utilities = class {
+        constructor() {
+        }
 
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('activity');
-                    expect(parameters).to.deep.equal({
-                        an_activity_filter: params.activityfilter.an_activity_filter,
-                        order: params.pagination.order,
-                        offset: 0,
-                        limit: 50
-                    });
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
+        getResults(query_name, parameters, query_filters) {
+          expect(query_name).to.equal('campaign_delta');
+          expect(parameters).to.deep.equal({
+            an_analytics_filter: params.analyticsfilter.an_analytics_filter,
+            order: 'desc',
+            offset: 0,
+            limit: 10
+          });
+          expect(query_filters).to.be.defined;
+          return Promise.resolve('any_results')
+        }
+      };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            return analyticsController.getActivity(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
+      return analyticsController.getCampaignDelta(params).then((result) => {
+        expect(result).to.equal('any_results');
+      });
     });
+  });
 
-    describe('getActivityByIdentifier', () => {
+  describe('getTransactionOverview', () => {
 
-        it('successfully returns activity by identifier', () => {
+    it('successfully returns transaction overview', () => {
 
-            let params = {
-                activityfilter: {
-                    an_activity_filter: 'an_activity_filter'
-                },
-                pagination: {
-                    order: 'sample data'
-                }
-            };
+      let params = {
+        analyticsfilter: 'an_analytics_filter'
+      };
 
-            let mock_analytics_utilities = class {
-                constructor(){}
+      let mock_analytics_utilities = class {
+        constructor() {
+        }
 
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('activity_by_identifier');
-                    expect(parameters).to.deep.equal({
-                        an_activity_filter: params.activityfilter.an_activity_filter,
-                        order: params.pagination.order,
-                        offset: 0,
-                        limit: 50
-                    });
-                    expect(query_filters).to.deep.equal(['action', 'account']);
-                    return Promise.resolve('any_results')
-                }
-            };
+        getResults(query_name, parameters, query_filters) {
+          expect(query_name).to.equal('transaction_summary');
+          expect(parameters).to.equal(params.analyticsfilter);
+          expect(query_filters).to.be.defined;
+          return Promise.resolve('any_results')
+        }
+      };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            return analyticsController.getActivityByIdentifier(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
+      return analyticsController.getTransactionOverview(params).then((result) => {
+        expect(result).to.equal('any_results');
+      });
     });
+  });
 
-    describe('getCampaignDelta', () => {
+  describe('getTransactionOverviewWithRebills', () => {
 
-        it('successfully returns campaign delta', () => {
+    it('successfully returns transaction overview wit rebills', () => {
 
-            let params = {
-                analyticsfilter: {
-                    an_analytics_filter: 'an_analytics_filter'
-                }
-            };
+      const start_iso = '2018-01-20T23:59:59Z';
+      const end_iso = '2018-01-25T00:00:00Z';
 
-            let mock_analytics_utilities = class {
-                constructor(){}
+      let params = {
+        analyticsfilter: {start: start_iso, end: end_iso}
+      };
 
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('campaign_delta');
-                    expect(parameters).to.deep.equal({
-                        an_analytics_filter: params.analyticsfilter.an_analytics_filter,
-                        order: 'desc',
-                        offset: 0,
-                        limit: 10
-                    });
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
+      let mock_analytics_utilities = class {
+        constructor() {
+        }
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
+        getResults(query_name, parameters, query_filters) {
+          expect(query_name).to.equal('transaction_summary');
+          expect(parameters).to.equal(params.analyticsfilter);
+          expect(query_filters).to.be.defined;
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+          return Promise.resolve({overview: {something: 'something'}})
+        }
+      };
 
-            return analyticsController.getCampaignDelta(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
+        getRebillsBilledAfter: (after) => {
+          expect(timestamp.getSecondsDifference(after)).to.be.below(2);
+
+          return Promise.resolve([{amount: 5.1}, {amount: 6.24}]);
+        }
+      });
+
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+      return analyticsController.getTransactionOverviewWithRebills(params).then((result) => {
+        expect(result).to.deep.equal(
+          {overview: {something: 'something', rebill: {count: 2, amount: 11.34}}});
+      });
     });
+  });
 
-    describe('getTransactionsReport', () => {
+  describe('getTransactionsByFacet', () => {
 
-        it('successfully returns transactions report', () => {
+    it('successfully returns transaction by facet', () => {
 
-            let params = {
-                analyticsfilter: {
-                    an_analytics_filter: 'an_analytics_filter'
-                },
-                pagination: {
-                    order: 'sample data'
-                }
-            };
+      let params = {
+        analyticsfilter: {
+          an_analytics_filter: 'an_analytics_filter'
+        },
+        pagination: {
+          order: 'sample data'
+        },
+        facet: 'a_facet'
+      };
 
-            let mock_analytics_utilities = class {
-                constructor(){}
+      let mock_analytics_utilities = class {
+        constructor() {
+        }
 
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('reports/transactions/transactions_report');
-                    expect(parameters).to.deep.equal({
-                        an_analytics_filter: params.analyticsfilter.an_analytics_filter,
-                        order: params.pagination.order,
-                        offset: 0,
-                        limit: 50
-                    });
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
+        getResults(query_name, parameters, query_filters) {
+          expect(query_name).to.equal('transactions_by_facet');
+          expect(parameters).to.deep.equal({
+            an_analytics_filter: params.analyticsfilter.an_analytics_filter,
+            order: params.pagination.order,
+            offset: 0,
+            limit: 50,
+            facet: params.facet
+          });
+          expect(query_filters).to.be.defined;
+          return Promise.resolve('any_results')
+        }
+      };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            return analyticsController.getTransactionsReport(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
+      return analyticsController.getTransactionsByFacet(params).then((result) => {
+        expect(result).to.equal('any_results');
+      });
     });
+  });
 
-    describe('getTransactionOverview', () => {
+  describe('getEventsByFacet', () => {
 
-        it('successfully returns transaction overview', () => {
+    it('successfully returns events by facet', () => {
 
-            let params = {
-                analyticsfilter: 'an_analytics_filter'
-            };
+      let params = {
+        analyticsfilter: {
+          an_analytics_filter: 'an_analytics_filter'
+        },
+        pagination: {
+          order: 'sample data'
+        },
+        facet: 'a_facet'
+      };
 
-            let mock_analytics_utilities = class {
-                constructor(){}
+      let mock_analytics_utilities = class {
+        constructor() {
+        }
 
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('transaction_summary');
-                    expect(parameters).to.equal(params.analyticsfilter);
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
+        getResults(query_name, parameters, query_filters) {
+          expect(query_name).to.equal('events_by_facet');
+          expect(parameters).to.deep.equal({
+            an_analytics_filter: params.analyticsfilter.an_analytics_filter,
+            order: params.pagination.order,
+            offset: 0,
+            limit: 50,
+            facet: params.facet
+          });
+          expect(query_filters).to.be.defined;
+          return Promise.resolve('any_results')
+        }
+      };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            return analyticsController.getTransactionOverview(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
+      return analyticsController.getEventsByFacet(params).then((result) => {
+        expect(result).to.equal('any_results');
+      });
     });
+  });
 
-    describe('getTransactionOverviewWithRebills', () => {
+  describe('getCampaignsByAmount', () => {
 
-        it('successfully returns transaction overview wit rebills', () => {
+    it('successfully returns campaigns by amount', () => {
 
-            const start_iso = '2018-01-20T23:59:59Z';
-            const end_iso = '2018-01-25T00:00:00Z';
+      let params = {
+        analyticsfilter: {
+          an_analytics_filter: 'an_analytics_filter'
+        }
+      };
 
-            let params = {
-                analyticsfilter: {start: start_iso, end: end_iso}
-            };
+      let mock_analytics_utilities = class {
+        constructor() {
+        }
 
-            let mock_analytics_utilities = class {
-                constructor(){}
+        getResults(query_name, parameters, query_filters) {
+          expect(query_name).to.equal('campaigns_by_amount');
+          expect(parameters).to.deep.equal({
+            an_analytics_filter: params.analyticsfilter.an_analytics_filter,
+            order: 'desc',
+            offset: 0,
+            limit: 10
+          });
+          expect(query_filters).to.be.defined;
+          return Promise.resolve('any_results')
+        }
+      };
 
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('transaction_summary');
-                    expect(parameters).to.equal(params.analyticsfilter);
-                    expect(query_filters).to.be.defined;
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-                    return Promise.resolve({overview: {something: 'something'}})
-                }
-            };
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                getRebillsBilledAfter: (after) => {
-                    expect(timestamp.getSecondsDifference(after)).to.be.below(2);
-
-                    return Promise.resolve([{amount: 5.1}, {amount: 6.24}]);
-                }
-            });
-
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-            return analyticsController.getTransactionOverviewWithRebills(params).then((result) => {
-                expect(result).to.deep.equal(
-                  {overview: {something: 'something', rebill: {count: 2, amount: 11.34}}});
-            });
-        });
+      return analyticsController.getCampaignsByAmount(params).then((result) => {
+        expect(result).to.equal('any_results');
+      });
     });
+  });
 
-    describe('getTransactionsByFacet', () => {
+  describe('getEvents', () => {
 
-        it('successfully returns transaction by facet', () => {
+    it('successfully returns events', () => {
 
-            let params = {
-                analyticsfilter: {
-                    an_analytics_filter: 'an_analytics_filter'
-                },
-                pagination: {
-                    order: 'sample data'
-                },
-                facet: 'a_facet'
-            };
+      let params = {
+        analyticsfilter: {
+          an_analytics_filter: 'an_analytics_filter'
+        },
+        pagination: {
+          order: 'sample data'
+        }
+      };
 
-            let mock_analytics_utilities = class {
-                constructor(){}
+      let mock_analytics_utilities = class {
+        constructor() {
+        }
 
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('transactions_by_facet');
-                    expect(parameters).to.deep.equal({
-                        an_analytics_filter: params.analyticsfilter.an_analytics_filter,
-                        order: params.pagination.order,
-                        offset: 0,
-                        limit: 50,
-                        facet: params.facet
-                    });
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
+        getResults(query_name, parameters, query_filters) {
+          expect(query_name).to.equal('events');
+          expect(parameters).to.deep.equal({
+            an_analytics_filter: params.analyticsfilter.an_analytics_filter,
+            order: params.pagination.order,
+            offset: 0,
+            limit: 50
+          });
+          expect(query_filters).to.be.defined;
+          return Promise.resolve('any_results')
+        }
+      };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            return analyticsController.getTransactionsByFacet(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
+      return analyticsController.getEvents(params).then((result) => {
+        expect(result).to.equal('any_results');
+      });
     });
+  });
 
-    describe('getEventsByFacet', () => {
+  describe('getEventFunnel', () => {
 
-        it('successfully returns events by facet', () => {
+    it('successfully returns event funnel', () => {
 
-            let params = {
-                analyticsfilter: {
-                    an_analytics_filter: 'an_analytics_filter'
-                },
-                pagination: {
-                    order: 'sample data'
-                },
-                facet: 'a_facet'
-            };
+      let params = {
+        analyticsfilter: 'an_analytics_filter'
+      };
 
-            let mock_analytics_utilities = class {
-                constructor(){}
+      let mock_analytics_utilities = class {
+        constructor() {
+        }
 
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('events_by_facet');
-                    expect(parameters).to.deep.equal({
-                        an_analytics_filter: params.analyticsfilter.an_analytics_filter,
-                        order: params.pagination.order,
-                        offset: 0,
-                        limit: 50,
-                        facet: params.facet
-                    });
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
+        getResults(query_name, parameters, query_filters) {
+          expect(query_name).to.equal('event_funnel');
+          expect(parameters).to.equal(params.analyticsfilter);
+          expect(query_filters).to.be.defined;
+          return Promise.resolve('any_results')
+        }
+      };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            return analyticsController.getEventsByFacet(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
+      return analyticsController.getEventFunnel(params).then((result) => {
+        expect(result).to.equal('any_results');
+      });
     });
+  });
 
-    describe('getCampaignsByAmount', () => {
+  describe('getBINList', () => {
 
-        it('successfully returns campaigns by amount', () => {
+    it('successfully returns BIN list', () => {
 
-            let params = {
-                analyticsfilter: {
-                    an_analytics_filter: 'an_analytics_filter'
-                }
-            };
+      let params = {
+        binfilter: {
+          a_binfilter: 'a_binfilter'
+        },
+        pagination: {
+          order: 'sample data'
+        }
+      };
 
-            let mock_analytics_utilities = class {
-                constructor(){}
+      let mock_analytics_utilities = class {
+        constructor() {
+        }
 
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('campaigns_by_amount');
-                    expect(parameters).to.deep.equal({
-                        an_analytics_filter: params.analyticsfilter.an_analytics_filter,
-                        order: 'desc',
-                        offset: 0,
-                        limit: 10
-                    });
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
+        getResults(query_name, parameters, query_filters) {
+          expect(query_name).to.equal('bin');
+          expect(parameters).to.deep.equal({
+            a_binfilter: params.binfilter.a_binfilter,
+            order: params.pagination.order,
+            offset: 0,
+            limit: 50
+          });
+          expect(query_filters).to.be.defined;
+          return Promise.resolve('any_results')
+        }
+      };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
-            return analyticsController.getCampaignsByAmount(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
+      return analyticsController.getBINList(params).then((result) => {
+        expect(result).to.equal('any_results');
+      });
     });
-
-    describe('getEvents', () => {
-
-        it('successfully returns events', () => {
-
-            let params = {
-                analyticsfilter: {
-                    an_analytics_filter: 'an_analytics_filter'
-                },
-                pagination: {
-                    order: 'sample data'
-                }
-            };
-
-            let mock_analytics_utilities = class {
-                constructor(){}
-
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('events');
-                    expect(parameters).to.deep.equal({
-                        an_analytics_filter: params.analyticsfilter.an_analytics_filter,
-                        order: params.pagination.order,
-                        offset: 0,
-                        limit: 50
-                    });
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
-
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-            return analyticsController.getEvents(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
-    });
-
-    describe('getEventFunnel', () => {
-
-        it('successfully returns event funnel', () => {
-
-            let params = {
-                analyticsfilter: 'an_analytics_filter'
-            };
-
-            let mock_analytics_utilities = class {
-                constructor(){}
-
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('event_funnel');
-                    expect(parameters).to.equal(params.analyticsfilter);
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
-
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-            return analyticsController.getEventFunnel(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
-    });
-
-    describe('getTransactions', () => {
-
-        it('successfully returns transactions', () => {
-
-            let params = {
-                analyticsfilter: {
-                    an_analytics_filter: 'an_analytics_filter'
-                },
-                pagination: {
-                    order: 'sample data'
-                }
-            };
-
-            let mock_analytics_utilities = class {
-                constructor(){}
-
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('transactions');
-                    expect(parameters).to.deep.equal({
-                        an_analytics_filter: params.analyticsfilter.an_analytics_filter,
-                        order: params.pagination.order,
-                        offset: 0,
-                        limit: 50
-                    });
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
-
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-            return analyticsController.getTransactions(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
-    });
-
-    describe('getBINList', () => {
-
-        it('successfully returns BIN list', () => {
-
-            let params = {
-                binfilter: {
-                    a_binfilter: 'a_binfilter'
-                },
-                pagination: {
-                    order: 'sample data'
-                }
-            };
-
-            let mock_analytics_utilities = class {
-                constructor(){}
-
-                getResults(query_name, parameters, query_filters) {
-                    expect(query_name).to.equal('bin');
-                    expect(parameters).to.deep.equal({
-                        a_binfilter: params.binfilter.a_binfilter,
-                        order: params.pagination.order,
-                        offset: 0,
-                        limit: 50
-                    });
-                    expect(query_filters).to.be.defined;
-                    return Promise.resolve('any_results')
-                }
-            };
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers','analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
-
-            let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-            return analyticsController.getBINList(params).then((result) => {
-                expect(result).to.equal('any_results');
-            });
-        });
-    });
+  });
 });

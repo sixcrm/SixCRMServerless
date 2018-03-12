@@ -6,12 +6,6 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
@@ -170,6 +164,24 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
     });
 
+    it('throws error when transaction product is not matching updated transaction product data', () => {
+
+        let transaction = getValidTransaction();
+
+        let updated_transaction_product = getValidTransactionProduct();
+
+        let transactionHelperController = new TransactionHelperController();
+
+        transactionHelperController.parameters.set('transaction', transaction);
+        transactionHelperController.parameters.set('updatedtransactionproducts', [updated_transaction_product]);
+
+        try {
+            transactionHelperController.updateTransactionProductsPrototype()
+        }catch (error) {
+            expect(error.message).to.equal('[500] Unaccounted for transaction products in update.');
+        }
+    });
+
   });
 
   describe('updateTransaction', () => {
@@ -197,6 +209,100 @@ describe('helpers/entities/transaction/Transaction.js', () => {
       });
 
     });
+
+  });
+
+  describe('acquireTransaction', () => {
+
+      it('successfully acquires transaction', () => {
+
+          let transaction = getValidTransaction();
+
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
+              get:({id}) => {
+                  expect(id).to.equal(transaction.id);
+                  return Promise.resolve(transaction);
+              }
+          });
+
+          let transactionHelperController = new TransactionHelperController();
+
+          transactionHelperController.parameters.set('transaction', transaction);
+          transactionHelperController.parameters.set('transactionid', transaction.id);
+
+          return transactionHelperController.acquireTransaction().then(result => {
+              expect(result).to.equal(true);
+              expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(transaction);
+          });
+
+      });
+
+      it('throws error when transaction is not found', () => {
+
+          let transaction = getValidTransaction();
+
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
+              get:({id}) => {
+                  expect(id).to.equal(transaction.id);
+                  return Promise.resolve(null);
+              }
+          });
+
+          let transactionHelperController = new TransactionHelperController();
+
+          transactionHelperController.parameters.set('transactionid', transaction.id);
+
+          return transactionHelperController.acquireTransaction().catch((error) => {
+              expect(error.message).to.equal('[500] Transaction not found.');
+          });
+
+      });
+
+  });
+
+  describe('updateTransactionProducts', () => {
+
+      it('successfully updates transaction products', () => {
+
+          let transaction = getValidTransaction();
+
+          let updated_transaction_product = {
+              product: transaction.products[0].product.id,
+              amount: transaction.products[0].amount,
+              shipping_receipt: uuidV4()
+          };
+
+          let updated_transaction = objectutilities.clone(transaction);
+
+          updated_transaction.products[0].shipping_receipt = updated_transaction_product.shipping_receipt;
+
+          let params = {
+              transaction_id: updated_transaction.id,
+              updated_transaction_products: [updated_transaction_product]
+          };
+
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
+              get:({id}) => {
+                  expect(id).to.equal(transaction.id);
+                  return Promise.resolve(transaction);
+              },
+              update:({entity}) => {
+                  return Promise.resolve(entity);
+              }
+          });
+
+          let transactionHelperController = new TransactionHelperController();
+
+          transactionHelperController.parameters.set('updatedtransactionproducts', [updated_transaction_product]);
+          transactionHelperController.parameters.set('transaction', updated_transaction);
+          transactionHelperController.parameters.set('transactionid', updated_transaction.id);
+
+          return transactionHelperController.updateTransactionProducts(params).then((result) => {
+              expect(result).to.deep.equal(updated_transaction);
+              expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(updated_transaction);
+          });
+
+      });
 
   });
 

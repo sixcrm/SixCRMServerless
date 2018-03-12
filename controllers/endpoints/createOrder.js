@@ -207,6 +207,7 @@ class CreateOrderController extends transactionEndpointController {
 
       return this.creditCardController.assureCreditCard(event.creditcard)
       .then(creditcard => {
+        this.creditCardController.decryptAttributes(creditcard);
         return this.parameters.set('creditcard', creditcard);
       })
       .then(() => this.addCreditCardToCustomer());
@@ -362,7 +363,6 @@ class CreateOrderController extends transactionEndpointController {
     let registerController = new RegisterController();
 
     return registerController.processTransaction({rebill: rebill}).then((register_response) =>{
-
       if(!_.has(this, 'transactionHelperController')){
         const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 

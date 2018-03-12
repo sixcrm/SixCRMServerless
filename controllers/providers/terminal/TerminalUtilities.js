@@ -93,6 +93,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
     return this.fulfillmentProviderController.get({id: fulfillment_provider_id}).then(fulfillment_provider => {
 
+      this.fulfillmentProviderController.decryptAttributes(fulfillment_provider);
       this.parameters.set('fulfillmentprovider', fulfillment_provider);
 
       return true;

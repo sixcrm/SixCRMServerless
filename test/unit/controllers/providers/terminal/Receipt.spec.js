@@ -1,16 +1,11 @@
 'use strict'
-const _ = require('underscore');
 const chai = require("chai");
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidFulfillmentProvider(){
@@ -25,38 +20,35 @@ function getValidFulfillmentProviderReference(){
 
 }
 
-function getValidTransactionProducts(){
+function getValidTransactionProducts(ids, extended){
 
-  return [
-    {
-      amount: 34.99,
-      product: uuidV4()
-    },
-    {
-      amount: 34.99,
-      product: uuidV4()
-    }
-  ];
+    return [
+        MockEntities.getValidTransactionProduct(ids, extended),
+        MockEntities.getValidTransactionProduct(ids, extended)
+    ];
 
 }
 
-function getValidAugmentedTransactionProducts(){
+function getValidTransaction(){
+    return MockEntities.getValidTransaction()
+}
 
-  let transaction_products = getValidTransactionProducts();
+function getValidAugmentedTransactionProducts(ids, extended){
 
-  return arrayutilities.map(transaction_products, transaction_product => {
+    let transaction_products = getValidTransactionProducts(ids, extended);
 
-    let transaction = MockEntities.getValidTransaction();
+    return arrayutilities.map(transaction_products, transaction_product => {
 
-    transaction.products = [transaction_product];
+      let transaction = getValidTransaction();
 
-    return objectutilities.merge(transaction_product, {transaction: transaction});
+      transaction.products = [transaction_product];
 
-  });
+      return objectutilities.merge(transaction_product, {transaction: transaction});
+    });
 
 }
 
-xdescribe('/providers/terminal/Receipt.js', () => {
+describe('/providers/terminal/Receipt.js', () => {
 
   before(() => {
     mockery.enable({
@@ -89,7 +81,7 @@ xdescribe('/providers/terminal/Receipt.js', () => {
     it('successfully issues a new shipping receipt', () => {
 
       let fulfillment_provider = getValidFulfillmentProvider();
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
 
       let transactions = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
         return augmented_transaction_product.transaction;
@@ -99,9 +91,10 @@ xdescribe('/providers/terminal/Receipt.js', () => {
       let shipping_receipt_id = uuidV4();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(fulfillment_provider);
-        }
+        },
+        decryptAttributes: () => {}
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {

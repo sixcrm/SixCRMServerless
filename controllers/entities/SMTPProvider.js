@@ -15,6 +15,16 @@ class SMTPProviderController extends entityController {
 
         this.search_fields = ['name'];
 
+        this.encryptedAttributes = [
+            'username',
+            'password'
+        ];
+
+    }
+
+    censorAttributes(smtpprovider) {
+        this.decryptAttributes(smtpprovider);
+        return super.censorAttributes(smtpprovider, this.encryptedAttributes);
     }
 
     associatedEntitiesCheck({id}){

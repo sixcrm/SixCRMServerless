@@ -101,9 +101,13 @@ function getValidCreditCard(){
   return MockEntities.getValidCreditCard();
 }
 
+function getValidPlaintextCreditCard(){
+  return MockEntities.getValidPlaintextCreditCard();
+}
+
 function getValidCreditCardPrototype(){
 
-  let creditcard = MockEntities.getValidCreditCard();
+  let creditcard = MockEntities.getValidPlaintextCreditCard();
 
   delete creditcard.id;
   delete creditcard.created_at;
@@ -352,7 +356,8 @@ describe('checkout', function () {
       session.completed = false;
       let campaign = getValidCampaign();
       let customer = getValidCustomer();
-      let creditcard = getValidCreditCard();
+      let encrypted_creditcard = getValidCreditCard();
+      let creditcard = getValidPlaintextCreditCard();
       let product_schedule_ids = arrayutilities.map(event.product_schedules, product_schedule_group => product_schedule_group.product_schedule);
       let product_schedule = getValidProductSchedule(product_schedule_ids, true);
 
@@ -402,7 +407,11 @@ describe('checkout', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
         assureCreditCard:() => {
-          return Promise.resolve(creditcard);
+          return Promise.resolve(encrypted_creditcard);
+        },
+        decryptAttributes:(input) => {
+          expect(input).to.equal(encrypted_creditcard);
+          Object.assign(encrypted_creditcard, creditcard);
         }
       });
 
@@ -652,7 +661,8 @@ describe('checkout', function () {
 
       customer.creditcards = [];
 
-      let creditcard = getValidCreditCard();
+      let encrypted_creditcard = getValidCreditCard();
+      let creditcard = getValidPlaintextCreditCard();
       let rebill = getValidRebill();
       let transactions = getValidTransactions();
       let processor_response = getValidProcessorResponse();
@@ -804,6 +814,9 @@ describe('checkout', function () {
             updated_at: timestamp.getISO8601(),
             account: global.account
           }));
+        },
+        decryptAttributes:() => {
+            Object.assign(encrypted_creditcard, creditcard);
         }
       });
 

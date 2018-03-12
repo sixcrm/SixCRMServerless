@@ -46,27 +46,32 @@ describe('controllers/helpers/entities/creditcard/CreditCard.js', () => {
   });
 
   describe('lastFour', () => {
+    it('returns a string of asterisks followed by the last four digits of the number', () => {
+      const number = '4111111111119876';
+      const expected = '************9876';
+      const creditCardHelperController = new CreditCardHelperController();
+      const actual = creditCardHelperController.lastFour(number);
 
-    it('successfully returns a asterisk version of first characters', () => {
-
-      let numbers = [
-        '4111111111119876',
-        '4111 1111 1111 9876',
-        '411111111119876',
-        '411111 111111 9876',
-      ];
-
-      let creditCardHelperController = new CreditCardHelperController();
-
-      arrayutilities.map(numbers, number => {
-        let munged_string = creditCardHelperController.lastFour(number);
-
-        expect(munged_string.substr(-4)).to.equal('9876');
-        expect(munged_string.length).to.equal(number.replace(/^[0-9]/gi, '').length);
-      });
-
+      expect(actual).to.equal(expected);
     });
 
+    it('removes whitespace', () => {
+      const number = '4111 1111 1111 9876';
+      const expected = '************9876';
+      const creditCardHelperController = new CreditCardHelperController();
+      const actual = creditCardHelperController.lastFour(number);
+
+      expect(actual).to.equal(expected);
+    });
+
+    it('matches length of input', () => {
+        const number = '4111 1111 11 9876';
+        const expected = '**********9876';
+        const creditCardHelperController = new CreditCardHelperController();
+        const actual = creditCardHelperController.lastFour(number);
+
+        expect(actual).to.equal(expected);
+    });
   });
 
 });

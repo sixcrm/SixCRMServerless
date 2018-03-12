@@ -21,7 +21,7 @@ function getValidProcessResponse(){
     code:'success',
     message:'Success',
     merchant_provider: getValidMerchantProvider().id,
-    creditcard: getValidCreditCard(),
+    creditcard: getValidPlaintextCreditCard(),
     result: {}
   };
 
@@ -39,6 +39,10 @@ function getValidMerchantProviderGroups(ids){
 
 function getValidMerchantProvider(){
   return MockEntities.getValidMerchantProvider();
+}
+
+function getValidPlaintextCreditCard(){
+  return MockEntities.getValidPlaintextCreditCard();
 }
 
 function getValidCreditCard(){
@@ -732,7 +736,7 @@ describe('controllers/providers/Register.js', () => {
       merchant_provider_groups[merchant_provider.id] = [rebill.products];
 
       let customer = getValidCustomer();
-      let creditcard = getValidCreditCard();
+      let creditcard = getValidPlaintextCreditCard();
       let amount = getValidAmount();
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Process.js'), class Process {
@@ -1342,7 +1346,7 @@ describe('controllers/providers/Register.js', () => {
         let registerController = new RegisterController();
         let transactions = getValidTransactions();
         let processor_responses = getProcessorResponses(transactions.length);
-        let creditcard = getValidCreditCard();
+        let creditcard = getValidPlaintextCreditCard();
 
         registerController.parameters.set('transactionreceipts', transactions);
         registerController.parameters.set('processorresponses', processor_responses);
@@ -1369,7 +1373,7 @@ describe('controllers/providers/Register.js', () => {
 
         declined_transaction.result = 'declined';
 
-        let creditcard = getValidCreditCard();
+        let creditcard = getValidPlaintextCreditCard();
 
         let registerController = new RegisterController();
 
@@ -1398,7 +1402,7 @@ describe('controllers/providers/Register.js', () => {
 
         error_transaction.result = 'error';
 
-        let creditcard = getValidCreditCard();
+        let creditcard = getValidPlaintextCreditCard();
 
         let registerController = new RegisterController();
 
@@ -1423,7 +1427,7 @@ describe('controllers/providers/Register.js', () => {
 
       xit('successfully processes a transaction', () => {
 
-        let creditcard = getValidCreditCard();
+        let creditcard = getValidPlaintextCreditCard();
 
         mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Response.js'), class RegisterResponse {
           constructor(){}
@@ -1684,8 +1688,7 @@ describe('controllers/providers/Register.js', () => {
         });
 
         mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-          putRecord: (table, object) => {
-            console.log(table, object);
+          putRecord: () => {
             return Promise.resolve({});
           }
         });
@@ -1829,8 +1832,7 @@ describe('controllers/providers/Register.js', () => {
         });
 
         mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-          putRecord: (table, object) => {
-            console.log(table, object);
+          putRecord: () => {
             return Promise.resolve({});
           }
         });
@@ -1936,7 +1938,7 @@ describe('controllers/providers/Register.js', () => {
             if (table === 'transactions') {
               expect(object.id).to.equal(getValidTransactionObject().id);
               expect(object.customer).to.equal(getValidCustomer().id);
-              expect(object.creditcard).to.equal(getValidCreditCard().id);
+              expect(object.creditcard).to.equal(getValidPlaintextCreditCard().id);
               expect(object.merchant_provider).to.equal(getValidMerchantProvider().id);
               expect(object.campaign).to.equal(getValidParentSession().campaign);
               expect(object.account).to.equal(getValidParentSession().account);

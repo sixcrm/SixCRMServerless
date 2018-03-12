@@ -21,3 +21,4 @@ module.exports.graphObj = new GraphQLObjectType({
     }),
     interfaces: []
 });
+

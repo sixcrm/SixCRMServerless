@@ -2,15 +2,9 @@
 const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
-const uuidV4 = require('uuid/v4');
-
 let expect = chai.expect;
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-let mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const ReverseHelperController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
 
@@ -52,62 +46,19 @@ function getInvalidArgumentsArray(omit){
 }
 
 function getValidTransaction(){
-  return {
-    "amount": 34.99,
-    "id": "e624af6a-21dc-4c64-b310-3b0523f8ca42",
-    "alias":"T56S2HJO32",
-    "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-    "rebill": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
-    "processor_response": "{\"message\":\"Success\",\"results\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894418\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
-    "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
-    "products":[{
-      "product":"be992cea-e4be-4d3e-9afa-8e020340ed16",
-      "amount":34.99
-    }],
-    "created_at":"2017-04-06T18:40:41.405Z",
-    "updated_at":"2017-04-06T18:41:12.521Z"
-  };
+
+  let transaction = MockEntities.getValidTransaction();
+
+  transaction.products.forEach(transaction_product => {
+      transaction_product.product = transaction_product.product.id;
+  });
+
+  return transaction;
 }
 
 function getTransactionMerchantProvider(){
 
-  return {
-		"id":"6c40761d-8919-4ad6-884d-6a46a776cfb9",
-		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		"name":"NMI Account 1",
-		"processor":{
-			"name":"NMA"
-		},
-		"processing":{
-			"monthly_cap": 2000000.00,
-			"discount_rate":0.9,
-			"transaction_fee":0.06,
-			"reserve_rate": 0.5,
-			"maximum_chargeback_ratio":0.17,
-			"transaction_counts":{
-				"daily":200000,
-				"monthly":200000,
-				"weekly":200000
-			}
-		},
-		"enabled":true,
-		"gateway": {
-			"type":"NMI",
-			"name":"NMI",
-			"username":"demo",
-			"password":"password",
-			"endpoint":"https://secure.networkmerchants.com/api/transact.php"
-		},
-		"allow_prepaid":true,
-		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
-		"customer_service":{
-			"email":"customer.service@mid.com",
-			"url":"http://mid.com",
-			"description":"Some string here..."
-		},
-		"created_at":"2017-04-06T18:40:41.405Z",
-		"updated_at":"2017-04-06T18:41:12.521Z"
-	};
+  return MockEntities.getValidMerchantProvider();
 
 }
 
@@ -201,7 +152,7 @@ describe('helpers/transaction/Reverse.js', () => {
         return vh.hydrateParameters().then(result => {
           expect(result).to.equal(true);
 
-          let test_merchantprovider = getTransactionMerchantProvider();
+          let test_merchantprovider = merchant_provider;
           let hydrated_merchantprovider = vh.parameters.get('selected_merchantprovider');
 
           delete hydrated_merchantprovider.created_at;
@@ -287,4 +238,56 @@ describe('helpers/transaction/Reverse.js', () => {
 
     });
 
+    describe('reverseTransaction', () => {
+
+        it('reverses a transaction', () => {
+
+            let merchant_provider = getTransactionMerchantProvider();
+
+            let transaction = getValidTransaction();
+
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
+                getMerchantProvider:(transaction) => {
+                    return Promise.resolve(merchant_provider);
+                },
+                get:({id}) => {
+                    expect(id).to.equal(transaction.id);
+                    return Promise.resolve(transaction);
+                }
+            });
+
+            mockery.registerMock('request', {
+                post: (request_options, callback) => {
+                    callback(null, transaction.processor_response.result);
+                }
+            });
+
+            let mock_gateway = class {
+                constructor(){}
+
+                reverse({argumentation}){
+                    return Promise.resolve(
+                        {
+                            code: 200,
+                            result: 'success',
+                            message: 'Success'
+                        }
+                    );
+                }
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('vendors', 'merchantproviders/NMI/handler.js'), mock_gateway);
+
+            let vh = new ReverseHelperController();
+
+            vh.parameters.set('selected_merchantprovider', merchant_provider);
+            vh.parameters.set('transaction', transaction);
+
+            return vh.reverseTransaction().then((result) => {
+                expect(result).to.have.property('code');
+                expect(result).to.have.property('message');
+                expect(result).to.have.property('result');
+            })
+        })
+    })
 });

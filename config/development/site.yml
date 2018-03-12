@@ -1,3 +1,6 @@
+data_encryption:
+  secret_key: '5c0c40a3aa7193f95635f11f0300d07742f62315f66cd70a3e3806f6afd243e1ddf983506742a568c878b40dc190b9d5ea3bb8e89243b50e8d9513788f51eb1b'
+
 aws:
   region: 'us-east-1'
   account: '068070110666'

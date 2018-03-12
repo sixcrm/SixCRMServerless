@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const {encryptAES256, decryptAES256} = global.SixCRM.routes.include('lib', 'encryption-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const EntityPermissionsHelper = global.SixCRM.routes.include('helpers', 'entityacl/EntityPermissions.js');
@@ -512,6 +513,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
         return true;
       })
+      .then(() => this.encryptAttributes(entity))
       .then(() => this.dynamoutilities.saveRecord(this.table_name, entity))
       .then(() => {
 
@@ -559,6 +561,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       }).then((existing_entity) => {
 
+        this.encryptAttributes(existing_entity);
         return this.dynamoutilities.saveRecord(this.table_name, existing_entity).then(() => {
           return existing_entity;
         });
@@ -619,6 +622,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return true;
       })
       .then(() => this.validate(entity))
+      .then(() => this.encryptAttributes(entity))
       .then(() => this.dynamoutilities.saveRecord(this.table_name, entity))
       .then(() => {
 
@@ -834,6 +838,63 @@ module.exports = class entityController extends entityUtilitiesController {
         }
       };
 
+    }
+
+    encryptAttributes(entity) {
+      if (arrayutilities.isArray(this.encryptedAttributePaths)) {
+        this.encryptedAttributePaths.forEach(attr_path => {
+          if (objectutilities.hasRecursive(entity, attr_path)) {
+            const attr_value = objectutilities.getRecursive(entity, attr_path);
+            const encrypted_value = this.encryptAttribute(attr_value);
+
+            objectutilities.setRecursive(entity, attr_path, encrypted_value);
+          }
+        });
+      }
+
+      return entity;
+    }
+
+    decryptAttributes(entity) {
+      if (arrayutilities.isArray(this.encryptedAttributePaths)) {
+        this.encryptedAttributePaths.forEach(attr_path => {
+          if (objectutilities.hasRecursive(entity, attr_path)) {
+            const encrypted_value = objectutilities.getRecursive(entity, attr_path);
+            const attr_value = this.decryptAttribute(encrypted_value);
+
+            objectutilities.setRecursive(entity, attr_path, attr_value);
+          }
+        });
+      }
+
+      return entity;
+    }
+
+    censorEncryptedAttributes(entity) {
+      if (arrayutilities.isArray(this.encryptedAttributePaths)) {
+          this.encryptedAttributePaths.forEach(attr_path => {
+              if (objectutilities.hasRecursive(entity, attr_path)) {
+                  const attr_value = objectutilities.getRecursive(entity, attr_path);
+                  const censored_attr = this.censorEncryptedAttribute(attr_path, attr_value);
+
+                  objectutilities.setRecursive(entity, attr_path, censored_attr);
+              }
+          });
+      }
+
+      return entity;
+    }
+
+    encryptAttribute(attribute) {
+      return encryptAES256(attribute);
+    }
+
+    decryptAttribute(attribute) {
+        return decryptAES256(attribute);
+    }
+
+    censorEncryptedAttribute() {
+        return '********';
     }
 
     createINQueryParameters({field, list_array}){

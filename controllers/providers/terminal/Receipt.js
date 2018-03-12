@@ -83,6 +83,7 @@ module.exports = class TerminalRecieptGenerator {
 
     return this.fulfillmentProviderController.get({id: fulfillment_provider_id }).then(result => {
 
+      this.fulfillmentProviderController.decryptAttributes(result);
       this.parameters.set('fulfillmentprovider', result);
 
       this.parameters.set('account', result.account);

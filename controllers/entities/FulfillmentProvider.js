@@ -10,6 +10,13 @@ class fulfillmentProviderController extends entityController {
 
     constructor(){
       super('fulfillmentprovider');
+
+      this.encryptedAttributePaths = [
+          'provider.username',
+          'provider.password',
+          'provider.api_key',
+          'provider.api_secret'
+      ];
     }
 
     associatedEntitiesCheck({id}){

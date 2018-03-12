@@ -1,9 +1,0 @@
-{
-  "method": "getCurrentQueueSummary",
-  "test_case": "random input with development data with bill filtering with failure",
-  "input": {
-    "queuename":"bill",
-    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
-  "result_name": "summary",
-  "expect": [{"queuename":"bill","avg_time":0,"number_of_rebills":"1","failure_rate":"1"}] 
-}

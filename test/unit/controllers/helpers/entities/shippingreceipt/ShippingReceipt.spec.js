@@ -1,21 +1,14 @@
 'use strict'
-
 const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
-
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
 
 function getValidShippingReceipts(ids){
@@ -90,7 +83,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let shipping_receipt = getValidShippingReceipt();
 
-      delete shipping_receipt.trackingnumber;
+      delete shipping_receipt.tracking;
 
       let shippingReceiptHelperController = new ShippingReceiptHelperController();
 
@@ -154,9 +147,11 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
   describe('buildUpdatedShippingReceiptPrototype', () => {
 
-    it('successfully builds the updated shipping receipt prototype', () => {
+    it('successfully builds the updated shipping receipt prototype without previous history', () => {
 
       let shipping_receipt = getValidShippingReceipt();
+
+      delete shipping_receipt.history;
 
       let shipping_status = 'delivered';
       let shipping_detail = 'Your item was delivered at 8:10 am on June 1 in Wilmington DE 19801.';
@@ -165,7 +160,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       shippingReceiptHelperController.parameters.set('shippingreceipt', shipping_receipt);
       shippingReceiptHelperController.parameters.set('shippingstatus', shipping_status);
-      shippingReceiptHelperController.parameters.set('shippingdetail', shipping_detail)
+      shippingReceiptHelperController.parameters.set('shippingdetail', shipping_detail);
 
       let result = shippingReceiptHelperController.buildUpdatedShippingReceiptPrototype();
 
@@ -173,6 +168,28 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt']).to.be.defined;
       expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].status).to.equal(shipping_status);
       expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].history[0].detail).to.equal(shipping_detail);
+
+    });
+
+    it('successfully builds the updated shipping receipt prototype', () => {
+
+        let shipping_receipt = getValidShippingReceipt();
+
+        let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+        shippingReceiptHelperController.parameters.set('shippingreceipt', shipping_receipt);
+        shippingReceiptHelperController.parameters.set('trackingid', shipping_receipt.tracking.id);
+        shippingReceiptHelperController.parameters.set('carrier', shipping_receipt.tracking.carrier);
+        shippingReceiptHelperController.parameters.set('shippingstatus', shipping_receipt.history[0].status);
+        shippingReceiptHelperController.parameters.set('shippingdetail', shipping_receipt.history[0].detail);
+
+        let result = shippingReceiptHelperController.buildUpdatedShippingReceiptPrototype();
+
+        expect(result).to.equal(true);
+        expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt']).to.be.defined;
+        expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].status).to.equal(shipping_receipt.history[0].status);
+        expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].history[0].detail).to.equal(shipping_receipt.history[0].detail);
+        expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].tracking).to.equal(shipping_receipt.tracking);
 
     });
 
@@ -187,7 +204,6 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       shipping_receipt.status = 'intransit';
 
       let shipping_status = 'delivered';
-      let shipping_detail = 'Your item was delivered at 8:10 am on June 1 in Wilmington DE 19801.';
 
       mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), {
         get:({id}) => {
@@ -201,11 +217,11 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let shippingReceiptHelperController = new ShippingReceiptHelperController();
 
-      return shippingReceiptHelperController.updateShippingReceipt({shipping_receipt: shipping_receipt, detail: shipping_detail, status: shipping_status })
+      return shippingReceiptHelperController.updateShippingReceipt({shipping_receipt: shipping_receipt, detail: shipping_receipt.history[0].detail, status: shipping_status })
       .then(result => {
         expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt']).to.be.defined;
         expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].status).to.equal(shipping_status);
-        expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].history[0].detail).to.equal(shipping_detail);
+        expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].history[0].detail).to.equal(shipping_receipt.history[0].detail);
       });
 
     });
@@ -254,6 +270,135 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       });
 
+    });
+
+    it('returns null when shipping receipts are not set', () => {
+
+        let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+        shippingReceiptHelperController.parameters.set('shippingreceipts', []);
+        shippingReceiptHelperController.parameters.set('shippingstatus', 'unknown'); //valid status
+
+        let result = shippingReceiptHelperController.confirmShippingReceiptStati();
+
+        expect(result).to.equal(null);
+    });
+
+    it('returns false when shipping receipt status is an unexpected value', () => {
+
+        let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+        shippingReceiptHelperController.parameters.set('shippingreceipts', [getValidShippingReceipt()]);
+        shippingReceiptHelperController.parameters.set('shippingstatus', 'unknown'); //valid status
+
+        let result = shippingReceiptHelperController.confirmShippingReceiptStati();
+
+        expect(result).to.equal(false);
+    });
+
+    it('returns false when tracking id is missing in "intransit" status', () => {
+
+        let shipping_receipt = getValidShippingReceipt();
+
+        let status = 'intransit'; //when status is intransit
+
+        let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+        shippingReceiptHelperController.parameters.set('shippingstatus', status);
+        shipping_receipt.status = status;
+
+        shippingReceiptHelperController.parameters.set('shippingreceipts', [shipping_receipt]);
+
+        //prepare test
+        delete shipping_receipt.tracking.id;
+
+        let result = shippingReceiptHelperController.confirmShippingReceiptStati();
+
+        expect(result).to.equal(false);
+    });
+
+    it('returns false when tracking carrier is missing in "intransit" status', () => {
+
+        let shipping_receipt = getValidShippingReceipt();
+
+        let status = 'intransit'; //when status is intransit
+
+        let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+        shippingReceiptHelperController.parameters.set('shippingstatus', status);
+        shipping_receipt.status = status;
+
+        shippingReceiptHelperController.parameters.set('shippingreceipts', [shipping_receipt]);
+
+        //prepare test
+        delete shipping_receipt.tracking.carrier;
+
+        let result = shippingReceiptHelperController.confirmShippingReceiptStati();
+
+        expect(result).to.equal(false);
+    });
+
+    it('returns false when tracking id is missing in "delivered" status', () => {
+
+        let shipping_receipt = getValidShippingReceipt();
+
+        let status = 'delivered'; //when status is in delivered state
+
+        let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+        shippingReceiptHelperController.parameters.set('shippingstatus', status);
+        shipping_receipt.status = status;
+
+        shippingReceiptHelperController.parameters.set('shippingreceipts', [shipping_receipt]);
+
+        //prepare test
+        delete shipping_receipt.tracking.id;
+
+        let result = shippingReceiptHelperController.confirmShippingReceiptStati();
+
+        expect(result).to.equal(false);
+    });
+
+    it('returns false when tracking carrier is missing in "delivered" status', () => {
+
+        let shipping_receipt = getValidShippingReceipt();
+
+        let status = 'delivered'; //when status is in delivered state
+
+        let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+        shippingReceiptHelperController.parameters.set('shippingstatus', status);
+        shipping_receipt.status = status;
+
+        shippingReceiptHelperController.parameters.set('shippingreceipts', [shipping_receipt]);
+
+        //prepare test
+        delete shipping_receipt.tracking.carrier;
+
+        let result = shippingReceiptHelperController.confirmShippingReceiptStati();
+
+        expect(result).to.equal(false);
+    });
+
+    it('returns false when history is missing in "delivered" status', () => {
+
+        let shipping_receipt = getValidShippingReceipt();
+
+        let status = 'delivered'; //when status is in delivered state
+
+        let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+        shippingReceiptHelperController.parameters.set('shippingstatus', status);
+        shipping_receipt.status = status;
+
+        shippingReceiptHelperController.parameters.set('shippingreceipts', [shipping_receipt]);
+
+        //prepare test
+        delete shipping_receipt.history;
+
+        let result = shippingReceiptHelperController.confirmShippingReceiptStati();
+
+        expect(result).to.equal(false);
     });
 
   });

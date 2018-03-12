@@ -268,4 +268,64 @@ describe('lib/string-utilities', () => {
 
     });
 
+    describe('stripHTML', () => {
+
+        it('removes HTML tags', () => {
+
+            //example of valid html tags
+            expect(stringutilities.stripHTML(
+                '<li>Coffee, </li>' +
+                '<li>Tea, </li>' +
+                '<li>Milk</li>' +
+                '</ul>')).to.equal('Coffee, Tea, Milk');
+
+            expect(stringutilities.stripHTML('<table>' +
+                '<tr>' +
+                '<td>any_value</td>' +
+                '</tr>' +
+                '</table>')).to.equal('any_value');
+
+            expect(stringutilities.stripHTML('<p><b>any_value</b></p>')).to.equal('any_value');
+
+            //example of invalid html tags
+            expect(stringutilities.stripHTML('<p>any_value/b></p>')).to.equal('any_value/b>');
+            expect(stringutilities.stripHTML('li>any_value</li>')).to.equal('li>any_value');
+        });
+    });
+
+    describe('escapeCharacter', () => {
+
+        it('escapes character', () => {
+            //escapes every letter 'u' occurrence
+            expect(stringutilities.escapeCharacter('any_value', 'u')).to.equal('any_val\\ue');
+
+            //escapes every occurrence of number 4
+            expect(stringutilities.escapeCharacter('4ny_v4lue', '4')).to.equal('\\4ny_v\\4lue');
+
+            //takes first character and escapes every letter 'o' occurrence
+            expect(stringutilities.escapeCharacter('some_random_value_for_testing_purposes', 'om'))
+                .to.equal('s\\ome_rand\\om_value_for_testing_purposes');
+        });
+
+    });
+
+    describe('replaceAll', () => {
+
+        it('replaces every occurrence of specified characters', () => {
+
+            expect(stringutilities.replaceAll('szme_randzm_value_fzr_testing_purpzses','z','o'))
+                .to.equal('some_random_value_for_testing_purposes');
+
+            expect(stringutilities.replaceAll('any_value','z','s'))
+                .to.equal('any_value');
+
+            expect(stringutilities.replaceAll('4ny_v4lue','4','a'))
+                .to.equal('any_value');
+
+            expect(stringutilities.replaceAll('sqe_randq_value','q','om'))
+                .to.equal('some_random_value');
+        });
+
+    });
+
 });
