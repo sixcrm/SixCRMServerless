@@ -560,22 +560,6 @@ module.exports.graphObj = new GraphQLObjectType({
               return analyticsController.executeAnalyticsFunction(args, 'getMerchantReport');
             }
         },
-        queuesummary: {
-          type: queueSummaryType.graphObj,
-          args: {
-            analyticsfilter: { type: analyticsFilterInputType.graphObj },
-            pagination: {type: analyticsPaginationInputType.graphObj},
-            queuename: {
-              description: 'Name of a queue',
-              type: new GraphQLNonNull(GraphQLString)
-            }
-          },
-          resolve: function(root, args){
-            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-            return analyticsController.executeAnalyticsFunction(args, 'getQueueSummary');
-          }
-        },
         rebillsummary: {
           type: queueSummaryType.graphObj,
           args: {
