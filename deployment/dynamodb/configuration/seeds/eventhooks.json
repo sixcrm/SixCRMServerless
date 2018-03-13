@@ -8,5 +8,15 @@
         "active": true,
         "created_at":"2017-04-06T18:40:41.405Z",
         "updated_at":"2017-04-06T18:41:12.521Z"
+    },
+    {
+        "id":"dc377b80-7c5b-44ad-9473-401f9b35922f",
+        "account":"*",
+        "name":"Test Event Hook 2",
+        "event_type":["lead"],
+        "hook":"J3VzZSBzdHJpY3QnCgptb2R1bGUuZXhwb3J0cyA9IChldmVudCkgPT4gewogIGNvbnNvbGUubG9nKCdoZWxsbyB3b3JsZCEnKTsKfQ==",
+        "active": true,
+        "created_at":"2017-04-06T18:40:41.405Z",
+        "updated_at":"2017-04-06T18:41:12.521Z"
     }
 ]

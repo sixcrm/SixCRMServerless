@@ -193,6 +193,9 @@ functions:
   redshiftevents:
     handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
 
+  rdsevents:
+    handler: handlers/workers/sns/rdsevents/handler.rdsevents
+
   trackingevents:
     handler: handlers/workers/sns/trackingevents/handler.trackingevents
 
@@ -202,6 +205,12 @@ functions:
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
+  pushrdsrecords:
+    handler: handlers/workers/pushrdsrecords/handler.pushrdsrecords
+    events:
+      - schedule:
+        rate: rate(1 minute)
+        enabled: true
 
   reindex:
     handler: handlers/workers/reindex/handler.reindex

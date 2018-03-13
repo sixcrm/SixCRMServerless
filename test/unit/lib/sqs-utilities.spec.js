@@ -1,11 +1,9 @@
 const chai = require('chai');
 const expect = chai.expect;
+const random = global.SixCRM.routes.include('lib','random.js');
+const _ = require('underscore');
 
-//Technical Debt:  Bad references to the config like this...
-const region = global.SixCRM.configuration.site_config.aws.region;
-const account = global.SixCRM.configuration.site_config.aws.account;
-
-xdescribe('lib/sqs-utilities', () => {
+describe('lib/sqs-utilities', () => {
 
     let copy_stage = process.env.stage;
 
@@ -22,6 +20,9 @@ xdescribe('lib/sqs-utilities', () => {
     describe('getQueueARN', () => {
 
         it('successfully returns queue arn', () => {
+
+          global.SixCRM.configuration.handleStage('development');
+          global.SixCRM.configuration.setConfigurationFiles();
 
           const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
@@ -55,21 +56,18 @@ xdescribe('lib/sqs-utilities', () => {
             }
         });
 
-        it('returns queue arn template with appointed queue name', () => {
+        it('returns queue arn template with appointed queue name for localhost', () => {
 
-            let queue_name = 'sampleQueueName';
-
-            global.SixCRM.configuration.handleStage('development');
-            global.SixCRM.configuration.setConfigurationFiles();
+            let argumentation = {QueueName: 'sampleQueueName'};
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
-            expect(sqsutilities.getQueueARN({QueueName: queue_name})).to.equal(
-                //queue arn template
-                'arn:aws:sqs:' +
-                region + ':' +
-                account + ':' +
-                queue_name);
+            global.SixCRM.configuration.handleStage('local');
+            global.SixCRM.configuration.setConfigurationFiles();
+
+            let queue_arn = sqsutilities.getQueueARN(argumentation);
+
+            expect(queue_arn).to.equal(argumentation.QueueName);
         });
     });
 
@@ -84,13 +82,7 @@ xdescribe('lib/sqs-utilities', () => {
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
-            expect(sqsutilities.getQueueURL(input)).to.equal(
-                //queue url template
-                'https://sqs.' +
-                region +
-                '.amazonaws.com/' +
-                account +
-                '/' + input);
+            expect(sqsutilities.getQueueURL(input)).to.match(/https:\/\/sqs.us-[a-zA-Z]+-[0-9].amazonaws.com\/[0-9]+\/example/);
         });
 
         it('returns url template with queue name from appointed input', () => {
@@ -102,13 +94,7 @@ xdescribe('lib/sqs-utilities', () => {
 
             const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
-            expect(sqsutilities.getQueueURL(input)).to.equal(
-                //queue url template
-                'https://sqs.' +
-                region +
-                '.amazonaws.com/' +
-                account +
-                '/' + input.queue);
+            expect(sqsutilities.getQueueURL(input)).to.match(/https:\/\/sqs.us-[a-zA-Z]+-[0-9].amazonaws.com\/[0-9]+\/example/);
         });
 
         it('returns localhost endpoint with appointed queue name', () => {
@@ -154,11 +140,9 @@ xdescribe('lib/sqs-utilities', () => {
 
             let queue_parameters = sqsutilities.getQueueParameters(queue_name);
 
-            expect(queue_parameters).to.deep.equal({
-                "account": account,
-                "queue_name": queue_name,
-                "region": region
-            });
+            expect(queue_parameters.account).to.match(/[0-9]/);
+            expect(queue_parameters.queue_name).to.equal(queue_name);
+            expect(queue_parameters.region).to.match(/us-[a-zA-Z]+-[0-9]/);
         });
     });
 
@@ -179,11 +163,75 @@ xdescribe('lib/sqs-utilities', () => {
         });
     });
 
+    describe('receiveMessagesRecursive', () => {
+
+      it('returns 200 messages', () => {
+
+        let ten_messages = [];
+
+        for(var i =0; i < 10; i++){
+          ten_messages.push({
+            Id: 'someid',
+            ReceiptHandle:'SomeReceiptHandle'
+          });
+        }
+
+        const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+        sqsutilities.sqs = {
+          receiveMessage: function(params, callback) {
+            callback(null, {Messages: ten_messages})
+          }
+        };
+
+        return sqsutilities.receiveMessagesRecursive({queue: 'testqueue'}).then(messages => {
+          expect(messages.length).to.equal(200);
+        });
+
+      });
+
+      let max = random.randomInt(0, 200);
+
+      it('returns random maximum number of messages ('+max+')', () => {
+
+        let ten_messages = [];
+
+        for(var i =0; i < 10; i++){
+          ten_messages.push({
+            Id: 'someid',
+            ReceiptHandle:'SomeReceiptHandle'
+          });
+        }
+
+        const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+
+        sqsutilities.batch_read_limit = max;
+        sqsutilities.sqs = {
+          receiveMessage: function(params, callback) {
+            if(_.has(params, 'MaxNumberOfMessages')){
+              let return_messages = ten_messages.slice(0, parseInt(params.MaxNumberOfMessages));
+
+              callback(null, {Messages: return_messages})
+            }
+            callback(null, {Messages: ten_messages})
+          }
+        };
+
+        return sqsutilities.receiveMessagesRecursive({queue: 'testqueue'}).then(messages => {
+          expect(messages.length).to.equal(max);
+        });
+
+      });
+
+    });
+
     describe('receiveMessages', () => {
 
         it('returns received message', () => {
 
-            process.env.stage = 'development';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
 
             let params = {
                 queue:'example',
@@ -205,7 +253,8 @@ xdescribe('lib/sqs-utilities', () => {
 
         it('returns error when message wasn\'t received', () => {
 
-            process.env.stage = 'development';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
 
             let params = {
                 queue:'example',
@@ -230,7 +279,8 @@ xdescribe('lib/sqs-utilities', () => {
 
         it('successfully deletes message', () => {
 
-            process.env.stage = 'development';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
 
             let input = {queue:'example'};
 
@@ -252,7 +302,8 @@ xdescribe('lib/sqs-utilities', () => {
 
         it('successfully sends message', () => {
 
-            process.env.stage = 'development';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
 
             let input = {queue:'example'};
 
@@ -274,7 +325,8 @@ xdescribe('lib/sqs-utilities', () => {
 
         it('successfully deletes messages', () => {
 
-            process.env.stage = 'development';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
 
             let input = {
                 queue: 'example',
@@ -299,7 +351,8 @@ xdescribe('lib/sqs-utilities', () => {
 
         it('returns response from deleted message batch', () => {
 
-            process.env.stage = 'development';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
 
             let input = {
                 queue: 'example',
@@ -326,7 +379,8 @@ xdescribe('lib/sqs-utilities', () => {
 
         it('returns error when messages haven\'t been removed', () => {
 
-            process.env.stage = 'development';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
 
             let fail = new Error('fail');
 
@@ -353,7 +407,8 @@ xdescribe('lib/sqs-utilities', () => {
 
         it('returns false when there aren\'t any messages to delete', () => {
 
-            process.env.stage = 'development';
+            global.SixCRM.configuration.handleStage('development');
+            global.SixCRM.configuration.setConfigurationFiles();
 
             let input = {queue: 'example'};
 

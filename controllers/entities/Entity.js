@@ -840,6 +840,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
+    //Nick:  Please move these to helpers
     encryptAttributes(entity) {
       if (arrayutilities.isArray(this.encryptedAttributePaths)) {
         this.encryptedAttributePaths.forEach(attr_path => {
@@ -855,8 +856,12 @@ module.exports = class entityController extends entityUtilitiesController {
       return entity;
     }
 
+    //Nick:  Please move these to helpers
     decryptAttributes(entity) {
+
+      //Nick:  variable_names_follow_this_convention, try arrayutilities.nonEmpty
       if (arrayutilities.isArray(this.encryptedAttributePaths)) {
+        //Nick: please use arrayutilities instead of forEach
         this.encryptedAttributePaths.forEach(attr_path => {
           if (objectutilities.hasRecursive(entity, attr_path)) {
             const encrypted_value = objectutilities.getRecursive(entity, attr_path);
@@ -870,6 +875,7 @@ module.exports = class entityController extends entityUtilitiesController {
       return entity;
     }
 
+    //Nick:  Please move these to helpers, please see comments above
     censorEncryptedAttributes(entity) {
       if (arrayutilities.isArray(this.encryptedAttributePaths)) {
           this.encryptedAttributePaths.forEach(attr_path => {
@@ -885,14 +891,19 @@ module.exports = class entityController extends entityUtilitiesController {
       return entity;
     }
 
+    //Nick:  Please move these to helpers
     encryptAttribute(attribute) {
+      //Nick:  In keeping with the style of the site, please use this.encryptionhelper.encryptAES256()
       return encryptAES256(attribute);
     }
 
+    //Nick:  Please move these to helpers
     decryptAttribute(attribute) {
+      //Nick:  In keeping with the style of the site, please use this.encryptionhelper.encryptAES256()
         return decryptAES256(attribute);
     }
 
+    //Nick:  Please move these to helpers
     censorEncryptedAttribute() {
         return '********';
     }

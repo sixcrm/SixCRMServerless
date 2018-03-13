@@ -1,5 +1,5 @@
 {
-  "id":"/workers/eventEmails/snsrecord.json",
+  "id":"/workers/snsEvent/snsrecord.json",
   "name":"SNS Record",
   "type":"object",
   "properties":{

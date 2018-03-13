@@ -1163,6 +1163,18 @@ module.exports.graphObj = new GraphQLObjectType({
               return eventHookController.listByAccount({pagination: eventhook.pagination, fatal:list_fatal, search: eventhook.search});
             }
         },
+        eventhooksharedlist: {
+          type: eventHookListType.graphObj,
+          args: {
+            pagination: {type: paginationInputType.graphObj},
+            search: {type: entitySearchInputType.graphObj}
+          },
+          resolve: function(root, eventhook){
+            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+            return eventHookController.listShared({pagination: eventhook.pagination});
+          }
+        },
         accesskeylist: {
           type: accessKeyListType.graphObj,
           args: {
@@ -1376,6 +1388,20 @@ module.exports.graphObj = new GraphQLObjectType({
             const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
 
             return eventHookController.get({id: eventhook.id, fatal: get_fatal});
+          }
+        },
+        eventhookshared: {
+          type: eventHookType.graphObj,
+          args: {
+            id: {
+              description: 'id of the event hook',
+              type: new GraphQLNonNull(GraphQLString)
+            }
+          },
+          resolve: function(root, eventhook){
+            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+
+            return eventHookController.getShared({id: eventhook.id});
           }
         },
         merchantprovidergroup: {

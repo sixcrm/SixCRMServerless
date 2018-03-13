@@ -1,3 +1,6 @@
+data_encryption:
+  secret_key: '41980c8bf6bc699a39518ee7bf3bc378480ffc73e59e7057c7f27085364533bb3e6de276c901c256ddb9c27217132a1d37cdf7130d5d7969834b604e154cb7a0'
+
 aws:
   region: 'us-east-1'
   account: '181111172466'
@@ -27,7 +30,7 @@ jwt:
   transaction: #This is the key for the transactional endpoint requests (AKA non-Six users...)
     secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
     expiration: 3600
-    
+
 sqs:
   deadletter_postfix: '_deadletter'
   max_receive_count: 5

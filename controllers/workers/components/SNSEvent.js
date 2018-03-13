@@ -22,9 +22,9 @@ module.exports = class SNSEventController {
       };
 
       this.parameter_validation = {
-        'records': global.SixCRM.routes.path('model', 'workers/eventEmails/records.json'),
-        'message':global.SixCRM.routes.path('model','workers/eventEmails/message.json'),
-        'record':global.SixCRM.routes.path('model','workers/eventEmails/snsrecord.json')
+        'records': global.SixCRM.routes.path('model', 'workers/snsEvents/records.json'),
+        'message':global.SixCRM.routes.path('model','workers/snsEvents/message.json'),
+        'record':global.SixCRM.routes.path('model','workers/snsEvents/snsrecord.json')
       };
 
       this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
@@ -130,47 +130,6 @@ module.exports = class SNSEventController {
       }
 
       return true;
-
-    }
-
-    discoverObjectsFromContext(search_objects, fatal){
-
-      du.debug('Discover Objects From Context');
-
-      fatal = (_.isUndefined(fatal) || _.isNull(fatal))?false:fatal;
-
-      let context = this.parameters.get('message').context;
-
-      let return_object = {};
-
-      arrayutilities.map(search_objects, search_object => {
-
-        let discovered_object = objectutilities.recurseByDepth(context, (key, value) => {
-
-          if(key == search_object){
-            if(_.isObject(value)){ return true; }
-            if(_.isString(value) && stringutilities.isUUID(value)){ return true; }
-          }
-
-          return false;
-
-        });
-
-        if(!_.isUndefined(discovered_object) && !_.isNull(discovered_object)){
-          return_object[search_object] = discovered_object;
-        }
-
-      });
-
-      if(fatal){
-        arrayutilities.map(search_objects, search_object => {
-          if(!_.has(return_object, search_object)){
-            eu.throwError('server','Unable to discover '+search_object+' in context.');
-          }
-        });
-      }
-
-      return return_object;
 
     }
 

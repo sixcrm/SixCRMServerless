@@ -280,6 +280,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
       return this.creditCardController.get({id:creditcard}).then(result => {
 
+        this.creditCardController.decryptAttributes(result);
         this.parameters.set('creditcard', result);
 
         return true;

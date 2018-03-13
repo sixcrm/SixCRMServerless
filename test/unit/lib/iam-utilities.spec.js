@@ -263,4 +263,256 @@ describe('lib/iam-utilities', () => {
             });
         });
     });
+
+    describe('createPolicy', () => {
+
+        it('returns data from iam utilities create policy', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                createPolicy: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback(null, 'any_policy_data')
+                }
+            };
+
+            return iamutilities.createPolicy(params).then((result) => {
+                expect(result).to.equal('any_policy_data');
+            });
+        });
+
+        it('throws error from iam utilities create policy', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                createPolicy: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback('fail', null)
+                }
+            };
+
+            return iamutilities.createPolicy(params).catch((error) => {
+                expect(error.message).to.equal('[500] fail');
+            });
+        });
+    });
+
+    describe('getPolicy', () => {
+
+        it('returns data from iam utilities get policy', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                getPolicy: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback(null, 'any_policy_data')
+                }
+            };
+
+            return iamutilities.getPolicy(params).then((result) => {
+                expect(result).to.equal('any_policy_data');
+            });
+        });
+
+        it('throws internal server error from iam utilities get policy', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                getPolicy: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback('fail', null)
+                }
+            };
+
+            return iamutilities.getPolicy(params).catch((error) => {
+                expect(error.message).to.equal('[500] Internal Server Error');
+            });
+        });
+
+        it('returns null when error is thrown from iam utilities get policy', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                getPolicy: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback({statusCode: 404}, null)
+                }
+            };
+
+            return iamutilities.getPolicy(params).then((result) => {
+                expect(result).to.equal(null);
+            });
+        });
+    });
+
+    describe('deletePolicy', () => {
+
+        it('returns data from iam utilities delete policy', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                deletePolicy: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback(null, 'any_policy_data')
+                }
+            };
+
+            return iamutilities.deletePolicy(params).then((result) => {
+                expect(result).to.equal('any_policy_data');
+            });
+        });
+
+        it('throws error from iam utilities delete policy', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                deletePolicy: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback('fail', null)
+                }
+            };
+
+            return iamutilities.deletePolicy(params).catch((error) => {
+                expect(error.message).to.equal('[500] fail');
+            });
+        });
+    });
+
+    describe('listEntitiesForPolicy', () => {
+
+        it('returns data from iam utilities list entities for policy', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                listEntitiesForPolicy: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback(null, 'any_policy_data')
+                }
+            };
+
+            return iamutilities.listEntitiesForPolicy(params).then((result) => {
+                expect(result).to.equal('any_policy_data');
+            });
+        });
+
+        it('throws error from iam utilities list entities for policy', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                listEntitiesForPolicy: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback('fail', null)
+                }
+            };
+
+            return iamutilities.listEntitiesForPolicy(params).catch((error) => {
+                expect(error.message).to.equal('[500] fail');
+            });
+        });
+    });
+
+    describe('createInstanceProfile', () => {
+
+        it('returns data from iam utilities create instance profile', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                createInstanceProfile: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback(null, 'any_profile_data')
+                }
+            };
+
+            return iamutilities.createInstanceProfile(params).then((result) => {
+                expect(result).to.equal('any_profile_data');
+            });
+        });
+
+        it('throws error from iam utilities create instance profile', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                createInstanceProfile: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback('fail', null)
+                }
+            };
+
+            return iamutilities.createInstanceProfile(params).catch((error) => {
+                expect(error.message).to.equal('[500] fail');
+            });
+        });
+    });
+
+    describe('addRoleToInstanceProfile', () => {
+
+        it('returns data from iam utilities add role to instance profile', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                addRoleToInstanceProfile: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback(null, 'any_role_data')
+                }
+            };
+
+            return iamutilities.addRoleToInstanceProfile(params).then((result) => {
+                expect(result).to.equal('any_role_data');
+            });
+        });
+
+        it('throws error from iam utilities add role to instance profile', () => {
+
+            let params = 'any_params';
+
+            const iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+
+            iamutilities.iam = {
+                addRoleToInstanceProfile: function(params, callback) {
+                    expect(params).to.equal(params);
+                    callback('fail', null)
+                }
+            };
+
+            return iamutilities.addRoleToInstanceProfile(params).catch((error) => {
+                expect(error.message).to.equal('[500] fail');
+            });
+        });
+    });
 });

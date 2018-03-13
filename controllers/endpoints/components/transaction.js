@@ -135,12 +135,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
       du.debug('Post Processing');
 
-      if(_.isUndefined(event_type) || _.isNull(event_type)){
-        if(_.has(this, 'event_type')){
-          event_type = this.event_type;
-        }
-      }
-
       this.pushEvent(event_type);
 
       return true;
@@ -151,13 +145,19 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
       du.debug('Push Event');
 
+      if(_.isUndefined(event_type) || _.isNull(event_type)){
+        if(_.has(this, 'event_type')){
+          event_type = this.event_type;
+        }
+      }
+
       if(!_.has(this, 'eventHelperController')){
         const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 
         this.eventHelperController = new EventHelperController();
       }
 
-      this.eventHelperController.pushEvent({event_type: event_type, context:this.parameters.store});
+      this.eventHelperController.pushEvent({event_type: event_type, context: this.parameters.store});
 
     }
 

@@ -220,13 +220,9 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
     for (let key in parameters) {
 
-      if (parameters.hasOwnProperty(key)) {
+      if (_.isArray(parameters[key])) {
 
-        if (_.isArray(parameters[key])) {
-
-          parameters[key] = arrayutilities.compress(parameters[key]);
-
-        }
+        parameters[key] = arrayutilities.compress(parameters[key]);
 
       }
 

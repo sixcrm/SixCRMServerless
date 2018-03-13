@@ -1,6 +1,6 @@
 {
-  "id":"/workers/eventEmails/message.json",
-  "name":"SNS Record Message",
+  "id":"/workers/snsEvents/message.json",
+  "name":"SNS Event Message",
   "type":"object",
   "properties":{
     "account":{"$ref":"../../definitions/sixcrmaccountidentifier.json"},
