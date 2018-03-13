@@ -1,6 +1,8 @@
 const chai = require('chai');
 const expect = chai.expect;
 
+const random = global.SixCRM.routes.include('lib','random.js');
+const _ = require('underscore');
 //Technical Debt:  Bad references to the config like this...
 const region = global.SixCRM.configuration.site_config.aws.region;
 const account = global.SixCRM.configuration.site_config.aws.account;
@@ -177,6 +179,69 @@ xdescribe('lib/sqs-utilities', () => {
 
             expect(sqsutilities.ensureString('any_string_value')).to.equal('any_string_value');
         });
+    });
+
+    describe('receiveMessagesRecursive', () => {
+
+      it('returns 200 messages', () => {
+
+        let ten_messages = [];
+
+        for(var i =0; i < 10; i++){
+          ten_messages.push({
+            Id: 'someid',
+            ReceiptHandle:'SomeReceiptHandle'
+          });
+        }
+
+        const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+        sqsutilities.sqs = {
+          receiveMessage: function(params, callback) {
+            callback(null, {Messages: ten_messages})
+          }
+        };
+
+        return sqsutilities.receiveMessagesRecursive({queue: 'testqueue'}).then(messages => {
+          expect(messages.length).to.equal(200);
+        });
+
+      });
+
+      let max = random.randomInt(0, 200);
+
+      it('returns random maximum number of messages ('+max+')', () => {
+
+        let ten_messages = [];
+
+        for(var i =0; i < 10; i++){
+          ten_messages.push({
+            Id: 'someid',
+            ReceiptHandle:'SomeReceiptHandle'
+          });
+        }
+
+        const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+
+
+        sqsutilities.batch_read_limit = max;
+        sqsutilities.sqs = {
+          receiveMessage: function(params, callback) {
+            if(_.has(params, 'MaxNumberOfMessages')){
+              let return_messages = ten_messages.slice(0, parseInt(params.MaxNumberOfMessages));
+
+              callback(null, {Messages: return_messages})
+            }
+            callback(null, {Messages: ten_messages})
+          }
+        };
+
+        return sqsutilities.receiveMessagesRecursive({queue: 'testqueue'}).then(messages => {
+          expect(messages.length).to.equal(max);
+        });
+
+      });
+
     });
 
     describe('receiveMessages', () => {

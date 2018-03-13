@@ -205,6 +205,12 @@ functions:
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
+  pushrdsrecords:
+    handler: handlers/workers/pushrdsrecords/handler.pushrdsrecords
+    events:
+      - schedule:
+        rate: rate(1 minute)
+        enabled: true
 
   reindex:
     handler: handlers/workers/reindex/handler.reindex
