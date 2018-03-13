@@ -192,9 +192,12 @@ class EventEmailsController extends SNSEventController {
 
     du.debug('Send Emails');
 
+
+
     let email_templates  = this.parameters.get('emailtemplates', null, false);
 
     if(_.isNull(email_templates) || !arrayutilities.nonEmpty(email_templates)){
+      du.warning('No pertinent email templates.');
       return true;
     }
 

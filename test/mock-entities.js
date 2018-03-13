@@ -1061,7 +1061,7 @@ class MockEntities {
     return {
       id: this.getValidId(id),
       account: this.getTestAccountID(),
-      name: randomutilities.createRandomName('full'),
+      name: randomutilities.createRandomString(10),
       hostname: random_hostname,
       username: randomutilities.createRandomString(10),
       password: randomutilities.createRandomString(10),
@@ -1073,34 +1073,38 @@ class MockEntities {
     }
   }
 
-  static getValidEmailTemplates(ids){
+  static getValidEmailTemplates(ids, event_type){
 
     ids = (!_.isUndefined(ids) && !_.isNull(ids))?ids:this.arrayOfIds();
 
     return arrayutilities.map(ids, id => {
-      return this.getValidEmailTemplate(id);
+      return this.getValidEmailTemplate(id, event_type);
     });
 
   }
 
-  static getValidEmailTemplate(id) {
+  static getValidEmailTemplate(id, event_type) {
 
     return {
       id: this.getValidId(id),
       account: this.getTestAccountID(),
-      name: randomutilities.createRandomName('full'),
+      name: randomutilities.createRandomString(20),
       body: randomutilities.createRandomString(20),
       subject: randomutilities.createRandomString(10),
-      type: this.getValidEventType(),
+      type: this.getValidEventType(event_type),
       smtp_provider: uuidV4(),
       created_at: timestamp.getISO8601(),
       updated_at: timestamp.getISO8601()
     }
   }
 
-  static getValidEventType(){
+  static getValidEventType(event_type){
 
     let event_list = global.SixCRM.routes.include('model', 'definitions/sixcrmeventtype.json').enum;
+
+    if(event_type && _.contains(event_list, event_type)){
+      return event_type;
+    }
 
     return randomutilities.selectRandomFromArray(event_list);
 
