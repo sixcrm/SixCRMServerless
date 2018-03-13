@@ -1,0 +1,8 @@
+{
+    "QueueName": "rds_transaction_batch",
+    "Attributes": {
+      "MessageRetentionPeriod": "345600",
+      "VisibilityTimeout": "300",
+      "MaximumMessageSize": "262144"
+    }
+}
