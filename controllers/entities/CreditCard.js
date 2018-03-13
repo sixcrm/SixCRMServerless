@@ -18,17 +18,23 @@ class creditCardController extends entityController {
 
       this.search_fields = ['name'];
 
-      this.encryptedAttributePaths = [
+      this.encrypted_attribute_paths = [
           'number',
           'ccv'
       ];
     }
 
-    censorEncryptedAttribute(attr_path, attr_value) {
-        if (attr_path === 'number') {
-            return helper.lastFour(this.decryptAttribute(attr_value));
+    censorEncryptedAttributes(entity) {
+        const custom_censor_fn = (attr_path, attr_value) => {
+            switch (attr_path) {
+                case 'number':
+                    return helper.lastFour(this.encryptionhelper.decrypt(entity, attr_value));
+                default:
+                    return '****';
+            }
         }
-        return super.censorEncryptedAttribute(attr_path, attr_value);
+
+        return super.censorEncryptedAttributes(entity, custom_censor_fn);
     }
 
     setLastFour(attributes) {

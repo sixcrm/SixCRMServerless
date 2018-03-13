@@ -216,13 +216,12 @@ describe('controllers/entities/CreditCard.js', () => {
         });
     });
 
-    describe('censorEncryptedAttribute', () => {
-        it('returns the last 4 digits of number', () => {
-            const number = '4111 1111 1111 1111';
+    describe('censorEncryptedAttributes', () => {
+        it('censors all but the last 4 digits of number', () => {
+            const creditcard = getValidCreditCard();
 
             class mockHelper {
-                lastFour(input) {
-                    expect(input).to.equal(number);
+                lastFour() {
                     return '************1111';
                 }
             }
@@ -231,20 +230,27 @@ describe('controllers/entities/CreditCard.js', () => {
 
             let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
 
-            creditCardController.decryptAttribute = (attr) => {
-                expect(attr).to.equal('encrypted_number');
-                return number;
-            }
+            creditCardController.censorEncryptedAttributes(creditcard);
 
-            expect(creditCardController.censorEncryptedAttribute('number', 'encrypted_number')).to.equal('************1111')
+            expect(creditcard.number).to.equal('************1111');
         });
 
-        it('returns generic censor for other attributes', () => {
-            const ccv = '123';
+        it('censors other attributes with generic censor', () => {
+            const creditcard = getValidCreditCard();
+
+            class mockHelper {
+                lastFour() {
+                    return '************1111';
+                }
+            }
+
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/creditcard/CreditCard.js'), mockHelper);
 
             let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
 
-            expect(creditCardController.censorEncryptedAttribute('ccv', ccv)).to.equal('********')
+            creditCardController.censorEncryptedAttributes(creditcard);
+
+            expect(creditcard.ccv).to.equal('****');
         });
     });
 });

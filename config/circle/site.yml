@@ -1,5 +1,5 @@
 data_encryption:
-  secret_key: '330585ba2ffa2210c9e4cf6c96b009c64d2b26082735dd3e02504b5e870388472b0baa222482bfb22373f9a56877afb8093b8b8934cc92e2ea79dca788d46c4b'
+  secret_key: 'c6b1249c8e92e30811a6f85e41125469a84d2352be82692af663c1810da77c44'
 
 aws:
   region: 'us-east-1'
@@ -7,7 +7,7 @@ aws:
 
 s3:
   account_resources_bucket: 'account-resources'
-  
+
 sts:
   deployment_role_name: 'SixCRMDeployment'
 

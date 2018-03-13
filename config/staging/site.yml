@@ -1,5 +1,5 @@
 data_encryption:
-  secret_key: '6b3e2ad5fcac03da9fecc706b4d4da706bdd991259d9143668670e9057934789c3535961b8e1d5d737c15ec53431ecc2494883925759cca13de06de506b0eb75'
+  secret_key: '36eb6db6ab734c38ae311e8238d689c024112094c102b50e52a74cf4194baf91'
 
 aws:
   region: 'us-east-1'

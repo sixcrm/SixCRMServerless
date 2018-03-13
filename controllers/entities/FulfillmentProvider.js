@@ -11,7 +11,7 @@ class fulfillmentProviderController extends entityController {
     constructor(){
       super('fulfillmentprovider');
 
-      this.encryptedAttributePaths = [
+      this.encrypted_attribute_paths = [
           'provider.username',
           'provider.password',
           'provider.api_key',
