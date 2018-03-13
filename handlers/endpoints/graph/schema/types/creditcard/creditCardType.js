@@ -22,6 +22,10 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(GraphQLString),
             description: 'The creditcard number'
         },
+        last_four: {
+            type: new GraphQLNonNull(GraphQLString),
+            description: 'The last four digits of the creditcard number'
+        },
         expiration: {
             type: new GraphQLNonNull(GraphQLString),
             description: 'The creditcard expiration date.',
