@@ -2,17 +2,13 @@ const request = require('supertest');
 const chai = require('chai');
 
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
 let endpoint = global.integration_test_config.endpoint;
 
 var entity = 'Transactions';
-var tests = [{
-    name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getTransactions.json')
-},
+var tests = [
 {
     name: "view",
     query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/view/getTransaction.json')
