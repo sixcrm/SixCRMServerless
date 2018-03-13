@@ -34,7 +34,6 @@ describe('controllers/workers/RDSEvents', () => {
     it('instantiates the RDSEventsController class', () => {
 
       let RDSEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/RDSEvents.js');
-
       expect(objectutilities.getClassName(RDSEventsController)).to.equal('RDSEventsController');
 
     });
@@ -153,14 +152,13 @@ describe('controllers/workers/RDSEvents', () => {
 
         let sns_message = MockEntities.getValidSNSMessage(test_case.message);
 
-        let RDSEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/RDSEvents.js');
-
         mockery.registerMock(global.SixCRM.routes.path('lib','sqs-utilities.js'), {
           sendMessage:() => {
             return Promise.resolve(true);
           }
         });
 
+        let RDSEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/RDSEvents.js');
         return RDSEventsController.execute(sns_message).then(result => {
           expect(result).to.equal(true);
           //expect(redshiftEventsController.parameters.store['redshiftobject']).to.deep.equal(test_case.result);
