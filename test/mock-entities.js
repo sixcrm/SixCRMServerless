@@ -6,7 +6,7 @@ const creditcardgenerator = require('creditcard-generator');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const {encryptAES256: encrypt} = global.SixCRM.routes.include('lib', 'encryption-utilities.js');
+const encryptionutilities = global.SixCRM.routes.include('lib', 'encryption-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 class MockEntities {
@@ -825,8 +825,8 @@ class MockEntities {
   static getValidCreditCard(id){
     const card = this.getValidPlaintextCreditCard(id);
 
-    card.number = encrypt(card.number);
-    card.ccv = encrypt(card.ccv);
+    card.number = encryptionutilities.encryptAES256(card.id, card.number);
+    card.ccv = encryptionutilities.encryptAES256(card.id, card.ccv);
     return card;
   }
 

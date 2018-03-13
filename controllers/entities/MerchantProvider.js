@@ -14,7 +14,7 @@ class merchantProviderController extends entityController {
 
       this.search_fields = ['name'];
 
-      this.encryptedAttributePaths = [
+      this.encrypted_attribute_paths = [
           'gateway.username',
           'gateway.password',
           'gateway.api_key'

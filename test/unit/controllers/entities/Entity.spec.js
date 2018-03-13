@@ -2164,26 +2164,11 @@ describe('controllers/Entity.js', () => {
         });
     });
 
-    describe('encryptAttribute', () => {
-        it('returns encrypted input', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'encryption-utilities.js'), {
-                encryptAES256: (input) => {
-                    expect(input).to.equal('sensitive_data');
-                    return 'encrypted_data'
-                }
-            });
-
-            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-            const entityController = new EC('entity');
-
-            expect(entityController.encryptAttribute('sensitive_data')).to.equal('encrypted_data');
-        });
-    });
-
     describe('encryptAttributes', () => {
         it('runs encryption on attributes listed in encryptedAttributes', () => {
             mockery.registerMock(global.SixCRM.routes.path('lib', 'encryption-utilities.js'), {
-                encryptAES256: (input) => {
+                encryptAES256: (iv_key, input) => {
+                    expect(iv_key).to.equal('entity_id');
                     expect(input).to.equal('sensitive_data');
                     return 'encrypted_data'
                 }
@@ -2191,12 +2176,13 @@ describe('controllers/Entity.js', () => {
 
             const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
             const entityController = new EC('entity');
-            const subject = { foo: 'plaintext_data', bar: 'sensitive_data' };
+            const subject = { id: 'entity_id', foo: 'plaintext_data', bar: 'sensitive_data' };
 
-            entityController.encryptedAttributePaths = ['bar'];
+            entityController.encrypted_attribute_paths = ['bar'];
             entityController.encryptAttributes(subject);
 
             expect(subject).to.deep.equal({
+                id: 'entity_id',
                 foo: 'plaintext_data',
                 bar: 'encrypted_data'
             });
@@ -2204,7 +2190,8 @@ describe('controllers/Entity.js', () => {
 
         it('handles deep attribute paths', () => {
             mockery.registerMock(global.SixCRM.routes.path('lib', 'encryption-utilities.js'), {
-                encryptAES256: (input) => {
+                encryptAES256: (iv_key, input) => {
+                    expect(iv_key).to.equal('entity_id');
                     expect(input).to.equal('sensitive_data');
                     return 'encrypted_data'
                 }
@@ -2212,19 +2199,20 @@ describe('controllers/Entity.js', () => {
 
             const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
             const entityController = new EC('entity');
-            const subject = { foo: { bar: { baz: 'sensitive_data' } } };
+            const subject = { id: 'entity_id', foo: { bar: { baz: 'sensitive_data' } } };
 
-            entityController.encryptedAttributePaths = ['foo.bar.baz'];
+            entityController.encrypted_attribute_paths = ['foo.bar.baz'];
             entityController.encryptAttributes(subject);
 
-            expect(subject).to.deep.equal({ foo: { bar: { baz: 'encrypted_data' } } });
+            expect(subject).to.deep.equal({ id: 'entity_id', foo: { bar: { baz: 'encrypted_data' } } });
         });
     });
 
     describe('decryptAttributes', () => {
         it('runs decryption on attributes listed in encryptedAttributes', () => {
             mockery.registerMock(global.SixCRM.routes.path('lib', 'encryption-utilities.js'), {
-                decryptAES256: (input) => {
+                decryptAES256: (iv_key, input) => {
+                    expect(iv_key).to.equal('entity_id');
                     expect(input).to.equal('encrypted_data');
                     return 'sensitive_data'
                 }
@@ -2232,12 +2220,13 @@ describe('controllers/Entity.js', () => {
 
             const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
             const entityController = new EC('entity');
-            const subject = { foo: 'plaintext_data', bar: 'encrypted_data' };
+            const subject = { id: 'entity_id', foo: 'plaintext_data', bar: 'encrypted_data' };
 
-            entityController.encryptedAttributePaths = ['bar'];
+            entityController.encrypted_attribute_paths = ['bar'];
             entityController.decryptAttributes(subject);
 
             expect(subject).to.deep.equal({
+                id: 'entity_id',
                 foo: 'plaintext_data',
                 bar: 'sensitive_data'
             });
@@ -2245,7 +2234,8 @@ describe('controllers/Entity.js', () => {
 
         it('handles deep attribute paths', () => {
             mockery.registerMock(global.SixCRM.routes.path('lib', 'encryption-utilities.js'), {
-                decryptAES256: (input) => {
+                decryptAES256: (iv_key, input) => {
+                    expect(iv_key).to.equal('entity_id');
                     expect(input).to.equal('encrypted_data');
                     return 'sensitive_data'
                 }
@@ -2253,28 +2243,12 @@ describe('controllers/Entity.js', () => {
 
             const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
             const entityController = new EC('entity');
-            const subject = { foo: { bar: { baz: 'encrypted_data' } } };
+            const subject = { id: 'entity_id', foo: { bar: { baz: 'encrypted_data' } } };
 
-            entityController.encryptedAttributePaths = ['foo.bar.baz'];
+            entityController.encrypted_attribute_paths = ['foo.bar.baz'];
             entityController.decryptAttributes(subject);
 
-            expect(subject).to.deep.equal({ foo: { bar: { baz: 'sensitive_data' } } });
-        });
-    });
-
-    describe('decryptAttribute', () => {
-        it('runs decryption on attributes listed in encryptedAttributes', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'encryption-utilities.js'), {
-                decryptAES256: (input) => {
-                    expect(input).to.equal('encrypted_data');
-                    return 'sensitive_data'
-                }
-            });
-
-            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-            const entityController = new EC('entity');
-
-            expect(entityController.decryptAttribute('encrypted_data')).to.equal('sensitive_data');
+            expect(subject).to.deep.equal({ id: 'entity_id', foo: { bar: { baz: 'sensitive_data' } } });
         });
     });
 
@@ -2284,12 +2258,12 @@ describe('controllers/Entity.js', () => {
             const entityController = new EC('entity');
             const subject = { foo: 'plaintext_data', bar: 'sensitive_data' };
 
-            entityController.encryptedAttributePaths = ['bar'];
+            entityController.encrypted_attribute_paths = ['bar'];
             entityController.censorEncryptedAttributes(subject);
 
             expect(subject).to.deep.equal({
                 foo: 'plaintext_data',
-                bar: '********'
+                bar: '****'
             });
         });
 
@@ -2298,19 +2272,10 @@ describe('controllers/Entity.js', () => {
             const entityController = new EC('entity');
             const subject = { foo: { bar: { baz: 'sensitive_data' } } };
 
-            entityController.encryptedAttributePaths = ['foo.bar.baz'];
+            entityController.encrypted_attribute_paths = ['foo.bar.baz'];
             entityController.censorEncryptedAttributes(subject);
 
-            expect(subject).to.deep.equal({ foo: { bar: { baz: '********' } } });
-        });
-    });
-
-    describe('censorEncryptedAttribute', () => {
-        it('returns asterisks', () => {
-            const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-            const entityController = new EC('entity');
-
-            expect(entityController.censorEncryptedAttribute('sensitive_data')).to.equal('********');
+            expect(subject).to.deep.equal({ foo: { bar: { baz: '****' } } });
         });
     });
 });

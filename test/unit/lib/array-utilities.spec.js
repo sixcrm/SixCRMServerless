@@ -5,6 +5,14 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js')
 
 describe('lib/array-utilities', () => {
 
+  it('forEach', () => {
+      let subject = [{foo: 1}, {foo: 2}, {foo: 3}];
+      let expected = [{foo: 2}, {foo: 3}, {foo: 4}];
+
+      arrayutilities.forEach(subject, x => x.foo++)
+      expect(subject).to.deep.equal(expected);
+  })
+
   it('flatten', () => {
     expect(arrayutilities.flatten(['a', ['b','c']])).to.deep.equal(['a','b','c']);
     expect(arrayutilities.flatten(['a', ['b','c',['d','e']]])).to.deep.equal(['a','b','c','d','e']);

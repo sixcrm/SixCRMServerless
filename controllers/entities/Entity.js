@@ -5,10 +5,10 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const {encryptAES256, decryptAES256} = global.SixCRM.routes.include('lib', 'encryption-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const EntityPermissionsHelper = global.SixCRM.routes.include('helpers', 'entityacl/EntityPermissions.js');
+const EncryptionHelper = global.SixCRM.routes.include('helpers', 'encryption/Encryption.js');
 const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
@@ -46,7 +46,7 @@ module.exports = class entityController extends entityUtilitiesController {
         ];
 
         this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
-
+        this.encryptionhelper = new EncryptionHelper({ primary_key: this.primary_key });
     }
 
     getUnsharedOrShared({id}) {
@@ -840,72 +840,16 @@ module.exports = class entityController extends entityUtilitiesController {
 
     }
 
-    //Nick:  Please move these to helpers
     encryptAttributes(entity) {
-      if (arrayutilities.isArray(this.encryptedAttributePaths)) {
-        this.encryptedAttributePaths.forEach(attr_path => {
-          if (objectutilities.hasRecursive(entity, attr_path)) {
-            const attr_value = objectutilities.getRecursive(entity, attr_path);
-            const encrypted_value = this.encryptAttribute(attr_value);
-
-            objectutilities.setRecursive(entity, attr_path, encrypted_value);
-          }
-        });
-      }
-
-      return entity;
+      return this.encryptionhelper.encryptAttributes(this.encrypted_attribute_paths, entity);
     }
 
-    //Nick:  Please move these to helpers
     decryptAttributes(entity) {
-
-      //Nick:  variable_names_follow_this_convention, try arrayutilities.nonEmpty
-      if (arrayutilities.isArray(this.encryptedAttributePaths)) {
-        //Nick: please use arrayutilities instead of forEach
-        this.encryptedAttributePaths.forEach(attr_path => {
-          if (objectutilities.hasRecursive(entity, attr_path)) {
-            const encrypted_value = objectutilities.getRecursive(entity, attr_path);
-            const attr_value = this.decryptAttribute(encrypted_value);
-
-            objectutilities.setRecursive(entity, attr_path, attr_value);
-          }
-        });
-      }
-
-      return entity;
+      return this.encryptionhelper.decryptAttributes(this.encrypted_attribute_paths, entity);
     }
 
-    //Nick:  Please move these to helpers, please see comments above
-    censorEncryptedAttributes(entity) {
-      if (arrayutilities.isArray(this.encryptedAttributePaths)) {
-          this.encryptedAttributePaths.forEach(attr_path => {
-              if (objectutilities.hasRecursive(entity, attr_path)) {
-                  const attr_value = objectutilities.getRecursive(entity, attr_path);
-                  const censored_attr = this.censorEncryptedAttribute(attr_path, attr_value);
-
-                  objectutilities.setRecursive(entity, attr_path, censored_attr);
-              }
-          });
-      }
-
-      return entity;
-    }
-
-    //Nick:  Please move these to helpers
-    encryptAttribute(attribute) {
-      //Nick:  In keeping with the style of the site, please use this.encryptionhelper.encryptAES256()
-      return encryptAES256(attribute);
-    }
-
-    //Nick:  Please move these to helpers
-    decryptAttribute(attribute) {
-      //Nick:  In keeping with the style of the site, please use this.encryptionhelper.encryptAES256()
-        return decryptAES256(attribute);
-    }
-
-    //Nick:  Please move these to helpers
-    censorEncryptedAttribute() {
-        return '********';
+    censorEncryptedAttributes(entity, custom_censor_fn) {
+      return this.encryptionhelper.censorEncryptedAttributes(this.encrypted_attribute_paths, entity, custom_censor_fn);
     }
 
     createINQueryParameters({field, list_array}){
