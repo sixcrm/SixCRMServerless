@@ -1,0 +1,6 @@
+{
+  "id":"/workers/snsEvent/records.json",
+  "name":"SNS Event Records",
+  "type":"array",
+  "items":{"$ref":"./snsrecord.json"}
+}

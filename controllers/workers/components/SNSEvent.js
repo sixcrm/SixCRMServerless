@@ -22,9 +22,9 @@ module.exports = class SNSEventController {
       };
 
       this.parameter_validation = {
-        'records': global.SixCRM.routes.path('model', 'workers/eventEmails/records.json'),
-        'message':global.SixCRM.routes.path('model','workers/eventEmails/message.json'),
-        'record':global.SixCRM.routes.path('model','workers/eventEmails/snsrecord.json')
+        'records': global.SixCRM.routes.path('model', 'workers/snsEvents/records.json'),
+        'message':global.SixCRM.routes.path('model','workers/snsEvents/message.json'),
+        'record':global.SixCRM.routes.path('model','workers/snsEvents/snsrecord.json')
       };
 
       this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
