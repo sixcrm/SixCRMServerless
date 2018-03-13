@@ -155,6 +155,12 @@ describe('controllers/workers/RDSEvents', () => {
 
         let RDSEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/RDSEvents.js');
 
+        mockery.registerMock(global.SixCRM.routes.path('lib','sqs-utilities.js'), {
+          sendMessage:() => {
+            return Promise.resolve(true);
+          }
+        });
+
         return RDSEventsController.execute(sns_message).then(result => {
           expect(result).to.equal(true);
           //expect(redshiftEventsController.parameters.store['redshiftobject']).to.deep.equal(test_case.result);
