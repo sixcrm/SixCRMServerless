@@ -4,6 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
+const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
 const NotificationUtilities = global.SixCRM.routes.include('helpers','notifications/notificationtypes/components/NotificationUtilities.js');
 
 module.exports = class BaseNotification extends NotificationUtilities {
@@ -18,6 +19,7 @@ module.exports = class BaseNotification extends NotificationUtilities {
     this.type = 'base';
 
     this.notificationProvider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+    this.contextHelperController = new ContextHelperController();
 
   }
 
@@ -43,9 +45,7 @@ module.exports = class BaseNotification extends NotificationUtilities {
     du.debug('Trigger Notifications');
 
     if(_.has(this, 'account_wide') && this.account_wide == true){
-
       return this.notificationProvider.createNotificationsForAccount(transformed_context);
-
     }
 
     return this.notificationProvider.createNotificationsForAccountAndUser(transformed_context);
@@ -56,7 +56,7 @@ module.exports = class BaseNotification extends NotificationUtilities {
 
     du.debug('Get User From Context');
 
-    return this.getFromContext(context, 'user', 'email');
+    return this.contextHelperController.getFromContext(context, 'user', 'email');
 
   }
 
@@ -64,7 +64,7 @@ module.exports = class BaseNotification extends NotificationUtilities {
 
     du.debug('Get User From Context');
 
-    return this.getFromContext(context, 'account');
+    return this.contextHelperController.getFromContext(context, 'account');
 
   }
 
@@ -77,13 +77,17 @@ module.exports = class BaseNotification extends NotificationUtilities {
     let tokens = parserutilities.getTokens(this.title);
 
     if(arrayutilities.nonEmpty(tokens)){
-      arrayutilities.map(tokens, token => {
-        let token_value = this.getFromContext(context, token, false)
 
-        if(token_value){
+      arrayutilities.map(tokens, token => {
+
+        let token_value = this.contextHelperController.getFromContext(context, token, false)
+
+        if(!_.isUndefined(token_value) && !_.isNull(token_value)){
           replace_object[token] = token_value;
         }
+
       });
+
     }
 
     return parserutilities.parse(this.title, replace_object);
@@ -99,13 +103,17 @@ module.exports = class BaseNotification extends NotificationUtilities {
     let tokens = parserutilities.getTokens(this.body);
 
     if(arrayutilities.nonEmpty(tokens)){
-      arrayutilities.map(tokens, token => {
-        let token_value = this.getFromContext(context, token, false)
 
-        if(token_value){
+      arrayutilities.map(tokens, token => {
+
+        let token_value = this.contextHelperController.getFromContext(context, token, false)
+
+        if(!_.isUndefined(token_value) && !_.isNull(token_value)){
           replace_object[token] = token_value;
         }
+
       });
+
     }
 
     return parserutilities.parse(this.body, replace_object);

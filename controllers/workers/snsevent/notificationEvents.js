@@ -1,7 +1,6 @@
 'use strict'
-//const _ = require('underscore');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-//const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const NotificationsHelperController = global.SixCRM.routes.include('helpers', 'notifications/Notification.js');
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
@@ -48,6 +47,7 @@ class NotificationEventsController extends SNSEventController {
     let context = this.parameters.get('message').context;
 
     let notificationsHelperController = new NotificationsHelperController();
+
     return notificationsHelperController.executeNotifications(event_type, context);
 
   }

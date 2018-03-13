@@ -5,6 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class ContextMailerHelper {
@@ -210,6 +211,56 @@ module.exports = class ContextMailerHelper {
     });
 
     return return_object;
+
+  }
+
+  getFromContext(context, field, type){
+
+    du.debug('Get From Context');
+
+    type = (_.isUndefined(type) || _.isNull(type))?'id':type;
+
+    let discovered = objectutilities.recurseByDepth(context, (key, value) => {
+
+      if(key == field){
+
+        if(type == false){
+          return true;
+        }
+
+        if(type == 'email'){
+          if(_.isString(value) && stringutilities.isEmail(value)){
+            return true;
+          }
+        }
+
+        if(type == 'id'){
+          if(_.isString(value)){
+            if(mvu.validateModel(value, global.SixCRM.routes.path('model','definitions/sixcrmidentifier.json'), null, false)){
+              return true;
+            }
+          }
+        }
+
+        if(type == 'object'){
+          if(_.isObject(value)){
+            return true;
+          }
+        }
+
+      }
+
+      return false;
+
+    });
+
+    if(discovered){
+      return discovered;
+    }
+
+    du.warning('Unable to determine '+field+' from context.');
+
+    return null;
 
   }
 

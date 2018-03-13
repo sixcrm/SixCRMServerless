@@ -1,6 +1,5 @@
 'use strict'
 
-//const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const BaseNotification = global.SixCRM.routes.include('helpers','notifications/notificationtypes/components/BaseNotification.js');
 
 class DefaultNotification extends BaseNotification{

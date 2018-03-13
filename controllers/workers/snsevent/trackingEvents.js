@@ -50,7 +50,9 @@ class TrackingEventsController extends SNSEventController {
 
     du.debug('Acquire Session');
 
-    let context_objects = this.contextHelperController.discoverObjectsFromContext(['session'], true);
+    let context = this.parameters.get('message').context;
+
+    let context_objects = this.contextHelperController.discoverObjectsFromContext(['session'], context, true);
 
     if(!_.has(this, 'sessionController')){
       this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
