@@ -3,7 +3,6 @@
 const chai = require('chai');
 const expect = chai.expect;
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 describe('lib/rds-utilities', () => {
 
