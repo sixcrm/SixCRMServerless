@@ -33,7 +33,7 @@ var tests = [{
 
 let this_request = request(endpoint);
 
-describe('Graph '+entity+' Test', function() {
+xdescribe('Graph '+entity+' Test', function() {
 
   	global.test_accounts.forEach((test_account) => {
 
