@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -18,7 +18,7 @@ class PushRDSRecordsController {
 
     return this.getRecordsFromSQS()
     .then(records => this.executeBatchWrite(records))
-    .then(records => this.removeMessagesFromSQS(records));
+    .then(records => this.removeRecordsFromSQS(records));
 
   }
 
