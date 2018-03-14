@@ -1,5 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const frozenNow = 1510820555711; //Thu, 16 Nov 2017 08:28:38 GMT
 
@@ -48,5 +49,15 @@ describe('lib/timer', () => {
         let elapsed = timer.get(true);
 
         expect(elapsed).to.equal(23051956515);
+    });
+
+    it('successfully sets timer', () => {
+
+        const timer = global.SixCRM.routes.include('lib', 'timer.js');
+
+        timer.set();
+
+        expect(timer.start).to.be.defined;
+        expect(timestamp.getTimeDifference(timer.start)).to.be.below(5);
     });
 });

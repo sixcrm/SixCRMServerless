@@ -331,6 +331,80 @@ describe('lib/smtp-utilities', () => {
 
   });
 
+  it('should create connection object from site config', () => {
+
+    const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
+    let smtputilities = new SMTPUtilities();
+
+    smtputilities.connect = () => {};
+
+    let connection_options = smtputilities.createConnectionObjectFromSiteConfig();
+
+    expect(connection_options.hostname).to.match(/email-smtp.us-[a-zA-Z]+-[0-9].amazonaws.com/);
+    expect(connection_options.password).to.be.defined;
+    expect(connection_options.username).to.be.defined;
+
+  });
+
+  it('should prepare mail options', () => {
+
+    let connection_options = createValidConnectionObject();
+
+    let email_object = createValidEmailObject();
+
+    const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
+    let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
+
+    expect(smtputilities.setMailOptions(email_object)).to.deep.equal({
+        from: '\"' + email_object.sender_name + '\" <' + email_object.sender_email + '>',
+        html: email_object.body,
+        subject: email_object.subject,
+        text: email_object.body,
+        to: email_object.recepient_emails[0]
+    });
+
+  });
+
+  it('throws error when SMTP library is missing connection', () => {
+
+    let connection_options = createValidConnectionObject();
+
+    const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
+    let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
+
+    delete smtputilities.connection;
+
+    return smtputilities.send({}).catch((error) => {
+        expect(error.message).to.equal('[500] SMTP library missing connection.');
+    });
+
+  });
+
+  it('throws error when mail is not successfully sent', () => {
+
+    let connection_options = createValidConnectionObject();
+
+    let email_object = createValidEmailObject();
+
+    const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
+    let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
+
+    smtputilities.connection.sendMail = (params, callback) => {
+        callback(new Error('Sending failed.'), null);
+    };
+
+    return smtputilities.send(email_object).catch((error) => {
+        expect(error.message).to.equal('Sending failed.');
+    });
+
+  });
+
 
   xit('should send a email', () => {
 
