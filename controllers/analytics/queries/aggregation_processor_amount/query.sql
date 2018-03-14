@@ -16,11 +16,11 @@ FROM
   RIGHT JOIN
   (
     SELECT
-      processor_result,
+      e.unnest as processor_result,
       DATE_TRUNC('{{period}}',datetime) rt_datetime
     FROM
       analytics.d_datetime,
-      analytics.d_processor_result
+      (SELECT unnest(enum_range(NULL::analytics.d_processor_result))) e
     GROUP BY
       processor_result,
       DATE_TRUNC('{{period}}',datetime)
