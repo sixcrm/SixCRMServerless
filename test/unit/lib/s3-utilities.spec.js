@@ -694,38 +694,144 @@ describe('lib/s3-utilities', () => {
 
     describe('putBucketLifecycleConfiguration', () => {
 
-			xit('sets lifecycle settings on a bucket', () => {
+			it('sets lifecycle settings on a bucket', () => {
+
+                    let a_bucket = 'a_bucket';
 
 					const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
 					s3utilities.s3 = {
 						putBucketLifecycleConfiguration: (params, callback) => {
+                                    expect(params).to.have.property('Bucket');
+                                    expect(params.Bucket).to.equal(a_bucket);
+                                    expect(params).to.have.property('LifecycleConfiguration');
 									callback(null, 'sample lifecycle data');
 							}
 					};
 
-					return s3utilities.putBucketLifecycleConfiguration('a bucket').then((result) => {
+					return s3utilities.putBucketLifecycleConfiguration(a_bucket).then((result) => {
 							return expect(result).to.equal('sample lifecycle data');
 					});
 			});
 
-			xit('returns error when object data is not retrieved', () => {
+			it('returns error when object data is not retrieved', () => {
+
+                    let a_bucket = 'a_bucket';
 
 					const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
 					s3utilities.s3 = {
 						putBucketLifecycleConfiguration: (params, callback) => {
+                                    expect(params).to.have.property('Bucket');
+                                    expect(params.Bucket).to.equal(a_bucket);
+                                    expect(params).to.have.property('LifecycleConfiguration');
 									callback(new Error('fail'), null);
 							}
 					};
 
-					return s3utilities.putBucketLifecycleConfiguration('a_bucket').catch((error) => {
-							expect(error.message).to.equal(false);
+					return s3utilities.putBucketLifecycleConfiguration(a_bucket).catch((error) => {
+							expect(error).to.equal(false);
 					});
 			});
 
 	});
 
+    describe('putBucketReplication', () => {
 
+        it('successfully puts bucket replication', () => {
+
+            let parameters = {
+                source: 'a_source',
+                destination: 'a_dest',
+                role: 'a_role'
+            };
+
+            const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+
+            s3utilities.s3 = {
+                putBucketReplication: (params, callback) => {
+                    expect(params).to.have.property('Bucket');
+                    expect(params).to.have.property('ReplicationConfiguration');
+                    expect(params.Bucket).to.equal(parameters.source);
+                    expect(params.ReplicationConfiguration.Role).to.equal(parameters.role);
+                    expect(params.ReplicationConfiguration.Rules[0].Destination.Bucket).to.contain(parameters.destination);
+                    callback(null, 'sample bucket replication data');
+                }
+            };
+
+            return s3utilities.putBucketReplication(parameters).then((result) => {
+                return expect(result).to.equal('sample bucket replication data');
+            });
+        });
+
+        it('returns false when bucket replication update was unsuccessful', () => {
+
+            let parameters = {
+                source: 'a_source',
+                destination: 'a_dest',
+                role: 'a_role'
+            };
+
+            const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+
+            s3utilities.s3 = {
+                putBucketReplication: (params, callback) => {
+                    expect(params).to.have.property('Bucket');
+                    expect(params).to.have.property('ReplicationConfiguration');
+                    expect(params.Bucket).to.equal(parameters.source);
+                    expect(params.ReplicationConfiguration.Role).to.equal(parameters.role);
+                    expect(params.ReplicationConfiguration.Rules[0].Destination.Bucket).to.contain(parameters.destination);
+                    callback(new Error('fail'), null);
+                }
+            };
+
+            return s3utilities.putBucketReplication(parameters).catch((error) => {
+                expect(error).to.equal(false);
+            });
+        });
+    });
+
+    describe('putBucketVersioning', () => {
+
+        it('successfully puts bucket versioning', () => {
+
+            let a_bucket = 'a_bucket';
+
+            const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+
+            s3utilities.s3 = {
+                putBucketVersioning: (params, callback) => {
+                    expect(params).to.have.property('Bucket');
+                    expect(params).to.have.property('VersioningConfiguration');
+                    expect(params.Bucket).to.equal(a_bucket);
+                    callback(null, 'sample bucket versioning data');
+                }
+            };
+
+            return s3utilities.putBucketVersioning(a_bucket).then((result) => {
+                return expect(result).to.equal('sample bucket versioning data');
+            });
+        });
+
+        it('returns false when bucket versioning was unsuccessful', () => {
+
+            let a_bucket = 'a_bucket';
+
+            const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+
+            s3utilities.s3 = {
+                putBucketVersioning: (params, callback) => {
+                    expect(params).to.have.property('Bucket');
+                    expect(params).to.have.property('VersioningConfiguration');
+                    expect(params.Bucket).to.equal(a_bucket);
+                    callback(new Error('fail'), null);
+                }
+            };
+
+            return s3utilities.putBucketVersioning(a_bucket).catch((error) => {
+                expect(error).to.equal(false);
+            });
+        });
+    });
 
 });
