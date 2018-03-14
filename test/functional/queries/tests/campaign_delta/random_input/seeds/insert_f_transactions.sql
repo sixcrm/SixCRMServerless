@@ -1,5 +1,5 @@
 INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, merchant_provider, campaign, affiliate, amount, processor_result, account, type, subtype, product_schedule, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
-  ((
+(
      SELECT
       '99999999-999e-44aa-999e-aaa9a99a9999',
       '2017-01-01 10:06:54.000000'::timestamp,
@@ -119,7 +119,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
       '',
       '',
       ''
-   )
    EXCEPT
    SELECT
      ft.id,
