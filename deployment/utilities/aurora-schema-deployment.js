@@ -25,15 +25,22 @@ class AuroraSchemaDeployment {
 
     });
 
-    return arrayutilities.serial(deployment_promises).then(() => {
+    return this.getQueryFromPath(global.SixCRM.routes.path('model', `aurora/before/schema/${process.env.stage}.sql`))
+      .then((query) => auroraContext.withConnection((connection => {
 
-      return true;
+        return connection.query(query);
 
-    }).then(() => {
+      })))
+      .then(() => arrayutilities.serial(deployment_promises)).then(() => {
 
-      return 'Complete';
+        return true;
 
-    });
+      })
+      .then(() => {
+
+        return 'Complete';
+
+      });
 
   }
 
@@ -384,7 +391,7 @@ class AuroraSchemaDeployment {
 
   }
 
-  getTableNameFromFilename(filename){
+  getTableNameFromFilename(filename) {
 
     du.debug('Get Table Name From Filename');
 

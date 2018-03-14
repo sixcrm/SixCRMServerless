@@ -2,9 +2,9 @@
 23.02.2017 J.C.Lozano Initial table definition @ aurora db
 */
 
-DROP TABLE IF EXISTS f_activity;
+DROP TABLE IF EXISTS analytics.f_activity;
 
-CREATE TABLE IF NOT EXISTS f_activity
+CREATE TABLE IF NOT EXISTS analytics.f_activity
 (
   id                   VARCHAR(36)  NOT NULL,
   datetime             TIMESTAMP    NOT NULL,

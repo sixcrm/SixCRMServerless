@@ -1,13 +1,13 @@
 /*
-23.02.2017 J.C. Lozano Initial table definition for agg_merchant_provider_transactions @ aurora db
+23.02.2017 J.C.Lozano Initial table definition @ aurora db
 */
 
-DROP TABLE IF EXISTS f_events;
+DROP TABLE IF EXISTS analytics.f_events;
 
-CREATE TABLE IF NOT EXISTS f_events
+CREATE TABLE IF NOT EXISTS analytics.f_events
 (
   session          VARCHAR(36) NOT NULL,
-  type             ENUM('click', 'lead', 'order', 'upsell', 'confirm'),
+  "type"           analytics.d_event_type,
   datetime         TIMESTAMP    NOT NULL,
   account          VARCHAR(36)  NOT NULL,
   campaign         VARCHAR(36)  NOT NULL,
