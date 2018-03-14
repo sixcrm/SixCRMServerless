@@ -7,12 +7,6 @@ TABLE_VERSION 1
 
 DROP TABLE IF EXISTS d_datetime;
 
-DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='d_datetime';
-
-INSERT INTO sys_sixcrm.sys_table_version
-   SELECT 'd_datetime',1,getdate();
-
-
 CREATE TABLE IF NOT EXISTS d_datetime
 (
   datetime TIMESTAMP encode zstd

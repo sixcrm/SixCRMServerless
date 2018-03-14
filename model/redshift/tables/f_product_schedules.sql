@@ -7,11 +7,6 @@ TABLE_VERSION 3
 
 DROP TABLE IF EXISTS f_product_schedules;
 
-DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_product_schedules';
-
-INSERT INTO sys_sixcrm.sys_table_version
-     SELECT 'f_product_schedules',3,getdate();
-
 CREATE TABLE IF NOT EXISTS f_product_schedules
 (
   transactions_id  VARCHAR(36) ENCODE ZSTD,

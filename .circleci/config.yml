@@ -146,9 +146,6 @@ jobs:
       - run:
           name: Backup DynamoDB
           command:  printenv && node ./deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
-      - run:
-          name: Backup Redshift
-          command:  node ./deployment/redshift/backup_cluster.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
   deploy_serverless:
     <<: *job-defaults
     steps:

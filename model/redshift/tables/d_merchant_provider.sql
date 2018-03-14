@@ -8,12 +8,6 @@ TABLE_VERSION 1
 
 DROP TABLE IF EXISTS d_merchant_provider;
 
-DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='d_merchant_provider';
-
-INSERT INTO sys_sixcrm.sys_table_version
-    SELECT 'd_merchant_provider',1,getdate();
-
-
 CREATE TABLE IF NOT EXISTS d_merchant_provider
 (
   merchant_provider VARCHAR(36),

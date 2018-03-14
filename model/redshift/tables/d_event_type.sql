@@ -7,12 +7,6 @@ TABLE_VERSION 1
 
 DROP TABLE IF EXISTS d_event_type;
 
-DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='d_event_type';
-
-INSERT INTO sys_sixcrm.sys_table_version
-   SELECT 'd_event_type',1,getdate();
-
-
 CREATE TABLE IF NOT EXISTS d_event_type
 (
   event_type varchar(16)

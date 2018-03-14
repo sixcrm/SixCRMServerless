@@ -7,12 +7,6 @@ TABLE_VERSION 3
 
 DROP TABLE IF EXISTS f_transactions;
 
-DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_transactions';
-
-INSERT INTO sys_sixcrm.sys_table_version
-     SELECT 'f_transactions',3,getdate();
-
-
 CREATE TABLE IF NOT EXISTS f_transactions
 (
     id                  VARCHAR(36)  NOT NULL ENCODE ZSTD

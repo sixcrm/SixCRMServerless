@@ -9,12 +9,6 @@ TABLE_VERSION 1
 
 DROP TABLE IF EXISTS f_activity;
 
-DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_activity';
-
-INSERT INTO sys_sixcrm.sys_table_version
-     SELECT 'f_activity',1,getdate();
-
-
 CREATE TABLE IF NOT EXISTS f_activity
 (
   id                   VARCHAR(36)  NOT NULL encode ZSTD,
