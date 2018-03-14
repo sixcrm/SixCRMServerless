@@ -1,4 +1,4 @@
-INSERT INTO f_events (session, type, datetime, account, campaign, product_schedule, affiliate, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
+INSERT INTO analytics.f_events (session, type, datetime, account, campaign, product_schedule, affiliate, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
   ((
    SELECT
       '99999999-999e-44aa-999e-aaa9a99a9999',
@@ -84,4 +84,4 @@ INSERT INTO f_events (session, type, datetime, account, campaign, product_schedu
      fe.subaffiliate_3,
      fe.subaffiliate_4,
      fe.subaffiliate_5
-   FROM f_events fe);
+   FROM analytics.f_events fe);

@@ -1,4 +1,4 @@
-INSERT INTO public.f_transactions (id, datetime, customer, creditcard, merchant_provider, campaign, affiliate, amount, processor_result, account, type, subtype, product_schedule, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
+INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, merchant_provider, campaign, affiliate, amount, processor_result, account, type, subtype, product_schedule, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
   ((
      SELECT
       '99999999-999e-44aa-999e-aaa9a99a9999',
@@ -120,4 +120,4 @@ INSERT INTO public.f_transactions (id, datetime, customer, creditcard, merchant_
      ft.subaffiliate_3,
      ft.subaffiliate_4,
      ft.subaffiliate_5
-   FROM f_transactions ft);
+   FROM analytics.f_transactions ft);
