@@ -312,8 +312,9 @@ class AuroraSchemaDeployment {
     du.debug('Execute Query');
 
     if (_.contains(['local', 'local-docker', 'circle'], global.SixCRM.configuration.stage)) { // Technical Debt: This REALLY shouldn't be hardcoded here.
-      query = this.transformQuery(query);
+
       du.info(query);
+
     }
 
     return auroraContext.withConnection((connection => {
@@ -335,32 +336,6 @@ class AuroraSchemaDeployment {
       return 'TRUNCATE TABLE ' + table_name + ';';
 
     });
-
-  }
-
-  transformQuery(query) {
-    /* Transforms query to PostgreSQL format by clearing Aurora specifics */
-
-    return arrayutilities.map(query.split(/\r?\n/), (data) =>
-      data.replace(/(getdate.*|integer identity.*|DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*|ENCODE[A-Za-z0-9 ]*)(\,)?/, (match, p1, p2) => { // eslint-disable-line no-useless-escape
-
-        if (p2 === ',') {
-          return `${p2}`;
-        } else if (p1.startsWith('encode')) {
-          return ''
-        } else if (p1.startsWith('ENCODE')) {
-          return ''
-        } else if (p1.startsWith('getdate')) {
-          return 'now();'
-        } else if (p1.startsWith('integer identity')) {
-          return 'serial ,'
-        }
-        else {
-          return ';'
-        }
-
-      })
-    ).join('\n');
 
   }
 
