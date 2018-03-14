@@ -1,5 +1,5 @@
 INSERT INTO analytics.f_activity (id, datetime, account, actor, actor_type, action, acted_upon, acted_upon_type, associated_with, associated_with_type)
-  ((
+(
      SELECT
        '7217bd5d-ab4b-4bfc-a5c5-a853a9b72cc1',
        timestamp'2017-01-01 10:06:54.000000',
@@ -70,7 +70,7 @@ INSERT INTO analytics.f_activity (id, datetime, account, actor, actor_type, acti
        'rama@damunaste.org',
        'notificationread',
        null,
-       null)
+       null
    EXCEPT
    SELECT
      fa.id,

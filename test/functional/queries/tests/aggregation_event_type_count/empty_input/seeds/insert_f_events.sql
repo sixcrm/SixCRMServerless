@@ -1,5 +1,5 @@
 INSERT INTO analytics.f_events (session, type, datetime, account, campaign, product_schedule, affiliate, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
-  ((
+(
    SELECT
       '99999999-999e-44aa-999e-aaa9a99a9999',
       'lead'::analytics.d_event_type,
@@ -83,7 +83,6 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
       '',
       '',
       ''
-   )
    EXCEPT
    SELECT
      fe.session,
