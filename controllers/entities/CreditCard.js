@@ -86,7 +86,7 @@ class creditCardController extends entityController {
 
     assureCreditCard(creditcard){
 
-      du.debug('Assure Credit Card');
+      du.debug('Assure Credit Card', creditcard);
 
       const encryptedNumber = this.encryptAttributes(creditcard).number;
 
