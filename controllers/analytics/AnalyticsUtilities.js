@@ -98,9 +98,9 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
           let transformation_function = this.getTransformationFunction(query_name);
 
-          const redshiftContext = global.SixCRM.getResource('redshiftContext');
+          const auroraContext = global.SixCRM.getResource('auroraContext');
 
-          return this.cacheController.useCache(query, () => redshiftContext.connection.queryWithArgs(query, []).then(result => result.rows))
+          return this.cacheController.useCache(query, () => auroraContext.connection.queryWithArgs(query, []).then(result => result.rows))
             .then((results) => transformation_function(results, parameters))
             .then((transformed_results) => {
               return resolve(transformed_results);

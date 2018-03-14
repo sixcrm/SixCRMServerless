@@ -44,7 +44,7 @@ FROM
                     ELSE NULL
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
-   FROM f_events fe
+   FROM analytics.f_events fe
    WHERE 1=1
      {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -63,7 +63,7 @@ RIGHT OUTER JOIN
                 END) decline_count,
           affiliate,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
-   FROM f_transactions
+   FROM analytics.f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'

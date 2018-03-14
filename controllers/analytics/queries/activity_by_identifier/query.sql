@@ -8,7 +8,7 @@ SELECT
   coalesce(fa.acted_upon_type,'') AS acted_upon_type,
   coalesce(fa.associated_with,'') AS associated_with,
   coalesce(fa.associated_with_type,'') AS associated_with_type
-FROM f_activity fa
+FROM analytics.f_activity fa
 WHERE 1=1
   {{filter}}
   AND ((actor IN ({{actor}}) AND actor_type IN ({{actor_type}})) OR (acted_upon IN ({{acted_upon}}) AND acted_upon_type IN ({{acted_upon_type}})) OR (associated_with IN ({{associated_with}}) AND associated_with_type IN ({{associated_with_type}})))
