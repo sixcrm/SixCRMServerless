@@ -11,7 +11,7 @@ class AuroraSchemaDeployment {
 
   constructor() {
 
-    this.table_direcotries = ['schemas', 'tables'];
+    this.table_directories = ['schemas', 'tables'];
 
   }
 
@@ -19,7 +19,7 @@ class AuroraSchemaDeployment {
 
     du.debug('Deploy Aurora tables');
 
-    let deployment_promises = arrayutilities.map(this.table_direcotries, (directory) => {
+    let deployment_promises = arrayutilities.map(this.table_directories, (directory) => {
 
       return () => this.deployDirectorySQL(directory);
 
@@ -263,7 +263,7 @@ class AuroraSchemaDeployment {
 
     du.debug('Purge');
 
-    let directory_purge_promises = arrayutilities.map(this.table_direcotries, (directory) => {
+    let directory_purge_promises = arrayutilities.map(this.table_directories, (directory) => {
 
       return () => this.purgeTableDirectory(directory);
 
