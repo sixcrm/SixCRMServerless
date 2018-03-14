@@ -7,7 +7,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
-const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
+const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
 
 module.exports = class graphController extends authenticatedController {
 
@@ -25,8 +25,8 @@ module.exports = class graphController extends authenticatedController {
 
     du.debug('GraphController.preamble()');
 
-    global.SixCRM.setResource('redshiftContext', redshiftContext);
-    return redshiftContext.init();
+    global.SixCRM.setResource('auroraContext', auroraContext);
+    return auroraContext.init();
 
   }
 
@@ -48,8 +48,8 @@ module.exports = class graphController extends authenticatedController {
 
     du.debug('GraphController.epilogue()');
 
-    global.SixCRM.getResource('redshiftContext');
-    return redshiftContext.dispose();
+    global.SixCRM.getResource('auroraContext');
+    return auroraContext.dispose();
 
   }
 

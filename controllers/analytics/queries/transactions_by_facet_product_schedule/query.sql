@@ -56,7 +56,7 @@ FROM
                 sum(count(*))
                 OVER ( )    AS all_transactions_count,
                 sum(amount) AS transactions_amount
-              FROM f_transactions
+              FROM analytics.f_transactions
               WHERE 1 = 1
                     {{filter}}
                     AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -74,7 +74,7 @@ FROM
        1           AS all_transactions_count,
        sum(amount) AS transactions_amount,
        sum(amount) AS all_transactions_amount
-     FROM f_transactions
+     FROM analytics.f_transactions
      WHERE 1 = 1
            {{filter}}
            AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'

@@ -16,7 +16,7 @@ with EVENTS_SUB1 as (SELECT subaffiliate_1 as subaffiliate,
                     ELSE 0
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
-   FROM f_events fe
+   FROM analytics.f_events fe
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -42,7 +42,7 @@ EVENTS_SUB2 as (SELECT subaffiliate_2 as subaffiliate,
                     ELSE 0
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
-   FROM f_events fe
+   FROM analytics.f_events fe
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -70,7 +70,7 @@ EVENTS_SUB3 as (SELECT subaffiliate_3 as subaffiliate,
                     ELSE 0
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
-   FROM f_events fe
+   FROM analytics.f_events fe
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -98,7 +98,7 @@ EVENTS_SUB4 as (SELECT subaffiliate_4 as subaffiliate,
                     ELSE 0
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
-   FROM f_events fe
+   FROM analytics.f_events fe
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -126,7 +126,7 @@ EVENTS_SUB5 as (SELECT subaffiliate_5 as subaffiliate,
                     ELSE 0
                 END) count_sales,
           DATE_TRUNC('{{period}}',datetime) AS {{period}}
-   FROM f_events fe
+   FROM analytics.f_events fe
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -148,7 +148,7 @@ TRANSACTIONS_SUB1 AS (SELECT sum(amount) sum_amount,
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_1
-   FROM f_transactions
+   FROM analytics.f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -168,7 +168,7 @@ TRANSACTIONS_SUB2 AS (SELECT sum(amount) sum_amount,
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_2
-   FROM f_transactions
+   FROM analytics.f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -190,7 +190,7 @@ TRANSACTIONS_SUB3 AS (SELECT sum(amount) sum_amount,
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_3
-   FROM f_transactions
+   FROM analytics.f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -212,7 +212,7 @@ TRANSACTIONS_SUB4 AS (SELECT sum(amount) sum_amount,
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_4
-   FROM f_transactions
+   FROM analytics.f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -234,7 +234,7 @@ TRANSACTIONS_SUB5 AS (SELECT sum(amount) sum_amount,
                 END) decline_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_5 as subaffiliate
-   FROM f_transactions
+   FROM analytics.f_transactions
    WHERE 1=1
     {{filter}}
      AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'

@@ -35,7 +35,7 @@ FROM (
         ELSE 0
         END) m_upsell
   FROM
-    f_events
+    analytics.f_events
   WHERE 1=1
     {{filter}}
   AND   datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'

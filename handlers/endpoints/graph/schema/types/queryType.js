@@ -125,7 +125,6 @@ let transactionOverviewType =  require('./analytics/transactionOverviewType');
 let eventFunnelType =  require('./analytics/eventFunnelType');
 let campaignDeltaType =  require('./analytics/campaignDeltaType');
 let campaignsByAmountType =  require('./analytics/campaignsByAmountType');
-let listBINsType =  require('./analytics/listBINsType');
 let binType = require('./bin/BINType');
 
 /* Reports */
@@ -143,7 +142,6 @@ let transactionsByFacetType =  require('./analytics/transactionsByFacetType');
 let analyticsFilterInputType = require('./analytics/filterInputType');
 let analyticsPaginationInputType = require('./analytics/paginationInputType');
 let analyticsActivityFilterInputType = require('./analytics/activityFilterInputType');
-let analyticsBINFilterInputType = require('./analytics/BINFilterInputType');
 
 let entitySearchInputType = require('./entity/searchInputType');
 let paginationInputType = require('./pagination/paginationInputType');
@@ -622,19 +620,6 @@ module.exports.graphObj = new GraphQLObjectType({
               return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderSummaries');
 
             }
-				},
-				listbins: {
-						type: listBINsType.graphObj,
-						args: {
-								binfilter: { type: analyticsBINFilterInputType.graphObj },
-								cache: {type: cacheInputType.graphObj},
-								pagination: {type: analyticsPaginationInputType.graphObj}
-						},
-						resolve: function(root, args){
-							const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-							return analyticsController.executeAnalyticsFunction(args, 'getBINList');
-					}
 				},
         bin: {
             type: binType.graphObj,

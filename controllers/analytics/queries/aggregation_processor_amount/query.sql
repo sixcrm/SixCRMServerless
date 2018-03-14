@@ -8,7 +8,7 @@ FROM
     SELECT
       *
     FROM
-      f_transactions
+      analytics.f_transactions
     WHERE 1=1
       {{filter}}
       AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -19,8 +19,8 @@ FROM
       processor_result,
       DATE_TRUNC('{{period}}',datetime) rt_datetime
     FROM
-      d_datetime,
-      d_processor_result
+      analytics.d_datetime,
+      analytics.d_processor_result
     GROUP BY
       processor_result,
       DATE_TRUNC('{{period}}',datetime)

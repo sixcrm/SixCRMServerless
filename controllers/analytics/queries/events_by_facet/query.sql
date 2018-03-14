@@ -38,7 +38,7 @@ FROM
                 count(*)    AS events_count,
                 sum(count(*))
                 OVER ( )    AS all_events_count
-              FROM f_events
+              FROM analytics.f_events
               WHERE 1 = 1
                     {{filter}}
                     AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -54,7 +54,7 @@ FROM
        'none'      AS {{facet}},
        count(*)    AS events_count,
        {{offset}}           AS all_events_count
-     FROM f_events
+     FROM analytics.f_events
      WHERE 1 = 1
            {{filter}}
            AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'

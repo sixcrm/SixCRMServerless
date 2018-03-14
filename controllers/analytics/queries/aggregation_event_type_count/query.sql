@@ -7,7 +7,7 @@ FROM
     SELECT
       *
     FROM
-      f_events
+      analytics.f_events
     WHERE 1=1
       {{filter}}
       AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -18,8 +18,8 @@ FROM
       event_type,
       DATE_TRUNC('{{period}}',datetime) rt_datetime
     FROM
-      d_datetime,
-      d_event_type
+      analytics.d_datetime,
+      analytics.d_event_type
     GROUP BY
       event_type,
       DATE_TRUNC('{{period}}',datetime)

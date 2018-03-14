@@ -1,7 +1,7 @@
 SELECT
   id_rebill,
   sum(amount) AS amount
-FROM f_rebills
+FROM analytics.f_rebills
 WHERE 1=1
   {{filter}}
   AND ( current_queuename = {{queuename}} OR previous_queuename = {{queuename}} )

@@ -196,27 +196,18 @@ class AuroraSchemaDeployment {
 
     let table_drop_queries_promise = this.getTableDropQueries();
 
-    let schema_drop_queries_promise = this.getSchemaDropQueries();
-
     return Promise.all([
-      table_drop_queries_promise,
-      schema_drop_queries_promise
+      table_drop_queries_promise
     ]).then((resolved_promises) => {
 
       let table_drop_queries = resolved_promises[0];
-      let schema_drop_queries = resolved_promises[1];
 
       arrayutilities.isArray(table_drop_queries, true);
-      arrayutilities.isArray(schema_drop_queries, true);
 
       let merged_queries_array = [];
 
       if (table_drop_queries.length > 0) {
         merged_queries_array = arrayutilities.merge(merged_queries_array, table_drop_queries);
-      }
-
-      if (schema_drop_queries.length > 0) {
-        merged_queries_array = arrayutilities.merge(merged_queries_array, schema_drop_queries);
       }
 
       if (merged_queries_array.length > 0) {
@@ -241,24 +232,6 @@ class AuroraSchemaDeployment {
         let table_name = this.getTableNameFromFilename(table_filename);
 
         return 'DROP TABLE IF EXISTS ' + table_name + ';';
-
-      });
-
-    });
-
-  }
-
-  getSchemaDropQueries() {
-
-    du.debug('Get Schema Drop Queries');
-
-    return this.getTableFilenames('schemas').then((schema_filenames) => {
-
-      return arrayutilities.map(schema_filenames, (schema_filename) => {
-
-        let schema_name = this.getTableNameFromFilename(schema_filename);
-
-        return 'DROP SCHEMA IF EXISTS ' + schema_name + ' CASCADE;';
 
       });
 

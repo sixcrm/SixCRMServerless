@@ -48,7 +48,7 @@ FROM
                     WHEN type ='order' THEN 1
                     ELSE NULL
                 END) count_sales
-   FROM f_events fe
+   FROM analytics.f_events fe
    WHERE 1=1
     {{filter}}
    AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
@@ -65,7 +65,7 @@ RIGHT OUTER JOIN
                     ELSE NULL
                 END) decline_count,
           affiliate
-   FROM f_transactions
+   FROM analytics.f_transactions
    WHERE 1=1
     {{filter}}
    AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'
