@@ -1254,10 +1254,166 @@ describe('workers/forwardMessage', () => {
     });
 
   });
+  describe('handleWorkerResponseObjects', () => {
+
+      before(() => {
+          mockery.enable({
+              useCleanCache: true,
+              warnOnReplace: false,
+              warnOnUnregistered: false
+          });
+      });
+
+      afterEach(() => {
+          mockery.resetCache();
+          mockery.deregisterAll();
+      });
+
+      it('successfully handles a worker response objects', () => {
+
+          let compound_worker_response_object = getValidCompoundWorkerResponse('success', getValidMessage());
+
+          mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+              deleteMessage: ({queue, receipt_handle}) => {
+                  expect(queue).to.equal('some_success_queue');
+
+                  return Promise.resolve(true);
+              }
+          });
+
+          const forwardMessageController = new ForwardMessageController();
+
+          forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
+          forwardMessageController.parameters.set('workerresponses', [compound_worker_response_object]);
+
+          return forwardMessageController.handleWorkerResponseObjects().then(result => {
+
+              expect(result).to.deep.equal([compound_worker_response_object]);
+
+          });
+
+      });
+
+  });
+
+  describe('validateWorkerResponseObject', () => {
+
+      before(() => {
+          mockery.enable({
+              useCleanCache: true,
+              warnOnReplace: false,
+              warnOnUnregistered: false
+          });
+      });
+
+      afterEach(() => {
+          mockery.resetCache();
+          mockery.deregisterAll();
+      });
+
+      it('successfully validates a worker response', () => {
+
+          let compound_worker_response_object = getValidCompoundWorkerResponse('success', getValidMessage());
+
+          const forwardMessageController = new ForwardMessageController();
+
+          forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
+          forwardMessageController.parameters.set('workerresponses', [compound_worker_response_object]);
+
+          return forwardMessageController.validateWorkerResponseObject(compound_worker_response_object).then(result => {
+
+              expect(result).to.equal(compound_worker_response_object);
+
+          });
+
+      });
+
+      it('fails to validates a worker response', () => {
+
+          let compound_worker_response_object = getValidCompoundWorkerResponse('fail', getValidMessage());
+
+          const forwardMessageController = new ForwardMessageController();
+
+          forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
+          forwardMessageController.parameters.set('workerresponses', [compound_worker_response_object]);
+
+          //any class that is not a WorkerResponse class
+          let mock_dummy_class = class DummyClass{
+              constructor(){}
+          };
+
+          compound_worker_response_object.worker_response_object = new mock_dummy_class;
+
+          try {
+              forwardMessageController.validateWorkerResponseObject(compound_worker_response_object)
+          } catch (error) {
+              expect(error.message).to.deep.equal('[500] Unrecognized worker response: ' + compound_worker_response_object);
+          }
+      });
+
+  });
 
   describe('execute', () => {
 
-    xit('successful', () => {});
+      before(() => {
+          mockery.enable({
+              useCleanCache: true,
+              warnOnReplace: false,
+              warnOnUnregistered: false
+          });
+      });
+
+      afterEach(() => {
+          mockery.resetCache();
+          mockery.deregisterAll();
+      });
+
+      it('successful', () => {
+
+          let messages = getValidMessages();
+
+          let mock_worker = getValidMockWorker();
+
+          let compound_worker_response_object = getValidCompoundWorkerResponse('success', getValidMessage());
+
+          mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
+
+          //does not invoke additional lambda when not required
+          mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
+              invokeFunction: () => {
+                  expect.fail();
+              }
+          });
+
+          const forwardMessageController = new ForwardMessageController();
+
+          forwardMessageController.sqsutilities = {
+              receiveMessages: ({queue, limit}) => {
+                  expect(queue).to.equal('some_success_queue');
+                  expect(limit).to.equal(forwardMessageController.message_limit);
+
+                  return Promise.resolve(messages);
+              },
+              deleteMessage: ({queue, receipt_handle}) => {
+
+                  expect(queue).to.equal('some_success_queue');
+                  expect(receipt_handle).to.equal(messages[0].ReceiptHandle);
+
+                  return Promise.resolve(true);
+              }
+          };
+
+          forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'aWorker.js'});
+          forwardMessageController.parameters.set('workerresponses', [compound_worker_response_object]);
+          forwardMessageController.parameters.set('messages', messages);
+
+          let RelayResponse = global.SixCRM.routes.include('workers', 'components/RelayResponse.js');
+          let relay_response = new RelayResponse('success');
+
+          return forwardMessageController.execute().then((result) => {
+              expect(result).to.deep.equal(relay_response);
+          });
+      });
 
   });
 
