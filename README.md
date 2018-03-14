@@ -115,9 +115,7 @@ Scripts:
  - Create a cluster:
  `node ./deployment/redshift/create_cluster.js {stage}`
  - Create tables:
-  `node ./deployment/redshift/deploy_redshift_tables.js {stage}`
- - Deploy migration scripts:
-  `node ./deployment/redshift/deploy_migration.js {stage}`  
+  `node ./deployment/redshift/deploy_redshift_tables.js {stage}` 
  - Truncate all tables:
   `node ./deployment/redshift/purge_redshift.js {stage}`
  - Seed static data:

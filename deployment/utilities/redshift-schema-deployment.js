@@ -18,9 +18,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     super();
 
-    this.non_versioned_table_direcotries = ['schemas', 'system'];
-
-    this.versioned_table_directories = ['tables'];
+    this.non_versioned_table_direcotries = ['schemas', 'tables'];
 
   }
 
@@ -30,7 +28,6 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     //Note:  Aldo, please see structure herein
     return this.deployNonVersionedTables()
-      .then(() => this.deployVersionedTables())
       .then(() => {
         return 'Complete';
       });
@@ -43,7 +40,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     let deployment_promises = arrayutilities.map(this.non_versioned_table_direcotries, (directory) => {
 
-      return () => this.deployDirectorySQL(directory, false);
+      return () => this.deployDirectorySQL(directory);
 
     });
 
@@ -53,26 +50,12 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  deployVersionedTables() {
-
-    du.debug('Deploy Versioned Tables');
-
-    let deployment_promises = arrayutilities.map(this.versioned_table_directories, (directory) => {
-
-      return this.deployDirectorySQL(directory);
-
-    });
-
-    return Promise.all(deployment_promises);
-
-  }
-
-  deployDirectorySQL(directory, versioned) {
+  deployDirectorySQL(directory) {
 
     du.debug('Deploy Directory SQL');
 
     return this.getDirectorySQLFilepaths(directory)
-      .then((filepaths) => this.getQueries(filepaths, versioned))
+      .then((filepaths) => this.getQueries(filepaths))
       .then((queries) => this.executeQueries(queries))
       .then((result) => {
 
@@ -104,14 +87,14 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  getQueries(query_filepaths, versioned) {
+  getQueries(query_filepaths) {
 
     du.debug('Get Queries');
 
     let queries = [];
 
     let query_promises = arrayutilities.map(query_filepaths, (filepath) => {
-      return () => this.getQueryFromPath(filepath, versioned).then((query) => {
+      return () => this.getQueryFromPath(filepath).then((query) => {
         queries.push(query);
         return true;
       });
@@ -123,44 +106,13 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  getQueryFromPath(filepath, versioned) {
+  getQueryFromPath(filepath) {
 
     du.debug('Get Query From Path');
 
-    if (_.isUndefined(versioned)) {
-      versioned = true;
-    }
-
     return fileutilities.getFileContents(filepath).then((query) => {
 
-      if (!versioned) {
-
-        du.highlight('Non-versioned query: ');
-        du.info(query);
-
-        return Promise.resolve(query);
-
-      }
-
-      return this.determineTableVersion(filepath).then((versions) => {
-
-        let version_in_database = versions[0];
-        let local_version = versions[1];
-
-        du.debug(
-          'filepath: ' + filepath,
-          'Database Version Number: ' + version_in_database,
-          'File Version Number ' + local_version);
-
-        if (version_in_database < local_version) {
-
-          return Promise.resolve(query);
-
-        }
-
-        return Promise.resolve('');
-
-      });
+      return Promise.resolve(query);
 
     });
 
@@ -309,7 +261,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
       let query_promises = arrayutilities.map((filepaths), (filepath) => {
 
-        return this.getQueryFromPath(filepath, false);
+        return this.getQueryFromPath(filepath);
 
       });
 
@@ -399,7 +351,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Purge');
 
-    let directory_purge_promises = arrayutilities.map(this.versioned_table_directories, (directory) => {
+    let directory_purge_promises = arrayutilities.map(this.non_versioned_table_direcotries, (directory) => {
 
       return () => this.purgeTableDirectory(directory);
 
