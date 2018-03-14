@@ -1,8 +1,8 @@
 INSERT INTO analytics.f_activity (id, datetime, account, actor, actor_type, action, acted_upon, acted_upon_type, associated_with, associated_with_type)
-  ((
+(
      SELECT
        '7217bd5d-ab4b-4bfc-a5c5-a853a9b72cc1',
-       '2017-03-22 10:52:04',
+       '2017-03-22T10:52:04'::timestamp,
        'd3fa3bf3-7824-49f4-8261-87674482bf1c',
        'rama@damunaste.org',
        'customer',
@@ -14,7 +14,7 @@ INSERT INTO analytics.f_activity (id, datetime, account, actor, actor_type, acti
      UNION ALL
      SELECT
        '8eaf6be9-88f0-48ad-87af-3ece911b3424',
-       '2017-04-10 21:38:21',
+       '2017-04-10T21:38:21'::timestamp,
        'd3fa3bf3-7824-49f4-8261-87674482bf1c',
        'rama@damunaste.org',
        'customer',
@@ -26,7 +26,7 @@ INSERT INTO analytics.f_activity (id, datetime, account, actor, actor_type, acti
      UNION ALL
      SELECT
        'c5638f41-0d0d-403b-9e46-0acb1e537c6b',
-       '2017-01-19 19:39:47',
+       '2017-01-19T19:39:47'::timestamp,
        'd3fa3bf3-7824-49f4-8261-87674482bf1c',
        'rama@damunaste.org',
        'customer',
@@ -38,7 +38,7 @@ INSERT INTO analytics.f_activity (id, datetime, account, actor, actor_type, acti
      UNION ALL
      SELECT
        'a1a93ad8-f207-4ed8-9393-a3b7d7a9d605',
-       '2017-02-23 09:02:17',
+       '2017-02-23T09:02:17'::timestamp,
        'd3fa3bf3-7824-49f4-8261-87674482bf1c',
        'timothy.dalbey@sixcrm.com',
        'user',
@@ -50,7 +50,7 @@ INSERT INTO analytics.f_activity (id, datetime, account, actor, actor_type, acti
      UNION ALL
      SELECT
        '0d9b9166-ca0a-47db-8f63-3e64cb8fb5fd',
-       '2017-01-27 22:13:39',
+       '2017-01-27T22:13:39'::timestamp,
        'd3fa3bf3-7824-49f4-8261-87674482bf1c',
        'rama@damunaste.org',
        'customer',
@@ -62,7 +62,7 @@ INSERT INTO analytics.f_activity (id, datetime, account, actor, actor_type, acti
      UNION ALL
      SELECT
        '25324eaf-80f2-4c87-b696-bb66aa2ee028',
-       '2017-01-16 16:39:34',
+       '2017-01-16T16:39:34'::timestamp,
        'd3fa3bf3-7824-49f4-8261-87674482bf1c',
        'rama@damunaste.org',
        'customer',
@@ -70,7 +70,8 @@ INSERT INTO analytics.f_activity (id, datetime, account, actor, actor_type, acti
        'rama@damunaste.org',
        'notificationread',
        'rama@damunaste.org',
-       'smtpprovider')
+       'smtpprovider'
+
    EXCEPT
    SELECT
      fa.id,

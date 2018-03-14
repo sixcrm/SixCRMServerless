@@ -4,4 +4,4 @@
 
 DROP TYPE IF EXISTS analytics.d_event_type;
 
-CREATE TYPE analytics.d_event_type AS ENUM('click','lead','order','upsell','confirm');
+CREATE TYPE analytics.d_event_type AS ENUM('click','lead','order','upsell','confirm', 'new');
