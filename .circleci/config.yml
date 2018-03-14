@@ -535,7 +535,7 @@ workflows:
           requires:
             - deploy_security_groups
             - deploy_iam
-      - aurora:
+      - deploy_aurora:
           requires:
             - deploy_security_groups
             - deploy_iam
