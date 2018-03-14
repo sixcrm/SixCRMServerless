@@ -15,11 +15,11 @@ FROM
   RIGHT JOIN
   (
     SELECT
-      event_type,
+      e.unnest as event_type,
       DATE_TRUNC('{{period}}',datetime) rt_datetime
     FROM
       analytics.d_datetime,
-      analytics.d_event_type
+      (SELECT unnest(enum_range(NULL::analytics.d_event_type))) e
     GROUP BY
       event_type,
       DATE_TRUNC('{{period}}',datetime)
