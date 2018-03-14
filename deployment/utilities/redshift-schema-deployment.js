@@ -18,7 +18,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     super();
 
-    this.table_direcotries = ['tables'];
+    this.table_directories = ['tables'];
 
   }
 
@@ -38,7 +38,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Deploy Non-Versioned Tables');
 
-    let deployment_promises = arrayutilities.map(this.table_direcotries, (directory) => {
+    let deployment_promises = arrayutilities.map(this.table_directories, (directory) => {
 
       return () => this.deployDirectorySQL(directory);
 
@@ -351,7 +351,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Purge');
 
-    let directory_purge_promises = arrayutilities.map(this.table_direcotries, (directory) => {
+    let directory_purge_promises = arrayutilities.map(this.table_directories, (directory) => {
 
       return () => this.purgeTableDirectory(directory);
 
