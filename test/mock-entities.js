@@ -49,9 +49,11 @@ class MockEntities {
 
   }
 
-  static arrayOfIds(){
+  static arrayOfIds(max){
 
-    let arraycount = randomutilities.randomInt(1, 10);
+    max = (_.isUndefined(max) || _.isNull(max))?10:max;
+
+    let arraycount = randomutilities.randomInt(1, max);
 
     let return_array = [];
 
@@ -1028,6 +1030,16 @@ class MockEntities {
       created_at: timestamp.getISO8601(),
       updated_at: timestamp.getISO8601()
     };
+
+  }
+
+  static getValidTrackers(ids){
+
+    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(), uuidV4()]:ids;
+
+    return arrayutilities.map(ids, id => {
+      return this.getValidTracker(id);
+    });
 
   }
 

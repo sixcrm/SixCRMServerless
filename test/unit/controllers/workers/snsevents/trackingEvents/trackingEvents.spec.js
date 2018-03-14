@@ -2,7 +2,6 @@
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
-
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
@@ -45,6 +44,8 @@ describe('controllers/workers/snsevents/trackingEvents', () => {
     it('successfully executes against cases', () => {
 
       let session  = MockEntities.getValidSession('668ad918-0d09-4116-a6fe-0e8a9eda36f7');
+      let affiliate_ids = MockEntities.arrayOfIds(5);
+      let trackers = MockEntities.getValidTrackers();
 
       let test_cases = [
         {
@@ -66,13 +67,21 @@ describe('controllers/workers/snsevents/trackingEvents', () => {
         mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
           get:()=>{
             return Promise.resolve(session);
+          },
+          getAffiliateIDs:() => {
+            return Promise.resolve(affiliate_ids);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js'), class {
-          constructor(){}
-          handleTracking(){
+        mockery.registerMock(global.SixCRM.routes.path('lib','postback-utilities.js'), {
+          executePostback:() => {
             return Promise.resolve(true);
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
+          listByAffiliate:() => {
+            return Promise.resolve(trackers);
           }
         });
 

@@ -3,14 +3,19 @@ const _ =  require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 module.exports = class TrackerHelperController{
 
-    constructor(){}
+    constructor(){
+
+      this.postbackutilities = global.SixCRM.routes.include('lib', 'postback-utilities.js');
+
+    }
 
     handleTracking(session, data){
 
-      du.debug('Handle Postbacks')
+      du.debug('Handle Tracking')
 
       return this.getAffiliateIDsFromSession(session).then((affiliate_ids) => {
 
@@ -47,7 +52,7 @@ module.exports = class TrackerHelperController{
 
         let affiliate_tracker_executions = [];
 
-        affiliate_ids.forEach((affiliate_id) => {
+        arrayutilities.map(affiliate_ids, (affiliate_id) => {
 
             affiliate_tracker_executions.push(this.executeAffiliateTrackers(affiliate_id, data));
 
@@ -63,33 +68,29 @@ module.exports = class TrackerHelperController{
 
     executeAffiliateTrackers(affiliate_id, data){
 
-        du.debug('Execute Affiliate Trackers');
+      du.debug('Execute Affiliate Trackers');
 
-        if(!_.has(this, 'trackerController')){
-          this.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+      if(!_.has(this, 'trackerController')){
+        this.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+      }
+
+      return this.trackerController.listByAffiliate({affiliate: affiliate_id}).then((trackers) => {
+
+        if(!_.isArray(trackers)){
+
+          du.debug('No trackers associated with this affiliate.');
+
+          return Promise.resolve(null);
+
         }
 
-        return this.trackerController.listByAffiliate({affiliate: affiliate_id}).then((trackers) => {
-
-            if(!_.isArray(trackers)){
-
-                du.debug('No trackers associated with this affiliate.');
-
-                return Promise.resolve(null);
-
-            }
-
-            let tracker_executions = [];
-
-            trackers.forEach((tracker) => {
-
-                tracker_executions.push(this.executeTracker(tracker, data));
-
-            });
-
-            return Promise.all(tracker_executions);
-
+        let tracker_executions = arrayutilities.map(trackers, (tracker) => {
+          return this.executeTracker(tracker, data);
         });
+
+        return Promise.all(tracker_executions);
+
+      });
 
     }
 
@@ -103,11 +104,7 @@ module.exports = class TrackerHelperController{
 
             case 'postback':
 
-              if(!_.has(this, 'trackerController')){
-                this.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
-              }
-
-              return this.trackerController.executePostback(tracker, data).then((result) => {
+              return this.executePostback(tracker, data).then((result) => {
 
                 return resolve(result);
 
@@ -126,6 +123,16 @@ module.exports = class TrackerHelperController{
             }
 
         });
+
+    }
+
+    executePostback(tracker, data){
+
+      du.debug('Execute Postback');
+
+    //Note:  We may want to parse the affiliate that is executing the postback into the data object
+
+      return this.postbackutilities.executePostback(tracker.body, data);
 
     }
 

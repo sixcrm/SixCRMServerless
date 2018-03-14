@@ -4,7 +4,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
-const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
 class TrackingEventsController extends SNSEventController {
@@ -75,6 +74,7 @@ class TrackingEventsController extends SNSEventController {
     let session = this.parameters.get('session');
     let context = this.parameters.get('message').context;
 
+    const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
     let trackerHelperController = new TrackerHelperController();
 
     return trackerHelperController.handleTracking(session, context);

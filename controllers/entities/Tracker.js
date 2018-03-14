@@ -3,9 +3,6 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-//Technical Debt:  This should be a function of the Tracker Helper
-const postbackutilities = global.SixCRM.routes.include('lib', 'postback-utilities.js');
-
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class trackerController extends entityController {
@@ -88,16 +85,6 @@ class trackerController extends entityController {
         }
 
         return null;
-
-    }
-
-    executePostback(tracker, data){
-
-      du.debug('Execute Postback');
-
-    //Note:  We may want to parse the affiliate that is executing the postback into the data object
-
-      return postbackutilities.executePostback(tracker.body, data);
 
     }
 

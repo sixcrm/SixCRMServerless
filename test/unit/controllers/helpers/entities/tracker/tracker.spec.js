@@ -2,7 +2,6 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 function getValidSession() {
@@ -35,7 +34,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             let data = 'Some sample data';
 
-            const trackerHelperController = new TrackerHelperController();
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeAffiliatesTracking(affiliate_ids, data).then((result) => {
                 expect(result).to.equal(null);
@@ -52,13 +52,17 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), {
                 listByAffiliate: () => {
                     return Promise.resolve([{type: 'postback'}]);
-                },
-                executePostback: () => {
-                    return Promise.resolve('sample transaction execution');
                 }
             });
 
-            const trackerHelperController = new TrackerHelperController();
+            mockery.registerMock(global.SixCRM.routes.path('lib','postback-utilities.js'), {
+              executePostback: () => {
+                  return Promise.resolve('sample transaction execution');
+              }
+            });
+
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeAffiliatesTracking(affiliate_ids, data).then((result) => {
                 expect(result).to.deep.equal([['sample transaction execution']]);
@@ -80,7 +84,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
                 }
             });
 
-            const trackerHelperController = new TrackerHelperController();
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeAffiliateTrackers(affiliate_id, data).then((result) => {
                 expect(result).to.equal(null);
@@ -96,13 +101,17 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), {
                 listByAffiliate: () => {
                     return Promise.resolve([{type: 'postback'}]);
-                },
-                executePostback: () => {
-                    return Promise.resolve('sample transaction execution');
                 }
             });
 
-            const trackerHelperController = new TrackerHelperController();
+            mockery.registerMock(global.SixCRM.routes.path('lib','postback-utilities.js'), {
+              executePostback: () => {
+                return Promise.resolve('sample transaction execution');
+              }
+            });
+
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeAffiliateTrackers(affiliate_id, data).then((result) => {
                 expect(result).to.deep.equal(['sample transaction execution']);
@@ -118,13 +127,14 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             let data = 'Some sample data';
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), {
-                executePostback: () => {
-                    return Promise.resolve('sample transaction execution');
-                }
+            mockery.registerMock(global.SixCRM.routes.path('lib','postback-utilities.js'), {
+              executePostback: () => {
+                  return Promise.resolve('sample transaction execution');
+              }
             });
 
-            const trackerHelperController = new TrackerHelperController();
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeTracker(tracker, data).then((result) => {
                 expect(result).to.equal('sample transaction execution');
@@ -137,7 +147,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             let data = 'Some sample data';
 
-            const trackerHelperController = new TrackerHelperController();
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeTracker(tracker, data).then((result) => {
                 expect(result).to.equal(null);
@@ -150,7 +161,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             let data = 'Some sample data';
 
-            const trackerHelperController = new TrackerHelperController();
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeTracker(tracker, data)
                 .catch(error => expect(error.message).to.equal('[500] Unrecognized Tracker type: unexpected type'));
@@ -166,14 +178,15 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, additional_parameters, index) => {
+                queryRecords: () => {
                     return Promise.resolve({
                         Items: [session]
                     });
                 }
             });
 
-            const trackerHelperController = new TrackerHelperController();
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.getAffiliateIDsFromSession(session.id).then((result) => {
                 expect(result).to.deep.equal([
@@ -199,14 +212,15 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, additional_parameters, index) => {
+                queryRecords: () => {
                     return Promise.resolve({
                         Items: [session]
                     });
                 }
             });
 
-            const trackerHelperController = new TrackerHelperController();
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.getAffiliateIDsFromSession(session.id).then((result) => {
                 expect(result).to.deep.equal([
@@ -237,7 +251,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, additional_parameters, index) => {
+                queryRecords: () => {
                     return Promise.resolve({
                         Items: [session]
                     });
@@ -250,13 +264,17 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
                     return Promise.resolve([{
                         type: 'postback' //returns valid tracker type
                     }]);
-                },
-                executePostback: () => {
-                    return Promise.resolve('sample transaction execution');
                 }
             });
 
-            const trackerHelperController = new TrackerHelperController();
+            mockery.registerMock(global.SixCRM.routes.path('lib','postback-utilities.js'), {
+              executePostback: () => {
+                  return Promise.resolve('sample transaction execution');
+              }
+            });
+
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.handleTracking(session.id, data).then((result) => {
                 expect(result).to.deep.equal([['sample transaction execution']]);
@@ -279,7 +297,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, additional_parameters, index) => {
+                queryRecords: () => {
                     return Promise.resolve({
                         Items: [session]
                     });
@@ -295,7 +313,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
                 }
             });
 
-            const trackerHelperController = new TrackerHelperController();
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.handleTracking(session.id, data).then((result) => {
                 expect(result).to.deep.equal([[null]]);
@@ -318,7 +337,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, additional_parameters, index) => {
+                queryRecords: () => {
                     return Promise.resolve({
                         Items: [session]
                     });
@@ -334,7 +353,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
                 }
             });
 
-            const trackerHelperController = new TrackerHelperController();
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.handleTracking(session.id, data).catch((error) => {
                 expect(error.message).to.equal('[500] Unrecognized Tracker type: invalid_tracker_type');
