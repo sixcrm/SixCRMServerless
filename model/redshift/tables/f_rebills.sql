@@ -8,11 +8,6 @@ TABLE_VERSION 2
 
 DROP TABLE IF EXISTS f_rebills;
 
-DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_rebills';
-
-INSERT INTO sys_sixcrm.sys_table_version
-   SELECT 'f_rebills',2,getdate();
-
 CREATE TABLE IF NOT EXISTS f_rebills (
   id_rebill VARCHAR(36),
   current_queuename    VARCHAR(20) NOT NULL ENCODE ZSTD,

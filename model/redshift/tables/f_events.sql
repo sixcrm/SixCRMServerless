@@ -7,12 +7,6 @@ TABLE_VERSION 1
 
 DROP TABLE IF EXISTS f_events;
 
-DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_events';
-
-INSERT INTO sys_sixcrm.sys_table_version
-     SELECT 'f_events',1,getdate();
-
-
 CREATE TABLE IF NOT EXISTS f_events
 (
   session          VARCHAR(36) NOT NULL,

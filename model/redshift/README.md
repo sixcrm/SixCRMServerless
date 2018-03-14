@@ -31,10 +31,6 @@ These are aggregation tables where data is pre-aggregated in batch manner on a r
 
 * `agg_merchant_provider_transactions` - We should fill this daily to aid performance of merchant_provider_summary. The query for filling this is in queries/etl folder. It should be automated
 
-### System table
-* `sys_sixcrm.sys_table_version` - System table of versions of tables in the model necessary for idempotency of the database model
-* `sys_sixcrm.sys_change_log` - System table of versions of migration scripts
----
 ## Loading scripts
 
 Redshift is a pure column store analytical database and as such lacks features for procedural control and optimal data generation. It is intended to be filled from external source. Optimal way of "filling" Redshift is via pregenerated data in S3 buckets.

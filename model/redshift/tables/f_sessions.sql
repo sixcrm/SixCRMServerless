@@ -6,11 +6,6 @@ TABLE_VERSION 1
 
 DROP TABLE IF EXISTS f_sessions;
 
-DELETE FROM sys_sixcrm.sys_table_version WHERE table_name ='f_sessions';
-
-INSERT INTO sys_sixcrm.sys_table_version
-     SELECT 'f_sessions',1,getdate();
-
 /*
 Technical Debt:  completed is now a boolean
 */
