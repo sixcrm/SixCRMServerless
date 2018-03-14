@@ -18,7 +18,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     super();
 
-    this.table_direcotries = ['schemas', 'tables'];
+    this.table_direcotries = ['tables'];
 
   }
 
