@@ -3,7 +3,7 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
    SELECT
       '99999999-999e-44aa-999e-aaa9a99a9999',
       'lead'::analytics.d_event_type,
-      timestamp'2017-01-01 00:00:01.000000',
+      '2017-01-01 00:00:01.000000'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '99999999-999e-44aa-999e-aaa9a99a9999',
       '99999999-999e-44aa-999e-aaa9a99a9999',
@@ -17,7 +17,7 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
    SELECT
       '99999999-999e-44aa-999e-aaa9a99a9999',
       'lead'::analytics.d_event_type,
-      timestamp'2017-01-01 10:00:02.000000',
+      '2017-01-01 10:00:02.000000'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '99999999-999e-44aa-999e-aaa9a99a9999',
       '99999999-999e-44aa-999e-aaa9a99a9999',
@@ -31,7 +31,7 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
    SELECT
       '668ad918-0d09-4116-a6fe-0e8a9eda36f7',
       'lead'::analytics.d_event_type,
-      timestamp'2017-01-01T18:40:41.405Z',
+      '2017-01-01T18:40:41.405Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
       '12529a17-ac32-4e46-b05b-83862843055d',
@@ -45,7 +45,7 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
     SELECT
       '008ad918-0d09-4116-a6fe-0e8a9eda3600',
       'lead'::analytics.d_event_type,
-      timestamp'2017-01-01T18:40:42.405Z',
+      '2017-01-01T18:40:42.405Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
       '8d1e896f-c50d-4a6b-8c84-d5661c16a046',
@@ -59,7 +59,7 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
     SELECT
       '7b556e82-5a4c-4199-b8bc-0d86b3d8b47b',
       'lead'::analytics.d_event_type,
-      timestamp'2017-01-01T18:40:43.405Z',
+      '2017-01-01T18:40:43.405Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
       '2200669e-5e49-4335-9995-9c02f041d91b',
@@ -73,7 +73,7 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
     SELECT
       '7b556e82-5a4c-4199-b8bc-0d86b3d8b47b',
       'lead'::analytics.d_event_type,
-      timestamp'2017-01-01T18:40:44.405Z',
+      '2017-01-01T18:40:44.405Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
       '300848c1-8b83-4b8d-aff9-529ba6459d0f',
