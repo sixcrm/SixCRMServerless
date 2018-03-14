@@ -11,7 +11,7 @@ class AuroraSchemaDeployment {
 
   constructor() {
 
-    this.table_directories = ['schemas', 'tables'];
+    this.table_directories = ['tables'];
 
   }
 
