@@ -165,6 +165,7 @@ let secondaryIdentifierInputType = require('./general/secondaryIdentifierInputTy
 let list_fatal = true;
 let get_fatal = true;
 
+
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
     fields: () => ({
