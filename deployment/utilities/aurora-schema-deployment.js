@@ -11,7 +11,7 @@ class AuroraSchemaDeployment {
 
   constructor() {
 
-    this.table_directories = ['schemas', 'tables'];
+    this.table_directories = ['tables'];
 
   }
 
@@ -25,15 +25,22 @@ class AuroraSchemaDeployment {
 
     });
 
-    return arrayutilities.serial(deployment_promises).then(() => {
+    return this.getQueryFromPath(global.SixCRM.routes.path('model', `aurora/before/schema/${process.env.stage}.sql`))
+      .then((query) => auroraContext.withConnection((connection => {
 
-      return true;
+        return connection.query(query);
 
-    }).then(() => {
+      })))
+      .then(() => arrayutilities.serial(deployment_promises)).then(() => {
 
-      return 'Complete';
+        return true;
 
-    });
+      })
+      .then(() => {
+
+        return 'Complete';
+
+      });
 
   }
 
@@ -317,7 +324,7 @@ class AuroraSchemaDeployment {
 
     du.debug('Get Table Filenames');
 
-    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', 'redshift/' + directory)).then((files) => {
+    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', 'aurora/' + directory)).then((files) => {
 
       files = files.filter(file => file.match(/\.sql$/));
 
@@ -359,7 +366,7 @@ class AuroraSchemaDeployment {
   }
 
   transformQuery(query) {
-    /* Transforms query to PostgreSQL format by clearing Redshift specifics */
+    /* Transforms query to PostgreSQL format by clearing Aurora specifics */
 
     return arrayutilities.map(query.split(/\r?\n/), (data) =>
       data.replace(/(getdate.*|integer identity.*|DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*|ENCODE[A-Za-z0-9 ]*)(\,)?/, (match, p1, p2) => { // eslint-disable-line no-useless-escape
@@ -384,7 +391,7 @@ class AuroraSchemaDeployment {
 
   }
 
-  getTableNameFromFilename(filename){
+  getTableNameFromFilename(filename) {
 
     du.debug('Get Table Name From Filename');
 

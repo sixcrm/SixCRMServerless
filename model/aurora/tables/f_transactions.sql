@@ -2,10 +2,9 @@
 23.02.2017 J.C.Lozano Initial table definition @ aurora db
 */
 
-DROP TABLE IF EXISTS f_transactions;
+DROP TABLE IF EXISTS analytics.f_transactions;
 
-
-CREATE TABLE IF NOT EXISTS f_transactions
+CREATE TABLE IF NOT EXISTS analytics.f_transactions
 (
     id                  VARCHAR(36)  NOT NULL PRIMARY KEY,
     datetime            TIMESTAMP     NOT NULL,
@@ -17,8 +16,8 @@ CREATE TABLE IF NOT EXISTS f_transactions
     amount              NUMERIC(8, 2) NOT NULL,
     processor_result    VARCHAR(16)   NOT NULL,
     account             VARCHAR(36)  NOT NULL,
-    type    ENUM('click', 'lead', 'order', 'upsell', 'confirm'),
-    subtype VARCHAR(10)   NOT NULL,
+    "type"              analytics.d_event_type,
+    subtype             VARCHAR(10)   NOT NULL,
     product_schedule    VARCHAR(36) ,
     subaffiliate_1      VARCHAR(36),
     subaffiliate_2      VARCHAR(36),

@@ -3,7 +3,7 @@
   "Engine": "aurora-postgresql",
   "AvailabilityZones": ["{{region}}a","{{region}}b","{{region}}c"],
   "BackupRetentionPeriod": 7,
-  "DatabaseName": "analytics",
+  "DatabaseName": "postgres",
   "EnableIAMDatabaseAuthentication": false,
   "EngineVersion": "9.6.3",
   "Port": 5432,
