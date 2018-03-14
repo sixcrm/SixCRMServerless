@@ -8,11 +8,11 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 
-class RDSClusterDeployment {
+class AuroraClusterDeployment {
 
   constructor() {
 
-    this._rdsutilities = global.SixCRM.routes.include('lib', 'rds-utilities.js');
+    this._rdsUtilities = global.SixCRM.routes.include('lib', 'rds-utilities.js');
 
   }
 
@@ -27,7 +27,7 @@ class RDSClusterDeployment {
         parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
         parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
 
-        return this._rdsutilities.putCluster(parameters).then(data => {
+        return this._rdsUtilities.putCluster(parameters).then(data => {
 
           du.info(data);
 
@@ -56,7 +56,7 @@ class RDSClusterDeployment {
 
     du.debug('Get Parameter Configuration From File.');
 
-    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'rds/config/')).then(directory_files => {
+    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'aurora/config/')).then(directory_files => {
 
       let dpcf = arrayutilities.find(directory_files, (directory_file) => {
         return (directory_file == global.SixCRM.configuration.stage + '.json');
@@ -64,7 +64,7 @@ class RDSClusterDeployment {
 
       dpcf = (_.isUndefined(dpcf) || _.isNull(dpcf)) ? 'default.json' : dpcf;
 
-      return global.SixCRM.routes.include('deployment', 'rds/config/' + dpcf);
+      return global.SixCRM.routes.include('deployment', 'aurora/config/' + dpcf);
 
     });
 
@@ -75,7 +75,7 @@ class RDSClusterDeployment {
     du.debug('Parse Parameters');
 
     let parser_data = {
-      region: this._rdsutilities.getRegion(),
+      region: this._rdsUtilities.getRegion(),
       stage: global.SixCRM.configuration.stage,
       account: global.SixCRM.configuration.site_config.aws.account
     };
@@ -108,7 +108,7 @@ class RDSClusterDeployment {
 
       let instance_parameters = this._parseParameters(instance);
 
-      return this._rdsutilities.putDBInstance(instance_parameters);
+      return this._rdsUtilities.putDBInstance(instance_parameters);
 
     });
 
@@ -122,4 +122,4 @@ class RDSClusterDeployment {
 
 }
 
-module.exports = new RDSClusterDeployment();
+module.exports = new AuroraClusterDeployment();

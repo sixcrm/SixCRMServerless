@@ -1,22 +1,15 @@
 'use strict';
 
 const _ = require('underscore');
-const fs = require('fs');
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
-const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
-const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
-const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
+const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
 
-class RedshiftSchemaDeployment extends RedshiftDeployment {
+class AuroraSchemaDeployment {
 
   constructor() {
-
-    super();
 
     this.table_direcotries = ['schemas', 'tables'];
 
@@ -24,19 +17,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   deployTables() {
 
-    du.debug('Deploy Redshift tables');
-
-    //Note:  Aldo, please see structure herein
-    return this.deployNonVersionedTables()
-      .then(() => {
-        return 'Complete';
-      });
-
-  }
-
-  deployNonVersionedTables() {
-
-    du.debug('Deploy Non-Versioned Tables');
+    du.debug('Deploy Aurora tables');
 
     let deployment_promises = arrayutilities.map(this.table_direcotries, (directory) => {
 
@@ -45,14 +26,20 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
     });
 
     return arrayutilities.serial(deployment_promises).then(() => {
+
       return true;
+
+    }).then(() => {
+
+      return 'Complete';
+
     });
 
   }
 
   deployDirectorySQL(directory) {
 
-    du.debug('Deploy Directory SQL');
+    du.debug('Deploy Aurora SQL');
 
     return this.getDirectorySQLFilepaths(directory)
       .then((filepaths) => this.getQueries(filepaths))
@@ -69,7 +56,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.highlight('Get Directory SQL Filepaths');
 
-    let directory_filepath = global.SixCRM.routes.path('model', 'redshift/' + directory);
+    let directory_filepath = global.SixCRM.routes.path('model', 'aurora/' + directory);
 
     return fileutilities.getDirectoryFiles(directory_filepath).then((files) => {
 
@@ -87,13 +74,13 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
-  getQueries(query_filepaths) {
+  getQueries(queryFilepaths) {
 
     du.debug('Get Queries');
 
     let queries = [];
 
-    let query_promises = arrayutilities.map(query_filepaths, (filepath) => {
+    let query_promises = arrayutilities.map(queryFilepaths, (filepath) => {
       return () => this.getQueryFromPath(filepath).then((query) => {
         queries.push(query);
         return true;
@@ -131,7 +118,9 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       }
 
       return () => {
+
         return Promise.resolve(null);
+
       };
 
     });
@@ -173,83 +162,6 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       .then(() => {
         return 'Complete';
       });
-
-  }
-
-  seed_referential() {
-
-    du.debug('Seed Referential data');
-
-    return this.seedDateDatabase()
-      .then(() => {
-        return 'Complete';
-      });
-
-  }
-
-  seedDateDatabase() {
-
-    du.debug('Seed Date Database');
-
-    return this.uploadDateDatabaseToS3().then(() => {
-      return this.copyDateDatabaseToRedshift()
-    });
-
-  }
-
-  uploadDateDatabaseToS3() {
-
-    du.debug('Upload Date Database');
-
-    let database_filename = 'd_datetime.csv';
-    let parameters = {
-      Bucket: 'sixcrm-' + global.SixCRM.configuration.stage + '-redshift',
-      Key: database_filename
-    };
-
-    return s3utilities.objectExists(parameters).then((exists) => {
-
-      if (exists) {
-
-        du.debug('Datetime database already exists on S3, skipping.');
-
-        return Promise.resolve();
-
-      } else {
-
-        du.debug('Uploading Date Database to S3 bucket.');
-
-        parameters['Body'] = fs.createReadStream(global.SixCRM.routes.path('model', 'redshift/seed_referential/' + database_filename));
-
-        return s3utilities.putObject(parameters);
-
-      }
-
-    });
-
-  }
-
-  copyDateDatabaseToRedshift() {
-
-    du.debug('Copy Date Database');
-
-    let parse_parameters = {
-      stage: process.env.stage,
-      aws_account_id: global.SixCRM.configuration.getAccountIdentifier()
-    };
-
-    let query_copy = `
-      TRUNCATE TABLE d_datetime;
-      COPY d_datetime
-      FROM 's3://sixcrm-{{stage}}-redshift/d_datetime.csv'
-      credentials 'aws_iam_role=arn:aws:iam::{{aws_account_id}}:role/sixcrm_redshift_copy_role'
-      DELIMITER ',';`;
-
-    query_copy = parserutilities.parse(query_copy, parse_parameters);
-
-    du.info(query_copy);
-
-    return this.execute(query_copy);
 
   }
 
@@ -424,7 +336,7 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       du.info(query);
     }
 
-    return redshiftContext.withConnection((connection => {
+    return auroraContext.withConnection((connection => {
 
       return connection.query(query).then(result => result.rows);
 
@@ -472,6 +384,14 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   }
 
+  getTableNameFromFilename(filename){
+
+    du.debug('Get Table Name From Filename');
+
+    return filename.replace('.sql', '');
+
+  }
+
 }
 
-module.exports = new RedshiftSchemaDeployment();
+module.exports = new AuroraSchemaDeployment();

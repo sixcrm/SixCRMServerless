@@ -270,7 +270,7 @@ jobs:
       - run:
           name: Redshift Create Tables
           command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
-  deploy_rds:
+  deploy_aurora:
     <<: *job-defaults
     steps:
       - checkout
@@ -282,8 +282,8 @@ jobs:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
-          name: RDS Create Cluster
-          command: ./tools/changesInDirectory.sh deployment/rds && node ./deployment/rds/deploy_cluster.js || echo "No changes, skipping."
+          name: Aurora Create Cluster
+          command: ./tools/changesInDirectory.sh deployment/aurora && node ./deployment/aurora/deploy_cluster.js || echo "No changes, skipping."
   deploy_kinesis:
     <<: *job-defaults
     steps:
@@ -535,14 +535,14 @@ workflows:
           requires:
             - deploy_security_groups
             - deploy_iam
-      - deploy_rds:
+      - aurora:
           requires:
             - deploy_security_groups
             - deploy_iam
       - deploy_kinesis:
           requires:
             - deploy_redshift
-            - deploy_rds
+            - deploy_aurora
       - post_deployment:
           requires:
             - deploy_serverless
@@ -553,7 +553,7 @@ workflows:
             - deploy_iam
             - deploy_dynamodb
             - deploy_redshift
-            - deploy_rds
+            - deploy_aurora
             - deploy_kinesis
             - deploy_sns
       - seed:
