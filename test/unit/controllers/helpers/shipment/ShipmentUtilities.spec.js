@@ -4,14 +4,8 @@ const chai = require("chai");
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
@@ -51,8 +45,6 @@ function getValidAugmentedTransactionProducts(){
 
 function getValidProducts(product_ids){
 
-  let products = [];
-
   if(_.isUndefined(product_ids)){
     product_ids = [uuidV4(), uuidV4()];
   }
@@ -65,6 +57,27 @@ function getValidProducts(product_ids){
 
 function getValidFulfillmentProvider(){
   return MockEntities.getValidFulfillmentProvider();
+}
+
+function getValidVendorResponse(){
+
+    const VendorResponse = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/Hashtag/Response.js');
+
+    return new VendorResponse({
+        vendor_response: {
+            error: null,
+            body: 'Everybody needs somebody.',
+            response: {
+                body:'<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><Int32 xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">1</Int32><warnings xmlns="http://www.JOI.com/schemas/ViaSub.WMS/" /></soap:Body></soap:Envelope>',
+                statusCode:200,
+                statusMessage:'OK'
+            }
+        },
+        action: 'fulfill',
+        additional_parameters: {
+            reference_number: uuidV4()
+        }
+    });
 }
 
 describe('helpers/shipment/ShipmentUtilities.js', () => {
@@ -201,6 +214,22 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
         expect(result).to.equal(true);
         expect(shipmentUtilitiesController.parameters.store['rebill']).to.deep.equal(rebill);
       });
+
+    });
+
+    it('throws error when rebill ID is non-distinct', () => {
+
+      let augmented_transaction_products = getValidAugmentedTransactionProducts();
+
+      let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+      shipmentUtilitiesController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+
+      try {
+          shipmentUtilitiesController.acquireRebillFromTransactions()
+      } catch (error) {
+          expect(error.message).to.equal('[500] Non-distinct rebill ID.');
+      }
 
     });
 
@@ -412,5 +441,81 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
     });
 
   });
+
+    describe('pruneResponse', () => {
+
+        it('prunes response', () => {
+
+            let vendor_response_class = getValidVendorResponse();
+
+            let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+            shipmentUtilitiesController.parameters.set('vendorresponseclass', vendor_response_class);
+
+            expect(shipmentUtilitiesController.pruneResponse()).to.equal(true);
+
+            let vendor_response = shipmentUtilitiesController.parameters.get('vendorresponseclass');
+
+            expect(vendor_response.parameters.store['vendorresponse']).to.be.undefined;
+            expect(vendor_response.parameters.store['response']).to.be.undefined;
+
+        });
+
+    });
+
+    describe('validateResponse', () => {
+
+        it('validates response', () => {
+
+            let vendor_response_class = getValidVendorResponse();
+
+            let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+            shipmentUtilitiesController.parameters.set('vendorresponseclass', vendor_response_class);
+
+            //any valid vendor response validation
+            shipmentUtilitiesController.response_validation = global.SixCRM.routes.path('model', 'providers/shipping/terminal/responses/fulfill.json');
+
+            expect(shipmentUtilitiesController.validateResponse()).to.equal(true);
+
+        });
+
+        it('returns false when response validation is not set', () => {
+
+            let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+            delete shipmentUtilitiesController.response_validation;
+
+            expect(shipmentUtilitiesController.validateResponse()).to.equal(false);
+
+        });
+
+    });
+
+    describe('hydrateShippingReceiptProperties', () => {
+
+        it('hydrates shipping receipt properties', () => {
+
+            let shipping_receipt = getValidShippingReceipt();
+
+            let fulfillment_provider = getValidFulfillmentProvider();
+
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
+                get:({id}) => {
+                    return Promise.resolve(fulfillment_provider);
+                }
+            });
+
+            let shipmentUtilitiesController = new ShipmentUtilitiesController();
+
+            shipmentUtilitiesController.parameters.set('shippingreceipt', shipping_receipt);
+
+            return shipmentUtilitiesController.hydrateShippingReceiptProperties().then((result) => {
+                expect(result).to.equal(true);
+                expect(shipmentUtilitiesController.parameters.store['fulfillmentprovider']).to.deep.equal(fulfillment_provider);
+            });
+        });
+
+    });
 
 });
