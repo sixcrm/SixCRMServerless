@@ -40,15 +40,13 @@ describe('lib/smtp-utilities', () => {
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
 
+    smtputilities.connect = () => {};
+
     expect(objectutilities.getClassName(smtputilities)).to.equal('SMTPUtilities');
 
   });
 
   it('should add default information to connection parameters', () => {
-
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
 
     let connection_options = createValidConnectionObject();
 
@@ -56,6 +54,8 @@ describe('lib/smtp-utilities', () => {
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     connection_options = smtputilities.addDefaults(connection_options);
 
@@ -67,14 +67,12 @@ describe('lib/smtp-utilities', () => {
 
   it('should validate a good connection object', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     let validation_error = null;
 
@@ -90,14 +88,12 @@ describe('lib/smtp-utilities', () => {
 
   it('should fail to validate a connection object (missing hostname)', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     delete connection_options.hostname;
 
@@ -111,14 +107,12 @@ describe('lib/smtp-utilities', () => {
 
   it('should fail to validate a connection object (missing username)', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     delete connection_options.username;
 
@@ -132,14 +126,12 @@ describe('lib/smtp-utilities', () => {
 
   it('should fail to validate a connection object (missing password)', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     delete connection_options.password;
 
@@ -154,14 +146,12 @@ describe('lib/smtp-utilities', () => {
 
   it('should fail to validate a connection object (missing password)', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     delete connection_options.password;
 
@@ -175,15 +165,13 @@ describe('lib/smtp-utilities', () => {
 
   it('should validate a good email object', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let email_object = createValidEmailObject();
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     smtputilities.validateSendObject(email_object);
 
@@ -191,15 +179,13 @@ describe('lib/smtp-utilities', () => {
 
   it('should fail to validate a email object (missing recepient_emails)', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let email_object = createValidEmailObject();
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     delete email_object.recepient_emails;
 
@@ -213,15 +199,13 @@ describe('lib/smtp-utilities', () => {
 
   it('should fail to validate a email object (incorrect recepient_emails formatting)', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let email_object = createValidEmailObject();
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     let bad = [[], '', 'a', 123, {}, false, null, ['randal'], ['test@test'], 'test@test.com', ['test@test.com', ''], ['test@test.com',[]]];
 
@@ -241,15 +225,13 @@ describe('lib/smtp-utilities', () => {
 
   it('should fail to validate a email object (incorrect recepient_name formatting)', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let email_object = createValidEmailObject();
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     let bad = [[], '', 'a', 123, {}, false, null, ['randal']];
 
@@ -269,15 +251,13 @@ describe('lib/smtp-utilities', () => {
 
   it('should fail to validate a email object (incorrect body formatting)', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let email_object = createValidEmailObject();
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     let bad_bodies = [[], '', 'a', 123, {}, false, null];
 
@@ -297,15 +277,13 @@ describe('lib/smtp-utilities', () => {
 
   it('should fail to validate a email object (incorrect subject formatting)', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let email_object = createValidEmailObject();
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     let bad = [[], '', 'a', 123, {}, false, null];
 
@@ -325,14 +303,12 @@ describe('lib/smtp-utilities', () => {
 
   it('should appropriately create the "toString"', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     let escaped_string = smtputilities.createToString(['test@test.com', 'test2@test.com', 'test@test.com']);
 
@@ -342,14 +318,12 @@ describe('lib/smtp-utilities', () => {
 
   it('should appropriately create the "from string"', () => {
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'smtp-utilities.js'), {
-      connect: () => {}
-    });
-
     let connection_options = createValidConnectionObject();
 
     const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
     let smtputilities = new SMTPUtilities(connection_options);
+
+    smtputilities.connect = () => {};
 
     let from_string = smtputilities.createFromString('Testing" at Six', 'test@sixcrm.com');
 
