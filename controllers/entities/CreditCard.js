@@ -88,7 +88,7 @@ class creditCardController extends entityController {
 
       du.debug('Assure Credit Card');
 
-      const encryptedNumber = this.encryptAttribute(creditcard.number);
+      const encryptedNumber = this.encryptAttributes(creditcard).number;
 
       return this.queryBySecondaryIndex({field:'number', index_value: encryptedNumber, index_name: 'number-index'}).then(results => {
 
