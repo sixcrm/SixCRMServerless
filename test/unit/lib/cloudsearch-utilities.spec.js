@@ -4,6 +4,8 @@ const mockery = require('mockery');
 
 describe('lib/cloudsearch-utilities', () => {
 
+    let test_mode_copy;
+
     before(() => {
         mockery.resetCache();
         mockery.deregisterAll();
@@ -25,6 +27,13 @@ describe('lib/cloudsearch-utilities', () => {
 
     });
 
+    beforeEach(() => {
+        test_mode_copy = process.env.TEST_MODE;
+    });
+
+    afterEach(() => {
+        process.env.TEST_MODE = test_mode_copy;
+    });
 
     describe('defineIndexField', () => {
 
@@ -140,30 +149,28 @@ describe('lib/cloudsearch-utilities', () => {
 
     describe('describeDomains', () => {
 
-        xit('describe domains', () => {
+        it('describe domains', () => {
+
+            let valid_domains = getValidDomains();
+
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
-                describeDomains: function() {
-                  return getValidDomains()
-                },
                 describeDomains: function(parameters, callback) {
-                    callback(null, 'success')
+                    callback(null, valid_domains)
                 }
             };
 
             return cloudsearchutilities.describeDomains().then((result) => {
-                expect(result).to.equal('success');
+                expect(result).to.deep.equal(valid_domains);
             });
         });
 
         it('throws error from cs describeDomains', () => {
+
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
-                describeDomains: function() {
-                  return getValidDomains()
-                },
                 describeDomains: function(parameters, callback) {
                     callback('fail', null)
                 }
@@ -175,15 +182,13 @@ describe('lib/cloudsearch-utilities', () => {
         });
     });
 
-    xdescribe('waitFor', () => {
+    describe('waitFor', () => {
 
         it('returns true when status is ready', () => {
+
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
-                describeDomains: function() {
-                  return getValidDomains()
-                },
                 describeDomains: function(parameters, callback) {
                     callback(null, {DomainStatusList: [{Created: true, Processing: false}]})
                 }
@@ -196,14 +201,12 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('returns true when status is deleted', () => {
+
             const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
             cloudsearchutilities.cs = {
-                describeDomains: function() {
-                  return getValidDomains()
-                },
                 describeDomains: function(parameters, callback) {
-                    callback(null, 'success')
+                    callback(null, {})
                 }
             };
 
@@ -494,6 +497,40 @@ describe('lib/cloudsearch-utilities', () => {
             }catch(error){
                 expect(error.message).to.equal('[500] Unable to establish connection to Cloudsearch Document endpoint.');
             }
+        });
+    });
+
+    describe('setDomainName', () => {
+
+        it('successfully sets domain name for test mode', () => {
+
+            process.env.TEST_MODE = 'true';
+
+            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+            let result = cloudsearchutilities.setDomainName();
+
+            expect(result).to.be.true;
+            expect(cloudsearchutilities.domainname).to.equal('cloudsearch.local');
+        });
+    });
+
+    describe('CSDExists', () => {
+
+        it('returns true when CSD exists', () => {
+
+            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+            expect(cloudsearchutilities.CSDExists()).to.be.true;
+        });
+
+        it('returns false when CSD does not exist', () => {
+
+            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+            delete cloudsearchutilities.csd;
+
+            expect(cloudsearchutilities.CSDExists()).to.be.false;
         });
     });
 
