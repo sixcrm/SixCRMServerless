@@ -15,20 +15,20 @@
     "DBInstanceClass": "db.r4.xlarge",
     "Engine": "aurora-postgresql",
     "DBClusterIdentifier":"sixcrm",
-    "PubliclyAccessible":true,
+    "PubliclyAccessible":true
   },
   {
     "DBInstanceIdentifier":"sixcrm-2",
     "DBInstanceClass": "db.r4.xlarge",
     "Engine": "aurora-postgresql",
     "DBClusterIdentifier":"sixcrm",
-    "PubliclyAccessible":true,
+    "PubliclyAccessible":true
   },
   {
     "DBInstanceIdentifier":"sixcrm-3",
     "DBInstanceClass": "db.r4.xlarge",
     "Engine": "aurora-postgresql",
     "DBClusterIdentifier":"sixcrm",
-    "PubliclyAccessible":true,
+    "PubliclyAccessible":true
   }]
 }
