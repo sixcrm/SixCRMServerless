@@ -11,7 +11,20 @@ describe('lib/array-utilities', () => {
 
       arrayutilities.forEach(subject, x => x.foo++)
       expect(subject).to.deep.equal(expected);
-  })
+  });
+
+  it('throws error when second argument is not a function', () => {
+      let subject = [{foo: 1}, {foo: 2}, {foo: 3}];
+      let unexpected_params = ['unexpected_element', '123', '-123', '', 123, 11.22, -123, {}, []];
+
+      unexpected_params.forEach(param => {
+          try{
+              arrayutilities.forEach(subject, param)
+          }catch(error) {
+              expect(error.message).to.equal('[500] ArrayUtilities.forEach iterator is not a function.');
+          }
+      });
+  });
 
   it('flatten', () => {
     expect(arrayutilities.flatten(['a', ['b','c']])).to.deep.equal(['a','b','c']);
