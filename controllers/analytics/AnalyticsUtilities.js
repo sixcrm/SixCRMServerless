@@ -209,7 +209,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
     if (filter_array.length > 0) {
       parameters['filter'] = ' AND ' + filter_array.join(' AND ');
     } else {
-      parameters['filter'] = ' AND 1 '
+      parameters['filter'] = ' AND 1 = 1 '
     }
 
     return parameters;
