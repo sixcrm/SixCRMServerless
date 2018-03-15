@@ -41,7 +41,7 @@ FROM
                     ELSE NULL
                 END) count_partials,
           count(CASE
-                    WHEN type LIKE 'upsell%' THEN 1
+                    WHEN type= 'upsell' THEN 1
                     ELSE NULL
                 END) count_upsell,
           count(CASE

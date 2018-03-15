@@ -8,7 +8,7 @@ with EVENTS_SUB1 as (SELECT subaffiliate_1 as subaffiliate,
                     ELSE 0
                 END) count_partials,
           sum(CASE
-                    WHEN type LIKE 'upsell%' THEN 1
+                    WHEN type= 'upsell' THEN 1
                     ELSE 0
                 END) count_upsell,
           sum(CASE
@@ -34,7 +34,7 @@ EVENTS_SUB2 as (SELECT subaffiliate_2 as subaffiliate,
                     ELSE 0
                 END) count_partials,
           sum(CASE
-                    WHEN type LIKE 'upsell%' THEN 1
+                    WHEN type= 'upsell' THEN 1
                     ELSE 0
                 END) count_upsell,
           sum(CASE
@@ -62,7 +62,7 @@ EVENTS_SUB3 as (SELECT subaffiliate_3 as subaffiliate,
                     ELSE 0
                 END) count_partials,
           sum(CASE
-                    WHEN type LIKE 'upsell%' THEN 1
+                    WHEN type= 'upsell' THEN 1
                     ELSE 0
                 END) count_upsell,
           sum(CASE
@@ -90,7 +90,7 @@ EVENTS_SUB4 as (SELECT subaffiliate_4 as subaffiliate,
                     ELSE 0
                 END) count_partials,
           sum(CASE
-                    WHEN type LIKE 'upsell%' THEN 1
+                    WHEN type= 'upsell' THEN 1
                     ELSE 0
                 END) count_upsell,
           sum(CASE
@@ -118,7 +118,7 @@ EVENTS_SUB5 as (SELECT subaffiliate_5 as subaffiliate,
                     ELSE 0
                 END) count_partials,
           sum(CASE
-                    WHEN type LIKE 'upsell%' THEN 1
+                    WHEN type= 'upsell' THEN 1
                     ELSE 0
                 END) count_upsell,
           sum(CASE
