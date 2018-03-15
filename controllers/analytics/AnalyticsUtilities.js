@@ -94,7 +94,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
           query = this.parseQueryParameters(query, parameters);
 
-          du.highlight('Query:', query);
+          du.highlight('Query:', query, parameters);
 
           let transformation_function = this.getTransformationFunction(query_name);
 
