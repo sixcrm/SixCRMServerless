@@ -1,9 +1,9 @@
 INSERT INTO analytics.f_events (session, type, datetime, account, campaign, product_schedule, affiliate, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
-  ((
+(
    SELECT
       '668ad918-0d09-4116-a6fe-0e8a9eda36f7',
-      'click',
-      timestamp'2017-01-01T18:40:41.405Z',
+      'click'::analytics.d_event_type,
+      '2017-01-01T18:40:41.405Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
       '12529a17-ac32-4e46-b05b-83862843055d',
@@ -16,8 +16,8 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
     UNION ALL
     SELECT
       '008ad918-0d09-4116-a6fe-0e8a9eda3600',
-      'upsell2',
-      timestamp'2017-01-01T18:40:41.405Z',
+      'upsell'::analytics.d_event_type,
+      '2017-01-01T18:40:41.406Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
       '8d1e896f-c50d-4a6b-8c84-d5661c16a046',
@@ -30,8 +30,8 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
     UNION ALL
     SELECT
       '7b556e82-5a4c-4199-b8bc-0d86b3d8b47b',
-      'upsell',
-      timestamp'2017-01-01T18:40:41.405Z',
+      'upsell'::analytics.d_event_type,
+      '2017-01-01T18:40:41.407Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
       '2200669e-5e49-4335-9995-9c02f041d91b',
@@ -44,8 +44,8 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
     UNION ALL
     SELECT
       '7b556e82-5a4c-4199-b8bc-0d86b3d8b47b',
-      'click',
-      timestamp'2017-01-02T18:40:41.405Z',
+      'click'::analytics.d_event_type,
+      '2017-01-02T18:40:41.408Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
       '300848c1-8b83-4b8d-aff9-529ba6459d0f',
@@ -55,7 +55,6 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
       '',
       '',
       ''
-   )
    EXCEPT
    SELECT
      fe.session,
