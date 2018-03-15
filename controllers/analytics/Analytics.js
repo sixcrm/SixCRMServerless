@@ -59,16 +59,6 @@ class AnalyticsController extends AnalyticsUtilities {
 
   }
 
-  getBINList(parameters) {
-
-    du.debug('Get BIN List');
-
-    parameters = paginationutilities.mergePagination(parameters.binfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-    return this.getResults('bin', parameters, this.default_bin_query_filters);
-
-  }
-
   getMerchantProviderSummaries(parameters) {
 
     du.debug('Get Merchant Provider Summaries');

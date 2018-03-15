@@ -400,43 +400,4 @@ describe('controllers/Analytics.js', () => {
     });
   });
 
-  describe('getBINList', () => {
-
-    it('successfully returns BIN list', () => {
-
-      let params = {
-        binfilter: {
-          a_binfilter: 'a_binfilter'
-        },
-        pagination: {
-          order: 'sample data'
-        }
-      };
-
-      let mock_analytics_utilities = class {
-        constructor() {
-        }
-
-        getResults(query_name, parameters, query_filters) {
-          expect(query_name).to.equal('bin');
-          expect(parameters).to.deep.equal({
-            a_binfilter: params.binfilter.a_binfilter,
-            order: params.pagination.order,
-            offset: 0,
-            limit: 50
-          });
-          expect(query_filters).to.be.defined;
-          return Promise.resolve('any_results')
-        }
-      };
-
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
-
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-
-      return analyticsController.getBINList(params).then((result) => {
-        expect(result).to.equal('any_results');
-      });
-    });
-  });
 });
