@@ -223,6 +223,15 @@ module.exports = class Configuration extends ConfigurationUtilities {
       }
     ];
 
+    validation_object[this.mandatory_config_names.aurora_host] = [
+      (argument) => {
+        return _.isString(argument);
+      },
+      (argument) => {
+        return _.has(argument, 'length') && argument.length > 2;
+      }
+    ];
+
     validation_object[this.mandatory_config_names.cloudsearch_domainendpoint] = [
       (argument) => {
         return _.isString(argument);
