@@ -385,19 +385,28 @@ class AnalyticsController extends AnalyticsUtilities {
 
   getActivityByIdentifier(args) {
 
-    du.debug('Get Activity By Identifier');
+    du.debug('Get Activity By Identifier', args);
 
     let activity_filter = this.getActivityFilter(args);
 
+    du.debug('Get Activity By Identifier: Activity filter', activity_filter);
+
     let pagination = this.getPagination(args);
 
+    du.debug('Get Activity By Identifier: Pagination', pagination);
+
     let parameters = paginationutilities.mergePagination(activity_filter, paginationutilities.createSQLPaginationInput(pagination));
+
+    du.debug('Get Activity By Identifier: Parameters', parameters);
 
     let this_query_filter = this.default_activity_query_filters;
 
     ['actor', 'actor_type', 'acted_upon', 'acted_upon_type', 'associated_with', 'associated_with_type'].forEach((argument) => {
       this_query_filter = arrayutilities.removeElement(this_query_filter, argument);
     });
+
+    du.debug('Get Activity By Identifier: Final parameters', parameters, this_query_filter);
+
     return this.getResults('activity_by_identifier', parameters, this_query_filter);
 
   }
