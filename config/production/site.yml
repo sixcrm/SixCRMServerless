@@ -43,7 +43,7 @@ cloudsearch:
 aurora:
   default_cluster_identifier: 'sixcrm'
   user: 'root'
-  database: 'analytics'
+  database: 'postgres'
   password: 'Jagodica9'
   port: 5440
   max: 10
