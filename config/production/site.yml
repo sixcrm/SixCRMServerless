@@ -42,7 +42,7 @@ cloudsearch:
 #Technical Debt:  Username and Password combinations need to be encrypted...
 aurora:
   default_cluster_identifier: 'sixcrm'
-  user: 'admin'
+  user: 'root'
   database: 'analytics'
   password: 'Jagodica9'
   port: 5440
