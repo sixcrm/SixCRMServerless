@@ -42,42 +42,42 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: 'Unit Tests'
-          command: stage=circle  npm run test-unit
+#      - run:
+#          name: 'Unit Tests'
+#          command: stage=circle  npm run test-unit
   functional_tests:
     <<: *functional-tests-default
     steps:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Install Docker Compose
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - run:
-          name: Start Docker Cluster
-          command: |
-            set -x
-            docker-compose --file tools/docker/docker-compose.yml up -d
-      - run: echo "Pausing to allow Redshift to catch up..." && sleep 30
-      - run:
-          name: Execute Functional Connectivity Test
-          command: stage=circle npm run test-functional-connectivity
-      - run:
-          name: Execute Functional Redis-Utility Test
-          command: stage=circle npm run test-functional-redis-utilities
-      - run:
-          name: Deploy Local Dynamo
-          command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
-      - run:
-          name: Deploy Local SQS
-          command: SIX_VERBOSE=2 stage=circle node ./deployment/sqs/deploy_queues.js
-      - run:
-          name: Execute State Machine Tests In Docker
-          command: SIX_VERBOSE=0 stage=circle npm run test-functional-state-machine-docker
+#      - run:
+#          name: Install Docker Compose
+#          command: |
+#            curl -L https://github.com/docker/compose/releases/download/1.11.2/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+#            chmod +x ~/docker-compose
+#            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+#      - run:
+#          name: Start Docker Cluster
+#          command: |
+#            set -x
+#            docker-compose --file tools/docker/docker-compose.yml up -d
+#      - run: echo "Pausing to allow Redshift to catch up..." && sleep 30
+#      - run:
+#          name: Execute Functional Connectivity Test
+#          command: stage=circle npm run test-functional-connectivity
+#      - run:
+#          name: Execute Functional Redis-Utility Test
+#          command: stage=circle npm run test-functional-redis-utilities
+#      - run:
+#          name: Deploy Local Dynamo
+#          command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
+#      - run:
+#          name: Deploy Local SQS
+#          command: SIX_VERBOSE=2 stage=circle node ./deployment/sqs/deploy_queues.js
+#      - run:
+#          name: Execute State Machine Tests In Docker
+#          command: SIX_VERBOSE=0 stage=circle npm run test-functional-state-machine-docker
   query_tests:
       <<: *functional-tests-default
       steps:
