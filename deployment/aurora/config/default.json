@@ -6,11 +6,11 @@
   "DatabaseName": "postgres",
   "EnableIAMDatabaseAuthentication": false,
   "EngineVersion": "9.6.3",
-  "Port": 5432,
+  "Port": 5440,
   "StorageEncrypted": true,
   "PreferredBackupWindow": "09:45-10:15",
   "PreferredMaintenanceWindow": "sat:06:57-sat:07:27",
-  "PubliclyAccessible":false,
+  "PubliclyAccessible":true,
   "Instances":[{
     "DBInstanceIdentifier":"sixcrm-1",
     "DBInstanceClass": "db.r4.large",
