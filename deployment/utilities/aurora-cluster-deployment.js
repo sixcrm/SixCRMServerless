@@ -20,48 +20,70 @@ class AuroraClusterDeployment {
 
     du.debug('Deploy Cluster');
 
-    return this._getParameterConfigurationFromFile()
-      .then((parameters) => this._parseParameters(parameters))
-      .then((parameters) => {
+    const parameters = {
+      DBClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
+    };
 
-        parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
-        parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
 
-        return this._rdsUtilities.putCluster(parameters).then(data => {
+    return this._rdsUtilities.describeClusters(parameters)
+      .then((data) => {
 
-          du.info(data);
+        if (data.DBClusters.length) {
 
-          if (data.DBClusters) {
+          du.info('Aurora cluster already created');
 
-            if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
+          return Promise.resolve();
 
-              eu.throwError('server', 'Data object does not contain appropriate key: DBClusters.0.Endpoint');
+        } else {
 
-            }
+          du.info('Creating Aurora cluster');
 
-            global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
+          return this._getParameterConfigurationFromFile()
+            .then((parameters) => this._parseParameters(parameters))
+            .then((parameters) => {
 
-          } else {
+              parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
+              parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
 
-            if (!objectutilities.hasRecursive(data, 'DBCluster.Endpoint')) {
+              return this._rdsUtilities.putCluster(parameters).then(data => {
 
-              eu.throwError('server', 'Data object does not contain appropriate key: DBCluster.Endpoint');
+                du.info(data);
 
-            }
+                if (data.DBClusters) {
 
-            global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBCluster.Endpoint);
+                  if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
 
-          }
+                    eu.throwError('server', 'Data object does not contain appropriate key: DBClusters.0.Endpoint');
 
-          du.info('Aurora host resolved', global.SixCRM.configuration.site_config.aurora);
+                  }
 
-          return parameters;
+                  global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
 
-        });
-      })
-      .then((parameters) => this._deployClusterInstances(parameters))
-      .then(() => {
-        return 'Complete';
+                } else {
+
+                  if (!objectutilities.hasRecursive(data, 'DBCluster.Endpoint')) {
+
+                    eu.throwError('server', 'Data object does not contain appropriate key: DBCluster.Endpoint');
+
+                  }
+
+                  global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBCluster.Endpoint);
+
+                }
+
+                du.info('Aurora host resolved', global.SixCRM.configuration.site_config.aurora);
+
+                return parameters;
+
+              });
+            })
+            .then((parameters) => this._deployClusterInstances(parameters))
+            .then(() => {
+              return 'Complete';
+            });
+
+        }
+
       });
 
   }

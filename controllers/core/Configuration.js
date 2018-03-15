@@ -183,7 +183,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
     const rdsUtilities = global.SixCRM.routes.include('lib', 'rds-utilities.js');
 
     let parameters = {
-      ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
+      DBClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
     };
 
     return rdsUtilities.describeClusters(parameters).then((data) => {

@@ -283,10 +283,10 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Aurora Create Cluster
-          command: ./tools/changesInDirectory.sh deployment/aurora && node ./deployment/aurora/deploy_cluster.js || echo "No changes, skipping."
+          command: node ./deployment/aurora/deploy_cluster.js
       - run:
           name: Aurora Create Tables
-          command: ./tools/changesInDirectory.sh deployment/aurora && node ./deployment/aurora/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
+          command: node ./deployment/aurora/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240
   deploy_kinesis:
     <<: *job-defaults
     steps:
