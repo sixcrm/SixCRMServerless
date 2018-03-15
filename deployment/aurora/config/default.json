@@ -1,5 +1,5 @@
 {
-  "DBClusterIdentifier":"sixcrm",
+  "DBClusterIdentifier":"sixcrm-test",
   "Engine": "aurora-postgresql",
   "AvailabilityZones": ["{{region}}a","{{region}}b","{{region}}c"],
   "BackupRetentionPeriod": 7,
@@ -12,9 +12,9 @@
   "PreferredMaintenanceWindow": "sat:06:57-sat:07:27",
   "PubliclyAccessible":false,
   "Instances":[{
-    "DBInstanceIdentifier":"sixcrm-1",
+    "DBInstanceIdentifier":"sixcrm-test-1",
     "DBInstanceClass": "db.r4.large",
     "Engine": "aurora-postgresql",
-    "DBClusterIdentifier":"sixcrm"
+    "DBClusterIdentifier":"sixcrm-test"
   }]
 }
