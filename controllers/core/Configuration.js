@@ -186,7 +186,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
       ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
     };
 
-    return rdsUtilities.describeCluster(parameters).then((data) => {
+    return rdsUtilities.describeClusters(parameters).then((data) => {
       if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
 
         eu.throwError('server', 'Data object does not contain appropriate key: DBClusters.0.Endpoint');
