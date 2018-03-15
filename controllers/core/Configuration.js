@@ -187,6 +187,9 @@ module.exports = class Configuration extends ConfigurationUtilities {
     };
 
     return rdsUtilities.describeClusters(parameters).then((data) => {
+
+      du.debug('Aurora clusters', data);
+
       if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
 
         eu.throwError('server', 'Data object does not contain appropriate key: DBClusters.0.Endpoint');
