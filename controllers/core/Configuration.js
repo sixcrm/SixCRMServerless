@@ -10,7 +10,7 @@ const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core
 
 module.exports = class Configuration extends ConfigurationUtilities {
 
-  constructor(stage){
+  constructor(stage) {
 
     super();
 
@@ -22,12 +22,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     this.mandatory_config_names = {
       redshift_host: 'redshift.host',
+      aurora_host: 'aurora.host',
       cloudsearch_domainendpoint: 'cloudsearch.domainendpoint'
     }
 
   }
 
-  setConfigurationInformation(){
+  setConfigurationInformation() {
 
     this.config_bucket_template = 'sixcrm-{{stage}}-configuration-master';
 
@@ -35,7 +36,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  handleStage(stage){
+  handleStage(stage) {
 
     du.debug('Handle Stage');
 
@@ -45,7 +46,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  setConfigurationFiles(){
+  setConfigurationFiles() {
 
     du.debug('Set Configuration Files');
 
@@ -57,7 +58,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  setEnvironmentConfigurationFile(){
+  setEnvironmentConfigurationFile() {
 
     du.debug('Set Environment Configuration Files');
 
@@ -73,7 +74,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getServerlessConfig(){
+  getServerlessConfig() {
 
     du.debug('Get Serverless Config');
 
@@ -81,7 +82,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getSiteConfig(){
+  getSiteConfig() {
 
     du.debug('Get Site Config');
 
@@ -93,7 +94,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     } catch (error) {
 
-      eu.throwError('server', 'Configuration.getSiteConfig was unable to identify file '+global.SixCRM.routes.path('config', this.stage+'/site.yml'));
+      eu.throwError('server', 'Configuration.getSiteConfig was unable to identify file ' + global.SixCRM.routes.path('config', this.stage + '/site.yml'));
 
     }
 
@@ -101,13 +102,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  setEnvironmentConfig(key, value){
+  setEnvironmentConfig(key, value) {
 
     du.debug('Set Environment Config');
 
     du.info(key, value);
 
-    if(this.isValidConfiguration(key, value)){
+    if (this.isValidConfiguration(key, value)) {
 
       return this.propagateCache('all', key, value);
 
@@ -128,6 +129,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
     };
 
     regeneration_functions[this.mandatory_config_names.redshift_host] = () => this.regenerateRedshiftConfiguration();
+    regeneration_functions[this.mandatory_config_names.aurora_host] = () => this.regenerateAuroraConfiguration();
     regeneration_functions[this.mandatory_config_names.cloudsearch_domainendpoint] = () => this.regenerateCloudsearchConfiguration();
 
     if (key && _.isFunction(regeneration_functions[key])) {
@@ -142,7 +144,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  regenerateAllConfigurations(){
+  regenerateAllConfigurations() {
 
     du.debug('Regenerate All Configurations');
 
@@ -156,58 +158,86 @@ module.exports = class Configuration extends ConfigurationUtilities {
   }
 
   regenerateRedshiftConfiguration() {
-      du.debug('Regenerate Redshift Configuration');
+    du.debug('Regenerate Redshift Configuration');
 
-      const redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
+    const redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
 
-      let parameters = {
-        ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
-      };
+    let parameters = {
+      ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
+    };
 
-      return redshiftutilities.describeCluster(parameters).then((data) => {
-          if(!objectutilities.hasRecursive(data, 'Clusters.0.Endpoint.Address')){
+    return redshiftutilities.describeCluster(parameters).then((data) => {
+      if (!objectutilities.hasRecursive(data, 'Clusters.0.Endpoint.Address')) {
 
-              eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
+        eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
 
-          }
+      }
 
-          return this.propagateCache('all', this.mandatory_config_names.redshift_host, data.Clusters[0].Endpoint.Address);
-      });
+      return this.propagateCache('all', this.mandatory_config_names.redshift_host, data.Clusters[0].Endpoint.Address);
+    });
   }
 
-    regenerateCloudsearchConfiguration() {
+  regenerateAuroraConfiguration() {
+    du.debug('Regenerate Aurora Configuration');
 
-      //Technical Debt:  This is causing some issues in unit tests...
-      du.debug('Regenerate Cloudsearch Configuration');
+    const rdsUtilities = global.SixCRM.routes.include('lib', 'rds-utilities.js');
 
-      const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+    let parameters = {
+      ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
+    };
 
-      return cloudsearchutilities.saveDomainConfiguration();
+    return rdsUtilities.describeCluster(parameters).then((data) => {
+      if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
 
-    }
+        eu.throwError('server', 'Data object does not contain appropriate key: DBClusters.0.Endpoint');
 
-  isValidConfiguration(key, value){
+      }
+
+      return this.propagateCache('all', this.mandatory_config_names.aurora_host, data.DBClusters[0].Endpoint);
+    });
+  }
+
+  regenerateCloudsearchConfiguration() {
+
+    //Technical Debt:  This is causing some issues in unit tests...
+    du.debug('Regenerate Cloudsearch Configuration');
+
+    const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+
+    return cloudsearchutilities.saveDomainConfiguration();
+
+  }
+
+  isValidConfiguration(key, value) {
 
     du.debug('Is Valid Configuration');
 
     let validation_object = {};
 
     validation_object[this.mandatory_config_names.redshift_host] = [
-        (argument) => { return _.isString(argument); },
-        (argument) => { return _.has(argument, 'length') && argument.length > 2; }
-      ];
+      (argument) => {
+        return _.isString(argument);
+      },
+      (argument) => {
+        return _.has(argument, 'length') && argument.length > 2;
+      }
+    ];
 
     validation_object[this.mandatory_config_names.cloudsearch_domainendpoint] = [
-      (argument) => { return _.isString(argument); },
-      (argument) => { return _.has(argument, 'length') && argument.length > 2; }
+      (argument) => {
+        return _.isString(argument);
+      },
+      (argument) => {
+        return _.has(argument, 'length') && argument.length > 2;
+      }
     ];
 
     let validates = true;
 
-    if(_.has(validation_object, key)){
+    if (_.has(validation_object, key)) {
 
       arrayutilities.find(validation_object[key], (validation_function) => {
-        if(validation_function(value) == false){
+        if (validation_function(value) == false) {
           validates = false;
           return true;
         }
@@ -219,11 +249,11 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getEnvironmentFields(){
+  getEnvironmentFields() {
     //use promise all
   }
 
-  getEnvironmentConfig(field, use_cache, wait_for){
+  getEnvironmentConfig(field, use_cache, wait_for) {
 
     du.debug('Get Environment Config');
 
@@ -235,45 +265,55 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       wait_for = this.setWaitFor(wait_for);
 
-      if(wait_for){
+      if (wait_for) {
 
         return this.waitForStatus(wait_for).then(() => {
           return this.getEnvironmentConfig(field, use_cache, null).then((result) => {
-              return resolve(result);
+            return resolve(result);
           });
         });
 
       }
 
       return this.getConfiguration('local', field, use_cache)
-      .then((result) => {
+        .then((result) => {
 
-        if(!_.isNull(result)){ return resolve(result); }
+          if (!_.isNull(result)) {
+            return resolve(result);
+          }
 
-        if(use_cache){
+          if (use_cache) {
 
-          return this.getConfiguration('native', field, use_cache).then((result) => {
+            return this.getConfiguration('native', field, use_cache).then((result) => {
 
-            if(!_.isNull(result)){ return resolve(result); }
+              if (!_.isNull(result)) {
+                return resolve(result);
+              }
 
-            return this.getConfiguration('localcache', field, use_cache).then((result) => {
+              return this.getConfiguration('localcache', field, use_cache).then((result) => {
 
-              if(!_.isNull(result)){ return resolve(result); }
+                if (!_.isNull(result)) {
+                  return resolve(result);
+                }
 
-              return this.getConfiguration('redis', field, use_cache).then((result) => {
+                return this.getConfiguration('redis', field, use_cache).then((result) => {
 
-                if(!_.isNull(result)){ return resolve(result); }
+                  if (!_.isNull(result)) {
+                    return resolve(result);
+                  }
 
-                return this.getConfiguration('s3', field, use_cache).then((result) => {
+                  return this.getConfiguration('s3', field, use_cache).then((result) => {
 
-                  if (_.isNull(result)) {
+                    if (_.isNull(result)) {
 
-                    return this.regenerateConfiguration(field);
+                      return this.regenerateConfiguration(field);
 
-                  } else {
+                    } else {
 
                       return resolve(result);
-                  }
+                    }
+
+                  });
 
                 });
 
@@ -281,49 +321,49 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
             });
 
-          });
+          } else {
 
-        }else{
+            return this.getConfiguration('local', field, use_cache).then((result) => {
 
-          return this.getConfiguration('local', field, use_cache).then((result) => {
-
-            if(!_.isNull(result)){ return resolve(result); }
-
-            return this.getConfiguration('s3', field, use_cache).then((result) => {
-
-              if (_.isNull(result)) {
-
-                return this.regenerateConfiguration(field);
-
-              } else {
-
+              if (!_.isNull(result)) {
                 return resolve(result);
-
               }
+
+              return this.getConfiguration('s3', field, use_cache).then((result) => {
+
+                if (_.isNull(result)) {
+
+                  return this.regenerateConfiguration(field);
+
+                } else {
+
+                  return resolve(result);
+
+                }
+
+              });
 
             });
 
-          });
+          }
 
-        }
-
-      });
+        });
 
     });
 
   }
 
-  getConfiguration(source, field){
+  getConfiguration(source, field) {
 
     du.debug('Get Configuration');
 
     return new Promise((resolve) => {
 
-      if(source == 'redis'){
+      if (source == 'redis') {
 
         return this.getRedisEnvironmentConfiguration(field).then((result) => resolve(result));
 
-      }else if(source == 's3'){
+      } else if (source == 's3') {
 
         return this.getS3EnvironmentConfiguration(field).then((result) => {
 
@@ -331,21 +371,21 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         });
 
-      }else if(source == 'native'){
+      } else if (source == 'native') {
 
         return this.getNativeEnvironmentConfiguration(field).then((result) => resolve(result));
 
-      }else if(source == 'localcache'){
+      } else if (source == 'localcache') {
 
         return this.getLocalCacheEnvironmentConfiguration(field).then((result) => resolve(result));
 
-      }else if(source == 'local'){
+      } else if (source == 'local') {
 
         return this.getLocalEnvironmentConfiguration(field).then((result) => resolve(result));
 
-      }else{
+      } else {
 
-        eu.throwError('server', 'Configuration.getConfiguration did not recognize the source provided: "'+source+'"');
+        eu.throwError('server', 'Configuration.getConfiguration did not recognize the source provided: "' + source + '"');
 
       }
 
@@ -353,17 +393,17 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getLocalEnvironmentConfiguration(){
+  getLocalEnvironmentConfiguration() {
 
     du.debug('Get Local Environent Configuration');
 
     let local_environment_configuration = null;
 
-    try{
+    try {
 
-      local_environment_configuration = global.SixCRM.routes.include('config', this.stage+'/environment.yml');
+      local_environment_configuration = global.SixCRM.routes.include('config', this.stage + '/environment.yml');
 
-    }catch(error){
+    } catch (error) {
 
       du.warning('no local environment configuration');
 
@@ -373,25 +413,25 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getNativeEnvironmentConfiguration(field){
+  getNativeEnvironmentConfiguration(field) {
 
     du.debug('Get Native Environment Configuration');
 
     let result = null;
 
-    if(field == 'all'){
+    if (field == 'all') {
 
-      if(_.has(this, 'environment_config')){
+      if (_.has(this, 'environment_config')) {
 
         result = this.environment_config;
 
       }
 
-    }else if(_.has(this, 'environment_config') && _.has(this.environment_config, field)){
+    } else if (_.has(this, 'environment_config') && _.has(this.environment_config, field)) {
 
       result = this.environment_config[field];
 
-      du.highlight('Native Result: '+result);
+      du.highlight('Native Result: ' + result);
 
     }
 
@@ -400,19 +440,19 @@ module.exports = class Configuration extends ConfigurationUtilities {
   }
 
 
-  getLocalCacheEnvironmentConfiguration(field){
+  getLocalCacheEnvironmentConfiguration(field) {
 
     du.debug('Get Local Cache Environment Configuration');
 
     let result = null;
 
-    if(_.has(global.SixCRM, 'localcache')){
+    if (_.has(global.SixCRM, 'localcache')) {
 
       let key = this.buildLocalCacheKey(field);
 
       result = global.SixCRM.localcache.get(key);
 
-      du.highlight('Local Cache Result: '+result);
+      du.highlight('Local Cache Result: ' + result);
 
     }
 
@@ -422,13 +462,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getRedisEnvironmentConfiguration(field){
+  getRedisEnvironmentConfiguration(field) {
 
     du.debug('Get Redis Environment Configuration');
 
     let redis_key = this.buildRedisKey(field);
 
-    if(!_.has(this, 'redisutilities')){
+    if (!_.has(this, 'redisutilities')) {
       this.redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
     }
 
@@ -436,7 +476,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       this.propagateCache('localcache', field, result);
 
-      du.highlight('Redis Cache Result: '+result);
+      du.highlight('Redis Cache Result: ' + result);
 
       return result;
 
@@ -450,61 +490,64 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  getS3EnvironmentConfiguration(field){
+  getS3EnvironmentConfiguration(field) {
 
     du.debug('Get S3 Environment Configuration');
 
     let bucket = parserutilities.parse(this.config_bucket_template, {stage: this.stage});
 
-    if(!_.has(this, 's3utilities') || !_.isFunction(this.s3utilities.getObject)){
+    if (!_.has(this, 's3utilities') || !_.isFunction(this.s3utilities.getObject)) {
 
       this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
 
     }
 
-    if(this.s3utilities.hasCredentials(false) !== true){
+    if (this.s3utilities.hasCredentials(false) !== true) {
       return Promise.resolve(null);
     }
 
-    return this.s3utilities.objectExists({Bucket: bucket, Key: this.s3_environment_configuration_file_key}).then((exists) => {
+    return this.s3utilities.objectExists({
+      Bucket: bucket,
+      Key: this.s3_environment_configuration_file_key
+    }).then((exists) => {
 
-      if(exists){
+      if (exists) {
 
-          return this.s3utilities.getObject(bucket, this.s3_environment_configuration_file_key).then((result) => {
+        return this.s3utilities.getObject(bucket, this.s3_environment_configuration_file_key).then((result) => {
 
-            if(!_.has(result, 'Body')){
-              eu.throwError('server', 'Result response is assumed to have Body property');
-            }
+          if (!_.has(result, 'Body')) {
+            eu.throwError('server', 'Result response is assumed to have Body property');
+          }
 
-            try{
+          try {
 
-              result = JSON.parse(result.Body.toString('utf-8'));
+            result = JSON.parse(result.Body.toString('utf-8'));
 
-            }catch(error){
+          } catch (error) {
 
-              eu.throwError('server', error);
+            eu.throwError('server', error);
 
-            }
+          }
 
-            let return_value = null;
+          let return_value = null;
 
-            if(field == 'all'){
+          if (field == 'all') {
 
-              return_value = result;
+            return_value = result;
 
-            }else if(_.has(result, field)){
+          } else if (_.has(result, field)) {
 
-              return_value = result[field];
+            return_value = result[field];
 
-            }
+          }
 
-            this.propagateCache('redis', field, return_value);
+          this.propagateCache('redis', field, return_value);
 
-            return return_value;
+          return return_value;
 
-          });
+        });
 
-      }else{
+      } else {
 
         return this.s3utilities.assureBucket({Bucket: bucket}).then(() => {
 
@@ -528,35 +571,35 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  propagateCache(source, key, value){
+  propagateCache(source, key, value) {
 
     du.debug('Propagate Cache');
 
     if (this.stage === 'local') {
-        return this.propagateToNativeCache(key, value);
+      return this.propagateToNativeCache(key, value);
     }
 
-    if(!_.isString(source)){
+    if (!_.isString(source)) {
       eu.throwError('server', 'Source is assumed to be a string');
     }
 
-    if(!_.contains(['all', 'redis', 'localcache', 'native', 's3'], source)){
+    if (!_.contains(['all', 'redis', 'localcache', 'native', 's3'], source)) {
       eu.throwError('server', 'Unrecognized source destination');
     }
 
-    if(source == 'all' || source == 's3'){
+    if (source == 'all' || source == 's3') {
 
       return this.propagateToS3Cache(key, value);
 
-    }else if(source == 'redis'){
+    } else if (source == 'redis') {
 
       return this.propagateToRedisCache(key, value);
 
-    }else if(source == 'localcache'){
+    } else if (source == 'localcache') {
 
       return this.propagateToLocalCache(key, value);
 
-    }else{
+    } else {
 
       return this.propagateToNativeCache(key, value);
 
@@ -564,19 +607,19 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  propagateToNativeCache(key, value){
+  propagateToNativeCache(key, value) {
 
     du.debug('Propagate To Native Cache');
 
     return Promise.resolve().then(() => {
 
-      if(key == 'all'){
+      if (key == 'all') {
 
-        if(!_.isNull(value)){
+        if (!_.isNull(value)) {
 
           this.environment_config = value;
 
-        }else{
+        } else {
 
           du.warning('Deleting Environment Config');
 
@@ -585,17 +628,17 @@ module.exports = class Configuration extends ConfigurationUtilities {
         }
 
 
-      }else{
+      } else {
 
-        if(!_.has(this, 'environment_config')){
+        if (!_.has(this, 'environment_config')) {
           this.environment_config = {};
         }
 
-        if(!_.isNull(value)){
+        if (!_.isNull(value)) {
 
           this.environment_config[key] = value;
 
-        }else{
+        } else {
 
           delete this.environment_config;
 
@@ -609,7 +652,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  propagateToLocalCache(key, value){
+  propagateToLocalCache(key, value) {
 
     du.debug('Propagate To Local Cache');
 
@@ -619,7 +662,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       let result = global.SixCRM.localcache.set(localcache_key, value);
 
-      if(result){
+      if (result) {
         return this.propagateCache('native', key, value);
       }
 
@@ -629,19 +672,19 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  propagateToRedisCache(key, value){
+  propagateToRedisCache(key, value) {
 
     du.debug('Propagate To Redis Cache');
 
-    if(_.isUndefined(key)){
+    if (_.isUndefined(key)) {
       eu.throwError('server', 'Key must be set');
     }
 
-    if(_.isUndefined(value)){
+    if (_.isUndefined(value)) {
       eu.throwError('server', 'Value must be set');
     }
 
-    if(!_.isString(value) && !objectutilities.isObject(value)){
+    if (!_.isString(value) && !objectutilities.isObject(value)) {
       return Promise.resolve(false);
     }
 
@@ -649,7 +692,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       let redis_key = this.buildRedisKey(key);
 
-      if(!_.has(this, 'redisutilities')){
+      if (!_.has(this, 'redisutilities')) {
         this.redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
       }
 
@@ -669,7 +712,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
   }
 
-  propagateToS3Cache(key, value){
+  propagateToS3Cache(key, value) {
 
     du.debug('Propagate To S3 Cache');
 
@@ -677,19 +720,21 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       du.debug('S3 environment configuration:', result);
 
-      if(_.isNull(result)){ result = {}; }
+      if (_.isNull(result)) {
+        result = {};
+      }
 
-      if(_.isNull(value) && !_.has(result, key)){
+      if (_.isNull(value) && !_.has(result, key)) {
 
         return this.propagateCache('redis', key, value);
 
-      }else{
+      } else {
 
-        if(_.isNull(value) && _.has(result, key)){
+        if (_.isNull(value) && _.has(result, key)) {
 
           delete result[key];
 
-        }else{
+        } else {
 
           result[key] = value;
 
@@ -699,11 +744,15 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         let bucket = parserutilities.parse(this.config_bucket_template, {stage: this.stage});
 
-        let body =  JSON.stringify(result);
+        let body = JSON.stringify(result);
 
-        du.debug({Bucket:bucket, Key: this.s3_environment_configuration_file_key, Body: body}, process.env);
+        du.debug({Bucket: bucket, Key: this.s3_environment_configuration_file_key, Body: body}, process.env);
 
-        return this.s3utilities.putObject({Bucket:bucket, Key: this.s3_environment_configuration_file_key, Body: body}).then(() => {
+        return this.s3utilities.putObject({
+          Bucket: bucket,
+          Key: this.s3_environment_configuration_file_key,
+          Body: body
+        }).then(() => {
 
           return this.propagateCache('redis', key, value);
 
