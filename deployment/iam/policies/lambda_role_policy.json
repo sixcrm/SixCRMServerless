@@ -133,6 +133,16 @@
             "Resource": [
                 "*"
             ]
+        },
+        {
+            "Sid": "stmnt{{random}}14",
+            "Effect": "Allow",
+            "Action": [
+                "rds:*"
+            ],
+            "Resource": [
+                "*"
+            ]
         }
     ]
   }
