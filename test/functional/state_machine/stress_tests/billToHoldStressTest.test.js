@@ -100,7 +100,7 @@ describe('billToHoldStressTest', () => {
 
         for (let i = 0; i < max_test_cases; i++) {
             let rebill = MockEntities.getValidRebill();
-            let creditCard = MockEntities.getValidCreditCard();
+            let creditCard = MockEntities.getValidPlaintextCreditCard();
             let customer = MockEntities.getValidCustomer();
             let bin = getBin();
             let session = MockEntities.getValidSession();
