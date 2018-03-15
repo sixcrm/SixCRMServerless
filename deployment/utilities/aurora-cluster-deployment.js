@@ -31,13 +31,27 @@ class AuroraClusterDeployment {
 
           du.info(data);
 
-          if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
+          if (data.DBClusters) {
 
-            eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
+            if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
+
+              eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint');
+
+            }
+
+            global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
+
+          } else {
+
+            if (!objectutilities.hasRecursive(data, 'DBCluster.Endpoint')) {
+
+              eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint');
+
+            }
+
+            global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBCluster.Endpoint);
 
           }
-
-          global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
 
           du.info('Aurora host resolved', global.SixCRM.configuration.site_config.aurora);
 
