@@ -35,7 +35,7 @@ class AuroraClusterDeployment {
 
             if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
 
-              eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint');
+              eu.throwError('server', 'Data object does not contain appropriate key: DBClusters.0.Endpoint');
 
             }
 
@@ -45,7 +45,7 @@ class AuroraClusterDeployment {
 
             if (!objectutilities.hasRecursive(data, 'DBCluster.Endpoint')) {
 
-              eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint');
+              eu.throwError('server', 'Data object does not contain appropriate key: DBCluster.Endpoint');
 
             }
 
