@@ -20,6 +20,8 @@ class RDSEventsController extends SNSEventController {
     //Need to add out-of-flow events (Refund, Void, Chargeback)
     this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
 
+    this.event_record_handler = 'pushToRDSQueue';
+
     this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
     const ContextHelperController = global.SixCRM.routes.include('helpers','context/Context.js');
@@ -27,18 +29,6 @@ class RDSEventsController extends SNSEventController {
     this.contextHelperController = new ContextHelperController();
 
     this.augmentParameters();
-
-  }
-
-  handleEventRecord(record){
-
-    du.debug('Handle Event Record');
-
-    return Promise.resolve()
-    .then(() => this.parameters.set('record', record))
-    .then(() => this.getMessage())
-    .then(() => this.pushToRDSQueue())
-    .then(() => this.cleanUp());
 
   }
 

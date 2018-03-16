@@ -11,9 +11,8 @@ module.exports = class NotificationHelperClass {
 
   constructor(){
 
-    this.parameter_validation = {
-
-    };
+    //Technical Debt:  Need to add validation schemas here...
+    this.parameter_validation = {};
 
     this.parameter_definition = {
       executeNotifications:{
@@ -81,6 +80,8 @@ module.exports = class NotificationHelperClass {
 
     this.parameters.set('notificationclass', notification_class);
 
+    return true;
+
   }
 
   transformContext(){
@@ -93,6 +94,8 @@ module.exports = class NotificationHelperClass {
     let transformed_context = notification_class.transformContext(context);
 
     this.parameters.set('transformedcontext', transformed_context);
+
+    return true;
 
   }
 

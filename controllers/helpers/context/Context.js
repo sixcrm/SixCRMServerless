@@ -220,13 +220,27 @@ module.exports = class ContextMailerHelper {
 
     type = (_.isUndefined(type) || _.isNull(type))?'id':type;
 
-    let discovered = objectutilities.recurseByDepth(context, (key, value) => {
+    let field_path = field.split('.');
 
-      if(key == field){
+    let discovered = objectutilities.recurseByDepth(context, (key) => {
+
+      if(key == field_path[0]){
+
+        if(type == false && field_path.length == 1){
+          return true;
+        }
+
+        if(field_path.length > 1){
+          if(objectutilities.hasRecursive(context, field) == false){
+            return false;
+          }
+        }
 
         if(type == false){
           return true;
         }
+
+        let value = objectutilities.getRecursive(context, field);
 
         if(type == 'email'){
           if(_.isString(value) && stringutilities.isEmail(value)){
@@ -255,7 +269,14 @@ module.exports = class ContextMailerHelper {
     });
 
     if(discovered){
+
+      if(field_path.length > 1){
+        field_path.shift();
+        return discovered[field_path];
+      }
+
       return discovered;
+
     }
 
     du.warning('Unable to determine '+field+' from context.');

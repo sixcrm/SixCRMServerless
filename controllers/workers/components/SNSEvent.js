@@ -88,6 +88,23 @@ module.exports = class SNSEventController {
 
     }
 
+    handleEventRecord(record){
+
+      du.debug('Handle Event Record');
+
+      return Promise.resolve()
+      .then(() => this.parameters.set('record', record))
+      .then(() => this.getMessage())
+      .then(() => {
+        if(_.has(this, 'event_record_handler') && _.isFunction(this[this.event_record_handler])){
+          return this[this.event_record_handler]();
+        }
+        eu.throwError('server', 'Event record handler not set.');
+      })
+      .then(() => this.cleanUp());
+
+    }
+
     getMessage(){
 
       du.debug('Get Message');
