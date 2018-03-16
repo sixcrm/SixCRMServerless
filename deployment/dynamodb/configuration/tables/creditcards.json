@@ -23,10 +23,10 @@
     ],
     "GlobalSecondaryIndexes":[
       {
-        "IndexName":"number-index",
+        "IndexName":"last_four-index",
         "KeySchema":[
           {
-            "AttributeName":"number",
+            "AttributeName":"last_four",
             "KeyType":"HASH"
           }
         ],
