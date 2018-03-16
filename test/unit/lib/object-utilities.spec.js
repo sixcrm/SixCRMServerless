@@ -1,9 +1,10 @@
 const chai = require('chai');
 const expect = chai.expect;
+const _ = require('underscore');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-describe('lib/object-utilities', () => {
+describe.only('lib/object-utilities', () => {
 
   describe('has', () => {
 
@@ -745,7 +746,7 @@ describe('lib/object-utilities', () => {
               }
           };
 
-          let match_func = (key, value) => {return key === 'd'};
+          let match_func = (key) => {return key === 'd'};
 
           expect(objectutilities.recurseByDepth(params, match_func, 0)).to.equal('v6');
           expect(objectutilities.recurseByDepth(params, match_func, 3)).to.equal('v6');
@@ -838,7 +839,9 @@ describe('lib/object-utilities', () => {
 
       let match_func = (key, value) => {return value === 'v2'};
 
-      expect(objectutilities.recurseByDepth(params, match_func)).to.equal('v2');
+      expect(objectutilities.recurseAll(params, match_func)).to.deep.equal(
+          [ { depth: 4, match: 'v2' }, { depth: 1, match: 'v2' } ]
+      );
 
     });
 
@@ -861,7 +864,7 @@ describe('lib/object-utilities', () => {
           }
       };
 
-      let match_func = (key, value) => {return key === 'd'};
+      let match_func = (key) => {return key === 'd'};
 
       expect(objectutilities.recurseAll(params, match_func, 0)).to.deep.equal([ { depth: 4, match: 'v6' } ]);
       expect(objectutilities.recurseAll(params, match_func, 3)).to.deep.equal([ { depth: 7, match: 'v6' } ]);
@@ -923,6 +926,46 @@ describe('lib/object-utilities', () => {
         expect(objectutilities.recurse(params, match_func)).to.equal('v3');
     });
 
+    it('finds value by key name', () => {
+      let params = {
+          a: 'v1',
+          b: 'v2',
+          c: {
+              a: 'v3'
+          }
+      };
+
+      let match_func = (key) => {return key === 'c'};
+
+      expect(objectutilities.recurse(params, match_func)).to.deep.equal({ a: 'v3' });
+    });
+
+    it('returns first matched value', () => {
+      let params = {
+          a: 'v1',
+          b: 'v2',
+          c: {
+              a: 'v3'
+          }
+      };
+
+      let match_func = (key) => {return key === 'a'};
+
+      expect(objectutilities.recurse(params, match_func)).to.equal('v1');
+    });
+
+    it('finds a function', () => {
+      let params = {
+          a: 'v1',
+          b: 'v2',
+          c: () => 'found'
+      };
+
+      let match_func = (key, value) => {return _.isFunction(value)};
+
+      expect(objectutilities.recurse(params, match_func)()).to.equal('found');
+    });
+
     it('returns null when value does not exist', () => {
         let params = {
             a: 'v1',
@@ -936,6 +979,21 @@ describe('lib/object-utilities', () => {
 
         expect(objectutilities.recurse(params, match_func)).to.equal(null);
     });
+
+      it('returns null when key does not exist', () => {
+          let params = {
+              a: 'v1',
+              b: 'v2',
+              c: {
+                  a: 'v3'
+              }
+          };
+
+          let match_func = (key) => {return key === 'd'};
+
+          expect(objectutilities.recurse(params, match_func)).to.equal(null);
+      });
+
   });
 
   describe('orderedRecursion', () => {
