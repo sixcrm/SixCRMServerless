@@ -340,10 +340,7 @@ describe('acquireToken', () => {
 
       acquireTokenController.parameters.set('event', event);
 
-      let result = acquireTokenController.postProcessing();
-
-      expect(result).to.equal(true);
-
+      return acquireTokenController.postProcessing();
 
     });
   });
