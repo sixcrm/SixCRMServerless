@@ -8,3 +8,4 @@ extra/aws/redshift/*.csv
 extra/aws/redshift/redshift_params.js
 extra/aws/redshift/test*.js
 .idea
+.vscode

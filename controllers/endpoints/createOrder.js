@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -475,7 +475,7 @@ class CreateOrderController extends transactionEndpointController {
         products:[],
         product_schedules:[]
       }
-    };
+    }
 
     let product_schedules = this.parameters.get('productschedules', null, false);
     let products = this.parameters.get('products', null, false);

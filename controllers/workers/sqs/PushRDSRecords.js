@@ -1,97 +1,82 @@
 'use strict';
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const arrayUtilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const sqsUtilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
-class PushRDSRecordsController {
+module.exports = class PushRDSRecords {
 
-  constructor(){
+	constructor(queueName) {
 
-    this.queue_name = 'rds_transaction_batch';
-    this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+		this._queueName = queueName;
 
-  }
+	}
 
-  execute(){
+	execute() {
 
-    du.debug('Execute');
+		du.debug('PushRDSRecordsController.execute()');
 
-    return this.getRecordsFromSQS()
-    .then(records => this.executeBatchWrite(records))
-    .then(records => this.removeRecordsFromSQS(records));
+		return this._getRecordsFromSQS()
+			.then(records => this._executeBatchWrite(records))
+			.then(records => this._removeRecordsFromSQS(records));
 
-  }
+	}
 
-  getRecordsFromSQS(){
+	_getRecordsFromSQS() {
 
-    du.debug('Get Records From SQS');
+		du.debug('PushRDSRecordsController._getRecordsFromSQS()');
 
-    return this.sqsutilities.receiveMessagesRecursive({
-      queue: this.queue_name
-    });
+		return sqsUtilities.receiveMessagesRecursive({
+			queue: this._queueName
+		});
 
-  }
+	}
 
-  executeBatchWrite(records){
+	_executeBatchWrite(records) {
 
-    du.debug('Execute Batch Write');
+		du.debug('PushRDSRecordsController._executeBatchWrite()');
 
-    if(arrayutilities.nonEmpty(records)){
+		if (arrayUtilities.nonEmpty(records)) {
 
-      return this.createBatchWriteQuery(records)
-      .then(batch_write_query => this.executeBatchWriteQuery(batch_write_query))
-      .then(() => {
-        return records;
-      });
+			return this.executeBatchWriteQuery()
+				.then(() => {
 
-    }
+					return records;
 
-    return Promise.resolve(records);
+				});
 
-  }
+		}
 
-  createBatchWriteQuery(records){
+		return Promise.resolve(records);
 
-    du.debug('Create Batch Write Query');
+	}
 
-    du.info(records);
-    let batch_write_query = '';
+	// override
+	executeBatchWriteQuery() {
 
-    return Promise.resolve(batch_write_query);
+		du.debug('PushRDSRecordsController.executeBatchWriteQuery()');
 
-  }
+		return Promise.resolve();
 
-  executeBatchWriteQuery(batch_write_query){
+	}
 
-    du.debug('Execute Batch Write Query');
+	_removeRecordsFromSQS(records) {
 
-    du.info(batch_write_query);
+		du.debug('PushRDSRecordsController._removeRecordsFromSQS()');
 
-    return true;
+		if (arrayUtilities.nonEmpty(records)) {
 
-  }
+			return sqsUtilities.deleteMessages({
+				messages: records,
+				queue: this._queueName
+			});
 
-  removeRecordsFromSQS(records){
+		} else {
 
-    du.debug('Remove Records From SQS');
+			return Promise.resolve();
 
-    if(arrayutilities.nonEmpty(records)){
+		}
 
-      return this.sqsutilities.deleteMessages({
-        messages: records,
-        queue: this.queue_name
-      }).then(() => {
-        return true;
-      });
-
-    }else{
-
-      return Promise.resolve(true);
-
-    }
-
-  }
+	}
 
 }
-
-module.exports = new PushRDSRecordsController();

@@ -146,7 +146,7 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 				})
 			);
 
-	};
+	}
 
 }
 

@@ -18,7 +18,8 @@ describe('Utility', () => {
       let eventHelperController = new EventsHelperController();
 
       return eventHelperController.pushEvent({event_type: 'click', context: context}).then(result => {
-        du.info(result);
+				du.info(result);
+				return;
       });
 
     });

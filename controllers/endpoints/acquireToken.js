@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 const _ = require('underscore');
 
 const jwtutilities  = global.SixCRM.routes.include('lib', 'jwt-utilities');
@@ -52,8 +52,8 @@ class AcquireTokenController extends transactionEndpointController {
       return this.preamble(event)
       .then(() => this.validateCampaign())
       .then(() => this.acquireToken())
+      .then(() => this.postProcessing())
       .then(() => {
-        this.postProcessing();
         return this.parameters.get('transactionjwt');
       });
 
@@ -105,9 +105,7 @@ class AcquireTokenController extends transactionEndpointController {
 
       du.debug('Post Processing');
 
-      this.handleAffiliateInformation().then(() => this.pushEvent());
-
-      return true;
+      return this.handleAffiliateInformation().then(() => this.pushEvent());
 
     }
 

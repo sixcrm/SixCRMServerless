@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 let _ = require('underscore');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -35,7 +35,7 @@ module.exports = function(results, parameters){
 
                     }
 
-                };
+                }
 
             }
 
