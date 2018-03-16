@@ -98,10 +98,6 @@ function getValidCampaign(){
 }
 
 function getValidCreditCard(){
-  return MockEntities.getValidCreditCard();
-}
-
-function getValidPlaintextCreditCard(){
   return MockEntities.getValidPlaintextCreditCard();
 }
 
@@ -356,8 +352,7 @@ describe('checkout', function () {
       session.completed = false;
       let campaign = getValidCampaign();
       let customer = getValidCustomer();
-      let encrypted_creditcard = getValidCreditCard();
-      let creditcard = getValidPlaintextCreditCard();
+      let creditcard = getValidCreditCard();
       let product_schedule_ids = arrayutilities.map(event.product_schedules, product_schedule_group => product_schedule_group.product_schedule);
       let product_schedule = getValidProductSchedule(product_schedule_ids, true);
 
@@ -407,11 +402,10 @@ describe('checkout', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
         assureCreditCard:() => {
-          return Promise.resolve(encrypted_creditcard);
+          return Promise.resolve(creditcard);
         },
-        decryptAttributes:(input) => {
-          expect(input).to.equal(encrypted_creditcard);
-          Object.assign(encrypted_creditcard, creditcard);
+        sanitize:(input) => {
+            expect(input).to.equal(false);
         }
       });
 
@@ -661,8 +655,7 @@ describe('checkout', function () {
 
       customer.creditcards = [];
 
-      let encrypted_creditcard = getValidCreditCard();
-      let creditcard = getValidPlaintextCreditCard();
+      let creditcard = getValidCreditCard();
       let rebill = getValidRebill();
       let transactions = getValidTransactions();
       let processor_response = getValidProcessorResponse();
@@ -815,8 +808,8 @@ describe('checkout', function () {
             account: global.account
           }));
         },
-        decryptAttributes:() => {
-            Object.assign(encrypted_creditcard, creditcard);
+        sanitize:(input) => {
+            expect(input).to.equal(false);
         }
       });
 

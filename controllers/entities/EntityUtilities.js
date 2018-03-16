@@ -12,6 +12,7 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
+const EncryptionHelper = global.SixCRM.routes.include('helpers', 'encryption/Encryption.js');
 
 //Technical Debt:  Much of this controller should be abstracted to a "Query Builder" helper
 //Technical Debt:  This controller needs a "hydrate" method or prototype
@@ -31,6 +32,18 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       this.preIndexingHelperController = new PreIndexingHelperController();
 
+
+      this.encryptionhelper = new EncryptionHelper(this);
+      this.sanitization = true;
+    }
+
+    sanitize(sanitize) {
+        if (!_.isBoolean(sanitize)) {
+            eu.throwError('server', 'sanitize argument is not a boolean.');
+        }
+
+        this.sanitization = sanitize;
+        return this;
     }
 
     //Technical Debt:  Refactor.
@@ -818,6 +831,12 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       arrayutilities.isArray(data.Items, true);
 
+      if (this.sanitization) {
+          arrayutilities.forEach(data.Items, item => this.censorEncryptedAttributes(item));
+      } else {
+          arrayutilities.forEach(data.Items, item => this.decryptAttributes(item));
+      }
+
       if(!arrayutilities.nonEmpty(data.Items)){
           data.Items = null;
       }
@@ -845,7 +864,14 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       objectutilities.isObject(data, true);
 
+
       if(_.has(data, "Items") && _.isArray(data.Items)){
+        if (this.sanitization) {
+          arrayutilities.forEach(data.Items, item => this.censorEncryptedAttributes(item));
+        } else {
+          arrayutilities.forEach(data.Items, item => this.decryptAttributes(item));
+        }
+
         return data.Items;
       }
 
@@ -1044,6 +1070,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       if(_.has(this, controller_name) && _.isFunction(this[controller_name][function_name])){
 
+        this[controller_name].sanitization = this.sanitization;
         return this[controller_name][function_name](function_arguments);
 
       }else{
@@ -1092,6 +1119,21 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       return Promise.resolve(response);
 
+    }
+
+    encryptAttributes(entity) {
+      du.debug('Encrypt Attributes');
+      return this.encryptionhelper.encryptAttributes(this.encrypted_attribute_paths, entity);
+    }
+
+    decryptAttributes(entity) {
+      du.debug('Decrypt Attributes');
+      return this.encryptionhelper.decryptAttributes(this.encrypted_attribute_paths, entity);
+    }
+
+    censorEncryptedAttributes(entity, custom_censor_fn) {
+      du.debug('Censor Encrypted Attributes');
+      return this.encryptionhelper.censorEncryptedAttributes(this.encrypted_attribute_paths, entity, custom_censor_fn);
     }
 
       /*

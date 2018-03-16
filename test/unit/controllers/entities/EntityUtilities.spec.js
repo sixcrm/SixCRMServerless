@@ -35,6 +35,30 @@ describe('controllers/EntityUtilities.js', () => {
         mockery.deregisterAll();
     });
 
+    describe('sanitization', () => {
+        it('has a sanitize property', () => {
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            const entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.sanitization).to.equal(true);
+        });
+
+        it('can be changed with the sanitize() method', () => {
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            const entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.sanitize(false);
+            expect(entityUtilitiesController.sanitization).to.equal(false);
+        });
+
+        it('returns this so it can be set in a chain', () => {
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            const entityUtilitiesController = new EUC();
+
+            expect(entityUtilitiesController.sanitize(false)).to.equal(entityUtilitiesController);
+        });
+    });
+
     describe('catchPermissions', () => {
 
         it('returns true for valid permissions for specified action', () => {
@@ -1306,9 +1330,69 @@ describe('controllers/EntityUtilities.js', () => {
 
             entityUtilitiesController.descriptive_name = 'a_name';
             entityUtilitiesController.setPrimaryKey();
+            entityUtilitiesController.censorEncryptedAttributes = () => {};
 
             expect(entityUtilitiesController.buildResponse(data)).to.deep.equal({
                 a_names: data.Items,
+                pagination: {
+                    count: 1,
+                    end_cursor: "dummy_id",
+                    has_next_page: "true",
+                    last_evaluated: "{\"id\":\"dummy_id\"}"
+                },
+            });
+        });
+
+        it('censors attributes when sanitize=true', () => {
+            const data = {
+                Items: ['encrypted_item'],
+                Count: 1,
+                LastEvaluatedKey: {id: 'dummy_id'}
+            };
+
+            const censored_items = ['censored_item'];
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            const entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'a_name';
+            entityUtilitiesController.setPrimaryKey();
+            entityUtilitiesController.censorEncryptedAttributes = () => {
+                data.Items = censored_items;
+            }
+
+            expect(entityUtilitiesController.buildResponse(data)).to.deep.equal({
+                a_names: censored_items,
+                pagination: {
+                    count: 1,
+                    end_cursor: "dummy_id",
+                    has_next_page: "true",
+                    last_evaluated: "{\"id\":\"dummy_id\"}"
+                },
+            });
+        });
+
+        it('decrypts attributes when sanitize=false', () => {
+            const data = {
+                Items: ['encrypted_item'],
+                Count: 1,
+                LastEvaluatedKey: {id: 'dummy_id'}
+            };
+
+            const unencrypted_items = ['item'];
+
+            const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
+            const entityUtilitiesController = new EUC();
+
+            entityUtilitiesController.descriptive_name = 'a_name';
+            entityUtilitiesController.setPrimaryKey();
+            entityUtilitiesController.sanitization = false;
+            entityUtilitiesController.decryptAttributes = () => {
+                data.Items = unencrypted_items;
+            }
+
+            expect(entityUtilitiesController.buildResponse(data)).to.deep.equal({
+                a_names: unencrypted_items,
                 pagination: {
                     count: 1,
                     end_cursor: "dummy_id",

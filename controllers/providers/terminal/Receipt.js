@@ -43,6 +43,8 @@ module.exports = class TerminalRecieptGenerator {
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
 
+    this.fulfillmentProviderController.sanitize(false);
+
   }
 
   issueReceipt(){
@@ -83,7 +85,6 @@ module.exports = class TerminalRecieptGenerator {
 
     return this.fulfillmentProviderController.get({id: fulfillment_provider_id }).then(result => {
 
-      this.fulfillmentProviderController.decryptAttributes(result);
       this.parameters.set('fulfillmentprovider', result);
 
       this.parameters.set('account', result.account);

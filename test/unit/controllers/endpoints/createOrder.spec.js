@@ -90,16 +90,12 @@ function getValidCampaign(id){
 }
 
 function getValidCreditCard(id){
-  return MockEntities.getValidCreditCard(id)
-}
-
-function getValidPlaintextCreditCard(id){
   return MockEntities.getValidPlaintextCreditCard(id)
 }
 
 function getValidCreditCardPrototype(){
 
-  let creditcard = getValidPlaintextCreditCard();
+  let creditcard = getValidCreditCard();
 
   delete creditcard.account;
   delete creditcard.id;
@@ -226,7 +222,7 @@ describe('createOrder', function () {
 
       let customer = getValidCustomer();
       let creditcard = getValidCreditCard();
-      let plaintext_creditcard = getValidPlaintextCreditCard();
+      let plaintext_creditcard = getValidCreditCard();
       let rebill = getValidRebill();
       let transactions = getValidTransactions();
       let processor_response = getValidProcessorResponse();
@@ -268,9 +264,8 @@ describe('createOrder', function () {
             account: global.account
           }));
         },
-        decryptAttributes: creditcard => {
-            Object.assign(creditcard, plaintext_creditcard);
-            return creditcard;
+        sanitize:(input) => {
+          expect(input).to.equal(false);
         }
       });
 
@@ -388,7 +383,7 @@ describe('createOrder', function () {
 
       let customer = getValidCustomer();
       let creditcard = getValidCreditCard();
-      let plaintext_creditcard = getValidPlaintextCreditCard();
+      let plaintext_creditcard = getValidCreditCard();
       let rebill = getValidRebill();
       let transactions = getValidTransactions();
       let processor_response = getValidProcessorResponse();
@@ -437,9 +432,8 @@ describe('createOrder', function () {
             account: global.account
           }));
         },
-        decryptAttributes: creditcard => {
-            Object.assign(creditcard, plaintext_creditcard);
-            return creditcard;
+        sanitize:(input) => {
+          expect(input).to.equal(false);
         }
       });
 
@@ -597,7 +591,6 @@ describe('createOrder', function () {
       let campaign = getValidCampaign();
       let event = getValidEventBody();
       let creditcard = getValidCreditCard();
-      let plaintext_creditcard = getValidPlaintextCreditCard();
       let customer = getValidCustomer();
       let session = getValidSession();
 
@@ -616,8 +609,8 @@ describe('createOrder', function () {
             account: global.account
           }));
         },
-        decryptAttributes: () => {
-            return plaintext_creditcard;
+        sanitize:(input) => {
+          expect(input).to.equal(false);
         }
       });
 
@@ -743,7 +736,7 @@ describe('createOrder', function () {
 
       let customer = getValidCustomer();
       let session = getValidSession();
-      let plaintext_creditcard = getValidPlaintextCreditCard();
+      let plaintext_creditcard = getValidCreditCard();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
         addCreditCard: () => {
@@ -845,7 +838,7 @@ describe('createOrder', function () {
       let rebill = getValidRebill();
       let processor_response = getValidProcessorResponse();
       let response_type = getValidResponseType();
-      let plaintext_creditcard = getValidPlaintextCreditCard();
+      let plaintext_creditcard = getValidCreditCard();
       let transactions = getValidTransactions();
 
       const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
@@ -913,7 +906,7 @@ describe('createOrder', function () {
       createOrderController.parameters.set('customer', getValidCustomer());
       createOrderController.parameters.set('rebill', getValidRebill());
       createOrderController.parameters.set('campaign', getValidCampaign());
-      createOrderController.parameters.set('creditcard', getValidPlaintextCreditCard());
+      createOrderController.parameters.set('creditcard', getValidCreditCard());
       createOrderController.parameters.set('result', 'success');
 
       return createOrderController.buildInfoObject().then(result => {
@@ -1163,7 +1156,9 @@ describe('createOrder', function () {
             account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'
           }));
         },
-        decryptAttributes: () => {}
+        sanitize:(input) => {
+          expect(input).to.equal(false);
+        }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
@@ -1350,7 +1345,7 @@ describe('createOrder', function () {
 
       let campaign = getValidCampaign();
       let customer = getValidCustomer();
-      let creditcard = getValidPlaintextCreditCard();
+      let creditcard = getValidCreditCard();
       let rebill = getValidRebill();
       let transactions = getValidTransactions();
       let processor_response = getValidProcessorResponse();
@@ -1403,7 +1398,9 @@ describe('createOrder', function () {
             account: global.account
           }));
         },
-        decryptAttributes: () => {}
+        sanitize:(input) => {
+          expect(input).to.equal(false);
+        }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {

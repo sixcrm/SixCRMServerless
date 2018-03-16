@@ -94,7 +94,9 @@ describe('/providers/terminal/Receipt.js', () => {
         get:() => {
           return Promise.resolve(fulfillment_provider);
         },
-        decryptAttributes: () => {}
+        sanitize: (input) => {
+            expect(input).to.equal(false);
+        }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {

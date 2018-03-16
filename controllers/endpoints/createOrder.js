@@ -203,11 +203,11 @@ class CreateOrderController extends transactionEndpointController {
 
       if(!_.has(this, 'creditCardController')){
         this.creditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
+        this.creditCardController.sanitize(false);
       }
 
       return this.creditCardController.assureCreditCard(event.creditcard)
       .then(creditcard => {
-        this.creditCardController.decryptAttributes(creditcard);
         return this.parameters.set('creditcard', creditcard);
       })
       .then(() => this.addCreditCardToCustomer());

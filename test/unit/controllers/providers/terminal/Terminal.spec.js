@@ -893,6 +893,9 @@ describe('controllers/providers/terminal/Terminal.js', function () {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
         get:({id}) => {
           return Promise.resolve(fulfillment_provider);
+        },
+        sanitize:(input) => {
+          expect(input).to.equal(false);
         }
       });
 
@@ -954,6 +957,9 @@ describe('controllers/providers/terminal/Terminal.js', function () {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
         get:({id}) => {
           return Promise.resolve(fulfillment_provider);
+        },
+        sanitize:(input) => {
+          expect(input).to.equal(false);
         }
       });
 
@@ -1030,6 +1036,9 @@ describe('controllers/providers/terminal/Terminal.js', function () {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
         get:({id}) => {
           return Promise.resolve(fulfillment_provider);
+        },
+        sanitize:(input) => {
+          expect(input).to.equal(false);
         }
       });
 

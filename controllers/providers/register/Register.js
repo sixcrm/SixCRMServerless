@@ -83,6 +83,9 @@ module.exports = class Register extends RegisterUtilities {
     this.creditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
+    this.merchantProviderController.sanitize(false);
+    this.customerController.sanitize(false);
+    this.creditCardController.sanitize(false);
   }
 
   refundTransaction(){
