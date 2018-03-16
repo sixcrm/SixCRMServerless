@@ -88,11 +88,14 @@ class creditCardController extends entityController {
 
       du.debug('Assure Credit Card', creditcard);
 
+      if (this.sanitization) {
+          eu.throwError('server', 'Cannot Assure Credit Card while sanitizing results');
+      }
+
       this.assignPrimaryKey(creditcard);
+      this.setLastFour(creditcard);
 
-      const encryptedNumber = this.encryptAttributes(creditcard).number;
-
-      return this.queryBySecondaryIndex({field:'number', index_value: encryptedNumber, index_name: 'number-index'}).then(results => {
+      return this.queryBySecondaryIndex({field:'last_four', index_value: creditcard.last_four, index_name: 'last_four-index'}).then(results => {
 
         if(_.has(results, 'creditcards')){
 
