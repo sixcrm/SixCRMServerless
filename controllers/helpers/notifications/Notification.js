@@ -4,6 +4,8 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -72,15 +74,24 @@ module.exports = class NotificationHelperClass {
 
     let notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/default.js');
 
-    if(fileutilities.fileExists(global.SixCRM.routes.path('helpers', 'notifications/notificationtypes/'+event_type+'.js'))){
+    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('helpers','notifications/notificationtypes/'))
+    .then(directory_files => {
 
-      notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+event_type+'.js');
+      let matching_notification_file = arrayutilities.find(directory_files, directory_file => {
+        du.info(directory_file.replace('.js',''), event_type);
+        return stringutilities.isMatch(directory_file.replace('.json',''), new RegExp(event_type,"g"));
+      });
 
-    }
+      if(matching_notification_file){
+        notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+matching_notification_file);
+        this.parameters.set('notificationclass', notification_class);
+      }else{
+        du.warning('No matching notification file for event type: '+event_type);
+      }
 
-    this.parameters.set('notificationclass', notification_class);
+      return true;
 
-    return true;
+    });
 
   }
 

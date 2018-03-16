@@ -59,9 +59,10 @@ describe('/helpers/notifications/Notification.js', () => {
 
       notificationHelperClass.parameters.set('eventtype', event_type);
 
-      let result = notificationHelperClass.instantiateNotificationClass();
+      return notificationHelperClass.instantiateNotificationClass().then(result => {
+        expect(result).to.equal(true);
+      });
 
-      expect(result).to.equal(true);
       expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('DefaultNotification');
 
     });
@@ -74,10 +75,29 @@ describe('/helpers/notifications/Notification.js', () => {
 
       notificationHelperClass.parameters.set('eventtype', event_type);
 
-      let result = notificationHelperClass.instantiateNotificationClass();
+      return notificationHelperClass.instantiateNotificationClass().then(result => {
 
-      expect(result).to.equal(true);
-      expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('TestNotification');
+        expect(result).to.equal(true);
+        expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('TestNotification');
+
+      });
+
+    });
+
+    it('successfully instantiates the test notification class using a regular expression', () => {
+
+      let event_type = 'tes[t]+';
+      const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
+      let notificationHelperClass = new NotificationHelperClass();
+
+      notificationHelperClass.parameters.set('eventtype', event_type);
+
+      return notificationHelperClass.instantiateNotificationClass().then(result => {
+
+        expect(result).to.equal(true);
+        expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('TestNotification');
+
+      });
 
     });
 
