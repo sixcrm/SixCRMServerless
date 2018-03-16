@@ -32,11 +32,7 @@ describe('lib/hash-utilities', () => {
             let unexpected_params = [{}, {a: 'b'}, {a: 'b', c: 'd'}];
 
             unexpected_params.forEach(param => {
-                try{
-                    hashutilities.toSHA1(param)
-                }catch(error) {
-                    expect(error.message).to.equal('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.');
-                }
+              expect(() => hashutilities.toSHA1(param)).to.throw();
             });
         });
     });
@@ -69,11 +65,7 @@ describe('lib/hash-utilities', () => {
             let unexpected_params = [{}, {a: 'b'}, {a: 'b', c: 'd'}];
 
             unexpected_params.forEach(param => {
-                try{
-                    hashutilities.toBase64(param)
-                }catch(error) {
-                    expect(error.message).to.equal('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.');
-                }
+              expect(() => hashutilities.toBase64(param)).to.throw();
             });
         });
     });
