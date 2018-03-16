@@ -240,6 +240,196 @@ describe('lib/object-utilities', () => {
     });
 
   });
+
+  describe('setRecursive', () => {
+
+        it('should fail with null key argumentation', () => {
+
+            try{
+                objectutilities.setRecursive({});
+                expect.fail();
+            }catch(error){
+                expect(error.message).to.equal('[500] Key must be a array or a string.');
+            }
+
+        });
+
+        it('should fail with empty key argumentation', () => {
+
+            try{
+                objectutilities.setRecursive({},[]);
+                expect.fail();
+            }catch(error){
+                expect(error.message).to.equal('[500] key array must be of length 1 or greater.');
+            }
+
+        });
+
+        it('should fail with fatal argumentation', () => {
+
+            try{
+                objectutilities.setRecursive({},['test'], 'hello', true);
+                expect.fail();
+            }catch(error){
+                expect(error.message).to.equal('[500] Expected object to have key "test"');
+            }
+
+        });
+
+        it('should return empty object', () => {
+
+            expect(objectutilities.setRecursive({},['test'], 'hello')).to.deep.equal({});
+
+        });
+
+        it('should fail due to invalid argumentation (object)', () => {
+
+            try{
+
+                objectutilities.setRecursive({test:'hello'}, {}, true);
+                expect.fail();
+
+            }catch(error){
+
+                expect(error.message).to.equal('[500] Key must be a array or a string.');
+
+            }
+
+        });
+
+        it('should fail due to invalid argumentation (object in array)', () => {
+
+            try{
+
+                objectutilities.setRecursive({test:'hello'}, [{}], true);
+                expect.fail();
+
+            }catch(error){
+
+                expect(error.message).to.equal('[500] Non-string key observed.');
+
+            }
+
+        });
+
+        it('should return object with key and value for array argument (one dimensional)', () => {
+
+            expect(objectutilities.setRecursive({test:'hello'},['test'], 'changed')).to.deep.equal({test:'changed'});
+
+        });
+
+        it('should return object with key and value for string argument (one dimensional)', () => {
+
+            expect(objectutilities.setRecursive({test:'hello'},'test', 'changed')).to.deep.equal({test:'changed'});
+
+        });
+
+        it('should return object with key and value for string argument (one dimensional) with arbitrary property types', () => {
+
+            expect(objectutilities.setRecursive({test:{test2:'hello'}}, 'test', 'changed')).deep.equal({test:'changed'});
+            expect(objectutilities.setRecursive({test:'hello'}, 'test', 'changed')).deep.equal({test:'changed'});
+            expect(objectutilities.setRecursive({test:null}, 'test', 'hello')).deep.equal({test:'hello'});
+            expect(objectutilities.setRecursive({test:false}, 'test', 'hello')).deep.equal({test:'hello'});
+            expect(objectutilities.setRecursive({test:true}, 'test', 'hello')).deep.equal({test:'hello'});
+            expect(objectutilities.setRecursive({test:{}}, 'test', 'hello')).deep.equal({test:'hello'});
+            expect(objectutilities.setRecursive({test:['hello']}, 'test', 'changed')).deep.equal({test:'changed'});
+
+            let changed = objectutilities.setRecursive({test: () => {return 'hello'; }}, 'test', () => {return 'hello'; });
+
+            expect(changed.test()).to.equal('hello');
+
+        });
+
+        it('should return object with key and value for array argument (one dimensional) with arbitrary property types', () => {
+
+            expect(objectutilities.setRecursive({test:{test2:'hello'}}, ['test'], 'changed')).to.deep.equal({test:'changed'});
+            expect(objectutilities.setRecursive({test:'hello'}, ['test'], 'changed')).to.deep.equal({test:'changed'});
+            expect(objectutilities.setRecursive({test:null}, ['test'], 'hello')).to.deep.equal({test:'hello'});
+            expect(objectutilities.setRecursive({test:false}, ['test'], 'hello')).to.deep.equal({test:'hello'});
+            expect(objectutilities.setRecursive({test:true}, ['test'], 'hello')).to.deep.equal({test:'hello'});
+            expect(objectutilities.setRecursive({test:{}}, ['test'], 'hello')).to.deep.equal({test:'hello'});
+            expect(objectutilities.setRecursive({test:['hello']}, ['test'], 'changed')).to.deep.equal({test:'changed'});
+
+            let changed = objectutilities.setRecursive({test: () => {return 'hello'; }}, ['test'], () => {return 'hello'; });
+
+            expect(changed.test()).to.equal('hello');
+        });
+
+        it('should return object with keys and value for array argument (two dimensional)', () => {
+
+            expect(objectutilities.setRecursive({test:{test2:'hello'}},['test', 'test2'], 'changed')).to.deep.equal({test:{test2:'changed'}});
+
+        });
+
+        it('should return object with keys and value for string argument (two dimensional)', () => {
+
+            expect(objectutilities.setRecursive({test:{test2:'hello'}},'test.test2', 'changed')).to.deep.equal({test:{test2:'changed'}});
+
+        });
+
+        it('should return object with key and value for string argument (two dimensional) with arbitrary property types', () => {
+
+            expect(objectutilities.setRecursive({test:{test2:{test3: 'hello'}}}, 'test.test2', 'changed')).to.deep.equal({test:{test2: 'changed'}});
+            expect(objectutilities.setRecursive({test:{test2:'hello'}}, 'test.test2', 'changed')).to.deep.equal({test:{test2:'changed'}});
+            expect(objectutilities.setRecursive({test:{test2:null}}, 'test.test2', 'hello')).to.deep.equal({test:{test2:'hello'}});
+            expect(objectutilities.setRecursive({test:{test2:false}}, 'test.test2', 'hello')).to.deep.equal({test:{test2:'hello'}});
+            expect(objectutilities.setRecursive({test:{test2:true}}, 'test.test2', 'hello')).to.deep.equal({test:{test2:'hello'}});
+            expect(objectutilities.setRecursive({test:{test2:{}}}, 'test.test2', 'hello')).to.deep.equal({test:{test2:'hello'}});
+            expect(objectutilities.setRecursive({test:{test2:['hello']}}, 'test.test2', ['changed'])).to.deep.equal({test:{test2:['changed']}});
+
+            let changed = objectutilities.setRecursive({test:{test2: () => {return 'hello'; }}}, 'test.test2', () => {return 'hello'; });
+
+            expect(changed.test.test2()).to.equal('hello');
+        });
+
+        it('should return return object with keys and value for array argument (two dimensional) with arbitrary property types', () => {
+
+            expect(objectutilities.setRecursive({test:{test2:{test3: 'hello'}}}, ['test','test2'], 'changed')).to.deep.equal({test:{test2: 'changed'}});
+            expect(objectutilities.setRecursive({test:{test2:'hello'}}, ['test','test2'], 'changed')).to.deep.equal({test:{test2:'changed'}});
+            expect(objectutilities.setRecursive({test:{test2:null}}, ['test','test2'], 'hello')).to.deep.equal({test:{test2:'hello'}});
+            expect(objectutilities.setRecursive({test:{test2:false}}, ['test','test2'], 'hello')).to.deep.equal({test:{test2:'hello'}});
+            expect(objectutilities.setRecursive({test:{test2:true}}, ['test','test2'], 'hello')).to.deep.equal({test:{test2:'hello'}});
+            expect(objectutilities.setRecursive({test:{test2:{}}}, ['test','test2'], {})).to.deep.equal({test:{test2:{}}});
+            expect(objectutilities.setRecursive({test:{test2:['hello']}}, ['test','test2'], ['changed'])).to.deep.equal({test:{test2:['changed']}});
+
+            let changed = objectutilities.setRecursive({test:{test2: () => {return 'hello'; }}}, ['test.test2'], () => {return 'hello'; });
+
+            expect(changed.test.test2()).to.equal('hello');
+
+        });
+
+        it('should return return object with keys and value for array argument (three dimensional)', () => {
+
+            expect(objectutilities.setRecursive({test:{test2:{test3:'hello'}}},['test', 'test2', 'test3'], 'changed')).to.deep.equal({test:{test2:{test3:'changed'}}});
+
+        });
+
+        it('should return object with keys and value for string argument (two dimensional)', () => {
+
+            expect(objectutilities.setRecursive({test:{test2:{test3:'hello'}}},'test.test2.test3', 'changed')).to.deep.equal({test:{test2:{test3:'changed'}}});
+
+        });
+
+        it('should return object with keys and value for array argument (three dimensional)', () => {
+
+            expect(objectutilities.setRecursive({test:{test2:{test4:'hello'}}},['test', 'test2', 'test3'], 'changed')).to.deep.equal({test:{test2:{test4:'hello'}}});
+
+        });
+
+        it('should return object with keys and value for string argument (two dimensional)', () => {
+
+            expect(objectutilities.setRecursive({test:{test2:{test4:'hello'}}},'test.test2.test3', 'changed')).to.deep.equal({test:{test2:{test4:'hello'}}});
+
+        });
+
+        it('should return object with keys and value for array argument (three dimensional with array index notation)', () => {
+
+            expect(objectutilities.setRecursive({test:[{another_key:{yet_another_key:'1'}}]},'test.0.another_key.yet_another_key', '1'), true).to.deep.equal({test:[{another_key:{yet_another_key:'1'}}]});
+
+        });
+
+    });
+
   describe('getRecursive', () => {
 
     it('should fail with null key argumentation', () => {
@@ -464,16 +654,287 @@ describe('lib/object-utilities', () => {
             }
         )).to.equal('a_value');
     });
+
+      it('throws error when second argument is not a function', () => {
+          try{
+              objectutilities.recurseByDepth({}, 'not_a_function')
+          }catch(error){
+              expect(error.message).to.equal('[500] Match function must be a function.');
+          }
+      });
+
+      it('returns null when first argument is not an object', () => {
+
+          let unexpected_params = ['unexpected_element', '123', '-123', '', 123, 11.22, -123, true];
+
+          unexpected_params.forEach(param => {
+              expect(objectutilities.recurseByDepth(param)).to.equal(null);
+          });
+
+      });
+
+      it('successfully returns matched value', () => {
+
+          let params = {
+              a: 'v1',
+              b: 'v2',
+              c: {
+                  a: 'v3'
+              }
+          };
+
+          let match_func = (key, value) => {return value === 'v3'};
+
+          expect(objectutilities.recurseByDepth(params, match_func)).to.equal('v3');
+
+      });
+
+      it('successfully returns matched value for more than one matched value (lower depth level goes first)', () => {
+
+          let params = {
+              a: 'v1',
+              b: 'v2',
+              c: {
+                  a: 'v2'
+              }
+          };
+
+          let match_func = (key, value) => {return value === 'v2'};
+
+          expect(objectutilities.recurseByDepth(params, match_func)).to.equal('v2');
+
+      });
+
+      it('successfully returns matched value for more than one matched value (lower depth level goes second)', () => {
+
+          let params = {
+              a: 'a',
+              b: {
+                  a: {
+                      a: {
+                          a: 'v2'
+                      }
+                  }
+              },
+              c: 'v3',
+              d: 'v2'
+          };
+
+          let match_func = (key, value) => {return value === 'v2'};
+
+          expect(objectutilities.recurseByDepth(params, match_func)).to.equal('v2');
+
+      });
+
+      it('returns value when match was a success', () => {
+
+          let params = {
+              a: 'v1',
+              b: 'v2',
+              c: {
+                  a: {
+                      a: {
+                          a: {
+                              a: 'v3',
+                              b: 'v4',
+                              c: 'v5',
+                              d: 'v6'
+                          }
+                      }
+                  }
+              }
+          };
+
+          let match_func = (key, value) => {return key === 'd'};
+
+          expect(objectutilities.recurseByDepth(params, match_func, 0)).to.equal('v6');
+          expect(objectutilities.recurseByDepth(params, match_func, 3)).to.equal('v6');
+      });
+
+      it('returns null when value does not exist', () => {
+
+          let params = {
+              a: 'v1',
+              b: 'v2',
+              c: {
+                  a: 'v3'
+              }
+          };
+
+          let match_func = (key, value) => {return value === 'v4'};
+
+          expect(objectutilities.recurseByDepth(params, match_func)).to.deep.equal(null);
+      });
   });
 
   describe('recurseAll', () => {
 
-    it('throws error if fatal is true', () => {
+    it('throws error when second argument is not a function', () => {
         try{
           objectutilities.recurseAll({}, 'not_a_function')
         }catch(error){
             expect(error.message).to.equal('[500] Match function must be a function.');
         }
+    });
+
+    it('returns null when first argument is not an object', () => {
+
+          let unexpected_params = ['unexpected_element', '123', '-123', '', 123, 11.22, -123, true];
+
+          unexpected_params.forEach(param => {
+              expect(objectutilities.recurseAll(param)).to.equal(null);
+          });
+
+    });
+
+    it('successfully returns depth level and matched value', () => {
+
+        let params = {
+            a: 'v1',
+            b: 'v2',
+            c: {
+                a: 'v3'
+            }
+        };
+
+        let match_func = (key, value) => {return value === 'v3'};
+
+        expect(objectutilities.recurseAll(params, match_func)).to.deep.equal([ { depth: 2, match: 'v3' } ] );
+
+    });
+
+    it('successfully returns depth level and matched value for more than one matched value (lower depth level goes first)', () => {
+
+        let params = {
+            a: 'v1',
+            b: 'v2',
+            c: {
+                a: 'v2'
+            }
+        };
+
+        let match_func = (key, value) => {return value === 'v2'};
+
+        expect(objectutilities.recurseAll(params, match_func)).to.deep.equal(
+            [ { depth: 1, match: 'v2' }, { depth: 2, match: 'v2' } ]
+        );
+
+    });
+
+    it('successfully returns depth level and matched value for more than one matched value (lower depth level goes second)', () => {
+
+      let params = {
+          a: 'v1',
+          b: {
+              a: {
+                  a: {
+                      a: 'v2'
+                  }
+              }
+          },
+          c: 'v2',
+          d: 'v3'
+      };
+
+      let match_func = (key, value) => {return value === 'v2'};
+
+      expect(objectutilities.recurseByDepth(params, match_func)).to.equal('v2');
+
+    });
+
+    it('returns depth level and matched value when match was a success', () => {
+
+      let params = {
+          a: 'v1',
+          b: 'v2',
+          c: {
+              a: {
+                  a: {
+                      a: {
+                          a: 'v3',
+                          b: 'v4',
+                          c: 'v5',
+                          d: 'v6'
+                      }
+                  }
+              }
+          }
+      };
+
+      let match_func = (key, value) => {return key === 'd'};
+
+      expect(objectutilities.recurseAll(params, match_func, 0)).to.deep.equal([ { depth: 4, match: 'v6' } ]);
+      expect(objectutilities.recurseAll(params, match_func, 3)).to.deep.equal([ { depth: 7, match: 'v6' } ]);
+    });
+
+    it('returns an empty array when value does not exist', () => {
+
+      let params = {
+          a: 'v1',
+          b: 'v2',
+          c: {
+              a: 'v3'
+          }
+      };
+
+      let match_func = (key, value) => {return value === 'v4'};
+
+      expect(objectutilities.recurseAll(params, match_func)).to.deep.equal([]);
+    });
+  });
+
+  describe('recurse', () => {
+
+    it('throws error when second argument is not a function', () => {
+        let params = {
+            a: 'v1',
+            b: 'v2',
+            c: {
+                a: 'v3'
+            }
+        };
+
+        try{
+            objectutilities.recurse(params, 'not_a_function')
+        }catch(error){
+            expect(error.message).to.equal('[500] Match function must be a function.');
+        }
+    });
+
+    it('returns null when first argument is not an object', () => {
+        let unexpected_params = ['unexpected_element', '123', '-123', '', 123, 11.22, -123, true];
+
+        unexpected_params.forEach(param => {
+            expect(objectutilities.recurse(param)).to.equal(null);
+        });
+    });
+
+    it('returns value when it exists in specified object', () => {
+        let params = {
+            a: 'v1',
+            b: 'v2',
+            c: {
+                a: 'v3'
+            }
+        };
+
+        let match_func = (key, value) => {return value === 'v3'};
+
+        expect(objectutilities.recurse(params, match_func)).to.equal('v3');
+    });
+
+    it('returns null when value does not exist', () => {
+        let params = {
+            a: 'v1',
+            b: 'v2',
+            c: {
+                a: 'v3'
+            }
+        };
+
+        let match_func = (key, value) => {return value === 'v4'};
+
+        expect(objectutilities.recurse(params, match_func)).to.equal(null);
     });
   });
 
