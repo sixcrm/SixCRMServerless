@@ -247,15 +247,7 @@ module.exports = class ConfigurationUtilities {
 
     du.debug('Get Account Identifier');
 
-    let account_identifier = this.getAccountIdentifierFromEnvironment();
-
-    if(_.isNull(account_identifier)){
-
-      account_identifier = this.getAccountIdentifierFromLambdaContext();
-
-    }
-
-    return account_identifier;
+    return this.getAccountIdentifierFromEnvironment();
 
   }
 
@@ -289,18 +281,6 @@ module.exports = class ConfigurationUtilities {
       return process.env.AWS_ACCOUNT;
     }else if(_.has(process.env, 'aws_account')){
       return process.env.aws_account;
-    }
-
-    return null;
-
-  }
-
-  getAccountIdentifierFromLambdaContext(){
-
-    du.debug('Get Account Identifier From Lambda Context');
-
-    if (typeof context !== 'undefined' && _.has(context, 'invokedFunctionArn')) {
-      return context.invokedFunctionArn.match(/\d{3,}/)[0];
     }
 
     return null;
