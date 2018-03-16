@@ -1,0 +1,12 @@
+{
+  "method": "getAffiliateReport",
+  "test_case": "input with events and no transactions",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-02-01T00:00:00.000Z" },
+    "period":"day",
+    "pagination": { "limit": 1, "order": "asc", "offset": 0 } },
+  "result_name": "affiliates",
+  "expect": []
+}

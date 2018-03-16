@@ -1,0 +1,12 @@
+{
+  "method": "getTransactionsByFacet",
+  "test_case": "random input",
+  "input": {
+    "analyticsfilter":
+  { "start": "2017-01-01T00:00:00.000Z",
+    "end": "2017-01-13T00:00:00.000Z" },
+    "facet": "affiliate",
+    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
+  "result_name": "facets",
+  "expect": [{"facet":"6b6331f6-7f84-437a-9ac6-093ba301e455","count":1,"count_percentage":"100.00%","amount":139.99,"amount_percentage":"13999.00%"}] 
+}
