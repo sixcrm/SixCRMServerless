@@ -1,6 +1,5 @@
 const request = require('supertest');
 const chai = require('chai');
-const fs = require('fs');
 
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 
@@ -33,7 +32,7 @@ var tests = [{
 
 let this_request = request(endpoint);
 
-xdescribe('Graph '+entity+' Test', function() {
+describe('Graph '+entity+' Test', function() {
 
   	global.test_accounts.forEach((test_account) => {
 
