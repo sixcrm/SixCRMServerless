@@ -4,7 +4,7 @@ const _ = require('underscore');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-describe.only('lib/object-utilities', () => {
+describe('lib/object-utilities', () => {
 
   describe('has', () => {
 
