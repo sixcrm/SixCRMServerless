@@ -568,12 +568,15 @@ workflows:
       - deleteblock_integration_tests:
           requires:
             - seed
+            - entity_integration_tests
       - analytics_integration_tests:
           requires:
             - seed
+            - entity_integration_tests
       - transactional_integration_tests:
           requires:
             - seed
+            - entity_integration_tests
       - synchronize_index:
           requires:
              - transactional_integration_tests
