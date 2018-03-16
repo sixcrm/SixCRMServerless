@@ -12,7 +12,6 @@ class LeadNotification extends BaseNotification {
     this.title = 'You\'ve got a new lead!';
     this.body = '{{campaign.name}} has a new lead!';
     this.category = 'transaction';
-    this.notification_type = 'lead';
 
     this.account_wide = true;
 
@@ -31,7 +30,6 @@ class LeadNotification extends BaseNotification {
       body: this.getBody(context),
       action: this.createAction(context)
     };
-
 
     return return_object;
 

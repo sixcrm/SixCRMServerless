@@ -11,7 +11,6 @@ class DefaultNotification extends BaseNotification{
     this.title = 'Default Notification';
     this.body = 'This is a default notification.';
     this.category = 'general';
-    this.type = 'default';
 
   }
 

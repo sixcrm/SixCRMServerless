@@ -1,0 +1,6 @@
+{
+  "id":"/helpers/notifications/notificationtype.json",
+  "title":"Notification Type",
+  "type":"string",
+  "enum":["notification", "alert", "persistent"]
+}

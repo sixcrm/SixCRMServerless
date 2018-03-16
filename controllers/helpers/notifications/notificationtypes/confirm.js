@@ -12,7 +12,6 @@ class ConfirmNotification extends BaseNotification {
     this.title = 'A customer has just confirmed thier order.';
     this.body = '{{campaign.name}} has a new confirmed order!';
     this.category = 'transaction';
-    this.notification_type = 'confirm';
 
     this.account_wide = true;
 

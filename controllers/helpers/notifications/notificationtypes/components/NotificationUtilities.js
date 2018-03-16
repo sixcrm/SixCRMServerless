@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib','error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 
 module.exports = class NotificationUtilities {
 
@@ -13,7 +14,6 @@ module.exports = class NotificationUtilities {
     this.notificationProvider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
 
     const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
-
     this.contextHelperController = new ContextHelperController();
 
   }
@@ -35,7 +35,11 @@ module.exports = class NotificationUtilities {
     du.debug('Get Notification Type');
 
     if(_.has(this, 'notification_type')){
+
+      mvu.validateModel(this.notification_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationtype.json'));
+
       return this.notification_type;
+
     }
 
     eu.throwError('server', 'Unable to determine notification type.');
@@ -62,25 +66,7 @@ module.exports = class NotificationUtilities {
 
     du.debug('Get Title');
 
-    let replace_object = {};
-
-    let tokens = parserutilities.getTokens(this.title);
-
-    if(arrayutilities.nonEmpty(tokens)){
-
-      arrayutilities.map(tokens, token => {
-
-        let token_value = this.contextHelperController.getFromContext(context, token, false)
-
-        if(!_.isUndefined(token_value) && !_.isNull(token_value)){
-          replace_object[token] = token_value;
-        }
-
-      });
-
-    }
-
-    return parserutilities.parse(this.title, replace_object);
+    return this.replaceFromContext(context, 'title');
 
   }
 
@@ -88,15 +74,23 @@ module.exports = class NotificationUtilities {
 
     du.debug('Get Title');
 
+    return this.replaceFromContext(context, 'body');
+
+  }
+
+  replaceFromContext(context, field){
+
+    du.debug('Replace From Context');
+
     let replace_object = {};
 
-    let tokens = parserutilities.getTokens(this.body);
+    let tokens = parserutilities.getTokens(this[field]);
 
     if(arrayutilities.nonEmpty(tokens)){
 
       arrayutilities.map(tokens, token => {
 
-        let token_value = this.contextHelperController.getFromContext(context, token, false)
+        let token_value = this.contextHelperController.getFromContext(context, token, false);
 
         if(!_.isUndefined(token_value) && !_.isNull(token_value)){
           replace_object[token] = token_value;
@@ -106,7 +100,11 @@ module.exports = class NotificationUtilities {
 
     }
 
-    return parserutilities.parse(this.body, replace_object);
+    let replaced = parserutilities.parse(this[field], replace_object, true);
+
+    du.info(replaced);
+
+    return replaced;
 
   }
 

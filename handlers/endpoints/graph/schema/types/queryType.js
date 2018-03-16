@@ -456,9 +456,14 @@ module.exports.graphObj = new GraphQLObjectType({
         notificationtest: {
             type: notificationTestType.graphObj,
             resolve: function() {
-                const notificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/notification-provider');
 
-                return notificationProviderController.test({fatal: get_fatal});
+              const EventsHelperController = global.SixCRM.routes.include('helpers','events/Event.js');
+              let eventsHelperController = new EventsHelperController();
+              let context = { user: global.user, account: global.account };
+              return eventsHelperController.pushEvent({event_type:'test', context:context}).then(() => {
+                return {result:'OK'};
+              });
+
             }
         },
         alerttest: {

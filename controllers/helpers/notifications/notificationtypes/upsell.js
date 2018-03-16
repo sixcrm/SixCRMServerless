@@ -12,7 +12,6 @@ class UpsellNotification extends BaseNotification {
     this.title = 'You\'ve got a new order (upsell)!';
     this.body = '{{campaign.name}} has a new order (upsell)!';
     this.category = 'transaction';
-    this.notification_type = 'upsell';
 
     this.account_wide = true;
 

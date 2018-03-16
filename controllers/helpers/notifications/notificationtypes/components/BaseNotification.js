@@ -13,7 +13,7 @@ module.exports = class BaseNotification extends NotificationUtilities {
     this.title = 'Base Notification';
     this.body = 'This is the base notification.';
     this.category = 'base';
-    this.type = 'base';
+    this.notification_type = 'notification';
 
   }
 
@@ -28,7 +28,8 @@ module.exports = class BaseNotification extends NotificationUtilities {
       type: this.getNotificationType(),
       category: this.getNotificationCategory(),
       title: this.getTitle(context),
-      body: this.getBody(context)
+      body: this.getBody(context),
+      action: {}
     };
 
     return return_object;

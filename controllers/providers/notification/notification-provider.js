@@ -96,6 +96,8 @@ class NotificationProvider {
     /**
      * Send a test notification to current user.
      */
+     //Deprecated...
+     /*
     test({type}) {
         du.debug('Sending a test notification.');
 
@@ -113,6 +115,7 @@ class NotificationProvider {
             return 'OK';
         });
     }
+    */
 
     /**
      * Save given notification in the system, and send it though all channels, respecting user settings.

@@ -12,7 +12,6 @@ class OrderNotification extends BaseNotification {
     this.title = 'You\'ve got a new order!';
     this.body = '{{campaign.name}} has a new order!';
     this.category = 'transaction';
-    this.notification_type = 'order';
 
     this.account_wide = true;
 
