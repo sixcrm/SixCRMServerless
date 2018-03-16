@@ -39,7 +39,7 @@ class NotificationEventsController extends SNSEventController {
 
     let notificationsHelperController = new NotificationsHelperController();
 
-    return notificationsHelperController.executeNotifications(event_type, context);
+    return notificationsHelperController.executeNotifications({event_type: event_type, context: context});
 
   }
 
