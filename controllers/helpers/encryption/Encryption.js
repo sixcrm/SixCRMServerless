@@ -6,8 +6,8 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 class EncryptionHelper {
-    constructor({primary_key}) {
-        this.primary_key = primary_key;
+    constructor(entity_ref) {
+        this.entity_ref = entity_ref;
     }
 
     encryptAttributes(paths, entity) {
@@ -60,11 +60,11 @@ class EncryptionHelper {
     }
 
     encrypt(entity, value) {
-        return encryptionutilities.encryptAES256(entity[this.primary_key], value)
+        return encryptionutilities.encryptAES256(entity[this.entity_ref.primary_key], value)
     }
 
     decrypt(entity, value) {
-        return encryptionutilities.decryptAES256(entity[this.primary_key], value)
+        return encryptionutilities.decryptAES256(entity[this.entity_ref.primary_key], value)
     }
 }
 

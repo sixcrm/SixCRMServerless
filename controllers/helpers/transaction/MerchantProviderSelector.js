@@ -47,7 +47,9 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       this.merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
       this.merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
       this.creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
-			this.binController = global.SixCRM.routes.include('controllers', 'entities/Bin.js')
+	  this.binController = global.SixCRM.routes.include('controllers', 'entities/Bin.js')
+
+      this.creditCardController.sanitize(false);
     }
 
     buildMerchantProviderGroups(){
@@ -280,7 +282,6 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
       return this.creditCardController.get({id:creditcard}).then(result => {
 
-        this.creditCardController.decryptAttributes(result);
         this.parameters.set('creditcard', result);
 
         return true;

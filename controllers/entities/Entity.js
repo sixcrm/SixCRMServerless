@@ -8,7 +8,6 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const EntityPermissionsHelper = global.SixCRM.routes.include('helpers', 'entityacl/EntityPermissions.js');
-const EncryptionHelper = global.SixCRM.routes.include('helpers', 'encryption/Encryption.js');
 const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
 
 //Technical Debt:  This controller needs a "hydrate" method or prototype
@@ -46,7 +45,6 @@ module.exports = class entityController extends entityUtilitiesController {
         ];
 
         this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
-        this.encryptionhelper = new EncryptionHelper({ primary_key: this.primary_key });
     }
 
     getUnsharedOrShared({id}) {
@@ -838,18 +836,6 @@ module.exports = class entityController extends entityUtilitiesController {
         }
       };
 
-    }
-
-    encryptAttributes(entity) {
-      return this.encryptionhelper.encryptAttributes(this.encrypted_attribute_paths, entity);
-    }
-
-    decryptAttributes(entity) {
-      return this.encryptionhelper.decryptAttributes(this.encrypted_attribute_paths, entity);
-    }
-
-    censorEncryptedAttributes(entity, custom_censor_fn) {
-      return this.encryptionhelper.censorEncryptedAttributes(this.encrypted_attribute_paths, entity, custom_censor_fn);
     }
 
     createINQueryParameters({field, list_array}){

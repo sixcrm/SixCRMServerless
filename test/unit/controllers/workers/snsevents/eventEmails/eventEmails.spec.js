@@ -197,7 +197,8 @@ describe('controllers/workers/eventEmails', () => {
         },
         getSMTPProvider:() => {
           return Promise.resolve(smtp_provider);
-        }
+        },
+        sanitize: () => {}
       });
 
       mockery.registerMock(global.SixCRM.routes.path('helpers','email/CustomerMailer.js'), class {
