@@ -3,7 +3,6 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
 class TrackingEventsController extends SNSEventController {
@@ -14,19 +13,11 @@ class TrackingEventsController extends SNSEventController {
 
     this.compliant_event_types = ['lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
 
+    this.event_record_handler = 'triggerTracking';
+
+    const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
+
     this.contextHelperController = new ContextHelperController();
-
-  }
-
-  handleEventRecord(record){
-
-    du.debug('Handle Event Record');
-
-    return Promise.resolve()
-    .then(() => this.parameters.set('record', record))
-    .then(() => this.getMessage())
-    .then(() => this.triggerTracking())
-    .then(() => this.cleanUp());
 
   }
 

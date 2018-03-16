@@ -59,8 +59,9 @@ describe('/helpers/notifications/Notification.js', () => {
 
       notificationHelperClass.parameters.set('eventtype', event_type);
 
-      notificationHelperClass.instantiateNotificationClass();
+      let result = notificationHelperClass.instantiateNotificationClass();
 
+      expect(result).to.equal(true);
       expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('DefaultNotification');
 
     });
@@ -73,32 +74,70 @@ describe('/helpers/notifications/Notification.js', () => {
 
       notificationHelperClass.parameters.set('eventtype', event_type);
 
-      notificationHelperClass.instantiateNotificationClass();
+      let result = notificationHelperClass.instantiateNotificationClass();
 
+      expect(result).to.equal(true);
       expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('TestNotification');
 
     });
 
   });
 
-  /*
-  instantiateNotificationClass(){
+  describe('transformContext', () => {
 
-    du.debug('Instantiate Notification Class');
+    it('successfully transforms the context object', () => {
 
-    let event_type = this.parameters.get('eventtype');
+      let context = {a:'1'};
+      let transformed_context = {b: 1};
 
-    let notification_class = global.SixCRM.routes.include('helpers', 'default.js');
+      let notificationclass = new class {
+        constructor(){}
+        transformContext(){
+          return transformed_context;
+        }
+      }
 
-    if(fileutilities.fileExists(global.SixCRM.routes.path('helpers', 'notifications/notificationtypes/'+event_type+'.js'))){
+      const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
+      let notificationHelperClass = new NotificationHelperClass();
 
-      notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+event_type+'.js');
+      notificationHelperClass.parameters.set('context', context);
+      notificationHelperClass.parameters.set('notificationclass', notificationclass);
 
-    }
+      let result = notificationHelperClass.transformContext();
 
-    this.parameters.set('notificationclass', notification_class);
+      expect(result).to.equal(true);
+      expect(notificationHelperClass.parameters.store).to.have.property('transformedcontext');
+      expect(notificationHelperClass.parameters.store['transformedcontext']).to.deep.equal(transformed_context);
 
-  }
-  */
+    });
+
+  });
+
+  describe('executeNotificationActions', () => {
+
+    it('successfully executes notification actions', () => {
+
+      let transformed_context = {b: 1};
+
+      let notificationclass = new class {
+        constructor(){}
+        triggerNotifications(){
+          return Promise.resolve(true);
+        }
+      }
+
+      const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
+      let notificationHelperClass = new NotificationHelperClass();
+
+      notificationHelperClass.parameters.set('transformedcontext', transformed_context);
+      notificationHelperClass.parameters.set('notificationclass', notificationclass);
+
+      return notificationHelperClass.executeNotificationActions().then(result => {
+        expect(result).to.equal(true);
+      });
+
+    });
+
+  });
 
 });

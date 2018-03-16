@@ -2,5 +2,5 @@
   "id":"/helpers/notifications/notificationevent.json",
   "title":"Notification Event",
   "type":"string",
-  "enum":["test"]
+  "enum":["test", "lead", "order", "main", "upsell[0-9]*", "confirm"]
 }

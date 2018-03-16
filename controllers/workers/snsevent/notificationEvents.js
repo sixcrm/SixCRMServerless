@@ -11,17 +11,7 @@ class NotificationEventsController extends SNSEventController {
 
     super();
 
-  }
-
-  handleEventRecord(record){
-
-    du.debug('Handle Event Record');
-
-    return Promise.resolve()
-    .then(() => this.parameters.set('record', record))
-    .then(() => this.getMessage())
-    .then(() => this.triggerNotification())
-    .then(() => this.cleanUp());
+    this.event_record_handler = 'triggerNotification';
 
   }
 
@@ -30,6 +20,7 @@ class NotificationEventsController extends SNSEventController {
     du.debug('Trigger Notifications');
 
     return Promise.resolve()
+    //Note:  Because compliant_event_types is not defined in this class, all events pass the checks here.
     .then(() => this.isComplaintEventType())
     .then(() => this.executeNotification())
     .catch(error => {

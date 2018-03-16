@@ -18,23 +18,13 @@ class RedshiftEventsController extends SNSEventController {
 
     this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
 
+    this.event_record_handler = 'pushToRedshift';
+
     const ContextHelperController = global.SixCRM.routes.include('helpers','context/Context.js');
 
     this.contextHelperController = new ContextHelperController();
 
     this.augmentParameters();
-
-  }
-
-  handleEventRecord(record){
-
-    du.debug('Handle Event Record');
-
-    return Promise.resolve()
-    .then(() => this.parameters.set('record', record))
-    .then(() => this.getMessage())
-    .then(() => this.pushToRedshift())
-    .then(() => this.cleanUp());
 
   }
 

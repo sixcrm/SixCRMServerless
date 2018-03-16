@@ -27,24 +27,14 @@ class EventEmailsController extends SNSEventController {
       'emailtemplates':global.SixCRM.routes.path('model','entities/components/emailtemplates.json')
     };
 
+    this.event_record_handler = 'triggerEmails';
+
     this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
     this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
     this.smtpProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
     this.emailTemplatesController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 
     this.augmentParameters();
-
-  }
-
-  handleEventRecord(record){
-
-    du.debug('Handle Event Record');
-
-    return Promise.resolve()
-    .then(() => this.parameters.set('record', record))
-    .then(() => this.getMessage())
-    .then(() => this.triggerEmails())
-    .then(() => this.cleanUp());
 
   }
 
