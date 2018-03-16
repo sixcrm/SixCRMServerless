@@ -455,22 +455,5 @@ describe('controllers/core/ConfigurationUtilities.js', () => {
             expect(configurationUtilities.getAccountIdentifier()).to.equal(process.env.AWS_ACCOUNT);
         });
 
-        it('returns account identifier from lambda context', () => {
-
-            let an_account_identifier = '1230123'; //random value matching regex
-
-            //eslint-disable-next-line no-global-assign
-            context = {
-                invokedFunctionArn: an_account_identifier
-            };
-
-            delete process.env.AWS_ACCOUNT;
-            delete process.env.aws_account;
-
-            const ConfigurationUtilities = global.SixCRM.routes.include('controllers','core/ConfigurationUtilities.js');
-            let configurationUtilities = new ConfigurationUtilities();
-
-            expect(configurationUtilities.getAccountIdentifier()).to.equal(an_account_identifier);
-        });
     });
 });
