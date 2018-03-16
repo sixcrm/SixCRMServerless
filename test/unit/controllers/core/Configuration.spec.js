@@ -106,28 +106,6 @@ describe('controllers/core/Configuration.js', () => {
 
     });
 
-    describe('getAccountIdentifierFromLambdaContext', () => {
-
-      let _context = null;
-
-      before(() => {
-        _context = context;
-      });
-
-      after(() => {
-        /* eslint-disable no-global-assign */
-        context = _context;
-      });
-
-      xit('determines account identifier from lambda context', () => {
-          // eslint-disable-next-line no-global-assign
-          context = {invokedFunctionArn: DEVELOPMENT_ACCOUNT};
-          let configuration = new Configuration();
-
-          expect(configuration.getAccountIdentifierFromLambdaContext()).to.equal(DEVELOPMENT_ACCOUNT);
-      });
-    });
-
     describe('getStatus', () => {
 
         xit('determines status', () => {

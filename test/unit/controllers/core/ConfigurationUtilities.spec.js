@@ -427,44 +427,6 @@ describe('controllers/core/ConfigurationUtilities.js', () => {
         });
     });
 
-    describe('getAccountIdentifierFromLambdaContext', () => {
-
-        let context_temp;
-
-        before(() => {
-            context_temp = context;
-        });
-
-        after(() => {
-            context = context_temp; //eslint-disable-line no-global-assign
-        });
-
-        it('returns account identifier from lambda context', () => {
-
-            let an_account_identifier = '1230123'; //random value matching regex
-
-            //eslint-disable-next-line no-global-assign
-            context = {
-                invokedFunctionArn: an_account_identifier
-            };
-
-            const ConfigurationUtilities = global.SixCRM.routes.include('controllers','core/ConfigurationUtilities.js');
-            let configurationUtilities = new ConfigurationUtilities();
-
-            expect(configurationUtilities.getAccountIdentifierFromLambdaContext()).to.equal(an_account_identifier);
-        });
-
-        it('returns null when "invokedFunctionArn" is undefined', () => {
-
-            delete context.invokedFunctionArn;
-
-            const ConfigurationUtilities = global.SixCRM.routes.include('controllers','core/ConfigurationUtilities.js');
-            let configurationUtilities = new ConfigurationUtilities();
-
-            expect(configurationUtilities.getAccountIdentifierFromLambdaContext()).to.equal(null);
-        });
-    });
-
     describe('getAccountIdentifier', () => {
 
         let AWS_ACCOUNT;
