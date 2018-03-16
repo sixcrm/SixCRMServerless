@@ -246,7 +246,7 @@ class RedshiftClusterDeployment extends RedshiftDeployment {
 
     if(!_.isNull(host)){
 
-      if(stringutilities.isMatch(host, /^[a-zA-Z0-9\.-:]*$/)){
+      if(stringutilities.isMatch(host, /^[a-zA-Z0-9.-:]*$/)){
 
         return global.SixCRM.configuration.setEnvironmentConfig('redshift.host', host);
 

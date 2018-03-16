@@ -403,17 +403,20 @@ describe('Transaction Endpoints Round Trip Test',() => {
           .then((create_order_result) => {
             expect(create_order_result.response).to.have.property('amount');
             du.info('First Request: '+create_order_result.response.amount);
-            expect(create_order_result.response.amount).to.equal(2.00);
+						expect(create_order_result.response.amount).to.equal(2.00);
+						return;
           })
           .then(() => createUpsell(token, session, upsell_object))
           .then((create_order_result) => {
             expect(create_order_result.response).to.have.property('amount');
             du.info('Second Request: '+create_order_result.response.amount);
-            expect(create_order_result.response.amount).to.equal(1.01);
+						expect(create_order_result.response.amount).to.equal(1.01);
+						return;
           })
           .then(() => confirmOrder(token, session))
           .then((result) => {
-            du.warning(result);
+						du.warning(result);
+						return;
           });
         });
 

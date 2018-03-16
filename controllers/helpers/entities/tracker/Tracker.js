@@ -43,7 +43,7 @@ module.exports = class TrackerHelperController{
 
             return Promise.resolve(null);
 
-        };
+        }
 
         let affiliate_tracker_executions = [];
 

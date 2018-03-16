@@ -116,7 +116,7 @@ class productScheduleController extends entityController {
 			let product_id = _.has(scheduled_product, 'product') ? scheduled_product.product : scheduled_product.product_id;
 
       //Technical Debt: Hack
-      if(_.isNull(product_id) || _.isUndefined(product_id)){ return Promise.resolve(null) };
+      if(_.isNull(product_id) || _.isUndefined(product_id)){ return Promise.resolve(null) }
 
       return this.executeAssociatedEntityFunction('productController', 'get', {id: product_id});
 

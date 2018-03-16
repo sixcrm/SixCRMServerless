@@ -115,7 +115,7 @@ module.exports = class AccountImages extends ResourcesController {
 
 			if (!_.has(result, 'ETag')) {
 				eu.throwError('server', 'Unable to upload image to S3.');
-			};
+			}
 
 			return {
 				filename: filename,

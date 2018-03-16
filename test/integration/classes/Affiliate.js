@@ -86,7 +86,7 @@ module.exports = class AffiliateTest extends IntegrationTest {
 
     du.output('Create Tracker');
 
-    let tracker_create_query = 'mutation { createtracker (tracker: { id: "'+tracker_id+'", event_type:["main"], affiliates: ["'+affiliate_id+'"], type: \"postback\", name:\"Testing Tracker 3\", body:\"http://sofun.com\"}) { id, affiliates{ id, name, affiliate_id, created_at, updated_at }, type, name, body, created_at, updated_at } }';
+    let tracker_create_query = 'mutation { createtracker (tracker: { id: "'+tracker_id+'", event_type:["main"], affiliates: ["'+affiliate_id+'"], type: "postback", name:"Testing Tracker 3", body:"http://sofun.com"}) { id, affiliates{ id, name, affiliate_id, created_at, updated_at }, type, name, body, created_at, updated_at } }';
 
     return this.executeQuery(tracker_create_query);
 

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -21,19 +21,19 @@ module.exports = function(results, parameters){
 
     if ( !_.isEmpty(result.avg_time) ) {
         avg_time = result.avg_time
-    };
+    }
 
     if ( _.isUndefined(avg_time.days) ) {
         avg_time.days = 0
-    };
+    }
 
     if ( _.isUndefined(avg_time.hours) ) {
         avg_time.hours = 0
-    };
+    }
 
     if ( _.isUndefined(avg_time.seconds) ) {
         avg_time.seconds = 0
-    };
+    }
 
     result_array.push({
       queuename: result.queuename,
