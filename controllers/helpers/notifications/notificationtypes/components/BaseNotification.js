@@ -41,11 +41,15 @@ module.exports = class BaseNotification extends NotificationUtilities {
 
     du.debug('Trigger Notifications');
 
+    if(!_.has(this, 'notificationProvider')){
+      this.notificationProvider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+    }
+
     if(_.has(this, 'account_wide') && this.account_wide == true){
       return this.notificationProvider.createNotificationsForAccount(transformed_context);
     }
 
-    return this.notificationProvider.createNotificationsForAccountAndUser(transformed_context);
+    return this.notificationProvider.createNotificationForAccountAndUser(transformed_context);
 
   }
 

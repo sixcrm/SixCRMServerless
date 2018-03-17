@@ -11,8 +11,6 @@ module.exports = class NotificationUtilities {
 
   constructor(){
 
-    this.notificationProvider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
-
     const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
     this.contextHelperController = new ContextHelperController();
 
@@ -50,7 +48,7 @@ module.exports = class NotificationUtilities {
 
     du.debug('Get User From Context');
 
-    return this.contextHelperController.getFromContext(context, 'user', 'email');
+    return this.contextHelperController.getFromContext(context, 'user.id', 'id');
 
   }
 

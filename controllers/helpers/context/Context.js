@@ -8,7 +8,7 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
-module.exports = class ContextMailerHelper {
+module.exports = class ContextHelperController {
 
   constructor(){
 
@@ -222,7 +222,7 @@ module.exports = class ContextMailerHelper {
 
     let field_path = field.split('.');
 
-    let discovered = objectutilities.recurseByDepth(context, (key) => {
+    let discovered = objectutilities.recurseByDepth(context, (key, value) => {
 
       if(key == field_path[0]){
 
@@ -240,7 +240,7 @@ module.exports = class ContextMailerHelper {
           return true;
         }
 
-        let value = objectutilities.getRecursive(context, field);
+        value = objectutilities.getRecursive(context, field);
 
         if(type == 'email'){
           if(_.isString(value) && stringutilities.isEmail(value)){
@@ -272,7 +272,7 @@ module.exports = class ContextMailerHelper {
 
       if(field_path.length > 1){
         field_path.shift();
-        return discovered[field_path];
+        discovered = objectutilities.getRecursive(discovered, field_path);
       }
 
       return discovered;
