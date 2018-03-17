@@ -9,11 +9,11 @@ module.exports = class PushTransactionRecords extends PushRDSRecords {
 
 	}
 
-	executeBatchWriteQuery() {
+	executeBatchWriteQuery(records) {
 
 		du.debug('PushTransactionRecords.executeBatchWriteQuery()');
 
-		return Promise.resolve();
+		return Promise.resolve(records);
 
 	}
 

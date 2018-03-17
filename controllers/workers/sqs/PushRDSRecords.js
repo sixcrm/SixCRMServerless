@@ -6,9 +6,10 @@ const sqsUtilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
 module.exports = class PushRDSRecords {
 
-	constructor(queueName) {
+	constructor(queueName, connection) {
 
 		this._queueName = queueName;
+		this._connection = connection;
 
 	}
 
@@ -38,7 +39,7 @@ module.exports = class PushRDSRecords {
 
 		if (arrayUtilities.nonEmpty(records)) {
 
-			return this.executeBatchWriteQuery()
+			return this.executeBatchWriteQuery(records)
 				.then(() => {
 
 					return records;
@@ -52,11 +53,11 @@ module.exports = class PushRDSRecords {
 	}
 
 	// override
-	executeBatchWriteQuery() {
+	executeBatchWriteQuery(records) {
 
 		du.debug('PushRDSRecordsController.executeBatchWriteQuery()');
 
-		return Promise.resolve();
+		return Promise.resolve(records);
 
 	}
 
