@@ -1,53 +1,30 @@
 const chai = require('chai');
 
 chai.use(require('chai-shallow-deep-equal'));
-const expect = chai.expect;
-
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
-const auroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/aurora-schema-deployment.js');
-const BBPromise = require('bluebird');
+// const expect = chai.expect;
 const path = require('path');
 
-before((done) => {
+const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
+const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
+const auroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/aurora-schema-deployment.js');
 
-	global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
-	global.user = 'admin.user@test.com';
+before(() => {
+
 	global.SixCRM.setResource('auroraContext', auroraContext);
 
-	auroraContext.init()
-		.then(() => {
-
-			return done();
-
-		})
-		.catch((ex) => {
-
-			done(ex);
-
-		});
+	return Promise.resolve()
+		.then(() => SQSDeployment.deployQueues())
+		.then(() => SQSDeployment.purgeQueues())
+		.then(() => auroraContext.init());
 
 });
 
-after((done) => {
+after(() => {
 
 	const auroraContext = global.SixCRM.getResource('auroraContext');
 
-	auroraContext.dispose()
-		.then(() => {
-
-			return done();
-
-		})
-		.catch((ex) => {
-
-			done(ex);
-
-		});
+	return auroraContext.dispose();
 
 });
 
@@ -65,7 +42,7 @@ describe('Push events to RDS', () => {
 
 		it(test.name, () => {
 
-			return prepareDatabase(test).then(() => {
+			return prepareDatabase().then(() => {
 
 				return console.log('YEAH');
 
@@ -77,11 +54,10 @@ describe('Push events to RDS', () => {
 
 });
 
-function prepareDatabase(test) {
+function prepareDatabase() {
 
 	return dropDatabase()
-		.then(() => createTables())
-		.then(() => seedDatabase(test));
+		.then(() => createTables());
 
 }
 
@@ -89,33 +65,7 @@ function prepareTest(dir) {
 
 	const test = require(path.join(dir, 'config.json'));
 	test.directory = dir;
-	test.seeds = path.join(dir, 'seeds');
-
 	return test;
-
-}
-
-function seedDatabase(test) {
-
-	du.debug(`Seeding Test database with ${test.method}`);
-
-	if (!fileutilities.fileExists(test.seeds)) {
-
-		return du.debug('Nothing to seed');
-
-	}
-
-	return auroraContext.withConnection((connection => {
-
-		const seeds = fileutilities.getDirectoryFilesSync(test.seeds);
-
-		return BBPromise.each(seeds.map((seed) => {
-
-			return connection.query(fileutilities.getFileContentsSync(test.seeds + seed));
-
-		}), (p) => p);
-
-	}));
 
 }
 
