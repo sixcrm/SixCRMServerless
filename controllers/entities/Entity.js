@@ -514,6 +514,13 @@ module.exports = class entityController extends entityUtilitiesController {
       .then(() => this.encryptAttributes(entity))
       .then(() => this.dynamoutilities.saveRecord(this.table_name, entity))
       .then(() => {
+          if (this.sanitization) {
+              return this.censorEncryptedAttributes(entity);
+          } else {
+              return this.decryptAttributes(entity);
+          }
+      })
+      .then(() => {
 
         this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
         this.addToSearchIndex(entity, this.descriptive_name);
@@ -563,6 +570,13 @@ module.exports = class entityController extends entityUtilitiesController {
         return this.dynamoutilities.saveRecord(this.table_name, existing_entity).then(() => {
           return existing_entity;
         });
+      }).then((existing_entity) => {
+
+        if (this.sanitization) {
+            return this.censorEncryptedAttributes(existing_entity);
+        } else {
+            return this.decryptAttributes(existing_entity);
+        }
 
       }).then((existing_entity) => {
 
@@ -622,6 +636,13 @@ module.exports = class entityController extends entityUtilitiesController {
       .then(() => this.validate(entity))
       .then(() => this.encryptAttributes(entity))
       .then(() => this.dynamoutilities.saveRecord(this.table_name, entity))
+      .then(() => {
+          if (this.sanitization) {
+              return this.censorEncryptedAttributes(entity);
+          } else {
+              return this.decryptAttributes(entity);
+          }
+      })
       .then(() => {
 
         this.createRedshiftActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null);
