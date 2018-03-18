@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/notificationaction.json",
+  "title": "Notification Action",
+  "description": "Notification Action",
+  "anyOf":[
+    {"type":"string"},
+    {"type":"object"}
+  ]
+}

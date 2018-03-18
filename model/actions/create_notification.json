@@ -1,21 +1,13 @@
 {
+  "id":"/actions/create_notification.json",
   "title": "CreateNotification",
   "type": "object",
   "properties": {
-    "user":{
-      "type": "string",
-      "format": "email"
-    },
-    "account": {
-      "type":"string"
-    },
-    "type":{
-      "type":"string"
-    },
+    "user":{"$ref":"../definitions/useridentifier.json"},
+    "account": {"$ref":"../definitions/sixcrmaccountidentifier.json"},
+    "type":{"$ref":"../definitions/notificationtype.json"},
+    "action":{"$ref":"../definitions/notificationaction.json"},
     "category":{
-      "type":"string"
-    },
-    "action":{
       "type":"string"
     },
     "title":{
@@ -24,7 +16,6 @@
     "body":{
       "type":"string"
     }
-
   },
   "required":["account", "type", "action", "title"]
 }

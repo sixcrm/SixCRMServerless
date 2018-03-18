@@ -25,7 +25,7 @@ describe('controllers/providers/notification/sms-notification-provider', () => {
         id: 'aa26af35-5542-4c2b-9a75-45100e78fc97',
         account: '*',
         user: 'test@test.com',
-        type: 'any',
+        type: 'notification',
         action: 'any',
         title: 'any',
         body: 'any',
@@ -74,7 +74,6 @@ describe('controllers/providers/notification/sms-notification-provider', () => {
 
             SmsNotificationProvider.sendNotificationViaSms(valid_notification_object, sms_number)
                 .catch((error) => {
-                    console.log(error.message);
                     done(error.message);
                 });
         });

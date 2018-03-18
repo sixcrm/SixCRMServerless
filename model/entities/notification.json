@@ -1,19 +1,15 @@
 {
 	"$schema": "http://json-schema.org/schema#",
-	"id":"/notification",
+	"id":"/entities/notification.json",
 	"title": "Notification",
 	"type": "object",
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"user":{"$ref": "../definitions/useridentifier.json"},
-		"action":{
-			"type":"string"
-		},
+		"action":{"$ref":"../definitions/notificationaction.json"},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+		"type": {"$ref":"../definitions/notificationtype.json"},
 		"title": {
-			"type":"string"
-		},
-		"type": {
 			"type":"string"
 		},
 		"category": {

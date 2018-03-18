@@ -25,7 +25,7 @@ describe('controllers/providers/notification/slack-notification-provider', () =>
         id: 'aa26af35-5542-4c2b-9a75-45100e78fc97',
         account: '*',
         user: 'test@test.com',
-        type: 'any',
+        type: 'notification',
         action: 'any',
         title: 'any',
         body: 'any',
@@ -72,10 +72,9 @@ describe('controllers/providers/notification/slack-notification-provider', () =>
             let SlackNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
 
             SlackNotificationProvider.sendNotificationViaSlack(valid_notification_object, webhook)
-                .catch((error) => {
-                    console.log(error.message);
-                    done(error.message);
-                });
+            .catch((error) => {
+                done(error.message);
+            });
         });
 
     });

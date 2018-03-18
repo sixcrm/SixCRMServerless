@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "/definitions/notificationtype.json",
+  "title": "Notification Type",
+  "description": "Notification Type",
+  "type":"string",
+  "enum":["notification","alert","persistent"]
+}

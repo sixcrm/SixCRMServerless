@@ -93,7 +93,7 @@ describe('controllers/providers/notification/notification-provider', () => {
     describe('validateCreateNotificationObject', () => {
         let valid_object = {
             account: '*',
-            type: 'any',
+            type: 'notification',
             category: 'any',
             action: 'any',
             title: 'any',
@@ -199,7 +199,7 @@ describe('controllers/providers/notification/notification-provider', () => {
     describe('createNotificationsForAccount', () => {
         let valid_object = {
             account: '*',
-            type: 'any_type',
+            type: 'notification',
             category: 'any_category',
             action: 'any_action',
             title: 'any_title',
@@ -269,7 +269,7 @@ describe('controllers/providers/notification/notification-provider', () => {
         let valid_object = {
             account: '*',
             user: 'user@example.com',
-            type: 'any_type',
+            type: 'notification',
             category: 'any_category',
             action: 'any_action',
             title: 'any_title',
