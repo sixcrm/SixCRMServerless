@@ -4,7 +4,7 @@
   "type":"object",
   "properties":{
     "account":{"$ref":"../../definitions/sixcrmaccountidentifier.json"},
-    "event_type":{"$ref":"../../definitions/sixcrmeventtype.json"},
+    "event_type":{"$ref":"../../definitions/eventtype.json"},
     "user":{"$ref":"../../definitions/email.json"},
     "context":{
       "type":"object"

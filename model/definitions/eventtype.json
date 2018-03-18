@@ -4,5 +4,5 @@
   "title": "Event Type",
   "description": "A event type",
   "type":"string",
-  "enum": ["click","lead","order","upsell","confirm"]
+  "enum": ["test", "testalert", "click", "lead", "order", "upsell", "confirm"]
 }
