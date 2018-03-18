@@ -56,6 +56,7 @@ module.exports = class NotificationHelperClass {
 
     let event_type = this.parameters.get('eventtype');
 
+    //Note:  These are a subset of event types which are notification events
     let valid_event_type = mvu.validateModel(event_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationevent.json'), null, false);
 
     if(valid_event_type == true){

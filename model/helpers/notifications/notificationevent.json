@@ -2,5 +2,7 @@
   "id":"/helpers/notifications/notificationevent.json",
   "title":"Notification Event",
   "type":"string",
-  "enum":["test", "lead", "order", "main", "upsell[0-9]*", "confirm"]
+  "description":"Events that are of subtype notification events",
+  "note":"break into subschemas",
+  "enum":["test", "testalert", "lead", "order", "main", "upsell", "upsell1", "upsell2", "upsell3", "upsell4", "upsell5", "confirm"]
 }
