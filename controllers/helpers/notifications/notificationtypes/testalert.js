@@ -11,7 +11,7 @@ class TestAlert extends BaseNotification {
     this.title = 'Test Alert';
     this.body = 'This is a test alert.';
     this.category = 'general';
-    this.type = 'alert';
+    this.notification_type = 'alert';
 
   }
 

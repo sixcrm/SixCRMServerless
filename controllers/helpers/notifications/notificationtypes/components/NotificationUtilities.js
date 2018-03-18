@@ -48,7 +48,17 @@ module.exports = class NotificationUtilities {
 
     du.debug('Get User From Context');
 
-    return this.contextHelperController.getFromContext(context, 'user.id', 'id');
+    let resolved_user = null;
+
+    resolved_user = this.contextHelperController.getFromContext(context, 'user.id', 'id');
+
+    if(_.isNull(resolved_user)){
+
+      resolved_user = this.contextHelperController.getFromContext(context, 'user', 'email');
+
+    }
+
+    return resolved_user;
 
   }
 
@@ -56,7 +66,17 @@ module.exports = class NotificationUtilities {
 
     du.debug('Get User From Context');
 
-    return this.contextHelperController.getFromContext(context, 'account');
+    let resolved_account = null;
+
+    resolved_account = this.contextHelperController.getFromContext(context, 'account.id', 'id');
+
+    if(_.isNull(resolved_account)){
+
+      resolved_account = this.contextHelperController.getFromContext(context, 'account', 'id');
+
+    }
+
+    return resolved_account;
 
   }
 
