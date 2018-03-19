@@ -231,7 +231,7 @@ module.exports = class ContextHelperController {
         }
 
         if(field_path.length > 1){
-          if(objectutilities.hasRecursive(context, field) == false){
+          if(objectutilities.hasRecursive(value, field_path.slice(1)) == false){
             return false;
           }
         }
@@ -240,24 +240,30 @@ module.exports = class ContextHelperController {
           return true;
         }
 
-        value = objectutilities.getRecursive(context, field);
+        let identified_value = null
+
+        if(_.isObject(value)){
+          identified_value = objectutilities.getRecursive(value, field_path.slice(1));
+        }else{
+          identified_value = value;
+        }
 
         if(type == 'email'){
-          if(_.isString(value) && stringutilities.isEmail(value)){
+          if(_.isString(identified_value) && stringutilities.isEmail(identified_value)){
             return true;
           }
         }
 
         if(type == 'id'){
-          if(_.isString(value)){
-            if(mvu.validateModel(value, global.SixCRM.routes.path('model','definitions/sixcrmidentifier.json'), null, false)){
+          if(_.isString(identified_value)){
+            if(mvu.validateModel(identified_value, global.SixCRM.routes.path('model','definitions/sixcrmidentifier.json'), null, false)){
               return true;
             }
           }
         }
 
         if(type == 'object'){
-          if(_.isObject(value)){
+          if(_.isObject(identified_value)){
             return true;
           }
         }
