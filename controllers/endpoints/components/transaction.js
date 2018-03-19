@@ -153,11 +153,13 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
       if(!_.has(this, 'eventHelperController')){
         const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-
         this.eventHelperController = new EventHelperController();
       }
 
-      this.eventHelperController.pushEvent({event_type: event_type, context: this.parameters.store});
+      let context = this.parameters.store;
+      context.user = global.user;
+
+      this.eventHelperController.pushEvent({event_type: event_type, context: context});
 
     }
 
