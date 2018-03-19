@@ -3,6 +3,9 @@ const chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
 // const expect = chai.expect;
 const path = require('path');
+const _ = require('underscore');
+const SQSTestUtils = require('../../sqs-test-utils');
+const PushTransactionRecords = require('../../../../controllers/workers/analytics/PushTransactionRecords');
 
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
@@ -15,16 +18,25 @@ before(() => {
 
 	return Promise.resolve()
 		.then(() => SQSDeployment.deployQueues())
-		.then(() => SQSDeployment.purgeQueues())
 		.then(() => auroraContext.init());
 
 });
+
+beforeEach(() => {
+
+	return Promise.resolve()
+		.then(() => SQSDeployment.purgeQueues())
+		.then(() => auroraSchemaDeployment.destroy())
+		.then(() => auroraSchemaDeployment.deployTables());
+
+})
 
 after(() => {
 
 	const auroraContext = global.SixCRM.getResource('auroraContext');
 
-	return auroraContext.dispose();
+	return Promise.resolve()
+	 .then(() => auroraContext.dispose());
 
 });
 
@@ -40,13 +52,27 @@ describe('Push events to RDS', () => {
 
 	tests.map((test) => {
 
-		it(test.name, () => {
+		it(test.name, (done) => {
 
-			return prepareDatabase().then(() => {
+			seedSQS(test)
+				.then(() => {
 
-				return console.log('YEAH');
+					// run the code
+					new PushTransactionRecords().execute()
+						.then(() => {
 
-			});
+							// should check the DB for the records here
+
+							return done();
+
+						});
+
+				})
+				.catch((ex) => {
+
+					done(ex);
+
+				});
 
 		});
 
@@ -54,29 +80,50 @@ describe('Push events to RDS', () => {
 
 });
 
-function prepareDatabase() {
-
-	return dropDatabase()
-		.then(() => createTables());
-
-}
-
 function prepareTest(dir) {
 
 	const test = require(path.join(dir, 'config.json'));
 	test.directory = dir;
+	test.seeds = {};
+
+	if (fileutilities.fileExists(path.join(dir, 'seeds'))) {
+
+		if (fileutilities.fileExists(path.join(dir, 'seeds', 'sqs'))) {
+
+			test.seeds.sqs = fileutilities.getDirectoryFilesSync(path.join(dir, 'seeds', 'sqs'));
+
+		}
+
+	}
+
 	return test;
 
 }
 
-function dropDatabase() {
+function seedSQS(test) {
 
-	return auroraSchemaDeployment.destroy();
+	if (!test.seeds || !test.seeds.sqs) {
 
-}
+		return Promise.resolve();
 
-function createTables() {
+	}
 
-	return auroraSchemaDeployment.deployTables();
+	const promises = _.reduce(test.seeds.sqs, (memo, seed) => {
+
+		const queueName = seed.replace('.json', '');
+		const seedFilePath = path.join(test.directory, 'seeds', 'sqs', seed);
+		const messages = require(seedFilePath);
+
+		memo.push(...messages.map(message => {
+
+			return SQSTestUtils.sendMessageToQueue(queueName, JSON.stringify(message), 1);
+
+		}));
+
+		return memo;
+
+	}, []);
+
+	return Promise.all(promises);
 
 }
