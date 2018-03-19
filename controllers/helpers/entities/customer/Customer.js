@@ -49,6 +49,7 @@ module.exports = class CustomerHelperController {
 
           return sessionHelperController.getSessionByCustomerAndAlias({customer: customer, alias: secondary_identifier.value});
         },
+          // Technical Debt: Following two methods don't seem to exist.
         'transaction.alias':() => this.sessionController.getSessionByCustomentAndTransactionAlias({customer: customer, transaction_alias: secondary_identifier.value}),
         'creditcard.number':() => this.sessionController.getSessionByCustomerAndCreditCardNumber({customer: customer, lastfour: secondary_identifier.value})
       }
