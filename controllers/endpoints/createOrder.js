@@ -48,7 +48,7 @@ class CreateOrderController extends transactionEndpointController {
       'session': global.SixCRM.routes.path('model', 'entities/session.json'),
       'creditcard':global.SixCRM.routes.path('model', 'entities/creditcard.json'),
       'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
-      'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
+      'customer':global.SixCRM.routes.path('model', 'endpoints/components/customerprocessable.json'),
       'productschedules':global.SixCRM.routes.path('model','endpoints/components/productschedules.json'),
       'rebill':global.SixCRM.routes.path('model', 'entities/rebill.json'),
       'transaction':global.SixCRM.routes.path('model', 'entities/transaction.json'),
@@ -82,7 +82,6 @@ class CreateOrderController extends transactionEndpointController {
 
     return this.hydrateSession()
     .then(() => this.hydrateEventAssociatedParameters())
-    .then(() => this.setCustomer())
     .then(() => this.validateEventProperties())
     .then(() => this.createRebill())
     .then(() => this.processRebill())
@@ -122,6 +121,7 @@ class CreateOrderController extends transactionEndpointController {
       this.setProductSchedules(),
       this.setProducts(),
       this.setTransactionSubType(),
+      this.setCustomer(),
       this.setCreditCard(),
       this.setCampaign()
     ];
@@ -222,14 +222,14 @@ class CreateOrderController extends transactionEndpointController {
 
     du.debug('Add Credit Card to Customer');
 
-    let session = this.parameters.get('session');
     let creditcard = this.parameters.get('creditcard');
+    let customer = this.parameters.get('customer');
 
     if(!_.has(this, 'customerController')){
       this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
     }
 
-    return this.customerController.addCreditCard(session.customer, creditcard).then((customer) => {
+    return this.customerController.addCreditCard(customer.id, creditcard).then((customer) => {
       this.parameters.set('customer', customer);
       return true;
     });
@@ -240,25 +240,24 @@ class CreateOrderController extends transactionEndpointController {
 
     du.debug('Set Customer');
 
-    let customer = this.parameters.get('customer', null, false);
+    let session = this.parameters.get('session');
+    let event = this.parameters.get('event');
 
-    if(_.isNull(customer)){
-
-      let session = this.parameters.get('session');
-
-      if(!_.has(this, 'customerController')){
+    if(!_.has(this, 'customerController')){
         this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
-      }
-
-      return this.customerController.get({id: session.customer}).then(customer => {
-        this.parameters.set('customer', customer);
-        return true;
-      });
-
     }
 
-    return Promise.resolve(true);
-
+    return this.customerController.get({id: session.customer}).then(customer => {
+        if (_.has(event, 'customer')) {
+            Object.assign(customer, event.customer);
+            return this.customerController.update({entity: customer});
+        }
+        return customer;
+    })
+    .then(customer => {
+        this.parameters.set('customer', customer);
+        return true;
+    });
   }
 
   validateEventProperties(){

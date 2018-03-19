@@ -21,5 +21,5 @@
 		},
 		"address":{"$ref": "../../definitions/address.json"}
 	},
-	"required":["email", "firstname", "lastname", "address"]
+	"required":["email"]
 }

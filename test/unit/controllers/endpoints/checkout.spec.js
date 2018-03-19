@@ -425,6 +425,9 @@ describe('checkout', function () {
         },
         get:() => {
           return Promise.resolve(customer);
+        },
+        update: ({entity}) => {
+            return Promise.resolve(entity);
         }
       });
 
@@ -724,6 +727,9 @@ describe('checkout', function () {
         },
         create:() => {
           return Promise.resolve(customer);
+        },
+        update: ({entity}) => {
+            return Promise.resolve(entity);
         }
       });
 
