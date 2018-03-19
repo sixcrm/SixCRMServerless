@@ -1,7 +1,7 @@
 const chai = require('chai');
 
 chai.use(require('chai-shallow-deep-equal'));
-// const expect = chai.expect;
+const expect = chai.expect;
 const path = require('path');
 const _ = require('underscore');
 const SQSTestUtils = require('../../sqs-test-utils');
@@ -13,8 +13,6 @@ const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-cont
 const auroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/aurora-schema-deployment.js');
 
 before(() => {
-
-	global.SixCRM.setResource('auroraContext', auroraContext);
 
 	return Promise.resolve()
 		.then(() => SQSDeployment.deployQueues())
@@ -33,10 +31,8 @@ beforeEach(() => {
 
 after(() => {
 
-	const auroraContext = global.SixCRM.getResource('auroraContext');
-
 	return Promise.resolve()
-	 .then(() => auroraContext.dispose());
+		.then(() => auroraContext.dispose());
 
 });
 
@@ -55,10 +51,12 @@ describe('Push events to RDS', () => {
 		it(test.name, (done) => {
 
 			seedSQS(test)
-				.then(() => {
+				.then(() => SQSTestUtils.messageCountInQueue('rds_transaction_batch'))
+				.then((count) => {
 
-					// run the code
-					new PushTransactionRecords().execute()
+					// expect(count === 2);
+
+					new PushTransactionRecords(auroraContext).execute()
 						.then(() => {
 
 							// should check the DB for the records here
