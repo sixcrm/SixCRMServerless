@@ -3,6 +3,14 @@
   "id": "/definitions/transactionsubtype.json",
   "title": "Transaction Subtype",
   "description": "A transaction subtype",
-  "type":"string",
-  "enum":["main","upsell1","upsell2"]
+  "anyOf":[
+    {
+      "type":"string",
+      "enum":["main"]
+    },
+    {
+      "type":"string",
+      "pattern":"^upsell[0-9]*$"
+    }
+  ]
 }

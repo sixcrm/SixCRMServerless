@@ -432,8 +432,7 @@ class CreateOrderController extends transactionEndpointController {
 
     du.debug('Push Event');
 
-    //Technical Debt: determine if this is a order, a downsell, or an upsell
-    super.pushEvent('order');
+    return super.pushEvent('order');
 
   }
 
