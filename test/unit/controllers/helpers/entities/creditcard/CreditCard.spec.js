@@ -4,6 +4,11 @@ let chai = require('chai');
 const expect = chai.expect;
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+
+function getValidCreditCard() {
+    return MockEntities.getValidCreditCard()
+}
 
 //const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
@@ -29,6 +34,21 @@ describe('controllers/helpers/entities/creditcard/CreditCard.js', () => {
       })
 
     });
+
+    it('throws error when credit card has no expiration property', () => {
+
+        let credit_card = getValidCreditCard();
+
+        delete credit_card.expiration;
+
+        let creditCardHelperController = new CreditCardHelperController();
+
+        try {
+            creditCardHelperController.getExpirationYear(credit_card)
+        } catch (error) {
+            expect(error.message).to.equal('[500] CreditCardHelper.getExpirationYear assumes creditcard object contains the expiration property.');
+        }
+    });
   });
 
   describe('getExpirationMonth', () => {
@@ -42,6 +62,21 @@ describe('controllers/helpers/entities/creditcard/CreditCard.js', () => {
         expect(creditCardHelperController.getExpirationMonth({expiration: expiration})).to.equal('04');
       })
 
+    });
+
+    it('throws error when credit card has no expiration property', () => {
+
+      let credit_card = getValidCreditCard();
+
+      delete credit_card.expiration;
+
+      let creditCardHelperController = new CreditCardHelperController();
+
+      try {
+          creditCardHelperController.getExpirationMonth(credit_card)
+      } catch (error) {
+          expect(error.message).to.equal('[500] CreditCardHelper.getExpirationMonth assumes creditcard object contains the expiration property.');
+      }
     });
   });
 

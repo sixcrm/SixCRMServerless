@@ -44,7 +44,7 @@ module.exports = class CreditCardHelper {
     du.debug('Get Expiration Year');
 
     if(!_.has(creditcard, 'expiration')){
-      eu.throwError('server', 'CreditCardHelper.getExpirationMonth assumes creditcard object contains the expiration property.');
+      eu.throwError('server', 'CreditCardHelper.getExpirationYear assumes creditcard object contains the expiration property.');
     }
 
     let expiration_last_two = creditcard.expiration.substr(creditcard.expiration.length - 2);
