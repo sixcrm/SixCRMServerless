@@ -54,18 +54,23 @@ describe('Push events to RDS', () => {
 				.then(() => SQSTestUtils.messageCountInQueue('rds_transaction_batch'))
 				.then((count) => {
 
-					// expect(count === 2);
-
-					new PushTransactionRecords(auroraContext).execute()
-						.then(() => {
-
-							// should check the DB for the records here
-
-							return done();
-
-						});
+					return expect(count === 2);
 
 				})
+				.then(() => new PushTransactionRecords(auroraContext).execute())
+				.then(() => auroraContext.connection.query('SELECT COUNT(1) as c FROM analytics.f_transactions'))
+				.then((result) => {
+
+					return expect(result.rows[0].c).to.be.equal('2');
+
+				})
+				.then(() => SQSTestUtils.messageCountInQueue('rds_transaction_batch'))
+				.then((count) => {
+
+					return expect(count === 0);
+
+				})
+				.then(() => done())
 				.catch((ex) => {
 
 					done(ex);
