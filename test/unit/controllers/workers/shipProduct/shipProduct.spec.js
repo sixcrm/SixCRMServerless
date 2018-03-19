@@ -1,16 +1,9 @@
 'use strict'
-const _ = require('underscore');
 const chai = require("chai");
-const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -89,12 +82,19 @@ describe('controllers/workers/shipProduct', function () {
         constructor(){
 
         }
-        fulfill({rebill}){
+        fulfill(){
           return Promise.resolve(terminal_response);
         }
       }
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Terminal.js'), terminal_mock);
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
+        constructor(){}
+        pushEvent(){
+          return Promise.resolve({});
+        }
+      });
 
       const ShipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
       let shipProductController = new ShipProductController();
@@ -151,12 +151,19 @@ describe('controllers/workers/shipProduct', function () {
         constructor(){
 
         }
-        fulfill({rebill}){
+        fulfill(){
           return Promise.resolve(terminal_response);
         }
       }
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Terminal.js'), terminal_mock);
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
+        constructor(){}
+        pushEvent(){
+          return Promise.resolve({});
+        }
+      });
 
       const ShipProductController = global.SixCRM.routes.include('controllers', 'workers/shipProduct.js');
       let shipProductController = new ShipProductController();

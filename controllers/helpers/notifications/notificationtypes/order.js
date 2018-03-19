@@ -17,6 +17,7 @@ class OrderNotification extends BaseNotification {
 
   }
 
+  //Technical Debt:  Use tokens
   getTitle(context){
 
     du.debug('Get Title');
@@ -24,13 +25,16 @@ class OrderNotification extends BaseNotification {
     let parsed_title = super.getTitle(context);
 
     if(_.has(context, 'transactionsubtype')){
-      parsed_title = parsed_title.replace('!', '')+' ('+context.transactionsubtype+')!';
+      if(context.transactionsubtype !== 'main'){
+        parsed_title = parsed_title.replace('!', '')+' ('+context.transactionsubtype+') !';
+      }
     }
 
     return parsed_title;
 
   }
 
+  //Technical Debt:  Use tokens
   getBody(context){
 
     du.debug('Get Body');
@@ -38,7 +42,9 @@ class OrderNotification extends BaseNotification {
     let parsed_body = super.getBody(context);
 
     if(_.has(context, 'transactionsubtype')){
-      parsed_body = parsed_body.replace('!', '')+' ('+context.transactionsubtype+')!';
+      if(context.transactionsubtype !== 'main'){
+        parsed_body = parsed_body.replace('!', '')+' ('+context.transactionsubtype+') !';
+      }
     }
 
     return parsed_body;

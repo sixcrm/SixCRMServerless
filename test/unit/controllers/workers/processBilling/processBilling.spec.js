@@ -149,6 +149,13 @@ describe('controllers/workers/processBilling', () => {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
+        constructor(){}
+        pushEvent(){
+          return Promise.resolve({});
+        }
+      });
+
       let message = getValidMessages()[0];
       const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
       let processBillingController = new ProcessBillingController();
