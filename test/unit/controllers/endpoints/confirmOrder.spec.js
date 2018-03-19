@@ -10,6 +10,10 @@ const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
+function getValidCampaign(){
+  return MockEntities.getValidCampaign();
+}
+
 function getValidCustomer(){
 
   return MockEntities.getValidCustomer();
@@ -212,6 +216,7 @@ describe('confirmOrder', function () {
       let customer = getValidCustomer();
       let transactions = getValidTransactions();
       let products = getValidTransactionProducts(null, true);
+      let campaign = getValidCampaign();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
         getCustomer:() => {
@@ -219,6 +224,9 @@ describe('confirmOrder', function () {
         },
         listTransactions:() => {
           return Promise.resolve(transactions);
+        },
+        getCampaign:() => {
+          return Promise.resolve(campaign);
         }
       });
 
@@ -387,6 +395,7 @@ describe('confirmOrder', function () {
       let transactions = getValidTransactions();
       let products = getValidTransactionProducts(null, true);
       let customer = getValidCustomer();
+      let campaign = getValidCampaign();
 
       session.completed = false;
 
@@ -414,6 +423,9 @@ describe('confirmOrder', function () {
         },
         closeSession:() => {
           return Promise.resolve(true);
+        },
+        getCampaign:() => {
+          return Promise.resolve(campaign);
         }
       });
 
@@ -472,6 +484,7 @@ describe('confirmOrder', function () {
       let transactions = getValidTransactions();
       let products = getValidTransactionProducts(null, true);
       let customer = getValidCustomer();
+      let campaign = getValidCampaign();
 
       session.completed = false;
 
@@ -499,6 +512,9 @@ describe('confirmOrder', function () {
         },
         closeSession:() => {
           return Promise.resolve(true);
+        },
+        getCampaign:() => {
+          return Promise.resolve(campaign);
         }
       });
 

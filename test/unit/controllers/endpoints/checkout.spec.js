@@ -324,6 +324,9 @@ describe('checkout', function () {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
         assureSession:() => {
           return Promise.resolve(session);
+        },
+        getCampaign:() => {
+          return Promise.resolve(campaign);
         }
       });
 
@@ -513,6 +516,7 @@ describe('checkout', function () {
 
       let event = getValidEventBody();
       let session = getValidSession();
+      let campaign = getValidCampaign();
 
       session.completed = false;
       event.session = session.id;
@@ -551,6 +555,9 @@ describe('checkout', function () {
         },
         closeSession:() => {
           return Promise.resolve(true);
+        },
+        getCampaign:() => {
+          return Promise.resolve(campaign);
         }
       });
 
@@ -783,6 +790,9 @@ describe('checkout', function () {
         },
         closeSession:() => {
           return Promise.resolve(true);
+        },
+        getCampaign:() => {
+          return Promise.resolve(campaign);
         }
       });
 

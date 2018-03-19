@@ -137,12 +137,14 @@ class ConfirmOrderController extends transactionEndpointController{
     let promises = [
       this.sessionController.getCustomer(session),
       this.sessionController.listTransactions(session),
+      this.sessionController.getCampaign(session)
     ];
 
     return Promise.all(promises).then(promises => {
 
       this.parameters.set('customer', promises[0]);
       this.parameters.set('transactions', promises[1]);
+      this.parameters.set('campaign', promises[2]);
 
       return true;
 
