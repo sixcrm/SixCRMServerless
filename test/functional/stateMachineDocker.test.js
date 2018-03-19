@@ -13,7 +13,6 @@ const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const redshiftSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-schema-deployment.js');
 
 describe('stateMachineDocker', () => {
     let lambdas = [];
@@ -40,9 +39,6 @@ describe('stateMachineDocker', () => {
             .then(() => SQSDeployment.deployQueues())
             .then(() => SQSDeployment.purgeQueues())
             .then(() => DynamoDbDeployment.seedTables())
-            // .then(() => redshiftSchemaDeployment.destroy())
-            // .then(() => redshiftSchemaDeployment.deployTables())
-            // .then(() => redshiftSchemaDeployment.seed())
             .then(() => done());
 
     });
