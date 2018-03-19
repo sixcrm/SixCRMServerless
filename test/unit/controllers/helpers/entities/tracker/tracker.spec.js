@@ -38,7 +38,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeAffiliatesTracking(affiliate_ids, data).then((result) => {
-                expect(result).to.equal(null);
+                return expect(result).to.equal(null);
             });
 
         });
@@ -65,7 +65,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeAffiliatesTracking(affiliate_ids, data).then((result) => {
-                expect(result).to.deep.equal([['sample transaction execution']]);
+                return expect(result).to.deep.equal([['sample transaction execution']]);
             });
         });
     });
@@ -88,7 +88,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeAffiliateTrackers(affiliate_id, data).then((result) => {
-                expect(result).to.equal(null);
+                return expect(result).to.equal(null);
             });
         });
 
@@ -114,7 +114,25 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeAffiliateTrackers(affiliate_id, data).then((result) => {
-                expect(result).to.deep.equal(['sample transaction execution']);
+                return expect(result).to.deep.equal(['sample transaction execution']);
+            });
+        });
+
+        it('returns null when tracker controller is set but there aren\'t any trackers associated with this affiliate', () => {
+
+            let affiliate_id = getValidSession().affiliate;
+
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
+
+            trackerHelperController.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+            trackerHelperController.trackerController.listByAffiliate = ({affiliate}) => {
+                expect(affiliate).to.equal(affiliate_id);
+                return Promise.resolve('');
+            };
+
+            return trackerHelperController.executeAffiliateTrackers(affiliate_id, {}).then((result) => {
+                return expect(result).to.equal(null);
             });
         });
     });
@@ -137,7 +155,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeTracker(tracker, data).then((result) => {
-                expect(result).to.equal('sample transaction execution');
+                return expect(result).to.equal('sample transaction execution');
             });
         });
 
@@ -151,7 +169,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.executeTracker(tracker, data).then((result) => {
-                expect(result).to.equal(null);
+                return expect(result).to.equal(null);
             });
         });
 
@@ -189,7 +207,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.getAffiliateIDsFromSession(session.id).then((result) => {
-                expect(result).to.deep.equal([
+                return expect(result).to.deep.equal([
                     "affiliate",
                     "subaffiliate_1",
                     "subaffiliate_2",
@@ -223,10 +241,36 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.getAffiliateIDsFromSession(session.id).then((result) => {
-                expect(result).to.deep.equal([
+                return expect(result).to.deep.equal([
                     "subaffiliate_3",
                     "subaffiliate_4",
                     "subaffiliate_5",
+                    "cid"
+                ]);
+            });
+        });
+
+        it('retrieves valid affiliate ids from session when session controller is already set', () => {
+
+            let session = getValidSession();
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'session');
+
+            const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+            let trackerHelperController = new TrackerHelperController();
+
+            trackerHelperController.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+            trackerHelperController.sessionController.getAffiliateIDs = (id) => {
+                expect(id).to.equal(session.id);
+                return Promise.resolve([
+                        "affiliate",
+                        "cid"
+                    ]);
+            };
+
+            return trackerHelperController.getAffiliateIDsFromSession(session.id).then((result) => {
+                return expect(result).to.deep.equal([
+                    "affiliate",
                     "cid"
                 ]);
             });
@@ -277,7 +321,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.handleTracking(session.id, data).then((result) => {
-                expect(result).to.deep.equal([['sample transaction execution']]);
+                return expect(result).to.deep.equal([['sample transaction execution']]);
             });
         });
 
@@ -317,7 +361,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.handleTracking(session.id, data).then((result) => {
-                expect(result).to.deep.equal([[null]]);
+                return expect(result).to.deep.equal([[null]]);
             });
         });
 
@@ -357,7 +401,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             let trackerHelperController = new TrackerHelperController();
 
             return trackerHelperController.handleTracking(session.id, data).catch((error) => {
-                expect(error.message).to.equal('[500] Unrecognized Tracker type: invalid_tracker_type');
+                return expect(error.message).to.equal('[500] Unrecognized Tracker type: invalid_tracker_type');
             });
         });
     });

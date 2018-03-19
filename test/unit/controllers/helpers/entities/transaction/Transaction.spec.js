@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
@@ -69,6 +68,19 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
     });
 
+    it('returns an empty array when there aren\'t any transaction products in transaction', () => {
+
+      let transaction = getValidTransaction();
+      delete transaction.products;
+
+      let transactionHelperController = new TransactionHelperController();
+
+      let result = transactionHelperController.getTransactionProducts([transaction]);
+
+      expect(result).to.deep.equal([]);
+
+    });
+
   });
 
   describe('markTransactionChargeback', () => {
@@ -81,7 +93,7 @@ describe('helpers/entities/transaction/Transaction.js', () => {
       expected_transaction.chargeback = true;
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(transaction);
         },
         update:({entity}) => {
@@ -91,9 +103,9 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
       let transactionHelperController = new TransactionHelperController();
 
-      return transactionHelperController.markTransactionChargeback({transactionid: transaction.id, chargeback_status: true}).then(result => {
+      return transactionHelperController.markTransactionChargeback({transactionid: transaction.id, chargeback_status: true}).then(() => {
 
-        expect(transactionHelperController.parameters.store['transaction'].chargeback).to.equal(true);
+          return expect(transactionHelperController.parameters.store['transaction'].chargeback).to.equal(true);
 
       })
 
@@ -110,7 +122,7 @@ describe('helpers/entities/transaction/Transaction.js', () => {
       delete expected_transaction.chargeback;
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(transaction);
         },
         update:({entity}) => {
@@ -120,9 +132,9 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
       let transactionHelperController = new TransactionHelperController();
 
-      return transactionHelperController.markTransactionChargeback({transactionid: transaction.id, chargeback_status: false}).then(result => {
+      return transactionHelperController.markTransactionChargeback({transactionid: transaction.id, chargeback_status: false}).then(() => {
 
-        expect(transactionHelperController.parameters.store['transaction'].chargeback).to.equal(false);
+          return expect(transactionHelperController.parameters.store['transaction'].chargeback).to.equal(false);
 
       });
 
@@ -205,7 +217,7 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
       return transactionHelperController.updateTransaction().then(result => {
         expect(result).to.equal(true);
-        expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(updated_transaction);
+        return expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(updated_transaction);
       });
 
     });
@@ -232,7 +244,7 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
           return transactionHelperController.acquireTransaction().then(result => {
               expect(result).to.equal(true);
-              expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(transaction);
+              return expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(transaction);
           });
 
       });
@@ -299,7 +311,7 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
           return transactionHelperController.updateTransactionProducts(params).then((result) => {
               expect(result).to.deep.equal(updated_transaction);
-              expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(updated_transaction);
+              return expect(transactionHelperController.parameters.store['transaction']).to.deep.equal(updated_transaction);
           });
 
       });

@@ -1,5 +1,4 @@
 'use strict'
-const _ = require('underscore');
 let chai = require('chai');
 const mockery = require('mockery');
 const expect = chai.expect;
@@ -100,7 +99,7 @@ describe('/helpers/entities/session/Session.js', () => {
             let customer = getValidCustomer();
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-                get: ({id}) => {
+                get: () => {
                     return Promise.resolve(session);
                 },
                 getCustomer: () => {
@@ -114,7 +113,7 @@ describe('/helpers/entities/session/Session.js', () => {
                 customer: customer.email,
                 id: session.id
             }).then((result) => {
-                expect(result).to.deep.equal(session);
+                return expect(result).to.deep.equal(session);
             });
         });
 
@@ -127,7 +126,7 @@ describe('/helpers/entities/session/Session.js', () => {
             let customer_email = randomutilities.createRandomEmail();
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-                get: ({id}) => {
+                get: () => {
                     return Promise.resolve(session);
                 },
                 getCustomer: () => {
@@ -141,7 +140,7 @@ describe('/helpers/entities/session/Session.js', () => {
                 customer: customer_email,
                 id: session.id
             }).then((result) => {
-                expect(result).to.equal(null);
+                return expect(result).to.equal(null);
             });
         });
 
@@ -152,7 +151,7 @@ describe('/helpers/entities/session/Session.js', () => {
             let customer = getValidCustomer();
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-                get: ({id}) => {
+                get: () => {
                     return Promise.resolve(null);
                 }
             });
@@ -163,7 +162,30 @@ describe('/helpers/entities/session/Session.js', () => {
                 customer: customer.email,
                 id: session.id
             }).then((result) => {
-                expect(result).to.equal(null);
+                return expect(result).to.equal(null);
+            });
+        });
+
+        it('returns null when session controller is set but session with specified id does not exist', () => {
+
+            let session = getValidSession();
+
+            let customer = getValidCustomer();
+
+            let sessionControllerHelper = new SessionHelperController();
+
+            sessionControllerHelper.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+
+            sessionControllerHelper.sessionController.get = ({id}) => {
+                expect(id).to.equal(session.id);
+                return Promise.resolve(null)
+            };
+
+            return sessionControllerHelper.getSessionByCustomerAndID({
+                customer: customer.email,
+                id: session.id
+            }).then((result) => {
+                return expect(result).to.equal(null);
             });
         });
 
@@ -178,7 +200,7 @@ describe('/helpers/entities/session/Session.js', () => {
             let customer = getValidCustomer();
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-                getCustomerByEmail: ({id}) => {
+                getCustomerByEmail: () => {
                     return Promise.resolve(customer);
                 },
                 getCustomerSessions: () => {
@@ -192,7 +214,7 @@ describe('/helpers/entities/session/Session.js', () => {
                 customer: customer.email,
                 alias: session.alias
             }).then((result) => {
-                expect(result).to.deep.equal(session);
+                return expect(result).to.deep.equal(session);
             });
         });
 
@@ -205,7 +227,7 @@ describe('/helpers/entities/session/Session.js', () => {
             let session_alias = 'S'+randomutilities.createRandomString(9);
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-                getCustomerByEmail: ({id}) => {
+                getCustomerByEmail: () => {
                     return Promise.resolve(customer);
                 },
                 getCustomerSessions: () => {
@@ -219,7 +241,7 @@ describe('/helpers/entities/session/Session.js', () => {
                 customer: customer.email,
                 alias: session_alias
             }).then((result) => {
-                expect(result).to.equal(null);
+                return expect(result).to.equal(null);
             });
         });
 
@@ -230,7 +252,7 @@ describe('/helpers/entities/session/Session.js', () => {
             let customer = getValidCustomer();
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-                getCustomerByEmail: ({id}) => {
+                getCustomerByEmail: () => {
                     return Promise.resolve(null);
                 }
             });
@@ -241,7 +263,7 @@ describe('/helpers/entities/session/Session.js', () => {
                 customer: customer.email,
                 alias: session.alias
             }).then((result) => {
-                expect(result).to.equal(null);
+                return expect(result).to.equal(null);
             });
         });
 
@@ -252,7 +274,7 @@ describe('/helpers/entities/session/Session.js', () => {
             let customer = getValidCustomer();
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-                getCustomerByEmail: ({id}) => {
+                getCustomerByEmail: () => {
                     return Promise.resolve(customer);
                 },
                 getCustomerSessions: () => {
@@ -266,7 +288,30 @@ describe('/helpers/entities/session/Session.js', () => {
                 customer: customer.email,
                 alias: session.alias
             }).then((result) => {
-                expect(result).to.equal(null);
+                return expect(result).to.equal(null);
+            });
+        });
+
+        it('returns null when customer controller is set but there is no customer with specified email', () => {
+
+            let session = getValidSession();
+
+            let customer = getValidCustomer();
+
+            let sessionControllerHelper = new SessionHelperController();
+
+            sessionControllerHelper.customerController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+
+            sessionControllerHelper.customerController.getCustomerByEmail = (email) => {
+                expect(email).to.equal(customer.email);
+                return Promise.resolve(null)
+            };
+
+            return sessionControllerHelper.getSessionByCustomerAndAlias({
+                customer: customer.email,
+                alias: session.alias
+            }).then((result) => {
+                return expect(result).to.deep.equal(null);
             });
         });
 
