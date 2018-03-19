@@ -104,7 +104,7 @@ jobs:
             command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
         - run:
             name: Execute Functional Analytics Tests in Docker
-            command: SIX_VERBOSE=0 stage=circle npm run test-functional-analytics"
+            command: SIX_VERBOSE=0 stage=circle npm run test-functional-analytics
   pre_deploy:
     <<: *job-defaults
     steps:
