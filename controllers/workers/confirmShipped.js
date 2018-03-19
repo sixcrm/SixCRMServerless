@@ -298,6 +298,10 @@ module.exports = class confirmShippedController extends workerController {
 
       let shipped = this.parameters.get('rebillshippedstatus');
 
+      if(shipped == true){
+        this.pushEvent({event_type: 'shipping_confirmation'});
+      }
+
       let response_code = (shipped == true)?'success':'noaction';
 
       return super.respond(response_code);

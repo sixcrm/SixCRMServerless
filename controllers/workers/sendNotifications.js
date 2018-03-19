@@ -10,6 +10,7 @@ const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utili
 
 var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
+//Tecnhincal Debt:  Is this in use??
 module.exports = class sendNotificationsController extends workerController {
 
   constructor(){

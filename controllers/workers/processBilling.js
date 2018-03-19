@@ -76,7 +76,11 @@ module.exports = class processBillingController extends workerController {
 
     return arrayutilities.serial(transactions, (current, transaction) => {
 
-      if(transaction.type != 'sale' || transaction.result != 'success'){ return false; }
+      this.pushEvent({event_type: 'transaction_'+transaction.result});
+
+      if(transaction.type != 'sale' || transaction.result != 'success'){
+        return false;
+      }
 
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 

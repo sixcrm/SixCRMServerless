@@ -162,6 +162,10 @@ module.exports = class confirmDeliveredController extends workerController {
 
       let delivered = this.parameters.get('rebilldeliveredstatus');
 
+      if(delivered == true){
+        this.pushEvent({event_type: 'delivery_confirmation'});
+      }
+
       let response_code = (delivered == true)?'success':'noaction';
 
       return super.respond(response_code);

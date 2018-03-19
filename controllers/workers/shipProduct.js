@@ -52,6 +52,10 @@ module.exports = class shipProductController extends workerController {
 
     return terminalController.fulfill({rebill: rebill}).then(response => {
 
+      let terminal_response_code = response.getCode();
+
+      this.pushEvent({event_type: 'fulfillment_triggered_'+terminal_response_code});
+
       this.parameters.set('terminalresponse', response);
 
       return Promise.resolve(true);

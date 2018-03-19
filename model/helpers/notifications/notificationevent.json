@@ -1,8 +1,32 @@
 {
   "id":"/helpers/notifications/notificationevent.json",
   "title":"Notification Event",
-  "type":"string",
   "description":"Events that are of subtype notification events",
   "note":"break into subschemas",
-  "enum":["test", "testalert", "lead", "order", "main", "upsell", "upsell1", "upsell2", "upsell3", "upsell4", "upsell5", "confirm"]
+  "anyOf":[
+    {
+      "type":"string",
+      "enum": ["test", "testalert"]
+    },
+    {
+      "type":"string",
+      "enum": ["click", "lead", "order", "confirm"]
+    },
+    {
+      "type":"string",
+      "pattern":"^transaction_(success|fail|error)$"
+    },
+    {
+      "type":"string",
+      "pattern":"^transaction_recovery_(success|fail|error)$"
+    },
+    {
+      "type":"string",
+      "pattern":"^fulfillment_triggered_(success|fail|error)$"
+    },
+    {
+      "type":"string",
+      "enum":["shipping_confirmation","delivery_confirmation"]
+    }
+  ]
 }

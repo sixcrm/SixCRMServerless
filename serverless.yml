@@ -168,6 +168,7 @@ functions:
     environment:
       archivefilter: 'all'
 
+  #Technical Debt:  Is this deprecated?
   sendnotificationstoarchive:
     handler: handlers/workers/forwardmessage/sendnotificationstoarchive/handler.sendnotificationstoarchive
     events:

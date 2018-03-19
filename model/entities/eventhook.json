@@ -9,7 +9,7 @@
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"event_type":{
 			"type":"array",
-			"items":{"$ref":"../definitions/sixcrmeventtype.json"}
+			"items":{"$ref":"../definitions/eventtype.json"}
 		},
 		"name": {
 			"type":"string"

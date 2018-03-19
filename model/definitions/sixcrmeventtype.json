@@ -2,6 +2,31 @@
   "$schema": "http://json-schema.org/schema#",
   "id": "/definitions/sixcrmeventtype.json",
   "title": "SixCRM Event Type",
-  "type":"string",
-  "enum":["test", "click", "lead", "order", "confirm"]
+  "note":"Technical Debt:  What's the difference between this and /definitions/eventtype.json?",
+  "anyOf":[
+    {
+      "type":"string",
+      "enum": ["test", "testalert"]
+    },
+    {
+      "type":"string",
+      "enum": ["click", "lead", "order", "confirm"]
+    },
+    {
+      "type":"string",
+      "pattern":"^transaction_(success|fail|error)$"
+    },
+    {
+      "type":"string",
+      "pattern":"^transaction_recovery_(success|fail|error)$"
+    },
+    {
+      "type":"string",
+      "pattern":"^fulfillment_triggered_(success|fail|error)$"
+    },
+    {
+      "type":"string",
+      "enum":["shipping_confirmation","delivery_confirmation"]
+    }
+  ]
 }
