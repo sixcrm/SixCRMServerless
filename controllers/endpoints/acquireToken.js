@@ -35,7 +35,6 @@ class AcquireTokenController extends transactionEndpointController {
         'event':global.SixCRM.routes.path('model', 'endpoints/acquireToken/event.json'),
         'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
         'transactionjwt':global.SixCRM.routes.path('model', 'definitions/jwt.json'),
-        'redshifteventobject':global.SixCRM.routes.path('model', 'kinesisfirehose/events.json'),
         'affiliates':global.SixCRM.routes.path('model','endpoints/components/affiliates.json')
       };
 

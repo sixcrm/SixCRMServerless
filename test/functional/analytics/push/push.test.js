@@ -50,21 +50,23 @@ describe('Push events to RDS', () => {
 
 		it(test.name, (done) => {
 
+			const ptr = new PushTransactionRecords(auroraContext);
+
 			seedSQS(test)
-				.then(() => SQSTestUtils.messageCountInQueue('rds_transaction_batch'))
+				.then(() => SQSTestUtils.messageCountInQueue(ptr.queueName))
 				.then((count) => {
 
-					return expect(count === 2);
+					return expect(count === test[ptr.queueName].count);
 
 				})
-				.then(() => new PushTransactionRecords(auroraContext).execute())
+				.then(() => ptr.execute())
 				.then(() => auroraContext.connection.query('SELECT COUNT(1) as c FROM analytics.f_transactions'))
 				.then((result) => {
 
-					return expect(result.rows[0].c).to.be.equal('2');
+					return expect(result.rows[0].c).to.be.equal(test[ptr.queueName].count.toString());
 
 				})
-				.then(() => SQSTestUtils.messageCountInQueue('rds_transaction_batch'))
+				.then(() => SQSTestUtils.messageCountInQueue(ptr.queueName))
 				.then((count) => {
 
 					return expect(count === 0);
@@ -115,9 +117,12 @@ function seedSQS(test) {
 
 		const queueName = seed.replace('.json', '');
 		const seedFilePath = path.join(test.directory, 'seeds', 'sqs', seed);
-		const messages = require(seedFilePath);
+		const seedContent = require(seedFilePath);
+		test[queueName] = {
+			count: seedContent.messages.length
+		};
 
-		memo.push(...messages.map(message => {
+		memo.push(...seedContent.messages.map(message => {
 
 			return SQSTestUtils.sendMessageToQueue(queueName, JSON.stringify(message), 1);
 

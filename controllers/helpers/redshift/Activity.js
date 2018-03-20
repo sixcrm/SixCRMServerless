@@ -8,216 +8,224 @@ require('../../../SixCRM.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
-const redshiftHelperController = global.SixCRM.routes.include('helpers','redshift/Redshift.js');
+module.exports = new class activityHelper {
 
-module.exports = new class activityHelper extends redshiftHelperController {
+	//Technical Debt:  Use Local Cache Object
+	acquireGlobalUser() {
 
-    constructor(){
+		du.debug('Acquire Global User');
 
-        super();
+		if (_.has(global, 'user')) {
 
-    }
+			return global.user;
 
-    //Technical Debt:  Use Local Cache Object
-    acquireGlobalUser(){
+		}
 
-        du.debug('Acquire Global User');
+		return null;
 
-        if(_.has(global, 'user')){
+	}
 
-            return global.user;
+	//Technical Debt:  Use Local Cache Object
+	acquireGlobalAccount() {
 
-        }
+		du.debug('Acquire Global Account');
 
-        return null;
+		if (_.has(global, 'account')) {
 
-    }
+			return global.account;
 
-    //Technical Debt:  Use Local Cache Object
-    acquireGlobalAccount(){
+		}
 
-        du.debug('Acquire Global Account');
+		return null;
 
-        if(_.has(global, 'account')){
+	}
 
-            return global.account;
+	createActivity(actor, action, acted_upon, associated_with) {
 
-        }
+		du.debug('Create Activity');
 
-        return null;
+		actor = this.getActor(actor);
+		acted_upon = this.getActedUpon(acted_upon);
+		associated_with = this.getAssociatedWith(associated_with, acted_upon);
 
-    }
+		return Promise.all([actor, acted_upon, associated_with]).then((promises) => {
 
-    createActivity(actor, action, acted_upon, associated_with){
+			let actor = promises[0];
+			let acted_upon = promises[1];
+			let associated_with = promises[2];
 
-        du.debug('Create Activity');
+			let account = this.getActivityAccount(acted_upon);
+			let now = timestamp.getISO8601();
 
-        actor = this.getActor(actor);
-        acted_upon = this.getActedUpon(acted_upon);
-        associated_with = this.getAssociatedWith(associated_with, acted_upon);
+			let activity = {
+				id: uuidV4(),
+				actor: actor.id,
+				actor_type: actor.type,
+				action: action,
+				datetime: now
+			};
 
-        return Promise.all([actor, acted_upon, associated_with]).then((promises) => {
+			if (!_.isNull(account)) {
+				activity['account'] = account;
+			}
 
-            let actor = promises[0];
-            let acted_upon = promises[1];
-            let associated_with = promises[2];
 
-            let account = this.getActivityAccount(acted_upon);
-            let now = timestamp.getISO8601();
+			if (!_.isNull(acted_upon) && _.has(acted_upon, 'id') && _.has(acted_upon, 'type')) {
+				activity['acted_upon'] = acted_upon.id;
+				activity['acted_upon_type'] = acted_upon.type;
+			}
 
-            let activity = {
-                id: uuidV4(),
-                actor: actor.id,
-                actor_type: actor.type,
-                action: action,
-                datetime: now
-            };
+			if (!_.isNull(associated_with) && _.has(associated_with, 'id') && _.has(associated_with, 'type')) {
+				activity['associated_with'] = associated_with.id;
+				activity['associated_with_type'] = associated_with.type;
+			}
 
-            if(!_.isNull(account)){
-                activity['account'] = account;
-            }
+			return Promise.resolve();
+			// return this.pushActivityToRedshift(activity);
 
+		});
 
-            if(!_.isNull(acted_upon) && _.has(acted_upon, 'id') && _.has(acted_upon, 'type')){
-                activity['acted_upon'] = acted_upon.id;
-                activity['acted_upon_type'] = acted_upon.type;
-            }
+	}
 
-            if(!_.isNull(associated_with) && _.has(associated_with, 'id') && _.has(associated_with, 'type')){
-                activity['associated_with'] = associated_with.id;
-                activity['associated_with_type'] = associated_with.type;
-            }
+	getActivityAccount(object) {
 
-            return this.pushActivityToRedshift(activity);
+		du.debug('Get Activity By Account');
 
-        });
+		let return_object = null;
 
-    }
+		if (_.isObject(object)) {
 
-    getActivityAccount(object){
+			if (_.has(object, 'account') && !_.isNull(object.account)) {
 
-        du.debug('Get Activity By Account');
+				return_object = object.account;
 
-        let return_object = null;
+			}
 
-        if(_.isObject(object)){
+		}
 
-            if(_.has(object, 'account') && !_.isNull(object.account)){
+		if (_.isNull(return_object)) {
 
-                return_object = object.account;
+			return_object = this.acquireGlobalAccount();
 
-            }
+		}
 
-        }
+		return return_object;
 
-        if(_.isNull(return_object)){
+	}
 
-            return_object = this.acquireGlobalAccount();
+	getActedUpon(object) {
 
-        }
+		du.debug('Get Acted Upon');
 
-        return return_object;
+		let return_object = this.getActivityEntity(object);
 
-    }
+		return Promise.resolve(return_object);
 
-    getActedUpon(object){
+	}
 
-        du.debug('Get Acted Upon');
+	getAssociatedWith(object, secondary_object) {
 
-        let return_object = this.getActivityEntity(object);
+		du.debug('Get Associated With');
 
-        return Promise.resolve(return_object);
+		let return_object = this.getActivityEntity(object);
 
-    }
+		if (_.isNull(return_object) && !_.isNull(secondary_object)) {
 
-    getAssociatedWith(object, secondary_object){
+			//infer type, get associated with
+			//transaction
+			//session.customer
 
-        du.debug('Get Associated With');
+		}
 
-        let return_object = this.getActivityEntity(object);
+		return Promise.resolve(return_object);
 
-        if(_.isNull(return_object) && !_.isNull(secondary_object)){
+	}
 
-      //infer type, get associated with
-        //transaction
-          //session.customer
+	getActivityEntity(object) {
 
-        }
+		du.debug('Get Activity Entity');
 
-        return Promise.resolve(return_object);
+		let return_object = null;
 
-    }
+		if (_.isObject(object)) {
 
-    getActivityEntity(object){
+			if (_.has(object, 'id') && _.has(object, 'type')) {
 
-        du.debug('Get Activity Entity');
+				return_object = {
+					id: object.id,
+					type: object.type
+				};
 
-        let return_object = null;
+			}
 
-        if(_.isObject(object)){
+			if (_.has(object, 'entity') && _.has(object.entity, 'id')) {
 
-            if(_.has(object, 'id') && _.has(object, 'type')){
+				return_object = {
+					id: object.entity.id,
+					type: object.type
+				};
 
-                return_object = {id: object.id, type: object.type};
+			}
 
-            }
+		} else if (_.isString(object)) {
 
-            if(_.has(object, 'entity') && _.has(object.entity, 'id')){
+			//Technical Debt:  should I infer?
 
-                return_object = {id: object.entity.id, type: object.type};
+		}
 
-            }
+		return return_object;
 
-        }else if(_.isString(object)){
+	}
 
-          //Technical Debt:  should I infer?
+	getActor(object) {
 
-        }
+		du.debug('Get Actor');
 
-        return return_object;
+		let return_object = null;
 
-    }
+		//Note: If it's explicity give (case: customer/what-have-you)
+		return_object = this.getActivityEntity(object);
 
-    getActor(object){
+		if (_.isNull(return_object)) {
 
-        du.debug('Get Actor');
+			let actor = this.acquireGlobalUser();
 
-        let return_object = null;
+			if (!_.isNull(actor)) {
 
-      //Note: If it's explicity give (case: customer/what-have-you)
-        return_object = this.getActivityEntity(object);
+				if (_.isString(actor)) {
 
-        if(_.isNull(return_object)){
+					return_object = {
+						id: actor,
+						type: 'user'
+					};
 
-            let actor = this.acquireGlobalUser();
+				} else if (_.isObject(actor)) {
 
-            if(!_.isNull(actor)){
+					if (_.has(actor, 'id')) {
 
-                if(_.isString(actor)){
+						return_object = {
+							id: actor.id,
+							type: 'user'
+						};
 
-                    return_object = {id: actor, type:'user'};
+					}
 
-                }else if(_.isObject(actor)){
+				}
 
-                    if(_.has(actor, 'id')){
 
-                        return_object = {id: actor.id, type:'user'};
+			} else {
 
-                    }
+				return_object = {
+					id: 'system',
+					type: 'system'
+				};
 
-                }
+			}
 
+		}
 
-            }else{
+		return Promise.resolve(return_object);
 
-                return_object = {id:'system', type:'system'};
-
-            }
-
-        }
-
-        return Promise.resolve(return_object);
-
-    }
+	}
 
 }
