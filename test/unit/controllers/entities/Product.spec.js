@@ -196,22 +196,6 @@ describe('controllers/Product.js', () => {
     });
 
     describe('validateDynamicPrice', () => {
-        it('returns true if price equals default price', () => {
-            const product = getValidProduct();
-            product.default_price = 10.00;
-            const price = 10.00;
-            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
-            expect(productController.validateDynamicPrice(product, price)).to.be.true;
-        });
-
-        it('returns false if product has no dynamic pricing', () => {
-            const product = getValidProduct();
-            product.default_price = 10.00;
-            const price = 9.00;
-            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
-            expect(productController.validateDynamicPrice(product, price)).to.be.false;
-        });
-
         it('returns true if price is within range', () => {
             const product = getValidProduct();
             product.default_price = 10.00;
@@ -223,6 +207,14 @@ describe('controllers/Product.js', () => {
             const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
             expect(productController.validateDynamicPrice(product, price)).to.be.true;
         });
+
+        it('returns true if product has no dynamic pricing', () => {
+            const product = getValidProduct();
+            const price = 9.00;
+            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            expect(productController.validateDynamicPrice(product, price)).to.be.true;
+        });
+
 
         it('returns false if price is below minimum', () => {
             const product = getValidProduct();
