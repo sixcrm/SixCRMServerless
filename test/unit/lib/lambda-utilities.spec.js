@@ -4,6 +4,8 @@ const mockery = require('mockery');
 
 describe('lib/lambda-utilities', () => {
 
+    let require_local_copy;
+
     before(() => {
         mockery.resetCache();
         mockery.deregisterAll();
@@ -13,6 +15,12 @@ describe('lib/lambda-utilities', () => {
             warnOnReplace: false,
             warnOnUnregistered: false
         });
+
+        require_local_copy = process.env.require_local;
+    });
+
+    after(() => {
+        process.env.require_local = require_local_copy;
     });
 
     describe('buildLambdaName', () => {
@@ -41,7 +49,7 @@ describe('lib/lambda-utilities', () => {
         it('invokes function', () => {
             const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 
-            lambdautilities.require_local = false;
+            delete process.env.require_local;
 
             lambdautilities.lambda = {
                 invoke: function(params, callback) {
@@ -50,17 +58,82 @@ describe('lib/lambda-utilities', () => {
             };
 
             return lambdautilities.invokeFunction({
-                function_name: 'a_function_name',
-                payload: 'a_payload'
+                function_name: 'deliveredtoarchive',
+                payload: '{}'
             }).then((result) => {
                 expect(result).to.equal('success');
+            });
+        });
+
+        it('invokes function when require local is set to true', (done) => {
+
+            const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+
+            process.env.require_local = true;
+
+            let parameters = {
+                function_name: 'deliveredtoarchive',
+                payload: '{}'
+            };
+
+            let callback = (error, data) => {
+                expect(data.StatusCode).to.equal(200);
+                done();
+            };
+
+            let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+
+            mockery.registerMock(path, {
+                deliveredtoarchive: (payload, context, callback) => {
+                    expect(payload).to.be.defined;
+                    expect(context).to.be.defined;
+                    expect(callback).to.be.defined;
+
+                    return callback(null, {body: {success: true}});
+                }
+            });
+
+            lambdautilities.invokeFunction(parameters, callback);
+
+        });
+
+        it('throws error when invoke local failed', (done) => {
+
+            const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+
+            process.env.require_local = true;
+
+            let parameters = {
+                function_name: 'deliveredtoarchive',
+                payload: '{}'
+            };
+
+            let callback = (error) => {
+                expect(error.StatusCode).to.equal(500);
+                done();
+            };
+
+            let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+
+            mockery.registerMock(path, {
+                deliveredtoarchive: (payload, context, callback) => {
+                    expect(payload).to.be.defined;
+                    expect(context).to.be.defined;
+                    expect(callback).to.be.defined;
+
+                    return callback({StatusCode: 500}, null);
+                }
+            });
+
+            lambdautilities.invokeFunction(parameters, callback).catch(e => {
+                expect(e).to.be.defined
             });
         });
 
         it('throws error from lambda invoke', () => {
             const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 
-            lambdautilities.require_local = false;
+            delete process.env.require_local;
 
             lambdautilities.lambda = {
                 invoke: function(params, callback) {
@@ -69,8 +142,8 @@ describe('lib/lambda-utilities', () => {
             };
 
             return lambdautilities.invokeFunction({
-                function_name: 'a_function_name',
-                payload: 'a_payload'
+                function_name: 'deliveredtoarchive',
+                payload: '{}'
             }).catch((error) => {
                 expect(error).to.equal('fail');
             });
@@ -201,6 +274,46 @@ describe('lib/lambda-utilities', () => {
         });
     });
 
+    describe('getLambdaInstance', () => {
+
+        it('successfully retrieves lambda instance', () => {
+
+            let lambda = 'deliveredtoarchive';
+
+            const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+
+            let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+
+            mockery.registerMock(path, {
+                deliveredtoarchive: (payload, context, callback) => {
+                    expect(payload).to.be.defined;
+                    expect(context).to.be.defined;
+                    expect(callback).to.be.defined;
+
+                    return callback(null, {body: {success: true}});
+                }
+            });
+
+            let response = lambdautilities.getLambdaInstance(lambda);
+
+            expect(response).to.have.property(lambda);
+            expect(response.deliveredtoarchive).to.be.a('function');
+        });
+
+        it('throws error when lambda name does not exist', () => {
+
+            let lambda = 'non_existing_name';
+
+            const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+
+            try {
+                lambdautilities.getLambdaInstance(lambda);
+            } catch (error) {
+                expect(error.message).to.equal("Cannot read property 'handler' of undefined");
+            }
+        });
+    });
+
     describe('invokeLocal', () => {
 
         it('successfully executes lambda locally', (done) => {
@@ -226,6 +339,69 @@ describe('lib/lambda-utilities', () => {
                     expect(callback).to.be.defined;
 
                     return callback(null, {body: {success: true}});
+                }
+            });
+
+
+            lambdautilities.invokeLocal(parameters, callback);
+
+        });
+
+        it('throws error from lambda callback', (done) => {
+
+            const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+
+            let parameters = {
+                FunctionName: 'deliveredtoarchive',
+                Payload: '{}'
+            };
+
+            let callback = (error) => {
+                expect(error.StatusCode).to.equal(500);
+                done();
+            };
+
+            let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+
+            mockery.registerMock(path, {
+                deliveredtoarchive: (payload, context, callback) => {
+                    expect(payload).to.be.defined;
+                    expect(context).to.be.defined;
+                    expect(callback).to.be.defined;
+
+                    return callback({StatusCode: 500}, null);
+                }
+            });
+
+
+            lambdautilities.invokeLocal(parameters, callback).catch(e => {
+                expect(e).to.be.defined
+            });
+
+        });
+
+        it('throws error when lambda was not successfully executed locally', (done) => {
+
+            const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+
+            let parameters = {
+                FunctionName: 'deliveredtoarchive',
+                Payload: '{}'
+            };
+
+            let callback = () => {
+                done();
+            };
+
+            let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+
+            mockery.registerMock(path, {
+                deliveredtoarchive: (payload, context, callback) => {
+                    expect(payload).to.be.defined;
+                    expect(context).to.be.defined;
+                    expect(callback).to.be.defined;
+
+                    return callback(null, {body: {success: false}});
                 }
             });
 
