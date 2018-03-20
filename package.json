@@ -76,7 +76,7 @@
 		"test-functional-state-machine-docker": "AWS_PROFILE=six node --max_old_space_size=4096 ./node_modules/mocha/bin/mocha --retries 0 --require test/config/global.js ./test/functional/state_machine/**/*.test.js",
 		"test-functional-connectivity": "AWS_PROFILE=six node ./node_modules/mocha/bin/mocha --retries 3 ./test/functional/functional-connectivity.spec.js",
 		"test-functional-redis-utilities": "node ./node_modules/mocha/bin/mocha --require test/unit/dependencies.js ./test/functional/redis-utilities.spec.js",
-		"test-functional-analytics": "npm run test-functional-analytics-queries && npm run test-analytics-push-events",
+		"test-functional-analytics": "npm run test-functional-analytics-queries && npm run test-functional-analytics-push-events",
 		"test-functional-analytics-push-events":"AWS_PROFILE=six istanbul cover node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/analytics/push/**/*.test.js'",
 		"test-functional-analytics-queries": "AWS_PROFILE=six istanbul cover node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/analytics/queries/**/*.test.js'",
 		"test-integration-analytics": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/analytics/*.test.js",
