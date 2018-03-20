@@ -1,122 +1,126 @@
 'use strict'
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
 //const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
-class RDSEventsController extends SNSEventController {
+class RDSEvents extends SNSEventController {
 
-  constructor(){
+	constructor() {
 
-    super();
+		super();
 
-    this.parameter_definition = {};
+		this.parameter_definition = {};
 
-    //This needs to get refactored, roorganized or renamed.
-    this.parameter_validation = {'rdsobject': global.SixCRM.routes.path('model','kinesisfirehose/events.json')};
+		//This needs to get refactored, roorganized or renamed.
+		this.parameter_validation = {
+			'rdsobject': global.SixCRM.routes.path('model', 'kinesisfirehose/events.json')
+		};
 
-    //Need to add state machine events.
-    //Need to add out-of-flow events (Refund, Void, Chargeback)
-    this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
+		//Need to add state machine events.
+		//Need to add out-of-flow events (Refund, Void, Chargeback)
+		this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
 
-    this.event_record_handler = 'pushToRDSQueue';
+		this.event_record_handler = 'pushToRDSQueue';
 
-    this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+		this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
-    const ContextHelperController = global.SixCRM.routes.include('helpers','context/Context.js');
+		this.contextHelperController = new ContextHelperController();
 
-    this.contextHelperController = new ContextHelperController();
+		this.augmentParameters();
 
-    this.augmentParameters();
+	}
 
-  }
+	pushToRDSQueue() {
 
-  pushToRDSQueue(){
+		du.debug('Push To RDSQueue');
 
-    du.debug('Push To RDSQueue');
+		return Promise.resolve()
+			.then(() => this.isComplaintEventType())
+			.then(() => this.assembleRDSQueueObject())
+			.then(() => this.pushObjectToRDSQueue())
+			.catch(error => {
+				du.error(error);
+				return true;
+			});
 
-    return Promise.resolve()
-    .then(() => this.isComplaintEventType())
-    .then(() => this.assembleRDSQueueObject())
-    .then(() => this.pushObjectToRDSQueue())
-    .catch(error => {
-      du.error(error);
-      return true;
-    });
+	}
 
-  }
+	assembleRDSQueueObject() {
 
-  assembleRDSQueueObject(){
+		du.debug('Assemble RDS Queue Object');
 
-    du.debug('Assemble RDS Queue Object');
+		let context = this.parameters.get('message').context;
 
-    let context = this.parameters.get('message').context;
+		let rds_object = this.contextHelperController.discoverObjectsFromContext(
+			[
+				'campaign',
+				'session',
+				'products',
+				'product_schedules',
+				'affiliates',
+				'datetime'
+			],
+			context
+		);
 
-    let rds_object = this.contextHelperController.discoverObjectsFromContext(
-      [
-        'campaign',
-        'session',
-        'products',
-        'product_schedules',
-        'affiliates',
-        'datetime'
-      ],
-      context
-    );
+		rds_object = this.transformRDSObject(rds_object);
 
-    rds_object = this.transformRDSObject(rds_object);
+		this.parameters.set('rdsobject', rds_object);
 
-    this.parameters.set('rdsobject', rds_object);
+		return true;
 
-    return true;
+	}
 
-  }
+	transformRDSObject(rds_object) {
 
-  transformRDSObject(rds_object){
+		du.debug('Transform RDS Object');
 
-    du.debug('Transform RDS Object');
+		let return_object = {
+			type: this.parameters.get('message').event_type
+		};
 
-    let return_object = {
-      type: this.parameters.get('message').event_type
-    };
+		return_object = this.contextHelperController.transcribeAccount(rds_object, return_object);
+		return_object = this.contextHelperController.transcribeDatetime(rds_object, return_object);
+		return_object = this.contextHelperController.transcribeCampaignFields(rds_object, return_object);
+		return_object = this.contextHelperController.transcribeSessionFields(rds_object, return_object);
+		return_object = this.contextHelperController.transcribeAffiliates(rds_object, return_object);
 
-    return_object = this.contextHelperController.transcribeAccount(rds_object, return_object);
-    return_object = this.contextHelperController.transcribeDatetime(rds_object, return_object);
-    return_object = this.contextHelperController.transcribeCampaignFields(rds_object, return_object);
-    return_object = this.contextHelperController.transcribeSessionFields(rds_object, return_object);
-    return_object = this.contextHelperController.transcribeAffiliates(rds_object, return_object);
+		if (_.has(rds_object, 'product_schedules')) {
+			return_object.product_schedules = this.contextHelperController.discoverIDs(rds_object.product_schedules, 'productschedule');
+		}
 
-    if(_.has(rds_object, 'product_schedules')){
-      return_object.product_schedules = this.contextHelperController.discoverIDs(rds_object.product_schedules, 'productschedule');
-    }
+		if (_.has(rds_object, 'products')) {
+			return_object.products = this.contextHelperController.discoverIDs(rds_object.products, 'product');
+		}
 
-    if(_.has(rds_object, 'products')){
-      return_object.products = this.contextHelperController.discoverIDs(rds_object.products, 'product');
-    }
+		//Technical Debt:  Isn't this redundant, please see above.
+		/*
+		if(_.has(rds_object, 'affiliates')){
+		  return_object = this.affiliateHelperController.transcribeAffiliates(rds_object.affiliates, return_object);
+		}
+		*/
 
-    //Technical Debt:  Isn't this redundant, please see above.
-    /*
-    if(_.has(rds_object, 'affiliates')){
-      return_object = this.affiliateHelperController.transcribeAffiliates(rds_object.affiliates, return_object);
-    }
-    */
+		return return_object;
 
-    return return_object;
+	}
 
-  }
+	pushObjectToRDSQueue() {
 
-  pushObjectToRDSQueue(){
+		du.debug('Push Object To RDS Queue');
 
-    du.debug('Push Object To RDS Queue');
+		let rds_object = this.parameters.get('rdsobject');
 
-    let rds_object = this.parameters.get('rdsobject');
+		return this.sqsutilities.sendMessage({
+			message_body: JSON.stringify(rds_object),
+			queue: 'rds_transaction_batch'
+		}).then(() => {
+			return true;
+		});
 
-    return this.sqsutilities.sendMessage({message_body: JSON.stringify(rds_object), queue: 'rds_transaction_batch'}).then(() => {
-      return true;
-    });
-
-  }
+	}
 
 }
 
