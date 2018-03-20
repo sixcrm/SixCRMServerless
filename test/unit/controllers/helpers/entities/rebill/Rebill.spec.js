@@ -1,20 +1,13 @@
 'use strict'
-
 const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
-
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
@@ -100,28 +93,6 @@ function getValidRebillWithNoState(id){
 
 }
 
-function getValidRebillPrototype(){
-
-  return {
-    parentsession: uuidV4(),
-    bill_at: "2017-04-06T18:40:41.405Z",
-    amount: 12.22,
-    product_schedules:[uuidV4(), uuidV4(), uuidV4()],
-    products: [{
-      product:uuidV4(),
-      amount: 3.22
-    },{
-      product:uuidV4(),
-      amount: 9.00
-    }]
-  }
-
-}
-
-function getValidBillDate(){
-  return timestamp.getISO8601();
-}
-
 function getValidSession(id){
 
   return MockEntities.getValidSession(id)
@@ -190,7 +161,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return rebillHelper.setParameters({argumentation: {rebill: rebill}, action: 'getShippingReceipts'}).then(() => {
 
-        expect(rebillHelper.parameters.store['rebill']).to.equal(rebill);
+        return expect(rebillHelper.parameters.store['rebill']).to.equal(rebill);
 
       });
 
@@ -211,7 +182,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
         expect(rebillHelper.parameters.store['session']).to.equal(session);
         expect(rebillHelper.parameters.store['day']).to.equal(day);
-        expect(rebillHelper.parameters.store['productscheduleids']).to.equal(product_schedules);
+        return expect(rebillHelper.parameters.store['productscheduleids']).to.equal(product_schedules);
 
       });
 
@@ -240,13 +211,13 @@ describe('/helpers/entities/Rebill.js', () => {
 
     it('throws an error when new state is not defined', () => {
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update: ({entity}) => {
+        update: () => {
           expect.fail();
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           expect.fail();
         }
       });
@@ -263,13 +234,13 @@ describe('/helpers/entities/Rebill.js', () => {
         update: ({entity}) => {
           return Promise.resolve(entity);
         },
-        get: ({id}) => {
+        get: () => {
           return Promise.resolve(rebill);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+        putRecord: () => {
           expect.fail();
         }
       });
@@ -290,7 +261,7 @@ describe('/helpers/entities/Rebill.js', () => {
         update: ({entity}) => {
           return Promise.resolve(entity);
         },
-        get: ({id}) => {
+        get: () => {
           return Promise.resolve(rebill);
         }
       });
@@ -302,7 +273,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(object.current_queuename).to.equal('hold');
           expect(object.previous_queuename).to.equal('');
 
-          mvu.validateModel(object, global.SixCRM.routes.path('model','kinesisfirehose/rebills.json'));
+          mvu.validateModel(object, global.SixCRM.routes.path('model','aurora/rebills.json'));
 
           return Promise.resolve();
         }
@@ -318,7 +289,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(rebill.history.length).to.equal(1);
           expect(rebill.history[0].state).to.equal('hold');
           expect(rebill.history[0].entered_at).to.equal(rebill.state_changed_at);
-          expect(rebill.history[0].exited_at).to.equal(undefined);
+          return expect(rebill.history[0].exited_at).to.equal(undefined);
         })
     });
 
@@ -329,7 +300,7 @@ describe('/helpers/entities/Rebill.js', () => {
         update: ({entity}) => {
           return Promise.resolve(entity);
         },
-        get: ({id}) => {
+        get: () => {
           return Promise.resolve(rebill);
         }
       });
@@ -341,7 +312,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(object.current_queuename).to.equal('shipped');
           expect(object.previous_queuename).to.equal('hold');
 
-          mvu.validateModel(object, global.SixCRM.routes.path('model','kinesisfirehose/rebills.json'));
+          mvu.validateModel(object, global.SixCRM.routes.path('model','aurora/rebills.json'));
 
           return Promise.resolve();
         }
@@ -365,7 +336,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(rebill.history[0].exited_at).to.equal(rebill.state_changed_at);
           expect(rebill.history[1].state).to.equal('shipped');
           expect(rebill.history[1].entered_at).to.equal(rebill.state_changed_at);
-          expect(rebill.history[1].exited_at).to.equal(undefined);
+          return expect(rebill.history[1].exited_at).to.equal(undefined);
         })
     });
 
@@ -376,7 +347,7 @@ describe('/helpers/entities/Rebill.js', () => {
         update: ({entity}) => {
           return Promise.resolve(entity);
         },
-        get: ({id}) => {
+        get: () => {
           return Promise.resolve(rebill);
         }
       });
@@ -388,7 +359,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(object.current_queuename).to.equal('hold');
           expect(object.previous_queuename).to.equal('bill');
 
-          mvu.validateModel(object, global.SixCRM.routes.path('model','kinesisfirehose/rebills.json'));
+          mvu.validateModel(object, global.SixCRM.routes.path('model','aurora/rebills.json'));
 
           return Promise.resolve();
         }
@@ -420,7 +391,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(rebill.history[1].state).to.equal('hold');
           expect(rebill.history[1].entered_at).to.equal(rebill.state_changed_at);
           expect(rebill.history[1].exited_at).to.equal(undefined);
-          expect(rebill.history[1].error_message).to.equal('errorMessage');
+          return expect(rebill.history[1].error_message).to.equal('errorMessage');
         })
     });
 
@@ -431,7 +402,7 @@ describe('/helpers/entities/Rebill.js', () => {
         update: ({entity}) => {
           return Promise.resolve(entity);
         },
-        get: ({id}) => {
+        get: () => {
           return Promise.resolve(rebill);
         }
       });
@@ -443,7 +414,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(object.current_queuename).to.equal('pending');
           expect(object.previous_queuename).to.equal('bill');
 
-          mvu.validateModel(object, global.SixCRM.routes.path('model','kinesisfirehose/rebills.json'));
+          mvu.validateModel(object, global.SixCRM.routes.path('model','aurora/rebills.json'));
 
           return Promise.resolve();
         }
@@ -482,7 +453,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(rebill.history[2].state).to.equal('pending');
           expect(rebill.history[2].entered_at).to.equal(rebill.state_changed_at);
           expect(rebill.history[2].exited_at).to.equal(undefined);
-          expect(rebill.history[2].error_message).to.equal('errorMessage');
+          return expect(rebill.history[2].error_message).to.equal('errorMessage');
         })
     });
   });
@@ -494,13 +465,13 @@ describe('/helpers/entities/Rebill.js', () => {
       let rebill = getValidRebill();
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage:({message_body, queue_name}) => {
+        sendMessage:() => {
           return Promise.resolve(true);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get: ({id}) => {
+        get: () => {
           return Promise.resolve(rebill);
         }
       });
@@ -509,7 +480,7 @@ describe('/helpers/entities/Rebill.js', () => {
       let rebillHelperController = new RebillHelperController();
 
       return rebillHelperController.addRebillToQueue({rebill: rebill, queue_name: 'hold'}).then(result => {
-        expect(result).to.equal(true);
+        return expect(result).to.equal(true);
       });
 
     });
@@ -523,7 +494,7 @@ describe('/helpers/entities/Rebill.js', () => {
       let queue_message_body_prototype = getValidQueueMessageBodyPrototype();
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage:({message_body, queue_name}) => {
+        sendMessage:() => {
           return Promise.resolve(true);
         }
       });
@@ -535,7 +506,7 @@ describe('/helpers/entities/Rebill.js', () => {
       rebillHelperController.parameters.set('queuemessagebodyprototype', queue_message_body_prototype);
 
       return rebillHelperController.addQueueMessageToQueue().then(result => {
-        expect(result).to.equal(true);
+        return expect(result).to.equal(true);
       });
 
     });
@@ -579,10 +550,10 @@ describe('/helpers/entities/Rebill.js', () => {
       })
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        listTransactions: (rebill) => {
+        listTransactions: () => {
           return Promise.resolve({transactions: transactions});
         },
-        get: ({id}) => {
+        get: () => {
           return Promise.resolve(rebill);
         },
         getResult:(result, field) => {
@@ -599,7 +570,7 @@ describe('/helpers/entities/Rebill.js', () => {
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount: ({ids}) => {
+        getListByAccount: () => {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         },
         getResult:(result, field) => {
@@ -619,7 +590,7 @@ describe('/helpers/entities/Rebill.js', () => {
       let rebillHelperController = new RebillHelperController();
 
       return rebillHelperController.getShippingReceipts({rebill: rebill}).then(result => {
-        expect(result).to.deep.equal(shipping_receipts);
+        return expect(result).to.deep.equal(shipping_receipts);
       });
 
     });
@@ -633,10 +604,10 @@ describe('/helpers/entities/Rebill.js', () => {
       //delete transactions[1].products[0].shipping_receipt;
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        listTransactions: (rebill) => {
+        listTransactions: () => {
           return Promise.resolve({transactions: transactions});
         },
-        get: ({id}) => {
+        get: () => {
           return Promise.resolve(rebill);
         },
         getResult:(result, field) => {
@@ -653,7 +624,7 @@ describe('/helpers/entities/Rebill.js', () => {
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount: ({ids}) => {
+        getListByAccount: () => {
           return Promise.resolve(null);
         }
       });
@@ -662,7 +633,7 @@ describe('/helpers/entities/Rebill.js', () => {
       let rebillHelperController = new RebillHelperController();
 
       return rebillHelperController.getShippingReceipts({rebill: rebill}).then(result => {
-        expect(result).to.deep.equal([]);
+        return expect(result).to.deep.equal([]);
       });
 
     });
@@ -677,7 +648,7 @@ describe('/helpers/entities/Rebill.js', () => {
       let transactions = getValidTransactions();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        listTransactions: (rebill) => {
+        listTransactions: () => {
           return Promise.resolve({transactions: transactions});
         },
         getResult:(result, field) => {
@@ -700,7 +671,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return rebillHelperController.acquireTransactions().then(result => {
         expect(result).to.equal(true);
-        expect(rebillHelperController.parameters.store['transactions']).to.deep.equal(transactions);
+        return expect(rebillHelperController.parameters.store['transactions']).to.deep.equal(transactions);
       });
 
     });
@@ -710,7 +681,7 @@ describe('/helpers/entities/Rebill.js', () => {
       let rebill = getValidRebill();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        listTransactions: (rebill) => {
+        listTransactions: () => {
           return Promise.resolve({transactions: null});
         },
         getResult:(result, field) => {
@@ -733,7 +704,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return rebillHelperController.acquireTransactions().then(result => {
         expect(result).to.equal(true);
-        expect(rebillHelperController.parameters.store['transactions']).to.not.be.defined;
+        return expect(rebillHelperController.parameters.store['transactions']).to.not.be.defined;
       });
 
     });
@@ -788,7 +759,7 @@ describe('/helpers/entities/Rebill.js', () => {
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount: ({ids}) => {
+        getListByAccount: () => {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         },
         getResult:(result, field) => {
@@ -811,7 +782,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return rebillHelperController.acquireShippingReceipts().then(result => {
         expect(result).to.equal(true);
-        expect(rebillHelperController.parameters.store['shippingreceipts']).to.deep.equal(shipping_receipts);
+        return expect(rebillHelperController.parameters.store['shippingreceipts']).to.deep.equal(shipping_receipts);
       });
 
     });
@@ -822,7 +793,7 @@ describe('/helpers/entities/Rebill.js', () => {
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount: ({ids}) => {
+        getListByAccount: () => {
           return Promise.resolve({shippingreceipts: null});
         },
         getResult:(result, field) => {
@@ -845,7 +816,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return rebillHelperController.acquireShippingReceipts().then(result => {
         expect(result).to.equal(true);
-        expect(rebillHelperController.parameters.store['shippingreceipts']).to.not.be.defined;
+        return expect(rebillHelperController.parameters.store['shippingreceipts']).to.not.be.defined;
       });
 
     });
@@ -875,7 +846,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
         expect(result).to.equal(true);
         expect(rebills.length).to.equal(1);
-        expect(rebills[0]).to.deep.equal(rebill)
+        return expect(rebills[0]).to.deep.equal(rebill)
       });
 
     });
@@ -902,7 +873,7 @@ describe('/helpers/entities/Rebill.js', () => {
         const rebills = rebillHelperController.parameters.get('billablerebills');
 
         expect(result).to.equal(true);
-        expect(rebills.length).to.equal(0);
+        return expect(rebills.length).to.equal(0);
       });
 
     });
