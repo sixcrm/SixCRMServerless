@@ -6,7 +6,7 @@ const ContextHelperController = global.SixCRM.routes.include('helpers', 'context
 
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
-class RDSEvents extends SNSEventController {
+class RDSEventsController extends SNSEventController {
 
 	constructor() {
 
@@ -16,7 +16,7 @@ class RDSEvents extends SNSEventController {
 
 		//This needs to get refactored, roorganized or renamed.
 		this.parameter_validation = {
-			'rdsobject': global.SixCRM.routes.path('model', 'kinesisfirehose/events.json')
+			'rdsobject': global.SixCRM.routes.path('model', 'aurora/events.json')
 		};
 
 		//Need to add state machine events.
