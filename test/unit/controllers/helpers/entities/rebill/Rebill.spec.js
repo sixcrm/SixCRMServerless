@@ -8,6 +8,7 @@ const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
@@ -821,6 +822,30 @@ describe('/helpers/entities/Rebill.js', () => {
 
     });
 
+    it('successfully acquires shipping receipts when shipping receipt controller is already set', () => {
+
+        let shipping_receipts = getValidShippingReceipts();
+        let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
+
+        PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+        let rebillHelperController = new RebillHelperController();
+
+        rebillHelperController.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+        rebillHelperController.shippingReceiptController.getListByAccount = () => {
+            return Promise.resolve({shippingreceipts: shipping_receipts});
+        };
+
+        rebillHelperController.parameters.set('shippingreceiptids', shipping_receipt_ids);
+
+        return rebillHelperController.acquireShippingReceipts().then(result => {
+            expect(result).to.equal(true);
+            return expect(rebillHelperController.parameters.store['shippingreceipts']).to.deep.equal(shipping_receipts);
+        });
+
+    });
+
   });
 
   describe('getBillableRebills', () => {
@@ -878,6 +903,543 @@ describe('/helpers/entities/Rebill.js', () => {
 
     });
 
+    it('successfully retrieves billable rebills when rebill controller is already set', () => {
+
+        let rebill = getValidRebill();
+
+        PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+        const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+        let rebillHelperController = new RebillHelperController();
+
+        rebillHelperController.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+        rebillHelperController.rebillController.getRebillsAfterTimestamp = (stamp) => {
+            expect(timestamp.getSecondsDifference(stamp)).to.be.below(5);
+
+            return Promise.resolve([rebill]);
+        };
+
+        return rebillHelperController.getBillableRebills().then((result) => {
+            let billable_rebills = rebillHelperController.parameters.get('billablerebills');
+
+            expect(result).to.equal(true);
+            expect(billable_rebills.length).to.equal(1);
+            return expect(billable_rebills[0]).to.deep.equal(rebill)
+        });
+
+    });
+
+  });
+
+  describe('setRebillProcessing', () => {
+
+      it('successfully sets rebill processing', () => {
+
+          let rebill = getValidRebill();
+
+          let processing = true;
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('processing', processing);
+
+          expect(rebillHelperController.setRebillProcessing()).to.equal(true);
+          expect(rebillHelperController.parameters.store['rebill'].processing).to.equal(processing);
+      });
+  });
+
+  describe('assureProductScheduleHelperController', () => {
+
+      it('returns true when product schedule controller is assured', () => {
+
+          let rebillHelperController = new RebillHelperController();
+
+          expect(rebillHelperController.assureProductScheduleHelperController()).to.equal(true);
+          expect(rebillHelperController.productScheduleHelperController).to.be.defined;
+      });
+
+      it('returns true when product schedule controller is already set', () => {
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.productScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
+
+          expect(rebillHelperController.assureProductScheduleHelperController()).to.equal(true);
+      });
+  });
+
+  describe('isAvailable', () => {
+
+      it('returns true when rebill is available for billing', () => {
+
+          let rebill = getValidRebill();
+
+          let rebillHelperController = new RebillHelperController();
+
+          expect(rebillHelperController.isAvailable({rebill: rebill})).to.equal(true);
+      });
+
+      it('returns false when rebill is not available for billing', () => {
+
+          let rebill = getValidRebill();
+
+          //rebill is not billable if "bill_at" is in the future
+          rebill.bill_at = "3018-02-02T18:40:41.405Z";
+
+          let rebillHelperController = new RebillHelperController();
+
+          expect(rebillHelperController.isAvailable({rebill: rebill})).to.equal(false);
+      });
+  });
+
+  describe('createRebillMessageSpoof', () => {
+
+      it('successfully creates rebill message spoof', () => {
+
+          let rebill = getValidRebill();
+
+          let rebillHelperController = new RebillHelperController();
+
+          let spoofed_message = rebillHelperController.createRebillMessageSpoof(rebill);
+
+          expect(spoofed_message.spoofed).to.equal(true);
+          expect(spoofed_message.MD5OfBody).to.equal('');
+          expect(spoofed_message.ReceiptHandle).to.equal('');
+          expect(spoofed_message.Body).to.equal('{"id":"' + rebill.id + '"}');
+          expect(stringutilities.isUUID(spoofed_message.MessageId)).to.equal(true);
+      });
+  });
+
+  describe('spoofRebillMessages', () => {
+
+      it('successfully spoofs rebill messages', () => {
+
+          let billable_rebills = [
+              getValidRebill(),
+              getValidRebill(),
+              getValidRebill()
+          ];
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('billablerebills', billable_rebills);
+
+          expect(rebillHelperController.spoofRebillMessages()).to.equal(true);
+
+          let spoofed_rebill_messages = rebillHelperController.parameters.get('spoofedrebillmessages');
+
+          spoofed_rebill_messages.forEach((spoofed_message, index) => {
+              expect(spoofed_message.spoofed).to.equal(true);
+              expect(spoofed_message.MD5OfBody).to.equal('');
+              expect(spoofed_message.ReceiptHandle).to.equal('');
+              expect(spoofed_message.Body).to.equal('{"id":"' + billable_rebills[index].id + '"}');
+              expect(stringutilities.isUUID(spoofed_message.MessageId)).to.equal(true);
+          });
+      });
+
+      it('returns true when there are no billable rebills', () => {
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('billablerebills', []);
+
+          expect(rebillHelperController.spoofRebillMessages()).to.equal(true);
+          expect(rebillHelperController.parameters.store['spoofedrebillmessages']).to.deep.equal([]);
+      });
+  });
+
+  describe('getAvailableRebillsAsMessages', () => {
+
+      it('successfully retrieves spoofed messages of billable rebills', () => {
+
+          let rebills = [
+              getValidRebill()
+          ];
+
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+              getRebillsAfterTimestamp: (stamp) => {
+                  expect(timestamp.getSecondsDifference(stamp)).to.be.below(5);
+                  return Promise.resolve(rebills);
+              }
+          });
+
+          PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+          let rebillHelperController = new RebillHelperController();
+
+          return rebillHelperController.getAvailableRebillsAsMessages().then((spoofed_message) => {
+              expect(spoofed_message[0].spoofed).to.equal(true);
+              expect(spoofed_message[0].MD5OfBody).to.equal('');
+              expect(spoofed_message[0].ReceiptHandle).to.equal('');
+              expect(spoofed_message[0].Body).to.equal('{"id":"' + rebills[0].id + '"}');
+              return expect(stringutilities.isUUID(spoofed_message[0].MessageId)).to.equal(true);
+          });
+      });
+  });
+
+  describe('setConditionalProperties', () => {
+
+      it('returns true when rebill does not have a new state', () => {
+
+          let rebill = getValidRebill();
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+
+          expect(rebillHelperController.setConditionalProperties()).to.equal(true);
+      });
+
+      it('successfully sets previous rebill state', () => {
+
+          let rebill = getValidRebill();
+
+          let new_state = 'shipped'; //any valid rebill state
+
+          rebill.state = 'pending'; //any valid rebill state
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('newstate', new_state);
+
+          expect(rebillHelperController.setConditionalProperties()).to.equal(true);
+          expect(rebillHelperController.parameters.store['previousstate']).to.equal(rebill.state);
+      });
+
+      it('returns true when previous state is already set', () => {
+
+          let rebill = getValidRebill();
+
+          let new_state = 'shipped'; //any valid rebill state
+
+          rebill.state = 'pending'; //any valid rebill state
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('newstate', new_state);
+          rebillHelperController.parameters.set('previousstate', rebill.state);
+
+          expect(rebillHelperController.setConditionalProperties()).to.equal(true);
+      });
+  });
+
+  describe('updateRebill', () => {
+
+      it('successfully updates rebill', () => {
+
+          let rebill = getValidRebill();
+
+          let updated_rebill = objectutilities.clone(rebill);
+
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+              update: ({entity}) => {
+                  expect(entity).to.equal(rebill);
+                  return Promise.resolve(updated_rebill);
+              }
+          });
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+
+          return rebillHelperController.updateRebill().then((result) => {
+              expect(result).to.equal(true);
+              return expect(rebillHelperController.parameters.store['rebill']).to.equal(updated_rebill);
+          });
+      });
+
+      it('successfully updates rebill when rebill controller is already set', () => {
+
+          let rebill = getValidRebill();
+
+          let updated_rebill = objectutilities.clone(rebill);
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+          rebillHelperController.rebillController.update = ({entity}) => {
+              expect(entity).to.equal(rebill);
+              return Promise.resolve(updated_rebill);
+          };
+          rebillHelperController.parameters.set('rebill', rebill);
+
+          return rebillHelperController.updateRebill().then((result) => {
+              expect(result).to.equal(true);
+              return expect(rebillHelperController.parameters.store['rebill']).to.equal(updated_rebill);
+          });
+      });
+  });
+
+  describe('createUpdatedHistoryObjectPrototype', () => {
+
+      it('adds history object with new state to rebill', () => {
+
+          let rebill = getValidRebill();
+
+          let state_changed_at = timestamp.getLastHourInISO8601();
+
+          let new_state = 'shipped';
+
+          rebill.history = [
+              {state: 'hold', entered_at: timestamp.getThisHourInISO8601()},
+              {state: 'pending', entered_at: timestamp.getISO8601()}
+          ];
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('previousstate', rebill.history[1].state);
+          rebillHelperController.parameters.set('newstate', new_state);
+          rebillHelperController.parameters.set('statechangedat', state_changed_at);
+
+          let result = rebillHelperController.createUpdatedHistoryObjectPrototype();
+
+          expect(result[1].exited_at).to.equal(state_changed_at);
+          expect(result[2].state).to.equal(new_state);
+          expect(result[2].entered_at).to.equal(state_changed_at);
+      });
+
+      it('adds history object with new state when rebill has no previous history', () => {
+
+          let rebill = getValidRebill();
+
+          let state_changed_at = timestamp.getLastHourInISO8601();
+
+          let new_state = 'shipped';
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('newstate', new_state);
+          rebillHelperController.parameters.set('statechangedat', state_changed_at);
+
+          let result = rebillHelperController.createUpdatedHistoryObjectPrototype();
+
+          expect(result[0]).to.deep.equal({
+              state: new_state,
+              entered_at: state_changed_at
+          });
+      });
+  });
+
+  describe('createHistoryElementPrototype', () => {
+
+      it('successfully creates history element', () => {
+
+          let params = {
+            state: 'pending',
+            entered_at: timestamp.getISO8601(),
+            exited_at: timestamp.getISO8601()
+          };
+
+          let rebillHelperController = new RebillHelperController();
+
+          expect(rebillHelperController.createHistoryElementPrototype(params)).to.deep.equal({
+              entered_at: params.entered_at,
+              exited_at: params.exited_at,
+              state: params.state
+          });
+      });
+
+      it('successfully creates history element when parameters are not specified', () => {
+
+          let params = {
+            state: 'pending',
+            entered_at: timestamp.getISO8601(),
+            exited_at: null
+          };
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('newstate', params.state);
+          rebillHelperController.parameters.set('statechangedat', params.entered_at);
+          rebillHelperController.parameters.set('exitedat', params.exited_at);
+
+          expect(rebillHelperController.createHistoryElementPrototype({})).to.deep.equal({
+              entered_at: params.entered_at,
+              state: params.state
+          });
+      });
+
+      it('sets history element with an error message', () => {
+
+          let params = {
+            state: '',
+            entered_at: timestamp.getISO8601(),
+            exited_at: timestamp.getISO8601(),
+            error_message: 'Rebill had no previous history of being in this state.'
+          };
+
+          let rebillHelperController = new RebillHelperController();
+
+          expect(rebillHelperController.createHistoryElementPrototype(params)).to.deep.equal(params);
+      });
+  });
+
+  describe('getLastMatchingStatePrototype', () => {
+
+      it('gets matching state when there is only one corresponding previous state', () => {
+
+          let rebill = getValidRebill();
+
+          rebill.history = [
+              {state: 'hold', entered_at: timestamp.getISO8601()},
+              {state: 'pending', entered_at: timestamp.getISO8601()}
+          ];
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('previousstate', 'pending');
+          rebillHelperController.parameters.set('statechangedat', timestamp.getISO8601());
+
+          expect(rebillHelperController.getLastMatchingStatePrototype()).to.deep.equal(rebill.history[1]);
+      });
+
+      it('gets last matching state when there are more than one specified previous state', () => {
+
+          let rebill = getValidRebill();
+
+          rebill.history = [
+              {state: 'hold', entered_at: timestamp.getISO8601()},
+              {state: 'pending', entered_at: timestamp.getISO8601()},
+              {state: 'pending', entered_at: timestamp.getThisHourInISO8601()},
+              {state: 'pending', entered_at: timestamp.getLastHourInISO8601()}
+          ];
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('previousstate', 'pending');
+          rebillHelperController.parameters.set('statechangedat', timestamp.getISO8601());
+
+          expect(rebillHelperController.getLastMatchingStatePrototype()).to.deep.equal(rebill.history[3]);
+      });
+
+      it('gets last matching state when rebill does not have a history of specified previous state', () => {
+
+          let rebill = getValidRebill();
+          let previous_state = 'pending';
+          let state_changed_at = timestamp.getISO8601();
+          let exited_at = timestamp.getISO8601();
+          let error_message = 'Rebill had no previous history of being in this state.';
+
+          rebill.history = [
+              {state: 'hold', entered_at: timestamp.getISO8601()},
+              {state: 'shipped', entered_at: timestamp.getISO8601()}
+          ];
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('previousstate', previous_state);
+          rebillHelperController.parameters.set('statechangedat', state_changed_at);
+          rebillHelperController.parameters.set('exitedat', exited_at);
+
+          expect(rebillHelperController.getLastMatchingStatePrototype()).to.deep.equal({
+            state: previous_state,
+            entered_at: state_changed_at,
+            exited_at: exited_at,
+            error_message: error_message
+          });
+      });
+  });
+
+  describe('updateHistoryPreviousStateWithNewExit', () => {
+
+      it('updates previous state from history with new exit', () => {
+
+          let rebill = getValidRebill();
+
+          let state_changed_at = timestamp.getISO8601();
+
+          rebill.history = [
+              {state: 'hold', entered_at: timestamp.getISO8601()},
+              {state: 'pending', entered_at: timestamp.getThisHourInISO8601()},
+              {state: 'pending', entered_at: timestamp.getISO8601()},
+              {state: 'pending', entered_at: timestamp.getLastHourInISO8601()},
+              {state: 'shipped', entered_at: timestamp.getISO8601()}
+          ];
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('previousstate', 'pending');
+          rebillHelperController.parameters.set('statechangedat', state_changed_at);
+
+          let result = rebillHelperController.updateHistoryPreviousStateWithNewExit();
+
+          expect(result[3].state).to.deep.equal(rebill.history[3].state);
+          expect(result[3].entered_at).to.deep.equal(rebill.history[3].entered_at);
+          //update only matching state
+          expect(result[3].exited_at).to.deep.equal(state_changed_at);
+          //leave others unaltered
+          expect(result[0].exited_at).to.be.undefined;
+          expect(result[1].exited_at).to.be.undefined;
+          expect(result[2].exited_at).to.be.undefined;
+          expect(result[4].exited_at).to.be.undefined;
+      });
+  });
+
+  describe('buildUpdatedRebillPrototype', () => {
+
+      it('successfully builds updated rebill prototype', () => {
+
+          let rebill = getValidRebill();
+
+          let new_state = 'shipped';
+
+          rebill.history = [
+              {state: 'hold', entered_at: timestamp.getThisHourInISO8601()},
+              {state: 'pending', entered_at: timestamp.getISO8601()}
+          ];
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('previousstate', rebill.history[1].state);
+          rebillHelperController.parameters.set('newstate', new_state);
+
+          expect(rebillHelperController.buildUpdatedRebillPrototype()).to.equal(true);
+
+          let updated_rebill_prototype = rebillHelperController.parameters.get('updatedrebillprototype');
+
+          let state_changed_at = rebillHelperController.parameters.get('statechangedat');
+
+          expect(updated_rebill_prototype.state).to.equal(new_state);
+          expect(updated_rebill_prototype.state_changed_at).to.equal(state_changed_at);
+          expect(updated_rebill_prototype.previous_state).to.equal(rebill.history[1].state);
+          expect(updated_rebill_prototype.history[2].entered_at).to.equal(state_changed_at);
+          expect(updated_rebill_prototype.history[2].state).to.equal(new_state);
+      });
+
+      it('successfully builds updated rebill prototype', () => {
+
+          let rebill = getValidRebill();
+
+          let new_state = 'shipped';
+
+          rebill.history = [
+              {state: 'hold', entered_at: timestamp.getThisHourInISO8601()},
+              {state: 'pending', entered_at: timestamp.getISO8601()}
+          ];
+
+          let rebillHelperController = new RebillHelperController();
+
+          rebillHelperController.parameters.set('rebill', rebill);
+          rebillHelperController.parameters.set('previousstate', rebill.history[1].state);
+          rebillHelperController.parameters.set('newstate', new_state);
+          rebillHelperController.parameters.unset('previousstate');
+
+          try {
+              rebillHelperController.buildUpdatedRebillPrototype()
+          } catch (error) {
+              expect(error.message).to.equal('[500] "previousstate" property is not set.');
+          }
+      });
   });
 
 });
