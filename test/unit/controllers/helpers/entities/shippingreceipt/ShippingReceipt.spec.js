@@ -104,7 +104,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shipping_receipt = getValidShippingReceipt();
 
       mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(shipping_receipt);
         }
       });
@@ -115,7 +115,26 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       return shippingReceiptHelperController.acquireShippingReceipt().then(result => {
         expect(result).to.equal(true);
-        expect(shippingReceiptHelperController.parameters.store['shippingreceipt']).to.deep.equal(shipping_receipt);
+        return expect(shippingReceiptHelperController.parameters.store['shippingreceipt']).to.deep.equal(shipping_receipt);
+      });
+    });
+
+    it('successfully acquires a shipping receipt when shipping receipt controller is set', () => {
+
+      let shipping_receipt = getValidShippingReceipt();
+
+      let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+      shippingReceiptHelperController.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+      shippingReceiptHelperController.shippingReceiptController.get = () => {
+          return Promise.resolve(shipping_receipt);
+      };
+
+      shippingReceiptHelperController.parameters.set('shippingreceipt', shipping_receipt);
+
+      return shippingReceiptHelperController.acquireShippingReceipt().then(result => {
+        expect(result).to.equal(true);
+        return expect(shippingReceiptHelperController.parameters.store['shippingreceipt']).to.deep.equal(shipping_receipt);
       });
     });
 
@@ -128,7 +147,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shipping_receipt = getValidShippingReceipt();
 
       mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), {
-        update:({entity}) => {
+        update:() => {
           return Promise.resolve(shipping_receipt);
         }
       });
@@ -139,7 +158,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       return shippingReceiptHelperController.pushUpdatedShippingReceipt().then(result => {
         expect(result).to.equal(true);
-        expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt']).to.deep.equal(shipping_receipt);
+        return expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt']).to.deep.equal(shipping_receipt);
       });
     });
 
@@ -206,7 +225,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shipping_status = 'delivered';
 
       mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(shipping_receipt);
         },
         update:({entity}) => {
@@ -218,10 +237,10 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shippingReceiptHelperController = new ShippingReceiptHelperController();
 
       return shippingReceiptHelperController.updateShippingReceipt({shipping_receipt: shipping_receipt, detail: shipping_receipt.history[0].detail, status: shipping_status })
-      .then(result => {
+      .then(() => {
         expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt']).to.be.defined;
         expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].status).to.equal(shipping_status);
-        expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].history[0].detail).to.equal(shipping_receipt.history[0].detail);
+        return expect(shippingReceiptHelperController.parameters.store['updatedshippingreceipt'].history[0].detail).to.equal(shipping_receipt.history[0].detail);
       });
 
     });
@@ -613,7 +632,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:({ids}) => {
+        getListByAccount:() => {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
@@ -624,7 +643,34 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       return shippingReceiptHelperController.acquireShippingReceipts().then(result => {
         expect(result).to.equal(true);
-        expect(shippingReceiptHelperController.parameters.store['shippingreceipts']).to.deep.equal(shipping_receipts);
+        return expect(shippingReceiptHelperController.parameters.store['shippingreceipts']).to.deep.equal(shipping_receipts);
+      });
+
+    });
+
+    it('successfully acquires shipping receipts when shipping receipt controller is already set', () => {
+
+      let shipping_receipts = getValidShippingReceipts();
+      let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
+        getListByAccount:() => {
+          return Promise.resolve({shippingreceipts: shipping_receipts});
+        }
+      });
+
+      let shippingReceiptHelperController = new ShippingReceiptHelperController();
+
+      shippingReceiptHelperController.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+      shippingReceiptHelperController.shippingReceiptController.getListByAccount = () => {
+          return Promise.resolve({shippingreceipts: shipping_receipts});
+      };
+
+      shippingReceiptHelperController.parameters.set('shippingreceiptids', shipping_receipt_ids);
+
+      return shippingReceiptHelperController.acquireShippingReceipts().then(result => {
+        expect(result).to.equal(true);
+        return expect(shippingReceiptHelperController.parameters.store['shippingreceipts']).to.deep.equal(shipping_receipts);
       });
 
     });
@@ -666,7 +712,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:({ids}) => {
+        getListByAccount:() => {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
@@ -675,7 +721,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       return shippingReceiptHelperController.confirmStati({shipping_receipt_ids: shipping_receipt_ids, shipping_status: shipping_status})
       .then((result) => {
-        expect(result).to.equal(true);
+        return expect(result).to.equal(true);
       });
 
     });
@@ -713,7 +759,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:({ids}) => {
+        getListByAccount:() => {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
@@ -722,7 +768,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       return shippingReceiptHelperController.confirmStati({shipping_receipt_ids: shipping_receipt_ids, shipping_status: shipping_status})
       .then((result) => {
-        expect(result).to.equal(true);
+        return expect(result).to.equal(true);
       });
 
     });
@@ -760,7 +806,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:({ids}) => {
+        getListByAccount:() => {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
@@ -769,7 +815,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       return shippingReceiptHelperController.confirmStati({shipping_receipt_ids: shipping_receipt_ids, shipping_status: shipping_status})
       .then((result) => {
-        expect(result).to.equal(true);
+        return expect(result).to.equal(true);
       });
 
     });
@@ -807,7 +853,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:({ids}) => {
+        getListByAccount:() => {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
@@ -816,7 +862,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       return shippingReceiptHelperController.confirmStati({shipping_receipt_ids: shipping_receipt_ids, shipping_status: shipping_status})
       .then((result) => {
-        expect(result).to.equal(true);
+        return expect(result).to.equal(true);
       });
 
     });
