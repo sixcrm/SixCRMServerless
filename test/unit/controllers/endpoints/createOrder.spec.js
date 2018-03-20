@@ -1274,6 +1274,25 @@ describe('createOrder', function () {
 
   });
 
+  describe('setProducts', () => {
+
+    it('successfully sets product schedules', () => {
+
+      let event = getValidEventBody();
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      createOrderController.parameters.set('event', event);
+
+      return createOrderController.setProducts().then(result => {
+        expect(result).to.equal(true);
+        expect(createOrderController.parameters.store['products']).to.equal(event.products);
+      });
+
+    });
+
+  });
+
   describe('setTransactionSubType', () => {
 
     it('successfully sets the transaction subtype', () => {

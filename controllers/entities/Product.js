@@ -112,6 +112,18 @@ class ProductController extends entityController {
 
     }
 
+    validateDynamicPrice(product, dynamic_price) {
+        du.debug('Validate Pricing');
+
+        if (!_.has(product, 'dynamic_pricing')) {
+            return dynamic_price === product.default_price;
+        }
+
+        const {min, max} = product.dynamic_pricing;
+
+        return dynamic_price >= min && dynamic_price <= max;
+    }
+
 }
 
 module.exports = new ProductController();
