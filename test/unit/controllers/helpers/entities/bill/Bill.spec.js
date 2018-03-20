@@ -1,20 +1,10 @@
 'use strict'
-
-const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
-const uuidV4 = require('uuid/v4');
-
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
 
@@ -26,41 +16,7 @@ function getValidToken(){
 }
 
 function getValidBill(){
-
-  let last_month_start = timestamp.getPreviousMonthStart();
-  let last_month_end = timestamp.getPreviousMonthEnd();
-
-  let now = timestamp.getISO8601();
-
-  return {
-  	id:uuidV4(),
-  	account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-  	paid:false,
-  	outstanding:false,
-  	period_start_at:last_month_start,
-  	period_end_at:last_month_end,
-  	available_at:last_month_end,
-  	detail:[
-  		{
-  			created_at:now,
-  			description:"Some line item charge",
-  			amount: 9.99
-  		},
-  		{
-  			created_at:now,
-  			description:"Subscription",
-  			amount: 30.00
-  		},
-  		{
-  			created_at:now,
-  			description:"Transaction Fees",
-  			amount: 747.48
-  		}
-  	],
-  	created_at:now,
-  	updated_at:now
-  };
-
+    return MockEntities.getValidBill();
 }
 
 describe('helpers/entities/bill/Bill.js', () => {
@@ -101,7 +57,7 @@ describe('helpers/entities/bill/Bill.js', () => {
       let bill =  getValidBill();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(bill);
         }
       });
@@ -114,7 +70,7 @@ describe('helpers/entities/bill/Bill.js', () => {
 
       return billHelperController.acquireBill().then(result => {
         expect(result).to.equal(true);
-        expect(billHelperController.parameters.store['bill']).to.deep.equal(bill);
+        return expect(billHelperController.parameters.store['bill']).to.deep.equal(bill);
       });
 
     });
@@ -145,6 +101,9 @@ describe('helpers/entities/bill/Bill.js', () => {
 
       let bill = getValidBill();
 
+      bill.paid = false;
+      delete bill.paid_result;
+
       let billHelperController = new BillHelperController();
 
       billHelperController.parameters.set('bill', bill);
@@ -169,7 +128,7 @@ describe('helpers/entities/bill/Bill.js', () => {
       updated_bill.paid_result = token;
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), {
-        updatePaidResult:({entity}) => {
+        updatePaidResult:() => {
           return Promise.resolve(updated_bill);
         }
       });
@@ -181,7 +140,35 @@ describe('helpers/entities/bill/Bill.js', () => {
 
       return billHelperController.updateBillWithPaymentToken().then(result => {
         expect(result).to.equal(true);
-        expect(billHelperController.parameters.store['bill']).to.deep.equal(updated_bill);
+        return expect(billHelperController.parameters.store['bill']).to.deep.equal(updated_bill);
+      });
+
+    });
+
+    it('successfully updates a bill with a payment token when bill is overdue', () => {
+
+      let bill = getValidBill();
+      let token = getValidToken();
+      let updated_bill = objectutilities.clone(bill);
+
+      bill.overdue = true;
+      updated_bill.paid = true;
+      updated_bill.paid_result = token;
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), {
+        updatePaidResult:() => {
+          return Promise.resolve(updated_bill);
+        }
+      });
+
+      let billHelperController = new BillHelperController();
+
+      billHelperController.parameters.set('bill', bill);
+      billHelperController.parameters.set('token', token);
+
+      return billHelperController.updateBillWithPaymentToken().then((result) => {
+        expect(result).to.equal(true);
+        return expect(billHelperController.parameters.store['bill']).to.deep.equal(updated_bill);
       });
 
     });
@@ -208,6 +195,7 @@ describe('helpers/entities/bill/Bill.js', () => {
 
       let bill = getValidBill();
 
+      bill.paid = false;
       bill.paid_result = getValidToken();
 
       let billHelperController = new BillHelperController();
@@ -221,6 +209,9 @@ describe('helpers/entities/bill/Bill.js', () => {
     it('returns true when bill is paid:false', () => {
 
       let bill = getValidBill();
+
+      bill.paid = false;
+      delete bill.paid_result;
 
       let billHelperController = new BillHelperController();
 
@@ -240,14 +231,16 @@ describe('helpers/entities/bill/Bill.js', () => {
       let token = getValidToken();
       let updated_bill = objectutilities.clone(bill);
 
+      bill.paid = false;
+      delete bill.paid_result;
       updated_bill.paid = true;
       updated_bill.paid_result = token;
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(bill);
         },
-        updatePaidResult:({entity}) => {
+        updatePaidResult:() => {
           return Promise.resolve(updated_bill);
         }
       });
@@ -255,7 +248,7 @@ describe('helpers/entities/bill/Bill.js', () => {
       let billHelperController = new BillHelperController();
 
       return billHelperController.setPayment({id: bill.id, token: token}).then(result => {
-        expect(result).to.deep.equal(updated_bill);
+        return expect(result).to.deep.equal(updated_bill);
       });
 
     });
