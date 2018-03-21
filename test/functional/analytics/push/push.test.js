@@ -5,7 +5,7 @@ const expect = chai.expect;
 const path = require('path');
 const _ = require('underscore');
 const SQSTestUtils = require('../../sqs-test-utils');
-const WriteTransactionRecords = require('../../../../controllers/workers/analytics/WriteTransactionRecords');
+const WriteTransactionRecords = require('../../../../controllers/workers/analytics/batch-inserts/write-transaction-records');
 
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');

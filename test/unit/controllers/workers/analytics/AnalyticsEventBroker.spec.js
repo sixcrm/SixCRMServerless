@@ -32,7 +32,7 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 
     it('instantiates the AnalyticsEventBroker class', () => {
 
-      let AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/AnalyticsEventBroker.js');
+      let AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
       expect(objectutilities.getClassName(AnalyticsEventBroker)).to.equal('AnalyticsEventBroker');
 
     });
@@ -157,7 +157,7 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
           }
         });
 
-        const analyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/AnalyticsEventBroker.js');
+        const analyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
         return analyticsEventBroker.execute(sns_message).then(result => {
           expect(result).to.equal(true);
           //expect(redshiftEventsController.parameters.store['redshiftobject']).to.deep.equal(test_case.result);

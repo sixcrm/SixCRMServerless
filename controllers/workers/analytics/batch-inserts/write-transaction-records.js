@@ -1,5 +1,5 @@
 const _ = require('underscore')
-const AnalyticsEventHandler = require('./AnalyticsEventHandler');
+const AnalyticsEventHandler = require('../analytics-event-handler');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class WriteTransactionRecords extends AnalyticsEventHandler {

@@ -1,0 +1,8 @@
+// ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
+
+[
+	{
+		"eventType": "click",
+		
+	}
+]
