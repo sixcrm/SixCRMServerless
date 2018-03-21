@@ -1,13 +1,11 @@
-'use strict';
+require('../../../../SixCRM.js');
 
-module.exports.rdsevents = (event, context, callback) => {
-
-  require('../../../../SixCRM.js');
+module.exports.rdsevents = (event, context, callback) => {}
 
   const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-  const RDSEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/RDSEvents.js');
+  const AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/AnalyticsEventBroker.js');
 
-  return RDSEventsController.execute(event).then((result) => {
+  return AnalyticsEventBroker.execute(event).then((result) => {
 
     return new LambdaResponse().issueResponse(200, {
         message: result

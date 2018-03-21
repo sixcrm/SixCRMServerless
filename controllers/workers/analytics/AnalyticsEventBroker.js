@@ -1,4 +1,3 @@
-'use strict'
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
@@ -6,7 +5,7 @@ const ContextHelperController = global.SixCRM.routes.include('helpers', 'context
 
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
-class RDSEventsController extends SNSEventController {
+class AnalyticsEventBroker extends SNSEventController {
 
 	constructor() {
 
@@ -124,4 +123,4 @@ class RDSEventsController extends SNSEventController {
 
 }
 
-module.exports = new RDSEventsController();
+module.exports = new AnalyticsEventBroker();
