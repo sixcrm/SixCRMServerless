@@ -1,3 +1,4 @@
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayUtilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const sqsUtilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
@@ -8,6 +9,7 @@ module.exports = class AnalyticsEventHandler {
 
 		this._queueName = queueName;
 		this._auroraContext = auroraContext;
+		this._eventTypeHandlerMap = null;
 
 	}
 
@@ -21,8 +23,14 @@ module.exports = class AnalyticsEventHandler {
 
 		du.debug('AnalyticsEventHandler.execute()');
 
+		if (!this._eventTypeHandlerMap) {
+
+			this._eventTypeHandlerMap = require('./analytics-event-router');
+
+		}
+
 		return this._getRecordsFromSQS()
-			.then(records => this._executeBatchWrite(records))
+			.then(records => this._executeHandlers(records))
 			.then(records => this._removeRecordsFromSQS(records));
 
 	}
@@ -37,31 +45,42 @@ module.exports = class AnalyticsEventHandler {
 
 	}
 
-	_executeBatchWrite(records) {
+	_executeHandlers(records) {
 
-		du.debug('AnalyticsEventHandler._executeBatchWrite()');
+		du.debug('AnalyticsEventHandler._executeHandlers()');
 
-		if (arrayUtilities.nonEmpty(records)) {
+		if (!arrayUtilities.nonEmpty(records)) {
 
-			return this.executeBatchWriteQuery(records.map(r => JSON.parse(r.Body)))
-				.then(() => {
-
-					return records;
-
-				});
+			return Promise.resolve(records);
 
 		}
 
-		return Promise.resolve(records);
+		const promises = records.map((r) => {
 
-	}
+			const message = JSON.parse(r.Body);
 
-	// override
-	executeBatchWriteQuery(records) {
+			const handerMap = this._eventTypeHandlerMap[message.event_type];
 
-		du.debug('AnalyticsEventHandler.executeBatchWriteQuery()');
+			if (!handerMap) {
 
-		return Promise.resolve(records);
+				du.console.warn('Analytics event type not mapped', message.event_type);
+
+				return Promise.resolve();
+
+			}
+
+			return handerMap.handlers.map(h => {
+
+				const Handler = require(`./event-handlers/${h}`);
+				const handler = new Handler(this._auroraContext);
+				return handler.execute();
+
+			});
+
+		});
+
+		return Promise.all(_.flatten(promises))
+			.then(() => records);
 
 	}
 
