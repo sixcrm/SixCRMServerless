@@ -56,6 +56,9 @@ module.exports = class AnalyticsEventHandler {
 		const promises = records.map((r) => {
 
 			const message = JSON.parse(r.Body);
+
+			du.debug('Message recieved', message);
+
 			const eventKeys = Object.keys(this._eventTypeHandlerMap);
 			const eventKey = eventKeys.find(ek => {
 
