@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayUtilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const sqsUtilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
@@ -30,8 +29,7 @@ module.exports = class AnalyticsEventHandler {
 		}
 
 		return this._getRecordsFromSQS()
-			.then(records => this._executeHandlers(records))
-			.then(records => this._removeRecordsFromSQS(records));
+			.then(records => this._executeHandlers(records));
 
 	}
 
@@ -59,7 +57,17 @@ module.exports = class AnalyticsEventHandler {
 
 			const message = JSON.parse(r.Body);
 
-			const handerMap = this._eventTypeHandlerMap[message.event_type];
+			du.debug('Message recieved', message);
+
+			const eventKeys = Object.keys(this._eventTypeHandlerMap);
+			const eventKey = eventKeys.find(ek => {
+
+				const regex = new RegExp(ek);
+				return message.event_type.match(regex);
+
+			});
+
+			const handerMap = this._eventTypeHandlerMap[eventKey];
 
 			if (!handerMap) {
 
@@ -69,7 +77,7 @@ module.exports = class AnalyticsEventHandler {
 
 			}
 
-			return handerMap.handlers.map(h => {
+			const messageHandlerPromises = handerMap.handlers.map(h => {
 
 				const Handler = require(`./event-handlers/${h}`);
 				const handler = new Handler(this._auroraContext);
@@ -77,29 +85,22 @@ module.exports = class AnalyticsEventHandler {
 
 			});
 
+			return Promise.all(messageHandlerPromises).then(() => this._removeRecordFromSQS(r));
+
 		});
 
-		return Promise.all(_.flatten(promises))
-			.then(() => records);
+		return Promise.all(promises).then(() => records);
 
 	}
 
-	_removeRecordsFromSQS(records) {
+	_removeRecordFromSQS(record) {
 
 		du.debug('AnalyticsEventHandler._removeRecordsFromSQS()');
 
-		if (arrayUtilities.nonEmpty(records)) {
-
-			return sqsUtilities.deleteMessages({
-				messages: records,
-				queue: this._queueName
-			});
-
-		} else {
-
-			return Promise.resolve();
-
-		}
+		return sqsUtilities.deleteMessage({
+			queue: this._queueName,
+			receipt_handle: record.ReceiptHandle
+		});
 
 	}
 

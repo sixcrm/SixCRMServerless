@@ -1,67 +1,67 @@
-'use strict'
 const _ = require('underscore');
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 
 module.exports = class EventHelperController {
 
-  constructor(){
+	constructor() {
 
-    this.snsutilities = global.SixCRM.routes.include('lib','sns-utilities.js');
+		this.snsutilities = global.SixCRM.routes.include('lib', 'sns-utilities.js');
 
-    this.topic_arn = 'arn:aws:sns:{{region}}:{{account}}:events';
+		this.topic_arn = 'arn:aws:sns:{{region}}:{{account}}:events';
 
-  }
+	}
 
-  pushEvent(){
+	pushEvent() {
 
-    du.debug('Push Event');
+		du.debug('Push Event');
 
-    let parameters = this.createPublishParameters(arguments[0]);
+		let parameters = this.createPublishParameters(arguments[0]);
 
-    return this.snsutilities.publish(parameters);
+		return this.snsutilities.publish(parameters);
 
-  }
+	}
 
-  createPublishParameters({event_type, context}){
+	createPublishParameters({
+		event_type,
+		context
+	}) {
 
-    du.debug('Create Publish Parameters');
+		du.debug('Create Publish Parameters');
 
-    let user_email = null;
+		let user_email = null;
 
-    if(objectutilities.hasRecursive(global, 'user.id') && _.isString(global.user.id)){
-      user_email = global.user.id;
-    }
+		if (objectutilities.hasRecursive(global, 'user.id') && _.isString(global.user.id)) {
+			user_email = global.user.id;
+		}
 
-    if(_.isNull(user_email) && _.has(global, 'user') && _.isString(global.user)){
-      user_email = global.user;
-    }
+		if (_.isNull(user_email) && _.has(global, 'user') && _.isString(global.user)) {
+			user_email = global.user;
+		}
 
-    return {
-      Message: JSON.stringify({
-        user: user_email,
-        account: global.account,
-        event_type: event_type,
-        context: context
-      }),
-      TopicArn: this.parseTopicARN()
-    };
+		return {
+			Message: JSON.stringify({
+				user: user_email,
+				account: global.account,
+				event_type: event_type,
+				context: context
+			}),
+			TopicArn: this.parseTopicARN()
+		};
 
-  }
+	}
 
-  parseTopicARN(){
+	parseTopicARN() {
 
-    du.debug('Parse Topic ARN');
+		du.debug('Parse Topic ARN');
 
-    return parserutilities.parse(this.topic_arn, {
-      //Technical Debt:  These explicit references are a no-no
-      account: global.SixCRM.configuration.site_config.aws.account,
-      region: this.snsutilities.getRegion()
-    });
+		return parserutilities.parse(this.topic_arn, {
+			//Technical Debt:  These explicit references are a no-no
+			account: global.SixCRM.configuration.site_config.aws.account,
+			region: this.snsutilities.getRegion()
+		});
 
-  }
-
+	}
 
 }
