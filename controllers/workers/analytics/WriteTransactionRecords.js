@@ -1,8 +1,8 @@
 const _ = require('underscore')
-const AnalyticsEventsHandler = require('./AnalyticsEventsHandler');
+const AnalyticsEventHandler = require('./AnalyticsEventHandler');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-module.exports = class WriteTransactionRecords extends AnalyticsEventsHandler {
+module.exports = class WriteTransactionRecords extends AnalyticsEventHandler {
 
 	constructor(auroraContext) {
 

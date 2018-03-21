@@ -1,10 +1,8 @@
-'use strict';
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayUtilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const sqsUtilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
-module.exports = class AnaylticsEventsHandler {
+module.exports = class AnalyticsEventHandler {
 
 	constructor(queueName, auroraContext) {
 
@@ -21,7 +19,7 @@ module.exports = class AnaylticsEventsHandler {
 
 	execute() {
 
-		du.debug('AnaylticsEventsHandler.execute()');
+		du.debug('AnalyticsEventHandler.execute()');
 
 		return this._getRecordsFromSQS()
 			.then(records => this._executeBatchWrite(records))
@@ -31,7 +29,7 @@ module.exports = class AnaylticsEventsHandler {
 
 	_getRecordsFromSQS() {
 
-		du.debug('AnaylticsEventsHandler._getRecordsFromSQS()');
+		du.debug('AnalyticsEventHandler._getRecordsFromSQS()');
 
 		return sqsUtilities.receiveMessagesRecursive({
 			queue: this._queueName
@@ -41,7 +39,7 @@ module.exports = class AnaylticsEventsHandler {
 
 	_executeBatchWrite(records) {
 
-		du.debug('AnaylticsEventsHandler._executeBatchWrite()');
+		du.debug('AnalyticsEventHandler._executeBatchWrite()');
 
 		if (arrayUtilities.nonEmpty(records)) {
 
@@ -61,7 +59,7 @@ module.exports = class AnaylticsEventsHandler {
 	// override
 	executeBatchWriteQuery(records) {
 
-		du.debug('AnaylticsEventsHandler.executeBatchWriteQuery()');
+		du.debug('AnalyticsEventHandler.executeBatchWriteQuery()');
 
 		return Promise.resolve(records);
 
@@ -69,7 +67,7 @@ module.exports = class AnaylticsEventsHandler {
 
 	_removeRecordsFromSQS(records) {
 
-		du.debug('AnaylticsEventsHandler._removeRecordsFromSQS()');
+		du.debug('AnalyticsEventHandler._removeRecordsFromSQS()');
 
 		if (arrayUtilities.nonEmpty(records)) {
 
