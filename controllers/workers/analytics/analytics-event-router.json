@@ -1,8 +1,26 @@
-// ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
-
 [
 	{
 		"eventType": "click",
-		
+		"handlers": []
+	},
+	{
+		"eventType": "lead",
+		"handlers": []
+	},
+	{
+		"eventType": "order",
+		"handlers": []
+	},
+	{
+		"eventType": "upsell",
+		"handlers": []
+	},
+	{
+		"eventType": "downsell",
+		"handlers": []
+	},
+	{
+		"eventType": "confirm",
+		"handlers": []
 	}
 ]
