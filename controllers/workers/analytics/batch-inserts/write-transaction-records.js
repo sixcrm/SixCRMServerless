@@ -1,18 +1,17 @@
 const _ = require('underscore')
-const AnalyticsEventHandler = require('../analytics-event-handler');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-module.exports = class WriteTransactionRecords extends AnalyticsEventHandler {
+module.exports = class WriteTransactionRecords {
 
 	constructor(auroraContext) {
 
-		super('rds_transaction_batch', auroraContext);
+		this._auroraContext = auroraContext;
 
 	}
 
-	executeBatchWriteQuery(records) {
+	execute(records) {
 
-		du.debug('WriteTransactionRecords.executeBatchWriteQuery()');
+		du.debug('WriteTransactionRecords.execute()');
 
 		let query =
 			'INSERT INTO analytics.f_transactions ( \

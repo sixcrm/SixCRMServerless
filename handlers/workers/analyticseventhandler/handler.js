@@ -2,16 +2,16 @@
 
 require('../../../SixCRM.js');
 const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-const WriteTransactionRecords = global.SixCRM.routes.include('controllers', 'workers/analytics/WriteTransactionRecords.js');
+const AnalyticsEventHandler = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-handler.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context');
 
 module.exports.analyticseventhandler = (event, context, callback) => {
 
-	const writeTransactionRecords = new WriteTransactionRecords();
+	const analyticsEventHandler = new AnalyticsEventHandler();
 
 	Promise.resolve()
 		.then(() => auroraContext.init())
-		.then(() => writeTransactionRecords.execute())
+		.then(() => analyticsEventHandler.execute())
 		.then(() => auroraContext.dispose())
 		.then(() => {
 

@@ -1,26 +1,20 @@
-[
-	{
-		"eventType": "click",
+{
+	"click": {
+		"handlers": ["click-event-handler.js"]
+	},
+	"lead": {
 		"handlers": []
 	},
-	{
-		"eventType": "lead",
+	"order": {
 		"handlers": []
 	},
-	{
-		"eventType": "order",
+	"upsell*": {
 		"handlers": []
 	},
-	{
-		"eventType": "upsell",
+	"downsell*": {
 		"handlers": []
 	},
-	{
-		"eventType": "downsell",
-		"handlers": []
-	},
-	{
-		"eventType": "confirm",
+	"confirm": {
 		"handlers": []
 	}
-]
+}
