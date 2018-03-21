@@ -1,20 +1,25 @@
-'use strict';
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayUtilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const sqsUtilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
-module.exports = class PushRDSRecords {
+module.exports = class AnalyticsEventHandler {
 
-	constructor(queueName) {
+	constructor(queueName, auroraContext) {
 
 		this._queueName = queueName;
+		this._auroraContext = auroraContext;
+
+	}
+
+	get queueName() {
+
+		return this._queueName;
 
 	}
 
 	execute() {
 
-		du.debug('PushRDSRecordsController.execute()');
+		du.debug('AnalyticsEventHandler.execute()');
 
 		return this._getRecordsFromSQS()
 			.then(records => this._executeBatchWrite(records))
@@ -24,7 +29,7 @@ module.exports = class PushRDSRecords {
 
 	_getRecordsFromSQS() {
 
-		du.debug('PushRDSRecordsController._getRecordsFromSQS()');
+		du.debug('AnalyticsEventHandler._getRecordsFromSQS()');
 
 		return sqsUtilities.receiveMessagesRecursive({
 			queue: this._queueName
@@ -34,11 +39,11 @@ module.exports = class PushRDSRecords {
 
 	_executeBatchWrite(records) {
 
-		du.debug('PushRDSRecordsController._executeBatchWrite()');
+		du.debug('AnalyticsEventHandler._executeBatchWrite()');
 
 		if (arrayUtilities.nonEmpty(records)) {
 
-			return this.executeBatchWriteQuery()
+			return this.executeBatchWriteQuery(records.map(r => JSON.parse(r.Body)))
 				.then(() => {
 
 					return records;
@@ -52,17 +57,17 @@ module.exports = class PushRDSRecords {
 	}
 
 	// override
-	executeBatchWriteQuery() {
+	executeBatchWriteQuery(records) {
 
-		du.debug('PushRDSRecordsController.executeBatchWriteQuery()');
+		du.debug('AnalyticsEventHandler.executeBatchWriteQuery()');
 
-		return Promise.resolve();
+		return Promise.resolve(records);
 
 	}
 
 	_removeRecordsFromSQS(records) {
 
-		du.debug('PushRDSRecordsController._removeRecordsFromSQS()');
+		du.debug('AnalyticsEventHandler._removeRecordsFromSQS()');
 
 		if (arrayUtilities.nonEmpty(records)) {
 

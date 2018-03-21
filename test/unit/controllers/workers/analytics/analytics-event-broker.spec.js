@@ -1,4 +1,3 @@
-'use strict'
 const _ = require('underscore');
 const chai = require("chai");
 const expect = chai.expect;
@@ -8,7 +7,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
-describe('controllers/workers/RDSEvents', () => {
+describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 
   before(() => {
     mockery.enable({
@@ -31,10 +30,10 @@ describe('controllers/workers/RDSEvents', () => {
 
   describe('constructor', () => {
 
-    it('instantiates the RDSEventsController class', () => {
+    it('instantiates the AnalyticsEventBroker class', () => {
 
-      let RDSEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/RDSEvents.js');
-      expect(objectutilities.getClassName(RDSEventsController)).to.equal('RDSEventsController');
+      let AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
+      expect(objectutilities.getClassName(AnalyticsEventBroker)).to.equal('AnalyticsEventBroker');
 
     });
 
@@ -158,8 +157,8 @@ describe('controllers/workers/RDSEvents', () => {
           }
         });
 
-        let RDSEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/RDSEvents.js');
-        return RDSEventsController.execute(sns_message).then(result => {
+        const analyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
+        return analyticsEventBroker.execute(sns_message).then(result => {
           expect(result).to.equal(true);
           //expect(redshiftEventsController.parameters.store['redshiftobject']).to.deep.equal(test_case.result);
         });

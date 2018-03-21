@@ -125,6 +125,11 @@ function getValidCustomerPrototype(){
   delete customer.created_at;
   delete customer.updated_at;
   delete customer.account;
+  delete customer.firstname;
+  delete customer.lastname;
+  delete customer.phone;
+  delete customer.address;
+  delete customer.creditcards;
 
   return customer;
 

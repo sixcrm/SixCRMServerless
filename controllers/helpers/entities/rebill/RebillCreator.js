@@ -272,8 +272,65 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
     }
     */
 
+    this.validateProductPricing();
+    this.validateProductSchedulePricing();
+
     return Promise.resolve(true);
 
+  }
+
+  validateProductPricing() {
+    if(!_.has(this, 'productController')){
+      this.productController = global.SixCRM.routes.include('entities', 'Product.js');
+    }
+
+    const product_groups = this.parameters.get('normalizedproducts', null, false);
+    if (_.isNull(product_groups)) {
+      return true;
+    }
+
+    const valid = arrayutilities.every(product_groups, product_group => {
+      if (!_.has(product_group, 'price')) {
+          return true;
+      }
+
+      return this.productController.validateDynamicPrice(product_group.product, product_group.price);
+    });
+
+    if (!valid) {
+        eu.throwError('bad_request', 'Price must be within product\'s dynamic price range.');
+    }
+
+    return valid;
+  }
+
+  validateProductSchedulePricing() {
+      if(!_.has(this, 'productController')){
+        this.productController = global.SixCRM.routes.include('entities', 'Product.js');
+      }
+
+      const product_schedules = this.parameters.get('normalizedproductschedules', null, false);
+      if (_.isNull(product_schedules)) {
+          return true;
+      }
+
+      du.info(product_schedules);
+      const valid = arrayutilities.every(product_schedules, product_schedule => {
+         const products = product_schedule.product_schedule.schedule;
+         return arrayutilities.every(products, product_group => {
+             if (!_.has(product_group, 'price')) {
+                 return true;
+             }
+
+             return this.productController.validateDynamicPrice(product_group.product, product_group.price);
+         });
+      });
+
+      if (!valid) {
+          eu.throwError('bad_request', 'Price must be within product\'s dynamic price range.');
+      }
+
+      return valid;
   }
 
   //Technical Debt:  Test this!

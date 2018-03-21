@@ -60,6 +60,18 @@ function getValidProductSchedules(ids){
 }
 
 describe('/helpers/entities/Rebill.js', () => {
+  before(() => {
+    mockery.enable({
+      useCleanCache: true,
+      warnOnReplace: false,
+      warnOnUnregistered: false
+    });
+  });
+
+  afterEach(() => {
+    mockery.resetCache();
+    mockery.deregisterAll();
+  });
 
   describe('constructor', () => {
 
@@ -112,19 +124,6 @@ describe('/helpers/entities/Rebill.js', () => {
   });
 
   describe('hydrateArguments', () => {
-
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
 
     //Technical Debt:  Grossly deprecated
     xit('successfully hydrates the arguments from the session object', () => {
@@ -282,6 +281,144 @@ describe('/helpers/entities/Rebill.js', () => {
         expect(error.message).to.have.string('A schedule element end can not be less than or equal to a schedule element start');
       }
 
+    });
+
+    it('passes if product dynamic pricing is valid', () => {
+        const normalized_products = [{
+            quantity: 1,
+            price: 9.99,
+            product: getValidProduct()
+        }];
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+          validateDynamicPrice: (product, price) => {
+            expect(product).to.equal(normalized_products[0].product);
+            expect(price).to.equal(9.99);
+            return true;
+          }
+        });
+
+        const rebillCreatorHelper = new RebillCreatorHelperController();
+
+        rebillCreatorHelper.parameters.set('normalizedproducts', normalized_products);
+
+        return rebillCreatorHelper.validateArguments()
+          .then(valid => {
+              expect(valid).to.be.true;
+          });
+    });
+
+    it('passes if no product dynamic pricing set', () => {
+        const normalized_products = [{
+            quantity: 1,
+            product: getValidProduct()
+        }];
+
+        const rebillCreatorHelper = new RebillCreatorHelperController();
+
+        rebillCreatorHelper.parameters.set('normalizedproducts', normalized_products);
+
+        return rebillCreatorHelper.validateArguments()
+          .then(valid => {
+              expect(valid).to.be.true;
+          });
+    });
+
+    it('throws error if product dynamic pricing is invalid', () => {
+        const normalized_products = [{
+            quantity: 1,
+            price: 9.99,
+            product: getValidProduct()
+        }];
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+          validateDynamicPrice: (product, price) => {
+            expect(product).to.equal(normalized_products[0].product);
+            expect(price).to.equal(9.99);
+            return false;
+          }
+        });
+
+        const rebillCreatorHelper = new RebillCreatorHelperController();
+
+        rebillCreatorHelper.parameters.set('normalizedproducts', normalized_products);
+
+        try {
+          rebillCreatorHelper.validateArguments();
+        } catch(error) {
+          expect(error.message).to.equal('[400] Price must be within product\'s dynamic price range.');
+        }
+    });
+
+    it('passes if product schedule dynamic pricing is valid', () => {
+        const product = getValidProduct();
+        let normalized_product_schedules = [{
+          quantity:1,
+          product_schedule: {
+            schedule: [
+              {
+                product,
+                price:9.99,
+                start:0,
+                end:14,
+                period:14
+              }
+            ]
+          }
+        }];
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+          validateDynamicPrice: (_product, price) => {
+            expect(_product).to.equal(product);
+            expect(price).to.equal(9.99);
+            return true;
+          }
+        });
+
+        const rebillCreatorHelper = new RebillCreatorHelperController();
+
+        rebillCreatorHelper.parameters.set('normalizedproductschedules', normalized_product_schedules);
+
+        return rebillCreatorHelper.validateArguments()
+          .then(valid => {
+              expect(valid).to.be.true;
+          });
+    });
+
+    it('throws error if product schedule dynamic pricing is invalid', () => {
+        const product = getValidProduct();
+        let normalized_product_schedules = [{
+          quantity:1,
+          product_schedule: {
+            schedule: [
+              {
+                product,
+                price:9.99,
+                start:0,
+                end:14,
+                period:14
+              }
+            ]
+          }
+        }];
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+          validateDynamicPrice: (_product, price) => {
+            expect(_product).to.equal(product);
+            expect(price).to.equal(9.99);
+            return false;
+          }
+        });
+
+        const rebillCreatorHelper = new RebillCreatorHelperController();
+
+        rebillCreatorHelper.parameters.set('normalizedproductschedules', normalized_product_schedules);
+
+        try {
+          rebillCreatorHelper.validateArguments();
+        } catch(error) {
+          expect(error.message).to.equal('[400] Price must be within product\'s dynamic price range.');
+        }
     });
 
   });
@@ -1120,6 +1257,10 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let day = -1;
 
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+        validateDynamicPrice: () => true
+      });
+
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       session.product_schedules = [];
@@ -1127,7 +1268,6 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return rebillCreatorHelper.createRebill({session: session, day: day, product_schedules: session.watermark.product_schedules}).then(result => {
 
-        du.info(result);
         delete result.created_at;
         delete result.updated_at;
         delete result.id;
@@ -1166,6 +1306,10 @@ describe('/helpers/entities/Rebill.js', () => {
         ]
       };
 
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+        validateDynamicPrice: () => true
+      });
+
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       session.watermark = {product_schedules: product_schedules};
@@ -1201,6 +1345,10 @@ describe('/helpers/entities/Rebill.js', () => {
         ]
       };
 
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+        validateDynamicPrice: () => true
+      });
+
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
@@ -1234,6 +1382,10 @@ describe('/helpers/entities/Rebill.js', () => {
         ]
       };
 
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+        validateDynamicPrice: () => true
+      });
+
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
@@ -1266,6 +1418,10 @@ describe('/helpers/entities/Rebill.js', () => {
           }
         ]
       };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+        validateDynamicPrice: () => true
+      });
 
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
@@ -1547,6 +1703,10 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+        validateDynamicPrice: () => true
+      });
+
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let day = -1;
@@ -1583,7 +1743,8 @@ describe('/helpers/entities/Rebill.js', () => {
                   price: 62.35,
                   product: {
                     id: "92bd4679-8fb5-47ff-93f5-8679c46bcaad",
-                    name: "Smack Dog - Caribbean Salmon Fusion 1.5 kg/3.30 lb"
+                    name: "Smack Dog - Caribbean Salmon Fusion 1.5 kg/3.30 lb",
+                    default_price: 62.35
                   },
                   start: 0
                 }
@@ -1599,7 +1760,8 @@ describe('/helpers/entities/Rebill.js', () => {
                   price: 101.35,
                   product: {
                     id: "6c6ec904-5315-4214-a057-79a7ff308cde",
-                    name: "Smack Dog - Caribbean Salmon Fusion 2.5 kg/5.5 lb"
+                    name: "Smack Dog - Caribbean Salmon Fusion 2.5 kg/5.5 lb",
+                    default_price: 101.35
                   },
                   start: 0
                 }

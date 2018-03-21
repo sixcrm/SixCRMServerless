@@ -194,4 +194,50 @@ describe('controllers/Product.js', () => {
             });
         });
     });
+
+    describe('validateDynamicPrice', () => {
+        it('returns true if price is within range', () => {
+            const product = getValidProduct();
+            product.default_price = 10.00;
+            product.dynamic_pricing = {
+                min: 8.00,
+                max: 11.00
+            };
+            const price = 9.00;
+            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            expect(productController.validateDynamicPrice(product, price)).to.be.true;
+        });
+
+        it('returns true if product has no dynamic pricing', () => {
+            const product = getValidProduct();
+            const price = 9.00;
+            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            expect(productController.validateDynamicPrice(product, price)).to.be.true;
+        });
+
+
+        it('returns false if price is below minimum', () => {
+            const product = getValidProduct();
+            product.default_price = 10.00;
+            product.dynamic_pricing = {
+                min: 8.00,
+                max: 11.00
+            };
+            const price = 7.99;
+            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            expect(productController.validateDynamicPrice(product, price)).to.be.false;
+        });
+
+        it('returns false if price is above maximum', () => {
+            const product = getValidProduct();
+            product.default_price = 10.00;
+            product.dynamic_pricing = {
+                min: 8.00,
+                max: 11.00
+            };
+            const price = 11.01;
+            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            expect(productController.validateDynamicPrice(product, price)).to.be.false;
+        });
+    });
 });
