@@ -206,8 +206,8 @@ functions:
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
-  analyticsevents:
-    handler: handlers/workers/analyticsevents/handler.analyticsevents
+  analyticseventhandler:
+    handler: handlers/workers/analyticseventhandler/handler.analyticseventhandler
     events:
       - schedule:
         rate: rate(1 minute)
