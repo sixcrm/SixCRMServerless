@@ -8,7 +8,7 @@ functional_tests_default: &functional-tests-default
 
 defaults: &job-defaults
   docker:
-    - image: circleci/node:7.10.0
+    - image: circleci/node:6.10.3
       environment:
         - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
 
