@@ -4,7 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayUtilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const sqsUtilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
-module.exports = class PushRDSRecords {
+module.exports = class AnaylticsEventsHandler {
 
 	constructor(queueName, auroraContext) {
 
@@ -21,7 +21,7 @@ module.exports = class PushRDSRecords {
 
 	execute() {
 
-		du.debug('PushRDSRecordsController.execute()');
+		du.debug('AnaylticsEventsHandler.execute()');
 
 		return this._getRecordsFromSQS()
 			.then(records => this._executeBatchWrite(records))
@@ -31,7 +31,7 @@ module.exports = class PushRDSRecords {
 
 	_getRecordsFromSQS() {
 
-		du.debug('PushRDSRecordsController._getRecordsFromSQS()');
+		du.debug('AnaylticsEventsHandler._getRecordsFromSQS()');
 
 		return sqsUtilities.receiveMessagesRecursive({
 			queue: this._queueName
@@ -41,7 +41,7 @@ module.exports = class PushRDSRecords {
 
 	_executeBatchWrite(records) {
 
-		du.debug('PushRDSRecordsController._executeBatchWrite()');
+		du.debug('AnaylticsEventsHandler._executeBatchWrite()');
 
 		if (arrayUtilities.nonEmpty(records)) {
 
@@ -61,7 +61,7 @@ module.exports = class PushRDSRecords {
 	// override
 	executeBatchWriteQuery(records) {
 
-		du.debug('PushRDSRecordsController.executeBatchWriteQuery()');
+		du.debug('AnaylticsEventsHandler.executeBatchWriteQuery()');
 
 		return Promise.resolve(records);
 
@@ -69,7 +69,7 @@ module.exports = class PushRDSRecords {
 
 	_removeRecordsFromSQS(records) {
 
-		du.debug('PushRDSRecordsController._removeRecordsFromSQS()');
+		du.debug('AnaylticsEventsHandler._removeRecordsFromSQS()');
 
 		if (arrayUtilities.nonEmpty(records)) {
 
