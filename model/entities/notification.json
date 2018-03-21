@@ -6,16 +6,11 @@
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"user":{"$ref": "../definitions/useridentifier.json"},
-		"action":{"$ref":"../definitions/notificationaction.json"},
+		"context":{"type":"object"},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"type": {"$ref":"../definitions/notificationtype.json"},
-		"title": {
-			"type":"string"
-		},
+		"name":{"type":"string"},
 		"category": {
-			"type":"string"
-		},
-		"body": {
 			"type":"string"
 		},
 		"expires_at":{"$ref": "../definitions/iso8601.json"},
@@ -23,5 +18,5 @@
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
-	"required":["account", "user", "action", "title", "type", "created_at", "updated_at"]
+	"required":["account", "user", "type", "name", "created_at", "updated_at"]
 }

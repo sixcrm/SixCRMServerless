@@ -3,7 +3,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-describe('controllers/providers/notification/sms-notification-provider', () => {
+xdescribe('controllers/providers/notification/sms-notification-provider', () => {
 
     before(() => {
         mockery.enable({

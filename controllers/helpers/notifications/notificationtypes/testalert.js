@@ -2,19 +2,17 @@
 
 const BaseNotification = global.SixCRM.routes.include('helpers','notifications/notificationtypes/components/BaseNotification.js');
 
-class TestAlert extends BaseNotification {
+class TestAlertNotification extends BaseNotification {
 
   constructor(){
 
     super();
 
-    this.title = 'Test Alert';
-    this.body = 'This is a test alert.';
-    this.category = 'general';
+    this.name = 'test_alert';
     this.notification_type = 'alert';
 
   }
 
 }
 
-module.exports = new TestAlert();
+module.exports = new TestAlertNotification();

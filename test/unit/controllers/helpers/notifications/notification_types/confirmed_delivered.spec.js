@@ -8,33 +8,33 @@ const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-describe('/helpers/notifications/notification_types/lead.js', () => {
+let notification_name = 'confirmed_delivered';
+let notification_readable_name = 'ConfirmedDelivered';
+
+describe('/helpers/notifications/notification_types/'+notification_name+'.js', () => {
 
   describe('constructor', () => {
     it('successfully constructs', () => {
-      let notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/lead.js');
+      let notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+notification_name+'.js');
 
-      expect(objectutilities.getClassName(notification_class)).to.equal('LeadNotification');
+      expect(objectutilities.getClassName(notification_class)).to.equal(notification_readable_name+'Notification');
+
     });
   });
 
   describe('transformContext', () => {
 
-    let required_fields = ['account','type','category','context'];
+    let required_fields = ['user','account','type','category','context'];
 
     it('successfully transforms the context object', () => {
 
-      let campaign = MockEntities.getValidCampaign();
-      let customer = MockEntities.getValidCustomer();
-
       let context = {
-        user: 'owner.user@test.com',
+        user: { id: 'owner.user@test.com' },
         account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-        campaign: campaign,
-        customer: customer
+        rebill: MockEntities.getValidRebill()
       };
 
-      let notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/lead.js');
+      let notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+notification_name+'.js');
       let transformed_context = notification_class.transformContext(context);
 
       arrayutilities.map(required_fields, key => {
@@ -49,6 +49,7 @@ describe('/helpers/notifications/notification_types/lead.js', () => {
       du.highlight(transformed_context);
 
     });
+
   });
 
 });

@@ -369,7 +369,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
       }else{
 
         du.debug('Entity already bound to a account.');
-
+        //Technical Debt: Critical
         //Technical Debt:  Need to validate that the user that is creating the entity has permission to assign to the account.
 
       }

@@ -1,11 +1,11 @@
 let mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-let modelgenerator = require('../../model-generator.js');
+//let modelgenerator = require('../../model-generator.js');
 let chai = require('chai');
 let fs = require('fs');
 let expect = chai.expect;
 
-let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+//let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 
 let schemaWithNoReferences = `${__dirname}/model/sql_pagination.json`;
 let schemaWithReferences = `${__dirname}/model/sixcrmidentifier.json`;
@@ -214,7 +214,7 @@ describe('lib/model-validator-utilities', () => {
                 });
         }
         validateSchemasOnPath(global.SixCRM.routes.path('model', 'entities'));
-        validateSchemasOnPath(global.SixCRM.routes.path('model', 'actions'));
+        //validateSchemasOnPath(global.SixCRM.routes.path('model', 'actions'));
         validateSchemasOnPath(global.SixCRM.routes.path('model', 'jwt'));
         validateSchemasOnPath(global.SixCRM.routes.path('model', 'transaction'));
 

@@ -570,6 +570,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return this.dynamoutilities.saveRecord(this.table_name, existing_entity).then(() => {
           return existing_entity;
         });
+
       }).then((existing_entity) => {
 
         if (this.sanitization) {

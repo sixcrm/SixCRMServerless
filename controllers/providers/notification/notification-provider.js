@@ -3,316 +3,445 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib','debug-utilities');
 const eu = global.SixCRM.routes.include('lib','error-utilities');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
-const permissionUtils = global.SixCRM.routes.include('lib','permission-utilities');
-const emailNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/email-notification-provider');
-const smsNotificationUtils = global.SixCRM.routes.include('controllers','providers/notification/sms-notification-provider');
-const slackNotificationUtils = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
-const timestamp = global.SixCRM.routes.include('lib','timestamp');
+//const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities');
+//const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
+//const timestamp = global.SixCRM.routes.include('lib','timestamp');
 
-const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
-const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
-const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
-const userAclController = global.SixCRM.routes.include('controllers', 'entities/UserACL');
+//const emailNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/email-notification-provider');
+//const smsNotificationUtils = global.SixCRM.routes.include('controllers','providers/notification/sms-notification-provider');
+//const slackNotificationUtils = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
+
+const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 class NotificationProvider {
 
-    /**
-     * Create a notification for each user of the account.
-     *
-     * @param create_notification_object
-     * @returns {Promise}
-     */
-    createNotificationsForAccount(create_notification_object) {
+  constructor(){
 
-        du.debug('Create Notifications For Account');
+    this.immutable_categories = [];
+    this.immutable_types = ['alert', 'persistent'];
 
-        du.debug(`Create notifications for users of account '${create_notification_object.account}'.`);
+    this.parameter_validation = {};
+    this.parameter_definition = {
+      createNotificationForAccountAndUser:{
+        required:{
+          notificationprototype:'notification_prototype',
+        },
+        optional: {}
+      },
+      createNotificationsForAccount:{
+        required:{
+          notificationprototype:'notification_prototype',
+        },
+        optional: {}
+      }
+    };
 
-        return this.validateCreateNotificationObject(create_notification_object).then(() => {
-            return this.getAccountUsers(create_notification_object.account);
-        }).then((users) => {
-            if (!users || users.length < 1) {
+    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-                du.debug('No users found of account ' + create_notification_object.account);
+    this.userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+    this.notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
+    this.notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting.js');
+    this.userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting.js');
 
-                return false;
+  }
+
+  createNotificationsForAccount() {
+
+    du.debug('Create Notifications For Account');
+
+    let action = 'createNotificationsForAccount';
+    this.parameters.set('action', action);
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: action}))
+    .then(() => this.validateNotificationPrototype())
+    .then(() => this.setReceiptUsers())
+    .then(() => this.sendNotificationToUsers());
+
+  }
+
+  createNotificationForAccountAndUser() {
+
+    du.debug('Create Notifications For Account and User');
+
+    let action = 'createNotificationForAccountAndUser';
+    this.parameters.set('action', action);
+
+    return Promise.resolve()
+    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: action}))
+    .then(() => this.validateNotificationPrototype())
+    .then(() => this.setReceiptUsers())
+    .then(() => this.sendNotificationToUsers());
+
+  }
+
+  validateNotificationPrototype() {
+
+    du.debug('Validate Notification Prototype');
+
+    let action = this.parameters.get('action');
+    let notification_prototype = this.parameters.get('notificationprototype');
+
+    let user_required = false;
+    if(action == 'createNotificationsForAccountAndUser'){
+      user_required = true;
+    }
+
+    if (user_required && !_.has(notification_prototype, 'user')) {
+      eu.throwError('server', 'User is mandatory in notification prototypes when using the createNotificationsForAccountAndUser method.');
+    }
+
+    return true;
+
+  }
+
+  setReceiptUsers(){
+
+    du.debug('Set Receipt Users');
+
+    let action = this.parameters.get('action');
+
+    if(action == 'createNotificationsForAccount'){
+
+      return this.setReceiptUsersFromAccount();
+
+    }
+
+    return this.setReceiptUsersFromNotificationPrototype();
+
+  }
+
+  setReceiptUsersFromNotificationPrototype(){
+
+    du.debug('Set Receipt Users From Notification Prototype');
+
+    let notification_prototype = this.parameters.get('notificationprototype');
+
+    if(!_.has(notification_prototype, 'user')){
+      eu.throwError('server', 'Unable to identify receipt user in notification prototype');
+    }
+
+    this.parameters.push('receiptusers', notification_prototype.user);
+
+    return true;
+
+  }
+
+  setReceiptUsersFromAccount(){
+
+    du.debug('Set Receipt Users From Account');
+
+    let notification_prototype = this.parameters.get('notificationprototype');
+
+    return this.userACLController.getACLByAccount({account: notification_prototype.account})
+    .then((results) => {
+
+      if(!arrayutilities.nonEmpty(results)){
+        eu.throwError('server', 'Empty useracls element in account user_acl response');
+      }
+
+      arrayutilities.map(results, (user_acl_element) => {
+        this.parameters.push('receiptusers', user_acl_element.user);
+      });
+
+      return true;
+
+    });
+
+  }
+
+  sendNotificationToUsers(){
+
+    du.debug('Send Notification To Users');
+
+    let receipt_users = this.parameters.get('receiptusers');
+    let notification_prototype = this.parameters.get('notificationprototype');
+
+    return arrayutilities.reduce(receipt_users, (current, receipt_user) => {
+      return this.saveAndSendNotification({notification_prototype: notification_prototype, account: notification_prototype.account, user: receipt_user})
+      .then(() => {
+        return true;
+      });
+    }, true);
+
+  }
+
+  saveAndSendNotification({notification_prototype, account, user}) {
+
+    du.debug('Save and Send Notification');
+
+    return this.getNotificationSettings({user: user})
+    .then((compound_notification_settings) => this.normalizeNotificationSettings(compound_notification_settings))
+    .then(({normalized_notification_settings, user_settings}) => {
+
+      return Promise.resolve()
+      .then(() => this.buildNotificationCategoriesAndTypes(normalized_notification_settings))
+      .then((augmented_normalized_notification_settings) => {
+
+        return this.createNotification({
+          notification_prototype: notification_prototype,
+          user: user,
+          account: account,
+          augmented_normalized_notification_settings: augmented_normalized_notification_settings,
+          user_settings: user_settings
+        })
+        .then(notification => {
+
+          /*
+          return this.sendNotificationToChannels({
+            notification: notification,
+            notification_settings: augmented_normalized_notification_settings
+          });
+          */
+
+          return notification;
+
+        });
+
+      });
+
+    });
+
+  }
+
+  getNotificationSettings({user}){
+
+    du.debug('Get Notification Settings');
+
+    let notification_preference_promises = [
+      this.notificationSettingController.get({id: user}),
+      this.userSettingController.get({id: user}),
+      this.notificationSettingController.getDefaultProfile()
+    ];
+
+    return Promise.all(notification_preference_promises).then((notification_preference_promises) => {
+      return {
+        notification_settings: notification_preference_promises[0],
+        user_settings: notification_preference_promises[1],
+        default_notification_settings: notification_preference_promises[2],
+      };
+    });
+
+  }
+
+  normalizeNotificationSettings({notification_settings, default_notification_settings}){
+
+    du.debug('Normalize Notification Settings');
+
+    let normalized_notification_settings = default_notification_settings;
+    let parsed_notification_settings = null;
+
+    if(!_.isUndefined(notification_settings) && !_.isNull(notification_settings) && _.has(notification_settings, 'settings')){
+
+      if(_.isString(notification_settings.settings)){
+
+        try{
+          parsed_notification_settings = JSON.parse(notification_settings.settings)
+        }catch(error){
+          eu.throwError(error);
+        }
+
+      }else if(_.isObject(notification_settings.settings)){
+
+        parsed_notification_settings = notification_settings.settings;
+
+      }else{
+
+        eu.throwError('server', 'Unrecognized notification_settions.settings property.');
+
+      }
+
+    }
+
+    if(!_.isNull(parsed_notification_settings)){
+      normalized_notification_settings = parsed_notification_settings;
+    }
+
+    //Technical Debt: Make the two structures agree with one another.
+
+    return normalized_notification_settings;
+
+  }
+
+  buildNotificationCategoriesAndTypes(notification_settings){
+
+    du.debug('Build Notification Categories and Types');
+
+    let notification_categories = this.immutable_categories;
+    let notification_types = this.immutable_types;
+
+    //Technical Debt:  Confirm and validate
+    if(_.has(notification_settings, 'notification_groups') && _.isArray(notification_settings.notification_groups)){
+      arrayutilities.map(notification_settings.notification_groups, (notification_group) => {
+        if(_.has(notification_group, 'notifications')){
+          arrayutilities.map(notification_group.notifications, notification => {
+            if(_.has(notification, 'default') && _.has(notification, 'key') && notification.default == true){
+              notification_categories.push(notification.key);
             }
-
-            let saveOperations = [];
-
-            users.forEach(user => {
-
-                let saveOperation = this.saveAndSendNotification(
-                    create_notification_object,
-                    create_notification_object.account,
-                    user
-                );
-
-                saveOperations.push(saveOperation);
-                du.debug(`Adding notification for user '${user}'.`);
-
-            });
-
-            return Promise.all(saveOperations).then((saveOperations) => {
-
-                du.highlight('Notifications Created.');
-                return saveOperations;
-
-            });
-
-        });
-
+          });
+        }
+      });
     }
 
-    /**
-     * Crate notification for a specific user of the account.
-     *
-     * @param create_notification_object
-     * @returns {Promise}
-     */
-    createNotificationForAccountAndUser(create_notification_object) {
+    return {
+      notification_settings: notification_settings,
+      notification_categories: notification_categories,
+      notification_types: notification_types
+    };
 
-        du.debug('Create Notifications For Account and User');
+  }
 
-        return this.validateCreateNotificationObject(create_notification_object, true).then(() => {
+  createNotification({notification_prototype, user, account, /*augmented_normalized_notification_settings, user_settings*/}){
 
-            du.debug(`Create notification for account '${create_notification_object.account}' and user '${create_notification_object.user}'.`);
+    du.debug('Create Notification Prototype');
 
-            return this.saveAndSendNotification(
-                create_notification_object,
-                create_notification_object.account,
-                create_notification_object.user
-            ).then((response_object) => {
-                du.highlight('Notification created.');
-                return response_object;
-            });
+    let transformed_notification_prototype = {
+      user: user,
+      account: account,
+      type: notification_prototype.type,
+      category: notification_prototype.category,
+      context: notification_prototype.context,
+      name: notification_prototype.name
+    };
 
-        });
+    /*
+    Technical Debt: Validate...
+    let six_notification_opt_in = this.getReceiveSettingForChannel('six', user_settings);
+    let notification_category_opt_in = this.getNotificationCategoryOptIn(augmented_normalized_notification_settings);
+    let notification_type_opt_in = this.getNotificationTypeOptIn(augmented_normalized_notification_settings);
 
-    }
-
-    /**
-     * Send a test notification to current user.
-     */
-     //Deprecated...
-     /*
-    test({type}) {
-        du.debug('Sending a test notification.');
-
-        let notification_object = {
-            account: global.account,
-            user: global.user.id,
-            type: type || 'notification',
-            category: 'message',
-            action: 'test',
-            title: 'A ' + type || '' + ' notification from SixCRM!',
-            body: 'This is a test ' + type || '' + 'notification. Do you see it?'
-        };
-
-        return this.createNotificationForAccountAndUser(notification_object).then(() => {
-            return 'OK';
-        });
+    //validate this logic///
+    if (six_notification_opt_in == false || notification_category_opt_in == false){
+      if(notification_type_opt_in == false){
+        notification_prototype.read_at = timestamp.getISO8601();
+      }
     }
     */
 
-    /**
-     * Save given notification in the system, and send it though all channels, respecting user settings.
-     */
-    saveAndSendNotification(notification_parameters, account, user) {
-        let notificationCategoriesToSend = ['message']; // always send notifications of category 'message'
-        let notificationTypesToSend = ['alert']; // always send notifications of type 'alert'
+    return this.notificationController.create({entity: transformed_notification_prototype});
 
-        du.debug('Save and send notification.');
+  }
 
-        return Promise.all([
-            notificationSettingController.get({id: user}), // notification settings
-            userSettingController.get({id: user}), // user settings
-            notificationSettingController.getDefaultProfile(), // default user settings
-        ]).then((settings) => {
+  getReceiveSettingForChannel(notification_channel, user_settings){
 
-            let notification_settings = null;
+    du.debug('Get Receive Setting For Channel');
 
-            if (settings[0] && settings[0].settings) {
-                notification_settings = JSON.parse(settings[0].settings);
-            }
+    let channel_settings = arrayutilities.find(user_settings.notifications, (notification_setting) => {
+      return (notification_setting.name === notification_channel);
+    });
 
-            let user_settings = settings[1];
+    return (!_.isNull(channel_settings) && _.has(channel_settings, 'receive') && (channel_settings.receive == true));
 
-            if (!user_settings) {
-                du.error(`No user settings exist for user '${user}'`);
-                return;
-            }
+  }
 
-            let default_notification_settings = settings[2];
+  /*
+  Technical Debt:  Need to integrate notification translation.
 
-            // If no valid notification settings exist use defaults.
-            if (!notification_settings || !notification_settings.notification_groups) {
-                notification_settings = default_notification_settings;
-            }
+  sendNotificationToChannels(){
 
-            // Gather notifications types that the user wanted to receive notification for.
-            notification_settings.notification_groups.forEach((group) => {
-                if (group && group.notifications) {
-                    group.notifications.forEach((notification) => {
-                        if (notification.default) {
-                            notificationCategoriesToSend.push(notification.key);
-                        }
-                    })
-                } else {
-                    du.warning('Notification group in unexpected format', group);
-                }
-            });
+    du.debug('Send Notification To Channels');
 
-            let createNotification = {
-                "user": user,
-                "account": account,
-                "type": notification_parameters.type,
-                "category": notification_parameters.category,
-                "action": notification_parameters.action,
-                "title": notification_parameters.title,
-                "body": notification_parameters.body
-            };
+    let notification_channel_promises = [];
 
-            // If user does not want to receive 'six' notifications, or this category of notification, mark it as already read.
-            if (!this.wantsToReceive('six', user_settings) || !_.contains(notificationCategoriesToSend, notification_parameters.category)) {
-                createNotification.read_at = timestamp.getISO8601();
-            }
+    if(this.userOptInCategory(notification) || this.userOptInType(notification)){
 
-            // If the type of notification is in the list of types to send, it should not have 'read_at' so it becomes visible to the user.
-            if (_.contains(notificationTypesToSend, notification_parameters.type)) {
-                delete createNotification.read_at;
-            }
-
-            du.debug('About to create notification', createNotification);
-
-            return notificationController.create({entity: createNotification}).then((notification) => {
-
-                du.debug('Saved notification', notification);
-
-                let notificationSendOperations = [];
-
-                // If user wanted to receive this category of notification, or notification type is in the list of types to send.
-                if (_.contains(notificationCategoriesToSend, notification.category) || _.contains(notificationTypesToSend, notification.type)) {
-
-                    // If user wanted to receive through this channel.
-                    if (this.wantsToReceive('email', user_settings)) {
-                        let email_address = this.settingsDataFor('email', user_settings);
-
-                        if (email_address) {
-                            notificationSendOperations.push(emailNotificationProvider.sendNotificationViaEmail(notification, email_address));
-                        }
-                    }
-
-                    if (this.wantsToReceive('sms', user_settings)){
-                        let sms_number = this.settingsDataFor('sms', user_settings);
-
-                        if (sms_number) {
-                            notificationSendOperations.push(smsNotificationUtils.sendNotificationViaSms(notification, sms_number));
-                        }
-                    }
-
-                    if (this.wantsToReceive('slack', user_settings)) {
-                        let slack_webhook = this.settingsDataFor('slack', user_settings);
-
-                        if (slack_webhook) {
-                            notificationSendOperations.push(slackNotificationUtils.sendNotificationViaSlack(notification, slack_webhook));
-                        }
-                    }
-                }
-
-                return Promise.all(notificationSendOperations).then(() => {
-                  return notification;
-                });
-            });
-        });
+      notification_channel_promises.push(this.sendEmail());
+      notification_channel_promises.push(this.sendSMS());
+      notification_channel_promises.push(this.sendSlackMessage());
 
     }
 
-    /**
-     * Whether user wants to receive messages through this channel.
-     * @param notification_type_name Channel name ('six' | 'email' | 'sms' | 'slack' | 'skype' | 'ios')
-     * @param user_settings
-     */
-    wantsToReceive(notification_type_name, user_settings) {
-        let notification = user_settings.notifications.filter(notification => notification.name === notification_type_name)[0];
+    return Promise.all(notificationSendOperations).then(() => {
+      return notification;
+    });
 
-        du.highlight(notification);
+  }
 
-        return notification && notification.receive;
-    }
+  userOptInCategory(){
 
-    /**
-     * Settings data for the given name,
-     * @param notification_type_name Channel name ('six' | 'email' | 'sms' | 'slack' | 'skype' | 'ios')
-     * @param user_settings
-     */
-    settingsDataFor(notification_type_name, user_settings) {
-        let notification = user_settings.notifications.filter(notification => notification.name === notification_type_name)[0];
+    du.debug('User Opt-In Category');
 
-        return notification.data;
-    }
+    //if (_.contains(notificationCategoriesToSend, notification.category) || _.contains(notificationTypesToSend, notification.type)) {
+    return true;
 
-    /**
-     *
-     * @param create_notification_object
-     * @param user_required Whether to require 'user' field in the notification object
-     * @returns {Promise}
-     */
-    validateCreateNotificationObject(create_notification_object, user_required) {
+  }
 
-        du.debug('Validate Create Notification Object');
+  userOptInType(){
 
-        if (user_required && !_.has(create_notification_object, 'user')) {
-            return eu.throwError('server','User is mandatory.');
-        }
+    du.debug('User Opt-In Type');
 
-        let params = objectutilities.clone(create_notification_object);
+    //if (_.contains(notificationCategoriesToSend, notification.category) || _.contains(notificationTypesToSend, notification.type)) {
+    return true;
 
-        if(!_.has(params, 'body')){
-          params.body = '(No Body)';
-        }
+  }
 
-        mvu.validateModel(params, global.SixCRM.routes.path('model','actions/create_notification.json'));
+  sendEmail(user_settings){
 
-        return Promise.resolve(params);
+    du.debug('Send Email');
+
+    if(this.getReceiveSettingForChannel('email', user_settings)){
+
+      let email_address = this.getNotificationChannelSettings('email', user_settings);
+
+      if(email_address){
+        return emailNotificationProvider.sendNotificationViaEmail(notification, email_address);
+      }
 
     }
 
-    /**
-     * All users that have access to given account.
-     *
-     * @param account
-     * @returns {Promise.<Array>}
-     */
-    getAccountUsers(account) {
+    return Promise.resolve(false);
 
-        du.debug('getAccountUsers');
-        // figure out if ACL checks were enabled
-        let aclsWereEnabled = !permissionUtils.areACLsDisabled();
+  }
 
-        permissionUtils.disableACLs();
+  sendSMS(){
 
-        return userAclController.queryBySecondaryIndex({field: 'account', index_value: account, index_name: 'account-index'}).then((userAcls) => {
-            // re-enable ACLs only if there were enabled before this method
-            if (aclsWereEnabled) {
-                permissionUtils.enableACLs();
-            }
+    du.debug('Send SMS');
 
-            if (userAcls) {
-                return userAcls.useracls.map(acl => acl.user);
-            } else {
-                return [];
-            }
-        }).catch(() => {
-            // re-enable ACLs only if there were enabled before this method
-            if (aclsWereEnabled) {
-                permissionUtils.enableACLs();
-            }
-        });
+    if(this.getReceiveSettingForChannel('sms', user_settings)){
+
+      let sms_number = this.getNotificationChannelSettings('sms', user_settings);
+
+      if (sms_number) {
+        return smsNotificationUtils.sendNotificationViaSms(notification, sms_number);
+      }
 
     }
+
+    return Promise.resolve(false);
+
+  }
+
+  sendSlackMessage(){
+
+    du.debug('Send Slack Message');
+
+    if(this.getReceiveSettingForChannel('slack', user_settings)) {
+
+      let slack_webhook = this.getNotificationChannelSettings('slack', user_settings);
+
+      if (slack_webhook) {
+        return slackNotificationUtils.sendNotificationViaSlack(notification, slack_webhook);
+      }
+
+    }
+
+    return Promise.resolve(false);
+
+  }
+
+  getNotificationChannelSettings(notification_channel, user_settings) {
+
+    du.debug('Get Notification Channel Settings');
+
+    let channel_settings = arrayutilities.find(user_settings.notifications, (notification_setting) => {
+      return (notification_setting.name === notification_channel);
+    });
+
+    return channel_settings.data;
+
+  }
+  */
 
 }
 

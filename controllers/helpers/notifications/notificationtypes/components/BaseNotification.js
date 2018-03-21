@@ -10,22 +10,19 @@ module.exports = class BaseNotification extends NotificationUtilities {
 
     super();
 
-    this.title = 'Base Notification';
-    this.body = 'This is the base notification.';
     this.category = 'base';
     this.notification_type = 'notification';
 
   }
 
-  createAction(){
+  createContext(){
 
-    du.debug('Create Action');
+    du.debug('Create Context');
 
     return {};
 
   }
 
-  //Entrypoint
   transformContext(context){
 
     du.debug('Transform Context');
@@ -33,13 +30,12 @@ module.exports = class BaseNotification extends NotificationUtilities {
     du.debug('Context:', context);
 
     let return_object = {
+      name: this.getName(),
       user: this.getUserFromContext(context),
       account: this.getAccountFromContext(context),
       type: this.getNotificationType(),
       category: this.getNotificationCategory(),
-      title: this.getTitle(context),
-      body: this.getBody(context),
-      action: this.createAction(context)
+      context: this.createContext(context)
     };
 
     return return_object;

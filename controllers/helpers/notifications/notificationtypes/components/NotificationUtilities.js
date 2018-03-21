@@ -16,6 +16,18 @@ module.exports = class NotificationUtilities {
 
   }
 
+  getName(){
+
+    du.debug('Get Name');
+
+    if(_.has(this, 'name')){
+      return this.name;
+    }
+
+    eu.throwError('server', 'Nameless notification, very cryptic.');
+
+  }
+
   getNotificationCategory(){
 
     du.debug('Get Notification Category');
@@ -77,22 +89,6 @@ module.exports = class NotificationUtilities {
     }
 
     return resolved_account;
-
-  }
-
-  getTitle(context){
-
-    du.debug('Get Title');
-
-    return this.replaceFromContext(context, 'title');
-
-  }
-
-  getBody(context){
-
-    du.debug('Get Title');
-
-    return this.replaceFromContext(context, 'body');
 
   }
 
