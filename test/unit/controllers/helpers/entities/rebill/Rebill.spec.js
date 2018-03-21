@@ -274,7 +274,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(object.current_queuename).to.equal('hold');
           expect(object.previous_queuename).to.equal('');
 
-          mvu.validateModel(object, global.SixCRM.routes.path('model','aurora/rebills.json'));
+          mvu.validateModel(object, global.SixCRM.routes.path('model','analytics/rebills.json'));
 
           return Promise.resolve();
         }
@@ -313,7 +313,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(object.current_queuename).to.equal('shipped');
           expect(object.previous_queuename).to.equal('hold');
 
-          mvu.validateModel(object, global.SixCRM.routes.path('model','aurora/rebills.json'));
+          mvu.validateModel(object, global.SixCRM.routes.path('model','analytics/rebills.json'));
 
           return Promise.resolve();
         }
@@ -360,7 +360,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(object.current_queuename).to.equal('hold');
           expect(object.previous_queuename).to.equal('bill');
 
-          mvu.validateModel(object, global.SixCRM.routes.path('model','aurora/rebills.json'));
+          mvu.validateModel(object, global.SixCRM.routes.path('model','analytics/rebills.json'));
 
           return Promise.resolve();
         }
@@ -415,7 +415,7 @@ describe('/helpers/entities/Rebill.js', () => {
           expect(object.current_queuename).to.equal('pending');
           expect(object.previous_queuename).to.equal('bill');
 
-          mvu.validateModel(object, global.SixCRM.routes.path('model','aurora/rebills.json'));
+          mvu.validateModel(object, global.SixCRM.routes.path('model','analytics/rebills.json'));
 
           return Promise.resolve();
         }
