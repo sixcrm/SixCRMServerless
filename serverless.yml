@@ -194,8 +194,8 @@ functions:
   redshiftevents:
     handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
 
-  rdsevents:
-    handler: handlers/workers/sns/rdsevents/handler.rdsevents
+  analyticsevents:
+    handler: handlers/workers/sns/analyticsevents/handler.analyticsevents
 
   trackingevents:
     handler: handlers/workers/sns/trackingevents/handler.trackingevents
