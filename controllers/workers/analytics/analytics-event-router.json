@@ -3,18 +3,18 @@
 		"handlers": ["click-event-handler.js"]
 	},
 	"lead": {
-		"handlers": []
+		"handlers": ["lead-event-handler.js"]
 	},
 	"order": {
-		"handlers": []
+		"handlers": ["order-event-handler.js"]
 	},
 	"upsell*": {
-		"handlers": []
+		"handlers": ["upsell-event-handler.js"]
 	},
 	"downsell*": {
-		"handlers": []
+		"handlers": ["downsell-event-handler.js"]
 	},
 	"confirm": {
-		"handlers": []
+		"handlers": ["confirm-event-handler.js"]
 	}
 }

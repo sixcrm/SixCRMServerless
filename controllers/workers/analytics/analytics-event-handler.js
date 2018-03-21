@@ -58,8 +58,15 @@ module.exports = class AnalyticsEventHandler {
 		const promises = records.map((r) => {
 
 			const message = JSON.parse(r.Body);
+			const eventKeys = Object.keys(this._eventTypeHandlerMap);
+			const eventKey = eventKeys.find(ek => {
 
-			const handerMap = this._eventTypeHandlerMap[message.event_type];
+				const regex = new RegExp(ek);
+				return message.event_type.match(regex);
+
+			});
+
+			const handerMap = this._eventTypeHandlerMap[eventKey];
 
 			if (!handerMap) {
 

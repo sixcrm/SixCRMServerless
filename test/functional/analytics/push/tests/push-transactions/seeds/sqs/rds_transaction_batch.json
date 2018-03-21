@@ -1,5 +1,8 @@
 {
 	"messages": [{
 		"event_type": "click"
+	},
+	{
+		"event_type": "upsell2"
 	}]
 }
