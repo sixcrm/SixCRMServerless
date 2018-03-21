@@ -5,7 +5,7 @@ const expect = chai.expect;
 const path = require('path');
 const _ = require('underscore');
 const SQSTestUtils = require('../../sqs-test-utils');
-const PushTransactionRecords = require('../../../../controllers/workers/analytics/PushTransactionRecords');
+const WriteTransactionRecords = require('../../../../controllers/workers/analytics/batch-inserts/write-transaction-records');
 
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
@@ -50,7 +50,7 @@ describe('Push events to RDS', () => {
 
 		it(test.name, (done) => {
 
-			const ptr = new PushTransactionRecords(auroraContext);
+			const ptr = new WriteTransactionRecords(auroraContext);
 
 			seedSQS(test)
 				.then(() => SQSTestUtils.messageCountInQueue(ptr.queueName))

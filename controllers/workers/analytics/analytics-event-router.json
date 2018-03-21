@@ -1,0 +1,26 @@
+[
+	{
+		"eventType": "click",
+		"handlers": []
+	},
+	{
+		"eventType": "lead",
+		"handlers": []
+	},
+	{
+		"eventType": "order",
+		"handlers": []
+	},
+	{
+		"eventType": "upsell",
+		"handlers": []
+	},
+	{
+		"eventType": "downsell",
+		"handlers": []
+	},
+	{
+		"eventType": "confirm",
+		"handlers": []
+	}
+]

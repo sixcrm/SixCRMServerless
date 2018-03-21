@@ -1,8 +1,8 @@
 const _ = require('underscore')
-const PushRDSRecords = require('../sqs/PushRDSRecords');
+const AnalyticsEventHandler = require('../analytics-event-handler');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-module.exports = class PushTransactionRecords extends PushRDSRecords {
+module.exports = class WriteTransactionRecords extends AnalyticsEventHandler {
 
 	constructor(auroraContext) {
 
@@ -12,7 +12,7 @@ module.exports = class PushTransactionRecords extends PushRDSRecords {
 
 	executeBatchWriteQuery(records) {
 
-		du.debug('PushTransactionRecords.executeBatchWriteQuery()');
+		du.debug('WriteTransactionRecords.executeBatchWriteQuery()');
 
 		let query =
 			'INSERT INTO analytics.f_transactions ( \
