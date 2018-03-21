@@ -1,6 +1,7 @@
 'use strict'
 const _ = require('underscore');
-
+const fs = require('fs');
+const uuid = require('uuid');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
@@ -19,7 +20,9 @@ module.exports = class EventHelperController {
 
     du.debug('Push Event');
 
-    let parameters = this.createPublishParameters(arguments[0]);
+		let parameters = this.createPublishParameters(arguments[0]);
+		
+		fs.writeFileSync(uuid.v4() + '.json', parameters.Message, 'utf8');
 
     return this.snsutilities.publish(parameters);
 

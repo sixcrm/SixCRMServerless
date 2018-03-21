@@ -1,8 +1,21 @@
 {
 	"messages": [{
-		"event_type": "click"
-	},
-	{
-		"event_type": "upsell2"
-	}]
+			"event_type": "click"
+		},
+		{
+			"event_type": "lead"
+		},
+		{
+			"event_type": "confirm"
+		},
+		{
+			"event_type": "upsell2"
+		},
+		{
+			"event_type": "downsell"
+		},
+		{
+			"event_type": "order"
+		}
+	]
 }

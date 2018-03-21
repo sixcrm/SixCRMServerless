@@ -10,7 +10,7 @@ module.exports = class OrderEventHandler {
 
 	execute(record) {
 
-		du.debug('LeadEventHandler.execute()', record);
+		du.debug('OrderEventHandler.execute()', record);
 
 		return Promise.resolve();
 
