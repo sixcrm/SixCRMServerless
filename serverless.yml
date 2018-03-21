@@ -206,8 +206,8 @@ functions:
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
-  pushrdsrecords:
-    handler: handlers/workers/pushrdsrecords/handler.pushrdsrecords
+  analyticsevents:
+    handler: handlers/workers/analyticsevents/handler.analyticsevents
     events:
       - schedule:
         rate: rate(1 minute)
