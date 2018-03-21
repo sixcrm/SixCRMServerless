@@ -81,6 +81,7 @@ class CreateOrderController extends transactionEndpointController {
     du.debug('Create Order');
 
     return this.hydrateSession()
+    .then(() => this.setCustomer())
     .then(() => this.hydrateEventAssociatedParameters())
     .then(() => this.validateEventProperties())
     .then(() => this.createRebill())
@@ -121,7 +122,6 @@ class CreateOrderController extends transactionEndpointController {
       this.setProductSchedules(),
       this.setProducts(),
       this.setTransactionSubType(),
-      this.setCustomer(),
       this.setCreditCard(),
       this.setCampaign()
     ];

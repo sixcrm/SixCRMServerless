@@ -804,9 +804,6 @@ describe('createOrder', function () {
         addCreditCard: () => {
           customer.creditcards.push(creditcard.id);
           return Promise.resolve(customer);
-        },
-        get: () => {
-            return Promise.resolve(customer);
         }
       });
 
@@ -816,6 +813,7 @@ describe('createOrder', function () {
 
       createOrderController.parameters.set('event', event);
       createOrderController.parameters.set('session', session);
+      createOrderController.parameters.set('customer', customer);
 
       return createOrderController.hydrateEventAssociatedParameters().then((result) => {
 
