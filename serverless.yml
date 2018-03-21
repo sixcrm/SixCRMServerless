@@ -210,15 +210,15 @@ functions:
     handler: handlers/workers/analyticseventhandler/handler.analyticseventhandler
     events:
       - schedule:
-        rate: rate(1 minute)
-        enabled: true
+          rate: rate(1 minute)
+          enabled: true
 
   reindex:
     handler: handlers/workers/reindex/handler.reindex
     events:
       - schedule:
-        rate: rate(60 minutes)
-        enabled: true
+          rate: rate(60 minutes)
+          enabled: true
 
   #sesnotifications:
   #  handler: handlers/workers/sesnotifications/handler.sesnotifications
