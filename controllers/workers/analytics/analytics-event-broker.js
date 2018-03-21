@@ -15,7 +15,7 @@ class AnalyticsEventBroker extends SNSEventController {
 
 		//This needs to get refactored, roorganized or renamed.
 		this.parameter_validation = {
-			'rdsobject': global.SixCRM.routes.path('model', 'aurora/events.json')
+			'rdsobject': global.SixCRM.routes.path('model', 'analytics/events.json')
 		};
 
 		//Need to add state machine events.

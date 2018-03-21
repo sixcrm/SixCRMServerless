@@ -13,7 +13,7 @@ class RedshiftEventsController extends SNSEventController {
 		this.parameter_definition = {};
 
 		this.parameter_validation = {
-			'redshiftobject': global.SixCRM.routes.path('model', 'kinesisfirehose/events.json')
+			'redshiftobject': global.SixCRM.routes.path('model', 'analytics/events.json')
 		};
 
 		this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
