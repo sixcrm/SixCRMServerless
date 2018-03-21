@@ -9,6 +9,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidAffiliateIDsArray(){
   return ['F4ZT4TDRYC'];
@@ -16,6 +17,10 @@ function getValidAffiliateIDsArray(){
 
 function getValidAffiliateObject(){
   return {id: 'f5e9e1c5-4989-460e-8014-17a0682ffb41', affiliate_id: 'F4ZT4TDRYC'};
+}
+
+function getValidSessionObject() {
+  return MockEntities.getValidSession();
 }
 
 describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
@@ -252,6 +257,109 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
         }
 
       });
+
+    });
+
+  });
+
+  describe('Transcribe Affiliates', () => {
+
+    it('transcribes from session', () => {
+
+      let affiliateHelperController = new AffiliateHelperController();
+
+      let valid_session_object = getValidSessionObject();
+
+      let transcribed = affiliateHelperController.transcribeAffiliates(valid_session_object, {test:'value'});
+
+      expect(transcribed.test).to.equal('value');
+
+      expect(transcribed.affiliate).to.be.defined;
+      expect(transcribed.affiliate).to.equal(valid_session_object.affiliate);
+
+      expect(transcribed.cid).to.be.defined;
+      expect(transcribed.cid).to.equal(valid_session_object.cid);
+
+      expect(transcribed.subaffiliate_1).to.be.defined;
+      expect(transcribed.subaffiliate_1).to.equal(valid_session_object.subaffiliate_1);
+
+      expect(transcribed.subaffiliate_2).to.be.defined;
+      expect(transcribed.subaffiliate_2).to.equal(valid_session_object.subaffiliate_2);
+
+      expect(transcribed.affiliate_3).to.be.defined;
+      expect(transcribed.affiliate_3).to.equal(valid_session_object.affiliate_3);
+
+      expect(transcribed.affiliate_4).to.be.defined;
+      expect(transcribed.affiliate_4).to.equal(valid_session_object.affiliate_4);
+
+      expect(transcribed.affiliate_5).to.be.defined;
+      expect(transcribed.affiliate_5).to.equal(valid_session_object.affiliate_5);
+
+    });
+
+    it('handles affiliate information', () => {
+
+      let affiliateHelperController = new AffiliateHelperController();
+
+      let valid_session_object = getValidSessionObject();
+
+      let transcribed = affiliateHelperController.transcribeAffiliates(valid_session_object);
+
+      expect(transcribed.affiliate).to.be.defined;
+      expect(transcribed.affiliate).to.equal(valid_session_object.affiliate);
+
+      expect(transcribed.cid).to.be.defined;
+      expect(transcribed.cid).to.equal(valid_session_object.cid);
+
+      expect(transcribed.subaffiliate_1).to.be.defined;
+      expect(transcribed.subaffiliate_1).to.equal(valid_session_object.subaffiliate_1);
+
+      expect(transcribed.subaffiliate_2).to.be.defined;
+      expect(transcribed.subaffiliate_2).to.equal(valid_session_object.subaffiliate_2);
+
+      expect(transcribed.affiliate_3).to.be.defined;
+      expect(transcribed.affiliate_3).to.equal(valid_session_object.affiliate_3);
+
+      expect(transcribed.affiliate_4).to.be.defined;
+      expect(transcribed.affiliate_4).to.equal(valid_session_object.affiliate_4);
+
+      expect(transcribed.affiliate_5).to.be.defined;
+      expect(transcribed.affiliate_5).to.equal(valid_session_object.affiliate_5);
+
+    });
+
+  });
+
+  describe('Transcribe Affiliates', () => {
+
+    it('assumes optional parameter', () => {
+
+      let affiliateHelperController = new AffiliateHelperController();
+
+      let valid_session_object = getValidSessionObject();
+
+      let transcribed = affiliateHelperController.transcribeAffiliates(valid_session_object);
+
+      expect(transcribed.affiliate).to.be.defined;
+      expect(transcribed.affiliate).to.equal(valid_session_object.affiliate);
+
+      expect(transcribed.cid).to.be.defined;
+      expect(transcribed.cid).to.equal(valid_session_object.cid);
+
+      expect(transcribed.subaffiliate_1).to.be.defined;
+      expect(transcribed.subaffiliate_1).to.equal(valid_session_object.subaffiliate_1);
+
+      expect(transcribed.subaffiliate_2).to.be.defined;
+      expect(transcribed.subaffiliate_2).to.equal(valid_session_object.subaffiliate_2);
+
+      expect(transcribed.affiliate_3).to.be.defined;
+      expect(transcribed.affiliate_3).to.equal(valid_session_object.affiliate_3);
+
+      expect(transcribed.affiliate_4).to.be.defined;
+      expect(transcribed.affiliate_4).to.equal(valid_session_object.affiliate_4);
+
+      expect(transcribed.affiliate_5).to.be.defined;
+      expect(transcribed.affiliate_5).to.equal(valid_session_object.affiliate_5);
 
     });
 
