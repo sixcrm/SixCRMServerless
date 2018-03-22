@@ -3,12 +3,12 @@
 const _ = require('underscore');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
-
 const expect = chai.expect;
+const mockery = require('mockery');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 let ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 
 function getValidProductSchedules(){
@@ -51,6 +51,8 @@ function getValidProductSchedule(){
   return getValidProductSchedules()[0];
 
 }
+
+describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () => {
 
 describe('constructor', () => {
   it('successfully constructs', () => {
@@ -184,6 +186,34 @@ describe('marryProductsToSchedule', () => {
     arrayutilities.map(test_cases, test_case => {
       expect(productScheduleHelper.marryProductsToSchedule({product_schedule: test_case.product_schedule, products: test_case.products})).to.deep.equal(test_case.expect);
     });
+  });
+
+  it('returns unchanged product schedules when products are an empty array', () => {
+
+      let product_schedules = MockEntities.getValidProductSchedules();
+
+      let productScheduleHelper = new ProductScheduleHelperController();
+
+      expect(productScheduleHelper.marryProductsToSchedule({
+          product_schedule: product_schedules[0],
+          products: []
+      })).to.deep.equal(product_schedules[0]);
+
+  });
+
+  it('returns unchanged product schedules when there is no schedule', () => {
+
+      let product_schedules = MockEntities.getValidProductSchedules();
+
+      delete product_schedules[0].schedule;
+
+      let productScheduleHelper = new ProductScheduleHelperController();
+
+      expect(productScheduleHelper.marryProductsToSchedule({
+          product_schedule: product_schedules[0],
+          products: []
+      })).to.deep.equal(product_schedules[0]);
+
   });
 
 });
@@ -390,6 +420,7 @@ describe('getNextScheduleElementStartDayNumber', () => {
     });
 
   });
+});
 
   describe('getTransactionProducts', () => {
     it('successfully acquires transaction products', () => {
@@ -454,38 +485,34 @@ describe('getNextScheduleElementStartDayNumber', () => {
 
     it('successfully acquires the schedule_element for purchase from schedule by day.', () => {
 
-      let product_schedules = getValidProductSchedules();
-
-      let test_cases = [
-        {
-          schedule: product_schedules[0].schedule,
-          day: 0,
-          expect:product_schedules[0].schedule[0]
-        },
-        {
-          schedule: product_schedules[0].schedule,
-          day: 14,
-          expect:product_schedules[0].schedule[1]
-        },
-        {
-          schedule: product_schedules[0].schedule,
-          day: 28,
-          expect:product_schedules[0].schedule[2]
-        },
-        {
-          schedule: product_schedules[0].schedule,
-          day: 56,
-          expect:product_schedules[0].schedule[2]
-        }
-      ];
+      let product_schedules = MockEntities.getValidProductSchedules();
 
       let productScheduleHelper = new ProductScheduleHelperController();
 
-      arrayutilities.map(test_cases, test_case => {
-        let schedule_element = productScheduleHelper.getScheduleElementByDay({schedule: test_case.schedule, day: test_case.day});
+      arrayutilities.map(product_schedules[0].schedule, schedule => {
 
-        expect(schedule_element).to.deep.equal(test_case.expect);
+        let schedule_element = productScheduleHelper.getScheduleElementByDay({
+            schedule: product_schedules[0].schedule,
+            day: schedule.start
+        });
+
+        expect(schedule_element).to.deep.equal(schedule);
       });
+
+    });
+
+    it('returns undefined when there are no schedule elements', () => {
+
+      let product_schedules = MockEntities.getValidProductSchedules();
+
+      let productScheduleHelper = new ProductScheduleHelperController();
+
+      let schedule_element = productScheduleHelper.getScheduleElementByDay({
+          schedule: product_schedules[0].schedule,
+          day: -1 //any number less than schedule.start
+      });
+
+      expect(schedule_element).to.be.undefined;
 
     });
   });
@@ -494,7 +521,7 @@ describe('getNextScheduleElementStartDayNumber', () => {
 
     it('succesfully acquires the schedule from a product schedule', () => {
 
-      let product_schedules = getValidProductSchedules();
+      let product_schedules = MockEntities.getValidProductSchedules();
 
       let productScheduleHelper = new ProductScheduleHelperController();
 
@@ -510,13 +537,28 @@ describe('getNextScheduleElementStartDayNumber', () => {
       });
     });
 
+    it('returns null when there aren\'t any schedules', () => {
+
+      let product_schedules = MockEntities.getValidProductSchedules();
+
+      product_schedules[0].schedule = [];
+
+      let productScheduleHelper = new ProductScheduleHelperController();
+
+      expect(productScheduleHelper.getSchedule({product_schedule: product_schedules[0]})).to.equal(null);
+    });
+
   });
 
   describe('transformScheduleElement', () => {
+
     it('successfully transforms a schedule element', () => {
 
-      let product_schedules = getValidProductSchedules();
+      let product_schedules = MockEntities.getValidProductSchedules();
       let productScheduleHelper = new ProductScheduleHelperController();
+
+      //remove one end, leave others, to check both test scenarios
+      delete product_schedules[0].schedule[0].end;
 
       arrayutilities.map(product_schedules, product_schedule => {
         arrayutilities.map(product_schedule.schedule, schedule_element => {
@@ -534,4 +576,60 @@ describe('getNextScheduleElementStartDayNumber', () => {
     });
   });
 
+  describe('getHydrated', () => {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
+
+    it('successfully hydrates product schedules', () => {
+
+      let products = [];
+
+      let product_schedules = MockEntities.getValidProductSchedules();
+
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
+          get: ({id}) => {
+              expect(id).to.equal(product_schedules[0].id);
+
+              for (let i = 0; i < product_schedules[0].schedule.length; i++) {
+                  product_schedules[0].schedule[i].product = product_schedules[0].schedule[i].product.id;
+              }
+              return Promise.resolve(product_schedules[0]);
+          },
+          getProducts: () => {
+
+            for (let i = 0; i < product_schedules[0].schedule.length; i++) {
+              let product = MockEntities.getValidProduct(product_schedules[0].schedule[i].product);
+
+              products.push(product);
+            }
+
+            return Promise.resolve({products: products});
+        },
+      });
+
+      let productScheduleHelper = new ProductScheduleHelperController();
+
+      return productScheduleHelper.getHydrated({id: product_schedules[0].id}).then((response) => {
+
+          for (let i = 0; i < response.schedule.length; i++) {
+              expect(response.schedule[i].product).to.be.defined;
+              expect(response.schedule[i].product).to.deep.equal(products[i]);
+          }
+
+          return expect(response.schedule).to.be.defined;
+      });
+
+    });
+  });
 });

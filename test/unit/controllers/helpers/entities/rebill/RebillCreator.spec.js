@@ -4,7 +4,6 @@ const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
-
 const expect = chai.expect;
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -13,7 +12,6 @@ const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
@@ -57,6 +55,18 @@ function getValidProductSchedules(ids){
 
   return arrayutilities.map(ids, id => getValidProductSchedule(id));
 
+}
+
+function getValidProductGroup(product, quantity, price) {
+    return MockEntities.getValidProductGroup(product, quantity, price)
+}
+
+function getValidSchedule(id) {
+    return MockEntities.getValidSchedule(id)
+}
+
+function getValidProductScheduleGroups(ids, expanded) {
+    return MockEntities.getValidProductScheduleGroups(ids, expanded)
 }
 
 describe('/helpers/entities/Rebill.js', () => {
@@ -125,73 +135,88 @@ describe('/helpers/entities/Rebill.js', () => {
 
   describe('hydrateArguments', () => {
 
-    //Technical Debt:  Grossly deprecated
-    xit('successfully hydrates the arguments from the session object', () => {
+    it('successfully hydrates the arguments when all arguments are specified', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
-          return Promise.resolve({productschedules:[getValidProductSchedule()]});
-        },
-        saveRecord: (tableName, entity) => {
-          return Promise.resolve(entity);
-        },
-        createINQueryParameters: (field_name, in_array) => {
-          arrayutilities.nonEmpty(in_array, true);
-          if(!arrayutilities.assureEntries(in_array, 'string')){
-            eu.throwError('server', 'All entries in the "in_array" must be of type string.');
-          }
-          let in_object = {};
+      let session = getValidSession();
 
-          arrayutilities.map(in_array, (value) => {
-            var in_key = ":"+randomutilities.createRandomString(10);
+      let product_schedules = getValidProductSchedules();
 
-            while(_.has(in_object, in_key)){
-              in_key = ":"+randomutilities.createRandomString(10);
-            }
-            in_object[in_key.toString()] = value;
-          });
-          return {
-            filter_expression : field_name+" IN ("+Object.keys(in_object).toString()+ ")",
-            expression_attribute_values : in_object
-          };
-        }
-      });
+      let product_group = getValidProductGroup();
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-        createActivity: () => {
-          return true;
-        }
-      });
+      let rebillCreatorHelper = new RebillCreatorHelperController();
 
-      let mock_preindexing_helper = class {
-        constructor(){
+      rebillCreatorHelper.parameters.set('session', session);
+      rebillCreatorHelper.parameters.set('day', 0);
+      rebillCreatorHelper.parameters.set('products', [product_group]);
+      rebillCreatorHelper.parameters.set('productschedules', product_schedules);
 
-        }
-        addToSearchIndex(){
-          return Promise.resolve(true);
-        }
-        removeFromSearchIndex(){
-          return Promise.resolve(true);
-        }
-      }
+      expect(rebillCreatorHelper.hydrateArguments()).to.equal(true);
+    });
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+    it('successfully hydrates the arguments when day is not already set', () => {
 
-      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+      let session = getValidSession();
+
+      let product_schedules = getValidProductSchedules();
+
+      let product_group = getValidProductGroup();
+
+      let rebillCreatorHelper = new RebillCreatorHelperController();
+
+      rebillCreatorHelper.parameters.set('session', session);
+      rebillCreatorHelper.parameters.set('products', [product_group]);
+      rebillCreatorHelper.parameters.set('productschedules', product_schedules);
+
+      expect(rebillCreatorHelper.hydrateArguments()).to.equal(true);
+      expect(rebillCreatorHelper.parameters.store['day']).to.equal(0);
+    });
+
+    it('successfully hydrates the arguments when product schedules are not already set', () => {
+
+      let session = getValidSession();
+
+      let product_group = getValidProductGroup();
+
+      let rebillCreatorHelper = new RebillCreatorHelperController();
+
+      rebillCreatorHelper.parameters.set('session', session);
+      rebillCreatorHelper.parameters.set('day', 0);
+      rebillCreatorHelper.parameters.set('products', [product_group]);
+
+      expect(rebillCreatorHelper.hydrateArguments()).to.equal(true);
+      expect(rebillCreatorHelper.parameters.store['productschedules']).to.deep.equal(session.watermark.product_schedules);
+    });
+
+    it('does not set product schedules when day is a negative number', () => {
+
+      let session = getValidSession();
+
+      let product_group = getValidProductGroup();
+
+      let rebillCreatorHelper = new RebillCreatorHelperController();
+
+      rebillCreatorHelper.parameters.set('session', session);
+      rebillCreatorHelper.parameters.set('day', -1);
+      rebillCreatorHelper.parameters.set('products', [product_group]);
+
+      expect(rebillCreatorHelper.hydrateArguments()).to.equal(true);
+      expect(rebillCreatorHelper.parameters.store['productschedules']).to.be.undefined;
+    });
+
+    it('throws error when there are no products or product schedules to be added to the rebill', () => {
 
       let session = getValidSession();
 
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('session', session);
+      rebillCreatorHelper.parameters.set('day', -1);
 
-      return rebillCreatorHelper.hydrateArguments().then(() => {
-
-        expect(rebillCreatorHelper.parameters.store['productschedules']).to.be.defined;
-        expect(rebillCreatorHelper.parameters.store['day']).to.be.defined;
-
-      });
-
+      try {
+          rebillCreatorHelper.hydrateArguments()
+      } catch (error) {
+          expect(error.message).to.deep.equal('[500] Nothing to add to the rebill.');
+      }
     });
 
   });
@@ -625,6 +650,32 @@ describe('/helpers/entities/Rebill.js', () => {
         });
 
       }));
+
+    });
+
+    it('returns true when there are no product schedules and the day is negative number', () => {
+
+        let rebillCreatorHelper = new RebillCreatorHelperController();
+
+        rebillCreatorHelper.parameters.set('day', -1);
+
+        return rebillCreatorHelper.getNextProductScheduleBillDayNumber().then((result) => {
+          expect(result).to.equal(true);
+        });
+
+    });
+
+    it('throws error when there are no normalized product schedules', () => {
+
+        let rebillCreatorHelper = new RebillCreatorHelperController();
+
+        rebillCreatorHelper.parameters.set('day', 0);
+
+        try{
+            rebillCreatorHelper.getNextProductScheduleBillDayNumber()
+        } catch (error) {
+            expect(error.message).to.equal('[500] Unrecognized case: day is greater than or equal to 0 but there are no normalized product schedules.');
+        }
 
     });
 
@@ -1725,7 +1776,6 @@ describe('/helpers/entities/Rebill.js', () => {
 
     });
 
-
     it('successfully creates a rebill for 0th day from watermark with overlapping ', () => {
 
       let product_schedules = null;
@@ -1928,6 +1978,216 @@ describe('/helpers/entities/Rebill.js', () => {
 
   });
 
+  describe('normalizeProducts', () => {
 
+      it('successfully normalizes products when product is an id', () => {
 
+          let product_id = uuidV4();
+
+          let product_group = getValidProductGroup(product_id);
+
+          let product = getValidProduct(product_id);
+
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+              isUUID: (id) => {
+                expect(id).to.equal(product_group.product);
+                return true;
+              },
+              get: ({id}) => {
+                expect(id).to.equal(product_group.product);
+                return Promise.resolve(product);
+              }
+          });
+
+          const rebillCreatorHelper = new RebillCreatorHelperController();
+
+          rebillCreatorHelper.parameters.set('products', [product_group]);
+
+          return rebillCreatorHelper.normalizeProducts().then((result) => {
+              expect(result).to.equal(true);
+              expect(rebillCreatorHelper.parameters.store['normalizedproducts']).to.deep.equal([product_group]);
+          });
+      });
+
+      it('successfully normalizes products when product is an object', () => {
+
+          let product_group = getValidProductGroup();
+
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+              isUUID: (id) => {
+                expect(id).not.to.equal(product_group.product.id);
+                return false;
+              }
+          });
+
+          const rebillCreatorHelper = new RebillCreatorHelperController();
+
+          rebillCreatorHelper.parameters.set('products', [product_group]);
+
+          return rebillCreatorHelper.normalizeProducts().then((result) => {
+              expect(result).to.equal(true);
+              expect(rebillCreatorHelper.parameters.store['normalizedproducts']).to.deep.equal([product_group]);
+          });
+      });
+
+      it('throws error when product with specified id does not exist', () => {
+
+          let product_id = uuidV4();
+
+          let product_group = getValidProductGroup(product_id);
+
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
+              isUUID: (id) => {
+                  expect(id).to.equal(product_group.product);
+                  return true;
+              },
+              get: ({id}) => {
+                  expect(id).to.equal(product_group.product);
+                  return Promise.resolve(null);
+              }
+          });
+
+          const rebillCreatorHelper = new RebillCreatorHelperController();
+
+          rebillCreatorHelper.parameters.set('products', [product_group]);
+
+          return rebillCreatorHelper.normalizeProducts().catch((error) => {
+              expect(error.message).to.equal('[404] Product does not exist: ' + product_group.product);
+          });
+      });
+
+      it('returns true when products are undefined', () => {
+
+          const rebillCreatorHelper = new RebillCreatorHelperController();
+
+          return rebillCreatorHelper.normalizeProducts().then((result) => {
+              expect(result).to.equal(true);
+          });
+      });
+
+  });
+
+  describe('getPriceFromProductGroup', () => {
+
+      it('returns price from product group', () => {
+
+          let product_group = getValidProductGroup();
+
+          const rebillCreatorHelper = new RebillCreatorHelperController();
+
+          expect(rebillCreatorHelper.getPriceFromProductGroup(product_group)).to.equal(product_group.price);
+      });
+
+      it('returns default price from product', () => {
+
+          let product_group = getValidProductGroup();
+
+          delete product_group.price;
+
+          const rebillCreatorHelper = new RebillCreatorHelperController();
+
+          expect(rebillCreatorHelper.getPriceFromProductGroup(product_group)).to.equal(product_group.product.default_price);
+      });
+
+      it('throws error when price can not be identified from product nor from product group', () => {
+
+          let product_group = getValidProductGroup();
+
+          delete product_group.price;
+          delete product_group.product.default_price;
+
+          const rebillCreatorHelper = new RebillCreatorHelperController();
+
+          try {
+              rebillCreatorHelper.getPriceFromProductGroup(product_group)
+          } catch (error) {
+              expect(error.message).to.equal('[500] Unable to identify price for product: ' + product_group.product.id);
+          }
+      });
+  });
+
+  describe('addScheduleElementsToTransactionProducts', () => {
+
+      it('successfully adds schedule elements to transaction products', () => {
+
+          let schedule = getValidSchedule();
+
+          let schedule_elements = [{
+              quantity: 1,
+              schedule_element: schedule[0]
+          }];
+
+          const rebillCreatorHelper = new RebillCreatorHelperController();
+
+          rebillCreatorHelper.parameters.set('scheduleelementsonbillday', schedule_elements);
+
+          return rebillCreatorHelper.addScheduleElementsToTransactionProducts().then((result) => {
+              expect(result).to.equal(true);
+              expect(rebillCreatorHelper.parameters.store['transactionproducts']).to.deep.equal([{
+                  product: schedule[0].product,
+                  amount: schedule[0].price,
+                  quantity: schedule_elements[0].quantity
+              }]);
+          });
+      });
+
+      it('returns false when there are no schedule elements on bill day', () => {
+
+          const rebillCreatorHelper = new RebillCreatorHelperController();
+
+          return rebillCreatorHelper.addScheduleElementsToTransactionProducts().then((result) => {
+              expect(result).to.equal(false);
+          });
+      });
+  });
+
+  describe('normalizeProductSchedules', () => {
+
+      it('successfully normalizes product schedules', () => {
+
+          let product_schedule_groups = getValidProductScheduleGroups([uuidV4()]);
+
+          let product_schedule = getValidProductSchedules([product_schedule_groups[0].product_schedule]);
+
+          mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
+              getHydrated({id}) {
+                  expect(id).to.equal(product_schedule_groups[0].product_schedule);
+
+                  return Promise.resolve(product_schedule[0]);
+              }
+          });
+
+          let rebillCreatorHelper = new RebillCreatorHelperController();
+
+          rebillCreatorHelper.parameters.set('productschedules', product_schedule_groups);
+
+          return rebillCreatorHelper.normalizeProductSchedules().then((result) => {
+              expect(result).to.equal(true);
+              expect(rebillCreatorHelper.parameters.store['normalizedproductschedules']).to.deep.equal(product_schedule_groups);
+          });
+      });
+
+      it('successfully normalizes product schedules when product schedules are an object', () => {
+
+          let product_schedule_groups = getValidProductScheduleGroups([uuidV4()], true);
+
+          let rebillCreatorHelper = new RebillCreatorHelperController();
+
+          rebillCreatorHelper.parameters.set('productschedules', product_schedule_groups);
+
+          return rebillCreatorHelper.normalizeProductSchedules().then((result) => {
+              expect(result).to.equal(true);
+              expect(rebillCreatorHelper.parameters.store['normalizedproductschedules']).to.deep.equal(product_schedule_groups);
+          });
+      });
+
+      it('returns true when product schedules are not set', () => {
+
+          let rebillCreatorHelper = new RebillCreatorHelperController();
+
+          return rebillCreatorHelper.normalizeProductSchedules().then((result) => {
+              expect(result).to.equal(true);
+          });
+      });
+  });
 });

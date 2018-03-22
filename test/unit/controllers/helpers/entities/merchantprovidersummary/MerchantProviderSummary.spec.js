@@ -1,13 +1,13 @@
 'use strict'
 const mockery = require('mockery');
 let chai = require('chai');
-
 const expect = chai.expect;
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 
 function getValidMerchantProvider(){
   return MockEntities.getValidMerchantProvider();
@@ -40,7 +40,6 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
     it('successfully constructs', () => {
 
-      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       expect(objectutilities.getClassName(merchantProviderSummaryHelperController)).to.equal('MerchantProviderSummaryHelperController');
@@ -59,7 +58,6 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
         }
       });
 
-      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       //Technical Debt:  This is busted... fix.
@@ -107,6 +105,41 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
     });
 
+    it('successfully increments summary', () => {
+
+      let mps = getValidMerchantProviderSummary();
+
+      let updated_mps = objectutilities.clone(mps);
+
+      let total = 10.00; //any number
+
+      updated_mps.total = numberutilities.formatFloat(total + mps.total);
+      updated_mps.count++;
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+        update:({entity}) => {
+          expect(entity).to.equal(mps);
+
+          return Promise.resolve(entity);
+        }
+      });
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      merchantProviderSummaryHelperController.parameters.set('merchantprovidersummary', mps);
+      merchantProviderSummaryHelperController.parameters.set('total', total);
+
+      return merchantProviderSummaryHelperController.incrementSummary().then((result) => {
+
+        let updated_merchant_provider_summary = merchantProviderSummaryHelperController.parameters.get('merchantprovidersummary');
+
+        expect(updated_merchant_provider_summary.total).to.equal(updated_mps.total);
+        expect(updated_merchant_provider_summary.count).to.equal(updated_mps.count);
+        return expect(result).to.equal(true);
+      });
+
+    });
+
   });
 
   describe('validateDay', () => {
@@ -115,7 +148,6 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
       let day = timestamp.getISO8601();
 
-      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       merchantProviderSummaryHelperController.parameters.set('day', day);
@@ -128,7 +160,6 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
       let day = timestamp.yesterday();
 
-      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       merchantProviderSummaryHelperController.parameters.set('day', day);
@@ -174,7 +205,6 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
         }
       });
 
-      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({merchant_provider: merchant_provider.id, day:day, type:type, total:total}).then(result => {
@@ -204,7 +234,6 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
           }
       });
 
-      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       return merchantProviderSummaryHelperController.getMerchantProviderSummaries({merchant_providers: [merchant_provider]}).then(result => {
@@ -235,6 +264,154 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
   });
 
+  describe('aggregateTodaysSummaries', () => {
+
+    it('aggregates after today', () => {
+
+      let mps = [
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary()
+      ];
+
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      let result = {
+        count: 0,
+        amount: 0
+      };
+
+      arrayutilities.map(mps, (merchant_provider) => {
+          result.count += parseInt(merchant_provider.count);
+          result.amount += numberutilities.formatFloat(merchant_provider.total, 2);
+      });
+
+      expect(merchantProviderSummaryHelperController.aggregateTodaysSummaries(mps)).to.deep.equal(result);
+
+    });
+
+    it('aggregates after today and skips merchant provider summaries in the past', () => {
+
+      let mps = [
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary()
+      ];
+
+      //any mps with the day in the past will be skipped
+      mps[1].day = "2018-03-20T14:04:45.963Z";
+      mps[2].day = "2018-03-20T14:04:45.963Z";
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      expect(merchantProviderSummaryHelperController.aggregateTodaysSummaries(mps)).to.deep.equal({
+          count: parseInt(mps[0].count),
+          amount: numberutilities.formatFloat(mps[0].total, 2)
+      });
+
+    });
+
+  });
+
+  describe('aggregateThisWeeksSummaries', () => {
+
+    it('aggregates after this week', () => {
+
+      let mps = [
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary()
+      ];
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      let result = {
+        count: 0,
+        amount: 0
+      };
+
+      arrayutilities.map(mps, (merchant_provider) => {
+          result.count += parseInt(merchant_provider.count);
+          result.amount += numberutilities.formatFloat(merchant_provider.total, 2);
+      });
+
+      expect(merchantProviderSummaryHelperController.aggregateThisWeeksSummaries(mps)).to.deep.equal(result);
+
+    });
+
+    it('aggregates after this week and skips merchant provider summaries in the past', () => {
+
+      let mps = [
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary()
+      ];
+
+      //any mps with the day in the past will be skipped
+      mps[1].day = "2018-02-20T14:04:45.963Z";
+      mps[2].day = "2018-02-20T14:04:45.963Z";
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      expect(merchantProviderSummaryHelperController.aggregateThisWeeksSummaries(mps)).to.deep.equal({
+          count: parseInt(mps[0].count),
+          amount: numberutilities.formatFloat(mps[0].total, 2)
+      });
+
+    });
+
+  });
+
+  describe('aggregateThisMonthsSummaries', () => {
+
+    it('aggregates after this month', () => {
+
+      let mps = [
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary()
+      ];
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      let result = {
+        count: 0,
+        amount: 0
+      };
+
+      arrayutilities.map(mps, (merchant_provider) => {
+          result.count += parseInt(merchant_provider.count);
+          result.amount += numberutilities.formatFloat(merchant_provider.total, 2);
+      });
+
+      expect(merchantProviderSummaryHelperController.aggregateThisMonthsSummaries(mps)).to.deep.equal(result);
+
+    });
+
+    it('aggregates after this month and skips merchant provider summaries in the past', () => {
+
+      let mps = [
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary(),
+          getValidMerchantProviderSummary()
+      ];
+
+      //any mps with the day in the past will be skipped
+      mps[1].day = "2018-02-20T14:04:45.963Z";
+      mps[2].day = "2018-02-20T14:04:45.963Z";
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      expect(merchantProviderSummaryHelperController.aggregateThisMonthsSummaries(mps)).to.deep.equal({
+          count: parseInt(mps[0].count),
+          amount: numberutilities.formatFloat(mps[0].total, 2)
+      });
+
+    });
+
+  });
+
   describe('acquireMerchantProviderSummaries', () => {
 
     it('successfully acquires merchant provider summaries', () => {
@@ -252,7 +429,6 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
           }
       });
 
-      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       merchantProviderSummaryHelperController.parameters.set('merchantproviders', [merchant_provider]);
@@ -260,6 +436,90 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
       return merchantProviderSummaryHelperController.acquireMerchantProviderSummaries().then(result => {
         expect(merchantProviderSummaryHelperController.parameters.store['merchantprovidersummaries']).to.deep.equal(merchant_provider_summary);
         expect(result).to.equal(true);
+      });
+
+    });
+
+  });
+
+  describe('getMerchantProviderSummary', () => {
+
+    it('successfully retrieves merchant provider summaries', () => {
+
+      let merchant_provider_summary = getValidMerchantProviderSummary();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+          create:() => {
+              return Promise.resolve(merchant_provider_summary);
+          },
+          listByMerchantProviderAndDateRange:() => {
+              return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
+          },
+          getResult:() => {
+              return merchant_provider_summary;
+          }
+      });
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      merchantProviderSummaryHelperController.parameters.set('merchantproviderid', merchant_provider_summary.merchant_provider);
+      merchantProviderSummaryHelperController.parameters.set('day', timestamp.getISO8601());
+      merchantProviderSummaryHelperController.parameters.set('type', 'recurring');
+
+      return merchantProviderSummaryHelperController.getMerchantProviderSummary().then(result => {
+        expect(merchantProviderSummaryHelperController.parameters.store['merchantprovidersummary']).to.deep.equal(merchant_provider_summary);
+        return expect(result).to.equal(true);
+      });
+
+    });
+
+    it('throws error when there is more than one merchant provider returned from the dynamo', () => {
+
+      let merchant_provider_summary = getValidMerchantProviderSummary();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+          listByMerchantProviderAndDateRange:() => {
+              return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
+          },
+          getResult:() => {
+              return [merchant_provider_summary, getValidMerchantProviderSummary()];
+          }
+      });
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      merchantProviderSummaryHelperController.parameters.set('merchantproviderid', merchant_provider_summary.merchant_provider);
+      merchantProviderSummaryHelperController.parameters.set('day', timestamp.getISO8601());
+      merchantProviderSummaryHelperController.parameters.set('type', 'recurring');
+
+      return merchantProviderSummaryHelperController.getMerchantProviderSummary().catch((error) => {
+        return expect(error.message).to.equal("[500] Unexpected Dynamo response.");
+      });
+
+    });
+
+    it('successfully retrieves merchant provider summaries when dynamo result is an array of one merchant provider', () => {
+
+      let merchant_provider_summary = getValidMerchantProviderSummary();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+          listByMerchantProviderAndDateRange:() => {
+              return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
+          },
+          getResult:() => {
+              return [merchant_provider_summary];
+          }
+      });
+
+      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+      merchantProviderSummaryHelperController.parameters.set('merchantproviderid', merchant_provider_summary.merchant_provider);
+      merchantProviderSummaryHelperController.parameters.set('day', timestamp.getISO8601());
+      merchantProviderSummaryHelperController.parameters.set('type', 'recurring');
+
+      return merchantProviderSummaryHelperController.getMerchantProviderSummary().then(result => {
+          expect(merchantProviderSummaryHelperController.parameters.store['merchantprovidersummary']).to.deep.equal(merchant_provider_summary);
+          return expect(result).to.equal(true);
       });
 
     });
