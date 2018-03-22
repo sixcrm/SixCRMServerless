@@ -1,7 +1,9 @@
-'use strict'
+'use strict';
 const _ = require('underscore');
+const querystring = require('querystring');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 
 //Technical Debt:  Look at disabling and enabling ACLs here...
@@ -56,10 +58,40 @@ module.exports = class Refund extends TransactionUtilities{
         let instantiated_gateway = this.parameters.get('instantiated_gateway');
         let processing_parameters = this.parameters.get('refund');
 
+        processing_parameters = this.ensureTransactionId(processing_parameters);
+
         return instantiated_gateway.refund(processing_parameters);
 
       });
 
+    }
+
+    /**
+     * It can happen that the transactionid is not stored in the processor response as expected. Some objects in our
+     * database keep responses like this:
+     *
+     * response:
+     * { statusCode: 200,
+     *   body: 'response=1&responsetext=SUCCESS&authcode=123456&transactionid=4010302956'
+     * }
+     *
+     * This method attempts to retrieve a transaction id from such response, and attach it to the top level response object.
+     */
+    ensureTransactionId(refund) {
+
+      du.debug('Ensure Transaction Id');
+
+      let result = refund.transaction.processor_response.result;
+
+      if (objectutilities.hasRecursive(result, 'response.body') && _.isString(result.response.body)) {
+        let parsed_response = querystring.parse(result.response.body);
+
+        if (_.has(parsed_response, 'transactionid')) {
+          result.transactionid = parsed_response.transactionid;
+        }
+      }
+
+      return refund;
     }
 
     createProcessingParameters(){

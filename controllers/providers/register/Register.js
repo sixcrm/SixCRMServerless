@@ -10,6 +10,7 @@ const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
 const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
+const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
 const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
 
@@ -250,7 +251,7 @@ module.exports = class Register extends RegisterUtilities {
     let amount = this.parameters.get('amount');
 
     return refundController.refund({transaction: transaction, amount: amount}).then(result => {
-      this.parameters.set('processorresponse', result);
+      this.parameters.set('processorresponse', this.extractProcessorResponse(result));
       return true;
     });
 
@@ -280,13 +281,21 @@ module.exports = class Register extends RegisterUtilities {
     const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
     let registerReceiptController = new RegisterReceiptController();
 
-    //fix!
-    // let argumentation_object = {};
+    let parameters = this.parameters.getAll();
 
-    return registerReceiptController.issueReceipt().then(receipt_transaction => {
-      return this.parameters.set('receipttransaction', receipt_transaction);
-    });
+    let argumentation_object = {
+      amount: parameters.amount,
+      transactiontype: parameters.transactiontype,
+      processorresponse: parameters.processorresponse,
+      merchant_provider: parameters.associatedtransaction.merchant_provider,
+      transaction_products: parameters.associatedtransaction.products,
+      associatedtransaction: parameters.associatedtransaction
+    };
 
+    return rebillController.get({id: parameters.associatedtransaction.rebill })
+      .then(rebill => argumentation_object.rebill = rebill)
+      .then(() => registerReceiptController.issueReceipt(argumentation_object))
+      .then(receipt_transaction => this.parameters.set('receipttransaction', receipt_transaction));
   }
 
   pushTransactionsRecordToRedshift(){
@@ -593,6 +602,17 @@ module.exports = class Register extends RegisterUtilities {
       }
     });
 
+  }
+
+  extractProcessorResponse(response) {
+
+    du.debug('Extract Processor Response');
+
+    if (objectutilities.hasRecursive(response, 'parameters.store')) {
+      return objectutilities.clone(response.parameters.store);
+    }
+
+    return response;
   }
 
 }

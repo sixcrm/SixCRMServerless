@@ -7,12 +7,19 @@
 		"code":{
 			"type":"string"
 		},
+		"oneOf": [
+			{ "required": ["result"] },
+			{ "required": ["response"] }
+		],
 		"result":{
+			"type":"object"
+		},
+		"response":{
 			"type":"object"
 		},
 		"message":{
 			"type":"string"
 		}
 	},
-	"required":["code","result","message"]
+	"required":["code", "message"]
 }
