@@ -20,7 +20,7 @@ class AnalyticsEventBroker extends SNSEventController {
 
 		//Need to add state machine events.
 		//Need to add out-of-flow events (Refund, Void, Chargeback)
-		this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
+		this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm', 'rebill'];
 
 		this.event_record_handler = 'pushToRDSQueue';
 
