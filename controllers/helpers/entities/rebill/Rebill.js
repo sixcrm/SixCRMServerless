@@ -184,7 +184,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 			.then(() => this.setConditionalProperties())
 			.then(() => this.buildUpdatedRebillPrototype())
 			.then(() => this.updateRebillFromUpdatedRebillPrototype())
-			.then(() => this.pushRebillStateChangeToEvent());
+			.then(() => this.pushRebillStateChangeEvent());
 
 	}
 
