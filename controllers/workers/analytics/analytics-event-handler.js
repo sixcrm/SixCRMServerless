@@ -59,6 +59,14 @@ module.exports = class AnalyticsEventHandler {
 
 			du.debug('Message recieved', message);
 
+			if (!message.event_type) {
+
+				du.console.warn('Analytics event missing event_type');
+
+				return this._removeRecordFromSQS(r);
+
+			}
+
 			const eventKeys = Object.keys(this._eventTypeHandlerMap);
 			const eventKey = eventKeys.find(ek => {
 
@@ -73,7 +81,7 @@ module.exports = class AnalyticsEventHandler {
 
 				du.console.warn('Analytics event type not mapped', message.event_type);
 
-				return Promise.resolve();
+				return this._removeRecordFromSQS(r);
 
 			}
 
