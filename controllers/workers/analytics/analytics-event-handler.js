@@ -61,7 +61,7 @@ module.exports = class AnalyticsEventHandler {
 
 			if (!message.type) {
 
-				du.warn('Analytics event missing type');
+				du.warning('Analytics event missing type');
 
 				return this._removeRecordFromSQS(r);
 
@@ -79,7 +79,7 @@ module.exports = class AnalyticsEventHandler {
 
 			if (!handerMap) {
 
-				du.warn('Analytics event type not mapped', message.type);
+				du.warning('Analytics event type not mapped', message.type);
 
 				return this._removeRecordFromSQS(r);
 
