@@ -862,7 +862,7 @@ describe('controllers/providers/notification/notification-provider', () => {
         };
 
         let augmented_normalized_notification_settings = {};
-        let user_settings = {};
+        let user_settings = getValidUserSetting();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
           create:({entity}) => {
@@ -941,9 +941,7 @@ describe('controllers/providers/notification/notification-provider', () => {
           user: user,
           account: account
         }).then(result => {
-          expect(result).to.have.property('id');
-          expect(result).to.have.property('created_at');
-          expect(result).to.have.property('updated_at');
+          expect(result).to.equal(true);
         });
       });
     });
@@ -1060,6 +1058,640 @@ describe('controllers/providers/notification/notification-provider', () => {
         });
       });
     });
+
+    describe('getReceiveSettingForChannel', () => {
+      it('successfully retrieves channel settings', () => {
+
+        let user_settings = getValidUserSetting();
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+
+        arrayutilities.map(user_settings.notifications, notification_setting => {
+          let receive_setting = notification_provider.getReceiveSettingForChannel(notification_setting.name, user_settings);
+          expect(receive_setting).to.equal(notification_setting.receive);
+        });
+
+      });
+
+      it('successfully returns default channel settings (false)', () => {
+
+        let user_settings = getValidUserSetting();
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+
+        let receive_setting = notification_provider.getReceiveSettingForChannel('unknownchannel', user_settings);
+        expect(receive_setting).to.equal(false);
+
+      });
+
+    });
+
+    describe('getNotificationCategoryOptIn', () => {
+
+      it('successfully get the notification category setting', () => {
+
+        let category = 'transaction';
+        let spoofed_notification_settings = {
+          notification_categories: ['transaction']
+        }
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let category_opt_in = notification_provider.getNotificationCategoryOptIn(category, spoofed_notification_settings);
+        expect(category_opt_in).to.equal(true);
+
+      });
+
+      it('successfully return false when setting is not configured', () => {
+
+        let category = 'transaction';
+        let spoofed_notification_settings = {
+          notification_categories: []
+        }
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let category_opt_in = notification_provider.getNotificationCategoryOptIn(category, spoofed_notification_settings);
+        expect(category_opt_in).to.equal(false);
+
+      });
+
+    });
+
+    describe('setNotificationReadAt', () => {
+
+      it('successfully sets the read_at property', () => {
+
+        let notification_prototype = {
+          category: 'transaction',
+          type: 'notification'
+        };
+
+        let user_settings = getValidUserSetting();
+        let augmented_normalized_notification_settings = {
+          notification_categories:[],
+          notification_types:[]
+        };
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let updated_notification_prototype = notification_provider.setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings);
+
+        expect(updated_notification_prototype).to.have.property('read_at');
+
+      });
+
+      it('successfully fails to set the read_at property (category mis-match)', () => {
+
+        let notification_prototype = {
+          category: 'transaction',
+          type: 'notification'
+        };
+
+        let user_settings = getValidUserSetting();
+        let augmented_normalized_notification_settings = {
+          notification_categories:['transaction'],
+          notification_types:[]
+        };
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let updated_notification_prototype = notification_provider.setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings);
+
+        expect(updated_notification_prototype).to.not.have.property('read_at');
+
+      });
+
+      it('successfully fails to set the read_at property (channel match)', () => {
+
+        let notification_prototype = {
+          category: 'transaction',
+          type: 'notification'
+        };
+
+        let user_settings = getValidUserSetting();
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification_setting => {
+          notification_setting.receive = true;
+          return notification_setting;
+        });
+
+        let augmented_normalized_notification_settings = {
+          notification_categories:['transaction'],
+          notification_types:[]
+        };
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let updated_notification_prototype = notification_provider.setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings);
+
+        expect(updated_notification_prototype).to.not.have.property('read_at');
+
+      });
+
+      it('successfully sets the read_at property (channel mismatch)', () => {
+
+        let notification_prototype = {
+          category: 'transaction',
+          type: 'notification'
+        };
+
+        let user_settings = getValidUserSetting();
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification_setting => {
+          notification_setting.receive = false;
+          return notification_setting;
+        });
+
+        let augmented_normalized_notification_settings = {
+          notification_categories:['transaction'],
+          notification_types:[]
+        };
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let updated_notification_prototype = notification_provider.setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings);
+
+        expect(updated_notification_prototype).to.have.property('read_at');
+
+      });
+
+    });
+
+    describe('getUserLanguagePreference', () => {
+
+      it('successfully retrieves the language preference', () => {
+
+        let user_setting = getValidUserSetting();
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let language_preference = notification_provider.getUserLanguagePreference(user_setting);
+        expect(language_preference).to.equal('English');
+
+        user_setting.language = 'Japanese';
+
+        language_preference = notification_provider.getUserLanguagePreference(user_setting);
+        expect(language_preference).to.equal('Japanese');
+
+
+      });
+
+      it('successfully sets the language preference when unable to identify user setting', () => {
+
+        let user_setting = {};
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let language_preference = notification_provider.getUserLanguagePreference(user_setting);
+        expect(language_preference).to.equal('English');
+
+      });
+
+    })
+
+    describe('getChannelConfiguration',  () => {
+      it('successfully returns notification channel configuration', () => {
+
+        let user_settings = getValidUserSetting();
+        let email_data = 'someemail@test.com';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'email'){
+            notification.data = email_data;
+          }
+          return notification;
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let channel_configuration = notification_provider.getChannelConfiguration('email', user_settings);
+        expect(channel_configuration).to.deep.equal(email_data);
+
+      });
+
+      it('returns null when there are no channel configuration', () => {
+
+        let user_settings = getValidUserSetting();
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let channel_configuration = notification_provider.getChannelConfiguration('unknownchannel', user_settings);
+        expect(channel_configuration).to.deep.equal(null);
+
+      });
+
+    });
+
+    describe('getTranslationObject', () => {
+      it('successfully retrieves a translation object', () => {
+
+        let translation_object = {
+          body: 'some string',
+          title: 'some other string'
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
+          constructor(){}
+          getTranslationObject(){
+            return translation_object;
+          }
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let discovered_translation_object = notification_provider.getTranslationObject('English', 'email.transaction.order');
+        expect(discovered_translation_object).to.deep.equal(translation_object);
+
+      });
+
+      it('returns English translation when missing translation', () => {
+
+        let translation_object = {
+          body: 'some string',
+          title: 'some other string'
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
+          constructor(){}
+          getTranslationObject(language){
+            if(language == 'English'){
+              return translation_object;
+            }
+            return null;
+          }
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let discovered_translation_object = notification_provider.getTranslationObject('Japanese', 'email.transaction.order');
+        expect(discovered_translation_object).to.deep.equal(translation_object);
+
+      });
+
+      it('throws an error when missing a translation', () => {
+
+        let translation_path = 'email.transaction.order';
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
+          constructor(){}
+          getTranslationObject(){
+            return null;
+          }
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+
+        try{
+          notification_provider.getTranslationObject('Japanese', translation_path);
+        }catch(error){
+          expect(error.message).to.equal('[500] Missing English Notification Translation: '+translation_path);
+        }
+
+      });
+
+    });
+
+    describe('parseFields', () => {
+
+      it('successfully parses fields into content', () => {
+
+        let content_string = 'Your {{campaign.name}} is really ridiculous, {{customer.firstname}}.  {{customer.firstname}}??';
+        let data = {
+          'campaign.name': 'hair piece',
+          'customer.firstname':'Mr. Trump'
+        };
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let parsed_string = notification_provider.parseFields(content_string, data);
+        expect(parsed_string).to.equal('Your hair piece is really ridiculous, Mr. Trump.  Mr. Trump??');
+      });
+
+    });
+
+    describe('buildReadableNotificationObject', () => {
+      it('builds a readable notification object', () => {
+
+        let user_settings = getValidUserSetting();
+
+        let notification_prototype = {
+          category: 'warmfuzzy',
+          type: 'notification',
+          name: 'nice_greeting',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let channel = 'email';
+
+        let translation_object = {
+          body: 'Oh goodness, that was {{some.context.field}}.',
+          title: 'Thanks {{title_property}}!'
+        };
+
+        let expected_readable_notification = {
+          body: 'Oh goodness, that was really wonderful.',
+          title: 'Thanks alot!'
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
+          constructor(){}
+          getTranslationObject(){
+            return translation_object;
+          }
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let readable_notification = notification_provider.buildReadableNotificationObject(channel, notification_prototype, user_settings);
+        expect(readable_notification).to.deep.equal(expected_readable_notification);
+      });
+    });
+
+    describe('sendChannelNotification', () => {
+      it('successfully sends a channel notification', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['warm_fuzzy'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        let user_settings = getValidUserSetting();
+        let email_data = 'someemail@test.com';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'email'){
+            notification.receive = true;
+            notification.data = email_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'warmfuzzy',
+          type: 'notification',
+          name: 'nice_greeting',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let translation_object = {
+          body: 'Oh goodness, that was {{some.context.field}}.',
+          title: 'Thanks {{title_property}}!'
+        };
+
+        let expected_readable_notification = {
+          body: 'Oh goodness, that was really wonderful.',
+          title: 'Thanks alot!'
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
+          constructor(){}
+          getTranslationObject(){
+            return translation_object;
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/email-notification-provider.js'), class {
+          constructor(){}
+          sendNotification(readable_notification, channel_data){
+            expect(channel_data).to.equal(email_data);
+            expect(readable_notification).to.deep.equal(expected_readable_notification);
+            return Promise.resolve(true);
+          }
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        return notification_provider.sendChannelNotification(
+          'email',
+          {
+            notification: notification,
+            augmented_normalized_notification_settings: augmented_normalized_notification_settings,
+            user_settings: user_settings
+          }
+        ).then(result => {
+          expect(result).to.equal(true);
+        });
+
+      });
+    });
+
+    describe('sendEmail', () => {
+      it('successfully sends a email notification', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['warm_fuzzy'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        let user_settings = getValidUserSetting();
+        let email_data = 'someemail@test.com';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'email'){
+            notification.receive = true;
+            notification.data = email_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'warmfuzzy',
+          type: 'notification',
+          name: 'nice_greeting',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let translation_object = {
+          body: 'Oh goodness, that was {{some.context.field}}.',
+          title: 'Thanks {{title_property}}!'
+        };
+
+        let expected_readable_notification = {
+          body: 'Oh goodness, that was really wonderful.',
+          title: 'Thanks alot!'
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
+          constructor(){}
+          getTranslationObject(){
+            return translation_object;
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/email-notification-provider.js'), class {
+          constructor(){}
+          sendNotification(readable_notification, channel_data){
+            expect(channel_data).to.equal(email_data);
+            expect(readable_notification).to.deep.equal(expected_readable_notification);
+            return Promise.resolve(true);
+          }
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        return notification_provider.sendEmail({
+          notification: notification,
+          augmented_normalized_notification_settings: augmented_normalized_notification_settings,
+          user_settings: user_settings
+        }).then(result => {
+          expect(result).to.equal(true);
+        });
+
+      });
+
+    });
+
+    describe('sendSMS', () => {
+      it('successfully sends a sms notification', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['warm_fuzzy'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        let user_settings = getValidUserSetting();
+        let sms_data = '5037055257';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'sms'){
+            notification.receive = true;
+            notification.data = sms_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'warmfuzzy',
+          type: 'notification',
+          name: 'nice_greeting',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let translation_object = {
+          body: 'Oh goodness, that was {{some.context.field}}.',
+          title: 'Thanks {{title_property}}!'
+        };
+
+        let expected_readable_notification = {
+          body: 'Oh goodness, that was really wonderful.',
+          title: 'Thanks alot!'
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
+          constructor(){}
+          getTranslationObject(){
+            return translation_object;
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/sms-notification-provider.js'), class {
+          constructor(){}
+          sendNotification(readable_notification, channel_data){
+            expect(channel_data).to.equal(sms_data);
+            expect(readable_notification).to.deep.equal(expected_readable_notification);
+            return Promise.resolve(true);
+          }
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        return notification_provider.sendSMS({
+          notification: notification,
+          augmented_normalized_notification_settings: augmented_normalized_notification_settings,
+          user_settings: user_settings
+        }).then(result => {
+          expect(result).to.equal(true);
+        });
+
+      });
+
+    });
+
+    describe('sendSlackMessage', () => {
+
+      it('successfully sends a slack notification', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['warm_fuzzy'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        let user_settings = getValidUserSetting();
+        let slack_data = 'http://slack.com/someurlargs';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'slack'){
+            notification.receive = true;
+            notification.data = slack_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'warmfuzzy',
+          type: 'notification',
+          name: 'nice_greeting',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let translation_object = {
+          body: 'Oh goodness, that was {{some.context.field}}.',
+          title: 'Thanks {{title_property}}!'
+        };
+
+        let expected_readable_notification = {
+          body: 'Oh goodness, that was really wonderful.',
+          title: 'Thanks alot!'
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
+          constructor(){}
+          getTranslationObject(){
+            return translation_object;
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/slack-notification-provider.js'), class {
+          constructor(){}
+          sendNotification(readable_notification, channel_data){
+            expect(channel_data).to.equal(slack_data);
+            expect(readable_notification).to.deep.equal(expected_readable_notification);
+            return Promise.resolve(true);
+          }
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        return notification_provider.sendSlackMessage({
+          notification: notification,
+          augmented_normalized_notification_settings: augmented_normalized_notification_settings,
+          user_settings: user_settings
+        }).then(result => {
+          expect(result).to.equal(true);
+        });
+
+      });
+
+    });
+
+    /*
+    sendChannelNotification(channel, {notification, augmented_normalized_notification_settings, user_settings}){
+
+      du.debug('Send Channel Notification');
+
+      if(this.getReceiveSettingForChannel(channel, user_settings)){
+
+        let channel_data = this.getChannelConfiguration(channel, user_settings);
+
+        if(channel_data){
+
+          let readable_notification = this.buildReadableNotificationObject(channel, notification_prototype, user_settings);
+
+          if(!_.has(this.channelProviders[channel])){
+            const ChannelProvider = global.SixCRM.routes.include('providers','notifications/'+channel+'-notification-provider.js');
+            this.channel_providers[channel] = new ChannelProvider()
+          }
+
+          return this.channel_providers[channel].sendNotification(readable_notification,channel_data);
+
+        }
+
+      }
+
+      return Promise.resolve(false);
+
+    }
+    */
 
     xdescribe('(LIVE) createNotificationForAccountAndUser (LIVE)', () => {
       it('creates notifications for a account user', () => {

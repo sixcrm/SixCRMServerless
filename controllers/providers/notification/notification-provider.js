@@ -1,16 +1,12 @@
 'use strict';
 const _ = require('underscore');
 
-const du = global.SixCRM.routes.include('lib','debug-utilities');
-const eu = global.SixCRM.routes.include('lib','error-utilities');
-//const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
-//const timestamp = global.SixCRM.routes.include('lib','timestamp');
-
-//const emailNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/email-notification-provider');
-//const smsNotificationUtils = global.SixCRM.routes.include('controllers','providers/notification/sms-notification-provider');
-//const slackNotificationUtils = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
+const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib','error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js')
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -20,6 +16,7 @@ class NotificationProvider {
 
     this.immutable_categories = [];
     this.immutable_types = ['alert', 'persistent'];
+    this.channel_providers = {};
 
     //Technical Debt:  Add action, notificationprototype
     this.parameter_validation = {};
@@ -191,14 +188,11 @@ class NotificationProvider {
         })
         .then(notification => {
 
-          /*
           return this.sendNotificationToChannels({
             notification: notification,
-            notification_settings: augmented_normalized_notification_settings
+            augmented_normalized_notification_settings: augmented_normalized_notification_settings,
+            user_settings: user_settings
           });
-          */
-
-          return notification;
 
         });
 
@@ -228,7 +222,7 @@ class NotificationProvider {
 
   }
 
-  normalizeNotificationSettings({notification_settings, default_notification_settings}){
+  normalizeNotificationSettings({notification_settings, default_notification_settings, user_settings}){
 
     du.debug('Normalize Notification Settings');
 
@@ -261,7 +255,7 @@ class NotificationProvider {
       normalized_notification_settings = normalized_notification_settings = objectutilities.recursiveMerge(parsed_notification_settings, normalized_notification_settings);
     }
 
-    return normalized_notification_settings;
+    return {normalized_notification_settings: normalized_notification_settings, user_settings: user_settings};
 
   }
 
@@ -270,20 +264,21 @@ class NotificationProvider {
     du.debug('Build Notification Categories and Types');
 
     let notification_categories = this.immutable_categories;
+
+    //Technical Debt:  What's the purpose of this.  Can a user turn off notification types?
     let notification_types = this.immutable_types;
 
     //Technical Debt:  Confirm and validate
     if(_.has(notification_settings, 'notification_groups') && _.isArray(notification_settings.notification_groups)){
       arrayutilities.map(notification_settings.notification_groups, (notification_group) => {
-        if(_.has(notification_group, 'notifications')){
-          arrayutilities.map(notification_group.notifications, notification => {
-            if(_.has(notification, 'default') && _.has(notification, 'key') && notification.default == true){
-              notification_categories.push(notification.key);
-            }
-          });
+        if(_.has(notification_group, 'key') && _.has(notification_group, 'default') && notification_group.default == true){
+          notification_categories.push(notification_group.key);
         }
       });
     }
+
+    notification_categories = arrayutilities.unique(notification_categories);
+    notification_types = arrayutilities.unique(notification_types);
 
     return {
       notification_settings: notification_settings,
@@ -293,7 +288,7 @@ class NotificationProvider {
 
   }
 
-  createNotification({notification_prototype, user, account, /*augmented_normalized_notification_settings, user_settings*/}){
+  createNotification({notification_prototype, user, account, user_settings, augmented_normalized_notification_settings}){
 
     du.debug('Create Notification Prototype');
 
@@ -306,21 +301,34 @@ class NotificationProvider {
       name: notification_prototype.name
     };
 
-    /*
-    Technical Debt: Validate...
-    let six_notification_opt_in = this.getReceiveSettingForChannel('six', user_settings);
-    let notification_category_opt_in = this.getNotificationCategoryOptIn(augmented_normalized_notification_settings);
-    let notification_type_opt_in = this.getNotificationTypeOptIn(augmented_normalized_notification_settings);
-
-    //validate this logic///
-    if (six_notification_opt_in == false || notification_category_opt_in == false){
-      if(notification_type_opt_in == false){
-        notification_prototype.read_at = timestamp.getISO8601();
-      }
-    }
-    */
+    transformed_notification_prototype = this.setNotificationReadAt(transformed_notification_prototype, user_settings, augmented_normalized_notification_settings);
 
     return this.notificationController.create({entity: transformed_notification_prototype});
+
+  }
+
+  setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings){
+
+    du.debug('Set Notification Read At');
+
+    let six_notification_opt_in = this.getReceiveSettingForChannel('six', user_settings);
+
+    if(six_notification_opt_in == false){
+
+      notification_prototype.read_at = timestamp.getISO8601();
+
+    }else{
+
+      let notification_category_opt_in = this.getNotificationCategoryOptIn(notification_prototype.category, augmented_normalized_notification_settings);
+      let notification_type_opt_in = this.getNotificationTypeOptIn(notification_prototype.type, augmented_normalized_notification_settings);
+
+      if(notification_type_opt_in == false || notification_category_opt_in == false){
+        notification_prototype.read_at = timestamp.getISO8601();
+      }
+
+    }
+
+    return notification_prototype;
 
   }
 
@@ -336,62 +344,129 @@ class NotificationProvider {
 
   }
 
-  /*
-  Technical Debt:  Need to integrate notification translation.
+  getNotificationCategoryOptIn(category, augmented_normalized_notification_settings){
+
+    du.debug('Get Notification Category Opt-In');
+
+    return _.contains(augmented_normalized_notification_settings.notification_categories, category);
+
+  }
+
+  getNotificationTypeOptIn(){
+
+    du.debug('Get Notification Type Opt-In');
+
+    //Technical Debt: This functionality isn't really well understood.
+    return true;
+
+  }
 
   sendNotificationToChannels(){
 
     du.debug('Send Notification To Channels');
 
-    let notification_channel_promises = [];
+    let common_parameterization = arguments[0];
 
-    if(this.userOptInCategory(notification) || this.userOptInType(notification)){
+    let notification_channel_promises = [
+      this.sendEmail(common_parameterization),
+      this.sendSMS(common_parameterization),
+      this.sendSlackMessage(common_parameterization)
+    ];
 
-      notification_channel_promises.push(this.sendEmail());
-      notification_channel_promises.push(this.sendSMS());
-      notification_channel_promises.push(this.sendSlackMessage());
-
-    }
-
-    return Promise.all(notificationSendOperations).then(() => {
-      return notification;
+    return Promise.all(notification_channel_promises).then(() => {
+      return true;
     });
 
   }
 
-  userOptInCategory(){
+  getUserLanguagePreference(user_settings){
 
-    du.debug('User Opt-In Category');
+    du.debug('Get User Language Preferences');
 
-    //if (_.contains(notificationCategoriesToSend, notification.category) || _.contains(notificationTypesToSend, notification.type)) {
-    return true;
+    if(_.has(user_settings, 'language')){
+      return user_settings.language;
+    }
 
-  }
-
-  userOptInType(){
-
-    du.debug('User Opt-In Type');
-
-    //if (_.contains(notificationCategoriesToSend, notification.category) || _.contains(notificationTypesToSend, notification.type)) {
-    return true;
+    return 'English';
 
   }
 
-  sendEmail(user_settings){
+  parseFields(content, data){
 
-    du.debug('Send Email');
+    du.debug('Parse Fields');
 
-    if(this.getReceiveSettingForChannel('email', user_settings)){
+    return parserutilities.parse(content, data);
 
-      let email_address = this.getNotificationChannelSettings('email', user_settings);
+  }
 
-      if(email_address){
-        return emailNotificationProvider.sendNotificationViaEmail(notification, email_address);
-      }
+  getChannelConfiguration(notification_channel, user_settings) {
+
+    du.debug('Get Channel Configuration');
+
+    let channel_settings = arrayutilities.find(user_settings.notifications, (notification_setting) => {
+      return (notification_setting.name === notification_channel);
+    });
+
+    if(_.has(channel_settings, 'data')){
+      return channel_settings.data;
+    }
+
+    return null;
+
+  }
+
+  getTranslationObject(language_preference, path){
+
+    du.debug('Get Translation File');
+
+    if(!_.has(this, 'translationHelperController')){
+      const TranslationHelperController = global.SixCRM.routes.include('helpers', 'translation/Translation.js');
+      this.translationHelperController = new TranslationHelperController();
+    }
+
+    let translation_object = this.translationHelperController.getTranslationObject(language_preference, path);
+
+    if(_.isNull(translation_object) && language_preference == 'English'){
+      eu.throwError('server', 'Missing English Notification Translation: '+path);
+    }else if(_.isNull(translation_object)){
+      du.warning('Missing '+language_preference+' Notification Translation: '+path);
+      return this.getTranslationObject('English', path);
+    }
+
+    return translation_object;
+
+  }
+
+  buildReadableNotificationObject(channel, notification_prototype, user_settings){
+
+    du.debug('Build Readable Notification Object');
+
+    let language_preference = this.getUserLanguagePreference(user_settings);
+
+    let notification_path = arrayutilities.compress([channel, notification_prototype.category, notification_prototype.name], '.','');
+
+    let raw_notification_object = this.getTranslationObject(language_preference, notification_path);
+
+    if(!_.isNull(raw_notification_object) && _.has(raw_notification_object, 'body') && _.has(raw_notification_object, 'title')){
+
+      let readable_notification = {
+        body: this.parseFields(raw_notification_object.body, notification_prototype.context),
+        title: this.parseFields(raw_notification_object.title, notification_prototype.context)
+      };
+
+      return readable_notification;
 
     }
 
-    return Promise.resolve(false);
+    eu.throwError('server', 'Missing Notification Translation: '+notification_path);
+
+  }
+
+  sendEmail(){
+
+    du.debug('Send Email');
+
+    return this.sendChannelNotification('email', arguments[0]);
 
   }
 
@@ -399,17 +474,7 @@ class NotificationProvider {
 
     du.debug('Send SMS');
 
-    if(this.getReceiveSettingForChannel('sms', user_settings)){
-
-      let sms_number = this.getNotificationChannelSettings('sms', user_settings);
-
-      if (sms_number) {
-        return smsNotificationUtils.sendNotificationViaSms(notification, sms_number);
-      }
-
-    }
-
-    return Promise.resolve(false);
+    return this.sendChannelNotification('sms', arguments[0]);
 
   }
 
@@ -417,12 +482,29 @@ class NotificationProvider {
 
     du.debug('Send Slack Message');
 
-    if(this.getReceiveSettingForChannel('slack', user_settings)) {
+    return this.sendChannelNotification('slack', arguments[0]);
 
-      let slack_webhook = this.getNotificationChannelSettings('slack', user_settings);
+  }
 
-      if (slack_webhook) {
-        return slackNotificationUtils.sendNotificationViaSlack(notification, slack_webhook);
+  sendChannelNotification(channel, {notification, user_settings}){
+
+    du.debug('Send Channel Notification');
+
+    if(this.getReceiveSettingForChannel(channel, user_settings)){
+
+      let channel_data = this.getChannelConfiguration(channel, user_settings);
+
+      if(channel_data){
+
+        let readable_notification = this.buildReadableNotificationObject(channel, notification, user_settings);
+
+        if(!_.has(this.channel_providers, channel)){
+          const ChannelProvider = global.SixCRM.routes.include('providers','notification/'+channel+'-notification-provider.js');
+          this.channel_providers[channel] = new ChannelProvider()
+        }
+
+        return this.channel_providers[channel].sendNotification(readable_notification, channel_data);
+
       }
 
     }
@@ -430,19 +512,6 @@ class NotificationProvider {
     return Promise.resolve(false);
 
   }
-
-  getNotificationChannelSettings(notification_channel, user_settings) {
-
-    du.debug('Get Notification Channel Settings');
-
-    let channel_settings = arrayutilities.find(user_settings.notifications, (notification_setting) => {
-      return (notification_setting.name === notification_channel);
-    });
-
-    return channel_settings.data;
-
-  }
-  */
 
 }
 
