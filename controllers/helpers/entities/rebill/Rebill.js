@@ -184,7 +184,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 			.then(() => this.setConditionalProperties())
 			.then(() => this.buildUpdatedRebillPrototype())
 			.then(() => this.updateRebillFromUpdatedRebillPrototype())
-			.then(() => this.pushRebillStateChangeToRedshift());
+			.then(() => this.pushRebillStateChangeEvent());
 
 	}
 
@@ -611,9 +611,9 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 	}
 
-	pushRebillStateChangeToRedshift() {
+	pushRebillStateChangeEvent() {
 
-		du.debug('Pushing Rebill State Change To Redshift');
+		du.debug('Pushing Rebill State Change Event');
 
 		return this.transformRebill()
 			.then(() => this.pushEvent())
