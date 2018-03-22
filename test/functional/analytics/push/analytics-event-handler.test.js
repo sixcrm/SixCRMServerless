@@ -16,8 +16,7 @@ const auroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'utili
 before(() => {
 
 	return Promise.resolve()
-		.then(() => SQSDeployment.deployQueues())
-		.then(() => auroraContext.init());
+		.then(() => SQSDeployment.deployQueues());
 
 });
 
@@ -29,13 +28,6 @@ beforeEach(() => {
 		.then(() => auroraSchemaDeployment.deployTables());
 
 })
-
-after(() => {
-
-	return Promise.resolve()
-		.then(() => auroraContext.dispose());
-
-});
 
 describe('Push events to RDS', () => {
 
