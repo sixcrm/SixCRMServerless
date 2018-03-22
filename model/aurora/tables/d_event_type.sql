@@ -1,7 +1,29 @@
-/*
-23.02.2017 J.C.Lozano Initial table definition @ aurora db
-*/
-
 DROP TYPE IF EXISTS analytics.d_event_type;
 
-CREATE TYPE analytics.d_event_type AS ENUM('click','lead','order','upsell','confirm', 'new', 'rebill', 'refund', 'chargeback');
+CREATE TYPE analytics.d_event_type AS ENUM ( 'click',
+  'lead',
+  'order',
+  'upsell',
+  'upsell2',
+  'upsell3',
+  'upsell4',
+  'upsell5',
+  'upsell6',
+  'upsell7',
+  'upsell8',
+  'upsell9',
+  'downsell',
+  'downsell2',
+  'downsell3',
+  'downsell4',
+  'downsell5',
+  'downsell6',
+  'downsell7',
+  'downsell8',
+  'downsell9',
+  'confirm',
+  'new',
+  'rebill',
+  'refund',
+  'chargeback'
+);

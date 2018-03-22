@@ -1,21 +1,56 @@
 {
 	"messages": [{
-			"type": "click"
+			"type": "click",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"datetime": "2018-03-22T16:43:38.302Z",
+			"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+			"session": "",
+			"affiliate": "94148afa-8eb1-4dea-91bf-60c950f9be7c",
+			"cid": "a4923c58-42af-4cb8-ab87-f37b5843afe9"
 		},
 		{
-			"type": "lead"
+			"type": "lead",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"datetime": "2018-03-22T16:43:04.953Z",
+			"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+			"session": "5a0d9655-a78d-43d3-9497-805a155c0643",
+			"affiliate": "0c09c649-6b11-4145-83f7-a1bf43115d6a"
 		},
 		{
-			"type": "confirm"
+			"type": "confirm",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"datetime": "2018-03-22T16:42:46.411Z",
+			"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+			"session": "e29ef49a-9ccd-41a0-9f08-5563f0d3fa1a",
+			"product_schedules": [],
+			"products": ["668ad918-0d09-4116-a6fe-0e7a9eda36f8"]
 		},
 		{
-			"type": "upsell2"
+			"type": "upsell2",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"datetime": "2018-03-22T16:42:53.005Z",
+			"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+			"session": "4707a999-206a-46f6-8f72-141228b58de3",
+			"affiliate": "8e170724-8401-45dd-876d-76be6c8353f5",
+			"products": ["668ad918-0d09-4116-a6fe-0e7a9eda36f8"]
 		},
 		{
-			"type": "downsell"
+			"type": "downsell",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"datetime": "2018-03-22T16:42:53.005Z",
+			"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+			"session": "4707a999-206a-46f6-8f72-141228b58de3",
+			"affiliate": "8e170724-8401-45dd-876d-76be6c8353f5",
+			"products": ["668ad918-0d09-4116-a6fe-0e7a9eda36f8"]
 		},
 		{
-			"type": "order"
+			"type": "order",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"datetime": "2018-03-22T16:42:53.005Z",
+			"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+			"session": "4707a999-206a-46f6-8f72-141228b58de3",
+			"affiliate": "8e170724-8401-45dd-876d-76be6c8353f5",
+			"products": ["668ad918-0d09-4116-a6fe-0e7a9eda36f8"]
 		}
 	]
 }
