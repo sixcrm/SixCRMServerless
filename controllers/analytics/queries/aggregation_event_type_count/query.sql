@@ -18,7 +18,7 @@ FROM
       e.unnest as event_type,
       DATE_TRUNC('{{period}}',datetime) rt_datetime
     FROM
-      analytics.d_datetime,
+      generate_series( '{{start}}'::timestamp, '{{end}}'::timestamp, '1 minute'::interval) datetime,
       (SELECT unnest(enum_range(NULL::analytics.d_event_type))) e
     GROUP BY
       event_type,

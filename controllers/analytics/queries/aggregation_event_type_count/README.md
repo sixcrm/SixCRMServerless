@@ -26,7 +26,6 @@ ____
 ### Query notes
 
 Connection to two dimensional tables :
-* `d_datetime` - Dimensional table of dates from 01.01.2017 to 01.01.2027
 * `d_event_type` - Dimensional table of event types [`click`, `order`, `lead`,`upsell`,`confirm`]
 
 This is needed to get the empty date list for dates with zero transactions.
