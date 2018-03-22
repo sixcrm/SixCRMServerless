@@ -6,635 +6,687 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-const kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
+const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 
 module.exports = class RebillHelper extends RebillHelperUtilities {
 
-  constructor(){
-
-    super();
-
-    this.parameter_definition = {
-      updateRebillState: {
-        required: {
-          rebill: 'rebill',
-          newstate:'new_state'
-        },
-        optional:{
-          errormessage:'error_message',
-          previousstate:'previous_state'
-        }
-      },
-      getShippingReceipts:{
-        required: {
-          rebill: 'rebill'
-        },
-        optional:{}
-      },
-      updateRebillProcessing:{
-        required: {
-          rebill:'rebill',
-          processing: 'processing'
-        },
-        optional:{}
-      },
-      addRebillToQueue:{
-        required:{
-          rebill:'rebill',
-          queuename:'queue_name'
-        },
-        optional:{}
-      }
-    };
-
-    this.parameter_validation = {
-      'session': global.SixCRM.routes.path('model','entities/session.json'),
-      'day': global.SixCRM.routes.path('model','helpers/rebill/day.json'),
-      'billdate':global.SixCRM.routes.path('model', 'definitions/iso8601.json'),
-      'nextproductschedulebilldaynumber': global.SixCRM.routes.path('model','helpers/rebill/day.json'),
-      'productschedules': global.SixCRM.routes.path('model','helpers/rebill/productschedules.json'),
-      'products': global.SixCRM.routes.path('model','helpers/rebill/products.json'),
-      'normalizedproductschedules':global.SixCRM.routes.path('model','helpers/rebill/normalizedproductschedules.json'),
-      'normalizedproducts':global.SixCRM.routes.path('model','helpers/rebill/normalizedproducts.json'),
-      'scheduleelementsonbillday':global.SixCRM.routes.path('model', 'helpers/rebill/scheduledproducts.json'),
-      'transactionproducts': global.SixCRM.routes.path('model', 'helpers/rebill/transactionproducts.json'),
-      'amount': global.SixCRM.routes.path('model','definitions/currency.json'),
-      'rebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/rebillprototype.json'),
-      'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
-      'transformedrebill': global.SixCRM.routes.path('model', 'entities/transformedrebill.json'),
-      'billablerebills':global.SixCRM.routes.path('model', 'helpers/rebill/billablerebills.json'),
-      'spoofedrebillmessages': global.SixCRM.routes.path('model', 'helpers/rebill/spoofedrebillmessages.json'),
-      'queuename': global.SixCRM.routes.path('model', 'workers/queuename.json'),
-      'queuemessagebodyprototype': global.SixCRM.routes.path('model','definitions/stringifiedjson.json'),
-      'statechangedat': global.SixCRM.routes.path('model','definitions/iso8601.json'),
-      'updatedrebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/updatedrebillprototype.json'),
-      'newstate': global.SixCRM.routes.path('model', 'workers/statename.json'),
-      'previousstate': global.SixCRM.routes.path('model', 'workers/statename.json'),
-      'errormessage': global.SixCRM.routes.path('model', 'helpers/rebill/errormessage.json'),
-      'shippingreceipts': global.SixCRM.routes.path('model','entities/components/shippingreceipts.json'),
-      'shippingreceiptids': global.SixCRM.routes.path('model','general/uuidv4list.json'),
-      'transactions': global.SixCRM.routes.path('model','entities/components/transactions.json')
-    };
+	constructor() {
+
+		super();
+
+		this.parameter_definition = {
+			updateRebillState: {
+				required: {
+					rebill: 'rebill',
+					newstate: 'new_state'
+				},
+				optional: {
+					errormessage: 'error_message',
+					previousstate: 'previous_state'
+				}
+			},
+			getShippingReceipts: {
+				required: {
+					rebill: 'rebill'
+				},
+				optional: {}
+			},
+			updateRebillProcessing: {
+				required: {
+					rebill: 'rebill',
+					processing: 'processing'
+				},
+				optional: {}
+			},
+			addRebillToQueue: {
+				required: {
+					rebill: 'rebill',
+					queuename: 'queue_name'
+				},
+				optional: {}
+			}
+		};
+
+		this.parameter_validation = {
+			'session': global.SixCRM.routes.path('model', 'entities/session.json'),
+			'day': global.SixCRM.routes.path('model', 'helpers/rebill/day.json'),
+			'billdate': global.SixCRM.routes.path('model', 'definitions/iso8601.json'),
+			'nextproductschedulebilldaynumber': global.SixCRM.routes.path('model', 'helpers/rebill/day.json'),
+			'productschedules': global.SixCRM.routes.path('model', 'helpers/rebill/productschedules.json'),
+			'products': global.SixCRM.routes.path('model', 'helpers/rebill/products.json'),
+			'normalizedproductschedules': global.SixCRM.routes.path('model', 'helpers/rebill/normalizedproductschedules.json'),
+			'normalizedproducts': global.SixCRM.routes.path('model', 'helpers/rebill/normalizedproducts.json'),
+			'scheduleelementsonbillday': global.SixCRM.routes.path('model', 'helpers/rebill/scheduledproducts.json'),
+			'transactionproducts': global.SixCRM.routes.path('model', 'helpers/rebill/transactionproducts.json'),
+			'amount': global.SixCRM.routes.path('model', 'definitions/currency.json'),
+			'rebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/rebillprototype.json'),
+			'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
+			'transformedrebill': global.SixCRM.routes.path('model', 'entities/transformedrebill.json'),
+			'billablerebills': global.SixCRM.routes.path('model', 'helpers/rebill/billablerebills.json'),
+			'spoofedrebillmessages': global.SixCRM.routes.path('model', 'helpers/rebill/spoofedrebillmessages.json'),
+			'queuename': global.SixCRM.routes.path('model', 'workers/queuename.json'),
+			'queuemessagebodyprototype': global.SixCRM.routes.path('model', 'definitions/stringifiedjson.json'),
+			'statechangedat': global.SixCRM.routes.path('model', 'definitions/iso8601.json'),
+			'updatedrebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/updatedrebillprototype.json'),
+			'newstate': global.SixCRM.routes.path('model', 'workers/statename.json'),
+			'previousstate': global.SixCRM.routes.path('model', 'workers/statename.json'),
+			'errormessage': global.SixCRM.routes.path('model', 'helpers/rebill/errormessage.json'),
+			'shippingreceipts': global.SixCRM.routes.path('model', 'entities/components/shippingreceipts.json'),
+			'shippingreceiptids': global.SixCRM.routes.path('model', 'general/uuidv4list.json'),
+			'transactions': global.SixCRM.routes.path('model', 'entities/components/transactions.json')
+		};
+
+		this.parameters = new Parameters({
+			validation: this.parameter_validation,
+			definition: this.parameter_definition
+		});
+
+	}
+
+	setParameters({
+		argumentation,
+		action
+	}) {
+
+		du.debug('Set Parameters');
+
+		this.parameters.setParameters({
+			argumentation: argumentation,
+			action: action
+		});
+
+		return Promise.resolve(true);
+
+	}
+
+	updateRebillProcessing() {
+
+		du.debug('Mark Rebill Processing');
+
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({
+				argumentation: arguments[0],
+				action: 'updateRebillProcessing'
+			}))
+			.then(() => this.acquireRebill())
+			.then(() => this.setRebillProcessing())
+			.then(() => this.updateRebill());
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+	}
 
-  }
+	acquireRebill() {
 
-  setParameters({argumentation, action}){
+		du.debug('Acquire Rebill');
 
-    du.debug('Set Parameters');
+		let rebill = this.parameters.get('rebill');
 
-    this.parameters.setParameters({argumentation: argumentation, action: action});
+		if (!_.has(this, 'rebillController')) {
+			this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+		}
 
-    return Promise.resolve(true);
+		return this.rebillController.get({
+			id: rebill.id
+		}).then(rebill => {
+			this.parameters.set('rebill', rebill);
+			return true;
+		});
 
-  }
+	}
 
-  updateRebillProcessing(){
+	setRebillProcessing() {
 
-    du.debug('Mark Rebill Processing');
+		du.debug('Set Rebill Processing');
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateRebillProcessing'}))
-    .then(() => this.acquireRebill())
-    .then(() => this.setRebillProcessing())
-    .then(() => this.updateRebill());
+		let rebill = this.parameters.get('rebill');
+		let processing = this.parameters.get('processing');
 
-  }
+		rebill.processing = processing;
 
-  acquireRebill(){
+		this.parameters.set('rebill', rebill);
 
-    du.debug('Acquire Rebill');
+		return true;
 
-    let rebill = this.parameters.get('rebill');
+	}
 
-    if(!_.has(this, 'rebillController')){
-      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-    }
+	updateRebill() {
 
-    return this.rebillController.get({id: rebill.id}).then(rebill => {
-      this.parameters.set('rebill', rebill);
-      return true;
-    });
+		du.debug('Update Rebill');
 
-  }
+		let rebill = this.parameters.get('rebill');
 
-  setRebillProcessing(){
+		if (!_.has(this, 'rebillController')) {
+			this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+		}
 
-    du.debug('Set Rebill Processing');
+		return this.rebillController.update({
+			entity: rebill
+		}).then(rebill => {
 
-    let rebill = this.parameters.get('rebill');
-    let processing = this.parameters.get('processing');
+			this.parameters.set('rebill', rebill);
 
-    rebill.processing = processing;
+			return true;
 
-    this.parameters.set('rebill', rebill);
+		});
 
-    return true;
+	}
 
-  }
+	updateRebillState() {
 
-  updateRebill(){
+		du.debug('Updating Rebill State');
 
-    du.debug('Update Rebill');
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({
+				argumentation: arguments[0],
+				action: 'updateRebillState'
+			}))
+			.then(() => this.acquireRebill())
+			.then(() => this.setConditionalProperties())
+			.then(() => this.buildUpdatedRebillPrototype())
+			.then(() => this.updateRebillFromUpdatedRebillPrototype())
+			.then(() => this.pushRebillStateChangeToRedshift());
 
-    let rebill = this.parameters.get('rebill');
+	}
 
-    if(!_.has(this, 'rebillController')){
-      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-    }
+	setConditionalProperties() {
 
-    return this.rebillController.update({entity: rebill}).then(rebill => {
+		du.debug('Set Conditional Properties');
 
-      this.parameters.set('rebill', rebill);
+		if (!this.parameters.isSet('newstate')) {
+			return true;
+		}
 
-      return true;
+		let rebill = this.parameters.get('rebill');
 
-    });
+		if (!this.parameters.isSet('previousstate') && !_.isUndefined(rebill.state) && rebill.state) {
+			this.parameters.set('previousstate', rebill.state);
+		}
 
-  }
+		return true;
 
-  updateRebillState(){
+	}
 
-    du.debug('Updating Rebill State');
+	buildUpdatedRebillPrototype() {
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateRebillState'}))
-    .then(() => this.acquireRebill())
-    .then(() => this.setConditionalProperties())
-    .then(() => this.buildUpdatedRebillPrototype())
-    .then(() => this.updateRebillFromUpdatedRebillPrototype())
-    .then(() => this.pushRebillStateChangeToRedshift());
+		du.debug('Build Updated Rebill Prototype');
 
-  }
+		let rebill = this.parameters.get('rebill');
 
-  setConditionalProperties(){
+		this.parameters.set('statechangedat', timestamp.getISO8601());
 
-    du.debug('Set Conditional Properties');
+		rebill.state = this.parameters.get('newstate');
+		rebill.state_changed_at = this.parameters.get('statechangedat');
+		rebill.history = this.createUpdatedHistoryObjectPrototype();
 
-    if(!this.parameters.isSet('newstate')){
-      return true;
-    }
+		//Technical Debt: note that this doesn't appear to be set every time!
+		if (this.parameters.isSet('previousstate')) {
+			rebill.previous_state = this.parameters.get('previousstate');
+		}
 
-    let rebill = this.parameters.get('rebill');
+		this.parameters.set('updatedrebillprototype', rebill);
 
-    if(!this.parameters.isSet('previousstate') && !_.isUndefined(rebill.state) && rebill.state){
-      this.parameters.set('previousstate', rebill.state);
-    }
+		return true;
 
-    return true;
+	}
 
-  }
+	createUpdatedHistoryObjectPrototype() {
 
-  buildUpdatedRebillPrototype(){
+		du.debug('Create Updated History Object Prototype');
 
-    du.debug('Build Updated Rebill Prototype');
+		let rebill = this.parameters.get('rebill');
 
-    let rebill = this.parameters.get('rebill');
+		if (_.has(rebill, 'history') && arrayutilities.nonEmpty(rebill.history)) {
 
-    this.parameters.set('statechangedat', timestamp.getISO8601());
+			rebill.history = this.updateHistoryPreviousStateWithNewExit();
 
-    rebill.state = this.parameters.get('newstate');
-    rebill.state_changed_at = this.parameters.get('statechangedat');
-    rebill.history = this.createUpdatedHistoryObjectPrototype();
+		} else {
 
-    //Technical Debt: note that this doesn't appear to be set every time!
-    if (this.parameters.isSet('previousstate')) {
-      rebill.previous_state = this.parameters.get('previousstate');
-    }
+			rebill.history = [];
 
-    this.parameters.set('updatedrebillprototype', rebill);
+		}
 
-    return true;
+		let new_history_element = this.createHistoryElementPrototype({});
 
-  }
+		rebill.history.push(new_history_element);
 
-  createUpdatedHistoryObjectPrototype(){
+		return rebill.history;
 
-    du.debug('Create Updated History Object Prototype');
+	}
 
-    let rebill = this.parameters.get('rebill');
+	updateHistoryPreviousStateWithNewExit() {
 
-    if(_.has(rebill, 'history') && arrayutilities.nonEmpty(rebill.history)){
+		du.debug('Update History With New Exit');
 
-      rebill.history = this.updateHistoryPreviousStateWithNewExit();
+		let rebill = this.parameters.get('rebill');
 
-    }else{
+		let last_matching_state = this.getLastMatchingStatePrototype();
 
-      rebill.history = [];
+		arrayutilities.find(rebill.history, (history_element, index) => {
+			if ((history_element.state == last_matching_state.state) && (history_element.entered_at == last_matching_state.entered_at)) {
+				rebill.history[index] = last_matching_state;
+			}
+		});
 
-    }
+		return rebill.history;
 
-    let new_history_element = this.createHistoryElementPrototype({});
+	}
 
-    rebill.history.push(new_history_element);
+	getLastMatchingStatePrototype() {
 
-    return rebill.history;
+		du.debug('Get Last Matching State Prototype');
 
-  }
+		let rebill = this.parameters.get('rebill');
+		let previous_state = this.parameters.get('previousstate');
+		let state_changed_at = this.parameters.get('statechangedat');
 
-  updateHistoryPreviousStateWithNewExit(){
+		let matching_states = arrayutilities.filter(rebill.history, (history_element) => {
+			return (history_element.state == previous_state)
+		});
 
-    du.debug('Update History With New Exit');
+		if (!arrayutilities.nonEmpty(matching_states)) {
 
-    let rebill = this.parameters.get('rebill');
+			du.warning('Rebill does not have a history of being in previous state: ' + previous_state);
 
-    let last_matching_state = this.getLastMatchingStatePrototype();
+			matching_states.push(this.createHistoryElementPrototype({
+				state: previous_state,
+				entered_at: state_changed_at,
+				error_message: 'Rebill had no previous history of being in this state.'
+			}));
 
-    arrayutilities.find(rebill.history, (history_element, index) => {
-      if((history_element.state == last_matching_state.state) && (history_element.entered_at == last_matching_state.entered_at)){
-        rebill.history[index] = last_matching_state;
-      }
-    });
+		}
 
-    return rebill.history;
+		matching_states = arrayutilities.sort(matching_states, (a, b) => {
+			return (a.entered_at - b.entered_at);
+		});
 
-  }
+		let last_matching_state = matching_states[matching_states.length - 1];
 
-  getLastMatchingStatePrototype(){
+		last_matching_state.exited_at = state_changed_at;
 
-    du.debug('Get Last Matching State Prototype');
+		return last_matching_state;
 
-    let rebill = this.parameters.get('rebill');
-    let previous_state = this.parameters.get('previousstate');
-    let state_changed_at = this.parameters.get('statechangedat');
+	}
 
-    let matching_states = arrayutilities.filter(rebill.history, (history_element) => {
-      return (history_element.state == previous_state)
-    });
+	createHistoryElementPrototype({
+		state,
+		entered_at,
+		exited_at,
+		error_message
+	}) {
 
-    if(!arrayutilities.nonEmpty(matching_states)){
+		du.debug('Create Rebill History Element Prototype');
 
-      du.warning('Rebill does not have a history of being in previous state: '+previous_state);
+		state = (!_.isUndefined(state) && !_.isNull(state)) ? state : this.parameters.get('newstate');
+		entered_at = (!_.isUndefined(entered_at) && !_.isNull(entered_at)) ? entered_at : this.parameters.get('statechangedat');
+		exited_at = (!_.isUndefined(exited_at) && !_.isNull(exited_at)) ? exited_at : this.parameters.get('exitedat', null, false);
+		error_message = (!_.isUndefined(error_message)) ? error_message : this.parameters.get('errormessage', null, false);
 
-      matching_states.push(this.createHistoryElementPrototype({state: previous_state, entered_at: state_changed_at, error_message: 'Rebill had no previous history of being in this state.'}));
+		let history_element = {
+			entered_at: entered_at,
+			state: state
+		};
 
-    }
+		if (!_.isNull(error_message)) {
+			history_element.error_message = error_message;
+		}
 
-    matching_states = arrayutilities.sort(matching_states, (a, b) => {
-      return (a.entered_at - b.entered_at);
-    });
+		if (!_.isNull(exited_at)) {
+			history_element.exited_at = exited_at;
+		}
 
-    let last_matching_state = matching_states[matching_states.length - 1];
+		return history_element;
 
-    last_matching_state.exited_at = state_changed_at;
+	}
 
-    return last_matching_state;
+	updateRebillFromUpdatedRebillPrototype() {
 
-  }
+		du.debug('Update Rebill');
 
-  createHistoryElementPrototype({state, entered_at, exited_at, error_message}){
+		let updated_rebill_prototype = this.parameters.get('updatedrebillprototype');
 
-    du.debug('Create Rebill History Element Prototype');
+		if (!_.has(this, 'rebillController')) {
+			this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+		}
 
-    state = (!_.isUndefined(state) && !_.isNull(state))?state:this.parameters.get('newstate');
-    entered_at = (!_.isUndefined(entered_at) && !_.isNull(entered_at))?entered_at:this.parameters.get('statechangedat');
-    exited_at = (!_.isUndefined(exited_at) && !_.isNull(exited_at))?exited_at:this.parameters.get('exitedat', null, false);
-    error_message = (!_.isUndefined(error_message))?error_message:this.parameters.get('errormessage', null, false);
+		return this.rebillController.update({
+			entity: updated_rebill_prototype
+		}).then(updated_rebill => {
 
-    let history_element = {
-      entered_at: entered_at,
-      state: state
-    };
+			this.parameters.set('rebill', updated_rebill);
 
-    if(!_.isNull(error_message)){
-      history_element.error_message = error_message;
-    }
+			return updated_rebill;
 
-    if(!_.isNull(exited_at)){
-      history_element.exited_at = exited_at;
-    }
+		});
 
-    return history_element;
+	}
 
-  }
+	getAvailableRebillsAsMessages() {
 
-  updateRebillFromUpdatedRebillPrototype(){
+		du.debug('Get Available Rebills As Messages');
 
-    du.debug('Update Rebill');
+		return this.getBillableRebills()
+			.then(() => this.spoofRebillMessages())
+			.then(() => {
+				return this.parameters.get('spoofedrebillmessages');
+			})
 
-    let updated_rebill_prototype = this.parameters.get('updatedrebillprototype');
+	}
 
-    if(!_.has(this, 'rebillController')){
-      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-    }
+	spoofRebillMessages() {
 
-    return this.rebillController.update({entity: updated_rebill_prototype}).then(updated_rebill => {
+		du.debug('Spoof Rebill Messages');
 
-      this.parameters.set('rebill', updated_rebill);
+		let billable_rebills = this.parameters.get('billablerebills');
 
-      return updated_rebill;
+		let spoofed_rebill_messages = [];
 
-    });
+		if (arrayutilities.nonEmpty(billable_rebills)) {
 
-  }
+			spoofed_rebill_messages = arrayutilities.map(billable_rebills, rebill => {
 
-  getAvailableRebillsAsMessages(){
+				return this.createRebillMessageSpoof(rebill);
 
-    du.debug('Get Available Rebills As Messages');
+			});
 
-    return this.getBillableRebills()
-    .then(() => this.spoofRebillMessages())
-    .then(() => {
-      return this.parameters.get('spoofedrebillmessages');
-    })
+		}
 
-  }
+		this.parameters.set('spoofedrebillmessages', spoofed_rebill_messages);
 
-  spoofRebillMessages(){
+		return true;
 
-    du.debug('Spoof Rebill Messages');
+	}
 
-    let billable_rebills = this.parameters.get('billablerebills');
+	createRebillMessageSpoof(rebill) {
 
-    let spoofed_rebill_messages = [];
+		du.debug('Create Rebill Message Spoof');
 
-    if(arrayutilities.nonEmpty(billable_rebills)){
+		let body = JSON.stringify({
+			id: rebill.id
+		});
 
-      spoofed_rebill_messages = arrayutilities.map(billable_rebills, rebill => {
+		let spoofed_message = {
+			MessageId: uuidV4(),
+			MD5OfBody: "",
+			ReceiptHandle: "",
+			Body: body,
+			spoofed: true
+		};
 
-        return this.createRebillMessageSpoof(rebill);
+		return spoofed_message;
 
-      });
+	}
 
-    }
+	getBillableRebills() {
 
-    this.parameters.set('spoofedrebillmessages', spoofed_rebill_messages);
+		du.debug('Get Billable Rebills');
 
-    return true;
+		let now = timestamp.createDate();
 
-  }
+		if (!_.has(this, 'rebillController')) {
+			this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+		}
 
-  createRebillMessageSpoof(rebill){
+		return this.rebillController.getRebillsAfterTimestamp(now).then(rebills => {
 
-    du.debug('Create Rebill Message Spoof');
+			let billable_rebills = arrayutilities.filter(rebills, (rebill) => {
+				if (!_.has(rebill, 'processing') || rebill.processing !== true) {
+					return true;
+				}
+				return false;
+			})
 
-    let body = JSON.stringify({id: rebill.id});
+			this.parameters.set('billablerebills', billable_rebills);
 
-    let spoofed_message = {
-      MessageId: uuidV4(),
-      MD5OfBody: "",
-      ReceiptHandle: "",
-      Body: body,
-      spoofed: true
-    };
+			return true;
 
-    return spoofed_message;
+		});
 
-  }
+	}
 
-  getBillableRebills(){
+	addRebillToQueue() {
 
-    du.debug('Get Billable Rebills');
+		du.debug('Add Rebill To Queue');
 
-    let now = timestamp.createDate();
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({
+				argumentation: arguments[0],
+				action: 'addRebillToQueue'
+			}))
+			.then(() => this.acquireRebill())
+			.then(() => this.createQueueMessageBodyPrototype())
+			.then(() => this.addQueueMessageToQueue());
 
-    if(!_.has(this, 'rebillController')){
-      this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-    }
+	}
 
-    return this.rebillController.getRebillsAfterTimestamp(now).then(rebills => {
+	addQueueMessageToQueue() {
 
-      let billable_rebills = arrayutilities.filter(rebills, (rebill) => {
-        if(!_.has(rebill, 'processing') || rebill.processing !== true){
-          return true;
-        }
-        return false;
-      })
+		du.debug('Add Queue Message To Queue');
 
-      this.parameters.set('billablerebills', billable_rebills);
+		let message_body = this.parameters.get('queuemessagebodyprototype');
+		let queue_name = this.parameters.get('queuename');
 
-      return true;
+		this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+		return this.sqsutilities.sendMessage({
+			message_body: message_body,
+			queue: queue_name
+		}).then(() => {
 
-    });
+			return true;
 
-  }
+		});
 
-  addRebillToQueue(){
+	}
 
-    du.debug('Add Rebill To Queue');
+	createQueueMessageBodyPrototype() {
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'addRebillToQueue'}))
-    .then(() => this.acquireRebill())
-    .then(() => this.createQueueMessageBodyPrototype())
-    .then(() => this.addQueueMessageToQueue());
+		du.debug('Create Queue Message Body Prototype');
 
-  }
+		let rebill = this.parameters.get('rebill');
 
-  addQueueMessageToQueue(){
+		let queue_message_body_prototype = JSON.stringify({
+			id: rebill.id
+		});
 
-    du.debug('Add Queue Message To Queue');
+		this.parameters.set('queuemessagebodyprototype', queue_message_body_prototype);
 
-    let message_body = this.parameters.get('queuemessagebodyprototype');
-    let queue_name = this.parameters.get('queuename');
+		return true;
 
-    this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
-    return this.sqsutilities.sendMessage({message_body: message_body, queue: queue_name}).then(() => {
+	}
 
-        return true;
+	getShippingReceipts() {
 
-    });
+		du.debug('Get Shipping Receipts');
 
-  }
+		return Promise.resolve(true)
+			.then(() => this.setParameters({
+				argumentation: arguments[0],
+				action: 'getShippingReceipts'
+			}))
+			.then(() => this.acquireRebill())
+			.then(() => this.acquireTransactions())
+			.then(() => this.getShippingReceiptIDs())
+			.then(() => this.acquireShippingReceipts())
+			.then(() => {
 
-  createQueueMessageBodyPrototype(){
+				let shipping_receipts = this.parameters.get('shippingreceipts', null, false);
 
-    du.debug('Create Queue Message Body Prototype');
+				if (_.isNull(shipping_receipts)) {
+					shipping_receipts = [];
+				}
+				return shipping_receipts;
+			});
 
-    let rebill = this.parameters.get('rebill');
+	}
 
-    let queue_message_body_prototype = JSON.stringify({
-      id: rebill.id
-    });
+	acquireTransactions() {
 
-    this.parameters.set('queuemessagebodyprototype', queue_message_body_prototype);
+		du.debug('Acquire Transactions');
 
-    return true;
+		let rebill = this.parameters.get('rebill');
 
-  }
+		if (!_.has(this, 'rebillController')) {
+			this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+		}
 
-  getShippingReceipts(){
+		return this.rebillController.listTransactions(rebill)
+			.then((results) => this.rebillController.getResult(results, 'transactions'))
+			.then(transactions => {
 
-    du.debug('Get Shipping Receipts');
+				if (!_.isNull(transactions)) {
+					this.parameters.set('transactions', transactions);
+				}
 
-    return Promise.resolve(true)
-    .then(() => this.setParameters({argumentation: arguments[0], action: 'getShippingReceipts'}))
-    .then(() => this.acquireRebill())
-    .then(() => this.acquireTransactions())
-    .then(() => this.getShippingReceiptIDs())
-    .then(() => this.acquireShippingReceipts())
-    .then(() => {
+				return true;
 
-      let shipping_receipts = this.parameters.get('shippingreceipts', null, false);
+			});
 
-      if(_.isNull(shipping_receipts)){
-        shipping_receipts = [];
-      }
-      return shipping_receipts;
-    });
+	}
 
-  }
+	getShippingReceiptIDs() {
 
-  acquireTransactions(){
+		du.debug('Get Shipping Receipt IDs');
 
-    du.debug('Acquire Transactions');
+		let transactions = this.parameters.get('transactions', null, false);
 
-    let rebill = this.parameters.get('rebill');
+		if (_.isNull(transactions)) {
+			return true;
+		}
 
-    if(!_.has(this, 'rebillController')){
-      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-    }
+		let shipping_receipt_ids = arrayutilities.map(transactions, transaction => {
 
-    return this.rebillController.listTransactions(rebill)
-    .then((results) => this.rebillController.getResult(results, 'transactions'))
-    .then(transactions => {
+			return arrayutilities.map(transaction.products, transaction_product => {
 
-      if(!_.isNull(transactions)){
-        this.parameters.set('transactions', transactions);
-      }
+				if (_.has(transaction_product, 'shipping_receipt')) {
+					return transaction_product.shipping_receipt;
+				}
 
-      return true;
+			});
 
-    });
+		});
 
-  }
+		shipping_receipt_ids = arrayutilities.flatten(shipping_receipt_ids);
+		shipping_receipt_ids = arrayutilities.unique(shipping_receipt_ids);
+		shipping_receipt_ids = arrayutilities.filter(shipping_receipt_ids, shipping_receipt_id => {
+			if (_.isUndefined(shipping_receipt_id) || _.isNull(shipping_receipt_ids)) {
+				return false;
+			}
+			return true;
+		});
 
-  getShippingReceiptIDs(){
+		if (arrayutilities.nonEmpty(shipping_receipt_ids)) {
+			this.parameters.set('shippingreceiptids', shipping_receipt_ids);
+		}
 
-    du.debug('Get Shipping Receipt IDs');
+		return true;
 
-    let transactions = this.parameters.get('transactions', null, false);
+	}
 
-    if(_.isNull(transactions)){
-      return true;
-    }
+	acquireShippingReceipts() {
 
-    let shipping_receipt_ids = arrayutilities.map(transactions, transaction => {
+		du.debug('Acquire Shipping Receipts');
 
-      return arrayutilities.map(transaction.products, transaction_product => {
+		let shipping_receipt_ids = this.parameters.get('shippingreceiptids', null, false);
 
-        if(_.has(transaction_product, 'shipping_receipt')){
-          return transaction_product.shipping_receipt;
-        }
+		if (_.isNull(shipping_receipt_ids)) {
+			return true;
+		}
 
-      });
+		if (!_.has(this, 'shippingReceiptController')) {
+			this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+		}
 
-    });
+		return this.shippingReceiptController.getListByAccount({
+				ids: shipping_receipt_ids
+			})
+			.then((results) => this.shippingReceiptController.getResult(results))
+			.then(shipping_receipts => {
 
-    shipping_receipt_ids = arrayutilities.flatten(shipping_receipt_ids);
-    shipping_receipt_ids = arrayutilities.unique(shipping_receipt_ids);
-    shipping_receipt_ids = arrayutilities.filter(shipping_receipt_ids, shipping_receipt_id => {
-      if(_.isUndefined(shipping_receipt_id) || _.isNull(shipping_receipt_ids)){
-        return false;
-      }
-      return true;
-    });
+				if (!_.isNull(shipping_receipts)) {
+					this.parameters.set('shippingreceipts', shipping_receipts);
+				}
 
-    if(arrayutilities.nonEmpty(shipping_receipt_ids)){
-      this.parameters.set('shippingreceiptids', shipping_receipt_ids);
-    }
+				return true;
 
-    return true;
+			});
 
-  }
+	}
 
-  acquireShippingReceipts(){
+	pushRebillStateChangeToRedshift() {
 
-    du.debug('Acquire Shipping Receipts');
+		du.debug('Pushing Rebill State Change To Redshift');
 
-    let shipping_receipt_ids = this.parameters.get('shippingreceiptids', null, false);
+		return this.transformRebill()
+			.then(() => this.pushEvent())
+			.then(() => this.parameters.get('rebill'))
 
-    if(_.isNull(shipping_receipt_ids)){
-      return true;
-    }
+	}
 
-    if(!_.has(this, 'shippingReceiptController')){
-      this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
-    }
+	transformRebill() {
 
-    return this.shippingReceiptController.getListByAccount({ids: shipping_receipt_ids})
-    .then((results) => this.shippingReceiptController.getResult(results))
-    .then(shipping_receipts => {
+		const rebill = this.parameters.get('rebill');
 
-      if(!_.isNull(shipping_receipts)){
-        this.parameters.set('shippingreceipts', shipping_receipts);
-      }
+		// A.Zelen
+		// For summary amounts in queries we need amount of rebills to be feed here
+		// I hard-coded zero
 
-      return true;
+		const transformedRebill = {
+			id_rebill: rebill.id,
+			current_queuename: rebill.state,
+			previous_queuename: rebill.previous_state || '',
+			account: rebill.account,
+			datetime: rebill.state_changed_at,
+			amount: 0
+		};
 
-    });
+		this.parameters.set('transformedrebill', transformedRebill);
 
-  }
+		return Promise.resolve();
+	}
 
-  pushRebillStateChangeToRedshift(){
+	pushEvent() {
 
-    du.debug('Pushing Rebill State Change To Redshift');
+		du.debug('Pushing Rebill State Change');
 
-    return this.transformRebill()
-      .then(() => this.pushToRedshift())
-      .then(() => this.parameters.get('rebill'))
+		if (!this.eventHelperController) {
 
-  }
+			this.eventHelperController = new EventHelperController();
 
-  transformRebill() {
+		}
 
-    const rebill = this.parameters.get('rebill');
+		const context = this.parameters.store;
+		context.user = global.user;
 
-    // A.Zelen
-    // For summary amounts in queries we need amount of rebills to be feed here
-    // I hard-coded zero
+		this.eventHelperController.pushEvent({
+			event_type: 'rebill',
+			context
+		});
 
-    const transformedRebill = {
-      id_rebill: rebill.id,
-      current_queuename: rebill.state,
-      previous_queuename: rebill.previous_state || '',
-      account: rebill.account,
-      datetime: rebill.state_changed_at,
-      amount: 0
-    };
+	}
 
-    this.parameters.set('transformedrebill', transformedRebill);
+	assureProductScheduleHelperController() {
 
-    return Promise.resolve();
-  }
+		du.debug('Assure Product Schedule Helper Controller');
 
-  pushToRedshift() {
+		if (!_.has(this, 'productScheduleHelperController')) {
+			const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 
-    const rebill = this.parameters.get('transformedrebill');
+			this.productScheduleHelperController = new ProductScheduleHelperController();
+		}
 
-    du.debug('Uploading Rebill State Change to Kinesis');
+		return true;
 
-    return kinesisfirehoseutilities.putRecord('rebills', rebill).then(() => {
-      du.debug('Rebill State Change Uploaded to Kinesis');
+	}
 
-      return Promise.resolve(true);
-    })
-  }
+	isAvailable({
+		rebill
+	}) {
 
-  assureProductScheduleHelperController(){
+		du.debug('Is Available');
 
-    du.debug('Assure Product Schedule Helper Controller');
+		let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
 
-    if(!_.has(this, 'productScheduleHelperController')){
-      const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
+		return !(timestamp.getTimeDifference(bill_at_timestamp) < 0);
 
-      this.productScheduleHelperController = new ProductScheduleHelperController();
-    }
-
-    return true;
-
-  }
-
-  isAvailable({rebill}){
-
-    du.debug('Is Available');
-
-    let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
-
-    return !(timestamp.getTimeDifference(bill_at_timestamp) < 0);
-
-  }
+	}
 
 };
