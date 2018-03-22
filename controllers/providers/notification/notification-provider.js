@@ -21,6 +21,7 @@ class NotificationProvider {
     this.immutable_categories = [];
     this.immutable_types = ['alert', 'persistent'];
 
+    //Technical Debt:  Add action, notificationprototype
     this.parameter_validation = {};
     this.parameter_definition = {
       createNotificationForAccountAndUser:{
@@ -142,7 +143,9 @@ class NotificationProvider {
       }
 
       arrayutilities.map(results, (user_acl_element) => {
-        this.parameters.push('receiptusers', user_acl_element.user);
+        if(!_.has(user_acl_element, 'pending')){
+          this.parameters.push('receiptusers', user_acl_element.user);
+        }
       });
 
       return true;
