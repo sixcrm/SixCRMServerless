@@ -16,5 +16,8 @@
 	},
 	"confirm": {
 		"handlers": ["confirm-event-handler.js"]
+	},
+	"rebill": {
+		"handlers": ["rebill-event-handler.js"]
 	}
 }
