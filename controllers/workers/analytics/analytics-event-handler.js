@@ -59,9 +59,9 @@ module.exports = class AnalyticsEventHandler {
 
 			du.debug('Message recieved', message);
 
-			if (!message.event_type) {
+			if (!message.type) {
 
-				du.warn('Analytics event missing event_type');
+				du.warn('Analytics event missing type');
 
 				return this._removeRecordFromSQS(r);
 
@@ -71,7 +71,7 @@ module.exports = class AnalyticsEventHandler {
 			const eventKey = eventKeys.find(ek => {
 
 				const regex = new RegExp(ek);
-				return message.event_type.match(regex);
+				return message.type.match(regex);
 
 			});
 
@@ -79,7 +79,7 @@ module.exports = class AnalyticsEventHandler {
 
 			if (!handerMap) {
 
-				du.warn('Analytics event type not mapped', message.event_type);
+				du.warn('Analytics event type not mapped', message.type);
 
 				return this._removeRecordFromSQS(r);
 
