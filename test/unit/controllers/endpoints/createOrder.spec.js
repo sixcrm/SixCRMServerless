@@ -994,6 +994,16 @@ describe('createOrder', function () {
         expect(result).to.equal(true);
         expect(createOrderController.parameters.store['rebill']).to.deep.equal(rebill);
       });
+    });
+
+    it('throws an error if no products could be found', () => {
+      let session = getValidSession();
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      createOrderController.parameters.set('session', session);
+
+      expect(() => {
+        createOrderController.createRebill();
+      }).to.throw('[500] Nothing to add to the rebill.');
 
     });
 
@@ -1201,6 +1211,244 @@ describe('createOrder', function () {
 
       expect(result).to.equal(true);
 
+    });
+
+    it('handles no watermark products', () => {
+
+      let rebill = getValidRebill();
+      let session = getValidSession();
+      delete session.watermark;
+      let product_schedules = getValidProductScheduleGroups(null, true);
+      let product_groups = getValidTransactionProducts(null, true);
+      let info = getValidInfo();
+      let transactions = getValidTransactions();
+
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: () => {
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
+        constructor(){}
+        addRebillToQueue(){
+          return Promise.resolve(true);
+        }
+        updateRebillState(){
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: () => {
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        update({entity}){
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+        listByMerchantProviderAndDateRange:() =>{
+          return Promise.resolve({merchantprovidersummaries: []});
+        },
+        getResult:() => {
+          return [];
+        },
+        create:({entity}) => {
+          entity.id = uuidV4();
+          entity.created_at = timestamp.getISO8601();
+          entity.updated_at = entity.created_at;
+          entity.account = global.account;
+          return Promise.resolve(entity);
+        },
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
+        },
+        getRegion: () => 'localhost'
+      });
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      createOrderController.parameters.set('rebill', rebill);
+      createOrderController.parameters.set('session', session);
+      createOrderController.parameters.set('productschedules', product_schedules);
+      createOrderController.parameters.set('products', product_groups);
+      createOrderController.parameters.set('info', info);
+      createOrderController.parameters.set('transactions', transactions);
+      createOrderController.parameters.set('result', 'success');
+
+      let result = createOrderController.postProcessing();
+
+      expect(result).to.equal(true);
+
+    });
+
+    it('handles no watermark product schedules', () => {
+
+      let rebill = getValidRebill();
+      let session = getValidSession();
+      delete session.watermark.product_schedules;
+      let product_schedules = getValidProductScheduleGroups(null, true);
+      let product_groups = getValidTransactionProducts(null, true);
+      let info = getValidInfo();
+      let transactions = getValidTransactions();
+
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: () => {
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
+        constructor(){}
+        addRebillToQueue(){
+          return Promise.resolve(true);
+        }
+        updateRebillState(){
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: () => {
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        update({entity}){
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+        listByMerchantProviderAndDateRange:() =>{
+          return Promise.resolve({merchantprovidersummaries: []});
+        },
+        getResult:() => {
+          return [];
+        },
+        create:({entity}) => {
+          entity.id = uuidV4();
+          entity.created_at = timestamp.getISO8601();
+          entity.updated_at = entity.created_at;
+          entity.account = global.account;
+          return Promise.resolve(entity);
+        },
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
+        },
+        getRegion: () => 'localhost'
+      });
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      createOrderController.parameters.set('rebill', rebill);
+      createOrderController.parameters.set('session', session);
+      createOrderController.parameters.set('productschedules', product_schedules);
+      createOrderController.parameters.set('products', product_groups);
+      createOrderController.parameters.set('info', info);
+      createOrderController.parameters.set('transactions', transactions);
+      createOrderController.parameters.set('result', 'success');
+
+      let result = createOrderController.postProcessing();
+
+      expect(result).to.equal(true);
+
+    });
+
+    it('marks rebill as no_process if register result unsuccessful', () => {
+
+      let rebill = getValidRebill();
+      let session = getValidSession();
+      let product_schedules = getValidProductScheduleGroups(null, true);
+      let product_groups = getValidTransactionProducts(null, true);
+      let info = getValidInfo();
+      let transactions = getValidTransactions();
+
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: () => {
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        update: () => {
+            return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
+        putRecord: () => {
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+        update({entity}){
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
+        listByMerchantProviderAndDateRange:() =>{
+          return Promise.resolve({merchantprovidersummaries: []});
+        },
+        getResult:() => {
+          return [];
+        },
+        create:({entity}) => {
+          entity.id = uuidV4();
+          entity.created_at = timestamp.getISO8601();
+          entity.updated_at = entity.created_at;
+          entity.account = global.account;
+          return Promise.resolve(entity);
+        },
+        update:({entity}) => {
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+        publish: () => {
+          return Promise.resolve();
+        },
+        getRegion: () => 'localhost'
+      });
+
+      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+      createOrderController.parameters.set('rebill', rebill);
+      createOrderController.parameters.set('session', session);
+      createOrderController.parameters.set('productschedules', product_schedules);
+      createOrderController.parameters.set('products', product_groups);
+      createOrderController.parameters.set('info', info);
+      createOrderController.parameters.set('transactions', transactions);
+      createOrderController.parameters.set('result', 'fail');
+
+      let result = createOrderController.postProcessing();
+
+      expect(result).to.equal(true);
+      expect(rebill.no_process).to.be.true;
     });
 
   });

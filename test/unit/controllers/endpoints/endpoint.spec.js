@@ -1,22 +1,12 @@
 'use strict'
 
-const _ = require('underscore');
-const mockery = require('mockery');
 let chai = require('chai');
-const uuidV4 = require('uuid/v4');
 const querystring = require('querystring');
 
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const EndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/endpoint.js');
 
 function getValidLambdaPOSTEvent(){
@@ -78,12 +68,6 @@ function getValidLambdaPOSTEvent(){
     body: '{"campaign":"70a6689a-5814-438b-b9fd-dd484d0812f9","affiliates":{"affiliate":"ZC9HCFCTGZ","subaffiliate_1":"MMCSENES99","subaffiliate_2":"7YR4T5345D","subaffiliate_3":"9H24CJCXEV","subaffiliate_4":"FGTLJ5NEJU","subaffiliate_5":"6Y2CRE5QN9","cid":"5JN5LHRVZR"}}',
     isBase64Encoded: false
   }
-
-}
-
-function getValidLocalPOSTEvent(){
-
-  return JSON.stringify(getValidLambdaPOSTEvent());
 
 }
 
@@ -162,6 +146,61 @@ describe('controllers/endpoints/endpoint.js', () => {
       let endpointController = new EndpointController();
 
       expect(objectutilities.getClassName(endpointController)).to.equal('EndpointController');
+    });
+  });
+
+  describe('execute', () => {
+    it('calls preamble', () => {
+      let called = false;
+      const event = {};
+      const endpointController = new EndpointController();
+      endpointController.preamble = _event => {
+          expect(_event).to.equal(event)
+          called = true;
+          return Promise.resolve();
+      }
+      return endpointController.execute(event).then(() => {
+          expect(called).to.be.true;
+      });
+    });
+
+    it('calls body', () => {
+      let called = false;
+      const event = {};
+      const endpointController = new EndpointController();
+      endpointController.body = _event => {
+          expect(_event).to.equal(event)
+          called = true;
+          return Promise.resolve();
+      }
+      return endpointController.execute(event).then(() => {
+          expect(called).to.be.true;
+      });
+    });
+
+    it('calls epilogue', () => {
+      let called = false;
+      const event = {};
+      const endpointController = new EndpointController();
+      endpointController.epilogue = () => {
+          called = true;
+          return Promise.resolve();
+      }
+      return endpointController.execute(event).then(() => {
+          expect(called).to.be.true;
+      });
+    });
+
+    it('returns body', () => {
+      const response = 'foo';
+      const event = {};
+      const endpointController = new EndpointController();
+      endpointController.body = () => {
+          return Promise.resolve(response);
+      }
+      return endpointController.execute(event).then(result => {
+          expect(result).to.equal(response);
+      });
     });
   });
 
@@ -491,8 +530,6 @@ describe('controllers/endpoints/endpoint.js', () => {
       let endpointController = new EndpointController();
       let event = getValidGETEvent();
 
-      event.queryStringParameters = querystring.parse(event.queryStringParameters);
-
       return endpointController.parseEventQueryString(event).then(result => {
 
         expect(result.queryStringParameters).to.deep.equal(event.queryStringParameters);
@@ -517,22 +554,22 @@ describe('controllers/endpoints/endpoint.js', () => {
     });
 
     it('throws an error when queryStringParameters is not parsable', () => {
-
       let endpointController = new EndpointController();
-      let event = getValidGETEvent();
-      let bad_types = [123, null, {}, () => {}, 3.2, 'somerandomstring'];
+      let bad_types = [123, null, () => {}, 3.2];
 
-      arrayutilities.map(bad_types, bad_type => {
-
+      return Promise.all(arrayutilities.map(bad_types, bad_type => {
+        let event = getValidGETEvent();
         event.queryStringParameters = bad_type;
 
-        try{
-          endpointController.parseEventQueryString(event);
-        }catch(error){
+        return endpointController.parseEventQueryString(event)
+        .then(() => {
+            throw new Error(`Expected failure for ${bad_type}`);
+        })
+        .catch(error => {
           expect(error.message).to.equal('[400] Unexpected event structure.');
-        }
+        });
 
-      });
+      }));
 
     });
 

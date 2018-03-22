@@ -204,25 +204,25 @@ module.exports = class EndpointController {
 
     du.debug('Parse Event Query String');
 
-    if (_.has(event, 'queryStringParameters') && !_.isObject(event.queryStringParameters)) {
+    return Promise.resolve().then(() => {
+        if (!_.has(event, 'queryStringParameters')) {
+            return event;
+        }
 
-      try {
+        if (_.isString(event.queryStringParameters)) {
+          event.queryStringParameters = querystring.parse(event.queryStringParameters);
+        }
 
-        event.queryStringParameters = querystring.parse(event.queryStringParameters);
+        if (
+            !_.isObject(event.queryStringParameters) ||
+            _.isArray(event.queryStringParameters) ||
+            _.isFunction(event.queryStringParameters)
+        ) {
+            this.throwUnexpectedEventStructureError(event);
+        }
 
-        return this.parseEventQueryString(event);
-
-      } catch (error) {
-
-        du.error(error);
-
-        this.throwUnexpectedEventStructureError(event);
-
-      }
-
-    }
-
-    return Promise.resolve(event);
+        return event;
+    });
 
   }
 
