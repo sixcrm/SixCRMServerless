@@ -1,5 +1,7 @@
-const _ = require('underscore')
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+
+const ATTRIBUTES = 12;
 
 module.exports = class WriteEventRecords {
 
@@ -9,38 +11,19 @@ module.exports = class WriteEventRecords {
 
 	}
 
-	// session          VARCHAR(36) NOT NULL,
-  // "type"           analytics.d_event_type,
-  // datetime         TIMESTAMP    NOT NULL,
-  // account          VARCHAR(36)  NOT NULL,
-  // campaign         VARCHAR(36)  NOT NULL,
-  // product_schedule VARCHAR(36),
-  // affiliate        VARCHAR(36),
-  // subaffiliate_1   VARCHAR(36),
-  // subaffiliate_2   VARCHAR(36),
-  // subaffiliate_3   VARCHAR(36),
-  // subaffiliate_4   VARCHAR(36),
-  // subaffiliate_5   VARCHAR(36),
-
 	execute(records) {
 
 		du.debug('WriteEventRecords.execute()');
 
 		let query =
-			'INSERT INTO analytics.f_transactions ( \
-				id, \
+			'INSERT INTO analytics.f_events ( \
+				session, \
+				"type", \
 				datetime, \
-				customer, \
-				creditcard, \
-				merchant_provider, \
-				campaign, \
-				affiliate, \
-				amount, \
-				processor_result, \
 				account, \
-				type, \
-				subtype, \
+				campaign, \
 				product_schedule, \
+				affiliate, \
 				subaffiliate_1, \
 				subaffiliate_2, \
 				subaffiliate_3, \
@@ -50,26 +33,19 @@ module.exports = class WriteEventRecords {
 
 		const values = records.map((r, i) => {
 
-			return (`(${Array.from(new Array(18), (val, index) => (i * 18) + index + 1).map(n => `$${n}`).join(',')})`);
+			return (`(${Array.from(new Array(ATTRIBUTES), (val, index) => (i * ATTRIBUTES) + index + 1).map(n => `$${n}`).join(',')})`);
 
 		});
 
 		query += values.join(',');
 
 		query += ' \
-			ON CONFLICT (id) DO UPDATE SET  \
-			datetime = EXCLUDED.datetime, \
-			customer = EXCLUDED.customer, \
-			creditcard = EXCLUDED.creditcard, \
-			merchant_provider = EXCLUDED.merchant_provider, \
+			ON CONFLICT (account, datetime) DO UPDATE SET  \
+			session = EXCLUDED.session, \
+			"type" = EXCLUDED.type, \
 			campaign = EXCLUDED.campaign, \
-			affiliate = EXCLUDED.affiliate, \
-			amount = EXCLUDED.amount, \
-			processor_result = EXCLUDED.processor_result, \
-			account = EXCLUDED.account, \
-			type = EXCLUDED.type, \
-			subtype = EXCLUDED.subtype, \
 			product_schedule = EXCLUDED.product_schedule, \
+			affiliate = EXCLUDED.affiliate, \
 			subaffiliate_1 = EXCLUDED.subaffiliate_1, \
 			subaffiliate_2 = EXCLUDED.subaffiliate_2, \
 			subaffiliate_3 = EXCLUDED.subaffiliate_3, \
@@ -79,30 +55,27 @@ module.exports = class WriteEventRecords {
 		const queryArgs = _.flatten(records.map(r => {
 
 			return [
-					r.id,
-					r.datetime,
-					r.customer,
-					r.creditcard,
-					r.merchant_provider,
-					r.campaign,
-					r.affiliate,
-					r.amount,
-					r.processor_result,
-					r.account,
-					r.type,
-					r.subtype,
-					r.product_schedule,
-					r.subaffiliate_1,
-					r.subaffiliate_2,
-					r.subaffiliate_3,
-					r.subaffiliate_4,
-					r.subaffiliate_5
+				r.session,
+				r.type,
+				r.datetime,
+				r.account,
+				r.campaign,
+				r.product_schedule,
+				r.affiliate,
+				r.subaffiliate_1,
+				r.subaffiliate_2,
+				r.subaffiliate_3,
+				r.subaffiliate_4,
+				r.subaffiliate_5
 			];
 
 		}));
 
-		return this._auroraContext.connection.queryWithArgs(query, queryArgs)
-			.then(() => records);
+		return this._auroraContext.withConnection((connection) => {
+
+			return connection.queryWithArgs(query, queryArgs);
+
+		});
 
 	}
 

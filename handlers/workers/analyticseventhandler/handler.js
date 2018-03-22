@@ -8,9 +8,7 @@ module.exports.analyticseventhandler = (event, context, callback) => {
 	const analyticsEventHandler = new AnalyticsEventHandler('rds_transaction_batch', auroraContext);
 
 	Promise.resolve()
-		.then(() => auroraContext.init())
 		.then(() => analyticsEventHandler.execute())
-		.then(() => auroraContext.dispose())
 		.then(() => {
 
 			return new LambdaResponse().issueSuccess({}, callback, 'success');

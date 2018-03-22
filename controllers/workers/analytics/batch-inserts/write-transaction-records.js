@@ -1,5 +1,7 @@
-const _ = require('underscore')
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+
+const ATTRIBUTES = 18;
 
 module.exports = class WriteTransactionRecords {
 
@@ -37,7 +39,7 @@ module.exports = class WriteTransactionRecords {
 
 		const values = records.map((r, i) => {
 
-			return (`(${Array.from(new Array(18), (val, index) => (i * 18) + index + 1).map(n => `$${n}`).join(',')})`);
+			return (`(${Array.from(new Array(ATTRIBUTES), (val, index) => (i * ATTRIBUTES) + index + 1).map(n => `$${n}`).join(',')})`);
 
 		});
 
@@ -88,8 +90,11 @@ module.exports = class WriteTransactionRecords {
 
 		}));
 
-		return this._auroraContext.connection.queryWithArgs(query, queryArgs)
-			.then(() => records);
+		return this._auroraContext.withConnection((connection) => {
+
+			return connection.queryWithArgs(query, queryArgs);
+
+		});
 
 	}
 

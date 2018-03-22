@@ -89,7 +89,7 @@ module.exports = class AnalyticsEventHandler {
 
 				const Handler = require(`./event-handlers/${h}`);
 				const handler = new Handler(this._auroraContext);
-				return handler.execute();
+				return handler.execute(message);
 
 			});
 
