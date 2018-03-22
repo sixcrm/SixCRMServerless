@@ -1,14 +1,8 @@
-'use strict';
-
 const _ = require('underscore');
-const fs = require('fs');
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
-const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
 const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
 
@@ -173,83 +167,6 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
       .then(() => {
         return 'Complete';
       });
-
-  }
-
-  seed_referential() {
-
-    du.debug('Seed Referential data');
-
-    return this.seedDateDatabase()
-      .then(() => {
-        return 'Complete';
-      });
-
-  }
-
-  seedDateDatabase() {
-
-    du.debug('Seed Date Database');
-
-    return this.uploadDateDatabaseToS3().then(() => {
-      return this.copyDateDatabaseToRedshift()
-    });
-
-  }
-
-  uploadDateDatabaseToS3() {
-
-    du.debug('Upload Date Database');
-
-    let database_filename = 'd_datetime.csv';
-    let parameters = {
-      Bucket: 'sixcrm-' + global.SixCRM.configuration.stage + '-redshift',
-      Key: database_filename
-    };
-
-    return s3utilities.objectExists(parameters).then((exists) => {
-
-      if (exists) {
-
-        du.debug('Datetime database already exists on S3, skipping.');
-
-        return Promise.resolve();
-
-      } else {
-
-        du.debug('Uploading Date Database to S3 bucket.');
-
-        parameters['Body'] = fs.createReadStream(global.SixCRM.routes.path('model', 'redshift/seed_referential/' + database_filename));
-
-        return s3utilities.putObject(parameters);
-
-      }
-
-    });
-
-  }
-
-  copyDateDatabaseToRedshift() {
-
-    du.debug('Copy Date Database');
-
-    let parse_parameters = {
-      stage: process.env.stage,
-      aws_account_id: global.SixCRM.configuration.getAccountIdentifier()
-    };
-
-    let query_copy = `
-      TRUNCATE TABLE d_datetime;
-      COPY d_datetime
-      FROM 's3://sixcrm-{{stage}}-redshift/d_datetime.csv'
-      credentials 'aws_iam_role=arn:aws:iam::{{aws_account_id}}:role/sixcrm_redshift_copy_role'
-      DELIMITER ',';`;
-
-    query_copy = parserutilities.parse(query_copy, parse_parameters);
-
-    du.info(query_copy);
-
-    return this.execute(query_copy);
 
   }
 
