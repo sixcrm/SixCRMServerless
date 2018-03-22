@@ -6,6 +6,54 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 describe('lib/object-utilities', () => {
 
+  describe('recursiveMerge', () => {
+
+    it('successfully merges objects', () => {
+
+      let authority_object = {
+        abc: '123',
+        somearray: ['this','is',{}, 123, 'a array'],
+        testobject:{
+          mykey:'my value'
+        },
+        differenttypes:{
+          'objecttype':'this should be present'
+        }
+      };
+
+      let secondary_object = {
+        abc: '456',
+        test: 'this is a test',
+        testobject: {
+          mykey:'someothervalue',
+          hasakey: 'someother value'
+        },
+        differenttypes: 123,
+        nulltype: null
+      };
+
+      let expected_merged_object = {
+        abc: '123',
+        test: 'this is a test',
+        somearray: ['this','is',{}, 123, 'a array'],
+        testobject:{
+          mykey:'my value',
+          hasakey: 'someother value'
+        },
+        differenttypes:{
+          'objecttype':'this should be present'
+        },
+        nulltype: null
+      };
+
+      let merged_object = objectutilities.recursiveMerge(authority_object, secondary_object);
+
+      expect(merged_object).to.deep.equal(expected_merged_object);
+
+    });
+
+  });
+
   describe('has', () => {
 
     it('should return false when it\'s not an object', () => {

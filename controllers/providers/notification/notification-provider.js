@@ -4,7 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib','debug-utilities');
 const eu = global.SixCRM.routes.include('lib','error-utilities');
 //const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities');
-//const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 //const timestamp = global.SixCRM.routes.include('lib','timestamp');
 
@@ -258,10 +258,8 @@ class NotificationProvider {
     }
 
     if(!_.isNull(parsed_notification_settings)){
-      normalized_notification_settings = parsed_notification_settings;
+      normalized_notification_settings = normalized_notification_settings = objectutilities.recursiveMerge(parsed_notification_settings, normalized_notification_settings);
     }
-
-    //Technical Debt: Make the two structures agree with one another.
 
     return normalized_notification_settings;
 
