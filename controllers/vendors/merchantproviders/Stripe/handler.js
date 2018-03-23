@@ -223,6 +223,10 @@ class StripeController extends MerchantProvider {
 
       let parameters_object = {
         charge: transaction.processor_response.result.id
+      };
+
+      if (objectutilities.hasRecursive(transaction, 'processor_response.result.response.body.id')) {
+        parameters_object.charge = transaction.processor_response.result.response.body.id;
       }
 
       if(action == 'reverse'){
