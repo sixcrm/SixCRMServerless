@@ -19,5 +19,8 @@
 	},
 	"rebill": {
 		"handlers": ["rebill-event-handler.js"]
+	},
+	"transaction": {
+		"handlers": ["transaction-event-handler.js"]
 	}
 }
