@@ -9,9 +9,7 @@ const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
-const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 
 const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
 
@@ -103,7 +101,6 @@ module.exports = class Register extends RegisterUtilities {
     .then(() => this.executeRefund())
     .then(() => this.issueReceipt())
     .then(() => this.acquireRefundTransactionSubProperties())
-    .then(() => this.pushTransactionEvent())
     .then(() => this.transformResponse());
 
   }
@@ -122,7 +119,6 @@ module.exports = class Register extends RegisterUtilities {
     .then(() => this.executeReverse())
     .then(() => this.issueReceipt())
     .then(() => this.acquireRefundTransactionSubProperties())
-    .then(() => this.pushTransactionEvent())
     .then(() => this.transformResponse());
 
   }
@@ -137,7 +133,6 @@ module.exports = class Register extends RegisterUtilities {
     .then(() => this.validateRebillForProcessing())
     .then(() => this.acquireRebillSubProperties())
     .then(() => this.executeProcesses())
-    // .then(() => this.pushTransactionEvent())
     .then(() => this.transformResponse());
 
   }
@@ -298,37 +293,6 @@ module.exports = class Register extends RegisterUtilities {
       .then(rebill => argumentation_object.rebill = rebill)
       .then(() => registerReceiptController.issueReceipt(argumentation_object))
       .then(receipt_transaction => this.parameters.set('receipttransaction', receipt_transaction));
-  }
-
-  pushTransactionEvent() {
-
-    du.debug('Pushing Transaction Event');
-
-    if (!this.eventHelperController) {
-
-      this.eventHelperController = new EventHelperController();
-
-		}
-
-		// this.parameters.get('receipttransaction');
-
-		// const transaction = this.generateTransactionObject();
-
-		// const productSchedules = this.generateProductScheduleObjects();
-
-    // this.eventHelperController.pushEvent({
-    //   event_type: 'transaction',
-    //   context: Object.assign({}, this.parameters.store, {
-    //     user: global.user,
-    //     eventMeta: {
-    //       transaction,
-    //       productSchedules
-    //     }
-    //   })
-		// });
-		
-		return Promise.resolve();
-
   }
 
   transformResponse(){
@@ -556,63 +520,6 @@ module.exports = class Register extends RegisterUtilities {
     this.parameters.set('transactiontype', this.action_to_transaction_type[action]);
 
     return Promise.resolve(true);
-
-  }
-
-  generateTransactionObject(){
-
-    du.debug('Generate Transaction Object');
-
-    const customer = this.parameters.get('customer');
-    const session = this.parameters.get('session');
-    const transaction_receipt = this.parameters.get('receipttransaction');
-    const processor_response = this.parameters.get('processorresponse');
-    const merchant_provider = this.parameters.get('merchantprovider');
-    const amount = this.parameters.get('amount');
-    const merchant_provider_id = (_.isObject(merchant_provider) && _.has(merchant_provider, 'id'))?merchant_provider.id:merchant_provider;
-
-    let transaction_object = {
-      id: transaction_receipt.id,
-      datetime: transaction_receipt.created_at,
-      customer: customer.id,
-      creditcard: processor_response.creditcard.id,
-      merchant_provider: merchant_provider_id,
-      campaign: session.campaign,
-      amount: amount,
-      processor_result: processor_response.code,
-      account: transaction_receipt.account,
-      type: 'new',
-      subtype: 'main'
-    };
-
-    if (!this.affiliateHelperController) {
-      this.affiliateHelperController = new AffiliateHelperController();
-    }
-
-    return this.affiliateHelperController.transcribeAffiliates(session, transaction_object);
-
-  }
-
-  generateProductScheduleObjects(){
-
-    du.debug('Generate Product Schedule Objects from Transaction Object');
-
-    return arrayutilities.map(this.parameters.get('productschedules'), (schedule) => {
-      return {
-        product_schedule: schedule.id,
-        transactions_id: this.parameters.get('receipttransaction').id,
-        datetime: this.parameters.get('receipttransaction').created_at,
-        customer: this.parameters.get('customer').id,
-        creditcard: this.parameters.get('processorresponse').creditcard.id,
-        merchant_provider: this.parameters.get('merchantprovider').id,
-        campaign: this.parameters.get('parentsession').campaign,
-        amount: this.parameters.get('amount'),
-        processor_result: this.parameters.get('processorresponse').code,
-        account: this.parameters.get('receipttransaction').account,
-        type: 'new',
-        subtype: 'main'
-      }
-    });
 
   }
 
