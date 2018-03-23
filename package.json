@@ -33,7 +33,7 @@
 		"redis": "^2.8.0",
 		"request": "^2.85.0",
 		"require-yaml": "0.0.1",
-		"sixcrm-translations": "git+https://TimothyDalbey2@bitbucket.org/sixcrm/crossrepositorytranslations.git",
+		"sixcrm-translations": "git+ssh://git@bitbucket.org/sixcrm/crossrepositorytranslations.git",
 		"stripe": "^5.5.0",
 		"striptags": "^3.1.1",
 		"underscore": "^1.8.3",
