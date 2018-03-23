@@ -54,7 +54,8 @@ module.exports.graphObj = new GraphQLObjectType({
       },
       attributes:{
         type: productAttributesType.graphObj,
-        description: 'The attributes associated with the product.'
+        description: 'The attributes associated with the product.',
+        resolve: product => productController.get({id: product.id}).then(product => product.attributes)
       },
       created_at: {
         type: GraphQLString,
