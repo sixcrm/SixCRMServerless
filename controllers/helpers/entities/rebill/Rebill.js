@@ -653,12 +653,13 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 		}
 
-		const context = this.parameters.store;
-		context.user = global.user;
-
 		this.eventHelperController.pushEvent({
 			event_type: 'rebill',
-			context
+			context: Object.assign({}, this.parameters.store, {
+				user: global.user,
+				eventMeta: this.parameters.get('transformedrebill')
+			})
+
 		});
 
 	}

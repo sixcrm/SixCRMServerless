@@ -55,13 +55,13 @@ class AnalyticsEventBroker extends SNSEventController {
 
 		let rds_object = this.contextHelperController.discoverObjectsFromContext(
 			[
-				'transformedrebill', // this probably needs to be by event type
 				'campaign',
 				'session',
 				'products',
 				'product_schedules',
 				'affiliates',
-				'datetime'
+				'datetime',
+				'eventMeta', // this probably needs to be by event type
 			],
 			context
 		);
@@ -96,8 +96,8 @@ class AnalyticsEventBroker extends SNSEventController {
 			return_object.products = this.contextHelperController.discoverIDs(rds_object.products, 'product');
 		}
 
-		if (_.has(rds_object, 'transformedrebill')) { // this probably needs to be by event type
-			return_object.transformedrebill = rds_object.transformedrebill;
+		if (_.has(rds_object, 'eventMeta')) { // this probably needs to be by event type
+			return_object.eventMeta = rds_object.eventMeta;
 		}
 
 		//Technical Debt:  Isn't this redundant, please see above.

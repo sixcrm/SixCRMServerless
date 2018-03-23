@@ -11,6 +11,7 @@ const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
 const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 
 const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
 
@@ -102,7 +103,7 @@ module.exports = class Register extends RegisterUtilities {
     .then(() => this.executeRefund())
     .then(() => this.issueReceipt())
     .then(() => this.acquireRefundTransactionSubProperties())
-    .then(() => this.pushTransactionsRecordToRedshift())
+    .then(() => this.pushTransactionEvent())
     .then(() => this.transformResponse());
 
   }
@@ -121,7 +122,7 @@ module.exports = class Register extends RegisterUtilities {
     .then(() => this.executeReverse())
     .then(() => this.issueReceipt())
     .then(() => this.acquireRefundTransactionSubProperties())
-    .then(() => this.pushTransactionsRecordToRedshift())
+    .then(() => this.pushTransactionEvent())
     .then(() => this.transformResponse());
 
   }
@@ -298,22 +299,26 @@ module.exports = class Register extends RegisterUtilities {
       .then(receipt_transaction => this.parameters.set('receipttransaction', receipt_transaction));
   }
 
-  pushTransactionsRecordToRedshift(){
+  pushTransactionEvent() {
 
-    /*
-    du.debug('Push Transactions Record');
+    du.debug('Pushing Transaction Event');
 
-    let transaction_redshift_obj = this.generateTransactionObject({});
-    let product_schedules_redshift_obj = this.generateProductScheduleObjects();
+    if (!this.eventHelperController) {
 
-    let promises = arrayutilities.map(product_schedules_redshift_obj, (schedule) => {
-      return kinesisfirehoseutilities.putRecord('product_schedules', schedule);
+      this.eventHelperController = new EventHelperController();
+
+    }
+
+    this.eventHelperController.pushEvent({
+      event_type: 'transaction',
+      context: Object.assign({}, this.parameters.store, {
+        user: global.user,
+        eventMeta: {
+          transaction: this.generateTransactionObject({}),
+          productSchedules: this.generateProductScheduleObjects()
+        }
+      })
     });
-
-    promises.push(kinesisfirehoseutilities.putRecord('transactions', transaction_redshift_obj));
-
-    return Promise.all(promises).then(() => true);
-    */
 
   }
 

@@ -71,14 +71,14 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 						account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
 						user: "system@sixcrm.com",
 						context: {
-							transformedrebill: { rebill: 'yes'},
+							eventMeta: { rebill: 'yes'},
 							affiliates,
 							campaign
 						}
 					},
 					result: {
 						type: 'rebill',
-						transformedrebill: { rebill: 'yes'}
+						eventMeta: { rebill: 'yes'}
 					}
 				},
 				{
