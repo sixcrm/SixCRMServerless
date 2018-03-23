@@ -1,4 +1,5 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const WriteRebillRecords = require('../batch-inserts/write-rebill-records')
 
 module.exports = class RebillEventHandler {
 
@@ -12,7 +13,8 @@ module.exports = class RebillEventHandler {
 
 		du.debug('RebillEventHandler.execute()', record);
 
-		return Promise.resolve();
+		return Promise.resolve()
+			.then(() => new WriteRebillRecords(this._auroraContext).execute([record]));
 
 	}
 
