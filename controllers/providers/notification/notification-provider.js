@@ -15,6 +15,8 @@ class NotificationProvider {
   constructor(){
 
     this.immutable_categories = [];
+
+    //Technical Debt:  These override the
     this.immutable_types = ['alert', 'persistent'];
     this.channel_providers = {};
 
@@ -415,22 +417,31 @@ class NotificationProvider {
 
   }
 
-  getTranslationObject(language_preference, path){
+  getTranslationObject(language_preference, path, fatal){
 
     du.debug('Get Translation Object');
+
+    fatal = (_.isUndefined(fatal) || _.isNull(fatal))?true:fatal;
 
     if(!_.has(this, 'translationHelperController')){
       const TranslationHelperController = global.SixCRM.routes.include('helpers', 'translation/Translation.js');
       this.translationHelperController = new TranslationHelperController();
     }
 
-    let translation_object = this.translationHelperController.getTranslationObject(language_preference, path);
+    let translation_object = this.translationHelperController.getTranslationObject(language_preference, 'notifications.'+path);
 
-    if(_.isNull(translation_object) && language_preference == 'English'){
-      eu.throwError('server', 'Missing English Notification Translation: '+path);
+    if(_.isNull(translation_object) && language_preference == 'English' && fatal){
+
+      eu.throwError('server', 'Missing '+language_preference+' Notification Translation: '+path);
+
     }else if(_.isNull(translation_object)){
+
       du.warning('Missing '+language_preference+' Notification Translation: '+path);
-      return this.getTranslationObject('English', path);
+
+      if(language_preference !== 'English'){
+        return this.getTranslationObject('English', path);
+      }
+
     }
 
     return translation_object;
@@ -445,20 +456,38 @@ class NotificationProvider {
 
     let notification_path = arrayutilities.compress([channel, notification_prototype.category, notification_prototype.name], '.','');
 
-    let raw_notification_object = this.getTranslationObject(language_preference, notification_path);
+    let notification_translation_prototype = this.getTranslationObject(language_preference, notification_path, false);
 
-    if(!_.isNull(raw_notification_object) && _.has(raw_notification_object, 'body') && _.has(raw_notification_object, 'title')){
+    if(this.isValidNotificationTranslationPrototype(notification_translation_prototype)){
 
       let readable_notification = {
-        body: this.parseFields(raw_notification_object.body, notification_prototype.context),
-        title: this.parseFields(raw_notification_object.title, notification_prototype.context)
+        body: this.parseFields(notification_translation_prototype.body, notification_prototype.context),
+        title: this.parseFields(notification_translation_prototype.title, notification_prototype.context)
       };
 
       return readable_notification;
 
+    }else if(channel !== 'default'){
+
+      return this.buildReadableNotificationObject('default', notification_prototype, user_settings);
+
     }
 
-    eu.throwError('server', 'Missing Notification Translation: '+language_preference+':'+notification_path);
+    eu.throwError('server', 'Missing Notification Translation Prototype: '+language_preference+':'+notification_path);
+
+  }
+
+  isValidNotificationTranslationPrototype(translation_prototype){
+
+    du.debug('Is Valid Notification Translation Prototype');
+
+    if(!_.isNull(translation_prototype)){
+      if(_.has(translation_prototype, 'body') && _.has(translation_prototype, 'title')){
+        return true;
+      }
+    }
+
+    return false;
 
   }
 

@@ -1354,14 +1354,14 @@ describe('controllers/providers/notification/notification-provider', () => {
     });
 
     describe('buildReadableNotificationObject', () => {
-      it('builds a readable notification object', () => {
+      it('builds a readable test notification object', () => {
 
         let user_settings = getValidUserSetting();
 
         let notification_prototype = {
-          category: 'warmfuzzy',
+          category: 'test',
           type: 'notification',
-          name: 'nice_greeting',
+          name: 'test',
           context:{
             'some.context.field':'really wonderful',
             'title_property': 'alot'
@@ -1371,13 +1371,13 @@ describe('controllers/providers/notification/notification-provider', () => {
         let channel = 'email';
 
         let translation_object = {
-          body: 'Oh goodness, that was {{some.context.field}}.',
-          title: 'Thanks {{title_property}}!'
+          title: 'This is a test notification',
+          body: 'Testing, testing.  Is this thing on? (taps microphone) Testing... hello? One, two, three. Testing.'
         };
 
         let expected_readable_notification = {
-          body: 'Oh goodness, that was really wonderful.',
-          title: 'Thanks alot!'
+          title: 'This is a test notification',
+          body: 'Testing, testing.  Is this thing on? (taps microphone) Testing... hello? One, two, three. Testing.'
         };
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
@@ -1391,6 +1391,85 @@ describe('controllers/providers/notification/notification-provider', () => {
         let readable_notification = notification_provider.buildReadableNotificationObject(channel, notification_prototype, user_settings);
         expect(readable_notification).to.deep.equal(expected_readable_notification);
       });
+
+      it('builds a parsed notification object', () => {
+
+        let user_settings = getValidUserSetting();
+
+        let notification_prototype = {
+          category: 'transaction',
+          type: 'notification',
+          name: 'lead',
+          context:{
+            'campaign.name':'Arbitrary Campaign',
+            'session.id':'5db7ed46-75b1-4ecd-b489-e61ef5d1107a'
+          }
+        };
+
+        let channel = 'email';
+
+        let translation_object = {
+          title:"{{campaign.name}} has a new lead!",
+          body:"Your campaign {{campaign.name}} has a new lead!"
+        };
+
+        let expected_readable_notification = {
+          title:"Arbitrary Campaign has a new lead!",
+          body:"Your campaign Arbitrary Campaign has a new lead!"
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
+          constructor(){}
+          getTranslationObject(){
+            return translation_object;
+          }
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let readable_notification = notification_provider.buildReadableNotificationObject(channel, notification_prototype, user_settings);
+        expect(readable_notification).to.deep.equal(expected_readable_notification);
+
+      });
+
+      it('Attempts to build a parsed notification object in Chinese', () => {
+
+        let user_settings = getValidUserSetting();
+        user_settings.language = 'Chinese';
+
+        let notification_prototype = {
+          category: 'transaction',
+          type: 'notification',
+          name: 'lead',
+          context:{
+            'campaign.name':'Arbitrary Campaign',
+            'session.id':'5db7ed46-75b1-4ecd-b489-e61ef5d1107a'
+          }
+        };
+
+        let channel = 'email';
+
+        let translation_object = {
+          title:"{{campaign.name}} has a new lead!",
+          body:"Your campaign {{campaign.name}} has a new lead!"
+        };
+
+        let expected_readable_notification = {
+          title:"Arbitrary Campaign has a new lead!",
+          body:"Your campaign Arbitrary Campaign has a new lead!"
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'translation/Translation.js'), class {
+          constructor(){}
+          getTranslationObject(){
+            return translation_object;
+          }
+        });
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/notification-provider.js');
+        let readable_notification = notification_provider.buildReadableNotificationObject(channel, notification_prototype, user_settings);
+        expect(readable_notification).to.deep.equal(expected_readable_notification);
+      });
+
     });
 
     describe('sendChannelNotification', () => {
@@ -1664,35 +1743,6 @@ describe('controllers/providers/notification/notification-provider', () => {
 
     });
 
-    /*
-    sendChannelNotification(channel, {notification, augmented_normalized_notification_settings, user_settings}){
-
-      du.debug('Send Channel Notification');
-
-      if(this.getReceiveSettingForChannel(channel, user_settings)){
-
-        let channel_data = this.getChannelConfiguration(channel, user_settings);
-
-        if(channel_data){
-
-          let readable_notification = this.buildReadableNotificationObject(channel, notification_prototype, user_settings);
-
-          if(!_.has(this.channelProviders[channel])){
-            const ChannelProvider = global.SixCRM.routes.include('providers','notifications/'+channel+'-notification-provider.js');
-            this.channel_providers[channel] = new ChannelProvider()
-          }
-
-          return this.channel_providers[channel].sendNotification(readable_notification,channel_data);
-
-        }
-
-      }
-
-      return Promise.resolve(false);
-
-    }
-    */
-
     xdescribe('(LIVE) createNotificationForAccountAndUser (LIVE)', () => {
       it('creates notifications for a account user', () => {
 
@@ -1701,10 +1751,10 @@ describe('controllers/providers/notification/notification-provider', () => {
         let a_notification_prototype = {
           user: user,
           account: account,
-          type: 'notification',
-          category: 'general',
+          type: 'alert',
+          category: 'test',
           context: {},
-          name: 'test'
+          name: 'testalert'
         };
 
         let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');

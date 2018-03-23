@@ -1,0 +1,10 @@
+{
+  "id":"/providers/notifications/translatednotification.json",
+  "title": "Translated Notification",
+  "type": "object",
+  "properties": {
+    "title":{"type":"string"},
+    "body":{"type":"string"}
+  },
+  "required":["title","body"]
+}
