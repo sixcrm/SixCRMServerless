@@ -308,18 +308,26 @@ module.exports = class Register extends RegisterUtilities {
 
       this.eventHelperController = new EventHelperController();
 
-    }
+		}
 
-    this.eventHelperController.pushEvent({
-      event_type: 'transaction',
-      context: Object.assign({}, this.parameters.store, {
-        user: global.user,
-        eventMeta: {
-          transaction: this.generateTransactionObject({}),
-          productSchedules: this.generateProductScheduleObjects()
-        }
-      })
-    });
+		// this.parameters.get('receipttransaction');
+
+		// const transaction = this.generateTransactionObject();
+
+		// const productSchedules = this.generateProductScheduleObjects();
+
+    // this.eventHelperController.pushEvent({
+    //   event_type: 'transaction',
+    //   context: Object.assign({}, this.parameters.store, {
+    //     user: global.user,
+    //     eventMeta: {
+    //       transaction,
+    //       productSchedules
+    //     }
+    //   })
+		// });
+		
+		return Promise.resolve();
 
   }
 
@@ -551,19 +559,17 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-  generateTransactionObject({transaction_receipt, processor_response, merchant_provider, amount}){
+  generateTransactionObject(){
 
     du.debug('Generate Transaction Object');
 
-    let customer = this.parameters.get('customer');
-    let session = this.parameters.get('session');
-
-    transaction_receipt = (!_.isUndefined(transaction_receipt) && !_.isNull(transaction_receipt))?transaction_receipt:this.parameters.get('receipttransaction');
-    processor_response = (!_.isUndefined(processor_response) && !_.isNull(processor_response))?this.parameters.get('processorresponse'):processor_response;
-    merchant_provider = (!_.isUndefined(merchant_provider) && !_.isNull(merchant_provider))?this.parameters.get('merchantprovider'):merchant_provider;
-    amount = (!_.isUndefined(amount) && !_.isNull(amount))?this.parameters.get('amount'):amount;
-
-    let merchant_provider_id = (_.isObject(merchant_provider) && _.has(merchant_provider, 'id'))?merchant_provider.id:merchant_provider;
+    const customer = this.parameters.get('customer');
+    const session = this.parameters.get('session');
+    const transaction_receipt = this.parameters.get('receipttransaction');
+    const processor_response = this.parameters.get('processorresponse');
+    const merchant_provider = this.parameters.get('merchantprovider');
+    const amount = this.parameters.get('amount');
+    const merchant_provider_id = (_.isObject(merchant_provider) && _.has(merchant_provider, 'id'))?merchant_provider.id:merchant_provider;
 
     let transaction_object = {
       id: transaction_receipt.id,
