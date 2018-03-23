@@ -309,19 +309,25 @@ module.exports = class Register extends RegisterUtilities {
       this.eventHelperController = new EventHelperController();
 
 		}
-		
-		return Promise.resolve();
+
+		// this.parameters.get('receipttransaction');
+
+		// const transaction = this.generateTransactionObject();
+
+		// const productSchedules = this.generateProductScheduleObjects();
 
     // this.eventHelperController.pushEvent({
     //   event_type: 'transaction',
     //   context: Object.assign({}, this.parameters.store, {
     //     user: global.user,
     //     eventMeta: {
-    //       // transaction: this.generateTransactionObject(),
-    //       // productSchedules: this.generateProductScheduleObjects()
+    //       transaction,
+    //       productSchedules
     //     }
     //   })
-    // });
+		// });
+		
+		return Promise.resolve();
 
   }
 
