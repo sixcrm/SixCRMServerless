@@ -8,6 +8,10 @@
 		"ship":true,
 		"shipping_delay":3600,
 		"default_price":12.99,
+		"dynamic_pricing": {
+			"min":9.99,
+			"max":14.99
+		},
 		"fulfillment_provider":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
 		"attributes":{
 			"weight":{

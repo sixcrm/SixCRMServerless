@@ -5,7 +5,7 @@ const ContextHelperController = global.SixCRM.routes.include('helpers', 'context
 
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
-class AnalyticsEventBroker extends SNSEventController {
+module.exports = class AnalyticsEventBroker extends SNSEventController {
 
 	constructor() {
 
@@ -20,7 +20,7 @@ class AnalyticsEventBroker extends SNSEventController {
 
 		//Need to add state machine events.
 		//Need to add out-of-flow events (Refund, Void, Chargeback)
-		this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm', 'rebill'];
+		this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm', 'rebill', 'transaction'];
 
 		this.event_record_handler = 'pushToRDSQueue';
 
@@ -60,7 +60,8 @@ class AnalyticsEventBroker extends SNSEventController {
 				'products',
 				'product_schedules',
 				'affiliates',
-				'datetime'
+				'datetime',
+				'eventMeta', // this probably needs to be by event type
 			],
 			context
 		);
@@ -95,12 +96,9 @@ class AnalyticsEventBroker extends SNSEventController {
 			return_object.products = this.contextHelperController.discoverIDs(rds_object.products, 'product');
 		}
 
-		//Technical Debt:  Isn't this redundant, please see above.
-		/*
-		if(_.has(rds_object, 'affiliates')){
-		  return_object = this.affiliateHelperController.transcribeAffiliates(rds_object.affiliates, return_object);
+		if (_.has(rds_object, 'eventMeta')) { // this probably needs to be by event type
+			return_object.eventMeta = rds_object.eventMeta;
 		}
-		*/
 
 		return return_object;
 
@@ -110,7 +108,7 @@ class AnalyticsEventBroker extends SNSEventController {
 
 		du.debug('Push Object To RDS Queue');
 
-		let rds_object = this.parameters.get('rdsobject');
+		const rds_object = this.parameters.get('rdsobject');
 
 		return this.sqsutilities.sendMessage({
 			message_body: JSON.stringify(rds_object),
@@ -122,5 +120,3 @@ class AnalyticsEventBroker extends SNSEventController {
 	}
 
 }
-
-module.exports = new AnalyticsEventBroker();
