@@ -278,6 +278,8 @@ module.exports = class Register extends RegisterUtilities {
     const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
     let registerReceiptController = new RegisterReceiptController();
 
+    this.transformProcessorResponse();
+
     let parameters = this.parameters.getAll();
 
     let argumentation_object = {
@@ -316,6 +318,22 @@ module.exports = class Register extends RegisterUtilities {
     return Promise.resolve(register_response);
 
   }
+
+    transformProcessorResponse() {
+
+        let transaction = this.parameters.get('associatedtransaction');
+
+        if(_.has(transaction, 'processor_response') && (_.isObject(transaction.processor_response))){
+
+            try{
+                transaction.processor_response = JSON.stringify(transaction.processor_response);
+            }catch(error){
+                eu.throwError('validation', 'Unrecognized format for processor response.')
+            }
+
+            this.parameters.set('associatedtransaction', transaction);
+        }
+    }
 
   getProcessorResponseCategory(){
 
