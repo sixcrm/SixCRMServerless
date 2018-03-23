@@ -12,6 +12,14 @@
     {
       "type":"string",
       "enum": ["click", "lead", "order", "confirm", "rebill", "transaction"]
+		},
+		{
+      "type":"string",
+      "pattern":"^upsell*"
+		},
+		{
+      "type":"string",
+      "pattern":"^downsell*"
     },
     {
       "type":"string",

@@ -5,7 +5,7 @@ const ContextHelperController = global.SixCRM.routes.include('helpers', 'context
 
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
-class AnalyticsEventBroker extends SNSEventController {
+module.exports = class AnalyticsEventBroker extends SNSEventController {
 
 	constructor() {
 
@@ -100,13 +100,6 @@ class AnalyticsEventBroker extends SNSEventController {
 			return_object.eventMeta = rds_object.eventMeta;
 		}
 
-		//Technical Debt:  Isn't this redundant, please see above.
-		/*
-		if(_.has(rds_object, 'affiliates')){
-		  return_object = this.affiliateHelperController.transcribeAffiliates(rds_object.affiliates, return_object);
-		}
-		*/
-
 		return return_object;
 
 	}
@@ -115,7 +108,7 @@ class AnalyticsEventBroker extends SNSEventController {
 
 		du.debug('Push Object To RDS Queue');
 
-		let rds_object = this.parameters.get('rdsobject');
+		const rds_object = this.parameters.get('rdsobject');
 
 		return this.sqsutilities.sendMessage({
 			message_body: JSON.stringify(rds_object),
@@ -127,5 +120,3 @@ class AnalyticsEventBroker extends SNSEventController {
 	}
 
 }
-
-module.exports = new AnalyticsEventBroker();

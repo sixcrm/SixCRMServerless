@@ -6,6 +6,7 @@ const mockery = require('mockery');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+const AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
 
 describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 
@@ -26,17 +27,6 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 	afterEach(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();
-	});
-
-	describe('constructor', () => {
-
-		it('instantiates the AnalyticsEventBroker class', () => {
-
-			let AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
-			expect(objectutilities.getClassName(AnalyticsEventBroker)).to.equal('AnalyticsEventBroker');
-
-		});
-
 	});
 
 	describe('execute', () => {
@@ -172,8 +162,7 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 					}
 				});
 
-				const analyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
-				return analyticsEventBroker.execute(sns_message).then(result => {
+				return new AnalyticsEventBroker().execute(sns_message).then(result => {
 					expect(result).to.equal(true);
 					//expect(redshiftEventsController.parameters.store['redshiftobject']).to.deep.equal(test_case.result);
 				});
