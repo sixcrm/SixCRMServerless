@@ -42,13 +42,12 @@ module.exports = class WriteRebillRecords {
 
 		const queryArgs = _.flatten(records.map(r => {
 
-			// todo: fix these property names
 			return [
-				r.id_rebill,
-				r.current_queuename,
-				r.previous_queuename,
-				r.account,
-				r.datetime,
+				r.transformedRebill.id_rebill,
+				r.transformedRebill.current_queuename,
+				r.transformedRebill.previous_queuename,
+				r.transformedRebill.account,
+				r.transformedRebill.datetime,
 				r.amount
 			];
 
