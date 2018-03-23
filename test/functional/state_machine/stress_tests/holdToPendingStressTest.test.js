@@ -1,3 +1,4 @@
+require('../state-machine-test-setup');
 const uuidV4 = require('uuid/v4');
 const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
