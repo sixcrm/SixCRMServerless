@@ -1,52 +1,47 @@
 'use strict';
-
-//Technical Debt:  This needs to be a helper.
-//Technical Debt:  Use SMTP
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
-//const ses = global.SixCRM.routes.include('lib', 'ses-utilities');
-const systemmailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
 
-const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 
-class EmailNotificationProvider {
+module.exports = class EmailNotificationProvider {
 
-    /**
-     * Send a notification via email.
-     *
-     * @param notification_object
-     * @param email_address
-     * @param username
-     * @returns {Promise}
-     */
-    sendNotificationViaEmail(notification_object, recepient_email_address, recepient_name) {
+  constructor(){
 
-        du.debug('Validating notification before sending via email.');
+    this.systemmailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+    this.notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
 
-        return notificationController.isValidNotification(notification_object).then(() => {
+  }
 
-          /*
-          if(_.isUndefined(recepient_name)){
-            recepient_name = null;
-          }
-          */
+  sendNotification(notification_object, recepient_email_address, recepient_name) {
 
-          du.debug(`Sending notification with ID ${notification_object.id} to ${recepient_name} at ${recepient_email_address}.`);
+    du.debug('Send Notification');
 
-          let email = {
-              recepient_emails: [recepient_email_address],
-              recepient_name: recepient_name,
-              subject: notification_object.title,
-              body: this.formatEmailBody(notification_object),
-          };
+    recepient_name = (_.isUndefined(recepient_name) || _.isNull(recepient_name))?null:recepient_name;
 
-          return systemmailer.sendEmail(email);
+    return this.notificationController.isValidNotification(notification_object).then(() => {
 
-        });
-    }
+      let email = {
+          recepient_emails: [recepient_email_address],
+          subject: notification_object.title,
+          body: this.formatEmailBody(notification_object),
+      };
 
-    formatEmailBody(notification_object) {
-        return `You received a notification with body "${notification_object.body}". Thanks for using SixCRM!`;
-    }
+      if(!_.isNull(recepient_name)){
+        email.recepient_name = recepient_name;
+      }
+
+      return this.systemmailer.sendEmail(email);
+
+    });
+
+  }
+
+  formatEmailBody(notification_object) {
+
+    du.debug('Format Email Body');
+
+    return notification_object.body;
+
+  }
+
 }
-
-module.exports = new EmailNotificationProvider();

@@ -417,7 +417,7 @@ class NotificationProvider {
 
   getTranslationObject(language_preference, path){
 
-    du.debug('Get Translation File');
+    du.debug('Get Translation Object');
 
     if(!_.has(this, 'translationHelperController')){
       const TranslationHelperController = global.SixCRM.routes.include('helpers', 'translation/Translation.js');
@@ -458,7 +458,7 @@ class NotificationProvider {
 
     }
 
-    eu.throwError('server', 'Missing Notification Translation: '+notification_path);
+    eu.throwError('server', 'Missing Notification Translation: '+language_preference+':'+notification_path);
 
   }
 
@@ -500,7 +500,7 @@ class NotificationProvider {
 
         if(!_.has(this.channel_providers, channel)){
           const ChannelProvider = global.SixCRM.routes.include('providers','notification/'+channel+'-notification-provider.js');
-          this.channel_providers[channel] = new ChannelProvider()
+          this.channel_providers[channel] = new ChannelProvider();
         }
 
         return this.channel_providers[channel].sendNotification(readable_notification, channel_data);

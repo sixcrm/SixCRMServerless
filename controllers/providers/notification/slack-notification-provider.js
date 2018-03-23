@@ -1,34 +1,31 @@
 'use strict';
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
-const slack = global.SixCRM.routes.include('lib', 'slack-utilities');
 
-const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+module.exports = class SlackNotificationProvider {
 
-class SlackNotificationProvider {
+  constructor(){
 
-    /**
-     * Send a notification via Slack Webhook.
-     *
-     * @param notification_object
-     * @param webhook
-     * @returns {Promise}
-     */
-    sendNotificationViaSlack(notification_object, webhook) {
+    this.notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+    this.slack = global.SixCRM.routes.include('lib', 'slack-utilities');
 
-        du.debug('Validating notification before sending via Slack.');
+  }
 
-        return notificationController.isValidNotification(notification_object).then(() => {
-            du.debug(`Sending notification with ID ${notification_object.id} to ${webhook}.`);
+  sendNotification(notification_object, webhook) {
 
-            return slack.sendMessageToWebhook(this.formatMessage(notification_object), webhook);
-        });
-    }
+    du.debug('Send Notification');
 
-    formatMessage(notification_object) {
-        return `SixCRM notification: "${notification_object.title}".`;
-    }
+    return this.notificationController.isValidNotification(notification_object).then(() => {
+      return this.slack.sendMessageToWebhook(this.formatMessage(notification_object), webhook);
+    });
 
+  }
+
+  formatMessage(notification_object) {
+
+    du.debug('Format Message');
+
+    return notification_object.title+"\n"+notification_object.body;
+
+  }
 
 }
-
-module.exports = new SlackNotificationProvider();
