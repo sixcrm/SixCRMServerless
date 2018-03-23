@@ -1,33 +1,40 @@
 {
-  "$schema": "http://json-schema.org/schema#",
-  "id": "/definitions/eventtype.json",
-  "title": "Event Type",
-  "description": "A event type",
-  "note":"break this schema into subschema:  Transactions, StateMachine, Graph Events etc...",
-  "anyOf":[
-    {
-      "type":"string",
-      "enum": ["test", "testalert"]
+	"$schema": "http://json-schema.org/schema#",
+	"id": "/definitions/eventtype.json",
+	"title": "Event Type",
+	"description": "A event type",
+	"note": "break this schema into subschema:  Transactions, StateMachine, Graph Events etc...",
+	"anyOf": [{
+			"type": "string",
+			"enum": ["test", "testalert"]
 		},
-    {
-      "type":"string",
-      "enum": ["click", "lead", "order", "confirm", "rebill", "transaction"]
-    },
-    {
-      "type":"string",
-      "pattern":"^transaction_(success|fail|error)$"
-    },
-    {
-      "type":"string",
-      "pattern":"^transaction_recovery_(success|fail|error)$"
-    },
-    {
-      "type":"string",
-      "pattern":"^fulfillment_triggered_(success|fail|error)$"
-    },
-    {
-      "type":"string",
-      "enum":["shipping_confirmation","delivery_confirmation"]
-    }
-  ]
+		{
+			"type": "string",
+			"enum": ["click", "lead", "order", "confirm", "rebill", "transaction"]
+		},
+		{
+			"type": "string",
+			"pattern": "^upsell*"
+		},
+		{
+			"type": "string",
+			"pattern": "^downsell*"
+		},
+		{
+			"type": "string",
+			"pattern": "^transaction_(success|fail|error)$"
+		},
+		{
+			"type": "string",
+			"pattern": "^transaction_recovery_(success|fail|error)$"
+		},
+		{
+			"type": "string",
+			"pattern": "^fulfillment_triggered_(success|fail|error)$"
+		},
+		{
+			"type": "string",
+			"enum": ["shipping_confirmation", "delivery_confirmation"]
+		}
+	]
 }
