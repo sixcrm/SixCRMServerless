@@ -13,13 +13,11 @@ module.exports = class EventHelperController {
 
 	}
 
-	pushEvent() {
+	pushEvent(event) {
 
 		du.debug('Push Event');
 
-		let parameters = this.createPublishParameters(arguments[0]);
-
-		return this.snsutilities.publish(parameters);
+		return this.snsutilities.publish(this.createPublishParameters(event));
 
 	}
 
