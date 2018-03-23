@@ -8,10 +8,10 @@
     {
       "type":"string",
       "enum": ["test", "testalert"]
-    },
+		},
     {
       "type":"string",
-      "enum": ["click", "lead", "order", "confirm"]
+      "enum": ["click", "lead", "order", "confirm", "rebill", "transaction"]
     },
     {
       "type":"string",

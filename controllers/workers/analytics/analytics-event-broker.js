@@ -20,7 +20,7 @@ class AnalyticsEventBroker extends SNSEventController {
 
 		//Need to add state machine events.
 		//Need to add out-of-flow events (Refund, Void, Chargeback)
-		this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm', 'rebill'];
+		this.compliant_event_types = ['click', 'lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm', 'rebill', 'transaction'];
 
 		this.event_record_handler = 'pushToRDSQueue';
 
@@ -55,6 +55,7 @@ class AnalyticsEventBroker extends SNSEventController {
 
 		let rds_object = this.contextHelperController.discoverObjectsFromContext(
 			[
+				'transformedrebill', // this probably needs to be by event type
 				'campaign',
 				'session',
 				'products',
@@ -93,6 +94,10 @@ class AnalyticsEventBroker extends SNSEventController {
 
 		if (_.has(rds_object, 'products')) {
 			return_object.products = this.contextHelperController.discoverIDs(rds_object.products, 'product');
+		}
+
+		if (_.has(rds_object, 'transformedrebill')) { // this probably needs to be by event type
+			return_object.transformedrebill = rds_object.transformedrebill;
 		}
 
 		//Technical Debt:  Isn't this redundant, please see above.
