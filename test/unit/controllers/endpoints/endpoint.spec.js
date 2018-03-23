@@ -543,7 +543,7 @@ describe('controllers/endpoints/endpoint.js', () => {
       let endpointController = new EndpointController();
       let event = getValidGETEvent();
 
-      delete event.queryStringParameters
+      event.queryStringParameters = null;
 
       return endpointController.parseEventQueryString(event).then(result => {
 
@@ -555,7 +555,7 @@ describe('controllers/endpoints/endpoint.js', () => {
 
     it('throws an error when queryStringParameters is not parsable', () => {
       let endpointController = new EndpointController();
-      let bad_types = [123, null, () => {}, 3.2];
+      let bad_types = [123, true, [], () => {}];
 
       return Promise.all(arrayutilities.map(bad_types, bad_type => {
         let event = getValidGETEvent();

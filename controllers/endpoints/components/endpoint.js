@@ -205,7 +205,7 @@ module.exports = class EndpointController {
     du.debug('Parse Event Query String');
 
     return Promise.resolve().then(() => {
-        if (!_.has(event, 'queryStringParameters')) {
+        if (!_.has(event, 'queryStringParameters') || _.isNull(event.queryStringParameters)) {
             return event;
         }
 
