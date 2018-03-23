@@ -5,7 +5,6 @@ package:
     - .git/**
     - bin/**
     - coverage/**
-    - model/redshift/seed_referential/**
     - deployment/**
     - test/**
     - tools/**
