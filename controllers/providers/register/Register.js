@@ -137,6 +137,7 @@ module.exports = class Register extends RegisterUtilities {
     .then(() => this.validateRebillForProcessing())
     .then(() => this.acquireRebillSubProperties())
     .then(() => this.executeProcesses())
+    .then(() => this.pushTransactionEvent())
     .then(() => this.transformResponse());
 
   }
