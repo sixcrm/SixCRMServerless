@@ -43,12 +43,12 @@ module.exports = class WriteRebillRecords {
 		const queryArgs = _.flatten(records.map(r => {
 
 			return [
-				r.eventMeta.id_rebill,
-				r.eventMeta.current_queuename,
-				r.eventMeta.previous_queuename,
-				r.eventMeta.account,
-				r.eventMeta.datetime,
-				r.eventMeta.amount
+				r.id_rebill,
+				r.current_queuename,
+				r.previous_queuename,
+				r.account,
+				r.datetime,
+				r.amount
 			];
 
 		}));

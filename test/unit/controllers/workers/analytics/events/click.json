@@ -1,6 +1,6 @@
 {
 	"result": {
-		"type": "lead",
+		"type": "click",
 		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"campaign": "6bbdd10c-3a11-425a-ba0c-48beed42a705",
 		"datetime": "2018-03-26T13:15:22.175Z",
@@ -14,7 +14,7 @@
 		"cid": "7e89d25c-93e9-4f27-b391-02f7eb94751c"
 	},
 	"event": {
-		"event_type": "lead",
+		"event_type": "click",
 		"context": {
 			"event": {
 				"customer": {

@@ -1,0 +1,16 @@
+{
+	"messages": [{
+		"type": "order",
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"campaign": "aae23631-230d-434f-8b64-958c2cfa1018",
+		"datetime": "2018-03-26T13:15:36.499Z",
+		"session": "e427af34-0356-4b9d-9c2e-17f7914d21ae",
+		"affiliate": "1cb710f1-962f-4d72-9381-433b70e75cc7",
+		"subaffiliate_1": "ff181a29-87eb-414d-ac92-9ea343664f09",
+		"subaffiliate_2": "ca35b194-60e5-4967-b784-87e421658109",
+		"subaffiliate_3": "c732a2cb-cd89-47d1-a101-69b465722a94",
+		"subaffiliate_4": "98dd8910-eff6-4c45-9b9b-ec5e0fcbe686",
+		"subaffiliate_5": "ce7dc716-30c5-416a-92a1-473f43a56b27",
+		"cid": "c9f90087-5905-47c4-bf28-3c129ce21048"
+	}]
+}
