@@ -1,10 +1,7 @@
 {
 	"result": {
 		"type": "transaction_declined",
-		"datetime": "2018-03-26T15:48:54.332Z",
-		"session": "",
-		"product_schedules": ["d2222962-a185-4fb4-85e6-1502adb0534d"],
-		"products": ["9ac3a920-1b1f-433f-b15b-9ca0f5a90236"]
+		"datetime": "2018-03-23T22:01:55.330Z"
 	},
 	"event": {
 		"event_type": "transaction_declined",
