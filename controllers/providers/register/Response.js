@@ -47,7 +47,7 @@ module.exports = class RegisterResponse extends Response {
 
   setTransactions(transactions){
 
-    this.parameters.set('transaction', transactions);
+    this.parameters.set('transactions', transactions);
 
   }
 

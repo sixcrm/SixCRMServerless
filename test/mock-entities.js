@@ -1127,6 +1127,27 @@ class MockEntities {
 
   }
 
+  static getValidProcessorResponse() {
+      return {
+          code: 'success',
+          result: {
+              message: "Success",
+              result:{
+                  response:"1",
+                  responsetext:"SUCCESS",
+                  authcode:"123456",
+                  transactionid:"3448894418",
+                  avsresponse:"N",
+                  cvvresponse:"",
+                  orderid:"",
+                  type:"sale",
+                  response_code:"100"
+              }
+          },
+          message: 'Some message'
+      }
+  }
+
 }
 
 module.exports = MockEntities;
