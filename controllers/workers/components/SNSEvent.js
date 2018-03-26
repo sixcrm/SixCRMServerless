@@ -5,6 +5,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+const PermissionUtilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
 module.exports = class SNSEventController {
 
@@ -38,7 +39,7 @@ module.exports = class SNSEventController {
 
 		du.debug('Set Permissions');
 
-		this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+		this.permissionutilities = PermissionUtilities;
 		this.permissionutilities.setPermissions('*', ['*/*'], [])
 
 	}
@@ -99,6 +100,11 @@ module.exports = class SNSEventController {
 			.then((result) => {
 				this.cleanUp();
 				return result;
+			})
+			.catch((ex) => {
+
+				du.error('SNSEvent.handleEventRecord(): error handling SNS event', ex, record);
+
 			});
 
 	}
