@@ -1,0 +1,16 @@
+{
+	"messages": [{
+		"type": "confirm",
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"campaign": "18fb65e7-b11f-46c3-af4a-5d11e5561ae9",
+		"datetime": "2018-03-26T13:15:23.763Z",
+		"session": "fc26cae6-c170-4140-9a41-f10ad52ba196",
+		"affiliate": "2JQ569RGXU3PT1ZRVFB7",
+		"subaffiliate_1": "6DTYLKQZ5HTEYQ7P58FC",
+		"subaffiliate_2": "J19H8FHPFUUV2VQN2AEV",
+		"subaffiliate_3": "2L95KJAB3A8J8T9GDHGB",
+		"subaffiliate_4": "14ALDTN55PC1SCA1RLJL",
+		"subaffiliate_5": "5FSZL2WU715BG1GVY6Z4",
+		"cid": "E8S1R25LHFQ2PH233GYC"
+	}]
+}
