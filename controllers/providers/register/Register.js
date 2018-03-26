@@ -198,7 +198,7 @@ module.exports = class Register extends RegisterUtilities {
     if(arrayutilities.nonEmpty(associated_transactions)){
 
       let associated_transaction_amounts = arrayutilities.map(associated_transactions, associated_transaction => {
-        return associated_transaction.amount;
+        return parseFloat(associated_transaction.amount);
       });
 
       base += mathutilities.sum(associated_transaction_amounts);
@@ -301,8 +301,8 @@ module.exports = class Register extends RegisterUtilities {
 
     du.debug('Transform Response');
 
-    let transaction_receipts = this.parameters.get('transactionreceipts');
-    let processor_responses = this.parameters.get('processorresponses');
+    let transaction_receipts = this.parameters.isSet('transactionreceipts') ? this.parameters.get('transactionreceipts') : [this.parameters.get('receipttransaction')];
+    let processor_responses = this.parameters.isSet('processorresponses') ? this.parameters.get('processorresponses') : [this.parameters.get('processorresponse')];
     let creditcard = this.parameters.get('selectedcreditcard');
     let response_category = this.getProcessorResponseCategory();
 
@@ -339,7 +339,7 @@ module.exports = class Register extends RegisterUtilities {
 
     du.debug('Get Processor Response Category');
 
-    let processor_responses = this.parameters.get('processorresponses');
+    let processor_responses = this.parameters.isSet('processorresponses') ? this.parameters.get('processorresponses') : [this.parameters.get('processorresponse')];
 
     let successful = arrayutilities.find(processor_responses, processor_response => {
       return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.success);

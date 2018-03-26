@@ -33,7 +33,7 @@ class RedshiftEventsController extends SNSEventController {
 		du.debug('Push To Redshift');
 
 		return Promise.resolve()
-			.then(() => this.isComplaintEventType())
+			.then(() => this.isCompliantEventType())
 			.then(() => this.assembleRedshiftObject())
 			.then(() => this.pushObjectToRedshift())
 			.catch(error => {

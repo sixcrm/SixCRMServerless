@@ -73,9 +73,7 @@ describe('controllers/workers/snsevents/notificationEvents.js', () => {
 
         let notificationEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/notificationEvents.js');
 
-        return notificationEventsController.execute(sns_message).then(result => {
-          expect(result).to.equal(true);
-        });
+        return notificationEventsController.execute(sns_message);
 
       }, null);
 

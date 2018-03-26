@@ -26,7 +26,7 @@ class TrackingEventsController extends SNSEventController {
     du.debug('Trigger Tracking');
 
     return Promise.resolve()
-    .then(() => this.isComplaintEventType())
+    .then(() => this.isCompliantEventType())
     .then(() => this.acquireSession())
     .then(() => this.executeTracker())
     .catch(error => {

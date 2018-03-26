@@ -212,9 +212,8 @@ describe('controllers/workers/eventEmails', () => {
 
       let eventEmailsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/eventEmails.js');
 
-      return eventEmailsController.execute(sns_message).then(result => {
-        expect(result).to.equal(true);
-      });
+      return eventEmailsController.execute(sns_message);
+
     });
 
   });

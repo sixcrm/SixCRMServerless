@@ -87,9 +87,7 @@ describe('controllers/workers/snsevents/trackingEvents', () => {
 
         let trackingEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/trackingEvents.js');
 
-        return trackingEventsController.execute(sns_message).then(result => {
-          expect(result).to.equal(true);
-        });
+        return trackingEventsController.execute(sns_message);
 
       }, null);
 

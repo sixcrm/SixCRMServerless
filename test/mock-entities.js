@@ -1127,6 +1127,59 @@ class MockEntities {
 
   }
 
+  static getValidProcessorResponse() {
+      return {
+          code: 'success',
+          result: {
+              message: "Success",
+              result:{
+                  response:"1",
+                  responsetext:"SUCCESS",
+                  authcode:"123456",
+                  transactionid:"3448894418",
+                  avsresponse:"N",
+                  cvvresponse:"",
+                  orderid:"",
+                  type:"sale",
+                  response_code:"100"
+              }
+          },
+          message: 'Some message'
+      }
+  }
+
+  static getValidTransactionPrototype(){
+
+      let type = ["sale","refund","reverse"];
+
+      return {
+          rebill: this.getValidRebill(),
+          amount: randomutilities.randomDouble(1, 200, 2),
+          type: randomutilities.selectRandomFromArray(type),
+          result: 'success',
+          processor_response: this.getValidProcessorResponse(),
+          merchant_provider: uuidV4(),
+          products: this.getValidTransactionProducts(null, true)
+      };
+  }
+
+  static getValidTransformedTransactionPrototype(){
+
+      let type = ["sale","refund","reverse"];
+
+      return {
+          rebill: uuidV4(),
+          processor_response: JSON.stringify(this.getValidProcessorResponse()),
+          amount: randomutilities.randomDouble(1, 200, 2),
+          products: this.getValidTransactionProducts(null, true),
+          alias: "T"+randomutilities.createRandomString(9),
+          merchant_provider: uuidV4(),
+          type: randomutilities.selectRandomFromArray(type),
+          result: 'success'
+      }
+
+  }
+
 }
 
 module.exports = MockEntities;

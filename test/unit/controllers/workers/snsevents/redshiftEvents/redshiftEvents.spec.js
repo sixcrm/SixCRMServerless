@@ -167,10 +167,7 @@ describe('controllers/workers/redshiftEvents', () => {
 
         let redshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');
 
-        return redshiftEventsController.execute(sns_message).then(result => {
-          expect(result).to.equal(true);
-          //expect(redshiftEventsController.parameters.store['redshiftobject']).to.deep.equal(test_case.result);
-        });
+        return redshiftEventsController.execute(sns_message);
 
       }, null);
 

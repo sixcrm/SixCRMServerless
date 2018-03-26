@@ -1,3 +1,4 @@
+require('../state-machine-test-setup');
 const expect = require('chai').expect;
 const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');

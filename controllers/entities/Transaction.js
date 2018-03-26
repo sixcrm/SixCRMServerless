@@ -185,7 +185,7 @@ class transactionController extends entityController {
 
     }
 
-    listByAssociatedTransaction({id, types}){
+    listByAssociatedTransaction({id, types, results}){
 
       du.debug('List By Parent Transaction');
 
@@ -197,9 +197,23 @@ class transactionController extends entityController {
           ':associated_transaction_id': id
         },
         expression_attribute_names: {
-          '#associatedtransaction': 'associatedtransaction'
+          '#associatedtransaction': 'associated_transaction'
         }
       };
+
+      if(!_.isUndefined(results) && arrayutilities.nonEmpty(results)){
+
+        let additional_conditions = [];
+
+        arrayutilities.map(results, (result) => {
+            additional_conditions.push('#result = :result'+result);
+            query_parameters.expression_attribute_values[':result'+result] = result;
+            query_parameters.expression_attribute_names['#result'] = 'result';
+        });
+
+        query_parameters.filter_expression += ' AND ('+arrayutilities.compress(additional_conditions, ' OR ', '') + ')';
+
+      }
 
       if(!_.isUndefined(types) && arrayutilities.nonEmpty(types)){
 
@@ -211,7 +225,7 @@ class transactionController extends entityController {
           query_parameters.expression_attribute_names['#typefield'] = 'type';
         });
 
-        query_parameters.filter_expression += ' AND '+arrayutilities.compress(additional_conditions, ' OR ', '');
+        query_parameters.filter_expression += ' AND ('+arrayutilities.compress(additional_conditions, ' OR ', '') + ')';
 
       }
 

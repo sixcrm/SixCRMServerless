@@ -39,7 +39,11 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     du.debug('Acquire Rebill');
 
-    const transaction = this.parameters.get('transaction');
+    let transaction = this.parameters.get('transaction');
+
+    if (!_.has(transaction, 'rebill')) {
+      transaction = this.parameters.get('associatedtransaction');
+    }
 
     return this.rebillController.get({id: transaction.rebill}).then((rebill) => {
 
