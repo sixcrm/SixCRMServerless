@@ -1,0 +1,92 @@
+{
+	"event_type": "delivery_confirmation",
+	"context": {
+		"message": {
+			"MessageId": "5fe1a2e5-fede-4e50-867a-5616fc7a545e",
+			"ReceiptHandle": "5fe1a2e5-fede-4e50-867a-5616fc7a545e#81994e61-a9d1-434f-99bb-82dbf482622b",
+			"MD5OfBody": "0835f04144f4289cda8063c1a2c59b34",
+			"Body": "{\"id\":\"c8b70738-755c-43c3-a953-1ef6fb4d1327\"}",
+			"MD5OfMessageAttributes": "d41d8cd98f00b204e9800998ecf8427e"
+		},
+		"parsedmessagebody": {
+			"id": "c8b70738-755c-43c3-a953-1ef6fb4d1327"
+		},
+		"rebill": {
+			"product_schedules": ["300848c1-8b83-4b8d-aff9-529ba6459d0f"],
+			"amount": 89.99,
+			"updated_at": "2018-03-23T22:05:22.827Z",
+			"bill_at": "2017-04-06T18:40:41.405Z",
+			"parentsession": "7b556e82-5a4c-4199-b8bc-0d86b3d8b47b",
+			"processing": true,
+			"created_at": "2018-03-23T22:05:22.827Z",
+			"id": "c8b70738-755c-43c3-a953-1ef6fb4d1327",
+			"state": "shipped",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+		},
+		"transactions": [{
+			"result": "success",
+			"merchant_provider": "ba60b877-0d06-4ade-abf7-156cce7670bb",
+			"amount": 14.99,
+			"updated_at": "2018-03-23T22:05:22.711Z",
+			"alias": "T56S2HJO32",
+			"created_at": "2018-03-23T22:05:22.711Z",
+			"processor_response": "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894419\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
+			"id": "8528bdae-4ede-4795-802f-7b68379a4fa4",
+			"type": "sale",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"rebill": "c8b70738-755c-43c3-a953-1ef6fb4d1327",
+			"products": [{
+				"product": {
+					"updated_at": "2017-04-06T18:41:12.521Z",
+					"name": "Test Product 2",
+					"shipping_delay": 3600,
+					"ship": false,
+					"created_at": "2017-04-06T18:40:41.405Z",
+					"id": "ddfe2f4d-16b1-4d13-b7b4-0515e9b5a780",
+					"sku": "1234",
+					"fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+					"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+				},
+				"amount": 14.99,
+				"quantity": 1,
+				"shipping_receipt": "90e20590-0486-4809-9010-b3b805d9b58e"
+			}]
+		}],
+		"shippedtransactionproducts": [{
+			"product": {
+				"updated_at": "2017-04-06T18:41:12.521Z",
+				"name": "Test Product 2",
+				"shipping_delay": 3600,
+				"ship": false,
+				"created_at": "2017-04-06T18:40:41.405Z",
+				"id": "ddfe2f4d-16b1-4d13-b7b4-0515e9b5a780",
+				"sku": "1234",
+				"fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+				"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+			},
+			"amount": 14.99,
+			"quantity": 1,
+			"shipping_receipt": "90e20590-0486-4809-9010-b3b805d9b58e"
+		}],
+		"shippingreceipts": [{
+			"updated_at": "2018-03-23T22:05:22.773Z",
+			"fulfillment_provider_reference": "3e538134-7596-47c5-96b3-249a9b65afe3",
+			"created_at": "2018-03-23T22:05:22.773Z",
+			"id": "90e20590-0486-4809-9010-b3b805d9b58e",
+			"history": [{
+				"created_at": "2017-04-06T18:40:41.405Z",
+				"status": "shipped",
+				"detail": "TEST"
+			}],
+			"fulfillment_provider": "5d18d0fa-5812-4c37-b98c-7b1debdcb435",
+			"tracking": {
+				"carrier": "Test",
+				"id": "09812304981039480219"
+			},
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"status": "intransit"
+		}],
+		"productdeliveredstati": [true],
+		"rebilldeliveredstatus": true
+	}
+}

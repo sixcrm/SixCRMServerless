@@ -55,22 +55,7 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 				affiliates_in_result[key] = affiliates[key];
 			});
 
-			let test_cases = [{
-					message: {
-						event_type: 'rebill',
-						account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-						user: "system@sixcrm.com",
-						context: {
-							eventMeta: { rebill: 'yes'},
-							affiliates,
-							campaign
-						}
-					},
-					result: {
-						type: 'rebill',
-						eventMeta: { rebill: 'yes'}
-					}
-				},
+			let test_cases = [
 				{
 					message: {
 						event_type: 'click',
