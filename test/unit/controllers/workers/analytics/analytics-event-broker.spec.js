@@ -69,16 +69,16 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 
 					return paths.map((p) => {
 
-						const event = JSON.parse(fs.readFileSync(p, 'utf8'));
+						const test = JSON.parse(fs.readFileSync(p, 'utf8'));
 
-						let sns_message = MockEntities.getValidSNSMessage(event);
+						const message = MockEntities.getValidSNSMessage(test.event);
 
-						return new AnalyticsEventBroker().execute(sns_message).then(result => {
+						return new AnalyticsEventBroker().execute(message).then(result => {
 							// expect(result).to.equal(true);
 
-							console.log(require('util').inspect(result, { depth: null}));
+							console.log('RESULT', require('util').inspect(result, { depth: null}));
 
-							//expect(redshiftEventsController.parameters.store['redshiftobject']).to.deep.equal(test_case.result);
+							// expect(
 						
 						});
 

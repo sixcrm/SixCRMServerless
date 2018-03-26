@@ -43,8 +43,9 @@ module.exports = class AnalyticsEventBroker extends SNSEventController {
 			.then(() => this.assembleRDSQueueObject())
 			.then(() => this.pushObjectToRDSQueue())
 			.catch(error => {
-				du.error(error);
-				return true;
+
+				return du.error(error);
+
 			});
 
 	}
@@ -83,8 +84,6 @@ module.exports = class AnalyticsEventBroker extends SNSEventController {
 		let return_object = {
 			type: this.parameters.get('message').event_type
 		};
-
-		console.log(return_object);
 
 		if (rds_object.account) {
 
@@ -127,11 +126,15 @@ module.exports = class AnalyticsEventBroker extends SNSEventController {
 
 		// fs.writeFileSync(rdsObject.type + '-' + uuid.v4() + '.json', JSON.stringify(rdsObject), 'utf8');
 
+		const message = JSON.stringify(rdsObject);
+
 		return this.sqsutilities.sendMessage({
-			message_body: JSON.stringify(rdsObject),
+			message_body: message,
 			queue: 'rds_transaction_batch'
 		}).then(() => {
-			return true;
+
+			return message;
+
 		});
 
 	}
