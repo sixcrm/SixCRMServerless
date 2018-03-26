@@ -1,6 +1,4 @@
-const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 module.exports = class ChannelNotification {
