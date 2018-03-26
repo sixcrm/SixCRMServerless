@@ -1,17 +1,4 @@
 const mockery = require('mockery');
-
-mockery.enable({
-	useCleanCache: true,
-	warnOnReplace: false,
-	warnOnUnregistered: false
-});
-
-mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-	sendMessage: () => {
-		return Promise.resolve(true);
-	}
-});
-
 const chai = require("chai");
 const expect = chai.expect;
 const path = require('path');
@@ -22,6 +9,22 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
 
 describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
+
+	before(() => {
+
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+		
+		mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
+			sendMessage: () => {
+				return Promise.resolve(true);
+			}
+		});
+
+	});
 
 	after(() => {
 
