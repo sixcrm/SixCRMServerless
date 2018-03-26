@@ -5,13 +5,13 @@
 		}
 	},
 	"pathParameters": {
-		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+		"account": "2f277488-e108-49b6-91e8-788600005741"
 	},
 	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNDk2MTY0Mzg3LCJleHAiOjE0OTYxNjc5ODcsInVzZXJfYWxpYXMiOiI0ZWUyM2E4ZjVjODY2MTYxMjA3NWE4OWU3MmE1NmEzYzZkMDBkZjkwIn0.GNl4N85mzShUMH-9eTTTOHIVJuce_-ETMvfntryLRbw",
 	"body": {
-		"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+		"campaign": "a888d5ba-cf8c-408e-bfc9-a6cdf22f7e91",
 		"product_schedules": [{
-			"product_schedule": "12529a17-ac32-4e46-b05b-83862843055d",
+			"product_schedule": "d30c72b1-4fb6-4fca-bdca-4823c359b5f2",
 			"quantity":2
 		}],
 		"affiliates": {
