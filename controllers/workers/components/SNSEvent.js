@@ -134,7 +134,7 @@ module.exports = class SNSEventController {
 
 	}
 
-	isComplaintEventType() {
+	isCompliantEventType() {
 
 		du.debug('Is Complaint Tracking Event Type');
 

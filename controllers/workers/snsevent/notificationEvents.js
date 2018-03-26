@@ -21,7 +21,7 @@ class NotificationEventsController extends SNSEventController {
 
     return Promise.resolve()
     //Note:  Because compliant_event_types is not defined in this class, all events pass the checks here.
-    .then(() => this.isComplaintEventType())
+    .then(() => this.isCompliantEventType())
     .then(() => this.executeNotification())
     .catch(error => {
       du.error(error);

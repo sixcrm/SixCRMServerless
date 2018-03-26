@@ -1,6 +1,6 @@
 const _ = require('underscore');
-const fs = require('fs');
-const uuid = require('uuid');
+// const fs = require('fs');
+// const uuid = require('uuid');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
@@ -19,7 +19,7 @@ module.exports = class EventHelperController {
 
 		du.debug('Push Event');
 
-		fs.writeFileSync(event.event_type + '-' + uuid.v4() + '.json', JSON.stringify(event), 'utf8');
+		// fs.writeFileSync(event.event_type + '-' + uuid.v4() + '.json', JSON.stringify(event), 'utf8');
 
 		return this.snsutilities.publish(this.createPublishParameters(event));
 

@@ -200,7 +200,7 @@ module.exports = class ContextHelperController {
           return thing_element;
         }
 
-        du.warning('Unrecognized thing:',thing_element);
+        // du.warning('Unrecognized thing:',thing_element);
 
       });
 
