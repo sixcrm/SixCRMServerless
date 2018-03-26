@@ -1,7 +1,6 @@
 // const fs = require('fs');
 // const uuid = require('uuid');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const sqsUtilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 
 module.exports = class AnalyticsEventBroker {
 
@@ -74,7 +73,7 @@ module.exports = class AnalyticsEventBroker {
 
 		const sqsMessage = JSON.stringify(record);
 
-		return sqsUtilities.sendMessage({
+		return global.SixCRM.routes.include('lib', 'sqs-utilities.js').sendMessage({
 			message_body: sqsMessage,
 			queue: 'rds_transaction_batch'
 		}).then(() => {
