@@ -41,36 +41,29 @@ describe('Push events to RDS', () => {
 
 	tests.map((test) => {
 
-		it(test.name, (done) => {
+		it(test.name, () => {
 
-			const aeh = new AnalyticsEventHandler('rds_transaction_batch', auroraContext);
+			return auroraContext.withConnection((connection) => {
 
-			seedSQS(test)
-				.then(() => SQSTestUtils.messageCountInQueue(aeh.queueName))
-				.then((count) => {
+				const aeh = new AnalyticsEventHandler('rds_transaction_batch', auroraContext);
 
-					return expect(count === test[aeh.queueName].count);
+				return seedSQS(test)
+					.then(() => SQSTestUtils.messageCountInQueue('rds_transaction_batch'))
+					.then((count) => {
 
-				})
-				.then(() => aeh.execute())
-				// .then(() => auroraContext.connection.query('SELECT COUNT(1) as c FROM analytics.f_transactions'))
-				// .then((result) => {
+						return expect(count === test.count);
 
-				// 	return expect(result.rows[0].c).to.be.equal(test[ptr.queueName].count.toString());
+					})
+					.then(() => aeh.execute())
+					.then(() => test.validate(connection))
+					.then(() => SQSTestUtils.messageCountInQueue('rds_transaction_batch'))
+					.then((count) => {
 
-				// })
-				.then(() => SQSTestUtils.messageCountInQueue(aeh.queueName))
-				.then((count) => {
+						return expect(count === 0);
 
-					return expect(count === 0);
+					});
 
-				})
-				.then(() => done())
-				.catch((ex) => {
-
-					done(ex);
-
-				});
+			});
 
 		});
 
@@ -83,6 +76,7 @@ function prepareTest(dir) {
 	const test = require(path.join(dir, 'config.json'));
 	test.directory = dir;
 	test.seeds = {};
+	test.validate = require(path.join(dir, 'validate.js'));
 
 	if (fileutilities.fileExists(path.join(dir, 'seeds'))) {
 
@@ -108,16 +102,13 @@ function seedSQS(test) {
 
 	const promises = _.reduce(test.seeds.sqs, (memo, seed) => {
 
-		const queueName = seed.replace('.json', '');
 		const seedFilePath = path.join(test.directory, 'seeds', 'sqs', seed);
 		const seedContent = require(seedFilePath);
-		test[queueName] = {
-			count: seedContent.messages.length
-		};
+		test.count = seedContent.messages.count;
 
 		memo.push(...seedContent.messages.map(message => {
 
-			return SQSTestUtils.sendMessageToQueue(queueName, JSON.stringify(message), 1);
+			return SQSTestUtils.sendMessageToQueue('rds_transaction_batch', JSON.stringify(message), 1);
 
 		}));
 

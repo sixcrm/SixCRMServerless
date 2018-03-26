@@ -1,8 +1,0 @@
-{
-	"name": "push a transaction to RDS",
-	"input": {
-		"transaction": {
-
-		}
-	}
-}
