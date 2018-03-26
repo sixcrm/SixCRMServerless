@@ -21,11 +21,11 @@ module.exports = class AnalyticsEventBroker {
 
 		}
 
-		return Promise.all(records.Records.map(this.recordHandler.bind(this)));
+		return Promise.all(records.Records.map(this._recordHandler.bind(this)));
 
 	}
 
-	recordHandler(snsRecord) {
+	_recordHandler(snsRecord) {
 
 		try {
 
@@ -51,7 +51,7 @@ module.exports = class AnalyticsEventBroker {
 
 		return Promise.resolve()
 			.then(() => new Transform().execute(record))
-			.then(this.pushToQueue.bind(this))
+			.then(this._pushToQueue.bind(this))
 			.catch((ex) => {
 
 				du.error('AnalyticsEventBroker.recordHandler()', ex);
@@ -66,7 +66,7 @@ module.exports = class AnalyticsEventBroker {
 
 	}
 
-	pushToQueue(record) {
+	_pushToQueue(record) {
 
 		du.debug('AnalyticsEventBroker.pushToQueue()');
 
