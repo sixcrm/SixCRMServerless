@@ -528,7 +528,7 @@ class NotificationProvider {
         let readable_notification = this.buildReadableNotificationObject(channel, notification, user_settings);
 
         if(!_.has(this.channel_providers, channel)){
-          const ChannelProvider = global.SixCRM.routes.include('providers','notification/'+channel+'-notification-provider.js');
+          const ChannelProvider = global.SixCRM.routes.include('providers','notification/channels/'+channel+'.js');
           this.channel_providers[channel] = new ChannelProvider();
         }
 

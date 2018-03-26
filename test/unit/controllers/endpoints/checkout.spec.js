@@ -315,7 +315,7 @@ describe('checkout', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'user/Email.js'), mock_email_helper);
 
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/notification-provider'), {
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/Notification.js'), {
         createNotificationsForAccount: () => {
           return Promise.resolve(true);
         }
@@ -772,7 +772,7 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/notification-provider'), {
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'notification/Notification.js'), {
         createNotificationsForAccount: () => {
           return Promise.resolve(true);
         }

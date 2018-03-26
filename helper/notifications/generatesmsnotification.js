@@ -2,7 +2,7 @@
 
 require('../../SixCRM.js');
 
-const SmsNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/sms-notification-provider');
+const SmsNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/channels/sms.js');
 const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utilities');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib','timestamp.js');

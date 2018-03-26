@@ -1,0 +1,15 @@
+{
+  "id":"/providers/notifications/channels/email/notificationproperties.json",
+  "title":"Email Notification Properties",
+  "oneOf":[
+    {
+      "type":"object",
+      "properties":{
+        "email":{"$ref":"../../../../definitions/email.json"},
+        "name":{"$ref":"../../../../definitions/name.json"}
+      },
+      "required":["email"]
+    },
+    {"$ref":"../../../../definitions/email.json"}
+  ]
+}

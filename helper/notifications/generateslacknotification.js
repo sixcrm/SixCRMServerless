@@ -2,7 +2,7 @@
 
 require('../../SixCRM.js');
 
-const SlackNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/slack-notification-provider');
+const SlackNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/channels/slack.js');
 const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utilities');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
