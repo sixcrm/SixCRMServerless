@@ -8,6 +8,8 @@ module.exports = class ConfirmTransform {
 
 		return Promise.resolve({
 			affiliate: record.context.event.affiliates.affiliate,
+			account: record.context.campaign.account,
+			campaign: record.context.campaign.id,
 			cid: record.context.event.affiliates.cid,
 			datetime: record.context.session.updated_at,
 			session: record.context.session.id,

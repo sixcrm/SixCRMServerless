@@ -1,9 +1,0 @@
-{
-	"type": "rebill",
-	"datetime": "2018-03-26T15:48:54.323Z",
-	"id_rebill": "16b7787a-fb6a-4392-996e-238a338b3b6d",
-	"current_queuename": "bill_error",
-	"previous_queuename": "bill",
-	"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
-	"amount": 0
-}

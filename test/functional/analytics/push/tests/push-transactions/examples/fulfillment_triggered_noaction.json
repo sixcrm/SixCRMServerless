@@ -1,7 +1,0 @@
-{
-	"type": "fulfillment_triggered_noaction",
-	"datetime": "2018-03-26T15:48:54.239Z",
-	"session": "",
-	"product_schedules": ["168ecb64-8a17-47b3-80b8-106599a7c288"],
-	"products": ["74e643f8-dd6f-4796-825a-b278b8cc85ad", "46194136-7165-48b8-8bea-4e2d43c237e1", "1173b747-c8bc-4d81-981e-bb2196297fcf", "ba1aea9b-3107-47d4-812f-0e92563c9d4f"]
-}

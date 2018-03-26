@@ -8,6 +8,8 @@ module.exports = class OrderTransform {
 
 		return Promise.resolve({
 			affiliate: record.context.session.affiliate,
+			account: record.context.campaign.account,
+			campaign: record.context.campaign.id,
 			cid: record.context.session.cid,
 			datetime: record.context.session.updated_at,
 			session: record.context.session.id,
