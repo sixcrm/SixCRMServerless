@@ -1,0 +1,7 @@
+{
+	"type": "transaction_success",
+	"datetime": "2018-03-26T15:48:54.336Z",
+	"session": "",
+	"product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
+	"products": ["1b7ecefe-8be6-44cd-addb-d4e4350d7738"]
+}

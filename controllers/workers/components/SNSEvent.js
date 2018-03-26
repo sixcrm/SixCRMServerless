@@ -1,11 +1,9 @@
-'use strict';
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class SNSEventController {
@@ -52,21 +50,20 @@ module.exports = class SNSEventController {
 		this.parameters.setParameterValidation({
 			parameter_validation: this.parameter_validation
 		});
+
 		this.parameters.setParameterDefinition({
 			parameter_definition: this.parameter_definition
 		});
 
-		return true;
-
 	}
 
-	execute() {
+	execute(argumentation) {
 
 		du.debug('Execute');
 
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({
-				argumentation: arguments[0],
+				argumentation,
 				action: 'execute'
 			}))
 			.then(() => this.handleEvents())
@@ -77,24 +74,7 @@ module.exports = class SNSEventController {
 
 		du.debug('Handle Events');
 
-		let records = this.parameters.get('records');
-
-		let event_promises = arrayutilities.map(records, record => {
-			return () => this.handleEventRecord(record);
-		});
-
-		//Technical Debt:  This would be great if it did all this stuff asyncronously down the road
-		return arrayutilities.reduce(
-			event_promises,
-			(current, event_promise) => {
-				return event_promise().then(() => {
-					return true;
-				})
-			},
-			Promise.resolve(true)
-		).then(() => {
-			return true;
-		});
+		return Promise.all(this.parameters.get('records').map(this.handleEventRecord.bind(this)));
 
 	}
 
@@ -106,12 +86,20 @@ module.exports = class SNSEventController {
 			.then(() => this.parameters.set('record', record))
 			.then(() => this.getMessage())
 			.then(() => {
+
 				if (_.has(this, 'event_record_handler') && _.isFunction(this[this.event_record_handler])) {
+
 					return this[this.event_record_handler]();
+
 				}
-				eu.throwError('server', 'Event record handler not set.');
+
+				return eu.throwError('server', 'Event record handler not set.');
+
 			})
-			.then(() => this.cleanUp());
+			.then((result) => {
+				this.cleanUp();
+				return result;
+			});
 
 	}
 
@@ -119,44 +107,41 @@ module.exports = class SNSEventController {
 
 		du.debug('Get Message');
 
-		let message = this.parameters.get('record').Sns.Message;
-
 		try {
-			message = JSON.parse(message);
+
+			const message = JSON.parse(this.parameters.get('record').Sns.Message);
+			this.parameters.set('message', message);
+
 		} catch (error) {
+
 			du.error(error);
 			eu.throwError(error);
+
 		}
-
-		this.parameters.set('message', message);
-
-		return true;
 
 	}
 
-	isComplaintEventType() {
+	isCompliantEventType() {
 
 		du.debug('Is Complaint Tracking Event Type');
 
 		if (_.has(this, 'compliant_event_types') && arrayutilities.nonEmpty(this.compliant_event_types)) {
 
-			let event_type = this.parameters.get('message').event_type;
+			const event_type = this.parameters.get('message').event_type;
 
-			let matching_event = arrayutilities.find(this.compliant_event_types, compliant_event_type => {
-				let re = new RegExp(compliant_event_type);
+			const matching_event = arrayutilities.find(this.compliant_event_types, compliant_event_type => {
 
-				return stringutilities.isMatch(event_type, re);
+				return stringutilities.isMatch(event_type, new RegExp(`^${compliant_event_type}`));
+
 			});
 
-			if (_.isString(matching_event)) {
-				return true;
+			if (!_.isString(matching_event)) {
+
+				du.debug('server', 'Not a complaint event type: ' + event_type);
+
 			}
 
-			eu.throwError('server', 'Not a complaint event type: ' + event_type);
-
 		}
-
-		return true;
 
 	}
 
@@ -169,8 +154,6 @@ module.exports = class SNSEventController {
 				this.parameters.unset(key);
 			}
 		});
-
-		return true;
 
 	}
 

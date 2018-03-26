@@ -2,6 +2,8 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
 //const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+// const fs = require('fs');
+// const uuid = require('uuid');
 
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
@@ -37,12 +39,13 @@ module.exports = class AnalyticsEventBroker extends SNSEventController {
 		du.debug('Push To RDSQueue');
 
 		return Promise.resolve()
-			.then(() => this.isComplaintEventType())
+			.then(() => this.isCompliantEventType())
 			.then(() => this.assembleRDSQueueObject())
 			.then(() => this.pushObjectToRDSQueue())
 			.catch(error => {
-				du.error(error);
-				return true;
+
+				return du.error(error);
+
 			});
 
 	}
@@ -82,9 +85,20 @@ module.exports = class AnalyticsEventBroker extends SNSEventController {
 			type: this.parameters.get('message').event_type
 		};
 
-		return_object = this.contextHelperController.transcribeAccount(rds_object, return_object);
+		if (rds_object.account) {
+
+			return_object = this.contextHelperController.transcribeAccount(rds_object, return_object);
+
+		}
+
 		return_object = this.contextHelperController.transcribeDatetime(rds_object, return_object);
-		return_object = this.contextHelperController.transcribeCampaignFields(rds_object, return_object);
+
+		if (rds_object.account) {
+
+			return_object = this.contextHelperController.transcribeCampaignFields(rds_object, return_object);
+
+		}
+
 		return_object = this.contextHelperController.transcribeSessionFields(rds_object, return_object);
 		return_object = this.contextHelperController.transcribeAffiliates(rds_object, return_object);
 
@@ -108,13 +122,19 @@ module.exports = class AnalyticsEventBroker extends SNSEventController {
 
 		du.debug('Push Object To RDS Queue');
 
-		const rds_object = this.parameters.get('rdsobject');
+		const rdsObject = this.parameters.get('rdsobject');
+
+		// fs.writeFileSync(rdsObject.type + '-' + uuid.v4() + '.json', JSON.stringify(rdsObject), 'utf8');
+
+		const message = JSON.stringify(rdsObject);
 
 		return this.sqsutilities.sendMessage({
-			message_body: JSON.stringify(rds_object),
+			message_body: message,
 			queue: 'rds_transaction_batch'
 		}).then(() => {
-			return true;
+
+			return message;
+
 		});
 
 	}
