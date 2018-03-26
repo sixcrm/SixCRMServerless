@@ -70,7 +70,7 @@ module.exports = class AnalyticsEventHandler {
 			const eventKeys = Object.keys(this._eventTypeHandlerMap);
 			const eventKey = eventKeys.find(ek => {
 
-				const regex = new RegExp(ek);
+				const regex = new RegExp(`^${ek}`);
 				return message.type.match(regex);
 
 			});

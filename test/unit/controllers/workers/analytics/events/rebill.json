@@ -1,18 +1,12 @@
 {
 	"result": {
 		"type": "rebill",
-		"datetime": "2018-03-26T15:48:54.323Z",
-		"session": "",
-		"product_schedules": ["0195a50a-ebc4-40ba-a873-93f5cb6d9db0"],
-		"products": ["a8ce3f46-479b-4846-a36b-01e2e8629041"],
-		"eventMeta": {
-			"id_rebill": "16b7787a-fb6a-4392-996e-238a338b3b6d",
-			"current_queuename": "bill_error",
-			"previous_queuename": "bill",
-			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
-			"datetime": "2018-03-23T22:06:20.452Z",
-			"amount": 0
-		}
+		"datetime": "2019-03-23T22:06:20.452Z",
+		"id_rebill": "16b7787a-fb6a-4392-996e-238a338b3b6d",
+		"current_queuename": "bill_error",
+		"previous_queuename": "bill",
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"amount": 0
 	},
 	"event": {
 		"event_type": "rebill",
@@ -177,14 +171,6 @@
 						}
 					}
 				}]
-			},
-			"eventMeta": {
-				"id_rebill": "16b7787a-fb6a-4392-996e-238a338b3b6d",
-				"current_queuename": "bill_error",
-				"previous_queuename": "bill",
-				"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
-				"datetime": "2018-03-23T22:06:20.452Z",
-				"amount": 0
 			}
 		}
 	}

@@ -9,9 +9,7 @@
 		"subaffiliate_3": "c732a2cb-cd89-47d1-a101-69b465722a94",
 		"subaffiliate_4": "98dd8910-eff6-4c45-9b9b-ec5e0fcbe686",
 		"subaffiliate_5": "ce7dc716-30c5-416a-92a1-473f43a56b27",
-		"cid": "c9f90087-5905-47c4-bf28-3c129ce21048",
-		"product_schedules": [],
-		"products": ["d487228c-5bf7-42a5-b951-2f5f1e17e78c"]
+		"cid": "c9f90087-5905-47c4-bf28-3c129ce21048"
 	},
 	"event": {
 		"event_type": "order",

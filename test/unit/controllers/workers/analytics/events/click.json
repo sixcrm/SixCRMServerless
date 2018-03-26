@@ -1,6 +1,6 @@
 {
 	"result": {
-		"type": "lead",
+		"type": "click",
 		"datetime": "2018-03-26T13:15:22.175Z",
 		"session": "39d4b5ad-8e8a-4c63-a9e5-7e337a0dec20",
 		"affiliate": "05d65fa9-bac9-4dc9-99f0-f4a1e08dc036",
@@ -12,7 +12,7 @@
 		"cid": "7e89d25c-93e9-4f27-b391-02f7eb94751c"
 	},
 	"event": {
-		"event_type": "lead",
+		"event_type": "click",
 		"context": {
 			"event": {
 				"customer": {
