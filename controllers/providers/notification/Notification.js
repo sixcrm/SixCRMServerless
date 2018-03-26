@@ -20,8 +20,12 @@ class NotificationProvider {
     this.immutable_types = ['alert', 'persistent'];
     this.channel_providers = {};
 
-    //Technical Debt:  Add action, notificationprototype
-    this.parameter_validation = {};
+    this.parameter_validation = {
+      action: global.SixCRM.routes.path('model', 'providers/notifications/action.json'),
+      //Technical Debt:  Type should not be required...
+      notificationprototype: global.SixCRM.routes.path('model', 'providers/notifications/notificationprototype.json')
+    };
+
     this.parameter_definition = {
       createNotificationForAccountAndUser:{
         required:{

@@ -1,0 +1,14 @@
+{
+  "id":"/providers/notifications/components/usernotificationprototype.json",
+  "title": "User Notification Prototype",
+  "type": "object",
+  "properties": {
+    "name":{"type":"string"},
+    "user":{"$ref":"../../../definitions/useridentifier.json"},
+    "account": {"$ref":"../../../definitions/sixcrmaccountidentifier.json"},
+    "type":{"$ref":"../../../definitions/notificationtype.json"},
+    "context":{"type":"object"},
+    "category":{"type":"string"}
+  },
+  "required":["user"]
+}

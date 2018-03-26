@@ -52,10 +52,10 @@ module.exports = class BaseNotification extends NotificationUtilities {
     }
 
     if(_.has(this, 'account_wide') && this.account_wide == true){
-      return this.notificationProvider.createNotificationsForAccount(transformed_context);
+      return this.notificationProvider.createNotificationsForAccount({notification_prototype: transformed_context});
     }
 
-    return this.notificationProvider.createNotificationForAccountAndUser(transformed_context);
+    return this.notificationProvider.createNotificationForAccountAndUser({notification_prototype: transformed_context});
 
   }
 

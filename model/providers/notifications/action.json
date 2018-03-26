@@ -1,0 +1,6 @@
+{
+  "id":"providers/notifications/action.json",
+  "title":"Notification Provider Actions",
+  "type":"string",
+  "enum":["createNotificationForAccountAndUser", "createNotificationsForAccount"]
+}

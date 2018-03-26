@@ -629,7 +629,10 @@ describe('controllers/providers/notification/Notification', () => {
     describe('validateNotificationPrototype', () => {
       it('successfully fails to validate', () => {
 
-        let notification_prototype = {};
+        let notification_prototype = {
+          context: {},
+          account:'ad58ea78-504f-4a7e-ad45-128b6e76dc57'
+        };
 
         let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
         notification_provider.parameters.set('action', 'createNotificationForAccountAndUser');
@@ -638,14 +641,18 @@ describe('controllers/providers/notification/Notification', () => {
         try{
           notification_provider.validateNotificationPrototype();
         }catch(error){
-          expect(error.message).to.equal('[500] User is mandatory in notification prototypes when using the createNotificationsForAccountAndUser method.');
+          expect(error.message).to.have.string('[500] One or more validation errors occurred:');
         }
 
       });
 
       it('successfully validates', () => {
 
-        let notification_prototype = {user:'someuser@user.com'};
+        let notification_prototype = {
+          user:'someuser@user.com',
+          context: {},
+          account:'ad58ea78-504f-4a7e-ad45-128b6e76dc57'
+        };
 
         let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
         notification_provider.parameters.set('action', 'createNotificationForAccountAndUser');
@@ -673,7 +680,10 @@ describe('controllers/providers/notification/Notification', () => {
       });
 
       it('throws an error when user is not set', () => {
-        let notification_prototype = {};
+        let notification_prototype = {
+          context: {},
+          account:'ad58ea78-504f-4a7e-ad45-128b6e76dc57'
+        };
 
         let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
         notification_provider.parameters.set('notificationprototype', notification_prototype);
@@ -690,6 +700,7 @@ describe('controllers/providers/notification/Notification', () => {
     describe('setReceiptUsers', () => {
 
       it('successfully sets the user from the notification prototype', () => {
+
         let notification_prototype = {user:'someuser@user.com'};
 
         let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
@@ -699,6 +710,7 @@ describe('controllers/providers/notification/Notification', () => {
         let result = notification_provider.setReceiptUsers();
         expect(result).to.equal(true);
         expect(notification_provider.parameters.store['receiptusers']).to.deep.equal([notification_prototype.user]);
+
       });
 
       it('successfully sets the users from account acls', () => {
@@ -852,7 +864,7 @@ describe('controllers/providers/notification/Notification', () => {
         let a_notification_prototype = {
           user: user,
           account: account,
-          type: 'lead',
+          type: 'notification',
           category: 'transaction',
           context: {
             'category.name': 'Some category name',
@@ -898,7 +910,7 @@ describe('controllers/providers/notification/Notification', () => {
         let a_notification_prototype = {
           user: user,
           account: account,
-          type: 'lead',
+          type: 'notification',
           category: 'transaction',
           context: {
             'category.name': 'Some category name',
@@ -954,7 +966,7 @@ describe('controllers/providers/notification/Notification', () => {
         let a_notification_prototype = {
           user: user,
           account: account,
-          type: 'lead',
+          type: 'notification',
           category: 'transaction',
           context: {
             'category.name': 'Some category name',
@@ -1007,7 +1019,7 @@ describe('controllers/providers/notification/Notification', () => {
         let a_notification_prototype = {
           user: user,
           account: account,
-          type: 'lead',
+          type: 'notification',
           category: 'transaction',
           context: {
             'category.name': 'Some category name',
@@ -1751,10 +1763,10 @@ describe('controllers/providers/notification/Notification', () => {
         let a_notification_prototype = {
           user: user,
           account: account,
-          type: 'alert',
+          type: 'notification',
           category: 'test',
           context: {},
-          name: 'testalert'
+          name: 'test'
         };
 
         let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');

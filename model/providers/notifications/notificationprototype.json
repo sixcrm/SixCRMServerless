@@ -1,14 +1,8 @@
 {
-  "id":"/actions/notificationprototype.json",
-  "title": "CreateNotification",
-  "type": "object",
-  "properties": {
-    "name":{"type":"string"},
-    "user":{"$ref":"../definitions/useridentifier.json"},
-    "account": {"$ref":"../definitions/sixcrmaccountidentifier.json"},
-    "type":{"$ref":"../definitions/notificationtype.json"},
-    "context":{"type":"object"},
-    "category":{"type":"string"}
-  },
-  "required":["account", "type", "context"]
+  "id":"/providers/notifications/notificationprototype.json",
+  "title": "Notification Prototype",
+  "anyOf": [
+    {"$ref":"./components/accountnotificationprototype.json"},
+    {"$ref":"./components/usernotificationprototype.json"}
+  ]
 }
