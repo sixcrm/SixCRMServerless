@@ -79,7 +79,7 @@ module.exports = class WriteTransactionRecords {
 					r.processorResult,
 					r.account,
 					r.type,
-					r.subtype,
+					r.subtype || 'main',
 					r.productSchedule,
 					r.subaffiliate1,
 					r.subaffiliate2,
