@@ -52,6 +52,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 	  this.binController = new BinController();
 
       this.creditCardController.sanitize(false);
+      this.merchantProviderGroupController.sanitize(false);
     }
 
     buildMerchantProviderGroups(){
