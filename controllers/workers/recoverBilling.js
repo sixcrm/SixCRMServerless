@@ -49,7 +49,7 @@ module.exports = class recoverBillingController extends workerController {
 
 		du.debug('Set Session');
 
-		let event = this.parameters.get('event');
+		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this.sessionController)) {
 
@@ -58,7 +58,7 @@ module.exports = class recoverBillingController extends workerController {
 		}
 
 		return this.sessionController.get({
-			id: event.session
+			id: rebill.parentsession
 		}).then(session => {
 
 			return this.parameters.set('session', session);

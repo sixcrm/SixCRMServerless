@@ -37,8 +37,11 @@ module.exports = class processBillingController extends workerController {
 			.then(() => this.process())
 			.then(() => this.postProcessing())
 			.then(() => this.respond())
-			.catch((error) => {
-				return super.respond('error', error.message);
+			.catch((ex) => {
+
+				du.error('ProcessBillingController.execute()', ex);
+				return super.respond('error', ex.message);
+
 			})
 
 	}
@@ -47,7 +50,7 @@ module.exports = class processBillingController extends workerController {
 
 		du.debug('Set Session');
 
-		let event = this.parameters.get('event');
+		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this.sessionController)) {
 
@@ -56,7 +59,7 @@ module.exports = class processBillingController extends workerController {
 		}
 
 		return this.sessionController.get({
-			id: event.session
+			id: rebill.parentsession
 		}).then(session => {
 
 			return this.parameters.set('session', session);
