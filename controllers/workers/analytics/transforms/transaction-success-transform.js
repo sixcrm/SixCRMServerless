@@ -6,32 +6,29 @@ module.exports = class TransactionSuccessTransform {
 
 		du.debug('TransactionSuccessTransform.execute()');
 
-		return Promise.resolve({
-			datetime: record.context.registerresponse.parameters.store.transactions[0].created_at,
-			type: record.event_type
-		});
+		return Promise.resolve(
+			record.context.registerresponse.parameters.store.transactions.map(t => {
+				return {
+					id: t.id,
+					datetime: t.created_at,
+					merchantProvider: t.merchant_provider,
+					processorResult: t.result,
+					amount: t.amount,
+					type: record.event_type,
+					subtype: record.transaction_subtype,
+					customer: record.context.session.customer,
+					creditcard: record.context.registerresponse.parameters.store.creditcard.number,
+					campaign: record.context.session.campaign,
+					account: record.context.session.account,
+					affiliate: record.context.session.affiliate,
+					subaffiliate1: record.context.session.subaffiliate_1,
+					subaffiliate2: record.context.session.subaffiliate_2,
+					subaffiliate3: record.context.session.subaffiliate_3,
+					subaffiliate4: record.context.session.subaffiliate_4,
+					subaffiliate5: record.context.session.subaffiliate_5,
+				};
+			}));
 
 	}
 
 }
-
-// 'INSERT INTO analytics.f_transactions ( \
-// 	id, \
-// 	datetime, \
-// 	customer, \
-// 	creditcard, \
-// 	merchant_provider, \
-// 	campaign, \
-// 	affiliate, \
-// 	amount, \
-// 	processor_result, \
-// 	account, \
-// 	type, \
-// 	subtype, \
-// 	product_schedule, \
-// 	subaffiliate_1, \
-// 	subaffiliate_2, \
-// 	subaffiliate_3, \
-// 	subaffiliate_4, \
-// 	subaffiliate_5) \
-// 	VALUES ';

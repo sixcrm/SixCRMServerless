@@ -1,0 +1,41 @@
+{
+	"messages": [{
+			"id": "0a35f59b-88d9-4227-a7ef-5272da0a785d",
+			"datetime": "2018-03-23T21:58:46.068Z",
+			"merchantProvider": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
+			"processorResult": "success",
+			"amount": 34.99,
+			"type": "transaction_success",
+			"subtype": "main",
+			"customer": "b1cf3769-a541-43f2-b03f-2f2e468a10f5",
+			"creditcard": "4111111111111111",
+			"campaign": "7a2b5750-adc4-4762-8963-268aa767b803",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"affiliate": "8882b1de-e4be-485b-b887-1a41ff93677e",
+			"subaffiliate1": "c41cbf33-b7df-4807-b153-2a882aab2110",
+			"subaffiliate2": "2250771e-8788-4706-bb00-0ef73bbc167a",
+			"subaffiliate3": "5da98116-789c-40d2-ae50-4357e691ab55",
+			"subaffiliate4": "c15faf77-0667-4f19-8be4-8793d2244b22",
+			"subaffiliate5": "25997dc4-44e6-49ec-a1c8-faa8c7344f28"
+		},
+		{
+			"id": "6dd9546f-9efd-40db-80d7-c95c90570455",
+			"datetime": "2018-03-23T22:01:55.330Z",
+			"merchantProvider": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
+			"processorResult": "declined",
+			"amount": 34.99,
+			"type": "transaction_declined",
+			"subtype": "main",
+			"customer": "b1cf3769-a541-43f2-b03f-2f2e468a10f5",
+			"creditcard": "1111111111111111",
+			"campaign": "7a2b5750-adc4-4762-8963-268aa767b803",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"affiliate": "8882b1de-e4be-485b-b887-1a41ff93677e",
+			"subaffiliate1": "c41cbf33-b7df-4807-b153-2a882aab2110",
+			"subaffiliate2": "2250771e-8788-4706-bb00-0ef73bbc167a",
+			"subaffiliate3": "5da98116-789c-40d2-ae50-4357e691ab55",
+			"subaffiliate4": "c15faf77-0667-4f19-8be4-8793d2244b22",
+			"subaffiliate5": "25997dc4-44e6-49ec-a1c8-faa8c7344f28"
+		}
+	]
+}

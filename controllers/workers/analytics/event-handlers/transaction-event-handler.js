@@ -1,4 +1,5 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const WriteTransactionRecords = require('../batch-inserts/write-transaction-records')
 
 module.exports = class TransactionEventHandler {
 
@@ -12,7 +13,8 @@ module.exports = class TransactionEventHandler {
 
 		du.debug('TransactionEventHandler.execute()', record);
 
-		return Promise.resolve();
+		return Promise.resolve()
+			.then(() => new WriteTransactionRecords(this._auroraContext).execute([record]));
 
 	}
 
