@@ -5,7 +5,8 @@ const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLList = require('graphql').GraphQLList;
 
-const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+const AccountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+const accountController = new AccountController();
 
 let userACLType = require('../useracl/userACLType');
 

@@ -43,8 +43,8 @@ describe('controllers/entities/UserACL.js', () => {
 
             let account = getValidAccount();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Account.js'), {
-                get: (an_account) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Account.js'), class {
+                get(an_account) {
                     expect(an_account.id).to.equal(userACL.account);
                     return Promise.resolve(account);
                 }
@@ -89,8 +89,8 @@ describe('controllers/entities/UserACL.js', () => {
 
             let account = getValidAccount();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Account.js'), {
-                get: (an_account) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Account.js'), class {
+                get(an_account) {
                     expect(an_account.id).to.equal(userACL.account);
                     return Promise.resolve(account);
                 }

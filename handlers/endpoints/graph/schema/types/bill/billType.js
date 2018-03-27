@@ -8,6 +8,9 @@ const GraphQLBoolean = require('graphql').GraphQLBoolean;
 let billDetailItemType = require('./billDetailItemType.js');
 let billAccountType = require('./billAccountType.js');
 
+const AccountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+const accountController = new AccountController();
+
 module.exports.graphObj = new GraphQLObjectType({
     name: 'bill',
     description: 'A bill.',
@@ -24,8 +27,6 @@ module.exports.graphObj = new GraphQLObjectType({
         type: billAccountType.graphObj,
         description: 'Owner account of the bill.',
         resolve: function(bill) {
-          const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
-
           return accountController.get({id: bill.account})
         }
       },

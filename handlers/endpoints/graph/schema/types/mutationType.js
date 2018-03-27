@@ -125,6 +125,7 @@ const BillController = global.SixCRM.routes.include('controllers', 'entities/Bil
 const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+const AccountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -490,7 +491,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 account: { type: accountInputType.graphObj }
             },
             resolve: (value, account) => {
-                const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+                const accountController = new AccountController();
 
                 return accountController.create({entity: account.account});
             }
@@ -502,7 +503,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 account: { type: accountInputType.graphObj }
             },
             resolve: (value, account) => {
-                const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+                const accountController = new AccountController();
 
                 return accountController.update({entity:account.account});
             }
@@ -518,7 +519,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, account) => {
                 var id = account.id;
-                const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+                const accountController = new AccountController();
 
                 return accountController.delete({id: id});
             }

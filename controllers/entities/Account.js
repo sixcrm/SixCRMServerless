@@ -4,7 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 //Technical Debt: Override the list method
-class accountController extends entityController {
+class AccountController extends entityController {
 
     constructor(){
         super('account');
@@ -61,4 +61,4 @@ class accountController extends entityController {
 
 }
 
-module.exports = new accountController();
+module.exports = AccountController;
