@@ -75,13 +75,13 @@ module.exports = class NotificationHelperClass {
     let event_type = this.parameters.get('eventtype');
 
     let notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/default.js');
+    this.parameters.set('notificationclass', notification_class);
 
     return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('helpers','notifications/notificationtypes/'))
     .then(directory_files => {
 
       let matching_notification_file = arrayutilities.find(directory_files, directory_file => {
-        du.info(directory_file.replace('.js',''), event_type);
-        return stringutilities.isMatch(directory_file.replace('.json',''), new RegExp(event_type,"g"));
+        return stringutilities.isMatch(directory_file.replace('.json',''), new RegExp(event_type, "g"));
       });
 
       if(matching_notification_file){
