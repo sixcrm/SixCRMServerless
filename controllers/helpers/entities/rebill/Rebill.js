@@ -45,7 +45,13 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 					queuename: 'queue_name'
 				},
 				optional: {}
-			}
+			},
+            updateRebillUpsell: {
+                required: {
+                    rebill: 'rebill',
+                    upsell: 'upsell'
+                }
+            },
 		};
 
 		this.parameter_validation = {
@@ -62,6 +68,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 			'amount': global.SixCRM.routes.path('model', 'definitions/currency.json'),
 			'rebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/rebillprototype.json'),
 			'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
+			'upsell': global.SixCRM.routes.path('model', 'entities/rebill.json'),
 			'transformedrebill': global.SixCRM.routes.path('model', 'entities/transformedrebill.json'),
 			'billablerebills': global.SixCRM.routes.path('model', 'helpers/rebill/billablerebills.json'),
 			'spoofedrebillmessages': global.SixCRM.routes.path('model', 'helpers/rebill/spoofedrebillmessages.json'),
@@ -205,6 +212,25 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		return true;
 
 	}
+
+    updateRebillUpsell() {
+        du.debug('Update Rebill Upsell');
+
+        return Promise.resolve()
+            .then(() => this.parameters.setParameters({
+                argumentation: arguments[0],
+                action: 'updateRebillUpsell'
+            }))
+            .then(() => this.acquireRebill())
+            .then(() => this.setRebillUpsell())
+            .then(() => this.updateRebill());
+    }
+
+    setRebillUpsell() {
+        const rebill = this.parameters.get('rebill');
+        const upsell = this.parameters.get('upsell');
+        rebill.upsell = upsell;
+    }
 
 	buildUpdatedRebillPrototype() {
 
@@ -429,6 +455,9 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		return this.rebillController.getRebillsAfterTimestamp(now).then(rebills => {
 
 			let billable_rebills = arrayutilities.filter(rebills, (rebill) => {
+				if (_.has(rebill, 'upsell')) {
+					return false;
+				}
 				if (!_.has(rebill, 'processing') || rebill.processing !== true) {
 					return true;
 				}

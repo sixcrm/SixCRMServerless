@@ -51,6 +51,7 @@ class CreateOrderController extends transactionEndpointController {
       'customer':global.SixCRM.routes.path('model', 'endpoints/components/customerprocessable.json'),
       'productschedules':global.SixCRM.routes.path('model','endpoints/components/productschedules.json'),
       'rebill':global.SixCRM.routes.path('model', 'entities/rebill.json'),
+      'previous_rebill':global.SixCRM.routes.path('model', 'entities/rebill.json'),
       'transaction':global.SixCRM.routes.path('model', 'entities/transaction.json'),
       'info':global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'),
       'result':global.SixCRM.routes.path('model', 'functional/register/transactionresult.json'),
@@ -123,7 +124,8 @@ class CreateOrderController extends transactionEndpointController {
       this.setProducts(),
       this.setTransactionSubType(),
       this.setCreditCard(),
-      this.setCampaign()
+      this.setCampaign(),
+      this.setPreviousRebill()
     ];
 
     return Promise.all(promises).then(() => {
@@ -260,6 +262,23 @@ class CreateOrderController extends transactionEndpointController {
     });
   }
 
+  setPreviousRebill() {
+      const event = this.parameters.get('event');
+
+      if (!_.has(event, 'reverse_on_complete')) {
+          return Promise.resolve();
+      }
+
+      if(!_.has(this, 'rebillController')){
+        this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+      }
+
+      return this.rebillController.get({id: event.reverse_on_complete}).then(rebill => {
+          this.parameters.set('previous_rebill', rebill);
+		  return true;
+      });
+  }
+
   validateEventProperties(){
 
     du.debug('Validate Event Properties');
@@ -358,10 +377,12 @@ class CreateOrderController extends transactionEndpointController {
 
     let rebill = this.parameters.get('rebill');
 
-    const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
-    let registerController = new RegisterController();
+    if (!_.has(this, 'registerController')) {
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+        this.registerController = new RegisterController();
+    }
 
-    return registerController.processTransaction({rebill: rebill}).then((register_response) =>{
+    return this.registerController.processTransaction({rebill: rebill}).then((register_response) =>{
       if(!_.has(this, 'transactionHelperController')){
         const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 
@@ -418,6 +439,7 @@ class CreateOrderController extends transactionEndpointController {
 
     du.debug('Post Processing');
 
+    this.reversePreviousRebill();
     this.pushEvent();
     this.incrementMerchantProviderSummary();
     this.updateSessionWithWatermark();
@@ -425,6 +447,36 @@ class CreateOrderController extends transactionEndpointController {
 
     return true;
 
+  }
+
+  reversePreviousRebill() {
+      const rebill = this.parameters.get('rebill');
+      const previous_rebill = this.parameters.get('previous_rebill', null, false);
+
+      if (_.isNull(previous_rebill)) {
+          return Promise.resolve();
+      }
+
+      if(!_.has(this, 'rebillController')){
+          this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+      }
+
+      if(!_.has(this, 'rebillHelperController')){
+          this.rebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      }
+
+      if (!_.has(this, 'registerController')) {
+          const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+          this.registerController = new RegisterController();
+      }
+
+	  return this.rebillHelperController.updateUpsell({rebill: previous_rebill, upsell: rebill})
+	  .then(() => this.rebillController.listTransactions(previous_rebill))
+      .then(results => this.rebillController.getResult(results, 'transactions'))
+      .then(transactions => Promise.all(
+          arrayutilities.map(transactions, transaction =>
+              this.registerController.reverseTransaction(transaction))
+      ));
   }
 
   pushEvent(){

@@ -207,6 +207,21 @@ function getValidEventBody(ids, expanded){
 
 describe('createOrder', function () {
 
+  before(() => {
+    mockery.resetCache();
+    mockery.deregisterAll();
+    mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+    });
+  });
+
+  afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+  });
+
   describe('constructor', () => {
     it('successfully constructs', () => {
       let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
@@ -1872,23 +1887,91 @@ describe('createOrder', function () {
     });
   });
 
+	describe('setPreviousRebill', () => {
+		it('retrieves rebill', () => {
+			const event = getValidEventBody();
+			const rebill = getValidRebill();
+
+			event.reverse_on_complete = rebill.id;
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+				get:({id}) => {
+					expect(id).to.equal(rebill.id);
+					return Promise.resolve(rebill);
+				}
+			});
+
+			const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			createOrderController.parameters.set('event', event);
+
+			return createOrderController.setPreviousRebill().then(() => {
+				const previous_rebill = createOrderController.parameters.get('previous_rebill', null, false);
+				expect(previous_rebill).to.equal(rebill);
+			});
+		});
+
+		it('resolves immediately if no previous rebill', () => {
+			const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+			createOrderController.parameters.set('event', getValidEventBody());
+
+			return createOrderController.setPreviousRebill().then(() => {
+				const rebill = createOrderController.parameters.get('previous_rebill', null, false)
+				expect(rebill).to.be.null;
+			});
+		});
+	});
+
+	describe('reversePreviousRebill', () => {
+		it('resolves immediately if no previous rebill', () => {
+			const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			createOrderController.parameters.set('rebill', getValidRebill());
+			return createOrderController.reversePreviousRebill();
+		});
+
+		it('reverses all associated transactions', () => {
+			const rebill = getValidRebill();
+			const previous_rebill = getValidRebill();
+			const transactions = getValidTransactions();
+			const reversed_transactions = [];
+			const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), {
+				updateUpsell({rebill: _rebill, upsell}) {
+					expect(_rebill).to.equal(previous_rebill);
+					expect(upsell).to.equal(rebill);
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+				listTransactions(rebill) {
+					expect(rebill).to.equal(previous_rebill);
+					return Promise.resolve({transactions});
+				},
+				getResult(result, field) {
+					return Promise.resolve(result[field]);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class {
+				reverseTransaction(transaction) {
+					reversed_transactions.push(transaction);
+					return Promise.resolve();
+				}
+			});
+
+			createOrderController.parameters.set('rebill', rebill);
+			createOrderController.parameters.set('previous_rebill', previous_rebill);
+
+			return createOrderController.reversePreviousRebill()
+			.then(() => {
+				expect(reversed_transactions).to.deep.equal(transactions);
+			});
+		});
+	});
+
   describe('createOrder', () => {
-
-    before(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-      mockery.enable({
-          useCleanCache: true,
-          warnOnReplace: false,
-          warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
     it('successfully creates a order', () => {
 
       let event = getValidEventBody(null, true);

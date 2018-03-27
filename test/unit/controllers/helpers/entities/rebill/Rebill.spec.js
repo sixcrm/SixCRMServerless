@@ -930,6 +930,33 @@ describe('/helpers/entities/Rebill.js', () => {
 
     });
 
+    it('filters out upsold rebills', () => {
+      const rebill = getValidRebill();
+
+      rebill.upsell = uuidV4();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+        getRebillsAfterTimestamp: (stamp) => {
+          expect(timestamp.getSecondsDifference(stamp)).to.be.below(5);
+
+          return Promise.resolve([rebill]);
+        }
+      });
+
+      PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+      let rebillHelperController = new RebillHelperController();
+
+      return rebillHelperController.getBillableRebills().then(result => {
+        const rebills = rebillHelperController.parameters.get('billablerebills');
+
+        expect(result).to.equal(true);
+        return expect(rebills.length).to.equal(0);
+      });
+
+    });
+
     it('successfully retrieves billable rebills when rebill controller is already set', () => {
 
         let rebill = getValidRebill();
