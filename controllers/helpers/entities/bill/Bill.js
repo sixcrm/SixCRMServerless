@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+const BillController = global.SixCRM.routes.include('entities', 'Bill.js');
 
 //Technical Debt:  Refactor
 module.exports = class BillHelperController {
@@ -25,7 +26,7 @@ module.exports = class BillHelperController {
       'bill':global.SixCRM.routes.path('model', 'entities/bill.json')
     };
 
-    this.billController = global.SixCRM.routes.include('entities', 'Bill.js');
+    this.billController = new BillController();
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 

@@ -120,6 +120,12 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
+// Entity Controllers
+const BillController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
+const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
@@ -844,7 +850,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 creditcard: { type: creditCardInputType.graphObj}
             },
             resolve: (value, creditcard) => {
-                const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+                const creditCardController = new CreditCardController();
 
                 return creditCardController.create({entity: creditcard.creditcard});
             }
@@ -856,7 +862,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 creditcard: { type: creditCardInputType.graphObj }
             },
             resolve: (value, creditcard) => {
-                const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+                const creditCardController = new CreditCardController();
 
                 return creditCardController.update({entity:creditcard.creditcard});
             }
@@ -869,7 +875,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 creditcard: { type: creditCardPartialInputType.graphObj }
             },
             resolve: (value, args) => {
-                const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+                const creditCardController = new CreditCardController();
 
                 return creditCardController.updateProperties({id: args.id, properties: args.creditcard});
             }
@@ -885,7 +891,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, creditcard) => {
                 var id = creditcard.id;
-                const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+                const creditCardController = new CreditCardController();
 
                 return creditCardController.delete({id:id});
             }
@@ -897,7 +903,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 customer: { type: customerInputType .graphObj}
             },
             resolve: (value, customer) => {
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+                const customerController = new CustomerController();
 
                 return customerController.create({entity: customer.customer});
             }
@@ -909,7 +915,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 customer: { type: customerInputType.graphObj }
             },
             resolve: (value, customer) => {
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+                const customerController = new CustomerController();
 
                 return customerController.update({entity:customer.customer});
             }
@@ -925,7 +931,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, customer) => {
                 var id = customer.id;
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+                const customerController = new CustomerController();
 
                 return customerController.delete({id:id});
             }
@@ -1103,7 +1109,7 @@ module.exports.graphObj = new GraphQLObjectType({
             bill: { type: billInputType.graphObj }
           },
           resolve: (value, bill) => {
-            const billController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
+            const billController = new BillController();
 
             return billController.create({entity: bill.bill});
           }
@@ -1115,7 +1121,7 @@ module.exports.graphObj = new GraphQLObjectType({
             bill: { type: billInputType.graphObj }
           },
           resolve: (value, bill) => {
-            const billController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
+            const billController = new BillController();
 
             return billController.update({entity:bill.bill});
           }
@@ -1131,7 +1137,7 @@ module.exports.graphObj = new GraphQLObjectType({
           },
           resolve: (value, bill) => {
             var id = bill.id;
-            const billController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
+            const billController = new BillController();
 
             return billController.delete({id:id});
           }
@@ -1203,7 +1209,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 campaign: { type: campaignInputType.graphObj }
             },
             resolve: (value, campaign) => {
-                const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+                const campaignController = new CampaignController();
 
                 return campaignController.create({entity: campaign.campaign});
             }
@@ -1215,7 +1221,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 campaign: { type: campaignInputType.graphObj }
             },
             resolve: (value, campaign) => {
-                const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+                const campaignController = new CampaignController();
 
                 return campaignController.update({entity:campaign.campaign});
             }
@@ -1231,7 +1237,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, campaign) => {
                 var id = campaign.id;
-                const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+                const campaignController = new CampaignController();
 
                 return campaignController.delete({id:id});
             }

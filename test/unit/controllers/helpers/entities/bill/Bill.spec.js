@@ -6,7 +6,6 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
 
 function getValidToken(){
 
@@ -42,6 +41,7 @@ describe('helpers/entities/bill/Bill.js', () => {
 
     it('successfully calls the constructor', () => {
 
+      const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
       let billHelperController = new BillHelperController();
 
       expect(objectutilities.getClassName(billHelperController)).to.equal('BillHelperController');
@@ -56,14 +56,19 @@ describe('helpers/entities/bill/Bill.js', () => {
 
       let bill =  getValidBill();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), {
-        get:() => {
-          return Promise.resolve(bill);
-        }
-      });
+      let mock_bill = class {
+          constructor(){}
+
+          get() {
+              return Promise.resolve(bill);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), mock_bill);
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
+      const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
       let billHelperController = new BillHelperController();
 
       billHelperController.parameters.set('billid', bill.id);
@@ -85,6 +90,7 @@ describe('helpers/entities/bill/Bill.js', () => {
 
       bill.paid = true;
 
+      const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
       let billHelperController = new BillHelperController();
 
       billHelperController.parameters.set('bill', bill);
@@ -104,6 +110,7 @@ describe('helpers/entities/bill/Bill.js', () => {
       bill.paid = false;
       delete bill.paid_result;
 
+      const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
       let billHelperController = new BillHelperController();
 
       billHelperController.parameters.set('bill', bill);
@@ -127,12 +134,17 @@ describe('helpers/entities/bill/Bill.js', () => {
       updated_bill.paid = true;
       updated_bill.paid_result = token;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), {
-        updatePaidResult:() => {
-          return Promise.resolve(updated_bill);
-        }
-      });
+      let mock_bill = class {
+          constructor(){}
 
+          updatePaidResult() {
+              return Promise.resolve(updated_bill);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), mock_bill);
+
+      const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
       let billHelperController = new BillHelperController();
 
       billHelperController.parameters.set('bill', bill);
@@ -155,12 +167,17 @@ describe('helpers/entities/bill/Bill.js', () => {
       updated_bill.paid = true;
       updated_bill.paid_result = token;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), {
-        updatePaidResult:() => {
-          return Promise.resolve(updated_bill);
-        }
-      });
+      let mock_bill = class {
+          constructor(){}
 
+          updatePaidResult() {
+              return Promise.resolve(updated_bill);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), mock_bill);
+
+      const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
       let billHelperController = new BillHelperController();
 
       billHelperController.parameters.set('bill', bill);
@@ -183,6 +200,7 @@ describe('helpers/entities/bill/Bill.js', () => {
 
       bill.paid = true;
 
+      const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
       let billHelperController = new BillHelperController();
 
       let result = billHelperController.isPaid(bill);
@@ -198,6 +216,7 @@ describe('helpers/entities/bill/Bill.js', () => {
       bill.paid = false;
       bill.paid_result = getValidToken();
 
+      const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
       let billHelperController = new BillHelperController();
 
       let result = billHelperController.isPaid(bill);
@@ -213,6 +232,7 @@ describe('helpers/entities/bill/Bill.js', () => {
       bill.paid = false;
       delete bill.paid_result;
 
+      const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
       let billHelperController = new BillHelperController();
 
       let result = billHelperController.isPaid(bill);
@@ -236,15 +256,21 @@ describe('helpers/entities/bill/Bill.js', () => {
       updated_bill.paid = true;
       updated_bill.paid_result = token;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), {
-        get:() => {
-          return Promise.resolve(bill);
-        },
-        updatePaidResult:() => {
-          return Promise.resolve(updated_bill);
-        }
-      });
+      let mock_bill = class {
+          constructor(){}
 
+          get() {
+              return Promise.resolve(bill);
+          }
+
+          updatePaidResult() {
+              return Promise.resolve(updated_bill);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Bill.js'), mock_bill);
+
+      const BillHelperController = global.SixCRM.routes.include('helpers','entities/bill/Bill.js');
       let billHelperController = new BillHelperController();
 
       return billHelperController.setPayment({id: bill.id, token: token}).then(result => {

@@ -4,7 +4,8 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
 let campaignType = require('../campaign/campaignType');
-const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+const campaignController = new CampaignController();
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'CampaingDeltaGroupType',

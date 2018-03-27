@@ -4,15 +4,9 @@ const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
-
 const expect = chai.expect;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
@@ -193,37 +187,41 @@ describe('tracking', () => {
       let trackers = getValidTrackers({campaigns:[campaign.id], affiliates:[affiliate.id]});
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve({})
         },
-        isEmail: (user_string) => {
+        isEmail: () => {
           return true;
         },
-        getUserStrict: (user_string) => {
+        getUserStrict: () => {
           return Promise.resolve({});
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get: ({id}) => {
-          return Promise.resolve(campaign)
-        }
-      });
-
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
-        listByCampaignAndAffiliate: ({campaign, affiliate, type}) => {
+        listByCampaignAndAffiliate: () => {
           return Promise.resolve(trackers)
         },
-        getResult:(object, field) => {
+        getResult:() => {
           return trackers;
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Affiliate.js'), {
-        getByAffiliateID: (affiliate_id) => {
+        getByAffiliateID: () => {
           return Promise.resolve(affiliate)
         }
       });
+
+      let mock_campaign = class {
+          constructor(){}
+
+          get() {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
@@ -265,10 +263,10 @@ describe('tracking', () => {
       let trackers = getValidTrackers({campaigns:[campaign.id], affiliates:[affiliate.id]});
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
-        listByCampaignAndAffiliate: ({campaign, affiliate, type}) => {
+        listByCampaignAndAffiliate: () => {
           return Promise.resolve(trackers)
         },
-        getResult:(object, field) => {
+        getResult:() => {
           return trackers;
         }
       });
@@ -293,10 +291,10 @@ describe('tracking', () => {
       let trackers = [];
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
-        listByCampaignAndAffiliate: ({campaign, affiliate, type}) => {
+        listByCampaignAndAffiliate: () => {
           return Promise.resolve(trackers)
         },
-        getResult:(object, field) => {
+        getResult:() => {
           return trackers;
         }
       });
@@ -322,11 +320,15 @@ describe('tracking', () => {
       let event_body = getValidEventBody();
       let campaign  = getValidCampaign();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get: ({id}) => {
-          return Promise.resolve(campaign)
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get() {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
 
@@ -349,7 +351,7 @@ describe('tracking', () => {
       let affiliate  = getValidAffiliate();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Affiliate.js'), {
-        getByAffiliateID: (affiliate_id) => {
+        getByAffiliateID: () => {
           return Promise.resolve(affiliate)
         }
       });
@@ -376,16 +378,20 @@ describe('tracking', () => {
       let campaign  = getValidCampaign();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Affiliate.js'), {
-        getByAffiliateID: (affiliate_id) => {
+        getByAffiliateID: () => {
           return Promise.resolve(affiliate)
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get: ({id}) => {
-          return Promise.resolve(campaign)
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get() {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
 

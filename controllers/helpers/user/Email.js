@@ -8,14 +8,16 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 //Technical Debt:  Deprecated:  Use SystemMailer
 const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/SMTP.js');
 const CustomerHelperController = global.SixCRM.routes.include('helpers','entities/customer/Customer.js');
+const CampaignController = global.SixCRM.routes.include('entities','Campaign.js');
+const CustomerController = global.SixCRM.routes.include('entities','Customer.js');
 
 module.exports = class userEmailHelperController {
 
     constructor(){
 
-        this.campaignController = global.SixCRM.routes.include('entities','Campaign.js');
+        this.campaignController = new CampaignController();
         this.emailTemplateController = global.SixCRM.routes.include('entities','EmailTemplate.js');
-        this.customerController = global.SixCRM.routes.include('entities','Customer.js');
+        this.customerController = new CustomerController();
         this.customerHelperController = new CustomerHelperController();
 
     }

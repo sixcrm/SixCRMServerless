@@ -26,12 +26,16 @@ describe('controllers/CustomerNote.js', () => {
                 customer: 'dummy_id'
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Customer.js'), {
-                get: ({id}) => {
+            let mock_customer = class {
+                constructor(){}
+
+                get({id}) {
                     expect(id).to.equal(customer_note.customer);
                     return Promise.resolve('a_customer')
                 }
-            });
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
             let customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
 
@@ -78,7 +82,7 @@ describe('controllers/CustomerNote.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'customernote');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: (table, parameters, index) => {
                     expect(index).to.equal('customer-index');
                     expect(table).to.equal('customernotes');
                     expect(parameters).to.have.property('expression_attribute_names');

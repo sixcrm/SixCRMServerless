@@ -163,6 +163,13 @@ let secondaryIdentifierInputType = require('./general/secondaryIdentifierInputTy
 let list_fatal = true;
 let get_fatal = true;
 
+// Entity Controllers
+const BinController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
+const BillController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
+const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -340,7 +347,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, session){
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+                const customerController = new CustomerController();
 
                 return customerController.listCustomerSessions({customer: session.customer, pagination: session.pagination, fatal: list_fatal});
             }
@@ -373,7 +380,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, rebill){
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+                const customerController = new CustomerController();
 
                 return customerController.listCustomerRebills({customer: rebill.customer, pagination: rebill.pagination, fatal: list_fatal});
             }
@@ -416,7 +423,7 @@ module.exports.graphObj = new GraphQLObjectType({
               pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, args){
-              const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+              const campaignController = new CampaignController();
 
               return campaignController.listCampaignsByProductSchedule({productschedule: args.productschedule, pagination: args.pagination, fatal: list_fatal});
             }
@@ -428,7 +435,7 @@ module.exports.graphObj = new GraphQLObjectType({
               pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, args){
-              const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+              const campaignController = new CampaignController();
 
               return campaignController.listCampaignsByProduct({product: args.product, pagination: args.pagination, fatal: list_fatal});
             }
@@ -440,7 +447,7 @@ module.exports.graphObj = new GraphQLObjectType({
             pagination: {type: paginationInputType.graphObj}
           },
           resolve: function(root, args){
-            const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.listByAffiliateAllow({affiliate: args.affiliate, pagination: args.pagination});
           }
@@ -642,7 +649,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
 
-							const binController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
+            const binController = new BinController();
 
               return binController.getCreditCardProperties({binnumber: args.binnumber});
             }
@@ -864,7 +871,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, customer){
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+                const customerController = new CustomerController();
 
                 return customerController.get({id:customer.id, fatal: get_fatal});
             }
@@ -1106,7 +1113,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, bill){
-                const billController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
+                const billController = new BillController();
 
                 return billController.listByAccount({pagination: bill.pagination, fatal:list_fatal, search: bill.search});
             }
@@ -1118,7 +1125,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, creditcard){
-                const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+                const creditCardController = new CreditCardController();
 
                 return creditCardController.listByAccount({pagination: creditcard.pagination, fatal:list_fatal, search: creditcard.search});
             }
@@ -1225,7 +1232,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, customer){
-                const customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+                const customerController = new CustomerController();
 
       	       return customerController.listByAccount({pagination: customer.pagination, fatal:list_fatal, search: customer.search});
             }
@@ -1313,7 +1320,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, campaign){
-                const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+                const campaignController = new CampaignController();
 
                 return campaignController.listByAccount({pagination: campaign.pagination, fatal:list_fatal, search: campaign.search});
             }
@@ -1437,7 +1444,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, creditcard){
-                const creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+                const creditCardController = new CreditCardController();
 
                 return creditCardController.get({id: creditcard.id, fatal: get_fatal});
             }
@@ -1451,7 +1458,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, campaign){
-                const campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+                const campaignController = new CampaignController();
 
                 return campaignController.get({id: campaign.id, fatal: get_fatal});
             }
@@ -1493,7 +1500,7 @@ module.exports.graphObj = new GraphQLObjectType({
             }
           },
           resolve: function(root, bill){
-            const billController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
+            const billController = new BillController();
 
             return billController.get({id: bill.id, fatal: get_fatal});
           }

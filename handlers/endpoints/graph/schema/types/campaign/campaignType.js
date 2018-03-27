@@ -5,6 +5,8 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
+var CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+
 let emailTemplateType = require('../emailtemplate/emailTemplateType');
 let affiliateAllowDenyType = require('../affiliate/affiliateAllowDenyType');
 let productScheduleType = require('../productschedule/productScheduleType');
@@ -34,7 +36,7 @@ module.exports.graphObj = new GraphQLObjectType({
           type: new GraphQLList(productScheduleType.graphObj),
           description: 'The configured product schedules associated with the campaign',
           resolve: (campaign) => {
-              var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+              const campaignController = new CampaignController();
 
               return campaignController.getProductSchedules(campaign);
           }
@@ -43,7 +45,7 @@ module.exports.graphObj = new GraphQLObjectType({
           type: new GraphQLList(emailTemplateType.graphObj),
           descsription: 'Email templates configured and associated with the campaign',
           resolve: (campaign) => {
-              var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+              const campaignController = new CampaignController();
 
               return campaignController.getEmailTemplates(campaign);
           }
@@ -52,7 +54,7 @@ module.exports.graphObj = new GraphQLObjectType({
         type: new GraphQLList(affiliateAllowDenyType.graphObj),
         description: 'The affiliate allow list on this campaign.',
         resolve: (campaign) => {
-          var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+          const campaignController = new CampaignController();
 
           return campaignController.getAffiliateAllowDenyList(campaign.affiliate_allow);
         }
@@ -61,7 +63,7 @@ module.exports.graphObj = new GraphQLObjectType({
         type: new GraphQLList(affiliateAllowDenyType.graphObj),
         description: 'The affiliate deny list on this campaign.',
         resolve: (campaign) => {
-          var campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+          const campaignController = new CampaignController();
 
           return campaignController.getAffiliateAllowDenyList(campaign.affiliate_deny);
         }

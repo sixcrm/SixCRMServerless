@@ -41,12 +41,13 @@ describe('controllers/entities/Bin.js', () => {
 			let binnumber = 411111;
 
 			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-				queryRecords: (table, parameters, index) => {
+				queryRecords: () => {
 					return Promise.resolve({ Items: [mockedCreditCardProperties] });
 				}
 			});
 
-			const binController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
+			const BinController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
+			const binController = new BinController();
 
 
 			return binController.getCreditCardProperties({ binnumber: binnumber }).then((result) => {

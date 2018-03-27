@@ -30,7 +30,8 @@ describe('controllers/entities/CreditCard.js', () => {
             name: 'N',
             address: 'A'
         };
-        let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+        const creditCardController = new CreditCardController();
 
         // when
         let creditCardObject = creditCardController.createCreditCardObject(creditCardData);
@@ -55,7 +56,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             creditCard.number = '411111';
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.getBINNumber(creditCard)).to.equal('411111');
         });
@@ -66,7 +68,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             creditCard.number = '411111';
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.getBINNumber(creditCard.number)).to.equal('411111');
         });
@@ -75,7 +78,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             let creditCard_number = 111111; //any number
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.getBINNumber(creditCard_number)).to.equal(null);
         });
@@ -84,7 +88,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             let creditCard_number = [];
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.getBINNumber(creditCard_number)).to.equal(null);
         });
@@ -93,7 +98,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             let creditCard_number = {};
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.getBINNumber(creditCard_number)).to.equal(null);
         });
@@ -102,7 +108,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             let creditCard_number = -1111; //any negative number
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.getBINNumber(creditCard_number)).to.equal(null);
         });
@@ -111,7 +118,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             let creditCard_number = 11.123; //any decimal number
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.getBINNumber(creditCard_number)).to.equal(null);
         });
@@ -125,7 +133,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             let testCreditCard = creditCard;
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.sameCard(creditCard, testCreditCard)).to.be.true;
         });
@@ -138,7 +147,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             delete testCreditCard.expiration;
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.sameCard(creditCard, testCreditCard)).to.be.false;
         });
@@ -151,7 +161,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             testCreditCard.expiration = 1025; //unexpected type
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.sameCard(creditCard, testCreditCard)).to.be.false;
         });
@@ -164,7 +175,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             testCreditCard.expiration = '1234';
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.sameCard(creditCard, testCreditCard)).to.be.false;
         });
@@ -179,7 +191,8 @@ describe('controllers/entities/CreditCard.js', () => {
                 "city": "Paris"
             };
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             expect(creditCardController.sameCard(creditCard, testCreditCard)).to.be.false;
         });
@@ -192,7 +205,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             testCreditCard.expiration = '1234';
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             try{
                 creditCardController.sameCard(creditCard, testCreditCard, true);
@@ -208,7 +222,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             let creditCard = getValidCreditCard();
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             return creditCardController.getAddress(creditCard).then((result) => {
                 expect(result).to.equal(creditCard.address);
@@ -228,7 +243,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/creditcard/CreditCard.js'), mockHelper);
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             creditCardController.censorEncryptedAttributes(creditcard);
 
@@ -246,7 +262,8 @@ describe('controllers/entities/CreditCard.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/creditcard/CreditCard.js'), mockHelper);
 
-            let creditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
+            const creditCardController = new CreditCardController();
 
             creditCardController.censorEncryptedAttributes(creditcard);
 

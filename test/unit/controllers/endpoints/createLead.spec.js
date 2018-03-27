@@ -208,14 +208,18 @@ describe('createLead', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: () => {
-          return Promise.resolve(null);
-        },
-        create:() => {
-          return Promise.resolve(customer);
-        }
-      });
+      let mock_customer = class {
+          constructor(){}
+
+          getCustomerByEmail() {
+              return Promise.resolve(null);
+          }
+          create() {
+              return Promise.resolve(customer);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
         constructor(){}
@@ -230,11 +234,15 @@ describe('createLead', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:() => {
-          return Promise.resolve(campaign);
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
         constructor(){}
@@ -279,14 +287,18 @@ describe('createLead', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: () => {
-          return Promise.resolve(null);
-        },
-        create:() => {
-          return Promise.resolve(customer);
-        }
-      });
+      let mock_customer = class {
+          constructor(){}
+
+          getCustomerByEmail() {
+              return Promise.resolve(null);
+          }
+          create() {
+              return Promise.resolve(customer);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
         constructor(){}
@@ -301,11 +313,15 @@ describe('createLead', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:() => {
-          return Promise.resolve(campaign);
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
         constructor(){}
@@ -352,11 +368,15 @@ describe('createLead', function () {
       let event = getValidEventBody();
       let customer = getValidCustomer();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: () => {
-          return Promise.resolve(customer);
-        }
-      });
+      let mock_customer = class {
+          constructor(){}
+
+          getCustomerByEmail() {
+              return Promise.resolve(customer);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
@@ -375,14 +395,18 @@ describe('createLead', function () {
       let event = getValidEventBody();
       let customer = getValidCustomer();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: () => {
-          return Promise.resolve(null);
-        },
-        create:() => {
-          return Promise.resolve(customer);
-        }
-      });
+      let mock_customer = class {
+          constructor(){}
+
+          getCustomerByEmail() {
+              return Promise.resolve(null);
+          }
+          create() {
+              return Promise.resolve(customer);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
@@ -487,11 +511,15 @@ describe('createLead', function () {
 
       event.campaign = campaign.id;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:() => {
-          return Promise.resolve(campaign);
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
@@ -529,14 +557,18 @@ describe('createLead', function () {
       let affiliates = getValidAffiliates();
       let campaign = getValidCampaign();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: () => {
-          return Promise.resolve(null);
-        },
-        create:() => {
-          return Promise.resolve(customer);
-        }
-      });
+      let mock_customer = class {
+          constructor(){}
+
+          getCustomerByEmail() {
+              return Promise.resolve(null);
+          }
+          create() {
+              return Promise.resolve(customer);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
         constructor(){}
@@ -548,11 +580,15 @@ describe('createLead', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:() => {
-          return Promise.resolve(campaign);
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
@@ -734,14 +770,18 @@ describe('createLead', function () {
       let campaign = getValidCampaign();
       let session = getValidSession();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: () => {
-          return Promise.resolve(null);
-        },
-        create:() => {
-          return Promise.resolve(customer);
-        }
-      });
+      let mock_customer = class {
+          constructor(){}
+
+          getCustomerByEmail() {
+              return Promise.resolve(null);
+          }
+          create() {
+              return Promise.resolve(customer);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
         constructor(){}
@@ -756,11 +796,15 @@ describe('createLead', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:() => {
-          return Promise.resolve(campaign);
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
         constructor(){}

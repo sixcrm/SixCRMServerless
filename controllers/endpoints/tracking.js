@@ -1,7 +1,7 @@
 'use strict';
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-
+const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class TrackingController extends transactionEndpointController{
@@ -29,7 +29,7 @@ class TrackingController extends transactionEndpointController{
         'trackers':global.SixCRM.routes.path('model', 'endpoints/tracking/trackers.json')
       };
 
-      this.campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+      this.campaignController = new CampaignController();
       this.affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
       this.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 

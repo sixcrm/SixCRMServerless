@@ -10,9 +10,9 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const timer = global.SixCRM.routes.include('lib', 'timer.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-const customerController = global.SixCRM.routes.include('entities', 'Customer.js');
-const binController = global.SixCRM.routes.include('entities', 'Bin.js');
-const creditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
+const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+const BinController = global.SixCRM.routes.include('entities', 'Bin.js');
+const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
 const merchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
 const merchantProviderGroupController = global.SixCRM.routes.include('entities', 'MerchantProviderGroup.js');
 const merchantProviderGroupAssociationController = global.SixCRM.routes.include('entities', 'MerchantProviderGroupAssociation.js');
@@ -20,6 +20,9 @@ const sessionController = global.SixCRM.routes.include('entities', 'Session.js')
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const tab = '      ';
+const binController = new BinController();
+const creditCardController = new CreditCardController();
+const customerController = new CustomerController();
 
 const max_test_cases = randomutilities.randomInt(10, 20);
 

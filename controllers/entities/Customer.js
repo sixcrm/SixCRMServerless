@@ -4,10 +4,9 @@ const _ = require('underscore');
 const du =  global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu =  global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities =  global.SixCRM.routes.include('lib', 'array-utilities.js');
-
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class customerController extends entityController {
+module.exports = class customerController extends entityController {
 
     constructor(){
 
@@ -269,4 +268,3 @@ class customerController extends entityController {
 
 }
 
-module.exports = new customerController();

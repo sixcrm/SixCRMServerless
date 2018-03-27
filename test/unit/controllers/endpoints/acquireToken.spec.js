@@ -137,6 +137,19 @@ function getValidAffiliatesPrototype(){
 
 describe('acquireToken', () => {
 
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
+
   describe('constructor', () => {
     it('successfully constructs', () => {
       let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
@@ -147,29 +160,20 @@ describe('acquireToken', () => {
 
   describe('validateCampaign', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('successfully validates the campaign', () => {
 
       let campaign = getValidCampaign();
       let event = getValidEventBody();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:() => {
-          return Promise.resolve(campaign);
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
 
@@ -186,11 +190,15 @@ describe('acquireToken', () => {
 
         let event = getValidEventBody();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-          get:() => {
-            return Promise.resolve(null);
-          }
-        });
+        let mock_campaign = class {
+            constructor(){}
+
+            get () {
+                return Promise.resolve(null);
+            }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
         let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
 
@@ -204,19 +212,6 @@ describe('acquireToken', () => {
   });
 
   describe('acquireToken', () => {
-
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
 
     it('successfully acquires a token', () => {
 
@@ -241,19 +236,6 @@ describe('acquireToken', () => {
   });
 
   describe('handleAffiliateInformation', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
 
     it('successfully updates the event with affiliate information', () => {
 
@@ -285,19 +267,6 @@ describe('acquireToken', () => {
   });
 
   describe('postProcessing', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
 
     it('successfully executes post processing methods', () => {
 
@@ -347,19 +316,6 @@ describe('acquireToken', () => {
 
   describe('execute', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('successfully executes', () => {
 
       let event = getValidEvent();
@@ -378,11 +334,15 @@ describe('acquireToken', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:() => {
-          return Promise.resolve(campaign);
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
         get:() => {

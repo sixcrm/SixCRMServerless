@@ -52,7 +52,8 @@ describe('controllers/entities/Customer.js', () => {
                 }
             });
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.listCustomerSessions(params).then((result) => {
                 expect(result.Items[0].session).to.deep.equal(session);
@@ -74,7 +75,8 @@ describe('controllers/entities/Customer.js', () => {
                 }
             });
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.getCustomerSessions(customer).then((result) => {
                 expect(result[0].session).to.deep.equal(session);
@@ -103,7 +105,8 @@ describe('controllers/entities/Customer.js', () => {
                 }
             });
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.listByCreditCard({
                 creditcard: customer.creditcards[0], pagination: 0
@@ -127,7 +130,8 @@ describe('controllers/entities/Customer.js', () => {
 
             let customer = getValidCustomer();
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.getAddress(customer).then((result) => {
                 expect(result).to.equal(customer.address);
@@ -154,7 +158,8 @@ describe('controllers/entities/Customer.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Entity.js'), mock_entity);
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.getCustomerByEmail(customer.email).then((result) => {
                 expect(result).to.equal(customer);
@@ -192,13 +197,18 @@ describe('controllers/entities/Customer.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/CreditCard.js'), {
-                listByAccount: () => {
+            let mock_credit_card = class {
+                constructor(){}
+
+                listByAccount () {
                     return Promise.resolve({creditcards: credit_cards});
                 }
-            });
+            };
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
+
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.getCreditCards(customer).then((result) => {
                 expect(result).to.equal(credit_cards);
@@ -211,7 +221,8 @@ describe('controllers/entities/Customer.js', () => {
 
             delete customer.creditcards;
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.getCreditCards(customer).then((result) => {
                 expect(result).to.equal(null);
@@ -255,13 +266,18 @@ describe('controllers/entities/Customer.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/CreditCard.js'), {
-                listByAccount: () => {
+            let mock_credit_card = class {
+                constructor(){}
+
+                listByAccount () {
                     return Promise.resolve({creditcards: credit_cards});
                 }
-            });
+            };
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
+
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.getMostRecentCreditCard(customer).then((result) => {
                 expect(result).to.equal(credit_cards[0]);
@@ -302,13 +318,18 @@ describe('controllers/entities/Customer.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/CreditCard.js'), {
-                listByAccount: () => {
+            let mock_credit_card = class {
+                constructor(){}
+
+                listByAccount () {
                     return Promise.resolve({creditcards: credit_cards});
                 }
-            });
+            };
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
+
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.getMostRecentCreditCard(customer).then((result) => {
                 expect(result).to.equal(credit_cards[0]);
@@ -335,7 +356,8 @@ describe('controllers/entities/Customer.js', () => {
                 }
             });
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.getMostRecentCreditCard(customer).then((result) => {
                 expect(result).to.equal(null);
@@ -362,7 +384,8 @@ describe('controllers/entities/Customer.js', () => {
                 }
             });
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.getMostRecentCreditCard(customer).then((result) => {
                 expect(result).to.equal(null);
@@ -394,7 +417,8 @@ describe('controllers/entities/Customer.js', () => {
                 }
             });
 
-            let customerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            let CustomerController = global.SixCRM.routes.include('controllers','entities/Customer');
+            const customerController =  new CustomerController();
 
             return customerController.associatedEntitiesCheck({id: params.customer.id}).then((result) => {
                 expect(result[0]).to.deep.equal({

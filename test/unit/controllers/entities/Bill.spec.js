@@ -82,7 +82,8 @@ describe('controllers/entities/Bill.js', () => {
             //prepare permissions
             global.account = '*';
 
-            let billController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const BillController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const billController = new BillController();
 
             return billController.update({entity}).then((result) => {
                 expect(result).to.equal(entity);
@@ -96,7 +97,8 @@ describe('controllers/entities/Bill.js', () => {
             //remove permissions
             delete global.account;
 
-            let billController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const BillController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const billController = new BillController();
 
             try {
                 billController.update({entity})
@@ -116,7 +118,8 @@ describe('controllers/entities/Bill.js', () => {
             //prepare permissions
             global.account = '*';
 
-            let billController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const BillController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const billController = new BillController();
 
             try {
                 billController.update({entity})
@@ -150,7 +153,8 @@ describe('controllers/entities/Bill.js', () => {
             //prepare permissions
             global.account = '*';
 
-            let billController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const BillController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const billController = new BillController();
 
             return billController.updatePaidResult({entity}).then((result) => {
                 expect(result).to.equal(entity);
@@ -168,7 +172,8 @@ describe('controllers/entities/Bill.js', () => {
             //prepare permissions
             global.account = '*';
 
-            let billController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const BillController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const billController = new BillController();
 
             try {
                 billController.updatePaidResult({entity})
@@ -202,7 +207,8 @@ describe('controllers/entities/Bill.js', () => {
             //prepare permissions
             global.account = '*';
 
-            let billController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const BillController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const billController = new BillController();
 
             return billController.create({entity}).then((result) => {
                 expect(result).to.equal(entity);
@@ -216,7 +222,8 @@ describe('controllers/entities/Bill.js', () => {
             //remove permissions
             delete global.account;
 
-            let billController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const BillController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const billController = new BillController();
 
             try {
                 billController.create({entity})
@@ -245,7 +252,8 @@ describe('controllers/entities/Bill.js', () => {
                 }
             });
 
-            let billController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const BillController = global.SixCRM.routes.include('controllers','entities/Bill.js');
+            const billController = new BillController();
 
             try {
                 billController.create({entity})

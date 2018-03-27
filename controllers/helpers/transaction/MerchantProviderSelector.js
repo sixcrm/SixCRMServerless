@@ -6,6 +6,8 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
+const BinController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
+const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 
 module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
@@ -46,8 +48,8 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
       this.merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
       this.merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
-      this.creditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
-	  this.binController = global.SixCRM.routes.include('controllers', 'entities/Bin.js')
+      this.creditCardController = new CreditCardController();
+	  this.binController = new BinController();
 
       this.creditCardController.sanitize(false);
     }

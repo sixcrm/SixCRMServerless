@@ -2,7 +2,7 @@
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-class binController extends entityController {
+module.exports = class binController extends entityController {
 
 	constructor() {
 		super('bin');
@@ -25,6 +25,4 @@ class binController extends entityController {
 
 	}
 
-}
-
-module.exports = new binController();
+};

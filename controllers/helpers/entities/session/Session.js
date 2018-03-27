@@ -4,6 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 
 module.exports = class SessionHelperController {
 
@@ -72,7 +73,7 @@ module.exports = class SessionHelperController {
     du.debug('Get Session By Customer and Alias');
 
     if(!_.has(this, 'customerController')){
-      this.customerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+      this.customerController = new CustomerController();
     }
 
     return this.customerController.getCustomerByEmail(customer).then(customer_result => {

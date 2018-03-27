@@ -6,7 +6,8 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
-
+const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
+const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const CustomerHelperController = global.SixCRM.routes.include('helpers', 'entities/customer/Customer.js');
 const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/CustomerMailer.js');
 
@@ -29,8 +30,8 @@ class EventEmailsController extends SNSEventController {
 
     this.event_record_handler = 'triggerEmails';
 
-    this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
-    this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
+    this.campaignController = new CampaignController();
+    this.customerController = new CustomerController();
     this.smtpProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
     this.emailTemplatesController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 

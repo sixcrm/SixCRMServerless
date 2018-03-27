@@ -32,7 +32,8 @@ describe('controllers/Campaign.js', () => {
                 }
             });
 
-            let campaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.getAffiliateAllowDenyList(list).then((result) => {
                 expect(result).to.deep.equal([
@@ -57,7 +58,8 @@ describe('controllers/Campaign.js', () => {
                 }
             });
 
-            let campaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.getAffiliateAllowDenyList(list).then((result) => {
                 expect(result).to.deep.equal([
@@ -73,7 +75,8 @@ describe('controllers/Campaign.js', () => {
 
             let list = [];
 
-            let campaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.getAffiliateAllowDenyList(list).then((result) => {
                 expect(result).to.equal(null);
@@ -84,7 +87,8 @@ describe('controllers/Campaign.js', () => {
 
             let list = ['unexpected_element', '123', '-123', '', 123, 11.22, -123, {}, [], () => {}];
 
-            let campaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.getAffiliateAllowDenyList(list).then((result) => {
                 expect(result).to.equal(null);
@@ -106,7 +110,8 @@ describe('controllers/Campaign.js', () => {
                 }
             });
 
-            let campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.getEmailTemplates(campaign).then((result) => {
                 expect(result).to.deep.equal(['an_email_template']);
@@ -116,7 +121,8 @@ describe('controllers/Campaign.js', () => {
         it('returns null when campaign does not have an email template', () => {
             let campaign = {};
 
-            let campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.getEmailTemplates(campaign).then((result) => {
                 expect(result).to.equal(null);
@@ -138,7 +144,8 @@ describe('controllers/Campaign.js', () => {
                 }
             });
 
-            let campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.getProductSchedules(campaign).then((result) => {
                 expect(result).to.deep.equal(['a_product_schedule']);
@@ -148,7 +155,8 @@ describe('controllers/Campaign.js', () => {
         it('returns null when campaign does not have a product schedule', () => {
             let campaign = {};
 
-            let campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.getProductSchedules(campaign).then((result) => {
                 expect(result).to.equal(null);
@@ -185,7 +193,8 @@ describe('controllers/Campaign.js', () => {
                 }
             });
 
-            let campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.listByAffiliateAllow(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -230,7 +239,8 @@ describe('controllers/Campaign.js', () => {
                 }
             });
 
-            let campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.listByAffiliateDeny(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -275,7 +285,8 @@ describe('controllers/Campaign.js', () => {
                 }
             });
 
-            let campaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+            let CampaignController = global.SixCRM.routes.include('controllers','entities/Campaign.js');
+            const campaignController = new CampaignController();
 
             return campaignController.listCampaignsByProductSchedule(params).then((result) => {
                 expect(result).to.deep.equal({

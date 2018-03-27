@@ -4,7 +4,6 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 const uuidV4 = require('uuid/v4');
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
@@ -12,7 +11,6 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 function getValidProcessResponse(){
@@ -117,24 +115,7 @@ function getProcessorResponses(count){
 
 function getProcessorResponseObject(){
 
-  return {
-    code: 'success',
-    result: {
-      message: "Success",
-      result:{
-        response:"1",
-        responsetext:"SUCCESS",
-        authcode:"123456",
-        transactionid:"3448894418",
-        avsresponse:"N",
-        cvvresponse:"",
-        orderid:"",
-        type:"sale",
-        response_code:"100"
-      }
-    },
-    message: 'Some message'
-  };
+  return MockEntities.getValidProcessorResponse();
 
 }
 
@@ -188,6 +169,7 @@ describe('controllers/providers/Register.js', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey')
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let parameters = {transaction: getValidTransactionID()};
@@ -214,6 +196,7 @@ describe('controllers/providers/Register.js', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('read', 'transaction', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let parameters = {transaction: getValidTransactionID()};
@@ -241,6 +224,7 @@ describe('controllers/providers/Register.js', () => {
 
       //PermissionTestGenerators.givenUserWithAllowed('read', 'transaction', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let parameters = {transaction: transaction};
@@ -264,6 +248,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('fails to set parameters due to missing required parameters', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let parameters = {}
@@ -278,6 +263,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('fails to set parameters due to invalid parameter types', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       arrayutilities.map(getInvalidArgumentsArray([undefined]), (invalid_argument) => {
@@ -294,6 +280,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully sets parameters', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction_id = getValidTransactionID();
@@ -308,6 +295,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully sets parameters', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction_object = getValidTransactionObject();
@@ -339,6 +327,7 @@ describe('controllers/providers/Register.js', () => {
         }
       });
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction_object = getValidTransactionObject();
@@ -371,6 +360,7 @@ describe('controllers/providers/Register.js', () => {
         }
       });
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       registerController.parameters.set('associatedtransaction', transaction);
@@ -389,6 +379,7 @@ describe('controllers/providers/Register.js', () => {
 
      it('returns error when transaction with pre-existing refunds/reversals can\'t be reversed', () => {
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         let associated_transactions = getValidAssociatedTransactions();
@@ -406,6 +397,7 @@ describe('controllers/providers/Register.js', () => {
 
      it('successfully validates associated transactions', () => {
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         return registerController.validateAssociatedTransactions().then((validated) => {
@@ -420,6 +412,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully sets amount when amount is not set in parameters', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction_object = getValidTransactionObject();
@@ -437,6 +430,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully gets amount when amount is set in parameters', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction_object = getValidTransactionObject();
@@ -459,6 +453,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully calculates the reversed amount when there are no associated_transactions', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let reversed_amount = registerController.calculateReversedAmount();
@@ -469,6 +464,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully calculates the reversed amount', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let associated_transactions = getValidAssociatedTransactions();
@@ -489,6 +485,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully validates amount (no associated transactions)', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction = getValidTransactionObject();
@@ -505,6 +502,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully validates amount (no associated transactions)', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction = getValidTransactionObject();
@@ -527,6 +525,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully validates amount (reversals exceed transaction amount)', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction = getValidTransactionObject();
@@ -554,6 +553,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully validates amount (reversals do not exceed transaction amount)', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction = getValidTransactionObject();
@@ -578,6 +578,7 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully validates amount (reversals do not exceed transaction amount and amount is a specific not the full amount)', () => {
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction = getValidTransactionObject();
@@ -632,6 +633,7 @@ describe('controllers/providers/Register.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Refund.js'), fake);
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction = getValidTransactionObject();
@@ -693,6 +695,7 @@ describe('controllers/providers/Register.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Reverse.js'), fake);
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       let transaction = getValidTransactionObject();
@@ -788,6 +791,7 @@ describe('controllers/providers/Register.js', () => {
         }
       });
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
       registerController.parameters.set('rebill', rebill);
@@ -814,6 +818,10 @@ describe('controllers/providers/Register.js', () => {
   xdescribe('issueReceipt', () => {
 
    it('creates a transaction receipt for successful sale', () => {
+
+      let rebill = getValidRebill();
+      let transaction = getValidTransactionObject();
+      let processor_response = getProcessorResponseObject();
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
         constructor(){}
@@ -846,20 +854,25 @@ describe('controllers/providers/Register.js', () => {
           return Promise.resolve(true);
         }
       });
+       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+           get: ({id}) => {
+               expect(id).to.equal(transaction.rebill);
+               return Promise.resolve(rebill);
+           }
+       });
 
       assumePermissionedRole();
 
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
       let registerController = new RegisterController();
 
-      let transaction = getValidTransactionObject();
-      let processor_response = getProcessorResponseObject();
-
-      registerController.parameters.set('rebill', getValidRebill());
+      registerController.parameters.set('rebill', rebill);
       registerController.parameters.set('transactiontype', 'sale');
       registerController.parameters.set('amount', 10.00);
       registerController.parameters.set('processorresponse', processor_response);
       registerController.parameters.set('merchantprovider', getValidMerchantProvider());
-      registerController.parameters.set('transactionproducts', transaction.products);
+      registerController.parameters.set('transactionproducts', getValidTransactionProducts());
+      registerController.parameters.set('associatedtransaction', transaction);
 
       return registerController.issueReceipt().then(() => {
 
@@ -917,7 +930,8 @@ describe('controllers/providers/Register.js', () => {
 
       assumePermissionedRole();
 
-      let registerController = new RegisterController();
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+        let registerController = new RegisterController();
 
       let transaction = getValidTransactionObject();
       let processor_response = getProcessorResponseObject();
@@ -989,7 +1003,8 @@ describe('controllers/providers/Register.js', () => {
 
       assumePermissionedRole();
 
-      let registerController = new RegisterController();
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+        let registerController = new RegisterController();
 
       let transaction = getValidTransactionObject();
       let processor_response = getProcessorResponseObject();
@@ -1047,6 +1062,7 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         registerController.parameters.set('rebill', getValidRebill());
@@ -1074,7 +1090,8 @@ describe('controllers/providers/Register.js', () => {
 
       let valid_rebill = getValidRebill();
 
-      let registerController = new RegisterController();
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+        let registerController = new RegisterController();
 
       registerController.parameters.set('rebill', valid_rebill);
 
@@ -1090,7 +1107,8 @@ describe('controllers/providers/Register.js', () => {
 
       let valid_rebill = getValidRebill();
 
-      let registerController = new RegisterController();
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+        let registerController = new RegisterController();
 
       registerController.parameters.set('rebill', valid_rebill);
 
@@ -1115,7 +1133,8 @@ describe('controllers/providers/Register.js', () => {
 
       let valid_rebill = getValidRebill();
 
-      let registerController = new RegisterController();
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+        let registerController = new RegisterController();
 
       registerController.parameters.set('rebill', valid_rebill);
 
@@ -1129,7 +1148,8 @@ describe('controllers/providers/Register.js', () => {
 
       let valid_rebill = getValidRebill();
 
-      let registerController = new RegisterController();
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+        let registerController = new RegisterController();
 
       registerController.parameters.set('rebill', valid_rebill);
 
@@ -1148,6 +1168,7 @@ describe('controllers/providers/Register.js', () => {
 
         let valid_rebill = getValidRebill();
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         registerController.parameters.set('rebill', valid_rebill);
@@ -1182,6 +1203,7 @@ describe('controllers/providers/Register.js', () => {
 
         let valid_rebill = getValidRebill();
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         registerController.parameters.set('rebill', valid_rebill);
@@ -1204,6 +1226,7 @@ describe('controllers/providers/Register.js', () => {
 
         let parent_session = getValidParentSession();
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         registerController.parameters.set('parentsession', parent_session);
@@ -1227,6 +1250,7 @@ describe('controllers/providers/Register.js', () => {
 
         let parent_session = getValidParentSession();
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         registerController.parameters.set('parentsession', parent_session);
@@ -1267,6 +1291,7 @@ describe('controllers/providers/Register.js', () => {
         let rebill = getValidRebill();
         let parentsession = getValidParentSession();
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         registerController.parameters.set('rebill', rebill);
@@ -1294,17 +1319,21 @@ describe('controllers/providers/Register.js', () => {
         let parentsession = getValidParentSession();
         let merchant_provider_groups = getValidMerchantProviderGroups();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-          getCreditCards:() => {
-            return Promise.resolve(getValidCreditCards());
-          },
-          get:() => {
-            return Promise.resolve(getValidCustomer());
-          },
-          sanitize:(input) => {
-              expect(input).to.equal(false);
-          }
-        });
+        let mock_customer = class {
+             constructor(){}
+
+             get () {
+                 return Promise.resolve(getValidCustomer())
+             }
+             getCreditCards() {
+                 return Promise.resolve(getValidCreditCards())
+             }
+             sanitize(input) {
+                 expect(input).to.equal(false);
+             }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/MerchantProviderSelector.js'), class {
           constructor(){}
@@ -1313,6 +1342,7 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         registerController.parameters.set('rebill', rebill);
@@ -1342,6 +1372,7 @@ describe('controllers/providers/Register.js', () => {
 
      it('successfully responds to success', () => {
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
         let transactions = getValidTransactions();
         let processor_responses = getProcessorResponses(transactions.length);
@@ -1374,6 +1405,7 @@ describe('controllers/providers/Register.js', () => {
 
         let creditcard = getValidCreditCard();
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         registerController.parameters.set('transactionreceipts', [declined_transaction]);
@@ -1403,6 +1435,7 @@ describe('controllers/providers/Register.js', () => {
 
         let creditcard = getValidCreditCard();
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         registerController.parameters.set('transactionreceipts', [error_transaction]);
@@ -1448,24 +1481,29 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), {
-          get:() => {
-            return Promise.resolve(creditcard);
-          },
-          getBINNumber:(creditcard) => {
-            let cc_number = null;
+        let mock_credit_card = class {
+          constructor(){}
 
-            if(_.has(creditcard, 'number')){
-              cc_number = creditcard.number;
-            }else if(_.isString(creditcard)){
-              cc_number = creditcard;
+            get() {
+                return Promise.resolve(creditcard);
             }
-            if(!_.isNull(cc_number)){
-              cc_number = cc_number.slice(0,6);
-            }
-            return cc_number;
-          }
-        });
+
+            getBINNumber(creditcard) {
+                let cc_number = null;
+
+                if(_.has(creditcard, 'number')){
+                    cc_number = creditcard.number;
+                }else if(_.isString(creditcard)){
+                    cc_number = creditcard;
+                }
+                if(!_.isNull(cc_number)){
+                  cc_number = cc_number.slice(0,6);
+                }
+                return cc_number;
+              }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
           listProductSchedules: () => {
@@ -1486,27 +1524,30 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), {
-          get: () => {
-            return Promise.resolve(getValidCustomer());
-          },
-          getCreditCards: () => {
-            return Promise.resolve(getValidCreditCards());
-          },
-          getID: (object) => {
+          let mock_customer = class {
+              constructor(){}
 
-              if(_.isString(object)){
-                  return object;
-              }else if(_.isObject(object)){
-                  if(_.has(object, 'id')){
-                    return object['id'];
-                  }
-              }else if(_.isNull(object)){
-                  return null;
+              get () {
+                  return Promise.resolve(getValidCustomer())
               }
+              getCreditCards() {
+                  return Promise.resolve(getValidCreditCards())
+              }
+              getID(object) {
 
-          }
-        });
+                  if(_.isString(object)){
+                      return object;
+                  } else if(_.isObject(object)){
+                      if(_.has(object, 'id')){
+                          return object['id'];
+                      }
+                  }else if(_.isNull(object)){
+                          return null;
+                  }
+              }
+          };
+
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
           getID: (object) => {
@@ -1552,6 +1593,7 @@ describe('controllers/providers/Register.js', () => {
 
         PermissionTestGenerators.givenUserWithAllowed('*', '*');
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         return registerController.processTransaction({rebill: valid_rebill}).then(result => {
@@ -1663,14 +1705,18 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), {
-          get: () => {
-            return Promise.resolve(getValidCustomer())
-          },
-          getCreditCards: () => {
-            return Promise.resolve(getValidCreditCards())
-          }
-        });
+         let mock_customer = class {
+             constructor(){}
+
+             get () {
+                 return Promise.resolve(getValidCustomer())
+             }
+             getCreditCards() {
+                 return Promise.resolve(getValidCreditCards())
+             }
+         };
+
+         mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
           constructor(){}
@@ -1696,6 +1742,7 @@ describe('controllers/providers/Register.js', () => {
 
         let valid_transaction = getValidTransactionObject();
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         return registerController.reverseTransaction({transaction: valid_transaction}).then(result => {
@@ -1807,14 +1854,21 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), {
-          get: () => {
-            return Promise.resolve(getValidCustomer())
-          },
-          getCreditCards:() => {
-            return Promise.resolve(getValidCreditCards())
-          }
-        });
+         let mock_customer = class {
+             constructor(){}
+
+             get () {
+                 return Promise.resolve(getValidCustomer())
+             }
+             getCreditCards() {
+                 return Promise.resolve(getValidCreditCards())
+             }
+             sanitize(input) {
+                 expect(input).to.equal(false);
+             }
+         };
+
+         mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
           constructor(){}
@@ -1844,6 +1898,7 @@ describe('controllers/providers/Register.js', () => {
 
         let valid_amount = (valid_transaction.amount - 10.00);
 
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
         return registerController.refundTransaction({transaction: valid_transaction, amount: valid_amount}).then(result => {
@@ -1890,7 +1945,8 @@ describe('controllers/providers/Register.js', () => {
             }
           ];
 
-          let registerController = new RegisterController();
+        const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+        let registerController = new RegisterController();
 
           let result = registerController.calculateAmountFromProductGroups([product_groups]);
 

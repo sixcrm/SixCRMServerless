@@ -209,7 +209,6 @@ function getValidConfirmation(){
 
 }
 
-
 describe('checkout', function () {
   before(() => {
     global.account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
@@ -252,14 +251,18 @@ describe('checkout', function () {
       let session = getValidSession();
       let customer = getValidCustomer();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        getCustomerByEmail: () => {
-          return Promise.resolve(null);
-        },
-        create:() => {
-          return Promise.resolve(customer);
-        }
-      });
+      let mock_customer = class {
+          constructor(){}
+
+          getCustomerByEmail() {
+              return Promise.resolve(null);
+          }
+          create() {
+              return Promise.resolve(customer);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
       let affiliates_helper_mock = class {
         constructor(){}
@@ -276,11 +279,15 @@ describe('checkout', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), affiliates_helper_mock);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:() => {
-          return Promise.resolve(campaign);
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
         putRecord: () => {
@@ -403,33 +410,46 @@ describe('checkout', function () {
         },
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
-        assureCreditCard:() => {
-          return Promise.resolve(creditcard);
-        },
-        sanitize:(input) => {
-            expect(input).to.equal(false);
-        }
-      });
+      let mock_credit_card = class {
+          constructor(){}
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get: () => {
-          return Promise.resolve(campaign)
-        }
-      });
+          assureCreditCard() {
+              return Promise.resolve(creditcard);
+          }
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        addCreditCard: () => {
-          customer.creditcards.push(creditcard.id);
-          return Promise.resolve(customer);
-        },
-        get:() => {
-          return Promise.resolve(customer);
-        },
-        update: ({entity}) => {
-            return Promise.resolve(entity);
-        }
-      });
+          sanitize(input) {
+              expect(input).to.equal(false);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
+
+      let mock_campaign = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
+
+      let mock_customer = class {
+          constructor(){}
+
+          addCreditCard() {
+              customer.creditcards.push(creditcard.id);
+              return Promise.resolve(customer);
+          }
+          get() {
+              return Promise.resolve(customer);
+          }
+          update({entity}) {
+              return Promise.resolve(entity);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
         constructor(){}
@@ -714,26 +734,30 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), {
-        addCreditCard: () => {
-          customer.creditcards.push(creditcard.id);
-          return Promise.resolve(customer);
-        },
-        get:() => {
-          return Promise.resolve(customer);
-        },
-        getCustomerByEmail: () => {
-          return Promise.resolve(null);
-        },
-        create:() => {
-          return Promise.resolve(customer);
-        },
-        update: ({entity}) => {
-            return Promise.resolve(entity);
-        }
-      });
+      let mock_customer = class {
+          constructor(){}
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
+          addCreditCard() {
+              customer.creditcards.push(creditcard.id);
+              return Promise.resolve(customer);
+          }
+          get() {
+              return Promise.resolve(customer);
+          }
+          getCustomerByEmail() {
+              return Promise.resolve(null);
+          }
+          create() {
+              return Promise.resolve(customer);
+          }
+          update({entity}) {
+              return Promise.resolve(entity);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
         constructor(){}
         handleAffiliateInformation(a_event){
           let cloned_event = objectutilities.clone(a_event);
@@ -746,11 +770,15 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), {
-        get:() => {
-          return Promise.resolve(campaign);
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(campaign);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
         putRecord: () => {
@@ -815,19 +843,24 @@ describe('checkout', function () {
           }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), {
-        assureCreditCard: (creditcard) => {
-          return Promise.resolve(objectutilities.merge(creditcard, {
-            id: uuidV4(),
-            created_at: timestamp.getISO8601(),
-            updated_at: timestamp.getISO8601(),
-            account: global.account
-          }));
-        },
-        sanitize:(input) => {
-            expect(input).to.equal(false);
-        }
-      });
+      let mock_credit_card = class {
+          constructor(){}
+
+          assureCreditCard (creditcard) {
+              return Promise.resolve(objectutilities.merge(creditcard, {
+                  id: uuidV4(),
+                  created_at: timestamp.getISO8601(),
+                  updated_at: timestamp.getISO8601(),
+                  account: global.account
+              }));
+          }
+
+          sanitize(input) {
+              expect(input).to.equal(false);
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class {
         constructor(){}

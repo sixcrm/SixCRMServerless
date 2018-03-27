@@ -1,3 +1,4 @@
+const _ = require('underscore');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
@@ -14,6 +15,10 @@ function getValidRebill(){
 
 function getValidTransaction(){
   return MockEntities.getValidTransaction();
+}
+
+function getValidCreditCard() {
+  return MockEntities.getValidCreditCard()
 }
 
 describe('controllers/Session.js', () => {
@@ -127,12 +132,16 @@ describe('controllers/Session.js', () => {
         it('successfully retrieves campaign', () => {
             let session = getValidSession();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Campaign.js'), {
-                get: ({id}) => {
+            let mock_campaign = class {
+                constructor(){}
+
+                get ({id}) {
                     expect(id).to.equal(session.campaign);
                     return Promise.resolve('a_campaign');
                 }
-            });
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
             let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
 
@@ -157,12 +166,16 @@ describe('controllers/Session.js', () => {
         it('successfully retrieves customer', () => {
             let session = getValidSession();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Customer.js'), {
-                get: ({id}) => {
+            let mock_customer = class {
+                constructor(){}
+
+                get({id}) {
                     expect(id).to.equal(session.customer);
                     return Promise.resolve('a_customer');
                 }
-            });
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
             let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
 
@@ -181,12 +194,16 @@ describe('controllers/Session.js', () => {
                 productschedules: ['a_product_schedule']
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Campaign.js'), {
-                getHydratedCampaign: ({id}) => {
+            let mock_campaign = class {
+                constructor(){}
+
+                getHydratedCampaign({id}) {
                     expect(id).to.equal(session.id);
                     return Promise.resolve(hydrated_campaign);
                 }
-            });
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
             let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
 
@@ -605,7 +622,7 @@ describe('controllers/Session.js', () => {
 
 				return sessionController.cancelSession({entity: mock_cancel}).catch((error) => {
 
-					expect(error.message).to.equal('[404] Unable to update session with ID: \"mock id\" -  record doesn\'t exist.');
+					expect(error.message).to.equal('[404] Unable to update session with ID: "mock id" -  record doesn\'t exist.');
 
 				});
 
@@ -613,4 +630,45 @@ describe('controllers/Session.js', () => {
 
 		});
 
+    describe('getSessionCreditCard', () => {
+
+        it('successfully acquires most recent credit card', () => {
+
+            let session = getValidSession();
+
+            let credit_card = getValidCreditCard();
+
+            let mock_customer = class {
+                constructor(){}
+
+                getMostRecentCreditCard({id}) {
+                    expect(id).to.equal(session.customer);
+                    return Promise.resolve(credit_card);
+                }
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
+
+            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+
+            return sessionController.getSessionCreditCard(session).then((result) => {
+                expect(result).to.equal(credit_card);
+            });
+        });
+    });
+
+    describe('createAlias', () => {
+
+        it('successfully creates alias', () => {
+
+            let session = getValidSession();
+
+            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+
+            let alias = sessionController.createAlias(session);
+
+            expect(alias).to.be.a('string');
+            expect(_.contains(alias, 'S')).to.equal(true);
+        });
+    });
 });

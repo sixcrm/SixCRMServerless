@@ -6,11 +6,11 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
-
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-
+const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
+const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js')
 const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
 
 module.exports = class Register extends RegisterUtilities {
@@ -79,8 +79,8 @@ module.exports = class Register extends RegisterUtilities {
       reverse: 'reverse'
     }
 
-    this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
-    this.creditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
+    this.customerController = new CustomerController();
+    this.creditCardController = new CreditCardController();
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
     this.merchantProviderController.sanitize(false);
@@ -137,7 +137,6 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-  //Technical Debt:  Update such that only successful transactions are returned
   getAssociatedTransactions(){
 
     du.debug('Get Associated Transactions');

@@ -76,12 +76,16 @@ describe('controllers/Tracker.js', () => {
 
             let campaign = getValidCampaign();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Campaign.js'), {
-                listBy: ({list_array}) => {
+            let mock_campaign = class {
+                constructor(){}
+
+                listBy ({list_array}) {
                     expect(list_array).to.deep.equal(tracker.campaigns);
                     return Promise.resolve({campaigns: [campaign]});
                 }
-            });
+            };
+
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
             let trackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
 

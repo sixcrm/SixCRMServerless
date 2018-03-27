@@ -84,23 +84,33 @@ describe('controllers/workers/eventEmails', () => {
 
       let sns_message = MockEntities.getValidSNSMessage(message);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities','Campaign.js'), {
-        get:() =>{
-          return Promise.resolve(campaign);
-        },
-        getEmailTemplates:() => {
-          return Promise.resolve(email_templates);
-        },
-        isUUID:() => {
-          return true;
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
 
-      mockery.registerMock(global.SixCRM.routes.path('entities','Customer.js'), {
-        get:() =>{
-          return Promise.resolve(customer);
-        }
-      });
+          get() {
+              return Promise.resolve(campaign);
+          }
+
+          getEmailTemplates() {
+              return Promise.resolve(email_templates);
+          }
+
+          isUUID() {
+              return true;
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
+
+      let mock_customer = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(customer)
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
       mockery.registerMock(global.SixCRM.routes.path('entities','EmailTemplate.js'), {
         get:({id}) =>{
@@ -173,23 +183,33 @@ describe('controllers/workers/eventEmails', () => {
 
       let sns_message = MockEntities.getValidSNSMessage(message);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities','Campaign.js'), {
-        get:() =>{
-          return Promise.resolve(campaign);
-        },
-        getEmailTemplates:() => {
-          return Promise.resolve(email_templates);
-        },
-        isUUID:() => {
-          return true;
-        }
-      });
+      let mock_campaign = class {
+          constructor(){}
 
-      mockery.registerMock(global.SixCRM.routes.path('entities','Customer.js'), {
-        get:() =>{
-          return Promise.resolve(customer);
-        }
-      });
+          get() {
+              return Promise.resolve(campaign);
+          }
+
+          getEmailTemplates() {
+              return Promise.resolve(email_templates);
+          }
+
+          isUUID() {
+              return true;
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
+
+      let mock_customer = class {
+          constructor(){}
+
+          get () {
+              return Promise.resolve(customer)
+          }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
       mockery.registerMock(global.SixCRM.routes.path('entities','EmailTemplate.js'), {
         get:({id}) =>{

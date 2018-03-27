@@ -4,7 +4,9 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-
+const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
+const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
+const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class CreateOrderController extends transactionEndpointController {
@@ -183,7 +185,7 @@ class CreateOrderController extends transactionEndpointController {
     let session =  this.parameters.get('session');
 
     if(!_.has(this, 'campaignController')){
-      this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
+      this.campaignController = new CampaignController();
     }
 
     return this.campaignController.get({id: session.campaign}).then(campaign => {
@@ -202,7 +204,7 @@ class CreateOrderController extends transactionEndpointController {
     if(_.has(event, 'creditcard')){
 
       if(!_.has(this, 'creditCardController')){
-        this.creditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
+        this.creditCardController = new CreditCardController();
         this.creditCardController.sanitize(false);
       }
 
@@ -226,7 +228,7 @@ class CreateOrderController extends transactionEndpointController {
     let customer = this.parameters.get('customer');
 
     if(!_.has(this, 'customerController')){
-      this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
+      this.customerController = new CustomerController();
     }
 
     return this.customerController.addCreditCard(customer.id, creditcard).then((customer) => {
@@ -244,7 +246,7 @@ class CreateOrderController extends transactionEndpointController {
     let event = this.parameters.get('event');
 
     if(!_.has(this, 'customerController')){
-        this.customerController = global.SixCRM.routes.include('entities', 'Customer.js');
+        this.customerController = new CustomerController();
     }
 
     return this.customerController.get({id: session.customer}).then(customer => {

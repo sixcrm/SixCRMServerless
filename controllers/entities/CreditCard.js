@@ -10,7 +10,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 
 const helper = new CreditCardHelperController();
 
-class creditCardController extends entityController {
+module.exports = class creditCardController extends entityController {
 
     constructor(){
 
@@ -220,4 +220,3 @@ class creditCardController extends entityController {
 
 }
 
-module.exports = new creditCardController();

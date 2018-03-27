@@ -4,7 +4,7 @@ const _ = require('underscore');
 const jwtutilities  = global.SixCRM.routes.include('lib', 'jwt-utilities');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-
+const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class AcquireTokenController extends transactionEndpointController {
@@ -65,7 +65,7 @@ class AcquireTokenController extends transactionEndpointController {
       let event = this.parameters.get('event');
 
       if(!_.has(this, 'campaignController')){
-        this.campaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
+        this.campaignController = new CampaignController();
       }
 
       return this.campaignController.get({id: event.campaign}).then((campaign) => {
