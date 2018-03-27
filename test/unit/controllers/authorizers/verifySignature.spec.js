@@ -153,13 +153,13 @@ describe('controllers/authorizers/verifySignature.js', () => {
             //token with example data in valid format
             let tokens = [access_key.id, 1516180676827, 'c7375e049f5d376d8a186957d5b972dd25a57354'];
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/AccessKey.js'), {
-                getAccessKeyByKey: (id) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/AccessKey.js'), class {
+                getAccessKeyByKey(id) {
                     expect(id).to.equal(tokens[0]);
                     return Promise.resolve(access_key)
-                },
-                disableACLs: () => {},
-                enableACLs: () => {}
+                }
+                disableACLs(){}
+                enableACLs(){}
             });
 
             let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
@@ -184,13 +184,13 @@ describe('controllers/authorizers/verifySignature.js', () => {
 
             delete access_key.secret_key; //remove required property
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/AccessKey.js'), {
-                getAccessKeyByKey: (id) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/AccessKey.js'), class {
+                getAccessKeyByKey(id) {
                     expect(id).to.equal(tokens[0]);
                     return Promise.resolve(access_key)
-                },
-                disableACLs: () => {},
-                enableACLs: () => {}
+                }
+                disableACLs(){}
+                enableACLs(){}
             });
 
             let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
@@ -209,13 +209,13 @@ describe('controllers/authorizers/verifySignature.js', () => {
 
             delete access_key.id; //remove required property
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/AccessKey.js'), {
-                getAccessKeyByKey: (id) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/AccessKey.js'), class {
+                getAccessKeyByKey(id) {
                     expect(id).to.equal(tokens[0]);
                     return Promise.resolve(access_key)
-                },
-                disableACLs: () => {},
-                enableACLs: () => {}
+                }
+                disableACLs(){}
+                enableACLs(){}
             });
 
             let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
@@ -232,13 +232,13 @@ describe('controllers/authorizers/verifySignature.js', () => {
             //token with example data in valid format
             let tokens = [access_key.id, 1516180676827, 'c7375e049f5d376d8a186957d5b972dd25a57354'];
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/AccessKey.js'), {
-                getAccessKeyByKey: (id) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/AccessKey.js'), class {
+                getAccessKeyByKey(id) {
                     expect(id).to.equal(tokens[0]);
                     return Promise.reject(new Error('Retrieval failed'))
-                },
-                disableACLs: () => {},
-                enableACLs: () => {}
+                }
+                disableACLs(){}
+                enableACLs(){}
             });
 
             let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
@@ -272,13 +272,13 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/AccessKey.js'), {
-                getAccessKeyByKey: (id) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/AccessKey.js'), class {
+                getAccessKeyByKey(id) {
                     expect(id).to.equal(access_key.id);
                     return Promise.resolve(access_key)
-                },
-                disableACLs: () => {},
-                enableACLs: () => {}
+                }
+                disableACLs(){}
+                enableACLs(){}
             });
 
             let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');

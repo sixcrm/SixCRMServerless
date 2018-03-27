@@ -68,7 +68,8 @@ describe('controllers/AccessKey.js', () => {
                 }
             });
 
-            let accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
+            const AccessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
+            const accessKeyController = new AccessKeyController();
 
             return accessKeyController.update(params).then((result) => {
                 expect(result.access_key).to.equal(access_key.access_key);
@@ -96,7 +97,8 @@ describe('controllers/AccessKey.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Entity.js'), mock_entity);
 
-            let accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
+            const AccessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
+            const accessKeyController = new AccessKeyController();
 
             accessKeyController.disableACLs = () => {};
             accessKeyController.enableACLs = () => {};

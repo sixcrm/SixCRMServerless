@@ -1,22 +1,25 @@
-'use strict'
+'use strict';
 const _ = require("underscore");
 
-var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-var signature = global.SixCRM.routes.include('lib', 'signature.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const signature = global.SixCRM.routes.include('lib', 'signature.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-
-const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
+const AccessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 
 class verifySignatureController {
+
+  constructor() {
+      this.accessKeyController = new AccessKeyController();
+  }
 
   execute(event){
 
     return this.parseEventSignature(event)
-    .then(this.createTokenObject)
-    .then(this.verifyTimestamp)
-    .then(this.verifySignature)
-    .then(this.populateAuthorityUser);
+    .then(this.createTokenObject.bind(this))
+    .then(this.verifyTimestamp.bind(this))
+    .then(this.verifySignature.bind(this))
+    .then(this.populateAuthorityUser.bind(this));
 
   }
 
@@ -24,7 +27,7 @@ class verifySignatureController {
 
     du.debug('Parse Event Signature');
 
-    var tokens = event.authorizationToken.split(':');
+    const tokens = event.authorizationToken.split(':');
 
     if(!_.isArray(tokens) || !(tokens.length == 3)){
 
@@ -44,9 +47,9 @@ class verifySignatureController {
 
      return new Promise((resolve, reject) =>	{
 
-       accessKeyController.disableACLs();
-       accessKeyController.getAccessKeyByKey(tokens[0]).then((access_key) => {
-         accessKeyController.enableACLs();
+      this.accessKeyController.disableACLs();
+      this.accessKeyController.getAccessKeyByKey(tokens[0]).then((access_key) => {
+         this.accessKeyController.enableACLs();
 
          if(_.has(access_key, 'secret_key') && _.has(access_key, 'id')){
 
