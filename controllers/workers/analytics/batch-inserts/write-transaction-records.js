@@ -72,20 +72,20 @@ module.exports = class WriteTransactionRecords {
 					r.datetime,
 					r.customer,
 					r.creditcard,
-					r.merchant_provider,
+					r.merchantProvider,
 					r.campaign,
 					r.affiliate,
 					r.amount,
-					r.processor_result,
+					r.processorResult,
 					r.account,
 					r.type,
 					r.subtype,
-					r.product_schedule,
-					r.subaffiliate_1,
-					r.subaffiliate_2,
-					r.subaffiliate_3,
-					r.subaffiliate_4,
-					r.subaffiliate_5
+					r.productSchedule,
+					r.subaffiliate1,
+					r.subaffiliate2,
+					r.subaffiliate3,
+					r.subaffiliate4,
+					r.subaffiliate5
 			];
 
 		}));
