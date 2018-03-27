@@ -2,10 +2,9 @@
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const NotificationsHelperController = global.SixCRM.routes.include('helpers', 'notifications/Notification.js');
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
-class NotificationEventsController extends SNSEventController {
+module.exports = class NotificationEventsController extends SNSEventController {
 
   constructor(){
 
@@ -37,6 +36,7 @@ class NotificationEventsController extends SNSEventController {
     let event_type = this.parameters.get('message').event_type;
     let context = this.parameters.get('message').context;
 
+    const NotificationsHelperController = global.SixCRM.routes.include('helpers', 'notifications/Notification.js');
     let notificationsHelperController = new NotificationsHelperController();
 
     return notificationsHelperController.executeNotifications({event_type: event_type, context: context});
@@ -44,5 +44,3 @@ class NotificationEventsController extends SNSEventController {
   }
 
 }
-
-module.exports = new NotificationEventsController();

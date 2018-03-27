@@ -33,7 +33,8 @@ describe('controllers/workers/snsevents/notificationEvents.js', () => {
 
     it('instantiates the trackingEventsController class', () => {
 
-      let notificationEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/notificationEvents.js');
+      const NotificationEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/notificationEvents.js');
+      let notificationEventsController = new NotificationEventsController();
 
       expect(objectutilities.getClassName(notificationEventsController)).to.equal('NotificationEventsController');
 
@@ -71,7 +72,8 @@ describe('controllers/workers/snsevents/notificationEvents.js', () => {
           }
         });
 
-        let notificationEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/notificationEvents.js');
+        const NotificationEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/notificationEvents.js');
+        let notificationEventsController = new NotificationEventsController();
 
         return notificationEventsController.execute(sns_message);
 

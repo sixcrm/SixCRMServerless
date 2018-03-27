@@ -13,7 +13,6 @@ module.exports = class ContextHelperController {
   constructor(){
 
     const AffiliateHelperController = global.SixCRM.routes.include('helpers','entities/affiliate/Affiliate.js');
-
     this.affiliateHelperController = new AffiliateHelperController();
 
   }

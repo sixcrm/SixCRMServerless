@@ -7,8 +7,6 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-
 module.exports = class NotificationHelperClass {
 
   constructor(){
@@ -26,6 +24,7 @@ module.exports = class NotificationHelperClass {
       }
     };
 
+    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
   }
@@ -33,6 +32,8 @@ module.exports = class NotificationHelperClass {
   executeNotifications(){
 
     du.debug('Execute Notifications');
+
+    this.parameters.store = {};
 
     return Promise.resolve()
     .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'executeNotifications'}))

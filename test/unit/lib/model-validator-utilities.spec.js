@@ -127,7 +127,7 @@ describe('lib/model-validator-utilities', () => {
     describe('entity-utils', () => {
 
         const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
-        let eu = new entityUtilitiesController();
+        let euc = new entityUtilitiesController();
 
         let customer = { id: 'b5803b28-c584-4bb3-8fac-3315b91686b4',
             firstname: 'Test_b5803b28-c584-4bb3-8fac-3315b91686b3',
@@ -148,7 +148,7 @@ describe('lib/model-validator-utilities', () => {
 
         it('loads references recursively', (done) => {
             try {
-                eu.validate(customer, global.SixCRM.routes.path('model', 'entities/customer.json'));
+                euc.validate(customer, global.SixCRM.routes.path('model', 'entities/customer.json'));
                 done('Validation should have failed.')
             } catch (error) {
                 expect(error.message).to.have.string('[500] One or more validation errors occurred:');

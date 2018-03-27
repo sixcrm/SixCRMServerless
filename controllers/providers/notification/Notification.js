@@ -8,8 +8,6 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js')
 
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-
 class NotificationProvider {
 
   constructor(){
@@ -41,6 +39,7 @@ class NotificationProvider {
       }
     };
 
+    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
     this.userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
@@ -53,6 +52,8 @@ class NotificationProvider {
   createNotificationsForAccount() {
 
     du.debug('Create Notifications For Account');
+
+    this.parameters.store = {};
 
     let action = 'createNotificationsForAccount';
     this.parameters.set('action', action);
@@ -68,6 +69,8 @@ class NotificationProvider {
   createNotificationForAccountAndUser() {
 
     du.debug('Create Notifications For Account and User');
+
+    this.parameters.store = {};
 
     let action = 'createNotificationForAccountAndUser';
     this.parameters.set('action', action);
