@@ -345,6 +345,10 @@ class NotificationProvider {
 
     du.debug('Get Receive Setting For Channel');
 
+    if(!_.has(user_settings, 'notifications') || !arrayutilities.nonEmpty(user_settings.notifications)){
+      return false;
+    }
+
     let channel_settings = arrayutilities.find(user_settings.notifications, (notification_setting) => {
       return (notification_setting.name === notification_channel);
     });
