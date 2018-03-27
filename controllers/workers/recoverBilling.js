@@ -1,140 +1,170 @@
-'use strict';
 const _ = require("underscore");
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
 //Technical Debt:  Need to either mark the rebill with the attempt number or update the method which checks the rebill for existing failed attempts (better idea.)
 module.exports = class recoverBillingController extends workerController {
 
-  constructor(){
+	constructor() {
 
-    super();
+		super();
 
-    this.parameter_definition = {
-      execute: {
-        required: {
-          message: 'message'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			execute: {
+				required: {
+					message: 'message'
+				},
+				optional: {}
+			}
+		};
 
-    this.parameter_validation = {
-      registerresponsecode: global.SixCRM.routes.path('model', 'general/response/responsetype.json')
-    };
+		this.parameter_validation = {
+			session: global.SixCRM.routes.path('model', 'entities/session.json'),
+			registerresponsecode: global.SixCRM.routes.path('model', 'general/response/responsetype.json')
+		};
 
-    this.augmentParameters();
+		this.augmentParameters();
 
-  }
+	}
 
-  execute(message){
+	execute(message) {
 
-    du.debug('Execute');
+		du.debug('Execute');
 
-    return this.preamble(message)
-    .then(() => this.process())
-    .then(() => this.markRebill())
-    .then(() => this.postProcessing())
-    .then(() => this.respond())
-    .catch((error) => {
-      du.error(error);
-      return super.respond('error', error.message);
-    })
+		return this.preamble(message)
+			.then(() => this.hydrateSession())
+			.then(() => this.process())
+			.then(() => this.markRebill())
+			.then(() => this.postProcessing())
+			.then(() => this.respond())
+			.catch((error) => {
+				du.error(error);
+				return super.respond('error', error.message);
+			})
 
-  }
+	}
 
-  //Technical Debt:  Merchant Provider is necessary in the context of a rebill
-  process(){
+	hydrateSession() {
 
-    du.debug('Process');
+		du.debug('Set Session');
 
-    let rebill = this.parameters.get('rebill');
+		let event = this.parameters.get('event');
 
-    const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
-    let registerController = new RegisterController();
+		if (!_.has(this.sessionController)) {
 
-    return registerController.processTransaction({rebill: rebill}).then(response => {
+			this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
-      this.parameters.set('registerresponse', response);
+		}
 
-      return Promise.resolve(true);
+		return this.sessionController.get({
+			id: event.session
+		}).then(session => {
 
-    });
+			return this.parameters.set('session', session);
 
-  }
+		});
 
-  postProcessing(){
+	}
 
-    du.debug('Post Processing');
+	//Technical Debt:  Merchant Provider is necessary in the context of a rebill
+	process() {
 
-    let register_response = this.parameters.get('registerresponse');
-    let transactions = register_response.parameters.get('transactions', null, false);
+		du.debug('Process');
 
-    if(_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)){ return false; }
+		let rebill = this.parameters.get('rebill');
 
-    const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+		const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+		let registerController = new RegisterController();
 
-    return arrayutilities.serial(transactions, (current, transaction) => {
+		return registerController.processTransaction({
+			rebill: rebill
+		}).then(response => {
 
-      this.pushEvent({event_type: 'transaction_recovery_'+transaction.result});
+			this.parameters.set('registerresponse', response);
 
-      if(transaction.type != 'sale' || transaction.result != 'success'){ return false; }
+			return Promise.resolve(true);
 
-      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+		});
 
-      return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
-        merchant_provider: transaction.merchant_provider,
-        day: transaction.created_at,
-        total: transaction.amount,
-        type: 'recurring'
-      });
+	}
 
-    }, Promise.resolve());
+	postProcessing() {
 
-  }
+		du.debug('Post Processing');
 
-  markRebill(){
+		let transactions = this.parameters.get('transactions', null, false);
 
-    du.debug('Mark Rebill');
+		if (_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)) {
+			return false;
+		}
 
-    let rebill = this.parameters.get('rebill');
-    let register_response_code = this.parameters.get('registerresponse').getCode();
+		const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 
-    if(register_response_code == 'fail'){
+		return arrayutilities.serial(transactions, (current, transaction) => {
 
-      rebill.second_attempt = true;
+			this.pushEvent({
+				event_type: 'transaction_recovery_' + transaction.result
+			});
 
-      if(!_.has(this, 'rebillController')){
-        this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-      }
+			if (transaction.type != 'sale' || transaction.result != 'success') {
+				return false;
+			}
 
-      return this.rebillController.update({entity: rebill}).then(result => {
+			let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
-        this.parameters.set('rebill', result);
+			return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
+				merchant_provider: transaction.merchant_provider,
+				day: transaction.created_at,
+				total: transaction.amount,
+				type: 'recurring'
+			});
 
-        return true;
+		}, Promise.resolve());
 
-      });
+	}
 
-    }else{
+	markRebill() {
 
-      return Promise.resolve(true);
+		du.debug('Mark Rebill');
 
-    }
+		let rebill = this.parameters.get('rebill');
+		let register_response_code = this.parameters.get('registerresponse').getCode();
 
-  }
+		if (register_response_code == 'fail') {
 
-  respond(){
+			rebill.second_attempt = true;
 
-    du.debug('Respond');
+			if (!_.has(this, 'rebillController')) {
+				this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			}
 
-    let register_response_code = this.parameters.get('registerresponse').getCode();
+			return this.rebillController.update({
+				entity: rebill
+			}).then(result => {
 
-    return super.respond(register_response_code);
+				this.parameters.set('rebill', result);
 
-  }
+				return true;
+
+			});
+
+		} else {
+
+			return Promise.resolve(true);
+
+		}
+
+	}
+
+	respond() {
+
+		du.debug('Respond');
+
+		let register_response_code = this.parameters.get('registerresponse').getCode();
+
+		return super.respond(register_response_code);
+
+	}
 
 }
