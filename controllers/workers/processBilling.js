@@ -1,108 +1,139 @@
-'use strict';
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 //Technical Debt:  Need to either mark the rebill with the attempt number or update the method which checks the rebill for existing failed attempts (better idea.)
 module.exports = class processBillingController extends workerController {
 
-  constructor(){
+	constructor() {
 
-    super();
+		super();
 
-    this.parameter_definition = {
-      execute: {
-        required: {
-          message: 'message'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			execute: {
+				required: {
+					message: 'message'
+				},
+				optional: {}
+			}
+		};
 
-    this.parameter_validation = {
-      registerresponsecode: global.SixCRM.routes.path('model', 'general/response/responsetype.json')
-    };
+		this.parameter_validation = {
+			session: global.SixCRM.routes.path('model', 'entities/session.json'),
+			registerresponsecode: global.SixCRM.routes.path('model', 'general/response/responsetype.json')
+		};
 
-    this.augmentParameters();
+		this.augmentParameters();
 
-  }
+	}
 
-  execute(message){
+	execute(message) {
 
-    du.debug('Execute');
+		du.debug('Execute');
 
-    return this.preamble(message)
-    .then(() => this.process())
-    .then(() => this.postProcessing())
-    .then(() => this.respond())
-    .catch((error) => {
-      return super.respond('error', error.message);
-    })
+		return this.preamble(message)
+			.then(() => this.hydrateSession())
+			.then(() => this.process())
+			.then(() => this.postProcessing())
+			.then(() => this.respond())
+			.catch((ex) => {
 
-  }
+				du.error('ProcessBillingController.execute()', ex);
+				return super.respond('error', ex.message);
 
-  //Technical Debt:  Merchant Provider is necessary in the context of a rebill
-  process(){
+			})
 
-    du.debug('Process');
+	}
 
-    let rebill = this.parameters.get('rebill');
+	hydrateSession() {
 
-    const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
-    let registerController = new RegisterController();
+		du.debug('Set Session');
 
-    return registerController.processTransaction({rebill: rebill}).then(response => {
+		let rebill = this.parameters.get('rebill');
 
-      this.parameters.set('registerresponse', response);
+		if (!_.has(this.sessionController)) {
 
-      return Promise.resolve(true);
+			this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
-    });
+		}
 
-  }
+		return this.sessionController.get({
+			id: rebill.parentsession
+		}).then(session => {
 
-  postProcessing(){
+			return this.parameters.set('session', session);
 
-    du.debug('Post Processing');
+		});
 
-    let register_response = this.parameters.get('registerresponse');
-    let transactions = register_response.parameters.get('transactions', null, false);
+	}
 
-    if(_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)){ return false; }
+	//Technical Debt:  Merchant Provider is necessary in the context of a rebill
+	process() {
 
-    const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+		du.debug('Process');
 
-    return arrayutilities.serial(transactions, (current, transaction) => {
+		let rebill = this.parameters.get('rebill');
 
-      this.pushEvent({event_type: 'transaction_'+transaction.result});
+		const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+		let registerController = new RegisterController();
 
-      if(transaction.type != 'sale' || transaction.result != 'success'){
-        return false;
-      }
+		return registerController.processTransaction({
+			rebill: rebill
+		}).then(response => {
 
-      let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+			this.parameters.set('registerresponse', response);
 
-      return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
-        merchant_provider: transaction.merchant_provider,
-        day: transaction.created_at,
-        total: transaction.amount,
-        type: 'recurring'
-      });
+			return Promise.resolve(true);
 
-    }, Promise.resolve());
+		});
 
-  }
+	}
 
-  respond(){
+	postProcessing() {
 
-    du.debug('Respond');
+		du.debug('Post Processing');
 
-    let register_response_code = this.parameters.get('registerresponse').getCode();
+		let register_response = this.parameters.get('registerresponse');
+		let transactions = register_response.parameters.get('transactions', null, false);
 
-    return super.respond(register_response_code);
+		if (_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)) {
+			return false;
+		}
 
-  }
+		const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+
+		return arrayutilities.serial(transactions, (current, transaction) => {
+
+			this.pushEvent({
+				event_type: 'transaction_' + transaction.result
+			});
+
+			if (transaction.type != 'sale' || transaction.result != 'success') {
+				return false;
+			}
+
+			let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+
+			return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
+				merchant_provider: transaction.merchant_provider,
+				day: transaction.created_at,
+				total: transaction.amount,
+				type: 'recurring'
+			});
+
+		}, Promise.resolve());
+
+	}
+
+	respond() {
+
+		du.debug('Respond');
+
+		let register_response_code = this.parameters.get('registerresponse').getCode();
+
+		return super.respond(register_response_code);
+
+	}
 
 }

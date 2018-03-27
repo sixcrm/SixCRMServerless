@@ -14,3 +14,24 @@ module.exports = class TransactionSuccessTransform {
 	}
 
 }
+
+// 'INSERT INTO analytics.f_transactions ( \
+// 	id, \
+// 	datetime, \
+// 	customer, \
+// 	creditcard, \
+// 	merchant_provider, \
+// 	campaign, \
+// 	affiliate, \
+// 	amount, \
+// 	processor_result, \
+// 	account, \
+// 	type, \
+// 	subtype, \
+// 	product_schedule, \
+// 	subaffiliate_1, \
+// 	subaffiliate_2, \
+// 	subaffiliate_3, \
+// 	subaffiliate_4, \
+// 	subaffiliate_5) \
+// 	VALUES ';

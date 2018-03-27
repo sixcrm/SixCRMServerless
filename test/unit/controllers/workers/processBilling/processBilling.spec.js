@@ -5,167 +5,178 @@ const expect = chai.expect;
 const mockery = require('mockery');
 
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-function getValidProcessorResponse(){
+function getValidProcessorResponse() {
 
-  return {
-    code:'success',
-    message:'Success',
-    result:{
-      response:'1',
-      responsetext:'SUCCESS',
-      authcode:'123456',
-      transactionid:'3448894418',
-      avsresponse:'N',
-      cvvresponse:'',
-      orderid:'',
-      type:'sale',
-      response_code:'100'
-    }
-  };
-
-}
-
-function getValidTransaction(){
-  return MockEntities.getValidTransaction();
-}
-
-function getValidRegisterResponse(){
-
-  const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
-
-  return new RegisterResponse({
-    response_type: 'success',
-    transaction: getValidTransaction(),
-    processor_response: getValidProcessorResponse()
-  });
+	return {
+		code: 'success',
+		message: 'Success',
+		result: {
+			response: '1',
+			responsetext: 'SUCCESS',
+			authcode: '123456',
+			transactionid: '3448894418',
+			avsresponse: 'N',
+			cvvresponse: '',
+			orderid: '',
+			type: 'sale',
+			response_code: '100'
+		}
+	};
 
 }
 
-function getValidMessages(){
+function getValidTransaction() {
+	return MockEntities.getValidTransaction();
+}
 
-  return [
-    {
-      MessageId:"someMessageID",
-      ReceiptHandle:"SomeReceiptHandle",
-      Body: JSON.stringify({id:uuidV4()}),
-      MD5OfBody:"SomeMD5"
-    },
-    {
-      MessageId:"someMessageID",
-      ReceiptHandle:"SomeReceiptHandle",
-      Body: JSON.stringify({id:uuidV4()}),
-      MD5OfBody:"SomeMD5"
-    }
-  ];
+function getValidRegisterResponse() {
+
+	const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
+
+	return new RegisterResponse({
+		response_type: 'success',
+		transaction: getValidTransaction(),
+		processor_response: getValidProcessorResponse()
+	});
 
 }
 
-function getValidRebill(){
-  return MockEntities.getValidRebill();
+function getValidMessages() {
+
+	return [{
+			MessageId: "someMessageID",
+			ReceiptHandle: "SomeReceiptHandle",
+			Body: JSON.stringify({
+				id: uuidV4()
+			}),
+			MD5OfBody: "SomeMD5"
+		},
+		{
+			MessageId: "someMessageID",
+			ReceiptHandle: "SomeReceiptHandle",
+			Body: JSON.stringify({
+				id: uuidV4()
+			}),
+			MD5OfBody: "SomeMD5"
+		}
+	];
+
+}
+
+function getValidRebill() {
+	return MockEntities.getValidRebill();
 }
 
 describe('controllers/workers/processBilling', () => {
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
 
-  beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
-  });
+	});
 
-  afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-  });
+	beforeEach(() => {
+		global.SixCRM.localcache.clear('all');
+	});
 
-  describe('constructor', () => {
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-    it('instantiates the processBillingController class', () => {
+	describe('constructor', () => {
 
-      const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
-      let processBillingController = new ProcessBillingController();
+		it('instantiates the processBillingController class', () => {
 
-      expect(objectutilities.getClassName(processBillingController)).to.equal('processBillingController');
+			const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+			let processBillingController = new ProcessBillingController();
 
-    });
+			expect(objectutilities.getClassName(processBillingController)).to.equal('processBillingController');
 
-  });
+		});
 
-  describe('process', () => {
+	});
 
-    it('successfully processes a transaction', () => {
+	describe('process', () => {
 
-      let rebill = getValidRebill();
-      let response_code = 'success';
+		it('successfully processes a transaction', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class Register {
-        constructor(){}
-        processTransaction(){
-          return Promise.resolve(getValidRegisterResponse());
-        }
-      });
+			let rebill = getValidRebill();
+			let response_code = 'success';
 
-      const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
-      let processBillingController = new ProcessBillingController();
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class Register {
+				constructor() {}
+				processTransaction() {
+					return Promise.resolve(getValidRegisterResponse());
+				}
+			});
 
-      processBillingController.parameters.set('rebill', rebill);
+			const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+			let processBillingController = new ProcessBillingController();
 
-      return processBillingController.process().then(result => {
+			processBillingController.parameters.set('rebill', rebill);
 
-        expect(result).to.equal(true);
-        expect(processBillingController.parameters.store['registerresponse'].getCode()).to.equal(response_code);
+			return processBillingController.process().then(result => {
 
-      });
+				expect(result).to.equal(true);
+				expect(processBillingController.parameters.store['registerresponse'].getCode()).to.equal(response_code);
 
-    });
+			});
 
-  });
+		});
 
-  describe('execute', () => {
+	});
 
-    it('successfully executes', () => {
+	describe('execute', () => {
 
-      let rebill = getValidRebill();
-      let register_response = getValidRegisterResponse();
-      let response_code = 'success';
+		it('successfully executes', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class Register {
-        constructor(){}
-        processTransaction(){
-          return Promise.resolve(register_response);
-        }
-      });
+			let rebill = getValidRebill();
+			let session = MockEntities.getValidSession(rebill.parentsession);
+			let register_response = getValidRegisterResponse();
+			let response_code = 'success';
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:() => {
-          return Promise.resolve(rebill)
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+				get: () => {
+					return Promise.resolve(session)
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-        constructor(){}
-        pushEvent(){
-          return Promise.resolve({});
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class Register {
+				constructor() {}
+				processTransaction() {
+					return Promise.resolve(register_response);
+				}
+			});
 
-      let message = getValidMessages()[0];
-      const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
-      let processBillingController = new ProcessBillingController();
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+				get: () => {
+					return Promise.resolve(rebill)
+				}
+			});
 
-      return processBillingController.execute(message).then(result => {
-        expect(processBillingController.parameters.store['registerresponse'].getCode()).to.equal(response_code);
-        expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-        expect(result.getCode()).to.equal('success');
-      });
-    });
-  });
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				constructor() {}
+				pushEvent() {
+					return Promise.resolve({});
+				}
+			});
+
+			let message = getValidMessages()[0];
+			const ProcessBillingController = global.SixCRM.routes.include('controllers', 'workers/processBilling.js');
+			let processBillingController = new ProcessBillingController();
+
+			return processBillingController.execute(message).then(result => {
+				expect(processBillingController.parameters.store['registerresponse'].getCode()).to.equal(response_code);
+				expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+				expect(result.getCode()).to.equal('success');
+			});
+		});
+	});
 
 });
