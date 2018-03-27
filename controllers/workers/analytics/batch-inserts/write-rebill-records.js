@@ -22,7 +22,7 @@ module.exports = class WriteRebillRecords {
 				previous_queuename, \
 				account, \
 				datetime, \
-				amount \
+				amount) \
 				VALUES ';
 
 		const values = records.map((r, i) => {
@@ -34,10 +34,9 @@ module.exports = class WriteRebillRecords {
 		query += values.join(',');
 
 		query += ' \
-			ON CONFLICT (id_rebill, datetime) DO UPDATE SET  \
+			ON CONFLICT (account, id_rebill, datetime) DO UPDATE SET  \
 			current_queuename = EXCLUDED.current_queuename, \
 			previous_queuename = EXCLUDED.previous_queuename, \
-			account = EXCLUDED.account, \
 			amount = EXCLUDED.amount';
 
 		const queryArgs = _.flatten(records.map(r => {
