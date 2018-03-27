@@ -53,6 +53,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
       this.creditCardController.sanitize(false);
       this.merchantProviderGroupController.sanitize(false);
+      this.merchantProviderGroupAssociationController.sanitize(false);
     }
 
     buildMerchantProviderGroups(){
