@@ -74,7 +74,8 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            let notificationController = global.SixCRM.routes.include('controllers','entities/Notification');
+            let NotificationController = global.SixCRM.routes.include('controllers','entities/Notification');
+            const notificationController = new NotificationController();
 
             // when
             return notificationController.numberOfUnseenNotifications().then((count) => {

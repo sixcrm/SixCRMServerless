@@ -9,7 +9,7 @@ const timestamp = global.SixCRM.routes.include('lib','timestamp');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class notificationController extends entityController {
+module.exports = class NotificationController extends entityController {
 
     constructor() {
         super('notification');
@@ -19,7 +19,7 @@ class notificationController extends entityController {
 
       du.debug('Number of Unseen Notifications');
 
-      return this.executeAssociatedEntityFunction('notificationReadController', 'getLastSeenTime', {})
+      return this.executeAssociatedEntityFunction('NotificationReadController', 'getLastSeenTime', {})
       .then(last_seen_time => {
 
         return {
@@ -63,7 +63,7 @@ class notificationController extends entityController {
 
     listByUser({query_parameters, user, pagination, reverse_order, fatal, append_account_filter}) {
 
-        return this.executeAssociatedEntityFunction('notificationReadController', 'markNotificationsAsSeen', {})
+        return this.executeAssociatedEntityFunction('NotificationReadController', 'markNotificationsAsSeen', {})
             .then(() => super.listByUser({query_parameters, user, pagination, reverse_order, fatal, append_account_filter}))
 
     }
@@ -91,4 +91,3 @@ class notificationController extends entityController {
 
 }
 
-module.exports = new notificationController();

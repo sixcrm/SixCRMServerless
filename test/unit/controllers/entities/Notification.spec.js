@@ -31,8 +31,8 @@ describe('controllers/Notification.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'notification');
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/NotificationRead.js'), {
-                getLastSeenTime: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/NotificationRead.js'), class {
+                getLastSeenTime() {
                     return Promise.resolve(notification.updated_at)
                 }
             });
@@ -51,7 +51,8 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            let notificationController = global.SixCRM.routes.include('controllers','entities/Notification.js');
+            let NotificationController = global.SixCRM.routes.include('controllers','entities/Notification.js');
+            const notificationController = new NotificationController();
 
             return notificationController.numberOfUnseenNotifications().then((result) => {
                 expect(result).to.deep.equal({
@@ -66,8 +67,8 @@ describe('controllers/Notification.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'notification');
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/NotificationRead.js'), {
-                getLastSeenTime: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/NotificationRead.js'), class {
+                getLastSeenTime() {
                     return Promise.resolve(notification.updated_at)
                 }
             });
@@ -84,7 +85,8 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            let notificationController = global.SixCRM.routes.include('controllers','entities/Notification.js');
+            let NotificationController = global.SixCRM.routes.include('controllers','entities/Notification.js');
+            const notificationController = new NotificationController();
 
             return notificationController.numberOfUnseenNotifications().catch((error) => {
                 expect(error.message).to.equal('[500] Object missing property "Count".');
@@ -110,8 +112,8 @@ describe('controllers/Notification.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'notification');
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/NotificationRead.js'), {
-                markNotificationsAsSeen: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/NotificationRead.js'), class {
+                markNotificationsAsSeen() {
                     return Promise.resolve({})
                 }
             });
@@ -131,7 +133,8 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            let notificationController = global.SixCRM.routes.include('controllers','entities/Notification.js');
+            let NotificationController = global.SixCRM.routes.include('controllers','entities/Notification.js');
+            const notificationController = new NotificationController();
 
             return notificationController.listByUser(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -190,7 +193,8 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            let notificationController = global.SixCRM.routes.include('controllers','entities/Notification.js');
+            let NotificationController = global.SixCRM.routes.include('controllers','entities/Notification.js');
+            const notificationController = new NotificationController();
 
             return notificationController.listByTypes(params).then((result) => {
                 expect(result).to.deep.equal({

@@ -811,11 +811,11 @@ describe('controllers/providers/notification/Notification', () => {
         let default_notification_setting = getValidDefaultNotificationSettings();
         let user_setting = getValidUserSetting();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'NotificationSetting.js'), {
-          get:() => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'NotificationSetting.js'), class {
+          get() {
             return Promise.resolve(user_notification_setting);
-          },
-          getDefaultProfile: () => {
+          }
+          getDefaultProfile() {
             return Promise.resolve(default_notification_setting);
           }
         });
@@ -876,8 +876,8 @@ describe('controllers/providers/notification/Notification', () => {
         let augmented_normalized_notification_settings = {};
         let user_settings = getValidUserSetting();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
-          create:({entity}) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), class {
+          create({entity}) {
             entity.id = uuidV4();
             entity.created_at = timestamp.getISO8601();
             entity.updated_at = entity.created_at;
@@ -919,8 +919,8 @@ describe('controllers/providers/notification/Notification', () => {
           name: 'lead'
         };
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
-          create:({entity}) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), class {
+          create({entity}) {
             entity.id = uuidV4();
             entity.created_at = timestamp.getISO8601();
             entity.updated_at = entity.created_at;
@@ -932,11 +932,11 @@ describe('controllers/providers/notification/Notification', () => {
         let default_notification_setting = getValidDefaultNotificationSettings();
         let user_setting = getValidUserSetting();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'NotificationSetting.js'), {
-          get:() => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'NotificationSetting.js'), class {
+          get() {
             return Promise.resolve(user_notification_setting);
-          },
-          getDefaultProfile: () => {
+          }
+          getDefaultProfile() {
             return Promise.resolve(default_notification_setting);
           }
         });
@@ -975,8 +975,8 @@ describe('controllers/providers/notification/Notification', () => {
           name: 'lead'
         };
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
-          create:({entity}) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), class {
+          create({entity}) {
             entity.id = uuidV4();
             entity.created_at = timestamp.getISO8601();
             entity.updated_at = entity.created_at;
@@ -988,11 +988,11 @@ describe('controllers/providers/notification/Notification', () => {
         let default_notification_setting = getValidDefaultNotificationSettings();
         let user_setting = getValidUserSetting();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'NotificationSetting.js'), {
-          get:() => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'NotificationSetting.js'), class {
+          get() {
             return Promise.resolve(user_notification_setting);
-          },
-          getDefaultProfile: () => {
+          }
+          getDefaultProfile() {
             return Promise.resolve(default_notification_setting);
           }
         });
@@ -1028,8 +1028,8 @@ describe('controllers/providers/notification/Notification', () => {
           name: 'lead'
         };
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), {
-          create:({entity}) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Notification.js'), class {
+          create({entity}) {
             entity.id = uuidV4();
             entity.created_at = timestamp.getISO8601();
             entity.updated_at = entity.created_at;
@@ -1041,11 +1041,11 @@ describe('controllers/providers/notification/Notification', () => {
         let default_notification_setting = getValidDefaultNotificationSettings();
         let user_setting = getValidUserSetting();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'NotificationSetting.js'), {
-          get:() => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'NotificationSetting.js'), class {
+          get() {
             return Promise.resolve(user_notification_setting);
-          },
-          getDefaultProfile: () => {
+          }
+          getDefaultProfile() {
             return Promise.resolve(default_notification_setting);
           }
         });

@@ -178,6 +178,8 @@ const FulfillmentProviderController = global.SixCRM.routes.include('controllers'
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
+const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -275,7 +277,7 @@ module.exports.graphObj = new GraphQLObjectType({
               pagination: {type: paginationInputType.graphObj}
           },
           resolve: function(root, args){
-            const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
+            const notificationController = new NotificationController();
 
             return notificationController.listByTypes({types: args.types, user: args.user, onlyUnexpired: args.onlyUnexpired, pagination: args.pagination, fatal: list_fatal});
           }
@@ -463,7 +465,7 @@ module.exports.graphObj = new GraphQLObjectType({
         notificationcount: {
   	       type: notificationCountType.graphObj,
             resolve: function() {
-                const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+                const notificationController = new NotificationController();
 
                 return notificationController.numberOfUnseenNotifications({fatal: list_fatal});
             }
@@ -501,7 +503,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, notification) {
-                const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+                const notificationController = new NotificationController();
 
                 return notificationController.listByUser({pagination: notification.pagination, reverse_order: true, fatal: list_fatal, search: notification.search, append_account_filter: true});
             }
@@ -509,7 +511,7 @@ module.exports.graphObj = new GraphQLObjectType({
         notificationsettingdefault: {
             type: notificationSettingDefaultType.graphObj,
             resolve: () => {
-                const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+                const notificationSettingController = new NotificationSettingController();
 
                 return notificationSettingController.getDefaultProfile({fatal: get_fatal});
             }
@@ -1702,7 +1704,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (root, notification) => {
                //Technical Debt:  What is this logic for?
                 if (_.has(notification, 'id')) {
-                    const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+                    const notificationController = new NotificationController();
 
                     return notificationController.get({id: notification.id, fatal: get_fatal});
                 } else {
@@ -1725,11 +1727,11 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (root, notificationsetting) => {
                 //Technical Debt:  This logic belongs in a controller
                 if (_.has(notificationsetting, 'user')) {
-                    const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+                    const notificationSettingController = new NotificationSettingController();
 
                     return notificationSettingController.get({id: notificationsetting.user, primary_key: 'user', fatal: get_fatal});
                 } else {
-                    const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+                    const notificationSettingController = new NotificationSettingController();
 
                     return notificationSettingController.get({id: notificationsetting.id, primary_key:'id', fatal: get_fatal});
                 }
@@ -1743,7 +1745,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, notification_setting) {
-                const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+                const notificationSettingController = new NotificationSettingController();
 
                 return notificationSettingController.list({pagination: notification_setting.pagination, fatal:list_fatal});
             }

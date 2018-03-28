@@ -134,6 +134,8 @@ const FulfillmentProviderController = global.SixCRM.routes.include('controllers'
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -1352,7 +1354,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 notification: { type: notificationInputType.graphObj }
             },
             resolve: (value, notification) => {
-                const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+                const notificationController = new NotificationController();
 
                 return notificationController.create({entity: notification.notification});
             }
@@ -1364,7 +1366,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 notification: { type: notificationInputType.graphObj }
             },
             resolve: (value, notification) => {
-                const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+                const notificationController = new NotificationController();
 
                 return notificationController.update({entity:notification.notification});
             }
@@ -1379,7 +1381,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, notification) => {
-                const notificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
+                const notificationController = new NotificationController();
 
                 return notificationController.delete({id:notification.id});
             }
@@ -1391,7 +1393,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 notificationsetting: { type: notificationSettingInputType.graphObj }
             },
             resolve: (value, notificationsetting) => {
-                const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+                const notificationSettingController = new NotificationSettingController();
 
                 return notificationSettingController.create({entity: notificationsetting.notificationsetting});
             }
@@ -1403,7 +1405,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 notificationsetting: { type: notificationSettingInputType.graphObj }
             },
             resolve: (value, notificationsetting) => {
-                const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+                const notificationSettingController = new NotificationSettingController();
 
                 return notificationSettingController.update({entity:notificationsetting.notificationsetting});
             }
@@ -1415,7 +1417,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 notificationsetting: { type: notificationSettingInputType.graphObj }
             },
             resolve: (value, notificationsetting) => {
-                const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+                const notificationSettingController = new NotificationSettingController();
 
                 return notificationSettingController.store({entity: notificationsetting.notificationsetting});
             }
@@ -1430,7 +1432,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, notificationsetting) => {
-                const notificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+                const notificationSettingController = new NotificationSettingController();
 
                 return notificationSettingController.delete({id: notificationsetting.id});
             }

@@ -4,7 +4,7 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 
 //Technical Debt: Override the list method
 //Technical Debt:  The create method must assure a user/account
-class notificationSettingController extends entityController {
+module.exports = class NotificationSettingController extends entityController {
 
     constructor() {
         super('notificationsetting');
@@ -18,4 +18,3 @@ class notificationSettingController extends entityController {
 
 }
 
-module.exports = new notificationSettingController();
