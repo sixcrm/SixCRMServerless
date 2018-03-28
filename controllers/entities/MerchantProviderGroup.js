@@ -6,7 +6,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class merchantProviderGroupController extends entityController {
+module.exports = class MerchantProviderGroupController extends entityController {
 
     constructor(){
 
@@ -166,4 +166,3 @@ class merchantProviderGroupController extends entityController {
 
 }
 
-module.exports = new merchantProviderGroupController();

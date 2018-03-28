@@ -105,7 +105,7 @@ class productScheduleController extends entityController {
 
       if(!_.has(product_schedule, 'merchantprovidergroup')){ return Promise.resolve(null); }
 
-      return this.executeAssociatedEntityFunction('merchantProviderGroupController', 'get', {id: product_schedule.merchantprovidergroup});
+      return this.executeAssociatedEntityFunction('MerchantProviderGroupController', 'get', {id: product_schedule.merchantprovidergroup});
 
     }
 

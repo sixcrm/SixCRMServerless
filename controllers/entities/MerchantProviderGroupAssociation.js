@@ -17,7 +17,7 @@ class merchantProviderGroupAssociationController extends entityController {
     du.debug('Get MerchantProviderGroup');
 
     return this.executeAssociatedEntityFunction(
-      'merchantProviderGroupController',
+      'MerchantProviderGroupController',
       'get',
       {id: merchantprovidergroupassociation.merchantprovidergroup}
     );

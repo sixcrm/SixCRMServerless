@@ -48,7 +48,8 @@ describe('controllers/MerchantProviderGroup.js', () => {
                 }
             });
 
-            let merchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
+            let MerchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
+            const merchantProviderGroupController = new MerchantProviderGroupController();
 
             return merchantProviderGroupController.listByMerchantProviderID(merchant_provider).then((result) => {
                 expect(result).to.deep.equal([merchant_provider_group]);
@@ -77,7 +78,8 @@ describe('controllers/MerchantProviderGroup.js', () => {
                 }
             });
 
-            let merchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
+            let MerchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
+            const merchantProviderGroupController = new MerchantProviderGroupController();
 
             return merchantProviderGroupController.listByMerchantProviderID(merchant_provider).then((result) => {
                 expect(result).to.deep.equal([]);
@@ -108,7 +110,8 @@ describe('controllers/MerchantProviderGroup.js', () => {
                 }
             });
 
-            let merchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
+            let MerchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
+            const merchantProviderGroupController = new MerchantProviderGroupController();
 
             return merchantProviderGroupController.listByMerchantProviderID(merchant_provider).then((result) => {
                 expect(result).to.deep.equal([]);
@@ -139,7 +142,8 @@ describe('controllers/MerchantProviderGroup.js', () => {
                 }
             });
 
-            let merchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
+            let MerchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
+            const merchantProviderGroupController = new MerchantProviderGroupController();
 
             return merchantProviderGroupController.listByMerchantProviderID(merchant_provider).then((result) => {
                 expect(result).to.deep.equal([]);
@@ -168,7 +172,8 @@ describe('controllers/MerchantProviderGroup.js', () => {
                 }
             });
 
-            let merchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
+            let MerchantProviderGroupController = global.SixCRM.routes.include('controllers','entities/MerchantProviderGroup.js');
+            const merchantProviderGroupController = new MerchantProviderGroupController();
 
             return merchantProviderGroupController.listByMerchantProviderID(merchant_provider).then((result) => {
                 expect(result).to.deep.equal([]);
@@ -182,7 +187,8 @@ describe('controllers/MerchantProviderGroup.js', () => {
 
         let merchantprovidergroup = getValidMerchantProviderGroup();
 
-        let merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+        let MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+        const merchantProviderGroupController = new MerchantProviderGroupController();
 
         let merchant_provider_configurations = merchantProviderGroupController.getMerchantProviderConfigurations(merchantprovidergroup);
 
@@ -211,7 +217,8 @@ describe('controllers/MerchantProviderGroup.js', () => {
                 }
             });
 
-            let merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+            let MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+            const merchantProviderGroupController = new MerchantProviderGroupController();
 
             return merchantProviderGroupController.getMerchantProviderConfiguration(merchant_provider_configuration).then((result) => {
                 expect(result).to.deep.equal('a_merchant_provider');

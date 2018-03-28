@@ -33,8 +33,8 @@ describe('controllers/MerchantProvider.js', () => {
 
             let merchantprovidergroup = getValidMerchantProviderGroup();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), {
-                listByMerchantProviderID: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), class {
+                listByMerchantProviderID({id}) {
                     expect(id).to.equal(a_merchant_provider_id);
                     return Promise.resolve([merchantprovidergroup]);
                 }
@@ -61,8 +61,8 @@ describe('controllers/MerchantProvider.js', () => {
 
             delete merchantprovidergroup.id;
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), {
-                listByMerchantProviderID: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), class {
+                listByMerchantProviderID({id}) {
                     expect(id).to.equal(a_merchant_provider_id);
                     return Promise.resolve([merchantprovidergroup]);
                 }

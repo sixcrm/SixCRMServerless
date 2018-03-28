@@ -197,8 +197,8 @@ describe('controllers/ProductSchedule.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/MerchantProviderGroup.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/MerchantProviderGroup.js'), class {
+                get({id}) {
                     expect(id).to.equal(product_schedule.merchantprovidergroup);
                     return Promise.resolve('a_merchantprovidergroup');
                 }
@@ -266,7 +266,7 @@ describe('controllers/ProductSchedule.js', () => {
             });
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Product.js'), {
-                listByAccount: ({query_parameters}) => {
+                listByAccount: () => {
                     return Promise.resolve(['a_product']);
                 }
             });

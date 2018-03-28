@@ -176,6 +176,7 @@ const EntityACLController = global.SixCRM.routes.include('controllers', 'entitie
 const EventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -1262,7 +1263,7 @@ module.exports.graphObj = new GraphQLObjectType({
             search: {type: entitySearchInputType.graphObj}
           },
           resolve: function(root, merchantprovidergroup){
-            const merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+            const merchantProviderGroupController = new MerchantProviderGroupController();
 
             return merchantProviderGroupController.listByAccount({pagination: merchantprovidergroup.pagination, fatal:list_fatal, search: merchantprovidergroup.search});
           }
@@ -1422,7 +1423,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, merchantprovidergroup){
-                const merchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+                const merchantProviderGroupController = new MerchantProviderGroupController();
 
                 return merchantProviderGroupController.get({id: merchantprovidergroup.id, fatal: get_fatal});
             }

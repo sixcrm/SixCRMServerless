@@ -28,7 +28,7 @@ module.exports = class MerchantProviderController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('merchantProviderGroupController', 'listByMerchantProviderID', {id:id}),
+        this.executeAssociatedEntityFunction('MerchantProviderGroupController', 'listByMerchantProviderID', {id:id}),
         //this.executeAssociatedEntityFunction('transactionController', 'listByMerchantProviderID', {id:id})
       ];
 

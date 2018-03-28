@@ -74,7 +74,7 @@ class ProductController extends entityController {
 
       if(!_.has(product, 'merchantprovidergroup')){ return Promise.resolve(null); }
 
-      return this.executeAssociatedEntityFunction('merchantProviderGroupController', 'get', {id: product.merchantprovidergroup});
+      return this.executeAssociatedEntityFunction('MerchantProviderGroupController', 'get', {id: product.merchantprovidergroup});
 
     }
 
