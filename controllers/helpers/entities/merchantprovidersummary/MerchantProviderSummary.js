@@ -5,6 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const MerchantProviderSummaryController = global.SixCRM.routes.include('entities', 'MerchantProviderSummary.js');
 
 module.exports = class MerchantProviderSummaryHelperController {
 
@@ -41,7 +42,7 @@ module.exports = class MerchantProviderSummaryHelperController {
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-    this.merchantProviderSummaryController = global.SixCRM.routes.include('entities', 'MerchantProviderSummary.js');
+    this.merchantProviderSummaryController = new MerchantProviderSummaryController();
 
   }
 

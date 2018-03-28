@@ -35,7 +35,8 @@ describe('controllers/MerchantProviderSummary.js', () => {
         let start = '2017-04-06T00:00:00.000Z';
         let end = '2017-04-07T00:00:00.000Z';
 
-        let merchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        let MerchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        const merchantProviderSummaryController = new MerchantProviderSummaryController();
 
         return merchantProviderSummaryController.listByMerchantProviderAndDateRange({merchant_providers: merchant_providers, start: start, end: end})
         .then((result) => {
@@ -55,7 +56,8 @@ describe('controllers/MerchantProviderSummary.js', () => {
         let end = '2017-04-07T00:00:00.000Z';
         let type = 'new';
 
-        let merchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        let MerchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        const merchantProviderSummaryController = new MerchantProviderSummaryController();
 
         return merchantProviderSummaryController.listByMerchantProviderAndDateRange({
           merchant_providers: merchant_providers,
@@ -79,7 +81,8 @@ describe('controllers/MerchantProviderSummary.js', () => {
         let end = '2017-04-07T00:00:00.000Z';
         let type = 'recurring';
 
-        let merchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        let MerchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        const merchantProviderSummaryController = new MerchantProviderSummaryController();
 
         return merchantProviderSummaryController.listByMerchantProviderAndDateRange({
           merchant_providers: merchant_providers,
@@ -104,7 +107,8 @@ describe('controllers/MerchantProviderSummary.js', () => {
         let start = '2017-04-06T00:00:00.000Z';
         let end = '2017-04-07T00:00:00.000Z';
 
-        let merchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        let MerchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        const merchantProviderSummaryController = new MerchantProviderSummaryController();
 
         return merchantProviderSummaryController.listByDateRange({start: start, end: end})
         .then((result) => {
@@ -122,7 +126,8 @@ describe('controllers/MerchantProviderSummary.js', () => {
         let end = '2017-04-07T00:00:00.000Z';
         let type = 'new';
 
-        let merchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        let MerchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        const merchantProviderSummaryController = new MerchantProviderSummaryController();
 
         return merchantProviderSummaryController.listByDateRange({start: start, end: end, type: type})
         .then((result) => {
@@ -140,7 +145,8 @@ describe('controllers/MerchantProviderSummary.js', () => {
         let end = '2017-04-07T00:00:00.000Z';
         let type = 'recurring';
 
-        let merchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        let MerchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        const merchantProviderSummaryController = new MerchantProviderSummaryController();
 
         return merchantProviderSummaryController.listByDateRange({start: start, end: end, type: type})
         .then((result) => {
@@ -161,7 +167,8 @@ describe('controllers/MerchantProviderSummary.js', () => {
 
         let merchant_providers = ['6c40761d-8919-4ad6-884d-6a46a776cfb9'];
 
-        let merchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        let MerchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        const merchantProviderSummaryController = new MerchantProviderSummaryController();
 
         return merchantProviderSummaryController.listByMerchantProviders({merchant_providers: merchant_providers})
         .then((result) => {
@@ -179,7 +186,8 @@ describe('controllers/MerchantProviderSummary.js', () => {
         let merchant_providers = ['6c40761d-8919-4ad6-884d-6a46a776cfb9'];
         let type = 'new';
 
-        let merchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        let MerchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        const merchantProviderSummaryController = new MerchantProviderSummaryController();
 
         return merchantProviderSummaryController.listByMerchantProviders({
           merchant_providers: merchant_providers,
@@ -199,7 +207,8 @@ describe('controllers/MerchantProviderSummary.js', () => {
         let merchant_providers = ['6c40761d-8919-4ad6-884d-6a46a776cfb9'];
         let type = 'recurring';
 
-        let merchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        let MerchantProviderSummaryController = global.SixCRM.routes.include('controllers','entities/MerchantProviderSummary.js');
+        const merchantProviderSummaryController = new MerchantProviderSummaryController();
 
         return merchantProviderSummaryController.listByMerchantProviders({
           merchant_providers: merchant_providers,

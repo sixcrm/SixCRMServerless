@@ -7,7 +7,7 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class MerchantProviderSummaryController extends entityController {
+module.exports = class MerchantProviderSummaryController extends entityController {
 
 	constructor() {
 		super('merchantprovidersummary');
@@ -76,4 +76,3 @@ class MerchantProviderSummaryController extends entityController {
 
 }
 
-module.exports = new MerchantProviderSummaryController();

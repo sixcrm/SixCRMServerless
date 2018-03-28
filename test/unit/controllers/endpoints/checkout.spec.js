@@ -501,21 +501,21 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
-        listByMerchantProviderAndDateRange:() =>{
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
+        listByMerchantProviderAndDateRange() {
           return Promise.resolve({merchantprovidersummaries: []});
-        },
-        getResult:() => {
+        }
+        getResult() {
           return [];
-        },
-        create:({entity}) => {
+        }
+        create({entity}) {
           entity.id = uuidV4();
           entity.created_at = timestamp.getISO8601();
           entity.updated_at = entity.created_at;
           entity.account = global.account;
           return Promise.resolve(entity);
-        },
-        update:({entity}) => {
+        }
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });
@@ -877,21 +877,21 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
-        listByMerchantProviderAndDateRange:() =>{
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
+        listByMerchantProviderAndDateRange() {
           return Promise.resolve({merchantprovidersummaries: []});
-        },
-        getResult:() => {
+        }
+        getResult() {
           return [];
-        },
-        create:({entity}) => {
+        }
+        create({entity}) {
           entity.id = uuidV4();
           entity.created_at = timestamp.getISO8601();
           entity.updated_at = entity.created_at;
           entity.account = global.account;
           return Promise.resolve(entity);
-        },
-        update:({entity}) => {
+        }
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });

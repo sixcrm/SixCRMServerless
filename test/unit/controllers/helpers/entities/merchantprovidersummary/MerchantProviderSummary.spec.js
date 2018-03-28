@@ -7,7 +7,6 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 
 function getValidMerchantProvider(){
   return MockEntities.getValidMerchantProvider();
@@ -40,6 +39,7 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
     it('successfully constructs', () => {
 
+        const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       expect(objectutilities.getClassName(merchantProviderSummaryHelperController)).to.equal('MerchantProviderSummaryHelperController');
@@ -52,12 +52,13 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
     it('successfully increments total and count', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       //Technical Debt:  This is busted... fix.
@@ -116,14 +117,15 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
       updated_mps.total = numberutilities.formatFloat(total + mps.total);
       updated_mps.count++;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
+        update({entity}) {
           expect(entity).to.equal(mps);
 
           return Promise.resolve(entity);
         }
       });
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       merchantProviderSummaryHelperController.parameters.set('merchantprovidersummary', mps);
@@ -148,6 +150,7 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
       let day = timestamp.getISO8601();
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       merchantProviderSummaryHelperController.parameters.set('day', day);
@@ -160,6 +163,7 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
       let day = timestamp.yesterday();
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       merchantProviderSummaryHelperController.parameters.set('day', day);
@@ -190,21 +194,22 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
       merchant_provider_summary.count = 32;
       merchant_provider_summary.total = 3213.87;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
-        },
-        create:() => {
+        }
+        create() {
           return Promise.resolve(merchant_provider_summary);
-        },
-        listByMerchantProviderAndDateRange:() => {
+        }
+        listByMerchantProviderAndDateRange() {
           return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
-        },
-        getResult:() => {
+        }
+        getResult() {
           return merchant_provider_summary;
         }
       });
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({merchant_provider: merchant_provider.id, day:day, type:type, total:total}).then(result => {
@@ -225,15 +230,16 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
       let merchant_provider_summary = getValidMerchantProviderSummary();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
-          listByMerchantProviderAndDateRange:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
+          listByMerchantProviderAndDateRange() {
               return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
-          },
-          getResult:() => {
+          }
+          getResult() {
               return [merchant_provider_summary];
           }
       });
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       return merchantProviderSummaryHelperController.getMerchantProviderSummaries({merchant_providers: [merchant_provider]}).then(result => {
@@ -275,6 +281,7 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
       ];
 
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       let result = {
@@ -303,6 +310,7 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
       mps[1].day = "2018-03-20T14:04:45.963Z";
       mps[2].day = "2018-03-20T14:04:45.963Z";
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       expect(merchantProviderSummaryHelperController.aggregateTodaysSummaries(mps)).to.deep.equal({
@@ -324,6 +332,7 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
           getValidMerchantProviderSummary()
       ];
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       let result = {
@@ -352,6 +361,7 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
       mps[1].day = "2018-02-20T14:04:45.963Z";
       mps[2].day = "2018-02-20T14:04:45.963Z";
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       expect(merchantProviderSummaryHelperController.aggregateThisWeeksSummaries(mps)).to.deep.equal({
@@ -373,6 +383,7 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
           getValidMerchantProviderSummary()
       ];
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       let result = {
@@ -401,6 +412,7 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
       mps[1].day = "2018-02-20T14:04:45.963Z";
       mps[2].day = "2018-02-20T14:04:45.963Z";
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       expect(merchantProviderSummaryHelperController.aggregateThisMonthsSummaries(mps)).to.deep.equal({
@@ -420,15 +432,16 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
       let merchant_provider_summary = getValidMerchantProviderSummary();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
-          listByMerchantProviderAndDateRange:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
+          listByMerchantProviderAndDateRange() {
               return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
-          },
-          getResult:() => {
+          }
+          getResult() {
               return merchant_provider_summary;
           }
       });
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       merchantProviderSummaryHelperController.parameters.set('merchantproviders', [merchant_provider]);
@@ -448,18 +461,19 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
       let merchant_provider_summary = getValidMerchantProviderSummary();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
-          create:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
+          create() {
               return Promise.resolve(merchant_provider_summary);
-          },
-          listByMerchantProviderAndDateRange:() => {
+          }
+          listByMerchantProviderAndDateRange() {
               return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
-          },
-          getResult:() => {
+          }
+          getResult() {
               return merchant_provider_summary;
           }
       });
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       merchantProviderSummaryHelperController.parameters.set('merchantproviderid', merchant_provider_summary.merchant_provider);
@@ -477,15 +491,16 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
       let merchant_provider_summary = getValidMerchantProviderSummary();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
-          listByMerchantProviderAndDateRange:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
+          listByMerchantProviderAndDateRange() {
               return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
-          },
-          getResult:() => {
+          }
+          getResult() {
               return [merchant_provider_summary, getValidMerchantProviderSummary()];
           }
       });
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       merchantProviderSummaryHelperController.parameters.set('merchantproviderid', merchant_provider_summary.merchant_provider);
@@ -502,15 +517,16 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
       let merchant_provider_summary = getValidMerchantProviderSummary();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), {
-          listByMerchantProviderAndDateRange:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
+          listByMerchantProviderAndDateRange() {
               return Promise.resolve({merchantprovidersummaries: [merchant_provider_summary]});
-          },
-          getResult:() => {
+          }
+          getResult() {
               return [merchant_provider_summary];
           }
       });
 
+      const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
       let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
       merchantProviderSummaryHelperController.parameters.set('merchantproviderid', merchant_provider_summary.merchant_provider);
