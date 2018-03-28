@@ -405,6 +405,8 @@ class CreateOrderController extends transactionEndpointController {
 				this.transactionHelperController = new TransactionHelperController();
 			}
 
+			this.parameters.set('registerresponse', register_response);
+
 			let amount = this.transactionHelperController.getTransactionsAmount(register_response.parameters.get('transactions'));
 
 			this.parameters.set('creditcard', register_response.getCreditCard());
