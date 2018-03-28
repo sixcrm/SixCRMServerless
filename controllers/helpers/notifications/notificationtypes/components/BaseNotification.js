@@ -1,6 +1,8 @@
 'use strict'
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const NotificationUtilities = global.SixCRM.routes.include('helpers','notifications/notificationtypes/components/NotificationUtilities.js');
 
@@ -15,11 +17,25 @@ module.exports = class BaseNotification extends NotificationUtilities {
 
   }
 
-  createContext(){
+  createContext(context){
 
     du.debug('Create Context');
 
-    return {};
+    let refined_context = {};
+
+    if(_.has(this, 'context_required') && arrayutilities.nonEmpty(this.context_required)){
+      arrayutilities.map(this.context_required, context_required_element => {
+        let acquired_element = this.contextHelperController.getFromContext(context, context_required_element, false);
+        if(!_.isNull(acquired_element)){
+          refined_context[context_required_element] = acquired_element;
+        }else{
+          du.error(context);
+          eu.throwError('server','Unable to identify "'+context_required_element+'" from context.');
+        }
+      });
+    }
+
+    return refined_context;
 
   }
 
@@ -37,6 +53,8 @@ module.exports = class BaseNotification extends NotificationUtilities {
       category: this.getNotificationCategory(),
       context: this.createContext(context)
     };
+
+    du.info('Transformed Context: ', return_object);
 
     return return_object;
 

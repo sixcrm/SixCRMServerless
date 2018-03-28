@@ -1,0 +1,145 @@
+{
+  "event": {
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+    "customer": {
+      "email": "Veronica.Kihn@keenan.net",
+      "firstname": "Veronica",
+      "lastname": "Kihn",
+      "phone": "451-496-8392 x687",
+      "address": {
+        "line1": "314 Yost Parkway",
+        "city": "Schadenside",
+        "state": "AK",
+        "zip": "34611",
+        "country": "MZ",
+        "line2": "Apt. 014"
+      },
+      "billing": {
+        "line1": "314 Yost Parkway",
+        "city": "Schadenside",
+        "state": "AK",
+        "zip": "34611",
+        "country": "MZ",
+        "line2": "Apt. 014"
+      },
+      "id": "c5c69d54-0052-41a3-9b30-19ed245735a7",
+      "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "created_at":"2018-03-27T22:55:28.421Z",
+      "updated_at":"2018-03-27T22:55:28.421Z",
+      "entity_type":"customer",
+      "index_action":"add"
+    },
+    "affiliates": {
+      "subaffiliate4":"6DJQ2YN7LBVR9Y5ZEAHE",
+      "cid":"834f0d98-7f9c-4497-9732-c14b41d295d0"
+    }
+  },
+  "affiliates": {
+    "subaffiliate4": "6DJQ2YN7LBVR9Y5ZEAHE",
+    "cid": "834f0d98-7f9c-4497-9732-c14b41d295d0"
+  },
+  "campaign": {
+    "updated_at": "2018-03-27T00:43:35.851Z",
+    "productschedules": ["12529a17-ac32-4e46-b05b-83862843055d",
+      "8d1e896f-c50d-4a6b-8c84-d5661c16a046"
+    ],
+    "created_at": "2018-01-18T14:52:47.220Z",
+    "emailtemplates": ["b44ce483-861c-4843-a7d6-b4c649d6bdde",
+      "8108d6a3-2d10-4013-9e8e-df71e2dc578b",
+      "102131a0-4cc4-4463-a614-e3157c3f03c2"
+    ],
+    "allow_prepaid": false,
+    "affiliate_allow": ["ad58ea78-504f-4a7e-ad45-128b6e76dc57"],
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "show_prepaid": false,
+    "affiliate_deny": ["*"],
+    "id": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+    "name": "Example Campaign"
+  },
+  "customer": {
+    "email": "Veronica.Kihn@keenan.net",
+    "firstname": "Veronica",
+    "lastname": "Kihn",
+    "phone": "451-496-8392 x687",
+    "address": {
+      "line1": "314 Yost Parkway",
+      "city": "Schadenside",
+      "state": "AK",
+      "zip": "34611",
+      "country": "MZ",
+      "line2": "Apt. 014"
+    },
+    "billing": {
+      "line1": "314 Yost Parkway",
+      "city": "Schadenside",
+      "state": "AK",
+      "zip": "34611",
+      "country": "MZ",
+      "line2": "Apt. 014"
+    },
+    "id": "c5c69d54-0052-41a3-9b30-19ed245735a7",
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "created_at": "2018-03-27T22:55:28.421Z",
+    "updated_at": "2018-03-27T22:55:28.421Z",
+    "entity_type": "customer",
+    "index_action": "add"
+  },
+  "session_prototype": {
+    "customer": "c5c69d54-0052-41a3-9b30-19ed245735a7",
+    "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+    "completed": false,
+    "subaffiliate4": "6DJQ2YN7LBVR9Y5ZEAHE",
+    "cid": "834f0d98-7f9c-4497-9732-c14b41d295d0"
+  },
+  "session": {
+    "completed": false,
+    "customer": "c5c69d54-0052-41a3-9b30-19ed245735a7",
+    "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+    "cid": "834f0d98-7f9c-4497-9732-c14b41d295d0",
+    "alias": "SR8RHRQJ2P",
+    "id": "829b9608-8888-4053-b7d6-574d94410770",
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "created_at": "2018-03-27T22:55:28.636Z",
+    "updated_at": "2018-03-27T22:55:28.636Z",
+    "entity_type": "session",
+    "index_action": "add"
+  },
+  "user": {
+    "updated_at": "2018-03-27T00:43:39.691Z",
+    "alias": "60fc8ccc85d8b7e6eaae333bb20d2db51aa37693",
+    "auth0_id": "google-oauth2|115021313586107803846",
+    "active": true,
+    "created_at": "2018-01-18T14:53:33.226Z",
+    "last_name": "User",
+    "first_name": "System",
+    "termsandconditions": "0.1",
+    "id": "system@sixcrm.com",
+    "name": "System User",
+    "acl": [{
+      "updated_at": "2018-03-27T00:43:39.198Z",
+      "created_at": "2018-01-15T22:46:36.621Z",
+      "role": {
+        "updated_at": "2018-03-27T00:43:38.226Z",
+        "active": true,
+        "created_at": "2018-02-28T23:01:42.250Z",
+        "permissions": {
+          "allow": ["*"]
+        },
+        "account": "*",
+        "id": "cae614de-ce8a-40b9-8137-3d3bdff78039",
+        "name": "Owner"
+      },
+      "account": {
+        "updated_at": "2018-03-27T00:43:35.480Z",
+        "active": true,
+        "created_at": "2018-01-18T14:52:41.732Z",
+        "id": "*",
+        "name": "Master Account"
+      },
+      "user": "system@sixcrm.com",
+      "termsandconditions": "0.1",
+      "id": "a7ee4036-bdd4-4a38-91c9-da766ce36668"
+    }]
+  }
+}

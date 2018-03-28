@@ -85,10 +85,16 @@ module.exports = class NotificationHelperClass {
       });
 
       if(matching_notification_file){
+
+        du.warning('Matching notification file for event_type ('+event_type+') '+matching_notification_file);
+
         notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+matching_notification_file);
         this.parameters.set('notificationclass', notification_class);
+
       }else{
+
         du.warning('No matching notification file for event type: '+event_type);
+
       }
 
       return true;
