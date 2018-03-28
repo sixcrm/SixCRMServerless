@@ -6,7 +6,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-module.exports = class campaignController extends entityController {
+module.exports = class CampaignController extends entityController {
 
     constructor(){
 
@@ -130,7 +130,7 @@ module.exports = class campaignController extends entityController {
 
       if(_.has(campaign, "emailtemplates") && arrayutilities.nonEmpty(campaign.emailtemplates)){
 
-        return this.executeAssociatedEntityFunction('emailTemplateController', 'listBy', {list_array: campaign.emailtemplates})
+        return this.executeAssociatedEntityFunction('EmailTemplateController', 'listBy', {list_array: campaign.emailtemplates})
         .then(emailtemplates => this.getResult(emailtemplates, 'emailtemplates'));
 
       }else{

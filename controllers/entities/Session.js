@@ -103,7 +103,7 @@ class sessionController extends entityController {
 
       if(!_.has(session, "campaign")){ return null; }
 
-      return this.executeAssociatedEntityFunction('campaignController', 'get', {id: session.campaign});
+      return this.executeAssociatedEntityFunction('CampaignController', 'get', {id: session.campaign});
 
     }
 
@@ -127,7 +127,7 @@ class sessionController extends entityController {
           id = session.id;
       }
 
-      return this.executeAssociatedEntityFunction('campaignController', 'getHydratedCampaign', {id: id});
+      return this.executeAssociatedEntityFunction('CampaignController', 'getHydratedCampaign', {id: id});
 
     }
 

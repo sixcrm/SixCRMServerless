@@ -6,7 +6,7 @@ const eu =  global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities =  global.SixCRM.routes.include('lib', 'array-utilities.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-module.exports = class customerController extends entityController {
+module.exports = class CustomerController extends entityController {
 
     constructor(){
 
@@ -23,7 +23,7 @@ module.exports = class customerController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('customerNoteController', 'listByCustomer', {customer:id}).then(customernotes => this.getResult(customernotes, 'customernotes')),
+        this.executeAssociatedEntityFunction('CustomerNoteController', 'listByCustomer', {customer:id}).then(customernotes => this.getResult(customernotes, 'customernotes')),
         this.executeAssociatedEntityFunction('sessionController', 'listByCustomer', {customer:id}).then(sessions => this.getResult(sessions, 'sessions'))
       ];
 
@@ -131,7 +131,7 @@ module.exports = class customerController extends entityController {
 
         let query_parameters = this.createINQueryParameters({field: 'id', list_array: creditcardids});
 
-        return this.executeAssociatedEntityFunction('creditCardController', 'listByAccount', {query_parameters: query_parameters})
+        return this.executeAssociatedEntityFunction('CreditCardController', 'listByAccount', {query_parameters: query_parameters})
         .then(creditcards => this.getResult(creditcards, 'creditcards'));
 
       }

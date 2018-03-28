@@ -29,7 +29,7 @@ class merchantProviderGroupAssociationController extends entityController {
     du.debug('Get Campaign');
 
     return this.executeAssociatedEntityFunction(
-      'campaignController',
+      'CampaignController',
       'get',
       {id: merchantprovidergroupassociation.campaign}
     );

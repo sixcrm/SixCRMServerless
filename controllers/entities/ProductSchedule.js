@@ -53,7 +53,7 @@ class productScheduleController extends entityController {
       //Technical Debt:  This looks redundant.
       let product_schedule_id = this.getID(args.productschedule);
 
-      return this.executeAssociatedEntityFunction('campaignController', 'listCampaignsByProductSchedule', {productschedule: product_schedule_id, pagination: args.pagination});
+      return this.executeAssociatedEntityFunction('CampaignController', 'listCampaignsByProductSchedule', {productschedule: product_schedule_id, pagination: args.pagination});
 
     }
 
