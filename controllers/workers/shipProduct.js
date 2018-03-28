@@ -3,7 +3,6 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
-const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
 
 module.exports = class shipProductController extends workerController {
 
@@ -48,6 +47,7 @@ module.exports = class shipProductController extends workerController {
 
     let rebill = this.parameters.get('rebill');
 
+    const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
     let terminalController = new TerminalController();
 
     return terminalController.fulfill({rebill: rebill}).then(response => {

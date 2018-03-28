@@ -103,9 +103,7 @@ module.exports = class recoverBillingController extends workerController {
 
 		return arrayutilities.serial(transactions, (current, transaction) => {
 
-			this.pushEvent({
-				event_type: 'transaction_recovery_' + transaction.result
-			});
+			this.pushEvent({event_type: 'transaction_recovery_' + transaction.result});
 
 			if (transaction.type != 'sale' || transaction.result != 'success') {
 				return false;

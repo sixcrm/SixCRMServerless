@@ -1032,6 +1032,37 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
     }
 
+    pushEvent({event_type, context}){
+
+      du.debug('Push Event');
+
+      if(_.isUndefined(event_type) || _.isNull(event_type)){
+        if(_.has(this, 'event_type')){
+          event_type = this.event_type;
+        }else{
+          eu.throwError('server', 'Unable to identify event_type.');
+        }
+      }
+
+      if(_.isUndefined(context) || _.isNull(context)){
+        if(objectutilities.hasRecursive(this, 'parameters.store')){
+          context = this.parameters.store;
+        }else{
+          eu.throwError('server', 'Unset context.');
+        }
+      }
+
+      if(!_.has(this, 'eventHelperController')){
+        const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+        this.eventHelperController = new EventHelperController();
+      }
+
+      this.eventHelperController.pushEvent({event_type: event_type, context: context});
+
+      return true;
+
+    }
+
 
     createRedshiftActivityRecord(actor, action, acted_upon, associated_with){
 
