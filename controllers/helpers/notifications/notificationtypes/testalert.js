@@ -8,7 +8,7 @@ class TestAlertNotification extends BaseNotification {
 
     super();
 
-    this.name = 'test_alert';
+    this.name = 'testalert';
     this.notification_type = 'alert';
 
   }
