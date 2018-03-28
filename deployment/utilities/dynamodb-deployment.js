@@ -383,9 +383,15 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       return this.getControllerFilenames().then((filenames) => {
 
-        filenames.forEach((filename) => {
+        filenames.filter(filename => filename !== 'Entity.js').forEach((filename) => {
 
-          this.controllers.push(global.SixCRM.routes.include('entities', filename));
+            let controller = global.SixCRM.routes.include('entities', filename);
+
+            if (_.isFunction(controller)) {
+                this.controllers.push(new controller());
+            } else {
+                this.controllers.push(controller);
+            }
 
         });
 
