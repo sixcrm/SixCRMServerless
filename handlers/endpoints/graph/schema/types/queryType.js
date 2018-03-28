@@ -479,8 +479,16 @@ module.exports.graphObj = new GraphQLObjectType({
 
               const EventsHelperController = global.SixCRM.routes.include('helpers','events/Event.js');
               let eventsHelperController = new EventsHelperController();
+
               let context = { user: global.user, account: global.account };
-              return eventsHelperController.pushEvent({event_type:'test', context:context}).then(() => {
+              let message_attributes = {
+                'event_type':{
+                  DataType:'String',
+                  StringValue: 'test'
+                }
+              };
+
+              return eventsHelperController.pushEvent({event_type:'test', context:context, message_attributes: message_attributes}).then(() => {
                 return {result:'OK'};
               });
 
@@ -493,7 +501,14 @@ module.exports.graphObj = new GraphQLObjectType({
               const EventsHelperController = global.SixCRM.routes.include('helpers','events/Event.js');
               let eventsHelperController = new EventsHelperController();
               let context = { user: global.user, account: global.account };
-              return eventsHelperController.pushEvent({event_type:'testalert', context:context}).then(() => {
+              let message_attributes = {
+                'event_type':{
+                  DataType:'String',
+                  StringValue: 'testalert'
+                }
+              };
+
+              return eventsHelperController.pushEvent({event_type:'testalert', context:context, message_attributes: message_attributes}).then(() => {
                 return {result:'OK'};
               });
 
