@@ -9,11 +9,11 @@
   },
   "result_name": "undefined",
   "expect":  {"transactions":[{"datetime":"2016-12-31T23:00:00.000Z",
-    "byprocessorresult":[{"processor_result":"decline","count":"0","amount":"0"},
+    "byprocessorresult":[{"processor_result":"declined","count":"0","amount":"0"},
       {"processor_result":"error","count":"0","amount":"0"},
       {"processor_result":"success","count":"0","amount":"0"}]},
       {"datetime":"2017-01-01T23:00:00.000Z",
-        "byprocessorresult":[{"processor_result":"decline","count":"0","amount":"0"},
+        "byprocessorresult":[{"processor_result":"declined","count":"0","amount":"0"},
           {"processor_result":"error","count":"0","amount":"0"},
           {"processor_result":"success","count":"1","amount":"139.99"}]}]}
 }

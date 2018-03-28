@@ -58,7 +58,7 @@ RIGHT OUTER JOIN
               END) sum_upsell,
           count(CASE
                     WHEN subtype IN ('order','main')
-                         AND processor_result ='decline' THEN 1
+                         AND processor_result ='declined' THEN 1
                     ELSE NULL
                 END) decline_count,
           affiliate,

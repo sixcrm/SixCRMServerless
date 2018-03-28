@@ -887,7 +887,7 @@ describe('controllers/providers/Register.js', () => {
 
     });
 
-   it('creates a transaction for sale decline', () => {
+   it('creates a transaction for sale declined', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
         constructor(){}
@@ -1393,7 +1393,7 @@ describe('controllers/providers/Register.js', () => {
 
       });
 
-     it('successfully responds to decline', () => {
+     it('successfully responds to declined', () => {
 
         let processor_responses = getProcessorResponses(1);
 

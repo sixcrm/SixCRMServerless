@@ -2,6 +2,8 @@ const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
+const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
 
 //Technical Debt:  Need to either mark the rebill with the attempt number or update the method which checks the rebill for existing failed attempts (better idea.)
 module.exports = class recoverBillingController extends workerController {
@@ -49,7 +51,7 @@ module.exports = class recoverBillingController extends workerController {
 
 		du.debug('Set Session');
 
-		let rebill = this.parameters.get('rebill');
+		const rebill = this.parameters.get('rebill');
 
 		if (!_.has(this.sessionController)) {
 
@@ -72,10 +74,9 @@ module.exports = class recoverBillingController extends workerController {
 
 		du.debug('Process');
 
-		let rebill = this.parameters.get('rebill');
+		const rebill = this.parameters.get('rebill');
 
-		const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
-		let registerController = new RegisterController();
+		const registerController = new RegisterController();
 
 		return registerController.processTransaction({
 			rebill: rebill
@@ -93,23 +94,23 @@ module.exports = class recoverBillingController extends workerController {
 
 		du.debug('Post Processing');
 
-		let transactions = this.parameters.get('transactions', null, false);
+		const transactions = this.parameters.get('transactions', null, false);
 
 		if (_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)) {
 			return false;
 		}
 
-		const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
-
 		return arrayutilities.serial(transactions, (current, transaction) => {
 
-			this.pushEvent({event_type: 'transaction_recovery_' + transaction.result});
+			this.pushEvent({
+				event_type: 'transaction_recovery_' + transaction.result
+			});
 
 			if (transaction.type != 'sale' || transaction.result != 'success') {
 				return false;
 			}
 
-			let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+			const merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
 			return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
 				merchant_provider: transaction.merchant_provider,
@@ -126,10 +127,10 @@ module.exports = class recoverBillingController extends workerController {
 
 		du.debug('Mark Rebill');
 
-		let rebill = this.parameters.get('rebill');
-		let register_response_code = this.parameters.get('registerresponse').getCode();
+		const rebill = this.parameters.get('rebill');
+		const registerResponseCode = this.parameters.get('registerresponse').getCode();
 
-		if (register_response_code == 'fail') {
+		if (registerResponseCode == 'fail') {
 
 			rebill.second_attempt = true;
 
@@ -141,15 +142,13 @@ module.exports = class recoverBillingController extends workerController {
 				entity: rebill
 			}).then(result => {
 
-				this.parameters.set('rebill', result);
-
-				return true;
+				return this.parameters.set('rebill', result);
 
 			});
 
 		} else {
 
-			return Promise.resolve(true);
+			return Promise.resolve();
 
 		}
 
@@ -159,9 +158,7 @@ module.exports = class recoverBillingController extends workerController {
 
 		du.debug('Respond');
 
-		let register_response_code = this.parameters.get('registerresponse').getCode();
-
-		return super.respond(register_response_code);
+		return super.respond(this.parameters.get('registerresponse').getCode());
 
 	}
 
