@@ -1583,8 +1583,8 @@ describe('controllers/providers/Register.js', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProvider.js'), {
-          get: () => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProvider.js'), class {
+          get() {
             return Promise.resolve(getValidMerchantProvider());
           }
         });

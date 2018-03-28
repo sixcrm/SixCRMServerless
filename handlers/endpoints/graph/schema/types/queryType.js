@@ -175,6 +175,7 @@ const EmailTemplateController = global.SixCRM.routes.include('controllers', 'ent
 const EntityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
 const EventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
+const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -1142,7 +1143,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, merchantprovider){
-                const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+                const merchantProviderController = new MerchantProviderController();
 
       	       return merchantProviderController.listByAccount({pagination: merchantprovider.pagination, fatal:list_fatal, search: merchantprovider.search});
             }
@@ -1365,7 +1366,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, merchantprovider){
-                const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+                const merchantProviderController = new MerchantProviderController();
 
       	       return merchantProviderController.get({id: merchantprovider.id, fatal: get_fatal});
             }

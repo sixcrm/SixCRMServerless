@@ -3,7 +3,6 @@ let expect = chai.expect;
 const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
 
 function getValidMerchantProviderGroup() {
@@ -205,8 +204,8 @@ describe('controllers/MerchantProviderGroup.js', () => {
                 merchantprovider: 'dummy_id'
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/MerchantProvider.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/MerchantProvider.js'), class {
+                get({id}) {
                     expect(id).to.equal(merchant_provider_configuration.merchantprovider);
                     return Promise.resolve('a_merchant_provider');
                 }

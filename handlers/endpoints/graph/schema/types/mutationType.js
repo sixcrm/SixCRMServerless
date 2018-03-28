@@ -130,7 +130,8 @@ const CustomerNoteController = global.SixCRM.routes.include('controllers', 'enti
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const EntityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
 const EventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
-const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js')
+const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
+const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -696,7 +697,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 merchantprovider: { type: merchantProviderInputType.graphObj}
             },
             resolve: (value, merchantprovider) => {
-                const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+                const merchantProviderController = new MerchantProviderController();
 
                 return merchantProviderController.create({entity: merchantprovider.merchantprovider});
             }
@@ -708,7 +709,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 merchantprovider: { type: merchantProviderInputType.graphObj }
             },
             resolve: (value, merchantprovider) => {
-                const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+                const merchantProviderController = new MerchantProviderController();
 
                 return merchantProviderController.update({entity:merchantprovider.merchantprovider});
             }
@@ -724,7 +725,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, merchantprovider) => {
                 var id = merchantprovider.id;
-                const merchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+                const merchantProviderController = new MerchantProviderController();
 
                 return merchantProviderController.delete({id:id});
             }

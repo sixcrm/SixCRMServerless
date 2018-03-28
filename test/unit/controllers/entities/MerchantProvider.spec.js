@@ -40,7 +40,8 @@ describe('controllers/MerchantProvider.js', () => {
                 }
             });
 
-            let merchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
+            let MerchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
+            const merchantProviderController = new MerchantProviderController();
 
             return merchantProviderController.associatedEntitiesCheck({id : a_merchant_provider_id}).then((result) => {
                 expect(result).to.deep.equal([{
@@ -67,7 +68,8 @@ describe('controllers/MerchantProvider.js', () => {
                 }
             });
 
-            let merchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
+            let MerchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
+            const merchantProviderController = new MerchantProviderController();
 
             return merchantProviderController.associatedEntitiesCheck({id : a_merchant_provider_id}).catch((error) => {
                 expect(error.message).to.equal('[500] Create Associated Entities expects the object parameter to have field "id"');

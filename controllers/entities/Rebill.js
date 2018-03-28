@@ -41,7 +41,7 @@ class rebillController extends entityController {
 
       if(_.has(rebill, 'merchant_provider')){
 
-        return this.executeAssociatedEntityFunction('merchantProviderController', 'get', {id: rebill.merchant_provider});
+        return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: rebill.merchant_provider});
 
       }
 

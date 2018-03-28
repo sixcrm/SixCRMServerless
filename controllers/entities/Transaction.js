@@ -40,7 +40,7 @@ class transactionController extends entityController {
 
       du.debug('Get Merchant Provider');
 
-      return this.executeAssociatedEntityFunction('merchantProviderController', 'get', {id: this.getID(transaction.merchant_provider)});
+      return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: this.getID(transaction.merchant_provider)});
 
     }
 
@@ -314,7 +314,7 @@ class transactionController extends entityController {
 
                 return this.validateRefund(refund, transaction).then(() => {
 
-                    return this.executeAssociatedEntityFunction('merchantProviderController', 'issueRefund', {transaction: transaction, refund: refund}).then((processor_result) => {
+                    return this.executeAssociatedEntityFunction('MerchantProviderController', 'issueRefund', {transaction: transaction, refund: refund}).then((processor_result) => {
 
                         let refund_transaction = {
                             rebill: transaction.rebill,

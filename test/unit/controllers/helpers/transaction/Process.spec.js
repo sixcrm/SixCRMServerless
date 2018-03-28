@@ -2,13 +2,9 @@
 
 const mockery = require('mockery');
 let chai = require('chai');
-
 let expect = chai.expect;
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
-
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 function assumePermissionedRole(){
@@ -57,6 +53,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
   it('fails when required parameters are not presented', () => {
 
+    const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
     let ph = new processHelperController();
     let parameters = {};
 
@@ -64,7 +61,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       ph.parameters.setParameters({argumentation: parameters, action: 'process'});
     }catch(error){
       expect(error.message).to.equal('[500] Missing source object field: "customer".');
-    };
+    }
 
     parameters = {
       customer: ''
@@ -74,7 +71,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       ph.parameters.setParameters({argumentation: parameters, action: 'process'});
     }catch(error){
       expect(error.message).to.equal('[500] Missing source object field: "creditcard".');
-    };
+    }
 
     parameters = {
       customer: '',
@@ -85,7 +82,7 @@ describe('helpers/transaction/Process.spec.js', () => {
       ph.parameters.setParameters({argumentation: parameters, action: 'process'});
     }catch(error){
       expect(error.message).to.equal('[500] Missing source object field: "amount".');
-    };
+    }
 
     parameters = {
       customer: '',
@@ -97,12 +94,13 @@ describe('helpers/transaction/Process.spec.js', () => {
       ph.parameters.setParameters({argumentation: parameters, action: 'process'});
     }catch(error){
       expect(error.message).to.equal('[500] Missing source object field: "merchant_provider".');
-    };
+    }
 
   });
 
   it('fails when required parameters are not correct', () => {
 
+    const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
      let ph = new processHelperController();
 
      let parameters = {
@@ -164,6 +162,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
   it('succeeds when required parameters are present', () => {
 
+    const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
     let ph = new processHelperController();
 
     let customer = getValidCustomer();
@@ -189,6 +188,7 @@ describe('helpers/transaction/Process.spec.js', () => {
 
   it('does not set non-whitelisted optional parameters', () => {
 
+    const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
     let ph = new processHelperController();
 
     let customer = getValidCustomer();
@@ -217,25 +217,16 @@ describe('helpers/transaction/Process.spec.js', () => {
 
     assumePermissionedRole();
 
-    let customer = getValidCustomer();
-    let creditcard = getValidCreditCard();
     let merchant_provider = getValidMerchantProvider();
-    let amount = getValidAmount();
 
-    mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProvider.js'), {
-      get({id}){
+    mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProvider.js'), class {
+      get(){
         return Promise.resolve(merchant_provider);
       }
     });
 
+    const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
     let ph = new processHelperController();
-
-    let parameters = {
-      customer: customer.id,
-      creditcard: creditcard.id,
-      amount: amount,
-      merchantprovider: '6c40761d-8919-4ad6-884d-6a46a776cfb9',
-    };
 
     ph.parameters.set('merchantproviderid', merchant_provider.id)
 
@@ -263,8 +254,8 @@ describe('helpers/transaction/Process.spec.js', () => {
       merchant_provider: merchant_provider.id
     };
 
-    mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProvider.js'), {
-      get({id}){
+    mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProvider.js'), class {
+      get(){
         return Promise.resolve(merchant_provider);
       }
     });

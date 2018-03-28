@@ -5,7 +5,8 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const merchantProviderSummaryGroupType = require('./merchantProviderSummaryGroupType');
 const merchantProviderType = require('../merchantprovider/merchantProviderType.js');
 
-const merchantProviderController = global.SixCRM.routes.include('entities','MerchantProvider.js');
+const MerchantProviderController = global.SixCRM.routes.include('entities','MerchantProvider.js');
+const merchantProviderController = new MerchantProviderController();
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'MerchantProviderSummaryType',

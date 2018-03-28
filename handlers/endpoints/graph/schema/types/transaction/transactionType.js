@@ -6,7 +6,8 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-const merchantProviderControler = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+const merchantProviderController = new MerchantProviderController();
 
 let transactionInterface = require('./transactionInterface');
 let transactionProductType = require('../transactionproduct/transactionProductType');
@@ -48,7 +49,7 @@ module.exports.graphObj = new GraphQLObjectType({
             description: 'Merchant provider associated with the transaction.',
             resolve: transaction => {
                 if (transaction.merchant_provider) {
-                    return merchantProviderControler.get({id: transaction.merchant_provider});
+                    return merchantProviderController.get({id: transaction.merchant_provider});
                 } else {
                     return null;
                 }

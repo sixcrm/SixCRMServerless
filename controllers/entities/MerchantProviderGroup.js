@@ -103,7 +103,7 @@ class merchantProviderGroupController extends entityController {
 
       du.debug('Get Merchant Provider Configuration');
 
-      return this.executeAssociatedEntityFunction('merchantProviderController', 'get', {id: merchantproviderconfiguration.merchantprovider});
+      return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: merchantproviderconfiguration.merchantprovider});
 
     }
 
@@ -116,7 +116,7 @@ class merchantProviderGroupController extends entityController {
         let promises = arrayutilities.map(merchantprovidergroup.merchantproviders, (merchant_provider) => {
 
           //Technical Debt:  This is likely broken.
-          return this.executeAssociatedEntityFunction('merchantProviderController', 'get', {id: merchant_provider});
+          return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: merchant_provider});
 
         });
 

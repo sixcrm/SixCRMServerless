@@ -69,8 +69,8 @@ describe('controllers/Transaction.js', () => {
                 }
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/MerchantProvider.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/MerchantProvider.js'), class {
+                get({id}) {
                     expect(id).to.equal(a_transaction.merchant_provider.id);
                     return Promise.resolve('a_merchant_provider');
                 }

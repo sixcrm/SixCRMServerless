@@ -3,7 +3,7 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
-
+const MerchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class Process extends TransactionUtilities{
@@ -33,7 +33,7 @@ module.exports = class Process extends TransactionUtilities{
         'amount':global.SixCRM.routes.path('model','transaction/amount.json')
       };
 
-      this.merchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
+      this.merchantProviderController = new MerchantProviderController();
 
       this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
