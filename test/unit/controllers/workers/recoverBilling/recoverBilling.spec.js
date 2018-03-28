@@ -167,9 +167,10 @@ describe('controllers/workers/recoverBilling', () => {
 			recoverBillingController.parameters.set('rebill', rebill);
 			recoverBillingController.parameters.set('registerresponse', registerresponse);
 
-			return recoverBillingController.markRebill().then(result => {
-				expect(result).to.equal(true);
-				expect(recoverBillingController.parameters.store['rebill'].second_attempt).to.equal(undefined);
+			return recoverBillingController.markRebill().then(() => {
+
+				return expect(recoverBillingController.parameters.store['rebill'].second_attempt).to.equal(undefined);
+
 			});
 
 		});
@@ -196,9 +197,10 @@ describe('controllers/workers/recoverBilling', () => {
 			recoverBillingController.parameters.set('rebill', rebill);
 			recoverBillingController.parameters.set('registerresponse', registerresponse);
 
-			return recoverBillingController.markRebill().then(result => {
-				expect(result).to.equal(true);
-				expect(recoverBillingController.parameters.store['rebill'].second_attempt).to.equal(undefined);
+			return recoverBillingController.markRebill().then(() => {
+
+				return expect(recoverBillingController.parameters.store['rebill'].second_attempt).to.equal(undefined);
+
 			})
 		});
 
