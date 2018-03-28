@@ -1207,7 +1207,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, account){
-                const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+                const accountController = new AccountController();
 
                 //Technical Debt: Needs consideration...
                 return accountController.list({pagination: account.pagination, fatal: list_fatal});
