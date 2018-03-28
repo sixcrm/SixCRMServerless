@@ -180,6 +180,7 @@ const MerchantProviderGroupController = global.SixCRM.routes.include('controller
 const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -1099,7 +1100,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, affiliate){
-              const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+              const affiliateController = new AffiliateController();
 
               return affiliateController.listByAccount({pagination: affiliate.pagination, fatal:list_fatal, search: affiliate.search});
             }
@@ -1482,7 +1483,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, affiliate){
-                const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+                const affiliateController = new AffiliateController();
 
                 return affiliateController.get({id: affiliate.id, fatal: get_fatal});
             }

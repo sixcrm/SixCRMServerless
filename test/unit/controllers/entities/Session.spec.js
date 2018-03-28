@@ -220,8 +220,8 @@ describe('controllers/Session.js', () => {
 
             let affiliate_field = "subaffiliate_1"; //valid field
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Affiliate.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Affiliate.js'), class {
+                get({id}) {
                     expect(id).to.equal(session[affiliate_field]);
                     return Promise.resolve('an_affiliate');
                 }

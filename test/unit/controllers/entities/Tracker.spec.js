@@ -42,8 +42,8 @@ describe('controllers/Tracker.js', () => {
 
             let affiliate = getValidAffiliate();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Affiliate.js'), {
-                listBy: ({list_array}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Affiliate.js'), class {
+                listBy({list_array}) {
                     expect(list_array).to.deep.equal(tracker.affiliates);
                     return Promise.resolve({affiliates: [affiliate]});
                 }

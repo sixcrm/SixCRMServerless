@@ -64,7 +64,7 @@ class trackerController extends entityController {
 
         if(_.has(tracker, 'affiliates')){
 
-          return this.executeAssociatedEntityFunction('affiliateController', 'listBy', {list_array: tracker.affiliates})
+          return this.executeAssociatedEntityFunction('AffiliateController', 'listBy', {list_array: tracker.affiliates})
           .then(affiliates => this.getResult(affiliates, 'affiliates'));
 
         }

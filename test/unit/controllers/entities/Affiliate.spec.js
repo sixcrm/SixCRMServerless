@@ -40,7 +40,8 @@ describe('controllers/Affiliate.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Entity.js'), mock_entity);
 
-            let affiliateController = global.SixCRM.routes.include('controllers','entities/Affiliate.js');
+            let AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+            const affiliateController = new AffiliateController();
 
             return affiliateController.getByAffiliateID(affiliate.id).then((result) => {
                 expect(result).to.deep.equal(affiliate);

@@ -25,8 +25,8 @@ describe('controllers/Campaign.js', () => {
             //any uuid or *
             let list = ['*', 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa'];
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Affiliate.js'), {
-                listBy: ({list_array}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Affiliate.js'), class {
+                listBy({list_array}) {
                     expect(list_array).to.deep.equal([list[1]]);
                     return Promise.resolve({affiliates: ['an_affiliate']})
                 }
@@ -51,8 +51,8 @@ describe('controllers/Campaign.js', () => {
             //any uuid or *
             let list = ['*', 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa'];
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Affiliate.js'), {
-                listBy: ({list_array}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Affiliate.js'), class {
+                listBy({list_array}) {
                     expect(list_array).to.deep.equal([list[1]]);
                     return Promise.resolve({affiliates: []})
                 }

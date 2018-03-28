@@ -6,6 +6,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
 //Technical Debt:  Refactor
 module.exports = class AffiliateHelperController {
@@ -43,7 +44,7 @@ module.exports = class AffiliateHelperController {
       if(arrayutilities.nonEmpty(affiliate_codes)){
 
         if(!_.has(this, 'affiliateController')){
-          this.affiliateController = global.SixCRM.routes.include('entities', 'Affiliate.js');
+          this.affiliateController = new AffiliateController();
         }
 
         return this.assureAffiliates(affiliate_codes).then(affiliates => {
@@ -124,7 +125,7 @@ module.exports = class AffiliateHelperController {
       if(_.has(event.affiliates, affiliate_field)){
 
         if(!_.has(this, 'affiliateController')){
-          this.affiliateController = global.SixCRM.routes.include('entities', 'Affiliate.js');
+          this.affiliateController = new AffiliateController();
         }
 
         if(!this.affiliateController.isUUID(event.affiliates[affiliate_field])){
@@ -160,7 +161,7 @@ module.exports = class AffiliateHelperController {
     affiliate_ids = arrayutilities.unique(affiliate_ids);
 
     if(!_.has(this, 'affiliateController')){
-      this.affiliateController = global.SixCRM.routes.include('entities', 'Affiliate.js');
+      this.affiliateController = new AffiliateController();
     }
 
     //Technical Debt:  We don't like this query...
@@ -219,7 +220,7 @@ module.exports = class AffiliateHelperController {
       if(affiliate_match === false){
 
         if(!_.has(this, 'affiliateController')){
-          this.affiliateController = global.SixCRM.routes.include('entities', 'Affiliate.js');
+          this.affiliateController = new AffiliateController();
         }
 
         return_array.push(this.affiliateController.create({entity:{affiliate_id: affiliate_id}}));

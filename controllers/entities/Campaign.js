@@ -75,7 +75,7 @@ module.exports = class CampaignController extends entityController {
       });
 
       if(arrayutilities.nonEmpty(affiliate_ids)){
-        return this.executeAssociatedEntityFunction('affiliateController', 'listBy', {list_array: affiliate_ids})
+        return this.executeAssociatedEntityFunction('AffiliateController', 'listBy', {list_array: affiliate_ids})
         .then((affiliates) => this.getResult(affiliates, 'affiliates'))
         .then(affiliates_array => {
           if(arrayutilities.nonEmpty(affiliates_array)){
@@ -195,7 +195,7 @@ module.exports = class CampaignController extends entityController {
 
       du.debug('Get Affiliate');
 
-      return this.executeAssociatedEntityFunction('affiliateController', 'get', {id: campaign.affiliate});
+      return this.executeAssociatedEntityFunction('AffiliateController', 'get', {id: campaign.affiliate});
 
     }
 

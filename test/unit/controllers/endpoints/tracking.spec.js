@@ -207,8 +207,8 @@ describe('tracking', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Affiliate.js'), {
-        getByAffiliateID: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Affiliate.js'), class {
+        getByAffiliateID() {
           return Promise.resolve(affiliate)
         }
       });
@@ -350,8 +350,8 @@ describe('tracking', () => {
       let event_body = getValidEventBody();
       let affiliate  = getValidAffiliate();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Affiliate.js'), {
-        getByAffiliateID: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Affiliate.js'), class {
+        getByAffiliateID() {
           return Promise.resolve(affiliate)
         }
       });
@@ -377,8 +377,8 @@ describe('tracking', () => {
       let affiliate  = getValidAffiliate();
       let campaign  = getValidCampaign();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Affiliate.js'), {
-        getByAffiliateID: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Affiliate.js'), class {
+        getByAffiliateID() {
           return Promise.resolve(affiliate)
         }
       });

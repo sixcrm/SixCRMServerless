@@ -136,6 +136,7 @@ const MerchantProviderGroupController = global.SixCRM.routes.include('controller
 const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
+const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -621,7 +622,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 affiliate: { type: affiliateInputType .graphObj}
             },
             resolve: (value, affiliate) => {
-                const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+                const affiliateController = new AffiliateController();
 
                 return affiliateController.create({entity: affiliate.affiliate});
             }
@@ -633,7 +634,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 affiliate: { type: affiliateInputType.graphObj }
             },
             resolve: (value, affiliate) => {
-                const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+                const affiliateController = new AffiliateController();
 
                 return affiliateController.update({entity:affiliate.affiliate});
             }
@@ -649,7 +650,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, affiliate) => {
                 var id = affiliate.id;
-                const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+                const affiliateController = new AffiliateController();
 
                 return affiliateController.delete({id:id});
             }

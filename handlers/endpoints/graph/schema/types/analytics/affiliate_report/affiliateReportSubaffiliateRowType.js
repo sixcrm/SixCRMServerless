@@ -2,7 +2,8 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
 
-const affiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const affiliateController = new AffiliateController();
 const affiliateType = require('./../../affiliate/affiliateType');
 
 module.exports.graphObj = new GraphQLObjectType({

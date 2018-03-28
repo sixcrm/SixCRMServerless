@@ -137,7 +137,7 @@ class sessionController extends entityController {
 
         if(_.has(session, affiliate_field) && this.isUUID(session[affiliate_field])){
 
-          return this.executeAssociatedEntityFunction('affiliateController', 'get', {id: session[affiliate_field]});
+          return this.executeAssociatedEntityFunction('AffiliateController', 'get', {id: session[affiliate_field]});
 
         }else{
 
@@ -191,7 +191,7 @@ class sessionController extends entityController {
 
               if(this.isUUID(session[affiliate_field])){
 
-                return this.executeAssociatedEntityFunction('affiliateController', 'get', {id: session[affiliate_field]});
+                return this.executeAssociatedEntityFunction('AffiliateController', 'get', {id: session[affiliate_field]});
 
               }else{
 
