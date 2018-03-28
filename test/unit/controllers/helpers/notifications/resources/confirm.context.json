@@ -1,0 +1,815 @@
+{
+  "event": {
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "product_schedules": [{
+      "product_schedule": {
+        "schedule": [{
+          "product": {
+            "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+            "name": "Dynamic Watermark Product"
+          },
+          "start": 0,
+          "period": 30,
+          "price": 12.49
+        }]
+      },
+      "quantity": 1
+    }],
+    "products": [{
+      "product": {
+        "default_price": 12.99,
+        "created_at": "2017-04-06T18:40:41.405Z",
+        "attributes": {
+          "weight": {
+            "unitofmeasurement": "pounds",
+            "units": 2.5
+          },
+          "images": [{
+            "name": "testimage",
+            "format": "jpeg",
+            "path": "somepath",
+            "description": "This is a test image",
+            "dimensions": {
+              "width": 400,
+              "height": 300
+            }
+          }],
+          "dimensions": {
+            "width": {
+              "unitofmeasurement": "inches",
+              "units": 3.2
+            },
+            "length": {
+              "unitofmeasurement": "inches",
+              "units": 33
+            },
+            "height": {
+              "unitofmeasurement": "inches",
+              "units": 4.78
+            }
+          }
+        },
+        "fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+        "name": "Test Product",
+        "updated_at": "2018-03-27T00:43:37.676Z",
+        "dynamic_pricing": {
+          "max": 14.99,
+          "min": 9.99
+        },
+        "shipping_delay": 3600,
+        "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+        "description": "This is a test description",
+        "ship": true,
+        "sku": "123"
+      },
+      "quantity": 2,
+      "price": 12.99
+    }],
+    "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+    "customer": {
+      "email": "Adeline.Kunde@candida.info",
+      "firstname": "Adeline",
+      "lastname": "Kunde",
+      "phone": "581-858-1764 x9467",
+      "address": {
+        "line1": "02608 Halle Tunnel",
+        "city": "Beerland",
+        "state": "OK",
+        "zip": "00196",
+        "country": "BG"
+      },
+      "billing": {
+        "line1": "02608 Halle Tunnel",
+        "city": "Beerland",
+        "state": "OK",
+        "zip": "00196",
+        "country": "BG"
+      },
+      "id": "e72f8d15-9491-4111-bd50-50b9821b33c3",
+      "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "created_at": "2018-03-27T18:52:20.629Z",
+      "updated_at": "2018-03-27T18:52:20.629Z",
+      "entity_type": "customer",
+      "index_action": "add"
+    },
+    "creditcard": {
+      "name": "Lukas Roob",
+      "number": "4111111111111111",
+      "expiration": "09/2018",
+      "ccv": "595",
+      "address": {
+        "line1": "751 Helga Streets",
+        "city": "Christmouth",
+        "state": "NY",
+        "zip": "64665",
+        "country": "US",
+        "line2": "Suite 645"
+      },
+      "id": "96cb070f-af50-4b8b-ad72-5954fb5385b5",
+      "last_four": "1111",
+      "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "created_at": "2018-03-27T18:52:21.170Z",
+      "updated_at": "2018-03-27T18:52:21.170Z",
+      "entity_type": "creditcard",
+      "index_action": "add"
+    },
+    "session": "66fc780a-2716-471b-9179-d174b96d4dc2"
+  },
+  "session": {
+    "updated_at": "2018-03-27T18:52:20.706Z",
+    "completed": false,
+    "alias": "SE3451UL3R",
+    "created_at": "2018-03-27T18:52:20.706Z",
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "customer": "e72f8d15-9491-4111-bd50-50b9821b33c3",
+    "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+    "id": "66fc780a-2716-471b-9179-d174b96d4dc2"
+  },
+  "customer": {
+    "updated_at": "2018-03-27T18:52:21.250Z",
+    "lastname": "Kunde",
+    "created_at": "2018-03-27T18:52:20.629Z",
+    "entity_type": "customer",
+    "index_action": "add",
+    "firstname": "Adeline",
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "address": {
+      "zip": "00196",
+      "country": "BG",
+      "state": "OK",
+      "city": "Beerland",
+      "line1": "02608 Halle Tunnel"
+    },
+    "id": "e72f8d15-9491-4111-bd50-50b9821b33c3",
+    "email": "Adeline.Kunde@candida.info",
+    "phone": "581-858-1764 x9467",
+    "billing": {
+      "zip": "00196",
+      "country": "BG",
+      "state": "OK",
+      "city": "Beerland",
+      "line1": "02608 Halle Tunnel"
+    },
+    "creditcards": ["96cb070f-af50-4b8b-ad72-5954fb5385b5"]
+  },
+  "productschedules": [{
+    "product_schedule": {
+      "schedule": [{
+        "product": {
+          "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          "name": "Dynamic Watermark Product"
+        },
+        "start": 0,
+        "period": 30,
+        "price": 12.49
+      }]
+    },
+    "quantity": 1
+  }],
+  "transactionsubtype": "main",
+  "campaign": {
+    "updated_at": "2018-03-27T00:43:35.851Z",
+    "productschedules": ["12529a17-ac32-4e46-b05b-83862843055d",
+      "8d1e896f-c50d-4a6b-8c84-d5661c16a046"
+    ],
+    "created_at": "2018-01-18T14:52:47.220Z",
+    "emailtemplates": ["b44ce483-861c-4843-a7d6-b4c649d6bdde",
+      "8108d6a3-2d10-4013-9e8e-df71e2dc578b",
+      "102131a0-4cc4-4463-a614-e3157c3f03c2"
+    ],
+    "allow_prepaid": false,
+    "affiliate_allow": ["ad58ea78-504f-4a7e-ad45-128b6e76dc57"],
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "show_prepaid": false,
+    "affiliate_deny": ["*"],
+    "id": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+    "name": "Example Campaign"
+  },
+  "creditcard": {
+    "updated_at": "2018-03-27T18:52:21.170Z",
+    "created_at": "2018-03-27T18:52:21.170Z",
+    "ccv": "595",
+    "number": "4111111111111111",
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "expiration": "09/2018",
+    "address": {
+      "zip": "64665",
+      "country": "US",
+      "state": "NY",
+      "city": "Christmouth",
+      "line2": "Suite 645",
+      "line1": "751 Helga Streets"
+    },
+    "id": "96cb070f-af50-4b8b-ad72-5954fb5385b5",
+    "last_four": "1111",
+    "name": "Lukas Roob"
+  },
+  "rebill": {
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "parentsession": "66fc780a-2716-471b-9179-d174b96d4dc2",
+    "products": [{
+        "product": {
+          "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          "name": "Dynamic Watermark Product"
+        },
+        "amount": 12.49,
+        "quantity": 1,
+        "merchantprovidergroupassociation": {
+          "updated_at": "2018-03-27T00:43:36.692Z",
+          "entity": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          "entity_type": "product",
+          "created_at": "2018-02-20T22:34:09.598Z",
+          "merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+          "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+          "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+          "id": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"
+        }
+      },
+      {
+        "product": {
+          "default_price": 12.99,
+          "created_at": "2017-04-06T18:40:41.405Z",
+          "attributes": {
+            "weight": {
+              "unitofmeasurement": "pounds",
+              "units": 2.5
+            },
+            "images": [{
+              "name": "testimage",
+              "format": "jpeg",
+              "path": "somepath",
+              "description": "This is a test image",
+              "dimensions": {
+                "width": 400,
+                "height": 300
+              }
+            }],
+            "dimensions": {
+              "width": {
+                "unitofmeasurement": "inches",
+                "units": 3.2
+              },
+              "length": {
+                "unitofmeasurement": "inches",
+                "units": 33
+              },
+              "height": {
+                "unitofmeasurement": "inches",
+                "units": 4.78
+              }
+            }
+          },
+          "fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+          "name": "Test Product",
+          "updated_at": "2018-03-27T00:43:37.676Z",
+          "dynamic_pricing": {
+            "max": 14.99,
+            "min": 9.99
+          },
+          "shipping_delay": 3600,
+          "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+          "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          "description": "This is a test description",
+          "ship": true,
+          "sku": "123"
+        },
+        "amount": 12.99,
+        "quantity": 2,
+        "merchantprovidergroupassociation": {
+          "updated_at": "2018-03-27T00:43:36.692Z",
+          "entity": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          "entity_type": "product",
+          "created_at": "2018-02-20T22:34:09.598Z",
+          "merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+          "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+          "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+          "id": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"
+        }
+      }
+    ],
+    "bill_at": "2018-03-27T18:52:20.000Z",
+    "amount": 38.47,
+    "processing": true,
+    "id": "00dd7cba-69f6-4f74-824e-5b5d8ed4f86e",
+    "created_at": "2018-03-27T18:52:21.492Z",
+    "updated_at": "2018-03-27T18:52:21.492Z",
+    "entity_type": "rebill",
+    "index_action": "add"
+  },
+  "transactions": [{
+    "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+    "rebill": "00dd7cba-69f6-4f74-824e-5b5d8ed4f86e",
+    "processor_response": "{\"code\":\"success\",\"message\":\"Success\",\"result\":{\"code\":\"success\",\"response\":{\"statusCode\":200,\"body\":\"response=1&responsetext=SUCCESS&authcode=123456&transactionid=4046019721&avsresponse=N&cvvresponse=&orderid=&type=sale&response_code=100\",\"headers\":{\"date\":\"Tue, 27 Mar 2018 18:52:22 GMT\",\"server\":\"Apache\",\"content-length\":\"136\",\"connection\":\"close\",\"content-type\":\"text/html; charset=UTF-8\"},\"request\":{\"uri\":{\"protocol\":\"https:\",\"slashes\":true,\"auth\":null,\"host\":\"secure.networkmerchants.com\",\"port\":443,\"hostname\":\"secure.networkmerchants.com\",\"hash\":null,\"search\":null,\"query\":null,\"pathname\":\"/api/transact.php\",\"path\":\"/api/transact.php\",\"href\":\"https://secure.networkmerchants.com/api/transact.php\"},\"method\":\"post\",\"headers\":{\"content-type\":\"application/x-www-form-urlencoded\",\"content-length\":429}}},\"message\":\"Success\"},\"merchant_provider\":\"6c40761d-8919-4ad6-884d-6a46a776cfb9\",\"creditcard\":\"96cb070f-af50-4b8b-ad72-5954fb5385b5\"}",
+    "amount": 38.47,
+    "products": [{
+        "product": {
+          "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          "name": "Dynamic Watermark Product"
+        },
+        "amount": 12.49,
+        "quantity": 1,
+        "merchantprovidergroupassociation": {
+          "updated_at": "2018-03-27T00:43:36.692Z",
+          "entity": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          "entity_type": "product",
+          "created_at": "2018-02-20T22:34:09.598Z",
+          "merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+          "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+          "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+          "id": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"
+        }
+      },
+      {
+        "product": {
+          "default_price": 12.99,
+          "created_at": "2017-04-06T18:40:41.405Z",
+          "attributes": {
+            "weight": {
+              "unitofmeasurement": "pounds",
+              "units": 2.5
+            },
+            "images": [{
+              "name": "testimage",
+              "format": "jpeg",
+              "path": "somepath",
+              "description": "This is a test image",
+              "dimensions": {
+                "width": 400,
+                "height": 300
+              }
+            }],
+            "dimensions": {
+              "width": {
+                "unitofmeasurement": "inches",
+                "units": 3.2
+              },
+              "length": {
+                "unitofmeasurement": "inches",
+                "units": 33
+              },
+              "height": {
+                "unitofmeasurement": "inches",
+                "units": 4.78
+              }
+            }
+          },
+          "fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+          "name": "Test Product",
+          "updated_at": "2018-03-27T00:43:37.676Z",
+          "dynamic_pricing": {
+            "max": 14.99,
+            "min": 9.99
+          },
+          "shipping_delay": 3600,
+          "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+          "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          "description": "This is a test description",
+          "ship": true,
+          "sku": "123"
+        },
+        "amount": 12.99,
+        "quantity": 2,
+        "merchantprovidergroupassociation": {
+          "updated_at": "2018-03-27T00:43:36.692Z",
+          "entity": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          "entity_type": "product",
+          "created_at": "2018-02-20T22:34:09.598Z",
+          "merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+          "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+          "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+          "id": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"
+        }
+      }
+    ],
+    "alias": "TZW4LFKHK8",
+    "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
+    "type": "sale",
+    "result": "success",
+    "id": "9c359d5c-0a3c-486c-8b04-fb267d9a06bd",
+    "created_at": "2018-03-27T18:52:23.947Z",
+    "updated_at": "2018-03-27T18:52:23.947Z",
+    "entity_type": "transaction",
+    "index_action": "add"
+  }],
+  "result": "success",
+  "amount": 38.47,
+  "info": {
+    "amount": 38.47,
+    "transactions": [{
+      "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "rebill": "00dd7cba-69f6-4f74-824e-5b5d8ed4f86e",
+      "processor_response": "{\"code\":\"success\",\"message\":\"Success\",\"result\":{\"code\":\"success\",\"response\":{\"statusCode\":200,\"body\":\"response=1&responsetext=SUCCESS&authcode=123456&transactionid=4046019721&avsresponse=N&cvvresponse=&orderid=&type=sale&response_code=100\",\"headers\":{\"date\":\"Tue, 27 Mar 2018 18:52:22 GMT\",\"server\":\"Apache\",\"content-length\":\"136\",\"connection\":\"close\",\"content-type\":\"text/html; charset=UTF-8\"},\"request\":{\"uri\":{\"protocol\":\"https:\",\"slashes\":true,\"auth\":null,\"host\":\"secure.networkmerchants.com\",\"port\":443,\"hostname\":\"secure.networkmerchants.com\",\"hash\":null,\"search\":null,\"query\":null,\"pathname\":\"/api/transact.php\",\"path\":\"/api/transact.php\",\"href\":\"https://secure.networkmerchants.com/api/transact.php\"},\"method\":\"post\",\"headers\":{\"content-type\":\"application/x-www-form-urlencoded\",\"content-length\":429}}},\"message\":\"Success\"},\"merchant_provider\":\"6c40761d-8919-4ad6-884d-6a46a776cfb9\",\"creditcard\":\"96cb070f-af50-4b8b-ad72-5954fb5385b5\"}",
+      "amount": 38.47,
+      "products": [{
+          "product": {
+            "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+            "name": "Dynamic Watermark Product"
+          },
+          "amount": 12.49,
+          "quantity": 1,
+          "merchantprovidergroupassociation": {
+            "updated_at": "2018-03-27T00:43:36.692Z",
+            "entity": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+            "entity_type": "product",
+            "created_at": "2018-02-20T22:34:09.598Z",
+            "merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+            "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+            "id": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"
+          }
+        },
+        {
+          "product": {
+            "default_price": 12.99,
+            "created_at": "2017-04-06T18:40:41.405Z",
+            "attributes": {
+              "weight": {
+                "unitofmeasurement": "pounds",
+                "units": 2.5
+              },
+              "images": [{
+                "name": "testimage",
+                "format": "jpeg",
+                "path": "somepath",
+                "description": "This is a test image",
+                "dimensions": {
+                  "width": 400,
+                  "height": 300
+                }
+              }],
+              "dimensions": {
+                "width": {
+                  "unitofmeasurement": "inches",
+                  "units": 3.2
+                },
+                "length": {
+                  "unitofmeasurement": "inches",
+                  "units": 33
+                },
+                "height": {
+                  "unitofmeasurement": "inches",
+                  "units": 4.78
+                }
+              }
+            },
+            "fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+            "name": "Test Product",
+            "updated_at": "2018-03-27T00:43:37.676Z",
+            "dynamic_pricing": {
+              "max": 14.99,
+              "min": 9.99
+            },
+            "shipping_delay": 3600,
+            "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+            "description": "This is a test description",
+            "ship": true,
+            "sku": "123"
+          },
+          "amount": 12.99,
+          "quantity": 2,
+          "merchantprovidergroupassociation": {
+            "updated_at": "2018-03-27T00:43:36.692Z",
+            "entity": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+            "entity_type": "product",
+            "created_at": "2018-02-20T22:34:09.598Z",
+            "merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+            "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+            "id": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"
+          }
+        }
+      ],
+      "alias": "TZW4LFKHK8",
+      "merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
+      "type": "sale",
+      "result": "success",
+      "id": "9c359d5c-0a3c-486c-8b04-fb267d9a06bd",
+      "created_at": "2018-03-27T18:52:23.947Z",
+      "updated_at": "2018-03-27T18:52:23.947Z",
+      "entity_type": "transaction",
+      "index_action": "add"
+    }],
+    "customer": {
+      "updated_at": "2018-03-27T18:52:21.250Z",
+      "lastname": "Kunde",
+      "created_at": "2018-03-27T18:52:20.629Z",
+      "entity_type": "customer",
+      "index_action": "add",
+      "firstname": "Adeline",
+      "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "address": {
+        "zip": "00196",
+        "country": "BG",
+        "state": "OK",
+        "city": "Beerland",
+        "line1": "02608 Halle Tunnel"
+      },
+      "id": "e72f8d15-9491-4111-bd50-50b9821b33c3",
+      "email": "Adeline.Kunde@candida.info",
+      "phone": "581-858-1764 x9467",
+      "billing": {
+        "zip": "00196",
+        "country": "BG",
+        "state": "OK",
+        "city": "Beerland",
+        "line1": "02608 Halle Tunnel"
+      },
+      "creditcards": ["96cb070f-af50-4b8b-ad72-5954fb5385b5"]
+    },
+    "rebill": {
+      "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "parentsession": "66fc780a-2716-471b-9179-d174b96d4dc2",
+      "products": [{
+          "product": {
+            "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+            "name": "Dynamic Watermark Product"
+          },
+          "amount": 12.49,
+          "quantity": 1,
+          "merchantprovidergroupassociation": {
+            "updated_at": "2018-03-27T00:43:36.692Z",
+            "entity": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+            "entity_type": "product",
+            "created_at": "2018-02-20T22:34:09.598Z",
+            "merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+            "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+            "id": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"
+          }
+        },
+        {
+          "product": {
+            "default_price": 12.99,
+            "created_at": "2017-04-06T18:40:41.405Z",
+            "attributes": {
+              "weight": {
+                "unitofmeasurement": "pounds",
+                "units": 2.5
+              },
+              "images": [{
+                "name": "testimage",
+                "format": "jpeg",
+                "path": "somepath",
+                "description": "This is a test image",
+                "dimensions": {
+                  "width": 400,
+                  "height": 300
+                }
+              }],
+              "dimensions": {
+                "width": {
+                  "unitofmeasurement": "inches",
+                  "units": 3.2
+                },
+                "length": {
+                  "unitofmeasurement": "inches",
+                  "units": 33
+                },
+                "height": {
+                  "unitofmeasurement": "inches",
+                  "units": 4.78
+                }
+              }
+            },
+            "fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+            "name": "Test Product",
+            "updated_at": "2018-03-27T00:43:37.676Z",
+            "dynamic_pricing": {
+              "max": 14.99,
+              "min": 9.99
+            },
+            "shipping_delay": 3600,
+            "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+            "description": "This is a test description",
+            "ship": true,
+            "sku": "123"
+          },
+          "amount": 12.99,
+          "quantity": 2,
+          "merchantprovidergroupassociation": {
+            "updated_at": "2018-03-27T00:43:36.692Z",
+            "entity": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+            "entity_type": "product",
+            "created_at": "2018-02-20T22:34:09.598Z",
+            "merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+            "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+            "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+            "id": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3"
+          }
+        }
+      ],
+      "bill_at": "2018-03-27T18:52:20.000Z",
+      "amount": 38.47,
+      "processing": true,
+      "id": "00dd7cba-69f6-4f74-824e-5b5d8ed4f86e",
+      "created_at": "2018-03-27T18:52:21.492Z",
+      "updated_at": "2018-03-27T18:52:21.492Z",
+      "entity_type": "rebill",
+      "index_action": "add"
+    },
+    "session": {
+      "updated_at": "2018-03-27T18:52:20.706Z",
+      "completed": false,
+      "alias": "SE3451UL3R",
+      "created_at": "2018-03-27T18:52:20.706Z",
+      "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "customer": "e72f8d15-9491-4111-bd50-50b9821b33c3",
+      "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+      "id": "66fc780a-2716-471b-9179-d174b96d4dc2"
+    },
+    "campaign": {
+      "updated_at": "2018-03-27T00:43:35.851Z",
+      "productschedules": ["12529a17-ac32-4e46-b05b-83862843055d",
+        "8d1e896f-c50d-4a6b-8c84-d5661c16a046"
+      ],
+      "created_at": "2018-01-18T14:52:47.220Z",
+      "emailtemplates": ["b44ce483-861c-4843-a7d6-b4c649d6bdde",
+        "8108d6a3-2d10-4013-9e8e-df71e2dc578b",
+        "102131a0-4cc4-4463-a614-e3157c3f03c2"
+      ],
+      "allow_prepaid": false,
+      "affiliate_allow": ["ad58ea78-504f-4a7e-ad45-128b6e76dc57"],
+      "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "show_prepaid": false,
+      "affiliate_deny": ["*"],
+      "id": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+      "name": "Example Campaign"
+    },
+    "creditcard": {
+      "updated_at": "2018-03-27T18:52:21.170Z",
+      "created_at": "2018-03-27T18:52:21.170Z",
+      "ccv": "595",
+      "number": "4111111111111111",
+      "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "expiration": "09/2018",
+      "address": {
+        "zip": "64665",
+        "country": "US",
+        "state": "NY",
+        "city": "Christmouth",
+        "line2": "Suite 645",
+        "line1": "751 Helga Streets"
+      },
+      "id": "96cb070f-af50-4b8b-ad72-5954fb5385b5",
+      "last_four": "1111",
+      "name": "Lukas Roob"
+    },
+    "result": "success",
+    "product_schedules": [{
+      "product_schedule": {
+        "schedule": [{
+          "product": {
+            "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+            "name": "Dynamic Watermark Product"
+          },
+          "start": 0,
+          "period": 30,
+          "price": 12.49
+        }]
+      },
+      "quantity": 1
+    }],
+    "products": [{
+      "product": {
+        "default_price": 12.99,
+        "created_at": "2017-04-06T18:40:41.405Z",
+        "attributes": {
+          "weight": {
+            "unitofmeasurement": "pounds",
+            "units": 2.5
+          },
+          "images": [{
+            "name": "testimage",
+            "format": "jpeg",
+            "path": "somepath",
+            "description": "This is a test image",
+            "dimensions": {
+              "width": 400,
+              "height": 300
+            }
+          }],
+          "dimensions": {
+            "width": {
+              "unitofmeasurement": "inches",
+              "units": 3.2
+            },
+            "length": {
+              "unitofmeasurement": "inches",
+              "units": 33
+            },
+            "height": {
+              "unitofmeasurement": "inches",
+              "units": 4.78
+            }
+          }
+        },
+        "fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+        "name": "Test Product",
+        "updated_at": "2018-03-27T00:43:37.676Z",
+        "dynamic_pricing": {
+          "max": 14.99,
+          "min": 9.99
+        },
+        "shipping_delay": 3600,
+        "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+        "description": "This is a test description",
+        "ship": true,
+        "sku": "123"
+      },
+      "quantity": 2,
+      "price": 12.99
+    }]
+  },
+  "user": {
+    "updated_at": "2018-03-27T00:43:39.691Z",
+    "alias": "60fc8ccc85d8b7e6eaae333bb20d2db51aa37693",
+    "auth0_id": "google-oauth2|115021313586107803846",
+    "active": true,
+    "created_at": "2018-01-18T14:53:33.226Z",
+    "last_name": "User",
+    "first_name": "System",
+    "termsandconditions": "0.1",
+    "id": "system@sixcrm.com",
+    "name": "System User",
+    "acl": [{
+      "updated_at": "2018-03-27T00:43:39.198Z",
+      "created_at": "2018-01-15T22:46:36.621Z",
+      "role": {
+        "updated_at": "2018-03-27T00:43:38.226Z",
+        "active": true,
+        "created_at": "2018-02-28T23:01:42.250Z",
+        "permissions": {
+          "allow": ["*"]
+        },
+        "account": "*",
+        "id": "cae614de-ce8a-40b9-8137-3d3bdff78039",
+        "name": "Owner"
+      },
+      "account": {
+        "updated_at": "2018-03-27T00:43:35.480Z",
+        "active": true,
+        "created_at": "2018-01-18T14:52:41.732Z",
+        "id": "*",
+        "name": "Master Account"
+      },
+      "user": "system@sixcrm.com",
+      "termsandconditions": "0.1",
+      "id": "a7ee4036-bdd4-4a38-91c9-da766ce36668"
+    }]
+  },
+  "products": [{
+    "product": {
+      "default_price": 12.99,
+      "created_at": "2017-04-06T18:40:41.405Z",
+      "attributes": {
+        "weight": {
+          "unitofmeasurement": "pounds",
+          "units": 2.5
+        },
+        "images": [{
+          "name": "testimage",
+          "format": "jpeg",
+          "path": "somepath",
+          "description": "This is a test image",
+          "dimensions": {
+            "width": 400,
+            "height": 300
+          }
+        }],
+        "dimensions": {
+          "width": {
+            "unitofmeasurement": "inches",
+            "units": 3.2
+          },
+          "length": {
+            "unitofmeasurement": "inches",
+            "units": 33
+          },
+          "height": {
+            "unitofmeasurement": "inches",
+            "units": 4.78
+          }
+        }
+      },
+      "fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+      "name": "Test Product",
+      "updated_at": "2018-03-27T00:43:37.676Z",
+      "dynamic_pricing": {
+        "max": 14.99,
+        "min": 9.99
+      },
+      "shipping_delay": 3600,
+      "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+      "description": "This is a test description",
+      "ship": true,
+      "sku": "123"
+    },
+    "quantity": 2,
+    "price": 12.99
+  }]
+}

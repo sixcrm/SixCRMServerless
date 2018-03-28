@@ -17,9 +17,9 @@
       "updated_at":"2017-04-06T18:41:12.521Z"
 	},
   {
-      "id":"d12fda4a-f00e-4819-924d-898cc6853309",
+      "id":"47d691fe-efb3-4261-8ca9-30ff1fc390a9",
       "account":"*",
-      "user":"scott.r.lindsey@gmail.com",
+      "user":"kris@sixcrm.com",
       "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
       "created_at":"2017-04-06T18:40:41.405Z",
       "updated_at":"2017-04-06T18:41:12.521Z"
@@ -33,14 +33,6 @@
 		"updated_at":"2017-04-06T18:41:12.521Z"
 	},
   {
-      "id":"f01c7f62-b5b6-4bca-a27e-bcab9601cea1",
-      "account":"*",
-      "user":"nathan.brenner@crmblackbox.com",
-      "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
-      "created_at":"2017-04-06T18:40:41.405Z",
-      "updated_at":"2017-04-06T18:41:12.521Z"
-  },
-  {
       "id":"67cbbc70-e0b6-423d-9490-33ac713ab923",
       "account":"*",
       "user":"accounting@sixcrm.com",
@@ -53,14 +45,6 @@
       "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
       "user":"timothy.dalbey@sixcrm.com",
       "role":"1116c054-42bb-4bf5-841e-ee0c413fa69e",
-      "created_at":"2017-04-06T18:40:41.405Z",
-      "updated_at":"2017-04-06T18:41:12.521Z"
-  },
-  {
-      "id":"dfd66ac0-3f2c-40c4-807b-a5262a86f68e",
-      "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-      "user":"nathan.brenner@crmblackbox.com",
-      "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
       "created_at":"2017-04-06T18:40:41.405Z",
       "updated_at":"2017-04-06T18:41:12.521Z"
   },
@@ -149,36 +133,12 @@
     "updated_at":"2017-04-06T18:41:12.521Z"
   },
   {
-        "id":"4250a511-8af4-45d7-91fc-ac987f9b880f",
-      "account":"*",
-      "user":"clausruete@gmail.com",
-      "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
-      "created_at":"2017-04-06T18:40:41.405Z",
-          "updated_at":"2017-04-06T18:41:12.521Z"
-  },
-  {
-    "account": "*",
-    "created_at": "2017-06-15T14:22:59.547Z",
-    "id": "dae354a8-fa95-409c-80a5-fdcf39650a85",
-    "role": "cae614de-ce8a-40b9-8137-3d3bdff78039",
-    "updated_at": "2017-06-15T14:22:59.547Z",
-    "user": "aldo.zelen@sixcrm.com"
-  },
-  {
     "account": "*",
     "created_at": "2017-06-15T14:22:59.547Z",
     "id": "dc263d2a-387e-40e4-8ea8-363d56140edf",
     "role": "cae614de-ce8a-40b9-8137-3d3bdff78039",
     "updated_at": "2017-06-15T14:22:59.547Z",
     "user": "logan.egbert@sixcrm.com"
-  },
-  {
-    "id":"5940a621-e8d4-4765-b319-59c018ceea83",
-    "account":"*",
-    "user":"marko.gledic@toptal.com",
-    "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
-    "created_at":"2017-04-06T18:40:41.405Z",
-    "updated_at":"2017-04-06T18:41:12.521Z"
   },
   {
     "id":"2cf80417-e4ae-4a69-903f-a459c9ea8f04",
@@ -220,14 +180,5 @@
     "termsandconditions": "0.1",
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
-  },
-  {
-    "id": "fdea5fdc-7267-4fe6-898f-ebfeaf1409bd",
-    "account": "eefdeca6-41bc-4af9-a561-159acb449b5e",
-    "created_at": "2017-06-15T14:22:59.547Z",
-    "role": "e09ac44b-6cde-4572-8162-609f6f0aeca8",
-    "updated_at": "2017-06-15T14:22:59.547Z",
-    "user": "aldo.zelen@sixcrm.com",
-    "termsandconditions": "0.1"
   }
 ]

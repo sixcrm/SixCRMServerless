@@ -24,14 +24,14 @@
 		"updated_at":"2017-04-06T18:41:12.521Z"
 	},
 	{
-		"name":"ScottLindsey",
-		"first_name": "Scott",
-		"last_name": "Lindsey",
+		"name":"KrisTrujillo",
+		"first_name": "Kris",
+		"last_name": "Trujillo",
 		"auth0_id":"abc1234",
-		"id":"scott.r.lindsey@gmail.com",
+		"id":"kris@sixcrm.com",
 		"active":true,
 		"termsandconditions":"0.1",
-		"alias":"c9187447f8e8e4534258b1806f568e34e7bd8284",
+		"alias":"5472bd73762d82071925a9469632b3de17a98fc7",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
 	},
@@ -156,30 +156,6 @@
 		"alias":"4f9e50799231a85500c42851addec5f2eddee93b",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
-	},
-	{
-		"name":"Claus Ruete",
-		"first_name": "Claus",
-		"last_name": "Ruete",
-		"auth0_id":"awdawdawdawdawd",
-		"id":"clausruete@gmail.com",
-		"active":true,
-		"termsandconditions":"0.1",
-		"alias":"f07632079dc5536880bae702123369df62b9940f",
-		"created_at":"2017-04-06T18:40:41.405Z",
-		  "updated_at":"2017-04-06T18:41:12.521Z"
-	},
-	{
-	  "name":"Aldo Zelen",
-	  "first_name": "Aldo",
-	  "last_name": "Zelen",
-	  "auth0_id":"awdawdawdawdawd",
-	  "id":"aldo.zelen@sixcrm.com",
-	  "active":true,
-	  "termsandconditions":"0.1",
-	  "alias":"dd4bd0402361565396cae86de96fab8e180e6929",
-	  "created_at":"2017-04-06T18:40:41.405Z",
-	  "updated_at":"2017-04-06T18:41:12.521Z"
 	},
 	{
 	  "name":"Logan Egbert",

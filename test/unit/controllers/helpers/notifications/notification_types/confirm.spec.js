@@ -6,7 +6,6 @@ const expect = chai.expect;
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 let notification_name = 'confirm';
 let notification_readable_name = 'Confirm';
@@ -24,21 +23,11 @@ describe('/helpers/notifications/notification_types/'+notification_name+'.js', (
 
   describe('transformContext', () => {
 
-    let required_fields = ['account','type','category','context'];
+    let required_fields = ['account','user', 'name', 'type','category','context'];
 
     it('successfully transforms the context object', () => {
 
-      let campaign = MockEntities.getValidCampaign();
-      let customer = MockEntities.getValidCustomer();
-      let session = MockEntities.getValidSession();
-
-      let context = {
-        user: 'owner.user@test.com',
-        account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-        campaign: campaign,
-        customer: customer,
-        session: session
-      };
+      let context = global.SixCRM.routes.include('test','unit/controllers/helpers/notifications/resources/'+notification_name+'.context.json');
 
       let notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+notification_name+'.js');
       let transformed_context = notification_class.transformContext(context);
@@ -50,6 +39,12 @@ describe('/helpers/notifications/notification_types/'+notification_name+'.js', (
       if(!_.has(notification_class, 'account_wide')){
         expect(transformed_context).to.have.property('user');
         expect(transformed_context.user).to.not.equal(null);
+      }
+
+      if(_.has(notification_class, 'context_required')){
+        arrayutilities.map(notification_class.context_required, required_context_field => {
+          expect(transformed_context.context).to.have.property(required_context_field);
+        });
       }
 
       du.highlight(transformed_context);
