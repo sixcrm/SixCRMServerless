@@ -126,6 +126,10 @@ const CreditCardController = global.SixCRM.routes.include('controllers', 'entiti
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 const AccountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+const CustomerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+const EntityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+const EventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -371,7 +375,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 entityacl: { type: entityACLInputType.graphObj }
             },
             resolve: (value, entityacl) => {
-                const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+                const entityACLController = new EntityACLController();
 
                 return entityACLController.create({entity: entityacl.entityacl});
             }
@@ -383,7 +387,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 entityacl: { type: entityACLInputType.graphObj }
             },
             resolve: (value, entityacl) => {
-                const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+                const entityACLController = new EntityACLController();
 
                 return entityACLController.update({entity: entityacl.entityacl});
             }
@@ -399,7 +403,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, entityacl) => {
                 const entity = entityacl.entity;
-                const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+                const entityACLController = new EntityACLController();
 
                 return entityACLController.delete({id: entity});
             }
@@ -731,7 +735,7 @@ module.exports.graphObj = new GraphQLObjectType({
             eventhook: { type: eventHookInputType.graphObj}
           },
           resolve: (value, eventhook) => {
-            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+            const eventHookController = new EventHookController();
 
             return eventHookController.create({entity: eventhook.eventhook});
           }
@@ -743,7 +747,7 @@ module.exports.graphObj = new GraphQLObjectType({
             eventhook: { type: eventHookInputType.graphObj }
           },
           resolve: (value, eventhook) => {
-            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+            const eventHookController = new EventHookController();
 
             return eventHookController.update({entity:eventhook.eventhook});
           }
@@ -759,7 +763,7 @@ module.exports.graphObj = new GraphQLObjectType({
           },
           resolve: (value, eventhook) => {
             var id = eventhook.id;
-            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+            const eventHookController = new EventHookController();
 
             return eventHookController.delete({id:id});
           }
@@ -811,7 +815,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 emailtemplate: { type: emailTemplateInputType.graphObj }
             },
             resolve: (value, emailtemplate) => {
-                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+                const emailTemplateController = new EmailTemplateController();
 
                 return emailTemplateController.create({entity: emailtemplate.emailtemplate});
             }
@@ -823,7 +827,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 emailtemplate: { type: emailTemplateInputType.graphObj }
             },
             resolve: (value, emailtemplate) => {
-                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+                const emailTemplateController = new EmailTemplateController();
 
                 return emailTemplateController.update({entity:emailtemplate.emailtemplate});
             }
@@ -839,7 +843,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, emailtemplate) => {
                 var id = emailtemplate.id;
-                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+                const emailTemplateController = new EmailTemplateController();
 
                 return emailTemplateController.delete({id:id});
             }
@@ -944,7 +948,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 customernote: { type: customerNoteInputType .graphObj}
             },
             resolve: (value, customernote) => {
-                const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+                const customerNoteController = new CustomerNoteController();
 
                 return customerNoteController.create({entity: customernote.customernote});
             }
@@ -956,7 +960,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 customernote: { type: customerNoteInputType.graphObj }
             },
             resolve: (value, customernote) => {
-                const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+                const customerNoteController = new CustomerNoteController();
 
                 return customerNoteController.update({entity:customernote.customernote});
             }
@@ -972,7 +976,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, customernote) => {
                 var id = customernote.id;
-                const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+                const customerNoteController = new CustomerNoteController();
 
                 return customerNoteController.delete({id:id});
             }

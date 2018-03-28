@@ -103,8 +103,8 @@ describe('controllers/Campaign.js', () => {
                 emailtemplates: ['an_email_template_id']
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/EmailTemplate.js'), {
-                listBy: ({list_array}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/EmailTemplate.js'), class {
+                listBy({list_array}) {
                     expect(list_array).to.deep.equal(campaign.emailtemplates);
                     return Promise.resolve({emailtemplates: ['an_email_template']})
                 }

@@ -2,7 +2,7 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-
+const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 let SMTPProviderType = require('../smtpprovider/SMTPProviderType');
 //let emailTemplateTypeEnum = require('./emailTemplateTypeEnum');
 
@@ -36,7 +36,7 @@ module.exports.graphObj = new GraphQLObjectType({
         type: SMTPProviderType.graphObj,
         description: 'The SMTP Provider for the email template.',
         resolve: (emailtemplate) => {
-          let emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+          let emailTemplateController = new EmailTemplateController();
 
           return emailTemplateController.getSMTPProvider(emailtemplate);
         }

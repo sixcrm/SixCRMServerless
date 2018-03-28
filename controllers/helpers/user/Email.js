@@ -10,13 +10,14 @@ const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/SMTP
 const CustomerHelperController = global.SixCRM.routes.include('helpers','entities/customer/Customer.js');
 const CampaignController = global.SixCRM.routes.include('entities','Campaign.js');
 const CustomerController = global.SixCRM.routes.include('entities','Customer.js');
+const EmailTemplateController = global.SixCRM.routes.include('entities','EmailTemplate.js');
 
 module.exports = class userEmailHelperController {
 
     constructor(){
 
         this.campaignController = new CampaignController();
-        this.emailTemplateController = global.SixCRM.routes.include('entities','EmailTemplate.js');
+        this.emailTemplateController = new EmailTemplateController();
         this.customerController = new CustomerController();
         this.customerHelperController = new CustomerHelperController();
 

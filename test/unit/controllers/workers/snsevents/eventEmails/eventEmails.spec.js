@@ -112,11 +112,11 @@ describe('controllers/workers/eventEmails', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities','EmailTemplate.js'), {
-        get:({id}) =>{
+      mockery.registerMock(global.SixCRM.routes.path('entities','EmailTemplate.js'), class {
+        get({id}) {
           return Promise.resolve(MockEntities.getValidEmailTemplate(id));
-        },
-        getSMTPProvider:() => {
+        }
+        getSMTPProvider() {
           return Promise.resolve(smtp_provider);
         }
       });
@@ -211,14 +211,14 @@ describe('controllers/workers/eventEmails', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities','EmailTemplate.js'), {
-        get:({id}) =>{
+      mockery.registerMock(global.SixCRM.routes.path('entities','EmailTemplate.js'), class {
+        get({id}) {
           return Promise.resolve(MockEntities.getValidEmailTemplate(id));
-        },
-        getSMTPProvider:() => {
+        }
+        getSMTPProvider() {
           return Promise.resolve(smtp_provider);
-        },
-        sanitize: () => {}
+        }
+        sanitize() {}
       });
 
       mockery.registerMock(global.SixCRM.routes.path('helpers','email/CustomerMailer.js'), class {

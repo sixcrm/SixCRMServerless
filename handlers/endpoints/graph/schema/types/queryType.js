@@ -170,7 +170,10 @@ const CreditCardController = global.SixCRM.routes.include('controllers', 'entiti
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 const AccountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
-
+const CustomerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+const EntityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+const EventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -283,7 +286,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, customernote){
-              const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+              const customerNoteController = new CustomerNoteController();
 
       	      return customerNoteController.listByCustomer({customer: customernote.customer, pagination: customernote.pagination, fatal: list_fatal});
             }
@@ -886,7 +889,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, customernote){
-                const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+                const customerNoteController = new CustomerNoteController();
 
                 return customerNoteController.get({id:customernote.id, fatal: get_fatal});
             }
@@ -914,7 +917,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, emailtemplate){
-                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+                const emailTemplateController = new EmailTemplateController();
 
                 return emailTemplateController.get({id: emailtemplate.id, fatal: get_fatal});
             }
@@ -928,7 +931,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, emailtemplate){
-                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+                const emailTemplateController = new EmailTemplateController();
 
                 return emailTemplateController.getShared({id: emailtemplate.id});
             }
@@ -954,7 +957,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, emailtemplates){
-                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+                const emailTemplateController = new EmailTemplateController();
 
                 return emailTemplateController.listByAccount({pagination: emailtemplates.pagination, fatal:list_fatal, search: emailtemplates.search});
             }
@@ -965,7 +968,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, emailtemplates){
-                const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+                const emailTemplateController = new EmailTemplateController();
 
                 return emailTemplateController.listShared({pagination: emailtemplates.pagination});
             }
@@ -978,7 +981,7 @@ module.exports.graphObj = new GraphQLObjectType({
             search: {type: entitySearchInputType.graphObj}
           },
           resolve: function(root, args){
-            const emailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+            const emailTemplateController = new EmailTemplateController();
 
             return emailTemplateController.listBySMTPProvider({smtpprovider: args.smtpprovider, pagination: args.pagination});
           }
@@ -1042,7 +1045,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, entityacl){
-                const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+                const entityACLController = new EntityACLController();
                 const {type, pagination, search} = entityacl;
 
                 return entityACLController.listByType({type, pagination, search, fatal:list_fatal});
@@ -1162,7 +1165,7 @@ module.exports.graphObj = new GraphQLObjectType({
               search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, eventhook){
-              const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+              const eventHookController = new EventHookController();
 
               return eventHookController.listByAccount({pagination: eventhook.pagination, fatal:list_fatal, search: eventhook.search});
             }
@@ -1174,7 +1177,7 @@ module.exports.graphObj = new GraphQLObjectType({
             search: {type: entitySearchInputType.graphObj}
           },
           resolve: function(root, eventhook){
-            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+            const eventHookController = new EventHookController();
 
             return eventHookController.listShared({pagination: eventhook.pagination});
           }
@@ -1245,7 +1248,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, customernote){
-                const customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+                const customerNoteController = new CustomerNoteController();
 
                 return customerNoteController.listByAccount({pagination: customernote.pagination, fatal:list_fatal, search: customernote.search});
             }
@@ -1389,7 +1392,7 @@ module.exports.graphObj = new GraphQLObjectType({
             }
           },
           resolve: function(root, eventhook){
-            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+            const eventHookController = new EventHookController();
 
             return eventHookController.get({id: eventhook.id, fatal: get_fatal});
           }
@@ -1403,7 +1406,7 @@ module.exports.graphObj = new GraphQLObjectType({
             }
           },
           resolve: function(root, eventhook){
-            const eventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+            const eventHookController = new EventHookController();
 
             return eventHookController.getShared({id: eventhook.id});
           }
@@ -1610,7 +1613,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, entityacl){
             	if(_.has(entityacl, 'entity')){
-                    const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+                    const entityACLController = new EntityACLController();
 
                     return entityACLController.get({id: entityacl.entity, fatal: get_fatal});
                 } else {

@@ -4,7 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class emailTemplateController extends entityController {
+module.exports = class EmailTemplateController extends entityController {
 
     constructor(){
 
@@ -55,4 +55,3 @@ class emailTemplateController extends entityController {
 
 }
 
-module.exports = new emailTemplateController();

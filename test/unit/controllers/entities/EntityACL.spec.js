@@ -62,7 +62,8 @@ describe('controllers/entities/EntityACL.js', () => {
                 }
             });
 
-            const entityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+            const EntityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
+            const entityACLController = new EntityACLController();
 
             return entityACLController.listByType({type: 'emailtemplate', pagination: {limit: 10}}).then(result => {
                 expect(result).to.deep.equal({

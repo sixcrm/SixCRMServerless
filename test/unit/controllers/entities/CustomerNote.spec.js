@@ -37,7 +37,8 @@ describe('controllers/CustomerNote.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-            let customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+            let CustomerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+            const customerNoteController = new CustomerNoteController();
 
             return customerNoteController.getCustomer(customer_note).then((result) => {
                 expect(result).to.equal('a_customer');
@@ -60,7 +61,8 @@ describe('controllers/CustomerNote.js', () => {
                 }
             });
 
-            let customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+            let CustomerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+            const customerNoteController = new CustomerNoteController();
 
             return customerNoteController.getUser(customer_note).then((result) => {
                 expect(result).to.equal('a_user');
@@ -98,7 +100,8 @@ describe('controllers/CustomerNote.js', () => {
                 }
             });
 
-            let customerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+            let CustomerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
+            const customerNoteController = new CustomerNoteController();
 
             return customerNoteController.listByCustomer(params).then((result) => {
                 expect(result).to.deep.equal({

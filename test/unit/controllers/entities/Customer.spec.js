@@ -410,8 +410,8 @@ describe('controllers/entities/Customer.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CustomerNote.js'), {
-                listByCustomer: ({customer}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CustomerNote.js'), class {
+                listByCustomer({customer}) {
                     expect(customer).to.equal(params.customer.id);
                     return Promise.resolve({ customernotes: customer_notes });
                 }

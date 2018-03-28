@@ -29,7 +29,7 @@ class SMTPProviderController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('emailTemplateController', 'listBySMTPProvider', {smtpprovider:id})
+        this.executeAssociatedEntityFunction('EmailTemplateController', 'listBySMTPProvider', {smtpprovider:id})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {

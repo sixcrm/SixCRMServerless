@@ -52,7 +52,8 @@ describe('controllers/EmailTemplate.js', () => {
                 }
             });
 
-            let emailTemplateController = global.SixCRM.routes.include('controllers','entities/EmailTemplate.js');
+            let EmailTemplateController = global.SixCRM.routes.include('controllers','entities/EmailTemplate.js');
+            const emailTemplateController = new EmailTemplateController();
 
             return emailTemplateController.listBySMTPProvider(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -76,7 +77,8 @@ describe('controllers/EmailTemplate.js', () => {
 
             delete emailTemplate.smtp_provider;
 
-            let emailTemplateController = global.SixCRM.routes.include('controllers','entities/EmailTemplate.js');
+            let EmailTemplateController = global.SixCRM.routes.include('controllers','entities/EmailTemplate.js');
+            const emailTemplateController = new EmailTemplateController();
 
             return emailTemplateController.getSMTPProvider(emailTemplate).then((result) => {
                 expect(result).to.deep.equal(null);
@@ -97,7 +99,8 @@ describe('controllers/EmailTemplate.js', () => {
                 }
             });
 
-            let emailTemplateController = global.SixCRM.routes.include('controllers','entities/EmailTemplate.js');
+            let EmailTemplateController = global.SixCRM.routes.include('controllers','entities/EmailTemplate.js');
+            const emailTemplateController = new EmailTemplateController();
 
             return emailTemplateController.getSMTPProvider(emailTemplate).then((result) => {
                 expect(result).to.deep.equal(smtp_provider);
