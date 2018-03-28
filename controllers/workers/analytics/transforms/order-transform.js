@@ -1,10 +1,11 @@
+const AnalyticsTransfrom = require('../analytics-transform');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-module.exports = class OrderTransform {
+module.exports = class OrderTransform extends AnalyticsTransfrom {
 
-	execute(record) {
+	transform(record) {
 
-		du.debug('OrderTransform.execute()');
+		du.debug('OrderTransform.transform()');
 
 		return Promise.resolve({
 			affiliate: record.context.session.affiliate,

@@ -1,10 +1,11 @@
+const AnalyticsTransfrom = require('../analytics-transform');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-module.exports = class LeadTransform {
+module.exports = class LeadTransform extends AnalyticsTransfrom {
 
-	execute(record) {
+	transform(record) {
 
-		du.debug('LeadTransform.execute()');
+		du.debug('LeadTransform.transform()');
 
 		return Promise.resolve({
 			affiliate: record.context.affiliates.affiliate,

@@ -1,10 +1,11 @@
+const AnalyticsTransfrom = require('../analytics-transform');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-module.exports = class RebillTransform {
+module.exports = class RebillTransform extends AnalyticsTransfrom {
 
-	execute(record) {
+	transform(record) {
 
-		du.debug('RebillTransform.execute()');
+		du.debug('RebillTransform.transform()');
 
 		return Promise.resolve({
 			id: record.context.transformedrebill.id_rebill,
