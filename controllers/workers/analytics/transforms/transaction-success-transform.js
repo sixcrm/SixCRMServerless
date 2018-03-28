@@ -1,10 +1,11 @@
+const AnalyticsTransfrom = require('../analytics-transform');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-module.exports = class TransactionSuccessTransform {
+module.exports = class TransactionSuccessTransform extends AnalyticsTransfrom {
 
-	execute(record) {
+	transform(record) {
 
-		du.debug('TransactionSuccessTransform.execute()');
+		du.debug('TransactionSuccessTransform.transform()');
 
 		return Promise.resolve(
 			record.context.registerresponse.parameters.store.transactions.map(t => {
