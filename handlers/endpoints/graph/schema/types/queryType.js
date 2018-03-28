@@ -170,6 +170,7 @@ const CreditCardController = global.SixCRM.routes.include('controllers', 'entiti
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 const AccountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+const AccessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 const CustomerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const EntityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
@@ -1196,7 +1197,7 @@ module.exports.graphObj = new GraphQLObjectType({
               search: {type: entitySearchInputType.graphObj}
           },
           resolve: function(root, accesskey){
-            const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
+            const accessKeyController = new AccessKeyController();
 
     	      return accessKeyController.listByAccount({pagination: accesskey.pagination, fatal:list_fatal, search: accesskey.search});
           }
@@ -1525,7 +1526,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, accesskey){
-                const accessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
+                const accessKeyController = new AccessKeyController();
 
                 return accessKeyController.get({id: accesskey.id, fatal: get_fatal});
             }
