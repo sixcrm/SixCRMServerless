@@ -1220,6 +1220,31 @@ describe('controllers/providers/notification/Notification', () => {
 
       });
 
+      it('successfully fails to set the read_at property (immutable type)', () => {
+
+        let notification_prototype = {
+          category: 'transaction',
+          type: 'alert'
+        };
+
+        let user_settings = getValidUserSetting();
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification_setting => {
+          notification_setting.receive = false;
+          return notification_setting;
+        });
+
+        let augmented_normalized_notification_settings = {
+          notification_categories:['transaction'],
+          notification_types:[]
+        };
+
+        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let updated_notification_prototype = notification_provider.setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings);
+
+        expect(updated_notification_prototype).not.to.have.property('read_at');
+
+      });
+
     });
 
     describe('getUserLanguagePreference', () => {

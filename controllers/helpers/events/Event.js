@@ -1,7 +1,7 @@
 const _ = require('underscore');
-// const fs = require('fs');
-// const uuid = require('uuid');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 
@@ -19,16 +19,13 @@ module.exports = class EventHelperController {
 
 		du.debug('Push Event');
 
-		// fs.writeFileSync(event.event_type + '-' + uuid.v4() + '.json', JSON.stringify(event), 'utf8');
+		let publish_parameters = this.createPublishParameters(event);
 
-		return this.snsutilities.publish(this.createPublishParameters(event));
+		return this.snsutilities.publish(publish_parameters);
 
 	}
 
-	createPublishParameters({
-		event_type,
-		context
-	}) {
+	createPublishParameters({event_type, context, message_attributes}) {
 
 		du.debug('Create Publish Parameters');
 
@@ -42,7 +39,7 @@ module.exports = class EventHelperController {
 			user_email = global.user;
 		}
 
-		return {
+		let return_object = {
 			Message: JSON.stringify({
 				user: user_email,
 				account: global.account,
@@ -51,6 +48,46 @@ module.exports = class EventHelperController {
 			}),
 			TopicArn: this.parseTopicARN()
 		};
+
+		return_object = this.addMessageAttributes({return_object: return_object, message_attributes: message_attributes});
+
+		return return_object;
+
+	}
+
+	addMessageAttributes({return_object, message_attributes}){
+
+		du.debug('Add Message Attributes');
+
+		if(_.isUndefined(message_attributes) || _.isNull(message_attributes)){
+
+			return return_object
+
+		}else if(_.isObject(message_attributes)){
+
+			objectutilities.map(message_attributes, (key) => {
+
+				if(!_.isString(key)){
+					eu.throwError('server', 'Message attribute key must be a string: '+key);
+				}
+
+				let value = message_attributes[key];
+
+				if(!_.has(value, 'DataType') || !_.isString(value.DataType)){
+					eu.throwError('server', 'Message attribute "'+key+'" DataType must be set and of type String.');
+				}
+
+				if(!_.has(value, 'StringValue') || !_.isString(value.StringValue)){
+					eu.throwError('server', 'Message attribute "'+key+'" DataType must be set and of type String.');
+				}
+
+			});
+
+			return_object.MessageAttributes = message_attributes;
+
+			return return_object;
+
+		}
 
 	}
 

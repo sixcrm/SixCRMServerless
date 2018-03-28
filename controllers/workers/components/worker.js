@@ -188,7 +188,7 @@ module.exports = class workerController {
 
     }
 
-    pushEvent({event_type, context}){
+    pushEvent({event_type, context, message_attributes}){
 
       du.debug('Push Event');
 
@@ -208,12 +208,21 @@ module.exports = class workerController {
         }
       }
 
+      if(_.isUndefined(message_attributes) || _.isNull(message_attributes)){
+        message_attributes = {
+          'event_type': {
+            DataType:'String',
+            StringValue: event_type
+          }
+        };
+      }
+
       if(!_.has(this, 'eventHelperController')){
         const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
         this.eventHelperController = new EventHelperController();
       }
 
-      this.eventHelperController.pushEvent({event_type: event_type, context: context});
+      this.eventHelperController.pushEvent({event_type: event_type, context: context, message_attributes: message_attributes});
 
       return true;
 
