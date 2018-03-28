@@ -90,12 +90,51 @@ class SNSDeployment extends AWSDeploymentUtilities {
 
 		return arrayutilities.reduce(subscription_file_contents.Subscriptions, (current, subscription) => {
 			return this.snsutilities.subscribe(subscription)
+			.then((result) => this.addSubscriptionAttributes(result, subscription))
 			.then(() => this.addSubscriptionPermissions(subscription))
 			.then((result) => {
 				du.debug(result);
 				return true;
 			});
 		}, Promise.resolve());
+
+	}
+
+	addSubscriptionAttributes(subscribe_result, subscription){
+
+		du.debug('Add Subscription Attributes');
+
+		if(!_.has(subscription, 'Attributes') || !arrayutilities.nonEmpty(subscription.Attributes)){
+			return Promise.resolve(true);
+		}
+
+		let subscription_attribute_promises = arrayutilities.map(subscription.Attributes, subscription_attribute => {
+
+			let parameters = {
+				AttributeName: subscription_attribute.AttributeName,
+				SubscriptionArn: this.getSubscriptionARN(subscribe_result),
+				AttributeValue: JSON.stringify(subscription_attribute.AttributeValue)
+			};
+
+			return this.snsutilities.setSubscriptionAttributes(parameters);
+
+		});
+
+		return Promise.all(subscription_attribute_promises).then(() => {
+			return true;
+		});
+
+	}
+
+	getSubscriptionARN(subscription_result){
+
+		du.debug('Get Subscription ARN');
+
+		if(_.has(subscription_result, 'SubscriptionArn')){
+			return subscription_result.SubscriptionArn;
+		}
+
+		eu.throwError('server', 'Unable to identify subscription ARN');
 
 	}
 

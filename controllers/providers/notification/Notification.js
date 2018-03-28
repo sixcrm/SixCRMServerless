@@ -324,7 +324,7 @@ class NotificationProvider {
 
     let six_notification_opt_in = this.getReceiveSettingForChannel('six', user_settings);
 
-    if(six_notification_opt_in == false){
+    if(six_notification_opt_in == false && !this.isImmutable(notification_prototype)){
 
       notification_prototype.read_at = timestamp.getISO8601();
 
@@ -333,8 +333,10 @@ class NotificationProvider {
       let notification_category_opt_in = this.getNotificationCategoryOptIn(notification_prototype.category, augmented_normalized_notification_settings);
       let notification_type_opt_in = this.getNotificationTypeOptIn(notification_prototype.type, augmented_normalized_notification_settings);
 
-      if(notification_type_opt_in == false || notification_category_opt_in == false){
+      if((notification_type_opt_in == false || notification_category_opt_in == false) && !this.isImmutable(notification_prototype)){
+
         notification_prototype.read_at = timestamp.getISO8601();
+
       }
 
     }
@@ -367,6 +369,17 @@ class NotificationProvider {
 
   }
 
+  isImmutable(notification_prototype){
+
+    du.debug('Is Immutable');
+
+    if(_.has(notification_prototype, 'type') && _.contains(this.immutable_types, notification_prototype.type)){
+      return true;
+    }
+
+    return false;
+
+  }
   getNotificationTypeOptIn(){
 
     du.debug('Get Notification Type Opt-In');
