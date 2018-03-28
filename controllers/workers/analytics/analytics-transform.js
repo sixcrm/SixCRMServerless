@@ -7,11 +7,11 @@ module.exports = class AnalyticsTransform {
 		du.debug('AnalyticsTransform.execute()');
 
 		return this.transform(record)
-		.catch((ex) => {
+			.catch((ex) => {
 
-			du.error('AnalyticsTransform.execute()', record, ex);
+				du.error('AnalyticsTransform.execute()', record, ex);
 
-		});
+			});
 
 	}
 
