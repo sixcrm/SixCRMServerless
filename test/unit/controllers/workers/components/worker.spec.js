@@ -142,6 +142,65 @@ describe('controllers/workers/components/worker.js', function () {
 
       });
 
+      it('Sets default message attributes', () => {
+
+        const expected_message_attributes = {
+          'event_type':{
+            DataType: 'String',
+            StringValue: 'test'
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
+          constructor(){}
+          pushEvent({event_type, message_attributes}){
+            expect(event_type).to.equal('test');
+            expect(message_attributes).to.deep.equal(expected_message_attributes);
+            return Promise.resolve({});
+          }
+        });
+
+        const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+        let workerController = new WorkerController();
+
+        let result = workerController.pushEvent({event_type: 'test'});
+        expect(result).to.equal(true);
+
+      });
+
+      it('Sets explicit message attributes', () => {
+
+        const message_attributes = {
+          'event_type':{
+            DataType: 'String',
+            StringValue: 'test2'
+          }
+        };
+
+        const expected_message_attributes = {
+          'event_type':{
+            DataType: 'String',
+            StringValue: 'test2'
+          }
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
+          constructor(){}
+          pushEvent({event_type, message_attributes}){
+            expect(event_type).to.equal('test');
+            expect(message_attributes).to.deep.equal(expected_message_attributes);
+            return Promise.resolve({});
+          }
+        });
+
+        const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+        let workerController = new WorkerController();
+
+        let result = workerController.pushEvent({event_type: 'test', message_attributes: message_attributes});
+        expect(result).to.equal(true);
+
+      });
+
     });
 
 });

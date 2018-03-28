@@ -5,6 +5,7 @@ let chai = require('chai');
 
 let expect = chai.expect;
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 describe('helpers/events/Event.spec.js', () => {
 
@@ -54,6 +55,8 @@ describe('helpers/events/Event.spec.js', () => {
 
   describe('createPublishParameters', () => {
 
+    PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+
     it('succesfully creates publishing parameters', () => {
 
       const EventHelperController = global.SixCRM.routes.include('helpers','events/Event.js');
@@ -78,6 +81,48 @@ describe('helpers/events/Event.spec.js', () => {
       expect(parameters).to.have.property('Message');
       expect(parameters).to.have.property('TopicArn');
       expect(parameters.Message).to.equal(JSON.stringify(expected_response));
+
+    });
+
+    it('succesfully creates publishing parameters with message attributes', () => {
+
+      const EventHelperController = global.SixCRM.routes.include('helpers','events/Event.js');
+      let eventHelperController = new EventHelperController();
+
+      let input_object = {
+        event_type: 'initial_order',
+        context: {
+          something: 'isnice'
+        },
+        message_attributes: {
+          'event_type':{
+            DataType: 'String',
+            StringValue: 'initial_order'
+          }
+        }
+      };
+
+      let expected_response = {
+        user: global.user.id,
+        account: global.account,
+        event_type: input_object.event_type,
+        context: input_object.context
+      };
+
+      let expected_message_attributes = {
+        'event_type': {
+          DataType: 'String',
+          StringValue: 'initial_order'
+        }
+      };
+
+      let parameters = eventHelperController.createPublishParameters(input_object);
+
+      expect(parameters).to.have.property('Message');
+      expect(parameters).to.have.property('TopicArn');
+      expect(parameters).to.have.property('MessageAttributes');
+      expect(parameters.Message).to.equal(JSON.stringify(expected_response));
+      expect(parameters.MessageAttributes).to.deep.equal(expected_message_attributes);
 
     });
 
