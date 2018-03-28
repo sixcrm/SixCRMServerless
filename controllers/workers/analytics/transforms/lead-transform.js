@@ -7,20 +7,29 @@ module.exports = class LeadTransform extends AnalyticsTransfrom {
 
 		du.debug('LeadTransform.transform()');
 
-		return Promise.resolve({
-			affiliate: record.context.affiliates.affiliate,
+		let result = {
 			account: record.context.campaign.account,
 			campaign: record.context.campaign.id,
-			cid: record.context.affiliates.cid,
 			datetime: record.context.session.updated_at,
 			session: record.context.session.id,
-			subaffiliate1: record.context.affiliates.subaffiliate_1,
-			subaffiliate2: record.context.affiliates.subaffiliate_2,
-			subaffiliate3: record.context.affiliates.subaffiliate_3,
-			subaffiliate4: record.context.affiliates.subaffiliate_4,
-			subaffiliate5: record.context.affiliates.subaffiliate_5,
 			type: record.event_type
-		});
+		};
+
+		if (record.context.affiliates) {
+
+			result = Object.assign({}, result, {
+				cid: record.context.affiliates.cid,
+				affiliate: record.context.affiliates.affiliate,
+				subaffiliate1: record.context.affiliates.subaffiliate_1,
+				subaffiliate2: record.context.affiliates.subaffiliate_2,
+				subaffiliate3: record.context.affiliates.subaffiliate_3,
+				subaffiliate4: record.context.affiliates.subaffiliate_4,
+				subaffiliate5: record.context.affiliates.subaffiliate_5
+			})
+
+		}
+
+		return Promise.resolve(result);
 
 	}
 
