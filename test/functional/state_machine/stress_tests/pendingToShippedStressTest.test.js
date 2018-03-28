@@ -11,10 +11,11 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timer = global.SixCRM.routes.include('lib', 'timer.js');
 const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
-const fulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
+const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
 const transactionController = global.SixCRM.routes.include('entities', 'Transaction.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
+const fulfillmentProviderController = new FulfillmentProviderController();
 const tab = '      ';
 
 const max_test_cases = randomutilities.randomInt(5, 9);

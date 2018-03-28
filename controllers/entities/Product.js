@@ -86,7 +86,7 @@ class ProductController extends entityController {
           return Promise.resolve(null); //fulfillment_provider is optional
       }
 
-      let fulfillment_provider =  this.executeAssociatedEntityFunction('fulfillmentProviderController', 'get', {id: product.fulfillment_provider});
+      let fulfillment_provider =  this.executeAssociatedEntityFunction('FulfillmentProviderController', 'get', {id: product.fulfillment_provider});
 
       return fulfillment_provider;
 

@@ -877,11 +877,11 @@ describe('controllers/providers/terminal/Terminal.js', function () {
       fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
       fulfillment_provider.provider.threepl_customer_id = 10;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+        get() {
           return Promise.resolve(fulfillment_provider);
-        },
-        sanitize:(input) => {
+        }
+        sanitize(input) {
           expect(input).to.equal(false);
         }
       });
@@ -941,11 +941,11 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
       //mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Test.js'), test_helper_mock);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+        get() {
           return Promise.resolve(fulfillment_provider);
-        },
-        sanitize:(input) => {
+        }
+        sanitize(input) {
           expect(input).to.equal(false);
         }
       });
@@ -1020,11 +1020,11 @@ describe('controllers/providers/terminal/Terminal.js', function () {
         }
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+        get() {
           return Promise.resolve(fulfillment_provider);
-        },
-        sanitize:(input) => {
+        }
+        sanitize(input) {
           expect(input).to.equal(false);
         }
       });

@@ -4,16 +4,10 @@ const chai = require("chai");
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-
-const FulfillController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
 
 function getValidTransactionProducts(ids, extended){
 
@@ -107,27 +101,13 @@ function getValidInstantiatedFulfillmentProvider(){
 
   let processor_response = getValidVendorResponse();
   let fulfillment_provider = class {
-    constructor({fulfillment_provider}){}
+    constructor(){}
     fulfill(){
       return Promise.resolve(processor_response);
     }
   }
 
   return new fulfillment_provider({});
-
-}
-
-function getValidProducts(product_ids){
-
-  let products = [];
-
-  if(_.isUndefined(product_ids)){
-    product_ids = [uuidV4(), uuidV4()];
-  }
-
-  return arrayutilities.map(product_ids, product_id => {
-    return MockEntities.getValidProduct(product_id)
-  });
 
 }
 
@@ -189,7 +169,6 @@ describe('helpers/shipment/Fulfill.js', () => {
 
   describe('hydrateAugmentedTransactionProducts', () => {
     it('successfully hydrates augmented transaction products', () => {
-      let augmented_transaction_products = getValidAugmentedTransactionProducts();
 
       let mock_shipment_utilities = class {
         constructor(){
@@ -275,32 +254,32 @@ describe('helpers/shipment/Fulfill.js', () => {
       let hydrated_augmented_transaction_products = getValidHydratedAugmentedTransactionProducts();
       let customer = getValidCustomer();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
-        get:({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+        get() {
           return Promise.resolve(fulfillment_provider);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(rebill);
         },
-        getSession: (rebill) => {
+        getSession: () => {
           return Promise.resolve(session);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        getCustomer:(session) => {
+        getCustomer:() => {
           return Promise.resolve(customer);
         },
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(session);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        getListByAccount:({ids}) => {
+        getListByAccount:() => {
           return Promise.resolve({products: products});
         },
         getResult:(result, field) => {

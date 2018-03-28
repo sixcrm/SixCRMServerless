@@ -130,6 +130,7 @@ const CustomerNoteController = global.SixCRM.routes.include('controllers', 'enti
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const EntityACLController = global.SixCRM.routes.include('controllers', 'entities/EntityACL.js');
 const EventHookController = global.SixCRM.routes.include('controllers', 'entities/EventHook.js');
+const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js')
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -775,7 +776,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 fulfillmentprovider: { type: fulfillmentProviderInputType.graphObj}
             },
             resolve: (value, fulfillmentprovider) => {
-                const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
+                const fulfillmentProviderController = new FulfillmentProviderController();
 
                 return fulfillmentProviderController.create({entity: fulfillmentprovider.fulfillmentprovider});
             }
@@ -787,7 +788,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 fulfillmentprovider: { type: fulfillmentProviderInputType.graphObj }
             },
             resolve: (value, fulfillmentprovider) => {
-                const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
+                const fulfillmentProviderController = new FulfillmentProviderController();
 
                 return fulfillmentProviderController.update({entity:fulfillmentprovider.fulfillmentprovider});
             }
@@ -803,7 +804,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, fulfillmentprovider) => {
                 var id = fulfillmentprovider.id;
-                const fulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
+                const fulfillmentProviderController = new FulfillmentProviderController();
 
                 return fulfillmentProviderController.delete({id:id});
             }

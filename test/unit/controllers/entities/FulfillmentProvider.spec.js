@@ -40,7 +40,8 @@ describe('controllers/FulfillmentProvider.js', () => {
                 }
             });
 
-            let fulfillmentProviderController = global.SixCRM.routes.include('controllers','entities/FulfillmentProvider.js');
+            let FulfillmentProviderController = global.SixCRM.routes.include('controllers','entities/FulfillmentProvider.js');
+            const fulfillmentProviderController = new FulfillmentProviderController();
 
             return fulfillmentProviderController.associatedEntitiesCheck({id : a_fulfillment_provider_id}).then((result) => {
                 expect(result).to.deep.equal([{
@@ -67,7 +68,8 @@ describe('controllers/FulfillmentProvider.js', () => {
                 }
             });
 
-            let fulfillmentProviderController = global.SixCRM.routes.include('controllers','entities/FulfillmentProvider.js');
+            let FulfillmentProviderController = global.SixCRM.routes.include('controllers','entities/FulfillmentProvider.js');
+            const fulfillmentProviderController = new FulfillmentProviderController();
 
             return fulfillmentProviderController.associatedEntitiesCheck({id : a_fulfillment_provider_id}).catch((error) => {
                 expect(error.message).to.equal('[500] Create Associated Entities expects the object parameter to have field "id"');

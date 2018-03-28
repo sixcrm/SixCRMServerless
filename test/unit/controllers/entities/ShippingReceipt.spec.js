@@ -24,8 +24,8 @@ describe('controllers/ShippingReceipt.js', () => {
                 fulfillment_provider: 'dummy_id'
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/FulfillmentProvider.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/FulfillmentProvider.js'), class {
+                get({id}) {
                     expect(id).to.equal(shipping_receipt.fulfillment_provider);
                     return Promise.resolve('a_fulfillment_provider')
                 }

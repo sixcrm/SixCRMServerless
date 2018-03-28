@@ -79,8 +79,8 @@ describe('controllers/Product.js', () => {
 
             let fulfillment_provider = getValidFulfillmentProvider();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/FulfillmentProvider.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/FulfillmentProvider.js'), class {
+                get({id}) {
                     expect(id).to.equal(product.fulfillment_provider);
                     return Promise.resolve(fulfillment_provider);
                 }

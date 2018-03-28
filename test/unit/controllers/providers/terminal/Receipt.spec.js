@@ -90,11 +90,11 @@ describe('/providers/terminal/Receipt.js', () => {
       let fulfillment_provider_reference = getValidFulfillmentProviderReference();
       let shipping_receipt_id = uuidV4();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+        get() {
           return Promise.resolve(fulfillment_provider);
-        },
-        sanitize: (input) => {
+        }
+        sanitize(input) {
             expect(input).to.equal(false);
         }
       });

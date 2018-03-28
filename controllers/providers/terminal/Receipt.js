@@ -4,7 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-
+const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class TerminalRecieptGenerator {
@@ -12,7 +12,7 @@ module.exports = class TerminalRecieptGenerator {
   constructor(){
 
     this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
-    this.fulfillmentProviderController =  global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
+    this.fulfillmentProviderController = new FulfillmentProviderController();
 
     const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 

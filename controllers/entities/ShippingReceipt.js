@@ -31,7 +31,7 @@ class ShippingReceiptController extends entityController {
 
       if(_.has(shipping_receipt, "fulfillment_provider")){
 
-        return this.executeAssociatedEntityFunction('fulfillmentProviderController', 'get', {id: shipping_receipt.fulfillment_provider});
+        return this.executeAssociatedEntityFunction('FulfillmentProviderController', 'get', {id: shipping_receipt.fulfillment_provider});
 
       }else{
 

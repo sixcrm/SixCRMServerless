@@ -6,7 +6,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class fulfillmentProviderController extends entityController {
+module.exports = class FulfillmentProviderController extends entityController {
 
     constructor(){
       super('fulfillmentprovider');
@@ -47,4 +47,3 @@ class fulfillmentProviderController extends entityController {
 
 }
 
-module.exports = new fulfillmentProviderController();

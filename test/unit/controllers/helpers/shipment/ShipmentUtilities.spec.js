@@ -7,7 +7,6 @@ const mockery = require('mockery');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
 function getValidShippingReceipt(){
   return MockEntities.getValidShippingReceipt();
@@ -107,12 +106,13 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 
       let fulfillment_provider = getValidFulfillmentProvider();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
-        get:({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+        get() {
           return Promise.resolve(fulfillment_provider);
         }
       });
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('fulfillmentproviderid', fulfillment_provider.id);
@@ -134,7 +134,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let products = getValidProducts();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        getListByAccount:({ids}) => {
+        getListByAccount:() => {
           return Promise.resolve({products: products});
         },
         getResult:(result, field) => {
@@ -150,6 +150,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
         }
       });
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -171,11 +172,12 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let customer = getValidCustomer();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        getCustomer:(session) => {
+        getCustomer:() => {
           return Promise.resolve(customer);
         }
       });
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('session', session);
@@ -201,11 +203,12 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(rebill);
         }
       });
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -221,6 +224,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 
       let augmented_transaction_products = getValidAugmentedTransactionProducts();
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -242,11 +246,12 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let rebill = getValidRebill();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(rebill);
         }
       });
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('rebillid', rebill.id);
@@ -268,11 +273,12 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let session = getValidSession();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(session);
         }
       });
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('rebill', rebill);
@@ -294,11 +300,12 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let customer = getValidCustomer();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        getCustomer:({session}) => {
+        getCustomer:() => {
           return Promise.resolve(customer);
         }
       });
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('session', session);
@@ -326,20 +333,21 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        getCustomer:({session}) => {
+        getCustomer:() => {
           return Promise.resolve(customer);
         },
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(session);
         }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:({id}) => {
+        get:() => {
           return Promise.resolve(rebill);
         }
       });
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
@@ -364,7 +372,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
         constructor(){
 
         }
-        updateTransactionProduct({id, transaction_product}){
+        updateTransactionProduct({transaction_product}){
           let transaction = getValidTransaction();
 
           transaction.products = [transaction_product]
@@ -374,6 +382,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('shippingreceipt', shipping_receipt);
@@ -393,7 +402,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let fulfillment_provider = getValidFulfillmentProvider();
 
       let mock_fulfillment_provider_class = class {
-        constructor({fulfillment_provider}){
+        constructor(){
 
         }
       }
@@ -402,6 +411,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 
       let mock_fulfillment_provider = new mock_fulfillment_provider_class({});
 
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       shipmentUtilitiesController.parameters.set('fulfillmentprovider', fulfillment_provider);
@@ -425,12 +435,14 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
         constructor(){
 
         }
-        issueReceipt({something}){
+        issueReceipt(){
           return Promise.resolve(shipping_receipt);
         }
       };
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Receipt.js'), mock_terminal_receipt_controller);
+
+      const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
       let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
       return shipmentUtilitiesController.issueReceipts().then(result => {
@@ -448,6 +460,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 
             let vendor_response_class = getValidVendorResponse();
 
+            const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
             let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
             shipmentUtilitiesController.parameters.set('vendorresponseclass', vendor_response_class);
@@ -469,6 +482,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 
             let vendor_response_class = getValidVendorResponse();
 
+            const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
             let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
             shipmentUtilitiesController.parameters.set('vendorresponseclass', vendor_response_class);
@@ -482,6 +496,7 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 
         it('returns false when response validation is not set', () => {
 
+            const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
             let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
             delete shipmentUtilitiesController.response_validation;
@@ -500,12 +515,13 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 
             let fulfillment_provider = getValidFulfillmentProvider();
 
-            mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), {
-                get:({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+                get() {
                     return Promise.resolve(fulfillment_provider);
                 }
             });
 
+            const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
             let shipmentUtilitiesController = new ShipmentUtilitiesController();
 
             shipmentUtilitiesController.parameters.set('shippingreceipt', shipping_receipt);
