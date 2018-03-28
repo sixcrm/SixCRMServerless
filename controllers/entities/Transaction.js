@@ -13,6 +13,8 @@ class transactionController extends entityController {
         super('transaction');
 
         this.search_fields = ['alias'];
+
+        this.sanitize(false);
     }
 
     //Technical Debt:  Finish
