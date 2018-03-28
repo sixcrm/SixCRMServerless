@@ -169,6 +169,7 @@ const BillController = global.SixCRM.routes.include('controllers', 'entities/Bil
 const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+const AccountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
 
 
 module.exports.graphObj = new GraphQLObjectType({
@@ -1528,7 +1529,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, account){
-                const accountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
+                const accountController = new AccountController();
 
                 return accountController.get({id: account.id, fatal: get_fatal});
             }
