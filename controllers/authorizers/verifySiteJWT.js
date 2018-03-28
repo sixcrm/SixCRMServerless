@@ -4,6 +4,8 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
+const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString.js');
+
 class verifySiteJWTController {
 
     constructor(){
@@ -39,7 +41,7 @@ class verifySiteJWTController {
         definition: this.parameter_definition
       });
 
-      this.userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString.js');
+      this.userSigningStringController = new UserSigningStringController();
 
     }
 

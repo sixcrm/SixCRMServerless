@@ -138,6 +138,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -1548,7 +1549,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersigningstring: { type: userSigningStringInputType.graphObj }
             },
             resolve: (value, usersigningstring) => {
-                const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
+                const userSigningStringController = new UserSigningStringController();
 
                 return userSigningStringController.create({entity: usersigningstring.usersigningstring});
             }
@@ -1560,7 +1561,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersigningstring: { type: userSigningStringInputType.graphObj }
             },
             resolve: (value, usersigningstring) => {
-                const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
+                const userSigningStringController = new UserSigningStringController();
 
                 return userSigningStringController.update({entity:usersigningstring.usersigningstring});
             }
@@ -1573,7 +1574,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersigningstring: { type: userSigningStringInputType.graphObj }
             },
             resolve: (value, usersigningstring) => {
-                const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
+                const userSigningStringController = new UserSigningStringController();
 
                 return userSigningStringController.store({entity: usersigningstring.usersigningstring});
             }
@@ -1588,7 +1589,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, usersigningstring) => {
-                const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
+                const userSigningStringController = new UserSigningStringController();
 
                 return userSigningStringController.delete({id: usersigningstring.id});
             }

@@ -182,6 +182,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -1677,7 +1678,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (root, user_signing_string) => {
-                const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
+                const userSigningStringController = new UserSigningStringController();
 
                 return userSigningStringController.get({id: user_signing_string.id, fatal: get_fatal});
             }
@@ -1690,7 +1691,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, user_signing_strings) {
-              const userSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
+              const userSigningStringController = new UserSigningStringController();
 
               return userSigningStringController.listByUser({pagination: user_signing_strings.pagination, fatal:list_fatal, search: user_signing_strings.search});
             }

@@ -4,6 +4,8 @@ const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
+const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
+
 function getValidUserSigningString() {
     return MockEntities.getValidUserSigningString()
 }
@@ -31,14 +33,14 @@ describe('controllers/UserSigningString.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('create', 'usersigningstring');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('usersigningstrings');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_signing_string.id);
                     return Promise.resolve([]);
                 },
-                saveRecord: (tableName, entity, callback) => {
+                saveRecord: (tableName, entity) => {
                     expect(tableName).to.equal('usersigningstrings');
                     expect(entity).to.deep.equal(user_signing_string);
                     return Promise.resolve(entity);
@@ -49,7 +51,7 @@ describe('controllers/UserSigningString.js', () => {
                 constructor(){
 
                 }
-                addToSearchIndex(entity){
+                addToSearchIndex(){
                     return Promise.resolve(true);
                 }
             };
@@ -62,7 +64,7 @@ describe('controllers/UserSigningString.js', () => {
                 }
             });
 
-            let userSigningStringController = global.SixCRM.routes.include('controllers','entities/UserSigningString.js');
+            let userSigningStringController = new UserSigningStringController();
 
             return userSigningStringController.create({entity: user_signing_string}).then((result) => {
                 expect(result).to.deep.equal(user_signing_string);
@@ -78,14 +80,14 @@ describe('controllers/UserSigningString.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('create', 'usersigningstring');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('usersigningstrings');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_signing_string.id);
                     return Promise.resolve([]);
                 },
-                saveRecord: (tableName, entity, callback) => {
+                saveRecord: (tableName, entity) => {
                     expect(tableName).to.equal('usersigningstrings');
                     expect(entity).to.deep.equal(user_signing_string);
                     return Promise.resolve(entity);
@@ -95,7 +97,7 @@ describe('controllers/UserSigningString.js', () => {
             let mock_preindexing_helper = class {
                 constructor(){}
 
-                addToSearchIndex(entity){
+                addToSearchIndex(){
                     return Promise.resolve(true);
                 }
             };
@@ -108,7 +110,7 @@ describe('controllers/UserSigningString.js', () => {
                 }
             });
 
-            let userSigningStringController = global.SixCRM.routes.include('controllers','entities/UserSigningString.js');
+            let userSigningStringController = new UserSigningStringController();
 
             return userSigningStringController.create({entity: user_signing_string}).then((result) => {
                 expect(result).to.deep.equal(user_signing_string);
@@ -124,7 +126,7 @@ describe('controllers/UserSigningString.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('*', 'usersigningstring');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('usersigningstrings');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -134,7 +136,7 @@ describe('controllers/UserSigningString.js', () => {
                         Items: [user_signing_string]
                     });
                 },
-                saveRecord: (tableName, entity, callback) => {
+                saveRecord: (tableName, entity) => {
                     expect(tableName).to.equal('usersigningstrings');
                     expect(entity).to.deep.equal(user_signing_string);
                     return Promise.resolve(entity);
@@ -144,7 +146,7 @@ describe('controllers/UserSigningString.js', () => {
             let mock_preindexing_helper = class {
                 constructor(){}
 
-                addToSearchIndex(entity){
+                addToSearchIndex(){
                     return Promise.resolve(true);
                 }
             };
@@ -157,7 +159,7 @@ describe('controllers/UserSigningString.js', () => {
                 }
             });
 
-            let userSigningStringController = global.SixCRM.routes.include('controllers','entities/UserSigningString.js');
+            let userSigningStringController = new UserSigningStringController();
 
             return userSigningStringController.update({entity: user_signing_string}).then((result) => {
                 expect(result).to.deep.equal(user_signing_string);

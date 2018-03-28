@@ -5,7 +5,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 //Technical Debt: Override the list method
-class userSigningStringController extends entityController {
+class UserSigningStringController extends entityController {
 
   constructor() {
       super('usersigningstring');
@@ -43,4 +43,4 @@ class userSigningStringController extends entityController {
 
 }
 
-module.exports = new userSigningStringController();
+module.exports = UserSigningStringController;

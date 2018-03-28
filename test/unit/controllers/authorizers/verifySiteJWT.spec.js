@@ -3,7 +3,6 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
 const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
@@ -87,8 +86,6 @@ setEnvironmentVariables();
 
 describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
-  let permissionedController;
-
   before(() => {
       mockery.enable({
           useCleanCache: true,
@@ -110,7 +107,7 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
     it('successfully executes the constructor', () => {
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
 
     })
 
@@ -248,17 +245,13 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
     it('successfully retrieves user signing strings', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSigningString.js'), {
-        listByUser: ({user}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSigningString.js'), class {
+        listByUser() {
           return Promise.resolve({usersigningstrings: getValidUserSigningStrings()});
-        },
-        disableACLs:() => {
-
-        },
-        enableACLs:() => {
-
-        },
-        getResult: (result, field) => {
+        }
+        disableACLs(){}
+        enableACLs(){}
+        getResult(result, field) {
 
           du.debug('Get Result');
 
@@ -306,17 +299,13 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
     it('successfully authorizes a valid self-signed JWT', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSigningString.js'), {
-        listByUser: ({user}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSigningString.js'), class {
+        listByUser() {
           return Promise.resolve({usersigningstrings: getValidUserSigningStrings()});
-        },
-        disableACLs:() => {
-
-        },
-        enableACLs:() => {
-
-        },
-        getResult: (result, field) => {
+        }
+        disableACLs(){}
+        enableACLs(){}
+        getResult(result, field){
 
           du.debug('Get Result');
 
