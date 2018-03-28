@@ -4,7 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class merchantProviderGroupAssociationController extends entityController {
+module.exports = class MerchantProviderGroupAssociationController extends entityController {
 
   constructor(){
 
@@ -81,4 +81,3 @@ class merchantProviderGroupAssociationController extends entityController {
 
 }
 
-module.exports = new merchantProviderGroupAssociationController();

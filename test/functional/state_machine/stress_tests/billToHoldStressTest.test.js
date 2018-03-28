@@ -15,7 +15,7 @@ const BinController = global.SixCRM.routes.include('entities', 'Bin.js');
 const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
 const MerchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
 const MerchantProviderGroupController = global.SixCRM.routes.include('entities', 'MerchantProviderGroup.js');
-const merchantProviderGroupAssociationController = global.SixCRM.routes.include('entities', 'MerchantProviderGroupAssociation.js');
+const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('entities', 'MerchantProviderGroupAssociation.js');
 const sessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
@@ -25,6 +25,7 @@ const creditCardController = new CreditCardController();
 const customerController = new CustomerController();
 const merchantProviderController = new MerchantProviderController();
 const merchantProviderGroupController = new MerchantProviderGroupController();
+const merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
 
 const max_test_cases = randomutilities.randomInt(10, 20);
 

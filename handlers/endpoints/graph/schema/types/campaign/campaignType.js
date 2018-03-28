@@ -6,6 +6,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 var CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 
 let emailTemplateType = require('../emailtemplate/emailTemplateType');
 let affiliateAllowDenyType = require('../affiliate/affiliateAllowDenyType');
@@ -72,7 +73,7 @@ module.exports.graphObj = new GraphQLObjectType({
         type: new GraphQLList(merchantprovidergroupAssociationType.graphObj),
         description: 'The merchant provider group association list on this campaign.',
         resolve: (campaign) => {
-          const merchantprovidergroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+          const merchantprovidergroupAssociationController = new MerchantProviderGroupAssociationController();
 
           return merchantprovidergroupAssociationController.listByEntitiesAndCampaign({entities: [campaign.id], campaign: campaign})
             .then((result) => result.merchantprovidergroupassociations);

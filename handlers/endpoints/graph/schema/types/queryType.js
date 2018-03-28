@@ -177,6 +177,7 @@ const EventHookController = global.SixCRM.routes.include('controllers', 'entitie
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -1275,7 +1276,7 @@ module.exports.graphObj = new GraphQLObjectType({
               search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, merchantprovidergroupassociation){
-              const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+              const merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
 
               return merchantProviderGroupAssociationController.listByAccount({pagination: merchantprovidergroupassociation.pagination, fatal:list_fatal, search: merchantprovidergroupassociation.search});
             }
@@ -1288,7 +1289,7 @@ module.exports.graphObj = new GraphQLObjectType({
             search: {type: entitySearchInputType.graphObj}
           },
           resolve: function(root, merchantprovidergroupassociation){
-            const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+            const merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
 
             return merchantProviderGroupAssociationController.listByEntity({entity: merchantprovidergroupassociation.entity, pagination: merchantprovidergroupassociation.pagination, fatal:list_fatal, search: merchantprovidergroupassociation.search});
           }
@@ -1437,7 +1438,7 @@ module.exports.graphObj = new GraphQLObjectType({
             }
           },
           resolve: function(root, merchantprovidergroupassociation){
-            const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+            const merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
 
             return merchantProviderGroupAssociationController.get({id: merchantprovidergroupassociation.id, fatal: get_fatal});
           }

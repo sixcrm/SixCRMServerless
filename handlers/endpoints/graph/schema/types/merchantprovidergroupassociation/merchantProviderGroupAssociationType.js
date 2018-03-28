@@ -6,7 +6,8 @@ const GraphQLString = require('graphql').GraphQLString;
 let campaignType = require('../campaign/campaignType');
 let merchantprovidergroupType = require('../merchantprovidergroup/merchantProviderGroupType');
 
-const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+const merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'MerchantProviderGroupAssociation',

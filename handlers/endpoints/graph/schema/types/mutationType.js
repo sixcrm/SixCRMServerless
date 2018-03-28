@@ -133,6 +133,7 @@ const EventHookController = global.SixCRM.routes.include('controllers', 'entitie
 const FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'entities/FulfillmentProvider.js');
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
+const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -1033,7 +1034,7 @@ module.exports.graphObj = new GraphQLObjectType({
             }
           },
           resolve: (value, merchantprovidergroupassociation) => {
-            const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+            const merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
 
             return merchantProviderGroupAssociationController.create({
               entity: merchantprovidergroupassociation.merchantprovidergroupassociation
@@ -1049,7 +1050,7 @@ module.exports.graphObj = new GraphQLObjectType({
             }
           },
           resolve: (value, merchantprovidergroupassociation) => {
-            const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+            const merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
 
             return merchantProviderGroupAssociationController.update({entity:merchantprovidergroupassociation.merchantprovidergroupassociation});
           }
@@ -1065,7 +1066,7 @@ module.exports.graphObj = new GraphQLObjectType({
           },
           resolve: (value, merchantprovidergroupassociation) => {
             let id = merchantprovidergroupassociation.id;
-            const merchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+            const merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
 
             return merchantProviderGroupAssociationController.delete({id:id});
           }
