@@ -4,6 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class EventHelperController {
 
@@ -44,6 +45,7 @@ module.exports = class EventHelperController {
 				user: user_email,
 				account: global.account,
 				event_type: event_type,
+				datetime: timestamp.getISO8601(),
 				context: context
 			}),
 			TopicArn: this.parseTopicARN()

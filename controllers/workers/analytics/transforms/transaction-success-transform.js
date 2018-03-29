@@ -26,7 +26,7 @@ module.exports = class TransactionSuccessTransform extends AnalyticsTransfrom {
 					subaffiliate2: record.context.session.subaffiliate_2,
 					subaffiliate3: record.context.session.subaffiliate_3,
 					subaffiliate4: record.context.session.subaffiliate_4,
-					subaffiliate5: record.context.session.subaffiliate_5,
+					subaffiliate5: record.context.session.subaffiliate_5
 				};
 			}));
 

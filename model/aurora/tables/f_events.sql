@@ -1,11 +1,11 @@
 DROP TABLE IF EXISTS analytics.f_events;
 
 CREATE TABLE IF NOT EXISTS analytics.f_events (
-    session VARCHAR(36) NOT NULL,
     "type" analytics.d_event_type,
     datetime TIMESTAMP NOT NULL,
     account VARCHAR(36) NOT NULL,
     campaign VARCHAR(36) NOT NULL,
+    session VARCHAR(36),
     product_schedule VARCHAR(36),
     affiliate VARCHAR(36),
     subaffiliate_1 VARCHAR(36),
