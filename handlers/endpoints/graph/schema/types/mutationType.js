@@ -138,6 +138,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
@@ -1507,7 +1508,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersetting: { type: userSettingInputType.graphObj }
             },
             resolve: (value, usersetting) => {
-                const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
+                const userSettingController = new UserSettingController();
 
                 return userSettingController.create({entity: usersetting.usersetting});
             }
@@ -1519,7 +1520,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersetting: { type: userSettingInputType.graphObj }
             },
             resolve: (value, usersetting) => {
-                const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
+                const userSettingController = new UserSettingController();
 
                 return userSettingController.update({entity:usersetting.usersetting});
             }
@@ -1531,7 +1532,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 usersetting: { type: userSettingInputType.graphObj }
             },
             resolve: (value, usersetting) => {
-                const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
+                const userSettingController = new UserSettingController();
 
                 return userSettingController.store({entity: usersetting.usersetting});
             }
@@ -1546,7 +1547,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, usersetting) => {
-                const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
+                const userSettingController = new UserSettingController();
 
                 return userSettingController.delete({id: usersetting.id});
             }

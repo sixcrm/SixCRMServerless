@@ -820,8 +820,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSetting.js'), {
-          get:() => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSetting.js'), class {
+          get() {
             return Promise.resolve(user_setting);
           }
         });
@@ -941,8 +941,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSetting.js'), {
-          get:() => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSetting.js'), class {
+          get(){
             return Promise.resolve(user_setting);
           }
         });
@@ -997,8 +997,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSetting.js'), {
-          get:() => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSetting.js'), class {
+          get() {
             return Promise.resolve(user_setting);
           }
         });
@@ -1050,8 +1050,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSetting.js'), {
-          get:() => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSetting.js'), class {
+          get() {
             return Promise.resolve(user_setting);
           }
         });

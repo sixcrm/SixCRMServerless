@@ -606,8 +606,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserSetting.js'), {
-                create: ({entity}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserSetting.js'), class {
+                create({entity}) {
                     expect(entity.id).to.equal(user_id);
                     expect(entity.timezone).to.equal('America/Los_Angeles');
                     expect(entity.notifications).to.deep.equal([
@@ -686,8 +686,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserSetting.js'), {
-                create: ({entity}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserSetting.js'), class {
+                create({entity}) {
                     expect(entity.id).to.equal(user_id);
                     expect(entity.timezone).to.equal('America/Los_Angeles');
                     expect(entity.notifications).to.deep.equal([

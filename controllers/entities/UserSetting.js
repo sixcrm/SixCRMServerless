@@ -3,7 +3,7 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 
 //Technical Debt: Override the list method
 //Technical Debt: May need to embelish this to account for multiple settings for multiple accounts
-class userSettingController extends entityController {
+class UserSettingController extends entityController {
 
     constructor() {
         super('usersetting');
@@ -11,4 +11,4 @@ class userSettingController extends entityController {
 
 }
 
-module.exports = new userSettingController();
+module.exports = UserSettingController;

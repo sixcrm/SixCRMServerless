@@ -182,6 +182,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
@@ -1668,13 +1669,10 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (root, usersetting) => {
                 //Technical Debt:  This logic belongs in a controller.
+                const userSettingController = new UserSettingController();
                 if (_.has(usersetting, 'user')) {
-                    const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
-
                     return userSettingController.get({id: usersetting.user, primary_key: 'user', fatal: get_fatal});
                 } else {
-                    const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
-
                     return userSettingController.get({id: usersetting.id, primary_key: 'id', fatal: get_fatal});
                 }
             }
@@ -1687,7 +1685,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, user_setting) {
-                const userSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
+                const userSettingController = new UserSettingController();
 
                 return userSettingController.list({pagination: user_setting.pagination, fatal:list_fatal});
             }
