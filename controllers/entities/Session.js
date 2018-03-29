@@ -225,7 +225,7 @@ class sessionController extends entityController {
 
       du.debug('List Transactions');
 
-      return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session})
+      return this.executeAssociatedEntityFunction('RebillController', 'listBySession', {session: session})
       .then((session_rebills) => {
 
         if(_.has(session_rebills, 'rebills') && arrayutilities.nonEmpty(session_rebills.rebills)){
@@ -290,7 +290,7 @@ class sessionController extends entityController {
 
       du.debug('List Rebills');
 
-      return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session})
+      return this.executeAssociatedEntityFunction('RebillController', 'listBySession', {session: session})
       .then(rebills => this.getResult(rebills, 'rebills'));
 
     }

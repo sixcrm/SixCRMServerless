@@ -141,6 +141,7 @@ const AffiliateController = global.SixCRM.routes.include('controllers', 'entitie
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -1185,7 +1186,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 rebill: { type: rebillInputType.graphObj }
             },
             resolve: (value, rebill) => {
-                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+                const rebillController = new RebillController();
 
                 return rebillController.create({entity: rebill.rebill});
             }
@@ -1197,7 +1198,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 rebill: { type: rebillInputType.graphObj }
             },
             resolve: (value, rebill) => {
-                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+                const rebillController = new RebillController();
 
                 return rebillController.update({entity:rebill.rebill});
             }
@@ -1213,7 +1214,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, rebill) => {
                 var id = rebill.id;
-                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+                const rebillController = new RebillController();
 
                 return rebillController.delete({id:id});
             }

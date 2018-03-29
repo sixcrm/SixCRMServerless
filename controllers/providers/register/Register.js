@@ -8,11 +8,12 @@ const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
-const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js')
 const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
 const MerchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
+const rebillController = new RebillController();
 
 module.exports = class Register extends RegisterUtilities {
 
@@ -82,7 +83,7 @@ module.exports = class Register extends RegisterUtilities {
 
     this.customerController = new CustomerController();
     this.creditCardController = new CreditCardController();
-    this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+    this.rebillController = new RebillController();
 
     this.merchantProviderController.sanitize(false);
     this.customerController.sanitize(false);

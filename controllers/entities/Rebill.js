@@ -10,7 +10,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
-class rebillController extends entityController {
+module.exports = class RebillController extends entityController {
 
     constructor(){
 
@@ -209,4 +209,3 @@ class rebillController extends entityController {
 
 }
 
-module.exports = new rebillController();

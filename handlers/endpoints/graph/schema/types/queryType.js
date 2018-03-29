@@ -185,6 +185,7 @@ const AffiliateController = global.SixCRM.routes.include('controllers', 'entitie
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -420,7 +421,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, args){
-                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+                const rebillController = new RebillController();
 
                 return rebillController.listByState(
                   {
@@ -873,7 +874,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, rebill){
-                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+                const rebillController = new RebillController();
 
                 return rebillController.get({id: rebill.id, fatal: get_fatal});
             }
@@ -1084,7 +1085,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, rebill){
-                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+                const rebillController = new RebillController();
 
       	       return rebillController.listByAccount({pagination: rebill.pagination, fatal:list_fatal, search: rebill.search});
             }
@@ -1096,7 +1097,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, rebill){
-                const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+                const rebillController = new RebillController();
 
                 return rebillController.getPendingRebills({pagination: rebill.pagination, fatal:list_fatal, search: rebill.search});
             }

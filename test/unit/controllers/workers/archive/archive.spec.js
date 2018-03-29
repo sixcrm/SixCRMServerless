@@ -1,15 +1,8 @@
 'use strict'
-const _ = require('underscore');
 const chai = require("chai");
-const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 function getValidMessage(){
@@ -110,8 +103,8 @@ describe('controllers/workers/archive', function () {
         let transactions = getValidTransactions();
         let rebill = getValidRebill();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
           }
         });
@@ -138,7 +131,7 @@ describe('controllers/workers/archive', function () {
         let products = getValidProductsForArchive();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
@@ -229,13 +222,13 @@ describe('controllers/workers/archive', function () {
         products[1].product.ship = false;
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
           }
         });
@@ -263,13 +256,13 @@ describe('controllers/workers/archive', function () {
         });
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
           }
         });
@@ -318,13 +311,13 @@ describe('controllers/workers/archive', function () {
         });
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
           }
         });
@@ -354,13 +347,13 @@ describe('controllers/workers/archive', function () {
         });
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
           }
         });
@@ -479,16 +472,16 @@ describe('controllers/workers/archive', function () {
         });
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
-          },
-          get: ({id}) => {
+          }
+          get() {
             return Promise.resolve(rebill);
           }
         });
@@ -520,16 +513,16 @@ describe('controllers/workers/archive', function () {
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
-          },
-          get: ({id}) => {
+          }
+          get() {
             return Promise.resolve(rebill);
           }
         });
@@ -556,16 +549,16 @@ describe('controllers/workers/archive', function () {
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
-          },
-          get: ({id}) => {
+          }
+          get() {
             return Promise.resolve(rebill);
           }
         });
@@ -595,16 +588,16 @@ describe('controllers/workers/archive', function () {
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
-          },
-          get: ({id}) => {
+          }
+          get() {
             return Promise.resolve(rebill);
           }
         });
@@ -632,16 +625,16 @@ describe('controllers/workers/archive', function () {
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
-          },
-          get: ({id}) => {
+          }
+          get() {
             return Promise.resolve(rebill);
           }
         });
@@ -667,16 +660,16 @@ describe('controllers/workers/archive', function () {
         let transactions = getValidTransactions();
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          getProducts: (transaction) => {
+          getProducts: () => {
             return Promise.resolve(products);
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listTransactions: (rebill) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listTransactions() {
               return Promise.resolve({ transactions: transactions });
-          },
-          get: ({id}) => {
+          }
+          get() {
             return Promise.resolve(rebill);
           }
         });

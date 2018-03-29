@@ -285,8 +285,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });
@@ -457,8 +457,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });
@@ -634,8 +634,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });
@@ -1459,8 +1459,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        update() {
             return Promise.resolve(true);
         }
       });
@@ -1894,8 +1894,8 @@ describe('createOrder', function () {
 
 			event.reverse_on_complete = rebill.id;
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-				get:({id}) => {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get({id}) {
 					expect(id).to.equal(rebill.id);
 					return Promise.resolve(rebill);
 				}
@@ -1934,7 +1934,6 @@ describe('createOrder', function () {
 			const previous_rebill = getValidRebill();
 			const transactions = getValidTransactions();
 			const reversed_transactions = [];
-			const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), {
 				updateUpsell({rebill: _rebill, upsell}) {
@@ -1944,11 +1943,11 @@ describe('createOrder', function () {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
 				listTransactions(rebill) {
 					expect(rebill).to.equal(previous_rebill);
 					return Promise.resolve({transactions});
-				},
+				}
 				getResult(result, field) {
 					return Promise.resolve(result[field]);
 				}
@@ -1961,6 +1960,7 @@ describe('createOrder', function () {
 				}
 			});
 
+            const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			createOrderController.parameters.set('rebill', rebill);
 			createOrderController.parameters.set('previous_rebill', previous_rebill);
 
@@ -2021,8 +2021,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });

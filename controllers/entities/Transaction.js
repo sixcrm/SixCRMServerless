@@ -61,7 +61,7 @@ class transactionController extends entityController {
 
       if(_.has(transaction, 'rebill')){
 
-        return this.executeAssociatedEntityFunction('rebillController', 'get', {id: this.getID(transaction.rebill)});
+        return this.executeAssociatedEntityFunction('RebillController', 'get', {id: this.getID(transaction.rebill)});
 
       }
 
@@ -250,7 +250,7 @@ class transactionController extends entityController {
 
         du.debug('Put Transaction');
 
-        return this.executeAssociatedEntityFunction('rebillController', 'get', {id: params.rebill}).then((rebill) => {
+        return this.executeAssociatedEntityFunction('RebillController', 'get', {id: params.rebill}).then((rebill) => {
 
           params.rebill = rebill;
 
@@ -379,7 +379,7 @@ class transactionController extends entityController {
 
           //Technical Debt:  Use a list method.
           let rebill_promises = arrayutilities.map(sessions, (session) => {
-            return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session}).then(rebills => this.getResult(rebills, 'rebills'))
+            return this.executeAssociatedEntityFunction('RebillController', 'listBySession', {session: session}).then(rebills => this.getResult(rebills, 'rebills'))
           });
 
           return Promise.all(rebill_promises).then((rebill_lists) => {

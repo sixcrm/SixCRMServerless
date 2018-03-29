@@ -192,8 +192,8 @@ describe('controllers/Analytics.js', () => {
       };
 
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-        getRebillsBilledAfter: (after) => {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+        getRebillsBilledAfter(after) {
           expect(timestamp.getSecondsDifference(after)).to.be.below(2);
 
           return Promise.resolve([{amount: 5.1}, {amount: 6.24}]);

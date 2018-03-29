@@ -8,7 +8,7 @@ const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 function getValidRebill(){
   return MockEntities.getValidRebill();
-};
+}
 
 function getValidMessage(id){
   return MockEntities.getValidMessage(id);
@@ -50,8 +50,8 @@ describe('workers/forwardRebillMessage', () => {
 
       const compound_worker_response_object = getRebillResponseObject('success');
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        get() {
           return Promise.resolve(rebill);
         }
       });
@@ -92,8 +92,8 @@ describe('workers/forwardRebillMessage', () => {
 
       let rebill = getValidRebill();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        get() {
           return Promise.resolve(rebill);
         }
       });
@@ -138,8 +138,8 @@ describe('workers/forwardRebillMessage', () => {
 
       const compound_worker_response_object = getRebillResponseObject('error');
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        get() {
           return Promise.resolve(rebill);
         }
       });

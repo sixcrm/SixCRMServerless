@@ -7,7 +7,8 @@ const permissionutilities = global.SixCRM.routes.include('lib', 'permission-util
 const DynamoDbDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const rebillController = new RebillController();
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 describe('shippedToDelivered', () => {

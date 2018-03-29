@@ -154,8 +154,8 @@ describe('controllers/workers/processBilling', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-				get: () => {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get() {
 					return Promise.resolve(rebill)
 				}
 			});

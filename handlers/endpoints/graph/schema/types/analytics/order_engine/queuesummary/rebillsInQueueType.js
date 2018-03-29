@@ -4,7 +4,7 @@ const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const rebillType = require('../../../rebill/rebillType');
 const analyticsPaginationType = require('./../../paginationType');
-
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'RebillsInQueueType',
@@ -14,7 +14,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLList(rebillType.graphObj),
             description: 'The rebills',
             resolve: (analytics_response) => {
-                let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+                let rebillController = new RebillController();
 
                 if (!analytics_response || !analytics_response.summary) {
                     return Promise.resolve([]);

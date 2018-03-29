@@ -1,12 +1,9 @@
 'use strict'
 
-const fs = require('fs');
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
-
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 function getValidSpoofedRebillMessage(){
@@ -72,8 +69,8 @@ describe('controllers/workers/pickRebills.js', function () {
 
         let rebill = getValidRebill();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          get:({id}) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          get() {
             return Promise.resolve(rebill);
           }
         });

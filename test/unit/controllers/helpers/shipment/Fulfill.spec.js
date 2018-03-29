@@ -260,11 +260,11 @@ describe('helpers/shipment/Fulfill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        get() {
           return Promise.resolve(rebill);
-        },
-        getSession: () => {
+        }
+        getSession() {
           return Promise.resolve(session);
         }
       });

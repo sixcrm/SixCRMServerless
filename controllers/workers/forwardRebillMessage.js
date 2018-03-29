@@ -3,6 +3,7 @@ const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 const forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports = class forwardRebillMessageController extends forwardMessageController {
 
@@ -53,7 +54,7 @@ module.exports = class forwardRebillMessageController extends forwardMessageCont
       }
 
       if(!_.has(this, 'rebillController')){
-        this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        this.rebillController = new RebillController();
       }
 
       return this.rebillController.get({id: rebill_id})

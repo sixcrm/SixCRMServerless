@@ -854,8 +854,8 @@ describe('controllers/providers/Register.js', () => {
           return Promise.resolve(true);
         }
       });
-       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-           get: ({id}) => {
+       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+           get({id}) {
                expect(id).to.equal(transaction.rebill);
                return Promise.resolve(rebill);
            }
@@ -1190,11 +1190,11 @@ describe('controllers/providers/Register.js', () => {
 
      it('successfully acquires rebill properties', () => {
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-          listProductSchedules: () => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+          listProductSchedules() {
             return Promise.resolve(getValidProductSchedules());
-          },
-          getParentSession: () => {
+          }
+          getParentSession() {
             return Promise.resolve(getValidParentSession());
           }
         });
@@ -1269,11 +1269,11 @@ describe('controllers/providers/Register.js', () => {
 
      it('successfully validates a rebill', () => {
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-          listProductSchedules: () => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+          listProductSchedules() {
             return Promise.resolve(getValidProductSchedules());
-          },
-          getParentSession: () => {
+          }
+          getParentSession() {
             return Promise.resolve(getValidParentSession());
           }
         });
@@ -1505,11 +1505,11 @@ describe('controllers/providers/Register.js', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          listProductSchedules: () => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          listProductSchedules() {
             return Promise.resolve(getValidProductSchedules());
-          },
-          getParentSession: () => {
+          }
+          getParentSession() {
             return Promise.resolve(getValidParentSession())
           }
         });
@@ -1690,17 +1690,17 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          get: () => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          get() {
             return Promise.resolve(getValidRebillWithMerchantProvider())
-          },
-          getMerchantProvider: () => {
+          }
+          getMerchantProvider() {
             return Promise.resolve(getValidMerchantProvider())
-          },
-          getParentSession: () => {
+          }
+          getParentSession() {
             return Promise.resolve(getValidParentSession());
-          },
-          listProductSchedules: () => {
+          }
+          listProductSchedules() {
             return Promise.resolve(getValidProductSchedules());
           }
         });
@@ -1839,17 +1839,17 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-          get: () => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+          get() {
             return Promise.resolve(getValidRebillWithMerchantProvider())
-          },
-          getMerchantProvider: () => {
+          }
+          getMerchantProvider() {
             return Promise.resolve(getValidMerchantProvider())
-          },
-          getParentSession: () => {
+          }
+          getParentSession() {
             return Promise.resolve(getValidParentSession());
-          },
-          listProductSchedules: () => {
+          }
+          listProductSchedules() {
             return Promise.resolve(getValidProductSchedules());
           }
         });

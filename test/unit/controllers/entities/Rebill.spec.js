@@ -36,7 +36,8 @@ describe('controllers/Rebill.js', () => {
                 }
             });
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             return rebillController.listTransactions(rebill).then((result) => {
                 expect(result).to.deep.equal(['a_transaction']);
@@ -56,7 +57,8 @@ describe('controllers/Rebill.js', () => {
                 }
             });
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             return rebillController.getParentSession(rebill).then((result) => {
                 expect(result).to.equal('a_parent_session');
@@ -68,7 +70,8 @@ describe('controllers/Rebill.js', () => {
 
             delete rebill.parentsession;
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             expect(rebillController.getParentSession(rebill)).to.equal(null);
         });
@@ -104,7 +107,8 @@ describe('controllers/Rebill.js', () => {
                 }
             });
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             return rebillController.listBySession(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -143,7 +147,8 @@ describe('controllers/Rebill.js', () => {
                 }
             });
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             return rebillController.listByState({state: 'a_state', pagination: 0}).then((result) => {
                 expect(result).to.deep.equal({
@@ -179,7 +184,8 @@ describe('controllers/Rebill.js', () => {
                 }
             });
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             return rebillController.listByState({state_changed_before: 'a_state_changed_before', pagination: 0}).then((result) => {
                 expect(result).to.deep.equal({
@@ -215,7 +221,8 @@ describe('controllers/Rebill.js', () => {
                 }
             });
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             return rebillController.listByState({state_changed_after: 'a_state_changed_after', pagination: 0}).then((result) => {
                 expect(result).to.deep.equal({
@@ -257,7 +264,8 @@ describe('controllers/Rebill.js', () => {
                 }
             });
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             return rebillController.listProductSchedules(rebill).then((result) => {
                 expect(result).to.deep.equal([product_schedule]);
@@ -293,7 +301,8 @@ describe('controllers/Rebill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             return rebillController.getRebillsAfterTimestamp(stamp).then((result) => {
                 expect(result.length).to.equal(1);
@@ -329,7 +338,8 @@ describe('controllers/Rebill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             return rebillController.getRebillsBilledAfter(after).then((result) => {
                 expect(result.length).to.equal(1);
@@ -365,7 +375,8 @@ describe('controllers/Rebill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-            let rebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            let RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+            const rebillController = new RebillController();
 
             return rebillController.getPendingRebills({pagination: {}, fatal: false, search: {}});
         });

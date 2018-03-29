@@ -7,11 +7,9 @@ const mockery = require('mockery');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
@@ -23,10 +21,12 @@ function getValidMessage(id){
 
 let rebill_id = null
 
-process.argv.forEach((val, index, array) => {
+process.argv.forEach((val) => {
+    /* eslint-disable */
   if(stringutilities.isMatch(val, /^--rebill=[a-z0-9\-].*$/)){
     rebill_id = val.split('=')[1];
   }
+/* eslint-enable */
 });
 
 describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js', () => {
@@ -52,15 +52,15 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           let message = getValidMessage(rebill_id);
 
           mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-              receiveMessages:({queue, limit}) => {
+              receiveMessages:({queue}) => {
                   du.highlight('Message read from queue (mock): '+queue);
                   return Promise.resolve([message]);
               },
-              sendMessage:({message_body: body, queue: queue}) => {
+              sendMessage:({queue: queue}) => {
                   du.highlight('Message sent to queue (mock): '+queue);
                   return Promise.resolve(true);
               },
-              deleteMessage: ({queue, receipt_handle}) => {
+              deleteMessage: ({queue}) => {
                   du.highlight('Deleting message from queue: '+queue);
                   return Promise.resolve(true);
               }
@@ -74,7 +74,7 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           return recoverToArchiveController.execute().then(result => {
               du.info(result);
 
-              let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+              let rebillController = new RebillController();
 
               return rebillController.get({id: rebill_id}).then((rebill) => {
                   du.info(rebill);
@@ -94,15 +94,15 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           let message = getValidMessage(rebill_id);
 
           mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-              receiveMessages:({queue, limit}) => {
+              receiveMessages:({queue}) => {
                   du.highlight('Message read from queue (mock): '+queue);
                   return Promise.resolve([message]);
               },
-              sendMessage:({message_body: body, queue: queue}) => {
+              sendMessage:({queue: queue}) => {
                   du.highlight('Message sent to queue (mock): '+queue);
                   return Promise.resolve(true);
               },
-              deleteMessage: ({queue, receipt_handle}) => {
+              deleteMessage: ({queue}) => {
                   du.highlight('Deleting message from queue: '+queue);
                   return Promise.resolve(true);
               }
@@ -116,7 +116,7 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           return recoverToArchiveController.execute().then(result => {
               du.info(result);
 
-              let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+              let rebillController = new RebillController();
 
               return rebillController.get({id: rebill_id}).then((rebill) => {
                   du.info(rebill);
@@ -136,15 +136,15 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           let message = getValidMessage(rebill_id);
 
           mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-              receiveMessages:({queue, limit}) => {
+              receiveMessages:({queue}) => {
                   du.highlight('Message read from queue (mock): '+queue);
                   return Promise.resolve([message]);
               },
-              sendMessage:({message_body: body, queue: queue}) => {
+              sendMessage:({queue: queue}) => {
                   du.highlight('Message sent to queue (mock): '+queue);
                   return Promise.resolve(true);
               },
-              deleteMessage: ({queue, receipt_handle}) => {
+              deleteMessage: ({queue}) => {
                   du.highlight('Deleting message from queue: '+queue);
                   return Promise.resolve(true);
               }
@@ -158,7 +158,7 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           return recoverToArchiveController.execute().then(result => {
               du.info(result);
 
-              let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+              let rebillController = new RebillController();
 
               return rebillController.get({id: rebill_id}).then((rebill) => {
                   du.info(rebill);
@@ -182,14 +182,14 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           const message = getValidMessage(rebill_id);
 
           mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-              receiveMessages: ({queue, limit}) => {
+              receiveMessages: () => {
                   return Promise.resolve([message]);
               },
-              sendMessage: ({message_body: body, queue: queue}) => {
+              sendMessage: ({queue: queue}) => {
                   expect(queue).to.equal('recover_error');
                   return Promise.resolve(true);
               },
-              deleteMessage: ({queue, receipt_handle}) => {
+              deleteMessage: ({queue}) => {
                   expect(queue).to.equal('recover');
                   return Promise.resolve(true);
               }
@@ -198,7 +198,7 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           process.env.archivefilter = 'all';
 
           mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/archive.js'), {
-              execute: (message) => {
+              execute: () => {
                   const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
                   const response = new WorkerResponse('error');
 
@@ -212,7 +212,7 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           return recoverToArchiveController.execute().then(result => {
               expect(result.response.code).to.equal('success');
 
-              let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+              let rebillController = new RebillController();
 
               return rebillController.get({id: rebill_id}).then((rebill) => {
                   du.info(rebill);
@@ -236,14 +236,14 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           const message = getValidMessage(rebill_id);
 
           mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-              receiveMessages: ({queue, limit}) => {
+              receiveMessages: () => {
                   return Promise.resolve([message]);
               },
-              sendMessage: ({message_body: body, queue: queue}) => {
+              sendMessage: ({queue: queue}) => {
                   expect(queue).to.equal('recover_failed');
                   return Promise.resolve(true);
               },
-              deleteMessage: ({queue, receipt_handle}) => {
+              deleteMessage: ({queue}) => {
                   expect(queue).to.equal('recover');
                   return Promise.resolve(true);
               }
@@ -252,7 +252,7 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           process.env.archivefilter = 'all';
 
           mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/archive.js'), {
-              execute: (message) => {
+              execute: () => {
                   const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
                   const response = new WorkerResponse('fail');
 
@@ -266,7 +266,7 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           return recoverToArchiveController.execute().then(result => {
               expect(result.response.code).to.equal('success');
 
-              let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+              let rebillController = new RebillController();
 
               return rebillController.get({id: rebill_id}).then((rebill) => {
                   du.info(rebill);
@@ -288,15 +288,15 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           let message = getValidMessage(rebill_id);
 
           mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-              receiveMessages:({queue, limit}) => {
+              receiveMessages:({queue}) => {
                   du.highlight('Message read from queue (mock): '+queue);
                   return Promise.resolve([message]);
               },
-              sendMessage:({message_body: body, queue: queue}) => {
+              sendMessage:({queue: queue}) => {
                   du.highlight('Message sent to queue (mock): '+queue);
                   return Promise.resolve(true);
               },
-              deleteMessage: ({queue, receipt_handle}) => {
+              deleteMessage: ({queue}) => {
                   du.highlight('Deleting message from queue: '+queue);
                   return Promise.resolve(true);
               }
@@ -321,15 +321,15 @@ describe('controllers/workers/forwardmessage/recoverToArchivedForwardMessage.js'
           let message = getValidMessage(rebill_id);
 
           mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-              receiveMessages:({queue, limit}) => {
+              receiveMessages:({queue}) => {
                   du.highlight('Message read from queue (mock): '+queue);
                   return Promise.resolve([message]);
               },
-              sendMessage:({message_body: body, queue: queue}) => {
+              sendMessage:({queue: queue}) => {
                   du.highlight('Message sent to queue (mock): '+queue);
                   return Promise.resolve(true);
               },
-              deleteMessage: ({queue, receipt_handle}) => {
+              deleteMessage: ({queue}) => {
                   du.highlight('Deleting message from queue: '+queue);
                   return Promise.resolve(true);
               }

@@ -8,6 +8,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports = class RebillHelper extends RebillHelperUtilities {
 
@@ -129,7 +130,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this, 'rebillController')) {
-			this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
 		}
 
 		return this.rebillController.get({
@@ -163,7 +164,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this, 'rebillController')) {
-			this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
 		}
 
 		return this.rebillController.update({
@@ -371,7 +372,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		let updated_rebill_prototype = this.parameters.get('updatedrebillprototype');
 
 		if (!_.has(this, 'rebillController')) {
-			this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
 		}
 
 		return this.rebillController.update({
@@ -449,7 +450,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		let now = timestamp.createDate();
 
 		if (!_.has(this, 'rebillController')) {
-			this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+			this.rebillController = new RebillController();
 		}
 
 		return this.rebillController.getRebillsAfterTimestamp(now).then(rebills => {
@@ -554,7 +555,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this, 'rebillController')) {
-			this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
 		}
 
 		return this.rebillController.listTransactions(rebill)

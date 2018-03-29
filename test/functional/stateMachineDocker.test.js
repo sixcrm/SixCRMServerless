@@ -1,8 +1,6 @@
 const expect = require('chai').expect;
-const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
 const SqSTestUtils = require('./sqs-test-utils');
-const TestUtils = require('./test-utils');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
@@ -12,7 +10,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 describe('stateMachineDocker', () => {
     let lambdas = [];
@@ -61,7 +59,7 @@ describe('stateMachineDocker', () => {
     describe('Database is ready', () => {
 
         it('should write rebill to database', () => {
-            let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+            let rebillController = new RebillController();
             let rebill = MockEntities.getValidRebill();
 
             return rebillController.create({entity: rebill})
@@ -103,7 +101,7 @@ describe('stateMachineDocker', () => {
 
     describe('Pick Rebill To Bill', () => {
 
-        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebillController = new RebillController();
         let rebill = {
             bill_at: timestamp.getISO8601(),
             id: uuidV4(),
@@ -145,7 +143,7 @@ describe('stateMachineDocker', () => {
             ]).then(() => done());
         });
 
-        console.log('REBILL ID ' + rebill.id);
+        du.output('REBILL ID ' + rebill.id);
 
         it('15 rebills should be picked from dynamo and moved to bill', () => {
 
@@ -212,7 +210,7 @@ describe('stateMachineDocker', () => {
 
     describe('Bill To Hold', () => {
 
-        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebillController = new RebillController();
         let rebill = {
             bill_at: timestamp.getISO8601(),
             id: uuidV4(),
@@ -255,7 +253,7 @@ describe('stateMachineDocker', () => {
 
     describe('Hold To Pending', () => {
 
-        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebillController = new RebillController();
         let rebill = {
             bill_at: timestamp.getISO8601(),
             id: uuidV4(),
@@ -299,7 +297,7 @@ describe('stateMachineDocker', () => {
 
     describe('Pending To Shipped', () => {
 
-        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebillController = new RebillController();
         let rebill = {
             bill_at: timestamp.getISO8601(),
             id: uuidV4(),
@@ -343,7 +341,7 @@ describe('stateMachineDocker', () => {
 
     describe('Shipped To Delivered', () => {
 
-        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebillController = new RebillController();
         let rebill = {
             bill_at: timestamp.getISO8601(),
             id: uuidV4(),
@@ -385,7 +383,7 @@ describe('stateMachineDocker', () => {
 
     describe('Delivered To Archive', () => {
 
-        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebillController = new RebillController();
         let rebill = {
             bill_at: timestamp.getISO8601(),
             id: uuidV4(),
@@ -444,7 +442,7 @@ describe('stateMachineDocker', () => {
 
     describe('Hold To Archive', () => {
 
-        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebillController = new RebillController();
         let rebill = {
             bill_at: timestamp.getISO8601(),
             id: uuidV4(),
@@ -487,7 +485,7 @@ describe('stateMachineDocker', () => {
 
     describe('Recover To Archive', () => {
 
-        let rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+        let rebillController = new RebillController();
         let rebill = {
             bill_at: timestamp.getISO8601(),
             id: uuidV4(),

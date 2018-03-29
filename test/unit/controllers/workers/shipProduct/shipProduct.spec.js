@@ -138,8 +138,8 @@ describe('controllers/workers/shipProduct', function () {
       let message = getValidMessage(rebill.id);
       let terminal_response = getValidTerminalResponse();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        get({id}) {
           if(id == rebill.id){
             return Promise.resolve(rebill);
           }

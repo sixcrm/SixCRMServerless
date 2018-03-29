@@ -1,11 +1,6 @@
-const fs = require('fs');
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-
-const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
-const modelgenerator = global.SixCRM.routes.include('test', 'model-generator.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -37,8 +32,6 @@ describe('controllers/workers/worker', function () {
         });
     });
 
-    const an_id = '7da91dc9-341b-4389-94ad-15b811996eef';
-
     describe('acquireRebill', () => {
 
         afterEach(() => {
@@ -54,8 +47,8 @@ describe('controllers/workers/worker', function () {
           let rebill = getValidRebill();
           let message = getValidMessage(rebill.id);
 
-          mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), {
-            get: ({id}) => {
+          mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+            get({id}) {
               if(id == rebill.id){
                 return Promise.resolve(rebill);
               }

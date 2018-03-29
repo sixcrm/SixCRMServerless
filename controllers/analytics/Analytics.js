@@ -7,6 +7,7 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 
 const AnalyticsUtilities = global.SixCRM.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 class AnalyticsController extends AnalyticsUtilities {
 
@@ -194,7 +195,7 @@ class AnalyticsController extends AnalyticsUtilities {
 
     return this.getTransactionOverview(parameters)
       .then((result) => {
-        const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+        const rebillController = new RebillController();
 
         return rebillController.getRebillsBilledAfter(timestamp.getISO8601())
           .then((rebills) => {

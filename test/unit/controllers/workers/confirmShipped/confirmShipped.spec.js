@@ -105,11 +105,11 @@ describe('controllers/workers/confirmShipped', () => {
       let rebill = getValidRebill();
       let transactions = getValidTransactions();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        listTransactions: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        listTransactions() {
           return Promise.resolve(transactions);
-        },
-        getResult:() => {
+        }
+        getResult() {
           return Promise.resolve(transactions);
         }
       });
@@ -306,14 +306,14 @@ describe('controllers/workers/confirmShipped', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        listTransactions: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        listTransactions() {
           return Promise.resolve(transactions);
-        },
-        getResult:() => {
+        }
+        getResult() {
           return Promise.resolve(transactions);
-        },
-        get:() => {
+        }
+        get() {
           return Promise.resolve(rebill);
         }
       });
@@ -370,14 +370,14 @@ describe('controllers/workers/confirmShipped', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        listTransactions: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        listTransactions() {
           return Promise.resolve(transactions);
-        },
-        getResult:() => {
+        }
+        getResult() {
           return Promise.resolve(transactions);
-        },
-        get:() => {
+        }
+        get() {
           return Promise.resolve(rebill);
         }
       });

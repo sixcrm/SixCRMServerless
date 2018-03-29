@@ -10,8 +10,9 @@ let sessionType = require('../session/sessionType');
 let rebillStateHistoryItem = require('./rebillStateHistoryItemType');
 let shippingReceiptType = require('../shippingreceipt/shippingReceiptType');
 
-const rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+const rebillController = new RebillController();
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Rebill',

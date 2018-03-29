@@ -26,7 +26,7 @@ module.exports = class ProductScheduleController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('rebillController', 'listByAssociations', {id: id, field: 'product_schedules'})
+        this.executeAssociatedEntityFunction('RebillController', 'listByAssociations', {id: id, field: 'product_schedules'})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {

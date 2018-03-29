@@ -226,8 +226,8 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
       let rebill = getValidRebill();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        get() {
           return Promise.resolve(rebill);
         }
       })
@@ -255,11 +255,11 @@ describe('controllers/providers/terminal/Terminal.js', function () {
       let rebill = getValidRebill();
       let transactions =  getValidTransactions();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        listTransactions:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        listTransactions() {
           return Promise.resolve({transactions: transactions});
-        },
-        getResult:(result, field) => {
+        }
+        getResult(result, field) {
           du.debug('Get Result');
           if(_.isUndefined(field)){
             field = this.descriptive_name+'s';
@@ -1031,11 +1031,11 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Receipt.js'), mocked_receipt_class);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        listTransactions:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        listTransactions() {
           return Promise.resolve({transactions: transactions});
-        },
-        getResult:(result, field) => {
+        }
+        getResult(result, field) {
           du.debug('Get Result');
           if(_.isUndefined(field)){
             field = this.descriptive_name+'s';
@@ -1045,11 +1045,11 @@ describe('controllers/providers/terminal/Terminal.js', function () {
           }else{
             return Promise.resolve(null);
           }
-        },
-        getSession: () => {
+        }
+        getSession() {
           return Promise.resolve(session)
-        },
-        get:() => {
+        }
+        get() {
           return Promise.resolve(rebill);
         }
       });

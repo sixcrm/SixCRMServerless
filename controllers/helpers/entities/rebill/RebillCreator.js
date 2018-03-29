@@ -10,6 +10,7 @@ const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
@@ -579,7 +580,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
     du.debug('Push Rebill');
 
     if(!_.has(this, 'rebillController')){
-      this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+      this.rebillController = new RebillController();
     }
 
     let prototype_rebill = this.parameters.get('rebillprototype');

@@ -307,8 +307,8 @@ describe('controllers/Session.js', () => {
         it('successfully lists rebills', () => {
             let session_data = getValidSession();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: ({session}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), class {
+                listBySession({session}) {
                     expect(session).to.equal(session_data);
                     return Promise.resolve({rebills: ['a_rebill']});
                 }
@@ -487,8 +487,8 @@ describe('controllers/Session.js', () => {
 
             let session = getValidSession();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), class {
+                listBySession() {
                     return Promise.resolve('session without rebills');
                 }
             });
@@ -504,8 +504,8 @@ describe('controllers/Session.js', () => {
 
             let session = getValidSession();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), class {
+                listBySession() {
                     return Promise.resolve({rebills : []});
                 }
             });
@@ -527,8 +527,8 @@ describe('controllers/Session.js', () => {
                 }]
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), class {
+                listBySession() {
                     return Promise.resolve(session_rebills);
                 }
             });
@@ -557,8 +557,8 @@ describe('controllers/Session.js', () => {
                 }]
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), class {
+                listBySession() {
                     return Promise.resolve(session_rebills);
                 }
             });
@@ -587,8 +587,8 @@ describe('controllers/Session.js', () => {
                 ]
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), {
-                listBySession: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Rebill.js'), class {
+                listBySession() {
                     return Promise.resolve(session_rebills);
                 }
             });

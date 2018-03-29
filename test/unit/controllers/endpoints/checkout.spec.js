@@ -404,10 +404,10 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
-        },
+        }
       });
 
       let mock_credit_card = class {
@@ -830,8 +830,8 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });

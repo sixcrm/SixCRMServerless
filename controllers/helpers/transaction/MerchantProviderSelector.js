@@ -10,6 +10,7 @@ const BinController = global.SixCRM.routes.include('controllers', 'entities/Bin.
 const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
@@ -47,7 +48,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
       this.instantiateParameters();
 
-      this.rebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+      this.rebillController = new RebillController();
       this.merchantProviderGroupController = new MerchantProviderGroupController();
       this.merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
       this.creditCardController = new CreditCardController();

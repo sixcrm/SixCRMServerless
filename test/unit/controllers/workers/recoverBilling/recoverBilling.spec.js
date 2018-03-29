@@ -122,13 +122,13 @@ describe('controllers/workers/recoverBilling', () => {
 			let rebill = getValidRebill();
 			let registerresponse = getValidRegisterResponse('fail');
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-				get: () => {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get() {
 					return Promise.resolve(rebill);
-				},
-				update: ({
+				}
+				update({
 					entity
-				}) => {
+				}) {
 					return Promise.resolve(entity);
 				}
 			});
@@ -150,13 +150,13 @@ describe('controllers/workers/recoverBilling', () => {
 			let rebill = getValidRebill();
 			let registerresponse = getValidRegisterResponse();
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-				get: () => {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get() {
 					return Promise.resolve(rebill);
-				},
-				update: ({
+				}
+				update({
 					entity
-				}) => {
+				}) {
 					return Promise.resolve(entity);
 				}
 			});
@@ -180,13 +180,13 @@ describe('controllers/workers/recoverBilling', () => {
 			let rebill = getValidRebill();
 			let registerresponse = getValidRegisterResponse('error');
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-				get: () => {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get() {
 					return Promise.resolve(rebill);
-				},
-				update: ({
+				}
+				update({
 					entity
-				}) => {
+				}) {
 					return Promise.resolve(entity);
 				}
 			});
@@ -262,8 +262,8 @@ describe('controllers/workers/recoverBilling', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), {
-				get: () => {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get() {
 					return Promise.resolve(rebill)
 				}
 			});

@@ -9,7 +9,7 @@ const PermissionedController = global.SixCRM.routes.include('helpers', 'permissi
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
 
 module.exports = class TerminalUtilitiesController extends PermissionedController  {
@@ -58,7 +58,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
       vendorresponseclass: global.SixCRM.routes.path('model', 'providers/shipping/terminal/responses/vendorresponseclass.json')
     };
 
-    this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+    this.rebillController = new RebillController();
     this.productController = new ProductController();
     this.fulfillmentProviderController = new FulfillmentProviderController();
     this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');

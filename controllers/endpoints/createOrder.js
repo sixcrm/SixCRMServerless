@@ -5,6 +5,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class CreateOrderController extends transactionEndpointController {
@@ -278,7 +279,7 @@ class CreateOrderController extends transactionEndpointController {
 		}
 
 		if (!_.has(this, 'rebillController')) {
-			this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
 		}
 
 		return this.rebillController.get({
@@ -476,7 +477,7 @@ class CreateOrderController extends transactionEndpointController {
 		}
 
 		if (!_.has(this, 'rebillController')) {
-			this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
 		}
 
 		if (!_.has(this, 'rebillHelperController')) {
@@ -607,7 +608,7 @@ class CreateOrderController extends transactionEndpointController {
 			rebill.no_process = true;
 
 			if (!_.has(this, 'rebillController')) {
-				this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+				this.rebillController = new RebillController();
 			}
 
 			return this.rebillController.update({
