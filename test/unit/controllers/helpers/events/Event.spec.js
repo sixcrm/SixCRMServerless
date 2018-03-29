@@ -1,169 +1,135 @@
-'use strict'
-
 const mockery = require('mockery');
 let chai = require('chai');
 
 let expect = chai.expect;
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp');
 
 describe('helpers/events/Event.spec.js', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-    afterEach(() => {
-        mockery.resetCache();
-    });
+	afterEach(() => {
+		mockery.resetCache();
+	});
 
-    after(() => {
-        mockery.deregisterAll();
-    });
+	after(() => {
+		mockery.deregisterAll();
+	});
 
-  describe('constructor', () => {
+	describe('constructor', () => {
 
-    it('successfully constructs', () => {
+		it('successfully constructs', () => {
 
-      const EventHelperController = global.SixCRM.routes.include('helpers','events/Event.js');
-      let eventHelperController = new EventHelperController();
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
 
-      expect(objectutilities.getClassName(eventHelperController)).to.equal('EventHelperController');
-    });
+			expect(objectutilities.getClassName(eventHelperController)).to.equal('EventHelperController');
+		});
 
-  });
+	});
 
-  describe('parseTopicARN', () => {
+	describe('parseTopicARN', () => {
 
-    it('successfully generates a valid topic ARN', () => {
+		it('successfully generates a valid topic ARN', () => {
 
-      const EventHelperController = global.SixCRM.routes.include('helpers','events/Event.js');
-      let eventHelperController = new EventHelperController();
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
 
-      let topic_arn = eventHelperController.parseTopicARN();
+			let topic_arn = eventHelperController.parseTopicARN();
 
-      //Technical Debt:  Bad to make hard references to the config like this...
-      expect(topic_arn).to.equal('arn:aws:sns:'+global.SixCRM.configuration.site_config.aws.region+':'+global.SixCRM.configuration.site_config.aws.account+':events');
+			//Technical Debt:  Bad to make hard references to the config like this...
+			expect(topic_arn).to.equal('arn:aws:sns:' + global.SixCRM.configuration.site_config.aws.region + ':' + global.SixCRM.configuration.site_config.aws.account + ':events');
 
-    });
+		});
 
-  });
+	});
 
-  describe('createPublishParameters', () => {
+	describe('createPublishParameters', () => {
 
-    PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+		PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
 
-    it('succesfully creates publishing parameters', () => {
+		it('succesfully creates publishing parameters', () => {
 
-      const EventHelperController = global.SixCRM.routes.include('helpers','events/Event.js');
-      let eventHelperController = new EventHelperController();
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
 
-      let input_object = {
-        event_type: 'initial_order',
-        context: {
-          something: 'isnice'
-        }
-      };
+			let input_object = {
+				event_type: 'initial_order',
+				context: {
+					something: 'isnice'
+				}
+			};
 
-      let expected_response = {
-        user: global.user.id,
-        account: global.account,
-        event_type: input_object.event_type,
-        context: input_object.context
-      };
+			let expected_response = {
+				user: global.user.id,
+				datetime: "2018-03-29T17:15:38.859Z",
+				account: global.account,
+				event_type: input_object.event_type,
+				context: input_object.context
+			};
 
-      let parameters = eventHelperController.createPublishParameters(input_object);
+			let parameters = eventHelperController.createPublishParameters(input_object);
 
-      expect(parameters).to.have.property('Message');
-      expect(parameters).to.have.property('TopicArn');
-      expect(parameters.Message).to.equal(JSON.stringify(expected_response));
+			expect(parameters).to.have.property('Message');
+			expect(parameters).to.have.property('TopicArn');
 
-    });
+			const message = JSON.parse(parameters.Message);
+			expect(message).to.have.property('datetime');
+			expect(timestamp.isISO8601(message.datetime));
 
-    it('succesfully creates publishing parameters with message attributes', () => {
+			// we have to set the datetime to the expected response since it would return the current date time
+			message.datetime = "2018-03-29T17:15:38.859Z";
 
-      const EventHelperController = global.SixCRM.routes.include('helpers','events/Event.js');
-      let eventHelperController = new EventHelperController();
+			expect(message).to.eql(expected_response);
 
-      let input_object = {
-        event_type: 'initial_order',
-        context: {
-          something: 'isnice'
-        },
-        message_attributes: {
-          'event_type':{
-            DataType: 'String',
-            StringValue: 'initial_order'
-          }
-        }
-      };
+		});
 
-      let expected_response = {
-        user: global.user.id,
-        account: global.account,
-        event_type: input_object.event_type,
-        context: input_object.context
-      };
+	});
 
-      let expected_message_attributes = {
-        'event_type': {
-          DataType: 'String',
-          StringValue: 'initial_order'
-        }
-      };
+	describe('pushEvent', () => {
 
-      let parameters = eventHelperController.createPublishParameters(input_object);
+		it('successfully pushes a event to a SNS topic', () => {
 
-      expect(parameters).to.have.property('Message');
-      expect(parameters).to.have.property('TopicArn');
-      expect(parameters).to.have.property('MessageAttributes');
-      expect(parameters.Message).to.equal(JSON.stringify(expected_response));
-      expect(parameters.MessageAttributes).to.deep.equal(expected_message_attributes);
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
+				publish: () => {
+					return Promise.resolve({
+						MessageId: "e0701729-c444-5c95-b3dd-442caf4b8dbe",
+						ResponseMetadata: {
+							RequestId: "a7adb36f-c590-5fb2-89a1-e06aae9e9e99"
+						}
+					})
+				},
+				getRegion() {
+					return 'us-east-1';
+				}
+			});
 
-    });
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
 
-  });
+			let input_object = {
+				event_type: 'initial_order',
+				context: {
+					something: 'isnice'
+				}
+			};
 
-  describe('pushEvent',  () => {
+			return eventHelperController.pushEvent(input_object).then(result => {
+				expect(result).to.have.property('MessageId');
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result.ResponseMetadata).to.have.property('RequestId');
+			});
 
-    it('successfully pushes a event to a SNS topic', () => {
+		});
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish:()=>{
-          return Promise.resolve({
-            MessageId: "e0701729-c444-5c95-b3dd-442caf4b8dbe",
-            ResponseMetadata: {
-              RequestId: "a7adb36f-c590-5fb2-89a1-e06aae9e9e99"
-            }
-          })
-        },
-        getRegion(){
-          return 'us-east-1';
-        }
-      });
-
-      const EventHelperController = global.SixCRM.routes.include('helpers','events/Event.js');
-      let eventHelperController = new EventHelperController();
-
-      let input_object = {
-        event_type: 'initial_order',
-        context: {
-          something: 'isnice'
-        }
-      };
-
-      return eventHelperController.pushEvent(input_object).then(result => {
-        expect(result).to.have.property('MessageId');
-        expect(result).to.have.property('ResponseMetadata');
-        expect(result.ResponseMetadata).to.have.property('RequestId');
-      });
-
-    });
-
-  });
+	});
 
 });

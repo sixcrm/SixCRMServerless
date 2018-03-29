@@ -1,14 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-
-const frozenNow = 1510820555711; //Thu, 16 Nov 2017 08:28:38 GMT
-
-function givenTimeIsFrozen() {
-    Date.now = () => {
-        return frozenNow;
-    }
-}
+const BBPromise = require('bluebird');
 
 describe('lib/timer', () => {
 
@@ -27,28 +20,21 @@ describe('lib/timer', () => {
 
     it('returns elapsed time', () => {
 
-        givenTimeIsFrozen();
+				const timer = global.SixCRM.routes.include('lib', 'timer.js');
 
-        const timer = global.SixCRM.routes.include('lib', 'timer.js');
+				timer.start = timestamp.createTimestampMilliseconds();
 
-        timer.start = 1487768599196;  // Wed, 22 Feb 2017 13:03:19 GMT;
+				return BBPromise.delay(1000)
+				.then(() => {
 
-        let elapsed = timer.get();
+					const elapsed = timer.get();
 
-        expect(elapsed).to.equal(23051956515);
-    });
+					expect(elapsed).to.be.greaterThan(0);
+					expect(elapsed).to.be.greaterThan(900).and.to.be.lessThan(1100);
 
-    it('returns elapsed time with info about execution time', () => {
+					return;
+				});
 
-        givenTimeIsFrozen();
-
-        const timer = global.SixCRM.routes.include('lib', 'timer.js');
-
-        timer.start = 1487768599196;  // Wed, 22 Feb 2017 13:03:19 GMT;
-
-        let elapsed = timer.get(true);
-
-        expect(elapsed).to.equal(23051956515);
     });
 
     it('successfully sets timer', () => {

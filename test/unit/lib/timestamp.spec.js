@@ -52,8 +52,6 @@ describe('lib/timestamp', () => {
 
       let today = timestamp.getISO8601();
 
-      console.log(timestamp.isToday(today));
-
       expect(timestamp.isToday(today)).to.equal(true);
 
     });
@@ -82,14 +80,14 @@ describe('lib/timestamp', () => {
         });
 
         it('should create timestamp in milliseconds', () => {
-            // given
-            givenTimeIsFrozen();
 
             // when
-            let timestampInMilliseconds = timestamp.createTimestampMilliseconds();
+            const timestampInMilliseconds = timestamp.createTimestampMilliseconds();
 
-            // then
-            expect(timestampInMilliseconds).to.equal(frozenNow);
+						// then
+						const now = moment().valueOf();
+						expect(now).to.be.greaterThan(timestampInMilliseconds);
+						expect(now).to.be.lessThan(timestampInMilliseconds + 1000);
         });
 
         it('should create a date', () => {

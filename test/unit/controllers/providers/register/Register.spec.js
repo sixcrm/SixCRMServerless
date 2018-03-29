@@ -1103,8 +1103,6 @@ describe('controllers/providers/Register.js', () => {
 
    it('returns error if rebill is not eligible for processing at this time', (done) => {
 
-      let date = new Date();
-
       let valid_rebill = getValidRebill();
 
       const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
@@ -1112,9 +1110,7 @@ describe('controllers/providers/Register.js', () => {
 
       registerController.parameters.set('rebill', valid_rebill);
 
-      date.setDate(date.getDate() + 1); //add one day so it would be too soon for rebill processing
-
-      valid_rebill.bill_at = date;
+      valid_rebill.bill_at = timestamp.tomorrow();
 
       try{
         registerController.validateRebillTimestamp()

@@ -10,8 +10,7 @@ module.exports = class ClickTransform extends AnalyticsTransfrom {
 		let result = {
 			account: record.context.campaign.account,
 			campaign: record.context.campaign.id,
-			datetime: record.context.session.updated_at,
-			session: record.context.session.id,
+			datetime: record.datetime,
 			type: record.event_type
 		};
 
