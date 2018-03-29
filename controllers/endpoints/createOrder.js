@@ -510,8 +510,8 @@ class CreateOrderController extends transactionEndpointController {
 		du.debug('Push Event');
 
 		return Promise.resolve()
-		.then(() => super.pushEvent('order'))
-		.then(() => this.pushTransactionEvents());
+			.then(() => super.pushEvent())
+			.then(() => this.pushTransactionEvents());
 
 	}
 
@@ -521,7 +521,12 @@ class CreateOrderController extends transactionEndpointController {
 
 		return BBPromise.each(transactions, (transaction) => {
 
-			return super.pushEvent('transaction_' + transaction.result);
+			return super.pushEvent({
+				event_type: 'transaction_' + transaction.result,
+				context: Object.assign({}, this.parameters.store, {
+					transaction
+				})
+			});
 
 		});
 

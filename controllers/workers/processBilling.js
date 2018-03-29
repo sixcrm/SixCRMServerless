@@ -104,7 +104,13 @@ module.exports = class processBillingController extends workerController {
 
 		return arrayutilities.serial(transactions, (current, transaction) => {
 
-			this.pushEvent({event_type: 'transaction_' + transaction.result});
+			this.pushEvent({
+				event_type: 'transaction_' + transaction.result,
+				context: Object.assign({},
+					this.parmeters.store, {
+						transaction
+					})
+			});
 
 			if (transaction.type != 'sale' || transaction.result != 'success') {
 				return false;
