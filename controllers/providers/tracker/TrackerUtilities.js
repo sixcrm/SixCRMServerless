@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const TrackerResponse = global.SixCRM.routes.include('providers', 'tracker/Response.js');
+const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js')
 
 module.exports = class TrackerUtilitiesController extends PermissionedController  {
 
@@ -25,7 +26,7 @@ module.exports = class TrackerUtilitiesController extends PermissionedController
       shippingreceipt: global.SixCRM.routes.path('model', 'providers/tracker/trackableshippingreceipt.json')
     };
 
-    this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+    this.shippingReceiptController = new ShippingReceiptController();
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 

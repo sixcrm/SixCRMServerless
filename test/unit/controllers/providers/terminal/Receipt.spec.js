@@ -113,8 +113,8 @@ describe('/providers/terminal/Receipt.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        create:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        create({entity}) {
           entity.id = shipping_receipt_id;
           let now = timestamp.getISO8601();
 

@@ -113,7 +113,8 @@ module.exports = class confirmShippedController extends workerController {
       let transaction_products = this.parameters.get('shippedtransactionproducts');
 
       if(!_.has(this, 'shippingReceiptController')){
-        this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+          const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+          this.shippingReceiptController = new ShippingReceiptController();
       }
 
       let shipping_receipt_promises = arrayutilities.map(transaction_products, transaction_product => {

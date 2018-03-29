@@ -626,7 +626,8 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		}
 
 		if (!_.has(this, 'shippingReceiptController')) {
-			this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+			this.shippingReceiptController = new ShippingReceiptController();
 		}
 
 		return this.shippingReceiptController.getListByAccount({

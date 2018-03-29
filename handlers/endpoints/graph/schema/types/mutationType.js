@@ -144,6 +144,7 @@ const ProductScheduleController = global.SixCRM.routes.include('controllers', 'e
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -1321,7 +1322,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 shippingreceipt: { type: shippingReceiptInputType.graphObj }
             },
             resolve: (value, shippingreceipt) => {
-                const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
+                const shippingReceiptController = new ShippingReceiptController();
 
                 return shippingReceiptController.create({entity: shippingreceipt.shippingreceipt});
             }
@@ -1334,7 +1335,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, shippingreceipt) => {
 
-                const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
+                const shippingReceiptController = new ShippingReceiptController();
 
                 return shippingReceiptController.update({entity:shippingreceipt.shippingreceipt});
             }
@@ -1350,7 +1351,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, shippingreceipt) => {
                 var id = shippingreceipt.id;
-                const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
+                const shippingReceiptController = new ShippingReceiptController();
 
                 return shippingReceiptController.delete({id:id});
             }

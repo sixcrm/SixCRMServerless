@@ -169,8 +169,8 @@ describe('controllers/workers/confirmDelivered', () => {
           transaction_product.shipping_receipt = uuidV4()
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        get() {
           return Promise.resolve(getValidShippingReceipt());
         }
       });
@@ -356,8 +356,8 @@ describe('controllers/workers/confirmDelivered', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        get() {
           return Promise.resolve(shipping_receipt);
         }
       });
@@ -423,8 +423,8 @@ describe('controllers/workers/confirmDelivered', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        get() {
           return Promise.resolve(shipping_receipt);
         }
       });

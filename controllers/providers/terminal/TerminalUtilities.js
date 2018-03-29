@@ -11,6 +11,7 @@ const FulfillmentProviderController = global.SixCRM.routes.include('entities', '
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
+const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 
 module.exports = class TerminalUtilitiesController extends PermissionedController  {
 
@@ -61,7 +62,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
     this.rebillController = new RebillController();
     this.productController = new ProductController();
     this.fulfillmentProviderController = new FulfillmentProviderController();
-    this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+    this.shippingReceiptController = new ShippingReceiptController();
 
     const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 

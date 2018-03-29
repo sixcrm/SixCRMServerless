@@ -90,7 +90,8 @@ module.exports = class ShippingReceiptHelperController {
     let shipping_receipt = this.parameters.get('shippingreceipt');
 
     if(!_.has(this, 'shippingReceiptController')){
-      this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+        const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+        this.shippingReceiptController = new ShippingReceiptController();
     }
 
     return this.shippingReceiptController.get({id: shipping_receipt.id}).then(shipping_receipt => {
@@ -110,7 +111,8 @@ module.exports = class ShippingReceiptHelperController {
     let updated_shipping_receipt = this.parameters.get('updatedshippingreceipt');
 
     if(!_.has(this, 'shippingReceiptController')){
-      this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+        const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+        this.shippingReceiptController = new ShippingReceiptController();
     }
 
     return this.shippingReceiptController.update({entity: updated_shipping_receipt}).then(updated_shipping_receipt => {
@@ -181,7 +183,8 @@ module.exports = class ShippingReceiptHelperController {
     let shipping_receipt_ids = this.parameters.get('shippingreceiptids');
 
     if(!_.has(this, 'shippingReceiptController')){
-      this.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+        const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+        this.shippingReceiptController = new ShippingReceiptController();
     }
 
     return this.shippingReceiptController.getListByAccount({ids: shipping_receipt_ids}).then(result => {

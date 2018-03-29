@@ -31,7 +31,8 @@ describe('controllers/ShippingReceipt.js', () => {
                 }
             });
 
-            let shippingReceiptController = global.SixCRM.routes.include('controllers','entities/ShippingReceipt.js');
+            let ShippingReceiptController = global.SixCRM.routes.include('controllers','entities/ShippingReceipt.js');
+            const shippingReceiptController = new ShippingReceiptController();
 
             return shippingReceiptController.getFulfillmentProvider(shipping_receipt).then((result) => {
                 expect(result).to.equal('a_fulfillment_provider');
@@ -41,7 +42,8 @@ describe('controllers/ShippingReceipt.js', () => {
         it('returns null when shipping receipt does not have a fulfillment provider', () => {
             let shipping_receipt = {};
 
-            let shippingReceiptController = global.SixCRM.routes.include('controllers','entities/ShippingReceipt.js');
+            let ShippingReceiptController = global.SixCRM.routes.include('controllers','entities/ShippingReceipt.js');
+            const shippingReceiptController = new ShippingReceiptController();
 
             return shippingReceiptController.getFulfillmentProvider(shipping_receipt).then((result) => {
                 expect(result).to.equal(null);

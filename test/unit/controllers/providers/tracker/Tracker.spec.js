@@ -1,17 +1,10 @@
 'use strict'
 const _ = require('underscore');
 const chai = require("chai");
-const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 function getValidTrackingNumber(carrier){
@@ -61,14 +54,6 @@ function getValidAPIResponse(carrier, tracking_number){
     };
 
   }
-
-}
-
-function getValidAPIResponseBody(carrier, tracking_number){
-
-  tracking_number = (_.isUndefined(tracking_number))?getValidTrackingNumber(carrier):tracking_number;
-
-  return '';
 
 }
 
@@ -125,8 +110,8 @@ describe('controllers/providers/tracker/Tracker.js', function () {
         return callback(null, api_response, '');
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        get:({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        get() {
           return Promise.resolve(shipping_receipt);
         }
       });
@@ -153,8 +138,8 @@ describe('controllers/providers/tracker/Tracker.js', function () {
 
       let api_response = getValidAPIResponse('USPS', shipping_receipt.tracking.id);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        get:({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        get() {
           return Promise.resolve(shipping_receipt);
         }
       });

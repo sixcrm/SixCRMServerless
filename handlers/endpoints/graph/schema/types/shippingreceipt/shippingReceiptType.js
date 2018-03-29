@@ -28,7 +28,8 @@ module.exports.graphObj = new GraphQLObjectType({
         type: fulfillmentProviderType.graphObj,
         description:"The fulfillment provider associated with the shipping receipt",
         resolve: (shipping_receipt) => {
-          let shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
+          const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+          let shippingReceiptController = new ShippingReceiptController();
 
           return shippingReceiptController.getFulfillmentProvider(shipping_receipt);
         }

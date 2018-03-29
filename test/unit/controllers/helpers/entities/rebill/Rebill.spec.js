@@ -601,11 +601,11 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        getListByAccount() {
           return Promise.resolve({shippingreceipts: shipping_receipts});
-        },
-        getResult:(result, field) => {
+        }
+        getResult(result, field) {
           if(_.isUndefined(field)){
             field = 'shippingreceipts';
           }
@@ -655,8 +655,8 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        getListByAccount() {
           return Promise.resolve(null);
         }
       });
@@ -790,11 +790,11 @@ describe('/helpers/entities/Rebill.js', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        getListByAccount() {
           return Promise.resolve({shippingreceipts: shipping_receipts});
-        },
-        getResult:(result, field) => {
+        }
+        getResult(result, field) {
           if(_.isUndefined(field)){
             field = 'shippingreceipts';
           }
@@ -824,11 +824,11 @@ describe('/helpers/entities/Rebill.js', () => {
       let shipping_receipts = getValidShippingReceipts();
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        getListByAccount() {
           return Promise.resolve({shippingreceipts: null});
-        },
-        getResult:(result, field) => {
+        }
+        getResult(result, field) {
           if(_.isUndefined(field)){
             field = 'shippingreceipts';
           }
@@ -855,6 +855,8 @@ describe('/helpers/entities/Rebill.js', () => {
 
     it('successfully acquires shipping receipts when shipping receipt controller is already set', () => {
 
+        const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+
         let shipping_receipts = getValidShippingReceipts();
         let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
@@ -863,7 +865,7 @@ describe('/helpers/entities/Rebill.js', () => {
         const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
         let rebillHelperController = new RebillHelperController();
 
-        rebillHelperController.shippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+        rebillHelperController.shippingReceiptController = new ShippingReceiptController();
         rebillHelperController.shippingReceiptController.getListByAccount = () => {
             return Promise.resolve({shippingreceipts: shipping_receipts});
         };

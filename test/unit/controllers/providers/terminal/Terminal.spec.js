@@ -886,8 +886,8 @@ describe('controllers/providers/terminal/Terminal.js', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        get() {
           return Promise.resolve(shipping_receipt);
         }
       });

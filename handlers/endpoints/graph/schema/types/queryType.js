@@ -188,6 +188,7 @@ const ProductScheduleController = global.SixCRM.routes.include('controllers', 'e
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -862,7 +863,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, shippingreceipt){
-                const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
+                const shippingReceiptController = new ShippingReceiptController();
 
                 return shippingReceiptController.get({id: shippingreceipt.id, fatal: get_fatal});
             }
@@ -1111,7 +1112,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, shippingreceipt){
-                const shippingReceiptController = global.SixCRM.routes.include('controllers', 'entities/ShippingReceipt.js');
+                const shippingReceiptController = new ShippingReceiptController();
 
                 return shippingReceiptController.listByAccount({pagination: shippingreceipt.pagination, fatal:list_fatal, search: shippingreceipt.search}); }
         },

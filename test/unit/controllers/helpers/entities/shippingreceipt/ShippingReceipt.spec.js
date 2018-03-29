@@ -103,8 +103,8 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let shipping_receipt = getValidShippingReceipt();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), class {
+        get() {
           return Promise.resolve(shipping_receipt);
         }
       });
@@ -146,8 +146,8 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let shipping_receipt = getValidShippingReceipt();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), {
-        update:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), class {
+        update() {
           return Promise.resolve(shipping_receipt);
         }
       });
@@ -224,11 +224,11 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let shipping_status = 'delivered';
 
-      mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), class {
+        get() {
           return Promise.resolve(shipping_receipt);
-        },
-        update:({entity}) => {
+        }
+        update({entity}) {
           entity.updated_at = timestamp.getISO8601();
           return Promise.resolve(entity);
         }
@@ -631,8 +631,8 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shipping_receipts = getValidShippingReceipts();
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        getListByAccount() {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
@@ -653,8 +653,8 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
       let shipping_receipts = getValidShippingReceipts();
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        getListByAccount() {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
@@ -711,8 +711,8 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        getListByAccount() {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
@@ -758,8 +758,8 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        getListByAccount() {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
@@ -805,8 +805,8 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        getListByAccount() {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
@@ -852,8 +852,8 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
       let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), {
-        getListByAccount:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        getListByAccount() {
           return Promise.resolve({shippingreceipts: shipping_receipts});
         }
       });
