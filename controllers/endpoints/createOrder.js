@@ -521,12 +521,12 @@ class CreateOrderController extends transactionEndpointController {
 
 		return BBPromise.each(transactions, (transaction) => {
 
-			return super.pushEvent(
-				'transaction_' + transaction.result,
-				Object.assign({}, this.parameters.store, {
+			return super.pushEvent({
+				event_type: 'transaction_' + transaction.result,
+				context: Object.assign({}, this.parameters.store, {
 					transaction
 				})
-			);
+			});
 
 		});
 

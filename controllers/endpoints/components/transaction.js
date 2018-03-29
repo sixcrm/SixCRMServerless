@@ -150,7 +150,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 	}
 
-	pushEvent(event_type, context) {
+	pushEvent({event_type = undefined, context = undefined} = {}) {
 
 		du.debug('Push Event');
 

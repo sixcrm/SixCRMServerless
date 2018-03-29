@@ -51,6 +51,8 @@ class checkoutController extends transactionEndpointController{
     this.createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
     this.confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 
+    this.event_type = 'checkout';
+
     this.initialize();
 
   }

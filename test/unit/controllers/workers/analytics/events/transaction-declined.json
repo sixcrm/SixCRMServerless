@@ -1,5 +1,5 @@
 {
-	"result": [{
+	"result": {
 		"id": "6dd9546f-9efd-40db-80d7-c95c90570455",
 		"datetime": "2018-03-23T22:01:55.330Z",
 		"merchantProvider": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
@@ -17,7 +17,7 @@
 		"subaffiliate3": "5da98116-789c-40d2-ae50-4357e691ab55",
 		"subaffiliate4": "c15faf77-0667-4f19-8be4-8793d2244b22",
 		"subaffiliate5": "25997dc4-44e6-49ec-a1c8-faa8c7344f28"
-	}],
+	},
 	"event": {
 		"event_type": "transaction_declined",
 		"transaction_subtype": "main",
