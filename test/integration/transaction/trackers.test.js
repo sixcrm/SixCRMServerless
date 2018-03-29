@@ -7,6 +7,7 @@ const assert = require('chai').assert
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 try {
     var config = global.SixCRM.routes.include('test', '/integration/config/'+process.env.stage+'.yml');
@@ -35,7 +36,7 @@ function getValidAuthorizationString(){
 
   let secret_key = config.access_keys.super_user.secret_key;
   let access_key = config.access_keys.super_user.access_key;
-  let request_time = new Date().getTime();
+  let request_time = timestamp.createTimestampMilliseconds();
 
   let signature = signatureutilities.createSignature(secret_key, request_time);
 

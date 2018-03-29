@@ -11,12 +11,13 @@ const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 const random = global.SixCRM.routes.include('lib','random.js');
 const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function createSignature(){
 
-  let request_time = new Date().getTime();
+  let request_time = timestamp.createTimestampMilliseconds();
   let secret_key = config.access_keys.super_user.secret_key;
   let access_key = config.access_keys.super_user.access_key;
   let signature = signatureutilities.createSignature(secret_key, request_time);
