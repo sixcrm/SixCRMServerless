@@ -58,7 +58,8 @@ describe('controllers/entities/Tag.js', () => {
                 }
             });
 
-            const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+            const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+            const tagController = new TagController();
 
             return tagController.listByKey({key:'Test Key', pagination: {limit: 10}}).then(result => {
                 expect(result).to.deep.equal({
@@ -115,7 +116,8 @@ describe('controllers/entities/Tag.js', () => {
                 }
             });
 
-            const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+            const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+            const tagController = new TagController();
 
             return tagController.listByKeyFuzzy({key:'Test', pagination: {limit: 10}}).then(result => {
                 expect(result).to.deep.equal({
@@ -173,7 +175,8 @@ describe('controllers/entities/Tag.js', () => {
                 }
             });
 
-            const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+            const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+            const tagController = new TagController();
 
             return tagController.listByEntity({id:'TestID', pagination: {limit: 10}}).then(result => {
                 expect(result).to.deep.equal({

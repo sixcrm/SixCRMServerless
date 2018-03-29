@@ -190,6 +190,7 @@ const RoleController = global.SixCRM.routes.include('controllers', 'entities/Rol
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
+const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -1823,7 +1824,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (root, tag) => {
-                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const tagController = new TagController();
 
                 return tagController.get({id: tag.id, fatal: get_fatal});
             }
@@ -1835,7 +1836,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: (root, tags) => {
-                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const tagController = new TagController();
                 const {pagination, search} = tags;
 
                 return tagController.listByAccount({pagination, search, fatal: list_fatal});
@@ -1852,7 +1853,7 @@ module.exports.graphObj = new GraphQLObjectType({
             search: {type: entitySearchInputType.graphObj}
           },
           resolve: (root, tags) => {
-            const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+            const tagController = new TagController();
             const {id, pagination} = tags;
 
             return tagController.listByEntity({id, pagination, fatal: list_fatal});
@@ -1869,7 +1870,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: (root, tags) => {
-                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const tagController = new TagController();
                 const {key, pagination, search} = tags;
 
                 return tagController.listByKey({key, pagination, search});
@@ -1886,7 +1887,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: (root, tags) => {
-                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const tagController = new TagController();
                 const {key, pagination, search} = tags;
 
                 return tagController.listByKeyFuzzy({key, pagination, search});

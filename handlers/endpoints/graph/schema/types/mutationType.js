@@ -146,6 +146,7 @@ const RoleController = global.SixCRM.routes.include('controllers', 'entities/Rol
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
+const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -1608,7 +1609,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 tag: { type: tagInputType.graphObj }
             },
             resolve: (value, tag) => {
-                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const tagController = new TagController();
 
                 return tagController.create({entity: tag.tag});
             }
@@ -1620,7 +1621,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 tag: { type: tagInputType.graphObj }
             },
             resolve: (value, tag) => {
-                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const tagController = new TagController();
 
                 return tagController.update({entity: tag.tag});
             }
@@ -1635,7 +1636,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, tag) => {
-                const tagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+                const tagController = new TagController();
 
                 return tagController.delete({id: tag.id});
             }

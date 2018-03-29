@@ -1,7 +1,7 @@
 'use strict';
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class TagController extends entityController {
+module.exports = class TagController extends entityController {
     constructor() {
         super('tag');
     }
@@ -39,4 +39,3 @@ class TagController extends entityController {
     }
 }
 
-module.exports = new TagController();
