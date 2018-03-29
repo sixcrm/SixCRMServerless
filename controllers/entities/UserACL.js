@@ -166,7 +166,7 @@ class userACLController extends entityController {
           return useracl.role;
       }
 
-      return this.executeAssociatedEntityFunction('roleController', 'getUnsharedOrShared', {id: useracl.role});
+      return this.executeAssociatedEntityFunction('RoleController', 'getUnsharedOrShared', {id: useracl.role});
 
     }
 

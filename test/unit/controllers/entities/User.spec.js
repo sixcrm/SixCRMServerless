@@ -758,8 +758,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_invite.role);
                     return Promise.resolve({
                         id: 'a_role_id',
@@ -840,8 +840,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_invite.role);
                     return Promise.resolve({
                         id: 'a_role_id',
@@ -885,8 +885,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_invite.role);
                     return Promise.reject(new Error('Role retrieving failed.'));
                 }
@@ -924,8 +924,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_invite.role);
                     return Promise.resolve({
                         id: 'a_role_id',
@@ -969,8 +969,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_invite.role);
                     return Promise.resolve({})
                 }
@@ -1008,8 +1008,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_invite.role);
                     return Promise.resolve({
                         id: 'a_role_id',
@@ -1075,8 +1075,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_acl.role);
                     return Promise.resolve({
                         id: 'a_role_id',
@@ -1133,8 +1133,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_acl.role);
                     return Promise.resolve({
                         id: 'a_role_id',

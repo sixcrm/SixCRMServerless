@@ -335,7 +335,7 @@ class userController extends entityController {
                     promises.push(this.executeAssociatedEntityFunction('accountController', 'create', {entity: proto_account}));
                     promises.push(this.create({entity: proto_user}));
 					          //Technical Debt:  This should be a lookup, not a hardcoded string
-                    promises.push(this.executeAssociatedEntityFunction('roleController', 'get', {id: 'cae614de-ce8a-40b9-8137-3d3bdff78039'}));
+                    promises.push(this.executeAssociatedEntityFunction('RoleController', 'get', {id: 'cae614de-ce8a-40b9-8137-3d3bdff78039'}));
                     promises.push(this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: proto_user_setting}));
 
                     return Promise.all(promises).then((promises) => {
@@ -760,7 +760,7 @@ class userController extends entityController {
 			//refactored
 
             promises.push(this.executeAssociatedEntityFunction('accountController', 'get', {id: userinvite.account}));
-            promises.push(this.executeAssociatedEntityFunction('roleController', 'get', {id: userinvite.role}));
+            promises.push(this.executeAssociatedEntityFunction('RoleController', 'get', {id: userinvite.role}));
             promises.push(this.get({id: userinvite.email}));
 
             return Promise.all(promises).then((promises) => {
@@ -858,7 +858,7 @@ class userController extends entityController {
                     let promises = [];
 
                     promises.push(this.executeAssociatedEntityFunction('accountController', 'get', {id: acl_entity.account}));
-                    promises.push(this.executeAssociatedEntityFunction('roleController', 'get', {id: acl_entity.role}));
+                    promises.push(this.executeAssociatedEntityFunction('RoleController', 'get', {id: acl_entity.role}));
 
                     return Promise.all(promises).then((promises) => {
 

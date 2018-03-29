@@ -65,8 +65,8 @@ describe('controllers/entities/UserACL.js', () => {
 
             let role = getValidRole();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Role.js'), {
-                getUnsharedOrShared: (a_role) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Role.js'), class {
+                getUnsharedOrShared(a_role) {
                     expect(a_role.id).to.equal(userACL.role);
                     return Promise.resolve(role);
                 }
@@ -96,8 +96,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Role.js'), {
-                getUnsharedOrShared: (a_role) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Role.js'), class {
+                getUnsharedOrShared(a_role) {
                     expect(a_role.id).to.equal(userACL.role);
                     return Promise.resolve(role);
                 }

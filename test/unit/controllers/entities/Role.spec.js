@@ -1,5 +1,6 @@
 let chai = require('chai');
 let expect = chai.expect;
+const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
 describe('controllers/Role.js', () => {
 
@@ -11,7 +12,7 @@ describe('controllers/Role.js', () => {
                 permissions: 'a_permission'
             };
 
-            let roleController = global.SixCRM.routes.include('controllers','entities/Role.js');
+            const roleController = new RoleController();
 
             expect(roleController.getPermissions(role)).to.equal('a_permission');
         });
@@ -20,7 +21,7 @@ describe('controllers/Role.js', () => {
 
             let role = {};
 
-            let roleController = global.SixCRM.routes.include('controllers','entities/Role.js');
+            const roleController = new RoleController();
 
             expect(roleController.getPermissions(role)).to.equal(null);
         });

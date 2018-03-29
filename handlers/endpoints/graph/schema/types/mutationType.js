@@ -142,6 +142,7 @@ const UserSigningStringController = global.SixCRM.routes.include('controllers', 
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -547,7 +548,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 role: { type: roleInputType.graphObj }
             },
             resolve: (value, role) => {
-                const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+                const roleController = new RoleController();
 
                 return roleController.create({entity: role.role});
             }
@@ -559,7 +560,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 role: { type: roleInputType.graphObj }
             },
             resolve: (value, role) => {
-                const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+                const roleController = new RoleController();
 
                 return roleController.update({entity:role.role});
             }
@@ -575,7 +576,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, role) => {
                 var id = role.id;
-                const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+                const roleController = new RoleController();
 
                 return roleController.delete({id:id});
             }

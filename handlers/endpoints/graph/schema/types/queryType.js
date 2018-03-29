@@ -186,6 +186,7 @@ const UserSigningStringController = global.SixCRM.routes.include('controllers', 
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -1240,7 +1241,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, role){
-              const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+              const roleController = new RoleController();
 
       	      return roleController.list({pagination: role.pagination, search: role.search, fatal:list_fatal});
             }
@@ -1251,7 +1252,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, role){
-                const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+                const roleController = new RoleController();
 
                 return roleController.listShared({pagination: role.pagination});
             }
@@ -1573,7 +1574,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, role){
-                const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+                const roleController = new RoleController();
 
                 return roleController.get({id: role.id, fatal: get_fatal});
             }
@@ -1587,7 +1588,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, role){
-                const roleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+                const roleController = new RoleController();
 
                 return roleController.getShared({id: role.id});
             }

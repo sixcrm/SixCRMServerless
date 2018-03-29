@@ -3,7 +3,7 @@ const _ = require('underscore');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 //Technical Debt: Override the list method
-class roleController extends entityController {
+module.exports = class RoleController extends entityController {
 
     constructor(){
         super('role');
@@ -25,4 +25,3 @@ class roleController extends entityController {
     }
 }
 
-module.exports = new roleController();
