@@ -27,28 +27,11 @@ describe('lib/timer', () => {
 
     it('returns elapsed time', () => {
 
-        givenTimeIsFrozen();
-
         const timer = global.SixCRM.routes.include('lib', 'timer.js');
 
-        timer.start = 1487768599196;  // Wed, 22 Feb 2017 13:03:19 GMT;
+        const elapsed = timer.get();
 
-        let elapsed = timer.get();
-
-        expect(elapsed).to.equal(23051956515);
-    });
-
-    it('returns elapsed time with info about execution time', () => {
-
-        givenTimeIsFrozen();
-
-        const timer = global.SixCRM.routes.include('lib', 'timer.js');
-
-        timer.start = 1487768599196;  // Wed, 22 Feb 2017 13:03:19 GMT;
-
-        let elapsed = timer.get(true);
-
-        expect(elapsed).to.equal(23051956515);
+        expect(elapsed).to.greaterThan(timer.start);
     });
 
     it('successfully sets timer', () => {

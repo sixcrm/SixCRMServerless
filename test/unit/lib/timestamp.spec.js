@@ -82,14 +82,12 @@ describe('lib/timestamp', () => {
         });
 
         it('should create timestamp in milliseconds', () => {
-            // given
-            givenTimeIsFrozen();
 
             // when
             let timestampInMilliseconds = timestamp.createTimestampMilliseconds();
 
             // then
-            expect(timestampInMilliseconds).to.equal(frozenNow);
+            expect(timestampInMilliseconds).to.be.greaterThan(moment().valueOf());
         });
 
         it('should create a date', () => {
