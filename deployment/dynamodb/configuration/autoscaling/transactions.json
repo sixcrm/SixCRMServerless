@@ -10,7 +10,7 @@
       },
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 3,
+        "MinCapacity": 5,
         "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
         "ServiceNamespace": "dynamodb"
       }
