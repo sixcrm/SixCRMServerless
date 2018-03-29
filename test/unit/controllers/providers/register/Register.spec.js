@@ -1549,8 +1549,8 @@ describe('controllers/providers/Register.js', () => {
 
           mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
-          getID: (object) => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), class {
+          getID(object) {
 
               if(_.isString(object)){
                   return object;

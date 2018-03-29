@@ -183,6 +183,8 @@ const NotificationController = global.SixCRM.routes.include('controllers', 'enti
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
+const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -307,7 +309,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, args){
-              const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+              const productScheduleController = new ProductScheduleController();
 
               return productScheduleController.listByProduct({product: args.product, pagination: args.pagination, fatal: list_fatal});
             }
@@ -927,7 +929,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, product){
-                const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+                const productController = new ProductController();
 
                 return productController.get({id: product.id, fatal: get_fatal});
             }
@@ -1029,7 +1031,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, products){
-                const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+                const productController = new ProductController();
 
                 return productController.listByAccount({pagination: products.pagination, fatal:list_fatal, search: products.search});
             }
@@ -1322,7 +1324,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, productschedule){
 
-                const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+                const productScheduleController = new ProductScheduleController();
 
       	       return productScheduleController.listByAccount({pagination: productschedule.pagination, fatal:list_fatal, search: productschedule.search});
             }
@@ -1374,7 +1376,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, productschedule){
-                const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+                const productScheduleController = new ProductScheduleController();
 
             	return productScheduleController.get({id: productschedule.id, fatal: get_fatal});
             }

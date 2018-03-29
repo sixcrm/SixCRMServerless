@@ -305,7 +305,7 @@ class sessionController extends entityController {
 
       let query_parameters = this.createINQueryParameters({field: 'id', list_array: session.product_schedules});
 
-      return this.executeAssociatedEntityFunction('productScheduleController', 'listByAccount', {query_parameters: query_parameters});
+      return this.executeAssociatedEntityFunction('ProductScheduleController', 'listByAccount', {query_parameters: query_parameters});
 
     }
 

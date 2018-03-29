@@ -7,7 +7,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class productScheduleController extends entityController {
+module.exports = class ProductScheduleController extends entityController {
 
     constructor(){
 
@@ -118,7 +118,7 @@ class productScheduleController extends entityController {
       //Technical Debt: Hack
       if(_.isNull(product_id) || _.isUndefined(product_id)){ return Promise.resolve(null) }
 
-      return this.executeAssociatedEntityFunction('productController', 'get', {id: product_id});
+      return this.executeAssociatedEntityFunction('ProductController', 'get', {id: product_id});
 
     }
 
@@ -140,7 +140,7 @@ class productScheduleController extends entityController {
           let query_parameters = this.createINQueryParameters({field: 'id', list_array: product_ids});
 
           du.warning(query_parameters);
-          return this.executeAssociatedEntityFunction('productController', 'listByAccount', {query_parameters: query_parameters});
+          return this.executeAssociatedEntityFunction('ProductController', 'listByAccount', {query_parameters: query_parameters});
 
         }
 
@@ -205,4 +205,3 @@ class productScheduleController extends entityController {
 
 }
 
-module.exports = new productScheduleController();

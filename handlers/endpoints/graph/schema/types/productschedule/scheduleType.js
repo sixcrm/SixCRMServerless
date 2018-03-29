@@ -6,6 +6,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 let productType = require('../product/productType');
+const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'schedule',
@@ -31,7 +32,7 @@ module.exports.graphObj = new GraphQLObjectType({
 	        type: productType.graphObj,
           description:'The product associated with the schedule',
 	        resolve: (schedule) => {
-            var productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+            var productScheduleController = new ProductScheduleController();
 
             return productScheduleController.getProduct(schedule)
           }

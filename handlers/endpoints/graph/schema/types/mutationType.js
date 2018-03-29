@@ -139,6 +139,8 @@ const NotificationController = global.SixCRM.routes.include('controllers', 'enti
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
+const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -424,7 +426,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 product: { type: productInputType.graphObj}
             },
             resolve: (value, product) => {
-                const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+                const productController = new ProductController();
 
                 return productController.create({entity: product.product});
             }
@@ -436,7 +438,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 product: { type: productInputType.graphObj }
             },
             resolve: (value, product) => {
-                const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+                const productController = new ProductController();
 
                 return productController.update({entity:product.product});
             }
@@ -452,7 +454,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, product) => {
                 var id = product.id;
-                const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+                const productController = new ProductController();
 
                 return productController.delete({id: id});
             }
@@ -1083,7 +1085,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 productschedule: { type:productScheduleInputType.graphObj }
             },
             resolve: (value, productschedule) => {
-                const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+                const productScheduleController = new ProductScheduleController();
 
                 return productScheduleController.create({entity: productschedule.productschedule});
             }
@@ -1095,7 +1097,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 productschedule: { type: productScheduleInputType.graphObj }
             },
             resolve: (value, productschedule) => {
-                const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+                const productScheduleController = new ProductScheduleController();
 
                 return productScheduleController.update({entity:productschedule.productschedule});
             }
@@ -1111,7 +1113,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, productschedule) => {
                 var id = productschedule.id;
-                const productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+                const productScheduleController = new ProductScheduleController();
 
                 return productScheduleController.delete({id:id});
             }

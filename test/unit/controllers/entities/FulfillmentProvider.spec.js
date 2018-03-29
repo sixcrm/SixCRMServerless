@@ -33,8 +33,8 @@ describe('controllers/FulfillmentProvider.js', () => {
 
             let product = getValidProduct();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Product.js'), {
-                listByFulfillmentProvider: ({fulfillment_provider}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Product.js'), class {
+                listByFulfillmentProvider({fulfillment_provider}) {
                     expect(fulfillment_provider).to.equal(a_fulfillment_provider_id);
                     return Promise.resolve({products: [product]});
                 }
@@ -61,8 +61,8 @@ describe('controllers/FulfillmentProvider.js', () => {
 
             delete product.id;
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Product.js'), {
-                listByFulfillmentProvider: ({fulfillment_provider}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Product.js'), class {
+                listByFulfillmentProvider({fulfillment_provider}) {
                     expect(fulfillment_provider).to.equal(a_fulfillment_provider_id);
                     return Promise.resolve({products: [product]});
                 }

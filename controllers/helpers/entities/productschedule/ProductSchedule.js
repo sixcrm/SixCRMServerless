@@ -16,7 +16,8 @@ module.exports = class ProductScheduleHelper {
 
     du.debug('Get Hydrated');
 
-    let productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+    let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+    const productScheduleController = new ProductScheduleController();
 
     return productScheduleController.get({id: id}).then(product_schedule => {
 

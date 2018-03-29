@@ -5,6 +5,7 @@ const GraphQLString = require('graphql').GraphQLString;
 
 let transactionalScheduleType = require('./transactionalScheduleType');
 let merchantProviderGroupType = require('./../../merchantprovidergroup/merchantProviderGroupType');
+let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule');
 //let watermarkProductSchedule = require('./watermarkProductScheduleType');
 
 module.exports.graphObj = new GraphQLObjectType({
@@ -23,7 +24,7 @@ module.exports.graphObj = new GraphQLObjectType({
         type: merchantProviderGroupType.graphObj,
         description: 'The merchant provider group associated with the product schedule.',
         resolve: (productschedule) => {
-          var productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule');
+          var productScheduleController = new ProductScheduleController();
 
           return productScheduleController.getMerchantProviderGroup(productschedule);
         }

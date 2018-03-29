@@ -55,7 +55,8 @@ describe('controllers/Product.js', () => {
                 }
             });
 
-            let productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+            const productController = new ProductController();
 
             return productController.listByFulfillmentProvider(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -86,7 +87,8 @@ describe('controllers/Product.js', () => {
                 }
             });
 
-            let productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+            const productController = new ProductController();
 
             return productController.getFulfillmentProvider(product).then((result) => {
                 expect(result).to.deep.equal(fulfillment_provider);
@@ -99,7 +101,8 @@ describe('controllers/Product.js', () => {
 
             delete product.fulfillment_provider;
 
-            let productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+            const productController = new ProductController();
 
             return productController.getFulfillmentProvider(product).then((result) => {
                 expect(result).to.equal(null);
@@ -119,15 +122,16 @@ describe('controllers/Product.js', () => {
 
             let a_product_schedules = ['a_product_schedule'];
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
-                listByProduct: ({product, pagination}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), class {
+                listByProduct({product, pagination}) {
                     expect(product).to.equal(params.product);
                     expect(pagination).to.equal(params.pagination);
                     return Promise.resolve(a_product_schedules);
                 }
             });
 
-            let productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+            const productController = new ProductController();
 
             return productController.getProductSchedules(params).then((result) => {
                 expect(result).to.deep.equal(a_product_schedules);
@@ -140,7 +144,8 @@ describe('controllers/Product.js', () => {
 
             delete product.fulfillment_provider;
 
-            let productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+            const productController = new ProductController();
 
             try {
                 productController.getProductSchedules({})
@@ -160,8 +165,8 @@ describe('controllers/Product.js', () => {
 
             let a_transaction = {id: 'dummy_transaction_id'};
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
-                listByProduct: ({product}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), class {
+                listByProduct({product}) {
                     expect(product).to.equal(product_data.id);
                     return Promise.resolve({productschedules: [a_product_schedule]});
                 }
@@ -174,7 +179,8 @@ describe('controllers/Product.js', () => {
                 }
             });
 
-            let productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+            const productController = new ProductController();
 
             return productController.associatedEntitiesCheck({id: product_data.id}).then((result) => {
                 expect(result).to.deep.equal([
@@ -204,14 +210,16 @@ describe('controllers/Product.js', () => {
                 max: 11.00
             };
             const price = 9.00;
-            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+            const productController = new ProductController();
             expect(productController.validateDynamicPrice(product, price)).to.be.true;
         });
 
         it('returns true if product has no dynamic pricing', () => {
             const product = getValidProduct();
             const price = 9.00;
-            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+            const productController = new ProductController();
             expect(productController.validateDynamicPrice(product, price)).to.be.true;
         });
 
@@ -224,7 +232,8 @@ describe('controllers/Product.js', () => {
                 max: 11.00
             };
             const price = 7.99;
-            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+            const productController = new ProductController();
             expect(productController.validateDynamicPrice(product, price)).to.be.false;
         });
 
@@ -236,7 +245,8 @@ describe('controllers/Product.js', () => {
                 max: 11.00
             };
             const price = 11.01;
-            const productController = global.SixCRM.routes.include('controllers','entities/Product.js');
+            const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+            const productController = new ProductController();
             expect(productController.validateDynamicPrice(product, price)).to.be.false;
         });
     });

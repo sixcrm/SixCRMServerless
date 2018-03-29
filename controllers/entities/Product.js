@@ -6,7 +6,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class ProductController extends entityController {
+module.exports = class ProductController extends entityController {
 
     constructor(){
 
@@ -23,7 +23,7 @@ class ProductController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('productScheduleController', 'listByProduct', {product: id}),
+        this.executeAssociatedEntityFunction('ProductScheduleController', 'listByProduct', {product: id}),
         this.executeAssociatedEntityFunction('transactionController', 'listByProductID', {id:id})
       ];
 
@@ -108,7 +108,7 @@ class ProductController extends entityController {
         eu.throwError('bad_request','getProductSchedules requires a product argument.');
       }
 
-      return this.executeAssociatedEntityFunction('productScheduleController', 'listByProduct', {product: args.product, pagination: args.pagination});
+      return this.executeAssociatedEntityFunction('ProductScheduleController', 'listByProduct', {product: args.product, pagination: args.pagination});
 
     }
 
@@ -125,4 +125,3 @@ class ProductController extends entityController {
 
 }
 
-module.exports = new ProductController();

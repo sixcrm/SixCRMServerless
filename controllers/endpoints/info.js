@@ -5,6 +5,8 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
 class InfoController extends transactionEndpointController{
 
@@ -31,8 +33,8 @@ class InfoController extends transactionEndpointController{
         'product_schedules':global.SixCRM.routes.path('model', 'entities/components/productschedules.json')
       };
 
-      this.productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-      this.productScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+      this.productController = new ProductController();
+      this.productScheduleController = new ProductScheduleController();
 
       this.initialize();
 

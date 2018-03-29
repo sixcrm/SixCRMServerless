@@ -597,16 +597,16 @@ describe('getNextScheduleElementStartDayNumber', () => {
 
       let product_schedules = MockEntities.getValidProductSchedules();
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
-          get: ({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), class {
+          get({id}) {
               expect(id).to.equal(product_schedules[0].id);
 
               for (let i = 0; i < product_schedules[0].schedule.length; i++) {
                   product_schedules[0].schedule[i].product = product_schedules[0].schedule[i].product.id;
               }
               return Promise.resolve(product_schedules[0]);
-          },
-          getProducts: () => {
+          }
+          getProducts() {
 
             for (let i = 0; i < product_schedules[0].schedule.length; i++) {
               let product = MockEntities.getValidProduct(product_schedules[0].schedule[i].product);
@@ -615,7 +615,7 @@ describe('getNextScheduleElementStartDayNumber', () => {
             }
 
             return Promise.resolve({products: products});
-        },
+        }
       });
 
       let productScheduleHelper = new ProductScheduleHelperController();

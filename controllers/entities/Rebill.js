@@ -57,7 +57,7 @@ class rebillController extends entityController {
 
       if(_.has(rebill, 'products') && arrayutilities.nonEmpty(rebill.products)){
 
-        return this.executeAssociatedEntityFunction('productController', 'listBy', {list_array: rebill.products})
+        return this.executeAssociatedEntityFunction('ProductController', 'listBy', {list_array: rebill.products})
         .then(products => this.getResult(products, 'products'));
 
       }else{
@@ -82,7 +82,7 @@ class rebillController extends entityController {
 
           let query_parameters = this.createINQueryParameters({field: 'id', list_array: list_array});
 
-          return this.executeAssociatedEntityFunction('productScheduleController', 'listByAccount', {query_parameters: query_parameters})
+          return this.executeAssociatedEntityFunction('ProductScheduleController', 'listByAccount', {query_parameters: query_parameters})
           .then((product_schedules) => this.getResult(product_schedules, 'productschedules'));
 
         }

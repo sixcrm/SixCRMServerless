@@ -7,6 +7,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
+const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class ShipmentUtilities {
@@ -14,7 +15,7 @@ module.exports = class ShipmentUtilities {
   constructor(){
 
     this.fulfillmentProviderController = new FulfillmentProviderController();
-    this.productController = global.SixCRM.routes.include('entities', 'Product.js');
+    this.productController = new ProductController();
     this.rebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
     this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
 

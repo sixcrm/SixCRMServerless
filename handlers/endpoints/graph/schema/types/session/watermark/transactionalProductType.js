@@ -8,7 +8,8 @@ let merchantProviderGroupType = require('../../merchantprovidergroup/merchantPro
 let fulfillmentProviderType = require('../../fulfillmentprovider/fulfillmentProviderType');
 let productAttributesType = require('../../product/components/attributesType');
 
-const productController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+const productController = new ProductController();
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'TransactionalProduct',

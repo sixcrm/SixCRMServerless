@@ -137,8 +137,8 @@ describe('controllers/Campaign.js', () => {
                 productschedules: ['a_product_schedule_id']
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), {
-                listBy: ({list_array}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/ProductSchedule.js'), class {
+                listBy({list_array}) {
                     expect(list_array).to.deep.equal(campaign.productschedules);
                     return Promise.resolve({productschedules: ['a_product_schedule']})
                 }

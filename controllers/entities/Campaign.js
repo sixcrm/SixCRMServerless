@@ -147,7 +147,7 @@ module.exports = class CampaignController extends entityController {
 
       if(_.has(campaign, "products") && arrayutilities.nonEmpty(campaign.products)){
 
-        return this.executeAssociatedEntityFunction('productController', 'listBy', {list_array: campaign.products})
+        return this.executeAssociatedEntityFunction('ProductController', 'listBy', {list_array: campaign.products})
         .then(products => this.getResult(products, 'products'));
 
       }else{
@@ -164,7 +164,7 @@ module.exports = class CampaignController extends entityController {
 
       if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
 
-        return this.executeAssociatedEntityFunction('productScheduleController', 'listBy', {list_array: campaign.productschedules})
+        return this.executeAssociatedEntityFunction('ProductScheduleController', 'listBy', {list_array: campaign.productschedules})
         .then(productschedules => this.getResult(productschedules, 'productschedules'));
 
       }else{
@@ -210,7 +210,7 @@ module.exports = class CampaignController extends entityController {
 
       du.debug('Get Campaigns By Product');
 
-      return this.executeAssociatedEntityFunction('productScheduleController', 'listByProduct', {product: this.getID(product)})
+      return this.executeAssociatedEntityFunction('ProductScheduleController', 'listByProduct', {product: this.getID(product)})
       .then((productschedules) => this.getResult(productschedules, 'productschedules'))
       .then((productschedules) => {
 
@@ -301,7 +301,7 @@ module.exports = class CampaignController extends entityController {
       if(_.has(campaign, "productschedules") && arrayutilities.nonEmpty(campaign.productschedules)){
 
         return Promise.all(arrayutilities.map(campaign.productschedules, (id) => {
-          return this.executeAssociatedEntityFunction('productScheduleController', 'getProductScheduleHydrated', {id: id});
+          return this.executeAssociatedEntityFunction('ProductScheduleController', 'getProductScheduleHydrated', {id: id});
         }));
 
       }else{

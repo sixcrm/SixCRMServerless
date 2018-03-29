@@ -26,7 +26,7 @@ module.exports = class FulfillmentProviderController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('productController', 'listByFulfillmentProvider', {fulfillment_provider:id})
+        this.executeAssociatedEntityFunction('ProductController', 'listByFulfillmentProvider', {fulfillment_provider:id})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {

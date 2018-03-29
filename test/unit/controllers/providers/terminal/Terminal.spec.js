@@ -328,11 +328,11 @@ describe('controllers/providers/terminal/Terminal.js', function () {
       let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
       let products = getValidProducts();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        getListByAccount:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+        getListByAccount() {
           return Promise.resolve({products: products});
-        },
-        getResult:(result, field) => {
+        }
+        getResult(result, field) {
           du.debug('Get Result');
           if(_.isUndefined(field)){
             field = this.descriptive_name+'s';
@@ -1054,11 +1054,11 @@ describe('controllers/providers/terminal/Terminal.js', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        getListByAccount:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+        getListByAccount() {
           return Promise.resolve({products: products});
-        },
-        getResult:(result, field) => {
+        }
+        getResult(result, field) {
           du.debug('Get Result');
           if(_.isUndefined(field)){
             field = this.descriptive_name+'s';

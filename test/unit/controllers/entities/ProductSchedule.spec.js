@@ -51,7 +51,8 @@ describe('controllers/ProductSchedule.js', () => {
                 }
             });
 
-            let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            const productScheduleController = new ProductScheduleController();
 
             return productScheduleController.listByProduct(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -89,7 +90,8 @@ describe('controllers/ProductSchedule.js', () => {
                 }
             });
 
-            let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            const productScheduleController = new ProductScheduleController();
 
             return productScheduleController.listByProduct(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -131,7 +133,8 @@ describe('controllers/ProductSchedule.js', () => {
                 }
             });
 
-            let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            const productScheduleController = new ProductScheduleController();
 
             return productScheduleController.listByProduct(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -173,7 +176,8 @@ describe('controllers/ProductSchedule.js', () => {
                 }
             });
 
-            let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            const productScheduleController = new ProductScheduleController();
 
             return productScheduleController.listByProduct(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -204,7 +208,8 @@ describe('controllers/ProductSchedule.js', () => {
                 }
             });
 
-            let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            const productScheduleController = new ProductScheduleController();
 
             return productScheduleController.getMerchantProviderGroup(product_schedule).then((result) => {
                 expect(result).to.equal('a_merchantprovidergroup');
@@ -217,7 +222,8 @@ describe('controllers/ProductSchedule.js', () => {
 
             delete product_schedule.merchantprovidergroup;
 
-            let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            const productScheduleController = new ProductScheduleController();
 
             return productScheduleController.getMerchantProviderGroup(product_schedule).then((result) => {
                 expect(result).to.equal(null);
@@ -233,14 +239,15 @@ describe('controllers/ProductSchedule.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Product.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Product.js'), class {
+                get({id}) {
                     expect(id).to.equal(product_schedule.schedule[0].product);
                     return Promise.resolve('a_product');
                 }
             });
 
-            let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            const productScheduleController = new ProductScheduleController();
 
             return productScheduleController.getProduct(product_schedule.schedule[0]).then((result) => {
                 expect(result).to.equal('a_product');
@@ -265,13 +272,14 @@ describe('controllers/ProductSchedule.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Product.js'), {
-                listByAccount: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Product.js'), class {
+                listByAccount() {
                     return Promise.resolve(['a_product']);
                 }
             });
 
-            let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            const productScheduleController = new ProductScheduleController();
 
             return productScheduleController.getProducts(product_schedule).then((result) => {
                 expect(result).to.deep.equal(['a_product']);
@@ -307,7 +315,8 @@ describe('controllers/ProductSchedule.js', () => {
                 }
             });
 
-            let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            const productScheduleController = new ProductScheduleController();
 
             return productScheduleController.listProductSchedulesByList({product_schedules: [product_schedule.id]}).then((result) => {
                 expect(result).to.deep.equal([product_schedule]);
@@ -342,7 +351,8 @@ describe('controllers/ProductSchedule.js', () => {
                 }
             });
 
-            let productScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            let ProductScheduleController = global.SixCRM.routes.include('controllers','entities/ProductSchedule.js');
+            const productScheduleController = new ProductScheduleController();
 
             return productScheduleController.listByMerchantProviderGroup(params).then((result) => {
                 expect(result).to.deep.equal([product_schedule]);

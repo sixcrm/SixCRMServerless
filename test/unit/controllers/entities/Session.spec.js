@@ -350,8 +350,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/ProductSchedule.js'), {
-                listByAccount: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/ProductSchedule.js'), class {
+                listByAccount() {
                     return Promise.resolve(['a_product_schedule']);
                 }
             });

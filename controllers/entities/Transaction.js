@@ -73,7 +73,7 @@ class transactionController extends entityController {
 
       du.debug('Get Product');
 
-      return this.executeAssociatedEntityFunction('productController', 'get', {id: this.getID(product)});
+      return this.executeAssociatedEntityFunction('ProductController', 'get', {id: this.getID(product)});
 
     }
 
@@ -143,7 +143,7 @@ class transactionController extends entityController {
 
         if(_.has(transaction_product, "product")){
 
-          promises.push(this.executeAssociatedEntityFunction('productController', 'get', {id: transaction_product.product}));
+          promises.push(this.executeAssociatedEntityFunction('ProductController', 'get', {id: transaction_product.product}));
 
         }else{
 

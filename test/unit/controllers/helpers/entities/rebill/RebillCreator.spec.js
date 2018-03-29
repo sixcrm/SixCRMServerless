@@ -14,7 +14,6 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
 
 function getValidRebill(id){
   return MockEntities.getValidRebill(id);
@@ -86,6 +85,7 @@ describe('/helpers/entities/Rebill.js', () => {
   describe('constructor', () => {
 
     it('successfully calls the constructor', () => {
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       expect(objectutilities.getClassName(rebillCreatorHelper)).to.equal('RebillCreatorHelper');
@@ -100,6 +100,7 @@ describe('/helpers/entities/Rebill.js', () => {
       //required
       let session = getValidSession();
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       return rebillCreatorHelper.setParameters({argumentation: {session: session}, action: 'createRebill'}).then(() => {
@@ -119,6 +120,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let product_schedules = getValidProductSchedules();
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       return rebillCreatorHelper.setParameters({argumentation: {session: session, day: day, product_schedules: product_schedules}, action: 'createRebill'}).then(() => {
@@ -143,6 +145,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let product_group = getValidProductGroup();
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('session', session);
@@ -161,6 +164,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let product_group = getValidProductGroup();
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('session', session);
@@ -177,6 +181,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let product_group = getValidProductGroup();
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('session', session);
@@ -193,6 +198,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let product_group = getValidProductGroup();
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('session', session);
@@ -207,6 +213,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let session = getValidSession();
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('session', session);
@@ -231,6 +238,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       session.product_schedules = arrayutilities.map(product_schedules, product_schedule => product_schedule.id);
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('session', session);
@@ -251,6 +259,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let product_schedules = [getValidProductSchedule()];
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('day', 1);
@@ -296,6 +305,7 @@ describe('/helpers/entities/Rebill.js', () => {
       }];
 
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('normalizedproductschedules', normalized_product_schedules);
@@ -315,14 +325,15 @@ describe('/helpers/entities/Rebill.js', () => {
             product: getValidProduct()
         }];
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-          validateDynamicPrice: (product, price) => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+          validateDynamicPrice(product, price) {
             expect(product).to.equal(normalized_products[0].product);
             expect(price).to.equal(9.99);
             return true;
           }
         });
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         const rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('normalizedproducts', normalized_products);
@@ -339,6 +350,7 @@ describe('/helpers/entities/Rebill.js', () => {
             product: getValidProduct()
         }];
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         const rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('normalizedproducts', normalized_products);
@@ -356,14 +368,15 @@ describe('/helpers/entities/Rebill.js', () => {
             product: getValidProduct()
         }];
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-          validateDynamicPrice: (product, price) => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+          validateDynamicPrice(product, price) {
             expect(product).to.equal(normalized_products[0].product);
             expect(price).to.equal(9.99);
             return false;
           }
         });
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         const rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('normalizedproducts', normalized_products);
@@ -392,14 +405,15 @@ describe('/helpers/entities/Rebill.js', () => {
           }
         }];
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-          validateDynamicPrice: (_product, price) => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+          validateDynamicPrice(_product, price) {
             expect(_product).to.equal(product);
             expect(price).to.equal(9.99);
             return true;
           }
         });
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         const rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('normalizedproductschedules', normalized_product_schedules);
@@ -427,14 +441,15 @@ describe('/helpers/entities/Rebill.js', () => {
           }
         }];
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-          validateDynamicPrice: (_product, price) => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+          validateDynamicPrice(_product, price) {
             expect(_product).to.equal(product);
             expect(price).to.equal(9.99);
             return false;
           }
         });
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         const rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('normalizedproductschedules', normalized_product_schedules);
@@ -530,6 +545,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return Promise.all(arrayutilities.map(test_cases, test_case => {
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         let rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('normalizedproductschedules',[{quantity: 1, product_schedule: product_schedule}]);
@@ -639,6 +655,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return Promise.all(arrayutilities.map(test_cases, test_case => {
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         let rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('normalizedproductschedules',[{quantity: 1, product_schedule: product_schedule}]);
@@ -655,6 +672,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
     it('returns true when there are no product schedules and the day is negative number', () => {
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         let rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('day', -1);
@@ -667,6 +685,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
     it('throws error when there are no normalized product schedules', () => {
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         let rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('day', 0);
@@ -735,6 +754,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return Promise.all(arrayutilities.map(test_cases, test_case => {
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         let rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('normalizedproductschedules',[{quantity: 1, product_schedule: product_schedule}]);
@@ -794,6 +814,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return Promise.all(arrayutilities.map(test_cases, test_case => {
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         let rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('productschedules',[product_schedule]);
@@ -867,6 +888,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return Promise.all(arrayutilities.map(test_cases, test_case => {
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         let rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('normalizedproductschedules',[{quantity: 1, product_schedule: product_schedule}]);
@@ -931,6 +953,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return Promise.all(arrayutilities.map(test_cases, test_case => {
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         let rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('transactionproducts', test_case.transaction_products);
@@ -971,6 +994,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return Promise.all(arrayutilities.map(test_cases, test_case => {
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
         let rebillCreatorHelper = new RebillCreatorHelperController();
 
         rebillCreatorHelper.parameters.set('session', session);
@@ -991,6 +1015,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
     it('successfully builds a rebill prototype', () => {
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       let normalized_product_schedules = [
@@ -1078,6 +1103,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('rebillprototype', getValidRebillPrototype());
@@ -1099,6 +1125,7 @@ describe('/helpers/entities/Rebill.js', () => {
   describe('returnRebill', () => {
     it('successfully returns a rebill object', () => {
       let rebill = getValidRebill();
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       rebillCreatorHelper.parameters.set('rebill', rebill);
@@ -1112,6 +1139,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
     it('Successfully acquires rebill properties', () => {
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       let session = getValidSession();
@@ -1265,11 +1293,11 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
-        listProductSchedulesByList:({product_schedules}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), class {
+        listProductSchedulesByList({product_schedules}) {
           return Promise.resolve({productschedules:product_schedules});
-        },
-        getResult: () => {
+        }
+        getResult() {
           return product_schedules;
         }
       });
@@ -1308,10 +1336,13 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let day = -1;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        validateDynamicPrice: () => true
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+        validateDynamicPrice() {
+          return true
+        }
       });
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       session.product_schedules = [];
@@ -1357,10 +1388,13 @@ describe('/helpers/entities/Rebill.js', () => {
         ]
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        validateDynamicPrice: () => true
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+        validateDynamicPrice() {
+            return true
+        }
       });
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       session.watermark = {product_schedules: product_schedules};
@@ -1396,10 +1430,13 @@ describe('/helpers/entities/Rebill.js', () => {
         ]
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        validateDynamicPrice: () => true
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+        validateDynamicPrice() {
+            return true
+        }
       });
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
@@ -1433,10 +1470,13 @@ describe('/helpers/entities/Rebill.js', () => {
         ]
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        validateDynamicPrice: () => true
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+        validateDynamicPrice() {
+            return true
+        }
       });
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
@@ -1470,10 +1510,13 @@ describe('/helpers/entities/Rebill.js', () => {
         ]
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        validateDynamicPrice: () => true
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+        validateDynamicPrice() {
+            return true
+        }
       });
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
@@ -1617,11 +1660,11 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
-        listProductSchedulesByList:({product_schedules}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), class {
+        listProductSchedulesByList({product_schedules}) {
           return Promise.resolve({productschedules: product_schedules});
-        },
-        getResult: () => {
+        }
+        getResult() {
           return product_schedules;
         }
       });
@@ -1643,6 +1686,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let day = -1;
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       return rebillCreatorHelper.createRebill({session: session, day: day, product_schedules: product_schedules}).then(result => {
@@ -1733,11 +1777,11 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
-        listProductSchedulesByList:({product_schedules}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), class {
+        listProductSchedulesByList({product_schedules}) {
           return Promise.resolve({productschedules: product_schedules});
-        },
-        getResult: () => {
+        }
+        getResult() {
           return product_schedules;
         }
       });
@@ -1754,14 +1798,17 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-        validateDynamicPrice: () => true
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+        validateDynamicPrice() {
+          return true
+        }
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let day = -1;
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       return rebillCreatorHelper.createRebill({session: session, day: day, product_schedules: session.watermark.product_schedules}).then(result => {
@@ -1931,11 +1978,11 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), {
-        listProductSchedulesByList:({product_schedules}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), class {
+        listProductSchedulesByList({product_schedules}) {
           return Promise.resolve({productschedules: product_schedules});
-        },
-        getResult: () => {
+        }
+        getResult() {
           return product_schedules;
         }
       });
@@ -1962,6 +2009,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let day = -1;
 
+      const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
       let rebillCreatorHelper = new RebillCreatorHelperController();
 
       return rebillCreatorHelper.createRebill({session: session, day: day, product_schedules: session.watermark.product_schedules, products: session.watermark.products}).then(result => {
@@ -1988,17 +2036,18 @@ describe('/helpers/entities/Rebill.js', () => {
 
           let product = getValidProduct(product_id);
 
-          mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-              isUUID: (id) => {
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+              isUUID(id) {
                 expect(id).to.equal(product_group.product);
                 return true;
-              },
-              get: ({id}) => {
+              }
+              get({id}) {
                 expect(id).to.equal(product_group.product);
                 return Promise.resolve(product);
               }
           });
 
+          const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           const rebillCreatorHelper = new RebillCreatorHelperController();
 
           rebillCreatorHelper.parameters.set('products', [product_group]);
@@ -2013,13 +2062,14 @@ describe('/helpers/entities/Rebill.js', () => {
 
           let product_group = getValidProductGroup();
 
-          mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-              isUUID: (id) => {
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+              isUUID(id) {
                 expect(id).not.to.equal(product_group.product.id);
                 return false;
               }
           });
 
+          const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           const rebillCreatorHelper = new RebillCreatorHelperController();
 
           rebillCreatorHelper.parameters.set('products', [product_group]);
@@ -2036,17 +2086,18 @@ describe('/helpers/entities/Rebill.js', () => {
 
           let product_group = getValidProductGroup(product_id);
 
-          mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), {
-              isUUID: (id) => {
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+              isUUID(id) {
                   expect(id).to.equal(product_group.product);
                   return true;
-              },
-              get: ({id}) => {
+              }
+              get({id}) {
                   expect(id).to.equal(product_group.product);
                   return Promise.resolve(null);
               }
           });
 
+          const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           const rebillCreatorHelper = new RebillCreatorHelperController();
 
           rebillCreatorHelper.parameters.set('products', [product_group]);
@@ -2058,6 +2109,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       it('returns true when products are undefined', () => {
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           const rebillCreatorHelper = new RebillCreatorHelperController();
 
           return rebillCreatorHelper.normalizeProducts().then((result) => {
@@ -2073,6 +2125,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
           let product_group = getValidProductGroup();
 
+          const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           const rebillCreatorHelper = new RebillCreatorHelperController();
 
           expect(rebillCreatorHelper.getPriceFromProductGroup(product_group)).to.equal(product_group.price);
@@ -2084,6 +2137,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
           delete product_group.price;
 
+          const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           const rebillCreatorHelper = new RebillCreatorHelperController();
 
           expect(rebillCreatorHelper.getPriceFromProductGroup(product_group)).to.equal(product_group.product.default_price);
@@ -2096,6 +2150,7 @@ describe('/helpers/entities/Rebill.js', () => {
           delete product_group.price;
           delete product_group.product.default_price;
 
+          const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           const rebillCreatorHelper = new RebillCreatorHelperController();
 
           try {
@@ -2117,6 +2172,7 @@ describe('/helpers/entities/Rebill.js', () => {
               schedule_element: schedule[0]
           }];
 
+          const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           const rebillCreatorHelper = new RebillCreatorHelperController();
 
           rebillCreatorHelper.parameters.set('scheduleelementsonbillday', schedule_elements);
@@ -2133,6 +2189,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       it('returns false when there are no schedule elements on bill day', () => {
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           const rebillCreatorHelper = new RebillCreatorHelperController();
 
           return rebillCreatorHelper.addScheduleElementsToTransactionProducts().then((result) => {
@@ -2157,6 +2214,7 @@ describe('/helpers/entities/Rebill.js', () => {
               }
           });
 
+          const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           let rebillCreatorHelper = new RebillCreatorHelperController();
 
           rebillCreatorHelper.parameters.set('productschedules', product_schedule_groups);
@@ -2171,6 +2229,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
           let product_schedule_groups = getValidProductScheduleGroups([uuidV4()], true);
 
+          const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           let rebillCreatorHelper = new RebillCreatorHelperController();
 
           rebillCreatorHelper.parameters.set('productschedules', product_schedule_groups);
@@ -2183,6 +2242,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       it('returns true when product schedules are not set', () => {
 
+        const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
           let rebillCreatorHelper = new RebillCreatorHelperController();
 
           return rebillCreatorHelper.normalizeProductSchedules().then((result) => {

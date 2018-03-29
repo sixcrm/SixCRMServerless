@@ -89,7 +89,7 @@ describe('controllers/Rebill.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: (table, parameters, index) => {
                     expect(index).to.equal('parentsession-index');
                     expect(table).to.equal('rebills');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -128,7 +128,7 @@ describe('controllers/Rebill.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: (table, parameters, index) => {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('rebills');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -164,7 +164,7 @@ describe('controllers/Rebill.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: (table, parameters, index) => {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('rebills');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -200,7 +200,7 @@ describe('controllers/Rebill.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index, callback) => {
+                queryRecords: (table, parameters, index) => {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('rebills');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -251,8 +251,8 @@ describe('controllers/Rebill.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/ProductSchedule.js'), {
-                listByAccount: ({query_parameters}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/ProductSchedule.js'), class {
+                listByAccount() {
                     return Promise.resolve({productschedules: [product_schedule]});
                 }
             });
@@ -274,7 +274,7 @@ describe('controllers/Rebill.js', () => {
             let rebill = getValidRebill();
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('rebills');
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('filter_expression');
@@ -311,7 +311,7 @@ describe('controllers/Rebill.js', () => {
             let rebill = getValidRebill();
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('rebills');
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('filter_expression');
@@ -345,7 +345,7 @@ describe('controllers/Rebill.js', () => {
             let rebill = getValidRebill();
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('rebills');
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('filter_expression');
