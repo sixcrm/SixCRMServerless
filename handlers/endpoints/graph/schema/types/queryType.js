@@ -182,6 +182,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
@@ -553,7 +554,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, user_device_token) {
-                const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
+                const userDeviceTokenController = new UserDeviceTokenController();
 
                 return userDeviceTokenController.getUserDeviceTokensByUser({user: user_device_token.user, fatal: list_fatal});
             }
@@ -1785,7 +1786,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, user_device_token) {
 
-              const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
+              const userDeviceTokenController = new UserDeviceTokenController();
 
               return userDeviceTokenController.listByUser({pagination: user_device_token.pagination, fatal:list_fatal, search: user_device_token.search});
 
@@ -1806,7 +1807,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (root, user_device_token) => {
                 //Technical Debt:  This logic belongs in a controller
                 if (_.has(user_device_token, 'id')) {
-                    const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
+                    const userDeviceTokenController = new UserDeviceTokenController();
 
                     return userDeviceTokenController.get({id: user_device_token.id, fatal: get_fatal});
                 }else{

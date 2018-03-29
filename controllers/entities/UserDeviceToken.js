@@ -6,7 +6,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 //Technical Debt: Override the list method
-class userDeviceTokenController extends entityController {
+class UserDeviceTokenController extends entityController {
 
     constructor(){
         super('userdevicetoken');
@@ -48,4 +48,4 @@ class userDeviceTokenController extends entityController {
 
 }
 
-module.exports = new userDeviceTokenController();
+module.exports = UserDeviceTokenController;

@@ -138,6 +138,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
@@ -1457,7 +1458,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 userdevicetoken: { type: userDeviceTokenInputType.graphObj }
             },
             resolve: (value, userdevicetoken) => {
-                const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken.js');
+                const userDeviceTokenController = new UserDeviceTokenController();
 
                 return userDeviceTokenController.create({entity: userdevicetoken.userdevicetoken});
             }
@@ -1469,7 +1470,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 userdevicetoken : { type: userDeviceTokenInputType.graphObj }
             },
             resolve: (value, userdevicetoken) => {
-                const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken.js');
+                const userDeviceTokenController = new UserDeviceTokenController();
 
                 return userDeviceTokenController.update({entity:userdevicetoken.userdevicetoken});
             }
@@ -1481,7 +1482,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 userdevicetoken: { type: userDeviceTokenInputType.graphObj }
             },
             resolve: (value, userdevicetoken) => {
-                const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken.js');
+                const userDeviceTokenController = new UserDeviceTokenController();
 
                 return userDeviceTokenController.store({entity: userdevicetoken.userdevicetoken});
             }
@@ -1496,7 +1497,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: (value, userdevicetoken) => {
-                const userDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken.js');
+                const userDeviceTokenController = new UserDeviceTokenController();
 
                 return userDeviceTokenController.delete({id: userdevicetoken.id});
             }
