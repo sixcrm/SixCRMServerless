@@ -264,14 +264,14 @@ describe('createOrder', function () {
       let processor_response = getValidProcessorResponse();
       let response_type = 'success';
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+        get() {
           return Promise.resolve(session)
-        },
-        isEmail: () => {
+        }
+        isEmail() {
           return true;
-        },
-        getUserStrict: () => {
+        }
+        getUserStrict() {
           return Promise.resolve({});
         }
       });
@@ -436,14 +436,14 @@ describe('createOrder', function () {
       let processor_response = getValidProcessorResponse();
       let response_type = 'success';
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+        get() {
           return Promise.resolve(session)
-        },
-        isEmail: () => {
+        }
+        isEmail() {
           return true;
-        },
-        getUserStrict: () => {
+        }
+        getUserStrict() {
           return Promise.resolve({});
         }
       });
@@ -613,14 +613,14 @@ describe('createOrder', function () {
       let processor_response = getValidProcessorResponse();
       let response_type = 'success';
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+        get() {
           return Promise.resolve(session)
-        },
-        isEmail: () => {
+        }
+        isEmail() {
           return true;
-        },
-        getUserStrict: () => {
+        }
+        getUserStrict() {
           return Promise.resolve({});
         }
       });

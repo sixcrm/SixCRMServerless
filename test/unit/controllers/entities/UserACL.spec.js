@@ -161,8 +161,8 @@ describe('controllers/entities/UserACL.js', () => {
 
             let userACL = getValidUserACL();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/User.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/User.js'), class {
+                get({id}) {
                     expect(id).to.equal(userACL.user);
                     return Promise.resolve('dummy_user_data');
                 }
@@ -180,8 +180,8 @@ describe('controllers/entities/UserACL.js', () => {
 
             let userACL = getValidUserACL();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/User.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/User.js'), class {
+                get({id}) {
                     expect(id).to.equal(userACL.user);
                     return Promise.resolve();
                 }

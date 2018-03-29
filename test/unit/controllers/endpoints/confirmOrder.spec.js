@@ -399,14 +399,14 @@ describe('confirmOrder', function () {
 
       session.completed = false;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+        get() {
           return Promise.resolve(session)
-        },
-        isEmail: () => {
+        }
+        isEmail() {
           return true;
-        },
-        getUserStrict: () => {
+        }
+        getUserStrict() {
           return Promise.resolve({});
         }
       });
@@ -488,14 +488,14 @@ describe('confirmOrder', function () {
 
       session.completed = false;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+        get() {
           return Promise.resolve(session)
-        },
-        isEmail: () => {
+        }
+        isEmail() {
           return true;
-        },
-        getUserStrict: () => {
+        }
+        getUserStrict() {
           return Promise.resolve({});
         }
       });

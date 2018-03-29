@@ -548,14 +548,14 @@ describe('checkout', function () {
       let products = getValidTransactionProducts(null, true);
       let customer = getValidCustomer();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+        get() {
           return Promise.resolve(session)
-        },
-        isEmail: () => {
+        }
+        isEmail() {
           return true;
-        },
-        getUserStrict: () => {
+        }
+        getUserStrict() {
           return Promise.resolve({});
         }
       });
@@ -722,14 +722,14 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+        get() {
           return Promise.resolve(session)
-        },
-        isEmail: () => {
+        }
+        isEmail() {
           return true;
-        },
-        getUserStrict: () => {
+        }
+        getUserStrict() {
           return Promise.resolve({});
         }
       });

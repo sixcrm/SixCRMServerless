@@ -14,7 +14,7 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 const termsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 
 //Technical Debt:  The list method here is tricky
-class userController extends entityController {
+class UserController extends entityController {
 
     constructor(){
         super('user');
@@ -970,4 +970,4 @@ class userController extends entityController {
 
 }
 
-module.exports = new userController();
+module.exports = UserController;

@@ -65,7 +65,8 @@ module.exports = class AuthenticatedController extends endpointController {
       }
 
       if(!_.has(this, 'userController')){
-        this.userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+        const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+        this.userController = new UserController();
       }
 
       if(this.userController.isEmail(user_string)){

@@ -138,6 +138,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 const UserACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
@@ -224,7 +225,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 invite: { type: inviteInputType.graphObj}
             },
             resolve: (value, invite) => {
-                const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+                const userController = new UserController();
 
                 return userController.acceptInvite(invite.invite);
             }
@@ -238,7 +239,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 userinvite: { type: userInviteInputType.graphObj}
             },
             resolve: (value, userinvite) => {
-                const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+                const userController = new UserController();
 
                 return userController.invite(userinvite.userinvite);
             }
@@ -250,7 +251,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 userinvite: { type: userInviteResendInputType.graphObj}
             },
             resolve: (value, userinvite) => {
-                const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+                const userController = new UserController();
 
                 return userController.inviteResend(userinvite.userinvite);
             }
@@ -291,7 +292,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 user: { type: userInputType .graphObj}
             },
             resolve: (value, user) => {
-                const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+                const userController = new UserController();
 
                 return userController.createUserWithAlias(user.user);
             }
@@ -304,7 +305,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 user: { type: userInputType.graphObj }
             },
             resolve: (value, user) => {
-                const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+                const userController = new UserController();
 
                 return userController.createStrict(user.user);
             }
@@ -316,7 +317,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 user: { type: userInputType.graphObj }
             },
             resolve: (value, user) => {
-                const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+                const userController = new UserController();
 
                 return userController.update({entity: user.user});
             }
@@ -332,7 +333,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, user) => {
                 var id = user.id;
-                const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+                const userController = new UserController();
 
                 return userController.delete({id: id});
             }

@@ -182,6 +182,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 const UserACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
@@ -242,7 +243,7 @@ module.exports.graphObj = new GraphQLObjectType({
       	  type: userType.graphObj,
           description: 'Retrieves or creates a user.',
     	    resolve: function(){
-            const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.introspection();
     	     }
@@ -266,7 +267,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, users){
-              const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+              const userController = new UserController();
 
               return userController.getUsersByAccount({pagination: users.pagination, fatal: list_fatal, search: users.search});
             }
@@ -1612,7 +1613,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, user){
               //Technical Debt:  What is this logic for?
       	       if(_.has(user,"id")){
-                 const userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+                 const userController = new UserController();
 
                  return userController.get({id: user.id, fatal: get_fatal});
              }else{

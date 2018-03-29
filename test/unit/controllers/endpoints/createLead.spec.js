@@ -196,14 +196,14 @@ describe('createLead', function () {
       let campaign = getValidCampaign();
       let session = getValidSession();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+        get() {
           return Promise.resolve(session)
-        },
-        isEmail: () => {
+        }
+        isEmail() {
           return true;
-        },
-        getUserStrict: () => {
+        }
+        getUserStrict() {
           return Promise.resolve({});
         }
       });
@@ -275,14 +275,14 @@ describe('createLead', function () {
       let campaign = getValidCampaign();
       let session = getValidSession();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+        get() {
           return Promise.resolve(session)
-        },
-        isEmail: () => {
+        }
+        isEmail() {
           return true;
-        },
-        getUserStrict: () => {
+        }
+        getUserStrict() {
           return Promise.resolve({});
         }
       });

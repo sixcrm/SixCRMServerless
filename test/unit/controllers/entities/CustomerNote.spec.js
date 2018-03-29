@@ -54,8 +54,8 @@ describe('controllers/CustomerNote.js', () => {
                 user: 'dummy_id'
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
+                get({id}) {
                     expect(id).to.equal(customer_note.user);
                     return Promise.resolve('a_user')
                 }

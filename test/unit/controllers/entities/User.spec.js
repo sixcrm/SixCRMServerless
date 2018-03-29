@@ -33,7 +33,8 @@ describe('controllers/entities/User.js', () => {
         it('returns user\'s full name', () => {
             let user = getValidUser();
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             expect(userController.getFullName(user)).to.equal(user.first_name + ' ' + user.last_name);
         });
@@ -43,7 +44,8 @@ describe('controllers/entities/User.js', () => {
 
             let non_string_values = [123, -123, 11.22, -11.22, null, {}, [], () => {}]; //not a string
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             non_string_values.forEach(non_string_value => {
                 user.first_name = non_string_value;
@@ -57,7 +59,8 @@ describe('controllers/entities/User.js', () => {
             delete user.first_name;
             delete user.last_name;
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             expect(userController.getFullName(user)).to.equal(null);
         });
@@ -68,7 +71,8 @@ describe('controllers/entities/User.js', () => {
         it('returns user itself when user alias exists', () => {
             let user = getValidUser();
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             expect(userController.appendAlias(user)).to.deep.equal(user);
         });
@@ -85,7 +89,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             let result = userController.appendAlias(user);
 
@@ -98,7 +103,8 @@ describe('controllers/entities/User.js', () => {
         it('returns null when user address is omitted', () => {
             let user = getValidUser(); //valid user without an address
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             expect(userController.getAddress(user)).to.equal(null);
         });
@@ -108,7 +114,8 @@ describe('controllers/entities/User.js', () => {
 
             user.address = 'an address';
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             expect(userController.getAddress(user)).to.equal(user.address);
         });
@@ -120,7 +127,8 @@ describe('controllers/entities/User.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'user');
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.can({action: 'update', id: global.user.id}).then((result) => {
                 expect(result).to.equal(true);
@@ -132,7 +140,8 @@ describe('controllers/entities/User.js', () => {
         it('returns hydrated user', () => {
             let user = getValidUser();
             let acl = {};
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             userController.get = () => Promise.resolve(user);
             userController.getACLPartiallyHydrated = () => Promise.resolve(acl);
@@ -147,7 +156,8 @@ describe('controllers/entities/User.js', () => {
 
         it('returns null if user not found', () => {
             let user = getValidUser();
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             userController.get = () => Promise.resolve(null);
 
@@ -159,7 +169,8 @@ describe('controllers/entities/User.js', () => {
 
         it('rejects with server error if hydration fails', () => {
             let user = getValidUser();
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             userController.get = () => Promise.resolve(user);
             userController.getACLPartiallyHydrated = () => Promise.resolve({});
@@ -197,7 +208,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.getACLPartiallyHydrated(user).then(result => {
                 expect(result).to.deep.equal([{
@@ -224,7 +236,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.getACLPartiallyHydrated(user).then(result => {
                 expect(result).to.be.null;
@@ -246,7 +259,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.getACL(user_without_acl).then((result) => {
                 expect(result).to.deep.equal(['userACL']);
@@ -258,7 +272,8 @@ describe('controllers/entities/User.js', () => {
 
             user_data.acl = ['userACL'];
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             expect(userController.getACL(user_data)).to.deep.equal(['userACL']);
         });
@@ -276,7 +291,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.getAccessKey(user.id).then((result) => {
                 expect(result).to.equal('an_access_key');
@@ -288,7 +304,8 @@ describe('controllers/entities/User.js', () => {
 
         it('successfully retrieves a master account', () => {
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.getAccount('*').then((result) => {
                 expect(result).to.deep.equal({
@@ -308,7 +325,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.getAccount('dummy_id').then((result) => {
                 expect(result).to.equal('an_account');
@@ -328,7 +346,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.getAccessKeyByKey(user.id).then((result) => {
                 expect(result).to.equal('an_access_key');
@@ -354,7 +373,8 @@ describe('controllers/entities/User.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Entity.js'), mock_entity);
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.getUserByAccessKeyId('an_access_key_id').then((result) => {
                 expect(result).to.deep.equal(user);
@@ -389,7 +409,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.createUserWithAlias(user).then((result) => {
                 expect(result.alias).to.be.defined;
@@ -433,7 +454,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.createUserWithAlias(user).then((result) => {
                 expect(result.alias).to.be.defined;
@@ -490,7 +512,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.createStrict(user).then((result) => {
                 expect(result).to.deep.equal(user);
@@ -528,7 +551,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.createStrict(user).catch((error) => {
                 expect(error.message).to.equal('Saving failed.');
@@ -554,7 +578,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.assureUser(user.id).then((result) => {
                 expect(result).to.equal(user);
@@ -628,7 +653,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.assureUser(user_id).then((result) => {
                 expect(result.active).to.equal(true);
@@ -708,7 +734,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.assureUser(user_id).catch((error) => {
                 expect(error.message).to.equal('[500] Error: User settings creating failed.');
@@ -728,7 +755,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.assureUser(user_id).catch((error) => {
                 expect(error.message).to.equal('[500] User retrieving failed.');
@@ -811,7 +839,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.invite(user_invite).then((result) => {
                 expect(result).to.deep.equal({
@@ -858,7 +887,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.invite(user_invite).catch((error) => {
                 expect(error.message).to.equal('[500] User retrieving failed.');
@@ -900,7 +930,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.invite(user_invite).catch((error) => {
                 expect(error.message).to.equal('Role retrieving failed.');
@@ -942,7 +973,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.invite(user_invite).catch((error) => {
                 expect(error.message).to.equal('Account retrieving failed.');
@@ -984,7 +1016,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.invite(user_invite).catch((error) => {
                 expect(error.message).to.equal('[400] Invalid role.');
@@ -1026,7 +1059,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.invite(user_invite).catch((error) => {
                 expect(error.message).to.equal('[400] Invalid account.');
@@ -1044,7 +1078,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.invite(user_invite).catch((error) => {
                 expect(error.message).to.equal('[400] Invalid user email address.');
@@ -1103,7 +1138,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.inviteResend(user_invite).then((result) => {
                 expect(result).to.deep.equal({
@@ -1161,7 +1197,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.inviteResend(user_invite).catch((error) => {
                 expect(error.message).to.equal('[500] Inviting failed.');
@@ -1184,7 +1221,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.inviteResend(user_invite).catch((error) => {
                 expect(error.message).to.equal('[500] Can\'t resend invite, User ACL is not pending.');
@@ -1203,7 +1241,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            let userController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
 
             return userController.inviteResend(user_invite).catch((error) => {
                 expect(error.message).to.equal('[500] Non Existing User ACL.');

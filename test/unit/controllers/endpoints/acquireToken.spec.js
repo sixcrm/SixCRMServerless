@@ -344,14 +344,14 @@ describe('acquireToken', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+        get() {
           return Promise.resolve({})
-        },
-        isEmail: () => {
+        }
+        isEmail() {
           return true;
-        },
-        getUserStrict: () => {
+        }
+        getUserStrict() {
           return Promise.resolve({});
         }
       });
