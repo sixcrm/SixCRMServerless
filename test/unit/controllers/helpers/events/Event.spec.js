@@ -87,7 +87,8 @@ describe('helpers/events/Event.spec.js', () => {
 
 			// we have to set the datetime to the expected response since it would return the current date time
 			message.datetime = "2018-03-29T17:15:38.859Z";
-			expect(message).to.equal(expected_response);
+
+			expect(message).to.eql(expected_response);
 
 		});
 
