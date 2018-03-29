@@ -54,7 +54,7 @@ module.exports = class recoverBillingController extends workerController {
 		const rebill = this.parameters.get('rebill');
 
 		if (!_.has(this.sessionController)) {
-            const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 			this.sessionController = new SessionController();
 
 		}
@@ -103,7 +103,11 @@ module.exports = class recoverBillingController extends workerController {
 		return arrayutilities.serial(transactions, (current, transaction) => {
 
 			this.pushEvent({
-				event_type: 'transaction_recovery_' + transaction.result
+				event_type: 'transaction_recovery_' + transaction.result,
+				context: Object.assign({},
+					this.parmeters.store, {
+						transaction
+					})
 			});
 
 			if (transaction.type != 'sale' || transaction.result != 'success') {
@@ -135,7 +139,7 @@ module.exports = class recoverBillingController extends workerController {
 			rebill.second_attempt = true;
 
 			if (!_.has(this, 'rebillController')) {
-                const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+				const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 				this.rebillController = new RebillController();
 			}
 
