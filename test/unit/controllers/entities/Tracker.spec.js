@@ -49,7 +49,8 @@ describe('controllers/Tracker.js', () => {
                 }
             });
 
-            let trackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            let TrackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            const trackerController = new TrackerController();
 
             return trackerController.getAffiliates(tracker).then((result) => {
                 expect(result).to.deep.equal([affiliate]);
@@ -62,7 +63,8 @@ describe('controllers/Tracker.js', () => {
 
             delete tracker.affiliates;
 
-            let trackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            let TrackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            const trackerController = new TrackerController();
 
             expect(trackerController.getAffiliates(tracker)).to.deep.equal(null);
         });
@@ -87,7 +89,8 @@ describe('controllers/Tracker.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-            let trackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            let TrackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            const trackerController = new TrackerController();
 
             return trackerController.getCampaigns(tracker).then((result) => {
                 expect(result).to.deep.equal([campaign]);
@@ -100,7 +103,8 @@ describe('controllers/Tracker.js', () => {
 
             delete tracker.campaigns;
 
-            let trackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            let TrackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            const trackerController = new TrackerController();
 
             expect(trackerController.getCampaigns(tracker)).to.deep.equal(null);
         });
@@ -131,7 +135,8 @@ describe('controllers/Tracker.js', () => {
                 }
             });
 
-            let trackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            let TrackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            const trackerController = new TrackerController();
 
             return trackerController.listByCampaign({campaign: campaign, pagination: 0}).then((result) => {
                 expect(result).to.deep.equal({
@@ -172,7 +177,8 @@ describe('controllers/Tracker.js', () => {
                 }
             });
 
-            let trackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            let TrackerController = global.SixCRM.routes.include('controllers','entities/Tracker.js');
+            const trackerController = new TrackerController();
 
             return trackerController.listByAffiliate({affiliate: affiliate, pagination: 0}).then((result) => {
                 expect(result).to.deep.equal({

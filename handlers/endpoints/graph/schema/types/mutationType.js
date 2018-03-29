@@ -147,6 +147,7 @@ const SessionController = global.SixCRM.routes.include('entities', 'Session.js')
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -592,7 +593,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 tracker: { type: trackerInputType.graphObj}
             },
             resolve: (value, tracker) => {
-              const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+              const trackerController = new TrackerController();
 
               return trackerController.create({entity: tracker.tracker});
             }
@@ -604,7 +605,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 tracker: { type: trackerInputType.graphObj }
             },
             resolve: (value, tracker) => {
-                const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+                const trackerController = new TrackerController();
 
                 return trackerController.update({entity:tracker.tracker});
             }
@@ -620,7 +621,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, tracker) => {
                 var id = tracker.id;
-                const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+                const trackerController = new TrackerController();
 
                 return trackerController.delete({id:id});
             }

@@ -79,8 +79,8 @@ describe('controllers/workers/snsevents/trackingEvents', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
-          listByAffiliate:() => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), class {
+          listByAffiliate() {
             return Promise.resolve(trackers);
           }
         });

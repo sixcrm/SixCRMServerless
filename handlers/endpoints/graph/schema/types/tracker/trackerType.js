@@ -6,8 +6,8 @@ const GraphQLList = require('graphql').GraphQLList;
 
 let affiliateType = require('../affiliate/affiliateType');
 let campaignType = require('../campaign/campaignType');
-
-const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const trackerController = new TrackerController();
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Tracker',

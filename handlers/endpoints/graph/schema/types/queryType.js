@@ -191,6 +191,7 @@ const SessionController = global.SixCRM.routes.include('entities', 'Session.js')
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
+const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -274,7 +275,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, args){
-              const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+              const trackerController = new TrackerController();
 
               return trackerController.listByAffiliate({affiliate: args.affiliate, pagination: args.pagination, fatal: list_fatal});
             }
@@ -1137,7 +1138,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, tracker){
-                const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+                const trackerController = new TrackerController();
 
                 return trackerController.listByAccount({pagination: tracker.pagination, fatal:list_fatal, search: tracker.search});
             }
@@ -1522,7 +1523,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, tracker){
-                const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+                const trackerController = new TrackerController();
 
                 return trackerController.get({id: tracker.id, fatal: get_fatal});
             }

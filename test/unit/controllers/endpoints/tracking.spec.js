@@ -198,11 +198,11 @@ describe('tracking', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
-        listByCampaignAndAffiliate: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), class {
+        listByCampaignAndAffiliate() {
           return Promise.resolve(trackers)
-        },
-        getResult:() => {
+        }
+        getResult() {
           return trackers;
         }
       });
@@ -262,11 +262,11 @@ describe('tracking', () => {
 
       let trackers = getValidTrackers({campaigns:[campaign.id], affiliates:[affiliate.id]});
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
-        listByCampaignAndAffiliate: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), class {
+        listByCampaignAndAffiliate() {
           return Promise.resolve(trackers)
-        },
-        getResult:() => {
+        }
+        getResult() {
           return trackers;
         }
       });
@@ -290,11 +290,11 @@ describe('tracking', () => {
 
       let trackers = [];
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), {
-        listByCampaignAndAffiliate: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Tracker.js'), class {
+        listByCampaignAndAffiliate() {
           return Promise.resolve(trackers)
-        },
-        getResult:() => {
+        }
+        getResult() {
           return trackers;
         }
       });

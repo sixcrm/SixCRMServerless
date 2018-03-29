@@ -24,7 +24,7 @@ module.exports = class CampaignController extends entityController {
 
       let data_acquisition_promises = [
         this.executeAssociatedEntityFunction('SessionController', 'listByCampaign', {campaign:id}).then(sessions => this.getResult(sessions, 'sessions')),
-        this.executeAssociatedEntityFunction('trackerController', 'listByCampaign', {campaign:id}).then(trackers => this.getResult(trackers, 'trackers'))
+        this.executeAssociatedEntityFunction('TrackerController', 'listByCampaign', {campaign:id}).then(trackers => this.getResult(trackers, 'trackers'))
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {

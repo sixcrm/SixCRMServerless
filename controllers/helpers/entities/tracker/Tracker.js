@@ -72,7 +72,8 @@ module.exports = class TrackerHelperController{
       du.debug('Execute Affiliate Trackers');
 
       if(!_.has(this, 'trackerController')){
-        this.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+        const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+        this.trackerController = new TrackerController();
       }
 
       return this.trackerController.listByAffiliate({affiliate: affiliate_id}).then((trackers) => {

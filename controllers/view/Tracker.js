@@ -4,7 +4,8 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const trackerController = new TrackerController();
 const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
 
 class trackerViewController{

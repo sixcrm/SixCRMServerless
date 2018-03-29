@@ -49,8 +49,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             let data = 'Some sample data';
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), {
-                listByAffiliate: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), class {
+                listByAffiliate() {
                     return Promise.resolve([{type: 'postback'}]);
                 }
             });
@@ -78,8 +78,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             let data = 'Some sample data';
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), {
-                listByAffiliate: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), class {
+                listByAffiliate() {
                     return Promise.resolve('not an array');
                 }
             });
@@ -98,8 +98,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             let data = 'Some sample data';
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), {
-                listByAffiliate: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), class {
+                listByAffiliate() {
                     return Promise.resolve([{type: 'postback'}]);
                 }
             });
@@ -120,12 +120,14 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
         it('returns null when tracker controller is set but there aren\'t any trackers associated with this affiliate', () => {
 
+            const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+
             let affiliate_id = getValidSession().affiliate;
 
             const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
             let trackerHelperController = new TrackerHelperController();
 
-            trackerHelperController.trackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+            trackerHelperController.trackerController = new TrackerController();
             trackerHelperController.trackerController.listByAffiliate = ({affiliate}) => {
                 expect(affiliate).to.equal(affiliate_id);
                 return Promise.resolve('');
@@ -304,8 +306,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), {
-                listByAffiliate: ({affiliate}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), class {
+                listByAffiliate({affiliate}) {
                     expect(affiliate).to.equal("subaffiliate_2");
                     return Promise.resolve([{
                         type: 'postback' //returns valid tracker type
@@ -350,8 +352,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), {
-                listByAffiliate: ({affiliate}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), class {
+                listByAffiliate({affiliate}) {
                     expect(affiliate).to.equal("subaffiliate_2");
                     return Promise.resolve([{
                         type: 'html' //returns valid tracker type
@@ -390,8 +392,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), {
-                listByAffiliate: ({affiliate}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Tracker.js'), class {
+                listByAffiliate({affiliate}) {
                     expect(affiliate).to.equal("subaffiliate_2");
                     return Promise.resolve([{
                         type: 'invalid_tracker_type'

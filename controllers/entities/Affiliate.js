@@ -25,7 +25,7 @@ module.exports = class AffiliateController extends entityController {
         this.executeAssociatedEntityFunction('CampaignController',  'listByAffiliateAllow', {affiliate:id}).then((campaigns) => this.getResult(campaigns, 'campaigns')),
         this.executeAssociatedEntityFunction('CampaignController',  'listByAffiliateDeny', {affiliate:id}).then((campaigns) => this.getResult(campaigns, 'campaigns')),
         this.executeAssociatedEntityFunction('SessionController',   'listByAffiliate', {affiliate:id}).then((sessions) => this.getResult(sessions, 'sessions')),
-        this.executeAssociatedEntityFunction('trackerController',   'listByAffiliate', {affiliate:id}).then((trackers) => this.getResult(trackers, 'trackers'))
+        this.executeAssociatedEntityFunction('TrackerController',   'listByAffiliate', {affiliate:id}).then((trackers) => this.getResult(trackers, 'trackers'))
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
@@ -85,7 +85,7 @@ module.exports = class AffiliateController extends entityController {
 
       du.debug('Get Trackers');
 
-      return this.executeAssociatedEntityFunction('trackerController', 'listByAffiliate', {affiliate: affiliate, pagination: pagination});
+      return this.executeAssociatedEntityFunction('TrackerController', 'listByAffiliate', {affiliate: affiliate, pagination: pagination});
 
     }
 
