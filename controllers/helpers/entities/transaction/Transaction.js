@@ -6,6 +6,8 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 
+const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+
 module.exports = class TransactionHelperController {
 
   constructor(){
@@ -38,7 +40,7 @@ module.exports = class TransactionHelperController {
 
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-    this.transactionController = global.SixCRM.routes.include('entities', 'Transaction.js');
+    this.transactionController = new TransactionController();
 
   }
 

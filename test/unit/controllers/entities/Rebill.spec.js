@@ -29,8 +29,8 @@ describe('controllers/Rebill.js', () => {
         it('lists transactions by rebill', () => {
             let rebill = getValidRebill();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Transaction.js'), {
-                listTransactionsByRebillID: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Transaction.js'), class {
+                listTransactionsByRebillID({id}) {
                     expect(id).to.equal(rebill.id);
                     return Promise.resolve(['a_transaction']);
                 }

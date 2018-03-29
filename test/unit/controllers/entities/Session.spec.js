@@ -553,8 +553,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Transaction.js'), {
-                listTransactionsByRebillID: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Transaction.js'), class {
+                listTransactionsByRebillID({id}) {
                     expect(id).to.equal(session_rebills.rebills[0].id);
                     return Promise.resolve([]);
                 }
@@ -584,8 +584,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Transaction.js'), {
-                listTransactionsByRebillID: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Transaction.js'), class {
+                listTransactionsByRebillID({id}) {
                     expect(id).to.equal(session_rebills.rebills[0].id);
                     return Promise.resolve();
                 }
@@ -615,8 +615,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Transaction.js'), {
-                listTransactionsByRebillID: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Transaction.js'), class {
+                listTransactionsByRebillID({id}) {
                     expect(id).to.equal(session_rebills.rebills[0].id);
                     return Promise.resolve({transactions: [transaction]});
                 }

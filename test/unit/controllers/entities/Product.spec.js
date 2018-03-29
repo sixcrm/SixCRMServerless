@@ -172,8 +172,8 @@ describe('controllers/Product.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-                listByProductID: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+                listByProductID({id}) {
                     expect(id).to.equal(product_data.id);
                     return Promise.resolve({transactions: [a_transaction]});
                 }

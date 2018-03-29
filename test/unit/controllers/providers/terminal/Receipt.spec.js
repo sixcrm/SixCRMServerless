@@ -99,15 +99,15 @@ describe('/providers/terminal/Receipt.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        get:({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+        get({id}) {
           let transaction = arrayutilities.find(transactions, transaction => {
             return transaction.id == id;
           });
 
           return Promise.resolve(transaction);
-        },
-        update:({entity}) => {
+        }
+        update({entity}) {
           entity.updated_at = timestamp.getISO8601();
           return Promise.resolve(entity);
         }

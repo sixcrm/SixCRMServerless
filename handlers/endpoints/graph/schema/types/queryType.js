@@ -182,6 +182,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 const UserACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
@@ -335,9 +336,9 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, transaction){
-              const transactionsController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+              const transactionController = new TransactionController();
 
-              return transactionsController.listByCustomer({customer: transaction.customer, pagination: transaction.pagination, fatal: list_fatal});
+              return transactionController.listByCustomer({customer: transaction.customer, pagination: transaction.pagination, fatal: list_fatal});
             }
         },
         sessionbycustomerandsecondaryidentifier:{
@@ -856,7 +857,7 @@ module.exports.graphObj = new GraphQLObjectType({
               }
           },
           resolve: function(root, transaction){
-              const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+              const transactionController = new TransactionController();
 
               return transactionController.get({id: transaction.id, fatal: get_fatal});
           }
@@ -1348,7 +1349,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, transaction){
 
-              const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+              const transactionController = new TransactionController();
 
               return transactionController.listByAccount({pagination: transaction.pagination, fatal:list_fatal, search: transaction.search});
 

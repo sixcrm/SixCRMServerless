@@ -7,7 +7,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class transactionController extends entityController {
+class TransactionController extends entityController {
 
     constructor(){
         super('transaction');
@@ -435,4 +435,4 @@ class transactionController extends entityController {
 
 }
 
-module.exports = new transactionController();
+module.exports = TransactionController;

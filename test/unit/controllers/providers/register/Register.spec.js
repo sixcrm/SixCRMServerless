@@ -188,8 +188,8 @@ describe('controllers/providers/Register.js', () => {
 
      let transaction = getValidTransactionObject();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        get: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+        get() {
           return Promise.resolve(transaction);
         }
       });
@@ -216,8 +216,8 @@ describe('controllers/providers/Register.js', () => {
 
      let transaction = getValidTransactionObject();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        get: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+        get() {
           return Promise.resolve(transaction);
         }
       });
@@ -314,11 +314,11 @@ describe('controllers/providers/Register.js', () => {
 
    it('successfully gets associated transactions (empty array)', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        listByAssociatedTransaction: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+        listByAssociatedTransaction() {
           return Promise.resolve({transactions: null});
-        },
-        getResult:(result, field) => {
+        }
+        getResult(result, field) {
           if(_.has(result, field)){
             return Promise.resolve(result[field]);
           }else{
@@ -347,11 +347,11 @@ describe('controllers/providers/Register.js', () => {
      let transaction = getValidTransactionObject();
      let associated_transactions = getValidAssociatedTransactions();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        listByAssociatedTransaction: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+        listByAssociatedTransaction() {
           return Promise.resolve({transactions: associated_transactions});
-        },
-        getResult:(result, field) => {
+        }
+        getResult(result, field) {
           if(_.has(result, field)){
             return Promise.resolve(result[field]);
           }else{
@@ -778,14 +778,14 @@ describe('controllers/providers/Register.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        create:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+        create({entity}) {
           entity.id = uuidV4();
           entity.created_at = timestamp.getISO8601();
           entity.updated_at = timestamp.getISO8601();
 
           return Promise.resolve(entity);
-        },
+        }
         createAlias(){
           return 'T'+randomutilities.createRandomString(9);
         }
@@ -1623,14 +1623,14 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          get: () => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+          get() {
             return Promise.resolve(getValidTransactionObject())
-          },
-          listByAssociatedTransaction: () => {
+          }
+          listByAssociatedTransaction() {
             return Promise.resolve({transactions:[]});
-          },
-          getResult: (result, field) => {
+          }
+          getResult(result, field) {
 
             du.debug('Get Result');
 
@@ -1644,11 +1644,11 @@ describe('controllers/providers/Register.js', () => {
               return Promise.resolve(null);
             }
 
-          },
-          getMerchantProvider: () => {
+          }
+          getMerchantProvider() {
             return Promise.resolve(getValidMerchantProvider());
-          },
-          getID: (object) => {
+          }
+          getID(object) {
 
               if(_.isString(object)){
                   return object;
@@ -1776,14 +1776,14 @@ describe('controllers/providers/Register.js', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), {
-          get: () => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+          get() {
             return Promise.resolve(getValidTransactionObject())
-          },
-          listByAssociatedTransaction: () => {
+          }
+          listByAssociatedTransaction() {
             return Promise.resolve({transactions:[]});
-          },
-          getResult: (result, field) => {
+          }
+          getResult(result, field) {
 
             du.debug('Get Result');
 
@@ -1797,11 +1797,11 @@ describe('controllers/providers/Register.js', () => {
               return Promise.resolve(null);
             }
 
-          },
-          getMerchantProvider:() => {
+          }
+          getMerchantProvider() {
             return Promise.resolve(getValidMerchantProvider());
-          },
-          getID: (object) => {
+          }
+          getID(object) {
 
               if(_.isString(object)){
                   return object;

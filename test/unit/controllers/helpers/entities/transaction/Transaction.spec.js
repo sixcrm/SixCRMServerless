@@ -60,7 +60,8 @@ describe('helpers/entities/transaction/Transaction.js', () => {
       let transaction = getValidTransaction();
       let transaction_products = transaction.products;
 
-      let transactionHelperController = new TransactionHelperController();
+      const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+      const transactionHelperController = new TransactionHelperController();
 
       let result = transactionHelperController.getTransactionProducts([transaction]);
 
@@ -73,7 +74,8 @@ describe('helpers/entities/transaction/Transaction.js', () => {
       let transaction = getValidTransaction();
       delete transaction.products;
 
-      let transactionHelperController = new TransactionHelperController();
+      const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+      const transactionHelperController = new TransactionHelperController();
 
       let result = transactionHelperController.getTransactionProducts([transaction]);
 
@@ -92,16 +94,17 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
       expected_transaction.chargeback = true;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+       get() {
           return Promise.resolve(transaction);
-        },
-        update:({entity}) => {
+        }
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });
 
-      let transactionHelperController = new TransactionHelperController();
+      const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+      const transactionHelperController = new TransactionHelperController();
 
       return transactionHelperController.markTransactionChargeback({transactionid: transaction.id, chargeback_status: true}).then(() => {
 
@@ -121,16 +124,17 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
       delete expected_transaction.chargeback;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+       get() {
           return Promise.resolve(transaction);
-        },
-        update:({entity}) => {
+        }
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });
 
-      let transactionHelperController = new TransactionHelperController();
+      const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+      const transactionHelperController = new TransactionHelperController();
 
       return transactionHelperController.markTransactionChargeback({transactionid: transaction.id, chargeback_status: false}).then(() => {
 
@@ -163,7 +167,8 @@ describe('helpers/entities/transaction/Transaction.js', () => {
         result_transaction.products[index].shipping_receipt = shipping_receipt;
       });
 
-      let transactionHelperController = new TransactionHelperController();
+      const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+      const transactionHelperController = new TransactionHelperController();
 
       transactionHelperController.parameters.set('transaction', transaction);
       transactionHelperController.parameters.set('updatedtransactionproducts', updated_transaction_products);
@@ -182,7 +187,8 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
         let updated_transaction_product = getValidTransactionProduct();
 
-        let transactionHelperController = new TransactionHelperController();
+        const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+        const transactionHelperController = new TransactionHelperController();
 
         transactionHelperController.parameters.set('transaction', transaction);
         transactionHelperController.parameters.set('updatedtransactionproducts', [updated_transaction_product]);
@@ -205,13 +211,14 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
       updated_transaction.products[0].shipping_receipt = uuidV4();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
         }
       });
 
-      let transactionHelperController = new TransactionHelperController();
+      const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+      const transactionHelperController = new TransactionHelperController();
 
       transactionHelperController.parameters.set('transaction', updated_transaction);
 
@@ -230,14 +237,15 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
           let transaction = getValidTransaction();
 
-          mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-              get:({id}) => {
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+              get({id}) {
                   expect(id).to.equal(transaction.id);
                   return Promise.resolve(transaction);
               }
           });
 
-          let transactionHelperController = new TransactionHelperController();
+          const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+          const transactionHelperController = new TransactionHelperController();
 
           transactionHelperController.parameters.set('transaction', transaction);
           transactionHelperController.parameters.set('transactionid', transaction.id);
@@ -253,14 +261,15 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 
           let transaction = getValidTransaction();
 
-          mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-              get:({id}) => {
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+              get({id}) {
                   expect(id).to.equal(transaction.id);
                   return Promise.resolve(null);
               }
           });
 
-          let transactionHelperController = new TransactionHelperController();
+          const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+          const transactionHelperController = new TransactionHelperController();
 
           transactionHelperController.parameters.set('transactionid', transaction.id);
 
@@ -293,17 +302,18 @@ describe('helpers/entities/transaction/Transaction.js', () => {
               updated_transaction_products: [updated_transaction_product]
           };
 
-          mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-              get:({id}) => {
+          mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+              get({id}) {
                   expect(id).to.equal(transaction.id);
                   return Promise.resolve(transaction);
-              },
-              update:({entity}) => {
+              }
+              update({entity}) {
                   return Promise.resolve(entity);
               }
           });
 
-          let transactionHelperController = new TransactionHelperController();
+          const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+          const transactionHelperController = new TransactionHelperController();
 
           transactionHelperController.parameters.set('updatedtransactionproducts', [updated_transaction_product]);
           transactionHelperController.parameters.set('transaction', updated_transaction);

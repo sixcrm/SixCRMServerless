@@ -7,7 +7,8 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 const shippingReceiptController = new ShippingReceiptController();
-const transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+const transactionController = new TransactionController();
 
 let productType = require('../product/productType');
 let shippingReceiptType = require('../shippingreceipt/shippingReceiptType');

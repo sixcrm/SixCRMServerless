@@ -3,6 +3,7 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
+const TransactionController = global.SixCRM.routes.include('entities','Transaction.js');
 
 //Technical Debt:  Look at disabling and enabling ACLs here...
 module.exports = class Reverse extends TransactionUtilities{
@@ -26,7 +27,7 @@ module.exports = class Reverse extends TransactionUtilities{
         //'amount':global.SixCRM.routes.path('model','transaction/amount.json')
       };
 
-      this.transactionController = global.SixCRM.routes.include('entities','Transaction.js');
+      this.transactionController = new TransactionController();
 
       this.instantiateParameters();
 

@@ -4,12 +4,13 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 
 module.exports = class RegisterRecieptGenerator {
 
   constructor(){
 
-    this.transactionController = global.SixCRM.routes.include('entities', 'Transaction.js');
+    this.transactionController = new TransactionController();
 
     this.parameter_definitions = {
       issueReceipt:{

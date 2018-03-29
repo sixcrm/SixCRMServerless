@@ -89,7 +89,8 @@ describe('helpers/transaction/Refund.js', () => {
 
       it('successfully constructs a refund class', () => {
 
-        let vh = new RefundHelperController();
+        const RefundHelperController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js')
+        const vh = new RefundHelperController();
 
         expect(vh.constructor.name).to.equal('Refund');
 
@@ -101,7 +102,8 @@ describe('helpers/transaction/Refund.js', () => {
 
       it('fails to set parameters', () => {
 
-        let vh = new RefundHelperController();
+        const RefundHelperController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js')
+        const vh = new RefundHelperController();
         let invalid_arguments_array = getInvalidArgumentsArray();
 
         arrayutilities.map(invalid_arguments_array, invalid_argument => {
@@ -115,7 +117,8 @@ describe('helpers/transaction/Refund.js', () => {
 
       it('successfully sets parameters', () => {
 
-        let vh = new RefundHelperController();
+        const RefundHelperController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js')
+        const vh = new RefundHelperController();
 
         let valid_parameters = getValidParameters();
 
@@ -134,16 +137,17 @@ describe('helpers/transaction/Refund.js', () => {
         let merchant_provider = getTransactionMerchantProvider();
         let transaction = getValidTransaction();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-          getMerchantProvider:(transaction) => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+          getMerchantProvider() {
             return Promise.resolve(merchant_provider);
-          },
-          get:({id}) => {
+          }
+          get() {
             return Promise.resolve(transaction);
           }
         });
 
-        let vh = new RefundHelperController();
+        const RefundHelperController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js');
+        const vh = new RefundHelperController();
 
         let valid_parameters = getValidParameters();
 
@@ -177,7 +181,8 @@ describe('helpers/transaction/Refund.js', () => {
 
         assumePermissionedRole()
 
-        let vh = new RefundHelperController();
+        const RefundHelperController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js')
+        const vh = new RefundHelperController();
 
         vh.parameters.set('transaction', getValidTransaction());
 
@@ -202,11 +207,11 @@ describe('helpers/transaction/Refund.js', () => {
         let merchant_provider = getTransactionMerchantProvider();
         let transaction = getValidTransaction();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-          getMerchantProvider:(transaction) => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+          getMerchantProvider() {
             return Promise.resolve(merchant_provider);
-          },
-          get:({id}) => {
+          }
+          get() {
             return Promise.resolve(transaction);
           }
         });
@@ -226,7 +231,8 @@ describe('helpers/transaction/Refund.js', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('vendors', 'merchantproviders/NMI/handler.js'), mock_gateway);
 
-        let vh = new RefundHelperController();
+      const RefundHelperController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js')
+        const vh = new RefundHelperController();
 
         return vh.refund({transaction:transaction}).then(result => {
           expect(result).to.have.property('code');
@@ -246,13 +252,12 @@ describe('helpers/transaction/Refund.js', () => {
 
             let transaction = getValidTransaction();
 
-            mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-                getMerchantProvider:(transaction_params) => {
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+                getMerchantProvider(transaction_params) {
                     expect(transaction_params).to.equal(transaction.id);
                     return Promise.resolve(merchant_provider);
-                },
-
-                get:({id}) => {
+                }
+                get() {
                     expect(id).to.equal(transaction.id);
                     return Promise.resolve(transaction);
                 }
@@ -280,7 +285,8 @@ describe('helpers/transaction/Refund.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('vendors', 'merchantproviders/NMI/handler.js'), mock_gateway);
 
-            let vh = new RefundHelperController();
+          const RefundHelperController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js')
+            const vh = new RefundHelperController();
 
             vh.parameters.set('selected_merchantprovider', merchant_provider);
             vh.parameters.set('transaction', transaction);

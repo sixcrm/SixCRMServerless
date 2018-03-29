@@ -134,15 +134,16 @@ describe('helpers/transaction/Reverse.js', () => {
         let merchant_provider = getTransactionMerchantProvider();
         let transaction = getValidTransaction();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-          getMerchantProvider:(transaction) => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+          getMerchantProvider(transaction) {
             return Promise.resolve(merchant_provider);
-          },
-          get:({id}) => {
+          }
+          get({id}) {
             return Promise.resolve(transaction);
           }
         });
 
+        const ReverseHelperController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
         let vh = new ReverseHelperController();
 
         let valid_parameters = getValidParameters();
@@ -202,11 +203,11 @@ describe('helpers/transaction/Reverse.js', () => {
         let merchant_provider = getTransactionMerchantProvider();
         let transaction = getValidTransaction();
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-          getMerchantProvider:(transaction) => {
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+          getMerchantProvider() {
             return Promise.resolve(merchant_provider);
-          },
-          get:({id}) => {
+          }
+          get() {
             return Promise.resolve(transaction);
           }
         });
@@ -226,6 +227,7 @@ describe('helpers/transaction/Reverse.js', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('vendors', 'merchantproviders/NMI/handler.js'), mock_gateway);
 
+        const ReverseHelperController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
         let vh = new ReverseHelperController();
 
         return vh.reverse({transaction:transaction}).then(result => {
@@ -246,11 +248,11 @@ describe('helpers/transaction/Reverse.js', () => {
 
             let transaction = getValidTransaction();
 
-            mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), {
-                getMerchantProvider:(transaction) => {
+            mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+                getMerchantProvider(transaction) {
                     return Promise.resolve(merchant_provider);
-                },
-                get:({id}) => {
+                }
+                get({id}) {
                     expect(id).to.equal(transaction.id);
                     return Promise.resolve(transaction);
                 }
@@ -278,6 +280,7 @@ describe('helpers/transaction/Reverse.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('vendors', 'merchantproviders/NMI/handler.js'), mock_gateway);
 
+            const ReverseHelperController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
             let vh = new ReverseHelperController();
 
             vh.parameters.set('selected_merchantprovider', merchant_provider);

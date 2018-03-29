@@ -209,6 +209,19 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
   describe('constructor', () => {
 
+      before(() => {
+          mockery.enable({
+              useCleanCache: true,
+              warnOnReplace: false,
+              warnOnUnregistered: false
+          });
+      });
+
+      beforeEach(() => {
+          mockery.resetCache();
+          mockery.deregisterAll();
+      });
+
     it('successfully constructs', () => {
 
       const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');

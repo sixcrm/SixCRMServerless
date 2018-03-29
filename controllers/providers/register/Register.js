@@ -13,6 +13,7 @@ const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCar
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js')
 const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
 const MerchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
+const TransactionsController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 const rebillController = new RebillController();
 
 module.exports = class Register extends RegisterUtilities {
@@ -27,7 +28,7 @@ module.exports = class Register extends RegisterUtilities {
       error:'error'
     };
 
-    this.transactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+    this.transactionController = new TransactionsController();
     this.merchantProviderController = new MerchantProviderController();
 
     this.parameter_definitions = {

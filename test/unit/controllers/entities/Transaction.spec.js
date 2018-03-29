@@ -1,7 +1,7 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 
 describe('controllers/Transaction.js', () => {
 
@@ -30,7 +30,8 @@ describe('controllers/Transaction.js', () => {
                 }
             });
 
-            let transactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+            const TransactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+            const transactionController = new TransactionController();
 
             expect(transactionController.createAlias()).to.equal('T' + random_string);
         });
@@ -51,7 +52,8 @@ describe('controllers/Transaction.js', () => {
                 }
             });
 
-            let transactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+            const TransactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+            const transactionController = new TransactionController();
 
             return transactionController.getProduct(a_product).then((result) => {
                 expect(result).to.equal('a_product_data');
@@ -76,7 +78,8 @@ describe('controllers/Transaction.js', () => {
                 }
             });
 
-            let transactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+            const TransactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+            const transactionController = new TransactionController();
 
             return transactionController.getMerchantProvider(a_transaction).then((result) => {
                 expect(result).to.equal('a_merchant_provider');
@@ -117,7 +120,8 @@ describe('controllers/Transaction.js', () => {
                 }
             });
 
-            let transactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+            const TransactionController = global.SixCRM.routes.include('controllers','entities/Transaction.js');
+            const transactionController = new TransactionController();
 
             return transactionController.listByAssociatedTransaction(params).then((result) => {
                 expect(result).to.deep.equal({
