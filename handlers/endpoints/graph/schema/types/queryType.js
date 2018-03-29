@@ -502,7 +502,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
               };
 
-              return eventsHelperController.pushEvent({event_type:'test', context:context, message_attributes: message_attributes}).then(() => {
+              return eventsHelperController.pushEvent({event_type:'test', context: context, message_attributes: message_attributes}).then(() => {
                 return {result:'OK'};
               });
 

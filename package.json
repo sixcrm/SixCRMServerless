@@ -34,7 +34,7 @@
 		"request": "^2.85.0",
 		"require-yaml": "0.0.1",
 		"sixcrm-translations": "git+ssh://git@bitbucket.org/sixcrm/crossrepositorytranslations.git",
-		"stripe": "^5.5.0",
+		"stripe": "^5.6.1",
 		"striptags": "^3.1.1",
 		"underscore": "^1.8.3",
 		"uuid": "^3.2.1",
@@ -42,7 +42,7 @@
 		"xml2js": "^0.4.19"
 	},
 	"devDependencies": {
-		"aws-sdk": "^2.213.1",
+		"aws-sdk": "^2.216.1",
 		"chai": "^3.5.0",
 		"chai-as-promised": "^6.0.0",
 		"chai-json-schema": "^1.4.0",

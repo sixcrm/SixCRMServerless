@@ -8,6 +8,7 @@ class TestNotification extends BaseNotification {
 
     super();
 
+    this.category = 'test';
     this.name = 'test';
 
   }
