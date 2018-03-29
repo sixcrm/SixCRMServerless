@@ -11,6 +11,8 @@ module.exports = class AnalyticsTransform {
 
 				du.error('AnalyticsTransform.execute()', record, ex);
 
+				throw ex;
+
 			});
 
 	}
