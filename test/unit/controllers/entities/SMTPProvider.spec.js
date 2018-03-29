@@ -40,7 +40,7 @@ describe('controllers/SMTPProvider.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'smtpprovider');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('smtpproviders');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(params.smtpprovider.id);
                     return Promise.resolve({
@@ -65,7 +65,8 @@ describe('controllers/SMTPProvider.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('controllers','providers/SMTP.js'), mock_smtp_controller);
 
-            let smtpProviderController = global.SixCRM.routes.include('controllers','entities/SMTPProvider.js');
+            let SMTPProviderController = global.SixCRM.routes.include('controllers','entities/SMTPProvider.js');
+            const smtpProviderController = new SMTPProviderController();
 
             return smtpProviderController.validateSMTPProvider(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -94,7 +95,7 @@ describe('controllers/SMTPProvider.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'smtpprovider');
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+                queryRecords: (table, parameters) => {
                     expect(table).to.equal('smtpproviders');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(params.smtpprovider.id);
                     return Promise.resolve({
@@ -104,7 +105,8 @@ describe('controllers/SMTPProvider.js', () => {
                 }
             });
 
-            let smtpProviderController = global.SixCRM.routes.include('controllers','entities/SMTPProvider.js');
+            let SMTPProviderController = global.SixCRM.routes.include('controllers','entities/SMTPProvider.js');
+            const smtpProviderController = new SMTPProviderController();
 
             return smtpProviderController.validateSMTPProvider(params).catch((error) => {
                 expect(error.message).to.equal('[500] The SMTP Provider specified was not found.');

@@ -145,6 +145,7 @@ const RebillController = global.SixCRM.routes.include('controllers', 'entities/R
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -256,9 +257,9 @@ module.exports.graphObj = new GraphQLObjectType({
               smtpvalidation: { type: SMTPValidationInputType.graphObj }
             },
             resolve: function(root, args){
-              const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
+              const smtpProviderController = new SMTPProviderController();
 
-              return SMTPProviderController.validateSMTPProvider(args.smtpvalidation);
+              return smtpProviderController.validateSMTPProvider(args.smtpvalidation);
             }
         },
         fulfillmentprovidervalidation: {
@@ -670,9 +671,9 @@ module.exports.graphObj = new GraphQLObjectType({
                 smtpprovider: { type: SMTPProviderInputType.graphObj}
             },
             resolve: (value, smtpprovider) => {
-                const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
+                const smtpProviderController = new SMTPProviderController();
 
-                return SMTPProviderController.create({entity: smtpprovider.smtpprovider});
+                return smtpProviderController.create({entity: smtpprovider.smtpprovider});
             }
         },
         updatesmtpprovider:{
@@ -682,9 +683,9 @@ module.exports.graphObj = new GraphQLObjectType({
                 smtpprovider: { type: SMTPProviderInputType.graphObj }
             },
             resolve: (value, smtpprovider) => {
-                const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
+                const smtpProviderController = new SMTPProviderController();
 
-                return SMTPProviderController.update({entity:smtpprovider.smtpprovider});
+                return smtpProviderController.update({entity:smtpprovider.smtpprovider});
             }
         },
         deletesmtpprovider:{
@@ -698,9 +699,9 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, smtpprovider) => {
                 var id = smtpprovider.id;
-                const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
+                const smtpProviderController = new SMTPProviderController();
 
-                return SMTPProviderController.delete({id:id});
+                return smtpProviderController.delete({id:id});
             }
         },
         createmerchantprovider:{

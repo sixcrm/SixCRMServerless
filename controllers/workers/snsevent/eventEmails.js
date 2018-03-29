@@ -11,7 +11,7 @@ const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js
 const CustomerHelperController = global.SixCRM.routes.include('helpers', 'entities/customer/Customer.js');
 const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/CustomerMailer.js');
 const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
-
+const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const SNSEventController = global.SixCRM.routes.include('controllers','workers/components/SNSEvent.js');
 
 class EventEmailsController extends SNSEventController {
@@ -33,7 +33,7 @@ class EventEmailsController extends SNSEventController {
 
     this.campaignController = new CampaignController();
     this.customerController = new CustomerController();
-    this.smtpProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
+    this.smtpProviderController = new SMTPProviderController();
     this.emailTemplatesController = new EmailTemplateController();
 
     this.smtpProviderController.sanitize(false);

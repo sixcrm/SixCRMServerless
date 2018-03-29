@@ -7,7 +7,7 @@ const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class SMTPProviderController extends entityController {
+module.exports = class SMTPProviderController extends entityController {
 
     constructor(){
 
@@ -93,4 +93,3 @@ class SMTPProviderController extends entityController {
 
 }
 
-module.exports = new SMTPProviderController();

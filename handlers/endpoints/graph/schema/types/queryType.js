@@ -189,6 +189,7 @@ const RebillController = global.SixCRM.routes.include('controllers', 'entities/R
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -975,9 +976,9 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, smtpprovider){
-                const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
+                const smtpProviderController = new SMTPProviderController();
 
-                return SMTPProviderController.get({id: smtpprovider.id, fatal: get_fatal});
+                return smtpProviderController.get({id: smtpprovider.id, fatal: get_fatal});
             }
         },
         emailtemplatelist: {
@@ -1023,9 +1024,9 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, smtpproviders){
-                const SMTPProviderController = global.SixCRM.routes.include('controllers', 'entities/SMTPProvider.js');
+                const smtpProviderController = new SMTPProviderController();
 
-                return SMTPProviderController.listByAccount({pagination: smtpproviders.pagination, fatal:list_fatal, search: smtpproviders.search});
+                return smtpProviderController.listByAccount({pagination: smtpproviders.pagination, fatal:list_fatal, search: smtpproviders.search});
             }
         },
         productlist: {

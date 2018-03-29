@@ -91,8 +91,8 @@ describe('controllers/EmailTemplate.js', () => {
 
             let smtp_provider = getValidSMTPProvider();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/SMTPProvider.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/SMTPProvider.js'), class {
+                get({id}) {
                     expect(id).to.equal(emailTemplate.smtp_provider);
 
                     return Promise.resolve(smtp_provider);
