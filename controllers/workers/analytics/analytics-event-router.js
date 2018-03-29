@@ -27,35 +27,7 @@ module.exports = {
 		transform: 'rebill-transform.js',
 		handlers: ['rebill-event-handler.js']
 	},
-	transaction_success: {
-		transform: 'transaction-transform.js',
-		handlers: ['transaction-event-handler.js']
-	},
-	transaction_fail: {
-		transform: 'transaction-transform.js',
-		handlers: ['transaction-event-handler.js']
-	},
-	transaction_declined: {
-		transform: 'transaction-transform.js',
-		handlers: ['transaction-event-handler.js']
-	},
-	transaction_error: {
-		transform: 'transaction-transform.js',
-		handlers: ['transaction-event-handler.js']
-	},
-	transaction_recovery_success: {
-		transform: 'transaction-transform.js',
-		handlers: ['transaction-event-handler.js']
-	},
-	transaction_recovery_fail: {
-		transform: 'transaction-transform.js',
-		handlers: ['transaction-event-handler.js']
-	},
-	transaction_recovery_declined: {
-		transform: 'transaction-transform.js',
-		handlers: ['transaction-event-handler.js']
-	},
-	transaction_recovery_error: {
+	'transaction_*': {
 		transform: 'transaction-transform.js',
 		handlers: ['transaction-event-handler.js']
 	}
