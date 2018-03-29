@@ -85,8 +85,8 @@ describe('controllers/workers/worker', function () {
           let session = getValidSession();
           let message = getValidMessage(session.id);
 
-          mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), {
-            get: ({id}) => {
+          mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), class {
+            get({id}) {
               if(id == session.id){
                 return Promise.resolve(session);
               }

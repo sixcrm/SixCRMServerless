@@ -143,6 +143,7 @@ const ProductController = global.SixCRM.routes.include('controllers', 'entities/
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
@@ -1267,7 +1268,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 session: { type: sessionInputType.graphObj }
             },
             resolve: (value, session) => {
-                const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+                const sessionController = new SessionController();
 
                 return sessionController.create({entity: session.session});
             }
@@ -1279,7 +1280,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 session: { type: sessionInputType.graphObj }
             },
             resolve: (value, session) => {
-                const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+                const sessionController = new SessionController();
 
                 return sessionController.update({entity:session.session});
             }
@@ -1295,7 +1296,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, session) => {
                 var id = session.id;
-                const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+                const sessionController = new SessionController();
 
                 return sessionController.delete({id:id});
             }
@@ -1307,7 +1308,7 @@ module.exports.graphObj = new GraphQLObjectType({
 						session: {type: sessionCancelInputType.graphObj}
 					},
 					resolve: (value, session) => {
-						const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+						const sessionController = new SessionController();
 
 						return sessionController.cancelSession({entity:session.session});
 

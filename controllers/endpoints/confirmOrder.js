@@ -5,7 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
-
+const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class ConfirmOrderController extends transactionEndpointController{
@@ -63,7 +63,7 @@ class ConfirmOrderController extends transactionEndpointController{
     this.transactionHelperController = new TransactionHelperController();
     this.sessionHelperController = new SessionHelperController();
 
-    this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+    this.sessionController = new SessionController();
 
     this.event_type = 'confirm';
 

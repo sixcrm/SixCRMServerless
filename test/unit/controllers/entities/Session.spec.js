@@ -51,7 +51,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.getAffiliateIDs(session.id).then((result) => {
                 expect(result).to.deep.equal([
@@ -87,7 +88,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.getAffiliateIDs(session.id).then((result) => {
                 expect(result).to.deep.equal([]);
@@ -109,7 +111,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.getAffiliateIDs(session.id).then((result) => {
                 expect(result).to.deep.equal([]);
@@ -124,7 +127,8 @@ describe('controllers/Session.js', () => {
 
             delete session.campaign;
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             expect(sessionController.getCampaign(session)).to.equal(null);
         });
@@ -143,7 +147,8 @@ describe('controllers/Session.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.getCampaign(session).then((result) => {
                 expect(result).to.equal('a_campaign');
@@ -158,7 +163,8 @@ describe('controllers/Session.js', () => {
 
             delete session.customer;
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             expect(sessionController.getCustomer(session)).to.equal(null);
         });
@@ -177,7 +183,8 @@ describe('controllers/Session.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.getCustomer(session).then((result) => {
                 expect(result).to.equal('a_customer');
@@ -205,7 +212,8 @@ describe('controllers/Session.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.getCampaignHydrated(session).then((result) => {
                 expect(result).to.equal(hydrated_campaign);
@@ -227,7 +235,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.getAffiliate(session, affiliate_field).then((result) => {
                 expect(result).to.equal('an_affiliate');
@@ -241,7 +250,8 @@ describe('controllers/Session.js', () => {
 
             session.subaffiliate_1 = "some random value"; //unexpected value
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             expect(sessionController.getAffiliate(session, affiliate_field)).to.equal(null);
         });
@@ -251,7 +261,8 @@ describe('controllers/Session.js', () => {
 
             let affiliate_field = "some_random_value"; //invalid field
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             expect(sessionController.getAffiliate(session, affiliate_field)).to.equal(null);
         });
@@ -286,7 +297,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.listByAffiliate(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -314,7 +326,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.listRebills(session_data).then((result) => {
                 expect(result).to.deep.equal(['a_rebill']);
@@ -327,7 +340,8 @@ describe('controllers/Session.js', () => {
         it('returns null when session does not have a product schedule', () => {
             let session = getValidSession();
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.listProductSchedules(session).then((result) => {
                 expect(result).to.deep.equal(null);
@@ -356,7 +370,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.listProductSchedules(session).then((result) => {
                 expect(result).to.deep.equal(['a_product_schedule']);
@@ -393,7 +408,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.listByCampaign(params).then((result) => {
                 expect(result).to.deep.equal({
@@ -432,7 +448,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.getSessionByCustomer(customer).then((result) => {
                 expect(result).to.deep.equal([{sessions: session}]);
@@ -473,7 +490,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.closeSession(session).then((result) => {
                 expect(result).to.deep.equal(updatedSession);
@@ -493,7 +511,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.listTransactions(session).then((result) => {
                 expect(result).to.equal(null);
@@ -510,7 +529,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.listTransactions(session).then((result) => {
                 expect(result).to.equal(null);
@@ -540,7 +560,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.listTransactions(session).then((result) => {
                 expect(result).to.deep.equal(null);
@@ -570,7 +591,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.listTransactions(session).then((result) => {
                 expect(result).to.deep.equal(null);
@@ -600,7 +622,8 @@ describe('controllers/Session.js', () => {
                 }
             });
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.listTransactions(session).then((result) => {
                 expect(result).to.deep.equal([transaction]);
@@ -618,7 +641,8 @@ describe('controllers/Session.js', () => {
 					canceled_by: 'test@user.com'
 				}
 
-				let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+				let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+				const sessionController = new SessionController();
 
 				return sessionController.cancelSession({entity: mock_cancel}).catch((error) => {
 
@@ -649,7 +673,8 @@ describe('controllers/Session.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             return sessionController.getSessionCreditCard(session).then((result) => {
                 expect(result).to.equal(credit_card);
@@ -663,7 +688,8 @@ describe('controllers/Session.js', () => {
 
             let session = getValidSession();
 
-            let sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+            const sessionController = new SessionController();
 
             let alias = sessionController.createAlias(session);
 

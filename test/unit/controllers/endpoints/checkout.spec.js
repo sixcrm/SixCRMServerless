@@ -328,11 +328,11 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        assureSession() {
           return Promise.resolve(session);
-        },
-        getCampaign:() => {
+        }
+        getCampaign() {
           return Promise.resolve(campaign);
         }
       });
@@ -395,11 +395,11 @@ describe('checkout', function () {
           }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
-        },
-        get:() => {
+        }
+        get() {
           return Promise.resolve(session)
         }
       });
@@ -566,20 +566,20 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        get() {
           return Promise.resolve(session);
-        },
-        getCustomer:() => {
+        }
+        getCustomer() {
           return Promise.resolve(customer);
-        },
-        listTransactions:() => {
+        }
+        listTransactions() {
           return Promise.resolve(transactions);
-        },
-        closeSession:() => {
+        }
+        closeSession() {
           return Promise.resolve(true);
-        },
-        getCampaign:() => {
+        }
+        getCampaign() {
           return Promise.resolve(campaign);
         }
       });
@@ -806,26 +806,26 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        assureSession() {
           return Promise.resolve(session);
-        },
-        update:({entity}) => {
+        }
+        update({entity}) {
           return Promise.resolve(entity);
-        },
-        get:() => {
+        }
+        get() {
           return Promise.resolve(session)
-        },
-        getCustomer:() => {
+        }
+        getCustomer() {
           return Promise.resolve(customer);
-        },
-        listTransactions:() => {
+        }
+        listTransactions() {
           return Promise.resolve(transactions);
-        },
-        closeSession:() => {
+        }
+        closeSession() {
           return Promise.resolve(true);
-        },
-        getCampaign:() => {
+        }
+        getCampaign() {
           return Promise.resolve(campaign);
         }
       });

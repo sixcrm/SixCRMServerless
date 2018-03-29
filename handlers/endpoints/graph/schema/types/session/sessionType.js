@@ -14,7 +14,8 @@ let customerType = require('../customer/customerType');
 let watermarkType = require('./watermark/watermarkType');
 let sessionCancelType = require('./sessionCancelType')
 
-const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+const sessionController = new SessionController();
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Session',

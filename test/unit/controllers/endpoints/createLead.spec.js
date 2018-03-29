@@ -251,8 +251,8 @@ describe('createLead', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        assureSession() {
           return Promise.resolve(session);
         }
       });
@@ -330,8 +330,8 @@ describe('createLead', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        assureSession() {
           return Promise.resolve(session);
         }
       });
@@ -688,8 +688,8 @@ describe('createLead', function () {
       let session_prototype = getValidSessionPrototype();
       let session = getValidSession();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        assureSession() {
           return Promise.resolve(session);
         }
       });
@@ -813,8 +813,8 @@ describe('createLead', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        assureSession:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        assureSession() {
           return Promise.resolve(session);
         }
       });

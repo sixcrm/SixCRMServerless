@@ -105,7 +105,7 @@ module.exports = class RebillController extends entityController {
 
       if(!_.has(rebill, 'parentsession')){ return null; }
 
-      return this.executeAssociatedEntityFunction('sessionController', 'get', {id: this.getID(rebill.parentsession)});
+      return this.executeAssociatedEntityFunction('SessionController', 'get', {id: this.getID(rebill.parentsession)});
 
     }
 
@@ -113,7 +113,7 @@ module.exports = class RebillController extends entityController {
 
       if(!_.has(rebill, 'parentsession')){ return null; }
 
-      return this.executeAssociatedEntityFunction('sessionController', 'getSessionHydrated', {id: rebill.parentsession});
+      return this.executeAssociatedEntityFunction('SessionController', 'getSessionHydrated', {id: rebill.parentsession});
 
     }
 

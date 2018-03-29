@@ -10,7 +10,7 @@ const random = global.SixCRM.routes.include('lib', 'random.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class sessionController extends entityController {
+module.exports = class SessionController extends entityController {
 
     constructor(){
 
@@ -93,7 +93,7 @@ class sessionController extends entityController {
 
       if(!_.has(session, "customer")){ return null; }
 
-      return this.executeAssociatedEntityFunction('customerController', 'get', {id: session.customer});
+      return this.executeAssociatedEntityFunction('CustomerController', 'get', {id: session.customer});
 
     }
 
@@ -113,7 +113,7 @@ class sessionController extends entityController {
 
       if(!_.has(session, 'customer')){ return null; }
 
-      return this.executeAssociatedEntityFunction('customerController', 'getMostRecentCreditCard', {id: session.customer});
+      return this.executeAssociatedEntityFunction('CustomerController', 'getMostRecentCreditCard', {id: session.customer});
 
     }
 
@@ -566,7 +566,7 @@ class sessionController extends entityController {
 
 			du.debug('Cancel Session');
 
-			return this.executeAssociatedEntityFunction('sessionController', 'get', {id: entity.id}).then(session => {
+			return this.executeAssociatedEntityFunction('SessionController', 'get', {id: entity.id}).then(session => {
 
 				if(!session){
 
@@ -587,4 +587,3 @@ class sessionController extends entityController {
 
 }
 
-module.exports = new sessionController();

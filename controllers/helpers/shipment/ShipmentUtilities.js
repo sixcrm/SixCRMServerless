@@ -10,6 +10,7 @@ const FulfillmentProviderController = global.SixCRM.routes.include('entities', '
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
 module.exports = class ShipmentUtilities {
 
@@ -18,7 +19,7 @@ module.exports = class ShipmentUtilities {
     this.fulfillmentProviderController = new FulfillmentProviderController();
     this.productController = new ProductController();
     this.rebillController = new RebillController();
-    this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+    this.sessionController = new SessionController();
 
     const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 

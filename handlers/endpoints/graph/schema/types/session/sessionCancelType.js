@@ -6,8 +6,8 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 let userType = require('../user/userType');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 
-
-let sessionController =  global.SixCRM.routes.include('controllers', 'entities/Session.js');
+const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+let sessionController = new SessionController();
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'SessionCancel',

@@ -252,6 +252,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
         it('retrieves valid affiliate ids from session when session controller is already set', () => {
 
+            const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+
             let session = getValidSession();
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
@@ -259,7 +261,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
             const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
             let trackerHelperController = new TrackerHelperController();
 
-            trackerHelperController.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+            trackerHelperController.sessionController = new SessionController();
             trackerHelperController.sessionController.getAffiliateIDs = (id) => {
                 expect(id).to.equal(session.id);
                 return Promise.resolve([

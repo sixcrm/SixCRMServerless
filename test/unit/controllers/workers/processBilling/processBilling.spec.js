@@ -141,8 +141,8 @@ describe('controllers/workers/processBilling', () => {
 			let register_response = getValidRegisterResponse();
 			let response_code = 'success';
 
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-				get: () => {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+				get() {
 					return Promise.resolve(session)
 				}
 			});

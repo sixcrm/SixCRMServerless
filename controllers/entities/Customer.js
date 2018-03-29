@@ -24,7 +24,7 @@ module.exports = class CustomerController extends entityController {
 
       let data_acquisition_promises = [
         this.executeAssociatedEntityFunction('CustomerNoteController', 'listByCustomer', {customer:id}).then(customernotes => this.getResult(customernotes, 'customernotes')),
-        this.executeAssociatedEntityFunction('sessionController', 'listByCustomer', {customer:id}).then(sessions => this.getResult(sessions, 'sessions'))
+        this.executeAssociatedEntityFunction('SessionController', 'listByCustomer', {customer:id}).then(sessions => this.getResult(sessions, 'sessions'))
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
@@ -187,7 +187,7 @@ module.exports = class CustomerController extends entityController {
 
       du.debug('Get Customer Sessions');
 
-      return this.executeAssociatedEntityFunction('sessionController', 'getSessionByCustomer', this.getID(customer));
+      return this.executeAssociatedEntityFunction('SessionController', 'getSessionByCustomer', this.getID(customer));
 
     }
 
@@ -224,7 +224,7 @@ module.exports = class CustomerController extends entityController {
 
       du.debug('List Customer Sessions');
 
-      return this.executeAssociatedEntityFunction('sessionController', 'listByCustomer', {customer: customer, pagination: pagination});
+      return this.executeAssociatedEntityFunction('SessionController', 'listByCustomer', {customer: customer, pagination: pagination});
 
     }
 

@@ -15,11 +15,12 @@ const CustomerController = global.SixCRM.routes.include('controllers', 'entities
 const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const transactionController = global.SixCRM.routes.include('entities', 'Transaction.js');
-const sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const numberUtilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const productController = new ProductController();
 const customerController = new CustomerController();
+const sessionController = new SessionController();
 const fulfillmentProviderController = new FulfillmentProviderController();
 const tab = '      ';
 

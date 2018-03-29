@@ -55,8 +55,8 @@ module.exports = class processBillingController extends workerController {
 		const rebill = this.parameters.get('rebill');
 
 		if (!_.has(this.sessionController)) {
-
-			this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+            const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
 
 		}
 

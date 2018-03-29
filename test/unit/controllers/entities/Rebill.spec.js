@@ -50,8 +50,8 @@ describe('controllers/Rebill.js', () => {
         it('successfully retrieves parent session', () => {
             let rebill = getValidRebill();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Session.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Session.js'), class {
+                get({id}) {
                     expect(id).to.equal(rebill.parentsession);
                     return Promise.resolve('a_parent_session');
                 }

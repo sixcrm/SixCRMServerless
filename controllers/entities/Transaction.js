@@ -370,7 +370,7 @@ class transactionController extends entityController {
 
         du.debug('List Transactions By Customer');
 
-        return this.executeAssociatedEntityFunction('customerController', 'getCustomerSessions', customer)
+        return this.executeAssociatedEntityFunction('CustomerController', 'getCustomerSessions', customer)
         .then(sessions => {
 
           if (!sessions) {

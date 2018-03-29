@@ -1,14 +1,8 @@
 'use strict'
-const _ = require('underscore');
 const chai = require("chai");
-const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
@@ -73,8 +67,8 @@ describe('controllers/workers/getRebills', () => {
 
       message.Body = JSON.stringify({id: session.id});
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        get: ({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        get() {
           return Promise.resolve(session)
         }
       });
@@ -104,7 +98,7 @@ describe('controllers/workers/getRebills', () => {
         constructor(){
 
         }
-        createRebill(session){
+        createRebill(){
           return Promise.resolve(rebill);
         }
       };
@@ -154,8 +148,8 @@ describe('controllers/workers/getRebills', () => {
 
       message.Body = JSON.stringify({id: session.id});
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        get: ({id}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        get() {
           return Promise.resolve(session)
         }
       });
@@ -164,7 +158,7 @@ describe('controllers/workers/getRebills', () => {
         constructor(){
 
         }
-        createRebill(session){
+        createRebill(){
           return Promise.resolve(rebill);
         }
       };

@@ -2,9 +2,6 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
-const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
-const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 class CreateOrderController extends transactionEndpointController {
@@ -105,7 +102,8 @@ class CreateOrderController extends transactionEndpointController {
 		let event = this.parameters.get('event');
 
 		if (!_.has(this.sessionController)) {
-			this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+            const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
 		}
 
 		return this.sessionController.get({
@@ -209,6 +207,7 @@ class CreateOrderController extends transactionEndpointController {
 		if (_.has(event, 'creditcard')) {
 
 			if (!_.has(this, 'creditCardController')) {
+                const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
 				this.creditCardController = new CreditCardController();
 				this.creditCardController.sanitize(false);
 			}
@@ -233,6 +232,7 @@ class CreateOrderController extends transactionEndpointController {
 		let customer = this.parameters.get('customer');
 
 		if (!_.has(this, 'customerController')) {
+            const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 			this.customerController = new CustomerController();
 		}
 
@@ -251,6 +251,7 @@ class CreateOrderController extends transactionEndpointController {
 		let event = this.parameters.get('event');
 
 		if (!_.has(this, 'customerController')) {
+            const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 			this.customerController = new CustomerController();
 		}
 
@@ -279,6 +280,7 @@ class CreateOrderController extends transactionEndpointController {
 		}
 
 		if (!_.has(this, 'rebillController')) {
+            const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 			this.rebillController = new RebillController();
 		}
 
@@ -477,6 +479,7 @@ class CreateOrderController extends transactionEndpointController {
 		}
 
 		if (!_.has(this, 'rebillController')) {
+            const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 			this.rebillController = new RebillController();
 		}
 
@@ -580,7 +583,8 @@ class CreateOrderController extends transactionEndpointController {
 		}
 
 		if (!_.has(this, 'sessionController')) {
-			this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+            const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
 		}
 
 		return this.sessionController.update({
@@ -608,6 +612,7 @@ class CreateOrderController extends transactionEndpointController {
 			rebill.no_process = true;
 
 			if (!_.has(this, 'rebillController')) {
+                const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 				this.rebillController = new RebillController();
 			}
 

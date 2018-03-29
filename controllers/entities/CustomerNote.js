@@ -14,7 +14,7 @@ module.exports = class CustomerNoteController extends entityController {
 
       du.debug('Get Customer');
 
-      return this.executeAssociatedEntityFunction('customerController', 'get', {id: customer_note.customer});
+      return this.executeAssociatedEntityFunction('CustomerController', 'get', {id: customer_note.customer});
 
     }
 

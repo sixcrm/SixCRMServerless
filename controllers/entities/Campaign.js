@@ -23,7 +23,7 @@ module.exports = class CampaignController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('sessionController', 'listByCampaign', {campaign:id}).then(sessions => this.getResult(sessions, 'sessions')),
+        this.executeAssociatedEntityFunction('SessionController', 'listByCampaign', {campaign:id}).then(sessions => this.getResult(sessions, 'sessions')),
         this.executeAssociatedEntityFunction('trackerController', 'listByCampaign', {campaign:id}).then(trackers => this.getResult(trackers, 'trackers'))
       ];
 
@@ -112,7 +112,7 @@ module.exports = class CampaignController extends entityController {
         }
       };
 
-      return this.executeAssociatedEntityFunction('sessionController', 'queryByParameters', {query_parameters: query_parameters, pagination: pagination});
+      return this.executeAssociatedEntityFunction('SessionController', 'queryByParameters', {query_parameters: query_parameters, pagination: pagination});
 
     }
 

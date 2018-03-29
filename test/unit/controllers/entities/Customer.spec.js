@@ -43,8 +43,8 @@ describe('controllers/entities/Customer.js', () => {
 
             let session = getValidSession();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), {
-                listByCustomer: ({customer, pagination}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), class {
+                listByCustomer({customer, pagination}) {
                     expect(customer).to.equal(params.customer);
                     expect(pagination).to.equal(params.pagination);
 
@@ -68,8 +68,8 @@ describe('controllers/entities/Customer.js', () => {
 
             let session = getValidSession();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), {
-                getSessionByCustomer: (a_customer) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), class {
+                getSessionByCustomer(a_customer) {
                     expect(a_customer).to.equal(customer.id);
                     return Promise.resolve([{session: session}]);
                 }
@@ -403,8 +403,8 @@ describe('controllers/entities/Customer.js', () => {
 
             let params = {customer: getValidCustomer(), pagination: 0};
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), {
-                listByCustomer: ({customer}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), class {
+                listByCustomer({customer}) {
                     expect(customer).to.equal(params.customer.id);
                     return Promise.resolve({ sessions: [session] });
                 }

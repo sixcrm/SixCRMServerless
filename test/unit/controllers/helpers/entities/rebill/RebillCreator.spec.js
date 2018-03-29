@@ -1284,11 +1284,11 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        listProductSchedules:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        listProductSchedules() {
           return Promise.resolve({productschedules:product_schedules});
-        },
-        getResult: () => {
+        }
+        getResult() {
           return product_schedules;
         }
       });
@@ -1651,11 +1651,11 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        listProductSchedules:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        listProductSchedules() {
           return Promise.resolve({productschedules:product_schedules});
-        },
-        getResult: () => {
+        }
+        getResult() {
           return product_schedules;
         }
       });
@@ -1768,11 +1768,11 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        listProductSchedules:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        listProductSchedules() {
           return Promise.resolve({productschedules:product_schedules});
-        },
-        getResult: () => {
+        }
+        getResult() {
           return product_schedules;
         }
       });
@@ -1969,11 +1969,11 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        listProductSchedules:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        listProductSchedules() {
           return Promise.resolve({productschedules:product_schedules});
-        },
-        getResult: () => {
+        }
+        getResult() {
           return product_schedules;
         }
       });

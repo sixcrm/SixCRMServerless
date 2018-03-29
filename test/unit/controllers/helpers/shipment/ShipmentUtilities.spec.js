@@ -171,8 +171,8 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let session = getValidSession();
       let customer = getValidCustomer();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        getCustomer:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        getCustomer() {
           return Promise.resolve(customer);
         }
       });
@@ -272,8 +272,8 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let rebill = getValidRebill();
       let session = getValidSession();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        get() {
           return Promise.resolve(session);
         }
       });
@@ -299,8 +299,8 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
       let session = getValidSession();
       let customer = getValidCustomer();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        getCustomer:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        getCustomer() {
           return Promise.resolve(customer);
         }
       });
@@ -332,11 +332,11 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
         augmented_transaction_products[index].transaction.rebill = rebill.id
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        getCustomer:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        getCustomer() {
           return Promise.resolve(customer);
-        },
-        get:() => {
+        }
+        get() {
           return Promise.resolve(session);
         }
       });

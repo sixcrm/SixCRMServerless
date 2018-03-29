@@ -64,11 +64,11 @@ describe('controllers/workers/snsevents/trackingEvents', () => {
 
         let sns_message = MockEntities.getValidSNSMessage(test_case.message);
 
-        mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-          get:()=>{
+        mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+          get() {
             return Promise.resolve(session);
-          },
-          getAffiliateIDs:() => {
+          }
+          getAffiliateIDs() {
             return Promise.resolve(affiliate_ids);
           }
         });

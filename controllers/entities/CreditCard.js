@@ -65,7 +65,7 @@ module.exports = class CreditCardController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('customerController', 'listByCreditCard', {creditcard:id})
+        this.executeAssociatedEntityFunction('CustomerController', 'listByCreditCard', {creditcard:id})
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {

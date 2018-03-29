@@ -5,6 +5,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
 class CreateLeadController extends transactionEndpointController{
 
@@ -57,7 +58,7 @@ class CreateLeadController extends transactionEndpointController{
 
       this.campaignController = new CampaignController();
       this.customerController = new CustomerController();
-      this.sessionController = global.SixCRM.routes.include('entities', 'Session.js');
+      this.sessionController = new SessionController();
 
       this.event_type = 'lead';
 

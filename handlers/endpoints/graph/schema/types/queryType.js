@@ -187,6 +187,7 @@ const ProductController = global.SixCRM.routes.include('controllers', 'entities/
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
+const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -379,7 +380,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: paginationInputType.graphObj}
             },
             resolve: function(root, args){
-                const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+                const sessionController = new SessionController();
                 //here
 
                 return sessionController.listByAffiliate({affiliate: args.affiliate, pagination: args.pagination, fatal: list_fatal});
@@ -889,7 +890,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, session){
-                const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+                const sessionController = new SessionController();
 
                 return sessionController.get({id: session, fatal: get_fatal});
             }
@@ -1364,7 +1365,7 @@ module.exports.graphObj = new GraphQLObjectType({
               search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, session){
-              const sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+              const sessionController = new SessionController();
 
               return sessionController.listByAccount({pagination: session.pagination, fatal:list_fatal, search: session.search});
             }

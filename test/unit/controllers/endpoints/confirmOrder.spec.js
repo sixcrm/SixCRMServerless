@@ -137,8 +137,8 @@ describe('confirmOrder', function () {
       let event = getValidEventBody();
       let session = getValidSession();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        get() {
           return Promise.resolve(session);
         }
       });
@@ -218,14 +218,14 @@ describe('confirmOrder', function () {
       let products = getValidTransactionProducts(null, true);
       let campaign = getValidCampaign();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        getCustomer:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        getCustomer() {
           return Promise.resolve(customer);
-        },
-        listTransactions:() => {
+        }
+        listTransactions() {
           return Promise.resolve(transactions);
-        },
-        getCampaign:() => {
+        }
+        getCampaign() {
           return Promise.resolve(campaign);
         }
       });
@@ -275,8 +275,8 @@ describe('confirmOrder', function () {
 
       let session = getValidSession();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        closeSession:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        closeSession() {
           return Promise.resolve(true);
         }
       });
@@ -411,20 +411,20 @@ describe('confirmOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        get() {
           return Promise.resolve(session);
-        },
-        getCustomer:() => {
+        }
+        getCustomer() {
           return Promise.resolve(customer);
-        },
-        listTransactions:() => {
+        }
+        listTransactions() {
           return Promise.resolve(transactions);
-        },
-        closeSession:() => {
+        }
+        closeSession() {
           return Promise.resolve(true);
-        },
-        getCampaign:() => {
+        }
+        getCampaign() {
           return Promise.resolve(campaign);
         }
       });
@@ -500,20 +500,20 @@ describe('confirmOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        get:() => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        get() {
           return Promise.resolve(session);
-        },
-        getCustomer:() => {
+        }
+        getCustomer() {
           return Promise.resolve(customer);
-        },
-        listTransactions:() => {
+        }
+        listTransactions() {
           return Promise.resolve(transactions);
-        },
-        closeSession:() => {
+        }
+        closeSession() {
           return Promise.resolve(true);
-        },
-        getCampaign:() => {
+        }
+        getCampaign() {
           return Promise.resolve(campaign);
         }
       });

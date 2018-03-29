@@ -276,11 +276,11 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
-        },
-        get:() => {
+        }
+        get() {
           return Promise.resolve(session)
         }
       });
@@ -448,11 +448,11 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
-        },
-        get:() => {
+        }
+        get() {
           return Promise.resolve(session)
         }
       });
@@ -625,11 +625,11 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
-        },
-        get:() => {
+        }
+        get() {
           return Promise.resolve(session)
         }
       });
@@ -787,8 +787,8 @@ describe('createOrder', function () {
 
       event.session = session.id;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        get: () => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        get() {
           return Promise.resolve(session)
         }
       });
@@ -1233,7 +1233,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
         update({entity}){
           return Promise.resolve(entity);
         }
@@ -1314,7 +1314,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
         update({entity}){
           return Promise.resolve(entity);
         }
@@ -1395,7 +1395,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
         update({entity}){
           return Promise.resolve(entity);
         }
@@ -1471,7 +1471,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
         update({entity}){
           return Promise.resolve(entity);
         }
@@ -2012,11 +2012,11 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), {
-        update:({entity}) => {
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        update({entity}) {
           return Promise.resolve(entity);
-        },
-        get:() => {
+        }
+        get() {
           return Promise.resolve(session)
         }
       });

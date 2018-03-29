@@ -160,7 +160,8 @@ module.exports = class workerController {
       let parsed_message_body = this.parameters.get('parsedmessagebody');
 
       if(!_.has(this, 'sessionController')){
-        this.sessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
+        const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+        this.sessionController = new SessionController();
       }
 
       return this.sessionController.get({id: parsed_message_body.id}).then((session) => {

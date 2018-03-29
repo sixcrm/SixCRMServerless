@@ -30,7 +30,8 @@ module.exports = class TrackerHelperController{
       du.debug('Get Affiliate IDs From Session');
 
       if(!_.has(this, 'sessionController')){
-        this.sessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+        const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+        this.sessionController = new SessionController();
       }
 
       return this.sessionController.getAffiliateIDs(session);
