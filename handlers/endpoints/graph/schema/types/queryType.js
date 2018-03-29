@@ -182,6 +182,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const UserACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
@@ -1052,7 +1053,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 search: {type: entitySearchInputType.graphObj}
             },
             resolve: function(root, useracl){
-                const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+                const userACLController = new UserACLController();
 
                 return userACLController.listByAccount({pagination: useracl.pagination, fatal:list_fatal, search: useracl.search});
             }
@@ -1064,7 +1065,7 @@ module.exports.graphObj = new GraphQLObjectType({
             pagination: {type: paginationInputType.graphObj}
           },
           resolve: function(root, useracl){
-            const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+            const userACLController = new UserACLController();
 
             return userACLController.listByRole({pagination: useracl.pagination, fatal:list_fatal, role: useracl.role});
           }
@@ -1630,7 +1631,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: function(root, useracl){
               //Technical Debt:  What is this logic for?
             	if(_.has(useracl, 'id')){
-                const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+                const userACLController = new UserACLController();
 
                 return userACLController.get({id: useracl.id, fatal: get_fatal});
             }else{

@@ -50,7 +50,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            let userACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const UserACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const userACLController = new UserACLController();
 
             return userACLController.getAccount(userACL).then((result) => {
                 expect(result).to.deep.equal(account);
@@ -72,7 +73,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            let userACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const UserACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const userACLController = new UserACLController();
 
             return userACLController.getRole(userACL).then((result) => {
                 expect(result).to.deep.equal(role);
@@ -103,7 +105,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            let userACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const UserACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const userACLController = new UserACLController();
 
             return userACLController.getPartiallyHydratedACLObject(userACL).then((result) => {
                 expect(result.account).to.be.defined;
@@ -136,7 +139,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            let userACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const UserACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const userACLController = new UserACLController();
 
             return userACLController.getACLByUser({user: 'dummy_user_data'}).then((result) => {
                 expect(result).to.deep.equal({
@@ -164,7 +168,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            let userACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const UserACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const userACLController = new UserACLController();
 
             return userACLController.getUser(userACL).then((result) => {
                 expect(result).to.equal('dummy_user_data');
@@ -182,7 +187,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            let userACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const UserACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const userACLController = new UserACLController();
 
             return userACLController.getUser(userACL).then((result) => {
                 expect(result).to.deep.equal({
@@ -212,7 +218,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            let userACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const UserACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const userACLController = new UserACLController();
 
             return userACLController.getACLByAccount({account: getValidAccount()}).then((result) => {
                 expect(result[0].useracl).to.deep.equal(userACL);
@@ -270,7 +277,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            let userACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const UserACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const userACLController = new UserACLController();
 
             return userACLController.create(params).then((result) => {
                 expect(result.entity_type).to.equal('useracl');
@@ -334,7 +342,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            let userACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const UserACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+            const userACLController = new UserACLController();
 
             return userACLController.update(params).then((result) => {
                 expect(result.entity_type).to.equal('useracl');

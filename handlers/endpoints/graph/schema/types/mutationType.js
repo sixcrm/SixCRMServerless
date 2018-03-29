@@ -138,6 +138,7 @@ const MerchantProviderGroupAssociationController = global.SixCRM.routes.include(
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+const UserACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 const UserDeviceTokenController = global.SixCRM.routes.include('controllers', 'entities/UserDeviceToken');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString');
@@ -343,7 +344,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 useracl: { type: userACLInputType.graphObj }
             },
             resolve: (value, useracl) => {
-                const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+                const userACLController = new UserACLController();
 
                 return userACLController.create({entity: useracl.useracl});
             }
@@ -355,7 +356,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 useracl: { type: userACLInputType.graphObj }
             },
             resolve: (value, useracl) => {
-                const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+                const userACLController = new UserACLController();
 
                 return userACLController.update({entity: useracl.useracl});
             }
@@ -367,7 +368,7 @@ module.exports.graphObj = new GraphQLObjectType({
               useracltermsandconditions: { type: userACLTermsAndConditionsInputType.graphObj }
             },
             resolve: (value, input) => {
-              const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+              const userACLController = new UserACLController();
 
               return userACLController.updateTermsAndConditions(input.useracltermsandconditions);
             }
@@ -383,7 +384,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: (value, useracl) => {
                 var id = useracl.id;
-                const userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+                const userACLController = new UserACLController();
 
                 return userACLController.delete({id: id});
             }

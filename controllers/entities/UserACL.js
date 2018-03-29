@@ -5,7 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
-class userACLController extends entityController {
+class UserACLController extends entityController {
 
     constructor(){
         super('useracl');
@@ -235,4 +235,4 @@ class userACLController extends entityController {
 
 }
 
-module.exports = new userACLController();
+module.exports = UserACLController;

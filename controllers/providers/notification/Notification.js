@@ -10,6 +10,7 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 const NotificationController = global.SixCRM.routes.include('controllers', 'entities/Notification.js');
 const NotificationSettingController = global.SixCRM.routes.include('controllers', 'entities/NotificationSetting.js');
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting.js');
+const UserACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 
 class NotificationProvider {
 
@@ -45,7 +46,7 @@ class NotificationProvider {
     const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
     this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-    this.userACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
+    this.userACLController = new UserACLController();
     this.notificationController = new NotificationController();
     this.notificationSettingController = new NotificationSettingController();
     this.userSettingController = new UserSettingController();

@@ -180,8 +180,8 @@ describe('controllers/entities/User.js', () => {
                 {id: 'fake-2'}
             ];
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), {
-                queryBySecondaryIndex: ({index_name, field, index_value}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), class {
+                queryBySecondaryIndex({index_name, field, index_value}) {
                     expect(index_name).to.equal('user-index');
                     expect(field).to.equal('user');
                     expect(index_value).to.equal(user.id);
@@ -189,8 +189,8 @@ describe('controllers/entities/User.js', () => {
                         useracls: acls,
                         pagination: {}
                     });
-                },
-                getPartiallyHydratedACLObject: (acl) => {
+                }
+                getPartiallyHydratedACLObject(acl) {
                     acl.role = 'role';
                     acl.account = 'account';
                     return Promise.resolve(acl);
@@ -215,8 +215,8 @@ describe('controllers/entities/User.js', () => {
         it('returns null if no acls found', () => {
             let user = getValidUser();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), {
-                queryBySecondaryIndex: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), class {
+                queryBySecondaryIndex() {
                     return Promise.resolve({
                         useracls: [],
                         pagination: {}
@@ -237,8 +237,8 @@ describe('controllers/entities/User.js', () => {
         it('successfully retrieves user ACL by user id', () => {
             let user_without_acl = getValidUser(); //valid user without acl
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), {
-                getACLByUser: ({user}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                getACLByUser({user}) {
                     expect(user).to.equal(user_without_acl.id);
                     return Promise.resolve({
                         useracls: ['userACL']
@@ -768,8 +768,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), {
-                create: ({entity}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                create({entity}) {
                     expect(entity.user).to.equal(user_invite.email);
                     expect(entity.account).to.equal('an_account_id');
                     expect(entity.role).to.equal('a_role_id');
@@ -1096,8 +1096,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_invite.acl);
                     return Promise.resolve(user_acl)
                 }
@@ -1154,8 +1154,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_invite.acl);
                     return Promise.resolve(user_acl)
                 }
@@ -1177,8 +1177,8 @@ describe('controllers/entities/User.js', () => {
 
             user_acl.pending = false;
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_invite.acl);
                     return Promise.resolve(user_acl)
                 }
@@ -1196,8 +1196,8 @@ describe('controllers/entities/User.js', () => {
                 acl: 'a_user_acl_id'
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), {
-                get: ({id}) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                get({id}) {
                     expect(id).to.equal(user_invite.acl);
                     return Promise.resolve()
                 }

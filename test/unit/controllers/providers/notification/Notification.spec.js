@@ -729,8 +729,8 @@ describe('controllers/providers/notification/Notification', () => {
           account:'ad58ea78-504f-4a7e-ad45-128b6e76dc57'
         };
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), {
-          getACLByAccount:() => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), class {
+          getACLByAccount() {
             return Promise.resolve(acls);
           }
         });
@@ -755,8 +755,8 @@ describe('controllers/providers/notification/Notification', () => {
         let acls = [];
         let notification_prototype = {account:'ad58ea78-504f-4a7e-ad45-128b6e76dc57'};
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), {
-          getACLByAccount:() => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), class {
+          getACLByAccount() {
             return Promise.resolve(acls);
           }
         });
@@ -784,8 +784,8 @@ describe('controllers/providers/notification/Notification', () => {
 
         let notification_prototype = {account:'ad58ea78-504f-4a7e-ad45-128b6e76dc57'};
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), {
-          getACLByAccount:() => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), class {
+          getACLByAccount() {
             return Promise.resolve(acls);
           }
         });
@@ -1058,8 +1058,8 @@ describe('controllers/providers/notification/Notification', () => {
 
         let acls = getUserACLsFromAccount();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), {
-          getACLByAccount:() => {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserACL.js'), class {
+          getACLByAccount() {
             return Promise.resolve(acls);
           }
         });
