@@ -14,7 +14,7 @@
 	},
 	"event": {
 		"event_type": "click",
-		"affiliates": "2018-03-26T13:15:22.175Z",
+		"datetime": "2018-03-26T13:15:22.175Z",
 		"context": {
 			"event": {
 				"customer": {
