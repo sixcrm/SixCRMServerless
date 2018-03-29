@@ -2,7 +2,6 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
@@ -188,6 +187,7 @@ class CreateOrderController extends transactionEndpointController {
 		let session = this.parameters.get('session');
 
 		if (!_.has(this, 'campaignController')) {
+            const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 			this.campaignController = new CampaignController();
 		}
 

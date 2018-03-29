@@ -4,7 +4,6 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
-const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 //Technical Debt:  Need to either mark the rebill with the attempt number or update the method which checks the rebill for existing failed attempts (better idea.)
 module.exports = class recoverBillingController extends workerController {
@@ -136,6 +135,7 @@ module.exports = class recoverBillingController extends workerController {
 			rebill.second_attempt = true;
 
 			if (!_.has(this, 'rebillController')) {
+                const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 				this.rebillController = new RebillController();
 			}
 

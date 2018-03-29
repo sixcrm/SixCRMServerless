@@ -9,7 +9,6 @@ const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
-const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
@@ -202,6 +201,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
     if(!_.isNull(products)){
 
       if(!_.has(this, 'productController')){
+        const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
         this.productController = new ProductController();
       }
 
@@ -283,6 +283,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
   validateProductPricing() {
     if(!_.has(this, 'productController')){
+      const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
       this.productController = new ProductController();
     }
 
@@ -308,6 +309,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
   validateProductSchedulePricing() {
       if(!_.has(this, 'productController')){
+        const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
         this.productController = new ProductController();
       }
 

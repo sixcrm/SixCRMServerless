@@ -5,7 +5,6 @@ const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports = class workerController {
 
@@ -140,6 +139,7 @@ module.exports = class workerController {
       let parsed_message_body = this.parameters.get('parsedmessagebody');
 
       if(!_.has(this, 'rebillController')){
+        const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
         this.rebillController = new RebillController();
       }
 

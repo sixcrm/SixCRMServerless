@@ -4,7 +4,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
-const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
 
 /*
@@ -71,6 +70,7 @@ module.exports = class confirmShippedController extends workerController {
       let rebill = this.parameters.get('rebill');
 
       if(!_.has(this, 'rebillController')){
+        const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
         this.rebillController = new RebillController();
       }
 
