@@ -271,8 +271,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/notification/Notification.js'), {
-                createNotificationForAccountAndUser: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/notification/Notification.js'), class {
+                createNotificationForAccountAndUser() {
                     return Promise.resolve({});
                 }
             });
@@ -336,8 +336,8 @@ describe('controllers/entities/UserACL.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/notification/Notification.js'), {
-                createNotificationForAccountAndUser: () => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/notification/Notification.js'), class {
+                createNotificationForAccountAndUser() {
                     return Promise.resolve({});
                 }
             });

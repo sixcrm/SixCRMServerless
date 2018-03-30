@@ -104,7 +104,8 @@ class UserACLController extends entityController {
             body: text
         };
 
-        let notificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
+        let NotificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
+        const notificationProviderController = new NotificationProviderController();
 
         return notificationProviderController.createNotificationForAccountAndUser(notification);
 

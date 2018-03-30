@@ -620,7 +620,8 @@ describe('controllers/providers/notification/Notification', () => {
     describe('constructor', () => {
       it('successfully constructs', () => {
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         expect(objectutilities.getClassName(notification_provider)).to.equal('NotificationProvider');
 
       });
@@ -634,7 +635,8 @@ describe('controllers/providers/notification/Notification', () => {
           account:'ad58ea78-504f-4a7e-ad45-128b6e76dc57'
         };
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         notification_provider.parameters.set('action', 'createNotificationForAccountAndUser');
         notification_provider.parameters.set('notificationprototype', notification_prototype);
 
@@ -654,7 +656,8 @@ describe('controllers/providers/notification/Notification', () => {
           account:'ad58ea78-504f-4a7e-ad45-128b6e76dc57'
         };
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         notification_provider.parameters.set('action', 'createNotificationForAccountAndUser');
         notification_provider.parameters.set('notificationprototype', notification_prototype);
 
@@ -671,7 +674,8 @@ describe('controllers/providers/notification/Notification', () => {
       it('successfully sets the user from the notification prototype', () => {
         let notification_prototype = {user:'someuser@user.com'};
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         notification_provider.parameters.set('notificationprototype', notification_prototype);
 
         let result = notification_provider.setReceiptUsersFromNotificationPrototype();
@@ -685,7 +689,8 @@ describe('controllers/providers/notification/Notification', () => {
           account:'ad58ea78-504f-4a7e-ad45-128b6e76dc57'
         };
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         notification_provider.parameters.set('notificationprototype', notification_prototype);
 
         try{
@@ -703,7 +708,8 @@ describe('controllers/providers/notification/Notification', () => {
 
         let notification_prototype = {user:'someuser@user.com'};
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         notification_provider.parameters.set('notificationprototype', notification_prototype);
         notification_provider.parameters.set('action', 'createNotificationForAccountAndUser');
 
@@ -735,7 +741,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         notification_provider.parameters.set('notificationprototype', notification_prototype);
         notification_provider.parameters.set('action', 'createNotificationsForAccount');
 
@@ -761,7 +768,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         notification_provider.parameters.set('notificationprototype', notification_prototype);
 
         return notification_provider.setReceiptUsersFromAccount().catch(error => {
@@ -790,7 +798,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         notification_provider.parameters.set('notificationprototype', notification_prototype);
 
         return notification_provider.setReceiptUsersFromAccount().then(result => {
@@ -826,7 +835,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
 
         return notification_provider.getNotificationSettings({user: user}).then(({notification_settings, user_settings, default_notification_settings}) => {
           expect(notification_settings).to.deep.equal(user_notification_setting);
@@ -844,7 +854,8 @@ describe('controllers/providers/notification/Notification', () => {
 
         let normalized_notification_settings = {};
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let result = notification_provider.buildNotificationCategoriesAndTypes(normalized_notification_settings);
 
         expect(result).to.have.property('notification_settings');
@@ -885,7 +896,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         return notification_provider.createNotification({
           notification_prototype: a_notification_prototype,
           user: user,
@@ -947,7 +959,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         return notification_provider.saveAndSendNotification({
           notification_prototype: a_notification_prototype,
           user: user,
@@ -1003,7 +1016,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         return notification_provider.createNotificationForAccountAndUser({notification_prototype: a_notification_prototype}).then(result => {
           expect(result).to.equal(true);
         });
@@ -1064,7 +1078,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         return notification_provider.createNotificationsForAccount({notification_prototype: a_notification_prototype}).then(result => {
           expect(result).to.equal(true);
         });
@@ -1076,7 +1091,8 @@ describe('controllers/providers/notification/Notification', () => {
 
         let user_settings = getValidUserSetting();
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
 
         arrayutilities.map(user_settings.notifications, notification_setting => {
           let receive_setting = notification_provider.getReceiveSettingForChannel(notification_setting.name, user_settings);
@@ -1089,7 +1105,8 @@ describe('controllers/providers/notification/Notification', () => {
 
         let user_settings = getValidUserSetting();
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
 
         let receive_setting = notification_provider.getReceiveSettingForChannel('unknownchannel', user_settings);
         expect(receive_setting).to.equal(false);
@@ -1107,7 +1124,8 @@ describe('controllers/providers/notification/Notification', () => {
           notification_categories: ['transaction']
         }
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let category_opt_in = notification_provider.getNotificationCategoryOptIn(category, spoofed_notification_settings);
         expect(category_opt_in).to.equal(true);
 
@@ -1120,7 +1138,8 @@ describe('controllers/providers/notification/Notification', () => {
           notification_categories: []
         }
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let category_opt_in = notification_provider.getNotificationCategoryOptIn(category, spoofed_notification_settings);
         expect(category_opt_in).to.equal(false);
 
@@ -1143,7 +1162,8 @@ describe('controllers/providers/notification/Notification', () => {
           notification_types:[]
         };
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let updated_notification_prototype = notification_provider.setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings);
 
         expect(updated_notification_prototype).to.have.property('read_at');
@@ -1163,7 +1183,8 @@ describe('controllers/providers/notification/Notification', () => {
           notification_types:[]
         };
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let updated_notification_prototype = notification_provider.setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings);
 
         expect(updated_notification_prototype).to.not.have.property('read_at');
@@ -1188,7 +1209,8 @@ describe('controllers/providers/notification/Notification', () => {
           notification_types:[]
         };
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let updated_notification_prototype = notification_provider.setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings);
 
         expect(updated_notification_prototype).to.not.have.property('read_at');
@@ -1213,7 +1235,8 @@ describe('controllers/providers/notification/Notification', () => {
           notification_types:[]
         };
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let updated_notification_prototype = notification_provider.setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings);
 
         expect(updated_notification_prototype).to.have.property('read_at');
@@ -1238,7 +1261,8 @@ describe('controllers/providers/notification/Notification', () => {
           notification_types:[]
         };
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let updated_notification_prototype = notification_provider.setNotificationReadAt(notification_prototype, user_settings, augmented_normalized_notification_settings);
 
         expect(updated_notification_prototype).not.to.have.property('read_at');
@@ -1253,7 +1277,8 @@ describe('controllers/providers/notification/Notification', () => {
 
         let user_setting = getValidUserSetting();
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let language_preference = notification_provider.getUserLanguagePreference(user_setting);
         expect(language_preference).to.equal('English');
 
@@ -1269,7 +1294,8 @@ describe('controllers/providers/notification/Notification', () => {
 
         let user_setting = {};
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let language_preference = notification_provider.getUserLanguagePreference(user_setting);
         expect(language_preference).to.equal('English');
 
@@ -1289,7 +1315,8 @@ describe('controllers/providers/notification/Notification', () => {
           return notification;
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let channel_configuration = notification_provider.getChannelConfiguration('email', user_settings);
         expect(channel_configuration).to.deep.equal(email_data);
 
@@ -1299,7 +1326,8 @@ describe('controllers/providers/notification/Notification', () => {
 
         let user_settings = getValidUserSetting();
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let channel_configuration = notification_provider.getChannelConfiguration('unknownchannel', user_settings);
         expect(channel_configuration).to.deep.equal(null);
 
@@ -1322,7 +1350,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let discovered_translation_object = notification_provider.getTranslationObject('English', 'email.transaction.order');
         expect(discovered_translation_object).to.deep.equal(translation_object);
 
@@ -1345,7 +1374,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let discovered_translation_object = notification_provider.getTranslationObject('Japanese', 'email.transaction.order');
         expect(discovered_translation_object).to.deep.equal(translation_object);
 
@@ -1361,7 +1391,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
 
         try{
           notification_provider.getTranslationObject('Japanese', translation_path);
@@ -1383,7 +1414,8 @@ describe('controllers/providers/notification/Notification', () => {
           'customer.firstname':'Mr. Trump'
         };
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let parsed_string = notification_provider.parseFields(content_string, data);
         expect(parsed_string).to.equal('Your hair piece is really ridiculous, Mr. Trump.  Mr. Trump??');
       });
@@ -1424,7 +1456,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let readable_notification = notification_provider.buildReadableNotificationObject(channel, notification_prototype, user_settings);
         expect(readable_notification).to.deep.equal(expected_readable_notification);
       });
@@ -1462,7 +1495,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let readable_notification = notification_provider.buildReadableNotificationObject(channel, notification_prototype, user_settings);
         expect(readable_notification).to.deep.equal(expected_readable_notification);
 
@@ -1502,7 +1536,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         let readable_notification = notification_provider.buildReadableNotificationObject(channel, notification_prototype, user_settings);
         expect(readable_notification).to.deep.equal(expected_readable_notification);
       });
@@ -1563,7 +1598,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         return notification_provider.sendChannelNotification(
           'email',
           {
@@ -1632,7 +1668,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         return notification_provider.sendEmail({
           notification: notification,
           augmented_normalized_notification_settings: augmented_normalized_notification_settings,
@@ -1699,7 +1736,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         return notification_provider.sendSMS({
           notification: notification,
           augmented_normalized_notification_settings: augmented_normalized_notification_settings,
@@ -1767,7 +1805,8 @@ describe('controllers/providers/notification/Notification', () => {
           }
         });
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         return notification_provider.sendSlackMessage({
           notification: notification,
           augmented_normalized_notification_settings: augmented_normalized_notification_settings,
@@ -1797,7 +1836,8 @@ describe('controllers/providers/notification/Notification', () => {
         let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
         PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         return notification_provider.createNotificationForAccountAndUser({notification_prototype: a_notification_prototype}).then(result => {
           expect(result).to.equal(true);
         });
@@ -1821,7 +1861,8 @@ describe('controllers/providers/notification/Notification', () => {
         let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
         PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-        let notification_provider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
         return notification_provider.createNotificationsForAccount({notification_prototype: a_notification_prototype}).then(result => {
           expect(result).to.equal(true);
         });

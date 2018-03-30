@@ -9,7 +9,8 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
 const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js');
 
-const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
+const NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
+const notificationProvider = new NotificationProvider();
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 const termsAndConditionsController = new TermsAndConditionsController();

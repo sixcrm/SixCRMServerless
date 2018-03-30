@@ -3,6 +3,7 @@
 require('../../SixCRM.js');
 
 const NotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/Notification.js');
+const notificationProvider = new NotificationProvider();
 const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utilities');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
@@ -46,9 +47,9 @@ let notification_object = {
 
 if (user) {
     notification_object['user'] = user;
-    NotificationProvider.createNotificationForAccountAndUser(notification_object);
+    notificationProvider.createNotificationForAccountAndUser(notification_object);
 } else {
-    NotificationProvider.createNotificationsForAccount(notification_object);
+    notificationProvider.createNotificationsForAccount(notification_object);
 }
 
 du.output('Attempted to insert a notification', notification_object);

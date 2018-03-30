@@ -827,8 +827,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/notification/Notification.js'), {
-                createNotificationsForAccount: (notification_object) => {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/notification/Notification.js'), class {
+                createNotificationsForAccount(notification_object) {
                     expect(notification_object.account).to.equal(global.account);
                     expect(notification_object.type).to.equal('notification');
                     expect(notification_object.category).to.equal('invitation_sent');

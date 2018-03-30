@@ -4,7 +4,8 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
+const NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
+const notificationProvider =  new NotificationProvider();
 const PermissionUtilities = global.SixCRM.routes.include('lib','permission-utilities.js');
 
 

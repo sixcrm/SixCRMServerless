@@ -12,7 +12,7 @@ const NotificationSettingController = global.SixCRM.routes.include('controllers'
 const UserSettingController = global.SixCRM.routes.include('controllers', 'entities/UserSetting.js');
 const UserACLController = global.SixCRM.routes.include('controllers', 'entities/UserACL.js');
 
-class NotificationProvider {
+module.exports = class NotificationProvider {
 
   constructor(){
 
@@ -572,4 +572,3 @@ class NotificationProvider {
 
 }
 
-module.exports = new NotificationProvider();
