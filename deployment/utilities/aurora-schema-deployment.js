@@ -29,7 +29,7 @@ module.exports = class AuroraSchemaDeployment {
 			.then(this._executeQuery.bind(this))
 			.then(() => BBPromise.each(procedurePromises, (p) => p))
 			.then(() => Promise.all(scriptPromises))
-			.then(() => Promise.all(tablePromises))
+			.then(() => Promise.all(tablePromises));
 
 	}
 
