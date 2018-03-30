@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION create_d_processor_result ()
+CREATE OR REPLACE FUNCTION analytics.create_d_processor_result ()
   RETURNS INT
 AS $$
 BEGIN
@@ -14,6 +14,7 @@ BEGIN
         'error'
 );
   END IF;
+  RETURN 0;
 END;
 $$
 LANGUAGE plpgsql;
