@@ -107,7 +107,7 @@ module.exports = class processBillingController extends workerController {
 			this.pushEvent({
 				event_type: 'transaction_' + transaction.result,
 				context: Object.assign({},
-					this.parmeters.store, {
+					this.parameters.store, {
 						transaction
 					})
 			});
