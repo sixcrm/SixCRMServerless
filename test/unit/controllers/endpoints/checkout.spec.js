@@ -233,9 +233,10 @@ describe('checkout', function () {
 
     it('successfully constructs', () => {
 
-      let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      const checkoutController = new CheckoutController();
 
-      expect(objectutilities.getClassName(checkoutController)).to.equal('checkoutController');
+      expect(objectutilities.getClassName(checkoutController)).to.equal('CheckoutController');
 
     });
 
@@ -339,7 +340,8 @@ describe('checkout', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      const checkoutController = new CheckoutController();
 
       checkoutController.parameters.set('event', event_body);
 
@@ -520,7 +522,8 @@ describe('checkout', function () {
         }
       });
 
-      let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      const checkoutController = new CheckoutController();
 
       checkoutController.parameters.set('event', event);
 
@@ -600,7 +603,8 @@ describe('checkout', function () {
           }
       });
 
-      let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      const checkoutController = new CheckoutController();
 
       checkoutController.parameters.set('event', event);
 
@@ -629,7 +633,8 @@ describe('checkout', function () {
           }
       });
 
-      let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      const checkoutController = new CheckoutController();
 
       checkoutController.parameters.set('event', event_body);
       checkoutController.parameters.set('session', session);
@@ -658,7 +663,8 @@ describe('checkout', function () {
           }
       });
 
-      let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      const checkoutController = new CheckoutController();
 
       checkoutController.parameters.set('confirmation', confirmation);
 
@@ -913,7 +919,8 @@ describe('checkout', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+      const checkoutController = new CheckoutController();
 
       return checkoutController.execute(event).then(()=> {
         expect(checkoutController.parameters.store['confirmation']).to.be.defined;

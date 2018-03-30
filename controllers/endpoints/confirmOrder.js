@@ -8,7 +8,7 @@ const SessionHelperController = global.SixCRM.routes.include('helpers', 'entitie
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
-class ConfirmOrderController extends transactionEndpointController{
+module.exports = class ConfirmOrderController extends transactionEndpointController{
 
   constructor(){
 
@@ -213,5 +213,3 @@ class ConfirmOrderController extends transactionEndpointController{
   }
 
 }
-
-module.exports = new ConfirmOrderController();

@@ -5,7 +5,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const BBPromise = require('bluebird');
 
-class CreateOrderController extends transactionEndpointController {
+module.exports = class CreateOrderController extends transactionEndpointController {
 
 	constructor() {
 
@@ -689,5 +689,3 @@ class CreateOrderController extends transactionEndpointController {
 	}
 
 }
-
-module.exports = new CreateOrderController();

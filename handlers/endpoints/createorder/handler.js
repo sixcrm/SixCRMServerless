@@ -6,7 +6,8 @@ module.exports.createorder = (event, context, callback) => {
   global.SixCRM.clearState();
 
   let LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-  let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+  let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+  const createOrderController = new CreateOrderController();
 
   createOrderController.execute(event).then((response) => {
 

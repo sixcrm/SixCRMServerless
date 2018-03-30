@@ -7,7 +7,7 @@ const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
-class CreateLeadController extends transactionEndpointController{
+module.exports = class CreateLeadController extends transactionEndpointController{
 
     constructor(){
       super();
@@ -220,5 +220,3 @@ class CreateLeadController extends transactionEndpointController{
     }
 
 }
-
-module.exports = new CreateLeadController();

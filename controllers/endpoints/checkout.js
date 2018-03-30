@@ -1,10 +1,12 @@
 'use strict';
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-
+const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+const ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
-class checkoutController extends transactionEndpointController{
+module.exports = class CheckoutController extends transactionEndpointController{
 
   constructor(){
 
@@ -47,9 +49,9 @@ class checkoutController extends transactionEndpointController{
       'confirmation':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
     };
 
-    this.createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
-    this.createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-    this.confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+    this.createLeadController = new CreateLeadController();
+    this.createOrderController = new CreateOrderController();
+    this.confirmOrderController = new ConfirmOrderController();
 
     this.event_type = 'checkout';
 
@@ -140,4 +142,3 @@ class checkoutController extends transactionEndpointController{
 
 }
 
-module.exports = new checkoutController();

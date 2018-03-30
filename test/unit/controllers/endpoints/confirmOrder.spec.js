@@ -109,7 +109,8 @@ describe('confirmOrder', function () {
 
   describe('constructor', () => {
     it('successfully constructs', () => {
-      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      const confirmOrderController = new ConfirmOrderController();
 
       expect(objectutilities.getClassName(confirmOrderController)).to.equal('ConfirmOrderController');
     });
@@ -143,7 +144,8 @@ describe('confirmOrder', function () {
         }
       });
 
-      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      const confirmOrderController = new ConfirmOrderController();
 
       confirmOrderController.parameters.set('event', event);
 
@@ -164,7 +166,8 @@ describe('confirmOrder', function () {
 
       session.completed = false;
 
-      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      const confirmOrderController = new ConfirmOrderController();
 
       confirmOrderController.parameters.set('session', session);
 
@@ -180,7 +183,8 @@ describe('confirmOrder', function () {
 
       session.completed = true;
 
-      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      const confirmOrderController = new ConfirmOrderController();
 
       confirmOrderController.parameters.set('session', session);
 
@@ -239,7 +243,8 @@ describe('confirmOrder', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      const confirmOrderController = new ConfirmOrderController();
 
       confirmOrderController.parameters.set('session', session);
 
@@ -281,7 +286,8 @@ describe('confirmOrder', function () {
         }
       });
 
-      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      const confirmOrderController = new ConfirmOrderController();
 
       confirmOrderController.parameters.set('session', session);
 
@@ -317,7 +323,8 @@ describe('confirmOrder', function () {
       let products = getValidTransactionProducts(null, true);
       let customer = getValidCustomer();
 
-      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      const confirmOrderController = new ConfirmOrderController();
 
       confirmOrderController.parameters.set('session', session);
       confirmOrderController.parameters.set('transactions', transactions);
@@ -362,7 +369,8 @@ describe('confirmOrder', function () {
 
       let session = getValidSession();
 
-      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      const confirmOrderController = new ConfirmOrderController();
 
       confirmOrderController.parameters.set('session', session);
 
@@ -445,7 +453,8 @@ describe('confirmOrder', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      const confirmOrderController = new ConfirmOrderController();
 
       return confirmOrderController.execute(event).then(result => {
         expect(result).to.have.property('transactions');
@@ -534,7 +543,8 @@ describe('confirmOrder', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+      const confirmOrderController = new ConfirmOrderController();
 
       confirmOrderController.parameters.set('event', event);
 

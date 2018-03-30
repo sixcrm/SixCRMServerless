@@ -5,7 +5,8 @@ module.exports.confirmorder = (event, context, callback) => {
   require('../../../SixCRM.js');
 
   let LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-  let confirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+  let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+  const confirmOrderController = new ConfirmOrderController();
 
   confirmOrderController.execute(event).then((response) => {
 

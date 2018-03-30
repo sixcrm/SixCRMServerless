@@ -5,7 +5,8 @@ module.exports.checkout = (event, context, callback) => {
   require('../../../SixCRM.js');
 
   let LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-  let checkoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+  let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
+  const checkoutController = new CheckoutController();
 
   checkoutController.execute(event).then((response) => {
 

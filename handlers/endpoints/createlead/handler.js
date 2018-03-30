@@ -5,7 +5,8 @@ module.exports.createlead = (event, context, callback) => {
   require('../../../SixCRM.js');
 
   var LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-  var createLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+  var CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+  const createLeadController = new CreateLeadController();
 
   createLeadController.execute(event).then((response) => {
 

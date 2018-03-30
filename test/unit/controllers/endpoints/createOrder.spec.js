@@ -224,7 +224,8 @@ describe('createOrder', function () {
 
   describe('constructor', () => {
     it('successfully constructs', () => {
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       expect(objectutilities.getClassName(createOrderController)).to.equal('CreateOrderController');
     });
@@ -405,7 +406,8 @@ describe('createOrder', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       return createOrderController.execute(event).then(() => {
 
@@ -580,7 +582,8 @@ describe('createOrder', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       return createOrderController.execute(event).then(() => {
 
@@ -754,7 +757,8 @@ describe('createOrder', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       return createOrderController.execute(event).then(() => {
         let info = createOrderController.parameters.get('info');
@@ -795,7 +799,8 @@ describe('createOrder', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('event', event);
 
@@ -873,7 +878,8 @@ describe('createOrder', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('event', event);
       createOrderController.parameters.set('session', session);
@@ -913,7 +919,8 @@ describe('createOrder', function () {
 
       session.completed = false;
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('session', session);
       createOrderController.parameters.set('sessionlength', 3600);
@@ -926,7 +933,8 @@ describe('createOrder', function () {
 
     it('throws an error if the session is closed', () => {
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       let session = getValidSession();
 
@@ -944,7 +952,8 @@ describe('createOrder', function () {
 
     it('throws an error if the session is expired', () => {
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       let session = getValidSession();
 
@@ -999,7 +1008,8 @@ describe('createOrder', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('creditcard', plaintext_creditcard);
       createOrderController.parameters.set('customer', customer);
@@ -1052,7 +1062,8 @@ describe('createOrder', function () {
         }
       });
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('session', session);
       createOrderController.parameters.set('productschedules', product_schedules);
@@ -1066,7 +1077,8 @@ describe('createOrder', function () {
 
     it('throws an error if no products could be found', () => {
       let session = getValidSession();
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
       createOrderController.parameters.set('session', session);
 
       expect(() => {
@@ -1139,7 +1151,8 @@ describe('createOrder', function () {
         }
       });
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('rebill', rebill);
 
@@ -1160,7 +1173,8 @@ describe('createOrder', function () {
 
     it('successfully builds and sets the info object', () => {
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('amount', 12.99);
       createOrderController.parameters.set('rebill', getValidRebill());
@@ -1265,7 +1279,8 @@ describe('createOrder', function () {
         getRegion: () => 'localhost'
       });
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('rebill', rebill);
       createOrderController.parameters.set('session', session);
@@ -1346,7 +1361,8 @@ describe('createOrder', function () {
         getRegion: () => 'localhost'
       });
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('rebill', rebill);
       createOrderController.parameters.set('session', session);
@@ -1427,7 +1443,8 @@ describe('createOrder', function () {
         getRegion: () => 'localhost'
       });
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('rebill', rebill);
       createOrderController.parameters.set('session', session);
@@ -1503,7 +1520,8 @@ describe('createOrder', function () {
         getRegion: () => 'localhost'
       });
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('rebill', rebill);
       createOrderController.parameters.set('session', session);
@@ -1557,7 +1575,8 @@ describe('createOrder', function () {
         }
       });
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('rebill', rebill);
 
@@ -1575,7 +1594,8 @@ describe('createOrder', function () {
 
       let event = getValidEventBody();
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('event', event);
 
@@ -1594,7 +1614,8 @@ describe('createOrder', function () {
 
       let event = getValidEventBody();
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('event', event);
 
@@ -1613,7 +1634,8 @@ describe('createOrder', function () {
 
       let event = getValidEventBody();
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('event', event);
 
@@ -1628,7 +1650,8 @@ describe('createOrder', function () {
 
       let event = getValidEventBody();
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       delete event.transaction_subtype;
       createOrderController.parameters.set('event', event);
@@ -1696,7 +1719,8 @@ describe('createOrder', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('event', event);
       createOrderController.parameters.set('customer', customer);
@@ -1730,7 +1754,8 @@ describe('createOrder', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('event', event);
 
@@ -1776,7 +1801,8 @@ describe('createOrder', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('session', getValidSession());
 
@@ -1824,7 +1850,8 @@ describe('createOrder', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('event', event);
       createOrderController.parameters.set('session', getValidSession());
@@ -1850,7 +1877,8 @@ describe('createOrder', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-        const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+        const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+        const createOrderController = new CreateOrderController();
 
         createOrderController.parameters.set('event', event);
         createOrderController.parameters.set('session', getValidSession());
@@ -1875,7 +1903,8 @@ describe('createOrder', function () {
 
         mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-        const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+        const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+        const createOrderController = new CreateOrderController();
 
         createOrderController.parameters.set('event', event);
         createOrderController.parameters.set('session', getValidSession());
@@ -1901,7 +1930,9 @@ describe('createOrder', function () {
 				}
 			});
 
-			const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const createOrderController = new CreateOrderController();
+
 			createOrderController.parameters.set('event', event);
 
 			return createOrderController.setPreviousRebill().then(() => {
@@ -1911,7 +1942,8 @@ describe('createOrder', function () {
 		});
 
 		it('resolves immediately if no previous rebill', () => {
-			const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const createOrderController = new CreateOrderController();
 
 			createOrderController.parameters.set('event', getValidEventBody());
 
@@ -1924,7 +1956,9 @@ describe('createOrder', function () {
 
 	describe('reversePreviousRebill', () => {
 		it('resolves immediately if no previous rebill', () => {
-			const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const createOrderController = new CreateOrderController();
+
 			createOrderController.parameters.set('rebill', getValidRebill());
 			return createOrderController.reversePreviousRebill();
 		});
@@ -1960,7 +1994,9 @@ describe('createOrder', function () {
 				}
 			});
 
-            const createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+            const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+            const createOrderController = new CreateOrderController();
+
 			createOrderController.parameters.set('rebill', rebill);
 			createOrderController.parameters.set('previous_rebill', previous_rebill);
 
@@ -2129,7 +2165,8 @@ describe('createOrder', function () {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let createOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+      const createOrderController = new CreateOrderController();
 
       createOrderController.parameters.set('event', event);
 
