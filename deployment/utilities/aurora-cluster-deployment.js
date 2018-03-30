@@ -8,7 +8,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 
-class AuroraClusterDeployment {
+module.exports = class AuroraClusterDeployment {
 
   constructor() {
 
@@ -157,5 +157,3 @@ class AuroraClusterDeployment {
   }
 
 }
-
-module.exports = new AuroraClusterDeployment();

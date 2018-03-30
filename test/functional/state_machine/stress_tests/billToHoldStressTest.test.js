@@ -4,8 +4,10 @@ const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
+const sqsDeployment = new SQSDeployment();
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 const DynamoDbDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
+const dynamoDbDeployment = new DynamoDbDeployment();
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const timer = global.SixCRM.routes.include('lib', 'timer.js');
@@ -40,11 +42,11 @@ describe('billToHoldStressTest', () => {
         process.env.require_local = true;
 
         Promise.resolve()
-            .then(() => DynamoDbDeployment.initializeControllers())
-            .then(() => DynamoDbDeployment.destroyTables())
-            .then(() => DynamoDbDeployment.deployTables())
-            .then(() => SQSDeployment.deployQueues())
-            .then(() => SQSDeployment.purgeQueues())
+            .then(() => dynamoDbDeployment.initializeControllers())
+            .then(() => dynamoDbDeployment.destroyTables())
+            .then(() => dynamoDbDeployment.deployTables())
+            .then(() => sqsDeployment.deployQueues())
+            .then(() => sqsDeployment.purgeQueues())
             .then(() => done());
 
     });
@@ -70,9 +72,9 @@ describe('billToHoldStressTest', () => {
 
     function beforeTest() {
         return Promise.resolve()
-            .then(() => SQSDeployment.purgeQueues())
-            .then(() => DynamoDbDeployment.destroyTables())
-            .then(() => DynamoDbDeployment.deployTables())
+            .then(() => sqsDeployment.purgeQueues())
+            .then(() => dynamoDbDeployment.destroyTables())
+            .then(() => dynamoDbDeployment.deployTables())
             .then(() => seed())
     }
 

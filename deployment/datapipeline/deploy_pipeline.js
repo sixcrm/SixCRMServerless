@@ -4,8 +4,9 @@ require('../../SixCRM.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const DataPipelineDeployment = global.SixCRM.routes.include('deployment', 'utilities/data-pipeline-deployment.js');
+const dataPipelineDeployment = new DataPipelineDeployment();
 
-DataPipelineDeployment.execute().then(result => {
+dataPipelineDeployment.execute().then(result => {
   return du.highlight(result);
 }).catch((error) => {
   du.error(error);

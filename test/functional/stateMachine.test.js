@@ -3,7 +3,7 @@ const mockery = require('mockery');
 const SqSTestUtils = require('./sqs-test-utils');
 const TestUtils = require('./test-utils');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const sqsDeployment = new SQSDeployment();
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -37,7 +37,7 @@ describe('stateMachine', () => {
         TestUtils.setEnvironmentVariables();
         configureLambdas();
 
-        SQSDeployment.deployQueues().then(() => SqSTestUtils.purgeAllQueues()).then(() => done());
+        sqsDeployment.deployQueues().then(() => SqSTestUtils.purgeAllQueues()).then(() => done());
     });
 
     beforeEach((done) => {

@@ -4,15 +4,16 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
+const S3Deployment = global.SixCRM.routes.include('deployment', 'utilities/s3-deployment.js');
 
-class DataPipelineDeployment extends AWSDeploymentUtilities {
+module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 
 	constructor() {
 
 		super();
 
 		this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
-		this.s3deployment = global.SixCRM.routes.include('deployment', 'utilities/s3-deployment.js');
+		this.s3deployment = new S3Deployment();
 		this.datapipelineutilities = global.SixCRM.routes.include('lib', 'data-pipeline-utilities.js');
 		this.unique_id = `sixcrm-${process.env.stage}-seed-dynamodb`;
 	}
@@ -149,7 +150,3 @@ class DataPipelineDeployment extends AWSDeploymentUtilities {
 	}
 
 }
-
-
-
-module.exports = new DataPipelineDeployment();

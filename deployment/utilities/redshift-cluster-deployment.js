@@ -10,7 +10,7 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
 
-class RedshiftClusterDeployment extends RedshiftDeployment {
+module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
   constructor() {
 
@@ -265,5 +265,3 @@ class RedshiftClusterDeployment extends RedshiftDeployment {
   }
 
 }
-
-module.exports = new RedshiftClusterDeployment();

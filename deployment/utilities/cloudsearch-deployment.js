@@ -5,7 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-class CloudsearchDeployment{
+module.exports = class CloudsearchDeployment{
 
     constructor() {
 
@@ -303,5 +303,3 @@ class CloudsearchDeployment{
     }
 
 }
-
-module.exports = new CloudsearchDeployment();

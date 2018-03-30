@@ -7,23 +7,24 @@ const _ = require('underscore');
 const SQSTestUtils = require('../../sqs-test-utils');
 const AnalyticsEventHandler = require('../../../../controllers/workers/analytics/analytics-event-handler');
 
-
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
+const sqsDeployment = new SQSDeployment();
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
-const auroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/aurora-schema-deployment.js');
+const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/aurora-schema-deployment.js');
+const auroraSchemaDeployment = new AuroraSchemaDeployment();
 
 before(() => {
 
 	return Promise.resolve()
-		.then(() => SQSDeployment.deployQueues());
+		.then(() => sqsDeployment.deployQueues());
 
 });
 
 beforeEach(() => {
 
 	return Promise.resolve()
-		.then(() => SQSDeployment.purgeQueues())
+		.then(() => sqsDeployment.purgeQueues())
 		.then(() => auroraSchemaDeployment.destroy())
 		.then(() => auroraSchemaDeployment.deployTables());
 

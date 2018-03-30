@@ -2,9 +2,11 @@ const expect = require('chai').expect;
 const uuidV4 = require('uuid/v4');
 const SqSTestUtils = require('./sqs-test-utils');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
+const sqsDeployment = new SQSDeployment();
 const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const DynamoDbDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
+const DynamoDBDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
+const dynamoDBDeployment = new DynamoDBDeployment();
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
@@ -32,11 +34,11 @@ describe('stateMachineDocker', () => {
 
         configureLambdas();
 
-        DynamoDbDeployment.destroyTables()
-            .then(() => DynamoDbDeployment.deployTables())
-            .then(() => SQSDeployment.deployQueues())
-            .then(() => SQSDeployment.purgeQueues())
-            .then(() => DynamoDbDeployment.seedTables())
+        dynamoDBDeployment.destroyTables()
+            .then(() => dynamoDBDeployment.deployTables())
+            .then(() => sqsDeployment.deployQueues())
+            .then(() => sqsDeployment.purgeQueues())
+            .then(() => dynamoDBDeployment.seedTables())
             .then(() => done());
 
     });
@@ -45,14 +47,14 @@ describe('stateMachineDocker', () => {
     });
 
     afterEach(() => {
-        // SQSDeployment.purgeQueues().then(() => done());
+        // sqsDeployment.purgeQueues().then(() => done());
     });
 
 
     after((done) => {
         Promise.all([
-            SQSDeployment.purgeQueues(),
-            DynamoDbDeployment.destroyTables()
+            sqsDeployment.purgeQueues(),
+            dynamoDBDeployment.destroyTables()
         ]).then(() => done());
     });
 
@@ -180,7 +182,7 @@ describe('stateMachineDocker', () => {
 
         it('ignores rebills that are already in state `processing`', () => {
 
-            return SQSDeployment.purgeQueues()
+            return sqsDeployment.purgeQueues()
                 .then(() => rebillController.create({entity: rebill_processing}))
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill_processing.id}))
@@ -191,7 +193,7 @@ describe('stateMachineDocker', () => {
 
         it('ignores rebills in past', () => {
 
-            return SQSDeployment.purgeQueues()
+            return sqsDeployment.purgeQueues()
                 .then(() => rebillController.create({entity: rebill_in_past}))
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill_processing.id}))

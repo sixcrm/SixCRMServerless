@@ -3,8 +3,10 @@ const expect = require('chai').expect;
 const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
+const sqsDeployment = new SQSDeployment();
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 const DynamoDbDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
+const dynamoDbDeployment = new DynamoDbDeployment();
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
@@ -71,11 +73,11 @@ describe('masterTestShip', () => {
         process.env.require_local = true;
 
         Promise.resolve()
-            .then(() => DynamoDbDeployment.initializeControllers())
-            .then(() => DynamoDbDeployment.destroyTables())
-            .then(() => DynamoDbDeployment.deployTables())
-            .then(() => SQSDeployment.deployQueues())
-            .then(() => SQSDeployment.purgeQueues())
+            .then(() => dynamoDbDeployment.initializeControllers())
+            .then(() => dynamoDbDeployment.destroyTables())
+            .then(() => dynamoDbDeployment.deployTables())
+            .then(() => sqsDeployment.deployQueues())
+            .then(() => sqsDeployment.purgeQueues())
             .then(() => done());
 
     });
@@ -106,9 +108,9 @@ describe('masterTestShip', () => {
 
     function beforeTest(test) {
         return Promise.resolve()
-            .then(() => SQSDeployment.purgeQueues())
-            .then(() => DynamoDbDeployment.destroyTables())
-            .then(() => DynamoDbDeployment.deployTables())
+            .then(() => sqsDeployment.purgeQueues())
+            .then(() => dynamoDbDeployment.destroyTables())
+            .then(() => dynamoDbDeployment.deployTables())
             .then(() => seedDynamo(test))
             .then(() => seedSqs(test))
             .then(() => {
@@ -131,7 +133,7 @@ describe('masterTestShip', () => {
             let table_name = seed.replace('.json', '');
             let seed_file_path = test.path + '/seeds/dynamodb/' + seed;
 
-            promises.push(DynamoDbDeployment.executeSeedViaController(
+            promises.push(dynamoDbDeployment.executeSeedViaController(
                 { Table: {
                     TableName: table_name
                 }},

@@ -10,7 +10,7 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-class DynamoDBDeployment extends AWSDeploymentUtilities {
+module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
     constructor(){
 
@@ -476,5 +476,3 @@ class DynamoDBDeployment extends AWSDeploymentUtilities {
     }
 
 }
-
-module.exports = new DynamoDBDeployment();

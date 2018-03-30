@@ -6,7 +6,7 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-class S3Deployment extends AWSDeploymentUtilities {
+module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 	constructor() {
 
@@ -248,5 +248,3 @@ class S3Deployment extends AWSDeploymentUtilities {
 	}
 
 }
-
-module.exports = new S3Deployment();

@@ -6,7 +6,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
 const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
 
-class RedshiftSchemaDeployment extends RedshiftDeployment {
+module.exports = class RedshiftSchemaDeployment extends RedshiftDeployment {
 
   constructor() {
 
@@ -363,5 +363,3 @@ class RedshiftSchemaDeployment extends RedshiftDeployment {
   }
 
 }
-
-module.exports = new RedshiftSchemaDeployment();

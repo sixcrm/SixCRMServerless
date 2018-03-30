@@ -9,7 +9,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
+module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
 
     constructor(){
 
@@ -411,5 +411,3 @@ class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
     }
 
 }
-
-module.exports = new DynamoDBAutoscalingDeployment();

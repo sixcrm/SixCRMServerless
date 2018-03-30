@@ -7,7 +7,7 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
 
-class AuroraSchemaDeployment {
+module.exports = class AuroraSchemaDeployment {
 
   constructor() {
 
@@ -348,5 +348,3 @@ class AuroraSchemaDeployment {
   }
 
 }
-
-module.exports = new AuroraSchemaDeployment();

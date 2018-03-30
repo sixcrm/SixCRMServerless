@@ -8,7 +8,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-class SQSDeployment extends AWSDeploymentUtilities{
+module.exports = class SQSDeployment extends AWSDeploymentUtilities{
 
     constructor() {
 
@@ -210,5 +210,3 @@ class SQSDeployment extends AWSDeploymentUtilities{
     }
 
 }
-
-module.exports = new SQSDeployment();
