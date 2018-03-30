@@ -63,11 +63,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		const directoryPurgePromises = arrayutilities.map(this._tableDirectories, this._purgeTableDirectory.bind(this));
 
-		return arrayutilities.serial(directoryPurgePromises).then(() => {
-
-			return 'Complete';
-
-		});
+		return Promise.all(directoryPurgePromises);
 
 	}
 
@@ -197,12 +193,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		return this._getTableFilenames(directory)
 			.then((filenames) => this._getPurgeQueries(filenames))
-			.then((queries) => this._executePurgeQueries(queries))
-			.then(() => {
-
-				return 'Complete';
-
-			});
+			.then((queries) => this._executePurgeQueries(queries));
 
 	}
 
