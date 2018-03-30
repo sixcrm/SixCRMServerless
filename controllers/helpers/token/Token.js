@@ -6,7 +6,7 @@ require('../../../SixCRM.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const mbu = global.SixCRM.routes.include('lib','model-builder-utilities.js');
 
-class Token {
+module.exports = class Token {
 
   getTokensSchema(){
 
@@ -20,4 +20,3 @@ class Token {
 
 }
 
-module.exports = new Token();

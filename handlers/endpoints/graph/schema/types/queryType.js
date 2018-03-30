@@ -200,6 +200,7 @@ const TrackerController = global.SixCRM.routes.include('controllers', 'entities/
 
 // Helpers Controllers
 const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
+const TokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -237,7 +238,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: tokenListType.graphObj,
             resolve: function(){
 
-              const tokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
+              const tokenHelperController = new TokenHelperController();
 
               return tokenHelperController.getTokensSchema({fatal:list_fatal});
 
