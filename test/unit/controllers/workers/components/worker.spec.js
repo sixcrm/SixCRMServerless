@@ -81,6 +81,27 @@ describe('controllers/workers/components/worker.js', function () {
 
       it('returns true under minimum conditions', () => {
 
+        let context = {
+          event_type: 'test'
+        };
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
+          constructor(){}
+          pushEvent(){
+            return Promise.resolve({});
+          }
+        });
+
+        const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+        let workerController = new WorkerController();
+
+        let result = workerController.pushEvent({context: context});
+        expect(result).to.equal(true);
+
+      });
+
+      it('returns true when event type is not specified but is present in the context', () => {
+
         mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
           constructor(){}
           pushEvent(){
