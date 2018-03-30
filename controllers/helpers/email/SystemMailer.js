@@ -9,7 +9,7 @@ const modelvalidatorutilities = global.SixCRM.routes.include('lib', 'model-valid
 //Technical Debt:  Validate, write tests.
 //Technical Debt:  Integrate
 
-class SystemMailer{
+module.exports = class SystemMailer{
 
     constructor(){
 
@@ -94,4 +94,3 @@ class SystemMailer{
 
 }
 
-module.exports = new SystemMailer();

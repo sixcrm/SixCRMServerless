@@ -2,7 +2,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-
+const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
 const ChannelNotification = global.SixCRM.routes.include('providers', 'notification/components/ChannelNotification.js');
 
 module.exports = class EmailNotificationProvider extends ChannelNotification {
@@ -11,7 +11,7 @@ module.exports = class EmailNotificationProvider extends ChannelNotification {
 
     super();
 
-    this.systemmailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+    this.systemmailer = new SystemMailer();
 
   }
 

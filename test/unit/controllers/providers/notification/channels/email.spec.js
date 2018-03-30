@@ -28,8 +28,8 @@ describe('controllers/providers/notification/channels/email.js', () => {
       let notification_object = {};
       let notification_properties = 'user@test.com';
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), {
-        sendEmail: () => {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), class {
+        sendEmail() {
           return Promise.resolve(true);
         }
       });
@@ -53,8 +53,8 @@ describe('controllers/providers/notification/channels/email.js', () => {
 
       let notification_properties = 'user@test.com';
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), {
-        sendEmail: (email) => {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), class {
+        sendEmail(email) {
           expect(email).to.have.property('recepient_emails');
           expect(email).to.have.property('subject');
           expect(email).to.have.property('body');
@@ -86,8 +86,8 @@ describe('controllers/providers/notification/channels/email.js', () => {
         name: 'Some User'
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), {
-        sendEmail: (email) => {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), class {
+        sendEmail(email) {
 
           expect(email).to.have.property('recepient_emails');
           expect(email).to.have.property('subject');

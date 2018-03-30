@@ -109,12 +109,12 @@ describe('lib/invite-utilities', () => {
 
     });
 
-    describe('encodeParameters', () => {
+    describe.only('encodeParameters', () => {
 
         it('encodes', () => {
 
             mockery.registerMock('soap', {
-                createClientAsync: (wsdl) => {
+                createClientAsync: (done) => {
                     return Promise.resolve({
                         testMethodAsync: () => {
                             done();
@@ -135,8 +135,8 @@ describe('lib/invite-utilities', () => {
 
         it('invites', () => {
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), {
-                sendEmail: () => {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), class {
+                sendEmail() {
                     return Promise.resolve({});
                 }
             });
@@ -151,8 +151,8 @@ describe('lib/invite-utilities', () => {
 
         it('throws error when sending mail fails', () => {
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), {
-                sendEmail: () => {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), class {
+                sendEmail() {
                     return Promise.reject(new Error('Sending failed.'));
                 }
             });
