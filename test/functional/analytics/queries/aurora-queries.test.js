@@ -33,6 +33,12 @@ before((done) => {
 
 });
 
+beforeEach(() => {
+
+	return auroraSchemaDeployment.destroy();
+
+});
+
 after((done) => {
 
   const auroraContext = global.SixCRM.getResource('auroraContext');
