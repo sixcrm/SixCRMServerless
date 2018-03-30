@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS analytics.f_rebills;
+-- DROP TABLE IF EXISTS analytics.f_rebills;
 
 CREATE TABLE IF NOT EXISTS analytics.f_rebills (
     id_rebill VARCHAR(36) PRIMARY KEY,
