@@ -164,6 +164,7 @@ let list_fatal = true;
 let get_fatal = true;
 
 // Entity Controllers
+
 const BinController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
 const BillController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
 const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
@@ -199,12 +200,18 @@ const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
 // Helpers Controllers
+
 const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 const TokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
 
 // Providers Controllers
+
 const SearchController = global.SixCRM.routes.include('controllers', 'providers/search/search.js');
 const SuggestController = global.SixCRM.routes.include('controllers', 'providers/search/suggest.js');
+
+//Analytics Controllers
+
+const AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
@@ -582,7 +589,7 @@ module.exports.graphObj = new GraphQLObjectType({
               pagination: {type: analyticsPaginationInputType.graphObj}
           },
           resolve: function(root, args){
-            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+            const analyticsController = new AnalyticsController();
 
             return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReportSubaffiliates');
           }
@@ -594,7 +601,7 @@ module.exports.graphObj = new GraphQLObjectType({
               cache: {type: cacheInputType.graphObj}
           },
           resolve: function(root, args){
-            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+            const analyticsController = new AnalyticsController();
 
             return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReportSummary');
           }
@@ -607,7 +614,7 @@ module.exports.graphObj = new GraphQLObjectType({
               pagination: {type: analyticsPaginationInputType.graphObj}
           },
           resolve: function(root, args){
-            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+            const analyticsController = new AnalyticsController();
 
             return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReport');
           }
@@ -620,7 +627,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: analyticsPaginationInputType.graphObj}
             },
             resolve: function(root, args){
-              const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+              const analyticsController = new AnalyticsController();
 
               return analyticsController.executeAnalyticsFunction(args, 'getMerchantReport');
             }
@@ -640,7 +647,7 @@ module.exports.graphObj = new GraphQLObjectType({
             }
           },
           resolve: function(root, args){
-            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+            const analyticsController = new AnalyticsController();
 
             return analyticsController.executeAnalyticsFunction(args, 'getRebillSummary');
           }
@@ -655,7 +662,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 pagination: {type: analyticsPaginationInputType.graphObj}
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getRebillsInQueue');
             }
@@ -669,7 +676,7 @@ module.exports.graphObj = new GraphQLObjectType({
             }
           },
           resolve: function(root, args){
-            const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+            const analyticsController = new AnalyticsController();
 
             return analyticsController.executeAnalyticsFunction(args, 'getCurrentQueueSummary');
           }
@@ -683,7 +690,7 @@ module.exports.graphObj = new GraphQLObjectType({
             },
             resolve: function(root, args){
 
-              const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+              const analyticsController = new AnalyticsController();
 
               return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderSummaries');
 
@@ -711,7 +718,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionSummary');
             }
@@ -724,7 +731,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getEvents');
             }
@@ -736,7 +743,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getEventSummary');
             }
@@ -748,7 +755,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionOverviewWithRebills');
             }
@@ -761,7 +768,7 @@ module.exports.graphObj = new GraphQLObjectType({
 
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getEventFunnel');
             }
@@ -773,7 +780,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getCampaignDelta');
             }
@@ -785,7 +792,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getCampaignsByAmount');
             }
@@ -801,7 +808,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getEventsByFacet');
             }
@@ -817,7 +824,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 }
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getTransactionsByFacet');
             }
@@ -830,7 +837,7 @@ module.exports.graphObj = new GraphQLObjectType({
                 cache: {type: cacheInputType.graphObj}
             },
             resolve: function(root, args){
-                const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+                const analyticsController = new AnalyticsController();
 
                 return analyticsController.executeAnalyticsFunction(args, 'getActivityByIdentifier');
             }

@@ -22,7 +22,8 @@ describe('controllers/Analytics.js', () => {
 
     it('returns null when activity filter is not set', () => {
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       expect(analyticsController.getActivityFilter({})).to.equal(null);
     });
@@ -33,7 +34,8 @@ describe('controllers/Analytics.js', () => {
         activityfilter: 'an_activity_filter'
       };
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       expect(analyticsController.getActivityFilter(params)).to.equal(params.activityfilter);
     });
@@ -43,7 +45,8 @@ describe('controllers/Analytics.js', () => {
 
     it('returns null when pagination is not set', () => {
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       expect(analyticsController.getPagination({})).to.equal(null);
     });
@@ -54,7 +57,8 @@ describe('controllers/Analytics.js', () => {
         pagination: 'any_pagination'
       };
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       expect(analyticsController.getPagination(params)).to.equal(params.pagination);
     });
@@ -92,7 +96,8 @@ describe('controllers/Analytics.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       return analyticsController.getActivityByIdentifier(params).then((result) => {
         expect(result).to.equal('any_results');
@@ -129,7 +134,8 @@ describe('controllers/Analytics.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       return analyticsController.getCampaignDelta(params).then((result) => {
         expect(result).to.equal('any_results');
@@ -159,7 +165,8 @@ describe('controllers/Analytics.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       return analyticsController.getTransactionOverview(params).then((result) => {
         expect(result).to.equal('any_results');
@@ -200,7 +207,8 @@ describe('controllers/Analytics.js', () => {
         }
       });
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       return analyticsController.getTransactionOverviewWithRebills(params).then((result) => {
         expect(result).to.deep.equal(
@@ -243,7 +251,8 @@ describe('controllers/Analytics.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       return analyticsController.getTransactionsByFacet(params).then((result) => {
         expect(result).to.equal('any_results');
@@ -285,7 +294,8 @@ describe('controllers/Analytics.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       return analyticsController.getEventsByFacet(params).then((result) => {
         expect(result).to.equal('any_results');
@@ -322,7 +332,8 @@ describe('controllers/Analytics.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       return analyticsController.getCampaignsByAmount(params).then((result) => {
         expect(result).to.equal('any_results');
@@ -362,7 +373,8 @@ describe('controllers/Analytics.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       return analyticsController.getEvents(params).then((result) => {
         expect(result).to.equal('any_results');
@@ -392,7 +404,8 @@ describe('controllers/Analytics.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
 
-      let analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+      const analyticsController = new AnalyticsController();
 
       return analyticsController.getEventFunnel(params).then((result) => {
         expect(result).to.equal('any_results');

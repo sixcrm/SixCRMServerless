@@ -9,7 +9,7 @@ const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-util
 const AnalyticsUtilities = global.SixCRM.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
-class AnalyticsController extends AnalyticsUtilities {
+module.exports = class AnalyticsController extends AnalyticsUtilities {
 
   constructor() {
 
@@ -436,4 +436,3 @@ class AnalyticsController extends AnalyticsUtilities {
 
 }
 
-module.exports = new AnalyticsController();

@@ -6,7 +6,8 @@ const expect = chai.expect;
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const analyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+const AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+const analyticsController = new AnalyticsController();
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');

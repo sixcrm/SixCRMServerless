@@ -469,9 +469,9 @@ describe('controllers/entities/User.js', () => {
     describe('createStrict', () => {
 
         beforeEach(() => {
-            mockery.registerMock(global.SixCRM.routes.path('analytics', 'Analytics.js'), {
-                disableACLs: () => {},
-                enableACLs: () => {}
+            mockery.registerMock(global.SixCRM.routes.path('analytics', 'Analytics.js'), class {
+                disableACLs() {}
+                enableACLs() {}
             });
         });
 
