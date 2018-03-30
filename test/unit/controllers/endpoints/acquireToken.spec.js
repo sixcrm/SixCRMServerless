@@ -152,7 +152,8 @@ describe('acquireToken', () => {
 
   describe('constructor', () => {
     it('successfully constructs', () => {
-      let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      const acquireTokenController = new AcquireTokenController();
 
       expect(objectutilities.getClassName(acquireTokenController)).to.equal('AcquireTokenController');
     });
@@ -175,7 +176,8 @@ describe('acquireToken', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-      let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      const acquireTokenController = new AcquireTokenController();
 
       acquireTokenController.parameters.set('event', event);
 
@@ -200,7 +202,8 @@ describe('acquireToken', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-        let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+        let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+        const acquireTokenController = new AcquireTokenController();
 
         acquireTokenController.parameters.set('event', event);
 
@@ -225,7 +228,8 @@ describe('acquireToken', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      const acquireTokenController = new AcquireTokenController();
 
       return acquireTokenController.acquireToken().then(result => {
         expect(result).to.equal(true);
@@ -255,7 +259,8 @@ describe('acquireToken', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      const acquireTokenController = new AcquireTokenController();
 
       acquireTokenController.parameters.set('event', updated_event);
       return acquireTokenController.handleAffiliateInformation().then(result => {
@@ -305,7 +310,8 @@ describe('acquireToken', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      const acquireTokenController = new AcquireTokenController();
 
       acquireTokenController.parameters.set('event', event);
 
@@ -383,7 +389,8 @@ describe('acquireToken', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let acquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
+      const acquireTokenController = new AcquireTokenController();
 
       acquireTokenController.createEventObject = () => { return getValidEventPrototype(); }
 
