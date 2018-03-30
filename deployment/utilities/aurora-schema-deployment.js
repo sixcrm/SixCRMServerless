@@ -28,8 +28,8 @@ module.exports = class AuroraSchemaDeployment {
 			.then(() => fileutilities.getFileContents(global.SixCRM.routes.path('model', `aurora/before/schema/${process.env.stage}.sql`)))
 			.then(this._executeQuery.bind(this))
 			.then(() => BBPromise.each(procedurePromises, (p) => p))
+			.then(() => Promise.all(scriptPromises))
 			.then(() => Promise.all(tablePromises))
-			.then(() => Promise.all(scriptPromises));
 
 	}
 
@@ -78,8 +78,8 @@ module.exports = class AuroraSchemaDeployment {
 		du.debug('Deploy Aurora SQL');
 
 		return this._getDirectorySQLFilepaths(directory)
-			.then((filepaths) => this._getQueries(filepaths))
-			.then((queries) => this._executeQueries(queries));
+			.then(this._getQueries.bind(this))
+			.then(this._executeQueries.bind(this));
 
 	}
 
