@@ -3,7 +3,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
+const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
 var workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
 module.exports = class IndexEntitiesController extends workerController {
@@ -32,7 +32,7 @@ module.exports = class IndexEntitiesController extends workerController {
 
       this.indexingHelperController = new IndexingHelperController();
 
-      this.cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+      this.cloudsearchutilities = new CloudsearchUtilities();
 
       this.augmentParameters();
 

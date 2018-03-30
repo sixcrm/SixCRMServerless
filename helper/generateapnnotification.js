@@ -1,6 +1,7 @@
 'use strict'
 require('../SixCRM.js');
-const apnutilities = global.SixCRM.routes.include('lib','apn-utilities');
+const ApnUtilities = global.SixCRM.routes.include('lib','providers/apn-utilities');
+const apnutilities = new ApnUtilities();
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
 let message = process.argv[2];

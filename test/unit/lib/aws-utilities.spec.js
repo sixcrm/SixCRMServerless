@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const AWSUtilities = global.SixCRM.routes.include('lib', 'aws-utilities.js');
+const AWSUtilities = global.SixCRM.routes.include('lib', 'providers/aws-utilities.js');
 
 describe('lib/aws-utilities', () => {
 
@@ -121,7 +121,7 @@ describe('lib/aws-utilities', () => {
         const awsutilities = new AWSUtilities();
 
         try{
-          let result = awsutilities.hasCredentials();
+          awsutilities.hasCredentials();
         }catch(error){
           expect(error.message).to.equal('[500] Missing Credentials in process.env');
         }
@@ -138,7 +138,7 @@ describe('lib/aws-utilities', () => {
         const awsutilities = new AWSUtilities();
 
         try{
-          let result = awsutilities.hasCredentials();
+          awsutilities.hasCredentials();
         }catch(error){
           expect(error.message).to.equal('[500] Missing Credentials in process.env');
         }

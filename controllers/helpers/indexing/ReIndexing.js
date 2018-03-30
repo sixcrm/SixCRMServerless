@@ -3,7 +3,8 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const dynamoutilities = global.SixCRM.routes.include('lib','dynamodb-utilities.js');
-const cloudsearchutilities = global.SixCRM.routes.include('lib','cloudsearch-utilities.js');
+const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+const cloudsearchutilities = new CloudsearchUtilities();
 
 const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
 let preIndexingHelperController = new PreIndexingHelperController();

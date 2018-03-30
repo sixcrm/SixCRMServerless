@@ -60,7 +60,7 @@ describe('lib/sts-utilities', () => {
         }
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib','aws-utilities.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('lib','providers/aws-utilities.js'), class {
         constructor(){
           this.AWS = {
             STS: class {

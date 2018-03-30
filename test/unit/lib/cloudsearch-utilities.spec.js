@@ -17,10 +17,10 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
-            set: (parameters) => {
+            set: () => {
                 return Promise.resolve();
             },
-            get: (parameters) => {
+            get: () => {
                 return Promise.resolve('cloudsearch.local');
             }
         });
@@ -38,7 +38,8 @@ describe('lib/cloudsearch-utilities', () => {
     describe('defineIndexField', () => {
 
         it('successfully creates index', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function() {
@@ -60,7 +61,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error when index creation failed', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function() {
@@ -89,7 +91,8 @@ describe('lib/cloudsearch-utilities', () => {
     describe('createDomain', () => {
 
         it('successfully creates domain', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function() {
@@ -111,7 +114,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error when domain creation failed', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function() {
@@ -141,7 +145,8 @@ describe('lib/cloudsearch-utilities', () => {
 
         it('successfully instantiates CSD', () => {
 
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             expect(cloudsearchutilities.instantiateCSD('an_endpoint')).to.equal('an_endpoint');
         });
@@ -153,7 +158,8 @@ describe('lib/cloudsearch-utilities', () => {
 
             let valid_domains = getValidDomains();
 
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function(parameters, callback) {
@@ -168,7 +174,8 @@ describe('lib/cloudsearch-utilities', () => {
 
         it('throws error from cs describeDomains', () => {
 
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function(parameters, callback) {
@@ -186,7 +193,8 @@ describe('lib/cloudsearch-utilities', () => {
 
         it('returns true when status is ready', () => {
 
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function(parameters, callback) {
@@ -202,7 +210,8 @@ describe('lib/cloudsearch-utilities', () => {
 
         it('returns true when status is deleted', () => {
 
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function(parameters, callback) {
@@ -217,7 +226,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error when max attempt is reached', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             //any number higher than 200
             return cloudsearchutilities.waitFor('any_status', 'a_domain_name', 201).catch((error) => {
@@ -229,7 +239,8 @@ describe('lib/cloudsearch-utilities', () => {
     describe('getDomainNames', () => {
 
         it('returns object keys for domain names', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function() {
@@ -246,7 +257,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error when domain name is not found', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function() {
@@ -266,7 +278,8 @@ describe('lib/cloudsearch-utilities', () => {
     describe('deleteDomain', () => {
 
         it('deletes domain', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function() {
@@ -283,7 +296,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error if domain is not deleted', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function() {
@@ -303,7 +317,8 @@ describe('lib/cloudsearch-utilities', () => {
     describe('indexDocuments', () => {
 
         it('index documents', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function() {
@@ -320,7 +335,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error from cs indexDocuments', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.cs = {
                 describeDomains: function() {
@@ -340,7 +356,8 @@ describe('lib/cloudsearch-utilities', () => {
     describe('uploadDocuments', () => {
 
         it('uploads documents', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.csd = {
                 search: function(parameters, callback) {
@@ -357,7 +374,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error from csd uploadDocuments', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.csd = {
                 search: function(parameters, callback) {
@@ -377,7 +395,8 @@ describe('lib/cloudsearch-utilities', () => {
     describe('suggest', () => {
 
         it('returns result from csd suggest', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.csd = {
                 suggest: function(parameters, callback) {
@@ -392,7 +411,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error from csd suggest', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.csd = {
                 suggest: function(parameters, callback) {
@@ -410,7 +430,8 @@ describe('lib/cloudsearch-utilities', () => {
     describe('executeStatedSearch', () => {
 
         it('executes stated search', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.csd = {
                 search: function(parameters, callback) {
@@ -424,7 +445,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error from csd search', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.csd = {
                 search: function(parameters, callback) {
@@ -441,7 +463,8 @@ describe('lib/cloudsearch-utilities', () => {
     describe('search', () => {
 
         it('executes search', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.csd = {
                 search: function(parameters, callback) {
@@ -456,7 +479,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error from csd search', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.csd = {
                 search: function(parameters, callback) {
@@ -474,7 +498,8 @@ describe('lib/cloudsearch-utilities', () => {
     describe('waitForCSD', () => {
 
         it('wait for CSD connection', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             cloudsearchutilities.csd = {
                 search: function(parameters, callback) {
@@ -489,7 +514,8 @@ describe('lib/cloudsearch-utilities', () => {
         });
 
         it('throws error when connection with CSD is not established', () => {
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             //when count number is more than or equal to 50 throw error
             try{
@@ -506,7 +532,8 @@ describe('lib/cloudsearch-utilities', () => {
 
             process.env.TEST_MODE = 'true';
 
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             let result = cloudsearchutilities.setDomainName();
 
@@ -519,14 +546,16 @@ describe('lib/cloudsearch-utilities', () => {
 
         it('returns true when CSD exists', () => {
 
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             expect(cloudsearchutilities.CSDExists()).to.be.true;
         });
 
         it('returns false when CSD does not exist', () => {
 
-            const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+            const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+            const cloudsearchutilities = new CloudsearchUtilities();
 
             delete cloudsearchutilities.csd;
 

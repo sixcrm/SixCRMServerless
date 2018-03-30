@@ -4,12 +4,13 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
 
 module.exports = class CloudsearchDeployment{
 
     constructor() {
 
-      this.cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+      this.cloudsearchutilities = new CloudsearchUtilities();
 
       this.setDomainName()
 

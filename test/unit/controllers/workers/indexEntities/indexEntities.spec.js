@@ -1,22 +1,15 @@
 'use strict'
 
-const _ = require('underscore');
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
-const querystring = require('querystring');
 
 const expect = chai.expect;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 function getValidWorkerResponseTypes(){
 
@@ -155,15 +148,15 @@ describe('controllers/workers/indexEntities', () => {
             constructor(){
 
             }
-            createIndexingDocument(parsedmessagebodies){
+            createIndexingDocument(){
                 return Promise.resolve(indexing_document);
             }
         };
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/Indexing.js'), mock_indexing_helper_controller);
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'cloudsearch-utilities.js'), {
-            uploadDocuments:(index_document) => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/cloudsearch-utilities.js'), class {
+            uploadDocuments() {
                 return Promise.resolve(cloudsearch_response);
             }
         });
@@ -264,15 +257,15 @@ describe('controllers/workers/indexEntities', () => {
         constructor(){
 
         }
-        createIndexingDocument(parsedmessagebodies){
+        createIndexingDocument(){
           return Promise.resolve(indexing_document);
         }
       };
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/Indexing.js'), mock_indexing_helper_controller);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'cloudsearch-utilities.js'), {
-        uploadDocuments:(index_document) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/cloudsearch-utilities.js'), class {
+        uploadDocuments() {
           return Promise.resolve(cloudsearch_response);
         }
       });

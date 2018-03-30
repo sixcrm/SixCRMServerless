@@ -7,6 +7,7 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
+const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
 
 module.exports = class Configuration extends ConfigurationUtilities {
 
@@ -205,7 +206,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
     //Technical Debt:  This is causing some issues in unit tests...
     du.debug('Regenerate Cloudsearch Configuration');
 
-    const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
+    const cloudsearchutilities = new CloudsearchUtilities();
 
     return cloudsearchutilities.saveDomainConfiguration();
 
