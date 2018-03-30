@@ -4,7 +4,8 @@ const TestUtils = require('./test-utils.js');
 require('../../routes');
 
 TestUtils.setEnvironmentVariables();
-const authController = global.SixCRM.routes.include('controllers', 'authorizers/verifySiteJWT.js');
+const AuthController = global.SixCRM.routes.include('controllers', 'authorizers/verifySiteJWT.js');
+const authController = new AuthController();
 
 xdescribe('verifySiteJWTController', function () {
     before(() => {

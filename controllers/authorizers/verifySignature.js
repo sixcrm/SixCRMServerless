@@ -7,7 +7,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const AccessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 
-class verifySignatureController {
+module.exports = class verifySignatureController {
 
   constructor() {
       this.accessKeyController = new AccessKeyController();
@@ -127,5 +127,3 @@ class verifySignatureController {
     }
 
 }
-
-module.exports = new verifySignatureController();

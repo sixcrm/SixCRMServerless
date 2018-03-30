@@ -6,7 +6,8 @@ module.exports.verifysitejwt = (event, context, callback) => {
   const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
   var policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
-  var verifySiteJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifySiteJWT.js');
+  var VerifySiteJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifySiteJWT.js');
+  const verifySiteJWTController = new VerifySiteJWTController();
 
   verifySiteJWTController.execute(event).then((response) => {
 

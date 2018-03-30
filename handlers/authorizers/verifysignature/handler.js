@@ -7,7 +7,8 @@ module.exports.verifysignature = (event, context, callback) => {
   require('../../../SixCRM.js');
 
   var policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
-  var verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+  var VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+  const verifySignatureController = new VerifySignatureController();
 
   verifySignatureController.execute(event).then((authority_user) => {
 

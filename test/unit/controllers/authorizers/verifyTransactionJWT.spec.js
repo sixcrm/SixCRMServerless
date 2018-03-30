@@ -3,7 +3,6 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
 
@@ -69,7 +68,8 @@ describe('controllers/authorizers/verifyTransactionJWT.js', () => {
 
     it('successfully executes the constructor', () => {
 
-      let verifyTransactionJWTController = global.SixCRM.routes.include('authorizers', 'verifyTransactionJWT.js');
+      let VerifyTransactionJWTController = global.SixCRM.routes.include('authorizers', 'verifyTransactionJWT.js');
+      new VerifyTransactionJWTController();
 
     })
 
@@ -81,7 +81,8 @@ describe('controllers/authorizers/verifyTransactionJWT.js', () => {
 
       let valid_event = getValidEvent();
 
-      let verifyTransactionJWTController = global.SixCRM.routes.include('authorizers', 'verifyTransactionJWT.js');
+      let VerifyTransactionJWTController = global.SixCRM.routes.include('authorizers', 'verifyTransactionJWT.js');
+      const verifyTransactionJWTController = new VerifyTransactionJWTController();
 
       return verifyTransactionJWTController.execute(valid_event).then((result) => {
         expect(result).to.equal(getValidUserAlias())
@@ -107,7 +108,8 @@ describe('controllers/authorizers/verifyTransactionJWT.js', () => {
 
       delete process.env.transaction_jwt_secret_key;
 
-      let verifyTransactionJWTController = global.SixCRM.routes.include('authorizers', 'verifyTransactionJWT.js');
+      let VerifyTransactionJWTController = global.SixCRM.routes.include('authorizers', 'verifyTransactionJWT.js');
+      const verifyTransactionJWTController = new VerifyTransactionJWTController();
 
       try{
           verifyTransactionJWTController.assureResources()
@@ -122,7 +124,8 @@ describe('controllers/authorizers/verifyTransactionJWT.js', () => {
 
     it('returns false when an event object is missing an authorization token', () => {
 
-      let verifyTransactionJWTController = global.SixCRM.routes.include('authorizers', 'verifyTransactionJWT.js');
+      let VerifyTransactionJWTController = global.SixCRM.routes.include('authorizers', 'verifyTransactionJWT.js');
+      const verifyTransactionJWTController = new VerifyTransactionJWTController();
 
         expect(verifyTransactionJWTController.acquireToken()).to.equal(false);
     });

@@ -107,7 +107,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
     it('successfully executes the constructor', () => {
 
-      global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+        let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+        new VerifySiteJWTController();
 
     })
 
@@ -119,7 +120,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
       let test_event = getValidEvent();
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      const verifySiteJWTController = new VerifySiteJWTController();
 
       verifySiteJWTController.setParameters(test_event);
 
@@ -131,7 +133,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
     it('throws an error when no argument is specified', () => {
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      const verifySiteJWTController = new VerifySiteJWTController();
 
       try{
         verifySiteJWTController.setParameters();
@@ -143,7 +146,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
     it('throws an error when argument with invalid structure is specified', () => {
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      const verifySiteJWTController = new VerifySiteJWTController();
 
       try{
         verifySiteJWTController.setParameters({});
@@ -161,7 +165,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
       let valid_token = getValidAuthorizationToken(getValidUser());
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      const verifySiteJWTController = new VerifySiteJWTController();
 
       verifySiteJWTController.parameters.set('encoded_authorization_token', valid_token);
 
@@ -181,7 +186,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
     it('fails to decode a invalid token', () => {
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      const verifySiteJWTController = new VerifySiteJWTController();
 
       verifySiteJWTController.parameters.set('encoded_authorization_token', getInvalidToken());
 
@@ -207,7 +213,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
       du.info(valid_token);
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      const verifySiteJWTController = new VerifySiteJWTController();
 
       verifySiteJWTController.parameters.set('encoded_authorization_token', valid_token);
 
@@ -225,7 +232,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
       let invalid_token = getInvalidToken();
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      const verifySiteJWTController = new VerifySiteJWTController();
 
       verifySiteJWTController.parameters.set('encoded_authorization_token', invalid_token);
 
@@ -263,7 +271,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
       let decoded_token = getDecodedToken();
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      const verifySiteJWTController = new VerifySiteJWTController();
 
       verifySiteJWTController.parameters.set('decoded_authorization_token', decoded_token);
 
@@ -285,7 +294,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
       let valid_event = getValidEvent();
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      const verifySiteJWTController = new VerifySiteJWTController();
 
       return verifySiteJWTController.execute(valid_event).then((result) => {
         expect(result).to.equal(getValidUser())
@@ -323,7 +333,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
       valid_event.authorizationToken = valid_self_signed_jwt;
 
-      let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+      const verifySiteJWTController = new VerifySiteJWTController();
 
       return verifySiteJWTController.execute(valid_event).then((result) => {
         expect(result).to.equal(getValidUser())
@@ -341,7 +352,8 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
         let decoded_token = getDecodedToken();
 
-        let verifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+        let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
+        const verifySiteJWTController = new VerifySiteJWTController();
 
         verifySiteJWTController.parameters.set('verified_authorization_token', valid_token);
         verifySiteJWTController.parameters.set('decoded_authorization_token', decoded_token);

@@ -6,7 +6,8 @@ module.exports.verifytransactionjwt = (event, context, callback) => {
   require('../../../SixCRM.js');
 
   var policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
-  var verifyTransactionJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifyTransactionJWT.js');
+  var VerifyTransactionJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifyTransactionJWT.js');
+  const verifyTransactionJWTController = new VerifyTransactionJWTController();
 
   verifyTransactionJWTController.execute(event).then((response) => {
 

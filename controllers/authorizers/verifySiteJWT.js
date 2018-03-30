@@ -6,7 +6,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString.js');
 
-class verifySiteJWTController {
+module.exports = class verifySiteJWTController {
 
     constructor(){
 
@@ -310,5 +310,3 @@ class verifySiteJWTController {
     }
     */
 }
-
-module.exports = new verifySiteJWTController();

@@ -5,7 +5,7 @@ const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-class verifyTransactionJWTController {
+module.exports = class verifyTransactionJWTController {
 
     constructor(){
 
@@ -74,5 +74,3 @@ class verifyTransactionJWTController {
     }
 
 }
-
-module.exports = new verifyTransactionJWTController();

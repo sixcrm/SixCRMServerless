@@ -30,7 +30,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 authorizationToken: 'a:b:c' //length after being split by ':' equal to 3
             };
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.parseEventSignature(event).then((result) => {
                 expect(result).to.deep.equal(['a', 'b', 'c']);
@@ -43,7 +44,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 authorizationToken: 'abc' //will not be an array after being split by ':'
             };
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.parseEventSignature(event).catch((error) => {
                 expect(error).to.equal(false);
@@ -56,7 +58,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 authorizationToken: 'a:b:c:d' //any length after being split by ':' greater than 3
             };
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.parseEventSignature(event).catch((error) => {
                 expect(error).to.equal(false);
@@ -68,7 +71,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
 
         it('successfully populates authority user', () => {
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             expect(verifySignatureController.populateAuthorityUser()).to.deep.equal({
                     id: 'system@sixcrm.com'
@@ -84,7 +88,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 timestamp: Date.now()
             };
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.verifyTimestamp(token_object).then((result) => {
                 expect(result).to.deep.equal(token_object);
@@ -98,7 +103,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 timestamp: 1514711901
             };
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.verifyTimestamp(token_object).catch((error) => {
                 expect(error).to.equal(false);
@@ -119,7 +125,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 signature: 'c7375e049f5d376d8a186957d5b972dd25a57354'
             };
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.verifySignature(token_object).then((result) => {
                 expect(result).to.deep.equal(token_object);
@@ -136,7 +143,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 signature: 'invalid_signature'
             };
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.verifySignature(token_object).catch((error) => {
                 expect(error).to.equal(false);
@@ -162,7 +170,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 enableACLs(){}
             });
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.createTokenObject(tokens).then((result) => {
                 expect(result.access_key).to.have.property('secret_key');
@@ -193,7 +202,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 enableACLs(){}
             });
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.createTokenObject(tokens).catch((error) => {
                 expect(error.message).to.equal('[501] Unset Access Key properties.');
@@ -218,7 +228,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 enableACLs(){}
             });
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.createTokenObject(tokens).catch((error) => {
                 expect(error.message).to.equal('[501] Unset Access Key properties.');
@@ -241,7 +252,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 enableACLs(){}
             });
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.createTokenObject(tokens).catch((error) => {
                 expect(error.message).to.equal('Retrieval failed');
@@ -281,7 +293,8 @@ describe('controllers/authorizers/verifySignature.js', () => {
                 enableACLs(){}
             });
 
-            let verifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            let VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
+            const verifySignatureController = new VerifySignatureController();
 
             return verifySignatureController.execute(event).then((result) => {
                 expect(result).to.deep.equal({
