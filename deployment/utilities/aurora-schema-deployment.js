@@ -10,7 +10,9 @@ module.exports = class AuroraSchemaDeployment {
 
 	constructor() {
 
-		this._tableDirectories = ['tables', 'procedures'];
+		this._tableDirectories = ['tables'];
+		this._procedureDirectories = ['procedures'];
+		this._scriptsDirectories = ['scripts'];
 
 	}
 
@@ -18,12 +20,16 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('Deploy Aurora tables');
 
-		const promises = arrayutilities.map(this._tableDirectories, this._deployDirectorySQL.bind(this));
+		const procedurePromises = arrayutilities.map(this._procedureDirectories, this._deployDirectorySQL.bind(this));
+		const tablePromises = arrayutilities.map(this._tableDirectories, this._deployDirectorySQL.bind(this));
+		const scriptPromises = arrayutilities.map(this._scriptsDirectories, this._deployDirectorySQL.bind(this));
 
 		return Promise.resolve()
 			.then(() => fileutilities.getFileContents(global.SixCRM.routes.path('model', `aurora/before/schema/${process.env.stage}.sql`)))
 			.then(this._executeQuery.bind(this))
-			.then(() => Promise.all(promises));
+			.then(() => BBPromise.each(procedurePromises, (p) => p))
+			.then(() => Promise.all(tablePromises))
+			.then(() => Promise.all(scriptPromises));
 
 	}
 
