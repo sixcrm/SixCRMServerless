@@ -109,7 +109,7 @@ describe('lib/invite-utilities', () => {
 
     });
 
-    describe.only('encodeParameters', () => {
+    describe('encodeParameters', () => {
 
         it('encodes', () => {
 

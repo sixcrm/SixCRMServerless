@@ -74,7 +74,8 @@ module.exports = class NotificationHelperClass {
 
     let event_type = this.parameters.get('eventtype');
 
-    let notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/default.js');
+    let NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/default.js');
+    let notification_class = new NotificationType();
     this.parameters.set('notificationclass', notification_class);
 
     return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('helpers','notifications/notificationtypes/'))
@@ -88,7 +89,8 @@ module.exports = class NotificationHelperClass {
 
         du.warning('Matching notification file for event_type ('+event_type+') '+matching_notification_file);
 
-        notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+matching_notification_file);
+        NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+matching_notification_file);
+        let notification_class = new NotificationType();
         this.parameters.set('notificationclass', notification_class);
 
       }else{

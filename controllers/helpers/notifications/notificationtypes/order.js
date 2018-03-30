@@ -1,7 +1,7 @@
 'use strict'
 const BaseNotification = global.SixCRM.routes.include('helpers','notifications/notificationtypes/components/BaseNotification.js');
 
-class OrderNotification extends BaseNotification {
+module.exports = class OrderNotification extends BaseNotification {
 
   constructor(){
 
@@ -17,4 +17,3 @@ class OrderNotification extends BaseNotification {
 
 }
 
-module.exports = new OrderNotification();

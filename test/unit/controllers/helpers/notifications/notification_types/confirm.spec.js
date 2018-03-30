@@ -14,7 +14,8 @@ describe('/helpers/notifications/notification_types/'+notification_name+'.js', (
 
   describe('constructor', () => {
     it('successfully constructs', () => {
-      let notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+notification_name+'.js');
+      let NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+notification_name+'.js');
+      const notification_class = new NotificationType();
 
       expect(objectutilities.getClassName(notification_class)).to.equal(notification_readable_name+'Notification');
 
@@ -29,7 +30,8 @@ describe('/helpers/notifications/notification_types/'+notification_name+'.js', (
 
       let context = global.SixCRM.routes.include('test','unit/controllers/helpers/notifications/resources/'+notification_name+'.context.json');
 
-      let notification_class = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+notification_name+'.js');
+      let NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+notification_name+'.js');
+      const notification_class = new NotificationType();
       let transformed_context = notification_class.transformContext(context);
 
       arrayutilities.map(required_fields, key => {

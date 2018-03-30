@@ -2,7 +2,7 @@
 
 const BaseNotification = global.SixCRM.routes.include('helpers','notifications/notificationtypes/components/BaseNotification.js');
 
-class ConfirmedShippedNotification extends BaseNotification {
+module.exports = class ConfirmedShippedNotification extends BaseNotification {
 
   constructor(){
 
@@ -17,4 +17,3 @@ class ConfirmedShippedNotification extends BaseNotification {
 
 }
 
-module.exports = new ConfirmedShippedNotification();

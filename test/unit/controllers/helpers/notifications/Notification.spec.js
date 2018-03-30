@@ -60,10 +60,9 @@ describe('/helpers/notifications/Notification.js', () => {
       notificationHelperClass.parameters.set('eventtype', event_type);
 
       return notificationHelperClass.instantiateNotificationClass().then(result => {
+        expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('DefaultNotification');
         expect(result).to.equal(true);
       });
-
-      expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('DefaultNotification');
 
     });
 
