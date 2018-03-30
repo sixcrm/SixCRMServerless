@@ -8,7 +8,7 @@ const TrackerController = global.SixCRM.routes.include('controllers', 'entities/
 const trackerController = new TrackerController();
 const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
 
-class trackerViewController{
+module.exports = class TrackerViewController{
 
     constructor(){
 
@@ -52,4 +52,3 @@ class trackerViewController{
 
 }
 
-module.exports = new trackerViewController();

@@ -90,7 +90,8 @@ module.exports = class PublicController extends endpointController {
 
         try{
 
-            this.view_controller = global.SixCRM.routes.include('controllers','view/'+this.path_object.class);
+            const ViewController = global.SixCRM.routes.include('controllers','view/'+this.path_object.class);
+            this.view_controller = new ViewController();
 
         }catch(error){
 
