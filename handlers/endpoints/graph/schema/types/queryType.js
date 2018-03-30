@@ -198,6 +198,9 @@ const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPPro
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
+// Helpers Controllers
+const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
+
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
     fields: () => ({
@@ -256,7 +259,7 @@ module.exports.graphObj = new GraphQLObjectType({
             role: {type: GraphQLString}
           },
           resolve: function(root, args){
-            const termsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
+            const termsAndConditionsController = new TermsAndConditionsController();
 
             return termsAndConditionsController.getLatestTermsAndConditions(args.role);
           }

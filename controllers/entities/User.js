@@ -11,7 +11,8 @@ const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js
 
 const notificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-const termsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
+const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
+const termsAndConditionsController = new TermsAndConditionsController();
 
 //Technical Debt:  The list method here is tricky
 class UserController extends entityController {

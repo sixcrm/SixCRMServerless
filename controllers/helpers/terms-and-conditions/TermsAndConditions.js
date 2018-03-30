@@ -4,7 +4,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
-class TermsAndConditions {
+module.exports = class TermsAndConditions {
 
   getLatestTermsAndConditions(role) {
 
@@ -23,4 +23,3 @@ class TermsAndConditions {
 
 }
 
-module.exports = new TermsAndConditions();
