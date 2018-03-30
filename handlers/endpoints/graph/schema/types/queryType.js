@@ -202,6 +202,10 @@ const TrackerController = global.SixCRM.routes.include('controllers', 'entities/
 const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 const TokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
 
+// Providers Controllers
+const SearchController = global.SixCRM.routes.include('controllers', 'providers/search/search.js');
+const SuggestController = global.SixCRM.routes.include('controllers', 'providers/search/suggest.js');
+
 module.exports.graphObj = new GraphQLObjectType({
     name: 'Query',
     fields: () => ({
@@ -216,7 +220,7 @@ module.exports.graphObj = new GraphQLObjectType({
               cache: {type: cacheInputType.graphObj}
   	        },
         	  resolve: function(root, search){
-              const searchController = global.SixCRM.routes.include('controllers', 'providers/search/search.js');
+              const searchController = new SearchController();
 
               return searchController.search(search.search);
         	  }
@@ -229,7 +233,7 @@ module.exports.graphObj = new GraphQLObjectType({
             cache: {type: cacheInputType.graphObj}
       	  },
       	  resolve: function(root, suggest){
-            const suggestController = global.SixCRM.routes.include('controllers', 'providers/search/suggest.js');
+            const suggestController = new SuggestController();
 
             return suggestController.suggest(suggest.suggest);
       	  }

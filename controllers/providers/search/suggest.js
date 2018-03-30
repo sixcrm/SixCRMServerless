@@ -3,7 +3,7 @@ const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 
-class suggestController {
+module.exports = class SuggestController {
 
     constructor(){
 
@@ -79,4 +79,3 @@ class suggestController {
 
 }
 
-module.exports = new suggestController();

@@ -4,7 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const cloudsearchutilities = global.SixCRM.routes.include('lib', 'cloudsearch-utilities.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
-class searchController {
+module.exports = class SearchController {
 
     constructor(){
 
@@ -226,5 +226,3 @@ class searchController {
     }
 
 }
-
-module.exports = new searchController();
