@@ -113,17 +113,6 @@ describe('lib/invite-utilities', () => {
 
         it('encodes', () => {
 
-            mockery.registerMock('soap', {
-                createClientAsync: (done) => {
-                    return Promise.resolve({
-                        testMethodAsync: () => {
-                            done();
-
-                        }
-                    });
-                }
-            });
-
             expect(inviteutilities.encodeParameters(getParameters()))
                 .to.deep.equal('YWxpY2VAZXhhbXBsZS5jb206YWNsOmJvYkBleGFtcGxlLmNvbToqOnJvbGU6MTQ4Nzc2ODU5OTE5Ng==');
 
