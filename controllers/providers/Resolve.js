@@ -1,6 +1,7 @@
 'use strict';
 const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const DownloadController = global.SixCRM.routes.include('providers', 'Download');
 
 module.exports = class ResolveController {
 
@@ -8,7 +9,7 @@ module.exports = class ResolveController {
 
         this.download_parameters = {};
 
-        this.downloadController = global.SixCRM.routes.include('providers', 'Download');
+        this.downloadController = new DownloadController();
 
     }
 

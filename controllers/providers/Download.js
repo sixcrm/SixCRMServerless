@@ -10,7 +10,7 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-class DownloadController {
+module.exports = class DownloadController {
 
     constructor(){
 
@@ -201,4 +201,3 @@ class DownloadController {
 
 }
 
-module.exports = new DownloadController();
