@@ -33,7 +33,8 @@ describe('controllers/workers/redshiftEvents', () => {
 
     it('instantiates the redshiftEventsController class', () => {
 
-      let redshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');
+      const RedshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');
+      const redshiftEventsController =  new RedshiftEventsController();
 
       expect(objectutilities.getClassName(redshiftEventsController)).to.equal('RedshiftEventsController');
 
@@ -165,7 +166,8 @@ describe('controllers/workers/redshiftEvents', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('lib','kinesis-firehose-utilities.js'), kfu);
 
-        let redshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');
+        const RedshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');
+        const redshiftEventsController =  new RedshiftEventsController();
 
         return redshiftEventsController.execute(sns_message);
 

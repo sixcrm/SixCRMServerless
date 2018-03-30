@@ -4,7 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
-class RedshiftEventsController extends SNSEventController {
+module.exports = class RedshiftEventsController extends SNSEventController {
 
 	constructor() {
 
@@ -116,5 +116,3 @@ class RedshiftEventsController extends SNSEventController {
 	}
 
 }
-
-module.exports = new RedshiftEventsController();

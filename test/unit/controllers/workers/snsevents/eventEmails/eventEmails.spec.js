@@ -34,7 +34,8 @@ describe('controllers/workers/eventEmails', () => {
 
     it('instantiates the eventEmailsController class', () => {
 
-      let eventEmailsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/eventEmails.js');
+      let EventEmailsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/eventEmails.js');
+      const eventEmailsController = new EventEmailsController();
 
       expect(objectutilities.getClassName(eventEmailsController)).to.equal('EventEmailsController');
 
@@ -133,7 +134,8 @@ describe('controllers/workers/eventEmails', () => {
       });
       */
 
-      let eventEmailsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/eventEmails.js');
+      let EventEmailsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/eventEmails.js');
+      const eventEmailsController = new EventEmailsController();
 
       return eventEmailsController.execute(sns_message).then(result => {
         expect(result).to.equal(true);
@@ -230,7 +232,8 @@ describe('controllers/workers/eventEmails', () => {
         }
       });
 
-      let eventEmailsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/eventEmails.js');
+      let EventEmailsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/eventEmails.js');
+      const eventEmailsController = new EventEmailsController();
 
       return eventEmailsController.execute(sns_message);
 

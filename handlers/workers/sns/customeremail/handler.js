@@ -5,7 +5,8 @@ module.exports.customeremail = (event, context, callback) => {
   require('../../../../SixCRM.js');
 
   const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
-  const eventEmailsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/eventEmails.js');
+  const EventEmailsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/eventEmails.js');
+  const eventEmailsController = new EventEmailsController();
 
   return eventEmailsController.execute(event).then((result) => {
 

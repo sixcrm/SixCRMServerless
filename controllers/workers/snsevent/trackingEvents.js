@@ -5,7 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
-class TrackingEventsController extends SNSEventController {
+module.exports = class TrackingEventsController extends SNSEventController {
 
   constructor(){
 
@@ -74,5 +74,3 @@ class TrackingEventsController extends SNSEventController {
   }
 
 }
-
-module.exports = new TrackingEventsController();

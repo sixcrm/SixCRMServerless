@@ -14,7 +14,7 @@ const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailT
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const SNSEventController = global.SixCRM.routes.include('controllers','workers/components/SNSEvent.js');
 
-class EventEmailsController extends SNSEventController {
+module.exports = class EventEmailsController extends SNSEventController {
 
   constructor(){
 
@@ -301,5 +301,3 @@ class EventEmailsController extends SNSEventController {
   }
 
 }
-
-module.exports = new EventEmailsController();
