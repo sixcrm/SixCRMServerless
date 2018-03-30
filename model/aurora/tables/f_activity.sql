@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS analytics.f_activity;
+-- DROP TABLE IF EXISTS analytics.f_activity;
 
 CREATE TABLE IF NOT EXISTS analytics.f_activity (
     id VARCHAR(36) NOT NULL,

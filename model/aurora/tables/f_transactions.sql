@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS analytics.f_transactions;
+-- DROP TABLE IF EXISTS analytics.f_transactions;
 
 CREATE TABLE IF NOT EXISTS analytics.f_transactions (
     id VARCHAR(36) NOT NULL PRIMARY KEY,
