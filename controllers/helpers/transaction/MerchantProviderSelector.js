@@ -264,10 +264,12 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       let merchantprovidergroup = this.parameters.get('smp.merchantprovidergroup');
 
       const MerchantProviderGeneralFilter = global.SixCRM.routes.include('helpers','transaction/filters/MerchantProviderGeneralFilter.js');
+      const merchantProviderGeneralFilter = new MerchantProviderGeneralFilter();
       const MerchantProviderLSSFilter = global.SixCRM.routes.include('helpers','transaction/filters/MerchantProviderLSSFilter.js');
+      const merchantProviderLSSFilter = new MerchantProviderLSSFilter();
 
-      return MerchantProviderGeneralFilter.filter({merchant_providers: merchant_providers, creditcard:creditcard, amount:amount})
-      .then((merchant_providers) => MerchantProviderLSSFilter.filter({merchant_providers: merchant_providers, creditcard: creditcard, amount: amount, merchantprovidergroup: merchantprovidergroup}))
+      return merchantProviderGeneralFilter.filter({merchant_providers: merchant_providers, creditcard:creditcard, amount:amount})
+      .then((merchant_providers) => merchantProviderLSSFilter.filter({merchant_providers: merchant_providers, creditcard: creditcard, amount: amount, merchantprovidergroup: merchantprovidergroup}))
       .then(merchant_provider => {
         this.parameters.set('smp.merchantprovider', merchant_provider);
         return true;

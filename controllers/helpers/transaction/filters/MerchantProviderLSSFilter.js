@@ -9,7 +9,7 @@ const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers','Parameters.js');
 
-class MerchantProvidersLSSFilter {
+module.exports = class MerchantProviderLSSFilter {
 
   constructor(){
 
@@ -191,4 +191,3 @@ class MerchantProvidersLSSFilter {
 
 }
 
-module.exports =  new MerchantProvidersLSSFilter();

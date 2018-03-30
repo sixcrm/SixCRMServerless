@@ -8,7 +8,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers','Parameters.js');
 
-class MerchantProviderGeneralFilter {
+module.exports = class MerchantProviderGeneralFilter {
 
   constructor(){
 
@@ -222,4 +222,3 @@ class MerchantProviderGeneralFilter {
 
 }
 
-module.exports = new MerchantProviderGeneralFilter();
