@@ -8,7 +8,7 @@ const transactionEndpointController = global.SixCRM.routes.include('controllers'
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
-class InfoController extends transactionEndpointController{
+module.exports = class InfoController extends transactionEndpointController{
 
     constructor(){
 
@@ -141,4 +141,3 @@ class InfoController extends transactionEndpointController{
 
 }
 
-module.exports = new InfoController();

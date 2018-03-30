@@ -6,7 +6,7 @@ const transactionEndpointController = global.SixCRM.routes.include('controllers'
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
-class TrackingController extends transactionEndpointController{
+module.exports = class TrackingController extends transactionEndpointController{
 
     constructor(){
 
@@ -129,4 +129,3 @@ class TrackingController extends transactionEndpointController{
 
 }
 
-module.exports = new TrackingController();

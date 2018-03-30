@@ -163,7 +163,8 @@ describe('tracking', () => {
   describe('constructor', () => {
     it('successfully constructs', () => {
 
-      let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      const trackingController = new TrackingController();
 
       expect(objectutilities.getClassName(trackingController)).to.equal('TrackingController');
 
@@ -225,7 +226,8 @@ describe('tracking', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-      let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      const trackingController = new TrackingController();
 
       return trackingController.execute(event).then(result => {
         expect(result).to.deep.equal({trackers: trackers});
@@ -241,7 +243,8 @@ describe('tracking', () => {
 
       let trackers = getValidTrackers({campaigns:[uuidV4()], affiliates:[uuidV4()]});
 
-      let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      const trackingController = new TrackingController();
 
       trackingController.parameters.set('trackers', trackers);
 
@@ -271,7 +274,8 @@ describe('tracking', () => {
         }
       });
 
-      let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      const trackingController = new TrackingController();
 
       trackingController.parameters.set('campaign', campaign);
       trackingController.parameters.set('affiliate', affiliate);
@@ -299,7 +303,8 @@ describe('tracking', () => {
         }
       });
 
-      let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      const trackingController = new TrackingController();
 
       trackingController.parameters.set('campaign', campaign);
       trackingController.parameters.set('affiliate', affiliate);
@@ -330,7 +335,8 @@ describe('tracking', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-      let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      const trackingController = new TrackingController();
 
       trackingController.parameters.set('event', event_body);
 
@@ -356,7 +362,8 @@ describe('tracking', () => {
         }
       });
 
-      let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      const trackingController = new TrackingController();
 
       trackingController.parameters.set('event', event_body);
 
@@ -393,7 +400,8 @@ describe('tracking', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-      let trackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
+      const trackingController = new TrackingController();
 
       trackingController.parameters.set('event', event_body);
 
