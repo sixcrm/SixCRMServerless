@@ -403,8 +403,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-                createActivity: () => {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+                createActivity() {
                     return Promise.resolve();
                 }
             });
@@ -448,8 +448,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-                createActivity: () => {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+                createActivity() {
                     return Promise.resolve();
                 }
             });
@@ -506,8 +506,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-                createActivity: () => {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+                createActivity() {
                     return Promise.resolve();
                 }
             });
@@ -647,8 +647,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-                createActivity: () => {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+                createActivity() {
                     return Promise.resolve();
                 }
             });
@@ -728,8 +728,8 @@ describe('controllers/entities/User.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-                createActivity: () => {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+                createActivity() {
                     return Promise.resolve();
                 }
             });

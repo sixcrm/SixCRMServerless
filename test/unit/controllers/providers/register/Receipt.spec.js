@@ -216,8 +216,8 @@ describe('controllers/providers/register/Receipt.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-        createActivity: () => {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+        createActivity() {
           return true;
         }
       });
@@ -272,8 +272,8 @@ describe('controllers/providers/register/Receipt.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-        createActivity: () => {
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+        createActivity() {
           return true;
         }
       });

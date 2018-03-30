@@ -62,8 +62,8 @@ describe('controllers/AccessKey.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-                createActivity: () => {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+                createActivity() {
                     return Promise.resolve();
                 }
             });

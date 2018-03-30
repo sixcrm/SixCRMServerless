@@ -1076,7 +1076,8 @@ module.exports = class entityUtilitiesController extends PermissionedController 
     createRedshiftActivityRecord(actor, action, acted_upon, associated_with){
 
         //Technical Debt:  This is inappropriate here...
-        let activityHelper = global.SixCRM.routes.include('helpers', 'redshift/Activity.js');
+        let ActivityHelper = global.SixCRM.routes.include('helpers', 'redshift/Activity.js');
+        const activityHelper = new ActivityHelper();
 
         return activityHelper.createActivity(actor, action, acted_upon, associated_with);
 

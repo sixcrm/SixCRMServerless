@@ -56,8 +56,8 @@ describe('controllers/entities/EntityACL.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
-                createActivity: () => {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+                createActivity() {
                     return Promise.resolve();
                 }
             });

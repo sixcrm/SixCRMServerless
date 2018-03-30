@@ -8,7 +8,7 @@ require('../../../SixCRM.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
-module.exports = new class activityHelper {
+module.exports = class ActivityHelper {
 
 	//Technical Debt:  Use Local Cache Object
 	acquireGlobalUser() {
