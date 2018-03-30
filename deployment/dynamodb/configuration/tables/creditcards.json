@@ -19,6 +19,10 @@
       {
         "AttributeName":"account",
         "AttributeType":"S"
+      },
+      {
+        "AttributeName":"customer",
+        "AttributeType":"S"
       }
     ],
     "GlobalSecondaryIndexes":[
@@ -52,6 +56,22 @@
         "ProvisionedThroughput":{
           "ReadCapacityUnits":3,
           "WriteCapacityUnits":3
+        }
+      },
+      {
+        "IndexName":"customer-index",
+        "KeySchema":[
+          {
+            "AttributeName":"customer",
+            "KeyType":"HASH"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":1,
+          "WriteCapacityUnits":1
         }
       }
     ],

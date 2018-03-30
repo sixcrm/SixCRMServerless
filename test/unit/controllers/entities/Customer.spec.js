@@ -12,6 +12,10 @@ function getValidCustomer() {
     return MockEntities.getValidCustomer()
 }
 
+function getValidCreditCard() {
+    return MockEntities.getValidCreditCard()
+}
+
 function getValidCreditCards() {
     return [MockEntities.getValidCreditCard()]
 }
@@ -436,4 +440,282 @@ describe('controllers/entities/Customer.js', () => {
             });
         });
     });
+
+	describe('addCreditCard', () => {
+		it('updates association arrays', () => {
+			const customer = getValidCustomer();
+			const creditcard = getValidCreditCard();
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*');
+
+			let mock_preindexing_helper = class {
+				constructor(){
+
+				}
+				addToSearchIndex(){
+					return Promise.resolve(true);
+				}
+				removeFromSearchIndex(){
+					return Promise.resolve(true);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+				createActivity() {
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+				queryRecords: () => {
+					return Promise.resolve({Items: [customer]});
+				},
+				saveRecord: () => {
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				update({entity}) {
+					return Promise.resolve(entity);
+				}
+			});
+
+			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+            const customerController =  new CustomerController();
+
+			return customerController.addCreditCard(customer, creditcard)
+			.then(([updated_customer, updated_creditcard]) => {
+				expect(updated_customer.creditcards).to.include(creditcard.id);
+				expect(updated_creditcard.customers).to.include(customer.id);
+			});
+		});
+
+		it('creates association arrays', () => {
+			const customer = getValidCustomer();
+			const creditcard = getValidCreditCard();
+			delete customer.creditcards;
+			delete creditcard.customers;
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*');
+
+			let mock_preindexing_helper = class {
+				constructor(){
+
+				}
+				addToSearchIndex(){
+					return Promise.resolve(true);
+				}
+				removeFromSearchIndex(){
+					return Promise.resolve(true);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+				createActivity() {
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+				queryRecords: () => {
+					return Promise.resolve({Items: [customer]});
+				},
+				saveRecord: () => {
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				update({entity}) {
+					return Promise.resolve(entity);
+				}
+			});
+
+			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+			const customerController =  new CustomerController();
+
+			return customerController.addCreditCard(customer, creditcard)
+			.then(([updated_customer, updated_creditcard]) => {
+				expect(updated_customer.creditcards).to.deep.equal([creditcard.id]);
+				expect(updated_creditcard.customers).to.deep.equal([customer.id]);
+			});
+		});
+
+		it('when associated does not update', () => {
+			const customer = getValidCustomer();
+			const creditcard = getValidCreditCard();
+			customer.creditcards = [creditcard.id];
+			creditcard.customers = [customer.id];
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*');
+
+			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+            const customerController =  new CustomerController();
+
+			return customerController.addCreditCard(customer, creditcard)
+			.then(([updated_customer, updated_creditcard]) => {
+				expect(updated_customer.creditcards).to.deep.equal([creditcard.id]);
+				expect(updated_creditcard.customers).to.deep.equal([customer.id]);
+			});
+		});
+
+		it('retrieves entities from db if ids given', () => {
+			const customer = getValidCustomer();
+			const creditcard = getValidCreditCard();
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*');
+
+			let mock_preindexing_helper = class {
+				constructor(){
+
+				}
+				addToSearchIndex(){
+					return Promise.resolve(true);
+				}
+				removeFromSearchIndex(){
+					return Promise.resolve(true);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+				createActivity() {
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+				queryRecords: () => {
+					return Promise.resolve({Items: [customer]});
+				},
+				saveRecord: () => {
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				get() {
+					return Promise.resolve(creditcard);
+				}
+				update({entity}) {
+					return Promise.resolve(entity);
+				}
+			});
+
+			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+            const customerController =  new CustomerController();
+
+			return customerController.addCreditCard(customer.id, creditcard.id)
+			.then(([updated_customer, updated_creditcard]) => {
+				expect(updated_customer.creditcards).to.include(creditcard.id);
+				expect(updated_creditcard.customers).to.include(customer.id);
+			});
+		});
+
+		it('throws error if customer does not exist', () => {
+			const customer = getValidCustomer();
+			const creditcard = getValidCreditCard();
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*');
+
+			let mock_preindexing_helper = class {
+				constructor(){
+
+				}
+				addToSearchIndex(){
+					return Promise.resolve(true);
+				}
+				removeFromSearchIndex(){
+					return Promise.resolve(true);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+				createActivity: () => {
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+				queryRecords: () => {
+					return Promise.resolve({Items: []});
+				},
+				saveRecord: () => {
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				get() {
+					return Promise.resolve(creditcard);
+				}
+			});
+
+			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+            const customerController =  new CustomerController();
+
+			return customerController.addCreditCard(customer.id, creditcard.id)
+			.catch(error => {
+				expect(error.message).to.equal(`[500] Customer does not exist: ${customer.id}`);
+			});
+		});
+
+		it('throws error if creditcard does not exist', () => {
+			const customer = getValidCustomer();
+			const creditcard = getValidCreditCard();
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*');
+
+			let mock_preindexing_helper = class {
+				constructor(){
+
+				}
+				addToSearchIndex(){
+					return Promise.resolve(true);
+				}
+				removeFromSearchIndex(){
+					return Promise.resolve(true);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), {
+				createActivity: () => {
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
+				queryRecords: () => {
+					return Promise.resolve({Items: [customer]});
+				},
+				saveRecord: () => {
+					return Promise.resolve();
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				get() {
+					return Promise.resolve(null);
+				}
+			});
+
+			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+            const customerController =  new CustomerController();
+
+			return customerController.addCreditCard(customer.id, creditcard.id)
+			.catch(error => {
+				expect(error.message).to.equal(`[500] Creditcard does not exist: ${creditcard.id}`);
+			});
+		});
+	});
 });

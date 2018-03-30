@@ -841,6 +841,7 @@ class MockEntities {
     return {
         id: this.getValidId(id),
         account: this.getTestAccountID(),
+        customers: [uuidV4()],
         address: this.getValidAddress(),
         number,
         last_four,

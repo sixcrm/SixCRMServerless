@@ -58,6 +58,18 @@ module.exports = class CreditCardController extends entityController {
         return super.updateProperties({id, properties});
     }
 
+	listCustomers(creditcard) {
+		du.debug('List Customers');
+
+		if(_.has(creditcard, "customers") && arrayutilities.nonEmpty(creditcard.customers)){
+			return Promise.all(arrayutilities.map(creditcard.customers, customer => {
+				return this.executeAssociatedEntityFunction('CustomerController', 'get', {id: customer});
+			}));
+		}
+
+		return Promise.resolve(null);
+	}
+
     associatedEntitiesCheck({id}){
 
       du.debug('Associated Entities Check');
@@ -219,4 +231,3 @@ module.exports = class CreditCardController extends entityController {
     }
 
 }
-

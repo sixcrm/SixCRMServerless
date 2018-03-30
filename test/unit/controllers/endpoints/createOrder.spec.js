@@ -122,6 +122,7 @@ function getValidCreditCardPrototype(){
   delete creditcard.id;
   delete creditcard.created_at;
   delete creditcard.updated_at;
+  delete creditcard.customers;
 
   return creditcard;
 
@@ -326,7 +327,8 @@ describe('createOrder', function () {
 
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
-              return Promise.resolve(customer);
+              creditcard.customers.push(customer.id);
+              return Promise.resolve([customer, creditcard]);
           }
           get() {
               return Promise.resolve(customer);
@@ -499,7 +501,8 @@ describe('createOrder', function () {
 
           addCreditCard() {
               customer.creditcards = [creditcard.id];
-              return Promise.resolve(customer);
+              creditcard.customers = [customer.id];
+              return Promise.resolve([customer, creditcard]);
           }
           get() {
               return Promise.resolve(customer);
@@ -684,7 +687,8 @@ describe('createOrder', function () {
 
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
-              return Promise.resolve(customer);
+              creditcard.customers.push(customer.id);
+              return Promise.resolve([customer, creditcard]);
           }
           get() {
               return Promise.resolve(customer);
@@ -836,6 +840,13 @@ describe('createOrder', function () {
       let customer = getValidCustomer();
       let session = getValidSession();
 
+	  event.creditcard = Object.assign({}, creditcard);
+	  delete event.creditcard.id;
+	  delete event.creditcard.account;
+	  delete event.creditcard.created_at;
+	  delete event.creditcard.updated_at;
+	  delete event.creditcard.customers;
+
       let mock_campaign = class {
           constructor(){}
 
@@ -870,7 +881,8 @@ describe('createOrder', function () {
 
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
-              return Promise.resolve(customer);
+              creditcard.customers = [customer.id];
+              return Promise.resolve([customer, creditcard]);
           }
       };
 
@@ -897,6 +909,7 @@ describe('createOrder', function () {
         delete stored_credit_card.created_at;
         delete stored_credit_card.updated_at;
         delete stored_credit_card.account;
+        delete stored_credit_card.customers;
         expect(stored_credit_card).to.deep.equal(event.creditcard)
 
         expect(hydrated_campaign).to.deep.equal(campaign);
@@ -1002,7 +1015,8 @@ describe('createOrder', function () {
 
           addCreditCard() {
               customer.creditcards.push(plaintext_creditcard.id);
-              return Promise.resolve(customer);
+              plaintext_creditcard.customers.push(customer.id);
+              return Promise.resolve([customer, plaintext_creditcard]);
           }
       };
 
@@ -1713,7 +1727,8 @@ describe('createOrder', function () {
 
           addCreditCard(a_customer, a_creditcard) {
               customer.creditcards.push(a_creditcard.id);
-              return Promise.resolve(customer);
+              a_creditcard.customers = [customer.id];
+              return Promise.resolve([customer, a_creditcard]);
           }
       };
 
@@ -1733,6 +1748,7 @@ describe('createOrder', function () {
         delete set_creditcard.created_at;
         delete set_creditcard.updated_at;
         delete set_creditcard.account;
+        delete set_creditcard.customers;
         expect(set_creditcard).to.deep.equal(event.creditcard);
       })
 
@@ -2097,7 +2113,8 @@ describe('createOrder', function () {
 
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
-              return Promise.resolve(customer);
+              creditcard.customers.push(customer.id);
+              return Promise.resolve([customer, creditcard]);
           }
           get() {
               return Promise.resolve(customer);

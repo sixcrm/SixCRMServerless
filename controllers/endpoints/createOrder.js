@@ -237,7 +237,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.customerController = new CustomerController();
 		}
 
-		return this.customerController.addCreditCard(customer.id, creditcard).then((customer) => {
+		return this.customerController.addCreditCard(customer.id, creditcard).then(([customer, creditcard]) => {
+			this.parameters.set('creditcard', creditcard);
 			this.parameters.set('customer', customer);
 			return true;
 		});

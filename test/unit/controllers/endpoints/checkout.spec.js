@@ -441,7 +441,8 @@ describe('checkout', function () {
 
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
-              return Promise.resolve(customer);
+			  creditcard.customers.push(customer.id);
+              return Promise.resolve([customer, creditcard]);
           }
           get() {
               return Promise.resolve(customer);
@@ -745,7 +746,8 @@ describe('checkout', function () {
 
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
-              return Promise.resolve(customer);
+              creditcard.customers.push(customer.id);
+              return Promise.resolve([customer, creditcard]);
           }
           get() {
               return Promise.resolve(customer);

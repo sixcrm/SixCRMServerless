@@ -50,6 +50,7 @@ module.exports = class CustomerController extends entityController {
 
     }
 
+	// Deprecate: Recursive Scan Query
     listByCreditCard({creditcard, pagination}){
 
       du.debug('List By Credit Card')
@@ -71,51 +72,64 @@ module.exports = class CustomerController extends entityController {
 
       du.debug('Add Credit Card');
 
-      if(!_.has(customer, this.primary_key)){
+	  const customerPromise = Promise.resolve().then(() => {
+	  	if (!_.has(customer, this.primary_key)) {
+	  		return this.get({id: customer});
+	  	}
+	  	return customer;
+	  })
+	  .then(_customer => {
+	  	if (_.isNull(_customer)) {
+	  		eu.throwError('server', `Customer does not exist: ${customer}`);
+	  	}
+	  	return _customer;
+	  });
 
-        return this.get({id: customer}).then((_customer) => {
+	  const creditcardPromise = Promise.resolve().then(() => {
+	  	if (!_.has(creditcard, 'id')) {
+	  		return this.executeAssociatedEntityFunction('CreditCardController', 'get', {id: creditcard});
+	  	}
+	  	return creditcard;
+	  })
+	  .then(_creditcard => {
+	  	if (_.isNull(_creditcard)) {
+	  		eu.throwError('server', `Creditcard does not exist: ${creditcard}`);
+	  	}
+	  	return _creditcard;
+	  });
 
-          //Technical Debt:  Bad validation
-          if(!_.has(_customer, this.primary_key)){
-            eu.throwError('server', 'Customer doesn\'t exist: '+customer);
-          }
+	  return Promise.all([customerPromise, creditcardPromise])
+	  .then(([customer, creditcard]) => {
+	  	const customerUpdatePromise = Promise.resolve().then(() => {
+	  		if (_.has(customer, 'creditcards')) {
+	  			arrayutilities.isArray(customer.creditcards, true);
+	  			if (_.contains(customer.creditcards, creditcard.id)) {
+	  				return customer;
+	  			}
+	  			customer.creditcards.push(creditcard.id);
+	  		} else {
+	  			customer.creditcards = [creditcard.id];
+	  		}
 
-          return this.addCreditCard(_customer, creditcard);
+	  		return this.update({entity: customer});
+	  	});
 
-        });
+	  	const creditcardUpdatePromise = Promise.resolve().then(() => {
+	  		if (_.has(creditcard, 'customers')) {
+	  			arrayutilities.isArray(creditcard.customers, true);
+	  			if (_.contains(creditcard.customers, customer.id)) {
+	  				return creditcard;
+	  			}
+	  			creditcard.customers.push(customer.id);
+	  		} else {
+	  			creditcard.customers = [customer.id];
+	  		}
 
-      }
+	  		return this.executeAssociatedEntityFunction('CreditCardController', 'update', {entity: creditcard});
+	  	});
 
-      //Technical Debt: shitty validation
-      if(!_.has(creditcard, 'id')){
-
-        eu.throwError('bad_request','Invalid customer provided.');
-
-      }
-
-      if(_.has(customer, 'creditcards')){
-
-        arrayutilities.isArray(customer.creditcards, true);
-
-        if(_.contains(customer.creditcards, creditcard.id)){
-
-            return Promise.resolve(customer);
-
-        }else{
-
-          customer.creditcards.push(creditcard.id);
-
-          return this.update({entity: customer});
-
-        }
-
-      }else{
-
-        customer['creditcards'] = [creditcard.id];
-
-        return this.update({entity: customer});
-
-      }
+	  	return Promise.all([customerUpdatePromise, creditcardUpdatePromise]);
+	  });
 
     }
 

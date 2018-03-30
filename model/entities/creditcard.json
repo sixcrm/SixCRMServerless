@@ -7,6 +7,10 @@
 	"properties": {
 		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+		"customers":{
+			"type": "array",
+			"items": {"$ref": "../definitions/uuidv4.json"}
+		},
 		"address":{"$ref": "../definitions/address.json"},
 		"number":{"$ref": "../definitions/creditcardnumber.json"},
 		"last_four":{"$ref":"../definitions/creditcardlastfour.json"},
