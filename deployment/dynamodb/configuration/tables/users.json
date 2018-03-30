@@ -38,8 +38,8 @@
           "ProjectionType":"ALL"
         },
         "ProvisionedThroughput":{
-          "ReadCapacityUnits":10,
-          "WriteCapacityUnits":1
+          "ReadCapacityUnits":30,
+          "WriteCapacityUnits":3
         }
       },
       {
@@ -54,8 +54,8 @@
           "ProjectionType":"ALL"
         },
         "ProvisionedThroughput":{
-          "ReadCapacityUnits":10,
-          "WriteCapacityUnits":1
+          "ReadCapacityUnits":30,
+          "WriteCapacityUnits":3
         }
       },
       {
@@ -70,14 +70,14 @@
           "ProjectionType":"ALL"
         },
         "ProvisionedThroughput":{
-          "ReadCapacityUnits":10,
-          "WriteCapacityUnits":1
+          "ReadCapacityUnits":30,
+          "WriteCapacityUnits":3
         }
       }
     ],
     "ProvisionedThroughput":{
-      "ReadCapacityUnits":10,
-      "WriteCapacityUnits":1
+      "ReadCapacityUnits":30,
+      "WriteCapacityUnits":3
     }
   }
 }
