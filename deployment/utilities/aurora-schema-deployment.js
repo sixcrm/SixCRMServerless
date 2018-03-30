@@ -6,345 +6,345 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
+const BBPromise = require('bluebird');
 
 module.exports = class AuroraSchemaDeployment {
 
-  constructor() {
+	constructor() {
 
-    this.table_directories = ['tables'];
+		this.table_directories = ['tables', 'procedures'];
 
-  }
+	}
 
-  deployTables() {
+	deployTables() {
 
-    du.debug('Deploy Aurora tables');
+		du.debug('Deploy Aurora tables');
 
-    let deployment_promises = arrayutilities.map(this.table_directories, (directory) => {
+		let deployment_promises = arrayutilities.map(this.table_directories, (directory) => {
 
-      return () => this.deployDirectorySQL(directory);
+			return () => this.deployDirectorySQL(directory);
 
-    });
+		});
 
-    return this.getQueryFromPath(global.SixCRM.routes.path('model', `aurora/before/schema/${process.env.stage}.sql`))
-      .then((query) => auroraContext.withConnection((connection => {
+		return Promise.resolve()
 
-        return connection.query(query);
+			.then(() => this.getQueryFromPath(global.SixCRM.routes.path('model', `aurora/before/schema/${process.env.stage}.sql`)))
+			.then((query) => auroraContext.withConnection((connection => {
 
-      })))
-      .then(() => arrayutilities.serial(deployment_promises)).then(() => {
+				return connection.query(query);
 
-        return true;
+			})))
+			.then(() => arrayutilities.serial(deployment_promises)).then(() => {
 
-      })
-      .then(() => {
+				return true;
 
-        return 'Complete';
+			})
+			.then(() => {
 
-      });
+				return 'Complete';
 
-  }
+			});
 
-  deployDirectorySQL(directory) {
+	}
 
-    du.debug('Deploy Aurora SQL');
+	deployDirectorySQL(directory) {
 
-    return this.getDirectorySQLFilepaths(directory)
-      .then((filepaths) => this.getQueries(filepaths))
-      .then((queries) => this.executeQueries(queries))
-      .then((result) => {
+		du.debug('Deploy Aurora SQL');
 
-        return result;
+		return this.getDirectorySQLFilepaths(directory)
+			.then((filepaths) => this.getQueries(filepaths))
+			.then((queries) => this.executeQueries(queries))
+			.then((result) => {
 
-      });
+				return result;
 
-  }
+			});
 
-  getDirectorySQLFilepaths(directory) {
+	}
 
-    du.highlight('Get Directory SQL Filepaths');
+	getDirectorySQLFilepaths(directory) {
 
-    let directory_filepath = global.SixCRM.routes.path('model', 'aurora/' + directory);
+		du.highlight('Get Directory SQL Filepaths');
 
-    return fileutilities.getDirectoryFiles(directory_filepath).then((files) => {
+		let directory_filepath = global.SixCRM.routes.path('model', 'aurora/' + directory);
 
-      files = arrayutilities.filter(files, (file) => {
-        return file.match(/\.sql$/);
-      });
+		return fileutilities.getDirectoryFiles(directory_filepath).then((files) => {
 
-      files = arrayutilities.map(files, (file) => {
-        return directory_filepath + '/' + file;
-      });
+			files = arrayutilities.filter(files, (file) => {
+				return file.match(/\.sql$/);
+			});
 
-      return files;
+			files = arrayutilities.map(files, (file) => {
+				return directory_filepath + '/' + file;
+			});
 
-    });
+			return files;
 
-  }
+		});
 
-  getQueries(queryFilepaths) {
+	}
 
-    du.debug('Get Queries');
+	getQueries(queryFilepaths) {
 
-    let queries = [];
+		du.debug('Get Queries');
 
-    let query_promises = arrayutilities.map(queryFilepaths, (filepath) => {
-      return () => this.getQueryFromPath(filepath).then((query) => {
-        queries.push(query);
-        return true;
-      });
-    });
+		let queries = [];
 
-    return arrayutilities.serial(query_promises).then(() => {
-      return queries;
-    })
+		let query_promises = arrayutilities.map(queryFilepaths, (filepath) => {
+			return () => this.getQueryFromPath(filepath).then((query) => {
+				queries.push(query);
+				return true;
+			});
+		});
 
-  }
+		return arrayutilities.serial(query_promises).then(() => {
+			return queries;
+		})
 
-  getQueryFromPath(filepath) {
+	}
 
-    du.debug('Get Query From Path');
+	getQueryFromPath(filepath) {
 
-    return fileutilities.getFileContents(filepath).then((query) => {
+		du.debug('Get Query From Path');
 
-      return Promise.resolve(query);
+		return fileutilities.getFileContents(filepath).then((query) => {
 
-    });
+			return Promise.resolve(query);
 
-  }
+		});
 
-  executeQueries(queries) {
+	}
 
-    du.debug('Execute Queries');
+	executeQueries(queries) {
 
-    let query_promises = arrayutilities.map(queries, (query) => {
+		du.debug('Execute Queries');
 
-      if (!_.isNull(query) && query !== '' && query !== false) {
+		let query_promises = arrayutilities.map(queries, (query) => {
 
-        return () => this.execute(query);
+			if (!_.isNull(query) && query !== '' && query !== false) {
 
-      }
+				return () => this.execute(query);
 
-      return () => {
+			}
 
-        return Promise.resolve(null);
+			return () => {
 
-      };
+				return Promise.resolve(null);
 
-    });
+			};
 
-    return arrayutilities.serial(query_promises).then(() => {
+		});
 
-      return true;
+		return arrayutilities.serial(query_promises).then(() => {
 
-    });
+			return true;
 
-  }
+		});
 
-  destroy() {
+	}
 
-    du.debug('Destroy');
+	destroy() {
 
-    return this.getDestroyQuery()
-      .then((destroy_query) => this.execute(destroy_query))
-      .then(() => {
+		du.debug('Destroy');
 
-        return 'Complete';
+		return this.getDestroyQuery()
+			.then((destroy_query) => this.execute(destroy_query))
+			.then(() => {
 
-      });
+				return 'Complete';
 
-  }
+			});
 
-  seed() {
+	}
 
-    du.debug('Seed');
+	seed() {
 
-    return this.getSeedQueries()
-      .then((seed_queries) => {
-        arrayutilities.isArray(seed_queries, true);
-        if (seed_queries.length > 0) {
-          return this.executeQueries(seed_queries);
-        }
-        return Promise.resolve(true);
-      })
-      .then(() => {
-        return 'Complete';
-      });
+		du.debug('Seed');
 
-  }
+		return this.getSeedQueries()
+			.then((seed_queries) => {
+				arrayutilities.isArray(seed_queries, true);
+				if (seed_queries.length > 0) {
+					return this.executeQueries(seed_queries);
+				}
+				return Promise.resolve(true);
+			})
+			.then(() => {
+				return 'Complete';
+			});
 
-  getSeedQueries() {
+	}
 
-    du.debug('Get Seed Queries');
+	getSeedQueries() {
 
-    return this.getDirectorySQLFilepaths('seeds').then((filepaths) => {
+		du.debug('Get Seed Queries');
 
-      let query_promises = arrayutilities.map((filepaths), (filepath) => {
+		return this.getDirectorySQLFilepaths('seeds').then((filepaths) => {
 
-        return this.getQueryFromPath(filepath);
+			let query_promises = arrayutilities.map((filepaths), (filepath) => {
 
-      });
+				return this.getQueryFromPath(filepath);
 
-      return Promise.all(query_promises);
+			});
 
-    });
+			return Promise.all(query_promises);
 
-  }
+		});
 
-  getDestroyQuery() {
+	}
 
-    du.debug('Get Destroy Query');
+	getDestroyQuery() {
 
-    let table_drop_queries_promise = this.getTableDropQueries();
+		du.debug('Get Destroy Query');
 
-    return Promise.all([
-      table_drop_queries_promise
-    ]).then((resolved_promises) => {
+		return auroraContext.withConnection((connection => {
 
-      let table_drop_queries = resolved_promises[0];
+			return Promise.resolve()
+				.then(() => this.getTableDropQueries())
+				.then((queries) => {
 
-      arrayutilities.isArray(table_drop_queries, true);
+					return BBPromise.each(queries, (query) => {
 
-      let merged_queries_array = [];
+						return connection.query(query).then(result => {
 
-      if (table_drop_queries.length > 0) {
-        merged_queries_array = arrayutilities.merge(merged_queries_array, table_drop_queries);
-      }
+							return result.rows;
 
-      if (merged_queries_array.length > 0) {
-        return arrayutilities.compress(merged_queries_array, ' ', '');
-      }
+						});
 
+					})
 
-      return null;
+				});
 
-    });
+		}));
 
-  }
+	}
 
-  getTableDropQueries() {
+	getTableDropQueries() {
 
-    du.debug('Get Table Drop Queries');
+		du.debug('Get Table Drop Queries');
 
-    return this.getTableFilenames('tables').then((table_filenames) => {
+		return this.getTableFilenames('tables').then((table_filenames) => {
 
-      return arrayutilities.map(table_filenames, (table_filename) => {
+			return arrayutilities.map(table_filenames, (table_filename) => {
 
-        let table_name = this.getTableNameFromFilename(table_filename);
+				let table_name = this.getTableNameFromFilename(table_filename);
 
-        return 'DROP TABLE IF EXISTS ' + table_name + ';';
+				return 'DROP TABLE IF EXISTS analytics.' + table_name + ';';
 
-      });
+			});
 
-    });
+		});
 
-  }
+	}
 
-  purge() {
+	purge() {
 
-    du.debug('Purge');
+		du.debug('Purge');
 
-    let directory_purge_promises = arrayutilities.map(this.table_directories, (directory) => {
+		let directory_purge_promises = arrayutilities.map(this.table_directories, (directory) => {
 
-      return () => this.purgeTableDirectory(directory);
+			return () => this.purgeTableDirectory(directory);
 
-    });
+		});
 
-    return arrayutilities.serial(
-      directory_purge_promises
-    ).then(() => {
-      return 'Complete';
-    });
+		return arrayutilities.serial(
+			directory_purge_promises
+		).then(() => {
+			return 'Complete';
+		});
 
-  }
+	}
 
-  purgeTableDirectory(directory) {
+	purgeTableDirectory(directory) {
 
-    du.debug('Purge Table Directory');
+		du.debug('Purge Table Directory');
 
-    return this.getTableFilenames(directory)
-      .then((filenames) => this.getPurgeQueries(filenames))
-      .then((queries) => this.executePurgeQueries(queries))
-      .then(() => {
+		return this.getTableFilenames(directory)
+			.then((filenames) => this.getPurgeQueries(filenames))
+			.then((queries) => this.executePurgeQueries(queries))
+			.then(() => {
 
-        return 'Complete';
+				return 'Complete';
 
-      });
+			});
 
-  }
+	}
 
-  executePurgeQueries(queries) {
+	executePurgeQueries(queries) {
 
-    du.debug('Execute Purge Queries');
+		du.debug('Execute Purge Queries');
 
-    if (!_.isArray(queries)) {
-      eu.throwError('server', 'Not an array: ' + queries);
-    }
+		if (!_.isArray(queries)) {
+			eu.throwError('server', 'Not an array: ' + queries);
+		}
 
-    if (queries.length < 1) {
+		if (queries.length < 1) {
 
-      du.highlight('No purge queries to execute');
-      return Promise.resolve(false);
+			du.highlight('No purge queries to execute');
+			return Promise.resolve(false);
 
-    }
+		}
 
-    let purge_query = arrayutilities.compress(queries, ' ', '');
+		let purge_query = arrayutilities.compress(queries, ' ', '');
 
-    return this.execute(purge_query);
+		return this.execute(purge_query);
 
-  }
+	}
 
-  getTableFilenames(directory) {
+	getTableFilenames(directory) {
 
-    du.debug('Get Table Filenames');
+		du.debug('Get Table Filenames');
 
-    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', 'aurora/' + directory)).then((files) => {
+		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', 'aurora/' + directory)).then((files) => {
 
-      files = files.filter(file => file.match(/\.sql$/));
+			files = files.filter(file => file.match(/\.sql$/));
 
-      return files;
+			return files;
 
-    });
+		});
 
-  }
+	}
 
-  execute(query) {
+	execute(query) {
 
-    du.debug('Execute Query');
+		du.debug('Execute Query');
 
-    if (_.contains(['local', 'local-docker', 'circle'], global.SixCRM.configuration.stage)) { // Technical Debt: This REALLY shouldn't be hardcoded here.
+		if (_.contains(['local', 'local-docker', 'circle'], global.SixCRM.configuration.stage)) { // Technical Debt: This REALLY shouldn't be hardcoded here.
 
-      du.info(query);
+			du.info(query);
 
-    }
+		}
 
-    return auroraContext.withConnection((connection => {
+		return auroraContext.withConnection((connection => {
 
-      return connection.query(query).then(result => result.rows);
+			return connection.query(query).then(result => {
+				return result.rows;
+			});
 
-    }));
+		}));
 
-  }
+	}
 
-  getPurgeQueries(table_filenames) {
+	getPurgeQueries(table_filenames) {
 
-    du.highlight('Get Purge Queries');
+		du.highlight('Get Purge Queries');
 
-    return arrayutilities.map(table_filenames, (table_filename) => {
+		return arrayutilities.map(table_filenames, (table_filename) => {
 
-      let table_name = this.getTableNameFromFilename(table_filename);
+			let table_name = this.getTableNameFromFilename(table_filename);
 
-      return 'TRUNCATE TABLE ' + table_name + ';';
+			return 'TRUNCATE TABLE ' + table_name + ';';
 
-    });
+		});
 
-  }
+	}
 
-  getTableNameFromFilename(filename) {
+	getTableNameFromFilename(filename) {
 
-    du.debug('Get Table Name From Filename');
+		du.debug('Get Table Name From Filename');
 
-    return filename.replace('.sql', '');
+		return filename.replace('.sql', '');
 
-  }
+	}
 
 }
