@@ -128,4 +128,3 @@ module.exports = class TrackingController extends transactionEndpointController{
     }
 
 }
-
