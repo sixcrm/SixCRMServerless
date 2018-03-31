@@ -6,6 +6,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
 const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js');
 
@@ -16,7 +17,7 @@ const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'te
 const termsAndConditionsController = new TermsAndConditionsController();
 
 //Technical Debt:  The list method here is tricky
-class UserController extends entityController {
+module.exports = class UserController extends entityController {
 
     constructor(){
         super('user');
@@ -60,218 +61,188 @@ class UserController extends entityController {
 
     getUserByAlias(user_alias){
 
-        du.debug('Get User By Alias');
+      du.debug('Get User By Alias');
 
-        return new Promise((resolve, reject) => {
+      return Promise.resolve(this.disableACLs())
+      .then(() => this.getBySecondaryIndex({field:'alias', index_value: user_alias, index_name: 'alias-index'}))
+      .then((user) => {
 
-            this.disableACLs();
+        this.enableACLs();
+        return user;
 
-            this.getBySecondaryIndex({field:'alias', index_value: user_alias, index_name: 'alias-index'}).then((user) => {
+      }).then((user) => {
 
-                if(_.has(user, 'id')){
+        if(!_.has(user, 'id')){
+          eu.throwError('not_found', 'User not found: '+user_alias);
+        }
 
-                    return this.getHydrated(user.id).then((user) => {
+        return user;
 
-                        this.enableACLs();
+      }).then((user) => {
 
-                        return resolve(user);
+        return Promise.resolve(this.disableACLs())
+        .then(() => this.getHydrated(user.id));
 
-                    }).catch((error) => {
+      }).then((user) => {
 
-                        return reject(error);
+        this.enableACLs();
+        return user;
 
-                    });
+      }).catch(error => {
 
-                }else{
+        if(error.statusCode == '404'){
+          return Promise.resolve(false);
+        }
 
-                    return resolve(false);
+        eu.throwError(error);
 
-                }
-
-            }).catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
+      });
 
     }
 
-    //Technical Debt:  What a mess.
-    getUserStrict(user_string){
+    getUserStrict(user_email){
 
-        return new Promise((resolve, reject) => {
+      du.debug('Get User Strict');
 
-            if(this.isEmail(user_string)){
+      if(!stringutilities.isEmail(user_email)){
+        eu.throwError('bad_request','A user identifier or a email is required, "'+user_email+'" provided');
+      }
 
-                du.debug('Is email: true');
+      return Promise.resolve(this.disableACLs())
+      .then(() => this.get({id: user_email}))
+      .then((user) => {
 
-                du.debug('Get User');
+        this.enableACLs();
 
-                this.disableACLs();
+        return user;
 
-                this.get({id: user_string}).then(user => {
+      }).then((user) => {
 
-                    this.enableACLs();
+        if(_.isNull(user) || !_.has(user, 'id')){
+          eu.throwError('not_found', 'User not found: '+user_email);
+        }
 
-                    if(_.has(user, 'id')){
+        return user;
 
-                        du.debug('Have user:', user);
+      }).then((user) => {
 
-                        this.disableACLs();
+        this.setGlobalUser(user);
 
-                        //Note:  this is redundant...
-                        return this.getHydrated({id: user.id}).then((user) => {
+        return user;
 
-                            this.enableACLs();
+      }).catch(error => {
 
-							//Technical Debt:  This is questionable...
-                            this.setGlobalUser(user);
+        if(error.statusCode == '404'){
+          return Promise.resolve(false);
+        }
 
-                            return resolve(user);
+        eu.throwError(error);
 
-                        }).catch((error) => {
+      });
 
-                            du.warning(error);
+    }
 
-                            return reject(error);
+    validateGlobalUser(){
 
-                        });
+      du.debug('Validate Global User');
 
-                    }else{
+      if(!objectutilities.hasRecursive(global, 'user.id') || !this.isEmail(global.user.id)){
+        eu.throwError('server', 'Unexpected argumentation');
+      }
 
-						//Technical Debt:  This is questionable...
-                        this.unsetGlobalUser();
-
-                        return resolve(false);
-
-                    }
-
-                }).catch((error) => {
-
-                    return reject(error);
-
-                });
-
-            }else{
-
-                return reject(eu.getError('bad_request','A user identifier or a email is required.'));
-
-            }
-
-        });
+      return true;
 
     }
 
     introspection(){
 
-      du.debug('Introspection', global.user);
+      du.debug('Introspection');
 
-      return new Promise((resolve, reject) => {
+      if(!_.has(global, 'user')){
+        eu.throwError('bad_request','Introspection method requires a global user.');
+      }
 
-        if(_.has(global, 'user')){
+      //Technical Debt:  This needs to get reduced
+      if(this.isEmail(global.user)){
 
-          if(this.isEmail(global.user)){
+        return this.createProfile(global.user)
+        .then((user) => {
 
-            this.createProfile(global.user).then((user) => {
+          let validated = this.isPartiallyHydratedUser(user);
 
-						//Technical Debt:  Let's make sure that it's a appropriate object before we set it as the global user here...
-              return this.isPartiallyHydratedUser(user).then((validated) => {
-
-                if(validated == true){
-
-                  this.setGlobalUser(user);
-
-                    du.debug('New Global User:', global.user);
-
-                    return resolve(this.introspection());
-
-                }else{
-
-                  return reject(eu.getError('server','User created in profile is not a partially-hydrated user.'));
-
-                }
-
-              });
-
-            }).catch((error) => {
-
-              return reject(error);
-
-            });
-
-          } else if (_.has(global.user, 'id')) {
-
-					  //Technical Debt: need some vigorous validation here
-            du.debug('Global User:', global.user);
-
-            termsAndConditionsController.getLatestTermsAndConditions()
-              .then(terms_and_conditions => {
-
-                if (terms_and_conditions.version !== global.user.termsandconditions) {
-                  global.user.termsandconditions_outdated = true;
-                }
-
-                return true;
-              })
-              .then(() => termsAndConditionsController.getLatestTermsAndConditions('owner'))
-              .then(owner_terms_and_conditions => {
-
-                let acls = global.user.acl || [];
-
-                acls = arrayutilities.map(acls, (acl) => {
-                  if (acl.role.name === 'Owner' && acl.termsandconditions !== owner_terms_and_conditions.version) {
-                    acl.termsandconditions_outdated = true;
-                  }
-
-                  return acl;
-                });
-
-                global.user.acl = acls;
-
-                return true;
-              })
-              .then(() => {
-                this.disableACLs();
-
-                // Technical Debt: get rid of enable/disable ACLs
-                return this.executeAssociatedEntityFunction('userSettingController', 'get', {id: global.user.id})
-                  .then((settings) => {
-
-                    this.enableACLs();
-
-                    return settings;
-
-                  }).catch((error) => {
-
-                    this.enableACLs();
-
-                    return reject(error);
-
-                  });
-
-              })
-              .then((settings) => {
-                global.user.usersetting = settings;
-
-                return resolve(global.user);
-              })
-              .catch(error => reject(error));
-
-          } else {
-
-            return reject(eu.getError('bad_request','Global User must be of type User or Email.'));
-
+          if(validated != true){
+            eu.throwError('server','User created in profile is not a partially-hydrated user.');
           }
 
-        } else {
+          return user;
 
-          return reject(eu.getError('bad_request','Introspection method requires a global user.'));
+        }).then(user => {
 
+          this.setGlobalUser(user);
+
+          return this.introspection();
+
+        });
+
+      }
+
+      this.validateGlobalUser();
+
+      return termsAndConditionsController.getLatestTermsAndConditions()
+      .then(terms_and_conditions => {
+
+        if(!_.has(terms_and_conditions, 'version')){
+          eu.throwError('server', 'Unable to acquire Terms & Conditions');
         }
 
+        if (terms_and_conditions.version !== global.user.termsandconditions) {
+          global.user.termsandconditions_outdated = true;
+        }
+
+        return true;
+
+      }).then(() => termsAndConditionsController.getLatestTermsAndConditions('owner'))
+      .then(owner_terms_and_conditions => {
+
+        let acls = [];
+
+        if(objectutilities.hasRecursive(global, 'user.acl') && arrayutilities.nonEmpty(global.user.acl)){
+          acls = arrayutilities.map(global.user.acl, (acl) => {
+            if (acl.role.name === 'Owner' && acl.termsandconditions !== owner_terms_and_conditions.version) {
+              acl.termsandconditions_outdated = true;
+            }
+            return acl;
+          });
+        }
+
+        global.user.acl = acls;
+
+        return true;
+
+      }).then(() => {
+
+        return Promise.resolve(this.disableACLs())
+        .then(() => this.executeAssociatedEntityFunction('userSettingController', 'get', {id: global.user.id}))
+        .then((settings) => {
+
+          this.enableACLs();
+          return settings;
+
+        }).then((settings) => {
+
+          global.user.usersetting = settings;
+          return global.user;
+
+        }).catch((error) => {
+
+          this.enableACLs();
+
+          eu.throwError(error);
+
+        });
+
       });
+
     }
 
     createProfile(email){
@@ -431,10 +402,11 @@ class UserController extends entityController {
     }
 
     getACL(user){
+
       du.debug('Get ACL');
 
       if(_.has(user, 'acl') && _.isArray(user.acl)){
-          return user.acl;
+        return user.acl;
       }
 
       return this.executeAssociatedEntityFunction('userACLController', 'getACLByUser', {user: user.id})
@@ -442,7 +414,9 @@ class UserController extends entityController {
 
     }
 
+    //Necessary?
     getACLPartiallyHydrated(user){
+
       du.debug('Get ACL Partially Hydrated');
 
       return this.executeAssociatedEntityFunction('userACLController','queryBySecondaryIndex', {field: 'user', index_value: user.id, index_name: 'user-index'})
@@ -463,13 +437,16 @@ class UserController extends entityController {
       });
     }
 
+    //Technical Debt: Why is this here?
     getAccount(id){
 
-        if(id == '*'){
-            return this.executeAssociatedEntityFunction('accountController', 'getMasterAccount', {});
-        }else{
-            return this.executeAssociatedEntityFunction('accountController', 'get', {id: id});
-        }
+      du.debug('Get Account');
+
+      if(id == '*'){
+        return this.executeAssociatedEntityFunction('accountController', 'getMasterAccount', {});
+      }
+
+      return this.executeAssociatedEntityFunction('accountController', 'get', {id: id});
 
     }
 
@@ -489,52 +466,26 @@ class UserController extends entityController {
 
     }
 
-    getAddress(user){
-
-        if(_.has(user, "address")){
-
-            return user.address;
-
-        }else{
-            return null;
-        }
-
-    }
-
     createStrict(user){
 
-        du.debug('Create User Strict');
-        du.debug('Arguments:', user);
+      du.debug('Create Strict');
 
-        return new Promise((resolve, reject) => {
+      if(!objectutilities.hasRecursive(global, 'user.id')){
+        eu.throwError('server', 'Unset user in globals');
+      }
 
-            du.debug('global user', global.user);
+      if(global.user.id != user.id){
+        eu.throwError('server', 'User ID does not match Global User ID');
+      }
 
-            if(_.has(global, 'user') && _.has(global.user, 'id')){
+      this.disableACLs();
 
-                if(global.user.id == user.id){
-
-                    this.disableACLs();
-
-                    user = this.appendAlias(user);
-
-                    this.create({entity: user}).then((user) => {
-
-                        this.enableACLs();
-
-                        return resolve(user);
-
-                    }).catch((error) => {
-
-                        return reject(error);
-
-                    });
-
-                }
-
-            }
-
-        });
+      return Promise.resolve(this.disableACLs())
+      .then(() => this.create({entity: user}))
+      .then((user) => {
+        this.enableACLs();
+        return user;
+      });
 
     }
 
@@ -543,7 +494,7 @@ class UserController extends entityController {
       du.debug('Append Alias');
 
       if(!_.has(user, 'alias')){
-        user['alias'] = mungeutilities.munge(user.id);
+        user.alias = mungeutilities.munge(user.id);
       }
 
       return user;
@@ -558,139 +509,100 @@ class UserController extends entityController {
 
     }
 
-    createUserWithAlias(user_input) {
+    create({entity: user}){
 
-      du.debug('Create User With Alias');
+      du.debug('User.create');
 
-      let user = this.appendAlias(user_input);
+      user = this.appendAlias(user);
 
-      return this.create({entity: user});
+      return super.create({entity: user});
 
     }
 
+    //Technical Debt:  Garbage...
     isPartiallyHydratedUser(user){ // eslint-disable-line no-unused-vars
 
-        return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
+      return Promise.resolve(true);
 
-            return resolve(true);
+    }
 
-			//Technical Debt:  There are problems with the Entity validate method.
-			/*
-			this.validate(user, 'partially_hydrated_user').then((validation) => {
+    createUserPrototype(user_id){
 
-				return resolve(true);
+      du.debug('Create User Prototype');
 
-				if(_.has(validation, 'errors') && validation.errors.length > 0){
+      let user_prototype = {
+          id: user_id,
+          termsandconditions: "0.0",
+          active: true,
+          auth0id: "-",
+          name: user_id
+      };
 
-					//du.warning('Partially Hydrated User validation errors', validation.errors);
+      return this.appendAlias(user_prototype);
 
-					return resolve(false);
+    }
 
-				}else{
+    //Technical Debt:  Move this to the UserSetting Entity...
+    createUserSettingPrototype(user_id){
 
-					//du.debug('Partially Hydrated User validated structurally.');
+      du.debug('Create User Setting Prototype');
 
-					return resolve(true);
-
-				}
-
-			}).catch((error) => {
-
-				return reject(error);
-
-			});
-			*/
-
-        });
+      return {
+        id: user_id,
+        timezone: 'America/Los_Angeles',
+        notifications: [
+          {
+            name: "six",
+            receive: true
+          },
+          {
+            name: "email",
+            receive: false
+          },
+          {
+            name: "sms",
+            receive: false
+          },
+          {
+            name: "slack",
+            receive: false
+          },
+          {
+            name: "skype",
+            receive: false
+          },
+          {
+            name: "ios",
+            receive: false
+          }]
+      };
 
     }
 
     assureUser(user_id){
 
-        return new Promise((resolve, reject) => {
+      du.debug('Assure User');
 
-            du.debug('Assure User');
-            du.highlight('User ID: ', user_id);
+      return this.get({id: user_id})
+      .then((user) => {
 
-            this.get({id: user_id}).then((user) => {
+        if(_.has(user, 'id')){
+          return user;
+        }
 
-                if(_.has(user, 'id')){
+        return Promise.resolve(this.createUserPrototype(user_id))
+        .then((user_prototype) => this.create({entity: user_prototype}));
 
-                    du.highlight('User Existed', user);
+      }).then((user) => {
 
-                    return resolve(user);
-
-                }else{
-
-                    let user_object = {
-                        id: user_id,
-                        termsandconditions: "0.0",
-                        active: true,
-                        auth0id: "-",
-                        name: user_id
-                    };
-
-                    let user_setting_object = {
-                      id: user_id,
-                      timezone: 'America/Los_Angeles',
-                      notifications: [
-                        {
-                          name: "six",
-                          receive: true
-                        },
-                        {
-                          name: "email",
-                          receive: false
-                        },
-                        {
-                          name: "sms",
-                          receive: false
-                        },
-                        {
-                          name: "slack",
-                          receive: false
-                        },
-                        {
-                          name: "skype",
-                          receive: false
-                        },
-                        {
-                          name: "ios",
-                          receive: false
-                        }]
-                    };
-
-                    user_object = this.appendAlias(user_object);
-
-                    du.highlight('New User', user_object);
-
-                    return this.create({entity: user_object}).then((user) => {
-
-                        if(_.has(user, 'id')){
-
-                            return this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: user_setting_object})
-                                .then(() => resolve(user))
-                                .catch((error) => {
-                                    return reject(eu.getError('server',error))
-                                });
-
-                        }else{
-
-                            return reject(eu.getError('server','Unable to assure user.'));
-
-                        }
-
-                    });
-
-                }
-
-            }).catch((error) => {
-
-                return reject(error);
-
-            });
-
+        //Technical Debt... we should add a feature to entity class that automatically executes a method on create
+        return Promise.resolve(this.createUserSettingPrototype(user.id))
+        .then((user_setting_prototype) => this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: user_setting_prototype}))
+        .then(() => {
+          return user;
         });
+
+      });
 
     }
 
@@ -894,75 +806,45 @@ class UserController extends entityController {
 
     }
 
-    getFullName(user){
+  getUsersByAccount({pagination, fatal}){
 
-      du.debug('Get Full Name');
+    du.debug('Get Users By Account');
 
-      let full_name = null;
-
-      if(_.has(user, 'first_name')){
-
-        full_name = user.first_name;
-
-      }
-
-      if(_.has(user, 'last_name')){
-
-        if(_.isString(full_name)){
-          full_name += ' '+user.last_name;
-        }else{
-          full_name = user.last_name;
-        }
-
-      }
-
-      return full_name;
-
+    if(this.isMasterAccount()){
+      return this.list({pagination: pagination, fatal: fatal});
     }
 
-    getUsersByAccount({pagination, fatal}){
+    return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: global.account, fatal: fatal})
+    .then((user_acl_objects) => {
 
-      du.debug('Get Users By Account');
+      if(arrayutilities.isArray(user_acl_objects) && user_acl_objects.length > 0){
 
-      if(global.account == '*'){
-
-        return this.list({pagination: pagination, fatal: fatal});
-
-      }else{
-
-        return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: global.account, fatal: fatal}).then(user_acl_objects => {
-
-          if(arrayutilities.isArray(user_acl_objects) && user_acl_objects.length > 0){
-
-            let user_ids = arrayutilities.map(user_acl_objects, (user_acl) => {
-              if(_.has(user_acl, 'user')){
-                return user_acl.user;
-              }
-            });
-
-            user_ids = arrayutilities.unique(user_ids);
-
-            let in_parameters = this.createINQueryParameters({field:'id', list_array: user_ids});
-
-            //Technical Debt:  Refactor, must return all users with correct pagination
-            return this.list({pagination: pagination, query_parameters: in_parameters});
-
-          }else{
-
-            return null;
-
+        let user_ids = arrayutilities.map(user_acl_objects, (user_acl) => {
+          if(_.has(user_acl, 'user')){
+            return user_acl.user;
           }
-
         });
 
+        user_ids = arrayutilities.unique(user_ids);
+
+        let in_parameters = this.createINQueryParameters({field:'id', list_array: user_ids});
+
+        //Technical Debt:  Refactor, must return all users with correct pagination
+        return this.list({pagination: pagination, query_parameters: in_parameters});
+
       }
 
-    }
+      return null;
+
+    });
+
+  }
 
   can({account, object, action, id, fatal}){
 
-    if (action === 'update' && objectutilities.hasRecursive(global, 'user.id') && global.user.id === id) {
-      du.debug('User updating himself', global.user.id);
+    du.debug('User.can()');
+
+    if(action === 'update' && objectutilities.hasRecursive(global, 'user.id') && global.user.id === id) {
       return Promise.resolve(true);
     }
 
@@ -971,5 +853,3 @@ class UserController extends entityController {
   }
 
 }
-
-module.exports = UserController;

@@ -10,6 +10,9 @@ const GraphQLString = require('graphql').GraphQLString;
 const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 const userController = new UserController();
 
+const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/User.js');
+const userHelperController = new UserHelperController();
+
 let userACLType = require('../useracl/userACLType');
 let accessKeyType = require('../accesskey/accessKeyType');
 let addressType = require('../address/addressType');
@@ -77,7 +80,7 @@ module.exports.graphObj = new GraphQLObjectType({
             type: addressType.graphObj,
             description: 'The address of the user.',
             resolve: (user) => {
-            	return userController.getAddress(user);
+            	return userHelperController.getAddress(user);
             }
         },
         usersetting: {

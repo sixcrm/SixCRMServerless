@@ -294,7 +294,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (value, user) => {
                 const userController = new UserController();
 
-                return userController.createUserWithAlias(user.user);
+                return userController.create(user.user);
             }
         },
         //Note: Fix
