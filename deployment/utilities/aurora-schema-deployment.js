@@ -189,13 +189,15 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('Execute Query', query);
 
+		if (!query) {
+
+			return Promise.resolve();
+
+		}
+
 		return auroraContext.withConnection((connection => {
 
-			return connection.query(query).then(result => {
-
-				return result.rows;
-
-			});
+			return connection.query(query);
 
 		}));
 
