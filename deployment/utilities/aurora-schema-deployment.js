@@ -1,35 +1,22 @@
 const _ = require('underscore');
+const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
-const BBPromise = require('bluebird');
 
 module.exports = class AuroraSchemaDeployment {
-
-	constructor() {
-
-		this._tableDirectories = ['tables'];
-		this._procedureDirectories = ['procedures'];
-		this._scriptsDirectories = ['scripts'];
-
-	}
 
 	deployTables() {
 
 		du.debug('Deploy Aurora tables');
 
-		const procedurePromises = arrayutilities.map(this._procedureDirectories, this._deployDirectorySQL.bind(this));
-		const tablePromises = arrayutilities.map(this._tableDirectories, this._deployDirectorySQL.bind(this));
-		const scriptPromises = arrayutilities.map(this._scriptsDirectories, this._deployDirectorySQL.bind(this));
-
 		return Promise.resolve()
 			.then(() => fileutilities.getFileContents(global.SixCRM.routes.path('model', `aurora/before/schema/${process.env.stage}.sql`)))
 			.then(this._executeQuery.bind(this))
-			.then(() => BBPromise.each(procedurePromises, (p) => p))
-			.then(() => Promise.all(scriptPromises))
-			.then(() => Promise.all(tablePromises));
+			.then(() => this._deployDirectorySQL('procedures'))
+			.then(() => this._deployDirectorySQL('scripts'))
+			.then(() => this._deployDirectorySQL('tables'));
 
 	}
 
@@ -47,19 +34,7 @@ module.exports = class AuroraSchemaDeployment {
 		du.debug('Seed');
 
 		return this._getSeedQueries()
-			.then((seed_queries) => {
-
-				arrayutilities.isArray(seed_queries, true);
-
-				if (seed_queries.length > 0) {
-
-					return this._executeQueries(seed_queries);
-
-				}
-
-				return Promise.resolve();
-
-			});
+			.then(this._executeQueries.bind(this));
 
 	}
 
@@ -67,9 +42,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('Purge');
 
-		const directoryPurgePromises = arrayutilities.map(this._tableDirectories, this._purgeTableDirectory.bind(this));
-
-		return Promise.all(directoryPurgePromises);
+		return this._purgeTableDirectory('tables');
 
 	}
 
@@ -87,23 +60,21 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.highlight('Get Directory SQL Filepaths');
 
-		const directoryFilepath = global.SixCRM.routes.path('model', 'aurora/' + directory);
+		const directoryFilepath = global.SixCRM.routes.path('model', `aurora/${directory}`);
 
 		return fileutilities.getDirectoryFiles(directoryFilepath).then((files) => {
 
-			files = arrayutilities.filter(files, (file) => {
+			const filter = arrayutilities.filter(files, (file) => {
 
 				return file.match(/\.sql$/);
 
 			});
 
-			files = arrayutilities.map(files, (file) => {
+			return arrayutilities.map(filter, (file) => {
 
-				return directoryFilepath + '/' + file;
+				return `${directoryFilepath}/${file}`;
 
 			});
-
-			return files;
 
 		});
 
@@ -129,19 +100,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('Execute Queries');
 
-		const queryPromises = arrayutilities.map(queries, (query) => {
-
-			if (!_.isNull(query) && query !== '' && query !== false) {
-
-				return this._executeQuery(query);
-
-			}
-
-			return Promise.resolve();
-
-		});
-
-		return Promise.all(queryPromises);
+		return BBPromise.map(queries, this._executeQuery.bind(this));
 
 	}
 
@@ -149,17 +108,12 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('Get Seed Queries');
 
-		return this._getDirectorySQLFilepaths('seeds').then((filepaths) => {
+		return this._getDirectorySQLFilepaths('seeds')
+			.then((filepaths) => {
 
-			let queryPromises = arrayutilities.map((filepaths), (filepath) => {
-
-				return fileutilities.getFileContents(filepath);
+				return BBPromise.map(filepaths, fileutilities.getFileContents.bind(this))
 
 			});
-
-			return Promise.all(queryPromises);
-
-		});
 
 	}
 
@@ -181,11 +135,11 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('Get Table Drop Queries');
 
-		return this._getTableFilenames('tables').then((table_filenames) => {
+		return this._getTableFilenames('tables').then((tableFilenames) => {
 
-			return arrayutilities.map(table_filenames, (table_filename) => {
+			return arrayutilities.map(tableFilenames, (tableFilename) => {
 
-				return 'DROP TABLE IF EXISTS analytics.' + this._getTableNameFromFilename(table_filename) + ';';
+				return `DROP TABLE IF EXISTS analytics.${this._getTableNameFromFilename(tableFilename)};`;
 
 			});
 
@@ -207,12 +161,6 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('Execute Purge Queries');
 
-		if (!_.isArray(queries)) {
-
-			eu.throwError('server', 'Not an array: ' + queries);
-
-		}
-
 		if (queries.length < 1) {
 
 			du.highlight('No purge queries to execute');
@@ -229,7 +177,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('Get Table Filenames');
 
-		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', 'aurora/' + directory)).then((files) => {
+		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', `aurora/${directory}`)).then((files) => {
 
 			return files.filter(file => file.match(/\.sql$/));
 
@@ -239,15 +187,17 @@ module.exports = class AuroraSchemaDeployment {
 
 	_executeQuery(query) {
 
-		du.debug('Execute Query');
+		du.debug('Execute Query', query);
+
+		if (!query) {
+
+			return Promise.resolve();
+
+		}
 
 		return auroraContext.withConnection((connection => {
 
-			return connection.query(query).then(result => {
-
-				return result.rows;
-
-			});
+			return connection.query(query);
 
 		}));
 
@@ -261,7 +211,7 @@ module.exports = class AuroraSchemaDeployment {
 
 			const table = this._getTableNameFromFilename(tableFilename);
 
-			return 'TRUNCATE TABLE analytics.' + table + ';';
+			return `TRUNCATE TABLE analytics.${table};`;
 
 		});
 
