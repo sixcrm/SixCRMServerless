@@ -153,6 +153,8 @@ const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPPro
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
+const InviteHelperController = global.SixCRM.routes.include('helpers', 'invite/Invite.js');
+
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Mutation',
   fields: () => ({
@@ -222,12 +224,11 @@ module.exports.graphObj = new GraphQLObjectType({
             type: userType.graphObj,
             description: 'Completes a user invite.',
             args: {
-                invite: { type: inviteInputType.graphObj}
+              invite: { type: inviteInputType.graphObj}
             },
             resolve: (value, invite) => {
-                const userController = new UserController();
-
-                return userController.acceptInvite(invite.invite);
+              const inviteHelperController = new InviteHelperController();
+              return inviteHelperController.acceptInvite({invite: invite.invite});
             }
         },
         //Technical Debt:  See below??
@@ -236,25 +237,23 @@ module.exports.graphObj = new GraphQLObjectType({
             type: userInviteType.graphObj,
             description: 'Invites a new user to the site.',
             args: {
-                userinvite: { type: userInviteInputType.graphObj}
+              userinvite: { type: userInviteInputType.graphObj}
             },
             resolve: (value, userinvite) => {
-                const userController = new UserController();
-
-                return userController.invite(userinvite.userinvite);
+              const inviteHelperController = new InviteHelperController();
+              return inviteHelperController.invite({user_invite: userinvite.userinvite});
             }
         },
         inviteresend:{
-            type: userInviteType.graphObj,
-            description: 'Resend pending user invite.',
-            args: {
-                userinvite: { type: userInviteResendInputType.graphObj}
-            },
-            resolve: (value, userinvite) => {
-                const userController = new UserController();
-
-                return userController.inviteResend(userinvite.userinvite);
-            }
+          type: userInviteType.graphObj,
+          description: 'Resend pending user invite.',
+          args: {
+            userinvite: { type: userInviteResendInputType.graphObj}
+          },
+          resolve: (value, userinvite) => {
+            const inviteHelperController = new InviteHelperController();
+            return inviteHelperController.inviteResend({user_invite: userinvite.userinvite});
+          }
         },
         smtpvalidation: {
             type: SMTPValidationType.graphObj,
@@ -294,7 +293,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (value, user) => {
                 const userController = new UserController();
 
-                return userController.createUserWithAlias(user.user);
+                return userController.create(user.user);
             }
         },
         //Note: Fix

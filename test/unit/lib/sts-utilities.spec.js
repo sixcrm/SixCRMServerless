@@ -61,7 +61,7 @@ describe('lib/sts-utilities', () => {
       };
 
       mockery.registerMock(global.SixCRM.routes.path('lib','providers/aws-utilities.js'), class {
-        constructor(){
+        instantiateAWS(){
           this.AWS = {
             STS: class {
               constructor(){
@@ -73,6 +73,7 @@ describe('lib/sts-utilities', () => {
             }
           }
         }
+        constructor(){}
         AWSCallback(error, data){
           if(error){
             //eu.throwError('server', error);

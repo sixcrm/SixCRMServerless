@@ -61,6 +61,7 @@
               "delivery_confirmation",
               "user_invited",
               "user_invite_accepted",
+              "user_invite_resent",
               "role_changed",
               "chargeback",
               "rma"

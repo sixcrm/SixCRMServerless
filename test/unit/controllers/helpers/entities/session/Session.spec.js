@@ -4,6 +4,7 @@ const mockery = require('mockery');
 const expect = chai.expect;
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
+const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidSession() {
@@ -129,7 +130,7 @@ describe('/helpers/entities/session/Session.js', () => {
 
             let customer = getValidCustomer();
 
-            let customer_email = randomutilities.createRandomEmail();
+            let customer_email = spoofer.createRandomEmail();
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
                 get() {
