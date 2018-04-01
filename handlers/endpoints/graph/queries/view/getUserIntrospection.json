@@ -9,4 +9,3 @@
 	},
 	"body":"{userintrospection {id,name,auth0_id,active,termsandconditions,termsandconditions_outdated,acl {account {id,name,active},role {id,name,active},termsandconditions_outdated,},address {line1,line2,city,state,zip,country},usersetting {timezone, language}, created_at,updated_at}}"
 }
-

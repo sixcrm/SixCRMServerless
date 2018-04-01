@@ -127,12 +127,22 @@ module.exports = class UserController extends entityController {
 
         return user;
 
+      }).then((user) => {
+
+        this.disableACLs();
+        return this.getACLPartiallyHydrated(user).then((acl) => {
+          this.enableACLs();
+
+          global.user.acl = acl;
+          return user;
+        });
+
       }).catch(error => {
 
         if(error.statusCode == '404'){
           return Promise.resolve(false);
         }
-
+        du.error(error);
         eu.throwError(error);
 
       });
