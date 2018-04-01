@@ -10,7 +10,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 const userController = new UserController();
 
-const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/User.js');
+const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
 const userHelperController = new UserHelperController();
 
 let userACLType = require('../useracl/userACLType');
