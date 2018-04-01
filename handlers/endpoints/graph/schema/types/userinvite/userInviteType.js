@@ -7,9 +7,9 @@ module.exports.graphObj = new GraphQLObjectType({
     name: 'UserInvite',
     description: 'A user invite.',
     fields: () => ({
-        link: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The id of the user',
-        }
+      link: {
+        type: new GraphQLNonNull(GraphQLString),
+        description: 'The id of the user',
+      }
     })
 });

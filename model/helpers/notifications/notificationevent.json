@@ -14,6 +14,10 @@
     },
     {
       "type":"string",
+      "enum": ["user_invited", "user_invite_resent", "user_invite_accepted"]
+    },
+    {
+      "type":"string",
       "pattern":"^transaction_(success|fail|error)$"
     },
     {

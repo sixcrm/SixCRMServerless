@@ -7,9 +7,10 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 class AccountController extends entityController {
 
     constructor(){
-        super('account');
 
-        this.search_fields = ['name'];
+      super('account');
+
+      this.search_fields = ['name'];
 
     }
 

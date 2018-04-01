@@ -16,6 +16,10 @@ chai.Assertion.addProperty('uppercase', function () {
 
 describe('lib/random', () => {
 
+  describe('', () => {
+
+  });
+
     it('should create random string of given length', () => {
         expect(Random.createRandomString(5)).to.have.lengthOf(5);
         expect(Random.createRandomString(1000)).to.have.lengthOf(1000);

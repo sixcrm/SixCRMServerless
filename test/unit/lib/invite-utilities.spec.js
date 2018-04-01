@@ -1,12 +1,12 @@
 'use strict';
 
-const mockery = require('mockery');
-const chai = require('chai');
-const expect = chai.expect;
+//const mockery = require('mockery');
+//const chai = require('chai');
+//const expect = chai.expect;
 
-const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js');
-
-describe('lib/invite-utilities', () => {
+//const inviteutilities = global.SixCRM.routes.include('lib', 'invite-utilities.js');
+/*
+xdescribe('lib/invite-utilities', () => {
 
     before(() => {
         mockery.enable({
@@ -177,3 +177,4 @@ function getParameters() {
     // YWxpY2VAZXhhbXBsZS5jb206YWNsOmJvYkBleGFtcGxlLmNvbToqOnJvbGU6MTQ4Nzc2ODU5OTE5Ng==
     return 'alice@example.com:acl:bob@example.com:*:role:1487768599196'
 }
+*/

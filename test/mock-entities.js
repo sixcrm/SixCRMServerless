@@ -9,6 +9,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const encryptionutilities = global.SixCRM.routes.include('lib', 'encryption-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const spoofer = global.SixCRM.routes.include('test','spoofer.js');
 
 class MockEntities {
 
@@ -375,9 +376,9 @@ class MockEntities {
 
   static getValidCustomer(id){
 
-    let firstname = randomutilities.createRandomName('first');
-    let lastname = randomutilities.createRandomName('last');
-    let email = firstname+'.'+lastname+'@'+randomutilities.createDomainName();
+    let firstname = spoofer.createRandomName('first');
+    let lastname = spoofer.createRandomName('last');
+    let email = firstname+'.'+lastname+'@'+spoofer.createDomainName();
 
     let customer = {
       id: this.getValidId(id),
@@ -385,13 +386,13 @@ class MockEntities {
       email: email,
       firstname: firstname,
       lastname: lastname,
-      phone: randomutilities.createRandomPhoneNumber(),
+      phone: spoofer.createRandomPhoneNumber(),
       address:{
-        line1:randomutilities.createRandomAddress('line1'),
-        city:randomutilities.createRandomAddress('city'),
-        state:randomutilities.createRandomAddress('state'),
-        zip:randomutilities.createRandomAddress('zip'),
-        country:randomutilities.createRandomAddress('country')
+        line1:spoofer.createRandomAddress('line1'),
+        city:spoofer.createRandomAddress('city'),
+        state:spoofer.createRandomAddress('state'),
+        zip:spoofer.createRandomAddress('zip'),
+        country:spoofer.createRandomAddress('country')
       },
       creditcards:[uuidV4()],
       created_at:timestamp.getISO8601(),
@@ -399,7 +400,7 @@ class MockEntities {
     }
 
     if(randomutilities.randomBoolean()){
-      customer.address.line2 = randomutilities.createRandomAddress('line2');
+      customer.address.line2 = spoofer.createRandomAddress('line2');
     }
 
     return customer;
@@ -418,7 +419,7 @@ class MockEntities {
       default_price:randomutilities.randomDouble(1.0, 300.0, 2),
       attributes:{
         images:[{
-          path:randomutilities.createURL(),
+          path:spoofer.createURL(),
           dimensions:{
             width:randomutilities.randomInt(10,1000),
             height:randomutilities.randomInt(10,1000)
@@ -702,10 +703,10 @@ class MockEntities {
 
   static getValidTransactionCustomer(){
 
-    let phone = randomutilities.createRandomPhoneNumber();
-    let firstname = randomutilities.createRandomName('first');
-    let lastname = randomutilities.createRandomName('last');
-    let email = firstname+'.'+lastname+'@'+randomutilities.createDomainName();
+    let phone = spoofer.createRandomPhoneNumber();
+    let firstname = spoofer.createRandomName('first');
+    let lastname = spoofer.createRandomName('last');
+    let email = firstname+'.'+lastname+'@'+spoofer.createDomainName();
     let address = this.getValidAddress();
 
     return {
@@ -722,16 +723,16 @@ class MockEntities {
   static getValidAddress(){
 
     let address = {
-      line1:randomutilities.createRandomAddress('line1'),
-      city:randomutilities.createRandomAddress('city'),
-      state:randomutilities.createRandomAddress('state'),
-      zip:randomutilities.createRandomAddress('zip'),
-      //country:randomutilities.createRandomAddress('country')
+      line1:spoofer.createRandomAddress('line1'),
+      city:spoofer.createRandomAddress('city'),
+      state:spoofer.createRandomAddress('state'),
+      zip:spoofer.createRandomAddress('zip'),
+      //country:spoofer.createRandomAddress('country')
       country:'US'
     };
 
     if(randomutilities.randomBoolean()){
-      address.line2 = randomutilities.createRandomAddress('line2');
+      address.line2 = spoofer.createRandomAddress('line2');
     }
 
     return address;
@@ -763,7 +764,7 @@ class MockEntities {
 
     type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type))?type:randomutilities.selectRandomFromArray(creditcard_types);
 
-    name = (!_.isUndefined(name) && !_.isNull(name))?name:randomutilities.createRandomName('full');
+    name = (!_.isUndefined(name) && !_.isNull(name))?name:spoofer.createRandomName('full');
 
     address = (!_.isUndefined(address) && !_.isNull(address))?address:this.getValidAddress();
 
@@ -845,7 +846,7 @@ class MockEntities {
         last_four,
         ccv: this.getValidCreditCardCCV(),
         expiration: this.getValidCreditCardExpiration(),
-        name: randomutilities.createRandomName('full'),
+        name: spoofer.createRandomName('full'),
         created_at: timestamp.getISO8601(),
         updated_at: timestamp.getISO8601()
     }
@@ -857,7 +858,7 @@ class MockEntities {
         id: this.getValidId(id),
         account: this.getTestAccountID(),
         customer: uuidV4(),
-        user:randomutilities.createRandomEmail(),
+        user:spoofer.createRandomEmail(),
         body: randomutilities.createRandomString(20),
         created_at: timestamp.getISO8601(),
         updated_at: timestamp.getISO8601()
@@ -883,7 +884,7 @@ class MockEntities {
     return {
       id: this.getValidId(id),
       account: this.getTestAccountID(),
-      name: randomutilities.createRandomName('full'),
+      name: spoofer.createRandomName('full'),
       merchantproviders: merchant_provider_configuration,
       created_at: timestamp.getISO8601(),
       updated_at: timestamp.getISO8601()
@@ -895,7 +896,7 @@ class MockEntities {
 
     return {
         id: this.getValidId(id),
-        user: randomutilities.createRandomEmail(),
+        user: spoofer.createRandomEmail(),
         action: randomutilities.createRandomString(10),
         account: this.getTestAccountID(),
         title: randomutilities.createRandomString(10),
@@ -913,8 +914,8 @@ class MockEntities {
 
     return {
         id: this.getValidId(id),
-        user: randomutilities.createRandomEmail(),
-        name: randomutilities.createRandomName('full'),
+        user: spoofer.createRandomEmail(),
+        name: spoofer.createRandomName('full'),
         signing_string: randomutilities.createRandomString(20),
         used_at: timestamp.getISO8601(),
         created_at: timestamp.getISO8601(),
@@ -924,13 +925,13 @@ class MockEntities {
 
   static getValidUser(id) {
 
-    id = (_.isUndefined(id) || _.isNull(id)) ? randomutilities.createRandomEmail():id;
+    id = (_.isUndefined(id) || _.isNull(id)) ? spoofer.createRandomEmail():id;
 
     return {
         id: id,
-        name: randomutilities.createRandomName('full'),
-        first_name: randomutilities.createRandomName('first'),
-        last_name: randomutilities.createRandomName('last'),
+        name: spoofer.createRandomName('full'),
+        first_name: spoofer.createRandomName('first'),
+        last_name: spoofer.createRandomName('last'),
         auth0_id: randomutilities.createRandomString(10),
         active:randomutilities.randomBoolean(),
         termsandconditions: randomutilities.createRandomString(10),
@@ -945,7 +946,7 @@ class MockEntities {
     return {
         id: this.getValidId(id),
         account: this.getTestAccountID(),
-        user: randomutilities.createRandomEmail(),
+        user: spoofer.createRandomEmail(),
         role: uuidV4(),
         pending: randomutilities.createRandomString(10),
         termsandconditions: randomutilities.createRandomString(10),
@@ -959,7 +960,7 @@ class MockEntities {
     return {
         id: this.getValidId(id),
         account: this.getTestAccountID(),
-        name: randomutilities.createRandomName('full'),
+        name: spoofer.createRandomName('full'),
         affiliate_id: randomutilities.createRandomString(10),
         created_at: timestamp.getISO8601(),
         updated_at: timestamp.getISO8601()
@@ -970,7 +971,7 @@ class MockEntities {
 
     return {
         id: this.getValidId(id),
-        name: randomutilities.createRandomName('full'),
+        name: spoofer.createRandomName('full'),
         active: randomutilities.randomBoolean(),
         created_at: timestamp.getISO8601(),
         updated_at: timestamp.getISO8601()
@@ -981,7 +982,7 @@ class MockEntities {
 
     return {
         id: this.getValidId(id),
-        name: randomutilities.createRandomName('full'),
+        name: spoofer.createRandomName('full'),
         active: randomutilities.randomBoolean(),
         permissions: {
           allow: [
@@ -1024,7 +1025,7 @@ class MockEntities {
       account: this.getTestAccountID(),
       allow_prepaid: randomutilities.randomBoolean(),
       show_prepaid: randomutilities.randomBoolean(),
-      name: randomutilities.createRandomName('full'),
+      name: spoofer.createRandomName('full'),
       emailtemplates: [uuidV4()],
       affiliate_allow: [uuidV4()],
       affiliate_deny: [uuidV4()],
@@ -1059,7 +1060,7 @@ class MockEntities {
       event_type: [
           randomutilities.selectRandomFromArray(event_type)
       ],
-      name: randomutilities.createRandomName('full'),
+      name: spoofer.createRandomName('full'),
       body: randomutilities.createRandomString(20),
       created_at: timestamp.getISO8601(),
       updated_at: timestamp.getISO8601()
@@ -1069,7 +1070,7 @@ class MockEntities {
 
   static getValidSMTPProvider(id) {
 
-    let random_hostname = randomutilities.createRandomString(5) + '.' + randomutilities.createDomainName();
+    let random_hostname = randomutilities.createRandomString(5) + '.' + spoofer.createDomainName();
 
     return {
       id: this.getValidId(id),
@@ -1079,8 +1080,8 @@ class MockEntities {
       username: randomutilities.createRandomString(10),
       password: randomutilities.createRandomString(10),
       port:randomutilities.randomInt(100,999),
-      from_email: randomutilities.createRandomEmail(),
-      from_name: randomutilities.createRandomName('full'),
+      from_email: spoofer.createRandomEmail(),
+      from_name: spoofer.createRandomName('full'),
       created_at: timestamp.getISO8601(),
       updated_at: timestamp.getISO8601()
     }

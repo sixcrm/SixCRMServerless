@@ -45,6 +45,7 @@ module.exports = class entityController extends entityUtilitiesController {
         ];
 
         this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
+
     }
 
     getUnsharedOrShared({id}) {
