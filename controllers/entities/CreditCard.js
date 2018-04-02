@@ -77,15 +77,15 @@ module.exports = class CreditCardController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('CustomerController', 'listByCreditCard', {creditcard:id})
+		this.get({id}).then(creditcard => this.listCustomers(creditcard))
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
 
         let customers = data_acquisition_promises[0];
 
-        if(_.has(customers, 'customers') && arrayutilities.nonEmpty(customers.customers)){
-          arrayutilities.map(customers.customers, (customer) => {
+        if (arrayutilities.nonEmpty(customers)) {
+          arrayutilities.map(customers, customer => {
             return_array.push(this.createAssociatedEntitiesObject({name:'Customer', object: customer}));
           });
         }

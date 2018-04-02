@@ -1,10 +1,15 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
+let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidCreditCard() {
-    return MockEntities.getValidCreditCard()
+    return MockEntities.getValidCreditCard();
+}
+
+function getValidCustomer() {
+    return MockEntities.getValidCustomer();
 }
 
 describe('controllers/entities/CreditCard.js', () => {
@@ -269,5 +274,29 @@ describe('controllers/entities/CreditCard.js', () => {
 
             expect(creditcard.ccv).to.equal('****');
         });
+    });
+
+    describe('listCustomers', () => {
+        it('gets customers', () => {
+			const creditcard = getValidCreditCard();
+			const customer = getValidCustomer();
+			creditcard.customers = [customer.id];
+
+			PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), class {
+				get() {
+					return Promise.resolve(customer);
+				}
+			});
+
+			const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+			const creditCardController = new CreditCardController();
+
+			return creditCardController.listCustomers(creditcard)
+			.then(customers => {
+				expect(customers).to.include(customer);
+			});
+		});
     });
 });

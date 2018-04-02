@@ -23,7 +23,7 @@ module.exports = class CreditCardTest extends IntegrationTest {
     du.info('Credit Card ID: '+creditcard_id);
     du.info('Customer ID: '+customer_id);
 
-    return this.createCreditCard(creditcard_id)
+    return this.createCreditCard(creditcard_id, customer_id)
     .then(() => this.createCustomer(customer_id, creditcard_id))
     .then(() => this.deleteCreditCard(creditcard_id, 403))
     .then(response => {
@@ -34,11 +34,11 @@ module.exports = class CreditCardTest extends IntegrationTest {
 
   }
 
-  createCreditCard(creditcard_id){
+  createCreditCard(creditcard_id, customer_id){
 
     du.output('Create Credit Card');
 
-    let creditcard_create_query = `mutation { createcreditcard (creditcard: { number: "3111111111111111", expiration: "1025", ccv: "999", name: "Rama2 Damunaste", address: { line1: "102 Skid Rw.", line2: "Suite 100", city: "Portland", state: "OR", zip: "97213", country: "US" }, id: "`+creditcard_id+`" }) { id } }`;
+    let creditcard_create_query = `mutation { createcreditcard (creditcard: { number: "3111111111111111", expiration: "1025", ccv: "999", name: "Rama2 Damunaste", address: { line1: "102 Skid Rw.", line2: "Suite 100", city: "Portland", state: "OR", zip: "97213", country: "US" }, id: "`+creditcard_id+`", customers:["${customer_id}"] }) { id } }`;
 
     return this.executeQuery(creditcard_create_query);
 
