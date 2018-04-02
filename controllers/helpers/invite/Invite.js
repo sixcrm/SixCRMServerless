@@ -107,8 +107,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
     .then(() => this.updatePendingACL())
     .then(() => this.postAccept())
     .then(() => {
-      //note:  this does not return a hydrated User any longer....
-      return true;
+      return this.parameters.get('user');
     });
 
   }
@@ -124,11 +123,16 @@ module.exports = class InviteHelperClass extends InviteUtilities {
     properties.push(this.accountController.get({id: user_invite.account}));
     properties.push(this.roleController.get({id: user_invite.role}));
     properties.push(this.userController.get({id: user_invite.email}));
+    properties.push(this.roleController.getShared({id: user_invite.role}));
 
-    return Promise.all(properties).then(([account, role, user]) => {
+    return Promise.all(properties).then(([account, role, user, shared_role]) => {
 
       this.parameters.set('account', account);
-      this.parameters.set('role', role);
+      if (role) {
+        this.parameters.set('role', role);
+      } else {
+        this.parameters.set('role', shared_role);
+      }
       this.parameters.set('user', user);
 
       return true;
@@ -187,6 +191,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
       acl: acl.id,
       invitor: invitor,
       account: account.name,
+      account_id: account.id,
       role: role.name
     };
 
