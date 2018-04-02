@@ -598,16 +598,11 @@ module.exports = class UserController extends entityController {
         }
 
         return Promise.resolve(this.createUserPrototype(user_id))
-        .then((user_prototype) => this.create({entity: user_prototype}));
-
-      }).then((user) => {
-
+        .then((user_prototype) => this.create({entity: user_prototype}))
         //Technical Debt... we should add a feature to entity class that automatically executes a method on create
-        return Promise.resolve(this.createUserSettingPrototype(user.id))
+        .then((user) => this.createUserSettingPrototype(user.id))
         .then((user_setting_prototype) => this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: user_setting_prototype}))
-        .then(() => {
-          return user;
-        });
+        .then(() => user);
 
       });
 

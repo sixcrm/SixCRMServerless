@@ -65,6 +65,10 @@ describe('/helpers/invite/Invite.js', () => {
           expect(id).to.equal(role.id);
           return Promise.resolve(role)
         }
+        getShared({id}){
+            expect(id).to.equal(role.id);
+            return Promise.resolve(role)
+        }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
@@ -141,6 +145,10 @@ describe('/helpers/invite/Invite.js', () => {
           expect(id).to.equal(role.id);
           return Promise.resolve(null)
         }
+        getShared({id}){
+          expect(id).to.equal(role.id);
+          return Promise.resolve(role)
+        }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
@@ -215,6 +223,10 @@ describe('/helpers/invite/Invite.js', () => {
       mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
         constructor(){}
         get({id}){
+          expect(id).to.equal(role.id);
+          return Promise.resolve(role)
+        }
+        getShared({id}){
           expect(id).to.equal(role.id);
           return Promise.resolve(role)
         }
@@ -404,7 +416,7 @@ describe('/helpers/invite/Invite.js', () => {
       };
 
       return inviteHelperClass.acceptInvite({invite: invite}).then((result) => {
-        expect(result).to.equal(true);
+        expect(result).to.equal(user);
       });
 
     });
