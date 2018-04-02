@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -10,150 +8,157 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 
 module.exports = class AuroraClusterDeployment {
 
-  constructor() {
+	constructor() {
 
-    this._rdsUtilities = global.SixCRM.routes.include('lib', 'rds-utilities.js');
+		this._rdsUtilities = global.SixCRM.routes.include('lib', 'rds-utilities.js');
 
-  }
+	}
 
-  deploy() {
+	deploy() {
 
-    du.debug('Deploy Cluster');
+		du.debug('Deploy Cluster');
 
-    const parameters = {
-      DBClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
-    };
+		const parameters = {
+			DBClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
+		};
 
+		return this._rdsUtilities.describeClusters(parameters)
+			.then((data) => {
 
-    return this._rdsUtilities.describeClusters(parameters)
-      .then((data) => {
+				if (data.DBClusters.length) {
 
-        if (data.DBClusters.length) {
+					du.info('Aurora cluster already created');
 
-          du.info('Aurora cluster already created');
+					return Promise.resolve();
 
-          return Promise.resolve();
+				} else {
 
-        } else {
+					du.info('Creating Aurora cluster');
 
-          du.info('Creating Aurora cluster');
+					return Promise.resolve()
+						.then(this._getParameterConfigurationFromFile.bind(this))
+						.then(this._parseParameters.bind(this))
+						.then((parameters) => {
 
-          return this._getParameterConfigurationFromFile()
-            .then((parameters) => this._parseParameters(parameters))
-            .then((parameters) => {
+							parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
+							parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
 
-              parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
-              parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
+							return this._rdsUtilities.putCluster(parameters).then(data => {
 
-              return this._rdsUtilities.putCluster(parameters).then(data => {
+								du.info(data);
 
-                du.info(data);
+								if (data.DBClusters) {
 
-                if (data.DBClusters) {
+									if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
 
-                  if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
+										eu.throwError('server', 'Data object does not contain appropriate key: DBClusters.0.Endpoint');
 
-                    eu.throwError('server', 'Data object does not contain appropriate key: DBClusters.0.Endpoint');
+									}
 
-                  }
+									global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
 
-                  global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
+								} else {
 
-                } else {
+									if (!objectutilities.hasRecursive(data, 'DBCluster.Endpoint')) {
 
-                  if (!objectutilities.hasRecursive(data, 'DBCluster.Endpoint')) {
+										eu.throwError('server', 'Data object does not contain appropriate key: DBCluster.Endpoint');
 
-                    eu.throwError('server', 'Data object does not contain appropriate key: DBCluster.Endpoint');
+									}
 
-                  }
+									global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBCluster.Endpoint);
 
-                  global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBCluster.Endpoint);
+								}
 
-                }
+								du.info('Aurora host resolved', global.SixCRM.configuration.site_config.aurora);
 
-                du.info('Aurora host resolved', global.SixCRM.configuration.site_config.aurora);
+								return parameters;
 
-                return parameters;
+							});
+						})
+						.then((parameters) => this._deployClusterInstances(parameters));
 
-              });
-            })
-            .then((parameters) => this._deployClusterInstances(parameters))
-            .then(() => {
-              return 'Complete';
-            });
+				}
 
-        }
+			});
 
-      });
+	}
 
-  }
+	_getParameterConfigurationFromFile() {
 
-  _getParameterConfigurationFromFile() {
+		du.debug('Get Parameter Configuration From File.');
 
-    du.debug('Get Parameter Configuration From File.');
+		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'aurora/config/')).then(directory_files => {
 
-    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'aurora/config/')).then(directory_files => {
+			let dpcf = arrayutilities.find(directory_files, (directory_file) => {
 
-      let dpcf = arrayutilities.find(directory_files, (directory_file) => {
-        return (directory_file == global.SixCRM.configuration.stage + '.json');
-      });
+				return (directory_file == global.SixCRM.configuration.stage + '.json');
 
-      dpcf = (_.isUndefined(dpcf) || _.isNull(dpcf)) ? 'default.json' : dpcf;
+			});
 
-      return global.SixCRM.routes.include('deployment', 'aurora/config/' + dpcf);
+			dpcf = (_.isUndefined(dpcf) || _.isNull(dpcf)) ? 'default.json' : dpcf;
 
-    });
+			return global.SixCRM.routes.include('deployment', 'aurora/config/' + dpcf);
 
-  }
+		});
 
-  _parseParameters(parameters) {
+	}
 
-    du.debug('Parse Parameters');
+	_parseParameters(parameters) {
 
-    let parser_data = {
-      region: this._rdsUtilities.getRegion(),
-      stage: global.SixCRM.configuration.stage,
-      account: global.SixCRM.configuration.site_config.aws.account
-    };
+		du.debug('Parse Parameters');
 
-    objectutilities.map(parameters, key => {
-      if (_.isString(parameters[key])) {
-        parameters[key] = parserutilities.parse(parameters[key], parser_data);
-      }
-      if (_.isArray(parameters[key]) && arrayutilities.nonEmpty(parameters[key])) {
-        parameters[key] = arrayutilities.map(parameters[key], a_parameter_value => {
-          if (_.isString(a_parameter_value)) {
-            return parserutilities.parse(a_parameter_value, parser_data);
-          }
-          return a_parameter_value;
-        });
-      }
-    });
+		const parserData = {
+			region: this._rdsUtilities.getRegion(),
+			stage: global.SixCRM.configuration.stage,
+			account: global.SixCRM.configuration.site_config.aws.account
+		};
 
-    return parameters;
+		objectutilities.map(parameters, key => {
 
-  }
+			if (_.isString(parameters[key])) {
 
-  _deployClusterInstances(parameters) {
+				parameters[key] = parserutilities.parse(parameters[key], parserData);
 
-    du.debug('Deploy Cluster Instances');
+			}
 
-    let instances = parameters.Instances;
+			if (_.isArray(parameters[key]) && arrayutilities.nonEmpty(parameters[key])) {
 
-    let instance_deployment_promises = arrayutilities.map(instances, instance => {
+				parameters[key] = arrayutilities.map(parameters[key], parameterValue => {
 
-      let instance_parameters = this._parseParameters(instance);
+					if (_.isString(parameterValue)) {
 
-      return this._rdsUtilities.putDBInstance(instance_parameters);
+						return parserutilities.parse(parameterValue, parserData);
 
-    });
+					}
 
-    return Promise.all(instance_deployment_promises).then((instance_deployment_promises) => {
+					return parameterValue;
 
-      return instance_deployment_promises;
+				});
 
-    });
+			}
 
-  }
+		});
+
+		return parameters;
+
+	}
+
+	_deployClusterInstances(parameters) {
+
+		du.debug('Deploy Cluster Instances');
+
+		const instances = parameters.Instances;
+
+		const instanceDeploymentPromises = arrayutilities.map(instances, instance => {
+
+			const instanceParameters = this._parseParameters(instance);
+
+			return this._rdsUtilities.putDBInstance(instanceParameters);
+
+		});
+
+		return Promise.all(instanceDeploymentPromises);
+
+	}
 
 }
