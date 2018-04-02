@@ -87,7 +87,7 @@ module.exports = class UserController extends entityController {
 
       }).catch(error => {
 
-        if(error.statusCode == '404'){
+        if(error.code == '404'){
           return Promise.resolve(false);
         }
 
@@ -139,7 +139,7 @@ module.exports = class UserController extends entityController {
 
       }).catch(error => {
 
-        if(error.statusCode == '404'){
+        if(error.code == '404'){
           return Promise.resolve(false);
         }
         du.error(error);
@@ -175,13 +175,13 @@ module.exports = class UserController extends entityController {
         return this.createProfile(global.user)
         .then((user) => {
 
-          let validated = this.isPartiallyHydratedUser(user);
+          return this.isPartiallyHydratedUser(user).then(validated => {
+            if(validated != true){
+              eu.throwError('server','User created in profile is not a partially-hydrated user.');
+            }
 
-          if(validated != true){
-            eu.throwError('server','User created in profile is not a partially-hydrated user.');
-          }
-
-          return user;
+            return user;
+          });
 
         }).then(user => {
 
