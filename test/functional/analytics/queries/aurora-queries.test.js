@@ -11,7 +11,7 @@ const analyticsController = new AnalyticsController();
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
-const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'utilities/aurora-schema-deployment.js');
+const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
 const BBPromise = require('bluebird');
 

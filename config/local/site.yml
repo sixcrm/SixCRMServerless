@@ -52,6 +52,7 @@ lambda:
   region: 'localhost'
 
 aurora:
+  release: 0.0.1
   region: 'localhost'
   default_cluster_identifier: 'sixcrm'
   user: 'postgres'

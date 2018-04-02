@@ -12,7 +12,7 @@ module.exports = class AuroraSchemaDeployment {
 		du.debug('Deploy Aurora tables');
 
 		return Promise.resolve()
-			.then(() => fileutilities.getFileContents(global.SixCRM.routes.path('model', `aurora/before/schema/${process.env.stage}.sql`)))
+			.then(() => fileutilities.getFileContents(global.SixCRM.routes.path('deployment', `aurora/before/schema/${process.env.stage}.sql`)))
 			.then(this._executeQuery.bind(this))
 			.then(() => this._deployDirectorySQL('procedures'))
 			.then(() => this._deployDirectorySQL('scripts'))
@@ -60,7 +60,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.highlight('Get Directory SQL Filepaths');
 
-		const directoryFilepath = global.SixCRM.routes.path('model', `aurora/${directory}`);
+		const directoryFilepath = global.SixCRM.routes.path('deployment', `aurora/${directory}`);
 
 		return fileutilities.getDirectoryFiles(directoryFilepath).then((files) => {
 
@@ -177,7 +177,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('Get Table Filenames');
 
-		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', `aurora/${directory}`)).then((files) => {
+		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', `aurora/${directory}`)).then((files) => {
 
 			return files.filter(file => file.match(/\.sql$/));
 
