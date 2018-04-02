@@ -235,6 +235,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		if (!_.has(this, 'customerController')) {
 			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 			this.customerController = new CustomerController();
+			this.customerController.sanitize(false);
 		}
 
 		return this.customerController.addCreditCard(customer.id, creditcard).then(([customer, creditcard]) => {
@@ -255,6 +256,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		if (!_.has(this, 'customerController')) {
 			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 			this.customerController = new CustomerController();
+			this.customerController.sanitize(false);
 		}
 
 		return this.customerController.get({

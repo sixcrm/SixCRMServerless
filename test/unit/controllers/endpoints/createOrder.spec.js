@@ -324,7 +324,7 @@ describe('createOrder', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
               creditcard.customers.push(customer.id);
@@ -498,7 +498,7 @@ describe('createOrder', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           addCreditCard() {
               customer.creditcards = [creditcard.id];
               creditcard.customers = [customer.id];
@@ -684,7 +684,7 @@ describe('createOrder', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
               creditcard.customers.push(customer.id);
@@ -878,7 +878,7 @@ describe('createOrder', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
               creditcard.customers = [customer.id];
@@ -1012,7 +1012,7 @@ describe('createOrder', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           addCreditCard() {
               customer.creditcards.push(plaintext_creditcard.id);
               plaintext_creditcard.customers.push(customer.id);
@@ -1724,7 +1724,7 @@ describe('createOrder', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           addCreditCard(a_customer, a_creditcard) {
               customer.creditcards.push(a_creditcard.id);
               a_creditcard.customers = [customer.id];
@@ -1858,7 +1858,7 @@ describe('createOrder', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           get() {
               return Promise.resolve(customer);
           }
@@ -1885,7 +1885,7 @@ describe('createOrder', function () {
 
         let mock_customer = class {
             constructor(){}
-
+            sanitize(){}
             get() {
                 return Promise.resolve(customer);
             }
@@ -1911,7 +1911,7 @@ describe('createOrder', function () {
 
         let mock_customer = class {
             constructor(){}
-
+            sanitize(){}
             get() {
                 return Promise.resolve(customer);
             }
@@ -2110,7 +2110,7 @@ describe('createOrder', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
               creditcard.customers.push(customer.id);

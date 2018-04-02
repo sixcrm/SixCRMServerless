@@ -254,7 +254,7 @@ describe('checkout', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           getCustomerByEmail() {
               return Promise.resolve(null);
           }
@@ -438,7 +438,7 @@ describe('checkout', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
 			  creditcard.customers.push(customer.id);
@@ -743,7 +743,7 @@ describe('checkout', function () {
 
       let mock_customer = class {
           constructor(){}
-
+          sanitize(){}
           addCreditCard() {
               customer.creditcards.push(creditcard.id);
               creditcard.customers.push(customer.id);
