@@ -312,6 +312,10 @@ describe('/helpers/invite/Invite.js', () => {
           expect(id).to.equal(role.id);
           return Promise.resolve(role)
         }
+        getShared({id}){
+          expect(id).to.equal(role.id);
+          return Promise.resolve(role)
+        }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {

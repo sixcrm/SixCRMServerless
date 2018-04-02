@@ -298,11 +298,16 @@ module.exports = class InviteHelperClass extends InviteUtilities {
       properties.push(this.accountController.get({id: acl.account}));
       properties.push(this.roleController.get({id: acl.role}));
       properties.push(this.userController.get({id: acl.user}));
+      properties.push(this.roleController.getShared({id: acl.role}));
 
-      return Promise.all(properties).then(([account, role, user]) => {
+      return Promise.all(properties).then(([account, role, user, shared_role]) => {
 
         this.parameters.set('account', account);
-        this.parameters.set('role', role);
+        if (role) {
+          this.parameters.set('role', role);
+        } else {
+          this.parameters.set('role', shared_role);
+        }
         this.parameters.set('user', user);
 
         return true;
