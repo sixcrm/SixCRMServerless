@@ -48,6 +48,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			'campaign': global.SixCRM.routes.path('model', 'entities/campaign.json'),
 			'customer': global.SixCRM.routes.path('model', 'endpoints/components/customerprocessable.json'),
 			'productschedules': global.SixCRM.routes.path('model', 'endpoints/components/productschedules.json'),
+			'products': global.SixCRM.routes.path('model', 'endpoints/components/products.json'),
 			'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
 			'previous_rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
 			'transaction': global.SixCRM.routes.path('model', 'entities/transaction.json'),

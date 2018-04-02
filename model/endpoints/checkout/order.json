@@ -5,8 +5,9 @@
 	"type":"object",
 	"properties": {
 		"amount":{"$ref":"../../definitions/currency.json"},
-		"transactiona":{"$ref":"../../entities/components/transactions.json"},
+		"transactions":{"$ref":"../../entities/components/transactions.json"},
 		"product_schedules":{"$ref": "../components/productschedules.json"},
+		"products":{"$ref": "../components/products.json"},
 		"customer":{"$ref": "../../entities/customer.json"},
 		"rebill":{"$ref":"../../entities/rebill.json"},
 		"session":{"$ref":"../../entities/session.json"},
@@ -14,5 +15,8 @@
 		"creditcard":{"$ref":"../../entities/creditcard.json"},
 		"result":{"$ref":"../../general/response/responsetype.json"}
 	},
-	"required":["customer", "session", "product_schedules", "transactions", "rebill", "campaign", "amount","creditcard","result"]
+	"anyOf": [
+		{ "required":["customer", "session", "transactions", "product_schedules", "rebill", "campaign", "amount","creditcard","result"] },
+		{ "required":["customer", "session", "transactions", "products", "rebill", "campaign", "amount","creditcard","result"] }
+	]
 }
