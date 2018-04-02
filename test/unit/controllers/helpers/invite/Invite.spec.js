@@ -73,7 +73,7 @@ describe('/helpers/invite/Invite.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
         constructor(){}
-        get({id}) {
+        assureUser(id) {
           expect(id).to.equal(user.id);
           return Promise.resolve(user);
         }
@@ -153,7 +153,7 @@ describe('/helpers/invite/Invite.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
         constructor(){}
-        get({id}) {
+        assureUser(id) {
           expect(id).to.equal(user.id);
           return Promise.resolve(null);
         }
@@ -234,7 +234,7 @@ describe('/helpers/invite/Invite.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
         constructor(){}
-        get({id}) {
+        assureUser(id) {
           expect(id).to.equal(user.id);
           return Promise.resolve(null);
         }

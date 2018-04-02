@@ -102,6 +102,8 @@ module.exports = class InviteHelperClass extends InviteUtilities {
       let invite = this.parameters.get('invite');
       let decoded_invite_parameters = this.decodeAndValidate(invite.token, invite.parameters);
       this.parameters.set('decodedinviteparameters', decoded_invite_parameters);
+
+      return true;
     })
     .then(() => this.assureUser())
     .then(() => this.updatePendingACL())
@@ -122,7 +124,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
     properties.push(this.accountController.get({id: user_invite.account}));
     properties.push(this.roleController.get({id: user_invite.role}));
-    properties.push(this.userController.get({id: user_invite.email}));
+    properties.push(this.userController.assureUser(user_invite.email));
     properties.push(this.roleController.getShared({id: user_invite.role}));
 
     return Promise.all(properties).then(([account, role, user, shared_role]) => {
