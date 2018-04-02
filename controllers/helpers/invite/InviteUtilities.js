@@ -99,6 +99,7 @@ module.exports = class InviteUtilities extends HelperController{
         acl: invite_object.acl,
         invitor: invite_object.invitor,
         account: invite_object.account,
+        account_id: invite_object.account_id,
         role: invite_object.role,
         timestamp: now
       };
