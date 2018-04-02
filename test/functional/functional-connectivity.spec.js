@@ -15,9 +15,6 @@ describe('Test connections to Docker Services', () => {
 
       let dynamodb = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
 
-      expect(dynamodb).to.have.property('dynamodb');
-      expect(dynamodb).to.have.property('dynamoraw');
-
       return dynamodb.listTables({}).then(result => {
         expect(result).to.have.property('TableNames');
       });
@@ -31,8 +28,6 @@ describe('Test connections to Docker Services', () => {
     it('successfully connects to the Docker SQS instance', () => {
 
       let sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
-
-      expect(sqsutilities).to.have.property('sqs');
 
       return sqsutilities.listQueues().then(result => {
         expect(result).to.have.property('ResponseMetadata');
