@@ -43,26 +43,14 @@ class UserACLController extends entityController {
 
       du.debug('UserACLController Create');
 
-      return super.create({entity: entity, primary_key: primary_key}).then((acl) => {
-        this.createNotification(acl, 'created', 'You have been assigned to a new account.');
-        return acl;
-      });
-
-
+      return super.create({entity: entity, primary_key: primary_key});
     }
 
     update({entity, primary_key, ignore_updated_at}) {
 
       du.debug('UserACLController Update');
 
-      return super.update({entity: entity, primary_key: primary_key, ignore_updated_at: ignore_updated_at}).then((acl) => {
-
-        this.createNotification(acl, 'updated', 'Your role on account has been updated.');
-
-        return acl;
-
-      });
-
+      return super.update({entity: entity, primary_key: primary_key, ignore_updated_at: ignore_updated_at});
     }
 
     updateTermsAndConditions(useracl_terms_and_conditions) {
@@ -87,27 +75,6 @@ class UserACLController extends entityController {
         return acl;
 
       });
-
-    }
-
-    //Technical Debt:  This doesn't go here.
-    createNotification(acl, action, text) {
-
-      du.debug('Create Notification');
-        let notification = {
-            account: acl.account,
-            user: acl.user,
-            type: 'notification',
-            category: 'acl',
-            action: action,
-            title: text,
-            body: text
-        };
-
-        let NotificationProviderController = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
-        const notificationProviderController = new NotificationProviderController();
-
-        return notificationProviderController.createNotificationForAccountAndUser(notification);
 
     }
 
