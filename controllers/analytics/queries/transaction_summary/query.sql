@@ -25,16 +25,16 @@ SELECT
   ),0) AS rebill_sale_amount,
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'decline'  THEN 1
+        WHEN processor_result = 'fail'  THEN 1
         ELSE 0
       END
-  ),0) AS declines_count,
+  ),0) AS fail_count,
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'decline'  THEN amount
+        WHEN processor_result = 'fail'  THEN amount
         ELSE 0
       END
-  ),0) AS declines_amount,
+  ),0) AS fail_amount,
   coalesce(SUM(
       CASE
         WHEN processor_result = 'error'  THEN 1

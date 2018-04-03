@@ -9,7 +9,7 @@
   "result_name": "undefined",
   "expect":    {
        "overview": {
-          "decline": {"amount": "0","count": "0"},
+          "fail": {"amount": "0","count": "0"},
           "error": {"amount": "0","count": "0"},
           "main": {"amount": "0","count": "0"},
           "newsale": {"amount": "0","count": "0"},

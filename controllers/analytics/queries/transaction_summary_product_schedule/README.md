@@ -26,7 +26,7 @@ ____
 Query returns six variables that represent :
 * `New Sale` -  Transactions that have processor_result = 'success’ and type = 'new’
 * `Rebill` - Transactions that have processor_result = 'success’ and type = 'rebill’
-* `Declines` - Transactions that have processor_result = 'decline'
+* `Fail` - Transactions that have processor_result = 'fail'
 * `Error` - Transactions that have processor_result = 'error'
 * `Upsell` - Transactions that have processor_result = 'success’ and type = 'new’ and subtype = 'upsell’
 * `Main` - Transactions that have processor_result = 'success’ and type = 'new’ and subtype = 'main’

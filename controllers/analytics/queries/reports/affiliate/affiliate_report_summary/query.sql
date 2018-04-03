@@ -6,14 +6,14 @@ SELECT coalesce(SUM(fe.count_click),0) AS count_click,
           else 1.0*fe.count_partials / fe.count_click
          end
        ),0) AS partials_percent,
-       coalesce(SUM(coalesce(decline_count,0)),0) AS decline_count,
+       coalesce(SUM(coalesce(fail_count,0)),0) AS fail_count,
        coalesce(SUM(
          coalesce(
            case
             when fe.count_click = 0 then 0
-            else 1.0*decline_count / fe.count_click
+            else 1.0*fail_count / fe.count_click
            end
-       ,0)),0) AS declines_percent,
+       ,0)),0) AS fail_percent,
        coalesce(SUM(fe.count_sales),0) AS count_sales,
        coalesce(SUM(
          case
@@ -61,9 +61,9 @@ RIGHT OUTER JOIN
               END) sum_upsell,
           count(CASE
                     WHEN subtype IN ('order','main')
-                         AND processor_result ='decline' THEN 1
+                         AND processor_result ='fail' THEN 1
                     ELSE NULL
-                END) decline_count,
+                END) fail_count,
           affiliate
    FROM analytics.f_transactions
    WHERE 1=1
