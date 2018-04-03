@@ -65,38 +65,6 @@ describe('controllers/entities/User.js', () => {
         });
     });
 
-    describe('appendAlias', () => {
-
-        it('returns user itself when user alias exists', () => {
-            let user = getValidUser();
-
-            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-            const userController = new UserController();
-
-            expect(userController.appendAlias(user)).to.deep.equal(user);
-        });
-
-        it('successfully appends alias', () => {
-            let user = getValidUser();
-
-            delete user.alias;
-            user.id = 'first.last@example.com'; //any email type id
-
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'random.js'), {
-                createRandomString: () => {
-                    return 'a_random_string';
-                }
-            });
-
-            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-            const userController = new UserController();
-
-            let result = userController.appendAlias(user);
-
-            expect(result.alias).to.equal('628243ee9c74e8b56e9026e3c26a7f53e5283037');
-        });
-    });
-
     xdescribe('getAddress', () => {
 
         it('returns null when user address is omitted', () => {
@@ -155,6 +123,7 @@ describe('controllers/entities/User.js', () => {
 
         it('returns null if user not found', () => {
             let user = getValidUser();
+
             const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
             const userController = new UserController();
 
@@ -175,7 +144,6 @@ describe('controllers/entities/User.js', () => {
             userController.getACLPartiallyHydrated = () => Promise.resolve({});
             userController.isPartiallyHydratedUser = () => Promise.resolve(false);
             return userController.getHydrated(user.id)
-            .then(() => expect.fail())
             .catch(error => {
                 expect(error.message).to.equal('[500] The user is not partially hydrated.');
             });
@@ -761,7 +729,7 @@ describe('controllers/entities/User.js', () => {
             const userController = new UserController();
 
             return userController.assureUser(user_id).catch((error) => {
-                expect(error.message).to.equal('[500] Error: User settings creating failed.');
+              expect(error.message).to.equal('[500] Error: User settings creating failed.');
             });
         });
 

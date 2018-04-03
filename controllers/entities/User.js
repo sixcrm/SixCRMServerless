@@ -7,7 +7,6 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
@@ -87,7 +86,7 @@ module.exports = class UserController extends entityController {
 
       }).catch(error => {
 
-        if(error.code == '404'){
+        if(error.statusCode == '404'){
           return Promise.resolve(false);
         }
 
@@ -139,9 +138,10 @@ module.exports = class UserController extends entityController {
 
       }).catch(error => {
 
-        if(error.code == '404'){
+        if(error.statusCode == '404'){
           return Promise.resolve(false);
         }
+
         du.error(error);
         eu.throwError(error);
 
@@ -161,6 +161,7 @@ module.exports = class UserController extends entityController {
 
     }
 
+    //To the helper...
     introspection(){
 
       du.debug('Introspection');
@@ -172,16 +173,16 @@ module.exports = class UserController extends entityController {
       //Technical Debt:  This needs to get reduced
       if(this.isEmail(global.user)){
 
-        return this.createProfile(global.user)
-        .then((user) => {
+        if(!_.has(this, 'userHelperController')){
+          const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
+          this.userHelperController = new UserHelperController();
+        }
 
-          return this.isPartiallyHydratedUser(user).then(validated => {
-            if(validated != true){
-              eu.throwError('server','User created in profile is not a partially-hydrated user.');
-            }
+        return this.userHelperController.createProfile(global.user).then((user) => {
 
-            return user;
-          });
+          //Technical Debt:  Add validation
+
+          return user;
 
         }).then(user => {
 
@@ -252,160 +253,36 @@ module.exports = class UserController extends entityController {
 
     }
 
-    createProfile(email){
-
-        return new Promise((resolve, reject) => {
-
-            this.disableACLs();
-
-            this.get({id: email}).then((user) => {
-
-                if(_.has(user, 'id')){
-
-                    return reject(eu.getError('bad_request','The user already exists.'));
-
-                }else{
-
-                    let account_id = this.getUUID();
-                    let proto_account = {
-                        id: account_id,
-                        name: email+'-pending-name',
-                        active: false
-                    };
-                    let proto_user = {
-                        id: email,
-                        name: email,
-                        active: false,
-                        first_name: email, // Technical Debt: Find another way to pass validation instead of using email.
-                        last_name: email, // Technical Debt: Find another way to pass validation instead of using email.
-                    };
-                    let proto_user_setting = {
-                        id: email,
-                        timezone: 'America/Los_Angeles',
-                        notifications: [{
-                            name: "six",
-                            receive: true
-                        },
-                        {
-                            name: "email",
-                            receive: false
-                        },
-                        {
-                            name: "sms",
-                            receive: false
-                        },
-                        {
-                            name: "slack",
-                            receive: false
-                        },
-                        {
-                            name: "skype",
-                            receive: false
-                        },
-                        {
-                            name: "ios",
-                            receive: false
-                        }]
-                    };
-
-                    proto_user = this.appendAlias(proto_user);
-
-                    let promises = [];
-
-                    promises.push(this.executeAssociatedEntityFunction('accountController', 'create', {entity: proto_account}));
-                    promises.push(this.create({entity: proto_user}));
-					          //Technical Debt:  This should be a lookup, not a hardcoded string
-                    promises.push(this.executeAssociatedEntityFunction('RoleController', 'get', {id: 'cae614de-ce8a-40b9-8137-3d3bdff78039'}));
-                    promises.push(this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: proto_user_setting}));
-
-                    return Promise.all(promises).then((promises) => {
-
-                        let account = promises[0];
-                        let user = promises[1];
-                        let role = promises[2];
-                        let user_setting = promises[3];
-
-                        if(!_.has(account, 'id') || !_.has(user, 'id') || !_.has(role, 'id') || !_.has(user_setting, 'id')){
-                            return reject(eu.getError('server','Unable to create new profile'));
-                        }
-
-                        du.debug('User', user);
-                        du.debug('Role', role);
-                        du.debug('Account', account);
-                        du.debug('User setting', user_setting);
-
-                        let acl_object = {
-                            user: user.id,
-                            account: account_id,
-                            role: role.id
-                        };
-
-                        du.debug('ACL object to create:', acl_object);
-
-                        return this.executeAssociatedEntityFunction('userACLController', 'create', {entity: acl_object}).then((acl) => {
-
-                            acl.account = account;
-                            acl.role = role;
-
-                            this.enableACLs();
-
-                            user.acl = [acl];
-
-                            return resolve(user);
-
-                        }).catch((error) => {
-
-                            du.warning(error);
-                            return reject(error);
-
-                        });
-
-                    }).catch((error) => {
-                      du.error(error);
-                        return reject(error);
-
-                    });
-
-                }
-
-            }).catch((error) => {
-
-                return reject(error);
-
-            });
-
-        });
-
-    }
-
     getHydrated(id){
-        return this.get({id}).then((user) => {
-            du.debug('Prehydrated User:', user);
-            if (!_.has(user, 'id')) {
-                const error = new Error();
 
-                error.name = 'NullUserError';
-                throw error;
-            }
-            return Promise.all([user, this.getACLPartiallyHydrated(user)]);
-        })
-        .then(([user, acl]) => {
-            du.deep('Partially hydrated User ACL object:', acl);
-            user.acl = acl;
-            return Promise.all([user, this.isPartiallyHydratedUser(user)]);
-        })
-        .then(([user, validated]) => {
-            if (!validated) {
-                eu.throwError('server','The user is not partially hydrated.');
-            }
-            return user;
-        })
-        .catch(error => {
-            if (error.name === 'NullUserError') {
-                return null;
-            }
-            throw error;
-        });
+      du.debug('Get Hydrated');
+
+      return this.get({id: id})
+      .then((user) => {
+
+        if (!_.has(user, 'id')) {
+          eu.throwError('not_found', 'User does not exist: '+id);
+        }
+
+        return Promise.all([user, this.getACLPartiallyHydrated(user)]);
+
+      }).then(([user, acl]) => {
+
+        user.acl = acl;
+
+        return user;
+
+      }).catch((error) => {
+
+        du.info(error);
+        if (error.code === 404) {
+          return null;
+        }
+
+        eu.throwError(error);
+
+      });
+
     }
 
     getACL(user){
@@ -496,18 +373,6 @@ module.exports = class UserController extends entityController {
 
     }
 
-    appendAlias(user){
-
-      du.debug('Append Alias');
-
-      if(!_.has(user, 'alias')){
-        user.alias = mungeutilities.munge(user.id);
-      }
-
-      return user;
-
-    }
-
     getUserByAccessKeyId(access_key_id){
 
       du.debug('Get User By Access Key ID');
@@ -520,69 +385,16 @@ module.exports = class UserController extends entityController {
 
       du.debug('User.create');
 
-      user = this.appendAlias(user);
+      if(!_.has(this, 'userHelperController')){
+
+        const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
+        this.userHelperController = new UserHelperController();
+
+      }
+
+      user = this.userHelperController.appendAlias(user);
 
       return super.create({entity: user});
-
-    }
-
-    //Technical Debt:  Garbage...
-    isPartiallyHydratedUser(user){ // eslint-disable-line no-unused-vars
-
-      return Promise.resolve(true);
-
-    }
-
-    createUserPrototype(user_id){
-
-      du.debug('Create User Prototype');
-
-      let user_prototype = {
-          id: user_id,
-          termsandconditions: "0.0",
-          active: true,
-          auth0id: "-",
-          name: user_id
-      };
-
-      return this.appendAlias(user_prototype);
-
-    }
-
-    //Technical Debt:  Move this to the UserSetting Entity...
-    createUserSettingPrototype(user_id){
-
-      du.debug('Create User Setting Prototype');
-
-      return {
-        id: user_id,
-        timezone: 'America/Los_Angeles',
-        notifications: [
-          {
-            name: "six",
-            receive: true
-          },
-          {
-            name: "email",
-            receive: false
-          },
-          {
-            name: "sms",
-            receive: false
-          },
-          {
-            name: "slack",
-            receive: false
-          },
-          {
-            name: "skype",
-            receive: false
-          },
-          {
-            name: "ios",
-            receive: false
-          }]
-      };
 
     }
 
@@ -597,12 +409,29 @@ module.exports = class UserController extends entityController {
           return user;
         }
 
-        return Promise.resolve(this.createUserPrototype(user_id))
-        .then((user_prototype) => this.create({entity: user_prototype}))
-        //Technical Debt... we should add a feature to entity class that automatically executes a method on create
-        .then((user) => Promise.resolve(this.createUserSettingPrototype(user.id))
-            .then((user_setting_prototype) => this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: user_setting_prototype}))
-            .then(() => user))
+        if(!_.has(this, 'userHelperController')){
+          const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
+          this.userHelperController = new UserHelperController();
+        }
+
+        return Promise.resolve()
+        .then(() => this.userHelperController.getPrototypeUser(user_id))
+        .then((user_prototype) => this.create({entity: user_prototype}));
+
+      }).then((user) => {
+
+        if(!_.has(this, 'userSettingHelperController')){
+          const UserSettingHelperController = global.SixCRM.routes.include('helpers', 'entities/usersetting/UserSetting.js');
+          this.userSettingHelperController = new UserSettingHelperController();
+        }
+
+        return Promise.resolve()
+        .then(() => this.userSettingHelperController.getPrototypeUserSetting(user.id))
+        .then((user_setting_prototype) => this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: user_setting_prototype}))
+        .then(() => {
+          return user;
+        })
+
       });
 
     }
