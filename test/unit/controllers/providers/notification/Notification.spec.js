@@ -491,10 +491,10 @@ function getValidDefaultNotificationSettings(){
               description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
               default: true,
               name: 'Upsell' },
-            { key: 'decline',
+            { key: 'fail',
               description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
               default: true,
-              name: 'Decline' },
+              name: 'Fail' },
             { key: 'cancellation',
               description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
               default: true,
@@ -562,10 +562,10 @@ function getValidUserNotificationSettings(){
               name:"Upsell"
             },
             {
-              key:"decline",
+              key:"fail",
               description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
               default:true,
-              name:"Decline"
+              name:"Fail"
             },
             {
               key:"cancellation",

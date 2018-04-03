@@ -4,7 +4,7 @@
     "user": "nikola.bosic@toptal.com",
     "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
     "type": "notification",
-    "name":"transaction_decline",
+    "name":"transaction_fail",
     "category": "transaction",
     "context": {
       "transaction.id":"e624af6a-21dc-4c64-b310-3b0523f8ca42"

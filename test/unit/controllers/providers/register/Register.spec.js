@@ -887,14 +887,14 @@ describe('controllers/providers/Register.js', () => {
 
     });
 
-   it('creates a transaction for sale decline', () => {
+   it('creates a transaction for sale fail', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
         constructor(){}
         issueReceipt(){
           let transaction = getValidTransactionObject();
 
-          transaction.result = 'decline';
+          transaction.result = 'fail';
           return Promise.resolve(transaction);
         }
       });
@@ -936,7 +936,7 @@ describe('controllers/providers/Register.js', () => {
       let transaction = getValidTransactionObject();
       let processor_response = getProcessorResponseObject();
 
-      processor_response.code = 'decline';
+      processor_response.code = 'fail';
 
       registerController.parameters.set('rebill', getValidRebill());
       registerController.parameters.set('transactiontype', 'sale');
@@ -954,7 +954,7 @@ describe('controllers/providers/Register.js', () => {
         expect(result_transaction).to.have.property('type');
         expect(result_transaction).to.have.property('result');
         expect(result_transaction.type).to.equal('sale');
-        expect(result_transaction.result).to.equal('decline');
+        expect(result_transaction.result).to.equal('fail');
 
       });
 
@@ -1389,22 +1389,22 @@ describe('controllers/providers/Register.js', () => {
 
       });
 
-     it('successfully responds to decline', () => {
+     it('successfully responds to fail', () => {
 
         let processor_responses = getProcessorResponses(1);
 
-        processor_responses[0].code = 'decline';
+        processor_responses[0].code = 'fail';
 
-        let decline_transaction = getValidTransactionObject();
+        let fail_transaction = getValidTransactionObject();
 
-        decline_transaction.result = 'decline';
+        fail_transaction.result = 'fail';
 
         let creditcard = getValidCreditCard();
 
         const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
-        registerController.parameters.set('transactionreceipts', [decline_transaction]);
+        registerController.parameters.set('transactionreceipts', [fail_transaction]);
         registerController.parameters.set('processorresponses', processor_responses);
         registerController.parameters.set('selectedcreditcard', creditcard)
 
@@ -1412,7 +1412,7 @@ describe('controllers/providers/Register.js', () => {
 
           expect(objectutilities.getClassName(response)).to.equal('RegisterResponse');
           expect(response.getCode()).to.equal('fail');
-          expect(response.getTransactions()).to.deep.equal([decline_transaction]);
+          expect(response.getTransactions()).to.deep.equal([fail_transaction]);
           expect(response.getProcessorResponses()).to.deep.equal(processor_responses);
 
         });
