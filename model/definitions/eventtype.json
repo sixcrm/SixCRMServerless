@@ -22,7 +22,7 @@
 		},
 		{
 			"type": "string",
-			"pattern": "^transaction_(success|decline|fail|error)$"
+			"pattern": "^transaction_(success|fail|error)$"
 		},
 		{
 			"type": "string",

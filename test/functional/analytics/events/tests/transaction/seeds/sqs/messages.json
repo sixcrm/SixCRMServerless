@@ -24,7 +24,7 @@
 			"merchantProvider": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
 			"processorResult": "fail",
 			"amount": 34.99,
-			"type": "transaction_decline",
+			"type": "transaction_fail",
 			"subtype": "main",
 			"customer": "b1cf3769-a541-43f2-b03f-2f2e468a10f5",
 			"creditcard": "1111111111111111",
