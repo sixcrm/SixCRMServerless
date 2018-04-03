@@ -98,15 +98,15 @@ describe('helpers/events/Event.spec.js', () => {
 
 		it('successfully pushes a event to a SNS topic', () => {
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-				publish: () => {
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+				publish() {
 					return Promise.resolve({
 						MessageId: "e0701729-c444-5c95-b3dd-442caf4b8dbe",
 						ResponseMetadata: {
 							RequestId: "a7adb36f-c590-5fb2-89a1-e06aae9e9e99"
 						}
 					})
-				},
+				}
 				getRegion() {
 					return 'us-east-1';
 				}

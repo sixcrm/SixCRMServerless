@@ -10,7 +10,7 @@ const dynamoDbDeployment = new DynamoDbDeployment();
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const timer = global.SixCRM.routes.include('lib', 'timer.js');
+const Timer = global.SixCRM.routes.include('lib', 'providers/timer.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
@@ -25,6 +25,7 @@ const customerController = new CustomerController();
 const sessionController = new SessionController();
 const productController = new ProductController();
 const fulfillmentProviderController = new FulfillmentProviderController();
+const timer = new Timer();
 const tab = '      ';
 
 const max_test_cases = randomutilities.randomInt(50, 90);

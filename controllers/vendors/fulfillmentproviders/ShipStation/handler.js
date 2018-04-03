@@ -5,7 +5,8 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
-const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
+const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const httpprovider = new HttpProvider();
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
@@ -401,7 +402,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
       body: parameters
     };
 
-    return httputilities.postJSON(options).then(result => {
+    return httpprovider.postJSON(options).then(result => {
 
       this.parameters.set('vendorresponse', result);
 
@@ -423,7 +424,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
     delete parameters.endpoint;
     delete parameters.path;
 
-    let querystring = httputilities.createQueryString(parameters);
+    let querystring = httpprovider.createQueryString(parameters);
 
     let options = {
       url: url,
@@ -433,7 +434,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
       querystring: querystring
     };
 
-    return httputilities.getJSON(options).then(result => {
+    return httpprovider.getJSON(options).then(result => {
 
       this.parameters.set('vendorresponse', result);
 

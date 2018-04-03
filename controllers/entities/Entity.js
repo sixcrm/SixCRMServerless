@@ -9,7 +9,7 @@ const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const EntityPermissionsHelper = global.SixCRM.routes.include('helpers', 'entityacl/EntityPermissions.js');
 const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
-
+const DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.
@@ -44,7 +44,7 @@ module.exports = class entityController extends entityUtilitiesController {
           'entityacl'
         ];
 
-        this.dynamoutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
+        this.dynamodbprovider = new DynamoDBProvider();
 
     }
 
@@ -75,7 +75,7 @@ module.exports = class entityController extends entityUtilitiesController {
           expression_attribute_values: {':primary_keyv': this.getID(id)}
       };
 
-      return this.dynamoutilities.queryRecords('entityacls', query_parameters, null)
+      return this.dynamodbprovider.queryRecords('entityacls', query_parameters, null)
       .then(data => this.getItems(data))
       .then(items => this.assureSingular(items))
       .then(acl => {
@@ -89,7 +89,7 @@ module.exports = class entityController extends entityUtilitiesController {
         };
 
         query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
-        return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null);
+        return this.dynamodbprovider.queryRecords(this.table_name, query_parameters, null);
 
       })
       .then(data => this.getItems(data))
@@ -109,7 +109,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       query_parameters = this.appendPagination({query_parameters, pagination});
 
-      return this.dynamoutilities.queryRecords('entityacls', query_parameters, 'type-index')
+      return this.dynamodbprovider.queryRecords('entityacls', query_parameters, 'type-index')
       .then(data => {
           const acls = this.getItems(data);
 
@@ -125,7 +125,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
           return Promise.all([
               this.executeAssociatedEntityFunction('EntityACLController', 'buildPaginationObject', data),
-              this.dynamoutilities.scanRecords(this.table_name, query_parameters)
+              this.dynamodbprovider.scanRecords(this.table_name, query_parameters)
           ]);
 
       })
@@ -189,7 +189,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return query_parameters;
 
       })
-      .then((query_parameters) => this.dynamoutilities.scanRecords(this.table_name, query_parameters))
+      .then((query_parameters) => this.dynamodbprovider.scanRecords(this.table_name, query_parameters))
       .then((data) => this.buildResponse(data))
       //Technical Debt:  Shouldn't this reference the fatal setting?
       .catch(this.handleErrors);
@@ -253,7 +253,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return query_parameters;
 
       })
-      .then((query_parameters) => this.dynamoutilities.scanRecords(this.table_name, query_parameters))
+      .then((query_parameters) => this.dynamodbprovider.scanRecords(this.table_name, query_parameters))
       .then((data) => this.buildResponse(data))
       .catch((error) => this.handleErrors(error, fatal));
 
@@ -285,7 +285,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return query_parameters;
 
       })
-      .then((query_parameters) => this.dynamoutilities.queryRecords(this.table_name, query_parameters, 'user-index'))
+      .then((query_parameters) => this.dynamodbprovider.queryRecords(this.table_name, query_parameters, 'user-index'))
       .then((data) => this.buildResponse(data))
       .catch((error) => this.handleErrors(error, fatal));
 
@@ -318,7 +318,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return query_parameters;
 
       })
-      .then((query_parameters) => this.dynamoutilities.queryRecords(this.table_name, query_parameters, 'account-index'))
+      .then((query_parameters) => this.dynamodbprovider.queryRecords(this.table_name, query_parameters, 'account-index'))
       .then((data) => this.buildResponse(data))
       .catch((error) => this.handleErrors(error, fatal));
 
@@ -387,7 +387,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return query_parameters;
 
       })
-      .then((query_parameters) => this.dynamoutilities.queryRecords(this.table_name, query_parameters, index_name))
+      .then((query_parameters) => this.dynamodbprovider.queryRecords(this.table_name, query_parameters, index_name))
       .then((data) => this.buildResponse(data))
       .catch(this.handleErrors);
 
@@ -409,7 +409,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return this.appendAccountFilter({query_parameters: query_parameters});
 
       })
-      .then((query_parameters) => this.dynamoutilities.queryRecords(this.table_name, query_parameters, index_name))
+      .then((query_parameters) => this.dynamodbprovider.queryRecords(this.table_name, query_parameters, index_name))
       .then(data => this.getItems(data))
       .then(items => this.assureSingular(items))
       .catch(this.handleErrors);
@@ -449,7 +449,7 @@ module.exports = class entityController extends entityUtilitiesController {
             query_parameters['scan_index_forward'] = !parameters.reverse_order;
         }
 
-        return this.dynamoutilities.queryRecords(this.table_name, query_parameters, index);
+        return this.dynamodbprovider.queryRecords(this.table_name, query_parameters, index);
 
       })
       .then((data) => this.buildResponse(data))
@@ -476,7 +476,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
         query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
-        return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null);
+        return this.dynamodbprovider.queryRecords(this.table_name, query_parameters, null);
 
       })
       .then((data) => this.getItems(data))
@@ -513,7 +513,7 @@ module.exports = class entityController extends entityUtilitiesController {
         return true;
       })
       .then(() => this.encryptAttributes(entity))
-      .then(() => this.dynamoutilities.saveRecord(this.table_name, entity))
+      .then(() => this.dynamodbprovider.saveRecord(this.table_name, entity))
       .then(() => {
           if (this.sanitization) {
               return this.censorEncryptedAttributes(entity);
@@ -568,7 +568,7 @@ module.exports = class entityController extends entityUtilitiesController {
       }).then((existing_entity) => {
 
         this.encryptAttributes(existing_entity);
-        return this.dynamoutilities.saveRecord(this.table_name, existing_entity).then(() => {
+        return this.dynamodbprovider.saveRecord(this.table_name, existing_entity).then(() => {
           return existing_entity;
         });
 
@@ -637,7 +637,7 @@ module.exports = class entityController extends entityUtilitiesController {
       })
       .then(() => this.validate(entity))
       .then(() => this.encryptAttributes(entity))
-      .then(() => this.dynamoutilities.saveRecord(this.table_name, entity))
+      .then(() => this.dynamodbprovider.saveRecord(this.table_name, entity))
       .then(() => {
           if (this.sanitization) {
               return this.censorEncryptedAttributes(entity);
@@ -735,7 +735,7 @@ module.exports = class entityController extends entityUtilitiesController {
         }
         return true;
       })
-      .then(() => this.dynamoutilities.deleteRecord(this.table_name, delete_parameters, null, null))
+      .then(() => this.dynamodbprovider.deleteRecord(this.table_name, delete_parameters, null, null))
       .then(() => {
 
         this.removeFromSearchIndex(id, this.descriptive_name);
@@ -771,7 +771,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
-      return this.dynamoutilities.queryRecords(this.table_name, query_parameters, null)
+      return this.dynamodbprovider.queryRecords(this.table_name, query_parameters, null)
       .then(data => this.getItems(data))
       .then(items => this.assureSingular(items))
       .then(item => {
@@ -804,7 +804,7 @@ module.exports = class entityController extends entityUtilitiesController {
             .then(() => {
                 parameters = this.appendAccountFilter({query_parameters: parameters});
 
-                return this.dynamoutilities.countRecords(this.table_name, parameters, index);
+                return this.dynamodbprovider.countRecords(this.table_name, parameters, index);
             })
     }
 
@@ -865,13 +865,13 @@ module.exports = class entityController extends entityUtilitiesController {
 
       du.debug('Create IN Query Parameters');
 
-      return this.dynamoutilities.createINQueryParameters(field, list_array);
+      return this.dynamodbprovider.createINQueryParameters(field, list_array);
 
     }
 
     appendDisjunctionQueryParameters({query_parameters, field_name, array }){
 
-      return this.dynamoutilities.appendDisjunctionQueryParameters(query_parameters, field_name, array);
+      return this.dynamodbprovider.appendDisjunctionQueryParameters(query_parameters, field_name, array);
 
     }
 

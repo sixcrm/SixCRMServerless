@@ -5,6 +5,8 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const S3Deployment = global.SixCRM.routes.include('deployment', 'utilities/s3-deployment.js');
+const DataPipelineProvider = global.SixCRM.routes.include('lib', 'providers/data-pipeline-utilities.js');
+const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
 
 module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 
@@ -12,9 +14,9 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 
 		super();
 
-		this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+		this.s3provider = new S3Provider();
 		this.s3deployment = new S3Deployment();
-		this.datapipelineutilities = global.SixCRM.routes.include('lib', 'data-pipeline-utilities.js');
+		this.datapipelineprovider = new DataPipelineProvider();
 		this.unique_id = `sixcrm-${process.env.stage}-seed-dynamodb`;
 	}
 
@@ -40,11 +42,11 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 			};
 
 
-			return this.datapipelineutilities.createPipeline({ parameters: create_parameters })
+			return this.datapipelineprovider.createPipeline({ parameters: create_parameters })
 				.then(result => this.buildPipelineDefinitionParams({pipeline_id: result.pipelineId}))
-				.then(definition => this.datapipelineutilities.validatePipelineDefinition({parameters: definition}))
-				.then(definition => this.datapipelineutilities.putPipelineDefinition({parameters: definition}))
-				.then(definition => this.datapipelineutilities.activatePipeline({parameters: {pipelineId: definition.pipelineId}}))
+				.then(definition => this.datapipelineprovider.validatePipelineDefinition({parameters: definition}))
+				.then(definition => this.datapipelineprovider.putPipelineDefinition({parameters: definition}))
+				.then(definition => this.datapipelineprovider.activatePipeline({parameters: {pipelineId: definition.pipelineId}}))
 				.catch(error => eu.throwError('server', error.message));
 
 	}
@@ -74,7 +76,7 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 		}
 
 		//Does the seed file already exist?
-		return this.s3utilities.objectExists(parameters).then(result => {
+		return this.s3provider.objectExists(parameters).then(result => {
 
 			if (result) {
 				//Yes, return true
@@ -89,7 +91,7 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 
 					parameters.body = file_data;
 
-					return this.s3utilities.putObject({ Bucket: this.data_pipeline_bucket, Key: `seeds/${seed_file_name}`, Body: file_data }).then(result => {
+					return this.s3provider.putObject({ Bucket: this.data_pipeline_bucket, Key: `seeds/${seed_file_name}`, Body: file_data }).then(result => {
 
 						du.warning(result);
 						return result;
@@ -115,8 +117,8 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 		this.data_pipeline_bucket = this.s3deployment.createEnvironmentSpecificBucketName(bucket);
 
 		//Technical Debt: could use some better validation thatj ust verifiying if the seeds folder has items
-		return this.s3utilities.assureBucket({ Bucket: this.data_pipeline_bucket }) //Does the bucket exist?
-			.then(() => this.s3utilities.listObjects(this.data_pipeline_bucket, null, additional_params)
+		return this.s3provider.assureBucket({ Bucket: this.data_pipeline_bucket }) //Does the bucket exist?
+			.then(() => this.s3provider.listObjects(this.data_pipeline_bucket, null, additional_params)
 				.then(result => {
 
 					//Do the correct number of seeds exist?

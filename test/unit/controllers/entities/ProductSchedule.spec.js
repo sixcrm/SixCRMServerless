@@ -38,8 +38,8 @@ describe('controllers/ProductSchedule.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('productschedules');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -77,8 +77,8 @@ describe('controllers/ProductSchedule.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('productschedules');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -120,8 +120,8 @@ describe('controllers/ProductSchedule.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('productschedules');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -163,8 +163,8 @@ describe('controllers/ProductSchedule.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('productschedules');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -261,8 +261,8 @@ describe('controllers/ProductSchedule.js', () => {
 
             let product_schedule = getValidProductSchedule();
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                createINQueryParameters: (field, list_array) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                createINQueryParameters(field, list_array) {
                     expect(field).to.equal('id');
                     expect(list_array[0]).to.deep.equal(product_schedule.schedule[0].product);
                     return Promise.resolve({
@@ -295,16 +295,16 @@ describe('controllers/ProductSchedule.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                createINQueryParameters: (field, list_array) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                createINQueryParameters(field, list_array) {
                     expect(field).to.equal('id');
                     expect(list_array).to.deep.equal([product_schedule.id]);
                     return Promise.resolve({
                         filter_expression: 'a_filter',
                         expression_attribute_values: 'an_expression_values'
                     })
-                },
-                queryRecords: (table, parameters, index) => {
+                }
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('productschedules');
                     expect(parameters).to.have.property('filter_expression');
@@ -339,8 +339,8 @@ describe('controllers/ProductSchedule.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'productschedule');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('productschedules');
                     expect(parameters).to.have.property('filter_expression');

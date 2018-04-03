@@ -1,7 +1,7 @@
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+const LambdaProvider = global.SixCRM.routes.include('lib', 'providers/lambda-provider.js');
+const lambdaprovider = new LambdaProvider();
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-
 
 class StateMachineTestUtils {
 
@@ -28,7 +28,7 @@ class StateMachineTestUtils {
         }
 
         let all_function_executions = arrayutilities.map(lambda_names, (lambda_name) => {
-            let lambda = lambdautilities.getLambdaInstance(lambda_name);
+            let lambda = lambdaprovider.getLambdaInstance(lambda_name);
             let function_name = Object.keys(lambda); // function is the first property of the handler
 
             return lambda[function_name](null, null, () => {

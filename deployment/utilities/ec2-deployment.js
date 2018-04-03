@@ -3,7 +3,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const EC2Utilities = global.SixCRM.routes.include('lib', 'ec2-utilities.js');
+const EC2Provider = global.SixCRM.routes.include('lib', 'providers/ec2-provider.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
 module.exports = class EC2Deployment extends AWSDeploymentUtilities{
@@ -12,7 +12,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
     super();
 
-    this.ec2utilities = new EC2Utilities();
+    this.ec2provider = new EC2Provider();
 
     this.parameter_groups = {
       security_group: {
@@ -58,10 +58,10 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
     let ingress_parameter_group = this.createIngressParameterGroup(security_group_definition);
     let egress_parameter_group = this.createEgressParameterGroup(security_group_definition);
 
-    return this.ec2utilities.assureSecurityGroup(this.createParameterGroup('security_group', 'create', security_group_definition))
+    return this.ec2provider.assureSecurityGroup(this.createParameterGroup('security_group', 'create', security_group_definition))
     .then(() => {
       if(!_.isNull(ingress_parameter_group)){
-        return this.ec2utilities.addSecurityGroupIngressRules(ingress_parameter_group);
+        return this.ec2provider.addSecurityGroupIngressRules(ingress_parameter_group);
       }else{
         return Promise.resolve(null);
       }
@@ -74,7 +74,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
     })
     .then(() => {
       if(!_.isNull(egress_parameter_group)){
-        return this.ec2utilities.addSecurityGroupEgressRules(egress_parameter_group);
+        return this.ec2provider.addSecurityGroupEgressRules(egress_parameter_group);
       }else{
         return Promise.resolve(null);
       }
@@ -162,7 +162,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
     let parameters = this.createDestroyParameterGroup(security_group_definition);
 
-    return this.ec2utilities.destroySecurityGroup(parameters);
+    return this.ec2provider.destroySecurityGroup(parameters);
 
   }
 

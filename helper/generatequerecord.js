@@ -9,7 +9,8 @@ const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
 
 setEnvironmentVariables();
 
-const kinesisfirehoseutilities = require('../lib/kinesis-firehose-utilities');
+const KinesisFirehoseProvider = require('../lib/providers/kinesis-firehose-provider');
+const kinesisFirehoseProvider = new KinesisFirehoseProvider();
 
 function createRandomKinesisQueueRecord(){
 
@@ -33,7 +34,7 @@ function setEnvironmentVariables(){
 
 }
 
-return kinesisfirehoseutilities.putRecord('queues', createRandomKinesisQueueRecord()).then((result) => {
+return kinesisFirehoseProvider.putRecord('queues', createRandomKinesisQueueRecord()).then((result) => {
     du.output('Kinesis Firehose Result', result);
     return result;
 })

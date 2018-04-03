@@ -5,12 +5,13 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const SNSProvider = global.SixCRM.routes.include('lib', 'providers/sns-provider.js');
 
 module.exports = class EventHelperController {
 
 	constructor() {
 
-		this.snsutilities = global.SixCRM.routes.include('lib', 'sns-utilities.js');
+		this.snsprovider = new SNSProvider();
 
 		this.topic_arn = 'arn:aws:sns:{{region}}:{{account}}:events';
 
@@ -22,7 +23,7 @@ module.exports = class EventHelperController {
 
 		let publish_parameters = this.createPublishParameters(event);
 
-		return this.snsutilities.publish(publish_parameters);
+		return this.snsprovider.publish(publish_parameters);
 
 	}
 
@@ -100,7 +101,7 @@ module.exports = class EventHelperController {
 		return parserutilities.parse(this.topic_arn, {
 			//Technical Debt:  These explicit references are a no-no
 			account: global.SixCRM.configuration.site_config.aws.account,
-			region: this.snsutilities.getRegion()
+			region: this.snsprovider.getRegion()
 		});
 
 	}

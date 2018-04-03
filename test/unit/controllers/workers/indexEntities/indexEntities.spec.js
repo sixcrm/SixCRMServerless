@@ -155,7 +155,7 @@ describe('controllers/workers/indexEntities', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/Indexing.js'), mock_indexing_helper_controller);
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/cloudsearch-utilities.js'), class {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/cloudsearch-provider.js'), class {
             uploadDocuments() {
                 return Promise.resolve(cloudsearch_response);
             }
@@ -264,7 +264,7 @@ describe('controllers/workers/indexEntities', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/Indexing.js'), mock_indexing_helper_controller);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/cloudsearch-utilities.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/cloudsearch-provider.js'), class {
         uploadDocuments() {
           return Promise.resolve(cloudsearch_response);
         }

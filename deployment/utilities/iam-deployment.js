@@ -8,6 +8,7 @@ const random = global.SixCRM.routes.include('lib','random.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
+const IAMProvider = global.SixCRM.routes.include('lib', 'providers/iam-provider.js');
 
 module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
@@ -15,7 +16,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
       super();
 
-      this.iamutilities =  global.SixCRM.routes.include('lib', 'iam-utilities.js');
+      this.iamprovider = new IAMProvider();
 
       this.parameter_groups = {
         role: {
@@ -127,7 +128,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
         PolicyArn:policy_arn
       };
 
-      return this.iamutilities.getPolicy(parameters).then(policy => {
+      return this.iamprovider.getPolicy(parameters).then(policy => {
         du.info(policy);
         return !(_.isNull(policy));
       });
@@ -151,7 +152,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
         PolicyDocument: stringified_policy_document
       };
 
-      return this.iamutilities.createPolicy(parameters);
+      return this.iamprovider.createPolicy(parameters);
 
     }
 
@@ -172,7 +173,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
       };
 
       return this.removeAssociatedRoles(parameters)
-      .then(() => this.iamutilities.deletePolicy(parameters));
+      .then(() => this.iamprovider.deletePolicy(parameters));
 
     }
 
@@ -184,7 +185,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
       parameter_clone.EntityFilter = 'Role';
 
-      return this.iamutilities.listEntitiesForPolicy(parameters).then(entities => {
+      return this.iamprovider.listEntitiesForPolicy(parameters).then(entities => {
 
         if(_.has(entities, 'PolicyRoles') && arrayutilities.nonEmpty(entities.PolicyRoles)){
 
@@ -195,7 +196,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
               RoleName: role.RoleName
             };
 
-            return this.iamutilities.detachRolePolicy(detach_parameters);
+            return this.iamprovider.detachRolePolicy(detach_parameters);
 
           });
 
@@ -276,7 +277,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
       let exists_parameters = this.transformDefinition('role', 'exists', role_definition);
 
-      return this.iamutilities.roleExists(exists_parameters);
+      return this.iamprovider.roleExists(exists_parameters);
 
     }
 
@@ -300,7 +301,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
       create_parameters.AssumeRolePolicyDocument = parserutilities.parse(create_parameters.AssumeRolePolicyDocument, {aws_account_id: global.SixCRM.configuration.site_config.aws.account});
 
-      return this.iamutilities.createRole(create_parameters).then(() => {
+      return this.iamprovider.createRole(create_parameters).then(() => {
 
         return timestamp.delay(3000)().then(() => this.addPoliciesAndPermissions(role_definition));
 
@@ -314,7 +315,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
       let list_attached_role_policies_parameters = this.transformDefinition('role', 'list_attached', role_definition);
 
-      return this.iamutilities.listAttachedRolePolicies(list_attached_role_policies_parameters).then((role_policies) => {
+      return this.iamprovider.listAttachedRolePolicies(list_attached_role_policies_parameters).then((role_policies) => {
 
         if(_.has(role_policies, 'AttachedPolicies')){
 
@@ -322,7 +323,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
             let detach_parameters = {RoleName: role_definition.RoleName, PolicyArn: attached_policy.PolicyArn};
 
-            return this.iamutilities.detachRolePolicy(detach_parameters);
+            return this.iamprovider.detachRolePolicy(detach_parameters);
 
           });
 
@@ -354,7 +355,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
           policy_arn = parserutilities.parse(policy_arn, {account: global.SixCRM.configuration.site_config.aws.account});
 
-          return this.iamutilities.attachRolePolicy({
+          return this.iamprovider.attachRolePolicy({
             RoleName: role_name,
             PolicyArn: policy_arn
           });
@@ -441,7 +442,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
       let delete_parameters = this.transformDefinition('role', 'delete', role_definition);
 
-      return this.iamutilities.deleteRole(delete_parameters);
+      return this.iamprovider.deleteRole(delete_parameters);
 
 		}
 
@@ -454,12 +455,12 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 				InstanceProfileName : 'DataPipelineDefaultResourceRole'
 			}
 
-			return this.iamutilities.createInstanceProfile(parameters)
+			return this.iamprovider.createInstanceProfile(parameters)
 				.then(() => {
 
 					parameters.RoleName = 'DataPipelineDefaultResourceRole'
 
-					return this.iamutilities.addRoleToInstanceProfile(parameters);
+					return this.iamprovider.addRoleToInstanceProfile(parameters);
 				});
 
 		}

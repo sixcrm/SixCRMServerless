@@ -247,8 +247,8 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           expect.fail();
         }
       });
@@ -271,8 +271,8 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           expect.fail();
         }
       });
@@ -298,8 +298,8 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord(table, object) {
           expect(table).to.equal('rebills');
           expect(object.id_rebill).to.equal(rebill.id);
           expect(object.current_queuename).to.equal('hold');
@@ -337,8 +337,8 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord(table, object) {
           expect(table).to.equal('rebills');
           expect(object.id_rebill).to.equal(rebill.id);
           expect(object.current_queuename).to.equal('shipped');
@@ -384,8 +384,8 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord(table, object) {
           expect(table).to.equal('rebills');
           expect(object.id_rebill).to.equal(rebill.id);
           expect(object.current_queuename).to.equal('hold');
@@ -439,8 +439,8 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: (table, object) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord(table, object) {
           expect(table).to.equal('rebills');
           expect(object.id_rebill).to.equal(rebill.id);
           expect(object.current_queuename).to.equal('pending');
@@ -496,8 +496,8 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let rebill = getValidRebill();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           return Promise.resolve(true);
         }
       });
@@ -525,8 +525,8 @@ describe('/helpers/entities/Rebill.js', () => {
       let queue_name = 'hold';
       let queue_message_body_prototype = getValidQueueMessageBodyPrototype();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           return Promise.resolve(true);
         }
       });

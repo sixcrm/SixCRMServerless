@@ -4,6 +4,7 @@ const crypto = require('crypto');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
 
 module.exports = class cacheController {
 
@@ -13,7 +14,7 @@ module.exports = class cacheController {
             this.key_prefix = prefix;
         }
 
-        this.redisutilities =  global.SixCRM.routes.include('lib', 'redis-utilities.js');
+        this.redisprovider = new RedisProvider();
 
     }
 
@@ -116,7 +117,7 @@ module.exports = class cacheController {
 
         du.debug('Get Cache');
 
-        return this.redisutilities.get(key);
+        return this.redisprovider.get(key);
 
     }
 
@@ -124,7 +125,7 @@ module.exports = class cacheController {
 
         du.debug('Set Cache');
 
-        return this.redisutilities.set(key, result, expiration);
+        return this.redisprovider.set(key, result, expiration);
 
     }
 

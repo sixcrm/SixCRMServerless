@@ -1,8 +1,8 @@
 'use strict';
 const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
-const cloudsearchutilities = new CloudsearchUtilities();
+const CloudsearchProvider = global.SixCRM.routes.include('lib', 'providers/cloudsearch-provider.js');
+const cloudsearchprovider = new CloudsearchProvider();
 
 module.exports = class SuggestController {
 
@@ -22,7 +22,7 @@ module.exports = class SuggestController {
 
             du.debug('Suggestion Parameters:', suggestion_parameters);
 
-            cloudsearchutilities.suggest(suggestion_parameters).then((results) => {
+            cloudsearchprovider.suggest(suggestion_parameters).then((results) => {
 
                 du.debug('Raw Results:', results);
 

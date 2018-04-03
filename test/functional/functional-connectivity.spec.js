@@ -6,6 +6,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
 const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
+const DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
 
 describe('Test connections to Docker Services', () => {
 
@@ -13,7 +14,7 @@ describe('Test connections to Docker Services', () => {
 
     it('successfully connects to the Docker DynamoDB instance', () => {
 
-      let dynamodb = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
+      let dynamodb = new DynamoDBProvider();
 
       return dynamodb.listTables({}).then(result => {
         expect(result).to.have.property('TableNames');
@@ -27,9 +28,10 @@ describe('Test connections to Docker Services', () => {
 
     it('successfully connects to the Docker SQS instance', () => {
 
-      let sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+        const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+        const sqsprovider = new SQSProvider();
 
-      return sqsutilities.listQueues().then(result => {
+      return sqsprovider.listQueues().then(result => {
         expect(result).to.have.property('ResponseMetadata');
       })
 
@@ -93,16 +95,17 @@ describe('Test connections to Docker Services', () => {
 
     it('successfully connects to the Docker Elasticache Instance', () => {
 
-      let redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+      const RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+      let redisprovider = new RedisProvider();
 
-      expect(redisutilities).to.have.property('endpoint');
+      expect(redisprovider).to.have.property('endpoint');
 
       let test_value = random.createRandomString(20);
 
-      return redisutilities.set('test', {'abc': test_value})
+      return redisprovider.set('test', {'abc': test_value})
         .then((result) => {
           expect(result).to.equal('OK');
-          return redisutilities.get('test');
+          return redisprovider.get('test');
         })
         .then((result) => {
           expect(result.abc).to.equal(test_value);
@@ -116,9 +119,10 @@ describe('Test connections to Docker Services', () => {
 
     it('successfully connects to the Docker SNS Instance', () => {
 
-      let snsutilities = global.SixCRM.routes.include('lib', 'sns-utilities.js');
+      const SNSProvider = global.SixCRM.routes.include('lib', 'providers/sns-provider.js');
+      let snsprovider = new SNSProvider();
 
-      return snsutilities.createTopic({"Name": "events"})
+      return snsprovider.createTopic({"Name": "events"})
         .then((response) => {
           expect(response).to.have.property('ResponseMetadata');
         })

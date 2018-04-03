@@ -6,11 +6,8 @@ const expect = chai.expect;
 const mockery = require('mockery');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidReferenceNumber(){
@@ -33,8 +30,6 @@ function getValidCustomer(id){
 
 function getValidProducts(product_ids){
 
-  let products = [];
-
   if(_.isUndefined(product_ids)){
     product_ids = [uuidV4(), uuidV4()];
   }
@@ -46,7 +41,7 @@ function getValidProducts(product_ids){
 }
 
 function getValidThreePLResponse(method){
-
+  /* eslint-disable */
   let method_responses = {
     FindOrders: {
       body:'<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body><FindOrders xmlns=\"http://www.JOI.com/schemas/ViaSub.WMS/\">&lt;orders&gt;&lt;order&gt;&lt;CustomerName&gt;Tests Hashtag Tests&lt;/CustomerName&gt;&lt;CustomerEmail&gt;Charlie.C@Hashtagfulfillment.com&lt;/CustomerEmail&gt;&lt;CustomerPhone&gt;&lt;/CustomerPhone&gt;&lt;Facility&gt;Hashtag Fulfillment&lt;/Facility&gt;&lt;FacilityID&gt;2&lt;/FacilityID&gt;&lt;WarehouseTransactionID&gt;1181282&lt;/WarehouseTransactionID&gt;&lt;ReferenceNum&gt;Order 682&lt;/ReferenceNum&gt;&lt;PONum&gt;&lt;/PONum&gt;&lt;Retailer /&gt;&lt;ShipToCompanyName&gt;Example Company&lt;/ShipToCompanyName&gt;&lt;ShipToName&gt;Example Company&lt;/ShipToName&gt;&lt;ShipToEmail&gt;&lt;/ShipToEmail&gt;&lt;ShipToPhone&gt;&lt;/ShipToPhone&gt;&lt;ShipToAddress1&gt;Example Address&lt;/ShipToAddress1&gt;&lt;ShipToAddress2&gt;&lt;/ShipToAddress2&gt;&lt;ShipToCity&gt;Example City&lt;/ShipToCity&gt;&lt;ShipToState&gt;CA&lt;/ShipToState&gt;&lt;ShipToZip&gt;90505&lt;/ShipToZip&gt;&lt;ShipToCountry&gt;US&lt;/ShipToCountry&gt;&lt;ShipMethod&gt;Next Day Air&lt;/ShipMethod&gt;&lt;MarkForName&gt;&lt;/MarkForName&gt;&lt;BatchOrderID /&gt;&lt;CreationDate&gt;2016-01-19T14:56:00&lt;/CreationDate&gt;&lt;EarliestShipDate /&gt;&lt;ShipCancelDate /&gt;&lt;PickupDate /&gt;&lt;Carrier&gt;Fed Ex&lt;/Carrier&gt;&lt;BillingCode&gt;BillThirdParty&lt;/BillingCode&gt;&lt;TotWeight&gt;0.33&lt;/TotWeight&gt;&lt;TotCuFt&gt;0.00&lt;/TotCuFt&gt;&lt;TotPackages&gt;1.0000&lt;/TotPackages&gt;&lt;TotOrdQty&gt;1.0000&lt;/TotOrdQty&gt;&lt;TotLines&gt;1.00&lt;/TotLines&gt;&lt;Notes&gt;&lt;/Notes&gt;&lt;OverAllocated&gt;&lt;/OverAllocated&gt;&lt;PickTicketPrintDate /&gt;&lt;ProcessDate&gt;2016-01-19&lt;/ProcessDate&gt;&lt;TrackingNumber&gt;&lt;/TrackingNumber&gt;&lt;LoadNumber&gt;&lt;/LoadNumber&gt;&lt;BillOfLading&gt;&lt;/BillOfLading&gt;&lt;MasterBillOfLading&gt;&lt;/MasterBillOfLading&gt;&lt;ASNSentDate /&gt;&lt;ConfirmASNSentDate&gt;&lt;/ConfirmASNSentDate&gt;&lt;RememberRowInfo&gt;1181282:10:2::2016/01/19:0:False:1:735163&lt;/RememberRowInfo&gt;&lt;/order&gt;&lt;/orders&gt;</FindOrders><totalOrders xmlns=\"http://www.JOI.com/schemas/ViaSub.WMS/\">2729</totalOrders></soap:Body></soap:Envelope>',
@@ -58,7 +53,8 @@ function getValidThreePLResponse(method){
       statusCode:200,
       statusMessage:'OK'
     }
-  }
+  };
+  /* eslint-enable */
 
   return method_responses[method];
 
@@ -139,8 +135,8 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
         body: three_pl_response.body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:(options) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response_object);
         }
       });
@@ -175,8 +171,8 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
         body: three_pl_response.body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:(options) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response_object);
         }
       });
@@ -210,8 +206,8 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
         body: three_pl_response.body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:(options) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response_object);
         }
       });
@@ -249,8 +245,8 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
         body: three_pl_response.body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:(options) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response_object);
         }
       });
@@ -290,8 +286,8 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
         body: three_pl_response.body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:(options) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response_object);
         }
       });
@@ -325,8 +321,8 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
         body: three_pl_response.body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:(options) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response_object);
         }
       });

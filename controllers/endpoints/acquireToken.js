@@ -1,7 +1,8 @@
 'use strict'
 const _ = require('underscore');
 
-const jwtutilities  = global.SixCRM.routes.include('lib', 'jwt-utilities');
+const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
+const jwtprovider  = new JWTProvider();
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
@@ -92,7 +93,7 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
         }
       };
 
-      let transaction_jwt = jwtutilities.getJWT(jwt_prototype, 'transaction');
+      let transaction_jwt = jwtprovider.getJWT(jwt_prototype, 'transaction');
 
       this.parameters.set('transactionjwt', transaction_jwt);
 

@@ -125,8 +125,8 @@ describe('controllers/entities/UserACL.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'useracl');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
                     expect(parameters).to.have.property('expression_attribute_names');
@@ -207,8 +207,8 @@ describe('controllers/entities/UserACL.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'useracl');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(table).to.equal('useracls');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -242,11 +242,11 @@ describe('controllers/entities/UserACL.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'useracl');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve([]);
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     return Promise.resolve(entity);
                 }
             });
@@ -307,11 +307,11 @@ describe('controllers/entities/UserACL.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'useracl');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({Items: [params.entity]});
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     return Promise.resolve(entity);
                 }
             });

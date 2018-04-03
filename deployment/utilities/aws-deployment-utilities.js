@@ -5,12 +5,13 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+const STSProvider = global.SixCRM.routes.include('lib', 'providers/sts-provider.js');
 
 module.exports = class AWSDeploymentUtilities {
 
   constructor(){
 
-    this.stsutilities = global.SixCRM.routes.include('lib', 'sts-utilities.js');
+    this.stsprovider = new STSProvider();
 
   }
 
@@ -24,7 +25,7 @@ module.exports = class AWSDeploymentUtilities {
 
     du.debug('Role Parameters: ', assume_role_parameters);
 
-    return this.stsutilities.assumeRole(assume_role_parameters).then(result => {
+    return this.stsprovider.assumeRole(assume_role_parameters).then(result => {
 
       mvu.validateModel(result, global.SixCRM.routes.path('model', 'deployment/sts/assumedroleresponse.json'));
 
@@ -40,7 +41,7 @@ module.exports = class AWSDeploymentUtilities {
 
     let assume_role_parameters = this.getEnvironmentAssumedRoleParameters(environment_key);
 
-    return this.stsutilities.assumeRole(assume_role_parameters).then(result => {
+    return this.stsprovider.assumeRole(assume_role_parameters).then(result => {
 
       return this.setAssumedRoleProperties(result);
 

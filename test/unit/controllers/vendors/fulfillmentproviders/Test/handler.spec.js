@@ -109,8 +109,8 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
 
       fulfillment_provider.provider.name = 'Test';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        postJSON:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        postJSON() {
           return Promise.resolve(getValidResponse());
         }
       });
@@ -141,8 +141,8 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
       fulfillment_provider.provider.name = 'Test';
       let shipping_receipt = getValidShippingReceipt();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        postJSON:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        postJSON() {
           return Promise.resolve(response_object);
         }
       });
@@ -181,8 +181,8 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
       let fulfillment_provider = getValidFulfillmentProvider();
       let response_object = getValidResponse();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        postJSON:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        postJSON() {
           return Promise.resolve(response_object);
         }
       });

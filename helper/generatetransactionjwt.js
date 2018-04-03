@@ -4,7 +4,8 @@ const _ = require('underscore');
 require('../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
+const jwtprovider = new JWTProvider();
 
 let site_config = global.SixCRM.configuration.site_config;
 
@@ -19,10 +20,10 @@ if(_.isUndefined(email) || _.isNull(email)){
     email = 'super.user@test.com';
 }
 
-jwtutilities.setParameters();
+jwtprovider.setParameters();
 
-let jwt = jwtutilities.getJWT({user:{email: email}}, 'transaction');
-let decoded = jwtutilities.verifyJWT(jwt, 'transaction');
+let jwt = jwtprovider.getJWT({user:{email: email}}, 'transaction');
+let decoded = jwtprovider.verifyJWT(jwt, 'transaction');
 
 du.output('Decoded JWT: ', decoded);
 du.output('JWT: ', jwt);

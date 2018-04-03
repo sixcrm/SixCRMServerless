@@ -3,7 +3,7 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-const SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
+const SMTPProvider = global.SixCRM.routes.include('lib', 'providers/smtp-provider.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class CustomerMailerHelper {
@@ -44,7 +44,7 @@ module.exports = class CustomerMailerHelper {
 
     let instantiation_options = this.createInstantiationOptions();
 
-    this.smtputilities = new SMTPUtilities(instantiation_options);
+    this.smtpprovider = new SMTPProvider(instantiation_options);
 
     return true;
 
@@ -131,7 +131,7 @@ module.exports = class CustomerMailerHelper {
 
     let processed_send_options = this.parameters.get('processedsendoptions');
 
-    return this.smtputilities.send(processed_send_options);
+    return this.smtpprovider.send(processed_send_options);
 
   }
 

@@ -83,8 +83,8 @@ describe('controllers/CustomerNote.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'customernote');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('customer-index');
                     expect(table).to.equal('customernotes');
                     expect(parameters).to.have.property('expression_attribute_names');

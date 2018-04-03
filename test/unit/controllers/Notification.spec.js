@@ -29,21 +29,21 @@ describe('controllers/Notification.js', () => {
             PermissionTestGenerators.givenAnyUser();
 
             //Technical Debt:  Fix...
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                get: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                get() {
                   return Promise.resolve({
                     id: "nikola.bosic@toptal.com/*",
                     created_at: "2017-04-06T18:40:41.405Z",
                     updated_at: "2017-04-06T18:41:12.521Z"
                   })
-                },
-                queryRecords: () => {
+                }
+                queryRecords() {
                     return Promise.resolve({ Count: 2})
-                },
-                saveRecord: () => {
+                }
+                saveRecord() {
                     return Promise.resolve({});
-                },
-                countRecords: () => {
+                }
+                countRecords() {
                     return Promise.resolve({ Count: 2});
                 }
             });
@@ -68,8 +68,8 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities.js'), {
-                putRecord: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+                putRecord() {
                     return Promise.resolve();
                 }
             });

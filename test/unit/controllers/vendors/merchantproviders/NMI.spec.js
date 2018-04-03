@@ -3,8 +3,6 @@ const _ = require('underscore');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-let querystring = require('querystring');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -84,7 +82,7 @@ function getValidRequestParametersObject(){
 
 }
 
-function getMockResponse(){
+/*function getMockResponse(){
 
   let mocked_callback = {
     response: '3',
@@ -100,7 +98,7 @@ function getMockResponse(){
 
   return querystring.stringify(mocked_callback);
 
-}
+}*/
 
 describe('vendors/merchantproviders/NMI.js', () => {
 
@@ -125,7 +123,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
       try {
 
-        let nmi_controller = new NMIController({});
+        new NMIController({});
 
       }catch(error){
 
@@ -285,8 +283,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response);
         }
       });
@@ -323,8 +321,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response);
         }
       });
@@ -366,8 +364,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response);
         }
       });
@@ -405,8 +403,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response);
         }
       });
@@ -448,8 +446,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response);
         }
       });
@@ -487,8 +485,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response);
         }
       });
@@ -531,8 +529,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response);
         }
       });
@@ -567,8 +565,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response);
         }
       });

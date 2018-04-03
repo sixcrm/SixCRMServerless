@@ -4,13 +4,13 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+const CloudsearchProvider = global.SixCRM.routes.include('lib', 'providers/cloudsearch-provider.js');
 
 module.exports = class CloudsearchDeployment{
 
     constructor() {
 
-      this.cloudsearchutilities = new CloudsearchUtilities();
+      this.cloudsearchprovider = new CloudsearchProvider();
 
       this.setDomainName()
 
@@ -72,7 +72,7 @@ module.exports = class CloudsearchDeployment{
           size: '10000'
       };
 
-      return this.cloudsearchutilities.search(query_parameters).then((results) => {
+      return this.cloudsearchprovider.search(query_parameters).then((results) => {
 
         du.warning(results);
 
@@ -136,7 +136,7 @@ module.exports = class CloudsearchDeployment{
 
       }else{
 
-        return this.cloudsearchutilities.uploadDocuments(purge_document).then((response) => {
+        return this.cloudsearchprovider.uploadDocuments(purge_document).then((response) => {
 
           du.highlight('Purge Response: ', response);
 
@@ -156,9 +156,9 @@ module.exports = class CloudsearchDeployment{
 
         if(result == false){
 
-          return this.cloudsearchutilities.createDomain()
-            .then(() => this.cloudsearchutilities.waitFor('ready'))
-            .then(() => this.cloudsearchutilities.saveDomainConfiguration())
+          return this.cloudsearchprovider.createDomain()
+            .then(() => this.cloudsearchprovider.waitFor('ready'))
+            .then(() => this.cloudsearchprovider.saveDomainConfiguration())
 
         }else{
 
@@ -166,7 +166,7 @@ module.exports = class CloudsearchDeployment{
 
             if(result.Processing == true){
               du.highlight('Domain is processing...');
-              return this.cloudsearchutilities.waitFor('ready');
+              return this.cloudsearchprovider.waitFor('ready');
             }else{
               return result;
             }
@@ -233,7 +233,7 @@ module.exports = class CloudsearchDeployment{
 
       du.debug('Create Cloudsearch Index');
 
-      return this.cloudsearchutilities.defineIndexField(index_object);
+      return this.cloudsearchprovider.defineIndexField(index_object);
 
     }
 
@@ -241,7 +241,7 @@ module.exports = class CloudsearchDeployment{
 
       du.debug('Index Cloudsearch Documents');
 
-      return this.cloudsearchutilities.indexDocuments(domainname);
+      return this.cloudsearchprovider.indexDocuments(domainname);
 
     }
 
@@ -253,8 +253,8 @@ module.exports = class CloudsearchDeployment{
 
         if(_.isObject(result)){
 
-          return this.cloudsearchutilities.deleteDomain(domainname).then(() => {
-            return this.cloudsearchutilities.waitFor('deleted');
+          return this.cloudsearchprovider.deleteDomain(domainname).then(() => {
+            return this.cloudsearchprovider.waitFor('deleted');
           });
 
         }
@@ -273,7 +273,7 @@ module.exports = class CloudsearchDeployment{
         domainname = this.domainname;
       }
 
-      return this.cloudsearchutilities.describeDomains([domainname]).then((results) => {
+      return this.cloudsearchprovider.describeDomains([domainname]).then((results) => {
 
         if(_.has(results, 'DomainStatusList') && _.isArray(results.DomainStatusList) && results.DomainStatusList.length > 0){
 

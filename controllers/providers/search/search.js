@@ -1,8 +1,8 @@
 'use strict';
 const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
-const cloudsearchutilities = new CloudsearchUtilities();
+const CloudsearchProvider = global.SixCRM.routes.include('lib', 'providers/cloudsearch-provider.js');
+const cloudsearchprovider = new CloudsearchProvider();
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
 module.exports = class SearchController {
@@ -147,7 +147,7 @@ module.exports = class SearchController {
 
             return this.appendFilters(search_input).then((search_input) => {
 
-                return cloudsearchutilities.search(search_input).then((results) => {
+                return cloudsearchprovider.search(search_input).then((results) => {
 
                     du.highlight(results);
 

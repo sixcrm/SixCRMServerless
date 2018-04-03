@@ -4,7 +4,7 @@ module.exports.graph = (event, context, callback) => {
 
   require('../../../SixCRM.js');
 
-  const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  const LambdaResponse = global.SixCRM.routes.include('lib', 'providers/lambda-response.js');
   const graphController = global.SixCRM.routes.include('controllers', 'endpoints/graph.js');
 
   let gc = new graphController();

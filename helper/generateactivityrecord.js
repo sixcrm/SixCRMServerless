@@ -16,7 +16,8 @@ entities = entities.map(function(filename){
     return filename.substring(0, filename.indexOf("s.json"));
 });
 
-const kinesisfirehoseutilities = require('../lib/kinesis-firehose-utilities');
+const KinesisFirehoseProvider = require('../lib/providers/kinesis-firehose-provider');
+const kinesisFirehoseProvider = new KinesisFirehoseProvider();
 
 function createRandomKinesisActivityRecord(){
 
@@ -109,7 +110,7 @@ function setEnvironmentVariables(){
 
 }
 
-return kinesisfirehoseutilities.putRecord('activity', createRandomKinesisActivityRecord()).then((result) => {
+return kinesisFirehoseProvider.putRecord('activity', createRandomKinesisActivityRecord()).then((result) => {
     du.output('Kinesis Firehose Result', result);
     return result;
 })

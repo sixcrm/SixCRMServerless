@@ -3,13 +3,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 const uuidV4 = require('uuid/v4');
-
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-
-const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
 
 function getValidAbridgedEntity(){
 
@@ -52,6 +46,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
   describe('constructor', () => {
 
     it('successfully constructs', () => {
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       expect(objectutilities.getClassName(preIndexingHelperController)).to.equal('PreIndexingHelperController');
@@ -65,12 +60,13 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       let packaged_abridged_entity = getValidPackagedAbridgedEntity();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           return Promise.resolve(true);
         }
       });
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       preIndexingHelperController.parameters.set('packagedabridgedentity', packaged_abridged_entity);
@@ -88,6 +84,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       let abridged_entity = getValidAbridgedEntity();
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       preIndexingHelperController.parameters.set('abridgedentity', abridged_entity);
@@ -109,6 +106,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
       let random_fields = {abc:"123", isnt:{this:'hierarchicalstructuregreat'}, 'somethingelse':'isjustthat'};
       let preindexing_entity = objectutilities.merge(abridged_entity, random_fields);
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       preIndexingHelperController.parameters.set('preindexingentity', preindexing_entity);
@@ -130,6 +128,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
       let random_fields = {abc:"123", isnt:{this:'hierarchicalstructuregreat'}, 'somethingelse':'isjustthat'};
       let preindexing_entity = objectutilities.merge(abridged_entity, random_fields);
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       preIndexingHelperController.parameters.set('preindexingentity', preindexing_entity);
@@ -147,12 +146,13 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       preindexing_entity.entity_type = 'x';
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       preIndexingHelperController.parameters.set('preindexingentity', preindexing_entity);
 
       return preIndexingHelperController.validateEntityForIndexing()
-      .then(result => {
+      .then(() => {
         expect(true).to.equal(false);
       })
       .catch(result => {
@@ -171,18 +171,19 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
       let random_fields = {abc:"123", isnt:{this:'hierarchicalstructuregreat'}, 'somethingelse':'isjustthat'};
       let preindexing_entity = objectutilities.merge(abridged_entity, random_fields);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           return Promise.resolve(true);
         }
       });
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       preIndexingHelperController.parameters.set('preindexingentity', preindexing_entity);
 
       return preIndexingHelperController.executePreIndexing()
-      .then(result => {
+      .then(() => {
         expect(true).to.equal(true);
       });
 
@@ -196,18 +197,19 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       preindexing_entity.entity_type = 'x';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           expect(true).to.equal(false);
         }
       });
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       preIndexingHelperController.parameters.set('preindexingentity', preindexing_entity);
 
       return preIndexingHelperController.executePreIndexing()
-      .then(result => {
+      .then(() => {
         expect(true).to.equal(true);
       });
 
@@ -224,12 +226,13 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       delete preindexing_entity.index_action;
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           return Promise.resolve(true);
         }
       });
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       return preIndexingHelperController.addToSearchIndex(preindexing_entity).then(result => {
@@ -253,12 +256,13 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       delete preindexing_entity.index_action;
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           return Promise.resolve(true);
         }
       });
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       return preIndexingHelperController.removeFromSearchIndex(preindexing_entity).then(result => {
@@ -279,6 +283,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       let keys = objectutilities.getKeys(global.SixCRM.routes.include('model','helpers/indexing/indexelement.json').properties);
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       preIndexingHelperController.setAbridgedEntityMap();
@@ -297,6 +302,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       let keys = global.SixCRM.routes.include('model', 'helpers/indexing/entitytype.json').enum;
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       preIndexingHelperController.setIndexingEntities();
@@ -312,18 +318,19 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
     it('successfully initializes properties', () => {
 
+      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
       let preIndexingHelperController = new PreIndexingHelperController();
 
       delete preIndexingHelperController.parameters;
       delete preIndexingHelperController.indexing_entities;
       delete preIndexingHelperController.abridged_entity_map;
-      delete preIndexingHelperController.sqsutilities;
+      delete preIndexingHelperController.sqsprovider;
       preIndexingHelperController.initialize();
 
       expect(preIndexingHelperController).to.have.property('indexing_entities');
       expect(preIndexingHelperController).to.have.property('abridged_entity_map');
       expect(preIndexingHelperController).to.have.property('parameters');
-      expect(preIndexingHelperController).to.have.property('sqsutilities');
+      expect(preIndexingHelperController).to.have.property('sqsprovider');
 
     });
 

@@ -3,7 +3,7 @@ const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-
+const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString.js');
 
 module.exports = class verifySiteJWTController {
@@ -31,8 +31,8 @@ module.exports = class verifySiteJWTController {
           bypass: 'BYPASS'
       }
 
-      this.jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
-      this.jwtutilities.setJWTType('site');
+      this.jwtprovider = new JWTProvider();
+      this.jwtprovider.setJWTType('site');
 
       const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -61,7 +61,7 @@ module.exports = class verifySiteJWTController {
 
       let token = this.parameters.get('encoded_authorization_token');
 
-      let decoded_token = this.jwtutilities.decodeJWT(token);
+      let decoded_token = this.jwtprovider.decodeJWT(token);
 
       if(decoded_token){
 
@@ -81,7 +81,7 @@ module.exports = class verifySiteJWTController {
 
       let encoded_token = this.parameters.get('encoded_authorization_token');
 
-      if(this.jwtutilities.verifyJWT(encoded_token)){
+      if(this.jwtprovider.verifyJWT(encoded_token)){
 
         this.parameters.set('verified_authorization_token', encoded_token);
 
@@ -141,7 +141,7 @@ module.exports = class verifySiteJWTController {
         let encoded_token = this.parameters.get('encoded_authorization_token');
 
         arrayutilities.find(user_signing_strings, (user_signing_string) => {
-          if(this.jwtutilities.decodeJWT(encoded_token, user_signing_string.signing_string)){
+          if(this.jwtprovider.decodeJWT(encoded_token, user_signing_string.signing_string)){
             this.parameters.set('verified_authorization_token', encoded_token);
             return true;
           }
@@ -193,11 +193,11 @@ module.exports = class verifySiteJWTController {
 
       if(!_.isUndefined(signing_string)){
 
-        decoded = jwtutilities.decodeAndValidateJWT(token, signing_string);
+        decoded = jwtprovider.decodeAndValidateJWT(token, signing_string);
 
       }else{
 
-        decoded = jwtutilities.verifyJWT(token);
+        decoded = jwtprovider.verifyJWT(token);
 
       }
 
@@ -217,7 +217,7 @@ module.exports = class verifySiteJWTController {
 
         if(!_.isNull(decoded_token)){
 
-          jwtutilities.validateJWTContents(decoded_token);
+          jwtprovider.validateJWTContents(decoded_token);
           return decoded_token.email;
 
         }

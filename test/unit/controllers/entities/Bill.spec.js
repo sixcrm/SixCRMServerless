@@ -66,11 +66,11 @@ describe('controllers/entities/Bill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'bill', '*');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({Items: [entity]});
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(entity).to.have.property('created_at');
                     expect(entity).to.have.property('updated_at');
                     expect(entity).to.have.property('id');
@@ -137,11 +137,11 @@ describe('controllers/entities/Bill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'bill', '*');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({Items: [entity]});
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(entity).to.have.property('created_at');
                     expect(entity).to.have.property('updated_at');
                     expect(entity).to.have.property('id');
@@ -193,11 +193,11 @@ describe('controllers/entities/Bill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'bill', '*');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve([]);
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(entity).to.have.property('created_at');
                     expect(entity).to.have.property('id');
                     return Promise.resolve(entity);
@@ -243,11 +243,11 @@ describe('controllers/entities/Bill.js', () => {
             //prepare permissions
             global.account = '*';
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve([]);
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     return Promise.resolve(entity);
                 }
             });

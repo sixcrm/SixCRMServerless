@@ -24,11 +24,11 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
     let parameters = this.createParametersObject('destroy');
 
-    return this.redshiftutilities.deleteCluster(parameters).then(() => {
+    return this.redshiftprovider.deleteCluster(parameters).then(() => {
 
       let parameters = this.createParametersObject('wait');
 
-      return this.redshiftutilities.waitForCluster('clusterDeleted', parameters);
+      return this.redshiftprovider.waitForCluster('clusterDeleted', parameters);
 
     });
 
@@ -42,11 +42,11 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
     return this.appendSecurityGroupIDs(parameters).then((parameters) => {
 
-      return this.redshiftutilities.createCluster(parameters).then(() => {
+      return this.redshiftprovider.createCluster(parameters).then(() => {
 
         parameters = this.createParametersObject('wait');
 
-        return this.redshiftutilities.waitForCluster('clusterAvailable', parameters).then((data) => {
+        return this.redshiftprovider.waitForCluster('clusterAvailable', parameters).then((data) => {
 
           return this.writeHostConfiguration(data).then(() => {
 
@@ -68,7 +68,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
     let parameters = this.createParametersObject('describe');
 
-    return this.redshiftutilities.clusterExists(parameters).then(exists => {
+    return this.redshiftprovider.clusterExists(parameters).then(exists => {
 
       if (!exists) {
 
@@ -96,7 +96,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
     let parameters = this.createParametersObject('describe');
 
-    return this.redshiftutilities.clusterExists(parameters).then(exists => {
+    return this.redshiftprovider.clusterExists(parameters).then(exists => {
 
       if (exists) {
 
@@ -188,10 +188,10 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
     if(_.has(this.configuration_file.cluster, 'security_group_names')){
 
-      if(!_.has(this, 'ec2utilities')){
-        let EC2Utilities = global.SixCRM.routes.include('lib', 'ec2-utilities.js');
+      if(!_.has(this, 'ec2provider')){
+        let EC2Provider = global.SixCRM.routes.include('lib', 'providers/ec2-provider.js');
 
-        this.ec2utilities =  new EC2Utilities();
+        this.ec2provider =  new EC2Provider();
       }
 
       if(!_.has(parameters, 'VpcSecurityGroupIds')){
@@ -202,7 +202,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
       let security_group_promises = arrayutilities.map(security_group_names, (security_group_name) => {
 
-        return this.ec2utilities.securityGroupExists(security_group_name).then((security_group) => {
+        return this.ec2provider.securityGroupExists(security_group_name).then((security_group) => {
 
           if(_.has(security_group, 'GroupId')){
 

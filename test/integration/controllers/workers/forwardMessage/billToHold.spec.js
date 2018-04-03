@@ -54,16 +54,16 @@ describe('controllers/workers/forwardmessage/billToHold.js', () => {
       rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
       const message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        receiveMessages: ({queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        receiveMessages({queue}) {
           du.highlight('Message read from queue (mock): ' + queue);
           return Promise.resolve([message]);
-        },
-        sendMessage: ({queue: queue}) => {
+        }
+        sendMessage({queue: queue}) {
           du.highlight('Message sent to queue (mock): ' + queue);
           return Promise.resolve(true);
-        },
-        deleteMessage: ({queue}) => {
+        }
+        deleteMessage({queue}) {
           du.highlight('Deleting message from queue: ' + queue);
           return Promise.resolve(true);
         }
@@ -115,8 +115,8 @@ describe('controllers/workers/forwardmessage/billToHold.js', () => {
 
     it('successfuly executes if no messages in queue found', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        receiveMessages: ({queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        receiveMessages({queue}) {
           du.highlight('Message read from queue (mock): ' + queue);
           return Promise.resolve([]);
         }
@@ -136,8 +136,8 @@ describe('controllers/workers/forwardmessage/billToHold.js', () => {
 
       const message = getValidMessage();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        receiveMessages:({queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        receiveMessages({queue}) {
           du.highlight('Message read from queue (mock): '+queue);
           return Promise.resolve([message]);
         }
@@ -157,15 +157,15 @@ describe('controllers/workers/forwardmessage/billToHold.js', () => {
       rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
       const message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        receiveMessages: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        receiveMessages() {
           return Promise.resolve([message]);
-        },
-        sendMessage: ({queue: queue}) => {
+        }
+        sendMessage({queue: queue}) {
           expect(queue).to.equal('bill_error');
           return Promise.resolve(true);
-        },
-        deleteMessage: ({queue}) => {
+        }
+        deleteMessage({queue}) {
           expect(queue).to.equal('bill');
           return Promise.resolve(true);
         }
@@ -196,15 +196,15 @@ describe('controllers/workers/forwardmessage/billToHold.js', () => {
       rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
       const message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        receiveMessages: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        receiveMessages() {
           return Promise.resolve([message]);
-        },
-        sendMessage: ({queue: queue}) => {
+        }
+        sendMessage({queue: queue}) {
           expect(queue).to.equal('recover');
           return Promise.resolve(true);
-        },
-        deleteMessage: ({queue}) => {
+        }
+        deleteMessage({queue}) {
           expect(queue).to.equal('bill');
           return Promise.resolve(true);
         }
@@ -237,15 +237,15 @@ describe('controllers/workers/forwardmessage/billToHold.js', () => {
 
       const message = getValidMessage(rebill.id);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        receiveMessages: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        receiveMessages() {
           return Promise.resolve([message]);
-        },
-        sendMessage: ({queue: queue}) => {
+        }
+        sendMessage({queue: queue}) {
           expect(queue).to.equal('bill_error');
           return Promise.resolve(true);
-        },
-        deleteMessage: ({queue}) => {
+        }
+        deleteMessage({queue}) {
           expect(queue).to.equal('bill');
           return Promise.resolve(true);
         }
@@ -301,15 +301,15 @@ describe('controllers/workers/forwardmessage/billToHold.js', () => {
       rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
       const message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        receiveMessages: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        receiveMessages() {
           return Promise.resolve([message]);
-        },
-        sendMessage: ({queue: queue}) => {
+        }
+        sendMessage({queue: queue}) {
           expect(queue).to.equal('recover');
           return Promise.resolve(true);
-        },
-        deleteMessage: ({queue}) => {
+        }
+        deleteMessage({queue}) {
           expect(queue).to.equal('bill');
           return Promise.resolve(true);
         }

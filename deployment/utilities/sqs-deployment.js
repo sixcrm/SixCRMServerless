@@ -7,6 +7,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
+const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
 
 module.exports = class SQSDeployment extends AWSDeploymentUtilities{
 
@@ -14,7 +15,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities{
 
       super();
 
-      this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+      this.sqsprovider = new SQSProvider();
 
     }
 
@@ -33,7 +34,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities{
           let queue_name = queue_definition.QueueName;
           let deadletter_queue_name = this.createDeadletterQueueName(queue_name);
 
-          return () => this.sqsutilities.purgeQueue(queue_name).then(() => this.sqsutilities.purgeQueue(deadletter_queue_name));
+          return () => this.sqsprovider.purgeQueue(queue_name).then(() => this.sqsprovider.purgeQueue(deadletter_queue_name));
 
         });
 
@@ -104,7 +105,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities{
 
       du.debug('Create Queue');
 
-      return this.sqsutilities.createQueue(queue_definition);
+      return this.sqsprovider.createQueue(queue_definition);
 
     }
 
@@ -123,7 +124,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities{
           let queue_name = queue_definition.QueueName;
           let deadletter_queue_name = this.createDeadletterQueueName(queue_name);
 
-          return () => this.sqsutilities.deleteQueue(queue_name).then(() => this.sqsutilities.deleteQueue(deadletter_queue_name));
+          return () => this.sqsprovider.deleteQueue(queue_name).then(() => this.sqsprovider.deleteQueue(deadletter_queue_name));
 
         });
 
@@ -162,7 +163,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities{
 
       du.debug('Add Queue Redrive Policy')
 
-      let deadletter_queue_arn = this.sqsutilities.getQueueARN(this.createDeadletterQueueName(queue_definition));
+      let deadletter_queue_arn = this.sqsprovider.getQueueARN(this.createDeadletterQueueName(queue_definition));
 
       queue_definition.Attributes.RedrivePolicy = JSON.stringify({
         deadLetterTargetArn: deadletter_queue_arn,

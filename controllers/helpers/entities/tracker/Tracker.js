@@ -4,12 +4,13 @@ const _ =  require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const PostbackProvider = global.SixCRM.routes.include('lib', 'providers/postback-provider.js');
 
 module.exports = class TrackerHelperController{
 
     constructor(){
 
-      this.postbackutilities = global.SixCRM.routes.include('lib', 'postback-utilities.js');
+      this.postbackprovider = new PostbackProvider();
 
     }
 
@@ -134,7 +135,7 @@ module.exports = class TrackerHelperController{
 
     //Note:  We may want to parse the affiliate that is executing the postback into the data object
 
-      return this.postbackutilities.executePostback(tracker.body, data);
+      return this.postbackprovider.executePostback(tracker.body, data);
 
     }
 

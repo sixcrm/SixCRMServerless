@@ -3,6 +3,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
+const RedshiftProvider = global.SixCRM.routes.include('lib', 'providers/redshift-provider.js');
 
 module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
 
@@ -10,7 +11,7 @@ module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
 
     super();
 
-    this.redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
+    this.redshiftprovider = new RedshiftProvider();
 
     this.setConfigurationFile();
 

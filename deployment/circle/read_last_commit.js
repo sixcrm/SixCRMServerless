@@ -1,10 +1,11 @@
 'use strict';
 require('../../SixCRM.js');
-const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
+const s3provider = new S3Provider();
 
 let bucket_name = 'sixcrm-' + global.SixCRM.configuration.stage + '-resources';
 
-return s3utilities.getObject(bucket_name, 'last_commit.txt')
+return s3provider.getObject(bucket_name, 'last_commit.txt')
     .then((data) => {
         let last_commit = data.Body.toString();
 

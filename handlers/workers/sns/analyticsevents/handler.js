@@ -1,6 +1,6 @@
 require('../../../../SixCRM.js');
 
-const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+const LambdaResponse = global.SixCRM.routes.include('lib', 'providers/lambda-response.js');
 const AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
 
 module.exports.analyticsevents = (event, context, callback) => {

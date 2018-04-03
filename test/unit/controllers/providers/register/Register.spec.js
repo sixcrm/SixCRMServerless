@@ -830,11 +830,11 @@ describe('controllers/providers/Register.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        queryRecords() {
           return Promise.resolve([]);
-        },
-        saveRecord: (tableName, entity) => {
+        }
+        saveRecord(tableName, entity) {
           return Promise.resolve(entity);
         }
       });
@@ -899,11 +899,11 @@ describe('controllers/providers/Register.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        queryRecords() {
           return Promise.resolve([]);
-        },
-        saveRecord: (tableName, entity) => {
+        }
+        saveRecord(tableName, entity) {
           return Promise.resolve(entity);
         }
       });
@@ -976,11 +976,11 @@ describe('controllers/providers/Register.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        queryRecords() {
           return Promise.resolve([]);
-        },
-        saveRecord: (tableName, entity) => {
+        }
+        saveRecord(tableName, entity) {
           return Promise.resolve(entity);
         }
       });
@@ -1037,11 +1037,11 @@ describe('controllers/providers/Register.js', () => {
 
         assumePermissionedRole();
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-          queryRecords: () => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+          queryRecords() {
             return Promise.resolve([]);
-          },
-          saveRecord: () => {
+          }
+          saveRecord() {
             return Promise.reject(new Error('Saving failed.'));
           }
         });
@@ -1728,8 +1728,8 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-          putRecord: () => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+          putRecord() {
             return Promise.resolve({});
           }
         });
@@ -1880,8 +1880,8 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-          putRecord: () => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+          putRecord() {
             return Promise.resolve({});
           }
         });

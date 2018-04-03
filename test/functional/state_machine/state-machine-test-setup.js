@@ -8,11 +8,11 @@ before(() => {
 		warnOnUnregistered: false
 	});
 
-	mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-		publish: () => {
+	mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+		publish() {
 			return Promise.resolve({});
-		},
-		getRegion: () => {
+		}
+		getRegion() {
 			return 'localhost';
 		}
 	});

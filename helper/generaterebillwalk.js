@@ -79,7 +79,7 @@ function createRandomRebillQueueRecord(){
 
 
 return createRandomRebillQueueRecord();
-/*return kinesisfirehoseutilities.putRecord('rebills', createRandomRebillQueueRecord()).then((result) => {
+/*return kinesisFirehoseProvider.putRecord('rebills', createRandomRebillQueueRecord()).then((result) => {
     du.output('Kinesis Firehose Result', result);
     return result;
 })

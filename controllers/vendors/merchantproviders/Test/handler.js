@@ -3,7 +3,8 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
+const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const httpprovider = new HttpProvider();
 
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
 
@@ -158,7 +159,7 @@ class TestController extends MerchantProvider {
         url: endpoint
       }
 
-      return httputilities.postJSON(request_options).then(result => {
+      return httpprovider.postJSON(request_options).then(result => {
 
         if(_.isError(result.error)){
           du.error(result.error);

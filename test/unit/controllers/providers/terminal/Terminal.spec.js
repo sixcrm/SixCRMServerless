@@ -911,8 +911,8 @@ describe('controllers/providers/terminal/Terminal.js', function () {
         body: response_body
       }
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve({error: null, response: vendor_response, body: response_body});
         }
       });
@@ -972,8 +972,8 @@ describe('controllers/providers/terminal/Terminal.js', function () {
         body: response_body
       }
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve({error: null, response: vendor_response, body: response_body});
         }
       });

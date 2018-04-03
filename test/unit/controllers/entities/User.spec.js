@@ -399,13 +399,13 @@ describe('controllers/entities/User.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'user');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
                     return Promise.resolve([]);
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(tableName).to.equal('users');
                     expect(entity).to.deep.equal(user);
                     return Promise.resolve(entity);
@@ -444,13 +444,13 @@ describe('controllers/entities/User.js', () => {
               }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
                     return Promise.resolve([]);
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(tableName).to.equal('users');
                     expect(entity).to.deep.equal(user);
                     return Promise.resolve(entity);
@@ -506,13 +506,13 @@ describe('controllers/entities/User.js', () => {
               enableACLs(){}
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
                     return Promise.resolve([]);
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(tableName).to.equal('users');
                     expect(entity).to.deep.equal(user);
                     return Promise.resolve(entity);
@@ -552,13 +552,13 @@ describe('controllers/entities/User.js', () => {
               enableACLs(){}
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
                     return Promise.resolve([]);
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(tableName).to.equal('users');
                     expect(entity).to.deep.equal(user);
                     return Promise.reject(new Error('Saving failed.'));
@@ -589,8 +589,8 @@ describe('controllers/entities/User.js', () => {
             }
           });
 
-          mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-              queryRecords: (table, parameters) => {
+          mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+              queryRecords(table, parameters) {
                   expect(table).to.equal('users');
                   expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
                   return Promise.resolve({
@@ -630,13 +630,13 @@ describe('controllers/entities/User.js', () => {
               }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_id);
                     return Promise.resolve({});
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(tableName).to.equal('users');
                     expect(entity.id).to.equal(user_id);
                     expect(entity.name).to.equal(user_id);
@@ -711,13 +711,13 @@ describe('controllers/entities/User.js', () => {
               }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_id);
                     return Promise.resolve({});
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(tableName).to.equal('users');
                     expect(entity.id).to.equal(user_id);
                     expect(entity.name).to.equal(user_id);
@@ -770,8 +770,8 @@ describe('controllers/entities/User.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('*', 'user');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('users');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_id);
                     return Promise.reject(new Error('User retrieving failed.'));

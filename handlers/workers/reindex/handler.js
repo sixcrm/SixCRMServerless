@@ -4,7 +4,7 @@ module.exports.reindex = (event, context, callback) => {
 
   require('../../../SixCRM.js');
 
-  const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  const LambdaResponse = global.SixCRM.routes.include('lib', 'providers/lambda-response.js');
   const ReIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/ReIndexing.js');
 
   new ReIndexingHelperController().execute(true).then((result) => {

@@ -13,7 +13,7 @@ module.exports = class SystemMailer{
 
     constructor(){
 
-      this.instantiateSMTPUtilities();
+      this.instantiateSMTPProvider();
 
     }
 
@@ -57,23 +57,23 @@ module.exports = class SystemMailer{
 
       du.debug('Send');
 
-      this.instantiateSMTPUtilities();
+      this.instantiateSMTPProvider();
 
-      return this.smtputilities.send(parameters);
+      return this.smtpprovider.send(parameters);
 
     }
 
-    instantiateSMTPUtilities(){
+    instantiateSMTPProvider(){
 
       du.debug('Instantiate SMTP Utilities');
 
-      if(!_.has(this, 'smtputilities')){
+      if(!_.has(this, 'smtpprovider')){
 
         let smtp_options = this.createSMTPOptions();
 
-        let SMTPUtilities = global.SixCRM.routes.include('lib', 'smtp-utilities.js');
+        let SMTPProvider = global.SixCRM.routes.include('lib', 'providers/smtp-provider.js');
 
-        this.smtputilities = new SMTPUtilities(smtp_options);
+        this.smtpprovider = new SMTPProvider(smtp_options);
 
       }
 

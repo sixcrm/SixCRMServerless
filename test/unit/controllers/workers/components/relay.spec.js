@@ -7,7 +7,6 @@ const uuidV4 = require('uuid/v4');
 
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const WorkerResponse = global.SixCRM.routes.include('workers', 'components/WorkerResponse.js');
-const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
 
 function getValidParams(){
 
@@ -61,10 +60,17 @@ describe('controllers/workers/components/relay.js', function () {
     });
   });
 
+  afterEach(() => {
+    mockery.resetCache();
+    mockery.deregisterAll();
+  });
+
+
   describe('constructor', () => {
 
     it('successfully constructs', () => {
 
+      const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
       expect(objectutilities.getClassName(relayController)).to.equal('RelayController');
@@ -77,6 +83,7 @@ describe('controllers/workers/components/relay.js', function () {
 
       it('throws error when forward message configuration is invalid', () => {
 
+          const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
           let relayController = new RelayController();
 
           try {
@@ -91,6 +98,7 @@ describe('controllers/workers/components/relay.js', function () {
 
           let params = getValidParams();
 
+          const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
           let relayController = new RelayController();
 
           relayController.parameters.set('params', params);
@@ -109,12 +117,13 @@ describe('controllers/workers/components/relay.js', function () {
       let messages = getValidMessages();
       let params = getValidParams();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        receiveMessages: ({queue, limit}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        receiveMessages() {
           return Promise.resolve(messages);
         }
       });
 
+      const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
       relayController.parameters.set('params', params);
@@ -133,6 +142,7 @@ describe('controllers/workers/components/relay.js', function () {
         let messages = getValidMessages();
         let datasource = () => { return Promise.resolve(messages); }
 
+        const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
         let relayController = new RelayController();
 
         relayController.message_acquisition_function = datasource;
@@ -153,6 +163,7 @@ describe('controllers/workers/components/relay.js', function () {
 
       let messages = getValidMessages();
 
+      const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
         expect(relayController.getReceiptHandle(messages[0])).to.equal(messages[0].ReceiptHandle);
@@ -165,6 +176,7 @@ describe('controllers/workers/components/relay.js', function () {
 
       delete messages[0].ReceiptHandle;
 
+      const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
         try{
@@ -183,6 +195,7 @@ describe('controllers/workers/components/relay.js', function () {
 
       let messages = getValidMessages();
 
+      const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
       relayController.parameters.set('messages', messages);
@@ -199,8 +212,8 @@ describe('controllers/workers/components/relay.js', function () {
   describe('invokeAdditionalLambdas', () => {
 
     it('does not invoke additional lambda when not required', () => {
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+        invokeFunction() {
           expect.fail();
         }
       });
@@ -208,6 +221,7 @@ describe('controllers/workers/components/relay.js', function () {
       let messages = getValidMessages();
       let params = getValidParams();
 
+      const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
       relayController.parameters.set('params', params);
@@ -228,6 +242,7 @@ describe('controllers/workers/components/relay.js', function () {
 
       let relayResponse = getValidWorkerResponse('noaction');
 
+      const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
       // send valid response type;
@@ -239,6 +254,7 @@ describe('controllers/workers/components/relay.js', function () {
 
     it('throws error when response type does not exist', () => {
 
+        const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
       // send non existing response type;
@@ -259,9 +275,10 @@ describe('controllers/workers/components/relay.js', function () {
 
       let params = {body: messages[0].Body, queue: 'a_queue'};
 
+      const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
-        relayController.sqsutilities = {
+        relayController.sqsprovider = {
             sendMessage: function({message_body: body, queue: queue}) {
                 expect(body).to.deep.equal(params.body);
                 expect(queue).to.equal(params.queue);
@@ -277,9 +294,10 @@ describe('controllers/workers/components/relay.js', function () {
 
     it('throws error when message sending failed', () => {
 
+        const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
-        relayController.sqsutilities = {
+        relayController.sqsprovider = {
             sendMessage: function({message_body: body, queue: queue}) {
                 expect(body).to.equal(undefined);
                 expect(queue).to.equal(undefined);
@@ -304,9 +322,10 @@ describe('controllers/workers/components/relay.js', function () {
 
       let params = {queue: 'a_queue', receipt_handle: messages[0].ReceiptHandle};
 
+      const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
       let relayController = new RelayController();
 
-        relayController.sqsutilities = {
+        relayController.sqsprovider = {
             deleteMessage: function({queue: queue, receipt_handle: receipt_handle}) {
                 expect(queue).to.equal(params.queue);
                 expect(receipt_handle).to.equal(params.receipt_handle);
@@ -320,9 +339,10 @@ describe('controllers/workers/components/relay.js', function () {
 
     it('throws error when message is not removed', () => {
 
+        const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
         let relayController = new RelayController();
 
-        relayController.sqsutilities = {
+        relayController.sqsprovider = {
             deleteMessage: function({queue: queue, receipt_handle: receipt_handle}) {
                 expect(receipt_handle).to.equal(undefined);
                 expect(queue).to.equal(undefined);
@@ -350,6 +370,7 @@ describe('controllers/workers/components/relay.js', function () {
 
         let params = getValidParams();
 
+        const RelayController = global.SixCRM.routes.include('workers', 'components/relay.js');
         let relayController = new RelayController();
 
         relayController.parameters.set('params', params);

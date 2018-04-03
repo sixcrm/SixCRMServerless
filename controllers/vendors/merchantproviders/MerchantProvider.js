@@ -6,7 +6,8 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const httputilities = global.SixCRM.routes.include('lib','http-utilities.js');
+const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const httpprovider = new HttpProvider();
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 
@@ -100,7 +101,7 @@ module.exports = class MerchantProvider {
     		  body: parameter_querystring
         };
 
-        return httputilities.post(request_options).then(response => {
+        return httpprovider.post(request_options).then(response => {
 
           if(_.isError(response.error)){
             reject(response.error);

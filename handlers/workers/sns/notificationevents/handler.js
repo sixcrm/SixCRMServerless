@@ -4,7 +4,7 @@ module.exports.notificationevents = (event, context, callback) => {
 
   require('../../../../SixCRM.js');
 
-  const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  const LambdaResponse = global.SixCRM.routes.include('lib', 'providers/lambda-response.js');
 
   const NotificationEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/notificationEvents.js');
   let notificationEventsController = new NotificationEventsController();

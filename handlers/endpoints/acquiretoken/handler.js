@@ -4,7 +4,7 @@ module.exports.acquiretoken = (event, context, callback) => {
 
   require('../../../SixCRM.js');
 
-  let LambdaResponse = global.SixCRM.routes.include('lib','lambda-response.js');
+  let LambdaResponse = global.SixCRM.routes.include('lib','providers/lambda-response.js');
   let AcquireTokenController = global.SixCRM.routes.include('controllers','endpoints/acquireToken.js');
   let acquireTokenController = new AcquireTokenController();
 

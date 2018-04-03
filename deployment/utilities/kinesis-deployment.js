@@ -7,6 +7,7 @@ const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
+const KinesisFirehoseProvider = global.SixCRM.routes.include('lib', 'providers/kinesis-firehose-provider.js');
 
 module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
@@ -14,7 +15,7 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
     super();
 
-    this.kinesisfirehosetutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities.js');
+    this.kinesisfirehoseprovider = new KinesisFirehoseProvider();
 
   }
 
@@ -34,7 +35,7 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
           let stream_name = stream_configuration.DeliveryStreamName;
 
-          return this.kinesisfirehosetutilities.streamExists(stream_name).then(exists => {
+          return this.kinesisfirehoseprovider.streamExists(stream_name).then(exists => {
 
             if (!exists) {
 
@@ -88,7 +89,7 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
 
           let stream_name = stream_configuration.DeliveryStreamName;
 
-          return this.kinesisfirehosetutilities.streamExists(stream_name).then(exists => {
+          return this.kinesisfirehoseprovider.streamExists(stream_name).then(exists => {
 
             if (exists) {
 
@@ -172,7 +173,7 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
       eu.throwError('server', 'createStreamAndWait assumes a parameters object with property "DeliveryStreamName"');
     }
 
-    return this.kinesisfirehosetutilities.createStream(parameters).then(() => {
+    return this.kinesisfirehoseprovider.createStream(parameters).then(() => {
       return this.waitForStreamToExist(parameters.DeliveryStreamName);
     });
   }
@@ -185,7 +186,7 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
       eu.throwError('server', 'deleteStreamAndWait assumes a parameters object with property "DeliveryStreamName"');
     }
 
-    return this.kinesisfirehosetutilities.deleteStream(parameters).then(() => {
+    return this.kinesisfirehoseprovider.deleteStream(parameters).then(() => {
       return this.waitForStreamNotExist(parameters.DeliveryStreamName);
     });
   }
@@ -193,11 +194,11 @@ module.exports = class KinesisDeployment extends AWSDeploymentUtilities {
   //Technical Debt:  These don't appear to work...
 
   waitForStreamToExist(stream_identifier) {
-    return this.kinesisfirehosetutilities.waitForStream(stream_identifier, 'ACTIVE');
+    return this.kinesisfirehoseprovider.waitForStream(stream_identifier, 'ACTIVE');
   }
 
   waitForStreamNotExist(stream_identifier) {
-    return this.kinesisfirehosetutilities.waitForStream(stream_identifier, 'DELETING');
+    return this.kinesisfirehoseprovider.waitForStream(stream_identifier, 'DELETING');
   }
 
 }

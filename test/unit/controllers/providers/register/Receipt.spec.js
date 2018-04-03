@@ -5,7 +5,6 @@ let expect = chai.expect;
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const ReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
 
 function getValidTransformedTransactionPrototype(){
 
@@ -70,6 +69,7 @@ describe('controllers/providers/register/Receipt.js', () => {
 
   describe('constructor', () => {
     it('successfully constructs', () => {
+      const ReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
       let receiptController = new ReceiptController();
 
       expect(objectutilities.getClassName(receiptController)).to.equal('RegisterRecieptGenerator');
@@ -79,6 +79,7 @@ describe('controllers/providers/register/Receipt.js', () => {
   describe('createTransactionPrototype', () => {
     it('successfully creates transaction prototype for process', () => {
 
+      const ReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
       let receiptController = new ReceiptController();
 
       let valid_rebill = getValidRebill();
@@ -119,6 +120,7 @@ describe('controllers/providers/register/Receipt.js', () => {
 
     it('successfully creates transaction prototype for refund', () => {
 
+      const ReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
       let receiptController = new ReceiptController();
 
       receiptController.parameters.set('rebill', getValidRebill());
@@ -145,6 +147,7 @@ describe('controllers/providers/register/Receipt.js', () => {
 
     it('successfully creates transaction prototype for reverse', () => {
 
+      const ReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
       let receiptController = new ReceiptController();
 
       receiptController.parameters.set('rebill', getValidRebill());
@@ -173,6 +176,7 @@ describe('controllers/providers/register/Receipt.js', () => {
   describe('transformTransactionPrototypeObject', () => {
     it('successfully transforms transaction prototype', () => {
 
+      const ReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
       let receiptController = new ReceiptController();
 
       let valid_transaction_prototype = getValidTransactionPrototype();
@@ -207,11 +211,11 @@ describe('controllers/providers/register/Receipt.js', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*');
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        queryRecords() {
           return Promise.resolve([]);
-        },
-        saveRecord: (tableName, entity) => {
+        }
+        saveRecord(tableName, entity) {
           return Promise.resolve(entity);
         }
       });
@@ -236,6 +240,7 @@ describe('controllers/providers/register/Receipt.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
+      const ReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
       let receiptController = new ReceiptController();
       let transformed_transaction_prototype = getValidTransformedTransactionPrototype();
 
@@ -263,11 +268,11 @@ describe('controllers/providers/register/Receipt.js', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*');
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        queryRecords() {
           return Promise.resolve([]);
-        },
-        saveRecord: (tableName, entity) => {
+        }
+        saveRecord(tableName, entity) {
           return Promise.resolve(entity);
         }
       });
@@ -301,6 +306,7 @@ describe('controllers/providers/register/Receipt.js', () => {
         transaction_products: getValidTransactionProducts(null, true)
       };
 
+      const ReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
       let receiptController = new ReceiptController();
 
       return receiptController.issueReceipt(issue_receipt_arguments).then(() => {

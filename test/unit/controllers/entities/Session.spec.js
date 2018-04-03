@@ -43,8 +43,8 @@ describe('controllers/Session.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({
                         Items: [session]
                     });
@@ -80,8 +80,8 @@ describe('controllers/Session.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({
                         Items: [session]
                     });
@@ -103,8 +103,8 @@ describe('controllers/Session.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({
                         Items: [session]
                     });
@@ -282,8 +282,8 @@ describe('controllers/Session.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('sessions');
                     expect(parameters).to.have.property('expression_attribute_names');
@@ -353,8 +353,8 @@ describe('controllers/Session.js', () => {
 
             session.product_schedules = ['a_product_schedule_id'];
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                createINQueryParameters: (field, list_array) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                createINQueryParameters(field, list_array) {
                     expect(field).to.equal('id');
                     expect(list_array).to.equal(session.product_schedules);
                     return Promise.resolve({
@@ -393,8 +393,8 @@ describe('controllers/Session.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('sessions');
                     expect(parameters).to.have.property('expression_attribute_names');
@@ -436,8 +436,8 @@ describe('controllers/Session.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(table).to.equal('sessions');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -468,16 +468,16 @@ describe('controllers/Session.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters ) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters ) {
                     expect(table).to.equal('sessions');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(session.id);
                     return Promise.resolve({Items: [session]});
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(entity).to.deep.equal(session);
                     expect(tableName).to.equal('sessions');
                     return Promise.resolve(updatedSession);

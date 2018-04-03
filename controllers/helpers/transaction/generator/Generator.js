@@ -4,7 +4,8 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const signatureutilities = global.SixCRM.routes.include('lib', 'signature.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
+const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const httpprovider = new HttpProvider();
 
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -113,7 +114,7 @@ module.exports = class TransactionGeneratorHelperController {
 
     du.info(parameters);
 
-    return httputilities.postJSON(parameters).then(result => {
+    return httpprovider.postJSON(parameters).then(result => {
 
       du.debug('Acquire Token Response: ', result.body);
 
@@ -146,7 +147,7 @@ module.exports = class TransactionGeneratorHelperController {
 
     du.info(parameters);
 
-    return httputilities.postJSON(parameters).then(result => {
+    return httpprovider.postJSON(parameters).then(result => {
 
       du.debug('Create Lead Response: ', result.body);
 
@@ -181,7 +182,7 @@ module.exports = class TransactionGeneratorHelperController {
 
     du.info(parameters);
 
-    return httputilities.postJSON(parameters).then(result => {
+    return httpprovider.postJSON(parameters).then(result => {
 
       du.debug('Create Order Response: ', result.body);
 
@@ -209,7 +210,7 @@ module.exports = class TransactionGeneratorHelperController {
 
     du.info(parameters);
 
-    return httputilities.getJSON(parameters).then(result => {
+    return httpprovider.getJSON(parameters).then(result => {
 
       du.debug('Confirm Order Response: ', result.body);
 

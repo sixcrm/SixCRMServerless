@@ -47,8 +47,8 @@ describe('controllers/providers/notification/channels/slack.js', () => {
 
         let webhook = 'http://test.com/webhook';
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-          postJSON: () => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+          postJSON() {
             return Promise.resolve(true);
           }
         });

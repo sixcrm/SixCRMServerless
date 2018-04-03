@@ -5,17 +5,19 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const EC2Utilities = global.SixCRM.routes.include('lib', 'ec2-utilities.js');
+const EC2Provider = global.SixCRM.routes.include('lib', 'providers/ec2-provider.js');
+const ElasticacheProvider = global.SixCRM.routes.include('lib', 'providers/elasticache-provider.js');
+const RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
 
 module.exports = class ElasticacheDeployment {
 
   constructor() {
 
-    this.elasticacheutilities = global.SixCRM.routes.include('lib', 'elasticache-utilities.js');
+    this.elasticacheprovider = new ElasticacheProvider();
 
-    this.redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+    this.redisprovider = new RedisProvider();
 
-    this.ec2utilities = new EC2Utilities();
+    this.ec2provider = new EC2Provider();
 
     this.parameterFilters = {
       'create':{
@@ -81,7 +83,7 @@ module.exports = class ElasticacheDeployment {
 
     let security_group_identifier = 'SixCRM-Elasticache';
 
-    return this.ec2utilities.securityGroupExists(security_group_identifier).then((result) => {
+    return this.ec2provider.securityGroupExists(security_group_identifier).then((result) => {
 
       if(_.isNull(result) || result == false || !_.has(result, 'GroupId')){
         eu.throwError('server', 'Missing ephemeral property: Elasticache SecurityGroup ID.  Please check EC2 configuration.');
@@ -169,7 +171,7 @@ module.exports = class ElasticacheDeployment {
 
     du.debug('Purge');
 
-    return this.redisutilities.flushAll().then(() => {
+    return this.redisprovider.flushAll().then(() => {
       return 'Complete';
     });
 
@@ -218,7 +220,7 @@ module.exports = class ElasticacheDeployment {
 
     du.debug('Describe Clusters');
 
-    return this.elasticacheutilities.describeClusters(parameters);
+    return this.elasticacheprovider.describeClusters(parameters);
 
   }
 
@@ -226,7 +228,7 @@ module.exports = class ElasticacheDeployment {
 
     du.debug('Create Cache Cluster');
 
-    return this.elasticacheutilities.createCluster(parameters);
+    return this.elasticacheprovider.createCluster(parameters);
 
   }
 
@@ -234,7 +236,7 @@ module.exports = class ElasticacheDeployment {
 
     du.debug('Destroy Cache Cluster');
 
-    return this.elasticacheutilities.destroyCluster(parameters);
+    return this.elasticacheprovider.destroyCluster(parameters);
 
   }
 
@@ -242,7 +244,7 @@ module.exports = class ElasticacheDeployment {
 
     du.debug('Wait For Cluster');
 
-    return this.elasticacheutilities.waitFor(parameters, status);
+    return this.elasticacheprovider.waitFor(parameters, status);
 
   }
 

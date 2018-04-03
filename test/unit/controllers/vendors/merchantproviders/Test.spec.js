@@ -4,7 +4,6 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 let querystring = require('querystring');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -120,7 +119,7 @@ describe('vendors/merchantproviders/Test.js', () => {
 
     try {
 
-      let test_controller = new TestController({});
+      new TestController({});
 
     }catch(error){
 
@@ -266,8 +265,8 @@ describe('vendors/merchantproviders/Test.js', () => {
       body: body
     };
 
-    mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-      postJSON:() => {
+    mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+      postJSON() {
         return Promise.resolve(response);
       }
     });

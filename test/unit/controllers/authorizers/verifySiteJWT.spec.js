@@ -5,16 +5,17 @@ let expect = chai.expect;
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
-const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
+const jwtprovider = new JWTProvider();
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 function getValidSelfSignedJWT(){
 
-  let raw_token = jwtutilities.createSiteJWTContents({user:{email:'owner.user@test.com'}});
+  let raw_token = jwtprovider.createSiteJWTContents({user:{email:'owner.user@test.com'}});
 
   let signing_string = getValidUserSigningStrings()[0].signing_string;
 
-  return jwtutilities.signJWT(raw_token, signing_string);
+  return jwtprovider.signJWT(raw_token, signing_string);
 
 }
 
@@ -325,7 +326,7 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
       });
 
-      jwtutilities.jwt_parameters.site_jwt_expiration = global.SixCRM.configuration.site_config.jwt.site.expiration;
+      jwtprovider.jwt_parameters.site_jwt_expiration = global.SixCRM.configuration.site_config.jwt.site.expiration;
 
       let valid_event = getValidEvent();
 

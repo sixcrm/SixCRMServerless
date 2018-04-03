@@ -3,13 +3,15 @@ const uuidV4 = require('uuid/v4');
 const SqSTestUtils = require('./sqs-test-utils');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 const sqsDeployment = new SQSDeployment();
-const sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+const sqsprovider = new SQSProvider();
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const DynamoDBDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
 const dynamoDBDeployment = new DynamoDBDeployment();
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+const LambdaProvider = global.SixCRM.routes.include('lib', 'providers/lambda-provider.js');
+const lambdaprovider = new LambdaProvider();
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
@@ -94,7 +96,7 @@ describe('stateMachineDocker', () => {
             let body = '{"id":"55c103b4-670a-439e-98d4-5a2834bb5fc3"}';
 
             return SqSTestUtils.sendMessageToQueue('bill', body)
-                .then(() => sqsutilities.receiveMessages({queue: 'bill'}))
+                .then(() => sqsprovider.receiveMessages({queue: 'bill'}))
                 .then((messages) => expect(messages[0].Body).to.deep.equal(body))
 
         });
@@ -415,11 +417,11 @@ describe('stateMachineDocker', () => {
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('archived'))
-                .then(() => sqsutilities.receiveMessages({queue: 'delivered'}))
+                .then(() => sqsprovider.receiveMessages({queue: 'delivered'}))
                 .then((messages) => expect(messages.length).to.equal(0))
-                .then(() => sqsutilities.receiveMessages({queue: 'delivered_failed'}))
+                .then(() => sqsprovider.receiveMessages({queue: 'delivered_failed'}))
                 .then((messages) => expect(messages.length).to.equal(0))
-                .then(() => sqsutilities.receiveMessages({queue: 'delivered_error'}))
+                .then(() => sqsprovider.receiveMessages({queue: 'delivered_error'}))
                 .then((messages) => expect(messages.length).to.equal(0))
         });
 
@@ -475,11 +477,11 @@ describe('stateMachineDocker', () => {
                 .then(() => timestamp.delay(2 * 1000)())
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('archived'))
-                .then(() => sqsutilities.receiveMessages({queue: 'hold'}))
+                .then(() => sqsprovider.receiveMessages({queue: 'hold'}))
                 .then((messages) => expect(messages.length).to.equal(0))
-                .then(() => sqsutilities.receiveMessages({queue: 'hold_failed'}))
+                .then(() => sqsprovider.receiveMessages({queue: 'hold_failed'}))
                 .then((messages) => expect(messages.length).to.equal(0))
-                .then(() => sqsutilities.receiveMessages({queue: 'hold_error'}))
+                .then(() => sqsprovider.receiveMessages({queue: 'hold_error'}))
                 .then((messages) => expect(messages.length).to.equal(0))
         });
 
@@ -517,11 +519,11 @@ describe('stateMachineDocker', () => {
                 .then(() => flushStateMachine())
                 .then(() => rebillController.get({id: rebill.id}))
                 .then(rebill => expect(rebill.state).to.equal('archived'))
-                .then(() => sqsutilities.receiveMessages({queue: 'recover'}))
+                .then(() => sqsprovider.receiveMessages({queue: 'recover'}))
                 .then((messages) => expect(messages.length).to.equal(0))
-                .then(() => sqsutilities.receiveMessages({queue: 'recover_failed'}))
+                .then(() => sqsprovider.receiveMessages({queue: 'recover_failed'}))
                 .then((messages) => expect(messages.length).to.equal(0))
-                .then(() => sqsutilities.receiveMessages({queue: 'recover_error'}))
+                .then(() => sqsprovider.receiveMessages({queue: 'recover_error'}))
                 .then((messages) => expect(messages.length).to.equal(0))
         });
 
@@ -543,7 +545,7 @@ describe('stateMachineDocker', () => {
 
     function configureLambdas() {
         arrayutilities.map(lambda_names, (lambda_name) => {
-            lambdas.push(lambdautilities.getLambdaInstance(lambda_name));
+            lambdas.push(lambdaprovider.getLambdaInstance(lambda_name));
         });
     }
 

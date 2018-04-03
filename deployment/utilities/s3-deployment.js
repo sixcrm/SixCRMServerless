@@ -5,6 +5,8 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
+const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
+const IAMProvider = global.SixCRM.routes.include('lib', 'providers/iam-provider.js');
 
 module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
@@ -12,8 +14,8 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 		super();
 
-		this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
-		this.iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+		this.s3provider = new S3Provider();
+		this.iamprovider = new IAMProvider();
 
 		this.bucket_name_template = 'sixcrm-{{stage}}-{{bucket_name}}';
 
@@ -135,7 +137,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 			sub_definition.Bucket = bucket_name;
 
-			return this.s3utilities.assureBucket(sub_definition);
+			return this.s3provider.assureBucket(sub_definition);
 
 		});
 
@@ -149,7 +151,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 			let bucket_name = this.createEnvironmentSpecificBucketName(sub_definition.Bucket);
 
-			return this.s3utilities.assureDelete(bucket_name);
+			return this.s3provider.assureDelete(bucket_name);
 
 		});
 
@@ -212,15 +214,15 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 		let destination_bucket = this.createEnvironmentSpecificBucketName(backup_definition.destination);
 
 
-		return this.s3utilities.putBucketVersioning(source_bucket)
-			.then(() => this.s3utilities.putBucketVersioning(destination_bucket))
+		return this.s3provider.putBucketVersioning(source_bucket)
+			.then(() => this.s3provider.putBucketVersioning(destination_bucket))
 			.then(() => this.getReplicationRole())
-			.then(replication_role => this.s3utilities.putBucketReplication({
+			.then(replication_role => this.s3provider.putBucketReplication({
 				source: source_bucket,
 				destination: destination_bucket,
 				role: replication_role.Role.Arn
 			}))
-		.then(() => this.s3utilities.putBucketLifecycleConfiguration(destination_bucket));
+		.then(() => this.s3provider.putBucketLifecycleConfiguration(destination_bucket));
 
 	}
 
@@ -232,7 +234,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 		du.warning(role_definition);
 
-		return this.iamutilities.roleExists({ RoleName: role_definition[0].RoleName })
+		return this.iamprovider.roleExists({ RoleName: role_definition[0].RoleName })
 			.then(result => {
 
 				if (result == false) {

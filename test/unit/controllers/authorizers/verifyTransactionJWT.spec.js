@@ -4,7 +4,8 @@ let chai = require('chai');
 let expect = chai.expect;
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
+const jwtprovider = new JWTProvider();
 
 function getValidUserAlias(){
 
@@ -13,11 +14,11 @@ function getValidUserAlias(){
 
 function getValidTransactionJWT(){
 
-  let raw_token = jwtutilities.createTransactionJWTContents({user: {user_alias: getValidUserAlias()}});
+  let raw_token = jwtprovider.createTransactionJWTContents({user: {user_alias: getValidUserAlias()}});
 
   du.warning(raw_token);
 
-  return jwtutilities.signJWT(raw_token, global.SixCRM.configuration.site_config.jwt.transaction.secret_key);
+  return jwtprovider.signJWT(raw_token, global.SixCRM.configuration.site_config.jwt.transaction.secret_key);
 
 }
 
@@ -46,7 +47,7 @@ describe('controllers/authorizers/verifyTransactionJWT.js', () => {
   before(() => {
 
     setEnvironmentVariables();
-    jwtutilities.setParameters();
+    jwtprovider.setParameters();
 
     mockery.enable({
       useCleanCache: true,

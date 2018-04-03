@@ -6,8 +6,6 @@ let expect = chai.expect;
 const mockery = require('mockery');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const random = global.SixCRM.routes.include('lib','random.js');
 
 describe('controllers/helpers/resources/accountimages/AccountImages.js', () => {
@@ -102,8 +100,8 @@ describe('controllers/helpers/resources/accountimages/AccountImages.js', () => {
       process.env.TEST_MODE = false;
       global.account = 'unittest';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-        putObject: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+        putObject() {
           return Promise.resolve({ETag:random.createRandomString(20)});
         }
       });
@@ -150,8 +148,8 @@ describe('controllers/helpers/resources/accountimages/AccountImages.js', () => {
       process.env.TEST_MODE = false;
       global.account = 'unittest';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-        putObject: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+        putObject() {
           return Promise.resolve({ETag:random.createRandomString(20)});
         }
       });

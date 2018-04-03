@@ -1,17 +1,9 @@
 'use strict'
-const _ = require('underscore');
 const chai = require("chai");
-const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const querystring = require('querystring');
 const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidShippingReceipt(){
@@ -315,11 +307,11 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () =>{
 
       let bad_response = getValidBadResponse();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        getJSON:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        getJSON() {
           return Promise.resolve(bad_response);
-        },
-        createQueryString:(querystring_object) => {
+        }
+        createQueryString(querystring_object) {
           return querystring.stringify(querystring_object);
         }
       });
@@ -348,11 +340,11 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () =>{
 
       let good_response = getValidGoodResponse();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        getJSON:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        getJSON() {
           return Promise.resolve(good_response);
-        },
-        createQueryString:(querystring_object) => {
+        }
+        createQueryString(querystring_object) {
           return querystring.stringify(querystring_object);
         }
       });
@@ -387,11 +379,11 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () =>{
       let customer = getValidCustomer();
       let products = getValidProducts();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        postJSON:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        postJSON() {
           return Promise.resolve(good_response);
-        },
-        createQueryString:(querystring_object) => {
+        }
+        createQueryString(querystring_object) {
           return querystring.stringify(querystring_object);
         }
       });
@@ -427,11 +419,11 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () =>{
 
       let good_response = getValidGoodResponse();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        getJSON:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        getJSON() {
           return Promise.resolve(good_response);
-        },
-        createQueryString:(querystring_object) => {
+        }
+        createQueryString(querystring_object) {
           return querystring.stringify(querystring_object);
         }
       });

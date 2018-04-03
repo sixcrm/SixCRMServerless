@@ -73,7 +73,10 @@ module.exports = class AnalyticsEventBroker {
 
 		const sqsMessage = JSON.stringify(record);
 
-		return global.SixCRM.routes.include('lib', 'sqs-utilities.js').sendMessage({
+        const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+        const sqsprovider = new SQSProvider();
+
+		return sqsprovider.sendMessage({
 			message_body: sqsMessage,
 			queue: 'rds_transaction_batch'
 		}).then(() => {

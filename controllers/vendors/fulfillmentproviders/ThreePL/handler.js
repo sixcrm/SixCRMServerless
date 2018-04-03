@@ -7,7 +7,8 @@ const js2xmlparser = require("js2xmlparser2");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
+const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const httpprovider = new HttpProvider();
 
 const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');
 
@@ -485,7 +486,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
       body: soap_parameters
     };
 
-    return httputilities.post(options).then((result) => {
+    return httpprovider.post(options).then((result) => {
 
       this.parameters.set('vendorresponse', result);
 

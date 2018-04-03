@@ -220,8 +220,8 @@ describe('acquireToken', () => {
 
       let jwt = getValidJWT();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'jwt-utilities'), {
-        getJWT: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/jwt-provider.js'), class {
+        getJWT() {
           return jwt;
         }
       });
@@ -334,8 +334,8 @@ describe('acquireToken', () => {
 
       delete updated_event.affiliates
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'jwt-utilities'), {
-        getJWT: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/jwt-provider.js'), class {
+        getJWT() {
           return jwt;
         }
       });

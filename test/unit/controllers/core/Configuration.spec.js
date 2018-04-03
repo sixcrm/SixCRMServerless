@@ -3,7 +3,6 @@ const expect = chai.expect;
 const mockery = require('mockery');
 const _ = require('underscore');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const Configuration = global.SixCRM.routes.include('controllers','core/Configuration.js');
 
@@ -154,28 +153,28 @@ describe('controllers/core/Configuration.js', () => {
     describe('getEnvironmentConfig', () => {
 
         it('gets environment config when no value', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-                objectExists: (parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+                objectExists() {
                     return Promise.resolve(true);
-                },
-                getObject: (parameters) => {
+                }
+                getObject() {
                     return Promise.resolve({
                         Body: JSON.stringify({})
                     });
-                },
-                putObject: (parameters) => {
+                }
+                putObject() {
                     return Promise.resolve();
-                },
-                hasCredentials:() => {
+                }
+                hasCredentials() {
                   return true;
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
-                set: (parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/redis-provider.js'), class {
+                set() {
                     return Promise.resolve();
-                },
-                get: (parameters) => {
+                }
+                get() {
                     return Promise.resolve(null);
                 }
             });
@@ -188,28 +187,28 @@ describe('controllers/core/Configuration.js', () => {
         });
 
         it('gets environment config when value exists', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-                objectExists: (parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+                objectExists() {
                     return Promise.resolve(true);
-                },
-                getObject: (parameters) => {
+                }
+                getObject() {
                     return Promise.resolve({
                         Body: JSON.stringify({test_key: 'test_value'})
                     });
-                },
-                putObject: (parameters) => {
+                }
+                putObject() {
                     return Promise.resolve();
-                },
-                hasCredentials:() => {
+                }
+                hasCredentials() {
                   return true;
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
-                set: (parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/redis-provider.js'), class {
+                set() {
                     return Promise.resolve();
-                },
-                get: (parameters) => {
+                }
+                get() {
                     return Promise.resolve(JSON.stringify({test_key: 'test_value'}));
                 }
             });
@@ -274,28 +273,28 @@ describe('controllers/core/Configuration.js', () => {
     describe('getS3EnvironmentConfiguration', () => {
 
         it('gets s3 config when value exists', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-                objectExists: (parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+                objectExists() {
                     return Promise.resolve(true);
-                },
-                getObject: (parameters) => {
+                }
+                getObject() {
                     return Promise.resolve({
                         Body: JSON.stringify({test_key: 'test_value'})
                     });
-                },
-                putObject: (parameters) => {
+                }
+                putObject() {
                     return Promise.resolve();
-                },
-                hasCredentials:() => {
+                }
+                hasCredentials() {
                   return true;
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
-                set: (parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/redis-provider.js'), class {
+                set() {
                     return Promise.resolve();
-                },
-                get: (parameters) => {
+                }
+                get() {
                     return Promise.resolve(JSON.stringify({}));
                 }
             });
@@ -310,16 +309,16 @@ describe('controllers/core/Configuration.js', () => {
         });
 
         it('throws error when Body value is invalid', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-                objectExists: (parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+                objectExists() {
                     return Promise.resolve(true);
-                },
-                getObject: (parameters) => {
+                }
+                getObject() {
                     return Promise.resolve({
                         Body: 'an_unexpected_value'
                     });
-                },
-                hasCredentials:() => {
+                }
+                hasCredentials() {
                   return true;
                 }
             });
@@ -332,14 +331,14 @@ describe('controllers/core/Configuration.js', () => {
         });
 
         it('throws error when Body property is missing', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-                objectExists: (parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+                objectExists() {
                     return Promise.resolve(true);
-                },
-                getObject: (parameters) => {
+                }
+                getObject() {
                     return Promise.resolve({});
-                },
-                hasCredentials:() => {
+                }
+                hasCredentials() {
                   return true;
                 }
             });
@@ -355,28 +354,28 @@ describe('controllers/core/Configuration.js', () => {
     describe('getRedisEnvironmentConfiguration', () => {
 
         it('gets redis config when value exists', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-                objectExists: (parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+                objectExists() {
                     return Promise.resolve(true);
-                },
-                getObject: (parameters) => {
+                }
+                getObject() {
                     return Promise.resolve({
                         Body: JSON.stringify({})
                     });
-                },
-                putObject: (parameters) => {
+                }
+                putObject() {
                     return Promise.resolve();
-                },
-                hasCredentials:() => {
+                }
+                hasCredentials() {
                   return true;
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'redis-utilities.js'), {
-                set: (parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/redis-provider.js'), class {
+                set() {
                     return Promise.resolve();
-                },
-                get: (parameters) => {
+                }
+                get() {
                     return Promise.resolve(JSON.stringify({test_key: 'test_value'}));
                 }
             });
@@ -441,19 +440,19 @@ describe('controllers/core/Configuration.js', () => {
     });
 
     it('gets s3 config when value exists', () => {
-        mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-            objectExists: (parameters) => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+            objectExists() {
                 return Promise.resolve(true);
-            },
-            getObject: (parameters) => {
+            }
+            getObject() {
                 return Promise.resolve({
                     Body: JSON.stringify({test_key: 'test_value'})
                 });
-            },
-            putObject: (parameters) => {
+            }
+            putObject() {
                 return Promise.resolve();
-            },
-            hasCredentials:() => {
+            }
+            hasCredentials() {
               return true;
             }
         });
@@ -482,19 +481,19 @@ describe('controllers/core/Configuration.js', () => {
     });
 
     it('gets redis config when value exists', () => {
-        mockery.registerMock(global.SixCRM.routes.path('lib', 's3-utilities.js'), {
-            objectExists: (parameters) => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+            objectExists() {
                 return Promise.resolve(true);
-            },
-            getObject: (parameters) => {
+            }
+            getObject() {
                 return Promise.resolve({
                     Body: JSON.stringify({})
                 });
-            },
-            putObject: (parameters) => {
+            }
+            putObject() {
                 return Promise.resolve();
-            },
-            hasCredentials:() => {
+            }
+            hasCredentials() {
               return true;
             }
         });
@@ -579,7 +578,7 @@ describe('controllers/core/Configuration.js', () => {
 
       it('successfully identifies the stage (local) in absence of branch name or ', () => {
 
-        let stages = global.SixCRM.routes.include('config', 'stages.yml');
+        //let stages = global.SixCRM.routes.include('config', 'stages.yml');
 
         if(!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)){
           delete process.env.AWS_ACCOUNT;

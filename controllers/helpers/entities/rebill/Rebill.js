@@ -8,6 +8,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
 
 module.exports = class RebillHelper extends RebillHelperUtilities {
 
@@ -498,8 +499,8 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		let message_body = this.parameters.get('queuemessagebodyprototype');
 		let queue_name = this.parameters.get('queuename');
 
-		this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
-		return this.sqsutilities.sendMessage({
+		this.sqsprovider = new SQSProvider();
+		return this.sqsprovider.sendMessage({
 			message_body: message_body,
 			queue: queue_name
 		}).then(() => {

@@ -120,8 +120,8 @@ describe('controllers/Tracker.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'tracker');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('trackers');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -162,8 +162,8 @@ describe('controllers/Tracker.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'tracker');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('trackers');
                     expect(parameters).to.have.property('key_condition_expression');

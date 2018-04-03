@@ -154,7 +154,8 @@ describe('controllers/workers/redshiftEvents', () => {
 
         let sns_message = MockEntities.getValidSNSMessage(test_case.message);
 
-        let kfu = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities.js');
+        const KinesisFirehoseProvider = global.SixCRM.routes.include('lib', 'providers/kinesis-firehose-provider.js');
+        let kfu = new KinesisFirehoseProvider();
 
         kfu.pushRecord = (name, record) => {
           if(!_.has(test_case, 'datetime')){
@@ -162,9 +163,9 @@ describe('controllers/workers/redshiftEvents', () => {
           }
           expect(record).to.deep.equal(test_case.result);
           return Promise.resolve(true);
-        }
+        };
 
-        mockery.registerMock(global.SixCRM.routes.path('lib','kinesis-firehose-utilities.js'), kfu);
+        //mockery.registerMock(global.SixCRM.routes.path('lib','providers/kinesis-firehose-provider.js'), kfu);
 
         const RedshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');
         const redshiftEventsController =  new RedshiftEventsController();

@@ -5,7 +5,8 @@ const TestUtils = require('./test-utils');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 const sqsDeployment = new SQSDeployment();
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+const LambdaProvider = global.SixCRM.routes.include('lib', 'providers/lambda-provider.js');
+const lambdaprovider = new LambdaProvider();
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 
@@ -373,7 +374,7 @@ describe('stateMachine', () => {
 
     function configureLambdas() {
         arrayutilities.map(lambda_names, (lambda_name) => {
-            lambdas.push(lambdautilities.getLambdaInstance(lambda_name));
+            lambdas.push(lambdaprovider.getLambdaInstance(lambda_name));
         });
     }
 

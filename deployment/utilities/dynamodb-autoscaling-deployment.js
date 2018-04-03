@@ -8,7 +8,9 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
-const AutoscalingUtilities = global.SixCRM.routes.include('lib', 'providers/autoscaling-utilities.js');
+const AutoscalingProvider = global.SixCRM.routes.include('lib', 'providers/autoscaling-provider.js');
+const DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
+const IAMProvider = global.SixCRM.routes.include('lib', 'providers/iam-provider.js');
 
 module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
 
@@ -40,9 +42,9 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 
       this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition})
 
-      this.dynamodbutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
-      this.iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
-      this.autoscalingutilities = new AutoscalingUtilities();
+      this.dynamodbutilities = new DynamoDBProvider();
+      this.iamprovider = new IAMProvider();
+      this.autoscalingprovider = new AutoscalingProvider();
 
     }
 
@@ -62,7 +64,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 
       let role_definition = global.SixCRM.routes.include('deployment', 'dynamodb/configuration/autoscalingrole.json');
 
-      return this.iamutilities.roleExists(role_definition).then(result => {
+      return this.iamprovider.roleExists(role_definition).then(result => {
 
         if(result == false){
           eu.throwError('server', 'Role does not exist: '+role_definition.RoleName);
@@ -259,7 +261,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
       let scalable_target_configurations = this.parameters.get('scalabletargetconfigurations');
 
       let scalable_target_configuration_promises = arrayutilities.map(scalable_target_configurations, scalable_target_configuration => {
-        return this.autoscalingutilities.registerScalableTarget(scalable_target_configuration);
+        return this.autoscalingprovider.registerScalableTarget(scalable_target_configuration);
       });
 
       return Promise.all(scalable_target_configuration_promises).then(() => {
@@ -299,7 +301,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
       let scaling_policy_configurations = this.parameters.get('scalingpolicyconfigurations');
 
       let scaling_policy_configuration_promises = arrayutilities.map(scaling_policy_configurations, scaling_policy_configuration => {
-        return this.autoscalingutilities.putScalingPolicy(scaling_policy_configuration);
+        return this.autoscalingprovider.putScalingPolicy(scaling_policy_configuration);
       });
 
       return Promise.all(scaling_policy_configuration_promises).then(() => {
@@ -349,7 +351,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
         ResourceIds:resource_ids
       }
 
-      return this.autoscalingutilities.describeScalableTargets(parameters)
+      return this.autoscalingprovider.describeScalableTargets(parameters)
       .then(result => {
 
         du.highlight(table_name+' scaling targets');
@@ -366,7 +368,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
             ServiceNamespace:'dynamodb'
           };
 
-          return () => this.autoscalingutilities.describeScalingPolicies(parameters)
+          return () => this.autoscalingprovider.describeScalingPolicies(parameters)
           .then(result => {
 
             du.highlight(resource_id+' Scaling Policies:');

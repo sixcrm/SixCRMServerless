@@ -9,6 +9,8 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
+const DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
+const IAMProvider = global.SixCRM.routes.include('lib', 'providers/iam-provider.js');
 
 module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
@@ -16,8 +18,8 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       super();
 
-      this.dynamodbutilities = global.SixCRM.routes.include('lib', 'dynamodb-utilities.js');
-      this.iamutilities = global.SixCRM.routes.include('lib', 'iam-utilities.js');
+      this.dynamodbutilities = new DynamoDBProvider();
+      this.iamprovider = new IAMProvider();
 
       this.controllers = [];
 

@@ -7,7 +7,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+const LambdaResponse = global.SixCRM.routes.include('lib', 'providers/lambda-response.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 module.exports = class DownloadController {

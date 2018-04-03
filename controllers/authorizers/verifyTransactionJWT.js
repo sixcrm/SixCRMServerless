@@ -1,7 +1,8 @@
 'use strict'
 const _ = require("underscore");
 
-const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities');
+const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
+const jwtprovider = new JWTProvider();
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
@@ -13,7 +14,7 @@ module.exports = class verifyTransactionJWTController {
           bypass: 'BYPASS'
       }
 
-      jwtutilities.setJWTType('transaction');
+      jwtprovider.setJWTType('transaction');
 
     }
 
@@ -69,7 +70,7 @@ module.exports = class verifyTransactionJWTController {
 
         du.debug('Validate Token');
 
-        return jwtutilities.verifyJWT(token, 'transaction');
+        return jwtprovider.verifyJWT(token, 'transaction');
 
     }
 

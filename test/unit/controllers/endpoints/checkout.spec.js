@@ -290,17 +290,17 @@ describe('checkout', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve({});
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-          publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+          publish() {
               return Promise.resolve({});
-          },
-          getRegion: () => {
+          }
+          getRegion() {
               return 'localhost';
           }
       });
@@ -388,11 +388,11 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-          publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+          publish() {
               return Promise.resolve({});
-          },
-          getRegion: () => {
+          }
+          getRegion() {
               return 'localhost';
           }
       });
@@ -498,8 +498,8 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -564,8 +564,8 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve({});
         }
       });
@@ -595,11 +595,11 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-          publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+          publish() {
               return Promise.resolve({});
-          },
-          getRegion: () => {
+          }
+          getRegion() {
               return 'localhost';
           }
       });
@@ -625,11 +625,11 @@ describe('checkout', function () {
       let event_body = getValidEventBody();
       let session = getValidSession();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-          publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+          publish() {
               return Promise.resolve({});
-          },
-          getRegion: () => {
+          }
+          getRegion() {
               return 'localhost';
           }
       });
@@ -655,11 +655,11 @@ describe('checkout', function () {
 
       let confirmation = getValidConfirmation();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-          publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+          publish() {
               return Promise.resolve({});
-          },
-          getRegion: () => {
+          }
+          getRegion() {
               return 'localhost';
           }
       });
@@ -699,23 +699,14 @@ describe('checkout', function () {
       let response_type = 'success';
       let product_schedules = getValidProductSchedules(null, true);
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities'), {
-            publish: () => {
-                return Promise.resolve({});
-            },
-            getRegion: () => {
-                return 'localhost';
-            }
-        });
-
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-            publish: () => {
-                return Promise.resolve({});
-            },
-            getRegion: () => {
-                return 'localhost';
-            }
-        });
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+          publish() {
+              return Promise.resolve({});
+          }
+          getRegion() {
+              return 'localhost';
+          }
+      });
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/productschedule/ProductSchedule.js'), class {
         getHydrated(){
@@ -788,8 +779,8 @@ describe('checkout', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve({});
         }
       });

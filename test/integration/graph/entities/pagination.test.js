@@ -29,7 +29,7 @@ var entities = [
 	{camel:'Roles',lower:'role'},
 	{camel:'Sessions',lower:'session'},
 	{camel:'ShippingReceipts',lower:'shippingreceipt'},
-	{camel:'SMTPProviders',lower:'smtpprovider'},
+	{camel:'SMTPProvider',lower:'smtpprovider'},
 	{camel:'Transactions',lower:'transaction'},
 	{camel:'Users',lower:'user'}
 ];

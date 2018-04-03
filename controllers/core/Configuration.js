@@ -7,7 +7,9 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
-const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
+const CloudsearchProvider = global.SixCRM.routes.include('lib', 'providers/cloudsearch-provider.js');
+const RDSProvider = global.SixCRM.routes.include('lib', 'providers/rds-provider.js');
+const RedshiftProvider = global.SixCRM.routes.include('lib', 'providers/redshift-provider.js');
 
 module.exports = class Configuration extends ConfigurationUtilities {
 
@@ -161,13 +163,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
   regenerateRedshiftConfiguration() {
     du.debug('Regenerate Redshift Configuration');
 
-    const redshiftutilities = global.SixCRM.routes.include('lib', 'redshift-utilities.js');
+    const redshiftprovider = new RedshiftProvider();
 
     let parameters = {
       ClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
     };
 
-    return redshiftutilities.describeCluster(parameters).then((data) => {
+    return redshiftprovider.describeCluster(parameters).then((data) => {
       if (!objectutilities.hasRecursive(data, 'Clusters.0.Endpoint.Address')) {
 
         eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
@@ -181,13 +183,13 @@ module.exports = class Configuration extends ConfigurationUtilities {
   regenerateAuroraConfiguration() {
     du.debug('Regenerate Aurora Configuration');
 
-    const rdsUtilities = global.SixCRM.routes.include('lib', 'rds-utilities.js');
+    const rdsprovider = new RDSProvider();
 
     let parameters = {
       DBClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
     };
 
-    return rdsUtilities.describeClusters(parameters).then((data) => {
+    return rdsprovider.describeClusters(parameters).then((data) => {
 
       du.debug('Aurora clusters', data);
 
@@ -206,9 +208,9 @@ module.exports = class Configuration extends ConfigurationUtilities {
     //Technical Debt:  This is causing some issues in unit tests...
     du.debug('Regenerate Cloudsearch Configuration');
 
-    const cloudsearchutilities = new CloudsearchUtilities();
+    const cloudsearchprovider = new CloudsearchProvider();
 
-    return cloudsearchutilities.saveDomainConfiguration();
+    return cloudsearchprovider.saveDomainConfiguration();
 
   }
 
@@ -481,11 +483,12 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     let redis_key = this.buildRedisKey(field);
 
-    if (!_.has(this, 'redisutilities')) {
-      this.redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+    if (!_.has(this, 'redisprovider')) {
+      const RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+      this.redisprovider = new RedisProvider();
     }
 
-    return this.redisutilities.get(redis_key).then((result) => {
+    return this.redisprovider.get(redis_key).then((result) => {
 
       this.propagateCache('localcache', field, result);
 
@@ -509,24 +512,25 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
     let bucket = parserutilities.parse(this.config_bucket_template, {stage: this.stage});
 
-    if (!_.has(this, 's3utilities') || !_.isFunction(this.s3utilities.getObject)) {
+    if (!_.has(this, 's3provider') || !_.isFunction(this.s3provider.getObject)) {
 
-      this.s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
+      const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
+      this.s3provider = new S3Provider();
 
     }
 
-    if (this.s3utilities.hasCredentials(false) !== true) {
+    if (this.s3provider.hasCredentials(false) !== true) {
       return Promise.resolve(null);
     }
 
-    return this.s3utilities.objectExists({
+    return this.s3provider.objectExists({
       Bucket: bucket,
       Key: this.s3_environment_configuration_file_key
     }).then((exists) => {
 
       if (exists) {
 
-        return this.s3utilities.getObject(bucket, this.s3_environment_configuration_file_key).then((result) => {
+        return this.s3provider.getObject(bucket, this.s3_environment_configuration_file_key).then((result) => {
 
           if (!_.has(result, 'Body')) {
             eu.throwError('server', 'Result response is assumed to have Body property');
@@ -562,7 +566,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       } else {
 
-        return this.s3utilities.assureBucket({Bucket: bucket}).then(() => {
+        return this.s3provider.assureBucket({Bucket: bucket}).then(() => {
 
           let parameters = {
             Bucket: bucket,
@@ -570,7 +574,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
             Body: '{}'
           };
 
-          return this.s3utilities.putObject(parameters).then(() => {
+          return this.s3provider.putObject(parameters).then(() => {
 
             return this.getS3EnvironmentConfiguration(field);
 
@@ -705,13 +709,14 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
       let redis_key = this.buildRedisKey(key);
 
-      if (!_.has(this, 'redisutilities')) {
-        this.redisutilities = global.SixCRM.routes.include('lib', 'redis-utilities.js');
+      if (!_.has(this, 'redisprovider')) {
+        const RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+        this.redisprovider = new RedisProvider();
       }
 
       //return this.propagateCache('localcache', key, value);
 
-      return this.redisutilities.set(redis_key, value).then(() => {
+      return this.redisprovider.set(redis_key, value).then(() => {
 
         return this.propagateCache('localcache', key, value);
 
@@ -761,7 +766,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
         du.debug({Bucket: bucket, Key: this.s3_environment_configuration_file_key, Body: body}, process.env);
 
-        return this.s3utilities.putObject({
+        return this.s3provider.putObject({
           Bucket: bucket,
           Key: this.s3_environment_configuration_file_key,
           Body: body

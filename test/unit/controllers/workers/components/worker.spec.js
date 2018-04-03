@@ -10,6 +10,19 @@ function getValidMessage(){
 
 describe('controllers/workers/components/worker.js', function () {
 
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
+
     describe('constructor', () => {
 
         it('successfully constructs', () => {

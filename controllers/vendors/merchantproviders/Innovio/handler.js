@@ -3,7 +3,8 @@ const querystring = require('querystring');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
+const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const httpprovider = new HttpProvider();
 
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
 
@@ -280,7 +281,7 @@ class InnovioController extends MerchantProvider {
         body: parameter_querystring
       };
 
-      return httputilities.post(request_options).then(result => {
+      return httpprovider.post(request_options).then(result => {
 
         this.parameters.set('vendorresponse', result);
         return true;
@@ -307,7 +308,7 @@ class InnovioController extends MerchantProvider {
         body: parameter_querystring
       };
 
-      return httputilities.post(request_options).then(result => {
+      return httpprovider.post(request_options).then(result => {
 
         this.parameters.set('vendorresponse', result);
         return true;
@@ -334,7 +335,7 @@ class InnovioController extends MerchantProvider {
         body: parameter_querystring
       };
 
-      return httputilities.post(request_options).then(result => {
+      return httpprovider.post(request_options).then(result => {
 
         this.parameters.set('vendorresponse', result);
         return true;
@@ -361,7 +362,7 @@ class InnovioController extends MerchantProvider {
         body: parameter_querystring
       };
 
-      return httputilities.post(request_options).then(result => {
+      return httpprovider.post(request_options).then(result => {
 
         this.parameters.set('vendorresponse', result);
         return true;

@@ -3,7 +3,8 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
+const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const httpprovider = new HttpProvider();
 
 const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');
 
@@ -278,7 +279,7 @@ module.exports = class TestController extends FulfillmentProviderController {
       url: uri
     };
 
-    return httputilities.postJSON(request_options).then(result => {
+    return httpprovider.postJSON(request_options).then(result => {
       this.parameters.set('vendorresponse', result);
       return result;
     });

@@ -28,8 +28,8 @@ describe('controllers/entities/Tag.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'tag');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(parameters.key_condition_expression).to.include('#key = :keyv');
                     expect(parameters.expression_attribute_names['#key']).to.equal('key');
                     expect(parameters.expression_attribute_values[':keyv']).to.equal('Test Key');
@@ -86,8 +86,8 @@ describe('controllers/entities/Tag.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'tag');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(parameters.key_condition_expression).to.include('begins_with(#key, :keyv)');
                     expect(parameters.expression_attribute_names['#key']).to.equal('key');
                     expect(parameters.expression_attribute_values[':keyv']).to.equal('Test');
@@ -145,8 +145,8 @@ describe('controllers/entities/Tag.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'tag');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(parameters.key_condition_expression).to.include('#entity = :index_valuev');
                     expect(parameters.expression_attribute_names['#entity']).to.equal('entity');
                     expect(parameters.expression_attribute_values[':index_valuev']).to.equal('TestID');

@@ -5,12 +5,9 @@ let expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
 
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const WorkerResponse = global.SixCRM.routes.include('workers', 'components/WorkerResponse.js');
-const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
-
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidCompoundWorkerResponseMultipleMessages(response, messages){
@@ -82,10 +79,24 @@ function getValidMessages(ids){
 
 describe('workers/forwardMessage', () => {
 
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
+
   describe('validateEnvironment', () => {
 
     it('fails when params are not set.', () => {
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       try {
@@ -102,6 +113,7 @@ describe('workers/forwardMessage', () => {
 
     it('fails when origin queue is not set.', () => {
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       try{
@@ -118,6 +130,7 @@ describe('workers/forwardMessage', () => {
 
     it('fails when name is not set.', () => {
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       try{
@@ -134,6 +147,7 @@ describe('workers/forwardMessage', () => {
 
     it('fails when workerfunction is not set.', () => {
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       try{
@@ -150,6 +164,7 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds when params are proper.', () => {
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
@@ -164,35 +179,19 @@ describe('workers/forwardMessage', () => {
 
   describe('getMessages', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      //global.SixCRM.localcache.clear('all');
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('successfully retrieves and sets messages from correct queue', () => {
 
       let valid_messages = getValidMessages();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        receiveMessages: ({queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        receiveMessages({queue}) {
           expect(queue).to.equal('dummy_queue');
 
           return Promise.resolve(valid_messages);
         }
       });
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
@@ -214,6 +213,7 @@ describe('workers/forwardMessage', () => {
 
       let invalids = [{}, '', null, undefined, 123, new Error(), false, true];
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       arrayutilities.map(invalids, (invalid) => {
@@ -260,6 +260,7 @@ describe('workers/forwardMessage', () => {
         }
       ];
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       arrayutilities.map(invalids, (invalid) => {
@@ -284,6 +285,7 @@ describe('workers/forwardMessage', () => {
 
       let valids = getValidMessages();
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('messages', valids);
@@ -299,31 +301,15 @@ describe('workers/forwardMessage', () => {
 
   describe('invokeAdditionalLambdas', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      //global.SixCRM.localcache.clear('all');
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('fails when messages parameters is not set', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+        invokeFunction() {
           return true;
         }
       });
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
@@ -338,12 +324,13 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for valid messages of length less than limit', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+        invokeFunction() {
           return true;
         }
       });
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
       let valid_messages = getValidMessages();
 
@@ -360,12 +347,13 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for valid messages of length 0', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+        invokeFunction() {
           expect.fail();
         }
       });
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
@@ -381,20 +369,21 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for valid messages of length 10', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: ( {function_name, payload, invocation_type} ) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+        invokeFunction( {function_name, payload, invocation_type} ) {
           expect(function_name).to.equal('lambda-name');
           expect(JSON.parse(payload)).to.deep.equal({});
           expect(invocation_type).to.equal('Event');
 
           return Promise.resolve(true);
-        },
+        }
 
-        buildLambdaName: () => {
+        buildLambdaName() {
           return 'lambda-name';
         }
       });
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
       let messages = getMultipleValidMessages(10);
 
@@ -411,8 +400,8 @@ describe('workers/forwardMessage', () => {
 
     it('fails when lambda returns error', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-        invokeFunction: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+        invokeFunction() {
           let error = new Error();
 
           error.message = 'Testing Error.';
@@ -420,6 +409,7 @@ describe('workers/forwardMessage', () => {
         }
       });
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_function'});
@@ -435,29 +425,13 @@ describe('workers/forwardMessage', () => {
 
   describe('forwardMessagesToWorkers', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      //global.SixCRM.localcache.clear('all');
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('succeeds for valid messages of length 0', () => {
 
       let mock_worker = getValidMockWorker();
 
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       let messages = [];
@@ -479,6 +453,7 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       let messages = getValidMessages();
@@ -513,6 +488,7 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       let messages = arrayutilities.merge(getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages());
@@ -546,6 +522,7 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController({workerfunction: 'aWorker.js'});
 
       let messages = getValidMessages();
@@ -573,6 +550,7 @@ describe('workers/forwardMessage', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       let messages = arrayutilities.merge(getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages(), getValidMessages());
@@ -611,6 +589,7 @@ describe('workers/forwardMessage', () => {
     //make sure the response has the original message in the body
     it('responds correctly when there are no messages', () => {
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       let RelayResponse = global.SixCRM.routes.include('workers', 'components/RelayResponse.js');
@@ -626,33 +605,17 @@ describe('workers/forwardMessage', () => {
 
   describe('handleFailure', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      //global.SixCRM.localcache.clear('all');
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('does not forward a object missing the failure property', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}, callback) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           expect.fail()
         }
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
@@ -665,14 +628,15 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward when failure_queue property is not set', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}, callback) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           expect.fail()
         }
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', getValidMessage());
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
@@ -685,8 +649,8 @@ describe('workers/forwardMessage', () => {
 
     it('successfully forwards to correct failure queue', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage({message_body, queue}) {
           let body = JSON.parse(validMessage.Body);
 
           body['referring_workerfunction'] = global.SixCRM.routes.path('workers', 'wf.js');
@@ -701,6 +665,7 @@ describe('workers/forwardMessage', () => {
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', validMessage);
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       let forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', failure_queue: 'some_queue', workerfunction: 'wf.js'});
@@ -715,33 +680,17 @@ describe('workers/forwardMessage', () => {
 
   describe('handleSuccess', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      //global.SixCRM.localcache.clear('all');
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('does not forward a object missing the success property', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}, callback) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           expect.fail()
         }
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', getValidMessage());
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', destination_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
@@ -754,14 +703,15 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward when destination_queue property is not set', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}, callback) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           expect.fail()
         }
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
@@ -774,8 +724,8 @@ describe('workers/forwardMessage', () => {
 
     it('successfully forwards to destination queue', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage({message_body, queue}) {
           expect(queue).to.equal('some_success_queue');
           expect(message_body).to.equal(validMessage.Body);
           return Promise.resolve({});
@@ -785,6 +735,7 @@ describe('workers/forwardMessage', () => {
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', validMessage);
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', destination_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
@@ -799,33 +750,17 @@ describe('workers/forwardMessage', () => {
 
   describe('handleError', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      //global.SixCRM.localcache.clear('all');
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('does not forward a object missing the error property', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}, callback) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           expect.fail();
         }
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', error_queue: 'some_error_queue', workerfunction: 'dummy_worker'});
@@ -838,14 +773,15 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward when error_queue property is not set', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}, callback) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           expect.fail();
         }
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('error', getValidMessage());
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController({});
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
@@ -858,8 +794,8 @@ describe('workers/forwardMessage', () => {
 
     it('successfully forwards to error queue', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage({message_body, queue}) {
           let body = JSON.parse(validMessage.Body);
 
           body['referring_workerfunction'] = global.SixCRM.routes.path('workers', 'wf.js');
@@ -874,6 +810,7 @@ describe('workers/forwardMessage', () => {
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('error', validMessage);
 
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', error_queue: 'some_error_queue', workerfunction: 'wf.js'});
@@ -891,14 +828,15 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward a object missing the noaction property', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        sendMessage: ({message_body, queue}, callback) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        sendMessage() {
           expect.fail();
         }
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
@@ -913,6 +851,7 @@ describe('workers/forwardMessage', () => {
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('noaction', getValidMessage());
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
@@ -927,32 +866,17 @@ describe('workers/forwardMessage', () => {
 
   describe('handleDelete', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      //global.SixCRM.localcache.clear('all');
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('does not delete noaction type', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage() {
           expect.fail();
         }
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('noaction', getValidMessage());
+
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'dummy_queue', workerfunction: 'dummy_worker'});
@@ -965,8 +889,8 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes fail type', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_delete_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
 
@@ -976,6 +900,8 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', validMessage);
+
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_delete_queue', workerfunction: 'dummy_worker'});
@@ -989,8 +915,8 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes success type', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_success_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
 
@@ -1000,6 +926,7 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', validMessage);
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
@@ -1012,8 +939,8 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes error type', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_error_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
 
@@ -1023,6 +950,7 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('error', validMessage);
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_error_queue', workerfunction: 'dummy_worker'});
@@ -1035,8 +963,8 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes success type with multiple messages', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_success_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
 
@@ -1046,6 +974,7 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', validMessage);
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
@@ -1058,8 +987,8 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes fail type with multiple messages', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_fail_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
 
@@ -1069,6 +998,7 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', validMessage);
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_fail_queue', workerfunction: 'dummy_worker'});
@@ -1081,8 +1011,8 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes error type with multiple messages', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_error_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
 
@@ -1092,6 +1022,7 @@ describe('workers/forwardMessage', () => {
 
       const validMessage = getValidMessage();
       const compoundWorkerResponse = getValidCompoundWorkerResponse('error', validMessage);
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_error_queue', workerfunction: 'dummy_worker'});
@@ -1104,13 +1035,14 @@ describe('workers/forwardMessage', () => {
 
     it('successfully skips deletes for noaction type with multiple messages', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage() {
           expect.fail();
         }
       });
 
       const compoundWorkerResponse = getValidCompoundWorkerResponse('noaction', getValidMessage());
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_noaction_queue', workerfunction: 'dummy_worker'});
@@ -1128,6 +1060,8 @@ describe('workers/forwardMessage', () => {
 
     it('retrieves messages for single message response', () => {
       const compoundWorkerResponse = getValidCompoundWorkerResponse('success', getValidMessage());
+
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController({});
       const retrieved_messages = forwardMessageController.getCompoundWorkerResponseMessages(compoundWorkerResponse);
 
@@ -1136,6 +1070,8 @@ describe('workers/forwardMessage', () => {
 
     it('retrieves messages for multi-message response', () => {
       const compoundWorkerResponse = getValidCompoundWorkerResponseMultipleMessages('success', getValidMessages());
+
+      const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController({});
       const retrieved_messages = forwardMessageController.getCompoundWorkerResponseMessages(compoundWorkerResponse);
 
@@ -1146,30 +1082,10 @@ describe('workers/forwardMessage', () => {
 
   describe('deleteMessages', () => {
 
-    before(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      //global.SixCRM.localcache.clear('all');
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('successfully deletes single message arrays', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage({queue}) {
           expect(queue).to.equal('some_success_queue');
 
           return Promise.resolve(true);
@@ -1177,6 +1093,7 @@ describe('workers/forwardMessage', () => {
       });
 
       const messages = [getValidMessage()];
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
@@ -1189,8 +1106,8 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes multiple message arrays', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage({queue}) {
           expect(queue).to.equal('some_success_queue');
 
           return Promise.resolve(true);
@@ -1198,6 +1115,7 @@ describe('workers/forwardMessage', () => {
       });
 
       const messages = getValidMessages();
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
@@ -1212,35 +1130,19 @@ describe('workers/forwardMessage', () => {
 
   describe('handleWorkerResponseObject', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      //global.SixCRM.localcache.clear('all');
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('successfully handles a worker response', () => {
 
       let compound_worker_response_object = getValidCompoundWorkerResponse('success', getValidMessage());
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-        deleteMessage: ({queue, receipt_handle}) => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        deleteMessage({queue}) {
           expect(queue).to.equal('some_success_queue');
 
           return Promise.resolve(true);
         }
       });
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
       const forwardMessageController = new ForwardMessageController();
 
       forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
@@ -1256,31 +1158,19 @@ describe('workers/forwardMessage', () => {
   });
   describe('handleWorkerResponseObjects', () => {
 
-      before(() => {
-          mockery.enable({
-              useCleanCache: true,
-              warnOnReplace: false,
-              warnOnUnregistered: false
-          });
-      });
-
-      afterEach(() => {
-          mockery.resetCache();
-          mockery.deregisterAll();
-      });
-
       it('successfully handles a worker response objects', () => {
 
           let compound_worker_response_object = getValidCompoundWorkerResponse('success', getValidMessage());
 
-          mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-              deleteMessage: ({queue, receipt_handle}) => {
+          mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+              deleteMessage({queue}) {
                   expect(queue).to.equal('some_success_queue');
 
                   return Promise.resolve(true);
               }
           });
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
           const forwardMessageController = new ForwardMessageController();
 
           forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
@@ -1298,23 +1188,11 @@ describe('workers/forwardMessage', () => {
 
   describe('validateWorkerResponseObject', () => {
 
-      before(() => {
-          mockery.enable({
-              useCleanCache: true,
-              warnOnReplace: false,
-              warnOnUnregistered: false
-          });
-      });
-
-      afterEach(() => {
-          mockery.resetCache();
-          mockery.deregisterAll();
-      });
-
       it('successfully validates a worker response', () => {
 
           let compound_worker_response_object = getValidCompoundWorkerResponse('success', getValidMessage());
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
           const forwardMessageController = new ForwardMessageController();
 
           forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
@@ -1332,6 +1210,7 @@ describe('workers/forwardMessage', () => {
 
           let compound_worker_response_object = getValidCompoundWorkerResponse('fail', getValidMessage());
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
           const forwardMessageController = new ForwardMessageController();
 
           forwardMessageController.parameters.set('params', {name: 'dummy_name', origin_queue: 'some_success_queue', workerfunction: 'dummy_worker'});
@@ -1355,19 +1234,6 @@ describe('workers/forwardMessage', () => {
 
   describe('execute', () => {
 
-      before(() => {
-          mockery.enable({
-              useCleanCache: true,
-              warnOnReplace: false,
-              warnOnUnregistered: false
-          });
-      });
-
-      afterEach(() => {
-          mockery.resetCache();
-          mockery.deregisterAll();
-      });
-
       it('successful', () => {
 
           let messages = getValidMessages();
@@ -1379,22 +1245,23 @@ describe('workers/forwardMessage', () => {
           mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
           //does not invoke additional lambda when not required
-          mockery.registerMock(global.SixCRM.routes.path('lib', 'lambda-utilities.js'), {
-              invokeFunction: () => {
+          mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+              invokeFunction() {
                   expect.fail();
               }
           });
 
+          const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
           const forwardMessageController = new ForwardMessageController();
 
-          forwardMessageController.sqsutilities = {
+          forwardMessageController.sqsprovider = {
               receiveMessages: ({queue, limit}) => {
                   expect(queue).to.equal('some_success_queue');
                   expect(limit).to.equal(forwardMessageController.message_limit);
 
                   return Promise.resolve(messages);
               },
-              deleteMessage: ({queue, receipt_handle}) => {
+              deleteMessage({queue, receipt_handle}) {
 
                   expect(queue).to.equal('some_success_queue');
                   expect(receipt_handle).to.equal(messages[0].ReceiptHandle);

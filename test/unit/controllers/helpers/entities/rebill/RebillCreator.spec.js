@@ -1076,11 +1076,11 @@ describe('/helpers/entities/Rebill.js', () => {
 
     it('successfully saves a rebill to the database', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        queryRecords() {
           return Promise.resolve([]);
-        },
-        saveRecord: (tableName, entity) => {
+        }
+        saveRecord(tableName, entity) {
           return Promise.resolve(entity);
         }
       });
@@ -1255,14 +1255,14 @@ describe('/helpers/entities/Rebill.js', () => {
 
     beforeEach(() => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        queryRecords() {
           return Promise.resolve([]);
-        },
-        saveRecord: (tableName, entity) => {
+        }
+        saveRecord(tableName, entity) {
           return Promise.resolve(entity);
-        },
-        createINQueryParameters: (field_name, in_array) => {
+        }
+        createINQueryParameters(field_name, in_array) {
           arrayutilities.nonEmpty(in_array, true);
           if(!arrayutilities.assureEntries(in_array, 'string')){
             eu.throwError('server', 'All entries in the "in_array" must be of type string.');
@@ -1622,14 +1622,14 @@ describe('/helpers/entities/Rebill.js', () => {
       }];
 
       /*
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        queryRecords() {
           return Promise.resolve([]);
-        },
-        saveRecord: (tableName, entity) => {
+        }
+        saveRecord(tableName, entity) {
           return Promise.resolve(entity);
-        },
-        createINQueryParameters: (field_name, in_array) => {
+        }
+        createINQueryParameters(field_name, in_array) {
           arrayutilities.nonEmpty(in_array, true);
           if(!arrayutilities.assureEntries(in_array, 'string')){
             eu.throwError('server', 'All entries in the "in_array" must be of type string.');
@@ -1739,14 +1739,14 @@ describe('/helpers/entities/Rebill.js', () => {
         }]
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        queryRecords() {
           return Promise.resolve([]);
-        },
-        saveRecord: (tableName, entity) => {
+        }
+        saveRecord(tableName, entity) {
           return Promise.resolve(entity);
-        },
-        createINQueryParameters: (field_name, in_array) => {
+        }
+        createINQueryParameters(field_name, in_array) {
           arrayutilities.nonEmpty(in_array, true);
           if(!arrayutilities.assureEntries(in_array, 'string')){
             eu.throwError('server', 'All entries in the "in_array" must be of type string.');
@@ -1940,14 +1940,14 @@ describe('/helpers/entities/Rebill.js', () => {
         ]
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-        queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        queryRecords() {
           return Promise.resolve([]);
-        },
-        saveRecord: (tableName, entity) => {
+        }
+        saveRecord(tableName, entity) {
           return Promise.resolve(entity);
-        },
-        createINQueryParameters: (field_name, in_array) => {
+        }
+        createINQueryParameters(field_name, in_array) {
           arrayutilities.nonEmpty(in_array, true);
           if(!arrayutilities.assureEntries(in_array, 'string')){
             eu.throwError('server', 'All entries in the "in_array" must be of type string.');

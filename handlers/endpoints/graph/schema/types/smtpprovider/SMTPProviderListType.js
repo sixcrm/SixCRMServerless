@@ -7,7 +7,7 @@ let paginationType = require('../pagination/paginationType');
 let SMTPProviderType = require('./SMTPProviderType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'SMTPProviders',
+    name: 'SMTPProvider',
     description: 'SMTP Providers.',
     fields: () => ({
         smtpproviders: {

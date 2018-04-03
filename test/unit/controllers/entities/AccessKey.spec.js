@@ -38,16 +38,16 @@ describe('controllers/AccessKey.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('*', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('accesskeys');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(params.entity.id);
                     return Promise.resolve({
                         Count: 1,
                         Items: [access_key]
                     });
-                },
-                saveRecord: (tableName, entity) => {
+                }
+                saveRecord(tableName, entity) {
                     expect(tableName).to.equal('accesskeys');
                     expect(entity.access_key).to.equal(access_key.access_key);
                     expect(entity.secret_key).to.equal(access_key.secret_key);

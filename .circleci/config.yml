@@ -67,8 +67,8 @@ jobs:
           name: Execute Functional Connectivity Test
           command: stage=circle npm run test-functional-connectivity
       - run:
-          name: Execute Functional Redis-Utility Test
-          command: stage=circle npm run test-functional-redis-utilities
+          name: Execute Functional Redis-Provider Test
+          command: stage=circle npm run test-functional-redis-provider
       - run:
           name: Deploy Local Dynamo
           command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js

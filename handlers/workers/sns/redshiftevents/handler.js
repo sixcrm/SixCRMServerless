@@ -4,7 +4,7 @@ module.exports.redshiftevents = (event, context, callback) => {
 
   require('../../../../SixCRM.js');
 
-  const LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+  const LambdaResponse = global.SixCRM.routes.include('lib', 'providers/lambda-response.js');
   const RedshiftEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/redshiftEvents.js');
   const redshiftEventsController =  new RedshiftEventsController();
 

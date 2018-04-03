@@ -55,8 +55,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib','postback-utilities.js'), {
-              executePostback: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib','providers/postback-provider.js'), class {
+              executePostback() {
                   return Promise.resolve('sample transaction execution');
               }
             });
@@ -104,8 +104,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib','postback-utilities.js'), {
-              executePostback: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib','providers/postback-provider.js'), class {
+              executePostback() {
                 return Promise.resolve('sample transaction execution');
               }
             });
@@ -147,8 +147,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             let data = 'Some sample data';
 
-            mockery.registerMock(global.SixCRM.routes.path('lib','postback-utilities.js'), {
-              executePostback: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib','providers/postback-provider.js'), class {
+              executePostback() {
                   return Promise.resolve('sample transaction execution');
               }
             });
@@ -197,8 +197,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({
                         Items: [session]
                     });
@@ -231,8 +231,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({
                         Items: [session]
                     });
@@ -298,8 +298,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({
                         Items: [session]
                     });
@@ -315,8 +315,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib','postback-utilities.js'), {
-              executePostback: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib','providers/postback-provider.js'), class {
+              executePostback() {
                   return Promise.resolve('sample transaction execution');
               }
             });
@@ -344,8 +344,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({
                         Items: [session]
                     });
@@ -384,8 +384,8 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'session');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: () => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords() {
                     return Promise.resolve({
                         Items: [session]
                     });

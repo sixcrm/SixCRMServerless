@@ -7,7 +7,8 @@ const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
+const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const httpprovider = new HttpProvider();
 const random = global.SixCRM.routes.include('lib','random.js');
 const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -65,17 +66,17 @@ function confirmOrder(token, session){
 
   let account = config.account;
 
-  let querystring = httputilities.createQueryString({session: session});
+  let querystring = httpprovider.createQueryString({session: session});
 
   let argument_object = {
-    //Technical Debt:  This is a hack - http-utilities.js should be adding the querystring from the qs parameter
+    //Technical Debt:  This is a hack - http-provider.js should be adding the querystring from the qs parameter
     url: config.endpoint+'order/confirm/'+account+'?'+querystring,
     headers:{
       Authorization: token
     }
   };
 
-  return httputilities.getJSON(argument_object)
+  return httpprovider.getJSON(argument_object)
   .then((result) => {
     du.debug(result.body);
     expect(result.response.statusCode).to.equal(200);
@@ -115,7 +116,7 @@ function createUpsell(token, session, upsell_object){
 
   du.info('Upsell', argument_object);
 
-  return httputilities.postJSON(argument_object)
+  return httpprovider.postJSON(argument_object)
   .then((result) => {
     du.debug(result.body);
     expect(result.response.statusCode).to.equal(200);
@@ -153,7 +154,7 @@ function createOrder(token, session, sale_object, creditcard){
 
   du.info('Order', argument_object);
 
-  return httputilities.postJSON(argument_object)
+  return httpprovider.postJSON(argument_object)
   .then((result) => {
     du.debug(result.body);
     expect(result.response.statusCode).to.equal(200);
@@ -187,7 +188,7 @@ function createLead(token, campaign, customer){
     }
   };
 
-  return httputilities.postJSON(argument_object)
+  return httpprovider.postJSON(argument_object)
   .then((result) => {
     du.debug(result.body);
     expect(result.response.statusCode).to.equal(200);
@@ -221,7 +222,7 @@ function acquireToken(campaign){
     }
   };
 
-  return httputilities.postJSON(argument_object)
+  return httpprovider.postJSON(argument_object)
   .then((result) => {
     du.debug(result.body);
     expect(result.response.statusCode).to.equal(200);

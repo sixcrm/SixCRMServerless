@@ -95,8 +95,8 @@ describe('controllers/entities/Customer.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('customers');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('filter_expression');
@@ -179,8 +179,8 @@ describe('controllers/entities/Customer.js', () => {
 
             let credit_cards = getValidCreditCards();
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('customers');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('filter_expression');
@@ -190,8 +190,8 @@ describe('controllers/entities/Customer.js', () => {
                         Count: 2,
                         Items: [{}, {}]
                     });
-                },
-                createINQueryParameters: (field, list_array) => {
+                }
+                createINQueryParameters(field, list_array) {
                     expect(field).to.equal('id');
                     expect(list_array[0]).to.equal(customer.creditcards[0]);
                     return Promise.resolve({
@@ -248,8 +248,8 @@ describe('controllers/entities/Customer.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('customers');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('filter_expression');
@@ -259,8 +259,8 @@ describe('controllers/entities/Customer.js', () => {
                         Count: 1,
                         Items: [customer]
                     });
-                },
-                createINQueryParameters: (field, list_array) => {
+                }
+                createINQueryParameters(field, list_array) {
                     expect(field).to.equal('id');
                     expect(list_array[0]).to.equal(customer.creditcards[0]);
                     return Promise.resolve({
@@ -300,8 +300,8 @@ describe('controllers/entities/Customer.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('customers');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('filter_expression');
@@ -311,8 +311,8 @@ describe('controllers/entities/Customer.js', () => {
                         Count: 1,
                         Items: [customer]
                     });
-                },
-                createINQueryParameters: (field, list_array) => {
+                }
+                createINQueryParameters(field, list_array) {
                     expect(field).to.equal('id');
                     expect(list_array[0]).to.equal(customer.creditcards[0]);
                     return Promise.resolve({
@@ -346,8 +346,8 @@ describe('controllers/entities/Customer.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('customers');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('filter_expression');
@@ -374,8 +374,8 @@ describe('controllers/entities/Customer.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('customers');
                     expect(parameters).to.have.property('key_condition_expression');
                     expect(parameters).to.have.property('filter_expression');
@@ -468,11 +468,11 @@ describe('controllers/entities/Customer.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-				queryRecords: () => {
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+				queryRecords() {
 					return Promise.resolve({Items: [customer]});
-				},
-				saveRecord: () => {
+				}
+				saveRecord() {
 					return Promise.resolve();
 				}
 			});
@@ -521,11 +521,11 @@ describe('controllers/entities/Customer.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-				queryRecords: () => {
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+				queryRecords() {
 					return Promise.resolve({Items: [customer]});
-				},
-				saveRecord: () => {
+				}
+				saveRecord() {
 					return Promise.resolve();
 				}
 			});
@@ -590,11 +590,11 @@ describe('controllers/entities/Customer.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-				queryRecords: () => {
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+				queryRecords() {
 					return Promise.resolve({Items: [customer]});
-				},
-				saveRecord: () => {
+				}
+				saveRecord() {
 					return Promise.resolve();
 				}
 			});
@@ -644,11 +644,11 @@ describe('controllers/entities/Customer.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-				queryRecords: () => {
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+				queryRecords() {
 					return Promise.resolve({Items: []});
-				},
-				saveRecord: () => {
+				}
+				saveRecord() {
 					return Promise.resolve();
 				}
 			});
@@ -694,11 +694,11 @@ describe('controllers/entities/Customer.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-				queryRecords: () => {
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+				queryRecords() {
 					return Promise.resolve({Items: [customer]});
-				},
-				saveRecord: () => {
+				}
+				saveRecord() {
 					return Promise.resolve();
 				}
 			});

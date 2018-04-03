@@ -7,6 +7,8 @@ const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const httpprovider = new HttpProvider();
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 const random = global.SixCRM.routes.include('lib','random.js');
@@ -65,7 +67,7 @@ function checkout(token, post_body){
     }
   };
 
-  return httputilities.postJSON(argument_object)
+  return httpprovider.post(argument_object)
   .then((result) => {
     du.debug(result.body);
     expect(result.response.statusCode).to.equal(200);
@@ -97,7 +99,7 @@ function refund(transaction, amount) {
 
     du.debug(argument_object);
 
-    return httputilities.post(argument_object)
+    return httpprovider.post(argument_object)
         .then((result) => {
             du.debug(result.body);
 
@@ -137,7 +139,7 @@ function acquireToken(campaign){
 
   du.info(argument_object);
 
-  return httputilities.postJSON(argument_object)
+  return httpprovider.postJSON(argument_object)
   .then((result) => {
     du.debug(result.body);
     expect(result.response.statusCode).to.equal(200);

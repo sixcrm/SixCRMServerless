@@ -360,11 +360,13 @@ describe('confirmOrder', function () {
 
     it('successfully executes post processing', () => {
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-            publish: () => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+            publish() {
                 return Promise.resolve();
-            },
-            getRegion: () => 'localhost'
+            }
+            getRegion() {
+              return 'localhost'
+            }
         });
 
       let session = getValidSession();
@@ -444,11 +446,13 @@ describe('confirmOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        publish() {
           return Promise.resolve();
-        },
-        getRegion: () => 'localhost'
+        }
+        getRegion() {
+          return 'localhost'
+        }
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
@@ -534,11 +538,13 @@ describe('confirmOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        publish() {
           return Promise.resolve();
-        },
-        getRegion: () => 'localhost'
+        }
+        getRegion() {
+          return 'localhost'
+        }
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');

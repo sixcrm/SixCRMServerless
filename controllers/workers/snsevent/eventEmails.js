@@ -50,7 +50,7 @@ module.exports = class EventEmailsController extends SNSEventController {
     return this.acquireCampaign()
     .then(() => this.acquireCustomer())
     .then(() => this.acquireEmailTemplates())
-    .then(() => this.acquireSMTPProviders())
+    .then(() => this.acquireSMTPProvider())
     .then(() => this.sendEmails())
     .catch(error => {
       du.error(error);
@@ -155,7 +155,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
   }
 
-  acquireSMTPProviders(){
+  acquireSMTPProvider(){
 
     du.debug('Acquire SMTP Provider');
 

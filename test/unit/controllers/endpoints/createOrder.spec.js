@@ -374,8 +374,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -399,11 +399,13 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        publish() {
           return Promise.resolve();
-        },
-        getRegion: () => 'localhost'
+        }
+        getRegion() {
+          return 'localhost'
+        }
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
@@ -551,8 +553,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -576,11 +578,13 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        publish() {
           return Promise.resolve();
-        },
-        getRegion: () => 'localhost'
+        }
+        getRegion() {
+          return 'localhost'
+        }
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
@@ -727,8 +731,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -752,11 +756,13 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        publish() {
           return Promise.resolve();
-        },
-        getRegion: () => 'localhost'
+        }
+        getRegion() {
+          return 'localhost'
+        }
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
@@ -1239,8 +1245,8 @@ describe('createOrder', function () {
       let transactions = getValidTransactions();
 
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1255,8 +1261,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1286,11 +1292,13 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        publish() {
           return Promise.resolve();
-        },
-        getRegion: () => 'localhost'
+        }
+        getRegion() {
+          return 'localhost'
+        }
       });
 
       let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
@@ -1321,8 +1329,8 @@ describe('createOrder', function () {
       let transactions = getValidTransactions();
 
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1337,8 +1345,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1368,11 +1376,13 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        publish() {
           return Promise.resolve();
-        },
-        getRegion: () => 'localhost'
+        }
+        getRegion() {
+          return 'localhost'
+        }
       });
 
       let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
@@ -1403,8 +1413,8 @@ describe('createOrder', function () {
       let transactions = getValidTransactions();
 
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1419,8 +1429,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1450,11 +1460,13 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        publish() {
           return Promise.resolve();
-        },
-        getRegion: () => 'localhost'
+        }
+        getRegion() {
+          return 'localhost'
+        }
       });
 
       let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
@@ -1484,8 +1496,8 @@ describe('createOrder', function () {
       let transactions = getValidTransactions();
 
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1496,8 +1508,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1527,11 +1539,13 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        publish() {
           return Promise.resolve();
-        },
-        getRegion: () => 'localhost'
+        }
+        getRegion() {
+          return 'localhost'
+        }
       });
 
       let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
@@ -2148,8 +2162,8 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'kinesis-firehose-utilities'), {
-        putRecord: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
+        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -2173,11 +2187,13 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'sns-utilities.js'), {
-        publish: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        publish() {
           return Promise.resolve();
-        },
-        getRegion: () => 'localhost'
+        }
+        getRegion() {
+          return 'localhost'
+        }
       });
 
       PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');

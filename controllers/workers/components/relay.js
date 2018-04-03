@@ -9,14 +9,16 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const RelayResponse = global.SixCRM.routes.include('controllers','workers/components/RelayResponse.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+const LambdaProvider = global.SixCRM.routes.include('lib', 'providers/lambda-provider.js');
 
 //Technical Debt:  Test this!
 module.exports = class RelayController {
 
     constructor(){
 
-      this.sqsutilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
-      this.lambdautilities = global.SixCRM.routes.include('lib', 'lambda-utilities.js');
+      this.sqsprovider = new SQSProvider();
+      this.lambdaprovider = new LambdaProvider();
 
       this.parameter_validation = {
         'params': global.SixCRM.routes.path('model', 'workers/forwardmessage/processenv.json'),
@@ -40,8 +42,8 @@ module.exports = class RelayController {
 
         du.warning('Invoking additional lambda');
 
-        return this.lambdautilities.invokeFunction({
-          function_name: this.lambdautilities.buildLambdaName(params.name),
+        return this.lambdaprovider.invokeFunction({
+          function_name: this.lambdaprovider.buildLambdaName(params.name),
           payload: JSON.stringify({}),
           invocation_type: 'Event' //Asynchronous execution
         }).then(() => {
@@ -73,7 +75,7 @@ module.exports = class RelayController {
 
         let params = this.parameters.get('params');
 
-        return this.sqsutilities.receiveMessages({queue: params.origin_queue, limit: this.message_limit}).then((messages) => {
+        return this.sqsprovider.receiveMessages({queue: params.origin_queue, limit: this.message_limit}).then((messages) => {
 
           du.debug('Messages', messages);
 
@@ -111,7 +113,7 @@ module.exports = class RelayController {
 
       du.debug('Delete Message');
 
-      return this.sqsutilities.deleteMessage({
+      return this.sqsprovider.deleteMessage({
         queue: queue,
         receipt_handle: receipt_handle
       });
@@ -130,7 +132,7 @@ module.exports = class RelayController {
 
       du.debug('Push Message To Queue');
 
-      return this.sqsutilities.sendMessage({message_body: body, queue: queue});
+      return this.sqsprovider.sendMessage({message_body: body, queue: queue});
 
     }
 

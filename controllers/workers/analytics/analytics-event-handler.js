@@ -1,6 +1,7 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayUtilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const sqsUtilities = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+const sqsprovider = new SQSProvider();
 
 module.exports = class AnalyticsEventHandler {
 
@@ -37,7 +38,7 @@ module.exports = class AnalyticsEventHandler {
 
 		du.debug('AnalyticsEventHandler._getRecordsFromSQS()');
 
-		return sqsUtilities.receiveMessagesRecursive({
+		return sqsprovider.receiveMessagesRecursive({
 			queue: this._queueName
 		});
 
@@ -105,7 +106,7 @@ module.exports = class AnalyticsEventHandler {
 
 		du.debug('AnalyticsEventHandler._removeRecordsFromSQS()');
 
-		return sqsUtilities.deleteMessage({
+		return sqsprovider.deleteMessage({
 			queue: this._queueName,
 			receipt_handle: record.ReceiptHandle
 		});

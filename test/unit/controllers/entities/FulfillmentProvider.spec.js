@@ -17,11 +17,8 @@ describe('controllers/FulfillmentProvider.js', () => {
         });
     });
 
-    beforeEach(() => {
-        mockery.resetCache();
-    });
-
     afterEach(() => {
+        mockery.resetCache();
         mockery.deregisterAll();
     });
 

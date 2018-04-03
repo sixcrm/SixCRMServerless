@@ -3,8 +3,6 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidResponseBody(response_type, action){
@@ -32,7 +30,7 @@ function getValidMerchantProvider(id, provider){
   return MockEntities.getValidMerchantProvider(id, provider);
 }
 
-function getValidMerchantProviderConfiguation(){
+/*function getValidMerchantProviderConfiguation(){
   return {
     username:"test@example.com",
     password:"Passw0rd!1",
@@ -56,7 +54,7 @@ function getValidParametersObject(){
 
 function getValidMethodParametersObject(){
   return {request_action: 'CCAUTHCAP'};
-}
+}*/
 
 function getValidTransaction(id){
 
@@ -89,7 +87,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
        const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
 
        try {
-         let innovio_controller = new InnovioController({});
+         new InnovioController({});
        }catch(error){
          expect(error.message).to.have.string('[500] Missing source object field:');
        }
@@ -127,8 +125,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
         body: JSON.stringify(body)
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response_object)
         }
       });
@@ -164,8 +162,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response_object)
         }
       });
@@ -222,8 +220,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post:() => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response_object)
         }
       });
@@ -265,8 +263,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
         body: body
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-        post: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+        post() {
           return Promise.resolve(response);
         }
       });
@@ -315,8 +313,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
        body: JSON.stringify(body)
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-       post: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+       post() {
          return Promise.resolve(response);
        }
       });
@@ -374,8 +372,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
        body: JSON.stringify(body)
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-       post: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+       post() {
          return Promise.resolve(response);
        }
       });
@@ -437,8 +435,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
          body: JSON.stringify(body)
        };
 
-       mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-         post: () => {
+       mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+         post() {
            return Promise.resolve(response);
          }
        });
@@ -487,8 +485,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
           body: JSON.stringify(body)
         };
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'http-utilities.js'), {
-          post: () => {
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+          post() {
             return Promise.resolve(response);
           }
         });

@@ -2,9 +2,10 @@
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const dynamoutilities = global.SixCRM.routes.include('lib','dynamodb-utilities.js');
-const CloudsearchUtilities = global.SixCRM.routes.include('lib', 'providers/cloudsearch-utilities.js');
-const cloudsearchutilities = new CloudsearchUtilities();
+const DynamoDBProvider = global.SixCRM.routes.include('lib','providers/dynamodb-provider.js');
+const dynamodbprovider = new DynamoDBProvider();
+const CloudsearchProvider = global.SixCRM.routes.include('lib', 'providers/cloudsearch-provider.js');
+const cloudsearchprovider = new CloudsearchProvider();
 
 const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
 let preIndexingHelperController = new PreIndexingHelperController();
@@ -33,7 +34,7 @@ module.exports = class ReIndexingHelperController {
       let promises = [];
 
       indexing_entities.map(entity => {
-          promises.push(() => dynamoutilities.scanRecords(entity + 's').then(r => {
+          promises.push(() => dynamodbprovider.scanRecords(entity + 's').then(r => {
               r.Items.map(c => {
                   entities_dynamodb.push({
                       id: c.id,
@@ -48,7 +49,7 @@ module.exports = class ReIndexingHelperController {
 
       return arrayutilities.serial(promises).then(() => {
           // Technical Debt: This only works for up to 10000 entities in index.
-          return cloudsearchutilities.executeStatedSearch({ query: 'matchall', queryParser: 'structured', size: 10000})
+          return cloudsearchprovider.executeStatedSearch({ query: 'matchall', queryParser: 'structured', size: 10000})
       }).then((search) => {
           search.hits.hit.map((s) => {
               entities_index.push(s);

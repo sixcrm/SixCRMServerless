@@ -146,8 +146,8 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('entities');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -203,8 +203,8 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('entities');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -233,8 +233,8 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('entities');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -266,8 +266,8 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('entities');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -379,8 +379,8 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-                queryRecords: (table, parameters, index) => {
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
                     expect(table).to.equal('entities');
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('key_condition_expression');

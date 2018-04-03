@@ -3,8 +3,10 @@ const _ = require('underscore');
 
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const s3utilities = global.SixCRM.routes.include('lib', 's3-utilities.js');
-const imageutilities = global.SixCRM.routes.include('lib','image-utilities.js');
+const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
+const s3provider = new S3Provider();
+const ImageProvider = global.SixCRM.routes.include('lib','providers/image-provider.js');
+const imageprovider = new ImageProvider();
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
 
@@ -78,7 +80,7 @@ module.exports = class AccountImages extends ResourcesController {
 
     let sha1 = hashutilities.toSHA1(base64_image);
 
-    let extension = imageutilities.getImageExtension(image_data);
+    let extension = imageprovider.getImageExtension(image_data);
 
     return arrayutilities.compress([sha1, extension],'.','');
 
@@ -100,7 +102,7 @@ module.exports = class AccountImages extends ResourcesController {
 		let bucket = this.getAccountResourcesBucketName();
     let prefix = this.getAccountImageUploadPrefix();
     let filename = this.createImageFilename(base64_image_data, image_data);
-    let content_type = imageutilities.getImageMimeType(image_data);
+    let content_type = imageprovider.getImageMimeType(image_data);
 
 		let location = arrayutilities.compress(['https://s3.amazonaws.com', bucket, prefix, filename], '/', '');
 
@@ -111,7 +113,7 @@ module.exports = class AccountImages extends ResourcesController {
 			ContentType: content_type
 		};
 
-		return s3utilities.putObject(parameters).then((result) => {
+		return s3provider.putObject(parameters).then((result) => {
 
 			if (!_.has(result, 'ETag')) {
 				eu.throwError('server', 'Unable to upload image to S3.');

@@ -17,9 +17,9 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 			warnOnReplace: false,
 			warnOnUnregistered: false
 		});
-		
-		mockery.registerMock(global.SixCRM.routes.path('lib', 'sqs-utilities.js'), {
-			sendMessage: () => {
+
+		mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+			sendMessage() {
 				return Promise.resolve(true);
 			}
 		});

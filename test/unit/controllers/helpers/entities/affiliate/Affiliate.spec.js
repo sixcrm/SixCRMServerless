@@ -8,7 +8,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidAffiliateIDsArray(){
@@ -40,6 +39,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
   describe('Validate Assured Affiliates', () => {
 
+    let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
     let affiliateHelperController = new AffiliateHelperController();
 
     it('fails when no arguments are provided', () => {
@@ -92,6 +92,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
     it('fails with no argumentation', () => {
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       try{
@@ -104,6 +105,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
     it('fails with bad argumentation', () => {
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       let bad_arguments = [null, 'a', undefined, null, {}, () => {}];
@@ -125,11 +127,11 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('create', 'affiliate');
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'dynamodb-utilities.js'), {
-          queryRecords: () => {
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+          queryRecords() {
               return Promise.resolve([]);
-          },
-          saveRecord: (table, entity) => {
+          }
+          saveRecord(table, entity) {
               return Promise.resolve(entity);
           }
       });
@@ -154,6 +156,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
           }
       });
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       let valid_affiliate_ids_array = getValidAffiliateIDsArray();
@@ -170,6 +173,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
     it('succeeds when able to match affiliates', () => {
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       let valid_affiliate_ids_array = getValidAffiliateIDsArray();
@@ -187,6 +191,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
     it('fails when affiliate array is not provided', () => {
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       try{
@@ -199,6 +204,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
     it('fails when affiliate array is null', () => {
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       try{
@@ -211,6 +217,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
     it('fails when affiliate array is an empty object', () => {
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       try{
@@ -223,6 +230,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
     it('fails when affiliate array is empty', () => {
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       try{
@@ -246,6 +254,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
         ['abc', undefined]
       ];
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       arrayutilities.map(bad_arrays, bad_array => {
@@ -266,6 +275,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
     it('transcribes from session', () => {
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       let valid_session_object = getValidSessionObject();
@@ -299,6 +309,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
     it('handles affiliate information', () => {
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       let valid_session_object = getValidSessionObject();
@@ -334,6 +345,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
     it('assumes optional parameter', () => {
 
+      let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
       let affiliateHelperController = new AffiliateHelperController();
 
       let valid_session_object = getValidSessionObject();

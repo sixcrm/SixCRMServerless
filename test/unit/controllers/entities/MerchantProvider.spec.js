@@ -17,11 +17,8 @@ describe('controllers/MerchantProvider.js', () => {
         });
     });
 
-    beforeEach(() => {
-        mockery.resetCache();
-    });
-
     afterEach(() => {
+        mockery.resetCache();
         mockery.deregisterAll();
     });
 

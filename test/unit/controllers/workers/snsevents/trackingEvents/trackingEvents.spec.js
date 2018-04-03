@@ -74,8 +74,8 @@ describe('controllers/workers/snsevents/trackingEvents', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('lib','postback-utilities.js'), {
-          executePostback:() => {
+        mockery.registerMock(global.SixCRM.routes.path('lib','providers/postback-provider.js'), class {
+          executePostback() {
             return Promise.resolve(true);
           }
         });

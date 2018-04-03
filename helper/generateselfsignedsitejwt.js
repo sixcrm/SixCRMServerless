@@ -4,7 +4,8 @@ const _ = require('underscore');
 require('../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
+const jwtprovider = new JWTProvider();
 
 let site_config = global.SixCRM.configuration.site_config;
 
@@ -25,10 +26,10 @@ if(_.isUndefined(signing_string) || _.isNull(signing_string)){
 
 process.env.site_jwt_secret_key = signing_string;
 
-jwtutilities.setParameters();
+jwtprovider.setParameters();
 
-let jwt = jwtutilities.getJWT({user:{email: email}}, 'site');
-let decoded = jwtutilities.verifyJWT(jwt, 'site');
+let jwt = jwtprovider.getJWT({user:{email: email}}, 'site');
+let decoded = jwtprovider.verifyJWT(jwt, 'site');
 
 du.output('Decoded JWT: ', decoded);
 du.output('JWT: ', jwt);

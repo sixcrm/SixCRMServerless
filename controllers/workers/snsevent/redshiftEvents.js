@@ -1,7 +1,6 @@
 'use strict'
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-
 const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
 
 module.exports = class RedshiftEventsController extends SNSEventController {
@@ -101,12 +100,13 @@ module.exports = class RedshiftEventsController extends SNSEventController {
 		/*
 		let redshift_object = this.parameters.get('redshiftobject');
 
-		if(!_.has(this, 'kinesisfirehoseutilities')){
-		  this.kinesisfirehoseutilities = global.SixCRM.routes.include('lib', 'kinesis-firehose-utilities.js');
+		if(!_.has(this, 'kinesisFirehoseProvider')){
+		  const KinesisFirehoseProvider = global.SixCRM.routes.include('lib', 'providers/kinesis-firehose-provider.js');
+		  this.kinesisFirehoseProvider = new KinesisFirehoseProvider();
 		}
 
 		//Technical debt:  There are several kinesis pipelines for seperate tables...
-		return this.kinesisfirehoseutilities.putRecord('events', redshift_object).then((result) => {
+		return this.kinesisFirehoseProvider.putRecord('events', redshift_object).then((result) => {
 		  return result;
 		});
 		*/

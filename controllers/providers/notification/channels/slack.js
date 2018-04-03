@@ -1,6 +1,7 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
-const httputilities = global.SixCRM.routes.include('lib','http-utilities.js');
+const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const httpprovider = new HttpProvider();
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const ChannelNotification = global.SixCRM.routes.include('providers', 'notification/components/ChannelNotification.js');
@@ -51,7 +52,7 @@ module.exports = class SlackNotification extends ChannelNotification {
 
     du.debug('Trigger Webhook Notification');
 
-    return httputilities.postJSON({
+    return httpprovider.postJSON({
       url: webhook,
       body: notification_object
     });

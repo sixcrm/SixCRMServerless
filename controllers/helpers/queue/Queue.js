@@ -3,7 +3,8 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const sqs = global.SixCRM.routes.include('lib', 'sqs-utilities.js');
+const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+const sqs = new SQSProvider();
 
 class Queue {
 
