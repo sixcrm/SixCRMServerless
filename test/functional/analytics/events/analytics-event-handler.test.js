@@ -26,7 +26,7 @@ beforeEach(() => {
 	return Promise.resolve()
 		.then(() => sqsDeployment.purgeQueues())
 		.then(() => auroraSchemaDeployment.destroy())
-		.then(() => auroraSchemaDeployment.deployTables());
+		.then(() => auroraSchemaDeployment.deploy());
 
 })
 

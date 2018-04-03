@@ -163,7 +163,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('AuroraSchemaDeployment._getTableDropQueries()');
 
-		return this._getTableFilenames('tables').then((tableFilenames) => {
+		return this._getTableFilenames(path.join('snapshot', 'tables')).then((tableFilenames) => {
 
 			return arrayutilities.map(tableFilenames, (tableFilename) => {
 
@@ -205,7 +205,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('AuroraSchemaDeployment._getTableFilenames()');
 
-		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', `aurora/${directory}`)).then((files) => {
+		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', path.join('aurora', directory))).then((files) => {
 
 			return files.filter(file => file.match(/\.sql$/));
 

@@ -104,7 +104,7 @@ function equalObjects(object, expected) {
 function prepareDatabase(test) {
 	return Promise.resolve()
 		.then(() => auroraSchemaDeployment.destroy())
-		.then(() => auroraSchemaDeployment.deployTables())
+		.then(() => auroraSchemaDeployment.deploy())
 		.then(() => seedDatabase(test));
 }
 
