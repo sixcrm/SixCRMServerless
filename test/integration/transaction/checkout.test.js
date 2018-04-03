@@ -7,6 +7,7 @@ const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 const random = global.SixCRM.routes.include('lib','random.js');
 const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
@@ -99,6 +100,11 @@ function refund(transaction, amount) {
     return httputilities.post(argument_object)
         .then((result) => {
             du.debug(result.body);
+
+            if (stringutilities.isString(result.body)) {
+              result.body = JSON.parse(result.body);
+            }
+
             expect(result.response.statusCode).to.equal(200);
             expect(result.response.statusMessage).to.equal('OK');
             expect(result.body).to.have.property('success');
