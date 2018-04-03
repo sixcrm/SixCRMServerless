@@ -69,12 +69,13 @@ describe('Test redis providers functionality', () => {
     const redisprovider = new RedisProvider();
 
     redisprovider.quiting_timer_timeout_ms = 1000;
-    let initial_redis_client_promisified = redisprovider.redis_client_promisified;
+    let initial_redis_client_promisified;
 
     let test_value = {'abc': 150, 'def': {'nested_value': 123}};
 
     return redisprovider.set('test3', test_value)
       .then((result) => {
+        initial_redis_client_promisified = redisprovider.redis_client_promisified;
         expect(result).to.equal('OK');
         return true;
       })
@@ -95,12 +96,13 @@ describe('Test redis providers functionality', () => {
     const redisprovider = new RedisProvider();
 
     redisprovider.quiting_timer_timeout_ms = 100;
-    let initial_redis_client_promisified = redisprovider.redis_client_promisified;
+    let initial_redis_client_promisified;
 
     let test_value = {'abc': 150, 'def': {'nested_value': 123}};
 
     return redisprovider.set('test4', test_value)
       .then((result) => {
+        initial_redis_client_promisified = redisprovider.redis_client_promisified;
         expect(result).to.equal('OK');
         return true;
       })
