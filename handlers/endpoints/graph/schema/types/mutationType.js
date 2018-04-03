@@ -202,7 +202,12 @@ module.exports.graphObj = new GraphQLObjectType({
         const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
         let registerController = new RegisterController();
 
-        return registerController.refundTransaction(refund.refund);
+        return registerController.refundTransaction(refund.refund).then(refund => {
+            return {
+                transaction: refund.getTransactions()[0],
+                processor_response: refund.getProcessorResponses()[0]
+            }
+        })
       }
     },
     reverse: {
