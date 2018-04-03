@@ -523,7 +523,7 @@ module.exports = class entityController extends entityUtilitiesController {
       })
       .then(() => {
 
-        this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+        this.createAnalyticsActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
         this.addToSearchIndex(entity, this.descriptive_name);
 
         return entity;
@@ -582,7 +582,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
       }).then((existing_entity) => {
 
-        this.createRedshiftActivityRecord(null, 'updated', {entity: existing_entity, type: this.descriptive_name}, null);
+        this.createAnalyticsActivityRecord(null, 'updated', {entity: existing_entity, type: this.descriptive_name}, null);
 
         this.addToSearchIndex(existing_entity, this.descriptive_name);
 
@@ -647,7 +647,7 @@ module.exports = class entityController extends entityUtilitiesController {
       })
       .then(() => {
 
-        this.createRedshiftActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null);
+        this.createAnalyticsActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null);
 
         this.addToSearchIndex(entity, this.descriptive_name);
 

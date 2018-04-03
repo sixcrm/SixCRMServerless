@@ -67,7 +67,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
                 createActivity() {
                     return Promise.resolve();
                 }
@@ -118,7 +118,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
                 createActivity() {
                     return Promise.resolve();
                 }
@@ -171,7 +171,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
                 createActivity() {
                     return Promise.resolve();
                 }
@@ -362,7 +362,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
                 createActivity() {
                     return Promise.resolve();
                 }
@@ -638,7 +638,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
                 createActivity() {
                     return Promise.resolve();
                 }
@@ -1329,7 +1329,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
                 createActivity() {
                     return Promise.resolve();
                 }
@@ -1445,7 +1445,7 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'redshift/Activity.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
                 createActivity() {
                     return Promise.resolve();
                 }
