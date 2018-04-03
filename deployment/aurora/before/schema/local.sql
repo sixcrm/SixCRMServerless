@@ -1,3 +1,0 @@
--- DROP SCHEMA IF EXISTS analytics CASCADE;
-
-CREATE SCHEMA IF NOT EXISTS "analytics";

@@ -39,7 +39,7 @@ cloudsearch:
   domainendpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
 
 aurora:
-  release: 0.0.1
+  release: 1
   default_cluster_identifier: 'sixcrm'
   user: 'root'
   database: 'postgres'

@@ -286,7 +286,7 @@ jobs:
           command: node ./deployment/aurora/aurora-deploy-cluster.js
       - run:
           name: Aurora Create Tables
-          command: node ./deployment/aurora/aurora-deploy-tables.js && echo "Pausing to allow queries to complete..." && sleep 240
+          command: node ./deployment/aurora/aurora-deploy.js && echo "Pausing to allow queries to complete..." && sleep 240
   deploy_kinesis:
     <<: *job-defaults
     steps:
