@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS analytics.f_events (
-    "type" analytics.d_event_type,
+    "type" VARCHAR(50) NOT NULL,
     datetime TIMESTAMP NOT NULL,
     account VARCHAR(36) NOT NULL,
     campaign VARCHAR(36) NOT NULL,
