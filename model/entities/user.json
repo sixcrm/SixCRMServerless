@@ -12,11 +12,11 @@
 		},
 		"first_name":{
 			"type":"string",
-			"minLength":3
+			"minLength":1
 		},
 		"last_name":{
 			"type":"string",
-			"minLength":3
+			"minLength":1
 		},
 		"auth0_id":{"$ref": "../definitions/auth0identifier.json"},
 		"active":{
