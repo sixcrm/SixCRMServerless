@@ -19,14 +19,14 @@ ____
 * `subaffiliate_5` -  a sub-affiliate string
 * `merchant_provider` -  a array of UUIDv4 strings
 * `product_schedule` -  a array of UUIDv4 strings
-* `processor_result` -  Any subset of the enumeration [`success`, `declined`, `error`]
+* `processor_result` -  Any subset of the enumeration [`success`, `decline`, `error`]
 * `type` - Any subset of the enmueration [`new`, `rebill`]
 
 ---
 ### Query notes
 
 Connection to two dimensional tables :
-* `d_processor_result` - Dimensional table of processor results [`success`, `declined`, `error`]
+* `d_processor_result` - Dimensional table of processor results [`success`, `decline`, `error`]
 
 This is needed to get the empty date list for dates with zero transactions.
 
@@ -35,7 +35,7 @@ This is needed to get the empty date list for dates with zero transactions.
 
 ```
 [ anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-01T08:00:00.000Z },
@@ -50,7 +50,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-01T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-02T08:00:00.000Z },
@@ -70,7 +70,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-03T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-03T08:00:00.000Z },
@@ -80,7 +80,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-03T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-04T08:00:00.000Z },
@@ -100,7 +100,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-05T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-05T08:00:00.000Z },
@@ -115,7 +115,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-06T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-06T08:00:00.000Z },
@@ -125,7 +125,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-06T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-07T08:00:00.000Z },
@@ -140,7 +140,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-07T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '3136.61',
     transaction_count: '1',
     day: 2017-03-08T08:00:00.000Z },
@@ -155,7 +155,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-08T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-09T08:00:00.000Z },
@@ -175,7 +175,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-10T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-10T08:00:00.000Z },
@@ -190,7 +190,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-11T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-11T08:00:00.000Z },
@@ -200,7 +200,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-11T08:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-12T08:00:00.000Z },
@@ -225,7 +225,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-13T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-13T07:00:00.000Z },
@@ -235,7 +235,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-14T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '1601.29',
     transaction_count: '1',
     day: 2017-03-14T07:00:00.000Z },
@@ -245,7 +245,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-14T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-15T07:00:00.000Z },
@@ -270,12 +270,12 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-16T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-16T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '3937.14',
     transaction_count: '2',
     day: 2017-03-17T07:00:00.000Z },
@@ -300,12 +300,12 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-18T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-18T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-19T07:00:00.000Z },
@@ -325,7 +325,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-20T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-20T07:00:00.000Z },
@@ -335,7 +335,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-20T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-21T07:00:00.000Z },
@@ -355,7 +355,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-22T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '9427.39',
     transaction_count: '1',
     day: 2017-03-22T07:00:00.000Z },
@@ -365,7 +365,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-22T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-23T07:00:00.000Z },
@@ -385,7 +385,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-24T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-24T07:00:00.000Z },
@@ -395,7 +395,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '2',
     day: 2017-03-24T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-25T07:00:00.000Z },
@@ -410,7 +410,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-25T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '5655.93',
     transaction_count: '1',
     day: 2017-03-26T07:00:00.000Z },
@@ -430,7 +430,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-27T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-27T07:00:00.000Z },
@@ -440,7 +440,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-27T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-28T07:00:00.000Z },
@@ -465,7 +465,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-29T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-29T07:00:00.000Z },
@@ -475,7 +475,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-30T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-30T07:00:00.000Z },
@@ -495,7 +495,7 @@ This is needed to get the empty date list for dates with zero transactions.
     transaction_count: '1',
     day: 2017-03-31T07:00:00.000Z },
   anonymous {
-    result: 'declined',
+    result: 'decline',
     sum_amount: '0.00',
     transaction_count: '1',
     day: 2017-03-31T07:00:00.000Z } ]

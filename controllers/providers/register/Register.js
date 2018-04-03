@@ -24,7 +24,7 @@ module.exports = class Register extends RegisterUtilities {
 
     this.processor_response_map = {
       success:'success',
-      declined:'fail',
+      decline:'fail',
       error:'error'
     };
 
@@ -359,7 +359,7 @@ module.exports = class Register extends RegisterUtilities {
       return this.processor_response_map.error;
     }
 
-    return this.processor_response_map.declined;
+    return this.processor_response_map.decline;
 
   }
 

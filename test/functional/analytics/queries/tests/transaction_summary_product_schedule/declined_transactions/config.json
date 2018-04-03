@@ -1,6 +1,6 @@
 {
   "method": "getTransactionOverview",
-  "test_case": "input to get declined transactions",
+  "test_case": "input to get decline transactions",
   "input": {
     "analyticsfilter":
   { "start": "2017-01-01T00:00:00.000Z",

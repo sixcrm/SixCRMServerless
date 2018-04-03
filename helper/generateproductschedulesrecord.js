@@ -23,7 +23,7 @@ function createRandomKinesisProductSchedulesRecord(){
         campaign: uuidV4(),
         affiliate: uuidV4(),
         amount: random.randomDouble(1.00, 45.00, 2),
-        processor_result: random.selectRandomFromArray(['success', 'declined', 'error']),
+        processor_result: random.selectRandomFromArray(['success', 'decline', 'error']),
         account: uuidV4(),
         transaction_type: random.selectRandomFromArray(['new', 'rebill']),
         subaffiliate_1: uuidV4(),

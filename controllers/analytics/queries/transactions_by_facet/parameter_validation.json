@@ -99,7 +99,7 @@
 			"uniqueItems": true,
 			"items": {
 				"type":"string",
-				"enum": ["success", "declined","error"]
+				"enum": ["success", "decline","error"]
 			}
 		},
 		"type":{
