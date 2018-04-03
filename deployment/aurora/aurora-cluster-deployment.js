@@ -10,7 +10,7 @@ module.exports = class AuroraClusterDeployment {
 
 	constructor() {
 
-		this._rdsUtilities = global.SixCRM.routes.include('lib', 'rds-utilities.js');
+		this._rdsUtilities = global.SixCRM.routes.include('lib', 'providers/rds-provider.js');
 
 	}
 
