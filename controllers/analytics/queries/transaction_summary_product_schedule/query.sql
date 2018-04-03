@@ -25,13 +25,13 @@ SELECT
   ),0) AS rebill_sale_amount,
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'declined'  THEN 1
+        WHEN processor_result = 'decline'  THEN 1
         ELSE 0
       END
   ),0) AS declines_count,
   coalesce(SUM(
       CASE
-        WHEN processor_result = 'declined'  THEN amount
+        WHEN processor_result = 'decline'  THEN amount
         ELSE 0
       END
   ),0) AS declines_amount,

@@ -19,7 +19,7 @@ ____
 * `subaffiliate_5` -  a sub-affiliate string
 * `merchant_provider` -  a array of UUIDv4 strings
 * `product_schedule` -  a array of UUIDv4 strings
-* `processor_result` -  Any subset of the enumeration [`success`, `declined`, `error`]
+* `processor_result` -  Any subset of the enumeration [`success`, `decline`, `error`]
 * `type` - Any subset of the enmueration [`new`, `rebill`]
 
 ---
