@@ -9,12 +9,19 @@ FROM
 
 INSERT INTO analytics.d_processor_result (id) (
   SELECT
-    'success',
-		'decline',
-		'fail',
-		'error')
+    'success'
+  UNION ALL
+  SELECT
+    'decline'
+  UNION ALL
+  SELECT
+    'fail'
+  UNION ALL
+  SELECT
+    'error')
 EXCEPT
 SELECT
   id
 FROM
   analytics.d_processor_result;
+

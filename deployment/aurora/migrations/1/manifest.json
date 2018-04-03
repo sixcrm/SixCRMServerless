@@ -6,13 +6,13 @@
 		"script": "scripts/create-d-event-type.sql"
 	},
 	{
-		"script": "scripts/create-d-processor-result.sql"
-	},
-	{
 		"script": "scripts/create-enums.sql"
 	},
 	{
 		"script": "tables/f_activity.sql"
+	},
+	{
+		"script": "tables/d_processor_result.sql"
 	},
 	{
 		"script": "tables/f_events.sql"

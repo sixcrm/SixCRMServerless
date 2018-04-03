@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS analytics.f_transactions (
     campaign VARCHAR(36) NOT NULL,
     affiliate VARCHAR(36),
     amount NUMERIC(8, 2) NOT NULL,
-    processor_result analytics.d_processor_result,
+    processor_result VARCHAR(50) NOT NULL,
     account VARCHAR(36) NOT NULL,
     "type" VARCHAR(25) NOT NULL,
     subtype VARCHAR(25) NOT NULL,
@@ -23,3 +23,4 @@ CREATE TABLE IF NOT EXISTS analytics.f_transactions (
     UNIQUE (account,
       datetime)
 );
+
