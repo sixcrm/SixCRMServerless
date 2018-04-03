@@ -88,7 +88,7 @@ module.exports = class AuroraSchemaDeployment {
 
 	_getDirectorySQLFilepaths(directory) {
 
-		du.highlight('AuroraSchemaDeployment._getDirectorySQLFilepaths()');
+		du.highlight('AuroraSchemaDeployment._getDirectorySQLFilepaths()', directory);
 
 		return fileutilities.getDirectoryFiles(directory).then((files) => {
 
@@ -136,7 +136,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		du.debug('AuroraSchemaDeployment._getSeedQueries()');
 
-		return this._getDirectorySQLFilepaths('seeds')
+		return this._getDirectorySQLFilepaths(global.SixCRM.routes.path('deployment', path.join('aurora', 'seeds')))
 			.then((filepaths) => {
 
 				return BBPromise.map(filepaths, fileutilities.getFileContents.bind(this))
