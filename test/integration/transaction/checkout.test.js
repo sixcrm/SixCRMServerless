@@ -11,7 +11,7 @@ const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 const random = global.SixCRM.routes.include('lib','random.js');
 const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-//const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -76,6 +76,38 @@ function checkout(token, post_body){
     expect(result.body.code).to.equal(200);
     return result.body;
   });
+
+}
+
+function refund(transaction, amount) {
+
+    du.output('Refund');
+
+    let account = config.account;
+    let test_jwt = tu.createTestAuth0JWT(config.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
+
+    let argument_object = {
+        url: config.endpoint+'graph/'+account,
+        body: 'mutation { refund (refund: { amount:"' + amount + '", transaction:"' + transaction + '" } ) { transaction { id } } }',
+        headers:{
+            Authorization: test_jwt
+        }
+    };
+
+    du.debug(argument_object);
+
+    return httputilities.post(argument_object)
+        .then((result) => {
+            du.debug(result.body);
+            expect(result.response.statusCode).to.equal(200);
+            expect(result.response.statusMessage).to.equal('OK');
+            expect(result.body).to.have.property('success');
+            expect(result.body).to.have.property('code');
+            expect(result.body).to.have.property('response');
+            expect(result.body.success).to.equal(true);
+            expect(result.body.code).to.equal(200);
+            return result.body;
+        });
 
 }
 
@@ -212,6 +244,35 @@ describe('Checkout', () => {
       });
 
     });
+
+      it('refunds a sale', () => {
+
+          let sale_object = {
+              products:[{
+                  product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+                  quantity:2
+              }]
+          };
+
+          return acquireToken(campaign)
+              .then((token) => {
+                  expect(token).to.be.defined;
+                  let checkout_body = createCheckoutBody(campaign, sale_object);
+
+                  return checkout(token, checkout_body);
+              })
+              .then(result => {
+                  let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+
+                  expect(validated).to.equal(true);
+
+                  let transaction_id = result.response.transactions[0].id;
+                  let amount = result.response.transactions[0].amount;
+
+                  return refund(transaction_id, amount);
+              });
+
+      });
   });
 
   describe('Straight Sale With Dynamic Price', () => {
