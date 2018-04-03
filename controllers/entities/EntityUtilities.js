@@ -1026,7 +1026,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
     asyncronousCreateBehaviors({entity: entity}){
 
       //Technical Debt:  This is inappropriate here...  These belong in helpers
-      this.createRedshiftActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+      this.createAnalyticsActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
 
       this.addToSearchIndex(entity, this.descriptive_name);
 
@@ -1075,10 +1075,10 @@ module.exports = class entityUtilitiesController extends PermissionedController 
     }
 
 
-    createRedshiftActivityRecord(actor, action, acted_upon, associated_with){
+    createAnalyticsActivityRecord(actor, action, acted_upon, associated_with){
 
         //Technical Debt:  This is inappropriate here...
-        let ActivityHelper = global.SixCRM.routes.include('helpers', 'redshift/Activity.js');
+        let ActivityHelper = global.SixCRM.routes.include('helpers', 'analytics/Activity.js');
         const activityHelper = new ActivityHelper();
 
         return activityHelper.createActivity(actor, action, acted_upon, associated_with);
