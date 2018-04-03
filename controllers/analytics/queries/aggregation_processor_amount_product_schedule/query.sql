@@ -16,11 +16,11 @@ FROM
   RIGHT JOIN
   (
     SELECT
-      e.unnest as processor_result,
+      e.id as processor_result,
       DATE_TRUNC('{{period}}',datetime) rt_datetime
     FROM
       generate_series( '{{start}}'::timestamp, '{{end}}'::timestamp, '1 minute'::interval) datetime,
-      (SELECT unnest(enum_range(NULL::analytics.d_processor_result))) e
+      (SELECT id FROM analytics.d_processor_result) e
     GROUP BY
       processor_result,
       DATE_TRUNC('{{period}}',datetime)

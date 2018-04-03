@@ -26,7 +26,7 @@ ____
 ### Query notes
 
 Connection to two dimensional tables :
-* `d_processor_result` - Dimensional table of processor results [`success`, `decline`, `error`]
+* `d_processor_result` - Dimensional table of processor results [`success`, `decline`, `error`, `fail`]
 
 This is needed to get the empty date list for dates with zero transactions.
 
