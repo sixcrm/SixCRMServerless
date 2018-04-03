@@ -3,4 +3,3 @@ CREATE TABLE IF NOT EXISTS analytics.m_release (
     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
-

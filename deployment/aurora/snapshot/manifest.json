@@ -1,0 +1,32 @@
+[
+	{
+		"script": "scripts/schema.sql"
+	},
+	{
+		"script": "scripts/create-d-event-type.sql"
+	},
+	{
+		"script": "scripts/create-d-processor-result.sql"
+	},
+	{
+		"script": "scripts/create-enums.sql"
+	},
+	{
+		"script": "tables/f_activity.sql"
+	},
+	{
+		"script": "tables/f_events.sql"
+	},
+	{
+		"script": "tables/f_rebills.sql"
+	},
+	{
+		"script": "tables/f_transactions.sql"
+	},
+	{
+		"script": "tables/m_release.sql"
+	},
+	{
+		"script": "scripts/seed-data.sql"
+	}
+]

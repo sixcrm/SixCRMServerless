@@ -6,4 +6,3 @@ SELECT
   id
 FROM
   analytics.m_release;
-
