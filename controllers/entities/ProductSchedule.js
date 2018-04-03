@@ -19,32 +19,6 @@ module.exports = class ProductScheduleController extends entityController {
 
     }
 
-    associatedEntitiesCheck({id}){
-
-      du.debug('Associated Entities Check');
-
-      let return_array = [];
-
-      let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('RebillController', 'listByAssociations', {id: id, field: 'product_schedules'})
-      ];
-
-      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
-
-        let rebills = data_acquisition_promises[0];
-
-        if(_.has(rebills, 'rebills') && arrayutilities.nonEmpty(rebills.rebills)){
-          arrayutilities.map(rebills.rebills, (rebill) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Rebill', object: rebill}));
-          });
-        }
-
-        return return_array;
-
-      });
-
-    }
-
     //Technical Debt: Deprecated
     getCampaigns(args){
 
@@ -204,4 +178,3 @@ module.exports = class ProductScheduleController extends entityController {
     }
 
 }
-
