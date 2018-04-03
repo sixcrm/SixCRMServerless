@@ -1,5 +1,3 @@
--- DROP TABLE IF EXISTS analytics.f_rebills;
-
 CREATE TABLE IF NOT EXISTS analytics.f_rebills (
     id_rebill VARCHAR(36) PRIMARY KEY,
     current_queuename VARCHAR(20) NOT NULL,
