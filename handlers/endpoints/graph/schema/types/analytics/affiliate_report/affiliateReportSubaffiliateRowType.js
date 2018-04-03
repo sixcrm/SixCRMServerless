@@ -26,10 +26,10 @@ module.exports.graphObj = new GraphQLObjectType({
       partials_percent: {
         type: GraphQLString
       },
-      decline_count: {
+      fail_count: {
         type: GraphQLString
       },
-      declines_percent: {
+      fail_percent: {
         type: GraphQLString
       },
       count_sales: {

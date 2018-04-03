@@ -19,9 +19,9 @@ module.exports = function(results){
                     count: results[0].rebill_sale_count,
                     amount: results[0].rebill_sale_amount
                 },
-                decline: {
-                    count: results[0].declines_count,
-                    amount: results[0].declines_amount
+                fail: {
+                    count: results[0].fail_count,
+                    amount: results[0].fail_amount
                 },
                 error: {
                     count: results[0].error_count,

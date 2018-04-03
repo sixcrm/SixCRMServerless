@@ -16,9 +16,9 @@ module.exports.graphObj = new GraphQLObjectType({
             type: new GraphQLNonNull(transactionOverviewGroupResponseType.graphObj),
             description: 'Rebill overview'
         },
-        decline:{
+        fail:{
             type: new GraphQLNonNull(transactionOverviewGroupResponseType.graphObj),
-            description: 'Decline overview'
+            description: 'Failure overview'
         },
         error:{
             type: new GraphQLNonNull(transactionOverviewGroupResponseType.graphObj),

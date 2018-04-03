@@ -14,8 +14,8 @@ ____
 * `Clicks`
 * `Partials`	 	
 * `Partials %`		
-* `Declines`		
-* `Decline %`
+* `Fail`		
+* `Fail %`
 * `Sales`		
 * `Sales %`		
 * `Sales Revenue`		

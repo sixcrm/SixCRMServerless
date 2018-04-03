@@ -23,7 +23,7 @@ function createRandomKinesisTransactionRecord(){
         campaign: uuidV4(),
         affiliate: uuidV4(),
         amount: random.randomDouble(1.00, 45.00, 2),
-        processor_result: random.selectRandomFromArray(['success', 'decline', 'error']),
+        processor_result: random.selectRandomFromArray(['success', 'fail', 'error']),
         account: uuidV4(),
         transaction_type: random.selectRandomFromArray(['new', 'rebill']),
         product_schedule: uuidV4(),

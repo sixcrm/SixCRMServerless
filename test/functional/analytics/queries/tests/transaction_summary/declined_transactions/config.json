@@ -1,6 +1,6 @@
 {
   "method": "getTransactionOverview",
-  "test_case": "input to get decline transactions",
+  "test_case": "input to get failed transactions",
   "input": {
     "analyticsfilter":
   { "start": "2017-01-01T00:00:00.000Z",
@@ -9,7 +9,7 @@
   "result_name": "undefined",
   "expect":   {"overview":{"newsale":{"count":"0","amount":"0"},
                "rebill":{"count":"0","amount":"0"},
-               "decline":{"count":"6","amount":"1671.88"},
+               "fail":{"count":"6","amount":"1671.88"},
                "error":{"count":"0","amount":"0"},
                "main":{"count":"0","amount":"0"},
                "upsell":{"count":"0","amount":"0"}}

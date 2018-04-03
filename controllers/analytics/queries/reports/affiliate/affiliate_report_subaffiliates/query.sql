@@ -143,9 +143,9 @@ TRANSACTIONS_SUB1 AS (SELECT sum(amount) sum_amount,
               END) sum_upsell,
           sum(CASE
                     WHEN subtype IN ('order','main')
-                         AND processor_result ='decline' THEN 1
+                         AND processor_result ='fail' THEN 1
                     ELSE 0
-                END) decline_count,
+                END) fail_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_1
    FROM analytics.f_transactions
@@ -163,9 +163,9 @@ TRANSACTIONS_SUB2 AS (SELECT sum(amount) sum_amount,
               END) sum_upsell,
           sum(CASE
                     WHEN subtype IN ('order','main')
-                         AND processor_result ='decline' THEN 1
+                         AND processor_result ='fail' THEN 1
                     ELSE 0
-                END) decline_count,
+                END) fail_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_2
    FROM analytics.f_transactions
@@ -185,9 +185,9 @@ TRANSACTIONS_SUB3 AS (SELECT sum(amount) sum_amount,
               END) sum_upsell,
           sum(CASE
                     WHEN subtype IN ('order','main')
-                         AND processor_result ='decline' THEN 1
+                         AND processor_result ='fail' THEN 1
                     ELSE 0
-                END) decline_count,
+                END) fail_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_3
    FROM analytics.f_transactions
@@ -207,9 +207,9 @@ TRANSACTIONS_SUB4 AS (SELECT sum(amount) sum_amount,
               END) sum_upsell,
           sum(CASE
                     WHEN subtype IN ('order','main')
-                         AND processor_result ='decline' THEN 1
+                         AND processor_result ='fail' THEN 1
                     ELSE 0
-                END) decline_count,
+                END) fail_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_4
    FROM analytics.f_transactions
@@ -229,9 +229,9 @@ TRANSACTIONS_SUB5 AS (SELECT sum(amount) sum_amount,
               END) sum_upsell,
           sum(CASE
                     WHEN subtype IN ('order','main')
-                         AND processor_result ='decline' THEN 1
+                         AND processor_result ='fail' THEN 1
                     ELSE 0
-                END) decline_count,
+                END) fail_count,
           DATE_TRUNC('{{period}}',datetime) AS {{period}},
           subaffiliate_5 as subaffiliate
    FROM analytics.f_transactions
@@ -251,13 +251,13 @@ SELECT ft.subaffiliate,
           when coalesce(fe.count_click,0) = 0 then 0
           else 1.0*fe.count_partials / fe.count_click
        end AS partials_percent,
-       coalesce(decline_count,0) AS decline_count,
+       coalesce(fail_count,0) AS fail_count,
        coalesce(
          case
-            when coalesce(decline_count,0) = 0 then 0
-            else 1.0*decline_count / fe.count_click
+            when coalesce(fail_count,0) = 0 then 0
+            else 1.0*fail_count / fe.count_click
             end
-       ,0) AS declines_percent,
+       ,0) AS fail_percent,
        coalesce(fe.count_sales,0) AS count_sales,
        case
           when coalesce(fe.count_sales,0) = 0 then 0
