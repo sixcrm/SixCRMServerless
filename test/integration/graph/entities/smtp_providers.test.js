@@ -10,7 +10,7 @@ let endpoint = global.integration_test_config.endpoint;
 var entity = 'SMTP Providers';
 var tests = [{
     name: "index",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getSMTPProvider.json')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/index/getSMTPProviders.json')
 },
 {
     name: "view",
