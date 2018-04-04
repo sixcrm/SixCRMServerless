@@ -1,4 +1,4 @@
-INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, merchant_provider, campaign, affiliate, amount, processor_result, account, type, subtype, product_schedule, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
+INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, merchant_provider, campaign, affiliate, amount, processor_result, account, type, subtype, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
 (
      SELECT
       '99999999-999e-44aa-999e-aaa9a99a9999',
@@ -13,7 +13,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
       '99999999-999e-44aa-999e-aaa9a99a9999',
       'new',
       'upsell',
-      '99999999-999e-44aa-999e-aaa9a99a9999',
       '',
       '',
       '',
@@ -33,7 +32,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
       'd3fa3bf3-7824-49f4-8261-87674482bf1c',
       'new',
       'order',
-      '12529a17-ac32-4e46-b05b-83862843055d',
       '',
       '',
       '',
@@ -53,7 +51,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
       'd3fa3bf3-7824-49f4-8261-87674482bf1c',
       'new',
       'order',
-      '12529a17-ac32-4e46-b05b-83862843055d',
       '',
       '',
       '',
@@ -73,7 +70,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
       'd3fa3bf3-7824-49f4-8261-87674482bf1c',
       'new',
       'order',
-      '300848c1-8b83-4b8d-aff9-529ba6459d0f',
       '',
       '',
       '',
@@ -93,7 +89,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
       'd3fa3bf3-7824-49f4-8261-87674482bf1c',
       'new',
       'order',
-      '2200669e-5e49-4335-9995-9c02f041d91b',
       '',
       '',
       '',
@@ -113,7 +108,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       'new',
       'order',
-      '2200669e-5e49-4335-9995-9c02f041d91b',
       '',
       '',
       '',
@@ -133,7 +127,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
      ft.account,
      ft.type,
      ft.subtype,
-     ft.product_schedule,
      ft.subaffiliate_1,
      ft.subaffiliate_2,
      ft.subaffiliate_3,

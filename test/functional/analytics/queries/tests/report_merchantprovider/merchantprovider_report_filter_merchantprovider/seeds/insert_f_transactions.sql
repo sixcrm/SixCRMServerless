@@ -1,6 +1,6 @@
 /* Testing filter merchant */ 
 
-INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, merchant_provider, campaign, affiliate, amount, processor_result, account, type, subtype, product_schedule, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
+INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, merchant_provider, campaign, affiliate, amount, processor_result, account, type, subtype, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
   ((
      SELECT
       '99999999-999e-44aa-999e-aaa9a99a9999',
@@ -15,7 +15,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       'refund',
       'order',
-      '99999999-999e-44aa-999e-aaa9a99a9999',
       '',
       '',
       '',
@@ -35,7 +34,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       'refund',
       'order',
-      '2200669e-5e49-4335-9995-9c02f041d91b',
       '',
       '',
       '',
@@ -56,7 +54,6 @@ INSERT INTO analytics.f_transactions (id, datetime, customer, creditcard, mercha
      ft.account,
      ft.type,
      ft.subtype,
-     ft.product_schedule,
      ft.subaffiliate_1,
      ft.subaffiliate_2,
      ft.subaffiliate_3,

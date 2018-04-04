@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS analytics.f_transactions (
     account VARCHAR(36) NOT NULL,
     "type" VARCHAR(25) NOT NULL,
     subtype VARCHAR(25) NOT NULL,
-    product_schedule VARCHAR(36),
     subaffiliate_1 VARCHAR(36),
     subaffiliate_2 VARCHAR(36),
     subaffiliate_3 VARCHAR(36),

@@ -1,7 +1,7 @@
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const ATTRIBUTES = 12;
+const ATTRIBUTES = 11;
 
 module.exports = class WriteEventRecords {
 
@@ -22,7 +22,6 @@ module.exports = class WriteEventRecords {
 				datetime, \
 				account, \
 				campaign, \
-				product_schedule, \
 				affiliate, \
 				subaffiliate_1, \
 				subaffiliate_2, \
@@ -44,7 +43,6 @@ module.exports = class WriteEventRecords {
 			session = EXCLUDED.session, \
 			"type" = EXCLUDED.type, \
 			campaign = EXCLUDED.campaign, \
-			product_schedule = EXCLUDED.product_schedule, \
 			affiliate = EXCLUDED.affiliate, \
 			subaffiliate_1 = EXCLUDED.subaffiliate_1, \
 			subaffiliate_2 = EXCLUDED.subaffiliate_2, \
@@ -60,7 +58,6 @@ module.exports = class WriteEventRecords {
 				r.datetime,
 				r.account,
 				r.campaign,
-				r.product_schedule,
 				r.affiliate,
 				r.subaffiliate_1,
 				r.subaffiliate_2,
