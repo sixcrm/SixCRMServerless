@@ -715,7 +715,6 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
 		//NOT ACL enabled
-    //Technical Debt:  Add Kinesis Activity
     delete({id}){
 
       du.debug('Delete');
