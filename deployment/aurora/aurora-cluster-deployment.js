@@ -11,7 +11,7 @@ module.exports = class AuroraClusterDeployment {
 
 	constructor() {
 
-		this._rdsUtilities = new RDSProvider();
+		this._rdsprovider = new RDSProvider();
 
 	}
 
@@ -23,7 +23,7 @@ module.exports = class AuroraClusterDeployment {
 			DBClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
 		};
 
-		return this._rdsUtilities.describeClusters(parameters)
+		return this._rdsprovider.describeClusters(parameters)
 			.then((data) => {
 
 				if (data.DBClusters.length) {
@@ -44,7 +44,7 @@ module.exports = class AuroraClusterDeployment {
 							parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
 							parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
 
-							return this._rdsUtilities.putCluster(parameters).then(data => {
+							return this._rdsprovider.putCluster(parameters).then(data => {
 
 								du.info(data);
 
@@ -109,7 +109,7 @@ module.exports = class AuroraClusterDeployment {
 		du.debug('Parse Parameters');
 
 		const parserData = {
-			region: this._rdsUtilities.getRegion(),
+			region: this._rdsprovider.getRegion(),
 			stage: global.SixCRM.configuration.stage,
 			account: global.SixCRM.configuration.site_config.aws.account
 		};
@@ -154,7 +154,7 @@ module.exports = class AuroraClusterDeployment {
 
 			const instanceParameters = this._parseParameters(instance);
 
-			return this._rdsUtilities.putDBInstance(instanceParameters);
+			return this._rdsprovider.putDBInstance(instanceParameters);
 
 		});
 

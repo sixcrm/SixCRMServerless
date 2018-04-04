@@ -39,15 +39,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyResults = { TableName: 'tableName', Item: { property: 'value' } };
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb =  {
+      dynamodbprovider.dynamodb =  {
           put: (params, callback) => {
               callback(null, params);
           }
       };
 
-      return dynamoDBUtilities.saveRecord(aTableName, anItem).then((result) => {
+      return dynamodbprovider.saveRecord(aTableName, anItem).then((result) => {
           expect(result).to.deep.equal(anyResults);
       });
 
@@ -59,15 +59,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let aTableName = anyTableName;
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb = {
+      dynamodbprovider.dynamodb = {
           put: (params, callback) => {
               callback(eu.getError('server','An error occurred.'), 'A stacktrace.');
           }
       };
 
-      return dynamoDBUtilities.saveRecord(aTableName, anItem).catch((error) => {
+      return dynamodbprovider.saveRecord(aTableName, anItem).catch((error) => {
           expect(error.message).to.equal(serverError);
       });
     });
@@ -83,15 +83,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyResults = { TableName: 'tableName', Key: '1' };
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb =  {
+      dynamodbprovider.dynamodb =  {
           get: (params, callback) => {
               callback(null, params);
           }
       };
 
-      return dynamoDBUtilities.get(aTableName, anyKey).then((result) => {
+      return dynamodbprovider.get(aTableName, anyKey).then((result) => {
           expect(result).to.deep.equal(anyResults);
       });
     });
@@ -107,15 +107,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyParams = {};
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb = {
+      dynamodbprovider.dynamodb = {
           scan: (params, callback) => {
               callback(null, anyResults);
           }
       };
 
-      return dynamoDBUtilities.scanRecords(aTableName, anyParams).then((result) => {
+      return dynamodbprovider.scanRecords(aTableName, anyParams).then((result) => {
           expect(result).to.deep.equal(anyResults);
       });
     });
@@ -127,15 +127,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyParams = {};
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb = {
+      dynamodbprovider.dynamodb = {
           scan: (params, callback) => {
               callback(null, anyResults);
           }
       };
 
-      return dynamoDBUtilities.scanRecords(aTableName, anyParams).then((result) => {
+      return dynamodbprovider.scanRecords(aTableName, anyParams).then((result) => {
           expect(result).to.deep.equal(anyResults);
       });
     });
@@ -147,16 +147,16 @@ describe('lib/providers/dynamodb-provider', () => {
       let paramsWithLimit = { limit: 1 };
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb = {
+      dynamodbprovider.dynamodb = {
           scan: (params, callback) => {
               expect(params.Limit).to.equal(paramsWithLimit.limit);
               callback(null, anyResults);
           }
       };
 
-      return dynamoDBUtilities.scanRecords(aTableName, paramsWithLimit).then((result) => {
+      return dynamodbprovider.scanRecords(aTableName, paramsWithLimit).then((result) => {
           expect(result).to.deep.equal(anyResults);
       });
     });
@@ -167,15 +167,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let aTableName = anyTableName;
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb = {
+      dynamodbprovider.dynamodb = {
           scan: (params, callback) => {
               callback(eu.getError('server','An error occurred.'), 'A stacktrace.');
           }
       };
 
-      return dynamoDBUtilities.scanRecords(aTableName, anItem).catch((error) => {
+      return dynamodbprovider.scanRecords(aTableName, anItem).catch((error) => {
           expect(error.message).to.equal(serverError);
       });
     });
@@ -192,15 +192,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyIndex = 0;
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb = {
+      dynamodbprovider.dynamodb = {
           query: (params, callback) => {
               callback(null, anyResults);
           }
       };
 
-      return dynamoDBUtilities.queryRecords(aTableName, anyParams, anyIndex).then((result) => {
+      return dynamodbprovider.queryRecords(aTableName, anyParams, anyIndex).then((result) => {
         du.info(result);
           expect(result).to.deep.equal(anyResults);
       });
@@ -257,15 +257,15 @@ describe('lib/providers/dynamodb-provider', () => {
 
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb = {
+      dynamodbprovider.dynamodb = {
           query: (params, callback) => {
               callback(null, spoofed_results);
           }
       };
 
-      return dynamoDBUtilities.queryRecords(table_name, parameters, index).then((result) => {
+      return dynamodbprovider.queryRecords(table_name, parameters, index).then((result) => {
         expect(result).to.deep.equal(spoofed_results);
       });
 
@@ -283,15 +283,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyIndex = 0;
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb = {
+      dynamodbprovider.dynamodb = {
           query: (params, callback) => {
               callback(null, anyResults);
           }
       };
 
-      return dynamoDBUtilities.countRecords(aTableName, anyParams, anyIndex).then((result) => {
+      return dynamodbprovider.countRecords(aTableName, anyParams, anyIndex).then((result) => {
           expect(result).to.deep.equal(anyResults);
       });
     });
@@ -314,15 +314,15 @@ describe('lib/providers/dynamodb-provider', () => {
       };
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb = {
+      dynamodbprovider.dynamodb = {
           update: (params, callback) => {
               callback(null, params);
           }
       };
 
-      return dynamoDBUtilities.updateRecord(aTableName, anyKey, anyExpression, anyParams).then((result) => {
+      return dynamodbprovider.updateRecord(aTableName, anyKey, anyExpression, anyParams).then((result) => {
           expect(result).to.deep.equal(anyResult);
       });
     });
@@ -343,15 +343,15 @@ describe('lib/providers/dynamodb-provider', () => {
       };
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamodb = {
+      dynamodbprovider.dynamodb = {
           delete: (params, callback) => {
               callback(null, params);
           }
       };
 
-      return dynamoDBUtilities.deleteRecord(aTableName, anyKey, anyExpression, anyParams).then((result) => {
+      return dynamodbprovider.deleteRecord(aTableName, anyKey, anyExpression, anyParams).then((result) => {
           expect(result).to.deep.equal(anyResults);
       });
     });
@@ -365,15 +365,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyResults = 'success';
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamoraw =  {
+      dynamodbprovider.dynamoraw =  {
           createTable: (params, callback) => {
               callback(null, anyResults);
           }
       };
 
-      return dynamoDBUtilities.createTable(anyParams).then((result) => {
+      return dynamodbprovider.createTable(anyParams).then((result) => {
           expect(result).to.equal(anyResults);
       });
     });
@@ -387,15 +387,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyResults = 'success';
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamoraw =  {
+      dynamodbprovider.dynamoraw =  {
           updateTable: (params, callback) => {
               callback(null, anyResults);
           }
       };
 
-      return dynamoDBUtilities.updateTable(anyParams).then((result) => {
+      return dynamodbprovider.updateTable(anyParams).then((result) => {
           expect(result).to.equal(anyResults);
       });
     });
@@ -409,15 +409,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyResults = { TableName: 'tableName' };
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamoraw =  {
+      dynamodbprovider.dynamoraw =  {
           describeTable: (params, callback) => {
               callback(null, params);
           }
       };
 
-      return dynamoDBUtilities.describeTable(aTableName).then((result) => {
+      return dynamodbprovider.describeTable(aTableName).then((result) => {
           expect(result).to.deep.equal(anyResults);
       });
 
@@ -433,15 +433,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyResults = { TableName: 'tableName' };
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamoraw =  {
+      dynamodbprovider.dynamoraw =  {
           deleteTable: (params, callback) => {
               callback(null, params);
           }
       };
 
-      return dynamoDBUtilities.deleteTable(aTableName).then((result) => {
+      return dynamodbprovider.deleteTable(aTableName).then((result) => {
           expect(result).to.deep.equal(anyResults);
       });
     });
@@ -451,15 +451,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let aTableName = anyTableName;
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamoraw =  {
+      dynamodbprovider.dynamoraw =  {
           deleteTable: (params, callback) => {
               callback(new Error('fail'), null);
           }
       };
 
-      return dynamoDBUtilities.deleteTable(aTableName).catch((error) => {
+      return dynamodbprovider.deleteTable(aTableName).catch((error) => {
           expect(error.message).to.deep.equal('[500] fail');
       });
     });
@@ -475,15 +475,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyStatus = 'anyStatus';
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamoraw =  {
+      dynamodbprovider.dynamoraw =  {
           waitFor: (status, params, callback) => {
               callback(null, params);
           }
       };
 
-      return dynamoDBUtilities.waitFor(aTableName, anyStatus).then((result) => {
+      return dynamodbprovider.waitFor(aTableName, anyStatus).then((result) => {
           expect(result).to.deep.equal(anyResults);
       });
     });
@@ -494,15 +494,15 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyStatus = 'anyStatus';
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
-      dynamoDBUtilities.dynamoraw =  {
+      dynamodbprovider.dynamoraw =  {
           waitFor: (status, params, callback) => {
               callback(new Error('fail'), null);
           }
       };
 
-      return dynamoDBUtilities.waitFor(aTableName, anyStatus).catch((error) => {
+      return dynamodbprovider.waitFor(aTableName, anyStatus).catch((error) => {
           expect(error.message).to.equal('[500] fail');
       });
     });
@@ -517,10 +517,10 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyArray = [1]; //array with a value that is not a string
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
+      const dynamodbprovider = new DynamoDBProvider();
 
       try {
-          dynamoDBUtilities.createINQueryParameters(anyFieldName, anyArray)
+          dynamodbprovider.createINQueryParameters(anyFieldName, anyArray)
       }catch(error) {
           expect(error.message).to.equal('[500] All entries in the "in_array" must be of type string.');
       }
@@ -532,8 +532,8 @@ describe('lib/providers/dynamodb-provider', () => {
       let anyArray = ['a', 'b'];
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
-      let inqueryParams = dynamoDBUtilities.createINQueryParameters(anyFieldName, anyArray);
+      const dynamodbprovider = new DynamoDBProvider();
+      let inqueryParams = dynamodbprovider.createINQueryParameters(anyFieldName, anyArray);
 
       expect(inqueryParams).to.have.property('filter_expression');
       expect(inqueryParams).to.have.property('expression_attribute_values');
@@ -546,8 +546,8 @@ describe('lib/providers/dynamodb-provider', () => {
     it('should create disjunction parameters when existing parameters are undefined', () => {
 
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
-      const result = dynamoDBUtilities.appendDisjunctionQueryParameters(undefined, 'type', ['type1', 'type2']);
+      const dynamodbprovider = new DynamoDBProvider();
+      const result = dynamodbprovider.appendDisjunctionQueryParameters(undefined, 'type', ['type1', 'type2']);
 
       expect(result.expression_attribute_names).to.deep.equal({'#type': 'type'});
       expect(result.expression_attribute_values).to.deep.equal({':typev0': 'type1', ':typev1': 'type2'});
@@ -559,8 +559,8 @@ describe('lib/providers/dynamodb-provider', () => {
           filter_expression: 'sample_query AND ',
       };
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
-      const result = dynamoDBUtilities.appendDisjunctionQueryParameters(query_parameters, 'type', ['type1', 'type2']);
+      const dynamodbprovider = new DynamoDBProvider();
+      const result = dynamodbprovider.appendDisjunctionQueryParameters(query_parameters, 'type', ['type1', 'type2']);
 
       expect(result.expression_attribute_names).to.deep.equal({'#type': 'type'});
       expect(result.expression_attribute_values).to.deep.equal({':typev0': 'type1', ':typev1': 'type2'});
@@ -574,8 +574,8 @@ describe('lib/providers/dynamodb-provider', () => {
           filter_expression: 'sample_query AND '
       };
       let DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-      const dynamoDBUtilities = new DynamoDBProvider();
-      const result = dynamoDBUtilities.appendDisjunctionQueryParameters(query_parameters, 'type', ['type1', 'type2']);
+      const dynamodbprovider = new DynamoDBProvider();
+      const result = dynamodbprovider.appendDisjunctionQueryParameters(query_parameters, 'type', ['type1', 'type2']);
 
       expect(result.expression_attribute_names).to.deep.equal({'#sample': 'sample','#type': 'type'});
       expect(result.expression_attribute_values).to.deep.equal({':samplev': 'sample', ':typev0': 'type1', ':typev1': 'type2'});

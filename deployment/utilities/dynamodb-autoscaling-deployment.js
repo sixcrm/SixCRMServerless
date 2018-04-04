@@ -42,7 +42,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 
       this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition})
 
-      this.dynamodbutilities = new DynamoDBProvider();
+      this.dynamodbprovider = new DynamoDBProvider();
       this.iamprovider = new IAMProvider();
       this.autoscalingprovider = new AutoscalingProvider();
 
@@ -389,7 +389,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 
       du.debug('Table Exists');
 
-      return this.dynamodbutilities.describeTable(table_name, false).then((results) => {
+      return this.dynamodbprovider.describeTable(table_name, false).then((results) => {
 
         du.highlight('Table found: '+table_name);
         return results;

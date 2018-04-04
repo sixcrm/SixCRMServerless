@@ -10,7 +10,6 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
 const httpprovider = new HttpProvider();
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const httputilities = global.SixCRM.routes.include('lib', 'http-utilities.js');
 const random = global.SixCRM.routes.include('lib','random.js');
 const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');

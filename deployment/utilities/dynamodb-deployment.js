@@ -18,7 +18,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       super();
 
-      this.dynamodbutilities = new DynamoDBProvider();
+      this.dynamodbprovider = new DynamoDBProvider();
       this.iamprovider = new IAMProvider();
 
       this.controllers = [];
@@ -33,9 +33,9 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
         if(result == false){
 
-          return this.dynamodbutilities.createTable(table_definition.Table).then(() => {
+          return this.dynamodbprovider.createTable(table_definition.Table).then(() => {
 
-            return this.dynamodbutilities.waitFor(table_definition.Table.TableName, 'tableExists').then(() => {
+            return this.dynamodbprovider.waitFor(table_definition.Table.TableName, 'tableExists').then(() => {
 
               return du.highlight('Successfully created table: '+table_definition.Table.TableName);
 
@@ -46,7 +46,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
         }else{
 
           //Technical Debt:  Complete this!
-          //return this.dynamodbutilities.updateTable(table_definition.Table);
+          //return this.dynamodbprovider.updateTable(table_definition.Table);
           return true
         }
 
@@ -58,7 +58,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       du.debug('Table Exists');
 
-      return this.dynamodbutilities.describeTable(table_name, false).then((results) => {
+      return this.dynamodbprovider.describeTable(table_name, false).then((results) => {
 
         du.highlight('Table found: '+table_name);
         return results;
@@ -98,7 +98,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
       du.warning(table_name);
 
-      return this.dynamodbutilities.scanRecords(table_name).then(results => {
+      return this.dynamodbprovider.scanRecords(table_name).then(results => {
         let return_array = [];
 
         if(_.has(results, 'Items')){
@@ -145,7 +145,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
                   if (seeds.find((seed) => seed.id === table_key)) {
                       du.info('Deleting ' + table_definition.Table.TableName + ' with id ' + table_key);
 
-                      this.dynamodbutilities.deleteRecord(table_definition.Table.TableName, {id: table_key}, null, null);
+                      this.dynamodbprovider.deleteRecord(table_definition.Table.TableName, {id: table_key}, null, null);
                       delete_count++;
 
                       return;
@@ -258,7 +258,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
             parameters.BackupName = table_definition.Table.TableName+'-'+branch+'-'+version;
           }
 
-          return this.dynamodbutilities.createBackup(parameters).then((result) => {
+          return this.dynamodbprovider.createBackup(parameters).then((result) => {
 
             if(objectutilities.hasRecursive(result, 'BackupDetails.BackupStatus')){
               du.highlight(table_definition.Table.TableName+' backup triggered: ('+result.BackupDetails.BackupName+')');
@@ -433,9 +433,9 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
         if(objectutilities.isObject(result)){
 
-          return this.dynamodbutilities.deleteTable(table_definition.Table.TableName).then(() => {
+          return this.dynamodbprovider.deleteTable(table_definition.Table.TableName).then(() => {
 
-            return this.dynamodbutilities.waitFor(table_definition.Table.TableName, 'tableNotExists');
+            return this.dynamodbprovider.waitFor(table_definition.Table.TableName, 'tableNotExists');
 
           });
 
