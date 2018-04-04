@@ -1,0 +1,13 @@
+{
+  "id":"/helpers/entities/user/createprofileelements.json",
+  "title":"Create Profile Elements",
+  "type":"object",
+  "properties":{
+    "account":{"$ref":"../../../entities/account.json"},
+    "user":{"$ref":"../../../entities/user.json"},
+    "role":{"$ref":"../../../entities/role.json"},
+    "user_setting":{"$ref":"../../../entities/usersetting.json"},
+    "user_acl":{"$ref":"../../../entities/useracl.json"}
+  },
+  "required":["account", "user", "role", "user_setting"]
+}

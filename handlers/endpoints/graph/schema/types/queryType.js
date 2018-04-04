@@ -259,9 +259,9 @@ module.exports.graphObj = new GraphQLObjectType({
       	  type: userType.graphObj,
           description: 'Retrieves or creates a user.',
     	    resolve: function(){
-            const userController = new UserController();
-
-            return userController.introspection();
+            const UserHelperController = global.SixCRM.routes.include('helpers','entities/user/User.js');
+            let userHelperController = new UserHelperController();
+            return userHelperController.introspection();
     	     }
       	},
         latesttermsandconditions:{
