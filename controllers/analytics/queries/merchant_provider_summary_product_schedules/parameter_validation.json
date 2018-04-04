@@ -99,12 +99,6 @@
 			},
 			"uniqueItems": true
 		},
-		"product_schedule":{
-			"type": "array",
-			"minItems": 1,
-			"items": {"$ref": "#/definitions/UUIDv4"},
-			"uniqueItems": true
-		},
 		"processor_result":{
 			"type": "array",
 			"minItems": 1,
@@ -145,5 +139,5 @@
 			"exclusiveMinimum": false
 		}
 	},
-	"required":["limit", "offset", "order", "order_field", "product_schedule"]
+	"required":["limit", "offset", "order", "order_field"]
 }

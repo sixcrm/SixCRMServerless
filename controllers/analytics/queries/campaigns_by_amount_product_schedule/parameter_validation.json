@@ -95,12 +95,6 @@
 			},
 			"uniqueItems": true
 		},
-		"product_schedule":{
-			"type": "array",
-			"minItems": 1,
-			"items": {"$ref": "#/definitions/UUIDv4"},
-			"uniqueItems": true
-		},
 		"processor_result":{
 			"type": "array",
 			"minItems": 1,
@@ -136,5 +130,5 @@
 			}
 		}
 	},
-	"required":["start", "end", "limit","product_schedule"]
+	"required":["start", "end", "limit"]
 }
