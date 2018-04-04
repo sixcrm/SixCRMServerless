@@ -47,10 +47,6 @@ module.exports.graphObj = new GraphQLInputObjectType({
             description: 'The transaction summary merchant provider filter list.',
             type: new GraphQLList(GraphQLString)
         },
-        product_schedule:{
-            description: 'The transaction summary product schedule filter list.',
-            type: new GraphQLList(GraphQLString)
-        },
         transactiontype:{
             description: 'The transaction summary product transaction type filter list.',
             type: new GraphQLList(GraphQLString)
