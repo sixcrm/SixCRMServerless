@@ -66,7 +66,7 @@ function checkout(token, post_body){
     }
   };
 
-  return httpprovider.post(argument_object)
+  return httpprovider.postJSON(argument_object)
   .then((result) => {
     du.debug(result.body);
     expect(result.response.statusCode).to.equal(200);
