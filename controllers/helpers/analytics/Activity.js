@@ -2,8 +2,15 @@ const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 
 module.exports = class ActivityHelper {
+
+	constructor() {
+
+		this._eventHelperController = new EventHelperController();
+
+	}
 
 	//Technical Debt:  Use Local Cache Object
 	acquireGlobalUser() {
@@ -56,7 +63,7 @@ module.exports = class ActivityHelper {
 				id: uuidV4(),
 				actor: actor.id,
 				actor_type: actor.type,
-				action: action,
+				action,
 				datetime: now
 			};
 
@@ -75,8 +82,10 @@ module.exports = class ActivityHelper {
 				activity['associated_with_type'] = associated_with.type;
 			}
 
-			return Promise.resolve();
-			// return this.pushActivityToRedshift(activity);
+			return this._eventHelperController.pushEvent({
+				event_type: `activity_${action}`,
+				context: activity
+			});
 
 		});
 
