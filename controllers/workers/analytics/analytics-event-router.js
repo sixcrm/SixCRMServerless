@@ -30,5 +30,9 @@ module.exports = {
 	'transaction_*': {
 		transform: 'transaction-transform.js',
 		handlers: ['transaction-event-handler.js']
+	},
+	'activity_*': {
+		transform: 'activity-transform.js',
+		handlers: ['activity-event-handler.js']
 	}
 }

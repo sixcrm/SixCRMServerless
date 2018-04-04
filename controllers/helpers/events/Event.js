@@ -23,6 +23,8 @@ module.exports = class EventHelperController {
 
 		let publish_parameters = this.createPublishParameters(event);
 
+		console.log(publish_parameters);
+
 		return this.snsprovider.publish(publish_parameters);
 
 	}

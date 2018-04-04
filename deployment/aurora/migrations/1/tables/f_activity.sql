@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS analytics.f_activity (
     id VARCHAR(36) NOT NULL,
     datetime TIMESTAMP NOT NULL,
+    "user" VARCHAR(100),
     account VARCHAR(36),
     actor VARCHAR(100) NOT NULL,
     actor_type VARCHAR(100),
@@ -11,3 +12,4 @@ CREATE TABLE IF NOT EXISTS analytics.f_activity (
     associated_with_type VARCHAR(100),
     PRIMARY KEY (id)
 );
+

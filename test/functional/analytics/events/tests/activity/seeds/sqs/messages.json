@@ -1,0 +1,16 @@
+{
+	"messages": [{
+		"id": "1ef02cd1-1cad-46bf-9b05-2da7b437b497",
+		"datetime": "2018-04-03T23:58:42.895Z",
+		"type": "activity_created",
+		"user": "system@sixcrm.com",
+		"account": "*",
+		"actor": "system",
+		"actorType": "system",
+		"action": "created",
+		"actedUpon": "45367480-f1c1-4f61-a3d6-413c22a44dc3",
+		"actedUponType": "merchantprovidergroup",
+		"associatedWith" : "x1",
+		"associatedWithType": "x2"
+	}]
+}
