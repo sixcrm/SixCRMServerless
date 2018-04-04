@@ -298,7 +298,7 @@ module.exports.graphObj = new GraphQLObjectType({
             resolve: (value, user) => {
                 const userController = new UserController();
 
-                return userController.create(user.user);
+                return userController.create({entity: user.user});
             }
         },
         //Note: Fix
