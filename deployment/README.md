@@ -34,7 +34,6 @@ OK
 13. Run `deployment/redshift/deploy_cluster.js` (Issue: promise rejection)
 16. Run `deployment/redshift/deploy_tables.js`
 17. Run `deployment/redshift/deploy_seeds.js`
-18. Run `deployment/kinesis/deploy_streams.js`
 19. Run `deployment/cloudsearch/deploy.js`
 20. Run `serverless deploy --stage {stage}`
  - Note:  This may need to occur earlier in the deployment due to the need for the roles at deployment time.

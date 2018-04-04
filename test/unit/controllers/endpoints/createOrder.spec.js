@@ -374,12 +374,6 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve(true);
-        }
-      });
-
       mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
         listByMerchantProviderAndDateRange() {
           return Promise.resolve({merchantprovidersummaries: []});
@@ -553,12 +547,6 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve(true);
-        }
-      });
-
       mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
         listByMerchantProviderAndDateRange() {
           return Promise.resolve({merchantprovidersummaries: []});
@@ -728,12 +716,6 @@ describe('createOrder', function () {
           });
 
           return Promise.resolve(register_response);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve(true);
         }
       });
 
@@ -1244,25 +1226,12 @@ describe('createOrder', function () {
       let info = getValidInfo();
       let transactions = getValidTransactions();
 
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve(true);
-        }
-      });
-
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
         constructor(){}
         addRebillToQueue(){
           return Promise.resolve(true);
         }
         updateRebillState(){
-          return Promise.resolve(true);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1328,25 +1297,12 @@ describe('createOrder', function () {
       let info = getValidInfo();
       let transactions = getValidTransactions();
 
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve(true);
-        }
-      });
-
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
         constructor(){}
         addRebillToQueue(){
           return Promise.resolve(true);
         }
         updateRebillState(){
-          return Promise.resolve(true);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1412,25 +1368,12 @@ describe('createOrder', function () {
       let info = getValidInfo();
       let transactions = getValidTransactions();
 
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve(true);
-        }
-      });
-
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
         constructor(){}
         addRebillToQueue(){
           return Promise.resolve(true);
         }
         updateRebillState(){
-          return Promise.resolve(true);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
           return Promise.resolve(true);
         }
       });
@@ -1495,22 +1438,9 @@ describe('createOrder', function () {
       let info = getValidInfo();
       let transactions = getValidTransactions();
 
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve(true);
-        }
-      });
-
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
         update() {
             return Promise.resolve(true);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve(true);
         }
       });
 
@@ -2159,12 +2089,6 @@ describe('createOrder', function () {
           });
 
           return Promise.resolve(register_response);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve(true);
         }
       });
 

@@ -290,12 +290,6 @@ describe('checkout', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve({});
-        }
-      });
-
       mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
           publish() {
               return Promise.resolve({});
@@ -498,12 +492,6 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve(true);
-        }
-      });
-
       mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
         listByMerchantProviderAndDateRange() {
           return Promise.resolve({merchantprovidersummaries: []});
@@ -560,12 +548,6 @@ describe('checkout', function () {
           return true;
         }
         getUserStrict() {
-          return Promise.resolve({});
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
           return Promise.resolve({});
         }
       });
@@ -778,12 +760,6 @@ describe('checkout', function () {
       };
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          return Promise.resolve({});
-        }
-      });
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/tracker/Tracker.js'), class {
         constructor(){ }

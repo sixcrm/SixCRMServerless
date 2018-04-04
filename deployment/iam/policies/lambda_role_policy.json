@@ -125,16 +125,6 @@
             ]
         },
         {
-            "Sid": "stmnt{{random}}13",
-            "Effect": "Allow",
-            "Action": [
-                "firehose:*"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
             "Sid": "stmnt{{random}}14",
             "Effect": "Allow",
             "Action": [

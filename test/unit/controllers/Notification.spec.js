@@ -68,12 +68,6 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-                putRecord() {
-                    return Promise.resolve();
-                }
-            });
-
             let NotificationController = global.SixCRM.routes.include('controllers','entities/Notification');
             const notificationController = new NotificationController();
 
