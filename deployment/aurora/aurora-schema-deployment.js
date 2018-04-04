@@ -48,7 +48,7 @@ module.exports = class AuroraSchemaDeployment {
 			}))
 			.then((migrations) => this._executeQuery('SELECT id FROM analytics.m_release ORDER BY id DESC LIMIT 1').then((currentRevision) => {
 				return {
-					currentRevision: Number(currentRevision.rows[0]),
+					currentRevision: Number(currentRevision.rows.length ? currentRevision.rows[0] : 0),
 					migrations
 				}
 			}).catch((ex) => {
@@ -59,10 +59,11 @@ module.exports = class AuroraSchemaDeployment {
 					currentRevision: 0,
 					migrations
 				}
+
 			}))
 			.then((result) => _.sortBy(_.filter(result.migrations, (f) => {
 
-				const currentRevision = options.fromRevision ? options.fromRevision : result.currentRevision;
+				const currentRevision = (options.fromRevision ? options.fromRevision : result.currentRevision) || 0;
 
 				return f.version <= Number(release) && f.version > currentRevision;
 
@@ -82,7 +83,9 @@ module.exports = class AuroraSchemaDeployment {
 					.then(() => fileutilities.getFileContents(path.join(migration.path, m.script)))
 					.then(this._executeQuery.bind(this));
 
-			}));
+			}))
+			// force the timestamp to update
+			.then(() => this._executeQuery('INSERT INTO analytics.m_release (id) VALUES($1) ON CONFLICT (id) DO UPDATE SET id = $2', [migration.version, migration.version]));
 
 	}
 
@@ -95,7 +98,7 @@ module.exports = class AuroraSchemaDeployment {
 
 	}
 
-	_executeQuery(query) {
+	_executeQuery(query, args) {
 
 		du.debug('AuroraSchemaDeployment._executeQuery()');
 
@@ -107,7 +110,15 @@ module.exports = class AuroraSchemaDeployment {
 
 		return auroraContext.withConnection((connection => {
 
-			return connection.query(query);
+			if (args && args.length) {
+
+				return connection.queryWithArgs(query, args);
+
+			} else {
+
+				return connection.query(query);
+
+			}
 
 		}));
 

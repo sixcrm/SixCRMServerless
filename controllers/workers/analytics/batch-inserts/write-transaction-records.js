@@ -1,7 +1,7 @@
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const ATTRIBUTES = 18;
+const ATTRIBUTES = 17;
 
 module.exports = class WriteTransactionRecords {
 
@@ -29,7 +29,6 @@ module.exports = class WriteTransactionRecords {
 				account, \
 				type, \
 				subtype, \
-				product_schedule, \
 				subaffiliate_1, \
 				subaffiliate_2, \
 				subaffiliate_3, \
@@ -58,7 +57,6 @@ module.exports = class WriteTransactionRecords {
 			account = EXCLUDED.account, \
 			type = EXCLUDED.type, \
 			subtype = EXCLUDED.subtype, \
-			product_schedule = EXCLUDED.product_schedule, \
 			subaffiliate_1 = EXCLUDED.subaffiliate_1, \
 			subaffiliate_2 = EXCLUDED.subaffiliate_2, \
 			subaffiliate_3 = EXCLUDED.subaffiliate_3, \
@@ -80,7 +78,6 @@ module.exports = class WriteTransactionRecords {
 					r.account,
 					r.type,
 					r.subtype || 'main',
-					r.productSchedule,
 					r.subaffiliate1,
 					r.subaffiliate2,
 					r.subaffiliate3,

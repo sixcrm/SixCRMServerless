@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS analytics.f_events (
     account VARCHAR(36) NOT NULL,
     campaign VARCHAR(36) NOT NULL,
     session VARCHAR(36),
-    product_schedule VARCHAR(36),
     affiliate VARCHAR(36),
     subaffiliate_1 VARCHAR(36),
     subaffiliate_2 VARCHAR(36),

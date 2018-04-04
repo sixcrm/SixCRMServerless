@@ -20,7 +20,6 @@ ____
 * `subaffiliate_4` -  a sub-affiliate string
 * `subaffiliate_5` -  a sub-affiliate string
 * `merchant_provider` -  a array of UUIDv4 strings
-* `product_schedule` -  a array of UUIDv4 strings
 
 ---
 ### Query notes

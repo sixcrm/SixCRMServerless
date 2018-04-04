@@ -190,9 +190,6 @@ functions:
   customeremail:
     handler: handlers/workers/sns/customeremail/handler.customeremail
 
-  redshiftevents:
-    handler: handlers/workers/sns/redshiftevents/handler.redshiftevents
-
   analyticsevents:
     handler: handlers/workers/sns/analyticsevents/handler.analyticsevents
 
