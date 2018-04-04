@@ -65,31 +65,31 @@ describe('Test connections to Docker Services', () => {
 
   });
 
-  describe('Redshift', () => {
+  // describe('Redshift', () => {
 
-    it('successfully connects to the Docker Redshift Instance', () => {
+  //   it('successfully connects to the Docker Redshift Instance', () => {
 
-      return redshiftContext.withConnection((connection => {
+  //     return redshiftContext.withConnection((connection => {
 
-        return connection.query('SELECT 1')
-          .then((result) => {
+  //       return connection.query('SELECT 1')
+  //         .then((result) => {
 
-            return expect(result.rows[0]['?column?']).to.equal(1);
+  //           return expect(result.rows[0]['?column?']).to.equal(1);
 
-          })
-          .catch(ex => {
+  //         })
+  //         .catch(ex => {
 
-            du.error(ex);
+  //           du.error(ex);
 
-            throw ex;
+  //           throw ex;
 
-          });
+  //         });
 
-      }));
+  //     }));
 
-    });
+  //   });
 
-  });
+  // });
 
   describe('Elasticache', () => {
 
