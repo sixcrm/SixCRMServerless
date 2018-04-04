@@ -9,8 +9,6 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
-const termsAndConditionsController = new TermsAndConditionsController();
 
 //Technical Debt:  The list method here is tricky
 module.exports = class UserController extends entityController {
@@ -59,6 +57,7 @@ module.exports = class UserController extends entityController {
 
       du.debug('Get User By Alias');
 
+      //Technical Debt:  Why are the ACL's disabled here?
       return Promise.resolve(this.disableACLs())
       .then(() => this.getBySecondaryIndex({field:'alias', index_value: user_alias, index_name: 'alias-index'}))
       .then((user) => {
@@ -86,7 +85,7 @@ module.exports = class UserController extends entityController {
 
       }).catch(error => {
 
-        if(error.statusCode == '404'){
+        if(error.code == 404){
           return Promise.resolve(false);
         }
 
@@ -104,6 +103,7 @@ module.exports = class UserController extends entityController {
         eu.throwError('bad_request','A user identifier or a email is required, "'+user_email+'" provided');
       }
 
+      //Technical Debt:  Why are ACL's disabled here?
       return Promise.resolve(this.disableACLs())
       .then(() => this.get({id: user_email}))
       .then((user) => {
@@ -158,98 +158,6 @@ module.exports = class UserController extends entityController {
       }
 
       return true;
-
-    }
-
-    //To the helper...
-    introspection(){
-
-      du.debug('Introspection');
-
-      if(!_.has(global, 'user')){
-        eu.throwError('bad_request','Introspection method requires a global user.');
-      }
-
-      //Technical Debt:  This needs to get reduced
-      if(this.isEmail(global.user)){
-
-        if(!_.has(this, 'userHelperController')){
-          const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
-          this.userHelperController = new UserHelperController();
-        }
-
-        return this.userHelperController.createProfile(global.user).then((user) => {
-
-          //Technical Debt:  Add validation
-
-          return user;
-
-        }).then(user => {
-
-          this.setGlobalUser(user);
-
-          return this.introspection();
-
-        });
-
-      }
-
-      this.validateGlobalUser();
-
-      return termsAndConditionsController.getLatestTermsAndConditions()
-      .then(terms_and_conditions => {
-
-        if(!_.has(terms_and_conditions, 'version')){
-          eu.throwError('server', 'Unable to acquire Terms & Conditions');
-        }
-
-        if (terms_and_conditions.version !== global.user.termsandconditions) {
-          global.user.termsandconditions_outdated = true;
-        }
-
-        return true;
-
-      }).then(() => termsAndConditionsController.getLatestTermsAndConditions('owner'))
-      .then(owner_terms_and_conditions => {
-
-        let acls = [];
-
-        if(objectutilities.hasRecursive(global, 'user.acl') && arrayutilities.nonEmpty(global.user.acl)){
-          acls = arrayutilities.map(global.user.acl, (acl) => {
-            if (acl.role.name === 'Owner' && acl.termsandconditions !== owner_terms_and_conditions.version) {
-              acl.termsandconditions_outdated = true;
-            }
-            return acl;
-          });
-        }
-
-        global.user.acl = acls;
-
-        return true;
-
-      }).then(() => {
-
-        return Promise.resolve(this.disableACLs())
-        .then(() => this.executeAssociatedEntityFunction('userSettingController', 'get', {id: global.user.id}))
-        .then((settings) => {
-
-          this.enableACLs();
-          return settings;
-
-        }).then((settings) => {
-
-          global.user.usersetting = settings;
-          return global.user;
-
-        }).catch((error) => {
-
-          this.enableACLs();
-
-          eu.throwError(error);
-
-        });
-
-      });
 
     }
 

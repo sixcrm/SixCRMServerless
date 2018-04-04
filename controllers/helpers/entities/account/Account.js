@@ -8,7 +8,7 @@ module.exports = class AccountHelperController {
 
   }
 
-  createPrototypeAccount(email){
+  getPrototypeAccount(email){
 
     du.debug('Create Prototype Account');
 

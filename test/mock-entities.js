@@ -13,6 +13,45 @@ const spoofer = global.SixCRM.routes.include('test','spoofer.js');
 
 class MockEntities {
 
+  static getValidUserSetting(id){
+
+    id = (_.isUndefined(id) || _.isNull(id))?spoofer.createRandomEmail():id;
+
+    let a_iso8601 = timestamp.getISO8601();
+
+    return {
+      id: id,
+      timezone: 'America/Los_Angeles',
+      created_at: a_iso8601,
+      updated_at: a_iso8601,
+      notifications: [{
+          name: "six",
+          receive: true
+      },
+      {
+          name: "email",
+          receive: false
+      },
+      {
+          name: "sms",
+          receive: false
+      },
+      {
+          name: "slack",
+          receive: false
+      },
+      {
+          name: "skype",
+          receive: false
+      },
+      {
+          name: "ios",
+          receive: false
+      }]
+    };
+
+  }
+
   static getValidSNSMessage(message){
 
     let default_message = {
