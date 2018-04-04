@@ -2,7 +2,7 @@
 const _ = require('underscore');
 const chai = require('chai');
 const expect = chai.expect;
-
+const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -90,7 +90,7 @@ function refund(transaction, amount) {
 
     let argument_object = {
         url: config.endpoint+'graph/'+account,
-        body: 'mutation { refund (refund: { amount:"' + amount + '", transaction:"' + transaction + '" } ) { transaction { id } } }',
+        body: 'mutation { refund (refund: { amount:"' + amount + '", transaction:"' + transaction + '" } ) { transaction { id }, processor_response } }',
         headers:{
             Authorization: test_jwt
         }
@@ -99,22 +99,6 @@ function refund(transaction, amount) {
     du.debug(argument_object);
 
     return httpprovider.post(argument_object)
-        .then((result) => {
-            du.debug(result.body);
-
-            if (stringutilities.isString(result.body)) {
-              result.body = JSON.parse(result.body);
-            }
-
-            expect(result.response.statusCode).to.equal(200);
-            expect(result.response.statusMessage).to.equal('OK');
-            expect(result.body).to.have.property('success');
-            expect(result.body).to.have.property('code');
-            expect(result.body).to.have.property('response');
-            expect(result.body.success).to.equal(true);
-            expect(result.body.code).to.equal(200);
-            return result.body;
-        });
 
 }
 
@@ -252,7 +236,7 @@ describe('Checkout', () => {
 
     });
 
-      it('refunds a sale', () => {
+      it('refunds a transaction', () => {
 
           let sale_object = {
               products:[{
@@ -277,9 +261,190 @@ describe('Checkout', () => {
                   let amount = result.response.transactions[0].amount;
 
                   return refund(transaction_id, amount);
+              }).then((result) => {
+                  du.debug(result.body);
+
+                  if (stringutilities.isString(result.body)) {
+                      result.body = JSON.parse(result.body);
+                  }
+
+                  let processor_response = result.body.response.data.refund.processor_response;
+
+                  expect(result.response.statusCode).to.equal(200);
+                  expect(result.response.statusMessage).to.equal('OK');
+                  expect(result.body).to.have.property('success');
+                  expect(result.body).to.have.property('code');
+                  expect(result.body).to.have.property('response');
+                  expect(result.body.success).to.equal(true);
+                  expect(result.body.code).to.equal(200);
+                  expect(processor_response.message).to.equal('Failed');
+                  expect(processor_response.code).to.equal('fail');
               });
 
       });
+
+    it('transaction refund fails for insufficient funds', () => {
+
+      let sale_object = {
+          products:[{
+              product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+              quantity:2
+          }]
+      };
+
+      return acquireToken(campaign)
+          .then((token) => {
+              expect(token).to.be.defined;
+              let checkout_body = createCheckoutBody(campaign, sale_object);
+
+              return checkout(token, checkout_body);
+          })
+          .then(result => {
+              let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+
+              expect(validated).to.equal(true);
+
+              let transaction_id = result.response.transactions[0].id;
+              let amount = "100.00";
+
+              return refund(transaction_id, amount);
+          }).then((result) => {
+
+              if (stringutilities.isString(result.body)) {
+                  result.body = JSON.parse(result.body);
+              }
+
+              expect(result.body).to.have.property('success');
+              expect(result.body).to.have.property('code');
+              expect(result.body.success).to.equal(false);
+              expect(result.body.code).to.equal(403);
+              expect(result.body.message).to.equal("[403] The proposed resolved transaction amount is negative.");
+          });
+
+    });
+
+    it('fails for non-existent transaction', () => {
+
+        let sale_object = {
+            products:[{
+                product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+                quantity:2
+            }]
+        };
+
+        return acquireToken(campaign)
+            .then((token) => {
+                expect(token).to.be.defined;
+                let checkout_body = createCheckoutBody(campaign, sale_object);
+
+                return checkout(token, checkout_body);
+            })
+            .then(result => {
+                let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+
+                expect(validated).to.equal(true);
+
+                let transaction_id = uuidV4();
+                let amount = random.randomDouble(1, 100, 2);
+
+                return refund(transaction_id, amount);
+            }).then((result) => {
+
+                if (stringutilities.isString(result.body)) {
+                    result.body = JSON.parse(result.body);
+                }
+
+                expect(result.body).to.have.property('success');
+                expect(result.body).to.have.property('code');
+                expect(result.body.success).to.equal(false);
+                expect(result.body.code).to.equal(500);
+                expect(result.body.message).to.equal("[500] One or more validation errors occurred: " +
+                    "Transaction instance is not of a type(s) object");
+            });
+
+    });
+
+    it('fails for unexpected transaction amount', () => {
+
+        let sale_object = {
+            products:[{
+                product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+                quantity:2
+            }]
+        };
+
+        return acquireToken(campaign)
+            .then((token) => {
+                expect(token).to.be.defined;
+                let checkout_body = createCheckoutBody(campaign, sale_object);
+
+                return checkout(token, checkout_body);
+            })
+            .then(result => {
+                let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+
+                expect(validated).to.equal(true);
+
+                let transaction_id = result.response.transactions[0].id;
+                let amount = 'an_unexpected_amount';
+
+                return refund(transaction_id, amount);
+            }).then((result) => {
+
+                if (stringutilities.isString(result.body)) {
+                    result.body = JSON.parse(result.body);
+                }
+
+                expect(result.body).to.have.property('success');
+                expect(result.body).to.have.property('code');
+                expect(result.body.success).to.equal(false);
+                expect(result.body.code).to.equal(500);
+                expect(result.body.message).to.equal("[500] One or more validation errors occurred: " +
+                    "Currency instance is not any of [subschema 0],[subschema 1]");
+            });
+
+    });
+
+    it('fails for unexpected transaction id', () => {
+
+        let sale_object = {
+            products:[{
+                product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+                quantity:2
+            }]
+        };
+
+        return acquireToken(campaign)
+            .then((token) => {
+                expect(token).to.be.defined;
+                let checkout_body = createCheckoutBody(campaign, sale_object);
+
+                return checkout(token, checkout_body);
+            })
+            .then(result => {
+                let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+
+                expect(validated).to.equal(true);
+
+                let transaction_id = 'an_unexpected_transaction_id';
+                let amount = result.response.transactions[0].amount;
+
+                return refund(transaction_id, amount);
+            }).then((result) => {
+
+                if (stringutilities.isString(result.body)) {
+                    result.body = JSON.parse(result.body);
+                }
+
+                expect(result.body).to.have.property('success');
+                expect(result.body).to.have.property('code');
+                expect(result.body.success).to.equal(false);
+                expect(result.body.code).to.equal(500);
+                expect(result.body.message).to.contain("[500] One or more validation errors occurred:");
+                expect(result.body.message).to.contain("Transaction Input instance is not any of");
+            });
+
+    });
   });
 
   describe('Straight Sale With Dynamic Price', () => {
