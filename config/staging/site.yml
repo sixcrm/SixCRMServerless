@@ -91,8 +91,11 @@ slack:
     - channel: '#servererrors'
       webhook_url: https://hooks.slack.com/services/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
 
+# These won't be right in production, fix this when we create the subnets there
 serverless:
   subnetIds:
     - subnet-2deee170
     - subnet-d407e1b3
     - subnet-a15a538e
+  securityGroupIds:
+    - sg-e36f99aa

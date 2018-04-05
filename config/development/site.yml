@@ -91,3 +91,5 @@ serverless:
     - subnet-2deee170
     - subnet-d407e1b3
     - subnet-a15a538e
+  securityGroupIds:
+    - sg-e36f99aa
