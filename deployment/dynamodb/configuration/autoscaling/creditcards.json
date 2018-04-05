@@ -10,7 +10,7 @@
       },
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 10,
+        "MinCapacity": 15,
         "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
         "ServiceNamespace": "dynamodb"
       }
@@ -39,7 +39,7 @@
           },
           "ScaleInCooldown": 10,
           "ScaleOutCooldown": 10,
-          "TargetValue": 50.0
+          "TargetValue": 30.0
         }
       }
     ]
@@ -55,7 +55,7 @@
       },
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 3,
+        "MinCapacity": 30,
         "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
         "ServiceNamespace": "dynamodb"
       }
@@ -84,7 +84,7 @@
           },
           "ScaleInCooldown": 10,
           "ScaleOutCooldown": 10,
-          "TargetValue": 50.0
+          "TargetValue": 30.0
         }
       }
     ]

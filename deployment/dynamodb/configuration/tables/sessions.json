@@ -50,13 +50,13 @@
           "ProjectionType":"ALL"
         },
         "ProvisionedThroughput":{
-          "ReadCapacityUnits":3,
+          "ReadCapacityUnits":125,
           "WriteCapacityUnits":3
         }
       }
     ],
     "ProvisionedThroughput":{
-      "ReadCapacityUnits":9,
+      "ReadCapacityUnits":15,
       "WriteCapacityUnits":3
     }
   }
