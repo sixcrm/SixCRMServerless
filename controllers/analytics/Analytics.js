@@ -372,8 +372,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		du.debug('Get Activity By Identifier');
 
-		const activityFilter = this.getActivityFilter(args);
-
 		return this.getResults('home/hero-chart-timeseries', args, [])
 			.then((results) => {
 				return results;
