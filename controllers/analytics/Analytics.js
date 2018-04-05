@@ -374,8 +374,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		const activityFilter = this.getActivityFilter(args);
 
-		const parameters = paginationutilities.mergePagination(activityFilter);
-
 		return this.getResults('home/hero-chart-timeseries', args, [])
 			.then((results) => {
 				return results;
