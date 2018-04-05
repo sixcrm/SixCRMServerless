@@ -1,22 +1,73 @@
 {
-  "method": "getEventsByFacet",
-  "test_case": "random input from development database 26.01.2018",
-  "input": {
-    "analyticsfilter":
-  { "start": "2018-01-21T00:00:00.000Z",
-    "end": "2018-01-23T00:00:00.000Z" },
-    "facet": "affiliate",
-    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
-  "result_name": "facets",
-  "expect": [{"facet":"all-other","count":0,"percentage":"0.00%"},
-             {"facet":"29788a18-4e22-4f55-8b8d-115bc9d95dcc","count":1,"percentage":"2.94%"},
-             {"facet":"2d97301d-567b-4625-8f85-4f7d0ea41a93","count":1,"percentage":"2.94%"},
-             {"facet":"9b0607b8-17e5-4a3f-a6f0-1f90636f37f9","count":3,"percentage":"8.82%"},
-             {"facet":"e897438f-2407-4867-9073-f9097151408f","count":3,"percentage":"8.82%"},
-             {"facet":"1608a533-7ceb-4339-821d-631c15448656","count":3,"percentage":"8.82%"},
-             {"facet":"36fb4e6a-237c-4ef8-9724-a1de00cea396","count":3,"percentage":"8.82%"},
-             {"facet":"2ab1b8c5-f3b0-4275-bfb1-048a880b86a7","count":4,"percentage":"11.76%"},
-             {"facet":"4788988d-d7c9-4e7e-8ec6-ffb13fd782fb","count":4,"percentage":"11.76%"},
-             {"facet":"50996747-85f1-4546-8b9c-d3c6bc3092f7","count":4,"percentage":"11.76%"},
-             {"facet":"f890226a-2bf0-47ca-acf5-dab8150ff4c4","count":4,"percentage":"11.76%"}] 
+	"method": "getEventsByFacet",
+	"test_case": "random input from development database 26.01.2018",
+	"input": {
+		"analyticsfilter": {
+			"start": "2018-01-21T00:00:00.000Z",
+			"end": "2018-01-23T00:00:00.000Z"
+		},
+		"facet": "affiliate",
+		"pagination": {
+			"limit": 10,
+			"order": "asc",
+			"offset": 0
+		}
+	},
+	"result_name": "facets",
+	"expect": [{
+			"facet": "all-other",
+			"count": 0,
+			"percentage": "0.00%"
+		},
+		{
+			"facet": "29788a18-4e22-4f55-8b8d-115bc9d95dcc",
+			"count": 1,
+			"percentage": "2.94%"
+		},
+		{
+			"facet": "2d97301d-567b-4625-8f85-4f7d0ea41a93",
+			"count": 1,
+			"percentage": "2.94%"
+		},
+		{
+			"facet": "4788988d-d7c9-4e7e-8ec6-ffb13fd782fb",
+			"count": 2,
+			"percentage": "5.88%"
+		},
+		{
+			"facet": "36fb4e6a-237c-4ef8-9724-a1de00cea396",
+			"count": 3,
+			"percentage": "8.82%"
+		},
+		{
+			"facet": "e897438f-2407-4867-9073-f9097151408f",
+			"count": 3,
+			"percentage": "8.82%"
+		},
+		{
+			"facet": "1608a533-7ceb-4339-821d-631c15448656",
+			"count": 3,
+			"percentage": "8.82%"
+		},
+		{
+			"facet": "75459f8f-a1e4-4c75-bf3d-ce9675be0c1e",
+			"count": 4,
+			"percentage": "11.76%"
+		},
+		{
+			"facet": "f890226a-2bf0-47ca-acf5-dab8150ff4c4",
+			"count": 4,
+			"percentage": "11.76%"
+		},
+		{
+			"facet": "2ab1b8c5-f3b0-4275-bfb1-048a880b86a7",
+			"count": 4,
+			"percentage": "11.76%"
+		},
+		{
+			"facet": "50996747-85f1-4546-8b9c-d3c6bc3092f7",
+			"count": 4,
+			"percentage": "11.76%"
+		}
+	]
 }
