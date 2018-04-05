@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/vendors/merchantproviders/NMI/response.json",
   "title":"NMI Response",
   "type":"object",

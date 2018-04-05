@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/entities/components/shippingreceipt/status.json",
 	"title": "Shipping Receipt Status",
 	"description": "Known shipping receipt stati",

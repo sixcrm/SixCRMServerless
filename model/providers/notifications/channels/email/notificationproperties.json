@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/providers/notifications/channels/email/notificationproperties.json",
   "title":"Email Notification Properties",
   "oneOf":[

@@ -1,4 +1,5 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"title": "Transaction Products",
 	"type": "array",
 	"description": "List of products in a transaction",

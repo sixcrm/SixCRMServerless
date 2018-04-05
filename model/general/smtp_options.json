@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/smtp_options",
   "title": "SMTP Options",
   "type": "object",
@@ -19,7 +19,7 @@
     },
     "port":{
       "type":"integer",
-      "minimum":"1",
+      "minimum":1,
       "exclusiveMinimum": false
     }
   },

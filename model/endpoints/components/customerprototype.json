@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/endpoints/components/customerprototype.json",
 	"title": "Customer Prototype",
 	"type": "object",
@@ -16,9 +16,7 @@
 			"type":"string",
 			"minLength": 1
 		},
-		"phone":{
-			"type":{"$ref":"../../definitions/phone.json"}
-		},
+		"phone":{"$ref":"../../definitions/phone.json"},
 		"address":{"$ref": "../../definitions/address.json"}
 	},
 	"required":["email"]

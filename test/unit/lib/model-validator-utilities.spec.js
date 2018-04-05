@@ -1,22 +1,18 @@
-let mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-//let modelgenerator = require('../../model-generator.js');
-let chai = require('chai');
-let fs = require('fs');
-let expect = chai.expect;
+const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const chai = require('chai');
+const fs = require('fs');
+const expect = chai.expect;
 
-//let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
-
-let schemaWithNoReferences = `${__dirname}/model/sql_pagination.json`;
-let schemaWithReferences = `${__dirname}/model/sixcrmidentifier.json`;
-let schemaWithNestedReferences = `${__dirname}/model/entity.json`;
+const schemaWithNoReferences = `${__dirname}/model/sql_pagination.json`;
+const schemaWithReferences = `${__dirname}/model/sixcrmidentifier.json`;
+const schemaWithNestedReferences = `${__dirname}/model/entity.json`;
 
 describe('lib/model-validator-utilities', () => {
 
     describe('validateModel', () => {
         it('validates valid model without references', () => {
-
-            let validModel = {
+            const validModel = {
                 count: 0, order: 'asc', limit: 0, offset: 0
             };
 
@@ -25,7 +21,7 @@ describe('lib/model-validator-utilities', () => {
 
         it('validates invalid model without references', () => {
 
-            let invalidModel = {
+            const invalidModel = {
                 count: 0
             };
 
@@ -38,14 +34,14 @@ describe('lib/model-validator-utilities', () => {
 
         it('validates valid model with flat references', () => {
 
-            let validModel = 'e5b86f43-54cc-4547-bde2-956fee266021';
+            const validModel = 'e5b86f43-54cc-4547-bde2-956fee266021';
 
             expect(mvu.validateModel(validModel, schemaWithReferences)).to.be.true;
         });
 
         it('validates invalid model with flat references', () => {
 
-            let invalidModel = 'e5b86f43-54cc-4547-bde2-956fee266021-12345-abc';
+            const invalidModel = 'e5b86f43-54cc-4547-bde2-956fee266021-12345-abc';
 
             try {
                 mvu.validateModel(invalidModel, schemaWithNoReferences);
@@ -56,7 +52,7 @@ describe('lib/model-validator-utilities', () => {
 
         it('validates valid model with nested references', () => {
 
-            let validModel = {
+            const validModel = {
                 id: 'e5b86f43-54cc-4547-bde2-956fee266021',
                 created_at: '2017-04-06T18:40:41.405Z',
                 updated_at: '2017-04-06T18:40:41.405Z'
@@ -67,7 +63,7 @@ describe('lib/model-validator-utilities', () => {
 
         it('validates invalid model with nested references', () => {
 
-            let invalidModel = {
+            const invalidModel = {
                 id: 'invalid',
                 created_at: '2017-04-06T18:40:41.405Zinvalid',
                 updated_at: '2017-04-06T18:40:41.405Z'
@@ -82,10 +78,10 @@ describe('lib/model-validator-utilities', () => {
 
         it('validates valid model against schema with `anyOf`', () => {
 
-            let valid_model_1 = '581e5fff-c2ad-49e4-8a7e-344525cd3a37';
-            let valid_model_2 = '2017-04-06T18:40:41.405Z';
+            const valid_model_1 = '581e5fff-c2ad-49e4-8a7e-344525cd3a37';
+            const valid_model_2 = '2017-04-06T18:40:41.405Z';
 
-            let schema = `${__dirname}/model/transactioninput.json`;
+            const schema = `${__dirname}/model/transactioninput.json`;
 
             expect(mvu.validateModel(valid_model_1, schema)).to.be.true;
             expect(mvu.validateModel(valid_model_2, schema)).to.be.true;
@@ -93,43 +89,12 @@ describe('lib/model-validator-utilities', () => {
 
     });
 
-    // Use this to test validation via graph, if needed.
-    // describe('mutation', () => {
-    //
-    //     PermissionTestGenerators.givenUserWithAllowed('create', 'customer');
-    //
-    //     it('works', () => {
-    //         let mutationType = require('../../../handlers/endpoints/graph/schema/types/mutationType.js');
-    //
-    //         let customer = { id: 'b5803b28-c584-4bb3-8fac-3315b91686b4',
-    //             firstname: 'Test_b5803b28-c584-4bb3-8fac-3315b91686b3',
-    //             lastname: 'Test',
-    //             email: 'test@test.com',
-    //             phone: '1234567890',
-    //             address:
-    //                 { line1: '123 Test St.',
-    //                     line2: 'Apartment 3',
-    //                     city: 'Portland',
-    //                     state: 'OR',
-    //                     zip: '97213',
-    //                     country: 'USA' },
-    //             creditcards: [ 'df84f7bb-06bd-4daa-b1a3-6a2c113edd72' ],
-    //             account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-    //             created_at: '2017-12-12T19:13:00.020Z',
-    //             updated_at: '2017-12-12T19:13:00.020Z' };
-    //
-    //         du.info(mutationType.graphObj.getFields().createcustomer.resolve(null,
-    //             {customer: customer}
-    //         ));
-    //     });
-    // });
-
     describe('entity-utils', () => {
 
         const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
-        let euc = new entityUtilitiesController();
+        const euc = new entityUtilitiesController();
 
-        let customer = { id: 'b5803b28-c584-4bb3-8fac-3315b91686b4',
+        const customer = { id: 'b5803b28-c584-4bb3-8fac-3315b91686b4',
             firstname: 'Test_b5803b28-c584-4bb3-8fac-3315b91686b3',
             lastname: 'Test',
             email: 'test@test.com',
@@ -158,7 +123,7 @@ describe('lib/model-validator-utilities', () => {
     });
 
     describe('customer', () => {
-        let customer = {
+        const customer = {
             id:"24f7c851-29d4-4af9-87c5-0298fa74c689",
             account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
             email:"rama@damunaste.org",
@@ -194,11 +159,11 @@ describe('lib/model-validator-utilities', () => {
             fs.readdirSync(path)
                 .filter((file_name) => file_name.endsWith('.json'))
                 .forEach((file_name) => {
-                    let schema = path + '/' + file_name;
-                    let model_name = schema.replace(global.SixCRM.routes.path('model'), '');
+                    const schema = path + '/' + file_name;
+                    const model_name = schema.replace(global.SixCRM.routes.path('model'), '');
 
                     it('validates invalid ' + model_name, () => {
-                        let invalid_model = {};
+                        const invalid_model = {};
 
                         du.debug('Model:', invalid_model);
                         du.debug('Schema:', schema);

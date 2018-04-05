@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id": "/definitions/creditcardlastfour.json",
   "title": "Credit Card Last Four",
   "description": "The last four digits of a credit card number",

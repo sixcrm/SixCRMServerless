@@ -1,6 +1,6 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"title": "NMI Merchant Provider Response Object",
 	"type": "object",
-	"properties": {},
-	"required":[]
+	"properties": {}
 }

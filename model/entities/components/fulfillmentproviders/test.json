@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/entities/components/fulfillmentproviders/test.json",
 	"title": "A Test fulfillment provider",
 	"type":"object",

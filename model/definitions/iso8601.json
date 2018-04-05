@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id": "/definitions/iso8601.json",
   "title": "ISO8601",
   "description": "ISO8601-compliant string",

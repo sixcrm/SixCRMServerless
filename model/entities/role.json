@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/schema#",
-	"id":"/role",
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/role.json",
 	"title": "Role",
 	"type": "object",
 	"properties": {

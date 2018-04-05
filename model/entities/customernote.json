@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/schema#",
-	"id":"/customernote",
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/customernote.json",
 	"title": "Customer Note",
 	"type": "object",
 	"properties": {

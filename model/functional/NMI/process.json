@@ -1,4 +1,6 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id": "/functional/NMI/process.json",
 	"title": "NMI Merchant Provider Process Object",
 	"type": "object",
 	"properties": {

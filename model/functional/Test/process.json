@@ -1,4 +1,6 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id": "/functional/Test/process.json",
 	"title": "Test Merchant Provider Process Object",
 	"type": "object",
 	"properties": {

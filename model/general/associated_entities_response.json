@@ -1,4 +1,6 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "/general/associated_entities_response.json",
   "title": "Associated Entities Response",
 	"type": "array",
 	"items":{
@@ -11,9 +13,7 @@
       "entity":{
         "type": "object",
         "properties": {
-          "id": {
-            "type": {"$ref": "../definitions/sixcrmidentifier.json"}
-          }
+          "id": {"$ref": "../definitions/sixcrmidentifier.json"}
         },
         "required":["id"]
       }

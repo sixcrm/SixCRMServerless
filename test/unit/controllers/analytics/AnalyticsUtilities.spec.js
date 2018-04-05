@@ -1,7 +1,6 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 
 describe('controllers/AnalyticsUtilities.js', () => {
 

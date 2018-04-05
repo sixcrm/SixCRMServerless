@@ -1,7 +1,7 @@
 'use strict';
 const _ = require('underscore');
 const fs = require('fs');
-const Validator = require('jsonschema').Validator;
+const Ajv = require('ajv');
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -254,15 +254,27 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
       return this.getQueryParameterValidationString(query_name).then((query_validation_string) => {
 
-        let v, validation;
+        let validation;
 
         du.debug(object, query_validation_string);
 
         try {
 
-          v = new Validator();
+          const ajv = new Ajv({
+            schemaId: 'auto',
+            format: 'full',
+            allErrors: true,
+            verbose: true
+          });
 
-          validation = v.validate(object, query_validation_string);
+          ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
+
+          const valid = ajv.validate(query_validation_string, object);
+
+          validation = {
+            valid,
+            errors: ajv.errors
+          }
 
         } catch (e) {
 
@@ -278,9 +290,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
             'bad_request',
             'One or more validation errors occurred.',
             {
-              issues: validation.errors.map((e) => {
-                return e.property + ' ' + e.message;
-              })
+              issues: validation.errors.map(e => e.message)
             }
           ));
 

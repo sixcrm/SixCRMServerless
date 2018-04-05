@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/schema#",
-	"id":"/usersigningstring",
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/usersigningstring.json",
 	"title": "User Signing String",
 	"type": "object",
 	"properties": {

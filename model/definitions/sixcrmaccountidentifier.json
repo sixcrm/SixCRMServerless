@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id": "/definitions/sixcrmaccountidentifier.json",
   "title": "SixCRM Account",
   "type":"string",

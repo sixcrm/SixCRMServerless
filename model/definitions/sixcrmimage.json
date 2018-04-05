@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id": "/definitions/sixcrmimage.json",
   "title": "SixCRM Image",
   "type":"object",
@@ -10,8 +10,8 @@
     "dimensions":{
       "type":"object",
       "properties":{
-        "width":{"type":"../../definitions/nonnegativeinteger.json"},
-        "height":{"type":"../../definitions/nonnegativeinteger.json"}
+        "width":{"$ref":"./nonnegativeinteger.json"},
+        "height":{"$ref":"./nonnegativeinteger.json"}
       },
       "required":["width","height"]
     },

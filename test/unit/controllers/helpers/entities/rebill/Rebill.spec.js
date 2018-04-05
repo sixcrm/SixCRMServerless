@@ -271,7 +271,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       return rebillHelper.updateRebillState({rebill: rebill, new_state: 'unknown'})
         .then(() => expect.fail('Error not thrown'))
-        .catch((error) => expect(error.message).to.have.string('[500] One or more validation errors occurred: State Name instance does not match pattern "^(bill|recover|hold|pending|shipped|delivered|archived)(_error|_failed|_deadletter)*$"'))
+        .catch((error) => expect(error.message).to.have.string('[500] One or more validation errors occurred'))
     });
 
     it('updates rebill state when when rebill has no state (initial state)', () => {

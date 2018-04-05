@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/workers/confirmShipped/shippedtransactionproducts.json",
 	"title": "Shipped Transaction Products",
 	"description": "A array of shipped transaction products",

@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/deployment/dynamodb/autoscaling/scalabletargetconfiguration.json",
   "title":"DynamoDB Table Autoscaling Scalable Target Configuration",
   "type":"object",

@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/shippingreceipts.json",
 	"title": "Shipping Receipts",
 	"description": "A array of shipping receipts",

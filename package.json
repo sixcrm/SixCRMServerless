@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"dependencies": {
 		"@adexchange/aeg-redshift": "0.0.84",
+		"ajv": "^6.4.0",
 		"apn": "^2.2.0",
 		"aws-xray-sdk": "^1.2.0",
 		"base-64": "^0.1.0",
@@ -19,7 +20,6 @@
 		"image-type": "^3.0.0",
 		"js2xmlparser2": "^0.2.0",
 		"json2csv": "^3.11.5",
-		"jsonschema": "1.2.2",
 		"jsonwebtoken": "^7.4.3",
 		"luhn": "^2.1.0",
 		"mime": "^1.6.0",

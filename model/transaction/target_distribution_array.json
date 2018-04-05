@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/target_distribution_array.json",
 	"title": "Target Distribution Array",
 	"type":"array",

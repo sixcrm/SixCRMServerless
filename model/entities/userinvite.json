@@ -1,6 +1,7 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"title": "UserInvite",
-	"id":"/userinvite",
+	"id":"/entities/userinvite.json",
 	"type": "object",
 	"properties": {
 		"email":{

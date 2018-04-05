@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/hypothetical_distribution_base_array.json",
 	"title": "Hypothetical Distribution Base Array",
 	"type":"array",

@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/helpers/transaction/merchantproviderselector/sortedmarriedproductgroups.json",
   "title":"Sorted Married Product Groups",
   "type":"object",

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/seachparameters",
   "title": "Search Parameters",
   "type": "object",
@@ -16,6 +16,5 @@
       "type":"object",
       "minProperties":1
     }
-  },
-  "required":[]
+  }
 }

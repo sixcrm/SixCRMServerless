@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/vendors/fulfillmentproviders/ThreePL/response.json",
   "title":"ThreePL Response",
   "type":"object",

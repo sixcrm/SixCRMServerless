@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/vendors/shippingcarriers/response/vendorresponse.json",
   "title":"Shipping Carrier Vendor Response ",
   "type":"object"

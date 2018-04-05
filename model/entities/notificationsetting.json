@@ -1,8 +1,7 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/notificationsetting",
   "title": "Notification Setting",
   "type": "object",
-  "properties": {},
-  "required":[]
+  "properties": {}
 }

@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/vendors/fulfillmentproviders/ThreePL/createordersparametersobject.json",
   "title":"ThreePL Create Orders Parameters Object",
   "type":"object",

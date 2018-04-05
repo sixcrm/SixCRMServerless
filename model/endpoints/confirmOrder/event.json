@@ -1,4 +1,5 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/endpoints/confirmOrder/event.json",
 	"title": "Event",
 	"type": "object",

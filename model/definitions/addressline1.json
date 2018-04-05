@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id": "/definitions/addressline1.json",
   "title": "Address Line 1",
   "description": "A address line 1",

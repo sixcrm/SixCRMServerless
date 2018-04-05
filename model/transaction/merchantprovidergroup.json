@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/merchantprovidergroup.json",
 	"title": "Merchant Provider Group",
 	"type": "object",
@@ -15,9 +15,9 @@
 					"id":{"$ref": "../definitions/uuidv4.json"},
 					"distribution":{
 						"type":"number"
-					},
-					"required":["id", "distribution"]
-				}
+					}
+				},
+				"required":["id", "distribution"]
 			}
 		},
 		"created_at":{"$ref": "../definitions/iso8601.json"},

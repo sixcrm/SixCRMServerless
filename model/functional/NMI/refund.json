@@ -1,4 +1,6 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id": "/functional/NMI/refund.json",
 	"title": "NMI Merchant Provider Refund Object",
 	"type": "object",
 	"properties": {

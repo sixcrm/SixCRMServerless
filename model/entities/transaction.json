@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/entities/transaction.json",
 	"title": "Transaction",
 	"type": "object",
@@ -20,9 +20,7 @@
 		"associated_transaction":{"$ref": "../definitions/uuidv4.json"},
 		"type":{"$ref":"../functional/register/transactiontype.json"},
 		"result":{"$ref":"../functional/register/transactionresult.json"},
-		"amount":{
-			"type": {"$ref": "../definitions/currency.json"}
-		},
+		"amount":{"$ref": "../definitions/currency.json"},
 		"chargeback":{
 			"type": "boolean"
 		},

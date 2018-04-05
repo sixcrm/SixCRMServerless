@@ -99,7 +99,7 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
             let aceuController = new ActivityToEnglishUtilitiesController('an_activity_row');
 
             return aceuController.validateActivityRow().catch((error) => {
-                expect(error.message).to.equal('[500] One or more validation errors occurred: Activity instance is not of a type(s) object');
+                expect(error.message).to.contain('[500] One or more validation errors occurred');
             });
         });
 

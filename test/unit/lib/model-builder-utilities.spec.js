@@ -1,5 +1,4 @@
 let mbu = global.SixCRM.routes.include('lib', 'model-builder-utilities.js');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let chai = require('chai');
 let expect = chai.expect;
 
@@ -41,8 +40,6 @@ describe('lib/model-builder-utilities', () => {
             const path_to_reference = 'definitions/sixcrmaccountidentifier.json';
             const path_to_subreference = 'definitions/uuidv4.json';
 
-            let model = global.SixCRM.routes.include('model', path_to_model_under_test);
-
             // when
             let hydrated_model = mbu.build(path_to_model_under_test);
 
@@ -76,7 +73,7 @@ describe('lib/model-builder-utilities', () => {
 
             // given
             let model = {
-                    "$schema": "http://json-schema.org/schema#",
+                    "$schema": "http://json-schema.org/draft-04/schema",
                     "id": "/definitions/optionaluuidv4.json",
                     "title": "SixCrmIdentifier",
 

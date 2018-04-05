@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/schema#",
-	"id":"/usersetting",
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/usersetting.json",
 	"title": "User Setting",
 	"description": "Settings related to a user",
 	"type": "object",

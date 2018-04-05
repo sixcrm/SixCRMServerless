@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/providers/shipping/terminal/responseclass.json",
   "title":"Terminal Response Class",
   "type":"object"

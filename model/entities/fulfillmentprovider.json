@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/schema#",
-	"id":"/fulfillmentprovider",
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/fulfillmentprovider.json",
 	"title": "Fulfillment provider",
 	"type": "object",
 	"description": "A fulfillment provider",

@@ -1,5 +1,6 @@
 {
-  "id":"/vendors/fulfillmentproviders/ShipStation/createordersparametersobject.json",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id":"/vendors/fulfillmentproviders/ShipStation/createorderparametersobject.json",
   "title":"ShipStation Create Orders Parameters Object",
   "type":"object",
   "properties":{

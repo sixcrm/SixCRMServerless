@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/schema#",
-	"id":"/useracl",
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/useracl.json",
 	"title": "User ACL",
 	"type": "object",
 	"description": "User's access control list",

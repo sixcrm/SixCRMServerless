@@ -1,6 +1,7 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"title": "Response Type",
-  "id":"/responsetype.json",
+	"id":"/responsetype.json",
 	"type": "string",
 	"description": "The response type",
 	"enum":["success","fail","error","noaction"]

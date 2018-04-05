@@ -1,5 +1,6 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"title": "Amount",
-	"type": {"$ref": "../definitions/currency.json"},
-	"description": "An amount"
+	"description": "An amount",
+	"$ref": "../definitions/currency.json"
 }

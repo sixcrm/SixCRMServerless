@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/uuidv4list.json",
 	"title": "UUIDv4 list",
 	"description": "A list of uuidV4s",

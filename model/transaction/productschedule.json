@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/productschedule.json",
 	"title": "Product Schedule",
 	"anyOf":[
@@ -48,7 +48,7 @@
 			"required":["name", "schedule", "account", "created_at", "updated_at"]
 		},
 		{
-			"type":{"$ref": "../definitions/uuidv4.json"}
+			"$ref": "../definitions/uuidv4.json"
 		}
 	]
 }

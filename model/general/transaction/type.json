@@ -1,6 +1,7 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"title": "Transaction Type",
-  "id":"/transactiontype.json",
+	"id":"/transactiontype.json",
 	"type": "string",
 	"description": "The transaction type",
 	"enum":["new","rebill"]

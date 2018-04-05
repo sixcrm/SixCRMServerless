@@ -122,7 +122,7 @@ describe('workers/forwardMessage', () => {
 
       }catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred: Process Env instance requires property "origin_queue"');
+        expect(error.message).to.have.string('[500] One or more validation errors occurred');
 
       }
 
@@ -139,7 +139,7 @@ describe('workers/forwardMessage', () => {
 
       }catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred: Process Env instance requires property "name"');
+        expect(error.message).to.have.string('[500] One or more validation errors occurred');
 
       }
 
@@ -156,7 +156,7 @@ describe('workers/forwardMessage', () => {
 
       }catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred: Process Env instance requires property "workerfunction"');
+        expect(error.message).to.have.string('[500] One or more validation errors occurred');
 
       }
 

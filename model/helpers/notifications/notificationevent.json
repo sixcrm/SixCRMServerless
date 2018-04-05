@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/helpers/notifications/notificationevent.json",
   "title":"Notification Event",
   "description":"Events that are of subtype notification events",

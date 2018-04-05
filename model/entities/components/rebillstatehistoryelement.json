@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id": "/entities/components/rebillstatehistoryelement.json",
   "title": "Rebill State History Element",
   "type":"object",
@@ -10,12 +10,8 @@
     "error_message":{
       "type":"string"
     },
-    "entered_at":{
-      "type":{"$ref": "../../definitions/iso8601.json"}
-    },
-    "exited_at":{
-      "type":{"$ref": "../../definitions/iso8601.json"}
-    }
+    "entered_at":{"$ref": "../../definitions/iso8601.json"},
+    "exited_at":{"$ref": "../../definitions/iso8601.json"}
   },
   "required":["state", "entered_at"]
 }

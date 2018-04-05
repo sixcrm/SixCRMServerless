@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/schema#",
-	"id":"/campaign",
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/campaign.json",
 	"title": "Campaign",
 	"type": "object",
 	"description": "A single campaign",

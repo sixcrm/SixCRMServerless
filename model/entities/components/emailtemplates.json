@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/schema#",
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/entities/components/emailtemplates.json",
 	"title": "Email Templates",
 	"description": "A array of Email Templates",

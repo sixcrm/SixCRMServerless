@@ -1,10 +1,9 @@
 {
+	"$schema": "http://json-schema.org/draft-04/schema",
 	"title": "Order",
 	"type": "object",
 	"properties": {
-		"session":{
-			"type":{"$ref": "../definitions/uuidv4.json"}
-		},
+		"session":{"$ref": "../definitions/uuidv4.json"},
 		"product_schedules":{"$ref": "components/product_schedules"},
 		"creditcard":{"$ref": "components/creditcard"}
 	},

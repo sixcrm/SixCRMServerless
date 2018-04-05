@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id":"/providers/notifications/components/accountnotificationprototype.json",
   "title": "Account Notification Prototype",
   "type": "object",

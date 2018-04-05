@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/schema#",
-	"id":"/creditcard",
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/creditcard.json",
 	"title": "Credit Card",
 	"type": "object",
 	"description": "A credit card object",

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema",
   "id": "/listentity",
   "title": "List of entities",
   "type": "object",
@@ -36,14 +36,12 @@
                   "properties": {
                     "pagination": { "$ref": "../../dynamo_pagination" }
                   },
-                  "required":[],
                   "maxProperties": 2,
                   "minProperties": 1
 
                 }
 
-              },
-              "required":[]
+              }
 
             }
 

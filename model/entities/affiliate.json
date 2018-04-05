@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/schema#",
-	"id":"/affiliate",
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/affiliate.json",
 	"title": "Affiliate",
 	"description": "An affiliate.",
 	"type": "object",

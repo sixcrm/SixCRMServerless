@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/schema#",
-	"id":"/bill",
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/bill.json",
 	"title": "Bill",
 	"type": "object",
 	"description": "A bill",
