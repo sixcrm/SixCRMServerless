@@ -13,7 +13,7 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 			merchantProvider: record.context.transaction.merchant_provider,
 			processorResult: record.context.transaction.result,
 			amount: record.context.transaction.amount,
-			type: record.event_type,
+			type: record.context.transaction.type,
 			subtype: record.transaction_subtype,
 			customer: record.context.session.customer,
 			creditcard: record.context.registerresponse.parameters.store.creditcard.number,
