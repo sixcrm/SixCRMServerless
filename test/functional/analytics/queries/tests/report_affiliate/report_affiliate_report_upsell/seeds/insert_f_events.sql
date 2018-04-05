@@ -1,4 +1,4 @@
-INSERT INTO analytics.f_events (session, type, datetime, account, campaign, product_schedule, affiliate, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
+INSERT INTO analytics.f_events (session, type, datetime, account, campaign, affiliate, subaffiliate_1, subaffiliate_2, subaffiliate_3, subaffiliate_4, subaffiliate_5)
 (
    SELECT
       '668ad918-0d09-4116-a6fe-0e8a9eda36f7',
@@ -6,7 +6,6 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
       '2017-01-01T18:40:41.405Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
-      '12529a17-ac32-4e46-b05b-83862843055d',
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '',
       '',
@@ -20,7 +19,6 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
       '2017-01-01T18:40:41.406Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
-      '8d1e896f-c50d-4a6b-8c84-d5661c16a046',
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '',
       '',
@@ -34,7 +32,6 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
       '2017-01-01T18:40:41.407Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
-      '2200669e-5e49-4335-9995-9c02f041d91b',
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '',
       '',
@@ -48,7 +45,6 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
       '2017-01-02T18:40:41.408Z'::timestamp,
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '70a6689a-5814-438b-b9fd-dd484d0812f9',
-      '300848c1-8b83-4b8d-aff9-529ba6459d0f',
       'd26c1887-7ad4-4a44-be0b-e80dbce22774',
       '',
       '',
@@ -62,7 +58,6 @@ INSERT INTO analytics.f_events (session, type, datetime, account, campaign, prod
      fe.datetime,
      fe.account,
      fe.campaign,
-     fe.product_schedule,
      fe.affiliate,
      fe.subaffiliate_1,
      fe.subaffiliate_2,

@@ -62,7 +62,7 @@ jobs:
           command: |
             set -x
             docker-compose --file tools/docker/docker-compose.yml up -d
-      - run: echo "Pausing to allow Redshift to catch up..." && sleep 30
+      - run: echo "Pausing to allow Docker to catch up..." && sleep 30
       - run:
           name: Execute Functional Connectivity Test
           command: stage=circle npm run test-functional-connectivity
@@ -253,23 +253,23 @@ jobs:
       - run:
           name: DynamoDB Autoscale Tables
           command: node ./deployment/dynamodb/deploy_autoscaling.js
-  deploy_redshift:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Redshift Create Cluster
-          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
-      - run:
-          name: Redshift Create Tables
-          command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
+  # deploy_redshift:
+  #   <<: *job-defaults
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         key: dependency-cache-{{ checksum "package.json" }}
+  #     - restore_cache:
+  #         key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+  #     - run:
+  #         name: Set Credentials
+  #         command: cat deployment_credentials/stscredentials >> $BASH_ENV
+  #     - run:
+  #         name: Redshift Create Cluster
+  #         command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
+  #     - run:
+  #         name: Redshift Create Tables
+  #         command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
   deploy_aurora:
     <<: *job-defaults
     steps:
@@ -287,20 +287,6 @@ jobs:
       - run:
           name: Aurora Create Tables
           command: node ./deployment/aurora/aurora-deploy.js && echo "Pausing to allow queries to complete..." && sleep 240
-  deploy_kinesis:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Kinesis Deploy
-          command: node ./deployment/kinesis/deploy_streams.js || echo "No changes, skipping."
   deploy_sns:
     <<: *job-defaults
     steps:
@@ -332,9 +318,9 @@ jobs:
       - run:
           name: Save Last Commit
           command: node deployment/circle/save_last_commit.js
-      - run:
-          name: AWS Services Available
-          command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
+      # - run:
+      #     name: AWS Services Available
+      #     command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
   #Eh... not very useful currently
   purge:
     <<: *job-defaults
@@ -534,18 +520,14 @@ workflows:
           requires:
             - deploy_security_groups
             - deploy_iam
-      - deploy_redshift:
-          requires:
-            - deploy_security_groups
-            - deploy_iam
+      # - deploy_redshift:
+      #     requires:
+      #       - deploy_security_groups
+      #       - deploy_iam
       - deploy_aurora:
           requires:
             - deploy_security_groups
             - deploy_iam
-      - deploy_kinesis:
-          requires:
-            - deploy_redshift
-            - deploy_aurora
       - post_deployment:
           requires:
             - deploy_serverless
@@ -555,9 +537,8 @@ workflows:
             - deploy_elasticache
             - deploy_iam
             - deploy_dynamodb
-            - deploy_redshift
+            # - deploy_redshift
             - deploy_aurora
-            - deploy_kinesis
             - deploy_sns
       - seed:
           requires:

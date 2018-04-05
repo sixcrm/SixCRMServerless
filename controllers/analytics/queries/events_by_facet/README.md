@@ -21,7 +21,6 @@ ____
 * `subaffiliate_3` -  a sub-affiliate string
 * `subaffiliate_4` -  a sub-affiliate string
 * `subaffiliate_5` -  a sub-affiliate string
-* `product_schedule` -  a array of UUIDv4 strings
 * `session` - a array of UUIDv4 strings
 * `type` -  type of the events ["click","order","lead","confirm","upsell"]
 
@@ -30,7 +29,6 @@ ____
 ### Query notes
 
 Displays the number of distinct facets,facets themselves and number of all transactions
-Events can have no product_schedule feed.
 Events can have no affiliates feed.
 
 ---

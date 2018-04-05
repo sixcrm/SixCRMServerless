@@ -1728,12 +1728,6 @@ describe('controllers/providers/Register.js', () => {
           }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-          putRecord() {
-            return Promise.resolve({});
-          }
-        });
-
         PermissionTestGenerators.givenUserWithAllowed('*', '*');
 
         let valid_transaction = getValidTransactionObject();
@@ -1877,12 +1871,6 @@ describe('controllers/providers/Register.js', () => {
           constructor(){}
           calculateDayInCycle(){
             return Promise.resolve(5);
-          }
-        });
-
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-          putRecord() {
-            return Promise.resolve({});
           }
         });
 

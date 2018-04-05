@@ -32,7 +32,6 @@ ____
 * `order` - ascending or descending order
 * `limit` - the number of displayed rows
 * `offset` - the number of rows from the first row of the dataset
-* `product_schedule` - product schedule for filtering
 
 ### Optional
 * `campaign` -  a array of UUIDv4 strings

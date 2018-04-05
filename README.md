@@ -125,29 +125,7 @@ Scripts:
  - Destroy cluster:
   `node ./deployment/redshift/destroy_cluster.js {stage}`
 
-#### Kinesis
-
-Scripts:
-
- - Create all Kinesis streams:
- `node ./deployment/kinesis/create_stream.js {stage}`
- - Destroy all Kinesis streams:
- `node ./deployment/redshift/destroy_stream.js {stage}`
-
 #### S3
-
-Scripts:
-
-  - Create all S3 buckets tied to Redshift or Kinesis:
-  `node ./deployment/kinesis/create_buckets.js {stage}`
-  - Destroy all S3 buckets tied to Redshift or Kinesis:
-  `node ./deployment/redshift/destroy_buckets.js {stage}`
-  - Create all S3 bucket folders tied to Redshift or Kinesis:
-  `node ./deployment/kinesis/create_folder.js {stage}`
-  - Destroy all empty S3 bucket folders tied to Redshift or Kinesis:
-  `node ./deployment/redshift/destroy_folders.js {stage}`  
-  - Destroy all S3 bucket folders with files tied to Redshift or Kinesis:
-  - node ./deployment/redshift/destroy_folders_all {stage}`
 
 ## Testing
 

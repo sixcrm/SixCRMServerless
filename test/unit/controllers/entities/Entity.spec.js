@@ -418,12 +418,6 @@ describe('controllers/Entity.js', () => {
 
             mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-                putRecord(entity) {
-                    return new Promise((resolve) => resolve(entity));
-                }
-            });
-
             const EC = global.SixCRM.routes.include('controllers','entities/Entity.js')
             let entityController = new EC('accesskey');
 

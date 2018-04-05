@@ -247,12 +247,6 @@ describe('/helpers/entities/Rebill.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          expect.fail();
-        }
-      });
-
       let RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
       const rebillHelper = new RebillHelperController();
       const rebill = {id: 'SOME_REBILL_ID', some_other_field: 'SOME_OTHER_FIELD'};
@@ -268,12 +262,6 @@ describe('/helpers/entities/Rebill.js', () => {
         }
         get() {
           return Promise.resolve(rebill);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord() {
-          expect.fail();
         }
       });
 
@@ -295,19 +283,6 @@ describe('/helpers/entities/Rebill.js', () => {
         }
         get() {
           return Promise.resolve(rebill);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord(table, object) {
-          expect(table).to.equal('rebills');
-          expect(object.id_rebill).to.equal(rebill.id);
-          expect(object.current_queuename).to.equal('hold');
-          expect(object.previous_queuename).to.equal('');
-
-          mvu.validateModel(object, global.SixCRM.routes.path('model','analytics/rebills.json'));
-
-          return Promise.resolve();
         }
       });
 
@@ -334,19 +309,6 @@ describe('/helpers/entities/Rebill.js', () => {
         }
         get() {
           return Promise.resolve(rebill);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord(table, object) {
-          expect(table).to.equal('rebills');
-          expect(object.id_rebill).to.equal(rebill.id);
-          expect(object.current_queuename).to.equal('shipped');
-          expect(object.previous_queuename).to.equal('hold');
-
-          mvu.validateModel(object, global.SixCRM.routes.path('model','analytics/rebills.json'));
-
-          return Promise.resolve();
         }
       });
 
@@ -381,19 +343,6 @@ describe('/helpers/entities/Rebill.js', () => {
         }
         get() {
           return Promise.resolve(rebill);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord(table, object) {
-          expect(table).to.equal('rebills');
-          expect(object.id_rebill).to.equal(rebill.id);
-          expect(object.current_queuename).to.equal('hold');
-          expect(object.previous_queuename).to.equal('bill');
-
-          mvu.validateModel(object, global.SixCRM.routes.path('model','analytics/rebills.json'));
-
-          return Promise.resolve();
         }
       });
 
@@ -436,19 +385,6 @@ describe('/helpers/entities/Rebill.js', () => {
         }
         get() {
           return Promise.resolve(rebill);
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/kinesis-firehose-provider.js'), class {
-        putRecord(table, object) {
-          expect(table).to.equal('rebills');
-          expect(object.id_rebill).to.equal(rebill.id);
-          expect(object.current_queuename).to.equal('pending');
-          expect(object.previous_queuename).to.equal('bill');
-
-          mvu.validateModel(object, global.SixCRM.routes.path('model','analytics/rebills.json'));
-
-          return Promise.resolve();
         }
       });
 
