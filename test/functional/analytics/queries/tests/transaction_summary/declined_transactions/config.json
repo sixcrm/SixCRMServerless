@@ -9,7 +9,7 @@
   "result_name": "undefined",
   "expect":   {"overview":{"newsale":{"count":"0","amount":"0"},
                "rebill":{"count":"0","amount":"0"},
-               "fail":{"count":"6","amount":"1671.88"},
+               "fail":{"count":"5","amount":"272.88"},
                "error":{"count":"0","amount":"0"},
                "main":{"count":"0","amount":"0"},
                "upsell":{"count":"0","amount":"0"}}

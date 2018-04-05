@@ -1,5 +1,7 @@
 const chai = require('chai');
 const _ = require('underscore');
+const uuid = require('uuid');
+const fs = require('fs');
 
 chai.use(require('chai-shallow-deep-equal'));
 const expect = chai.expect;
@@ -70,8 +72,8 @@ describe('queries/aurora-queries.js', () => {
 
 							expect(result_value).to.not.equal(
 								undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
-
-							return equalObjects(result_value, test.expect);
+							// fs.writeFileSync(uuid.v4(), JSON.stringify(result_value));
+							return expect(result_value).to.be.eql(test.expect);
 
 						});
 
@@ -87,24 +89,12 @@ describe('queries/aurora-queries.js', () => {
 
 });
 
-function equalObjects(object, expected) {
-	for (let key in expected) {
-		if (_.isObject(expected[key])) {
-			return equalObjects(object[key], expected[key])
-		} else {
-			if (key === 'datetime' || key === 'period') {
-				return expect(object[key]).to.be.defined; // Technical Debt: At least verify it's in the correct format.
-			} else {
-				return expect(object[key]).to.deep.equal(expected[key]);
-			}
-		}
-	}
-}
-
 function prepareDatabase(test) {
 	return Promise.resolve()
 		.then(() => auroraSchemaDeployment.destroy())
-		.then(() => auroraSchemaDeployment.deploy({fromRevision: 0}))
+		.then(() => auroraSchemaDeployment.deploy({
+			fromRevision: 0
+		}))
 		.then(() => seedDatabase(test));
 }
 
