@@ -1968,7 +1968,7 @@ describe('createOrder', function () {
 	});
 
   describe('createOrder', () => {
-    it('successfully creates a order', () => {
+    it('successfully creates an order', () => {
 
       let event = getValidEventBody(null, true);
       let product_schedule_ids = arrayutilities.map(event.product_schedules, product_schedule_group => product_schedule_group.product_schedule);
