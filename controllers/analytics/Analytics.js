@@ -372,21 +372,11 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		du.debug('Get Activity By Identifier');
 
-		// let activity_filter = this.getActivityFilter(args);
+		const activityFilter = this.getActivityFilter(args);
 
-		// let parameters = paginationutilities.mergePagination(activity_filter, paginationutilities.createSQLPaginationInput(pagination));
+		const parameters = paginationutilities.mergePagination(activityFilter);
 
-		// let this_query_filter = this.default_activity_query_filters;
-
-		// ['actor', 'actor_type', 'acted_upon', 'acted_upon_type', 'associated_with', 'associated_with_type'].forEach((argument) => {
-		// 	this_query_filter = arrayutilities.removeElement(this_query_filter, argument);
-		// });
-
-		return this.getResults('home/hero-chart-timeseries', {
-				start: '2017-01-01T15:51:57Z',
-				end: '2017-01-03T15:51:57Z',
-				period: 'day'
-			}, [])
+		return this.getResults('home/hero-chart-timeseries', args, [])
 			.then((results) => {
 				return results;
 			});
