@@ -72,7 +72,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		this.parameters.store = {};
 
 		return this.preamble(event)
-			.then(() => this.createOrder());
+		.then(() => this.createOrder());
 
 	}
 

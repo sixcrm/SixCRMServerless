@@ -6,6 +6,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/endpoint.js');
 
@@ -23,9 +24,21 @@ module.exports = class AuthenticatedController extends endpointController {
 
       return this.normalizeEvent(event)
       .then((event) => this.validateEvent(event))
-			.then((event) => this.acquireAccount(event))
-			.then((event) => this.acquireUser(event))
+      .then((event) => this.acquireSubProperties(event))
 			.then((event) => this.validateRequiredPermissions(event));
+
+    }
+
+    acquireSubProperties(event){
+
+      du.debug('Acquire Sub Properties');
+
+      return Promise.all([
+        this.acquireAccount(event),
+        this.acquireUser(event)
+      ]).then(() => {
+        return event;
+      });
 
     }
 
@@ -69,27 +82,25 @@ module.exports = class AuthenticatedController extends endpointController {
         this.userController = new UserController();
       }
 
-      if(this.userController.isEmail(user_string)){
+      if(stringutilities.isEmail(user_string)){
 
         return this.userController.getUserStrict(user_string).then((user) => {
 
           if(_.has(user, 'id')){
 
-            //Technical Debt:  This should use the global configuration object
-            permissionutilities.setGlobalUser(user);
+            this.userController.setGlobalUser(user);
 
-          }else if(user == false){
-
-            if(!this.isUserIntrospection(event) && !this.isAcceptInvite(event)) {
-              eu.throwError('forbidden', 'Unknown user.  Please contact the system administrator.');
-            }
-
-            du.warning('Unable to acquire user, setting global user to email.');
-
-            //Technical Debt:  This should use the global configuration object
-            permissionutilities.setGlobalUser(user_string);
+            return event;
 
           }
+
+          if(!this.isUserIntrospection(event) && !this.isAcceptInvite(event)) {
+            eu.throwError('forbidden', 'Unknown user.  Please contact the system administrator.');
+          }
+
+          du.warning('Unable to acquire user, setting global user to email.');
+
+          this.userController.setGlobalUser(user_string);
 
           return event;
 
@@ -97,29 +108,32 @@ module.exports = class AuthenticatedController extends endpointController {
 
       }else{
 
-          return this.userController.getUserByAlias(user_string).then((user) => {
+        if(!_.has(this, 'userController')){
+          const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+          this.userController = new UserController();
+        }
 
-              if(_.has(user, 'id')){
+        return this.userController.getUserByAlias(user_string).then((user) => {
 
-                  permissionutilities.setGlobalUser(user);
+          if(_.has(user, 'id')){
 
-              }else if(user == false){
+            this.userController.setGlobalUser(user);
 
-                  if (!this.isUserIntrospection(event)) {
-                      return Promise.reject(eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.'));
-                  }
+            return event;
 
-                  du.warning('Unable to acquire user, setting global user to alias.');
+          }
 
-                  permissionutilities.setGlobalUser(user_string);
+          if (!this.isUserIntrospection(event)) {
+            return Promise.reject(eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.'));
+          }
 
-                  return event;
+          du.warning('Unable to acquire user, setting global user to alias.');
 
-              }
+          this.userController.setGlobalUser(user_string);
 
-              return Promise.resolve(event);
+          return event;
 
-          });
+        });
 
       }
 

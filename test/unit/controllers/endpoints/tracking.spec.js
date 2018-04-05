@@ -8,6 +8,7 @@ const expect = chai.expect;
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
@@ -173,9 +174,32 @@ describe('tracking', () => {
 
   describe('execute', () => {
 
+    let global_user;
+
+    before(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+      mockery.enable({
+          useCleanCache: true,
+          warnOnReplace: false,
+          warnOnUnregistered: false
+      });
+    });
+
+    beforeEach(() => {
+      global_user = global.user;
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+        global.user = global_user;
+    });
+
     it('successfully runs execute method', () => {
 
       let event = getValidEvent();
+      let user = MockEntities.getValidUser();
 
       let campaign = getValidCampaign();
 
@@ -196,6 +220,12 @@ describe('tracking', () => {
         }
         getUserStrict() {
           return Promise.resolve({});
+        }
+        getUserByAlias(){
+          return Promise.resolve(user);
+        }
+        setGlobalUser(user){
+          global.user = user;
         }
       });
 

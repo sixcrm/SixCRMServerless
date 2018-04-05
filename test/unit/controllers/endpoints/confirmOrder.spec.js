@@ -385,6 +385,8 @@ describe('confirmOrder', function () {
 
   describe('execute', () => {
 
+    let global_user;
+
     before(() => {
       mockery.enable({
         useCleanCache: true,
@@ -393,9 +395,14 @@ describe('confirmOrder', function () {
       });
     });
 
+    beforeEach(() => {
+      global_user = global.user;
+    });
+
     afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();
+      global.user = global_user;
     });
 
     it('successfully executes', () => {
@@ -406,6 +413,7 @@ describe('confirmOrder', function () {
       let products = getValidTransactionProducts(null, true);
       let customer = getValidCustomer();
       let campaign = getValidCampaign();
+      let user = MockEntities.getValidUser();
 
       session.completed = false;
 
@@ -418,6 +426,12 @@ describe('confirmOrder', function () {
         }
         getUserStrict() {
           return Promise.resolve({});
+        }
+        getUserByAlias(){
+          return Promise.resolve(user);
+        }
+        setGlobalUser(user){
+          global.user = user;
         }
       });
 

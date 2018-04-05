@@ -661,6 +661,18 @@ describe('checkout', function () {
 
   describe('execute', () => {
 
+    let global_user;
+
+    beforeEach(() => {
+      global_user = global.user;
+    });
+
+    afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+      global.user = global_user;
+    });
+
     it('successfully executes a checkout event', () => {
 
       let event = getValidEvent();
@@ -680,6 +692,7 @@ describe('checkout', function () {
       let processor_response = getValidProcessorResponse();
       let response_type = 'success';
       let product_schedules = getValidProductSchedules(null, true);
+      let user = MockEntities.getValidUser();
 
       mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
           publish() {
@@ -711,6 +724,12 @@ describe('checkout', function () {
         }
         getUserStrict() {
           return Promise.resolve({});
+        }
+        getUserByAlias(){
+          return Promise.resolve(user);
+        }
+        setGlobalUser(user){
+          global.user = user;
         }
       });
 

@@ -174,6 +174,8 @@ describe('createLead', function () {
 
   describe('execute', () => {
 
+    let global_user;
+
     before(() => {
       mockery.resetCache();
       mockery.deregisterAll();
@@ -184,9 +186,14 @@ describe('createLead', function () {
       });
     });
 
+    beforeEach(() => {
+      global_user = global.user;
+    });
+
     afterEach(() => {
         mockery.resetCache();
         mockery.deregisterAll();
+        global.user = global_user;
     });
 
     it('successfully executes', () => {
@@ -196,6 +203,7 @@ describe('createLead', function () {
       let affiliates = getValidAffiliates();
       let campaign = getValidCampaign();
       let session = getValidSession();
+      let user = MockEntities.getValidUser();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
         get() {
@@ -206,6 +214,12 @@ describe('createLead', function () {
         }
         getUserStrict() {
           return Promise.resolve({});
+        }
+        getUserByAlias(){
+          return Promise.resolve(user);
+        }
+        setGlobalUser(user){
+          global.user = user;
         }
       });
 
@@ -276,6 +290,7 @@ describe('createLead', function () {
       let affiliates = getValidAffiliates();
       let campaign = getValidCampaign();
       let session = getValidSession();
+      let user = MockEntities.getValidUser();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
         get() {
@@ -286,6 +301,12 @@ describe('createLead', function () {
         }
         getUserStrict() {
           return Promise.resolve({});
+        }
+        getUserByAlias(){
+          return Promise.resolve(user);
+        }
+        setGlobalUser(user){
+          global.user = user;
         }
       });
 

@@ -322,12 +322,25 @@ describe('acquireToken', () => {
 
   describe('execute', () => {
 
+    let global_user;
+
+    beforeEach(() => {
+      global_user = global.user;
+    });
+
+    afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+      global.user = global_user;
+    });
+
     it('successfully executes', () => {
 
       let event = getValidEvent();
       let campaign = getValidCampaign();
       let jwt = getValidJWT();
       let almost_updated_event = objectutilities.clone(getValidEventBody());
+      let user = MockEntities.getValidUser();
 
       almost_updated_event.affiliates = getValidAffiliates();
       let updated_event = objectutilities.merge(almost_updated_event, almost_updated_event.affiliates);
@@ -359,6 +372,12 @@ describe('acquireToken', () => {
         }
         getUserStrict() {
           return Promise.resolve({});
+        }
+        getUserByAlias(){
+          return Promise.resolve(user);
+        }
+        setGlobalUser(user){
+          global.user = user;
         }
       });
 
