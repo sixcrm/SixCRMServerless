@@ -19,7 +19,7 @@
                 ".+": {
                   "anyOf": [
                     { "$ref": "../entity" },
-                    { "type": null }
+                    { "type": "null" }
                   ]
                 }
 
