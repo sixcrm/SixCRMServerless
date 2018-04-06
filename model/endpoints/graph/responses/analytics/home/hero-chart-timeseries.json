@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "/hero-chart-timeseries-graph-response",
+  "title": "Hero Chart Timeseries",
+  "type": "object",
+  "properties": {
+
+    "timeseries": {
+      "type": "array"
+    }
+
+  }
+}

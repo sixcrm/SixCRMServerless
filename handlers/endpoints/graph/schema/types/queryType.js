@@ -869,7 +869,7 @@ module.exports.graphObj = new GraphQLObjectType({
 
 			}
 		},
-		heroChartTimeseries: {
+		herocharttimeseries: {
 			type: HeroChartTimeSeriesType,
 			args: {
 				analyticsfilter: {
