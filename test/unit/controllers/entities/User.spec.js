@@ -754,4 +754,10 @@ describe('controllers/entities/User.js', () => {
             });
         });
     });
+
+    describe('getUserStrict', () => {
+
+      xit('gets a user', () => {})
+      xit('returns false when user is not found', () => {});
+    });
 });
