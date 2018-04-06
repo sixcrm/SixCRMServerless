@@ -99,5 +99,24 @@
         }
       ]
     }
+  },
+  {
+    "Description": "For Lambdas behind public NAT",
+    "GroupName": "public-lambda",
+    "Ingress": {
+      "IpPermissions": []
+    },
+    "Egress":{
+      "IpPermissions": [
+        {
+          "IpProtocol": "-1",
+          "IpRanges": [
+            {
+              "CidrIp": "0.0.0.0/0"
+            }
+          ]
+        }
+      ]
+    }
   }
 ]
