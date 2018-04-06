@@ -2,7 +2,7 @@
   "PolicyName":"SixCRMLambdaExecutionPolicy",
   "Description":"The SixCRM Lambda Execution Policy",
   "PolicyDocument":{
-    "Version": "2012-10-17", 
+    "Version": "2012-10-17",
     "Statement": [
         {
             "Sid": "stmnt{{random}}1",
@@ -129,6 +129,16 @@
             "Effect": "Allow",
             "Action": [
                 "rds:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "stmnt{{random}}15",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:*"
             ],
             "Resource": [
                 "*"
