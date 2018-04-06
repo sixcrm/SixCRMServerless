@@ -1,14 +1,14 @@
 'use strict';
 const _ = require('underscore');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+//const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 
-const helper = new CreditCardHelperController();
+//const helper = new CreditCardHelperController();
 
 module.exports = class CreditCardController extends entityController {
 
@@ -31,7 +31,7 @@ module.exports = class CreditCardController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-		this.get({id}).then(creditcard => this.listCustomers(creditcard))
+        this.get({id}).then(creditcard => this.listCustomers(creditcard))
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
@@ -91,11 +91,71 @@ module.exports = class CreditCardController extends entityController {
     }
 
     update({entity}) {
-      //Technical Debt:  What should we do here??
-        this.setLastFour(entity);
-        return super.update({entity});
+
+      du.debug('CreditCard.update()');
+
+      return Promise.resolve(entity)
+      .then((entity) => this.exists({entity: entity, return_entity: true}))
+      .then((existing_creditcard) => {
+
+        if(!_.has(existing_creditcard, 'id')){
+          eu.throwError('not_found', 'Credit card not found.');
+        }
+
+        return existing_creditcard;
+
+      }).then((existing_creditcard) => {
+
+        let update_entity = objectutilities.transcribe(
+          {
+            address:'address',
+            customers:'customers',
+            name: 'name',
+            expiration: 'expiration'
+          },
+          existing_creditcard,
+          existing_creditcard,
+          false
+        );
+
+        return update_entity;
+
+      }).then((update_entity) => {
+
+        return super.update({entity: update_entity});
+
+      });
+
     }
 
+    delete({id}){
+
+      du.debug('CreditCard.delete()');
+
+      return Promise.resolve(id)
+      .then((id) => this.get({id: id}))
+      .then((creditcard) => {
+
+        if(_.isNull(creditcard)){
+          eu.throwError('not_found', 'Unable to identify creditcard for delete.');
+        }
+
+        if(!_.has(this, 'tokenController')){
+          const TokenController = global.SixCRM.routes.include('providers', 'token/Token.js');
+          this.tokenController = new TokenController();
+        }
+
+        return Promise.all([creditcard, this.tokenController.deleteToken(creditcard.token)]);
+
+      }).then(([creditcard]) => {
+
+        return super.delete({id: creditcard.id});
+
+      });
+
+    }
+
+    //Technical Debt:  Update to support only supported properties
     updateProperties({id, properties}) {
         this.setLastFour(properties);
         return super.updateProperties({id, properties});
