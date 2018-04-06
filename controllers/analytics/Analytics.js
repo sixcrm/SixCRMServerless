@@ -368,11 +368,11 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	}
 
-	getHomeHeroChartTimeseries(args) {
+	getHomeHeroChartTimeseries(parameters) {
 
-		du.debug('Get Activity By Identifier');
+		du.debug('Get home chart timeseries');
 
-		return this.getResults('home/hero-chart-timeseries', args, [])
+		return this.getResults('home/hero-chart-timeseries', parameters.analyticsfilter, [])
 			.then((results) => {
 				return results;
 			});

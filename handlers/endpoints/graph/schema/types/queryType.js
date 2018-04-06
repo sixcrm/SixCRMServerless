@@ -125,6 +125,7 @@ let transactionOverviewType = require('./analytics/transactionOverviewType');
 let eventFunnelType = require('./analytics/eventFunnelType');
 let campaignDeltaType = require('./analytics/campaignDeltaType');
 let campaignsByAmountType = require('./analytics/campaignsByAmountType');
+const HeroChartTimeseriesFilterType = require('./analytics/home/hero-chart-timeseries-filter-type');
 const HeroChartTimeSeriesType = require('./analytics/home/hero-chart-timeseries-type');
 let binType = require('./bin/BINType');
 
@@ -871,14 +872,8 @@ module.exports.graphObj = new GraphQLObjectType({
 		heroChartTimeseries: {
 			type: HeroChartTimeSeriesType,
 			args: {
-				start: {
-					type: GraphQLString
-				},
-				end: {
-					type: GraphQLString
-				},
-				period: {
-					type: GraphQLString
+				analyticsfilter: {
+					type: HeroChartTimeseriesFilterType
 				}
 			},
 			resolve: function (root, args) {
