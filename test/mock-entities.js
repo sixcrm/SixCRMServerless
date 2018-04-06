@@ -892,31 +892,56 @@ class MockEntities {
 
   }
 
+<<<<<<< HEAD
   static getValidCreditCard(id) {
     const card = this.getValidPlaintextCreditCard(id);
+=======
+  static getValidCreditCard(id){
+    return this.getValidPlaintextCreditCard(id);
+>>>>>>> WIP
 
-    card.number = encryptionutilities.encryptAES256(card.id, card.number);
-    card.ccv = encryptionutilities.encryptAES256(card.id, card.ccv);
-    return card;
+    //card.number = encryptionutilities.encryptAES256(card.id, card.number);
+    //card.ccv = encryptionutilities.encryptAES256(card.id, card.ccv);
+    //return card;
   }
 
   static getValidPlaintextCreditCard(id) {
     const number = this.getValidCreditCardNumber();
     const last_four = number.slice(-4);
+    const first_six = number.slice(0, 5);
 
     return {
       id: this.getValidId(id),
       account: this.getTestAccountID(),
       customers: [uuidV4()],
       address: this.getValidAddress(),
+<<<<<<< HEAD
       number,
       last_four,
       ccv: this.getValidCreditCardCCV(),
+=======
+      token: this.getValidCreditCardToken(),
+      first_six: first_six,
+      last_four: last_four,
+>>>>>>> WIP
       expiration: this.getValidCreditCardExpiration(),
       name: spoofer.createRandomName('full'),
       created_at: timestamp.getISO8601(),
       updated_at: timestamp.getISO8601()
+<<<<<<< HEAD
     }
+=======
+    };
+  }
+
+  static getValidCreditCardToken(){
+
+    return {
+      provider:"tokenex",
+      token:"sometokenstring"
+    };
+
+>>>>>>> WIP
   }
 
   static getValidCustomerNotes(id) {
