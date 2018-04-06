@@ -867,25 +867,6 @@ module.exports.graphObj = new GraphQLObjectType({
 
 			}
 		},
-		listactivitybyidentifier: {
-			type: listActivityType.graphObj,
-			args: {
-				activityfilter: {
-					type: analyticsActivityFilterInputType.graphObj
-				},
-				pagination: {
-					type: analyticsPaginationInputType.graphObj
-				},
-				cache: {
-					type: cacheInputType.graphObj
-				}
-			},
-			resolve: function (root, args) {
-				const analyticsController = new AnalyticsController();
-
-				return analyticsController.executeAnalyticsFunction(args, 'getActivityByIdentifier');
-			}
-		},
 		bin: {
 			type: binType.graphObj,
 			args: {
