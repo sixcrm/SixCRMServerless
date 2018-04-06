@@ -1,14 +1,12 @@
-'use strict';
 const _ = require('underscore');
-const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-//const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 
-//const helper = new CreditCardHelperController();
+const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class CreditCardController extends entityController {
 
@@ -95,17 +93,32 @@ module.exports = class CreditCardController extends entityController {
       du.debug('CreditCard.update()');
 
       return Promise.resolve(entity)
-      .then((entity) => this.exists({entity: entity, return_entity: true}))
-      .then((existing_creditcard) => {
+      .then((entity) => {
+
+        return this.exists({entity: entity, return_entity: true}).then((existing_creditcard) => {
+
+          return {
+            existing_creditcard: existing_creditcard,
+            entity: entity
+          };
+
+        });
+
+      })
+      .then(({existing_creditcard, entity}) => {
 
         if(!_.has(existing_creditcard, 'id')){
-          eu.throwError('not_found', 'Credit card not found.');
+          eu.throwError('not_found', 'Credit Card not found.');
         }
 
-        return existing_creditcard;
+        return {
+          existing_creditcard: existing_creditcard,
+          entity: entity
+        };
 
-      }).then((existing_creditcard) => {
+      }).then(({existing_creditcard, entity}) => {
 
+        //Note:  We may need to assure that existing properties are not modified.
         let update_entity = objectutilities.transcribe(
           {
             address:'address',
@@ -113,7 +126,7 @@ module.exports = class CreditCardController extends entityController {
             name: 'name',
             expiration: 'expiration'
           },
-          existing_creditcard,
+          entity,
           existing_creditcard,
           false
         );
@@ -133,10 +146,10 @@ module.exports = class CreditCardController extends entityController {
       du.debug('CreditCard.delete()');
 
       return Promise.resolve(id)
-      .then((id) => this.get({id: id}))
-      .then((creditcard) => {
+      .then((id) => this.exists({id: id, return_entity: true}))
+      .then((existing_entity) => {
 
-        if(_.isNull(creditcard)){
+        if(!_.has(existing_entity, 'id')){
           eu.throwError('not_found', 'Unable to identify creditcard for delete.');
         }
 
@@ -145,20 +158,61 @@ module.exports = class CreditCardController extends entityController {
           this.tokenController = new TokenController();
         }
 
-        return Promise.all([creditcard, this.tokenController.deleteToken(creditcard.token)]);
+        return Promise.all([existing_entity, this.tokenController.deleteToken(existing_entity.token)]);
 
-      }).then(([creditcard]) => {
+      }).then(([existing_entity]) => {
 
-        return super.delete({id: creditcard.id});
+        return super.delete({id: existing_entity.id});
 
       });
 
     }
 
-    //Technical Debt:  Update to support only supported properties
     updateProperties({id, properties}) {
-        this.setLastFour(properties);
-        return super.updateProperties({id, properties});
+
+      du.debug('Update Properties');
+
+      return Promise.resolve(id)
+      .then((id) => {
+
+        return this.exists({entity: {id: id}, return_entity: true}).then((existing_creditcard) => {
+
+          return existing_creditcard;
+
+        });
+
+      })
+      .then((existing_creditcard) => {
+
+        if(!_.has(existing_creditcard, 'id')){
+          eu.throwError('not_found', 'Credit Card not found.');
+        }
+
+        return existing_creditcard;
+
+      }).then((existing_creditcard) => {
+
+        //Note:  We may need to assure that existing properties are not modified.
+        let update_entity = objectutilities.transcribe(
+          {
+            address:'address',
+            customers:'customers',
+            name: 'name',
+            expiration: 'expiration'
+          },
+          properties,
+          existing_creditcard,
+          false
+        );
+
+        return update_entity;
+
+      }).then((update_entity) => {
+
+        return super.update({entity: update_entity});
+
+      });
+
     }
 
   	listCustomers(creditcard) {
@@ -186,46 +240,51 @@ module.exports = class CreditCardController extends entityController {
         eu.throwError('server', 'Cannot Assure Credit Card while sanitizing results');
       }
 
-      if(!_.has(creditcard, 'last_four')){
-        this.setLastFour(creditcard);
-      }
+      //Technical Debt:  It might be better to query by the first_six
+      return this.queryBySecondaryIndex({field: 'last_four', index_value: creditcard.last_four, index_name: 'last_four-index'})
+      .then((result) => {
 
-      return this.queryBySecondaryIndex({field:'last_four', index_value: creditcard.last_four, index_name: 'last_four-index'}).then(results => {
+        if(_.has(result, 'creditcards') && _.isArray(result.creditcards) && arrayutilities.nonEmpty(result.creditcards)){
 
-        if(_.has(results, 'creditcards')){
-
-          if(arrayutilities.nonEmpty(results.creditcards)){
-
-            let found_card = arrayutilities.find(results.creditcards, (result) => {
-              return this.sameCard(creditcard, result);
-            });
-
-            if(!_.isUndefined(found_card)){
-              return found_card;
-            }
-
+          if(!_.has(this, 'creditCardHelperController')){
+            const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+            this.creditCardHelperController = new CreditCardHelperController();
           }
 
-          return this.create({entity: creditcard});
+          let found_card = arrayutilities.find(result.creditcards, (existing_creditcard) => {
+            return this.creditCardHelperController.sameCard(creditcard, existing_creditcard);
+          });
+
+          if(!_.isUndefined(found_card)){
+            return found_card;
+          }
 
         }
 
-        return true;
+        return this.create({entity: creditcard});
 
       });
 
     }
 
     setLastFour(attributes) {
+
+      du.debug('Set Last Four');
+
       if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
         attributes.last_four = attributes.number.slice(-4);
       }
+
     }
 
     setFirstSix(attributes) {
+
+      du.debug('Set First Six');
+
       if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
         attributes.first_six = attributes.number.substring(0, 6);
       }
+
     }
 
 }
