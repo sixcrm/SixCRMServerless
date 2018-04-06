@@ -138,7 +138,7 @@ module.exports = class UserController extends entityController {
 
       }).catch(error => {
 
-        if(error.statusCode == '404'){
+        if(error.code == 404){
           return Promise.resolve(false);
         }
 
