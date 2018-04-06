@@ -125,6 +125,7 @@ let transactionOverviewType = require('./analytics/transactionOverviewType');
 let eventFunnelType = require('./analytics/eventFunnelType');
 let campaignDeltaType = require('./analytics/campaignDeltaType');
 let campaignsByAmountType = require('./analytics/campaignsByAmountType');
+const HeroChartTimeSeriesType = require('./analytics/home/hero-chart-timeseries-type');
 let binType = require('./bin/BINType');
 
 /* Reports */
@@ -864,6 +865,26 @@ module.exports.graphObj = new GraphQLObjectType({
 				const analyticsController = new AnalyticsController();
 
 				return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderSummaries');
+
+			}
+		},
+		heroChartTimeseries: {
+			type: HeroChartTimeSeriesType,
+			args: {
+				start: {
+					type: GraphQLString
+				},
+				end: {
+					type: GraphQLString
+				},
+				period: {
+					type: GraphQLString
+				}
+			},
+			resolve: function (root, args) {
+
+				const analyticsController = new AnalyticsController();
+				return analyticsController.executeAnalyticsFunction(args, 'getHomeHeroChartTimeseries');
 
 			}
 		},
