@@ -1,0 +1,11 @@
+{
+	"requestContext": {
+		"authorizer": {
+			"user": "owner.user@test.com"
+		}
+	},
+	"pathParameters": {
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+	},
+	"body": "query {herocharttimeseries (analyticsfilter:{start:\"2017-01-01T17:23:43.043Z\" end:\"2017-01-31T20:12:29Z\" period:\"day\"}) {timeseries {datetime, orders, revenue} }}"
+}
