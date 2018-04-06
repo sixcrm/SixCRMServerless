@@ -5,14 +5,15 @@ let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/pe
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidCreditCard() {
-    return MockEntities.getValidCreditCard();
+  return MockEntities.getValidCreditCard();
 }
 
 function getValidCustomer() {
-    return MockEntities.getValidCustomer();
+  return MockEntities.getValidCustomer();
 }
 
 describe('controllers/entities/CreditCard.js', () => {
+
     before(() => {
         mockery.enable({
             useCleanCache: true,
@@ -26,31 +27,55 @@ describe('controllers/entities/CreditCard.js', () => {
         mockery.deregisterAll();
     });
 
-    it('creates credit card object', () => {
-        // given
-        let creditCardData = {
-            number: '1',
-            expiration: '01/18',
-            ccv: '2',
-            name: 'N',
-            address: 'A'
-        };
+    describe('create', () => {
+
+      it('successfully creates a creditcard entity', () => {
+
+        let creditcard_prototype = MockEntities.getValidTransactionCreditCard();
+        let creditcard = MockEntities.getValidCreditCard();
+
+        PermissionTestGenerators.givenUserWithAllowed('*', 'creditcard');
+
+        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+          constructor(){}
+          saveRecord(){
+            return Promise.resolve({
+              Items: [creditcard]
+            })
+          }
+        });
+
+        mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), class {
+          constructor(){}
+          addToSearchIndex(){
+            return Promise.resolve(true);
+          }
+        });
+
         let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
         const creditCardController = new CreditCardController();
 
-        // when
-        let creditCardObject = creditCardController.createCreditCardObject(creditCardData);
+        creditCardController.exists = () => {
+          return Promise.resolve(false);
+        }
 
-        // then
-        return creditCardObject.then((data) => {
-            expect(data).to.deep.equal({
-                number: creditCardData.number,
-                expiration: creditCardData.expiration,
-                ccv: creditCardData.ccv,
-                name: creditCardData.name,
-                address: creditCardData.address
-            });
+        return creditCardController.create({entity: creditcard_prototype}).then(result => {
+          console.log(result);
+          expect(true).to.equal(true);
         });
+
+      });
+
+    });
+
+    describe('assureCreditCard', () => {
+
+      it('assures that a creditcard is stored', () => {
+
+        
+
+      });
+
     });
 
     describe('getBINNumber', () => {
@@ -237,7 +262,9 @@ describe('controllers/entities/CreditCard.js', () => {
     });
 
     describe('censorEncryptedAttributes', () => {
-        it('censors all but the last 4 digits of number', () => {
+
+        it('censors the credit card token ', () => {
+
             const creditcard = getValidCreditCard();
 
             class mockHelper {
@@ -253,27 +280,12 @@ describe('controllers/entities/CreditCard.js', () => {
 
             creditCardController.censorEncryptedAttributes(creditcard);
 
-            expect(creditcard.number).to.equal('************1111');
+            expect(creditcard).to.have.property('token');
+            expect(creditcard.token).to.have.property('token');
+            expect(creditcard.token.token).to.equal('****');
+
         });
 
-        it('censors other attributes with generic censor', () => {
-            const creditcard = getValidCreditCard();
-
-            class mockHelper {
-                lastFour() {
-                    return '************1111';
-                }
-            }
-
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/creditcard/CreditCard.js'), mockHelper);
-
-            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-            const creditCardController = new CreditCardController();
-
-            creditCardController.censorEncryptedAttributes(creditcard);
-
-            expect(creditcard.ccv).to.equal('****');
-        });
     });
 
     describe('listCustomers', () => {

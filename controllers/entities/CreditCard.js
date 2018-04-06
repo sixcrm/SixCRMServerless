@@ -19,57 +19,10 @@ module.exports = class CreditCardController extends entityController {
       this.search_fields = ['name'];
 
       this.encrypted_attribute_paths = [
-          'number',
-          'ccv'
+        'token.token'
       ];
+
     }
-
-    censorEncryptedAttributes(entity) {
-        const custom_censor_fn = (attr_path, attr_value) => {
-            switch (attr_path) {
-                case 'number':
-                    return helper.lastFour(this.encryptionhelper.decrypt(entity, attr_value));
-                default:
-                    return '****';
-            }
-        }
-
-        return super.censorEncryptedAttributes(entity, custom_censor_fn);
-    }
-
-    setLastFour(attributes) {
-        if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
-            attributes.last_four = attributes.number.slice(-4);
-        }
-    }
-
-    create({entity}) {
-        this.setLastFour(entity);
-        return super.create({entity});
-    }
-
-    update({entity}) {
-        this.setLastFour(entity);
-        return super.update({entity});
-    }
-
-    updateProperties({id, properties}) {
-        this.setLastFour(properties);
-        return super.updateProperties({id, properties});
-    }
-
-	listCustomers(creditcard) {
-		du.debug('List Customers');
-
-		if(_.has(creditcard, "customers") && arrayutilities.nonEmpty(creditcard.customers)){
-			return Promise.all(arrayutilities.map(creditcard.customers, customer => {
-				return this.executeAssociatedEntityFunction('CustomerController', 'get', {id: customer});
-			}))
-				.then(customers => arrayutilities.filter(customers, customer => !_.isNull(customer)));
-		}
-
-		return Promise.resolve(null);
-	}
 
     associatedEntitiesCheck({id}){
 
@@ -97,16 +50,85 @@ module.exports = class CreditCardController extends entityController {
 
     }
 
+    create({entity}) {
+
+      du.debug('CreditCard.create()');
+
+      //Technical Debt:  Validate that this is a creditcard with a number and cvv etc...
+
+      return Promise.resolve(entity)
+      .then((entity) => {
+
+        this.assignPrimaryKey(entity);
+        this.setLastFour(entity);
+        this.setFirstSix(entity);
+
+        return entity;
+
+      }).then(entity => {
+
+        if(!_.has(this, 'tokenController')){
+          const TokenController = global.SixCRM.routes.include('providers', 'token/Token.js');
+          this.tokenController = new TokenController();
+        }
+
+        return Promise.all([entity, this.tokenController.setToken(entity)]);
+
+      }).then(([entity, token]) => {
+
+        delete entity.number;
+        delete entity.cvv;
+        entity.token = token;
+
+        return entity;
+
+      }).then(entity => {
+
+        return super.create({entity});
+
+      });
+
+    }
+
+    update({entity}) {
+      //Technical Debt:  What should we do here??
+        this.setLastFour(entity);
+        return super.update({entity});
+    }
+
+    updateProperties({id, properties}) {
+        this.setLastFour(properties);
+        return super.updateProperties({id, properties});
+    }
+
+  	listCustomers(creditcard) {
+
+  		du.debug('List Customers');
+
+  		if(_.has(creditcard, "customers") && arrayutilities.nonEmpty(creditcard.customers)){
+
+        //Nick:  Use a list query here, not parallel get queries
+  			return Promise.all(arrayutilities.map(creditcard.customers, customer => {
+  				return this.executeAssociatedEntityFunction('CustomerController', 'get', {id: customer});
+  			})).then(customers => arrayutilities.filter(customers, customer => !_.isNull(customer)));
+
+  		}
+
+  		return Promise.resolve(null);
+
+  	}
+
     assureCreditCard(creditcard){
 
       du.debug('Assure Credit Card', creditcard);
 
       if (this.sanitization) {
-          eu.throwError('server', 'Cannot Assure Credit Card while sanitizing results');
+        eu.throwError('server', 'Cannot Assure Credit Card while sanitizing results');
       }
 
-      this.assignPrimaryKey(creditcard);
-      this.setLastFour(creditcard);
+      if(!_.has(creditcard, 'last_four')){
+        this.setLastFour(creditcard);
+      }
 
       return this.queryBySecondaryIndex({field:'last_four', index_value: creditcard.last_four, index_name: 'last_four-index'}).then(results => {
 
@@ -134,101 +156,16 @@ module.exports = class CreditCardController extends entityController {
 
     }
 
-    sameCard(creditcard, test_card, fatal){
-
-      du.debug('Same Card');
-
-      fatal = (_.isUndefined(fatal))?false:fatal;
-
-      let bad_field = arrayutilities.find(objectutilities.getKeys(creditcard), creditcard_field => {
-
-        if(!_.has(test_card, creditcard_field)){
-          return true;
-        }
-
-        let test_field = test_card[creditcard_field];
-        let fact_field = creditcard[creditcard_field];
-
-        if(typeof test_field !== typeof fact_field){
-          return true;
-        }
-
-        if((_.isString(fact_field) || _.isNumber(fact_field)) && fact_field !== test_field){
-          return true;
-        }
-
-        if(_.isObject(fact_field)){
-          if(!_.isMatch(fact_field, test_field)){
-            return true;
-          }
-        }
-
-        return false;
-
-      });
-
-      if(!_.isUndefined(bad_field)){
-
-        let message = 'Cards do not match.  Bad field: '+bad_field;
-
-        if(fatal == true){
-          eu.throwError('server', message);
-        }
-
-        return false;
-
+    setLastFour(attributes) {
+      if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
+        attributes.last_four = attributes.number.slice(-4);
       }
-
-      return true;
-
     }
 
-    getAddress(creditcard){
-
-      du.debug('Get Address');
-
-      return Promise.resolve(creditcard.address);
-
-    }
-
-    getBINNumber(creditcard){
-
-      du.debug('Get BIN Number');
-
-      let cc_number = null;
-
-      if(_.has(creditcard, 'number')){
-
-        cc_number = creditcard.number;
-
-      }else if(_.isString(creditcard)){
-
-        cc_number = creditcard;
-
+    setFirstSix(attributes) {
+      if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
+        attributes.first_six = attributes.number.substring(0, 6);
       }
-
-      if(!_.isNull(cc_number)){
-
-        cc_number = cc_number.slice(0,6);
-
-      }
-
-      return cc_number;
-
-    }
-
-    createCreditCardObject(input_object){
-
-      var creditcard = {
-          number: input_object.number,
-          expiration: input_object.expiration,
-          ccv: input_object.ccv,
-          name: input_object.name,
-          address: input_object.address
-      };
-
-      return Promise.resolve(creditcard);
-
     }
 
 }

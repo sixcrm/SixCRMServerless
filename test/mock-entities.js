@@ -866,30 +866,40 @@ class MockEntities {
   }
 
   static getValidCreditCard(id){
-    const card = this.getValidPlaintextCreditCard(id);
+    return this.getValidPlaintextCreditCard(id);
 
-    card.number = encryptionutilities.encryptAES256(card.id, card.number);
-    card.ccv = encryptionutilities.encryptAES256(card.id, card.ccv);
-    return card;
+    //card.number = encryptionutilities.encryptAES256(card.id, card.number);
+    //card.ccv = encryptionutilities.encryptAES256(card.id, card.ccv);
+    //return card;
   }
 
   static getValidPlaintextCreditCard(id){
     const number = this.getValidCreditCardNumber();
     const last_four = number.slice(-4);
+    const first_six = number.slice(0, 5);
 
     return {
-        id: this.getValidId(id),
-        account: this.getTestAccountID(),
-        customers: [uuidV4()],
-        address: this.getValidAddress(),
-        number,
-        last_four,
-        ccv: this.getValidCreditCardCCV(),
-        expiration: this.getValidCreditCardExpiration(),
-        name: spoofer.createRandomName('full'),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
-    }
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      customers: [uuidV4()],
+      address: this.getValidAddress(),
+      token: this.getValidCreditCardToken(),
+      first_six: first_six,
+      last_four: last_four,
+      expiration: this.getValidCreditCardExpiration(),
+      name: spoofer.createRandomName('full'),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
+    };
+  }
+
+  static getValidCreditCardToken(){
+
+    return {
+      provider:"tokenex",
+      token:"sometokenstring"
+    };
+
   }
 
   static getValidCustomerNotes(id) {
