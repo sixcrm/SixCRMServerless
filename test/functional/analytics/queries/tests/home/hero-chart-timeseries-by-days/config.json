@@ -2,9 +2,11 @@
 	"method": "getHomeHeroChartTimeseries",
 	"test_case": "Successful transaction and orders by period",
 	"input": {
-		"start": "2017-01-01T00:00:00.000Z",
-		"end": "2017-01-03T00:00:00.000Z",
-		"period": "day"
+		"analyticsfilter": {
+			"start": "2017-01-01T00:00:00.000Z",
+			"end": "2017-01-03T00:00:00.000Z",
+			"period": "day"
+		}
 	},
 	"result_name": "timeseries",
 	"expect": [{
