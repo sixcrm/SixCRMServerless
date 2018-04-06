@@ -103,9 +103,6 @@
   {
     "Description": "For Lambdas behind public NAT",
     "GroupName": "public-lambda",
-    "Ingress": {
-      "IpPermissions": []
-    },
     "Egress":{
       "IpPermissions": [
         {
