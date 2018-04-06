@@ -103,12 +103,8 @@ function getValidCreditCard(){
 
 function getValidCreditCardPrototype(){
 
-  let creditcard = MockEntities.getValidPlaintextCreditCard();
+  let creditcard = MockEntities.getValidTransactionCreditCard();
 
-  delete creditcard.id;
-  delete creditcard.created_at;
-  delete creditcard.updated_at;
-  delete creditcard.account;
   return creditcard;
 
 }
@@ -686,7 +682,7 @@ describe('checkout', function () {
 
       customer.creditcards = [];
 
-      let creditcard = getValidCreditCard();
+      let stored_creditcard = getValidCreditCard();
       let rebill = getValidRebill();
       let transactions = getValidTransactions();
       let processor_response = getValidProcessorResponse();
@@ -737,9 +733,9 @@ describe('checkout', function () {
           constructor(){}
           sanitize(){}
           addCreditCard() {
-              customer.creditcards.push(creditcard.id);
-              creditcard.customers.push(customer.id);
-              return Promise.resolve([customer, creditcard]);
+              customer.creditcards.push(stored_creditcard.id);
+              stored_creditcard.customers.push(customer.id);
+              return Promise.resolve([customer, stored_creditcard]);
           }
           get() {
               return Promise.resolve(customer);
@@ -837,24 +833,12 @@ describe('checkout', function () {
           }
       });
 
-      let mock_credit_card = class {
-          constructor(){}
-
-          assureCreditCard (creditcard) {
-              return Promise.resolve(objectutilities.merge(creditcard, {
-                  id: uuidV4(),
-                  created_at: timestamp.getISO8601(),
-                  updated_at: timestamp.getISO8601(),
-                  account: global.account
-              }));
-          }
-
-          sanitize(input) {
-              expect(input).to.equal(false);
-          }
+      const CreditCard = global.SixCRM.routes.include('entities','CreditCard.js');
+      CreditCard.prototype.queryBySecondaryIndex = () => { return Promise.resolve({creditcards: []}); };
+      CreditCard.prototype.create = ({entity}) => {
+        expect(entity).to.be.defined;
+        return Promise.resolve(stored_creditcard);
       };
-
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class {
         constructor(){}
@@ -864,7 +848,7 @@ describe('checkout', function () {
             transactions: transactions,
             processor_response: processor_response,
             response_type: response_type,
-            creditcard: creditcard
+            creditcard: stored_creditcard
           });
 
           return Promise.resolve(register_response);
@@ -905,7 +889,7 @@ describe('checkout', function () {
         }
       });
 
-      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+      //PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
       const checkoutController = new CheckoutController();
