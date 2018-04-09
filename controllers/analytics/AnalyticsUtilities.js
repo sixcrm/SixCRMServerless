@@ -205,13 +205,13 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 				du.highlight(filter, parameters[filter]);
 
-				if (_.isArray(parameters[filter])) {
+				if (_.isArray(parameters[filter]) && parameters[filter].length > 0) {
 
 					filter_array.push(filter + " IN (" + arrayutilities.compress(parameters[filter]) + ")");
 
 				} else {
 
-					filter_array.push(filter + " IN (" + parameters[filter] + ")");
+					filter_array.push(filter + " = " + parameters[filter]);
 
 				}
 
