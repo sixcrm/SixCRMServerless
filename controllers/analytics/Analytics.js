@@ -372,11 +372,35 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		du.debug('Get home chart timeseries');
 
-		// todo: switch by the chart comparison enum
-		return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
-			.then((results) => {
-				return results;
-			});
+		switch (parameters.analyticsfilter.comparisonType) {
+
+			case 'revenueVersusOrders':
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
+					.then((results) => {
+						return results;
+					});
+			case 'ordersVersusUpsells':
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
+					.then((results) => {
+						return results;
+					});
+			case 'directVersusRebill':
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
+					.then((results) => {
+						return results;
+					});
+			case 'averageRevenuePerOrder':
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
+					.then((results) => {
+						return results;
+					});
+			default:
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
+					.then((results) => {
+						return results;
+					});
+
+		}
 
 	}
 
