@@ -16,8 +16,8 @@ ON s.generate_series = o.datetime
 LEFT OUTER JOIN
 	( SELECT COUNT ( 1 ) AS upsells,
 		DATE_TRUNC('{{period}}', datetime) as datetime
-		FROM analytics.f_events 
-		WHERE datetime BETWEEN TIMESTAMP '{{start}}'::DATE + '00:00:00'::TIME AND TIMESTAMP '{{end}}'::DATE + '23:59:59'::TIME AND "type" LIKE 'upsell%' {{filter}}
+		FROM analytics.f_transactions 
+		WHERE datetime BETWEEN TIMESTAMP '{{start}}'::DATE + '00:00:00'::TIME AND TIMESTAMP '{{end}}'::DATE + '23:59:59'::TIME AND "type" = 'new' AND "subtype" LIKE 'upsell%' {{filter}}
 		GROUP BY DATE_TRUNC('{{period}}', datetime)
 		) u
 ON s.generate_series = u.datetime;
