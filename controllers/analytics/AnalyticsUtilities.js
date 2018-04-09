@@ -105,11 +105,11 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 		return new Promise((resolve, reject) => {
 
-			parameters = this.appendAccount(parameters);
-
-			parameters = this.createQueryFilter(parameters, query_filters);
-
 			this.validateQueryParameters(query_name, parameters).then(() => {
+
+					parameters = this.appendAccount(parameters);
+
+					parameters = this.createQueryFilter(parameters, query_filters);
 
 					return this.getQueryString(query_name).then((query) => {
 
@@ -211,7 +211,9 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 				} else {
 
-					filter_array.push(filter + " = " + parameters[filter]);
+					const val = _.isNumber(parameters[filter]) ? parameters[filter] : `'${parameters[filter]}'`;
+
+					filter_array.push(filter + " = " + val);
 
 				}
 
