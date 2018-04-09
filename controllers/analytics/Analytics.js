@@ -372,27 +372,27 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		switch (parameters.analyticsfilter.comparisonType) {
 
 			case 'revenueVersusOrders':
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, this.default_queue_account_filter)
 					.then((results) => {
 						return results;
 					});
 			case 'ordersVersusUpsells':
-				return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', parameters.analyticsfilter, [])
+				return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', parameters.analyticsfilter, this.default_queue_account_filter)
 					.then((results) => {
 						return results;
 					});
 			case 'directVersusRebill':
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, this.default_queue_account_filter)
 					.then((results) => {
 						return results;
 					});
 			case 'averageRevenuePerOrder':
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, this.default_queue_account_filter)
 					.then((results) => {
 						return results;
 					});
 			default:
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, this.default_queue_account_filter)
 					.then((results) => {
 						return results;
 					});

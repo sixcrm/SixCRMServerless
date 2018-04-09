@@ -17,31 +17,31 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 		super();
 
 		this.period_options = [{
-				name: "minute",
+				name: 'minute',
 				seconds: 60
 			},
 			{
-				name: "hour",
+				name: 'hour',
 				seconds: 3600
 			},
 			{
-				name: "day",
+				name: 'day',
 				seconds: 86400
 			},
 			{
-				name: "week",
+				name: 'week',
 				seconds: 604800
 			},
 			{
-				name: "month",
+				name: 'month',
 				seconds: 2678400
 			},
 			{
-				name: "quarter",
+				name: 'quarter',
 				seconds: 7776000
 			},
 			{
-				name: "year",
+				name: 'year',
 				seconds: 30412800
 			}
 		];
@@ -105,11 +105,11 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 		return new Promise((resolve, reject) => {
 
-			parameters = this.appendAccount(parameters);
-
-			parameters = this.createQueryFilter(parameters, query_filters);
-
 			this.validateQueryParameters(query_name, parameters).then(() => {
+
+					parameters = this.appendAccount(parameters);
+
+					parameters = this.createQueryFilter(parameters, query_filters);
 
 					return this.getQueryString(query_name).then((query) => {
 
@@ -205,13 +205,23 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 				du.highlight(filter, parameters[filter]);
 
-				if (_.isArray(parameters[filter])) {
+				if (_.isArray(parameters[filter]) && parameters[filter].length > 1) {
 
-					filter_array.push(filter + " IN (" + arrayutilities.compress(parameters[filter]) + ")");
+					if (_.isNumber(parameters[filter][0])) {
+
+						filter_array.push(filter + ' IN (' + parameters.join(',') + ')');
+
+					} else {
+
+						filter_array.push(filter + ' IN (' + parameters.map(p => `'${p}'`).join(',') + ')');
+
+					}
 
 				} else {
 
-					filter_array.push(filter + " IN (" + parameters[filter] + ")");
+					const val = _.isNumber(parameters[filter]) ? parameters[filter] : `'${parameters[filter]}'`;
+
+					filter_array.push(filter + ' = ' + val);
 
 				}
 
@@ -303,7 +313,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 				}
 
-				if (_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0) {
+				if (_.has(validation, 'errors') && _.isArray(validation.errors) && validation.errors.length > 0) {
 
 					du.warning(validation.errors);
 
