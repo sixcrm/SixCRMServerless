@@ -372,7 +372,8 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		du.debug('Get home chart timeseries');
 
-		return this.getResults('home/hero-chart-timeseries', parameters.analyticsfilter, [])
+		// todo: switch by the chart comparison enum
+		return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
 			.then((results) => {
 				return results;
 			});

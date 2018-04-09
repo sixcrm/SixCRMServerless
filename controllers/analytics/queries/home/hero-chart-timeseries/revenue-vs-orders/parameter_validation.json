@@ -25,6 +25,10 @@
 		},
 		"campaign": {
 			"$ref": "#/definitions/UUIDv4"
+		},
+		"comparison": {
+			"type": "string",
+			"enum": ["revenue-vs-orders", "orders-vs-upsell", "direct-vs-rebill", "avg-revenue-per-order"]
 		}
 	},
 	"required": ["start", "end", "period"]
