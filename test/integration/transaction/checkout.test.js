@@ -358,8 +358,7 @@ describe('Checkout', () => {
                 expect(result.body).to.have.property('code');
                 expect(result.body.success).to.equal(false);
                 expect(result.body.code).to.equal(500);
-                expect(result.body.message).to.equal("[500] One or more validation errors occurred: " +
-                    "Transaction instance is not of a type(s) object");
+                expect(result.body.message).to.have.string("[500] One or more validation errors occurred");
             });
 
     });
@@ -399,8 +398,7 @@ describe('Checkout', () => {
                 expect(result.body).to.have.property('code');
                 expect(result.body.success).to.equal(false);
                 expect(result.body.code).to.equal(500);
-                expect(result.body.message).to.equal("[500] One or more validation errors occurred: " +
-                    "Currency instance is not any of [subschema 0],[subschema 1]");
+                expect(result.body.message).to.have.string("[500] One or more validation errors occurred");
             });
 
     });
@@ -441,7 +439,6 @@ describe('Checkout', () => {
                 expect(result.body.success).to.equal(false);
                 expect(result.body.code).to.equal(500);
                 expect(result.body.message).to.contain("[500] One or more validation errors occurred:");
-                expect(result.body.message).to.contain("Transaction Input instance is not any of");
             });
 
     });

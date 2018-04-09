@@ -1,7 +1,6 @@
 'use strict';
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -12,56 +11,6 @@ module.exports = class AffiliateController extends entityController {
         super('affiliate');
 
         this.search_fields = ['name', 'affiliate_id'];
-
-    }
-
-    associatedEntitiesCheck({id}){
-
-      du.debug('Associated Entities Check');
-
-      let return_array = [];
-
-      let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('CampaignController',  'listByAffiliateAllow', {affiliate:id}).then((campaigns) => this.getResult(campaigns, 'campaigns')),
-        this.executeAssociatedEntityFunction('CampaignController',  'listByAffiliateDeny', {affiliate:id}).then((campaigns) => this.getResult(campaigns, 'campaigns')),
-        this.executeAssociatedEntityFunction('SessionController',   'listByAffiliate', {affiliate:id}).then((sessions) => this.getResult(sessions, 'sessions')),
-        this.executeAssociatedEntityFunction('TrackerController',   'listByAffiliate', {affiliate:id}).then((trackers) => this.getResult(trackers, 'trackers'))
-      ];
-
-      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
-
-        let campaign_allow = data_acquisition_promises[0];
-        let campaign_deny = data_acquisition_promises[1];
-        let sessions = data_acquisition_promises[2];
-        let trackers = data_acquisition_promises[3];
-
-        if(arrayutilities.nonEmpty(campaign_allow)){
-          arrayutilities.map(campaign_allow, (campaign) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Campaign', object: campaign}));
-          });
-        }
-
-        if(arrayutilities.nonEmpty(campaign_deny)){
-          arrayutilities.map(campaign_deny, (campaign) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Campaign', object: campaign}));
-          });
-        }
-
-        if(arrayutilities.nonEmpty(sessions)){
-          arrayutilities.map(sessions, (session) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Session', object: session}));
-          });
-        }
-
-        if(arrayutilities.nonEmpty(trackers)){
-          arrayutilities.map(trackers, (tracker) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Tracker', object: tracker}));
-          });
-        }
-
-        return return_array;
-
-      });
 
     }
 
@@ -90,4 +39,3 @@ module.exports = class AffiliateController extends entityController {
     }
 
 }
-
