@@ -3,11 +3,30 @@
 	"id": "/hero-chart-timeseries-graph-response",
 	"title": "Hero Chart Timeseries",
 	"type": "object",
+	"required": [ "facets"],
 	"properties": {
-
 		"facets": {
-			"type": "array"
+			"type": "array",
+			"items" : {
+				"type": "object",
+				"required": [ "facet", "timeseries"],
+				"properties": {
+					"facet": {
+						"type": "string"
+					},
+					"timeseries": {
+						"type": "array",
+						"properties": {
+							"datetime": {
+								"$ref": "../../../../../definitions/iso8601" 
+							},
+							"value": {
+								"type": "number"
+							}
+						}
+					}	
+				}
+			}
 		}
-
 	}
 }
