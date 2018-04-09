@@ -3,6 +3,6 @@
   "id": "/funnel",
   "title": "Funnel",
   "type": "array",
-  "minItems": "5",
-  "maxItems": "5"
+  "minItems": 5,
+  "maxItems": 5
 }
