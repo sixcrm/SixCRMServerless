@@ -9,13 +9,13 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const encryptionutilities = global.SixCRM.routes.include('lib', 'encryption-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const spoofer = global.SixCRM.routes.include('test','spoofer.js');
+const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
 class MockEntities {
 
-  static getValidNotificationSettings(id){
+  static getValidNotificationSettings(id) {
 
-    id = (_.isUndefined(id) || _.isNull(id))?spoofer.createRandomEmail():id;
+    id = (_.isUndefined(id) || _.isNull(id)) ? spoofer.createRandomEmail() : id;
 
     let a_iso8601 = timestamp.getISO8601();
 
@@ -25,23 +25,22 @@ class MockEntities {
       updated_at: a_iso8601,
       settings: {
         notification_groups: [{
-          key:"account",
+          key: "account",
           display: true,
-          default:['all'],
-          notifications: [
-            {
-              key: 'a_type_of_notification',
-              channels:[]
-            }
-          ]
+          default: ['all'],
+          notifications: [{
+            key: 'a_type_of_notification',
+            channels: []
+          }]
         }]
       }
     };
 
   }
-  static getValidUserSetting(id){
 
-    id = (_.isUndefined(id) || _.isNull(id))?spoofer.createRandomEmail():id;
+  static getValidUserSetting(id) {
+
+    id = (_.isUndefined(id) || _.isNull(id)) ? spoofer.createRandomEmail() : id;
 
     let a_iso8601 = timestamp.getISO8601();
 
@@ -53,78 +52,77 @@ class MockEntities {
       notifications: [{
           name: "six",
           receive: true
-      },
-      {
+        },
+        {
           name: "email",
           receive: false
-      },
-      {
+        },
+        {
           name: "sms",
           receive: false
-      },
-      {
+        },
+        {
           name: "slack",
           receive: false
-      },
-      {
+        },
+        {
           name: "skype",
           receive: false
-      },
-      {
+        },
+        {
           name: "ios",
           receive: false
-      }]
-    };
-
-  }
-
-  static getValidSNSMessage(message){
-
-    let default_message = {
-      event_type: this.getValidEventType(),
-      account: this.getTestAccountID(),
-      user:"system@sixcrm.com",
-      context:{
-        test:"this is a test"
-      }
-    };
-
-    message = (!_.isUndefined(message) && !_.isNull(message))?message:default_message;
-
-    return {
-      Records:[
-        {
-          EventSource: 'aws:sns',
-          EventVersion: '1.0',
-          EventSubscriptionArn: 'arn:aws:sns:us-east-1:068070110666:events:97b9686e-e835-4243-b453-1f80b39cb3bd',
-          Sns:{
-            Type: 'Notification',
-            MessageId: '71890333-00d2-5e4f-b9df-5036a0f6243a',
-            TopicArn: 'arn:aws:sns:us-east-1:068070110666:events',
-            Subject: null,
-            Message: JSON.stringify(message),
-            Timestamp: '2018-02-20T04:02:44.700Z',
-            SignatureVersion: '1',
-            Signature: 'IYaZ94s2hsjBXJ8E9eiXqLgXHXC/wqSQq2mTAAKeOY1kWXgr+28bC8t8oxEe2RZifk5cfN840vVEJFpc+fme6p4GyRZcIz99QrRkGAF6EwDxUyojl4FSvZEeX4BWJtMEQY0z0ORadMKoR5+T/gQ9m++k4DnfW9BeZvLK90ogA3fhN6mqFOUv/tKSkt3a9s4J173wikjr4qQwl9njzmJ5/rTqIu3Nezw0PhbZwg6N9d/L80+KN/a3yQ+4gaD/yrAFYddUwt4ZZ7hObh6XtPZufexWlVjxoy21FSqYvtUxPoIKLF/5sui67OFFL7a/YfL93luBDKY8EDUbQORS6r7XmQ==',
-            SigningCertUrl: 'https://sns.us-east-1.amazonaws.com/SimpleNotificationService-433026a4050d206028891664da859041.pem',
-            UnsubscribeUrl: 'https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:068070110666:events:97b9686e-e835-4243-b453-1f80b39cb3bd',
-            MessageAttributes: {}
-          }
         }
       ]
     };
 
   }
 
-  static arrayOfIds(max){
+  static getValidSNSMessage(message) {
 
-    max = (_.isUndefined(max) || _.isNull(max))?10:max;
+    let default_message = {
+      event_type: this.getValidEventType(),
+      account: this.getTestAccountID(),
+      user: "system@sixcrm.com",
+      context: {
+        test: "this is a test"
+      }
+    };
+
+    message = (!_.isUndefined(message) && !_.isNull(message)) ? message : default_message;
+
+    return {
+      Records: [{
+        EventSource: 'aws:sns',
+        EventVersion: '1.0',
+        EventSubscriptionArn: 'arn:aws:sns:us-east-1:068070110666:events:97b9686e-e835-4243-b453-1f80b39cb3bd',
+        Sns: {
+          Type: 'Notification',
+          MessageId: '71890333-00d2-5e4f-b9df-5036a0f6243a',
+          TopicArn: 'arn:aws:sns:us-east-1:068070110666:events',
+          Subject: null,
+          Message: JSON.stringify(message),
+          Timestamp: '2018-02-20T04:02:44.700Z',
+          SignatureVersion: '1',
+          Signature: 'IYaZ94s2hsjBXJ8E9eiXqLgXHXC/wqSQq2mTAAKeOY1kWXgr+28bC8t8oxEe2RZifk5cfN840vVEJFpc+fme6p4GyRZcIz99QrRkGAF6EwDxUyojl4FSvZEeX4BWJtMEQY0z0ORadMKoR5+T/gQ9m++k4DnfW9BeZvLK90ogA3fhN6mqFOUv/tKSkt3a9s4J173wikjr4qQwl9njzmJ5/rTqIu3Nezw0PhbZwg6N9d/L80+KN/a3yQ+4gaD/yrAFYddUwt4ZZ7hObh6XtPZufexWlVjxoy21FSqYvtUxPoIKLF/5sui67OFFL7a/YfL93luBDKY8EDUbQORS6r7XmQ==',
+          SigningCertUrl: 'https://sns.us-east-1.amazonaws.com/SimpleNotificationService-433026a4050d206028891664da859041.pem',
+          UnsubscribeUrl: 'https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:068070110666:events:97b9686e-e835-4243-b453-1f80b39cb3bd',
+          MessageAttributes: {}
+        }
+      }]
+    };
+
+  }
+
+  static arrayOfIds(max) {
+
+    max = (_.isUndefined(max) || _.isNull(max)) ? 10 : max;
 
     let arraycount = randomutilities.randomInt(1, max);
 
     let return_array = [];
 
-    for(let i = 0; i< arraycount; i++){
+    for (let i = 0; i < arraycount; i++) {
       return_array.push(uuidV4());
     }
 
@@ -132,9 +130,9 @@ class MockEntities {
 
   }
 
-  static getValidMerchantProviderSummaries(ids){
+  static getValidMerchantProviderSummaries(ids) {
 
-    ids = (_.isUndefined(ids) || _.isNull(ids))?this.arrayOfIds():ids;
+    ids = (_.isUndefined(ids) || _.isNull(ids)) ? this.arrayOfIds() : ids;
 
     return arrayutilities.map(ids, id => {
       return this.getValidMerchantProviderSummary(id);
@@ -142,20 +140,20 @@ class MockEntities {
 
   }
 
-  static getValidMerchantProviderSummary(id){
+  static getValidMerchantProviderSummary(id) {
 
     let a_iso8601 = timestamp.getISO8601();
 
     return {
-      id:this.getValidId(id),
-  		account:this.getTestAccountID(),
-  	  merchant_provider:uuidV4(),
-  		day: a_iso8601,
-  		count:randomutilities.randomInt(1,100),
-  		type:randomutilities.selectRandomFromArray(['new','recurring']),
-  		total:randomutilities.randomDouble(1.0, 100.00),
-  		created_at: a_iso8601,
-  		updated_at: a_iso8601
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      merchant_provider: uuidV4(),
+      day: a_iso8601,
+      count: randomutilities.randomInt(1, 100),
+      type: randomutilities.selectRandomFromArray(['new', 'recurring']),
+      total: randomutilities.randomDouble(1.0, 100.00),
+      created_at: a_iso8601,
+      updated_at: a_iso8601
     };
 
   }
@@ -163,13 +161,13 @@ class MockEntities {
   static getValidId(id) {
     return (!_.isUndefined(id) && !_.isNull(id)) ? id : uuidV4();
   }
-/* eslint-disable */
-  static getValidSchedule(ids, expanded){
-/* eslint-enable */
+  /* eslint-disable */
+  static getValidSchedule(ids, expanded) {
+    /* eslint-enable */
 
-    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded)) ? false : expanded;
 
-    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+    ids = (_.isUndefined(ids) || _.isNull(ids)) ? [uuidV4(), uuidV4(), uuidV4(), uuidV4()] : ids;
 
     let start = 0;
 
@@ -183,9 +181,9 @@ class MockEntities {
 
       return {
         product: this.getValidProduct(id, true),
-        price:randomutilities.randomDouble(1.00, 100.00, 2),
-        start:this_start,
-        end:end,
+        price: randomutilities.randomDouble(1.00, 100.00, 2),
+        start: this_start,
+        end: end,
         period: period
       }
 
@@ -193,42 +191,42 @@ class MockEntities {
 
   }
 
-  static getValidProductScheduleGroups(ids, expanded){
+  static getValidProductScheduleGroups(ids, expanded) {
 
-    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded)) ? false : expanded;
 
     let product_schedules = this.getValidProductSchedules(ids);
 
     return arrayutilities.map(product_schedules, product_schedule => {
       return {
-        quantity: randomutilities.randomInt(1,10),
-        product_schedule: (expanded)?product_schedule:product_schedule.id
+        quantity: randomutilities.randomInt(1, 10),
+        product_schedule: (expanded) ? product_schedule : product_schedule.id
       }
     });
 
   }
 
-  static getValidTransactionProducts(ids, expanded){
+  static getValidTransactionProducts(ids, expanded) {
 
-    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded)) ? false : expanded;
 
     let products = this.getValidProducts(ids);
 
     return arrayutilities.map(products, product => {
       return {
-        quantity: randomutilities.randomInt(1,10),
-        product: (expanded)?product:product.id,
+        quantity: randomutilities.randomInt(1, 10),
+        product: (expanded) ? product : product.id,
         amount: randomutilities.randomDouble(1.00, 100.00)
       }
     });
 
   }
 
-  static getValidProductSchedules(ids, expanded){
+  static getValidProductSchedules(ids, expanded) {
 
-    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded)) ? false : expanded;
 
-    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+    ids = (_.isUndefined(ids) || _.isNull(ids)) ? [uuidV4(), uuidV4(), uuidV4(), uuidV4()] : ids;
 
     return arrayutilities.map(ids, (id) => {
       return this.getValidProductSchedule(id, expanded);
@@ -236,9 +234,9 @@ class MockEntities {
 
   }
 
-  static getValidProducts(ids){
+  static getValidProducts(ids) {
 
-    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+    ids = (_.isUndefined(ids) || _.isNull(ids)) ? [uuidV4(), uuidV4(), uuidV4(), uuidV4()] : ids;
 
     return arrayutilities.map(ids, (id) => {
       return this.getValidProduct(id);
@@ -246,13 +244,13 @@ class MockEntities {
 
   }
 
-  static getValidProductSchedule(id, expanded){
+  static getValidProductSchedule(id, expanded) {
 
-    expanded = (_.isUndefined(expanded) || _.isNull(expanded))?false:expanded;
+    expanded = (_.isUndefined(expanded) || _.isNull(expanded)) ? false : expanded;
 
     let schedule = this.getValidSchedule(null, expanded);
 
-    return  {
+    return {
       id: this.getValidId(id),
       name: randomutilities.createRandomString(20),
       account: this.getTestAccountID(),
@@ -264,43 +262,45 @@ class MockEntities {
 
   }
 
-  static getValidMessage(id){
+  static getValidMessage(id) {
 
     return {
-      MessageId:"someMessageID",
-      ReceiptHandle:"SomeReceiptHandle",
-      Body: JSON.stringify({id: this.getValidId(id)}),
-      MD5OfBody:"SomeMD5"
+      MessageId: "someMessageID",
+      ReceiptHandle: "SomeReceiptHandle",
+      Body: JSON.stringify({
+        id: this.getValidId(id)
+      }),
+      MD5OfBody: "SomeMD5"
     };
 
   }
 
-  static getValidMerchantProviderGateway(processor){
+  static getValidMerchantProviderGateway(processor) {
 
-    processor = (_.isUndefined(processor) || _.isNull(processor))?'NMI':processor;
+    processor = (_.isUndefined(processor) || _.isNull(processor)) ? 'NMI' : processor;
 
     let gateways = {
       'NMI': {
-        name:"NMI",
-        username:randomutilities.createRandomString(20),
-        password:randomutilities.createRandomString(20),
-        processor_id:randomutilities.randomInt(1,100).toString()
+        name: "NMI",
+        username: randomutilities.createRandomString(20),
+        password: randomutilities.createRandomString(20),
+        processor_id: randomutilities.randomInt(1, 100).toString()
       },
-      'Innovio':{
+      'Innovio': {
         name: 'Innovio',
-        username:randomutilities.createRandomString(20),
-        password:randomutilities.createRandomString(20),
+        username: randomutilities.createRandomString(20),
+        password: randomutilities.createRandomString(20),
         site_id: '0',
         merchant_account_id: '100',
         product_id: '1001'
       },
-      'Test':{
+      'Test': {
         name: 'Test',
-        username:'demo',
-        password:'password',
-        processor_id:'0'
+        username: 'demo',
+        password: 'password',
+        processor_id: '0'
       },
-      'Stripe':{
+      'Stripe': {
         name: 'Stripe',
         api_key: randomutilities.createRandomString(20)
       }
@@ -310,24 +310,24 @@ class MockEntities {
 
   }
 
-  static getValidMerchantProviderProcessor(processor){
+  static getValidMerchantProviderProcessor(processor) {
 
-    processor = (_.isUndefined(processor) || _.isNull(processor))?'NMI':processor;
+    processor = (_.isUndefined(processor) || _.isNull(processor)) ? 'NMI' : processor;
 
     let processors = {
       'NMI': {
         name: 'NMA',
         id: 'deprecated?'
       },
-      'Innovio':{
+      'Innovio': {
         name: 'Humbolt',
         id: 'deprecated?'
       },
-      'Test':{
+      'Test': {
         name: 'Test',
         id: 'deprecated?'
       },
-      'Stripe':{
+      'Stripe': {
         name: 'Stripe',
         id: 'deprecated?'
       }
@@ -337,9 +337,9 @@ class MockEntities {
 
   }
 
-  static getValidMerchantProviderGroups(ids){
+  static getValidMerchantProviderGroups(ids) {
 
-    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4()]:ids;
+    ids = (_.isUndefined(ids) || _.isNull(ids)) ? [uuidV4()] : ids;
 
     let return_object = {};
 
@@ -351,56 +351,56 @@ class MockEntities {
 
   }
 
-  static getValidMerchantProvider(id, processor){
+  static getValidMerchantProvider(id, processor) {
 
     return {
       id: this.getValidId(id),
-  		account:this.getTestAccountID(),
-  		name:randomutilities.createRandomString(20),
-  		processor:this.getValidMerchantProviderProcessor(processor),
-  		processing:{
-  			monthly_cap: 50000.00,
-  			discount_rate:0.9,
-  			transaction_fee:0.06,
-  			reserve_rate: 0.5,
-  			maximum_chargeback_ratio:0.17,
-  			transaction_counts:{
-  				daily:30,
-  				monthly:30,
-  				weekly:30
-  			}
-  		},
-  		enabled:true,
-  		gateway: this.getValidMerchantProviderGateway(processor),
-  		allow_prepaid:true,
-  		accepted_payment_methods:["Visa", "Mastercard", "American Express"],
-  		customer_service:{
-  			email:"customer.service@mid.com",
-  			url:"http://mid.com",
-  			description:randomutilities.createRandomString(20)
-  		},
-  		created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
+      account: this.getTestAccountID(),
+      name: randomutilities.createRandomString(20),
+      processor: this.getValidMerchantProviderProcessor(processor),
+      processing: {
+        monthly_cap: 50000.00,
+        discount_rate: 0.9,
+        transaction_fee: 0.06,
+        reserve_rate: 0.5,
+        maximum_chargeback_ratio: 0.17,
+        transaction_counts: {
+          daily: 30,
+          monthly: 30,
+          weekly: 30
+        }
+      },
+      enabled: true,
+      gateway: this.getValidMerchantProviderGateway(processor),
+      allow_prepaid: true,
+      accepted_payment_methods: ["Visa", "Mastercard", "American Express"],
+      customer_service: {
+        email: "customer.service@mid.com",
+        url: "http://mid.com",
+        description: randomutilities.createRandomString(20)
+      },
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     };
 
   }
 
-  static getValidAccessKey(id){
+  static getValidAccessKey(id) {
 
     return {
       id: this.getValidId(id),
-      account:this.getTestAccountID(),
-      name:randomutilities.createRandomString(10),
+      account: this.getTestAccountID(),
+      name: randomutilities.createRandomString(10),
       notes: 'This is a mock access key.',
       access_key: this.getValidAccessKeyString(),
       secret_key: this.getValidSecretKeyString(),
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
 
   }
 
-  static getValidAccessKeyString(){
+  static getValidAccessKeyString() {
 
     let accessKeyHelperController = global.SixCRM.routes.include('helpers', 'accesskey/AccessKey.js');
 
@@ -408,7 +408,7 @@ class MockEntities {
 
   }
 
-  static getValidSecretKeyString(){
+  static getValidSecretKeyString() {
 
     let accessKeyHelperController = global.SixCRM.routes.include('helpers', 'accesskey/AccessKey.js');
 
@@ -416,20 +416,20 @@ class MockEntities {
 
   }
 
-  static getValidTrackingNumber(vendor){
+  static getValidTrackingNumber(vendor) {
 
     let vendor_tracking_numbers = {
-      'Test':() => randomutilities.createRandomString(20)
+      'Test': () => randomutilities.createRandomString(20)
     }
 
     return vendor_tracking_numbers[vendor]();
 
   }
 
-  static getValidTransactionProduct(id, extended){
+  static getValidTransactionProduct(id, extended) {
 
-    extended = (_.isUndefined(extended) || _.isNull(extended))?false:extended;
-    let product = (extended)?this.getValidProduct(id):this.getValidId(id);
+    extended = (_.isUndefined(extended) || _.isNull(extended)) ? false : extended;
+    let product = (extended) ? this.getValidProduct(id) : this.getValidId(id);
 
     return {
       product: product,
@@ -439,32 +439,32 @@ class MockEntities {
 
   }
 
-  static getValidCustomer(id){
+  static getValidCustomer(id) {
 
     let firstname = spoofer.createRandomName('first');
     let lastname = spoofer.createRandomName('last');
-    let email = firstname+'.'+lastname+'@'+spoofer.createDomainName();
+    let email = firstname + '.' + lastname + '@' + spoofer.createDomainName();
 
     let customer = {
       id: this.getValidId(id),
-      account:this.getTestAccountID(),
+      account: this.getTestAccountID(),
       email: email,
       firstname: firstname,
       lastname: lastname,
       phone: spoofer.createRandomPhoneNumber(),
-      address:{
-        line1:spoofer.createRandomAddress('line1'),
-        city:spoofer.createRandomAddress('city'),
-        state:spoofer.createRandomAddress('state'),
-        zip:spoofer.createRandomAddress('zip'),
-        country:spoofer.createRandomAddress('country')
+      address: {
+        line1: spoofer.createRandomAddress('line1'),
+        city: spoofer.createRandomAddress('city'),
+        state: spoofer.createRandomAddress('state'),
+        zip: spoofer.createRandomAddress('zip'),
+        country: spoofer.createRandomAddress('country')
       },
-      creditcards:[uuidV4()],
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
+      creditcards: [uuidV4()],
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
 
-    if(randomutilities.randomBoolean()){
+    if (randomutilities.randomBoolean()) {
       customer.address.line2 = spoofer.createRandomAddress('line2');
     }
 
@@ -472,60 +472,60 @@ class MockEntities {
 
   }
 
-  static getValidProduct(id){
+  static getValidProduct(id) {
 
     return {
       id: this.getValidId(id),
-      name:randomutilities.createRandomString(20),
-      sku:randomutilities.createRandomString(20),
-      ship:randomutilities.randomBoolean(),
-      shipping_delay:randomutilities.randomInt(60,9999999),
-      fulfillment_provider:uuidV4(),
-      default_price:randomutilities.randomDouble(1.0, 300.0, 2),
-      attributes:{
-        images:[{
-          path:spoofer.createURL(),
-          dimensions:{
-            width:randomutilities.randomInt(10,1000),
-            height:randomutilities.randomInt(10,1000)
+      name: randomutilities.createRandomString(20),
+      sku: randomutilities.createRandomString(20),
+      ship: randomutilities.randomBoolean(),
+      shipping_delay: randomutilities.randomInt(60, 9999999),
+      fulfillment_provider: uuidV4(),
+      default_price: randomutilities.randomDouble(1.0, 300.0, 2),
+      attributes: {
+        images: [{
+          path: spoofer.createURL(),
+          dimensions: {
+            width: randomutilities.randomInt(10, 1000),
+            height: randomutilities.randomInt(10, 1000)
           },
-          format:'jpg',
-          name:randomutilities.createRandomString(randomutilities.randomInt(10, 40)),
-          description:randomutilities.createRandomString(randomutilities.randomInt(10, 300)),
-          default_image:randomutilities.randomBoolean()
+          format: 'jpg',
+          name: randomutilities.createRandomString(randomutilities.randomInt(10, 40)),
+          description: randomutilities.createRandomString(randomutilities.randomInt(10, 300)),
+          default_image: randomutilities.randomBoolean()
         }],
-        weight:{
+        weight: {
           unitofmeasurement: 'kilos',
           units: 100
         },
-        dimensions:{
-          height:{
+        dimensions: {
+          height: {
             unitofmeasurement: 'centimeters',
-            units: randomutilities.randomInt(1,100)
+            units: randomutilities.randomInt(1, 100)
           },
-          width:{
+          width: {
             unitofmeasurement: 'centimeters',
-            units: randomutilities.randomInt(1,100)
+            units: randomutilities.randomInt(1, 100)
           },
-          length:{
+          length: {
             unitofmeasurement: 'centimeters',
-            units: randomutilities.randomInt(1,100)
+            units: randomutilities.randomInt(1, 100)
           }
         }
       },
-      account:this.getTestAccountID(),
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
+      account: this.getTestAccountID(),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     };
 
   }
 
 
-  static getTestAccountID(){
+  static getTestAccountID() {
     return "d3fa3bf3-7824-49f4-8261-87674482bf1c";
   }
 
-  static getValidFulfillmentProviderProvider(type){
+  static getValidFulfillmentProviderProvider(type) {
 
     let providers = {
       Hashtag: {
@@ -533,21 +533,21 @@ class MockEntities {
         username: randomutilities.createRandomString(20),
         password: randomutilities.createRandomString(20),
         threepl_customer_id: randomutilities.randomInt(),
-        threepl_key: '{'+uuidV4()+'}'
+        threepl_key: '{' + uuidV4() + '}'
       },
-      ThreePL:{
+      ThreePL: {
         name: 'ThreePL',
         username: randomutilities.createRandomString(20),
         password: randomutilities.createRandomString(20),
         threepl_customer_id: randomutilities.randomInt(),
-        threepl_key: '{'+uuidV4()+'}',
+        threepl_key: '{' + uuidV4() + '}',
         threepl_id: randomutilities.randomInt(),
         threepl_facility_id: randomutilities.randomInt()
       },
       Test: {
         name: 'Test'
       },
-      ShipStation:{
+      ShipStation: {
         name: 'ShipStation',
         api_key: randomutilities.createRandomString(20),
         api_secret: randomutilities.createRandomString(20)
@@ -558,56 +558,56 @@ class MockEntities {
 
   }
 
-  static getValidFulfillmentProvider(id, type){
+  static getValidFulfillmentProvider(id, type) {
 
-    type = (_.isUndefined(type) || !_.contains(['ShipStation', 'Hashtag', 'ThreePL', 'Test'], type))?'Hashtag':type;
+    type = (_.isUndefined(type) || !_.contains(['ShipStation', 'Hashtag', 'ThreePL', 'Test'], type)) ? 'Hashtag' : type;
 
     let provider = this.getValidFulfillmentProviderProvider(type);
 
     return {
       id: this.getValidId(id),
-  		account: this.getTestAccountID(),
+      account: this.getTestAccountID(),
       name: randomutilities.createRandomString(20),
-  		provider: provider,
-  		created_at: timestamp.getISO8601(),
-  		updated_at:timestamp.getISO8601()
+      provider: provider,
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     };
 
   }
 
   static getValidHistoryElement() {
 
-      let random_status = ['unknown', 'intransit', 'delivered', 'returned'];
+    let random_status = ['unknown', 'intransit', 'delivered', 'returned'];
 
-      return {
-          created_at: timestamp.getISO8601(),
-          status: randomutilities.selectRandomFromArray(random_status),
-          detail: randomutilities.createRandomString(20)
-      }
+    return {
+      created_at: timestamp.getISO8601(),
+      status: randomutilities.selectRandomFromArray(random_status),
+      detail: randomutilities.createRandomString(20)
+    }
   }
 
-  static getValidShippingReceipt(id){
+  static getValidShippingReceipt(id) {
 
     return {
       id: this.getValidId(id),
       account: this.getTestAccountID(),
-      tracking:{
+      tracking: {
         carrier: 'UPS',
         id: randomutilities.createRandomString(10)
       },
-      history: [ this.getValidHistoryElement() ],
-      status:"intransit",
+      history: [this.getValidHistoryElement()],
+      status: "intransit",
       fulfillment_provider: uuidV4(),
       fulfillment_provider_reference: uuidV4(),
       created_at: timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
+      updated_at: timestamp.getISO8601()
     };
 
   }
 
-  static getValidTransactions(ids){
+  static getValidTransactions(ids) {
 
-    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(),uuidV4(),uuidV4(),uuidV4()]:ids;
+    ids = (_.isUndefined(ids) || _.isNull(ids)) ? [uuidV4(), uuidV4(), uuidV4(), uuidV4()] : ids;
 
     return arrayutilities.map(ids, (id) => {
       return this.getValidTransaction(id);
@@ -615,26 +615,26 @@ class MockEntities {
 
   }
 
-  static getValidTransaction(id){
+  static getValidTransaction(id) {
 
     return {
       id: this.getValidId(id),
       amount: 14.99,
-      alias:"T"+randomutilities.createRandomString(9),
+      alias: "T" + randomutilities.createRandomString(9),
       account: this.getTestAccountID(),
       rebill: uuidV4(),
       processor_response: "{\"message\":\"Success\",\"result\":{\"response\":\"1\",\"responsetext\":\"SUCCESS\",\"authcode\":\"123456\",\"transactionid\":\"3448894419\",\"avsresponse\":\"N\",\"cvvresponse\":\"\",\"orderid\":\"\",\"type\":\"sale\",\"response_code\":\"100\"}}",
       merchant_provider: uuidV4(),
-      products:this.getValidTransactionProducts(null, true),
-      type:"sale",
-      result:"success",
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
+      products: this.getValidTransactionProducts(null, true),
+      type: "sale",
+      result: "success",
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     };
 
   }
 
-  static getValidRebill(id){
+  static getValidRebill(id) {
 
     return {
       bill_at: timestamp.getISO8601(),
@@ -644,43 +644,43 @@ class MockEntities {
       product_schedules: [uuidV4()],
       products: this.getValidTransactionProducts(null, true),
       amount: randomutilities.randomDouble(1, 200, 2),
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     };
 
   }
 
-  static getValidSessionAlias(){
-    return 'S'+randomutilities.createRandomString(9);
+  static getValidSessionAlias() {
+    return 'S' + randomutilities.createRandomString(9);
   }
 
-  static getValidAffiliates(){
+  static getValidAffiliates() {
 
     return {
-      affiliate: randomutilities.createRandomString(randomutilities.randomInt(5,40)),
-      subaffiliate_1:	randomutilities.createRandomString(randomutilities.randomInt(5,40)),
-      subaffiliate_2:	randomutilities.createRandomString(randomutilities.randomInt(5,40)),
-      subaffiliate_3:	randomutilities.createRandomString(randomutilities.randomInt(5,40)),
-      subaffiliate_4:	randomutilities.createRandomString(randomutilities.randomInt(5,40)),
-      subaffiliate_5:	randomutilities.createRandomString(randomutilities.randomInt(5,40)),
+      affiliate: randomutilities.createRandomString(randomutilities.randomInt(5, 40)),
+      subaffiliate_1: randomutilities.createRandomString(randomutilities.randomInt(5, 40)),
+      subaffiliate_2: randomutilities.createRandomString(randomutilities.randomInt(5, 40)),
+      subaffiliate_3: randomutilities.createRandomString(randomutilities.randomInt(5, 40)),
+      subaffiliate_4: randomutilities.createRandomString(randomutilities.randomInt(5, 40)),
+      subaffiliate_5: randomutilities.createRandomString(randomutilities.randomInt(5, 40)),
     };
 
   }
 
-  static getValidRedshiftObjectAffiliates(){
+  static getValidRedshiftObjectAffiliates() {
 
     let return_object = {};
 
-    let affiliate = (randomutilities.randomBoolean())?uuidV4():null;
+    let affiliate = (randomutilities.randomBoolean()) ? uuidV4() : null;
 
-    if(!_.isNull(affiliate)){
+    if (!_.isNull(affiliate)) {
       return_object.affiliate = affiliate;
-      let sub_affiliate_fields = ['subaffiliate_1','subaffiliate_2','subaffiliate_3','subaffiliate_4','subaffiliate_5','cid'];
+      let sub_affiliate_fields = ['subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
 
       arrayutilities.map(sub_affiliate_fields, sub_affiliate_field => {
-        let sub_affiliate_field_value = (randomutilities.randomBoolean())?uuidV4():null;
+        let sub_affiliate_field_value = (randomutilities.randomBoolean()) ? uuidV4() : null;
 
-        if(!_.isNull(sub_affiliate_field_value)){
+        if (!_.isNull(sub_affiliate_field_value)) {
           return_object[sub_affiliate_field] = sub_affiliate_field_value;
         }
       });
@@ -690,37 +690,37 @@ class MockEntities {
 
   }
 
-  static getValidSession(id){
+  static getValidSession(id) {
 
     let product_schedules = this.getValidProductSchedules();
 
     return {
       id: this.getValidId(id),
-      account:this.getTestAccountID(),
+      account: this.getTestAccountID(),
       alias: this.getValidSessionAlias(),
       customer: uuidV4(),
-      campaign:uuidV4(),
+      campaign: uuidV4(),
       product_schedules: arrayutilities.map(product_schedules, (product_schedule) => product_schedule.id),
       watermark: this.getValidWatermark(product_schedules),
       completed: randomutilities.randomBoolean(),
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601(),
-      affiliate:	uuidV4(),
-      subaffiliate_1:	uuidV4(),
-      subaffiliate_2:	uuidV4(),
-      subaffiliate_3:	uuidV4(),
-      subaffiliate_4:	uuidV4(),
-      subaffiliate_5:	uuidV4(),
-      cid:uuidV4()
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601(),
+      affiliate: uuidV4(),
+      subaffiliate_1: uuidV4(),
+      subaffiliate_2: uuidV4(),
+      subaffiliate_3: uuidV4(),
+      subaffiliate_4: uuidV4(),
+      subaffiliate_5: uuidV4(),
+      cid: uuidV4()
     };
 
   }
 
-  static getValidWatermark(product_schedules, products){
+  static getValidWatermark(product_schedules, products) {
 
     let return_object = {};
 
-    if(arrayutilities.nonEmpty(product_schedules)){
+    if (arrayutilities.nonEmpty(product_schedules)) {
 
       return_object.product_schedules = arrayutilities.map(product_schedules, product_schedule => {
         return this.getValidProductScheduleGroup(product_schedule);
@@ -728,7 +728,7 @@ class MockEntities {
 
     }
 
-    if(arrayutilities.nonEmpty(products)){
+    if (arrayutilities.nonEmpty(products)) {
 
       return_object.products = arrayutilities.map(products, product => {
         return this.getValidProductGroup(product);
@@ -740,10 +740,10 @@ class MockEntities {
 
   }
 
-  static getValidProductScheduleGroup(product_schedule, quantity){
+  static getValidProductScheduleGroup(product_schedule, quantity) {
 
-    product_schedule = (_.isUndefined(product_schedule) || _.isNull(product_schedule))?this.getValidProductSchedule():product_schedule;
-    quantity = (_.isUndefined(quantity) || _.isNull(quantity))?randomutilities.randomInt(1,10):quantity;
+    product_schedule = (_.isUndefined(product_schedule) || _.isNull(product_schedule)) ? this.getValidProductSchedule() : product_schedule;
+    quantity = (_.isUndefined(quantity) || _.isNull(quantity)) ? randomutilities.randomInt(1, 10) : quantity;
 
     return {
       product_schedule: product_schedule,
@@ -752,11 +752,11 @@ class MockEntities {
 
   }
 
-  static getValidProductGroup(product, quantity, price){
+  static getValidProductGroup(product, quantity, price) {
 
-    product = (_.isUndefined(product) || _.isNull(product))?this.getValidProduct():product;
-    price = (_.isUndefined(price) || _.isNull(price))?randomutilities.randomDouble(1.0,100.00):price;
-    quantity = (_.isUndefined(quantity) || _.isNull(quantity))?randomutilities.randomInt(1,10):quantity;
+    product = (_.isUndefined(product) || _.isNull(product)) ? this.getValidProduct() : product;
+    price = (_.isUndefined(price) || _.isNull(price)) ? randomutilities.randomDouble(1.0, 100.00) : price;
+    quantity = (_.isUndefined(quantity) || _.isNull(quantity)) ? randomutilities.randomInt(1, 10) : quantity;
 
     return {
       product: product,
@@ -766,12 +766,12 @@ class MockEntities {
 
   }
 
-  static getValidTransactionCustomer(){
+  static getValidTransactionCustomer() {
 
     let phone = spoofer.createRandomPhoneNumber();
     let firstname = spoofer.createRandomName('first');
     let lastname = spoofer.createRandomName('last');
-    let email = firstname+'.'+lastname+'@'+spoofer.createDomainName();
+    let email = firstname + '.' + lastname + '@' + spoofer.createDomainName();
     let address = this.getValidAddress();
 
     return {
@@ -785,18 +785,18 @@ class MockEntities {
 
   }
 
-  static getValidAddress(){
+  static getValidAddress() {
 
     let address = {
-      line1:spoofer.createRandomAddress('line1'),
-      city:spoofer.createRandomAddress('city'),
-      state:spoofer.createRandomAddress('state'),
-      zip:spoofer.createRandomAddress('zip'),
+      line1: spoofer.createRandomAddress('line1'),
+      city: spoofer.createRandomAddress('city'),
+      state: spoofer.createRandomAddress('state'),
+      zip: spoofer.createRandomAddress('zip'),
       //country:spoofer.createRandomAddress('country')
-      country:'US'
+      country: 'US'
     };
 
-    if(randomutilities.randomBoolean()){
+    if (randomutilities.randomBoolean()) {
       address.line2 = spoofer.createRandomAddress('line2');
     }
 
@@ -804,84 +804,84 @@ class MockEntities {
 
   }
 
-  static getValidCreditCardProperties(){
+  static getValidCreditCardProperties() {
 
-      return {
-        binnumber: 411111,
-        brand: 'Visa',
-        bank: 'Some Bank',
-        type: 'Classic',
-        level: 'level',
-        country: 'US',
-        info: '',
-        country_iso: 'USA',
-        country2_iso: 'USA',
-        country3_iso: 'USA',
-        webpage: 'www.bankofamerica.com',
-        phone: '15032423612'
-      };
+    return {
+      binnumber: 411111,
+      brand: 'Visa',
+      bank: 'Some Bank',
+      type: 'Classic',
+      level: 'level',
+      country: 'US',
+      info: '',
+      country_iso: 'USA',
+      country2_iso: 'USA',
+      country3_iso: 'USA',
+      webpage: 'www.bankofamerica.com',
+      phone: '15032423612'
+    };
 
   }
 
-  static getValidTransactionCreditCard(name, address, type){
+  static getValidTransactionCreditCard(name, address, type) {
 
     let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
 
-    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type))?type:randomutilities.selectRandomFromArray(creditcard_types);
+    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);
 
-    name = (!_.isUndefined(name) && !_.isNull(name))?name:spoofer.createRandomName('full');
+    name = (!_.isUndefined(name) && !_.isNull(name)) ? name : spoofer.createRandomName('full');
 
-    address = (!_.isUndefined(address) && !_.isNull(address))?address:this.getValidAddress();
+    address = (!_.isUndefined(address) && !_.isNull(address)) ? address : this.getValidAddress();
 
     return {
       name: name,
       number: this.getValidCreditCardNumber(type),
-      expiration:this.getValidCreditCardExpiration(),
+      expiration: this.getValidCreditCardExpiration(),
       ccv: this.getValidCreditCardCCV(type),
       address: address
     };
 
   }
 
-  static getValidCreditCardNumber(type){
+  static getValidCreditCardNumber(type) {
 
     du.debug('Get Valid CreditCard Numbers');
 
     let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
 
-    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type))?type:randomutilities.selectRandomFromArray(creditcard_types);
+    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);
 
     return creditcardgenerator.GenCC(type).shift();
 
   }
 
-  static getValidCreditCardExpiration(){
+  static getValidCreditCardExpiration() {
 
     du.debug('Get Valid CreditCard Expiration');
 
-    let expiration_month = randomutilities.randomInt(1,12).toString();
+    let expiration_month = randomutilities.randomInt(1, 12).toString();
 
-    if(expiration_month.length == 1){
-      expiration_month = '0'+expiration_month;
+    if (expiration_month.length == 1) {
+      expiration_month = '0' + expiration_month;
     }
 
     let current_year = parseInt(timestamp.getYear());
 
-    let expiration_year = randomutilities.randomInt(current_year, (current_year+randomutilities.randomInt(1,5))).toString();
+    let expiration_year = randomutilities.randomInt(current_year, (current_year + randomutilities.randomInt(1, 5))).toString();
 
-    return expiration_month+'/'+expiration_year;
+    return expiration_month + '/' + expiration_year;
 
   }
 
-  static getValidCreditCardCCV(type){
+  static getValidCreditCardCCV(type) {
 
     du.debug('Get Valid CreditCard CCV');
 
     let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
 
-    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type))?type:randomutilities.selectRandomFromArray(creditcard_types);
+    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);
 
-    if(type == 'Amex'){
+    if (type == 'Amex') {
 
       return randomutilities.randomInt(1001, 9999).toString();
 
@@ -891,7 +891,7 @@ class MockEntities {
 
   }
 
-  static getValidCreditCard(id){
+  static getValidCreditCard(id) {
     const card = this.getValidPlaintextCreditCard(id);
 
     card.number = encryptionutilities.encryptAES256(card.id, card.number);
@@ -899,53 +899,56 @@ class MockEntities {
     return card;
   }
 
-  static getValidPlaintextCreditCard(id){
+  static getValidPlaintextCreditCard(id) {
     const number = this.getValidCreditCardNumber();
     const last_four = number.slice(-4);
 
     return {
-        id: this.getValidId(id),
-        account: this.getTestAccountID(),
-        customers: [uuidV4()],
-        address: this.getValidAddress(),
-        number,
-        last_four,
-        ccv: this.getValidCreditCardCCV(),
-        expiration: this.getValidCreditCardExpiration(),
-        name: spoofer.createRandomName('full'),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      customers: [uuidV4()],
+      address: this.getValidAddress(),
+      number,
+      last_four,
+      ccv: this.getValidCreditCardCCV(),
+      expiration: this.getValidCreditCardExpiration(),
+      name: spoofer.createRandomName('full'),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
 
   static getValidCustomerNotes(id) {
 
     return {
-        id: this.getValidId(id),
-        account: this.getTestAccountID(),
-        customer: uuidV4(),
-        user:spoofer.createRandomEmail(),
-        body: randomutilities.createRandomString(20),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      customer: uuidV4(),
+      user: spoofer.createRandomEmail(),
+      body: randomutilities.createRandomString(20),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
-	/* eslint-disable */
+  /* eslint-disable */
 
-  static getValidMerchantProviderConfiguration(ids){
+  static getValidMerchantProviderConfiguration(ids) {
 
-    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(), uuidV4()]:ids;
+    ids = (_.isUndefined(ids) || _.isNull(ids)) ? [uuidV4(), uuidV4()] : ids;
 
     return arrayutilities.map(ids, id => {
-      return {id: uuidV4(), distribution: randomutilities.randomDouble(0.0, 1.0)};
+      return {
+        id: uuidV4(),
+        distribution: randomutilities.randomDouble(0.0, 1.0)
+      };
     });
-		/* eslint-enable */
+    /* eslint-enable */
 
   }
 
   static getValidMerchantProviderGroup(id, merchant_provider_configuration) {
 
-    merchant_provider_configuration = (_.isUndefined(merchant_provider_configuration) || _.isNull(merchant_provider_configuration))?this.getValidMerchantProviderConfiguration():merchant_provider_configuration;
+    merchant_provider_configuration = (_.isUndefined(merchant_provider_configuration) || _.isNull(merchant_provider_configuration)) ? this.getValidMerchantProviderConfiguration() : merchant_provider_configuration;
 
     return {
       id: this.getValidId(id),
@@ -961,105 +964,105 @@ class MockEntities {
   static getValidNotification(id) {
 
     return {
-        id: this.getValidId(id),
-        user: spoofer.createRandomEmail(),
-        action: randomutilities.createRandomString(10),
-        account: this.getTestAccountID(),
-        title: randomutilities.createRandomString(10),
-        type: randomutilities.createRandomString(10),
-        category: randomutilities.createRandomString(10),
-        body: randomutilities.createRandomString(20),
-        expires_at: timestamp.getISO8601(),
-        read_at: timestamp.getISO8601(),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: this.getValidId(id),
+      user: spoofer.createRandomEmail(),
+      action: randomutilities.createRandomString(10),
+      account: this.getTestAccountID(),
+      title: randomutilities.createRandomString(10),
+      type: randomutilities.createRandomString(10),
+      category: randomutilities.createRandomString(10),
+      body: randomutilities.createRandomString(20),
+      expires_at: timestamp.getISO8601(),
+      read_at: timestamp.getISO8601(),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
 
   static getValidUserSigningString(id) {
 
     return {
-        id: this.getValidId(id),
-        user: spoofer.createRandomEmail(),
-        name: spoofer.createRandomName('full'),
-        signing_string: randomutilities.createRandomString(20),
-        used_at: timestamp.getISO8601(),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: this.getValidId(id),
+      user: spoofer.createRandomEmail(),
+      name: spoofer.createRandomName('full'),
+      signing_string: randomutilities.createRandomString(20),
+      used_at: timestamp.getISO8601(),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
 
   static getValidUser(id) {
 
-    id = (_.isUndefined(id) || _.isNull(id)) ? spoofer.createRandomEmail():id;
+    id = (_.isUndefined(id) || _.isNull(id)) ? spoofer.createRandomEmail() : id;
 
     return {
-        id: id,
-        name: spoofer.createRandomName('full'),
-        first_name: spoofer.createRandomName('first'),
-        last_name: spoofer.createRandomName('last'),
-        auth0_id: randomutilities.createRandomString(10),
-        active:randomutilities.randomBoolean(),
-        termsandconditions: randomutilities.createRandomString(10),
-        alias: randomutilities.createRandomString(40),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: id,
+      name: spoofer.createRandomName('full'),
+      first_name: spoofer.createRandomName('first'),
+      last_name: spoofer.createRandomName('last'),
+      auth0_id: randomutilities.createRandomString(10),
+      active: randomutilities.randomBoolean(),
+      termsandconditions: randomutilities.createRandomString(10),
+      alias: randomutilities.createRandomString(40),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
 
   static getValidUserACL(id) {
 
     return {
-        id: this.getValidId(id),
-        account: this.getTestAccountID(),
-        user: spoofer.createRandomEmail(),
-        role: uuidV4(),
-        pending: randomutilities.createRandomString(10),
-        termsandconditions: randomutilities.createRandomString(10),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      user: spoofer.createRandomEmail(),
+      role: uuidV4(),
+      pending: randomutilities.createRandomString(10),
+      termsandconditions: randomutilities.createRandomString(10),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
 
   static getValidAffiliate(id) {
 
     return {
-        id: this.getValidId(id),
-        account: this.getTestAccountID(),
-        name: spoofer.createRandomName('full'),
-        affiliate_id: randomutilities.createRandomString(10),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: this.getValidId(id),
+      account: this.getTestAccountID(),
+      name: spoofer.createRandomName('full'),
+      affiliate_id: randomutilities.createRandomString(10),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
 
   static getValidAccount(id) {
 
     return {
-        id: this.getValidId(id),
-        name: spoofer.createRandomName('full'),
-        active: randomutilities.randomBoolean(),
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: this.getValidId(id),
+      name: spoofer.createRandomName('full'),
+      active: randomutilities.randomBoolean(),
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
 
   static getValidRole(id) {
 
     return {
-        id: this.getValidId(id),
-        name: spoofer.createRandomName('full'),
-        active: randomutilities.randomBoolean(),
-        permissions: {
-          allow: [
-              randomutilities.createRandomString(10)
-          ],
-          deny: [
-              randomutilities.createRandomString(10)
-          ]
-        },
-        created_at: timestamp.getISO8601(),
-        updated_at: timestamp.getISO8601()
+      id: this.getValidId(id),
+      name: spoofer.createRandomName('full'),
+      active: randomutilities.randomBoolean(),
+      permissions: {
+        allow: [
+          randomutilities.createRandomString(10)
+        ],
+        deny: [
+          randomutilities.createRandomString(10)
+        ]
+      },
+      created_at: timestamp.getISO8601(),
+      updated_at: timestamp.getISO8601()
     }
   }
 
@@ -1075,9 +1078,9 @@ class MockEntities {
       period_end_at: timestamp.getISO8601(),
       available_at: timestamp.getISO8601(),
       detail: [{
-          created_at: timestamp.getISO8601(),
-          description: randomutilities.createRandomString(10),
-          amount: randomutilities.randomDouble(1, 200, 2)
+        created_at: timestamp.getISO8601(),
+        description: randomutilities.createRandomString(10),
+        amount: randomutilities.randomDouble(1, 200, 2)
       }],
       created_at: timestamp.getISO8601(),
       updated_at: timestamp.getISO8601()
@@ -1101,9 +1104,9 @@ class MockEntities {
 
   }
 
-  static getValidTrackers(ids){
+  static getValidTrackers(ids) {
 
-    ids = (_.isUndefined(ids) || _.isNull(ids))?[uuidV4(), uuidV4()]:ids;
+    ids = (_.isUndefined(ids) || _.isNull(ids)) ? [uuidV4(), uuidV4()] : ids;
 
     return arrayutilities.map(ids, id => {
       return this.getValidTracker(id);
@@ -1124,7 +1127,7 @@ class MockEntities {
       account: this.getTestAccountID(),
       type: randomutilities.selectRandomFromArray(tracker_types),
       event_type: [
-          randomutilities.selectRandomFromArray(event_type)
+        randomutilities.selectRandomFromArray(event_type)
       ],
       name: spoofer.createRandomName('full'),
       body: randomutilities.createRandomString(20),
@@ -1145,7 +1148,7 @@ class MockEntities {
       hostname: random_hostname,
       username: randomutilities.createRandomString(10),
       password: randomutilities.createRandomString(10),
-      port:randomutilities.randomInt(100,999),
+      port: randomutilities.randomInt(100, 999),
       from_email: spoofer.createRandomEmail(),
       from_name: spoofer.createRandomName('full'),
       created_at: timestamp.getISO8601(),
@@ -1153,9 +1156,9 @@ class MockEntities {
     }
   }
 
-  static getValidEmailTemplates(ids, event_type){
+  static getValidEmailTemplates(ids, event_type) {
 
-    ids = (!_.isUndefined(ids) && !_.isNull(ids))?ids:this.arrayOfIds();
+    ids = (!_.isUndefined(ids) && !_.isNull(ids)) ? ids : this.arrayOfIds();
 
     return arrayutilities.map(ids, id => {
       return this.getValidEmailTemplate(id, event_type);
@@ -1178,72 +1181,72 @@ class MockEntities {
     }
   }
 
-  static getValidEventType(event_type){
+  static getValidEventType(event_type) {
 
-    if(!_.isUndefined(event_type)){
+    if (!_.isUndefined(event_type)) {
 
-      let validates = mvu.validateModel(event_type, global.SixCRM.routes.path('model','definitions/eventtype.json'), null, false);
+      let validates = mvu.validateModel(event_type, global.SixCRM.routes.path('model', 'definitions/eventtype.json'), null, false);
 
-      if(validates){
+      if (validates) {
         return event_type;
       }
 
     }
 
-    return randomutilities.selectRandomFromArray(['click','lead','order','confirm']);
+    return randomutilities.selectRandomFromArray(['click', 'lead', 'order', 'confirm']);
 
   }
 
   static getValidProcessorResponse() {
-      return {
-          code: 'success',
-          result: {
-              message: "Success",
-              result:{
-                  response:"1",
-                  responsetext:"SUCCESS",
-                  authcode:"123456",
-                  transactionid:"3448894418",
-                  avsresponse:"N",
-                  cvvresponse:"",
-                  orderid:"",
-                  type:"sale",
-                  response_code:"100"
-              }
-          },
-          message: 'Some message'
-      }
+    return {
+      code: 'success',
+      result: {
+        message: "Success",
+        result: {
+          response: "1",
+          responsetext: "SUCCESS",
+          authcode: "123456",
+          transactionid: "3448894418",
+          avsresponse: "N",
+          cvvresponse: "",
+          orderid: "",
+          type: "sale",
+          response_code: "100"
+        }
+      },
+      message: 'Some message'
+    }
   }
 
-  static getValidTransactionPrototype(){
+  static getValidTransactionPrototype() {
 
-      let type = ["sale","refund","reverse"];
+    let type = ["sale", "refund", "reverse"];
 
-      return {
-          rebill: this.getValidRebill(),
-          amount: randomutilities.randomDouble(1, 200, 2),
-          type: randomutilities.selectRandomFromArray(type),
-          result: 'success',
-          processor_response: this.getValidProcessorResponse(),
-          merchant_provider: uuidV4(),
-          products: this.getValidTransactionProducts(null, true)
-      };
+    return {
+      rebill: this.getValidRebill(),
+      amount: randomutilities.randomDouble(1, 200, 2),
+      type: randomutilities.selectRandomFromArray(type),
+      result: 'success',
+      processor_response: this.getValidProcessorResponse(),
+      merchant_provider: uuidV4(),
+      products: this.getValidTransactionProducts(null, true)
+    };
   }
 
-  static getValidTransformedTransactionPrototype(){
+  static getValidTransformedTransactionPrototype() {
 
-      let type = ["sale","refund","reverse"];
+    let type = ["sale", "refund", "reverse"];
 
-      return {
-          rebill: uuidV4(),
-          processor_response: JSON.stringify(this.getValidProcessorResponse()),
-          amount: randomutilities.randomDouble(1, 200, 2),
-          products: this.getValidTransactionProducts(null, true),
-          alias: "T"+randomutilities.createRandomString(9),
-          merchant_provider: uuidV4(),
-          type: randomutilities.selectRandomFromArray(type),
-          result: 'success'
-      }
+    return {
+      rebill: uuidV4(),
+      processor_response: JSON.stringify(this.getValidProcessorResponse()),
+      amount: randomutilities.randomDouble(1, 200, 2),
+      products: this.getValidTransactionProducts(null, true),
+      alias: "T" + randomutilities.createRandomString(9),
+      merchant_provider: uuidV4(),
+      type: randomutilities.selectRandomFromArray(type),
+      result: 'success'
+    }
 
   }
 
