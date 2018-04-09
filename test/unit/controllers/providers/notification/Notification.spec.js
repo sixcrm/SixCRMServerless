@@ -6,6 +6,7 @@ const mockery = require('mockery');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 function getUserACLsFromAccount(){
 
@@ -453,148 +454,19 @@ function getValidUserSetting(){
 
 function getValidDefaultNotificationSettings(){
 
-  return {
-    notification_groups: [
-      { key: 'account',
-         name: 'Account',
-         description: 'Account related notifications',
-         display: true,
-         notifications: [
-           {
-             key: 'invitation_sent',
-             description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
-             default: true,
-             name: 'Invitation Sent'
-           },
-           {
-             key: 'invitation_accepted',
-             description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
-             default: true,
-             name: 'Invitation Accepted'
-           }
-         ]
-       },
-       { key: 'crm',
-         name: 'CRM',
-         description: 'CRM related notifications',
-         display: true,
-         notifications:[
-           { key: 'lead',
-              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
-              default: true,
-              name: 'Lead' },
-            { key: 'order',
-              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
-              default: true,
-              name: 'Order' },
-            { key: 'upsell',
-              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
-              default: true,
-              name: 'Upsell' },
-            { key: 'fail',
-              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
-              default: true,
-              name: 'Fail' },
-            { key: 'cancellation',
-              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
-              default: true,
-              name: 'Cancellation' },
-            { key: 'rebill',
-              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
-              default: true,
-              name: 'Rebill' },
-            { key: 'mid',
-              description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.',
-              default: true,
-              name: 'Merchant Processor'
-            }
-          ]
-        }
-      ]
-    };
+  return global.SixCRM.routes.include('model', 'general/default_notification_settings.json');
 
 }
 
 function getValidUserNotificationSettings(){
 
+  let default_notification_settings = getValidDefaultNotificationSettings();
+
   return {
-    updated_at: '2017-12-29T19:04:42.013Z',
-    settings: JSON.stringify({
-      notification_groups:[
-        {
-          notifications:[
-            {
-              key:"invitation_sent",
-              description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-              default:true,
-              name:"Invitation Sent"
-            },
-            {
-              key:"invitation_accepted",
-              description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-              default:true,
-              name:"Invitation Accepted"
-            }
-          ],
-          key:"account",
-          name:"Account",
-          description:"Account",
-          display:true
-        },
-        {
-          notifications:[
-            {
-              key:"lead",
-              description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-              default:true,
-              name:"Lead"
-            },
-            {
-              key:"order",
-              description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-              default:true,
-              name:"Order"
-            },
-            {
-              key:"upsell",
-              description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-              default:true,
-              name:"Upsell"
-            },
-            {
-              key:"fail",
-              description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-              default:true,
-              name:"Fail"
-            },
-            {
-              key:"cancellation",
-              description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-              default:true,
-              name:"Cancellation"
-            },
-            {
-              key:"rebill",
-              description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-              default:true,
-              name:"Rebill"
-            },
-            {
-              key:"mid",
-              description:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-              default:true,
-              name:"Merchant Processor"
-            }
-          ],
-          key:"crm",
-          name:"CRM",
-          description:"CRM",
-          display:true
-        }
-      ]
-    }),
+    id: 'timothy.dalbey@sixcrm.com',
     created_at: '2017-12-29T19:04:42.013Z',
-    id: 'timothy.dalbey@sixcrm.com'
+    updated_at: '2017-12-29T19:04:42.013Z',
+    settings: default_notification_settings
   };
 
 }
@@ -861,6 +733,27 @@ describe('controllers/providers/notification/Notification', () => {
         expect(result).to.have.property('notification_settings');
         expect(result).to.have.property('notification_categories');
         expect(result).to.have.property('notification_types');
+
+      });
+
+      it('successfully returns augmented normalized notification settings object with categories turned off (no account)', () => {
+
+        let normalized_notification_settings = getValidDefaultNotificationSettings();
+        arrayutilities.find(normalized_notification_settings.notification_groups, (notification_group, index) => {
+          if(notification_group['key'] == 'account'){
+            normalized_notification_settings.notification_groups[index].default = [];
+          }
+        });
+
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
+        let result = notification_provider.buildNotificationCategoriesAndTypes(normalized_notification_settings);
+
+        du.info(result);
+        expect(result).to.have.property('notification_settings');
+        expect(result).to.have.property('notification_categories');
+        expect(result).to.have.property('notification_types');
+        expect(result.notification_categories).not.to.include('account');
 
       });
 
@@ -1563,9 +1456,9 @@ describe('controllers/providers/notification/Notification', () => {
 
         let notification = {
           user: user_settings.id,
-          category: 'warmfuzzy',
+          category: 'account',
           type: 'notification',
-          name: 'nice_greeting',
+          name: 'user_invited',
           context:{
             'some.context.field':'really wonderful',
             'title_property': 'alot'
@@ -1633,9 +1526,9 @@ describe('controllers/providers/notification/Notification', () => {
 
         let notification = {
           user: user_settings.id,
-          category: 'warmfuzzy',
+          category: 'account',
           type: 'notification',
-          name: 'nice_greeting',
+          name: 'user_invited',
           context:{
             'some.context.field':'really wonderful',
             'title_property': 'alot'
@@ -1701,9 +1594,9 @@ describe('controllers/providers/notification/Notification', () => {
 
         let notification = {
           user: user_settings.id,
-          category: 'warmfuzzy',
+          category: 'account',
           type: 'notification',
-          name: 'nice_greeting',
+          name: 'user_invited',
           context:{
             'some.context.field':'really wonderful',
             'title_property': 'alot'
@@ -1770,9 +1663,9 @@ describe('controllers/providers/notification/Notification', () => {
 
         let notification = {
           user: user_settings.id,
-          category: 'warmfuzzy',
+          category: 'account',
           type: 'notification',
-          name: 'nice_greeting',
+          name: 'user_invited',
           context:{
             'some.context.field':'really wonderful',
             'title_property': 'alot'
@@ -1818,6 +1711,378 @@ describe('controllers/providers/notification/Notification', () => {
       });
 
     });
+
+    describe('receiveChannelOnNotification', () => {
+
+      it('returns true for channel configuration on notification (specific channel)', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['account'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, (category, index) => {
+          if(category.key == 'account'){
+            arrayutilities.find(category.notifications, (notification_type, secondary_index) => {
+              if(notification_type.key == 'user_invited'){
+                augmented_normalized_notification_settings.settings.notification_groups[index].notifications[secondary_index].channels = ['email'];
+                return true;
+              }
+              return false;
+            });
+            return true;
+          }
+          return false;
+        });
+
+        let user_settings = getValidUserSetting();
+        let slack_data = 'http://slack.com/someurlargs';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'slack'){
+            notification.receive = true;
+            notification.data = slack_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'account',
+          type: 'notification',
+          name: 'user_invited',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
+
+        let result = notification_provider.receiveChannelOnNotification({channel: 'email', notification: notification, augmented_normalized_notification_settings: augmented_normalized_notification_settings});
+        expect(result).to.equal(true);
+
+      });
+
+      it('returns true for channel configuration on notification (all channels)', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['account'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        //console.log(augmented_normalized_notification_settings.settings.notification_groups);  process.exit();
+
+        arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, (category, index) => {
+          if(category.key == 'account'){
+            arrayutilities.find(category.notifications, (notification_type, secondary_index) => {
+              if(notification_type.key == 'user_invited'){
+                augmented_normalized_notification_settings.settings.notification_groups[index].notifications[secondary_index].channels = ['all'];
+                return true;
+              }
+              return false;
+            });
+            return true;
+          }
+          return false;
+        });
+
+        let user_settings = getValidUserSetting();
+        let slack_data = 'http://slack.com/someurlargs';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'slack'){
+            notification.receive = true;
+            notification.data = slack_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'account',
+          type: 'notification',
+          name: 'user_invited',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
+
+        let result = notification_provider.receiveChannelOnNotification({channel: 'email', notification: notification, augmented_normalized_notification_settings: augmented_normalized_notification_settings});
+        expect(result).to.equal(true);
+
+      });
+
+      it('returns false for channel configuration on notification and channel', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['account'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        //console.log(augmented_normalized_notification_settings.settings.notification_groups);  process.exit();
+
+        arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, (category, index) => {
+          if(category.key == 'account'){
+            augmented_normalized_notification_settings.settings.notification_groups[index].default = [];
+            return true;
+          }
+          return false;
+        });
+
+        let user_settings = getValidUserSetting();
+        let slack_data = 'http://slack.com/someurlargs';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'slack'){
+            notification.receive = true;
+            notification.data = slack_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'account',
+          type: 'notification',
+          name: 'user_invited',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
+
+        let result = notification_provider.receiveChannelOnNotification({channel: 'email', notification: notification, augmented_normalized_notification_settings: augmented_normalized_notification_settings});
+        expect(result).to.equal(false);
+
+      });
+
+      it('returns false for channel configuration on notification', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['account'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        //console.log(augmented_normalized_notification_settings.settings.notification_groups);  process.exit();
+
+        arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, (category, index) => {
+          if(category.key == 'account'){
+            augmented_normalized_notification_settings.settings.notification_groups[index].default = ['some', 'other', 'channels'];
+            return true;
+          }
+          return false;
+        });
+
+        let user_settings = getValidUserSetting();
+        let slack_data = 'http://slack.com/someurlargs';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'slack'){
+            notification.receive = true;
+            notification.data = slack_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'account',
+          type: 'notification',
+          name: 'user_invited',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
+
+        let result = notification_provider.receiveChannelOnNotification({channel: 'email', notification: notification, augmented_normalized_notification_settings: augmented_normalized_notification_settings});
+        expect(result).to.equal(false);
+      });
+
+      it('returns false for channel configuration on notification (channel)', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['account'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        //console.log(augmented_normalized_notification_settings.settings.notification_groups);  process.exit();
+
+        arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, (category, index) => {
+          if(category.key == 'account'){
+            arrayutilities.find(category.notifications, (notification_type, secondary_index) => {
+              if(notification_type.key == 'user_invited'){
+                augmented_normalized_notification_settings.settings.notification_groups[index].notifications[secondary_index].channels = ['a','bunch', 'of', 'other', 'channels'];
+                return true;
+              }
+              return false;
+            });
+            return true;
+          }
+          return false;
+        });
+
+        let user_settings = getValidUserSetting();
+        let slack_data = 'http://slack.com/someurlargs';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'slack'){
+            notification.receive = true;
+            notification.data = slack_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'account',
+          type: 'notification',
+          name: 'user_invited',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
+
+        let result = notification_provider.receiveChannelOnNotification({channel: 'email', notification: notification, augmented_normalized_notification_settings: augmented_normalized_notification_settings});
+        expect(result).to.equal(false);
+
+      });
+
+      it('returns false for channel configuration on notification (channel)', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['account'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        //console.log(augmented_normalized_notification_settings.settings.notification_groups);  process.exit();
+
+        arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, (category, index) => {
+          if(category.key == 'account'){
+            arrayutilities.find(category.notifications, (notification_type, secondary_index) => {
+              if(notification_type.key == 'user_invited'){
+                augmented_normalized_notification_settings.settings.notification_groups[index].notifications[secondary_index].channels = [];
+                return true;
+              }
+              return false;
+            });
+            return true;
+          }
+          return false;
+        });
+
+        let user_settings = getValidUserSetting();
+        let slack_data = 'http://slack.com/someurlargs';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'slack'){
+            notification.receive = true;
+            notification.data = slack_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'account',
+          type: 'notification',
+          name: 'user_invited',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
+
+        let result = notification_provider.receiveChannelOnNotification({channel: 'email', notification: notification, augmented_normalized_notification_settings: augmented_normalized_notification_settings});
+        expect(result).to.equal(false);
+
+      });
+
+      it('returns false for channel configuration on notification (channel)', () => {
+
+        let augmented_normalized_notification_settings = getValidUserNotificationSettings();
+        augmented_normalized_notification_settings.notification_categories = ['account'];
+        augmented_normalized_notification_settings.notification_types = ['notifcation'];
+
+        arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, (category, index) => {
+          if(category.key == 'account'){
+            augmented_normalized_notification_settings.settings.notification_groups[index].default = [];
+            return true;
+          }
+          return false;
+        });
+
+        let user_settings = getValidUserSetting();
+        let slack_data = 'http://slack.com/someurlargs';
+        user_settings.notifications = arrayutilities.map(user_settings.notifications, notification => {
+          if(notification.name == 'slack'){
+            notification.receive = true;
+            notification.data = slack_data;
+          }
+          return notification;
+        });
+
+        let notification = {
+          user: user_settings.id,
+          category: 'account',
+          type: 'notification',
+          name: 'user_invited',
+          context:{
+            'some.context.field':'really wonderful',
+            'title_property': 'alot'
+          }
+        };
+
+        let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
+        const notification_provider = new NotificationProvider();
+
+        let result = notification_provider.receiveChannelOnNotification({channel: 'email', notification: notification, augmented_normalized_notification_settings: augmented_normalized_notification_settings});
+        expect(result).to.equal(false);
+
+      });
+
+    });
+
+    /*
+    receiveChannelOnNotification({channel, notification, augmented_normalized_notification_settings}){
+
+      du.debug('Receive Channel On Notification');
+
+      let found_category = arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, notification_group => {
+        return (notification_group.key == notification.category);
+      });
+
+      if(found_category){
+        let found_notification = arrayutilities.find(found_category.notifications, category_notification => {
+          return (category_notification.key == notification.name);
+        });
+        if(found_notification){
+          if(_.has(found_notification, 'channels') && arrayutilities.nonEmpty(found_notification.channels)){
+            if(_.contains(found_notification.channels, 'all') || _.contains(found_notification.channels, channel)){
+              return true;
+            }
+          }
+        }
+
+        if(_.has(found_category, 'default') && arrayutilities.nonEmpty(found_category.default)){
+          if(_.contains(found_category.default, 'all') || _.contains(found_category.default, channel)){
+            return true;
+          }
+        }
+      }
+
+      return false;
+
+    }
+    */
+
 
     xdescribe('(LIVE) createNotificationForAccountAndUser (LIVE)', () => {
       it('creates notifications for a account user', () => {

@@ -1,74 +1,75 @@
 {
-    "notification_groups":[
-        {
-            "key": "account",
-            "name":"Account",
-            "description": "Account related notifications",
-            "display": true,
-            "notifications": [
-                {
-                    "key": "invitation_sent",
-                    "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-                    "default": true,
-                    "name": "Invitation Sent"
-                },
-                {
-                    "key": "invitation_accepted",
-                    "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-                    "default": true,
-                    "name": "Invitation Accepted"
-                }
-            ]
+  "notification_groups": [{
+      "key": "test",
+      "display": true,
+      "default": ["all"],
+      "notifications": [{
+          "key": "test"
         },
         {
-            "key": "crm",
-            "name":"CRM",
-            "description": "CRM related notifications",
-            "display": true,
-            "notifications":[
-                {
-                    "key":"lead",
-                    "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-                    "default": true,
-                    "name": "Lead"
-                },
-                {
-                    "key": "order",
-                    "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-                    "default": true,
-                    "name": "Order"
-                },
-                {
-                    "key":"upsell",
-                    "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-                    "default": true,
-                    "name": "Upsell"
-                },
-                {
-                    "key": "fail",
-                    "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-                    "default": true,
-                    "name": "Fail"
-                },
-                {
-                    "key": "cancellation",
-                    "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-                    "default": true,
-                    "name": "Cancellation"
-                },
-                {
-                    "key": "rebill",
-                    "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-                    "default": true,
-                    "name": "Rebill"
-                },
-                {
-                    "key": "mid",
-                    "description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin eu orci faucibus vulputate. In ut tincidunt mi, nec dignissim.",
-                    "default": true,
-                    "name": "Merchant Processor"
-                }
-            ]
+          "key": "test_alert"
         }
-    ]
+      ]
+    },
+    {
+      "key": "account",
+      "display": true,
+      "default": ["all"],
+      "notifications": [{
+          "key": "user_invited"
+        },
+        {
+          "key": "user_invite_accepted"
+        },
+        {
+          "key": "user_invite_resent"
+        }
+      ]
+    },
+    {
+      "key": "transaction",
+      "display": true,
+      "default": ["all"],
+      "notifications": [{
+          "key": "lead"
+        },
+        {
+          "key": "order"
+        },
+        {
+          "key": "confirm"
+        }
+      ]
+    },
+    {
+      "key": "statemachine",
+      "display": true,
+      "default": ["all"],
+      "notifications": [{
+          "key": "shipping_confirmation"
+        },
+        {
+          "key": "delivery_confirmation"
+        },
+        {
+          "key": "recovery_success"
+        },
+        {
+          "key": "recovery_fail"
+        },
+        {
+          "key": "recovery_error"
+        },
+        {
+          "key": "fulfillment_triggered_success"
+        },
+        {
+          "key": "fulfillment_triggered_fail"
+        },
+        {
+          "key": "fulfillment_triggered_error"
+        }
+      ]
+    }
+  ]
 }
