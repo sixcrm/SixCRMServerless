@@ -246,6 +246,7 @@ module.exports = class NotificationProvider {
 
       if(_.isString(notification_settings.settings)){
 
+        //Technical Debt:  This is deprecated....
         try{
           parsed_notification_settings = JSON.parse(notification_settings.settings)
         }catch(error){
@@ -281,10 +282,10 @@ module.exports = class NotificationProvider {
     //Technical Debt:  What's the purpose of this.  Can a user turn off notification types?
     let notification_types = this.immutable_types;
 
-    //Technical Debt:  Confirm and validate
+    //Note:  This states that if the default setting for the group (category) has any channel, then it's on.  Otherwise, it's off.
     if(_.has(notification_settings, 'notification_groups') && _.isArray(notification_settings.notification_groups)){
       arrayutilities.map(notification_settings.notification_groups, (notification_group) => {
-        if(_.has(notification_group, 'key') && _.has(notification_group, 'default') && notification_group.default == true){
+        if(_.has(notification_group, 'key') && _.has(notification_group, 'default') && arrayutilities.nonEmpty(notification_group.default)){
           notification_categories.push(notification_group.key);
         }
       });
@@ -543,24 +544,28 @@ module.exports = class NotificationProvider {
 
   }
 
-  sendChannelNotification(channel, {notification, user_settings}){
+  sendChannelNotification(channel, {notification, user_settings, augmented_normalized_notification_settings}){
 
     du.debug('Send Channel Notification');
 
     if(this.getReceiveSettingForChannel(channel, user_settings)){
 
-      let channel_data = this.getChannelConfiguration(channel, user_settings);
+      if(this.receiveChannelOnNotification({channel: channel, notification: notification, augmented_normalized_notification_settings: augmented_normalized_notification_settings})){
 
-      if(channel_data){
+        let channel_data = this.getChannelConfiguration(channel, user_settings);
 
-        let readable_notification = this.buildReadableNotificationObject(channel, notification, user_settings);
+        if(channel_data){
 
-        if(!_.has(this.channel_providers, channel)){
-          const ChannelProvider = global.SixCRM.routes.include('providers','notification/channels/'+channel+'.js');
-          this.channel_providers[channel] = new ChannelProvider();
+          let readable_notification = this.buildReadableNotificationObject(channel, notification, user_settings);
+
+          if(!_.has(this.channel_providers, channel)){
+            const ChannelProvider = global.SixCRM.routes.include('providers','notification/channels/'+channel+'.js');
+            this.channel_providers[channel] = new ChannelProvider();
+          }
+
+          return this.channel_providers[channel].sendNotification(readable_notification, channel_data);
+
         }
-
-        return this.channel_providers[channel].sendNotification(readable_notification, channel_data);
 
       }
 
@@ -570,5 +575,36 @@ module.exports = class NotificationProvider {
 
   }
 
-}
+  receiveChannelOnNotification({channel, notification, augmented_normalized_notification_settings}){
 
+    du.debug('Receive Channel On Notification');
+
+    let found_category = arrayutilities.find(augmented_normalized_notification_settings.settings.notification_groups, notification_group => {
+      return (notification_group.key == notification.category);
+    });
+
+    if(found_category){
+      let found_notification = arrayutilities.find(found_category.notifications, category_notification => {
+        return (category_notification.key == notification.name);
+      });
+      if(found_notification){
+        if(_.has(found_notification, 'channels') && _.isArray(found_notification.channels)){
+          if(_.contains(found_notification.channels, 'all') || _.contains(found_notification.channels, channel)){
+            return true;
+          }
+          return false;
+        }
+      }
+
+      if(_.has(found_category, 'default') && _.isArray(found_category.default)){
+        if(_.contains(found_category.default, 'all') || _.contains(found_category.default, channel)){
+          return true;
+        }
+      }
+    }
+
+    return false;
+
+  }
+
+}

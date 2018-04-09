@@ -17,4 +17,3 @@ module.exports = class NotificationSettingController extends entityController {
     }
 
 }
-
