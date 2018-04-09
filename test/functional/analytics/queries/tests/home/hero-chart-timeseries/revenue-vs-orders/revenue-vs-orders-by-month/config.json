@@ -8,16 +8,29 @@
 			"period": "month"
 		}
 	},
-	"result_name": "timeseries",
+	"result_name": "facets",
 	"expect": [{
-			"datetime": "2017-01-01T00:00:00.000Z",
-			"orders": 2,
-			"revenue": 322
-		},
-		{
-			"datetime": "2017-02-01T00:00:00.000Z",
-			"orders": 0,
-			"revenue": 0
-		}
-	]
+		"facet": "orders",
+		"timeseries": [{
+				"datetime": "2017-01-01T00:00:00.000Z",
+				"value": 2
+			},
+			{
+				"datetime": "2017-02-01T00:00:00.000Z",
+				"value": 0
+			}
+		]
+	},
+	{
+		"facet": "revenue",
+		"timeseries": [{
+				"datetime": "2017-01-01T00:00:00.000Z",
+				"value": 322
+			},
+			{
+				"datetime": "2017-02-01T00:00:00.000Z",
+				"value": 0
+			}
+		]
+	}]
 }
