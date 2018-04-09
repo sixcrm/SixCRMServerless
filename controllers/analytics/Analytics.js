@@ -380,7 +380,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 						return results;
 					});
 			case 'ordersVersusUpsells':
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, [])
+				return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', parameters.analyticsfilter, [])
 					.then((results) => {
 						return results;
 					});

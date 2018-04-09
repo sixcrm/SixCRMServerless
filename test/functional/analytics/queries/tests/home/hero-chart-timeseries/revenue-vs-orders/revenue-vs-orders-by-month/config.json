@@ -1,6 +1,6 @@
 {
 	"method": "getHomeHeroChartTimeseries",
-	"test_case": "Successful transaction and orders by period",
+	"test_case": "Successful revenue and orders by month",
 	"input": {
 		"analyticsfilter": {
 			"start": "2017-01-01T00:00:00.000Z",
