@@ -25,6 +25,10 @@ module.exports.graphObj = new GraphQLObjectType({
           type: new GraphQLNonNull(GraphQLString),
           description: 'The name of the campaign.',
       },
+      description: {
+          type: GraphQLString,
+          description: 'The description of the campaign.',
+      },
       allow_prepaid: {
           type: new GraphQLNonNull(GraphQLBoolean),
           description: 'Allow prepaid on the campaign.'

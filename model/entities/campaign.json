@@ -20,6 +20,9 @@
 			"type":"string",
 			"minLength":3
 		},
+		"description":{
+			"type":"string"
+		},
 		"emailtemplates":{
 			"type":"array",
 			"items":{"$ref": "../definitions/uuidv4.json"}
