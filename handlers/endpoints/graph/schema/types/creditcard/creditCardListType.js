@@ -7,17 +7,17 @@ let creditCardType = require('./creditCardType')
 let paginationType = require('../pagination/paginationType')
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'CreditCards',
-    description: 'Credit cards',
-    fields: () => ({
-        creditcards: {
-            type: new GraphQLList(creditCardType.graphObj),
-            description: 'The affiliates',
-        },
-        pagination: {
-            type: new GraphQLNonNull(paginationType.graphObj),
-            description: 'Query pagination',
-        }
-    }),
-    interfaces: []
+  name: 'CreditCards',
+  description: 'Credit cards',
+  fields: () => ({
+    creditcards: {
+      type: new GraphQLList(creditCardType.graphObj),
+      description: 'The affiliates',
+    },
+    pagination: {
+      type: new GraphQLNonNull(paginationType.graphObj),
+      description: 'Query pagination',
+    }
+  }),
+  interfaces: []
 });
