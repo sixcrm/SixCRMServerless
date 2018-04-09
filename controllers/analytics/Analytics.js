@@ -1,11 +1,8 @@
-'use strict';
 const _ = require('underscore');
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
-
 const AnalyticsUtilities = global.SixCRM.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
