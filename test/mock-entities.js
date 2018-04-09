@@ -13,6 +13,32 @@ const spoofer = global.SixCRM.routes.include('test','spoofer.js');
 
 class MockEntities {
 
+  static getValidNotificationSettings(id){
+
+    id = (_.isUndefined(id) || _.isNull(id))?spoofer.createRandomEmail():id;
+
+    let a_iso8601 = timestamp.getISO8601();
+
+    return {
+      id: id,
+      created_at: a_iso8601,
+      updated_at: a_iso8601,
+      settings: {
+        notification_groups: [{
+          key:"account",
+          display: true,
+          default:['all'],
+          notifications: [
+            {
+              key: 'a_type_of_notification',
+              channels:[]
+            }
+          ]
+        }]
+      }
+    };
+
+  }
   static getValidUserSetting(id){
 
     id = (_.isUndefined(id) || _.isNull(id))?spoofer.createRandomEmail():id;
