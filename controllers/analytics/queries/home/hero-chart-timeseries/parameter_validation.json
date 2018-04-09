@@ -24,7 +24,7 @@
 			"enum": ["day", "month"]
 		},
 		"campaign": {
-			"$ref": "#/definitions/ISO8601"
+			"$ref": "#/definitions/UUIDv4"
 		}
 	},
 	"required": ["start", "end", "period"]
