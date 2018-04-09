@@ -4,17 +4,10 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+
 function getValidNotificationSettings(){
-    return {
-        settings: {
-            notification_groups: [{
-                notifications: [{
-                    default: 'any_default',
-                    key: 'a_type_of_notification'
-                }]
-            }]
-        }
-    }
+    return MockEntities.getValidNotificationSettings();
 }
 
 describe('controllers/EntityUtilities.js', () => {
