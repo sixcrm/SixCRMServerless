@@ -24,12 +24,7 @@
 			"enum": ["day", "month"]
 		},
 		"campaign": {
-			"type": "array",
-			"minItems": 1,
-			"items": {
-				"$ref": "#/definitions/UUIDv4"
-			},
-			"uniqueItems": true
+			"$ref": "#/definitions/ISO8601"
 		}
 	},
 	"required": ["start", "end", "period"]
