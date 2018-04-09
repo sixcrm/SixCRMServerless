@@ -1,11 +1,8 @@
 const chai = require('chai');
-const _ = require('underscore');
-const uuid = require('uuid');
-const fs = require('fs');
-
 chai.use(require('chai-shallow-deep-equal'));
 const expect = chai.expect;
-
+const _ = require('underscore');
+const path = require('path');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
@@ -21,9 +18,7 @@ before(() => {
 
 	global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
 	global.user = 'admin.user@test.com';
-
 	global.SixCRM.setResource('auroraContext', auroraContext);
-
 	return auroraContext.init();
 
 });
@@ -31,29 +26,23 @@ before(() => {
 after(() => {
 
 	const auroraContext = global.SixCRM.getResource('auroraContext');
-
 	return auroraContext.dispose();
 
 });
 
 describe('queries/aurora-queries.js', () => {
 
-	const suite_directory = __dirname + '/tests';
-	const suites = fileutilities.getDirectoryList(suite_directory);
+	const suites = fileutilities.getDirectoryList(path.join(__dirname, 'tests'));
 
 	arrayutilities.map(suites, (suite) => {
 
 		describe(suite, () => {
 
-			const tests = [];
+			const testDirectories = getDirectories(path.join(__dirname, 'tests', suite));
 
-			const test_directory = suite_directory + '/' + suite;
-			// this is temporary here, ignore tests where second letter is *, not first as we want to keep the folder structure
-			const test_dirs = fileutilities.getDirectoryList(test_directory).filter(test => !test.includes('*'));
+			const tests = arrayutilities.map(testDirectories, (testDirectory) => {
 
-			arrayutilities.map(test_dirs, (dir) => {
-
-				prepareTest(dir, test_directory, tests);
+				return prepareTest(testDirectory);
 
 			});
 
@@ -98,15 +87,12 @@ function prepareDatabase(test) {
 		.then(() => seedDatabase(test));
 }
 
-function prepareTest(dir, test_directory, tests) {
+function prepareTest(suite) {
 
-	const directory = test_directory + '/' + dir + '/';
-	const test = require(directory + '/config.json');
-
-	test.directory = directory;
-	test.seeds = test.directory + 'seeds/';
-
-	tests.push(test);
+	const test = require(path.join(suite, 'config.json'));
+	test.directory = path.basename(suite);
+	test.seeds = path.join(suite, 'seeds');
+	return test;
 
 }
 
@@ -126,10 +112,32 @@ function seedDatabase(test) {
 
 		return BBPromise.each(seeds.map((seed) => {
 
-			return connection.query(fileutilities.getFileContentsSync(test.seeds + seed));
+			return connection.query(fileutilities.getFileContentsSync(path.join(test.seeds, seed)));
 
 		}), (p) => p);
 
 	}));
+
+}
+
+function getDirectories(root) {
+
+	const directories = fileutilities.getDirectoryList(root);
+
+	return _.reduce(directories, ((m, d) => {
+
+		const files = fileutilities.getDirectoryFilesSync(path.join(root, d));
+
+		if (_.contains(files, 'config.json')) {
+
+			m.push(path.join(root, d));
+
+		}
+
+		m.push(...getDirectories(path.join(root, d)));
+
+		return m;
+
+	}), []);
 
 }
