@@ -1,32 +1,42 @@
 const GraphQLString = require('graphql').GraphQLString;
-const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 module.exports = new GraphQLObjectType({
-	name: 'heroChartTimeseriesType',
-	description: 'Timeseries of orders versus revenue by period',
+	name: 'HeroChartTimeseriesType',
+	description: 'Timeseries of facets by a period',
 	fields: () => ({
-		timeseries: {
-			type: new GraphQLList(HeroChartTimeseriesRowType),
-			description: 'Rows of order and revenue totals by period'
+		facets: {
+			type: new GraphQLList(HeroChartTimeseriesFacetType),
+			description: 'Facets'
 		}
 	}),
 	interfaces: []
 });
 
-const HeroChartTimeseriesRowType = new GraphQLObjectType({
-	name: 'HeroChartTimeseriesRowType',
-	description: 'Timeseries of orders versus revenue rows by period',
+const HeroChartTimeseriesFacetType = new GraphQLObjectType({
+	name: 'HeroChartTimeseriesFacetType',
+	description: 'Facet',
+	fields: () => ({
+		facet: {
+			type: GraphQLString
+		},
+		timeseries: {
+			type: new GraphQLList(HeroChartTimeseriesFacetSliceType),
+		}
+	}),
+	interfaces: []
+});
+
+const HeroChartTimeseriesFacetSliceType = new GraphQLObjectType({
+	name: 'HeroChartTimeseriesFacetSliceType',
+	description: 'Time slice of a facet a by a period',
 	fields: () => ({
 		datetime: {
 			type: GraphQLString
 		},
-		orders: {
-			type: GraphQLInt
-		},
-		revenue: {
+		value: {
 			type: GraphQLFloat
 		}
 	}),
