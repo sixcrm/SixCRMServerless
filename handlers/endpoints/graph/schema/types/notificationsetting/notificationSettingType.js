@@ -1,7 +1,8 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const GraphQLJSON = require('graphql-type-json');
+
+let notificationSettingSettingType = require('./notificationSettingSettingType');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'NotificationSetting',
@@ -12,8 +13,8 @@ module.exports.graphObj = new GraphQLObjectType({
       description: 'The id of the notification.',
     },
     settings: {
-      type: new GraphQLNonNull(GraphQLJSON),
-      description: 'The serialized notification settings for the user .',
+      type: new GraphQLNonNull(notificationSettingSettingType.graphObj),
+      description: 'The notification settings for the user .',
     },
     created_at: {
       type: new GraphQLNonNull(GraphQLString),
