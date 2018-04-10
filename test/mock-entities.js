@@ -7,14 +7,13 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const encryptionutilities = global.SixCRM.routes.include('lib', 'encryption-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
 class MockEntities {
 
   static getValidNotificationSettings(id) {
-    
+
     id = (_.isUndefined(id) || _.isNull(id)) ? spoofer.createRandomEmail() : id;
 
     let a_iso8601 = timestamp.getISO8601();
@@ -903,7 +902,7 @@ class MockEntities {
   static getValidPlaintextCreditCard(id) {
     const number = this.getValidCreditCardNumber();
     const last_four = number.slice(-4);
-    const first_six = number.slice(0, 5);
+    const first_six = number.slice(0, 6);
 
     return {
       id: this.getValidId(id),

@@ -813,7 +813,7 @@ describe('createOrder', function () {
       stored_creditcard.first_six = creditcard.number.substring(0,6);
       stored_creditcard.last_four = creditcard.number.slice(-4);
       stored_creditcard.id = MockEntities.getValidId();
-      stored_creditcard.created_at = MockEntities.getValidISO8601();
+      stored_creditcard.created_at = timestamp.getISO8601();
       stored_creditcard.updated_at = stored_creditcard.created_at;
       stored_creditcard.account = MockEntities.getValidId();
       stored_creditcard.token = {
@@ -1621,7 +1621,7 @@ describe('createOrder', function () {
         entity.first_six = entity.number.substring(0,6);
         entity.last_four = entity.number.slice(-4);
         entity.id = MockEntities.getValidId();
-        entity.created_at = MockEntities.getValidISO8601();
+        entity.created_at = timestamp.getISO8601();
         entity.updated_at = entity.created_at;
         entity.account = MockEntities.getValidId();
         entity.token = {
