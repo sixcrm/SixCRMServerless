@@ -988,7 +988,7 @@ describe('controllers/providers/notification/Notification', () => {
         const notification_provider = new NotificationProvider();
 
         arrayutilities.map(user_settings.notifications, notification_setting => {
-          let receive_setting = notification_provider.getReceiveSettingForChannel(notification_setting.name, user_settings);
+          let receive_setting = notification_provider.getReceiveSettingForChannel({notification_channel: notification_setting.name, user_settings: user_settings});
           expect(receive_setting).to.equal(notification_setting.receive);
         });
 
@@ -1001,7 +1001,7 @@ describe('controllers/providers/notification/Notification', () => {
         let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
         const notification_provider = new NotificationProvider();
 
-        let receive_setting = notification_provider.getReceiveSettingForChannel('unknownchannel', user_settings);
+        let receive_setting = notification_provider.getReceiveSettingForChannel({notification_channel: 'unknownchannel', user_settings: user_settings});
         expect(receive_setting).to.equal(false);
 
       });

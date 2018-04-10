@@ -2,6 +2,7 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLList = require('graphql').GraphQLList;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'NotificationSettingSubGroup',
@@ -10,6 +11,10 @@ module.exports.graphObj = new GraphQLObjectType({
     key: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The notifcation key.'
+    },
+    active:{
+      type: new GraphQLNonNull(GraphQLBoolean),
+      description: 'The notification active status'
     },
     channels: {
       type: new GraphQLList(GraphQLString),
