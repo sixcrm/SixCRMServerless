@@ -387,7 +387,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 						return results;
 					});
 			case 'averageRevenuePerOrder':
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, this.default_queue_account_filter)
+				return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', parameters.analyticsfilter, this.default_queue_account_filter)
 					.then((results) => {
 						return results;
 					});
