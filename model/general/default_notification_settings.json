@@ -4,10 +4,12 @@
       "display": true,
       "default": ["all"],
       "notifications": [{
-          "key": "test"
+          "key": "test",
+          "active":true
         },
         {
-          "key": "test_alert"
+          "key": "test_alert",
+          "active":true
         }
       ]
     },
@@ -16,13 +18,16 @@
       "display": true,
       "default": ["all"],
       "notifications": [{
-          "key": "user_invited"
+          "key": "user_invited",
+          "active":true
         },
         {
-          "key": "user_invite_accepted"
+          "key": "user_invite_accepted",
+          "active":true
         },
         {
-          "key": "user_invite_resent"
+          "key": "user_invite_resent",
+          "active":true
         }
       ]
     },
@@ -31,13 +36,16 @@
       "display": true,
       "default": ["all"],
       "notifications": [{
-          "key": "lead"
+          "key": "lead",
+          "active":true
         },
         {
-          "key": "order"
+          "key": "order",
+          "active":true
         },
         {
-          "key": "confirm"
+          "key": "confirm",
+          "active":true
         }
       ]
     },
@@ -46,28 +54,36 @@
       "display": true,
       "default": ["all"],
       "notifications": [{
-          "key": "shipping_confirmation"
+          "key": "shipping_confirmation",
+          "active":true
         },
         {
-          "key": "delivery_confirmation"
+          "key": "delivery_confirmation",
+          "active":true
         },
         {
-          "key": "recovery_success"
+          "key": "recovery_success",
+          "active":true
         },
         {
-          "key": "recovery_fail"
+          "key": "recovery_fail",
+          "active":true
         },
         {
-          "key": "recovery_error"
+          "key": "recovery_error",
+          "active":true
         },
         {
-          "key": "fulfillment_triggered_success"
+          "key": "fulfillment_triggered_success",
+          "active":true
         },
         {
-          "key": "fulfillment_triggered_fail"
+          "key": "fulfillment_triggered_fail",
+          "active":true
         },
         {
-          "key": "fulfillment_triggered_error"
+          "key": "fulfillment_triggered_error",
+          "active":true
         }
       ]
     }

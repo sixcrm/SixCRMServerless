@@ -325,7 +325,10 @@ module.exports = class NotificationProvider {
 
     du.debug('Set Notification Read At');
 
-    let six_notification_opt_in = this.getReceiveSettingForChannel('six', user_settings);
+    let six_notification_opt_in = this.getReceiveSettingForChannel({
+      notification_channel: 'six',
+      user_settings: user_settings
+    });
 
     if(six_notification_opt_in == false && !this.isImmutable(notification_prototype)){
 
@@ -333,10 +336,11 @@ module.exports = class NotificationProvider {
 
     }else{
 
+      let notification_active = this.getNotificationActive(notification_prototype, augmented_normalized_notification_settings);
       let notification_category_opt_in = this.getNotificationCategoryOptIn(notification_prototype.category, augmented_normalized_notification_settings);
       let notification_type_opt_in = this.getNotificationTypeOptIn(notification_prototype.type, augmented_normalized_notification_settings);
 
-      if((notification_type_opt_in == false || notification_category_opt_in == false) && !this.isImmutable(notification_prototype)){
+      if((notification_active == false || notification_type_opt_in == false || notification_category_opt_in == false) && !this.isImmutable(notification_prototype)){
 
         notification_prototype.read_at = timestamp.getISO8601();
 
@@ -348,7 +352,35 @@ module.exports = class NotificationProvider {
 
   }
 
-  getReceiveSettingForChannel(notification_channel, user_settings){
+  getNotificationActive(notification_prototype, augmented_normalized_notification_settings){
+
+    du.debug('Get Notification Active');
+
+    if(objectutilities.hasRecursive(augmented_normalized_notification_settings, 'notification_settings.notification_groups') && _.isArray(augmented_normalized_notification_settings.notification_settings.notification_groups)){
+
+      let notification_group = arrayutilities.find(augmented_normalized_notification_settings.notification_settings.notification_groups, notification_group => {
+        return (notification_group.key == notification_prototype.category)
+      });
+
+      if(!_.isNull(notification_group) && arrayutilities.nonEmpty(notification_group.notifications)){
+
+        let notification = arrayutilities.find(notification_group.notifications, notification => {
+          return notification.key == notification_prototype.name;
+        });
+
+        if(!_.isNull(notification) && _.has(notification, 'active')){
+          return (notification.active == true);
+        }
+
+      }
+
+    }
+
+    return true;
+
+  }
+
+  getReceiveSettingForChannel({notification_channel, user_settings}){
 
     du.debug('Get Receive Setting For Channel');
 
@@ -383,6 +415,7 @@ module.exports = class NotificationProvider {
     return false;
 
   }
+
   getNotificationTypeOptIn(){
 
     du.debug('Get Notification Type Opt-In');
@@ -548,9 +581,10 @@ module.exports = class NotificationProvider {
 
     du.debug('Send Channel Notification');
 
-    if(this.getReceiveSettingForChannel(channel, user_settings)){
+    if(this.getReceiveSettingForChannel({notification_channel: channel, user_settings: user_settings})){
 
       if(this.receiveChannelOnNotification({channel: channel, notification: notification, augmented_normalized_notification_settings: augmented_normalized_notification_settings})){
+
 
         let channel_data = this.getChannelConfiguration(channel, user_settings);
 

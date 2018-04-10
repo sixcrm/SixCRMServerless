@@ -40,10 +40,13 @@
                 "type": "array",
                 "items": {
                   "type": "object",
-                  "required": ["key"],
+                  "required": ["key", "active"],
                   "properties": {
                     "key": {
                       "type": "string"
+                    },
+                    "active":{
+                      "type":"boolean"
                     },
                     "channels": {
                       "type": "array",

@@ -30,6 +30,7 @@ class MockEntities {
           default: ['all'],
           notifications: [{
             key: 'a_type_of_notification',
+            active: true,
             channels: []
           }]
         }]
