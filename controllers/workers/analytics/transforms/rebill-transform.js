@@ -8,7 +8,7 @@ module.exports = class RebillTransform extends AnalyticsTransfrom {
 		du.debug('RebillTransform.transform()');
 
 		return Promise.resolve({
-			id: record.context.transformedrebill.id_rebill,
+			id: record.context.transformedrebill.id,
 			datetime: record.context.transformedrebill.datetime,
 			currentQueuename: record.context.transformedrebill.current_queuename,
 			previousQueuename: record.context.transformedrebill.previous_queuename,

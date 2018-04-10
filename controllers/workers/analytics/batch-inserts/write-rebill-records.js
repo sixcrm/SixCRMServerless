@@ -17,7 +17,7 @@ module.exports = class WriteRebillRecords {
 
 		let query =
 			'INSERT INTO analytics.f_rebills ( \
-				id_rebill, \
+				id, \
 				current_queuename, \
 				previous_queuename, \
 				account, \
@@ -34,7 +34,7 @@ module.exports = class WriteRebillRecords {
 		query += values.join(',');
 
 		query += ' \
-			ON CONFLICT (account, id_rebill, datetime) DO UPDATE SET  \
+			ON CONFLICT (id, account, datetime) DO UPDATE SET  \
 			current_queuename = EXCLUDED.current_queuename, \
 			previous_queuename = EXCLUDED.previous_queuename, \
 			amount = EXCLUDED.amount';

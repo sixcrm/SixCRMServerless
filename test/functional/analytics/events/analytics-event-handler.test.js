@@ -48,7 +48,9 @@ describe('Push events to RDS', () => {
 
 				const aeh = new AnalyticsEventHandler('rds_transaction_batch', auroraContext);
 
-				return seedSQS(test)
+				return Promise.resolve()
+					.then(() => seedAurora(test))
+					.then(() => seedSQS(test))
 					.then(() => SQSTestUtils.messageCountInQueue('rds_transaction_batch'))
 					.then((count) => {
 
@@ -81,6 +83,12 @@ function prepareTest(dir) {
 
 	if (fileutilities.fileExists(path.join(dir, 'seeds'))) {
 
+		if (fileutilities.fileExists(path.join(dir, 'seeds', 'aurora'))) {
+
+			test.seeds.aurora = fileutilities.getDirectoryFilesSync(path.join(dir, 'seeds', 'aurora'));
+
+		}
+
 		if (fileutilities.fileExists(path.join(dir, 'seeds', 'sqs'))) {
 
 			test.seeds.sqs = fileutilities.getDirectoryFilesSync(path.join(dir, 'seeds', 'sqs'));
@@ -90,6 +98,33 @@ function prepareTest(dir) {
 	}
 
 	return test;
+
+}
+
+function seedAurora(test) {
+
+	if (!test.seeds || !test.seeds.aurora) {
+
+		return Promise.resolve();
+
+	}
+
+	const promises = _.reduce(test.seeds.aurora, (memo, seed) => {
+
+		const seedFilePath = path.join(test.directory, 'seeds', 'aurora', seed);
+		const script = fileutilities.getFileContentsSync(seedFilePath, 'utf8');
+
+		memo.push(auroraContext.withConnection((connection) => {
+
+			return connection.query(script);
+
+		}));
+
+		return memo;
+
+	}, []);
+
+	return Promise.all(promises);
 
 }
 

@@ -10,6 +10,5 @@ CREATE TABLE IF NOT EXISTS analytics.f_activity (
     acted_upon_type VARCHAR(100),
     associated_with VARCHAR(100),
     associated_with_type VARCHAR(100),
-    PRIMARY KEY (id)
+    CONSTRAINT pk_f_activity PRIMARY KEY(id)
 );
-

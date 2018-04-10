@@ -5,11 +5,11 @@
 	"type": "object",
 	"description": "A Rebill transformed for redshift upload",
 	"properties": {
-		"id_rebill":{"$ref": "../definitions/uuidv4.json"},
+		"id":{"$ref": "../definitions/uuidv4.json"},
 		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
 		"datetime":{"$ref": "../definitions/iso8601.json"},
 		"current_queuename":{ "type":"string" },
 		"previous_queuename":{ "type":"string" }
 	},
-	"required":["account", "id_rebill", "datetime", "current_queuename"]
+	"required":["account", "id", "datetime", "current_queuename"]
 }

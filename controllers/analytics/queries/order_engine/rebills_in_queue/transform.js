@@ -13,7 +13,7 @@ module.exports = function(results, parameters){
   arrayutilities.map(results, (result) => {
 
     result_array.push({
-      id_rebill: result.id_rebill,
+      id: result.id,
       amount: result.amount
     });
 

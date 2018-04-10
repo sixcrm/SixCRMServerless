@@ -12,6 +12,9 @@
 		"script": "tables/d_processor_result.sql"
 	},
 	{
+		"script": "tables/f_sessions.sql"
+	},
+	{
 		"script": "tables/f_events.sql"
 	},
 	{

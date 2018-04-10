@@ -10,6 +10,7 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 		return Promise.resolve({
 			id: record.context.transaction.id,
 			datetime: record.context.transaction.created_at,
+			session: record.context.session.id,
 			merchantProvider: record.context.transaction.merchant_provider,
 			processorResult: record.context.transaction.result,
 			amount: record.context.transaction.amount,

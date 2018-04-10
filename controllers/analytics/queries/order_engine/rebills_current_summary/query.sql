@@ -9,12 +9,12 @@ SELECT
   from
 (SELECT
   case
-      when max(datetime) over (partition by id_rebill) = datetime and current_queuename = {{queuename}} then 1
+      when max(datetime) over (partition by id) = datetime and current_queuename = {{queuename}} then 1
       else 0
   end is_last_current_queue,
-  datetime - lag(DATETIME) OVER ( PARTITION BY id_rebill ORDER BY datetime) delta_time_in_queue,
+  datetime - lag(DATETIME) OVER ( PARTITION BY id ORDER BY datetime) delta_time_in_queue,
   case
-      when max(datetime) over (partition by id_rebill) = datetime
+      when max(datetime) over (partition by id) = datetime
             and current_queuename = {{queuename}}
             and datetime < CURRENT_DATE - interval '14 days' then 1
        else 0

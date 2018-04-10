@@ -6,7 +6,7 @@ FROM
 SELECT
   fr.datetime,
   case when fr.current_queuename = {{queuename}} then  1 else 0 end queue,
-  case when fr.current_queuename = lead(previous_queuename,1) over (partition by fr.id_rebill order by datetime) then 1 else 0 end queue_moved_on
+  case when fr.current_queuename = lead(previous_queuename,1) over (partition by fr.id order by datetime) then 1 else 0 end queue_moved_on
 FROM
   analytics.f_rebills fr
 WHERE 1=1

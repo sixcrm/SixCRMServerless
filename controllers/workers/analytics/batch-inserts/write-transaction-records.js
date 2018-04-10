@@ -1,7 +1,7 @@
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const ATTRIBUTES = 17;
+const ATTRIBUTES = 18;
 
 module.exports = class WriteTransactionRecords {
 
@@ -19,6 +19,7 @@ module.exports = class WriteTransactionRecords {
 			'INSERT INTO analytics.f_transactions ( \
 				id, \
 				datetime, \
+				session, \
 				customer, \
 				creditcard, \
 				merchant_provider, \
@@ -47,6 +48,7 @@ module.exports = class WriteTransactionRecords {
 		query += ' \
 			ON CONFLICT (id) DO UPDATE SET  \
 			datetime = EXCLUDED.datetime, \
+			session = EXCLUDED.session, \
 			customer = EXCLUDED.customer, \
 			creditcard = EXCLUDED.creditcard, \
 			merchant_provider = EXCLUDED.merchant_provider, \
@@ -68,6 +70,7 @@ module.exports = class WriteTransactionRecords {
 			return [
 					r.id,
 					r.datetime,
+					r.session,
 					r.customer,
 					r.creditcard,
 					r.merchantProvider,

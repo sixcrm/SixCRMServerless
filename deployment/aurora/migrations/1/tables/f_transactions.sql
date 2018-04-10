@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS analytics.f_transactions (
-    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    id VARCHAR(36) NOT NULL,
     datetime TIMESTAMP NOT NULL,
+    session VARCHAR(36) NOT NULL,
     customer VARCHAR(36) NOT NULL,
     creditcard VARCHAR(36) NOT NULL,
     merchant_provider VARCHAR(36) NOT NULL,
@@ -19,7 +20,7 @@ CREATE TABLE IF NOT EXISTS analytics.f_transactions (
     prepaid BOOLEAN,
     result VARCHAR(16),
     associated_transaction VARCHAR(36),
-    UNIQUE (account,
-      datetime)
+    CONSTRAINT pk_f_transactions PRIMARY KEY (id),
+    CONSTRAINT fk_f_transactions_f_sessions FOREIGN KEY (session) REFERENCES analytics.f_sessions (id)
 );
 
