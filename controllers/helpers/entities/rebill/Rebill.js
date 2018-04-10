@@ -666,7 +666,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		// I hard-coded zero
 
 		const transformedRebill = {
-			id_rebill: rebill.id,
+			id: rebill.id,
 			current_queuename: rebill.state,
 			previous_queuename: rebill.previous_state || '',
 			account: rebill.account,

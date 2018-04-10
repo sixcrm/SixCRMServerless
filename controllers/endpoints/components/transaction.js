@@ -1,12 +1,9 @@
-'use strict';
 const _ = require("underscore");
-
+const uuid = require('uuid');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-
 const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
 
 module.exports = class transactionEndpointController extends authenticatedController {
@@ -150,16 +147,19 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 	}
 
-	pushEvent({event_type = undefined, context = undefined} = {}) {
+	pushEvent({
+		event_type = undefined,
+		context = undefined
+	} = {}) {
 
 		du.debug('Push Event');
 
-		if(_.isUndefined(event_type) || _.isNull(event_type)){
-			if(_.has(this, 'event_type')){
+		if (_.isUndefined(event_type) || _.isNull(event_type)) {
+			if (_.has(this, 'event_type')) {
 				event_type = this.event_type;
-			}else if (!_.isUndefined(context) && !_.isNull(context) && _.has(context, 'event_type') && _.isString(context.event_type)){
+			} else if (!_.isUndefined(context) && !_.isNull(context) && _.has(context, 'event_type') && _.isString(context.event_type)) {
 				event_type = context.event_type;
-			}else{
+			} else {
 				eu.throwError('server', 'Unable to identify event_type.');
 			}
 		}
@@ -179,7 +179,9 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 		this.eventHelperController.pushEvent({
 			event_type: event_type,
-			context: Object.assign({}, context, {
+			context: Object.assign({
+				id: uuid.v4()
+			}, context, {
 				user: global.user
 			})
 		});

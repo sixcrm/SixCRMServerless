@@ -272,7 +272,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		parameters = this.appendPeriod(parameters, period_selection);
 
-		return this.getResults('reports/affiliate/affiliate_report_subaffiliates', parameters, this.default_query_filters);
+		return this.getResults('deprecate/reports/affiliate/affiliate_report_subaffiliates', parameters, this.default_query_filters);
 
 	}
 
@@ -288,7 +288,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		parameters = this.appendPeriod(parameters, period_selection);
 
-		return this.getResults('reports/affiliate/affiliate_report_summary', parameters, this.default_query_filters);
+		return this.getResults('deprecate/reports/affiliate/affiliate_report_summary', parameters, this.default_query_filters);
 
 	}
 
@@ -304,7 +304,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		parameters = this.appendPeriod(parameters, period_selection);
 
-		return this.getResults('reports/affiliate/affiliate_report', parameters, this.default_query_filters);
+		return this.getResults('deprecate/reports/affiliate/affiliate_report', parameters, this.default_query_filters);
 
 	}
 
@@ -326,7 +326,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		du.debug('Get Merchant Report parameters after merge');
 		du.debug(parameters);
 
-		return this.getResults('reports/merchantprovider/merchantprovider_report', parameters, this.default_query_filters);
+		return this.getResults('deprecate/reports/merchantprovider/merchantprovider_report', parameters, this.default_query_filters);
 
 	}
 

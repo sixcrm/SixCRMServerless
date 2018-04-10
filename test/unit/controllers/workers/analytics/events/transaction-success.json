@@ -2,6 +2,7 @@
 	"result": {
 		"id": "0a35f59b-88d9-4227-a7ef-5272da0a785d",
 		"datetime": "2018-03-23T21:58:46.068Z",
+		"session": "39d4b5ad-8e8a-4c63-a9e5-7e337a0dec20",
 		"merchantProvider": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
 		"processorResult": "success",
 		"amount": 34.99,

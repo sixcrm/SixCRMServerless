@@ -8,6 +8,7 @@ module.exports = class LeadTransform extends AnalyticsTransfrom {
 		du.debug('LeadTransform.transform()');
 
 		let result = {
+			id: record.context.id,
 			account: record.context.campaign.account,
 			campaign: record.context.campaign.id,
 			datetime: record.context.session.updated_at,

@@ -8,6 +8,7 @@ module.exports = class OrderTransform extends AnalyticsTransfrom {
 		du.debug('OrderTransform.transform()');
 
 		let result = {
+			id: record.context.id,
 			account: record.context.campaign.account,
 			campaign: record.context.campaign.id,
 			datetime: record.context.session.updated_at,

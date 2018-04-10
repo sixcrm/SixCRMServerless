@@ -1,7 +1,7 @@
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const ATTRIBUTES = 11;
+const ATTRIBUTES = 12;
 
 module.exports = class WriteEventRecords {
 
@@ -17,6 +17,7 @@ module.exports = class WriteEventRecords {
 
 		let query =
 			'INSERT INTO analytics.f_events ( \
+				id, \
 				session, \
 				"type", \
 				datetime, \
@@ -39,9 +40,11 @@ module.exports = class WriteEventRecords {
 		query += values.join(',');
 
 		query += ' \
-			ON CONFLICT (account, datetime) DO UPDATE SET  \
+			ON CONFLICT (id) DO UPDATE SET  \
 			session = EXCLUDED.session, \
 			"type" = EXCLUDED.type, \
+			datetime = EXCLUDED.datetime, \
+			account = EXCLUDED.account, \
 			campaign = EXCLUDED.campaign, \
 			affiliate = EXCLUDED.affiliate, \
 			subaffiliate_1 = EXCLUDED.subaffiliate_1, \
@@ -53,6 +56,7 @@ module.exports = class WriteEventRecords {
 		const queryArgs = _.flatten(records.map(r => {
 
 			return [
+				r.id,
 				r.session,
 				r.type,
 				r.datetime,

@@ -2,6 +2,7 @@
 	"messages": [{
 			"id": "0a35f59b-88d9-4227-a7ef-5272da0a785d",
 			"datetime": "2018-03-23T21:58:46.068Z",
+			"session": "11111111-1111-1111-1111-111111111111",
 			"merchantProvider": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
 			"processorResult": "success",
 			"amount": 34.99,
@@ -21,6 +22,7 @@
 		{
 			"id": "6dd9546f-9efd-40db-80d7-c95c90570455",
 			"datetime": "2018-03-23T22:01:55.330Z",
+			"session": "11111111-1111-1111-1111-111111111111",
 			"merchantProvider": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
 			"processorResult": "fail",
 			"amount": 34.99,
