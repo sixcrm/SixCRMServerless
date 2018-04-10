@@ -17,7 +17,10 @@
     "tracking_number": {"$ref":"../../definitions/trackingnumber.json"},
     "address":{"$ref":"../../definitions/address.json"},
     "amount":{"$ref":"../../definitions/currency.json"},
-    "alias":{"$ref":"../../definitions/transactionalias.json"},
+    "alias": {"anyOf":[
+      {"$ref":"../../definitions/transactionalias.json"},
+      {"$ref":"../../definitions/sessionalias.json"}
+    ]},
     "first_six":{"$ref":"../../definitions/creditcardfirstsix.json"},
     "last_four":{"$ref":"../../definitions/creditcardlastfour.json"},
     "account":{"$ref":"../../definitions/sixcrmaccountidentifier.json"},

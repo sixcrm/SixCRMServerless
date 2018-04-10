@@ -3,5 +3,5 @@
 	"id":"/entitytype.json",
 	"title": "Entity Type",
 	"type": "string",
-  "enum":["campaign","creditcard","merchantprovider","productschedule","product","shippingreceipt","customer","transaction","affiliate"]
+  "enum":["campaign","creditcard","merchantprovider","productschedule","product","shippingreceipt","customer","transaction","affiliate","session"]
 }
