@@ -2,13 +2,16 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
+const spoofer = global.SixCRM.routes.include('test','spoofer.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-
 
 function getValidUser() {
     return MockEntities.getValidUser()
+}
+
+function getValidUserACL() {
+    return MockEntities.getValidUserACL()
 }
 
 
@@ -25,67 +28,6 @@ describe('controllers/entities/User.js', () => {
     afterEach(() => {
         mockery.resetCache();
         mockery.deregisterAll();
-    });
-
-    xdescribe('getFullName', () => {
-
-        it('returns user\'s full name', () => {
-            let user = getValidUser();
-
-            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-            const userController = new UserController();
-
-            expect(userController.getFullName(user)).to.equal(user.first_name + ' ' + user.last_name);
-        });
-
-        it('returns only last name when first name is not a string', () => {
-            let user = getValidUser();
-
-            let non_string_values = [123, -123, 11.22, -11.22, null, {}, [], () => {}]; //not a string
-
-            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-            const userController = new UserController();
-
-            non_string_values.forEach(non_string_value => {
-                user.first_name = non_string_value;
-                expect(userController.getFullName(user)).to.equal(user.last_name);
-            });
-        });
-
-        it('returns null when user\'s first and last name are omitted', () => {
-            let user = getValidUser();
-
-            delete user.first_name;
-            delete user.last_name;
-
-            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-            const userController = new UserController();
-
-            expect(userController.getFullName(user)).to.equal(null);
-        });
-    });
-
-    xdescribe('getAddress', () => {
-
-        it('returns null when user address is omitted', () => {
-            let user = getValidUser(); //valid user without an address
-
-            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-            const userController = new UserController();
-
-            expect(userController.getAddress(user)).to.equal(null);
-        });
-
-        it('returns user address', () => {
-            let user = getValidUser();
-
-            user.address = 'an address';
-
-            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-            const userController = new UserController();
-
-            expect(userController.getAddress(user)).to.equal(user.address);
-        });
     });
 
     describe('can', () => {
@@ -359,90 +301,6 @@ describe('controllers/entities/User.js', () => {
         });
     });
 
-    xdescribe('createUserWithAlias', () => {
-
-        it('creates user with previously set alias', () => {
-
-            let user = getValidUser();
-
-            PermissionTestGenerators.givenUserWithAllowed('create', 'user');
-
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
-                queryRecords(table, parameters) {
-                    expect(table).to.equal('users');
-                    expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
-                    return Promise.resolve([]);
-                }
-                saveRecord(tableName, entity) {
-                    expect(tableName).to.equal('users');
-                    expect(entity).to.deep.equal(user);
-                    return Promise.resolve(entity);
-                }
-            });
-
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
-                createActivity() {
-                    return Promise.resolve();
-                }
-            });
-
-            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-            const userController = new UserController();
-
-            return userController.createUserWithAlias(user).then((result) => {
-                expect(result.alias).to.be.defined;
-                expect(result).to.deep.equal(user);
-            });
-        });
-
-        it('appends user alias and creates user', () => {
-
-            let user = getValidUser();
-
-            delete user.alias;
-
-            PermissionTestGenerators.givenUserWithAllowed('create', 'user');
-
-            mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), class {
-              constructor(){
-
-              }
-              create({entity}){
-                return Promise.resolve(entity);
-              }
-            });
-
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
-                queryRecords(table, parameters) {
-                    expect(table).to.equal('users');
-                    expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
-                    return Promise.resolve([]);
-                }
-                saveRecord(tableName, entity) {
-                    expect(tableName).to.equal('users');
-                    expect(entity).to.deep.equal(user);
-                    return Promise.resolve(entity);
-                }
-            });
-
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
-                createActivity() {
-                    return Promise.resolve();
-                }
-            });
-
-            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-            const userController = new UserController();
-
-            return userController.createUserWithAlias(user).then((result) => {
-                expect(result.alias).to.be.defined;
-                expect(result).to.deep.equal(user);
-            }).catch(error => {
-              du.error(error);
-            });
-        });
-    });
-
     describe('createStrict', () => {
 
         beforeEach(() => {
@@ -540,6 +398,34 @@ describe('controllers/entities/User.js', () => {
                 expect(error.message).to.equal('Saving failed.');
             });
         });
+
+        it('throws error when user id does not match global user id', () => {
+
+            let user = getValidUser();
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            try {
+                userController.createStrict(user)
+            }catch(error){
+                expect(error.message).to.equal("[500] User ID does not match Global User ID");
+            }
+        });
+
+        it('throws error when global user id is not set', () => {
+
+            delete global.user.id;
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            try {
+                userController.createStrict()
+            }catch(error){
+                expect(error.message).to.equal("[500] Unset user in globals");
+            }
+        });
     });
 
     describe('assureUser', () => {
@@ -577,54 +463,35 @@ describe('controllers/entities/User.js', () => {
 
         });
 
-        //Need appropriate mocks
-        xit('successfully assures user', () => {
-            let user_id = 'test@example.com';
+        it('successfully assures user', () => {
+
+            let user = getValidUser();
+
+            let alias;
 
             PermissionTestGenerators.givenUserWithAllowed('*', 'user');
-
-            mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), class {
-              constructor(){
-
-              }
-              create({entity}){
-                return Promise.resolve(entity);
-              }
-              get(){
-                return Promise.resolve(null);
-              }
-              executeAssociatedEntityFunction(){
-                return Promise.resolve({});
-              }
-            });
 
             mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('users');
-                    expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user_id);
-                    return Promise.resolve({});
+                    expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
+                    return Promise.resolve(user);
                 }
                 saveRecord(tableName, entity) {
+                    alias = entity.alias;
                     expect(tableName).to.equal('users');
-                    expect(entity.id).to.equal(user_id);
-                    expect(entity.name).to.equal(user_id);
-                    expect(entity.termsandconditions).to.equal('0.0');
-                    expect(entity.active).to.equal(true);
-                    expect(entity.auth0id).to.equal('-');
-                    expect(entity.alias).to.equal('ccc8a2908e3b3722e73c727b01adae54c6e341eb');
+                    expect(entity.id).to.equal(user.id);
+                    expect(entity.name).to.equal(user.id);
+                    expect(entity.first_name).to.equal(user.id);
+                    expect(entity.last_name).to.equal(user.id);
+                    expect(entity.active).to.equal(false);
                     return Promise.resolve(entity);
-                }
-            });
-
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'random.js'), {
-                createRandomString: () => {
-                    return 'a_random_string';
                 }
             });
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserSetting.js'), class {
                 create({entity}) {
-                    expect(entity.id).to.equal(user_id);
+                    expect(entity.id).to.equal(user.id);
                     expect(entity.timezone).to.equal('America/Los_Angeles');
                     expect(entity.notifications).to.deep.equal([
                         { name: 'six', receive: true },
@@ -634,28 +501,85 @@ describe('controllers/entities/User.js', () => {
                         { name: 'skype', receive: false },
                         { name: 'ios', receive: false }
                     ]);
-                    return Promise.resolve(entity)
-                }
-            });
-
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {
-                createActivity() {
-                    return Promise.resolve();
+                    return Promise.resolve(user)
                 }
             });
 
             const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
             const userController = new UserController();
 
-            return userController.assureUser(user_id).then((result) => {
-                expect(result.active).to.equal(true);
-                expect(result.alias).to.equal('ccc8a2908e3b3722e73c727b01adae54c6e341eb');
-                expect(result.auth0id).to.equal('-');
+            return userController.assureUser(user.id).then((result) => {
+                expect(result.active).to.equal(false);
+                expect(result.alias).to.equal(alias);
                 expect(result.entity_type).to.equal('user');
-                expect(result.id).to.equal(user_id);
-                expect(result.name).to.equal(user_id);
+                expect(result.id).to.equal(user.id);
+                expect(result.name).to.equal(user.id);
                 expect(result.index_action).to.equal('add');
-                expect(result.termsandconditions).to.equal('0.0');
+                expect(result.first_name).to.equal(user.id);
+                expect(result.last_name).to.equal(user.id);
+            });
+        });
+
+        it('successfully assures user when user helper and user setting helper controllers are already set', () => {
+
+            const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
+            const UserSettingHelperController = global.SixCRM.routes.include('helpers', 'entities/usersetting/UserSetting.js');
+
+            let user = getValidUser();
+
+            let alias;
+
+            PermissionTestGenerators.givenUserWithAllowed('*', 'user');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table, parameters) {
+                    expect(table).to.equal('users');
+                    expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(user.id);
+                    return Promise.resolve(user);
+                }
+                saveRecord(tableName, entity) {
+                    alias = entity.alias;
+                    expect(tableName).to.equal('users');
+                    expect(entity.id).to.equal(user.id);
+                    expect(entity.name).to.equal(user.id);
+                    expect(entity.first_name).to.equal(user.id);
+                    expect(entity.last_name).to.equal(user.id);
+                    expect(entity.active).to.equal(false);
+                    return Promise.resolve(entity);
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/UserSetting.js'), class {
+                create({entity}) {
+                    expect(entity.id).to.equal(user.id);
+                    expect(entity.timezone).to.equal('America/Los_Angeles');
+                    expect(entity.notifications).to.deep.equal([
+                        { name: 'six', receive: true },
+                        { name: 'email', receive: false },
+                        { name: 'sms', receive: false },
+                        { name: 'slack', receive: false },
+                        { name: 'skype', receive: false },
+                        { name: 'ios', receive: false }
+                    ]);
+                    return Promise.resolve(user)
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            userController.userHelperController = new UserHelperController();
+            userController.userSettingHelperController = new UserSettingHelperController();
+
+            return userController.assureUser(user.id).then((result) => {
+                expect(result.active).to.equal(false);
+                expect(result.alias).to.equal(alias);
+                expect(result.entity_type).to.equal('user');
+                expect(result.id).to.equal(user.id);
+                expect(result.name).to.equal(user.id);
+                expect(result.index_action).to.equal('add');
+                expect(result.first_name).to.equal(user.id);
+                expect(result.last_name).to.equal(user.id);
             });
         });
 
@@ -755,9 +679,429 @@ describe('controllers/entities/User.js', () => {
         });
     });
 
+    describe('associatedEntitiesCheck', () => {
+
+        it('creates associated entities object', () => {
+
+            let user_id = getValidUser().id;
+
+            let userACL = getValidUserACL();
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                listByUser({user}) {
+                    expect(user).to.equal(user_id);
+                    return Promise.resolve({
+                        useracls: [userACL]
+                    })
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.associatedEntitiesCheck({id: user_id}).then((result) => {
+                expect(result).to.deep.equal([{
+                    entity: {
+                        id: userACL.id
+                    },
+                    name: "Campaign"
+                }]);
+            });
+        });
+
+        it('returns an empty array when userACL with specified user id does not exist', () => {
+
+            let user_id = getValidUser().id;
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                listByUser({user}) {
+                    expect(user).to.equal(user_id);
+                    return Promise.resolve({})
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.associatedEntitiesCheck({id: user_id}).then((result) => {
+                expect(result).to.deep.equal([]);
+            });
+        });
+    });
+
+    describe('getUserByAlias', () => {
+
+        beforeEach(() => {
+            mockery.registerMock(global.SixCRM.routes.path('analytics', 'Analytics.js'), class {
+                disableACLs() {}
+                enableACLs() {}
+            });
+        });
+
+        it('retrieves user with acl by alias', () => {
+
+            let user = getValidUser();
+
+            let userACL = getValidUserACL();
+
+            let partially_hydrated_userACL = {
+                role: userACL.role,
+                account: userACL.account
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'user');
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                queryBySecondaryIndex({index_name, field, index_value}) {
+                    expect(index_name).to.equal('user-index');
+                    expect(field).to.equal('user');
+                    expect(index_value).to.equal(user.id);
+                    return Promise.resolve({
+                        useracls: [userACL]
+                    })
+                }
+                getPartiallyHydratedACLObject() {
+                    return Promise.resolve(partially_hydrated_userACL)
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table) {
+                    expect(table).to.equal('users');
+                    return Promise.resolve({
+                        Count: 1,
+                        Items: [user]
+                    });
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.getUserByAlias(user.alias).then((result) => {
+                expect(result.acl[0].role).to.equal(userACL.role);
+                expect(result.acl[0].account).to.equal(userACL.account);
+                expect(result).to.equal(user);
+            });
+        });
+
+        it('returns false when user is not found', () => {
+
+            let user = getValidUser();
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'user');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table) {
+                    expect(table).to.equal('users');
+                    return Promise.resolve({});
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.getUserByAlias(user.alias).then((result) => {
+                expect(result).to.equal(false);
+            });
+        });
+
+        it('throws internal server error when userACL query fails', () => {
+
+            let user = getValidUser();
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'user');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table) {
+                    expect(table).to.equal('users');
+                    return Promise.resolve({
+                        Count: 1,
+                        Items: [user]
+                    });
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                queryBySecondaryIndex({index_name, field, index_value}) {
+                    expect(index_name).to.equal('user-index');
+                    expect(field).to.equal('user');
+                    expect(index_value).to.equal(user.id);
+                    return new Error('Failed');
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.getUserByAlias(user.alias).catch((error) => {
+                expect(error.message).to.equal('[500] Internal Server Error');
+            });
+        });
+    });
+
     describe('getUserStrict', () => {
 
-      xit('gets a user', () => {})
-      xit('returns false when user is not found', () => {});
+        beforeEach(() => {
+            mockery.registerMock(global.SixCRM.routes.path('analytics', 'Analytics.js'), class {
+                disableACLs() {}
+                enableACLs() {}
+            });
+        });
+
+        it('successfully retrieves user strict and sets global user and user acl', () => {
+
+            let user = getValidUser();
+
+            let userACL = getValidUserACL();
+
+            let email = spoofer.createRandomEmail();
+
+            let partially_hydrated_userACL = {
+                role: userACL.role,
+                account: userACL.account
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'user');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table) {
+                    expect(table).to.equal('users');
+                    return Promise.resolve({
+                        Count: 1,
+                        Items: [user]
+                    });
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                queryBySecondaryIndex({index_name, field, index_value}) {
+                    expect(index_name).to.equal('user-index');
+                    expect(field).to.equal('user');
+                    expect(index_value).to.equal(user.id);
+                    return Promise.resolve({
+                        useracls: [userACL]
+                    })
+                }
+                getPartiallyHydratedACLObject() {
+                    return Promise.resolve(partially_hydrated_userACL)
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.getUserStrict(email).then((result) => {
+                expect(global.user).to.deep.equal(user);
+                expect(global.user.acl).to.deep.equal([partially_hydrated_userACL]);
+                expect(result).to.equal(user);
+            });
+        });
+
+        it('returns false when user is not found', () => {
+
+            let email = spoofer.createRandomEmail();
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'user');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table) {
+                    expect(table).to.equal('users');
+                    return Promise.resolve({});
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.getUserStrict(email).then((result) => {
+                expect(result).to.equal(false);
+            });
+        });
+
+        it('throws internal server error when userACL query fails', () => {
+
+            let user = getValidUser();
+
+            let email = spoofer.createRandomEmail();
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'user');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                queryRecords(table) {
+                    expect(table).to.equal('users');
+                    return Promise.resolve({
+                        Count: 1,
+                        Items: [user]
+                    });
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                queryBySecondaryIndex({index_name, field, index_value}) {
+                    expect(index_name).to.equal('user-index');
+                    expect(field).to.equal('user');
+                    expect(index_value).to.equal(user.id);
+                    return new Error('Failed');
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.getUserStrict(email).catch((error) => {
+                expect(error.message).to.equal('[500] Internal Server Error');
+            });
+        });
+
+        it('throws error when email is incorrect', () => {
+
+            let invalid_emails = ['any_string', '123', 'any_string123', 123, 123.123, [], {}, () => {}, true,
+                'plainaddress',
+                '#@%^%#$@#$@#.com',
+                '@example.com',
+                'email.example.com',
+                'email@example@example.com',
+                '.email@example.com',
+                'email.@example.com',
+                'email..email@example.com',
+                'email@example',
+                'email@-example.com',
+                'email@example.web',
+                'email@111.222.333.44444',
+                'email@example..com',
+                'Abc..123@example.com'
+            ];
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            invalid_emails.forEach(email => {
+                try {
+                    userController.getUserStrict(email)
+                }catch(error) {
+                    expect(error.message).to.equal('[400] A user identifier or a email is required, "' + email + '" provided');
+                }
+            })
+        });
+    });
+
+    describe('getUsersByAccount', () => {
+
+        it('successfully retrieves users by account', () => {
+
+            let user = getValidUser();
+
+            let userACL = getValidUserACL();
+
+            let params = {
+                pagination: {
+                    count: 1,
+                    end_cursor: '',
+                    has_next_page: 'false',
+                    last_evaluated: ''
+                },
+                fatal: false
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'user');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                scanRecords(table) {
+                    expect(table).to.equal('users');
+                    return Promise.resolve({ Count:1, Items: [user] });
+                }
+                createINQueryParameters(field, in_array) {
+                    expect(field).to.equal('id');
+                    expect(in_array[0]).to.equal(userACL.user);
+                    return Promise.resolve({
+                        filter_expression: 'a_filter',
+                        expression_attribute_values: 'an_expression_values'
+                    })
+                }
+            });
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                getACLByAccount({account, fatal}) {
+                    expect(account).to.equal(global.account);
+                    expect(fatal).to.equal(params.fatal);
+                    return Promise.resolve([userACL]);
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.getUsersByAccount(params).then((result) => {
+                expect(result).to.deep.equal({
+                    pagination: params.pagination,
+                    users: [user]
+                });
+            });
+        });
+
+        it('returns null when there are no results for specified account', () => {
+
+            let params = {
+                pagination: {
+                    count: 1,
+                    end_cursor: '',
+                    has_next_page: 'false',
+                    last_evaluated: ''
+                },
+                fatal: false
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('read', 'user');
+
+            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+                getACLByAccount({account, fatal}) {
+                    expect(account).to.equal(global.account);
+                    expect(fatal).to.equal(params.fatal);
+                    return Promise.resolve([]);
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.getUsersByAccount(params).then((result) => {
+                expect(result).to.equal(null);
+            });
+        });
+
+        it('successfully retrieves users by account with master account permissions', () => {
+
+            let user = getValidUser();
+
+            let params = {
+                pagination: {
+                    count: 1,
+                    end_cursor: '',
+                    has_next_page: 'false',
+                    last_evaluated: ''
+                },
+                fatal: false
+            };
+
+            PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+
+            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+                scanRecords(table) {
+                    expect(table).to.equal('users');
+                    return Promise.resolve({ Count:1, Items: [user] });
+                }
+            });
+
+            const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+            const userController = new UserController();
+
+            return userController.getUsersByAccount(params).then((result) => {
+                expect(result).to.deep.equal({
+                    pagination: params.pagination,
+                    users: [user]
+                });
+            });
+        });
     });
 });
