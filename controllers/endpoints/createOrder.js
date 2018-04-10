@@ -497,7 +497,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.registerController = new RegisterController();
 		}
 
-		return this.rebillHelperController.updateUpsell({
+		return this.rebillHelperController.updateRebillUpsell({
 				rebill: previous_rebill,
 				upsell: rebill
 			})
