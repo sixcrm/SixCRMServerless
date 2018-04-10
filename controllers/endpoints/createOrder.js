@@ -489,7 +489,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}
 
 		if (!_.has(this, 'rebillHelperController')) {
-			this.rebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+			const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+			this.rebillHelperController = new RebillHelperController();
 		}
 
 		if (!_.has(this, 'registerController')) {

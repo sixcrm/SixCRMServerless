@@ -1961,7 +1961,7 @@ describe('createOrder', function () {
 			const transactions = getValidTransactions();
 			const reversed_transactions = [];
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), {
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
 				updateRebillUpsell({rebill: _rebill, upsell}) {
 					expect(_rebill).to.equal(previous_rebill);
 					expect(upsell).to.equal(rebill);
