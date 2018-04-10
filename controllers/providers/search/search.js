@@ -19,7 +19,8 @@ module.exports = class SearchController {
         productschedule: 'productschedule',
         merchantprovider: 'merchantprovider',
         shippingreceipt: 'shippingreceipt',
-        transaction: 'transaction'
+        transaction: 'transaction',
+        session: 'session'
       };
 
     }
