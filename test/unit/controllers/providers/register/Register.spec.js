@@ -161,7 +161,7 @@ describe('controllers/providers/Register.js', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {

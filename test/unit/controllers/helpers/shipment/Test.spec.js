@@ -1,19 +1,19 @@
 'use strict'
-const _ = require('underscore');
+//const _ = require('underscore');
 const chai = require("chai");
-const uuidV4 = require('uuid/v4');
+//const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+//const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
+//const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+//const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+//const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+//const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
-const FulfillController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
-
+//const FulfillController = global.SixCRM.routes.include('helpers', 'shipment/Fulfill.js');
+/*
 function getValidTransactionProducts(){
 
   return [
@@ -28,7 +28,8 @@ function getValidTransactionProducts(){
   ];
 
 }
-
+*/
+/*
 function getValidAugmentedTransactionProducts(){
 
   let transaction_products = getValidTransactionProducts();
@@ -187,6 +188,7 @@ function getValidFulfillmentProvider(){
   };
 
 }
+*/
 
 describe('helpers/shipment/Test.js', () => {
 
@@ -199,7 +201,7 @@ describe('helpers/shipment/Test.js', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {

@@ -22,7 +22,7 @@ describe('lib/providers/dynamodb-provider', () => {
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {

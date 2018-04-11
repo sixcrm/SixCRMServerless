@@ -77,7 +77,7 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
   });
 
   beforeEach(() => {
-    global.SixCRM.localcache.clear('all');
+    //global.SixCRM.localcache.clear('all');
   });
 
   afterEach(() => {

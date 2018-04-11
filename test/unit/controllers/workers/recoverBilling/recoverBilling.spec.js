@@ -94,7 +94,7 @@ describe('controllers/workers/recoverBilling', () => {
 	});
 
 	beforeEach(() => {
-		global.SixCRM.localcache.clear('all');
+		//global.SixCRM.localcache.clear('all');
 	});
 
 	afterEach(() => {

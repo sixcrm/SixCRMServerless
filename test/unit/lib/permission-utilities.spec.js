@@ -1,5 +1,5 @@
 let PermissionUtilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+//let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let PermissionTestGenerators = require('./permission-test-generators');
 let chai = require('chai');
 let expect = chai.expect;
@@ -11,7 +11,7 @@ describe('lib/permission-utilities', () => {
     });
 
     afterEach(() => {
-      global.SixCRM.localcache.clear('all');
+      //global.SixCRM.localcache.clear('all');
     });
 
     let anyAction = PermissionTestGenerators.anyAction();
@@ -444,7 +444,7 @@ describe('lib/permission-utilities', () => {
     describe('buildPermissionObject', () => {
         it('allows user with specific permission', () => {
             // given
-            let user = PermissionTestGenerators.givenUserWithAllowed('add', 'user');
+            PermissionTestGenerators.givenUserWithAllowed('add', 'user');
 
             // then
             expect(PermissionUtilities.buildPermissionObject()).to.deep.equal({
@@ -470,7 +470,7 @@ describe('lib/permission-utilities', () => {
 
         it('denies user without specific permission', () => {
             // given
-            let user = PermissionTestGenerators.givenUserWithNoPermissions();
+            PermissionTestGenerators.givenUserWithNoPermissions();
 
             // then
             expect(PermissionUtilities.buildPermissionObject()).to.deep.equal({
@@ -481,7 +481,7 @@ describe('lib/permission-utilities', () => {
 
         it('denies when user and account don\'t match', () => {
             // given
-            let user = PermissionTestGenerators.givenUserWithAllowed('user', 'add');
+            PermissionTestGenerators.givenUserWithAllowed('user', 'add');
 
             global.account = 'anotherId';
 
@@ -494,7 +494,7 @@ describe('lib/permission-utilities', () => {
 
         it('denies all even if user is denied a specific permission', () => {
             // given
-            let user = PermissionTestGenerators.givenUserWithDenied('add', 'user');
+            PermissionTestGenerators.givenUserWithDenied('add', 'user');
 
             // then
             expect(PermissionUtilities.buildPermissionObject()).to.deep.equal({
@@ -621,7 +621,7 @@ describe('lib/permission-utilities', () => {
 
         it('resolves permission object otherwise', () => {
             // given
-            let user = PermissionTestGenerators.givenAnyUser();
+            PermissionTestGenerators.givenAnyUser();
 
             // when
             let result = PermissionUtilities.getPermissions();
@@ -636,7 +636,7 @@ describe('lib/permission-utilities', () => {
 
             let permissions_array = [anyPermission, anotherPermission];
 
-            let user = PermissionTestGenerators.givenAnyUser();
+            PermissionTestGenerators.givenAnyUser();
 
             let result = PermissionUtilities.validatePermissionsArray(permissions_array);
 
