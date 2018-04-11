@@ -162,6 +162,8 @@ let listQueueMessageType = require('./queue/listQueueMessageType');
 
 let secondaryIdentifierInputType = require('./general/secondaryIdentifierInputType');
 
+let ipCheckType = require('./ipcheck/ipCheckType');
+
 let list_fatal = true;
 let get_fatal = true;
 
@@ -214,6 +216,8 @@ const SuggestController = global.SixCRM.routes.include('controllers', 'providers
 //Analytics Controllers
 
 const AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+
+const IPCheckController = global.SixCRM.routes.include('controllers', 'endpoints/ipCheck.js');
 
 module.exports.graphObj = new GraphQLObjectType({
   name: 'Query',
@@ -2576,6 +2580,15 @@ module.exports.graphObj = new GraphQLObjectType({
           search
         });
       }
-    }
-  })
+    },
+	ipCheck: {
+		type: ipCheckType.graphObj,
+		args: {},
+		resolve: (root) => {
+			const ipCheckController = new IPCheckController();
+
+			return ipCheckController.checkIP();
+		}
+	}
+})
 });

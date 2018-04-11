@@ -395,6 +395,15 @@ jobs:
       - run:
           name: Transactional Integration Tests
           command: export SIX_VERBOSE=2; npm run test-transactions
+  miscellaneous_integration_tests:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Miscellaneous Integration Tests
+          command: export SIX_VERBOSE=2; npm run test-miscellaneous
   synchronize_index:
     <<: *job-defaults
     steps:
