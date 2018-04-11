@@ -70,7 +70,7 @@ module.exports = class AnalyticsEventBroker {
 
 		du.debug('AnalyticsEventBroker.pushToQueue()');
 
-		// fs.writeFileSync(rdsObject.type + '-' + uuid.v4() + '.json', JSON.stringify(rdsObject), 'utf8');
+		// for testing: fs.writeFileSync(rdsObject.type + '-' + uuid.v4() + '.json', JSON.stringify(rdsObject), 'utf8');
 
 		const sqsMessage = JSON.stringify(record);
 
