@@ -1,5 +1,6 @@
 // const fs = require('fs');
 // const uuid = require('uuid');
+const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class AnalyticsEventBroker {
@@ -20,7 +21,7 @@ module.exports = class AnalyticsEventBroker {
 
 		}
 
-		return Promise.all(records.Records.map(this._recordHandler.bind(this)));
+		return BBPromise.each(records.Records.map(this._recordHandler.bind(this)), p => p);
 
 	}
 
@@ -28,34 +29,34 @@ module.exports = class AnalyticsEventBroker {
 
 		try {
 
-		const record = JSON.parse(snsRecord.Sns.Message);
+			const record = JSON.parse(snsRecord.Sns.Message);
 
-		const eventKeys = Object.keys(this._eventTypeHandlerMap);
-		const eventKey = eventKeys.find(ek => {
+			const eventKeys = Object.keys(this._eventTypeHandlerMap);
+			const eventKey = eventKeys.find(ek => {
 
-			const regex = new RegExp(`^${ek}`);
-			return record.event_type.match(regex);
-
-		});
-
-		const handerMap = this._eventTypeHandlerMap[eventKey];
-
-		if (!handerMap) {
-
-			return du.warning('AnalyticsEventBroker.execute(): event type not mapped', record.event_type);
-
-		}
-
-		const Transform = require(`./transforms/${handerMap.transform}`);
-
-		return Promise.resolve()
-			.then(() => new Transform().execute(record))
-			.then(this._pushToQueue.bind(this))
-			.catch((ex) => {
-
-				du.error('AnalyticsEventBroker.recordHandler()', ex);
+				const regex = new RegExp(`^${ek}`);
+				return record.event_type.match(regex);
 
 			});
+
+			const handerMap = this._eventTypeHandlerMap[eventKey];
+
+			if (!handerMap) {
+
+				return du.warning('AnalyticsEventBroker.execute(): event type not mapped', record.event_type);
+
+			}
+
+			const Transform = require(`./transforms/${handerMap.transform}`);
+
+			return Promise.resolve()
+				.then(() => new Transform().execute(record))
+				.then(this._pushToQueue.bind(this))
+				.catch((ex) => {
+
+					du.error('AnalyticsEventBroker.recordHandler()', ex);
+
+				});
 
 		} catch (ex) {
 
@@ -73,12 +74,15 @@ module.exports = class AnalyticsEventBroker {
 
 		const sqsMessage = JSON.stringify(record);
 
-        const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
-        const sqsprovider = new SQSProvider();
+		const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+		const sqsprovider = new SQSProvider();
+
+		const queue = global.SixCRM.configuration.isLocal() ? 'analytics' : 'analytics.fifo';
 
 		return sqsprovider.sendMessage({
 			message_body: sqsMessage,
-			queue: 'rds_transaction_batch'
+			queue,
+			messageGroupId: 'analytics'
 		}).then(() => {
 
 			return record;
