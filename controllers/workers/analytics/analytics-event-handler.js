@@ -29,8 +29,7 @@ module.exports = class AnalyticsEventHandler {
 
 		}
 
-		return this._getRecordsFromSQS()
-			.then(records => this._executeHandlers(records));
+		return this._getRecordsFromSQS();
 
 	}
 
@@ -40,6 +39,8 @@ module.exports = class AnalyticsEventHandler {
 
 		return sqsprovider.receiveMessagesRecursive({
 			queue: this._queueName
+		}, {
+			delegate: this._executeHandlers.bind(this)
 		});
 
 	}
