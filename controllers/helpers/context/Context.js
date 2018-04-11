@@ -83,7 +83,7 @@ module.exports = class ContextHelperController {
     }
 
     if(!_.has(destination_object, 'account') && objectutilities.hasRecursive(source_object, 'session.account') && stringutilities.isUUID(source_object.session.account)){
-      destination_object.account = source_object.campaign.account;
+      destination_object.account = source_object.session.account;
     }
 
     if(!_.has(destination_object, 'account')){
@@ -186,7 +186,7 @@ module.exports = class ContextHelperController {
           }
 
           if(_.has(thing_element, name) && stringutilities.isUUID(thing_element[name])){
-            return thing[name];
+            return thing_element[name];
           }
 
           if(objectutilities.hasRecursive(thing_element, name+'.id') && stringutilities.isUUID(thing_element[name].id)){
