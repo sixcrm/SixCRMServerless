@@ -27,7 +27,7 @@ describe('IP Check Test', function() {
 
 	var test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-	it('Should return an IP address', function (done) {
+	it('should return the NAT outgoing IP address', function (done) {
 
 		var query = tu.getQuery(test.query);
 
@@ -58,9 +58,9 @@ describe('IP Check Test', function() {
 				assert.equal(result.NatGateways.length, 0, "Zero or multiple NAT Gateways found for public-lambda");
 				assert.equal(result.NatGateways[0].NatGatewayAddresses[0].PublicIp, ipAddress, "Outgoing IP Address does not match NAT Gateway");
 
-			})
+				done();
 
-			done();
+			})
 
 		});
 
