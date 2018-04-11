@@ -3,7 +3,7 @@ require('../../../SixCRM.js');
 const _ = require('underscore');
 
 
-var LambdaResponse = global.SixCRM.routes.include('lib', 'lambda-response.js');
+var LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
 var publicHTMLController = global.SixCRM.routes.include('controllers', 'endpoints/publichtml.js');
 
 module.exports.publichtml = (event, context, callback) => {

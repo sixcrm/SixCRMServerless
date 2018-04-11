@@ -5,7 +5,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const RDSProvider = global.SixCRM.routes.include('lib', 'providers/rds-provider.js');
+const RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
 
 module.exports = class AuroraClusterDeployment {
 

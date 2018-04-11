@@ -8,9 +8,9 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
-const AutoscalingProvider = global.SixCRM.routes.include('lib', 'providers/autoscaling-provider.js');
-const DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
-const IAMProvider = global.SixCRM.routes.include('lib', 'providers/iam-provider.js');
+const AutoscalingProvider = global.SixCRM.routes.include('controllers', 'providers/autoscaling-provider.js');
+const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
+const IAMProvider = global.SixCRM.routes.include('controllers', 'providers/iam-provider.js');
 
 module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilities {
 

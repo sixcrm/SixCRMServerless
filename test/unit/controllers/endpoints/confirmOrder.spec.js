@@ -360,7 +360,7 @@ describe('confirmOrder', function () {
 
     it('successfully executes post processing', () => {
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
             publish() {
                 return Promise.resolve();
             }
@@ -460,7 +460,7 @@ describe('confirmOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
         publish() {
           return Promise.resolve();
         }
@@ -552,7 +552,7 @@ describe('confirmOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
         publish() {
           return Promise.resolve();
         }

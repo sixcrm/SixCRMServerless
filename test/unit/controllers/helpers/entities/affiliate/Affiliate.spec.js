@@ -127,7 +127,7 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('create', 'affiliate');
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
           queryRecords() {
               return Promise.resolve([]);
           }

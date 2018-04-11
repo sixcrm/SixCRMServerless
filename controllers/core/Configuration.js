@@ -7,9 +7,9 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
-const CloudsearchProvider = global.SixCRM.routes.include('lib', 'providers/cloudsearch-provider.js');
-const RDSProvider = global.SixCRM.routes.include('lib', 'providers/rds-provider.js');
-const RedshiftProvider = global.SixCRM.routes.include('lib', 'providers/redshift-provider.js');
+const CloudsearchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudsearch-provider.js');
+const RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+const RedshiftProvider = global.SixCRM.routes.include('controllers', 'providers/redshift-provider.js');
 
 module.exports = class Configuration extends ConfigurationUtilities {
 
@@ -490,7 +490,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 		let redis_key = this.buildRedisKey(field);
 
 		if (!_.has(this, 'redisprovider')) {
-			const RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+			const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
 			this.redisprovider = new RedisProvider();
 		}
 
@@ -522,7 +522,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
 		if (!_.has(this, 's3provider') || !_.isFunction(this.s3provider.getObject)) {
 
-			const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
+			const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
 			this.s3provider = new S3Provider();
 
 		}
@@ -720,7 +720,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 			let redis_key = this.buildRedisKey(key);
 
 			if (!_.has(this, 'redisprovider')) {
-				const RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+				const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
 				this.redisprovider = new RedisProvider();
 			}
 

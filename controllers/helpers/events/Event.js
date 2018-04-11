@@ -5,7 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const SNSProvider = global.SixCRM.routes.include('lib', 'providers/sns-provider.js');
+const SNSProvider = global.SixCRM.routes.include('controllers', 'providers/sns-provider.js');
 
 module.exports = class EventHelperController {
 

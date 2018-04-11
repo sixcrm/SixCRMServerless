@@ -9,8 +9,8 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const RelayResponse = global.SixCRM.routes.include('controllers','workers/components/RelayResponse.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
-const LambdaProvider = global.SixCRM.routes.include('lib', 'providers/lambda-provider.js');
+const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
+const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 
 //Technical Debt:  Test this!
 module.exports = class RelayController {

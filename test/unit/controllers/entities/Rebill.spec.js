@@ -91,7 +91,7 @@ describe('controllers/Rebill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index) {
                     expect(index).to.equal('parentsession-index');
                     expect(table).to.equal('rebills');
@@ -131,7 +131,7 @@ describe('controllers/Rebill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('rebills');
@@ -168,7 +168,7 @@ describe('controllers/Rebill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('rebills');
@@ -205,7 +205,7 @@ describe('controllers/Rebill.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'rebill');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('rebills');
@@ -250,7 +250,7 @@ describe('controllers/Rebill.js', () => {
                 expression_attribute_values: 'an_expression_values'
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 createINQueryParameters(field, list_array) {
                     expect(field).to.equal('id');
                     expect(list_array).to.deep.equal(rebill.product_schedules);
@@ -281,7 +281,7 @@ describe('controllers/Rebill.js', () => {
 
             let rebill = getValidRebill();
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('rebills');
                     expect(parameters).to.have.property('expression_attribute_names');
@@ -319,7 +319,7 @@ describe('controllers/Rebill.js', () => {
 
             let rebill = getValidRebill();
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('rebills');
                     expect(parameters).to.have.property('expression_attribute_names');
@@ -354,7 +354,7 @@ describe('controllers/Rebill.js', () => {
         it('builds correct query when listing pending rebills', () => {
             let rebill = getValidRebill();
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('rebills');
                     expect(parameters).to.have.property('expression_attribute_names');

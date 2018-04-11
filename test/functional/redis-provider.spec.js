@@ -7,7 +7,7 @@ describe('Test redis providers functionality', () => {
 
   it('successfully connects / disconnects to the Redis server', () => {
 
-    let RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+    let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
     const redisprovider = new RedisProvider();
 
     return redisprovider.connect().then(() => {
@@ -24,7 +24,7 @@ describe('Test redis providers functionality', () => {
 
   it('set/get plain string values', () => {
 
-    let RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+    let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
     const redisprovider = new RedisProvider();
 
     let test_value = 'abcdef';
@@ -44,7 +44,7 @@ describe('Test redis providers functionality', () => {
 
   it('set/get object values', () => {
 
-    let RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+    let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
     const redisprovider = new RedisProvider();
 
     let test_value = {'abc': 150, 'def': {'nested_value': 123}};
@@ -65,7 +65,7 @@ describe('Test redis providers functionality', () => {
   // Uses light white-box testing to determine connection reusage
   it('set/get object values reusing the connection', () => {
 
-    let RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+    let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
     const redisprovider = new RedisProvider();
 
     redisprovider.quiting_timer_timeout_ms = 1000;
@@ -92,7 +92,7 @@ describe('Test redis providers functionality', () => {
   // Uses light white-box testing to determine connection reusage
   it('set/get object values shutting down the connection', () => {
 
-    let RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+    let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
     const redisprovider = new RedisProvider();
 
     redisprovider.quiting_timer_timeout_ms = 100;
@@ -118,7 +118,7 @@ describe('Test redis providers functionality', () => {
 
   it('flushing db', () => {
 
-    let RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+    let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
     const redisprovider = new RedisProvider();
 
     let test_value = 'abcdef';

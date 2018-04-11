@@ -9,7 +9,7 @@ const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const EntityPermissionsHelper = global.SixCRM.routes.include('helpers', 'entityacl/EntityPermissions.js');
 const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
-const DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
+const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
 //Technical Debt:  This controller needs a "hydrate" method or prototype
 //Technical Debt:  Deletes must cascade in some respect.  Otherwise, we are going to get continued problems in the Graph schemas
 //Technical Debt:  We need a "inactivate"  method that is used more prolifically than the delete method is.

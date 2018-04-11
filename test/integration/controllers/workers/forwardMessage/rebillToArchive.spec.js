@@ -46,7 +46,7 @@ describe('controllers/workers/forwardmessage/rebillToDeliveredForwardMessage.js'
       session_id = (!_.isNull(session_id))?session_id:uuidV4();
       let message = getValidMessage(session_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages({queue}) {
           du.highlight('Message read from queue (mock): '+queue);
           return Promise.resolve([message]);

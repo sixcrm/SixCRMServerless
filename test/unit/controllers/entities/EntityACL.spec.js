@@ -31,7 +31,7 @@ describe('controllers/entities/EntityACL.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entityacl');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index_name) {
                     expect(index_name).to.equal('type-index');
                     expect(parameters.key_condition_expression).to.include('#type = :index_valuev');

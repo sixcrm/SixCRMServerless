@@ -2,7 +2,7 @@
 require('../../SixCRM.js');
 const exec = require('child_process').execSync;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
+const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
 const s3provider = new S3Provider();
 
 let last_commit = exec(`git rev-parse --verify HEAD`).toString().replace(/\r?\n|\r/g,'');

@@ -74,7 +74,7 @@ module.exports = class AnalyticsEventBroker {
 
 		const sqsMessage = JSON.stringify(record);
 
-		const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+		const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 		const sqsprovider = new SQSProvider();
 
 		const queue = global.SixCRM.configuration.isLocal() ? 'analytics' : 'analytics.fifo';

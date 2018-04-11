@@ -409,7 +409,7 @@ describe('controllers/entities/CreditCard.js', () => {
 
       PermissionTestGenerators.givenUserWithAllowed('*', 'creditcard');
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
         constructor() {}
         saveRecord() {
           return Promise.resolve({

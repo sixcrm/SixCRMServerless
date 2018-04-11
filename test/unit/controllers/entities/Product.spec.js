@@ -40,7 +40,7 @@ describe('controllers/Product.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'product');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index) {
                     expect(index).to.equal('account-index');
                     expect(table).to.equal('products');

@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
 
 module.exports = class cacheController {
 

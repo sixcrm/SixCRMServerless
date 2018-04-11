@@ -60,7 +60,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       let packaged_abridged_entity = getValidPackagedAbridgedEntity();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           return Promise.resolve(true);
         }
@@ -171,7 +171,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
       let random_fields = {abc:"123", isnt:{this:'hierarchicalstructuregreat'}, 'somethingelse':'isjustthat'};
       let preindexing_entity = objectutilities.merge(abridged_entity, random_fields);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           return Promise.resolve(true);
         }
@@ -197,7 +197,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       preindexing_entity.entity_type = 'x';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           expect(true).to.equal(false);
         }
@@ -226,7 +226,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       delete preindexing_entity.index_action;
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           return Promise.resolve(true);
         }
@@ -256,7 +256,7 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 
       delete preindexing_entity.index_action;
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           return Promise.resolve(true);
         }

@@ -389,7 +389,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
         publish() {
           return Promise.resolve();
         }
@@ -556,7 +556,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
         publish() {
           return Promise.resolve();
         }
@@ -722,7 +722,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
         publish() {
           return Promise.resolve();
         }
@@ -1229,7 +1229,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
         publish() {
           return Promise.resolve();
         }
@@ -1300,7 +1300,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
         publish() {
           return Promise.resolve();
         }
@@ -1371,7 +1371,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
         publish() {
           return Promise.resolve();
         }
@@ -1437,7 +1437,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
         publish() {
           return Promise.resolve();
         }
@@ -2066,7 +2066,7 @@ describe('createOrder', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
         publish() {
           return Promise.resolve();
         }

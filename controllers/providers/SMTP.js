@@ -1,7 +1,7 @@
 'use strict'
 const _ = require('underscore');
 
-const smtpprovider = global.SixCRM.routes.include('lib', 'providers/smtp-provider.js');
+const smtpprovider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');

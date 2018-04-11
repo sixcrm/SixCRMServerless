@@ -889,7 +889,7 @@ describe('controllers/providers/Register.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
         queryRecords() {
           return Promise.resolve([]);
         }
@@ -960,7 +960,7 @@ describe('controllers/providers/Register.js', () => {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
         queryRecords() {
           return Promise.resolve([]);
         }
@@ -1037,7 +1037,7 @@ describe('controllers/providers/Register.js', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), mock_receipt);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
         queryRecords() {
           return Promise.resolve([]);
         }
@@ -1098,7 +1098,7 @@ describe('controllers/providers/Register.js', () => {
 
       assumePermissionedRole();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
         queryRecords() {
           return Promise.resolve([]);
         }

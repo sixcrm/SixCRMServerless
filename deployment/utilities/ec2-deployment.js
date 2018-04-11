@@ -3,7 +3,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const EC2Provider = global.SixCRM.routes.include('lib', 'providers/ec2-provider.js');
+const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
 module.exports = class EC2Deployment extends AWSDeploymentUtilities{

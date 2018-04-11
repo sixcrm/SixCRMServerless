@@ -5,7 +5,7 @@ const TestUtils = require('./test-utils');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 const sqsDeployment = new SQSDeployment();
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const LambdaProvider = global.SixCRM.routes.include('lib', 'providers/lambda-provider.js');
+const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 const lambdaprovider = new LambdaProvider();
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 

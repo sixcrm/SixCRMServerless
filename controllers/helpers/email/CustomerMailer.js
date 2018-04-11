@@ -3,7 +3,7 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
-const SMTPProvider = global.SixCRM.routes.include('lib', 'providers/smtp-provider.js');
+const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class CustomerMailerHelper {

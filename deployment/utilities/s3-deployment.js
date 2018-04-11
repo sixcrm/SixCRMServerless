@@ -5,8 +5,8 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
-const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
-const IAMProvider = global.SixCRM.routes.include('lib', 'providers/iam-provider.js');
+const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
+const IAMProvider = global.SixCRM.routes.include('controllers', 'providers/iam-provider.js');
 
 module.exports = class S3Deployment extends AWSDeploymentUtilities {
 

@@ -24,7 +24,7 @@ describe('controllers/helpers/queue/Queue.js', () => {
 
     it('returns empty array of messages when sqs utilities returns null', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages() {
           return Promise.resolve(null);
         }
@@ -40,7 +40,7 @@ describe('controllers/helpers/queue/Queue.js', () => {
 
     it('returns empty array of messages when no messages in a queue', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages() {
           return Promise.resolve([]);
         }
@@ -56,7 +56,7 @@ describe('controllers/helpers/queue/Queue.js', () => {
 
     it('parses and returns messages from a queue', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages() {
           return Promise.resolve([
             {MessageId: 1, Body: 'test message'},
@@ -78,7 +78,7 @@ describe('controllers/helpers/queue/Queue.js', () => {
 
     it('throws an error when queue rejects', (done) => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages() {
           return Promise.reject('this is an error');
         }

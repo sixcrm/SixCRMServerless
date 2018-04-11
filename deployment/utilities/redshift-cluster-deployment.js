@@ -189,7 +189,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
     if(_.has(this.configuration_file.cluster, 'security_group_names')){
 
       if(!_.has(this, 'ec2provider')){
-        let EC2Provider = global.SixCRM.routes.include('lib', 'providers/ec2-provider.js');
+        let EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
 
         this.ec2provider =  new EC2Provider();
       }

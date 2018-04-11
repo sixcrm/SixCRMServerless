@@ -5,8 +5,8 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const S3Deployment = global.SixCRM.routes.include('deployment', 'utilities/s3-deployment.js');
-const DataPipelineProvider = global.SixCRM.routes.include('lib', 'providers/data-pipeline-provider.js');
-const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
+const DataPipelineProvider = global.SixCRM.routes.include('controllers', 'providers/data-pipeline-provider.js');
+const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
 
 module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 

@@ -183,7 +183,7 @@ describe('workers/forwardMessage', () => {
 
       let valid_messages = getValidMessages();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages({queue}) {
           expect(queue).to.equal('dummy_queue');
 
@@ -303,7 +303,7 @@ describe('workers/forwardMessage', () => {
 
     it('fails when messages parameters is not set', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/lambda-provider.js'), class {
         invokeFunction() {
           return true;
         }
@@ -324,7 +324,7 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for valid messages of length less than limit', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/lambda-provider.js'), class {
         invokeFunction() {
           return true;
         }
@@ -347,7 +347,7 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for valid messages of length 0', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/lambda-provider.js'), class {
         invokeFunction() {
           expect.fail();
         }
@@ -369,7 +369,7 @@ describe('workers/forwardMessage', () => {
 
     it('succeeds for valid messages of length 10', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/lambda-provider.js'), class {
         invokeFunction( {function_name, payload, invocation_type} ) {
           expect(function_name).to.equal('lambda-name');
           expect(JSON.parse(payload)).to.deep.equal({});
@@ -400,7 +400,7 @@ describe('workers/forwardMessage', () => {
 
     it('fails when lambda returns error', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/lambda-provider.js'), class {
         invokeFunction() {
           let error = new Error();
 
@@ -607,7 +607,7 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward a object missing the failure property', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           expect.fail()
         }
@@ -628,7 +628,7 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward when failure_queue property is not set', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           expect.fail()
         }
@@ -649,7 +649,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully forwards to correct failure queue', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage({message_body, queue}) {
           let body = JSON.parse(validMessage.Body);
 
@@ -682,7 +682,7 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward a object missing the success property', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           expect.fail()
         }
@@ -703,7 +703,7 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward when destination_queue property is not set', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           expect.fail()
         }
@@ -724,7 +724,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully forwards to destination queue', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage({message_body, queue}) {
           expect(queue).to.equal('some_success_queue');
           expect(message_body).to.equal(validMessage.Body);
@@ -752,7 +752,7 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward a object missing the error property', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           expect.fail();
         }
@@ -773,7 +773,7 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward when error_queue property is not set', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           expect.fail();
         }
@@ -794,7 +794,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully forwards to error queue', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage({message_body, queue}) {
           let body = JSON.parse(validMessage.Body);
 
@@ -828,7 +828,7 @@ describe('workers/forwardMessage', () => {
 
     it('does not forward a object missing the noaction property', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           expect.fail();
         }
@@ -868,7 +868,7 @@ describe('workers/forwardMessage', () => {
 
     it('does not delete noaction type', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage() {
           expect.fail();
         }
@@ -889,7 +889,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes fail type', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_delete_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
@@ -915,7 +915,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes success type', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_success_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
@@ -939,7 +939,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes error type', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_error_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
@@ -963,7 +963,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes success type with multiple messages', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_success_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
@@ -987,7 +987,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes fail type with multiple messages', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_fail_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
@@ -1011,7 +1011,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes error type with multiple messages', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage({queue, receipt_handle}) {
           expect(queue).to.equal('some_error_queue');
           expect(receipt_handle).to.equal(validMessage.ReceiptHandle);
@@ -1035,7 +1035,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully skips deletes for noaction type with multiple messages', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage() {
           expect.fail();
         }
@@ -1084,7 +1084,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes single message arrays', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage({queue}) {
           expect(queue).to.equal('some_success_queue');
 
@@ -1106,7 +1106,7 @@ describe('workers/forwardMessage', () => {
 
     it('successfully deletes multiple message arrays', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage({queue}) {
           expect(queue).to.equal('some_success_queue');
 
@@ -1134,7 +1134,7 @@ describe('workers/forwardMessage', () => {
 
       let compound_worker_response_object = getValidCompoundWorkerResponse('success', getValidMessage());
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         deleteMessage({queue}) {
           expect(queue).to.equal('some_success_queue');
 
@@ -1162,7 +1162,7 @@ describe('workers/forwardMessage', () => {
 
           let compound_worker_response_object = getValidCompoundWorkerResponse('success', getValidMessage());
 
-          mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+          mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
               deleteMessage({queue}) {
                   expect(queue).to.equal('some_success_queue');
 
@@ -1245,7 +1245,7 @@ describe('workers/forwardMessage', () => {
           mockery.registerMock(global.SixCRM.routes.path('workers', 'aWorker.js'), mock_worker);
 
           //does not invoke additional lambda when not required
-          mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+          mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/lambda-provider.js'), class {
               invokeFunction() {
                   expect.fail();
               }

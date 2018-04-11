@@ -41,7 +41,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenAnyUser();
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table) {
                     if (table === 'entityacls') {
                         return Promise.resolve({Items: [entityAcl]});
@@ -92,7 +92,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenAnyUser();
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table) {
                     if (table === 'entityacls') {
                         return Promise.resolve({Items: [entityAcl]});
@@ -143,7 +143,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenAnyUser();
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     if (table === 'entityacls') {
                         return Promise.resolve({Items: [entityAcl]});
@@ -202,7 +202,7 @@ describe('controllers/Entity.js', () => {
                 id: 'ead02cb4-61f9-49de-bd08-e9192718e75d'
             }];
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({ Count: acls.length, Items: acls })
                 }
@@ -249,7 +249,7 @@ describe('controllers/Entity.js', () => {
                 id: 'f683e149-874a-4572-85b0-afa7c1c5b4dd'
             }];
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(parameters.limit).to.equal(params.pagination.limit);
                     return Promise.resolve({ Count: acls.length, LastEvaluatedKey: acls[acls.length - 1], Items: acls })
@@ -286,7 +286,7 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenAnyUser();
             const acls = [];
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({ Count: acls.length, Items: acls })
                 }
@@ -339,7 +339,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve([]);
                 }
@@ -395,7 +395,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({Items: [anEntity]});
                 }
@@ -434,7 +434,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                   eu.throwError('server','Reading failed.');
                 }
@@ -464,7 +464,7 @@ describe('controllers/Entity.js', () => {
 
         PermissionTestGenerators.givenUserWithAllowed('update', 'product');
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
             queryRecords() {
                 return Promise.resolve({Items: [anEntity]});
             }
@@ -473,7 +473,7 @@ describe('controllers/Entity.js', () => {
             }
         });
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
           sendMessage() {
             return Promise.resolve(true);
           }
@@ -533,7 +533,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     eu.throwError('server','Reading failed.');
                 }
@@ -574,7 +574,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve([]);
                 }
@@ -609,7 +609,7 @@ describe('controllers/Entity.js', () => {
             PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
             global.account = '*';
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({Items: [anEntity]});
                 }
@@ -687,7 +687,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                   eu.throwError('server', 'Reading failed.');
                 }
@@ -710,7 +710,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({Items:[anEntity]});
                 }
@@ -736,7 +736,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({Items:[]});
                 }
@@ -762,7 +762,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                   return Promise.resolve({Items:[anEntity, anEntity]});
                 }
@@ -787,7 +787,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('delete', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({Items:[anEntity]});
                 }
@@ -855,7 +855,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                   return Promise.resolve({Items: [anEntity]});
                 }
@@ -879,7 +879,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     eu.throwError('server','Reading failed.');
                 }
@@ -904,7 +904,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({Items:[anEntity, anEntity]});
                 }
@@ -928,7 +928,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({Items:[]});
                 }
@@ -992,7 +992,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 scanRecords() {
                     return Promise.resolve({Items: [], LastEvaluatedKey: {id: 1}});
                 }
@@ -1011,7 +1011,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 scanRecords() {
                   return Promise.resolve('');
                 }
@@ -1031,7 +1031,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 scanRecords() {
                     eu.throwError('server','Scanning failed.');
                 }
@@ -1051,7 +1051,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 scanRecords() {
                   return Promise.resolve({Count: 0,Items: []});
                 }
@@ -1079,7 +1079,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 scanRecords() {
                     return Promise.resolve({
                         Count: 10,
@@ -1137,7 +1137,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({ Items: 'non array' });
                 }
@@ -1157,7 +1157,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     eu.throwError('server','Query failed.');
                 }
@@ -1177,7 +1177,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({ Items: [] });
                 }
@@ -1197,7 +1197,7 @@ describe('controllers/Entity.js', () => {
             // given
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({ Items: [{},{}] });
                 }
@@ -1336,7 +1336,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve([]);
                 }
@@ -1366,7 +1366,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({Items: [anEntity]});
                 }
@@ -1398,7 +1398,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve([]);
                 }
@@ -1452,7 +1452,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('*', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve([]);
                 }
@@ -1481,7 +1481,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('update', 'accesskey');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
               queryRecords() {
                   return Promise.resolve({Items: [anEntity]});
               }
@@ -1541,7 +1541,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({
                         Count: 2,
@@ -1582,7 +1582,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('entities');
                     expect(parameters.expression_attribute_values[':updated_at_after_v']).to.deep.equal(params.search.updated_at.after);
@@ -1630,7 +1630,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('entities');
                     expect(parameters.expression_attribute_values[':updated_at_after_v']).to.deep.equal(params.search.updated_at.after);
@@ -1664,7 +1664,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({Count: 0,Items: []});
                 }
@@ -1693,7 +1693,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({
                         Count: 2,
@@ -1734,7 +1734,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('entities');
                     expect(parameters.expression_attribute_values[':updated_at_after_v']).to.deep.equal(params.search.updated_at.after);
@@ -1769,7 +1769,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({Count: 0,Items: []});
                 }
@@ -1798,7 +1798,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({
                         Count: 2,
@@ -1842,7 +1842,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index) {
                     expect(table).to.equal('entities');
                     expect(index).to.equal('account-index');
@@ -1884,7 +1884,7 @@ describe('controllers/Entity.js', () => {
         it('retrieves list by user', () => {
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords() {
                     return Promise.resolve({
                         Count: 2,
@@ -1928,7 +1928,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index) {
                     expect(index).to.equal(params.index_name);
                     expect(parameters).to.have.property('key_condition_expression');
@@ -1970,7 +1970,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index) {
                     expect(index).to.equal(params.index);
                     expect(table).to.equal('entities');
@@ -2019,7 +2019,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 scanRecords(table, parameters) {
                     expect(parameters).to.have.property('filter_expression');
                     expect(parameters).to.have.property('expression_attribute_values');
@@ -2094,7 +2094,7 @@ describe('controllers/Entity.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'entity');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 countRecords(table, additional_parameters) {
                     expect(table).to.equal('entities');
                     expect(additional_parameters).to.have.property('filter_expression');
@@ -2121,7 +2121,7 @@ describe('controllers/Entity.js', () => {
                 list_array: ['an_item']
             };
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 createINQueryParameters(field_name, in_array) {
                     expect(field_name).to.equal(params.field);
                     expect(in_array).to.equal(params.list_array);

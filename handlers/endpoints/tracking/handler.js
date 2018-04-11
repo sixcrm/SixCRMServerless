@@ -4,7 +4,7 @@ module.exports.tracking = (event, context, callback) => {
 
   require('../../../SixCRM.js');
 
-  const LambdaResponse = global.SixCRM.routes.include('lib', 'providers/lambda-response.js');
+  const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
   let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
   const trackingController = new TrackingController();
 

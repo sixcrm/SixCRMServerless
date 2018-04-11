@@ -7,7 +7,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
-const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 
 module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 

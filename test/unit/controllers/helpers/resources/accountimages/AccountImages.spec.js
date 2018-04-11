@@ -100,7 +100,7 @@ describe('controllers/helpers/resources/accountimages/AccountImages.js', () => {
       process.env.TEST_MODE = false;
       global.account = 'unittest';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
         putObject() {
           return Promise.resolve({ETag:random.createRandomString(20)});
         }
@@ -148,7 +148,7 @@ describe('controllers/helpers/resources/accountimages/AccountImages.js', () => {
       process.env.TEST_MODE = false;
       global.account = 'unittest';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
         putObject() {
           return Promise.resolve({ETag:random.createRandomString(20)});
         }

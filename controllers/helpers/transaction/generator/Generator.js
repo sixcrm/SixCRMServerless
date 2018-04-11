@@ -4,7 +4,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const signatureutilities = global.SixCRM.routes.include('lib', 'signature.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
 const httpprovider = new HttpProvider();
 
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');

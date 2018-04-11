@@ -5,7 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const STSProvider = global.SixCRM.routes.include('lib', 'providers/sts-provider.js');
+const STSProvider = global.SixCRM.routes.include('controllers', 'providers/sts-provider.js');
 
 module.exports = class AWSDeploymentUtilities {
 

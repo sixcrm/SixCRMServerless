@@ -1,6 +1,6 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayUtilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 const sqsprovider = new SQSProvider();
 
 module.exports = class AnalyticsEventHandler {

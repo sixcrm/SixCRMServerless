@@ -1,6 +1,6 @@
 'use strict';
 require('../../SixCRM.js');
-const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
+const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
 const s3provider = new S3Provider();
 
 let bucket_name = 'sixcrm-' + global.SixCRM.configuration.stage + '-resources';

@@ -40,7 +40,7 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
       let expected_value = 'someplaintextvalue';
       let token = '9IB97FXD2ZLQLWIZF5NNYL0IVNJKMB6C49E8ET';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
         constructor(){}
         postJSON(){
           return Promise.resolve({
@@ -73,7 +73,7 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
       let expected_value = '9IB97FXD2ZLQLWIZF5NNYL0IVNJKMB6C49E8ET';
       let value = 'someplaintextvalue';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
         constructor(){}
         postJSON(){
           return Promise.resolve({
@@ -106,7 +106,7 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
       let expected_value = true;
       let token = '9IB97FXD2ZLQLWIZF5NNYL0IVNJKMB6C49E8ET';
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
         constructor(){}
         postJSON(){
           return Promise.resolve({

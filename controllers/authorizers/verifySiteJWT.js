@@ -3,7 +3,7 @@ const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
+const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString.js');
 
 module.exports = class verifySiteJWTController {

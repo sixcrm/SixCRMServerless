@@ -3,9 +3,9 @@ const _ = require('underscore');
 
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const S3Provider = global.SixCRM.routes.include('lib', 'providers/s3-provider.js');
+const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
 const s3provider = new S3Provider();
-const ImageProvider = global.SixCRM.routes.include('lib','providers/image-provider.js');
+const ImageProvider = global.SixCRM.routes.include('controllers','providers/image-provider.js');
 const imageprovider = new ImageProvider();
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');

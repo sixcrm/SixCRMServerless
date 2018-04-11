@@ -1,7 +1,7 @@
 'use strict'
 const _ = require('underscore');
 
-const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
+const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
 const jwtprovider  = new JWTProvider();
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');

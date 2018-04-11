@@ -3,7 +3,7 @@ const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
-const RedshiftProvider = global.SixCRM.routes.include('lib', 'providers/redshift-provider.js');
+const RedshiftProvider = global.SixCRM.routes.include('controllers', 'providers/redshift-provider.js');
 
 module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
 

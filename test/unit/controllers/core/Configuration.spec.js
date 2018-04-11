@@ -153,7 +153,7 @@ describe('controllers/core/Configuration.js', () => {
     describe('getEnvironmentConfig', () => {
 
         it('gets environment config when no value', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
                 objectExists() {
                     return Promise.resolve(true);
                 }
@@ -170,7 +170,7 @@ describe('controllers/core/Configuration.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/redis-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/redis-provider.js'), class {
                 set() {
                     return Promise.resolve();
                 }
@@ -187,7 +187,7 @@ describe('controllers/core/Configuration.js', () => {
         });
 
         it('gets environment config when value exists', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
                 objectExists() {
                     return Promise.resolve(true);
                 }
@@ -204,7 +204,7 @@ describe('controllers/core/Configuration.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/redis-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/redis-provider.js'), class {
                 set() {
                     return Promise.resolve();
                 }
@@ -273,7 +273,7 @@ describe('controllers/core/Configuration.js', () => {
     describe('getS3EnvironmentConfiguration', () => {
 
         it('gets s3 config when value exists', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
                 objectExists() {
                     return Promise.resolve(true);
                 }
@@ -290,7 +290,7 @@ describe('controllers/core/Configuration.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/redis-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/redis-provider.js'), class {
                 set() {
                     return Promise.resolve();
                 }
@@ -309,7 +309,7 @@ describe('controllers/core/Configuration.js', () => {
         });
 
         it('throws error when Body value is invalid', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
                 objectExists() {
                     return Promise.resolve(true);
                 }
@@ -331,7 +331,7 @@ describe('controllers/core/Configuration.js', () => {
         });
 
         it('throws error when Body property is missing', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
                 objectExists() {
                     return Promise.resolve(true);
                 }
@@ -354,7 +354,7 @@ describe('controllers/core/Configuration.js', () => {
     describe('getRedisEnvironmentConfiguration', () => {
 
         it('gets redis config when value exists', () => {
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
                 objectExists() {
                     return Promise.resolve(true);
                 }
@@ -371,7 +371,7 @@ describe('controllers/core/Configuration.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/redis-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/redis-provider.js'), class {
                 set() {
                     return Promise.resolve();
                 }
@@ -440,7 +440,7 @@ describe('controllers/core/Configuration.js', () => {
     });
 
     it('gets s3 config when value exists', () => {
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
             objectExists() {
                 return Promise.resolve(true);
             }
@@ -481,7 +481,7 @@ describe('controllers/core/Configuration.js', () => {
     });
 
     it('gets redis config when value exists', () => {
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/s3-provider.js'), class {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
             objectExists() {
                 return Promise.resolve(true);
             }

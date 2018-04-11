@@ -71,7 +71,7 @@ module.exports = class SystemMailer{
 
         let smtp_options = this.createSMTPOptions();
 
-        let SMTPProvider = global.SixCRM.routes.include('lib', 'providers/smtp-provider.js');
+        let SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 
         this.smtpprovider = new SMTPProvider(smtp_options);
 

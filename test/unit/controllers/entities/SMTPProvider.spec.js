@@ -39,7 +39,7 @@ describe('controllers/SMTPProvider.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'smtpprovider');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('smtpproviders');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(params.smtpprovider.id);
@@ -94,7 +94,7 @@ describe('controllers/SMTPProvider.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'smtpprovider');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('smtpproviders');
                     expect(parameters.expression_attribute_values[':primary_keyv']).to.equal(params.smtpprovider.id);

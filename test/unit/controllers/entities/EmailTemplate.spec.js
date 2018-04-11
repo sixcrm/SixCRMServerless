@@ -38,7 +38,7 @@ describe('controllers/EmailTemplate.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'emailtemplate');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index) {
                     expect(table).to.equal('emailtemplates');
                     expect(parameters).to.have.property('filter_expression');

@@ -6,7 +6,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 const trackerController = new TrackerController();
-const LambdaResponse = global.SixCRM.routes.include('lib', 'providers/lambda-response.js');
+const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
 
 module.exports = class TrackerViewController{
 

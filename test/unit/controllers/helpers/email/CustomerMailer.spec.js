@@ -56,7 +56,7 @@ describe('helpers/transaction/CustomerMailer.spec.js', () => {
           recepient_name: 'Timothy Dalbey'
         }
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/smtp-provider.js'), class {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/smtp-provider.js'), class {
           constructor(){}
           send(){
             return Promise.resolve('some-long-string-or-something');

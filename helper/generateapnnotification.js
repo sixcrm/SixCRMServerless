@@ -1,6 +1,6 @@
 'use strict'
 require('../SixCRM.js');
-const APNProvider = global.SixCRM.routes.include('lib','providers/apn-provider');
+const APNProvider = global.SixCRM.routes.include('controllers', 'providers/apn-provider.js');
 const apnprovider = new APNProvider();
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 

@@ -5,7 +5,7 @@ let expect = chai.expect;
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
-const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
+const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
 const jwtprovider = new JWTProvider();
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 

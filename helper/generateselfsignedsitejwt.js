@@ -4,7 +4,7 @@ const _ = require('underscore');
 require('../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const JWTProvider = global.SixCRM.routes.include('lib', 'providers/jwt-provider.js');
+const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
 const jwtprovider = new JWTProvider();
 
 let site_config = global.SixCRM.configuration.site_config;

@@ -117,7 +117,7 @@ describe('controllers/workers/components/relay.js', function () {
       let messages = getValidMessages();
       let params = getValidParams();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages() {
           return Promise.resolve(messages);
         }
@@ -212,7 +212,7 @@ describe('controllers/workers/components/relay.js', function () {
   describe('invokeAdditionalLambdas', () => {
 
     it('does not invoke additional lambda when not required', () => {
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/lambda-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/lambda-provider.js'), class {
         invokeFunction() {
           expect.fail();
         }

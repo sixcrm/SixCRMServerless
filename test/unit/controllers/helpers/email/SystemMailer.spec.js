@@ -489,7 +489,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
     /*
     it('sends an email', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/smtp-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/smtp-provider.js'), class {
         send(parameters) {
           return Promise.resolve(true);
         }

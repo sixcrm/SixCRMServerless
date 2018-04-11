@@ -98,7 +98,7 @@ describe('helpers/events/Event.spec.js', () => {
 
 		it('successfully pushes a event to a SNS topic', () => {
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
 				publish() {
 					return Promise.resolve({
 						MessageId: "e0701729-c444-5c95-b3dd-442caf4b8dbe",

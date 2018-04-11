@@ -286,7 +286,7 @@ describe('checkout', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
           publish() {
               return Promise.resolve({});
           }
@@ -378,7 +378,7 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
           publish() {
               return Promise.resolve({});
           }
@@ -573,7 +573,7 @@ describe('checkout', function () {
         }
       });
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
           publish() {
               return Promise.resolve({});
           }
@@ -603,7 +603,7 @@ describe('checkout', function () {
       let event_body = getValidEventBody();
       let session = getValidSession();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
           publish() {
               return Promise.resolve({});
           }
@@ -633,7 +633,7 @@ describe('checkout', function () {
 
       let confirmation = getValidConfirmation();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
           publish() {
               return Promise.resolve({});
           }
@@ -690,7 +690,7 @@ describe('checkout', function () {
       let product_schedules = getValidProductSchedules(null, true);
       let user = MockEntities.getValidUser();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
           publish() {
               return Promise.resolve({});
           }

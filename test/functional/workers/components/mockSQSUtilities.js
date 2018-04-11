@@ -5,7 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const AWSProvider = global.SixCRM.routes.include('lib', 'providers/aws-provider.js');
+const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
 class mockSQSProvider extends AWSProvider {
 

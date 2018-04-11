@@ -3,7 +3,7 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
 const httpprovider = new HttpProvider();
 
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');

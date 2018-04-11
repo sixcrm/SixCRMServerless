@@ -2,7 +2,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities');
 const ChannelNotification = global.SixCRM.routes.include('providers', 'notification/components/ChannelNotification.js');
-const SNSProvider = global.SixCRM.routes.include('lib', 'providers/sns-provider.js');
+const SNSProvider = global.SixCRM.routes.include('controllers', 'providers/sns-provider.js');
 
 module.exports = class SlackNotification extends ChannelNotification {
 

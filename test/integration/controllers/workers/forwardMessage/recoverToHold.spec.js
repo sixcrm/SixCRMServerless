@@ -55,7 +55,7 @@ describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', ()
       rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
       const message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages({queue}) {
           du.highlight('Message read from queue (mock): ' + queue);
           return Promise.resolve([message]);
@@ -116,7 +116,7 @@ describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', ()
 
     it('successfuly executes if no messages in queue found', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages({queue}) {
           du.highlight('Message read from queue (mock): ' + queue);
           return Promise.resolve([]);
@@ -137,7 +137,7 @@ describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', ()
 
       const message = getValidMessage();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages({queue}) {
           du.highlight('Message read from queue (mock): '+queue);
           return Promise.resolve([message]);
@@ -158,7 +158,7 @@ describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', ()
       rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
       const message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages() {
           return Promise.resolve([message]);
         }
@@ -196,7 +196,7 @@ describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', ()
       rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
       const message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages() {
           return Promise.resolve([message]);
         }
@@ -234,7 +234,7 @@ describe('controllers/workers/forwardmessage/recoverToHoldForwardMessage.js', ()
       rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
       const message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         receiveMessages() {
           return Promise.resolve([message]);
         }

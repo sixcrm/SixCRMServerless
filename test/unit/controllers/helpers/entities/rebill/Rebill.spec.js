@@ -4,7 +4,6 @@ const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -432,7 +431,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
       let rebill = getValidRebill();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           return Promise.resolve(true);
         }
@@ -461,7 +460,7 @@ describe('/helpers/entities/Rebill.js', () => {
       let queue_name = 'hold';
       let queue_message_body_prototype = getValidQueueMessageBodyPrototype();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sqs-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
         sendMessage() {
           return Promise.resolve(true);
         }

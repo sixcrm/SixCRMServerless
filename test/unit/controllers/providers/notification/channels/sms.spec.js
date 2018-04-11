@@ -46,7 +46,7 @@ describe('controllers/providers/notification/channels/sms.js', () => {
 
         let notification_properties = '+381630000000';
 
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/sns-provider.js'), class {
+        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
           sendSMS() {
             return Promise.resolve(true);
           }

@@ -111,7 +111,7 @@ module.exports = class TokenEx {
     du.debug('Perform Request');
 
     if(!_.has(this, 'httputilities')){
-      const HTTPUtilities = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+      const HTTPUtilities = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
       this.httputilities = new HTTPUtilities();
     }
 

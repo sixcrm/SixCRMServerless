@@ -37,7 +37,7 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 countRecords(table, additional_parameters, index) {
                     expect(table).to.equal('notifications');
                     expect(index).to.equal('user-index');
@@ -73,7 +73,7 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 countRecords(table, additional_parameters, index) {
                     expect(additional_parameters).to.have.property('expression_attribute_names');
                     expect(additional_parameters).to.have.property('filter_expression');
@@ -118,7 +118,7 @@ describe('controllers/Notification.js', () => {
                 }
             });
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters, index) {
                     expect(index).to.equal('user-index');
                     expect(table).to.equal('notifications');
@@ -173,7 +173,7 @@ describe('controllers/Notification.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'notification');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 appendDisjunctionQueryParameters(query_parameters, field_name, array) {
                     expect(field_name).to.equal('type');
                     expect(array).to.equal(params.types);

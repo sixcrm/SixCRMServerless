@@ -307,7 +307,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () =>{
 
       let bad_response = getValidBadResponse();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
         getJSON() {
           return Promise.resolve(bad_response);
         }
@@ -340,7 +340,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () =>{
 
       let good_response = getValidGoodResponse();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
         getJSON() {
           return Promise.resolve(good_response);
         }
@@ -379,7 +379,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () =>{
       let customer = getValidCustomer();
       let products = getValidProducts();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
         postJSON() {
           return Promise.resolve(good_response);
         }
@@ -419,7 +419,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () =>{
 
       let good_response = getValidGoodResponse();
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/http-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
         getJSON() {
           return Promise.resolve(good_response);
         }

@@ -10,8 +10,8 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
-const SNSProvider = global.SixCRM.routes.include('lib', 'providers/sns-provider.js');
-const LambdaProvider = global.SixCRM.routes.include('lib', 'providers/lambda-provider.js');
+const SNSProvider = global.SixCRM.routes.include('controllers', 'providers/sns-provider.js');
+const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 
 module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 

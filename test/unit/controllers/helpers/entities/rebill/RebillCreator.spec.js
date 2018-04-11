@@ -1076,7 +1076,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
     it('successfully saves a rebill to the database', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
         queryRecords() {
           return Promise.resolve([]);
         }
@@ -1255,7 +1255,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
     beforeEach(() => {
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
         queryRecords() {
           return Promise.resolve([]);
         }
@@ -1622,7 +1622,7 @@ describe('/helpers/entities/Rebill.js', () => {
       }];
 
       /*
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
         queryRecords() {
           return Promise.resolve([]);
         }
@@ -1739,7 +1739,7 @@ describe('/helpers/entities/Rebill.js', () => {
         }]
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
         queryRecords() {
           return Promise.resolve([]);
         }
@@ -1940,7 +1940,7 @@ describe('/helpers/entities/Rebill.js', () => {
         ]
       };
 
-      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
         queryRecords() {
           return Promise.resolve([]);
         }

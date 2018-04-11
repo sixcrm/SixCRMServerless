@@ -1,6 +1,6 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
-const HttpProvider = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
 const httpprovider = new HttpProvider();
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 

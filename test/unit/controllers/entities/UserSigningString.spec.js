@@ -30,7 +30,7 @@ describe('controllers/UserSigningString.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'usersigningstring');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('usersigningstrings');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -78,7 +78,7 @@ describe('controllers/UserSigningString.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('create', 'usersigningstring');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('usersigningstrings');
                     expect(parameters).to.have.property('key_condition_expression');
@@ -125,7 +125,7 @@ describe('controllers/UserSigningString.js', () => {
 
             PermissionTestGenerators.givenUserWithAllowed('*', 'usersigningstring');
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
                 queryRecords(table, parameters) {
                     expect(table).to.equal('usersigningstrings');
                     expect(parameters).to.have.property('key_condition_expression');

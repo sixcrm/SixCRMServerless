@@ -4,7 +4,7 @@ const _ =  require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 
 module.exports = class PreIndexingHelperController {
 

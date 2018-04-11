@@ -4,9 +4,8 @@ require('../../SixCRMLite.js');
 const expect = require('chai').expect;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
-const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
-const DynamoDBProvider = global.SixCRM.routes.include('lib', 'providers/dynamodb-provider.js');
+const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
 
 describe('Test connections to Docker Services', () => {
 
@@ -28,7 +27,7 @@ describe('Test connections to Docker Services', () => {
 
     it('successfully connects to the Docker SQS instance', () => {
 
-        const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
+        const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
         const sqsprovider = new SQSProvider();
 
       return sqsprovider.listQueues().then(result => {
@@ -95,7 +94,7 @@ describe('Test connections to Docker Services', () => {
 
     it('successfully connects to the Docker Elasticache Instance', () => {
 
-      const RedisProvider = global.SixCRM.routes.include('lib', 'providers/redis-provider.js');
+      const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
       let redisprovider = new RedisProvider();
 
       expect(redisprovider).to.have.property('endpoint');
@@ -119,7 +118,7 @@ describe('Test connections to Docker Services', () => {
 
     it('successfully connects to the Docker SNS Instance', () => {
 
-      const SNSProvider = global.SixCRM.routes.include('lib', 'providers/sns-provider.js');
+      const SNSProvider = global.SixCRM.routes.include('controllers', 'providers/sns-provider.js');
       let snsprovider = new SNSProvider();
 
       return snsprovider.createTopic({"Name": "events"})
