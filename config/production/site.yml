@@ -93,6 +93,12 @@ slack:
     - channel: '#servererrors'
       webhook_url: https://hooks.slack.com/services/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
 
+tokenization:
+  tokenex:
+    id: 2029633460477211
+    api_key: XnIOBNQVmQRyfRMiQdA5FuQBalGDDTxWlgoJBL8N
+    base: https://test-api.tokenex.com
+    
 # These won't be right in production, fix this when we create the subnets there
 serverless:
   subnets:

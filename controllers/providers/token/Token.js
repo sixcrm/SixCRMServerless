@@ -19,8 +19,6 @@ module.exports = class Token {
 
     if(provider == 'tokenex'){
 
-      du.info(entity);
-
       return this.tokenExController.setToken(entity).then((result) => {
         return {
           token: result.token,
