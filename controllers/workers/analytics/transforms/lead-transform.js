@@ -1,5 +1,6 @@
 const AnalyticsTransfrom = require('../analytics-transform');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const moment = require('moment-timezone');
 
 module.exports = class LeadTransform extends AnalyticsTransfrom {
 
@@ -11,7 +12,7 @@ module.exports = class LeadTransform extends AnalyticsTransfrom {
 			id: record.context.id,
 			account: record.context.campaign.account,
 			campaign: record.context.campaign.id,
-			datetime: record.context.session.updated_at,
+			datetime: record.context.session ? record.context.session.updated_at : moment.tz('UTC').toISOString(),
 			type: record.event_type,
 			session: {
 				id: record.context.session.id,
