@@ -304,9 +304,14 @@ module.exports = class SQSProvider extends AWSProvider {
 
 			var params = {
 				MessageBody: this.ensureString(parameters.message_body),
-				QueueUrl: queue_url,
-				DelaySeconds: 30,
+				QueueUrl: queue_url
 			};
+
+			if (!queue_url.includes('.fifo')) {
+
+				params.DelaySeconds = 30;
+
+			}
 
 			if (parameters.messageGroupId) {
 
