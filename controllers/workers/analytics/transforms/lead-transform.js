@@ -12,8 +12,20 @@ module.exports = class LeadTransform extends AnalyticsTransfrom {
 			account: record.context.campaign.account,
 			campaign: record.context.campaign.id,
 			datetime: record.context.session.updated_at,
-			session: record.context.session.id,
-			type: record.event_type
+			type: record.event_type,
+			session: {
+				id: record.context.session.id,
+				datetime: record.context.session.created_at,
+				account: record.context.session.account,
+				campaign: record.context.session.campaign,
+				cid: record.context.session.cid,
+				affiliate: record.context.session.affiliate,
+				subaffiliate_1: record.context.session.subaffiliate_1,
+				subaffiliate_2: record.context.session.subaffiliate_2,
+				subaffiliate_3: record.context.session.subaffiliate_3,
+				subaffiliate_4: record.context.session.subaffiliate_4,
+				subaffiliate_5: record.context.session.subaffiliate_5
+			}
 		};
 
 		if (record.context.affiliates) {
