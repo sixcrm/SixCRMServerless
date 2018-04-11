@@ -33,9 +33,8 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
 	isLocal() {
 
-		return !(global.SixCRM.configuration.stage === 'development' ||
-			global.SixCRM.configuration.stage === 'staging' ||
-			global.SixCRM.configuration.stage === 'production');
+		return !_.contains(['development', 'staging', 'production'], global.SixCRM.configuration.stage);
+
 	}
 
 	setConfigurationInformation() {
