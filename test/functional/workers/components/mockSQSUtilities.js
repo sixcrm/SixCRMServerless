@@ -9,484 +9,495 @@ const AWSProvider = global.SixCRM.routes.include('lib', 'providers/aws-provider.
 
 class mockSQSProvider extends AWSProvider {
 
-    constructor(){
-      super();
+	constructor() {
+		super();
 
-      this.deadletter_postfix = '_deadletter';
-      this.queue_url_template = 'https://sqs.{{region}}.amazonaws.com/{{account}}/{{queue_name}}';
-      this.queue_arn_template = 'arn:aws:sqs:{{region}}:{{account}}:{{queue_name}}';
+		this.deadletter_postfix = '_deadletter';
+		this.queue_url_template = 'https://sqs.{{region}}.amazonaws.com/{{account}}/{{queue_name}}';
+		this.queue_arn_template = 'arn:aws:sqs:{{region}}:{{account}}:{{queue_name}}';
 
-      this.instantiateSQS();
+		this.instantiateSQS();
 
-    }
+	}
 
-    instantiateSQS(){
+	instantiateSQS() {
 
-      du.debug('Instantiate SQS');
+		du.debug('Instantiate SQS');
 
-      let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sqs.region'))?global.SixCRM.configuration.site_config.sqs.region:this.getRegion();
+		let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sqs.region')) ? global.SixCRM.configuration.site_config.sqs.region : this.getRegion();
 
-      let parameters = {
-        region: region
-      };
+		let parameters = {
+			region: region
+		};
 
-      if(objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sqs.endpoint')){
-        parameters.endpoint = global.SixCRM.configuration.site_config.sqs.endpoint;
-      }
+		if (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sqs.endpoint')) {
+			parameters.endpoint = global.SixCRM.configuration.site_config.sqs.endpoint;
+		}
 
-      this.sqs = new this.AWS.SQS(parameters);
+		this.sqs = new this.AWS.SQS(parameters);
 
-    }
+	}
 
 
-    getQueueARN(queue_name){
+	getQueueARN(queue_name) {
 
-      du.debug('Get Queue ARN');
+		du.debug('Get Queue ARN');
 
-      if(_.isObject(queue_name)){
-        if(_.has(queue_name, 'QueueName')){
-          queue_name = queue_name.QueueName;
-        }else{
-          eu.throwError('server', 'Missing QueueName property');
-        }
-      }
+		if (_.isObject(queue_name)) {
+			if (_.has(queue_name, 'QueueName')) {
+				queue_name = queue_name.QueueName;
+			} else {
+				eu.throwError('server', 'Missing QueueName property');
+			}
+		}
 
-      if(!_.isString(queue_name)){
-        eu.throwError('server', 'Improper argumentation for getQueueARN');
-      }
+		if (!_.isString(queue_name)) {
+			eu.throwError('server', 'Improper argumentation for getQueueARN');
+		}
 
-      if (global.SixCRM.configuration.site_config.sqs.region === 'localhost') {
-        return queue_name;
-      }
+		if (global.SixCRM.configuration.site_config.sqs.region === 'localhost') {
+			return queue_name;
+		}
 
-      let parameters = this.getQueueParameters(queue_name);
+		let parameters = this.getQueueParameters(queue_name);
 
-      return parserutilities.parse(this.queue_arn_template, parameters);
+		return parserutilities.parse(this.queue_arn_template, parameters);
 
-    }
+	}
 
-    getQueueURL(input){
+	getQueueURL(input) {
 
-      let queue_name = null;
+		let queue_name = null;
 
-      if(_.isString(input)){
-        queue_name = input;
-      }else if(_.isObject(input)){
-        if(_.has(input, 'queue') && _.isString(input.queue)){
-          queue_name = input.queue;
-        }
-      }
+		if (_.isString(input)) {
+			queue_name = input;
+		} else if (_.isObject(input)) {
+			if (_.has(input, 'queue') && _.isString(input.queue)) {
+				queue_name = input.queue;
+			}
+		}
 
-      if (global.SixCRM.configuration.site_config.sqs.region === 'localhost') {
-          return global.SixCRM.configuration.site_config.sqs.endpoint + '/queue/' + queue_name;
-      }
+		if (global.SixCRM.configuration.site_config.sqs.region === 'localhost') {
+			return global.SixCRM.configuration.site_config.sqs.endpoint + '/queue/' + queue_name;
+		}
 
-      let parameters = this.getQueueParameters(queue_name);
+		let parameters = this.getQueueParameters(queue_name);
 
-      return parserutilities.parse(this.queue_url_template, parameters);
+		return parserutilities.parse(this.queue_url_template, parameters);
 
-    }
+	}
 
-    getQueueParameters(queue_name){
+	getQueueParameters(queue_name) {
 
-      du.debug('Get Queue Parameters');
+		du.debug('Get Queue Parameters');
 
-      if(_.isNull(queue_name) || _.isUndefined(queue_name)){
-        eu.throwError('server', 'Unable to determine queue name.');
-      }
+		if (_.isNull(queue_name) || _.isUndefined(queue_name)) {
+			eu.throwError('server', 'Unable to determine queue name.');
+		}
 
-      let parameters = {
-        'region': this.getRegion(),
-        'account': global.SixCRM.configuration.site_config.aws.account,
-        'queue_name': queue_name
-      };
+		let parameters = {
+			'region': this.getRegion(),
+			'account': global.SixCRM.configuration.site_config.aws.account,
+			'queue_name': queue_name
+		};
 
-      return parameters;
+		return parameters;
 
-    }
+	}
 
-  receiveMessages(parameters) {
+	receiveMessages(parameters) {
 
-    du.debug('Receive Messages');
+		du.debug('Receive Messages');
 
-    return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-      let params = {};
+			let params = {};
 
-      let queue_url = this.getQueueURL(parameters);
+			let queue_url = this.getQueueURL(parameters);
 
-      params['QueueUrl'] = queue_url;
+			params['QueueUrl'] = queue_url;
 
-      if(_.has(parameters, 'limit')){
-        params['MaxNumberOfMessages'] = parameters['limit'];
-      }
+			if (_.has(parameters, 'limit')) {
+				params['MaxNumberOfMessages'] = parameters['limit'];
+			}
 
-      if(_.has(parameters, 'visibilityTimeout')){
-        params['VisibilityTimeout'] = parameters['visibilityTimeout'];
-      }
+			if (_.has(parameters, 'visibilityTimeout')) {
+				params['VisibilityTimeout'] = parameters['visibilityTimeout'];
+			}
 
-      du.debug('Message parameters', params);
+			du.debug('Message parameters', params);
 
-      this.sqs.receiveMessage(params, function(error, data) {
+			this.sqs.receiveMessage(params, function (error, data) {
 
-        if (error) {
+				if (error) {
 
-          return reject(error);
+					return reject(error);
 
-        } else {
+				} else {
 
-          let messages = [];
+					let messages = [];
 
-          if(_.has(data, 'Messages')){
-            messages = data.Messages;
-          }
+					if (_.has(data, 'Messages')) {
+						messages = data.Messages;
+					}
 
-          return resolve(messages);
+					return resolve(messages);
 
-        }
+				}
 
-      });
+			});
 
-    });
+		});
 
-  }
+	}
 
-    deleteMessages(parameters){
+	deleteMessages(parameters) {
 
-        return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-            let entries = [];
+			let entries = [];
 
-            du.debug('Messages to delete:', parameters);
+			du.debug('Messages to delete:', parameters);
 
-            if(_.has(parameters, 'messages')){
-                parameters.messages.forEach((message) => {
-                    du.debug('Message to delete:', message);
-                    if(_.has(message, 'ReceiptHandle') && _.has(message, 'MessageId')){
-                        entries.push({
-                            Id: message.MessageId,
-                            ReceiptHandle: message.ReceiptHandle
-                        });
-                    }
-                });
-            }
+			if (_.has(parameters, 'messages')) {
+				parameters.messages.forEach((message) => {
+					du.debug('Message to delete:', message);
+					if (_.has(message, 'ReceiptHandle') && _.has(message, 'MessageId')) {
+						entries.push({
+							Id: message.MessageId,
+							ReceiptHandle: message.ReceiptHandle
+						});
+					}
+				});
+			}
 
-            if(entries.length > 0){
+			if (entries.length > 0) {
 
-                let params = {
-                    Entries: entries
-                };
+				let params = {
+					Entries: entries
+				};
 
-                let queue_url = this.getQueueURL(parameters);
+				let queue_url = this.getQueueURL(parameters);
 
-                params['QueueUrl'] = queue_url;
+				params['QueueUrl'] = queue_url;
 
-                du.debug('Delete message parameters:', params);
+				du.debug('Delete message parameters:', params);
 
-                this.sqs.deleteMessageBatch(params, function(err, data) {
+				this.sqs.deleteMessageBatch(params, function (err, data) {
 
-                    if (err){
+					if (err) {
 
-                        du.warning(err);
+						du.warning(err);
 
-                        return reject(err)
+						return reject(err)
 
-                    }else{
+					} else {
 
-                        if(_.has(data, 'Failed') && _.isArray(data.Failed) && data.Failed.length > 0){
-                            du.warning('Failed to delete messages: ', data.Failed);
-                        }
+						if (_.has(data, 'Failed') && _.isArray(data.Failed) && data.Failed.length > 0) {
+							du.warning('Failed to delete messages: ', data.Failed);
+						}
 
-                        du.debug('Delete response: ', data);
+						du.debug('Delete response: ', data);
 
-                        return resolve(data);
-                    }
+						return resolve(data);
+					}
 
-                });
+				});
 
-            }else{
+			} else {
 
-                du.warning('No messages to delete.  Might want to check functional usage.');
+				du.warning('No messages to delete.  Might want to check functional usage.');
 
-                return resolve(false);
+				return resolve(false);
 
-            }
+			}
 
-        });
+		});
 
-    }
+	}
 
-    deleteMessage(parameters){
+	deleteMessage(parameters) {
 
-      du.debug('Delete Message');
+		du.debug('Delete Message');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-          let queue_url = this.getQueueURL(parameters);
+			let queue_url = this.getQueueURL(parameters);
 
-          var params = {
-              QueueUrl: queue_url,
-              ReceiptHandle: parameters.receipt_handle
-          };
+			var params = {
+				QueueUrl: queue_url,
+				ReceiptHandle: parameters.receipt_handle
+			};
 
-          this.sqs.deleteMessage(params, (error, data) => {
-              return resolve(this.AWSCallback(error, data))
-          });
+			this.sqs.deleteMessage(params, (error, data) => {
+				return resolve(this.AWSCallback(error, data))
+			});
 
-      });
+		});
 
-    }
+	}
 
-    sendMessage(parameters){
+	sendMessage(parameters) {
 
-      du.debug('Send Message');
+		du.debug('Send Message');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        let queue_url = this.getQueueURL(parameters);
+			let queue_url = this.getQueueURL(parameters);
 
-        var params = {
-          MessageBody: this.ensureString(parameters.message_body),
-          QueueUrl: queue_url,
-          DelaySeconds: 30,
-        };
+			var params = {
+				MessageBody: this.ensureString(parameters.message_body),
+				QueueUrl: queue_url
+			};
 
-        du.debug('Sending message', params);
+			if (!queue_url.includes('.fifo')) {
 
-        this.sqs.sendMessage(params, (error, data) => {
-          resolve(this.AWSCallback(error, data))
-        });
+				params.DelaySeconds = 30;
 
-      });
+			}
 
-    }
+			du.debug('Sending message', params);
 
-    purgeQueue(parameters){
+			this.sqs.sendMessage(params, (error, data) => {
+				resolve(this.AWSCallback(error, data))
+			});
 
-      du.debug('Purge Queue');
+		});
 
-      return new Promise((resolve) => {
+	}
 
-        let queue_name;
+	purgeQueue(parameters) {
 
-        if(_.isString(parameters)){
+		du.debug('Purge Queue');
 
-          queue_name = parameters;
+		return new Promise((resolve) => {
 
-        }else{
+			let queue_name;
 
-          if(!_.has(parameters, 'QueueName')){
-            eu.throwError('server', 'Purge Queue parameters objects assumed to have QueueName property');
-          }
+			if (_.isString(parameters)) {
 
-          queue_name = parameters.QueueName;
+				queue_name = parameters;
 
-        }
+			} else {
 
-        return this.queueExists(queue_name).then(queue_exists => {
+				if (!_.has(parameters, 'QueueName')) {
+					eu.throwError('server', 'Purge Queue parameters objects assumed to have QueueName property');
+				}
 
-          if(queue_exists){
+				queue_name = parameters.QueueName;
 
-            du.debug('Queue exists, purging');
+			}
 
-            let queue_url = this.getQueueURL(parameters);
+			return this.queueExists(queue_name).then(queue_exists => {
 
-            let params = {QueueUrl: queue_url};
+				if (queue_exists) {
 
-            return this.sqs.purgeQueue(params, (error, data) => {
+					du.debug('Queue exists, purging');
 
-              du.highlight(queue_name+' queue purged');
+					let queue_url = this.getQueueURL(parameters);
 
-              return resolve(this.AWSCallback(error, data))
+					let params = {
+						QueueUrl: queue_url
+					};
 
-            });
+					return this.sqs.purgeQueue(params, (error, data) => {
 
-          }else{
+						du.highlight(queue_name + ' queue purged');
 
-            du.debug('Queue not found, skipping');
+						return resolve(this.AWSCallback(error, data))
 
-            return resolve(false);
+					});
 
-          }
+				} else {
 
-        });
+					du.debug('Queue not found, skipping');
 
-      });
+					return resolve(false);
 
-    }
+				}
 
-    createQueue(params) {
+			});
 
-      du.debug('Create Queue', params);
+		});
 
-      return new Promise((resolve) => {
+	}
 
-        du.warning(params.QueueName);
+	createQueue(params) {
 
-        return this.queueExists(params.QueueName).then(queue_exists => {
+		du.debug('Create Queue', params);
 
-          if(queue_exists){
+		return new Promise((resolve) => {
 
-            du.highlight('Queue exists, skipping');
+			du.warning(params.QueueName);
 
-            return resolve(false);
+			return this.queueExists(params.QueueName).then(queue_exists => {
 
-          }else{
+				if (queue_exists) {
 
-            du.highlight('Queue not found, creating', params);
+					du.highlight('Queue exists, skipping');
 
-            return this.sqs.createQueue(params, (error, data) => {
-              return resolve(this.AWSCallback(error, data));
-            });
+					return resolve(false);
 
-          }
+				} else {
 
-        });
+					du.highlight('Queue not found, creating', params);
 
-      });
+					return this.sqs.createQueue(params, (error, data) => {
+						return resolve(this.AWSCallback(error, data));
+					});
 
-    }
+				}
 
-    setQueueAttibutes(params) {
+			});
 
-      du.debug('Set Queue Attrbutes', params);
+		});
 
-      return new Promise((resolve) => {
+	}
 
-        this.sqs.setQueueAttributes(params, (error, data) => resolve(this.AWSCallback(error, data)));
+	setQueueAttibutes(params) {
 
-      });
+		du.debug('Set Queue Attrbutes', params);
 
-    }
+		return new Promise((resolve) => {
 
-    queueExists(shortname, refresh){
+			this.sqs.setQueueAttributes(params, (error, data) => resolve(this.AWSCallback(error, data)));
 
-      du.debug('Queue Exists');
+		});
 
-      if(_.isUndefined(refresh)){
-        refresh = false;
-      }
+	}
 
-      if(!_.has(this, 'existing_queues') || refresh == true){
+	queueExists(shortname, refresh) {
 
-        return this.listQueues().then((queues) => {
+		du.debug('Queue Exists');
 
-          du.info(queues);
-          if(!_.has(queues, 'QueueUrls')){
+		if (_.isUndefined(refresh)) {
+			refresh = false;
+		}
 
-            this.existing_queues = [];
+		if (!_.has(this, 'existing_queues') || refresh == true) {
 
-            return Promise.resolve(false);
+			return this.listQueues().then((queues) => {
 
-          }
+				du.info(queues);
+				if (!_.has(queues, 'QueueUrls')) {
 
-          if(!_.isArray(queues.QueueUrls)){
-            return Promise.reject(eu.getError('server', 'Unexpected response format from AWS ListQueues.'));
-          }
+					this.existing_queues = [];
 
-          let existing_queues = queues.QueueUrls.map(queue_url  => {
-            return queue_url.substr((queue_url.lastIndexOf('/')+1), queue_url.length);
-          });
+					return Promise.resolve(false);
 
-          this.existing_queues = existing_queues;
+				}
 
-          return (_.contains(this.existing_queues, shortname));
+				if (!_.isArray(queues.QueueUrls)) {
+					return Promise.reject(eu.getError('server', 'Unexpected response format from AWS ListQueues.'));
+				}
 
-        });
+				let existing_queues = queues.QueueUrls.map(queue_url => {
+					return queue_url.substr((queue_url.lastIndexOf('/') + 1), queue_url.length);
+				});
 
-      }else{
+				this.existing_queues = existing_queues;
 
-        return Promise.resolve((_.contains(this.existing_queues, shortname)));
+				return (_.contains(this.existing_queues, shortname));
 
-      }
+			});
 
+		} else {
 
-    }
+			return Promise.resolve((_.contains(this.existing_queues, shortname)));
 
-    listQueues(params){
+		}
 
-      du.debug('List Queues');
 
-      return new Promise((resolve, reject) => {
+	}
 
-        if(_.isUndefined(params) || !_.isObject(params)){
-          params = {};
-        }
+	listQueues(params) {
 
-        this.sqs.listQueues(params, function(error, data) {
+		du.debug('List Queues');
 
-          if (error){ return reject(eu.getError('server', error.message));}
+		return new Promise((resolve, reject) => {
 
-          return resolve(data);
+			if (_.isUndefined(params) || !_.isObject(params)) {
+				params = {};
+			}
 
-        });
+			this.sqs.listQueues(params, function (error, data) {
 
-      });
+				if (error) {
+					return reject(eu.getError('server', error.message));
+				}
 
-    }
+				return resolve(data);
 
-    deleteQueue(shortname) {
+			});
 
-      du.debug('Delete Queue');
+		});
 
-      du.warning('Deleting queue: '+shortname);
+	}
 
-      return this.queueExists(shortname, true).then(queue_exists => {
+	deleteQueue(shortname) {
 
-        return new Promise((resolve, reject) => {
+		du.debug('Delete Queue');
 
-            if(queue_exists){
+		du.warning('Deleting queue: ' + shortname);
 
-                let queue_url = this.getQueueURL(shortname);
+		return this.queueExists(shortname, true).then(queue_exists => {
 
-                let parameters = {QueueUrl: queue_url};
+			return new Promise((resolve, reject) => {
 
-                this.sqs.deleteQueue(parameters, (error, data) => {
+				if (queue_exists) {
 
-                    if (error){
+					let queue_url = this.getQueueURL(shortname);
 
-                        if (error.code === 'AWS.SimpleQueueService.NonExistentQueue') {
+					let parameters = {
+						QueueUrl: queue_url
+					};
 
-                            du.warning('Failed to delete queue (does not exist): '+shortname);
+					this.sqs.deleteQueue(parameters, (error, data) => {
 
-                            return resolve(false);
+						if (error) {
 
-                        }
+							if (error.code === 'AWS.SimpleQueueService.NonExistentQueue') {
 
-                        return reject(eu.getError('server', 'Failed to delete queue: '+shortname));
+								du.warning('Failed to delete queue (does not exist): ' + shortname);
 
-                    }else{
+								return resolve(false);
 
-                        du.debug(shortname+' queue successfully deleted.');
+							}
 
-                        return resolve(data);
+							return reject(eu.getError('server', 'Failed to delete queue: ' + shortname));
 
-                    }
+						} else {
 
-                });
+							du.debug(shortname + ' queue successfully deleted.');
 
-            }else {
+							return resolve(data);
 
-                du.warning('Queue does not exist: '+shortname);
+						}
 
-                return resolve(false);
+					});
 
-            }
+				} else {
 
-        });
+					du.warning('Queue does not exist: ' + shortname);
 
+					return resolve(false);
 
-      });
+				}
 
-    }
+			});
 
-    ensureString(value) {
-        if (_.isString(value)) {
-            return value;
-        }
 
-        return JSON.stringify(value);
-    }
+		});
+
+	}
+
+	ensureString(value) {
+		if (_.isString(value)) {
+			return value;
+		}
+
+		return JSON.stringify(value);
+	}
 
 }
 
