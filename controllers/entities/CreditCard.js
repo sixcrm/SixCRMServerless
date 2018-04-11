@@ -16,12 +16,6 @@ module.exports = class CreditCardController extends entityController {
 
       this.search_fields = ['name'];
 
-      /*
-      this.encrypted_attribute_paths = [
-        'token.token'
-      ];
-      */
-
     }
 
     associatedEntitiesCheck({id}){
@@ -45,6 +39,35 @@ module.exports = class CreditCardController extends entityController {
         }
 
         return return_array;
+
+      });
+
+    }
+
+    get({id}){
+
+      du.debug('Get Detokenized');
+
+      return super.get({id: id})
+      .then((result) => {
+
+        if(_.isNull(result)){
+          return result;
+        }
+
+        if(!_.has(result, 'token')){
+          eu.throwError('server', 'Unable to detokenize: entity is missing the token field');
+        }
+
+        const TokenController = global.SixCRM.routes.include('providers', 'token/Token.js');
+        this.tokenController = new TokenController();
+
+        return this.tokenController.getToken(result.token).then((detokenized_result) => {
+
+          result.number = detokenized_result;
+          return result;
+
+        });
 
       });
 

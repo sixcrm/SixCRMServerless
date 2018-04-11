@@ -51,6 +51,7 @@ module.exports = class Register extends RegisterUtilities {
           rebill: 'rebill'
         },
         optional:{
+          //Technical Debt:  Add the ability to force the use of a creditcard without a token
         }
       }
     };

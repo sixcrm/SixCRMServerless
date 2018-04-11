@@ -190,6 +190,36 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
   }
 
+  hydrateSelectedCreditCard(){
+
+    du.debug('Hydrate Selected CreditCard');
+
+    let selected_creditcard = this.parameters.get('selectedcreditcard');
+
+    if(_.has(selected_creditcard, 'number')){
+      return true;
+    }
+
+    if(_.has(selected_creditcard, 'token')){
+
+      return this.creditCardController.get({id: selected_creditcard.id}).then(result => {
+
+        if(_.isNull(result) || !_.has(result, 'number')){
+          eu.throwError('server', 'Unable to hydrate the selected creditcard');
+        }
+
+        this.parameters.set('selectedcreditcard', result);
+
+        return true;
+
+      });
+
+    }
+
+    eu.throwError('server', 'Selected CreditCard must have either a number or a token.');
+
+  }
+
   selectCustomerCreditCard(){
 
     du.debug('Select Customer Credit Card');

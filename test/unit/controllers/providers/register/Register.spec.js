@@ -169,6 +169,114 @@ describe('controllers/providers/Register.js', () => {
     mockery.deregisterAll();
   });
 
+  describe('hydrateSelectedCreditCard', () => {
+
+    it('fails because the creditcard has neither a token nor a number', () => {
+
+      const selected_creditcard = getValidCreditCard();
+      delete selected_creditcard.token;
+      delete selected_creditcard.number;
+
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+      let registerController = new RegisterController();
+      registerController.parameters.store['selectedcreditcard'] = selected_creditcard;
+
+      try{
+        registerController.hydrateSelectedCreditCard();
+      }catch(error){
+        expect(error.message).to.equal('[500] Selected CreditCard must have either a number or a token.');
+      }
+
+    });
+
+    it('returns true because the creditcard has a number', () => {
+
+      const selected_creditcard = getValidCreditCard();
+      selected_creditcard.number = '4111111111111111';
+
+      const CreditCard = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+      CreditCard.prototype.get = () => {
+        expect(false).to.equal(true);
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), CreditCard);
+
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+      let registerController = new RegisterController();
+      registerController.parameters.set('selectedcreditcard', selected_creditcard);
+
+      let result = registerController.hydrateSelectedCreditCard();
+      expect(result).to.equal(true);
+
+    });
+
+    it('fails because the creditcard returns null', () => {
+
+      const selected_creditcard = getValidCreditCard();
+
+      const CreditCard = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+      CreditCard.prototype.get = () => {
+        return Promise.resolve(null);
+      }
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), CreditCard);
+
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+      let registerController = new RegisterController();
+      registerController.parameters.set('selectedcreditcard', selected_creditcard);
+
+      return registerController.hydrateSelectedCreditCard().catch(error => {
+        expect(error.message).to.equal('[500] Unable to hydrate the selected creditcard');
+      });
+
+    });
+
+    it('fails because the creditcard returns entity with no number', () => {
+
+      const selected_creditcard = getValidCreditCard();
+
+      const CreditCard = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+      CreditCard.prototype.get = () => {
+        return Promise.resolve(selected_creditcard);
+      }
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), CreditCard);
+
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+      let registerController = new RegisterController();
+      registerController.parameters.set('selectedcreditcard', selected_creditcard);
+
+      return registerController.hydrateSelectedCreditCard().catch(error => {
+        expect(error.message).to.equal('[500] Unable to hydrate the selected creditcard');
+      });
+
+    });
+
+    it('succeeds', () => {
+
+      const selected_creditcard = getValidCreditCard();
+      let token_value = '4111111111111111';
+      const hydrated_creditcard = objectutilities.clone(selected_creditcard);
+      hydrated_creditcard.number = token_value;
+
+      const CreditCard = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+      CreditCard.prototype.get = ({id}) => {
+        expect(id).to.equal(selected_creditcard.id);
+        return Promise.resolve(hydrated_creditcard);
+      }
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), CreditCard);
+
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+      let registerController = new RegisterController();
+      registerController.parameters.set('selectedcreditcard', selected_creditcard);
+
+      return registerController.hydrateSelectedCreditCard().then(result => {
+        expect(result).to.equal(true);
+        expect(registerController.parameters.store['selectedcreditcard']).to.deep.equal(hydrated_creditcard);
+      });
+
+    });
+
+  });
+
   describe('hydrateTransaction', () => {
 
     it('fails because user does not have permission', () => {
@@ -1540,7 +1648,6 @@ describe('controllers/providers/Register.js', () => {
 
       let mock_credit_card = class {
         constructor() {}
-
         get() {
           return Promise.resolve(creditcard);
         }
