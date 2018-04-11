@@ -1,19 +1,25 @@
 [{
-	"id": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72",
-	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-	"customers":["24f7c851-29d4-4af9-87c5-0298fa74c689"],
-	"address": {
-		"city": "Portland",
-		"country": "US",
-		"line1": "10 Skid Rw.",
-		"line2": "Suite 100",
-		"state": "OR",
-		"zip": "97213"
+  "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+  "address": {
+    "city": "Portland",
+    "country": "US",
+    "line1": "10 Skid Rw.",
+    "line2": "Suite 100",
+    "state": "OR",
+    "zip": "97213"
+  },
+  "created_at": "2018-03-30T22:32:16.355Z",
+  "customers": [
+    "24f7c851-29d4-4af9-87c5-0298fa74c689"
+  ],
+  "expiration": "10/2025",
+  "id": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72",
+  "last_four": "1111",
+	"first_six":"411111",
+  "name": "Rama Damunaste",
+  "token":{
+		"token":"sometoken",
+		"provider":"tokenex"
 	},
-	"number": "4111111111111111",
-	"ccv": "999",
-	"expiration": "10/2025",
-	"name": "Rama Damunaste",
-	"created_at":"2017-04-06T18:40:41.405Z",
-	"updated_at":"2017-04-06T18:41:12.521Z"
+  "updated_at": "2018-03-30T22:32:16.355Z"
 }]

@@ -211,14 +211,15 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			if (!_.has(this, 'creditCardController')) {
 				const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
 				this.creditCardController = new CreditCardController();
-				this.creditCardController.sanitize(false);
 			}
 
+			this.creditCardController.sanitize(false);
 			return this.creditCardController.assureCreditCard(event.creditcard)
-				.then(creditcard => {
-					return this.parameters.set('creditcard', creditcard);
-				})
-				.then(() => this.addCreditCardToCustomer());
+			.then(creditcard => {
+				this.parameters.set('creditcard', creditcard);
+				return true;
+			})
+			.then(() => this.addCreditCardToCustomer());
 
 		}
 
@@ -236,9 +237,10 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		if (!_.has(this, 'customerController')) {
 			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 			this.customerController = new CustomerController();
-			this.customerController.sanitize(false);
+
 		}
 
+		this.customerController.sanitize(false);
 		return this.customerController.addCreditCard(customer.id, creditcard).then(([customer, creditcard]) => {
 			this.parameters.set('creditcard', creditcard);
 			this.parameters.set('customer', customer);
@@ -278,6 +280,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	}
 
 	setPreviousRebill() {
+
 		const event = this.parameters.get('event');
 
 		if (!_.has(event, 'reverse_on_complete')) {

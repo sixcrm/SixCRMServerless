@@ -7,7 +7,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const encryptionutilities = global.SixCRM.routes.include('lib', 'encryption-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
@@ -892,31 +891,41 @@ class MockEntities {
 
   }
 
-  static getValidCreditCard(id) {
-    const card = this.getValidPlaintextCreditCard(id);
+  static getValidCreditCard(id){
+    return this.getValidPlaintextCreditCard(id);
 
-    card.number = encryptionutilities.encryptAES256(card.id, card.number);
-    card.ccv = encryptionutilities.encryptAES256(card.id, card.ccv);
-    return card;
+    //card.number = encryptionutilities.encryptAES256(card.id, card.number);
+    //card.ccv = encryptionutilities.encryptAES256(card.id, card.ccv);
+    //return card;
   }
 
   static getValidPlaintextCreditCard(id) {
     const number = this.getValidCreditCardNumber();
     const last_four = number.slice(-4);
+    const first_six = number.slice(0, 6);
 
     return {
       id: this.getValidId(id),
       account: this.getTestAccountID(),
       customers: [uuidV4()],
       address: this.getValidAddress(),
-      number,
-      last_four,
-      ccv: this.getValidCreditCardCCV(),
+      token: this.getValidCreditCardToken(),
+      first_six: first_six,
+      last_four: last_four,
       expiration: this.getValidCreditCardExpiration(),
       name: spoofer.createRandomName('full'),
       created_at: timestamp.getISO8601(),
       updated_at: timestamp.getISO8601()
-    }
+    };
+  }
+
+  static getValidCreditCardToken(){
+
+    return {
+      provider:"tokenex",
+      token:"sometokenstring"
+    };
+
   }
 
   static getValidCustomerNotes(id) {

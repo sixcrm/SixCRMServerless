@@ -1,0 +1,145 @@
+const _ = require('underscore');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+
+module.exports = class TokenEx {
+
+  constructor(){
+
+    this.request_paths = {
+      'getToken': 'TokenServices.svc/REST/Detokenize',
+      'setToken': 'TokenServices.svc/REST/Tokenize',
+      'deleteToken':'TokenServices.svc/REST/DeleteToken'
+    };
+
+    this._setConfiguration();
+
+  }
+
+  getToken(token){
+
+    du.debug('Get Token');
+
+    let post_body = {
+      "APIKey":this.api_key,
+      "TokenExID":this.id,
+      "Token":token
+    };
+
+    let argument_object = {
+      url: this._createFullRequestURL('getToken'),
+      body: post_body
+    };
+
+
+    return this._performRequest(argument_object).then((result) => this._parseResponse('getToken', result));
+
+  }
+
+  setToken(data){
+
+    du.debug('Set Token');
+
+    let post_body = {
+      "APIKey":this.api_key,
+      "TokenExID":this.id,
+      "Data":data,
+      "TokenScheme":22
+    };
+
+    let argument_object = {
+      url: this._createFullRequestURL('setToken'),
+      body: post_body
+    };
+
+    //du.warning(argument_object); process.exit();
+
+    return this._performRequest(argument_object).then((result) => this._parseResponse('setToken', result));
+
+  }
+
+  deleteToken(token){
+
+    du.debug('Delete Token');
+
+    let post_body = {
+      "APIKey":this.api_key,
+      "TokenExID":this.id,
+      "Token":token
+    };
+
+    let argument_object = {
+      url: this._createFullRequestURL('deleteToken'),
+      body: post_body
+    };
+
+    return this._performRequest(argument_object).then((result) => this._parseResponse('deleteToken', result));
+
+  }
+
+  _parseResponse(request_name, result){
+
+    du.debug('Parse Response');
+
+    if(!_.has(result.body, 'Success') || result.body.Success !== true){
+      eu.throwError('server','Tokenization request failed (TokenEx.com): "'+request_name+'".  ('+result.Error+')');
+    }
+
+    return {
+      setToken:(result) => {
+        if(_.has(result.body, 'Token')){
+          return { token: result.body.Token };
+        }
+        eu.throwError('server', 'Tokenization Response missing "Token" field (TokenEx.com).');
+      },
+      getToken:(result) => {
+        if(_.has(result.body, 'Value')){
+          return { value: result.body.Value };
+        }
+        eu.throwError('server', 'Tokenization Response missing "Value" field (TokenEx.com).');
+      },
+      deleteToken:() => {
+        return true;
+      }
+    }[request_name](result);
+
+  }
+
+  _performRequest(argumentation_object){
+
+    du.debug('Perform Request');
+
+    if(!_.has(this, 'httputilities')){
+      const HTTPUtilities = global.SixCRM.routes.include('lib', 'providers/http-provider.js');
+      this.httputilities = new HTTPUtilities();
+    }
+
+    return this.httputilities.postJSON(argumentation_object);
+
+  }
+
+  _createFullRequestURL(request_name){
+
+    du.debug('Create Full Request URL');
+
+    if(!_.has(this.request_paths, request_name)){
+      eu.throwError('server', 'Unknown token request: '+request_name);
+    }
+
+    return this.base+'/'+this.request_paths[request_name];
+
+  }
+
+  _setConfiguration(){
+
+    du.debug('Set Configuration');
+
+    const tokenex_configuration = global.SixCRM.configuration.site_config.tokenization.tokenex;
+    objectutilities.map(tokenex_configuration, (key) => {
+      this[key] = tokenex_configuration[key];
+    });
+
+  }
+
+}

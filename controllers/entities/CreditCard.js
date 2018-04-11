@@ -1,14 +1,12 @@
-'use strict';
 const _ = require('underscore');
-const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 
-const helper = new CreditCardHelperController();
+const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class CreditCardController extends entityController {
 
@@ -18,58 +16,13 @@ module.exports = class CreditCardController extends entityController {
 
       this.search_fields = ['name'];
 
+      /*
       this.encrypted_attribute_paths = [
-          'number',
-          'ccv'
+        'token.token'
       ];
+      */
+
     }
-
-    censorEncryptedAttributes(entity) {
-        const custom_censor_fn = (attr_path, attr_value) => {
-            switch (attr_path) {
-                case 'number':
-                    return helper.lastFour(this.encryptionhelper.decrypt(entity, attr_value));
-                default:
-                    return '****';
-            }
-        }
-
-        return super.censorEncryptedAttributes(entity, custom_censor_fn);
-    }
-
-    setLastFour(attributes) {
-        if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
-            attributes.last_four = attributes.number.slice(-4);
-        }
-    }
-
-    create({entity}) {
-        this.setLastFour(entity);
-        return super.create({entity});
-    }
-
-    update({entity}) {
-        this.setLastFour(entity);
-        return super.update({entity});
-    }
-
-    updateProperties({id, properties}) {
-        this.setLastFour(properties);
-        return super.updateProperties({id, properties});
-    }
-
-	listCustomers(creditcard) {
-		du.debug('List Customers');
-
-		if(_.has(creditcard, "customers") && arrayutilities.nonEmpty(creditcard.customers)){
-			return Promise.all(arrayutilities.map(creditcard.customers, customer => {
-				return this.executeAssociatedEntityFunction('CustomerController', 'get', {id: customer});
-			}))
-				.then(customers => arrayutilities.filter(customers, customer => !_.isNull(customer)));
-		}
-
-		return Promise.resolve(null);
-	}
 
     associatedEntitiesCheck({id}){
 
@@ -78,7 +31,7 @@ module.exports = class CreditCardController extends entityController {
       let return_array = [];
 
       let data_acquisition_promises = [
-		this.get({id}).then(creditcard => this.listCustomers(creditcard))
+        this.get({id}).then(creditcard => this.listCustomers(creditcard))
       ];
 
       return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
@@ -97,137 +50,242 @@ module.exports = class CreditCardController extends entityController {
 
     }
 
+    create({entity}) {
+
+      du.debug('CreditCard.create()');
+
+      //Technical Debt:  Validate that this is a creditcard with a number and cvv etc...
+
+      return Promise.resolve(entity)
+      .then((entity) => {
+
+        this.assignPrimaryKey(entity);
+        this.setLastFour(entity);
+        this.setFirstSix(entity);
+
+        return entity;
+
+      }).then(entity => {
+
+        if(!_.has(this, 'tokenController')){
+          const TokenController = global.SixCRM.routes.include('providers', 'token/Token.js');
+          this.tokenController = new TokenController();
+        }
+
+        return Promise.all([entity, this.tokenController.setToken({entity: entity.number})]);
+
+      }).then(([entity, token]) => {
+
+        delete entity.number;
+        delete entity.cvv;
+        entity.token = token;
+
+        return entity;
+
+      }).then(entity => {
+
+        return super.create({entity});
+
+      });
+
+    }
+
+    update({entity}) {
+
+      du.debug('CreditCard.update()');
+
+      return Promise.resolve(entity)
+      .then((entity) => {
+
+        return this.exists({entity: entity, return_entity: true}).then((existing_creditcard) => {
+
+          return {
+            existing_creditcard: existing_creditcard,
+            entity: entity
+          };
+
+        });
+
+      })
+      .then(({existing_creditcard, entity}) => {
+
+        if(!_.has(existing_creditcard, 'id')){
+          eu.throwError('not_found', 'Credit Card not found.');
+        }
+
+        return {
+          existing_creditcard: existing_creditcard,
+          entity: entity
+        };
+
+      }).then(({existing_creditcard, entity}) => {
+
+        //Note:  We may need to assure that existing properties are not modified.
+        let update_entity = objectutilities.transcribe(
+          {
+            address:'address',
+            customers:'customers',
+            name: 'name',
+            expiration: 'expiration'
+          },
+          entity,
+          existing_creditcard,
+          false
+        );
+
+        return update_entity;
+
+      }).then((update_entity) => {
+
+        return super.update({entity: update_entity});
+
+      });
+
+    }
+
+    delete({id}){
+
+      du.debug('CreditCard.delete()');
+
+      return Promise.resolve(id)
+      .then((id) => this.exists({id: id, return_entity: true}))
+      .then((existing_entity) => {
+
+        if(!_.has(existing_entity, 'id')){
+          eu.throwError('not_found', 'Unable to identify creditcard for delete.');
+        }
+
+        if(!_.has(this, 'tokenController')){
+          const TokenController = global.SixCRM.routes.include('providers', 'token/Token.js');
+          this.tokenController = new TokenController();
+        }
+
+        return Promise.all([existing_entity, this.tokenController.deleteToken(existing_entity.token)]);
+
+      }).then(([existing_entity]) => {
+
+        return super.delete({id: existing_entity.id});
+
+      });
+
+    }
+
+    updateProperties({id, properties}) {
+
+      du.debug('Update Properties');
+
+      return Promise.resolve(id)
+      .then((id) => {
+
+        return this.exists({entity: {id: id}, return_entity: true}).then((existing_creditcard) => {
+
+          return existing_creditcard;
+
+        });
+
+      })
+      .then((existing_creditcard) => {
+
+        if(!_.has(existing_creditcard, 'id')){
+          eu.throwError('not_found', 'Credit Card not found.');
+        }
+
+        return existing_creditcard;
+
+      }).then((existing_creditcard) => {
+
+        //Note:  We may need to assure that existing properties are not modified.
+        let update_entity = objectutilities.transcribe(
+          {
+            address:'address',
+            customers:'customers',
+            name: 'name',
+            expiration: 'expiration'
+          },
+          properties,
+          existing_creditcard,
+          false
+        );
+
+        return update_entity;
+
+      }).then((update_entity) => {
+
+        return super.update({entity: update_entity});
+
+      });
+
+    }
+
+  	listCustomers(creditcard) {
+
+  		du.debug('List Customers');
+
+  		if(_.has(creditcard, "customers") && arrayutilities.nonEmpty(creditcard.customers)){
+
+        //Nick:  Use a list query here, not parallel get queries
+  			return Promise.all(arrayutilities.map(creditcard.customers, customer => {
+  				return this.executeAssociatedEntityFunction('CustomerController', 'get', {id: customer});
+  			})).then(customers => arrayutilities.filter(customers, customer => !_.isNull(customer)));
+
+  		}
+
+  		return Promise.resolve(null);
+
+  	}
+
     assureCreditCard(creditcard){
 
       du.debug('Assure Credit Card', creditcard);
 
       if (this.sanitization) {
-          eu.throwError('server', 'Cannot Assure Credit Card while sanitizing results');
+        eu.throwError('server', 'Cannot Assure Credit Card while sanitizing results');
       }
 
-      this.assignPrimaryKey(creditcard);
-      this.setLastFour(creditcard);
+      //Technical Debt:  It might be better to query by the first_six
+      return this.queryBySecondaryIndex({field: 'last_four', index_value: creditcard.last_four, index_name: 'last_four-index'})
+      .then((result) => {
 
-      return this.queryBySecondaryIndex({field:'last_four', index_value: creditcard.last_four, index_name: 'last_four-index'}).then(results => {
+        if(_.has(result, 'creditcards') && _.isArray(result.creditcards) && arrayutilities.nonEmpty(result.creditcards)){
 
-        if(_.has(results, 'creditcards')){
-
-          if(arrayutilities.nonEmpty(results.creditcards)){
-
-            let found_card = arrayutilities.find(results.creditcards, (result) => {
-              return this.sameCard(creditcard, result);
-            });
-
-            if(!_.isUndefined(found_card)){
-              return found_card;
-            }
-
+          if(!_.has(this, 'creditCardHelperController')){
+            const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+            this.creditCardHelperController = new CreditCardHelperController();
           }
 
-          return this.create({entity: creditcard});
+          let found_card = arrayutilities.find(result.creditcards, (existing_creditcard) => {
+            return this.creditCardHelperController.sameCard(creditcard, existing_creditcard);
+          });
+
+          if(!_.isUndefined(found_card)){
+            return found_card;
+          }
 
         }
 
-        return true;
+        return this.create({entity: creditcard});
 
       });
 
     }
 
-    sameCard(creditcard, test_card, fatal){
+    setLastFour(attributes) {
 
-      du.debug('Same Card');
+      du.debug('Set Last Four');
 
-      fatal = (_.isUndefined(fatal))?false:fatal;
-
-      let bad_field = arrayutilities.find(objectutilities.getKeys(creditcard), creditcard_field => {
-
-        if(!_.has(test_card, creditcard_field)){
-          return true;
-        }
-
-        let test_field = test_card[creditcard_field];
-        let fact_field = creditcard[creditcard_field];
-
-        if(typeof test_field !== typeof fact_field){
-          return true;
-        }
-
-        if((_.isString(fact_field) || _.isNumber(fact_field)) && fact_field !== test_field){
-          return true;
-        }
-
-        if(_.isObject(fact_field)){
-          if(!_.isMatch(fact_field, test_field)){
-            return true;
-          }
-        }
-
-        return false;
-
-      });
-
-      if(!_.isUndefined(bad_field)){
-
-        let message = 'Cards do not match.  Bad field: '+bad_field;
-
-        if(fatal == true){
-          eu.throwError('server', message);
-        }
-
-        return false;
-
+      if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
+        attributes.last_four = attributes.number.slice(-4);
       }
-
-      return true;
 
     }
 
-    getAddress(creditcard){
+    setFirstSix(attributes) {
 
-      du.debug('Get Address');
+      du.debug('Set First Six');
 
-      return Promise.resolve(creditcard.address);
-
-    }
-
-    getBINNumber(creditcard){
-
-      du.debug('Get BIN Number');
-
-      let cc_number = null;
-
-      if(_.has(creditcard, 'number')){
-
-        cc_number = creditcard.number;
-
-      }else if(_.isString(creditcard)){
-
-        cc_number = creditcard;
-
+      if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
+        attributes.first_six = attributes.number.substring(0, 6);
       }
-
-      if(!_.isNull(cc_number)){
-
-        cc_number = cc_number.slice(0,6);
-
-      }
-
-      return cc_number;
-
-    }
-
-    createCreditCardObject(input_object){
-
-      var creditcard = {
-          number: input_object.number,
-          expiration: input_object.expiration,
-          ccv: input_object.ccv,
-          name: input_object.name,
-          address: input_object.address
-      };
-
-      return Promise.resolve(creditcard);
 
     }
 
