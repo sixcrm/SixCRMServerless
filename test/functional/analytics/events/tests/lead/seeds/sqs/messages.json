@@ -5,13 +5,25 @@
 		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"campaign": "6bbdd10c-3a11-425a-ba0c-48beed42a705",
 		"datetime": "2018-03-26T13:15:22.175Z",
-		"session": "39d4b5ad-8e8a-4c63-a9e5-7e337a0dec20",
 		"affiliate": "05d65fa9-bac9-4dc9-99f0-f4a1e08dc036",
 		"subaffiliate_1": "64a59b46-2008-45dd-99e4-fe041d2b7f6a",
 		"subaffiliate_2": "95bc7f0c-1485-49cb-8794-e7e00540c229",
 		"subaffiliate_3": "dbf244eb-85b5-4400-b3ec-dc1f27cbcd0a",
 		"subaffiliate_4": "6c1d5896-43b4-4efb-91bc-9cd2f04f9d9f",
 		"subaffiliate_5": "87a46ae8-4d65-42e5-be03-3fd30a3383e3",
-		"cid": "7e89d25c-93e9-4f27-b391-02f7eb94751c"
+		"cid": "7e89d25c-93e9-4f27-b391-02f7eb94751c",
+		"session": {
+			"id": "39d4b5ad-8e8a-4c63-a9e5-7e337a0dec20",
+			"datetime": "2018-03-26T13:15:22.175Z",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"campaign": "7a2b5750-adc4-4762-8963-268aa767b803",
+			"cid": "2f05f316-405c-4293-bac0-f7845f765580",
+			"affiliate": "8882b1de-e4be-485b-b887-1a41ff93677e",
+			"subaffiliate_1": "c41cbf33-b7df-4807-b153-2a882aab2110",
+			"subaffiliate_2": "2250771e-8788-4706-bb00-0ef73bbc167a",
+			"subaffiliate_3": "5da98116-789c-40d2-ae50-4357e691ab55",
+			"subaffiliate_4": "c15faf77-0667-4f19-8be4-8793d2244b22",
+			"subaffiliate_5": "25997dc4-44e6-49ec-a1c8-faa8c7344f28"
+		}
 	}]
 }
