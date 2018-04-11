@@ -1,6 +1,6 @@
+const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const random = global.SixCRM.routes.include('lib', 'random.js');
-const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 module.exports = class Token {
 
@@ -11,15 +11,26 @@ module.exports = class Token {
 
   }
 
-  setToken({entity}){
+  setToken({entity, provider}){
 
     du.debug('Get Token');
 
-    du.info(entity);
-    return Promise.resolve({
-      token: hashutilities.toSHA1(random.createRandomString(20)),
-      provider: 'tokenex'
-    });
+    provider = (_.isUndefined(provider) || _.isNull(provider))?'tokenex':provider;
+
+    if(provider == 'tokenex'){
+
+      du.info(entity);
+
+      return this.tokenExController.setToken(entity).then((result) => {
+        return {
+          token: result.token,
+          provider: 'tokenex'
+        };
+      });
+
+    }
+
+    eu.throwError('server', 'Unknown token provider: "'+provider+'".');
 
   }
 
@@ -27,9 +38,15 @@ module.exports = class Token {
 
     du.debug('Get Token');
 
-    du.info(token, provider);
+    if(provider == 'tokenex'){
 
-    return '4111111111111111';
+      return this.tokenExController.getToken(token).then((result) => {
+        return result.value;
+      });
+
+    }
+
+    eu.throwError('server', 'Unknown token provider: "'+provider+'".');
 
   }
 
@@ -37,9 +54,15 @@ module.exports = class Token {
 
     du.debug('Delete Token');
 
-    du.info(token, provider);
+    if(provider == 'tokenex'){
 
-    return Promise.resolve(true);
+      return this.tokenExController.deleteToken(token).then((result) => {
+        return result.value;
+      });
+
+    }
+
+    eu.throwError('server', 'Unknown token provider: "'+provider+'".');
 
   }
 

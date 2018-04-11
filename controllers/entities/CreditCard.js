@@ -16,9 +16,11 @@ module.exports = class CreditCardController extends entityController {
 
       this.search_fields = ['name'];
 
+      /*
       this.encrypted_attribute_paths = [
         'token.token'
       ];
+      */
 
     }
 
@@ -70,7 +72,7 @@ module.exports = class CreditCardController extends entityController {
           this.tokenController = new TokenController();
         }
 
-        return Promise.all([entity, this.tokenController.setToken(entity)]);
+        return Promise.all([entity, this.tokenController.setToken({entity: entity.number})]);
 
       }).then(([entity, token]) => {
 

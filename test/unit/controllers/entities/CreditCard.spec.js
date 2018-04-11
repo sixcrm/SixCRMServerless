@@ -5,7 +5,8 @@ const mockery = require('mockery');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const random = global.SixCRM.routes.include('lib', 'random.js');
 
 function getValidCreditCard() {
   return MockEntities.getValidCreditCard();
@@ -17,513 +18,632 @@ function getValidCustomer() {
 
 describe('controllers/entities/CreditCard.js', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
+  before(() => {
+    mockery.enable({
+      useCleanCache: true,
+      warnOnReplace: false,
+      warnOnUnregistered: false
+    });
+  });
+
+  afterEach(() => {
+    mockery.resetCache();
+    mockery.deregisterAll();
+  });
+
+  describe('delete', () => {
+
+    it('successfully deletes a creditcard', () => {
+
+      let existing_creditcard = MockEntities.getValidCreditCard();
+
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.exists = ({
+        entity
+      }) => {
+        expect(entity).to.be.defined;
+        return Promise.resolve(existing_creditcard);
+      };
+      EntityClass.prototype.delete = ({
+        id
+      }) => {
+        return Promise.resolve({
+          id: id
         });
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {
+        constructor() {}
+        deleteToken({
+          token,
+          provider
+        }) {
+          expect(token).to.be.defined;
+          expect(provider).to.be.defined;
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {
+        constructor() {}
+        deleteToken() {
+          return true;
+        }
+      });
+
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+
+      return creditCardController.delete({
+        id: existing_creditcard.id
+      }).then(result => {
+        expect(result).to.deep.equal({
+          id: existing_creditcard.id
+        });
+      })
+
     });
 
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
+    it('returns a error when creditcard does not exist', () => {
+
+      let existing_creditcard = MockEntities.getValidCreditCard();
+
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.exists = ({
+        entity
+      }) => {
+        expect(entity).to.be.defined;
+        return Promise.resolve(false);
+      };
+      EntityClass.prototype.delete = ({
+        id
+      }) => {
+        return Promise.resolve({
+          id: id
+        });
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {
+        constructor() {}
+        deleteToken() {
+          return true;
+        }
+      });
+
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+
+      return creditCardController.delete({
+        id: existing_creditcard.id
+      }).catch(error => {
+        expect(error.message).to.equal('[404] Unable to identify creditcard for delete.');
+      });
+
     });
 
-    describe('delete', () => {
+  });
 
-      it('successfully deletes a creditcard', () => {
+  describe('updateProperties', () => {
 
-        let existing_creditcard = MockEntities.getValidCreditCard();
+    it('successfully updates a creditcard', () => {
 
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.exists = ({entity}) => {
-          expect(entity).to.be.defined;
-          return Promise.resolve(existing_creditcard);
-        };
-        EntityClass.prototype.delete = ({id}) => { return Promise.resolve({id: id}); };
+      let existing_creditcard = MockEntities.getValidCreditCard();
+      let update_properties = {
+        name: 'A New Name',
+        expiration: '10/20',
+        address: {
+          line1: '123 New Address',
+          line2: 'Suite 43',
+          city: 'Portland',
+          state: 'OR',
+          country: 'US',
+          zip: '97203'
+        },
+        customers: existing_creditcard.customers.push(MockEntities.getValidId())
+      };
 
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.update = ({
+        entity
+      }) => {
+        return Promise.resolve(entity);
+      };
 
-        mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {
-          constructor(){}
-          deleteToken({token, provider}){
-            expect(token).to.be.defined;
-            expect(provider).to.be.defined;
-            return Promise.resolve(true);
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
+
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+
+      creditCardController.exists = () => {
+        return Promise.resolve(existing_creditcard);
+      }
+
+      return creditCardController.updateProperties({
+        id: existing_creditcard.id,
+        properties: update_properties
+      }).then((stored_creditcard) => {
+        objectutilities.map(stored_creditcard, (key) => {
+          if (_.has(update_properties, key)) {
+            expect(stored_creditcard[key]).to.deep.equal(update_properties[key]);
+          } else {
+            expect(stored_creditcard[key]).to.deep.equal(existing_creditcard[key]);
           }
         });
-
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
-
-        return creditCardController.delete({id: existing_creditcard.id}).then(result => {
-          expect(result).to.deep.equal({id: existing_creditcard.id});
-        })
-
       });
 
-      it('returns a error when creditcard does not exist', () => {
+    });
 
-        let existing_creditcard = MockEntities.getValidCreditCard();
+    it('does not update a field that is not whitelisted', () => {
 
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.exists = ({entity}) => {
-          expect(entity).to.be.defined;
-          return Promise.resolve(false);
-        };
-        EntityClass.prototype.delete = ({id}) => { return Promise.resolve({id: id}); };
+      let existing_creditcard = MockEntities.getValidCreditCard();
+      let update_properties = {
+        first_six: '123456',
+        name: 'A New Name',
+        expiration: '10/20',
+        address: {
+          line1: '123 New Address',
+          line2: 'Suite 43',
+          city: 'Portland',
+          state: 'OR',
+          country: 'US',
+          zip: '97203'
+        },
+        customers: existing_creditcard.customers.push(MockEntities.getValidId())
+      };
 
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.update = ({
+        entity
+      }) => {
+        return Promise.resolve(entity);
+      };
 
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
 
-        return creditCardController.delete({id: existing_creditcard.id}).catch(error => {
-          expect(error.message).to.equal('[404] Unable to identify creditcard for delete.');
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+
+      creditCardController.exists = () => {
+        return Promise.resolve(existing_creditcard);
+      }
+
+      return creditCardController.updateProperties({
+        id: existing_creditcard.id,
+        properties: update_properties
+      }).then((stored_creditcard) => {
+        objectutilities.map(stored_creditcard, (key) => {
+          expect(stored_creditcard.first_six).to.equal(existing_creditcard.first_six);
+          delete update_properties.first_six;
+          if (_.has(update_properties, key)) {
+            expect(stored_creditcard[key]).to.deep.equal(update_properties[key]);
+          } else {
+            expect(stored_creditcard[key]).to.deep.equal(existing_creditcard[key]);
+          }
         });
+      });
+
+    });
+
+    it('returns a error when creditcard does not exist', () => {
+
+      let existing_creditcard = MockEntities.getValidCreditCard();
+      let update_properties = {
+        name: 'Test'
+      };
+
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.exists = ({
+        entity
+      }) => {
+        expect(entity).to.be.defined;
+        return Promise.resolve(false);
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
+
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+
+      return creditCardController.updateProperties({
+        id: existing_creditcard.id,
+        properties: update_properties
+      }).catch(error => {
+        expect(error.message).to.equal('[404] Credit Card not found.');
+      });
+
+    });
+
+  });
+
+
+  describe('update', () => {
+
+    it('successfully updates a creditcard', () => {
+
+      let existing_creditcard = MockEntities.getValidCreditCard();
+      let updated_creditcard = objectutilities.clone(existing_creditcard);
+      updated_creditcard.name = 'A New Name';
+      updated_creditcard.expiration = '10/20';
+      updated_creditcard.address = {
+        line1: '123 New Address',
+        line2: 'Suite 43',
+        city: 'Portland',
+        state: 'OR',
+        country: 'US',
+        zip: '97203'
+      };
+      updated_creditcard.customers = objectutilities.clone(existing_creditcard.customers);
+      updated_creditcard.customers.push(MockEntities.getValidId());
+
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.update = ({
+        entity
+      }) => {
+        return Promise.resolve(entity);
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
+
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+
+      creditCardController.exists = () => {
+        return Promise.resolve(existing_creditcard);
+      }
+
+      return creditCardController.update({
+        entity: updated_creditcard
+      }).then((stored_creditcard) => {
+        expect(stored_creditcard).to.deep.equal(updated_creditcard);
+      });
+
+    });
+
+    it('doesn\'t allow non-whitelisted fields', () => {
+
+      let existing_creditcard = MockEntities.getValidCreditCard();
+      let updated_creditcard = objectutilities.clone(existing_creditcard);
+      updated_creditcard.name = 'A New Name';
+      updated_creditcard.expiration = '10/20';
+      updated_creditcard.address = {
+        line1: '123 New Address',
+        line2: 'Suite 43',
+        city: 'Portland',
+        state: 'OR',
+        country: 'US',
+        zip: '97203'
+      };
+      updated_creditcard.customers = objectutilities.clone(existing_creditcard.customers);
+      updated_creditcard.customers.push(MockEntities.getValidId());
+      updated_creditcard.first_six = '123456';
+
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.update = ({
+        entity
+      }) => {
+        return Promise.resolve(entity);
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
+
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+
+      creditCardController.exists = () => {
+        return Promise.resolve(existing_creditcard);
+      }
+
+      return creditCardController.update({
+        entity: updated_creditcard
+      }).then((stored_creditcard) => {
+
+        expect(stored_creditcard).not.to.deep.equal(updated_creditcard);
+        delete stored_creditcard.first_six;
+        delete updated_creditcard.first_six;
+        expect(stored_creditcard).to.deep.equal(updated_creditcard);
 
       });
 
     });
 
-    describe('updateProperties', () => {
+    it('throws an error if the creditcard doesn\'t exist in the database', () => {
 
-      it('successfully updates a creditcard', () => {
+      //let creditcard = null;
 
-        let existing_creditcard = MockEntities.getValidCreditCard();
-        let update_properties = {
-          name: 'A New Name',
-          expiration: '10/20',
-          address: {
-            line1: '123 New Address',
-            line2: 'Suite 43',
-            city: 'Portland',
-            state: 'OR',
-            country: 'US',
-            zip: '97203'
-          },
-          customers: existing_creditcard.customers.push(MockEntities.getValidId())
-        };
+      let existing_creditcard = MockEntities.getValidCreditCard();
+      let updated_creditcard = objectutilities.clone(existing_creditcard);
+      updated_creditcard.name = 'A New Name';
+      updated_creditcard.expiration = '10/20';
+      updated_creditcard.address = {
+        line1: '123 New Address',
+        line2: 'Suite 43',
+        city: 'Portland',
+        state: 'OR',
+        country: 'US',
+        zip: '97203'
+      };
+      updated_creditcard.customers = objectutilities.clone(existing_creditcard.customers);
+      updated_creditcard.customers.push(MockEntities.getValidId());
+      updated_creditcard.first_six = '123456';
 
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.update = ({entity}) => { return Promise.resolve(entity); };
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.update = ({
+        entity
+      }) => {
+        return Promise.resolve(entity);
+      };
 
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
 
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
 
-        creditCardController.exists = () => {
-          return Promise.resolve(existing_creditcard);
+      creditCardController.exists = () => {
+        return Promise.resolve(false);
+      }
+
+      return creditCardController.update({
+        entity: updated_creditcard
+      }).catch(error => {
+        expect(error.message).to.equal('[404] Credit Card not found.');
+      });
+
+    });
+
+    xit('does not alter existing fields', () => {
+      //Technical Debt:  Make sure that important stuff (that may be encrypted) doesn't change
+    });
+
+  });
+
+  describe('create', () => {
+
+    it('successfully creates a creditcard entity', () => {
+
+      let creditcard_prototype = MockEntities.getValidTransactionCreditCard();
+      let creditcard = MockEntities.getValidCreditCard();
+
+      PermissionTestGenerators.givenUserWithAllowed('*', 'creditcard');
+
+      mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
+        constructor() {}
+        saveRecord() {
+          return Promise.resolve({
+            Items: [creditcard]
+          })
         }
+      });
 
-        return creditCardController.updateProperties({id: existing_creditcard.id, properties: update_properties}).then((stored_creditcard) => {
-          objectutilities.map(stored_creditcard, (key) => {
-            if(_.has(update_properties, key)){
-              expect(stored_creditcard[key]).to.deep.equal(update_properties[key]);
-            }else{
-              expect(stored_creditcard[key]).to.deep.equal(existing_creditcard[key]);
-            }
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), class {
+        constructor() {}
+        addToSearchIndex() {
+          return Promise.resolve(true);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {
+        constructor() {}
+        setToken({
+          entity,
+          provider
+        }) {
+          expect(entity).to.be.defined;
+          expect(provider).to.satisfy((thing) => {
+            return(_.isUndefined(thing) || _.isNull(thing) || _.isString(thing));
           });
-        });
-
-      });
-
-      it('does not update a field that is not whitelisted', () => {
-
-        let existing_creditcard = MockEntities.getValidCreditCard();
-        let update_properties = {
-          first_six: '123456',
-          name: 'A New Name',
-          expiration: '10/20',
-          address: {
-            line1: '123 New Address',
-            line2: 'Suite 43',
-            city: 'Portland',
-            state: 'OR',
-            country: 'US',
-            zip: '97203'
-          },
-          customers: existing_creditcard.customers.push(MockEntities.getValidId())
-        };
-
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.update = ({entity}) => { return Promise.resolve(entity); };
-
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
-
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
-
-        creditCardController.exists = () => {
-          return Promise.resolve(existing_creditcard);
+          return {
+            token: random.createRandomString(36),
+            provider: 'tokenex'
+          };
         }
-
-        return creditCardController.updateProperties({id: existing_creditcard.id, properties: update_properties}).then((stored_creditcard) => {
-          objectutilities.map(stored_creditcard, (key) => {
-            expect(stored_creditcard.first_six).to.equal(existing_creditcard.first_six);
-            delete update_properties.first_six;
-            if(_.has(update_properties, key)){
-              expect(stored_creditcard[key]).to.deep.equal(update_properties[key]);
-            }else{
-              expect(stored_creditcard[key]).to.deep.equal(existing_creditcard[key]);
-            }
-          });
-        });
-
       });
 
-      it('returns a error when creditcard does not exist', () => {
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
 
-        let existing_creditcard = MockEntities.getValidCreditCard();
-        let update_properties = {
-          name: 'Test'
-        };
+      creditCardController.exists = () => {
+        return Promise.resolve(false);
+      }
 
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.exists = ({entity}) => {
-          expect(entity).to.be.defined;
-          return Promise.resolve(false);
-        };
+      return creditCardController.create({
+        entity: creditcard_prototype
+      }).then(() => {
 
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
-
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
-
-        return creditCardController.updateProperties({id: existing_creditcard.id, properties: update_properties}).catch(error => {
-          expect(error.message).to.equal('[404] Credit Card not found.');
-        });
+        expect(true).to.equal(true);
 
       });
 
     });
 
+  });
 
-    describe('update', () => {
+  describe('assureCreditCard', () => {
 
-      it('successfully updates a creditcard', () => {
+    it('assures that a creditcard is stored (creditcard exists)', () => {
 
-        let existing_creditcard = MockEntities.getValidCreditCard();
-        let updated_creditcard = objectutilities.clone(existing_creditcard);
-        updated_creditcard.name = 'A New Name';
-        updated_creditcard.expiration = '10/20';
-        updated_creditcard.address = {
-          line1: '123 New Address',
-          line2: 'Suite 43',
-          city: 'Portland',
-          state: 'OR',
-          country: 'US',
-          zip: '97203'
-        };
-        updated_creditcard.customers = objectutilities.clone(existing_creditcard.customers);
-        updated_creditcard.customers.push(MockEntities.getValidId());
+      let existing_creditcard = MockEntities.getValidTransactionCreditCard();
 
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.update = ({entity}) => { return Promise.resolve(entity); };
+      let stored_existing_creditcard = MockEntities.getValidCreditCard();
+      stored_existing_creditcard.first_six = existing_creditcard.number.substring(0, 6);
+      stored_existing_creditcard.last_four = existing_creditcard.number.slice(-4);
 
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
+      let another_creditcard = MockEntities.getValidCreditCard();
+      let creditcards = [stored_existing_creditcard, another_creditcard];
 
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
-
-        creditCardController.exists = () => {
-          return Promise.resolve(existing_creditcard);
-        }
-
-        return creditCardController.update({entity: updated_creditcard}).then((stored_creditcard) => {
-          expect(stored_creditcard).to.deep.equal(updated_creditcard);
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.queryBySecondaryIndex = () => {
+        return Promise.resolve({
+          creditcards: creditcards
         });
+      };
 
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/creditcard/CreditCard.js'), class {
+        constructor() {}
+        sameCard(creditcard, testcard) {
+          if ((creditcard.number.substring(0, 6) == testcard.first_six) && (creditcard.number.slice(-4) == testcard.last_four)) {
+            return true;
+          }
+          return false;
+        }
       });
 
-      it('doesn\'t allow non-whitelisted fields', () => {
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+      creditCardController.create = () => {
+        //shouldn't get here.
+        expect(false).to.equal(true);
+      }
 
-        let existing_creditcard = MockEntities.getValidCreditCard();
-        let updated_creditcard = objectutilities.clone(existing_creditcard);
-        updated_creditcard.name = 'A New Name';
-        updated_creditcard.expiration = '10/20';
-        updated_creditcard.address = {
-          line1: '123 New Address',
-          line2: 'Suite 43',
-          city: 'Portland',
-          state: 'OR',
-          country: 'US',
-          zip: '97203'
-        };
-        updated_creditcard.customers = objectutilities.clone(existing_creditcard.customers);
-        updated_creditcard.customers.push(MockEntities.getValidId());
-        updated_creditcard.first_six ='123456';
-
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.update = ({entity}) => { return Promise.resolve(entity); };
-
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
-
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
-
-        creditCardController.exists = () => {
-          return Promise.resolve(existing_creditcard);
-        }
-
-        return creditCardController.update({entity: updated_creditcard}).then((stored_creditcard) => {
-
-          expect(stored_creditcard).not.to.deep.equal(updated_creditcard);
-          delete stored_creditcard.first_six;
-          delete updated_creditcard.first_six;
-          expect(stored_creditcard).to.deep.equal(updated_creditcard);
-
-        });
-
-      });
-
-      it('throws an error if the creditcard doesn\'t exist in the database', () => {
-
-        //let creditcard = null;
-
-        let existing_creditcard = MockEntities.getValidCreditCard();
-        let updated_creditcard = objectutilities.clone(existing_creditcard);
-        updated_creditcard.name = 'A New Name';
-        updated_creditcard.expiration = '10/20';
-        updated_creditcard.address = {
-          line1: '123 New Address',
-          line2: 'Suite 43',
-          city: 'Portland',
-          state: 'OR',
-          country: 'US',
-          zip: '97203'
-        };
-        updated_creditcard.customers = objectutilities.clone(existing_creditcard.customers);
-        updated_creditcard.customers.push(MockEntities.getValidId());
-        updated_creditcard.first_six ='123456';
-
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.update = ({entity}) => { return Promise.resolve(entity); };
-
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
-
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
-
-        creditCardController.exists = () => {
-          return Promise.resolve(false);
-        }
-
-        return creditCardController.update({entity: updated_creditcard}).catch(error => {
-          expect(error.message).to.equal('[404] Credit Card not found.');
-        });
-
-      });
-
-      xit('does not alter existing fields', () => {
-        //Technical Debt:  Make sure that important stuff (that may be encrypted) doesn't change
+      creditCardController.sanitize(false);
+      return creditCardController.assureCreditCard(existing_creditcard).then(result => {
+        expect(result).to.deep.equal(stored_existing_creditcard);
       });
 
     });
 
-    describe('create', () => {
+    it('assures that a creditcard is stored (creditcard does not exist)', () => {
 
-      it('successfully creates a creditcard entity', () => {
+      let new_creditcard = MockEntities.getValidTransactionCreditCard();
+      let creditcards = [];
 
-        let creditcard_prototype = MockEntities.getValidTransactionCreditCard();
-        let creditcard = MockEntities.getValidCreditCard();
-
-        PermissionTestGenerators.givenUserWithAllowed('*', 'creditcard');
-
-        mockery.registerMock(global.SixCRM.routes.path('lib', 'providers/dynamodb-provider.js'), class {
-          constructor(){}
-          saveRecord(){
-            return Promise.resolve({
-              Items: [creditcard]
-            })
-          }
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.queryBySecondaryIndex = () => {
+        return Promise.resolve({
+          creditcards: creditcards
         });
+      };
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), class {
-          constructor(){}
-          addToSearchIndex(){
-            return Promise.resolve(true);
-          }
-        });
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
 
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
-
-        creditCardController.exists = () => {
-          return Promise.resolve(false);
-        }
-
-        return creditCardController.create({entity: creditcard_prototype}).then(() => {
-
-          expect(true).to.equal(true);
-
-        });
-
-      });
-
-    });
-
-    describe('assureCreditCard', () => {
-
-      it('assures that a creditcard is stored (creditcard exists)', () => {
-
-        let existing_creditcard = MockEntities.getValidTransactionCreditCard();
-
-        let stored_existing_creditcard = MockEntities.getValidCreditCard();
-        stored_existing_creditcard.first_six = existing_creditcard.number.substring(0, 6);
-        stored_existing_creditcard.last_four = existing_creditcard.number.slice(-4);
-
-        let another_creditcard = MockEntities.getValidCreditCard();
-        let creditcards = [stored_existing_creditcard, another_creditcard];
-
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.queryBySecondaryIndex = () => { return Promise.resolve({creditcards: creditcards}); };
-
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
-
-        mockery.registerMock(global.SixCRM.routes.path('helpers','entities/creditcard/CreditCard.js'), class {
-          constructor(){}
-          sameCard(creditcard, testcard){
-            if((creditcard.number.substring(0,6) == testcard.first_six) && (creditcard.number.slice(-4) == testcard.last_four)){
-              return true;
-            }
-            return false;
-          }
-        });
-
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
-        creditCardController.create = () => {
-          //shouldn't get here.
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/creditcard/CreditCard.js'), class {
+        constructor() {}
+        sameCard(creditcard, testcard) {
+          expect(creditcard).to.be.defined;
+          expect(testcard).to.be.defined;
           expect(false).to.equal(true);
         }
-
-        creditCardController.sanitize(false);
-        return creditCardController.assureCreditCard(existing_creditcard).then(result => {
-          expect(result).to.deep.equal(stored_existing_creditcard);
-        });
-
       });
 
-      it('assures that a creditcard is stored (creditcard does not exist)', () => {
-
-        let new_creditcard = MockEntities.getValidTransactionCreditCard();
-        let creditcards = [];
-
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.queryBySecondaryIndex = () => { return Promise.resolve({creditcards: creditcards}); };
-
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
-
-        mockery.registerMock(global.SixCRM.routes.path('helpers','entities/creditcard/CreditCard.js'), class {
-          constructor(){}
-          sameCard(creditcard, testcard){
-            expect(creditcard).to.be.defined;
-            expect(testcard).to.be.defined;
-            expect(false).to.equal(true);
-          }
-        });
-
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
-        creditCardController.create = ({entity}) => {
-          expect(entity.number).to.equal(new_creditcard.number);
-          return Promise.resolve(entity);
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {
+        constructor() {}
+        setToken({
+          entity,
+          provider
+        }) {
+          expect(entity).to.be.defined;
+          expect(provider).to.satisfy((thing) => {
+            return(_.isUndefined(thing) || _.isNull(thing) || _.isString(thing));
+          });
+          return {
+            token: random.createRandomString(36),
+            provider: 'tokenex'
+          };
         }
-
-        creditCardController.sanitize(false);
-        return creditCardController.assureCreditCard(new_creditcard).then(result => {
-          expect(result).to.deep.equal(new_creditcard);
-        });
-
       });
 
-      it('assures that a creditcard is stored (creditcard does not exist)', () => {
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+      creditCardController.create = ({
+        entity
+      }) => {
+        expect(entity.number).to.equal(new_creditcard.number);
+        return Promise.resolve(entity);
+      }
 
-        let new_creditcard = MockEntities.getValidTransactionCreditCard();
-        let non_matching_creditcard = MockEntities.getValidCreditCard();
-        let creditcards = [non_matching_creditcard];
+      creditCardController.sanitize(false);
+      return creditCardController.assureCreditCard(new_creditcard).then(result => {
+        expect(result).to.deep.equal(new_creditcard);
+      });
 
-        const EntityClass = global.SixCRM.routes.include('entities','Entity.js');
-        EntityClass.prototype.queryBySecondaryIndex = () => { return Promise.resolve({creditcards: creditcards}); };
+    });
 
-        mockery.registerMock(global.SixCRM.routes.path('entities','Entity.js'), EntityClass);
+    it('assures that a creditcard is stored (creditcard does not exist)', () => {
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers','entities/creditcard/CreditCard.js'), class {
-          constructor(){}
-          sameCard(creditcard, testcard){
-            expect(creditcard).to.be.defined;
-            expect(testcard).to.be.defined;
-            return false;
-          }
+      let new_creditcard = MockEntities.getValidTransactionCreditCard();
+      let non_matching_creditcard = MockEntities.getValidCreditCard();
+      let creditcards = [non_matching_creditcard];
+
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.queryBySecondaryIndex = () => {
+        return Promise.resolve({
+          creditcards: creditcards
         });
+      };
 
-        let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-        const creditCardController = new CreditCardController();
-        creditCardController.create = ({entity}) => {
-          expect(entity.number).to.equal(new_creditcard.number);
-          return Promise.resolve(entity);
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/creditcard/CreditCard.js'), class {
+        constructor() {}
+        sameCard(creditcard, testcard) {
+          expect(creditcard).to.be.defined;
+          expect(testcard).to.be.defined;
+          return false;
         }
+      });
 
-        creditCardController.sanitize(false);
-        return creditCardController.assureCreditCard(new_creditcard).then(result => {
-          expect(result).to.deep.equal(new_creditcard);
-        });
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {
+        constructor() {}
+        setToken({
+          entity,
+          provider
+        }) {
+          expect(entity).to.be.defined;
+          expect(provider).to.satisfy((thing) => {
+            return(_.isUndefined(thing) || _.isNull(thing) || _.isString(thing));
+          });
 
+          return {
+            token: random.createRandomString(36),
+            provider: 'tokenex'
+          };
+        }
+      });
+
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+      creditCardController.create = ({
+        entity
+      }) => {
+        expect(entity.number).to.equal(new_creditcard.number);
+        return Promise.resolve(entity);
+      }
+
+      creditCardController.sanitize(false);
+      return creditCardController.assureCreditCard(new_creditcard).then(result => {
+        expect(result).to.deep.equal(new_creditcard);
       });
 
     });
 
-    describe('censorEncryptedAttributes', () => {
+  });
 
-        it('censors the credit card token ', () => {
+  describe('listCustomers', () => {
+    it('gets customers', () => {
+      const creditcard = getValidCreditCard();
+      const customer = getValidCustomer();
+      creditcard.customers = [customer.id];
 
-            const creditcard = getValidCreditCard();
+      PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
 
-            class mockHelper {
-                lastFour() {
-                    return '************1111';
-                }
-            }
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), class {
+        get() {
+          return Promise.resolve(customer);
+        }
+      });
 
-            mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/creditcard/CreditCard.js'), mockHelper);
+      const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
 
-            let CreditCardController = global.SixCRM.routes.include('controllers','entities/CreditCard');
-            const creditCardController = new CreditCardController();
-
-            creditCardController.censorEncryptedAttributes(creditcard);
-
-            expect(creditcard).to.have.property('token');
-            expect(creditcard.token).to.have.property('token');
-            expect(creditcard.token.token).to.equal('****');
-
+      return creditCardController.listCustomers(creditcard)
+        .then(customers => {
+          expect(customers).to.include(customer);
         });
-
     });
-
-    describe('listCustomers', () => {
-        it('gets customers', () => {
-			const creditcard = getValidCreditCard();
-			const customer = getValidCustomer();
-			creditcard.customers = [customer.id];
-
-			PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
-
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), class {
-				get() {
-					return Promise.resolve(customer);
-				}
-			});
-
-			const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
-			const creditCardController = new CreditCardController();
-
-			return creditCardController.listCustomers(creditcard)
-			.then(customers => {
-				expect(customers).to.include(customer);
-			});
-		});
-    });
+  });
 });

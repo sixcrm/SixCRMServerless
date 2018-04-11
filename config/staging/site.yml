@@ -93,9 +93,9 @@ slack:
 
 # These won't be right in production, fix this when we create the subnets there
 serverless:
-  subnetIds:
+  subnets:
     - subnet-2deee170
     - subnet-d407e1b3
     - subnet-a15a538e
-  securityGroupIds:
+  security_groups:
     - sg-e36f99aa
