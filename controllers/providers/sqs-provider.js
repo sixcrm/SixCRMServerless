@@ -108,7 +108,7 @@ module.exports = class SQSProvider extends AWSProvider {
 
 	}
 
-	receiveMessagesRecursive(parameters) {
+	receiveMessagesRecursive(parameters, options = {}) {
 
 		du.debug('Receive Messages Recursive');
 
@@ -121,30 +121,44 @@ module.exports = class SQSProvider extends AWSProvider {
 			const parametersClone = _.clone(parameters);
 			const returnMessages = [];
 
+			if (self.batch_read_limit < 10) {
+
+				parametersClone.limit =
+					parametersClone.limit !== undefined && parametersClone.limit < 10 ?
+					parametersClone.limit :
+					self.batch_read_limit;
+
+			}
+
 			return self.receiveMessages(parametersClone).then((messages) => {
 
 				returnMessages.push(...messages);
 				count += messages.length;
-
 				const messagesRemaining = self.batch_read_limit - count;
+				const delegate = options.delegate ? options.delegate : () => Promise.resolve();
 
-				if (messages.length === 10 && messagesRemaining > 0) {
+				return delegate()
+					.then(() => {
 
-					parametersClone.limit = messagesRemaining > 10 ? 10 : messagesRemaining;
+						if (messages.length === 10 && messagesRemaining > 0) {
 
-					return _receiveMessagesRecursive(parametersClone, count).then(messages => {
+							parametersClone.limit = messagesRemaining > 10 ? 10 : messagesRemaining;
 
-						returnMessages.push(...messages);
+							return _receiveMessagesRecursive(parametersClone, count).then(messages => {
 
-						return returnMessages;
+								returnMessages.push(...messages);
 
-					});
+								return returnMessages;
 
-				} else {
+							});
 
-					return returnMessages;
+						} else {
 
-				}
+							return returnMessages;
+
+						}
+
+					})
 
 			});
 
