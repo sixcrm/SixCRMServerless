@@ -125,6 +125,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.setProductSchedules(),
 			this.setProducts(),
 			this.setTransactionSubType(),
+			this.setRawCreditCard(),
 			this.setCreditCard(),
 			this.setCampaign(),
 			this.setPreviousRebill()
@@ -197,6 +198,29 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.parameters.set('campaign', campaign);
 			return true;
 		});
+
+	}
+
+	setRawCreditCard(){
+
+		du.debug('Set Raw Credit Card');
+
+		let event = this.parameters.get('event');
+
+		if(_.has(event, 'creditcard')){
+
+			if (!_.has(this, 'creditCardHelperController')) {
+				const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+				this.creditCardHelperController = new CreditCardHelperController();
+			}
+
+			let raw_creditcard = this.creditCardHelperController.formatRawCreditCard(event.creditcard);
+
+			this.parameters.set('rawcreditcard', raw_creditcard);
+
+		}
+
+		return
 
 	}
 
@@ -407,9 +431,19 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.registerController = new RegisterController();
 		}
 
-		return this.registerController.processTransaction({
+		let raw_creditcard = this.parameters.get('raw_creditcard', null, false);
+
+		let argumentation = {
 			rebill: rebill
-		}).then((register_response) => {
+		};
+
+		if(!_.isNull(raw_creditcard)){
+			argumentation.creditcard = raw_creditcard;
+		}
+
+		return this.registerController.processTransaction(argumentation)
+		.then((register_response) => {
+
 			if (!_.has(this, 'transactionHelperController')) {
 				const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 

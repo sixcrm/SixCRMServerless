@@ -51,7 +51,7 @@ module.exports = class Register extends RegisterUtilities {
           rebill: 'rebill'
         },
         optional:{
-          //Technical Debt:  Add the ability to force the use of a creditcard without a token
+          rawcreditcard: 'creditcard'
         }
       }
     };
@@ -71,6 +71,7 @@ module.exports = class Register extends RegisterUtilities {
       'parentsession': global.SixCRM.routes.path('model', 'entities/session.json'),
       'creditcards': global.SixCRM.routes.path('model', 'workers/processBilling/creditcards.json'),
       'selectedcreditcard': global.SixCRM.routes.path('model', 'entities/creditcard.json'),
+      'rawcreditcard':global.SixCRM.routes.path('model', 'general/rawcreditcard.json'),
       'transactiontype':global.SixCRM.routes.path('model', 'functional/register/transactiontype.json'),
       'merchantprovider':global.SixCRM.routes.path('model', 'entities/merchantprovider.json')
     };
@@ -322,21 +323,21 @@ module.exports = class Register extends RegisterUtilities {
 
   }
 
-    transformProcessorResponse() {
+  transformProcessorResponse() {
 
-        let transaction = this.parameters.get('associatedtransaction');
+      let transaction = this.parameters.get('associatedtransaction');
 
-        if(_.has(transaction, 'processor_response') && (_.isObject(transaction.processor_response))){
+      if(_.has(transaction, 'processor_response') && (_.isObject(transaction.processor_response))){
 
-            try{
-                transaction.processor_response = JSON.stringify(transaction.processor_response);
-            }catch(error){
-                eu.throwError('validation', 'Unrecognized format for processor response.')
-            }
+          try{
+              transaction.processor_response = JSON.stringify(transaction.processor_response);
+          }catch(error){
+              eu.throwError('validation', 'Unrecognized format for processor response.')
+          }
 
-            this.parameters.set('associatedtransaction', transaction);
-        }
-    }
+          this.parameters.set('associatedtransaction', transaction);
+      }
+  }
 
   getProcessorResponseCategory(){
 

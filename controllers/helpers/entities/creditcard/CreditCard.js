@@ -11,6 +11,14 @@ module.exports = class CreditCardHelper {
 
   }
 
+  formatRawCreditCard(creditcard){
+
+    du.debug('Format Raw Credit Card');
+
+    return creditcard;
+
+  }
+
   getExpirationMonth(creditcard){
 
     du.debug('Get Expiration Month');

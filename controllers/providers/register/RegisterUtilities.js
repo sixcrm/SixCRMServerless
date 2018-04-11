@@ -224,37 +224,57 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     du.debug('Select Customer Credit Card');
 
-    let creditcards = this.parameters.get('creditcards');
-
-    let selected_creditcard = arrayutilities.reduce(
-      creditcards,
-      (selected_creditcard, creditcard) => {
-
-        if(_.isNull(selected_creditcard)){
-          return creditcard;
-        }
-
-        if(_.has(creditcard, 'default') && creditcard.default == true){
-          return creditcard;
-        }
-
-        if(creditcard.updated_at > selected_creditcard.updated_at){
-          return creditcard;
-        }
-
-        return selected_creditcard;
-
-      },
-      null
-    );
+    let selected_creditcard = this.parameters.get('selectedcreditcard', null, false);
 
     if(_.isNull(selected_creditcard)){
-      eu.throwError('server', 'Unable to set credit card for customer');
+
+      let creditcards = this.parameters.get('creditcards');
+
+      selected_creditcard = arrayutilities.reduce(
+        creditcards,
+        (selected_creditcard, creditcard) => {
+
+          if(_.isNull(selected_creditcard)){
+            return creditcard;
+          }
+
+          if(_.has(creditcard, 'default') && creditcard.default == true){
+            return creditcard;
+          }
+
+          if(creditcard.updated_at > selected_creditcard.updated_at){
+            return creditcard;
+          }
+
+          return selected_creditcard;
+
+        },
+        null
+      );
+
+      if(_.isNull(selected_creditcard)){
+        eu.throwError('server', 'Unable to set credit card for customer');
+      }
+
     }
+
+    this.appendCVV(selected_creditcard);
 
     this.parameters.set('selectedcreditcard', selected_creditcard);
 
     return Promise.resolve(true);
+
+  }
+
+  appendCVV(selected_creditcard){
+
+    du.debug('selected_creditcard');
+
+    let raw_creditcard = this.parameters.get('rawcreditcard', null, false);
+
+    if(_.has(raw_creditcard, 'ccv')){
+      selected_creditcard.ccv = raw_creditcard.ccv;
+    }
 
   }
 
@@ -275,6 +295,12 @@ module.exports = class RegisterUtilities extends PermissionedController {
   acquireCustomerCreditCards(){
 
     du.debug('Acquire Customer Creditcard');
+
+    let selected_creditcard = this.parameters.get('selectedcreditcard', null, false);
+
+    if(!_.isNull(selected_creditcard) && _.has(selected_creditcard, 'id')){
+      return Promise.resolve(true);
+    }
 
     let customer = this.parameters.get('customer');
 
