@@ -1481,6 +1481,44 @@ describe('controllers/providers/Register.js', () => {
 
   });
 
+  describe('selectCustomerCreditCard', () => {
+
+    it('adds the ccv if the selected creditcard is present and the raw creditcard is present', () => {
+
+      let selected_creditcard = MockEntities.getValidCreditCard();
+      selected_creditcard.number = '4111111111111111';
+
+      let raw_creditcard = MockEntities.getValidTransactionCreditCard();
+
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+      let registerController = new RegisterController();
+      registerController.parameters.set('selectedcreditcard', selected_creditcard);
+      registerController.parameters.set('rawcreditcard', raw_creditcard);
+
+      return registerController.selectCustomerCreditCard().then(result => {
+        expect(result).to.equal(true);
+        expect(registerController.parameters.store['selectedcreditcard'].cvv).to.equal(raw_creditcard.cvv);
+      });
+    });
+
+    it('adds the ccv if the selected creditcard is present and the raw creditcard is present', () => {
+
+      let selected_creditcard = MockEntities.getValidCreditCard();
+      selected_creditcard.number = '4111111111111111';
+
+      const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+      let registerController = new RegisterController();
+      registerController.parameters.set('selectedcreditcard', selected_creditcard);
+
+      return registerController.selectCustomerCreditCard().then(result => {
+        expect(result).to.equal(true);
+        expect(registerController.parameters.store['selectedcreditcard']).not.to.have.property('cvv');
+      });
+
+    });
+
+  });
+
   describe('acquireRebillSubProperties', () => {
 
     it('successfully acquires rebill subproperties', () => {
