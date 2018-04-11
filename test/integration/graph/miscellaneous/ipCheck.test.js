@@ -3,7 +3,7 @@ const chai = require('chai');
 const assert = require('chai').assert;
 
 const aws = require('aws-sdk');
-const ec2 = new aws.ec2();
+const ec2 = new aws.EC2();
 
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
