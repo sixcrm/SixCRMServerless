@@ -202,7 +202,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
     if(_.has(selected_creditcard, 'token')){
 
-      return this.creditCardController.get({id: selected_creditcard.id}).then(result => {
+      return this.creditCardController.get({id: selected_creditcard.id, hydrate_token: true}).then(result => {
 
         if(_.isNull(result) || !_.has(result, 'number')){
           eu.throwError('server', 'Unable to hydrate the selected creditcard');

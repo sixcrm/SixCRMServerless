@@ -316,7 +316,7 @@ module.exports = class Register extends RegisterUtilities {
       creditcard: creditcard
     });
 
-    du.info(register_response);
+    //du.info(register_response);
 
     return Promise.resolve(register_response);
 
@@ -500,7 +500,7 @@ module.exports = class Register extends RegisterUtilities {
           product_group,
           (subtotal, product) => {
 
-            du.info(product);
+            //du.info(product);
             let product_group_total = numberutilities.formatFloat((product.amount * product.quantity), 2);
 
             return (subtotal + product_group_total);

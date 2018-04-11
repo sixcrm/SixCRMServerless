@@ -44,30 +44,35 @@ module.exports = class CreditCardController extends entityController {
 
     }
 
-    get({id}){
+    get({id, hydrate_token}){
 
       du.debug('Get Detokenized');
+
+      hydrate_token = (_.isUndefined(hydrate_token) || _.isNull(hydrate_token))?false:hydrate_token;
 
       return super.get({id: id})
       .then((result) => {
 
-        if(_.isNull(result)){
-          return result;
+
+        if(hydrate_token === true){
+
+          if(!_.has(result, 'token')){
+            eu.throwError('server', 'Unable to detokenize: entity is missing the token field');
+          }
+
+          const TokenController = global.SixCRM.routes.include('providers', 'token/Token.js');
+          this.tokenController = new TokenController();
+
+          return this.tokenController.getToken(result.token).then((detokenized_result) => {
+
+            result.number = detokenized_result;
+            return result;
+
+          });
+
         }
 
-        if(!_.has(result, 'token')){
-          eu.throwError('server', 'Unable to detokenize: entity is missing the token field');
-        }
-
-        const TokenController = global.SixCRM.routes.include('providers', 'token/Token.js');
-        this.tokenController = new TokenController();
-
-        return this.tokenController.getToken(result.token).then((detokenized_result) => {
-
-          result.number = detokenized_result;
-          return result;
-
-        });
+        return result;
 
       });
 

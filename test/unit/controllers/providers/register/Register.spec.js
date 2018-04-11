@@ -215,7 +215,9 @@ describe('controllers/providers/Register.js', () => {
       const selected_creditcard = getValidCreditCard();
 
       const CreditCard = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
-      CreditCard.prototype.get = () => {
+      CreditCard.prototype.get = ({id, hydrate_token}) => {
+        expect(id).to.equal(selected_creditcard.id);
+        expect(hydrate_token).to.equal(true);
         return Promise.resolve(null);
       }
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), CreditCard);
@@ -235,7 +237,9 @@ describe('controllers/providers/Register.js', () => {
       const selected_creditcard = getValidCreditCard();
 
       const CreditCard = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
-      CreditCard.prototype.get = () => {
+      CreditCard.prototype.get = ({id, hydrate_token}) => {
+        expect(id).to.equal(selected_creditcard.id);
+        expect(hydrate_token).to.equal(true);
         return Promise.resolve(selected_creditcard);
       }
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), CreditCard);
@@ -258,8 +262,9 @@ describe('controllers/providers/Register.js', () => {
       hydrated_creditcard.number = token_value;
 
       const CreditCard = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
-      CreditCard.prototype.get = ({id}) => {
+      CreditCard.prototype.get = ({id, hydrate_token}) => {
         expect(id).to.equal(selected_creditcard.id);
+        expect(hydrate_token).to.equal(true);
         return Promise.resolve(hydrated_creditcard);
       }
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/CreditCard.js'), CreditCard);

@@ -33,6 +33,69 @@ describe('controllers/entities/CreditCard.js', () => {
 
   describe('get', () => {
 
+    it('successfully returns a non-hydrated token when hydrate_token argument is not set', () => {
+
+      let unhydrated_creditcard = MockEntities.getValidCreditCard();
+
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.get = ({id}) => {
+        expect(id).to.be.defined;
+        return Promise.resolve(unhydrated_creditcard);
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {
+        constructor() {}
+        getToken() {
+          expect(false).to.equal(true);
+        }
+      });
+
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+
+      return creditCardController.get({
+        id: unhydrated_creditcard.id
+      }).then(result => {
+        expect(result).to.have.property('id');
+        expect(result).not.to.have.property('number');
+      });
+
+    });
+
+    it('returns a non-hydrated token when hydrate_token argument is not true', () => {
+
+      let unhydrated_creditcard = MockEntities.getValidCreditCard();
+
+      const EntityClass = global.SixCRM.routes.include('entities', 'Entity.js');
+      EntityClass.prototype.get = ({id}) => {
+        expect(id).to.be.defined;
+        return Promise.resolve(unhydrated_creditcard);
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {
+        constructor() {}
+        getToken() {
+          expect(false).to.equal(true);
+        }
+      });
+
+      let CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard');
+      const creditCardController = new CreditCardController();
+
+      return creditCardController.get({
+        id: unhydrated_creditcard.id,
+        hydrate_token: 'true'
+      }).then(result => {
+        expect(result).to.have.property('id');
+        expect(result).not.to.have.property('number');
+      });
+
+    });
+
     it('successfully hydrates tokenized fields on get', () => {
 
       let unhydrated_creditcard = MockEntities.getValidCreditCard();
@@ -44,7 +107,6 @@ describe('controllers/entities/CreditCard.js', () => {
         expect(id).to.be.defined;
         return Promise.resolve(unhydrated_creditcard);
       };
-
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Entity.js'), EntityClass);
 
       mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {
@@ -58,7 +120,8 @@ describe('controllers/entities/CreditCard.js', () => {
       const creditCardController = new CreditCardController();
 
       return creditCardController.get({
-        id: unhydrated_creditcard.id
+        id: unhydrated_creditcard.id,
+        hydrate_token: true
       }).then(result => {
         expect(result).to.have.property('number');
         expect(result.number).to.equal(token_value);
