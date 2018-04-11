@@ -564,19 +564,24 @@ workflows:
       - transactional_integration_tests:
           requires:
             - seed
+      - miscellaneous_integration_tests:
+          requires:
+            - seed
       - synchronize_index:
           requires:
-             - transactional_integration_tests
-             - entity_integration_tests
-             - deleteblock_integration_tests
-             - analytics_integration_tests
+            - transactional_integration_tests
+            - entity_integration_tests
+            - deleteblock_integration_tests
+            - analytics_integration_tests
+            - miscellaneous_integration_tests
       - hold:
           type: approval
           requires:
-             - transactional_integration_tests
-             - entity_integration_tests
-             - deleteblock_integration_tests
-             - analytics_integration_tests
+            - transactional_integration_tests
+            - entity_integration_tests
+            - deleteblock_integration_tests
+            - analytics_integration_tests
+            - miscellaneous_integration_tests
           filters:
             branches:
               only:
@@ -588,6 +593,7 @@ workflows:
             - entity_integration_tests
             - deleteblock_integration_tests
             - analytics_integration_tests
+            - miscellaneous_integration_tests
           filters:
             branches:
               ignore:
