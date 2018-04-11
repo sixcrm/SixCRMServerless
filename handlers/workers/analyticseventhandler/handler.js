@@ -5,7 +5,8 @@ const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-cont
 
 module.exports.analyticseventhandler = (event, context, callback) => {
 
-	const analyticsEventHandler = new AnalyticsEventHandler('rds_transaction_batch', auroraContext);
+	const queue = global.SixCRM.configuration.isLocal() ? 'analytics' : 'analytics.fifo';
+	const analyticsEventHandler = new AnalyticsEventHandler(queue, auroraContext);
 
 	Promise.resolve()
 		.then(() => analyticsEventHandler.execute())

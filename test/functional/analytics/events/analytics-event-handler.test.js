@@ -46,12 +46,12 @@ describe('Push events to RDS', () => {
 
 			return auroraContext.withConnection((connection) => {
 
-				const aeh = new AnalyticsEventHandler('rds_transaction_batch', auroraContext);
+				const aeh = new AnalyticsEventHandler('analytics', auroraContext);
 
 				return Promise.resolve()
 					.then(() => seedAurora(test))
 					.then(() => seedSQS(test))
-					.then(() => SQSTestUtils.messageCountInQueue('rds_transaction_batch'))
+					.then(() => SQSTestUtils.messageCountInQueue('analytics'))
 					.then((count) => {
 
 						return expect(count === test.count);
@@ -59,7 +59,7 @@ describe('Push events to RDS', () => {
 					})
 					.then(() => aeh.execute())
 					.then(() => test.validate(connection))
-					.then(() => SQSTestUtils.messageCountInQueue('rds_transaction_batch'))
+					.then(() => SQSTestUtils.messageCountInQueue('analytics'))
 					.then((count) => {
 
 						return expect(count === 0);
@@ -144,7 +144,7 @@ function seedSQS(test) {
 
 		memo.push(...seedContent.messages.map(message => {
 
-			return SQSTestUtils.sendMessageToQueue('rds_transaction_batch', JSON.stringify(message), 1);
+			return SQSTestUtils.sendMessageToQueue('analytics', JSON.stringify(message), 1);
 
 		}));
 

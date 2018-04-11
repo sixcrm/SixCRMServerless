@@ -1,0 +1,10 @@
+{
+	"QueueName": "analytics",
+	"Attributes": {
+		"FifoQueue": "true",
+		"ContentBasedDeduplication": "false",
+		"MessageRetentionPeriod": "345600",
+		"VisibilityTimeout": "300",
+		"MaximumMessageSize": "262144"
+	}
+}

@@ -9,205 +9,212 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const SQSProvider = global.SixCRM.routes.include('lib', 'providers/sqs-provider.js');
 
-module.exports = class SQSDeployment extends AWSDeploymentUtilities{
+module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 
-    constructor() {
+	constructor() {
 
-      super();
+		super();
 
-      this.sqsprovider = new SQSProvider();
+		this.sqsprovider = new SQSProvider();
 
-    }
+	}
 
-    purgeQueues(){
+	purgeQueues() {
 
-      du.debug('Purge Queues');
+		du.debug('Purge Queues');
 
-      return this.getQueueDefinitions().then((queue_definitions) => {
+		return this.getQueueDefinitions().then((queue_definitions) => {
 
-        let purge_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
+			let purge_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
 
-          if(!_.has(queue_definition, 'QueueName')){
-            eu.throwError('server', 'Queue definition lacks QueueName property');
-          }
+				if (!_.has(queue_definition, 'QueueName')) {
+					eu.throwError('server', 'Queue definition lacks QueueName property');
+				}
 
-          let queue_name = queue_definition.QueueName;
-          let deadletter_queue_name = this.createDeadletterQueueName(queue_name);
+				let queue_name = this.resolveQueueName(queue_definition);
+				let deadletter_queue_name = this.resolveQueueName(queue_definition, true);
 
-          return () => this.sqsprovider.purgeQueue(queue_name).then(() => this.sqsprovider.purgeQueue(deadletter_queue_name));
+				return () => this.sqsprovider.purgeQueue(queue_name).then(() => this.sqsprovider.purgeQueue(deadletter_queue_name));
 
-        });
+			});
 
-        return arrayutilities.serial(purge_queue_promises).then(() => {
+			return arrayutilities.serial(purge_queue_promises).then(() => {
 
-          return 'Complete';
+				return 'Complete';
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    deployQueues(){
+	deployQueues() {
 
-      du.debug('Deploy Queues');
+		du.debug('Deploy Queues');
 
-      let number_of_created_queues = 0;
+		let number_of_created_queues = 0;
 
-      return this.getQueueDefinitions().then((queue_definitions) => {
+		return this.getQueueDefinitions().then((queue_definitions) => {
 
-        let create_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
+			let create_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
 
-          if(!_.has(queue_definition, 'QueueName')){ eu.throwError('server', 'Queue definition lacks QueueName property'); }
+				if (!_.has(queue_definition, 'QueueName')) {
+					eu.throwError('server', 'Queue definition lacks QueueName property');
+				}
 
-          let deadletter_queue_definition = this.createDeadLetterQueueDefinition(queue_definition);
+				let deadletter_queue_definition = this.createDeadLetterQueueDefinition(queue_definition);
 
-          return () => this.createQueue(deadletter_queue_definition).then(() => {
+				return () => this.createQueue(deadletter_queue_definition).then(() => {
 
-            queue_definition = this.addQueueRedrivePolicy(queue_definition);
+					queue_definition = this.addQueueRedrivePolicy(queue_definition);
+					queue_definition.QueueName = this.resolveQueueName(queue_definition);
 
-            return this.createQueue(queue_definition).then((result) => {
+					return this.createQueue(queue_definition).then((result) => {
 
-              if(result == false){
-                du.highlight('Queue Exists');
-              } else {
-                du.highlight('Queue Created');
-                number_of_created_queues++;
-              }
+						if (result == false) {
+							du.highlight('Queue Exists');
+						} else {
+							du.highlight('Queue Created');
+							number_of_created_queues++;
+						}
 
-              return true;
+						return true;
 
-            });
+					});
 
-          });
+				});
 
-        });
+			});
 
-        return arrayutilities.serial(create_queue_promises).then(() => {
+			return arrayutilities.serial(create_queue_promises).then(() => {
 
-          du.highlight('Pausing to allow AWS to catch up...');
+				du.highlight('Pausing to allow AWS to catch up...');
 
-          if (number_of_created_queues > 0) {
-              return timestamp.delay(60000)().then(() => {
-                  return 'Complete';
-              });
-          } else {
-              return 'Complete';
-          }
+				if (number_of_created_queues > 0) {
+					return timestamp.delay(60000)().then(() => {
+						return 'Complete';
+					});
+				} else {
+					return 'Complete';
+				}
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    createQueue(queue_definition){
+	createQueue(queue_definition) {
 
-      du.debug('Create Queue');
+		du.debug('Create Queue');
 
-      return this.sqsprovider.createQueue(queue_definition);
+		return this.sqsprovider.createQueue(queue_definition);
 
-    }
+	}
 
-    destroyQueues(){
+	destroyQueues() {
 
-      du.debug('Destroy Queues');
+		du.debug('Destroy Queues');
 
-      return this.getQueueDefinitions().then((queue_definitions) => {
+		return this.getQueueDefinitions().then((queue_definitions) => {
 
-        let delete_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
+			let delete_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
 
-          if(!_.has(queue_definition, 'QueueName')){
-            eu.throwError('server', 'Queue definition lacks QueueName property');
-          }
+				if (!_.has(queue_definition, 'QueueName')) {
+					eu.throwError('server', 'Queue definition lacks QueueName property');
+				}
 
-          let queue_name = queue_definition.QueueName;
-          let deadletter_queue_name = this.createDeadletterQueueName(queue_name);
+				let queue_name = this.resolveQueueName(queue_definition);
+				let deadletter_queue_name = this.resolveQueueName(queue_definition, true);
 
-          return () => this.sqsprovider.deleteQueue(queue_name).then(() => this.sqsprovider.deleteQueue(deadletter_queue_name));
+				return () => this.sqsprovider.deleteQueue(queue_name).then(() => this.sqsprovider.deleteQueue(deadletter_queue_name));
 
-        });
+			});
 
-        return arrayutilities.serial(delete_queue_promises)
-        .then(() => {
+			return arrayutilities.serial(delete_queue_promises)
+				.then(() => {
 
-          du.highlight('Pausing to allow AWS to catch up...');
+					du.highlight('Pausing to allow AWS to catch up...');
 
-          return timestamp.delay(60000)().then(() => { return 'Complete'; });
+					return timestamp.delay(60000)().then(() => {
+						return 'Complete';
+					});
 
-        });
+				});
 
-      });
+		});
 
-    }
+	}
 
-    getQueueDefinitions(){
+	getQueueDefinitions() {
 
-      du.debug('Get Queue Definitions');
+		du.debug('Get Queue Definitions');
 
-      let sqs_definitions_directory = global.SixCRM.routes.path('deployment', 'sqs/queues');
+		let sqs_definitions_directory = global.SixCRM.routes.path('deployment', 'sqs/queues');
 
-      return fileutilities.getDirectoryFiles(sqs_definitions_directory).then((queue_definition_filenames) => {
+		return fileutilities.getDirectoryFiles(sqs_definitions_directory).then((queue_definition_filenames) => {
 
-        let queue_definitions = arrayutilities.map(queue_definition_filenames, (queue_definition_filename) => {
-          return global.SixCRM.routes.include('deployment', 'sqs/queues/'+queue_definition_filename);
-        });
+			let queue_definitions = arrayutilities.map(queue_definition_filenames, (queue_definition_filename) => {
+				return global.SixCRM.routes.include('deployment', 'sqs/queues/' + queue_definition_filename);
+			});
 
-        return queue_definitions;
+			return queue_definitions;
 
-      });
+		});
 
-    }
+	}
 
-    addQueueRedrivePolicy(queue_definition){
+	addQueueRedrivePolicy(queue_definition) {
 
-      du.debug('Add Queue Redrive Policy')
+		du.debug('Add Queue Redrive Policy')
 
-      let deadletter_queue_arn = this.sqsprovider.getQueueARN(this.createDeadletterQueueName(queue_definition));
+		let deadletter_queue_arn = this.sqsprovider.getQueueARN(this.resolveQueueName(queue_definition, true));
 
-      queue_definition.Attributes.RedrivePolicy = JSON.stringify({
-        deadLetterTargetArn: deadletter_queue_arn,
-        maxReceiveCount: global.SixCRM.configuration.site_config.sqs.max_receive_count
-      });
+		queue_definition.Attributes.RedrivePolicy = JSON.stringify({
+			deadLetterTargetArn: deadletter_queue_arn,
+			maxReceiveCount: global.SixCRM.configuration.site_config.sqs.max_receive_count
+		});
 
-      return queue_definition;
+		return queue_definition;
 
-    }
+	}
 
-    createDeadLetterQueueDefinition(queue_definition){
+	createDeadLetterQueueDefinition(queue_definition) {
 
-      du.debug('Create Deadletter Queue Definition');
+		du.debug('Create Deadletter Queue Definition');
 
-      let queue_definition_clone = objectutilities.clone(queue_definition);
+		let queue_definition_clone = objectutilities.clone(queue_definition);
 
-      if(!_.has(queue_definition, 'QueueName')){
-        eu.throwError('server', 'Queue definition lacks QueueName property');
-      }
+		if (!_.has(queue_definition, 'QueueName')) {
+			eu.throwError('server', 'Queue definition lacks QueueName property');
+		}
 
-      queue_definition_clone.QueueName = this.createDeadletterQueueName(queue_definition);
+		queue_definition_clone.QueueName = this.resolveQueueName(queue_definition, true)
 
-      return queue_definition_clone;
+		return queue_definition_clone;
 
-    }
+	}
 
-    createDeadletterQueueName(queue_name){
+	resolveQueueName(definition, isDeadLetter) {
 
-      du.debug('Create Deadletter Queue Name');
+		let queueName = definition.QueueName;
 
-      if(_.isObject(queue_name)){
-        if(_.has(queue_name, 'QueueName')){
-          queue_name = queue_name.QueueName;
-        }else{
-          eu.throwError('server', 'Missing QueueName property');
-        }
-      }
+		if (isDeadLetter) {
 
-      if(!_.isString(queue_name)){
-        eu.throwError('server', 'Improper argumentation for createDeadletterQueueName');
-      }
+			queueName += global.SixCRM.configuration.site_config.sqs.deadletter_postfix;
 
-      return queue_name + global.SixCRM.configuration.site_config.sqs.deadletter_postfix;
+		}
 
-    }
+		if (definition.Attributes.FifoQueue === 'true') {
+
+			return queueName + '.fifo';
+
+		} else {
+
+			return queueName;
+
+		}
+
+	}
 
 }
