@@ -19,7 +19,8 @@ module.exports = class UserSettingHelperController {
         },
         {
             name: "email",
-            receive: false
+            receive: false,
+            data: email
         },
         {
             name: "sms",

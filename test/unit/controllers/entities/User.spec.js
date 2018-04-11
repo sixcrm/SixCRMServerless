@@ -495,7 +495,7 @@ describe('controllers/entities/User.js', () => {
                     expect(entity.timezone).to.equal('America/Los_Angeles');
                     expect(entity.notifications).to.deep.equal([
                         { name: 'six', receive: true },
-                        { name: 'email', receive: false },
+                        { name: 'email', receive: false, data: entity.id },
                         { name: 'sms', receive: false },
                         { name: 'slack', receive: false },
                         { name: 'skype', receive: false },
@@ -555,7 +555,7 @@ describe('controllers/entities/User.js', () => {
                     expect(entity.timezone).to.equal('America/Los_Angeles');
                     expect(entity.notifications).to.deep.equal([
                         { name: 'six', receive: true },
-                        { name: 'email', receive: false },
+                        { name: 'email', receive: false, data: entity.id },
                         { name: 'sms', receive: false },
                         { name: 'slack', receive: false },
                         { name: 'skype', receive: false },
