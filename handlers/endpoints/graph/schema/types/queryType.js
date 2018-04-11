@@ -2584,7 +2584,7 @@ module.exports.graphObj = new GraphQLObjectType({
 	ipCheck: {
 		type: ipCheckType.graphObj,
 		args: {},
-		resolve: (root) => {
+		resolve: () => {
 			const ipCheckController = new IPCheckController();
 
 			return ipCheckController.checkIP();
