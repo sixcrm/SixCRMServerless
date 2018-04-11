@@ -97,16 +97,21 @@ function confirmOrder(token, session){
 
 }
 
-function createUpsell(token, session, sale_object){
+function createUpsell(token, session, sale_object, previous_order){
 
   du.output('Create Upsell');
 
-  let account = config.account;
-  let post_body = createOrderBody(session, sale_object);
+  const account = config.account;
+  const post_body = createOrderBody(session, sale_object);
 
   delete post_body.creditcard;
   post_body.transaction_subtype = 'upsell1';
 
+  if (previous_order) {
+    const previous_rebill_id = previous_order.response.rebill.id;
+    post_body.reverse_on_complete = previous_rebill_id;
+  }
+
   let argument_object = {
     url: config.endpoint+'order/create/'+account,
     body: post_body,
@@ -136,12 +141,12 @@ function createUpsell(token, session, sale_object){
 
 }
 
-function createOrder(token, session, sale_object){
+function createOrder(token, session, sale_object, customer){
 
   du.output('Create Order');
 
   let account = config.account;
-  let post_body = createOrderBody(session, sale_object);
+  let post_body = createOrderBody(session, sale_object, customer);
 
   let argument_object = {
     url: config.endpoint+'order/create/'+account,
@@ -171,11 +176,11 @@ function createOrder(token, session, sale_object){
 
 }
 
-function createLead(token, campaign){
+function createLead(token, campaign, customer){
 
   du.output('Create Lead');
   let account = config.account;
-  let post_body = createLeadBody(campaign);
+  let post_body = createLeadBody(campaign, customer);
 
   let argument_object = {
     url: config.endpoint+'lead/create/'+account,
@@ -262,11 +267,11 @@ function createCreditCard(){
 
 }
 
-function createLeadBody(campaign){
+function createLeadBody(campaign, customer){
 
   let return_object = {
     campaign:(_.has(campaign, 'id'))?campaign.id:campaign,
-    customer: createCustomer()
+    customer: customer || createCustomer()
   };
 
   let affiliates = createAffiliates();
@@ -277,13 +282,17 @@ function createLeadBody(campaign){
 
 }
 
-function createOrderBody(session, sale_object){
+function createOrderBody(session, sale_object, customer){
 
   let return_object = objectutilities.clone(sale_object);
 
   return_object.session = session;
   return_object.creditcard = createCreditCard();
   return_object.transaction_subtype = 'main';
+
+  if (customer) {
+    return_object.customer = customer;
+  }
 
   return return_object;
 
@@ -352,6 +361,27 @@ describe('Transaction Endpoints Round Trip Test',() => {
 
     });
 
+    it('succeeds with partial customer lead', () => {
+      let sale_object = {
+        products:[{
+          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+          quantity:2
+        }]
+      };
+
+      return acquireToken(campaign)
+      .then((token) => {
+        const customer = createCustomer();
+        const customerPartial = { email: customer.email };
+        return createLead(token, campaign, customerPartial)
+        .then((session) => {
+          return createOrder(token, session, sale_object, customer)
+          .then(() => confirmOrder(token, session));
+        });
+
+      });
+    });
+
   });
 
   describe('Straight Sale with Upsell', () => {
@@ -377,7 +407,7 @@ describe('Transaction Endpoints Round Trip Test',() => {
         return createLead(token, campaign)
         .then((session) => {
           return createOrder(token, session, sale_object)
-          .then(() => createUpsell(token, session, upsale_sale_object))
+          .then(response => createUpsell(token, session, upsale_sale_object, response))
           .then(() => confirmOrder(token, session));
         });
 
