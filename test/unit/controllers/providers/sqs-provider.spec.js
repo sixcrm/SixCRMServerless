@@ -1,6 +1,5 @@
 const chai = require('chai');
 const expect = chai.expect;
-const random = global.SixCRM.routes.include('lib','random.js');
 const _ = require('underscore');
 
 describe('controllers/providers/sqs-provider', () => {
@@ -202,9 +201,42 @@ describe('controllers/providers/sqs-provider', () => {
 
       });
 
-      let max = random.randomInt(0, 200);
 
-      it('returns random maximum number of messages ('+max+')', () => {
+      it('obeys batch_read_limit', () => {
+        let max = 50;
+        let ten_messages = [];
+
+        for(var i =0; i < 10; i++){
+          ten_messages.push({
+            Id: 'someid',
+            ReceiptHandle:'SomeReceiptHandle'
+          });
+        }
+
+        const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
+        const sqsprovider = new SQSProvider();
+
+
+        sqsprovider.batch_read_limit = max;
+        sqsprovider.sqs = {
+          receiveMessage: function(params, callback) {
+            if(_.has(params, 'MaxNumberOfMessages')){
+              let return_messages = ten_messages.slice(0, parseInt(params.MaxNumberOfMessages));
+
+              callback(null, {Messages: return_messages})
+            }
+            callback(null, {Messages: ten_messages})
+          }
+        };
+
+        return sqsprovider.receiveMessagesRecursive({queue: 'testqueue'}).then(messages => {
+          expect(messages.length).to.equal(max);
+        });
+
+      });
+
+      it('obeys batch_read_limit less than 10', () => {
+        let max = 5;
 
         let ten_messages = [];
 
