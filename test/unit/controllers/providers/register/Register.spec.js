@@ -1544,20 +1544,6 @@ describe('controllers/providers/Register.js', () => {
         get() {
           return Promise.resolve(creditcard);
         }
-
-        getBINNumber(creditcard) {
-          let cc_number = null;
-
-          if (_.has(creditcard, 'number')) {
-            cc_number = creditcard.number;
-          } else if (_.isString(creditcard)) {
-            cc_number = creditcard;
-          }
-          if (!_.isNull(cc_number)) {
-            cc_number = cc_number.slice(0, 6);
-          }
-          return cc_number;
-        }
       };
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);

@@ -8,6 +8,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 const BinController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
 const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
 const MerchantProviderGroupController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroup.js');
 const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
@@ -52,6 +53,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
       this.merchantProviderGroupController = new MerchantProviderGroupController();
       this.merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
       this.creditCardController = new CreditCardController();
+      this.creditCardHelperController = new CreditCardHelperController();
 	  this.binController = new BinController();
 
       this.creditCardController.sanitize(false);
@@ -305,7 +307,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
       let creditcard = this.parameters.get('creditcard');
 
-      let binnumber = this.creditCardController.getBINNumber(creditcard.number);
+      let binnumber = this.creditCardHelperController.getBINNumber(creditcard.number);
 
       if(_.isNull(binnumber)){
 

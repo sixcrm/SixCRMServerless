@@ -242,6 +242,10 @@ module.exports = class CreditCardController extends entityController {
         eu.throwError('server', 'Cannot Assure Credit Card while sanitizing results');
       }
 
+      if (!_.has(creditcard, 'last_four')) {
+        this.setLastFour(creditcard);
+      }
+
       //Technical Debt:  It might be better to query by the first_six
       return this.queryBySecondaryIndex({field: 'last_four', index_value: creditcard.last_four, index_name: 'last_four-index'})
       .then((result) => {
