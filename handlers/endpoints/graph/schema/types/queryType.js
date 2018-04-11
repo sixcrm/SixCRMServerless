@@ -2579,16 +2579,16 @@ module.exports.graphObj = new GraphQLObjectType({
           pagination,
           search
         });
-      },
-		ipCheck: {
-			type: ipCheckType.graphObj,
-			args: {},
-			resolve: (root) => {
-				const ipCheckController = new IPCheckController();
+      }
+    },
+	ipCheck: {
+		type: ipCheckType.graphObj,
+		args: {},
+		resolve: (root) => {
+			const ipCheckController = new IPCheckController();
 
-				return ipCheckController.checkIP();
-			}
+			return ipCheckController.checkIP();
 		}
-    }
-  })
+	}
+})
 });

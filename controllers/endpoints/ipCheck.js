@@ -4,7 +4,7 @@ const request = require('request-promise');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-class IPCheckController {
+module.exports = class IPCheckController {
 
 	checkIP() {
 

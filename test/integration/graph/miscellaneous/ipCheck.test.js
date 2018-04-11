@@ -9,7 +9,7 @@ let endpoint = global.integration_test_config.endpoint;
 
 let test = {
     name: "uncategorized",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/checkIP.json')
+    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/ipCheck.json')
 };
 
 let test_user = {
@@ -18,6 +18,7 @@ let test_user = {
 };
 
 let this_request = request(endpoint);
+let account = '*';
 
 describe('IP Check Test', function() {
 
@@ -27,7 +28,7 @@ describe('IP Check Test', function() {
 
 		var query = tu.getQuery(test.query);
 
-		this_request.post('graph/')
+		this_request.post('graph/'+account)
 					.set('Authorization', test_jwt)
 					.send(query)
 					.expect(200)
