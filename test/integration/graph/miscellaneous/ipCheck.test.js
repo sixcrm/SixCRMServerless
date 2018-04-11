@@ -2,6 +2,9 @@ const request = require('supertest');
 const chai = require('chai');
 const assert = require('chai').assert;
 
+const aws = require('aws-sdk');
+const ec2 = new aws.ec2();
+
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
@@ -35,10 +38,27 @@ describe('IP Check Test', function() {
 					.expect('Content-Type', 'application/json')
 					.end(function(err, response){
 
-			du.output(response.body);
+			if (err) return done(err);
 
-			assert.isObject(response.body.response);
-			assert.match(response.body.response, /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/);
+			du.output(response.body);
+			const ipAddress = response.body.response.data.ipCheck.ipAddress;
+			assert.isString(ipAddress);
+
+			ec2.describeNatGateways({
+				Filter: [
+					{
+						Name: "tag:Name",
+						Values: ["public-lambda"]
+					}
+				]
+			}, function(err, result) {
+
+				if (err) return done(err);
+
+				assert.equal(result.NatGateways.length, 0, "Zero or multiple NAT Gateways found for public-lambda");
+				assert.equal(result.NatGateways[0].NatGatewayAddresses[0].PublicIp, ipAddress, "Outgoing IP Address does not match NAT Gateway");
+
+			})
 
 			done();
 
