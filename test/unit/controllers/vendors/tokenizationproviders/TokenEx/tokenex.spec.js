@@ -4,7 +4,7 @@ const mockery = require('mockery');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 //const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-describe('vendors/tokenizationproviders/TokenEx/tokenex.js', () =>{
+describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
 
   before(() => {
 
@@ -27,7 +27,7 @@ describe('vendors/tokenizationproviders/TokenEx/tokenex.js', () =>{
 
   describe('constructor', () => {
     it('successfully constructs', () => {
-      const TokenExController = global.SixCRM.routes.include('vendors','tokenizationproviders/TokenEx/tokenex.js');
+      const TokenExController = global.SixCRM.routes.include('vendors','tokenizationproviders/tokenex/tokenex.js');
       let tokenExController = new TokenExController();
       expect(objectutilities.getClassName(tokenExController)).to.equal('TokenEx');
     });
@@ -54,7 +54,7 @@ describe('vendors/tokenizationproviders/TokenEx/tokenex.js', () =>{
         }
       });
 
-      const TokenExController = global.SixCRM.routes.include('vendors','tokenizationproviders/TokenEx/tokenex.js');
+      const TokenExController = global.SixCRM.routes.include('vendors','tokenizationproviders/tokenex/tokenex.js');
       let tokenExController = new TokenExController();
 
       return tokenExController.getToken(token).then(result => {
@@ -87,7 +87,7 @@ describe('vendors/tokenizationproviders/TokenEx/tokenex.js', () =>{
         }
       });
 
-      const TokenExController = global.SixCRM.routes.include('vendors','tokenizationproviders/TokenEx/tokenex.js');
+      const TokenExController = global.SixCRM.routes.include('vendors','tokenizationproviders/tokenex/tokenex.js');
       let tokenExController = new TokenExController();
 
       return tokenExController.setToken(value).then(result => {
@@ -119,7 +119,7 @@ describe('vendors/tokenizationproviders/TokenEx/tokenex.js', () =>{
         }
       });
 
-      const TokenExController = global.SixCRM.routes.include('vendors','tokenizationproviders/TokenEx/tokenex.js');
+      const TokenExController = global.SixCRM.routes.include('vendors','tokenizationproviders/tokenex/tokenex.js');
       let tokenExController = new TokenExController();
 
       return tokenExController.deleteToken(token).then(result => {

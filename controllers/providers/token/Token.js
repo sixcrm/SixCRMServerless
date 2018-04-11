@@ -6,7 +6,7 @@ module.exports = class Token {
 
   constructor(){
 
-    const TokenExController = global.SixCRM.routes.include('vendors', 'tokenizationproviders/TokenEx/tokenex.js');
+    const TokenExController = global.SixCRM.routes.include('vendors', 'tokenizationproviders/tokenex/tokenex.js');
     this.tokenExController = new TokenExController();
 
   }
