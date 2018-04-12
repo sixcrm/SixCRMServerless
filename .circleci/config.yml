@@ -401,6 +401,11 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Miscellaneous Integration Tests
           command: export SIX_VERBOSE=2; npm run test-miscellaneous
