@@ -1,2 +1,2 @@
-redshift_host: 192.168.99.100
+redshift_host: local-docker
 cloudsearch_domainendpoint: null
