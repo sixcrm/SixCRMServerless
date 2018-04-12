@@ -502,14 +502,13 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		du.debug('Post Processing');
 
-		this.reversePreviousRebill();
-		this.pushEvent();
-		this.incrementMerchantProviderSummary();
-		this.updateSessionWithWatermark();
-		this.addRebillToStateMachine();
-
-		return true;
-
+		return Promise.all([
+			this.reversePreviousRebill(),
+			this.pushEvent(),
+			this.incrementMerchantProviderSummary(),
+			this.updateSessionWithWatermark(),
+			this.addRebillToStateMachine()
+		]);
 	}
 
 	reversePreviousRebill() {

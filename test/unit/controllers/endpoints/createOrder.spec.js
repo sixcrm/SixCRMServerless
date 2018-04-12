@@ -1194,6 +1194,8 @@ describe('createOrder', function () {
       let info = getValidInfo();
       let transactions = getValidTransactions();
 
+      PermissionTestGenerators.givenAnyUser();
+
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
         constructor(){}
         addRebillToQueue(){
@@ -1249,10 +1251,7 @@ describe('createOrder', function () {
       createOrderController.parameters.set('transactions', transactions);
       createOrderController.parameters.set('result', 'success');
 
-      let result = createOrderController.postProcessing();
-
-      expect(result).to.equal(true);
-
+      return createOrderController.postProcessing()
     });
 
     it('handles no watermark products', () => {
@@ -1265,6 +1264,8 @@ describe('createOrder', function () {
       let info = getValidInfo();
       let transactions = getValidTransactions();
 
+      PermissionTestGenerators.givenAnyUser();
+
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
         constructor(){}
         addRebillToQueue(){
@@ -1320,10 +1321,7 @@ describe('createOrder', function () {
       createOrderController.parameters.set('transactions', transactions);
       createOrderController.parameters.set('result', 'success');
 
-      let result = createOrderController.postProcessing();
-
-      expect(result).to.equal(true);
-
+      return createOrderController.postProcessing();
     });
 
     it('handles no watermark product schedules', () => {
@@ -1336,6 +1334,8 @@ describe('createOrder', function () {
       let info = getValidInfo();
       let transactions = getValidTransactions();
 
+      PermissionTestGenerators.givenAnyUser();
+
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
         constructor(){}
         addRebillToQueue(){
@@ -1391,9 +1391,7 @@ describe('createOrder', function () {
       createOrderController.parameters.set('transactions', transactions);
       createOrderController.parameters.set('result', 'success');
 
-      let result = createOrderController.postProcessing();
-
-      expect(result).to.equal(true);
+      return createOrderController.postProcessing()
 
     });
 
@@ -1405,6 +1403,8 @@ describe('createOrder', function () {
       let product_groups = getValidTransactionProducts(null, true);
       let info = getValidInfo();
       let transactions = getValidTransactions();
+
+      PermissionTestGenerators.givenAnyUser();
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
         update() {
@@ -1457,10 +1457,9 @@ describe('createOrder', function () {
       createOrderController.parameters.set('transactions', transactions);
       createOrderController.parameters.set('result', 'fail');
 
-      let result = createOrderController.postProcessing();
-
-      expect(result).to.equal(true);
-      expect(rebill.no_process).to.be.true;
+      return createOrderController.postProcessing().then(() => {
+        expect(rebill.no_process).to.be.true;
+      });
     });
 
   });
