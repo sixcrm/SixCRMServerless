@@ -1,47 +1,62 @@
 {
-	"method": "getHomeHeroChartTimeseries",
+	"method": "getReport",
 	"test_case": "Direct versus rebill revenue",
 	"input": {
-		"analyticsfilter": {
-			"start": "2017-01-01T00:00:00.000Z",
-			"end": "2017-01-03T00:00:00.000Z",
-			"period": "day",
-			"comparisonType": "directVersusRebill",
-			"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9"
+		"analyticsfacets": {
+			"facets": [{
+					"facet": "start",
+					"values": ["2017-01-01T00:00:00.000Z"]
+				},
+				{
+					"facet": "end",
+					"values": ["2017-01-03T00:00:00.000Z"]
+				},
+				{
+					"facet": "period",
+					"values": ["day"]
+				},
+				{
+					"facet": "campaign",
+					"values": ["70a6689a-5814-438b-b9fd-dd484d0812f9"]
+				}
+			],
+			"reportType": "directVersusRebill"
 		}
 	},
-	"result_name": "facets",
-	"expect": [{
-			"facet": "direct",
-			"timeseries": [{
-					"datetime": "2017-01-01T00:00:00.000Z",
-					"value": 0
-				},
-				{
-					"datetime": "2017-01-02T00:00:00.000Z",
-					"value": 0
-				},
-				{
-					"datetime": "2017-01-03T00:00:00.000Z",
-					"value": 100
-				}
-			]
-		},
-		{
-			"facet": "rebill",
-			"timeseries": [{
-					"datetime": "2017-01-01T00:00:00.000Z",
-					"value": 0
-				},
-				{
-					"datetime": "2017-01-02T00:00:00.000Z",
-					"value": 0
-				},
-				{
-					"datetime": "2017-01-03T00:00:00.000Z",
-					"value": 222
-				}
-			]
-		}
+	"result_name": "records",
+	"expect": [
+		[{
+				"key": "direct",
+				"value": [{
+						"datetime": "2017-01-01T00:00:00.000Z",
+						"value": 0
+					},
+					{
+						"datetime": "2017-01-02T00:00:00.000Z",
+						"value": 0
+					},
+					{
+						"datetime": "2017-01-03T00:00:00.000Z",
+						"value": 100
+					}
+				]
+			},
+			{
+				"key": "rebill",
+				"value": [{
+						"datetime": "2017-01-01T00:00:00.000Z",
+						"value": 0
+					},
+					{
+						"datetime": "2017-01-02T00:00:00.000Z",
+						"value": 0
+					},
+					{
+						"datetime": "2017-01-03T00:00:00.000Z",
+						"value": 222
+					}
+				]
+			}
+		]
 	]
 }

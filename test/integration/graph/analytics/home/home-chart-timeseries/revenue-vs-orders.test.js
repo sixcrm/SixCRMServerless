@@ -6,7 +6,7 @@ const tu = global.SixCRM.routes.include('lib', 'test-utilities.js');
 chai.use(require('chai-json-schema'));
 
 let test_name = 'Hero Chart Timeseries';
-let test_query = global.SixCRM.routes.path('handlers', '/endpoints/graph/queries/analytics/home/hero-chart-timeseries.json');
+let test_query = global.SixCRM.routes.include('handlers', '/endpoints/graph/queries/analytics/home/hero-chart-timeseries/orders-vs-revenue/by-day.js');
 
 //set the test user
 let test_user = {
@@ -28,13 +28,12 @@ describe('Get ' + test_name + ' Test', function () {
 	let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
 	it('Should return return a 200 HTTP response code and a correctly formatted response', function (done) {
-		var query = tu.getQuery(test_query);
 
 		this_request.post('graph/' + account.id, {
 				timeout: 5000
 			})
 			.set('Authorization', test_jwt)
-			.send(query)
+			.send(test_query.body)
 			.expect(200)
 			.expect('Content-Type', 'application/json')
 			.expect('Access-Control-Allow-Origin', '*')
@@ -50,7 +49,7 @@ describe('Get ' + test_name + ' Test', function () {
 
 				assert.isObject(response.body.response, JSON.stringify(response.body));
 
-				assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/activity/home/hero-chart-timeseries'));
+				assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/reports/analytics-reports'));
 
 				done();
 
