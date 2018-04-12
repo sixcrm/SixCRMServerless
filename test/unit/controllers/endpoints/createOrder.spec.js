@@ -231,27 +231,14 @@ describe('createOrder', function () {
     let global_user;
 
     before(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-      mockery.enable({
-          useCleanCache: true,
-          warnOnReplace: false,
-          warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
       global_user = global.user;
     });
 
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
+    after(() => {
         global.user = global_user;
     });
 
     it('successfully runs execute method', () => {
-
       let event = getValidEvent();
       let session = getValidSession();
       let campaign = getValidCampaign();
@@ -299,14 +286,23 @@ describe('createOrder', function () {
         update({entity}) {
           return Promise.resolve(entity);
         }
+        listTransactions() {
+          return Promise.resolve({transactions});
+        }
+        getResult() {
+          return Promise.resolve(transactions);
+        }
       });
 
-      const CreditCard = global.SixCRM.routes.include('entities','CreditCard.js');
-      CreditCard.prototype.queryBySecondaryIndex = () => { return Promise.resolve({creditcards: []}); };
-      CreditCard.prototype.create = ({entity}) => {
-        expect(entity).to.be.defined;
-        return Promise.resolve(stored_creditcard);
-      };
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+        sanitize(sanitization) {
+          expect(sanitization).to.be.false;
+          return this;
+        }
+        assureCreditCard() {
+          return Promise.resolve(stored_creditcard);
+        }
+      });
 
       let mock_campaign = class {
           constructor(){}
@@ -342,15 +338,13 @@ describe('createOrder', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
         constructor(){}
-        createRebill({session, product_schedules}){
-          rebill.product_schedules = product_schedules;
-          rebill.parentsession = session.id
-          return Promise.resolve(rebill);
-        }
         addRebillToQueue(){
           return Promise.resolve(true);
         }
         updateRebillState(){
+          return Promise.resolve(true);
+        }
+        updateRebillUpsell() {
           return Promise.resolve(true);
         }
       });
@@ -367,6 +361,9 @@ describe('createOrder', function () {
           });
 
           return Promise.resolve(register_response);
+        }
+        reverseTransaction(){
+          return Promise.resolve();
         }
       });
 
@@ -1940,9 +1937,6 @@ describe('createOrder', function () {
       let product_schedule_ids = arrayutilities.map(event.product_schedules, product_schedule_group => product_schedule_group.product_schedule);
       let product_schedules = getValidProductSchedules(product_schedule_ids, true);
       let session = getValidSession();
-
-      session.completed = false;
-
       let campaign = getValidCampaign();
       let customer = getValidCustomer();
       let stored_creditcard = getValidCreditCard();
@@ -1951,8 +1945,7 @@ describe('createOrder', function () {
       let processor_response = getValidProcessorResponse();
       let response_type = 'success';
 
-      //const ProductScheduleHelperController = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
-      //let productScheduleHelper = new ProductScheduleHelperController();
+      session.completed = false;
 
       mockery.registerMock(global.SixCRM.routes.path('helpers','entities/productschedule/ProductSchedule.js'), class {
         constructor(){}
@@ -1964,13 +1957,6 @@ describe('createOrder', function () {
         }
         getScheduleElementOnDayInSchedule(){
           return 0;
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
-        constructor(){}
-        createRebill(){
-          return Promise.resolve(rebill);
         }
       });
 
@@ -1987,14 +1973,23 @@ describe('createOrder', function () {
         update({entity}) {
           return Promise.resolve(entity);
         }
+        listTransactions() {
+          return Promise.resolve({transactions});
+        }
+        getResult() {
+          return Promise.resolve(transactions);
+        }
       });
 
-      const CreditCard = global.SixCRM.routes.include('entities','CreditCard.js');
-      CreditCard.prototype.queryBySecondaryIndex = () => { return Promise.resolve({creditcards: []}); };
-      CreditCard.prototype.create = ({entity}) => {
-        expect(entity).to.be.defined;
-        return Promise.resolve(stored_creditcard);
-      };
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+        sanitize(sanitization) {
+          expect(sanitization).to.be.false;
+          return this;
+        }
+        assureCreditCard() {
+          return Promise.resolve(stored_creditcard);
+        }
+      });
 
       let mock_campaign = class {
           constructor(){}
@@ -2021,12 +2016,22 @@ describe('createOrder', function () {
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
+          constructor(){}
+          createRebill(){
+              return Promise.resolve(rebill);
+          }
+      });
+
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
         constructor(){}
         addRebillToQueue(){
           return Promise.resolve(true);
         }
         updateRebillState(){
+          return Promise.resolve(true);
+        }
+        updateRebillUpsell() {
           return Promise.resolve(true);
         }
       });
@@ -2073,6 +2078,8 @@ describe('createOrder', function () {
           return 'localhost'
         }
       });
+
+      PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
       let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
       const createOrderController = new CreateOrderController();
