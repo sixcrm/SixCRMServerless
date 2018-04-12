@@ -13,7 +13,7 @@ package:
 
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs8.10
   timeout: 90
   stage: ${opt:stage, 'development'}
   region: ${file(./config/${opt:stage}/site.yml):aws.region}
