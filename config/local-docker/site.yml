@@ -32,17 +32,17 @@ jwt:
 
 dynamodb:
   region: 'localhost'
-  endpoint: http://192.168.99.100:8000
+  endpoint: http://local-docker:8000
 
 sqs:
   region: 'localhost'
   deadletter_postfix: '_deadletter'
   max_receive_count: 5
-  endpoint: http://192.168.99.100:9324
+  endpoint: http://local-docker:9324
 
 sns:
   region: 'localhost'
-  endpoint: http://192.168.99.100:9911
+  endpoint: http://local-docker:9911
 
 cloudsearch:
   domainname: 'sixcrm'
@@ -58,7 +58,7 @@ aurora:
   user: 'postgres'
   database: 'postgres'
   password: ''
-  host: 192.168.99.100
+  host: local-docker
   port: 5440
   max: 10
   idle_timeout: 3000
@@ -71,7 +71,7 @@ redshift:
   user: 'postgres'
   database: 'postgres'
   password: ''
-  host: 192.168.99.100
+  host: local-docker
   port: 5440
   max: 10
   idle_timeout: 3000
@@ -93,7 +93,7 @@ cache:
 elasticache:
   max_attempts: 3
   retry_time: 1800000
-  endpoint: 192.168.99.100
+  endpoint: local-docker
   port: 6379
   default_expiration: 300
 
