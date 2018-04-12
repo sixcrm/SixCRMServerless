@@ -31,7 +31,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       this.encryptionhelper = new EncryptionHelper(this);
       this.sanitization = true;
-      
+
     }
 
     sanitize(sanitize) {
@@ -448,7 +448,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
     }
 
-    appendAccountCondition({query_parameters, account}){
+    appendAccountCondition({query_parameters, account, literal_master}){
 
       du.debug('Append Account Condition');
 
@@ -459,7 +459,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
         if(!_.contains(this.nonaccounts, this.descriptive_name)){
 
-          if(!this.isMasterAccount()){
+          if(!this.isMasterAccount() || literal_master){
 
             query_parameters = this.appendKeyConditionExpression(query_parameters, '#account = :accountv');
             query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', this.getID(account));

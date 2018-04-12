@@ -85,7 +85,7 @@ module.exports = class NotificationController extends entityController {
           query_parameters.filter_expression += ' AND ( attribute_not_exists(expires_at) OR expires_at > :currentv )';
       }
 
-      return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal});
+      return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal, literal_master: true});
 
     }
 

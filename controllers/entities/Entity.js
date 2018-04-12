@@ -292,11 +292,11 @@ module.exports = class entityController extends entityUtilitiesController {
     }
 
     //Note:  When the query parameters have a filter expression, we need to implement a Six specific pagination...
-    listByAccount({query_parameters, account, pagination, reverse_order, fatal, search}){
+    listByAccount({query_parameters, account, pagination, reverse_order, fatal, search, literal_master}){
 
       du.debug('List By Account');
 
-      if(this.isMasterAccount()){
+      if(this.isMasterAccount() && !literal_master){
         return this.list(arguments[0]);
       }
 
@@ -304,7 +304,7 @@ module.exports = class entityController extends entityUtilitiesController {
       .then((permission) => this.catchPermissions(permission, 'read'))
       .then(() => {
 
-        query_parameters = this.appendAccountCondition({query_parameters: query_parameters, account: account});
+        query_parameters = this.appendAccountCondition({query_parameters: query_parameters, account: account, literal_master: literal_master});
         query_parameters = this.appendPagination({query_parameters: query_parameters, pagination: pagination});
 
         if (reverse_order) {
