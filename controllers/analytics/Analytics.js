@@ -365,37 +365,48 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	}
 
-	getHomeHeroChartTimeseries(parameters) {
+	getReport(parameters) {
 
 		du.debug('Get home chart timeseries');
 
-		switch (parameters.analyticsfilter.comparisonType) {
+		switch (parameters.analyticsfacets.reportType) {
 
 			case 'revenueVersusOrders':
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, this.default_queue_account_filter)
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams(), this.default_queue_account_filter)
 					.then((results) => {
 						return results;
 					});
 			case 'ordersVersusUpsells':
-				return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', parameters.analyticsfilter, this.default_queue_account_filter)
+				return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', _resolveParams(), this.default_queue_account_filter)
 					.then((results) => {
 						return results;
 					});
 			case 'directVersusRebill':
-				return this.getResults('home/hero-chart-timeseries/direct-vs-rebill', parameters.analyticsfilter, this.default_queue_account_filter)
+				return this.getResults('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams(), this.default_queue_account_filter)
 					.then((results) => {
 						return results;
 					});
 			case 'averageRevenuePerOrder':
-				return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', parameters.analyticsfilter, this.default_queue_account_filter)
+				return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams(), this.default_queue_account_filter)
 					.then((results) => {
 						return results;
 					});
 			default:
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', parameters.analyticsfilter, this.default_queue_account_filter)
-					.then((results) => {
-						return results;
-					});
+				throw new Error('Report not found');
+
+		}
+
+		function _resolveParams() {
+
+			const start = parameters.analyticsfacets.facets.find(f => f.facet === 'start');
+			const end = parameters.analyticsfacets.facets.find(f => f.facet === 'end');
+			const period = parameters.analyticsfacets.facets.find(f => f.facet === 'period');
+			
+			return {
+				start: start.values[0],
+				end: end.values[0],
+				period: period.values[0]
+			}
 
 		}
 

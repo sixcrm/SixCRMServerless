@@ -5,24 +5,26 @@ module.exports = (results) => {
 	du.debug('Transformation Function');
 
 	return Promise.resolve({
-		facets: [{
-				facet: 'direct',
-				timeseries: results.map(r => {
-					return {
-						datetime: r.datetime,
-						value: Number(r.direct)
-					};
-				})
-			},
-			{
-				facet: 'rebill',
-				timeseries: results.map(r => {
-					return {
-						datetime: r.datetime,
-						value: Number(r.rebill)
-					};
-				})
-			}
+		records: [
+			[{
+					key: 'direct',
+					value: results.map(r => {
+						return {
+							datetime: r.datetime,
+							value: Number(r.direct)
+						};
+					})
+				},
+				{
+					key: 'rebill',
+					value: results.map(r => {
+						return {
+							datetime: r.datetime,
+							value: Number(r.rebill)
+						};
+					})
+				}
+			]
 		]
 	});
 

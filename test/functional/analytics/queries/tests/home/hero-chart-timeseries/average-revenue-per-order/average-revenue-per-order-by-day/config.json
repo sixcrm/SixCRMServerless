@@ -1,19 +1,33 @@
 {
-	"method": "getHomeHeroChartTimeseries",
+	"method": "getReport",
 	"test_case": "Average revenue per order per day",
 	"input": {
-		"analyticsfilter": {
-			"start": "2017-01-01T00:00:00.000Z",
-			"end": "2017-01-03T00:00:00.000Z",
-			"period": "day",
-			"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
-			"comparisonType": "averageRevenuePerOrder"
+		"analyticsfacets": {
+			"facets": [{
+					"facet": "start",
+					"values": ["2017-01-01T00:00:00.000Z"]
+				},
+				{
+					"facet": "end",
+					"values": ["2017-01-03T00:00:00.000Z"]
+				},
+				{
+					"facet": "period",
+					"values": ["day"]
+				},
+				{
+					"facet": "campaign",
+					"values": ["70a6689a-5814-438b-b9fd-dd484d0812f9"]
+				}
+			],
+			"reportType": "averageRevenuePerOrder"
 		}
 	},
-	"result_name": "facets",
-	"expect": [{
-			"facet": "averageRevenue",
-			"timeseries": [{
+	"result_name": "records",
+	"expect": [
+		[{
+			"key": "averageRevenue",
+			"value": [{
 					"datetime": "2017-01-01T00:00:00.000Z",
 					"value": 0
 				},
@@ -26,6 +40,6 @@
 					"value": 222
 				}
 			]
-		}
+		}]
 	]
 }

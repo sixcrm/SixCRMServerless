@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id": "/analytics-reports",
+	"title": "Analytics reports",
+	"type": "object",
+	"required": ["records"],
+	"properties": {
+		"records": {
+			"type": "array",
+			"items": {
+				"type": "array",
+				"items": {
+					"required": ["key", "value"],
+					"properties": {
+						"key": {
+							"type": "string"
+						},
+						"value": {}
+					}
+				}
+			}
+		}
+	}
+}
