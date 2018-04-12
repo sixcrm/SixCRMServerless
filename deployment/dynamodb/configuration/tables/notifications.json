@@ -22,6 +22,10 @@
       {
         "AttributeName": "account",
         "AttributeType": "S"
+      },
+      {
+        "AttributeName": "access_string",
+        "AttributeType": "S"
       }
     ],
     "GlobalSecondaryIndexes": [
@@ -65,6 +69,26 @@
           {
             "AttributeName":"account",
             "KeyType":"HASH"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":3,
+          "WriteCapacityUnits":3
+        }
+      },
+      {
+        "IndexName":"access_string-index",
+        "KeySchema":[
+          {
+            "AttributeName":"access_string",
+            "KeyType":"HASH"
+          },
+          {
+            "AttributeName": "updated_at",
+            "KeyType": "RANGE"
           }
         ],
         "Projection":{

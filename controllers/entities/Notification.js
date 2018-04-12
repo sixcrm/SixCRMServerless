@@ -15,6 +15,11 @@ module.exports = class NotificationController extends entityController {
         super('notification');
     }
 
+    create({entity}) {
+        entity.access_string = entity.user + '-' + entity.account + '-' + entity.type;
+        super.create({entity: entity});
+    }
+
     numberOfUnseenNotifications() {
 
       du.debug('Number of Unseen Notifications');
@@ -68,11 +73,13 @@ module.exports = class NotificationController extends entityController {
 
     }
 
-    listByTypes({types, onlyUnexpired, pagination, user, fatal}){
+    listByType({type, onlyUnexpired, pagination, user, fatal}){
 
       du.debug('List By Type');
 
-      let query_parameters = this.appendDisjunctionQueryParameters({field_name: 'type', array: types});
+      // let query_parameters = this.appendDisjunctionQueryParameters({field_name: 'type', array: types});
+
+        let query_parameters = {};
 
       if(!_.isUndefined(user) && user == true){
         query_parameters.filter_expression += ' AND #user = :userv';
@@ -85,8 +92,9 @@ module.exports = class NotificationController extends entityController {
           query_parameters.filter_expression += ' AND ( attribute_not_exists(expires_at) OR expires_at > :currentv )';
       }
 
-      return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal, literal_master: true});
-
+      // return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal, literal_master: true});
+        let access_string = this.getID(global.user) + '-' + global.account + '-' + type;
+        return this.queryBySecondaryIndex({field: 'access_string', index_value: access_string, index_name: 'access_string-index', pagination: pagination, fatal: fatal});
     }
 
 }

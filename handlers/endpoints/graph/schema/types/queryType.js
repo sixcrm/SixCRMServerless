@@ -5,7 +5,6 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
-const GraphQLList = require('graphql').GraphQLList;
 const GraphQLInt = require('graphql').GraphQLInt;
 
 //Technical Debt:  All of these types frequently have the same fields (id, account, active, created_at, updated_at).  This would be a excellent usage of fragments...
@@ -334,11 +333,11 @@ module.exports.graphObj = new GraphQLObjectType({
         });
       }
     },
-    notificationlistbytypes: {
+    notificationlistbytype: {
       type: notificationListType.graphObj,
       args: {
-        types: {
-          type: new GraphQLList(GraphQLString)
+        type: {
+          type: GraphQLString
         },
         onlyUnexpired: {
           type: GraphQLBoolean
@@ -353,8 +352,8 @@ module.exports.graphObj = new GraphQLObjectType({
       resolve: function(root, args) {
         const notificationController = new NotificationController();
 
-        return notificationController.listByTypes({
-          types: args.types,
+        return notificationController.listByType({
+          type: args.type,
           user: args.user,
           onlyUnexpired: args.onlyUnexpired,
           pagination: args.pagination,
