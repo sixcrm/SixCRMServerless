@@ -401,11 +401,18 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			const start = parameters.analyticsfacets.facets.find(f => f.facet === 'start');
 			const end = parameters.analyticsfacets.facets.find(f => f.facet === 'end');
 			const period = parameters.analyticsfacets.facets.find(f => f.facet === 'period');
-			
-			return {
+			const campaign = parameters.analyticsfacets.facets.find(f => f.facet === 'campaign');
+
+			const params = {
 				start: start.values[0],
 				end: end.values[0],
 				period: period.values[0]
+			}
+
+			if (campaign) {
+
+				params.campaign = campaign.values[0];
+
 			}
 
 		}
