@@ -415,6 +415,8 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 			}
 
+			return params;
+
 		}
 
 	}
