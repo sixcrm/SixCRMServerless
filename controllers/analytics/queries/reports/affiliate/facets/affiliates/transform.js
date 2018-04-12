@@ -5,16 +5,13 @@ module.exports = (results) => {
 	du.debug('Transformation Function');
 
 	return Promise.resolve({
-		facets: [{
-				facet: 'affiliate',
-				timeseries: results.map(r => {
-					return {
-						datetime: r.datetime,
-						value: Number(r.orders)
-					};
-				})
+		facet: 'affiliate',
+		values: results.map(r => {
+			return {
+				key: r.affiliate,
+				value: r.affiliate
 			}
-		]
+		})
 	});
 
 }
