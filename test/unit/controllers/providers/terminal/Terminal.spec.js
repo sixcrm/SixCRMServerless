@@ -199,6 +199,23 @@ describe('controllers/providers/terminal/Terminal.js', function () {
   });
 
   beforeEach(() => {
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
+    });
+
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+        publish() {
+            return Promise.resolve({});
+        }
+        getRegion() {
+            return 'localhost';
+        }
+    });
+  });
+
+  beforeEach(() => {
     //global.SixCRM.localcache.clear('all');
   });
 
@@ -208,19 +225,6 @@ describe('controllers/providers/terminal/Terminal.js', function () {
   });
 
   describe('constructor', () => {
-
-      before(() => {
-          mockery.enable({
-              useCleanCache: true,
-              warnOnReplace: false,
-              warnOnUnregistered: false
-          });
-      });
-
-      beforeEach(() => {
-          mockery.resetCache();
-          mockery.deregisterAll();
-      });
 
     it('successfully constructs', () => {
 

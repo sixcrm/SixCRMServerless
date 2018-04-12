@@ -21,7 +21,20 @@ describe('controllers/Entity.js', () => {
     });
 
     beforeEach(() => {
-      //global.SixCRM.localcache.clear('all');
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+          publish() {
+              return Promise.resolve({});
+          }
+          getRegion() {
+              return 'localhost';
+          }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+        sendMessage() {
+          return Promise.resolve(true);
+        }
+      });
     });
 
     afterEach(() => {
@@ -1263,7 +1276,7 @@ describe('controllers/Entity.js', () => {
     describe('isUUID', () => {
         let entityController;
 
-        before(() => {
+        beforeEach(() => {
             const EC = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
             entityController = new EC('entity');
         });

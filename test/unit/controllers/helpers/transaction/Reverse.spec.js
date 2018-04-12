@@ -6,19 +6,6 @@ let expect = chai.expect;
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const ReverseHelperController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
-
-function getValidReverseParameters(){
-
-  let transaction = getValidTransaction();
-
-  transaction.processor_response = JSON.parse(transaction.processor_response);
-
-  return {
-    transaction: transaction
-  };
-
-}
 
 function assumePermissionedRole(){
 
@@ -80,6 +67,16 @@ describe('helpers/transaction/Reverse.js', () => {
       });
     });
 
+    beforeEach(() => {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+        sendMessage() {
+          return Promise.resolve(true);
+        }
+      });
+    });
+
     afterEach(() => {
         mockery.resetCache();
         mockery.deregisterAll();
@@ -88,7 +85,7 @@ describe('helpers/transaction/Reverse.js', () => {
     describe('constructor', () => {
 
       it('successfully constructs a reverse class', () => {
-
+        const ReverseHelperController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
         let vh = new ReverseHelperController();
 
         expect(vh.constructor.name).to.equal('Reverse');
@@ -100,7 +97,7 @@ describe('helpers/transaction/Reverse.js', () => {
     describe('setParameters', () => {
 
       it('fails to set parameters', () => {
-
+        const ReverseHelperController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
         let vh = new ReverseHelperController();
         let invalid_arguments_array = getInvalidArgumentsArray();
 
@@ -114,7 +111,7 @@ describe('helpers/transaction/Reverse.js', () => {
       });
 
       it('successfully sets parameters', () => {
-
+        const ReverseHelperController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
         let vh = new ReverseHelperController();
 
         let valid_parameters = getValidParameters();
@@ -135,10 +132,10 @@ describe('helpers/transaction/Reverse.js', () => {
         let transaction = getValidTransaction();
 
         mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
-          getMerchantProvider(transaction) {
+          getMerchantProvider() {
             return Promise.resolve(merchant_provider);
           }
-          get({id}) {
+          get() {
             return Promise.resolve(transaction);
           }
         });
@@ -177,7 +174,7 @@ describe('helpers/transaction/Reverse.js', () => {
       it('successfully creates processing parameters', () => {
 
         //assumePermissionedRole();
-
+        const ReverseHelperController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
         let vh = new ReverseHelperController();
 
         vh.parameters.set('transaction', getValidTransaction());
@@ -214,7 +211,7 @@ describe('helpers/transaction/Reverse.js', () => {
 
         let mock_gateway = class {
           constructor(){}
-          reverse({argumentation}){
+          reverse(){
             return Promise.resolve(
               {
                 code: 200,
@@ -249,7 +246,7 @@ describe('helpers/transaction/Reverse.js', () => {
             let transaction = getValidTransaction();
 
             mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
-                getMerchantProvider(transaction) {
+                getMerchantProvider() {
                     return Promise.resolve(merchant_provider);
                 }
                 get({id}) {
@@ -267,7 +264,7 @@ describe('helpers/transaction/Reverse.js', () => {
             let mock_gateway = class {
                 constructor(){}
 
-                reverse({argumentation}){
+                reverse(){
                     return Promise.resolve(
                         {
                             code: 200,

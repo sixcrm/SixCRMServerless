@@ -19,6 +19,23 @@ describe('controllers/Rebill.js', () => {
         });
     });
 
+    beforeEach(() => {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+          publish() {
+              return Promise.resolve({});
+          }
+          getRegion() {
+              return 'localhost';
+          }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+        sendMessage() {
+          return Promise.resolve(true);
+        }
+      });
+    });
+
     afterEach(() => {
         mockery.resetCache();
         mockery.deregisterAll();

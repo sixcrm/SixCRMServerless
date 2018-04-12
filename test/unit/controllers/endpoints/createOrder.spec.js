@@ -203,12 +203,18 @@ function getValidEventBody(ids, expanded){
 describe('createOrder', function () {
 
   before(() => {
-    mockery.resetCache();
-    mockery.deregisterAll();
     mockery.enable({
         useCleanCache: true,
         warnOnReplace: false,
         warnOnUnregistered: false
+    });
+  });
+
+  beforeEach(() => {
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
     });
   });
 
@@ -744,19 +750,6 @@ describe('createOrder', function () {
 
   describe('hydrateSession', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
     it('successfully gets event session property', () => {
 
       let session = getValidSession();
@@ -787,19 +780,6 @@ describe('createOrder', function () {
   });
 
   describe('hydrateEventAssociatedParameters', () => {
-
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
 
     it('successfully gets associated event properties', () => {
 
@@ -940,24 +920,6 @@ describe('createOrder', function () {
 
   describe('addCreditCardToCustomer', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
     it('successfully adds the credit card to the customer', () => {
 
       let customer = getValidCustomer();
@@ -992,24 +954,6 @@ describe('createOrder', function () {
   });
 
   describe('createRebill', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
 
     it('successfully creates the order rebill', () => {
 
@@ -1057,24 +1001,6 @@ describe('createOrder', function () {
   });
 
   describe('processRebill', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
 
     it('successfully processes a rebill', () => {
 
@@ -1163,24 +1089,6 @@ describe('createOrder', function () {
   });
 
   describe('postProcessing', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
 
     it('successfully executes post processing methods', () => {
 
@@ -1463,24 +1371,6 @@ describe('createOrder', function () {
 
   describe('addRebillToQueue', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
     it('successfully adds the rebill to the appropriate queue', () => {
 
       let rebill = getValidRebill();
@@ -1588,24 +1478,6 @@ describe('createOrder', function () {
 
   describe('setCreditCard', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
     it('successfully sets a creditcard', () => {
 
       let event = getValidEventBody();
@@ -1691,24 +1563,6 @@ describe('createOrder', function () {
 
   describe('setCampaign', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
     it('successfully sets the campaign', () => {
 
       let campaign = getValidCampaign();
@@ -1738,24 +1592,6 @@ describe('createOrder', function () {
   });
 
   describe('setCustomer', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    beforeEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
 
     it('successfully sets a customer', () => {
 

@@ -163,6 +163,27 @@ function getValidAffiliatesPrototype(){
 
 describe('createLead', function () {
 
+  before(() => {
+    mockery.enable({
+        useCleanCache: true,
+        warnOnReplace: false,
+        warnOnUnregistered: false
+    });
+  });
+
+  beforeEach(() => {
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
+    });
+  });
+
+  afterEach(() => {
+      mockery.resetCache();
+      mockery.deregisterAll();
+  });
+
   describe('constructor', () => {
     it('successfully constructs', () => {
       let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
@@ -176,23 +197,11 @@ describe('createLead', function () {
 
     let global_user;
 
-    before(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-      mockery.enable({
-          useCleanCache: true,
-          warnOnReplace: false,
-          warnOnUnregistered: false
-      });
-    });
-
     beforeEach(() => {
       global_user = global.user;
     });
 
     afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
         global.user = global_user;
     });
 
@@ -374,19 +383,6 @@ describe('createLead', function () {
 
   describe('assureCustomer', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
     it('successfully sets a new customer', () => {
 
       let event = getValidEventBody();
@@ -449,19 +445,6 @@ describe('createLead', function () {
 
   describe('assureAffiliates', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
     it('successfully assures affiliates', () => {
 
       let event = getValidEventBody();
@@ -519,19 +502,6 @@ describe('createLead', function () {
 
   describe('setCampaign', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
     it('successfully sets the campaign', () => {
 
       let event = getValidEventBody();
@@ -565,19 +535,6 @@ describe('createLead', function () {
   });
 
   describe('assureLeadProperties', () => {
-
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
 
     it('successfully assures lead properties', () => {
 
@@ -638,19 +595,6 @@ describe('createLead', function () {
 
   describe('createSessionPrototype', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
-
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
-
     it('successfully creates a session prototype', () => {
 
       let customer = getValidCustomer();
@@ -702,19 +646,6 @@ describe('createLead', function () {
 
   describe('assureSession', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('successfully assures the session', () => {
 
       let session_prototype = getValidSessionPrototype();
@@ -742,19 +673,6 @@ describe('createLead', function () {
 
   describe('postProcessing', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('successfully triggers all post processing', () => {
 
       let session = getValidSession();
@@ -780,19 +698,6 @@ describe('createLead', function () {
   });
 
   describe('createLead',  () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
 
     it('successfully creates a lead', () => {
 

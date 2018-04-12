@@ -4,20 +4,28 @@ const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 
 describe('controllers/entities/Bin.js', () => {
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: true,
+			warnOnUnregistered: false
+		});
+	});
+
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
+    });
+	});
+
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
 	describe('getCreditCard', () => {
-		before(() => {
-			mockery.enable({
-				useCleanCache: true,
-				warnOnReplace: true,
-				warnOnUnregistered: false
-			});
-		});
-
-		afterEach(() => {
-			mockery.resetCache();
-			mockery.deregisterAll();
-		});
 		it('successfully retrieves credit card propetires from bin', () => {
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');

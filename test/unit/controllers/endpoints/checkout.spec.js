@@ -216,8 +216,11 @@ describe('checkout', function () {
   });
 
   beforeEach(() => {
-    mockery.resetCache();
-    mockery.deregisterAll();
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
+    });
   });
 
   afterEach(() => {

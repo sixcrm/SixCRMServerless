@@ -1,8 +1,30 @@
 let chai = require('chai');
 let expect = chai.expect;
+const mockery = require('mockery');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
 describe('controllers/Role.js', () => {
+
+    before(() => {
+        mockery.enable({
+            useCleanCache: true,
+            warnOnReplace: false,
+            warnOnUnregistered: false
+        });
+    });
+
+    beforeEach(() => {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+        sendMessage() {
+          return Promise.resolve(true);
+        }
+      });
+    });
+
+    afterEach(() => {
+        mockery.resetCache();
+        mockery.deregisterAll();
+    });
 
     describe('getPermissions', () => {
 

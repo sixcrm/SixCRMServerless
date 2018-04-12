@@ -107,6 +107,27 @@ function getValidSession(){
 
 describe('confirmOrder', function () {
 
+  before(() => {
+    mockery.enable({
+      useCleanCache: true,
+      warnOnReplace: false,
+      warnOnUnregistered: false
+    });
+  });
+
+  beforeEach(() => {
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
+    });
+  });
+
+  afterEach(() => {
+    mockery.resetCache();
+    mockery.deregisterAll();
+  });
+
   describe('constructor', () => {
     it('successfully constructs', () => {
       let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
@@ -117,21 +138,6 @@ describe('confirmOrder', function () {
   });
 
   describe('hydrateSession', () => {
-
-    before(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
 
     it('successfully hydrates a session', () => {
 
@@ -199,21 +205,6 @@ describe('confirmOrder', function () {
 
   describe('hydrateSessionProperties', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('successfully hydrates session properties', () => {
 
       let session = getValidSession();
@@ -261,21 +252,6 @@ describe('confirmOrder', function () {
 
   describe('closeSession', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('successfully closes a session', () => {
 
       let session = getValidSession();
@@ -300,21 +276,6 @@ describe('confirmOrder', function () {
   });
 
   describe('buildResponse', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
 
     it('successfully builds a response', () => {
 
@@ -345,19 +306,6 @@ describe('confirmOrder', function () {
 
   describe('postProcessing', () => {
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
-
     it('successfully executes post processing', () => {
 
         mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
@@ -385,21 +333,11 @@ describe('confirmOrder', function () {
 
     let global_user;
 
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
     beforeEach(() => {
       global_user = global.user;
     });
 
     afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
       global.user = global_user;
     });
 
@@ -488,19 +426,6 @@ describe('confirmOrder', function () {
   });
 
   describe('confirmOrder', () => {
-
-    before(() => {
-      mockery.enable({
-        useCleanCache: true,
-        warnOnReplace: false,
-        warnOnUnregistered: false
-      });
-    });
-
-    afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-    });
 
     it('successfully executes', () => {
 

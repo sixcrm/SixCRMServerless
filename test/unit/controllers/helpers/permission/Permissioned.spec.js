@@ -6,13 +6,10 @@ let expect = chai.expect;
 //const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 //const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const PermissionedController = global.SixCRM.routes.include('controllers','entities/Entity');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 
 
 describe('controllers/helpers/permission/Permissioned.js', () => {
-
-  let permissionedController;
 
   before(() => {
       mockery.enable({
@@ -20,6 +17,25 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
           warnOnReplace: false,
           warnOnUnregistered: false
       });
+  });
+
+  beforeEach(() => {
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
+    });
+
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+        publish() {
+            return Promise.resolve({});
+        }
+        getRegion() {
+            return 'localhost';
+        }
+    });
   });
 
   beforeEach(() => {
@@ -33,10 +49,6 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
   describe('can', () => {
 
-    beforeEach(() => {
-      permissionedController = new PermissionedController('entity');
-    });
-
     afterEach(() => {
       delete global.user;
     });
@@ -45,6 +57,8 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
       let some_action = 'action_x';
       let some_object = 'object_y'
+      const PermissionedController = global.SixCRM.routes.include('controllers','entities/Entity');
+      let permissionedController = new PermissionedController('entity');
 
       try{
 
@@ -65,6 +79,8 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
       let some_object = 'object_y'
 
       PermissionTestGenerators.givenUserWithDenied(some_action, some_object);
+      const PermissionedController = global.SixCRM.routes.include('controllers','entities/Entity');
+      let permissionedController = new PermissionedController('entity');
 
       try {
 
@@ -84,6 +100,8 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
       let some_object = 'object_y';
 
       PermissionTestGenerators.givenUserWithNoPermissions();
+      const PermissionedController = global.SixCRM.routes.include('controllers','entities/Entity');
+      let permissionedController = new PermissionedController('entity');
 
       try {
         permissionedController.can({action: some_action, object: some_object});
@@ -99,6 +117,8 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
       let some_object = 'object_y';
 
       PermissionTestGenerators.givenUserWithAllowed(some_action, some_object);
+      const PermissionedController = global.SixCRM.routes.include('controllers','entities/Entity');
+      let permissionedController = new PermissionedController('entity');
 
       return permissionedController.can({action: some_action, object: some_object}).then((can) => {
 
@@ -112,10 +132,6 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
   describe('disableACLs/enableACLs', () => {
 
-    beforeEach(() => {
-      permissionedController = new PermissionedController('entity');
-    });
-
     afterEach(() => {
       delete global.user;
       global.disableactionchecks = false;
@@ -124,6 +140,8 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
     it('successfully disables the acls', () => {
 
+      const PermissionedController = global.SixCRM.routes.include('controllers','entities/Entity');
+      let permissionedController = new PermissionedController('entity');
       permissionedController.disableACLs();
       expect(global.disableactionchecks).to.equal(true);
       expect(global.disableaccountfilter).to.equal(true);
@@ -132,6 +150,8 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
     it('successfully disables and then enables the acls', () => {
 
+      const PermissionedController = global.SixCRM.routes.include('controllers','entities/Entity');
+      let permissionedController = new PermissionedController('entity');
       permissionedController.disableACLs();
       expect(global.disableactionchecks).to.equal(true);
       expect(global.disableaccountfilter).to.equal(true);
@@ -145,10 +165,6 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
   describe('setGlobalUser/unsetGlobalUser', () => {
 
-    beforeEach(() => {
-      permissionedController = new PermissionedController('entity');
-    });
-
     afterEach(() => {
       delete global.user;
     });
@@ -157,6 +173,8 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
       let user = {id: 'some@testuser.com'}
 
+      const PermissionedController = global.SixCRM.routes.include('controllers','entities/Entity');
+      let permissionedController = new PermissionedController('entity');
       permissionedController.setGlobalUser(user);
       expect(global.user).to.deep.equal(user);
       permissionedController.unsetGlobalUser();
@@ -168,6 +186,8 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
       let user = 'some@testuser.com';
 
+      const PermissionedController = global.SixCRM.routes.include('controllers','entities/Entity');
+      let permissionedController = new PermissionedController('entity');
       permissionedController.setGlobalUser(user);
       expect(global.user).to.equal(user);
       permissionedController.unsetGlobalUser();

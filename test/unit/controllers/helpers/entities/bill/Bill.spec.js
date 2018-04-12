@@ -32,6 +32,23 @@ describe('helpers/entities/bill/Bill.js', () => {
 
   });
 
+  beforeEach(() => {
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
+    });
+
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+        publish() {
+            return Promise.resolve({});
+        }
+        getRegion() {
+            return 'localhost';
+        }
+    });
+  });
+
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

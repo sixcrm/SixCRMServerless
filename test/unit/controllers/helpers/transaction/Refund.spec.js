@@ -6,20 +6,6 @@ const expect = chai.expect;
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const RefundHelperController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js');
-
-function getValidRefundParameters(){
-
-  let transaction = getValidTransaction();
-  let amount = (parseFloat(transaction.amount) / 2)
-
-  transaction.processor_response = JSON.parse(transaction.processor_response);
-
-  return {
-    transaction: transaction
-  };
-
-}
 
 function assumePermissionedRole(){
 
@@ -77,6 +63,16 @@ describe('helpers/transaction/Refund.js', () => {
         useCleanCache: true,
         warnOnReplace: false,
         warnOnUnregistered: false
+      });
+    });
+
+    beforeEach(() => {
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
+      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+        sendMessage() {
+          return Promise.resolve(true);
+        }
       });
     });
 
@@ -218,7 +214,7 @@ describe('helpers/transaction/Refund.js', () => {
 
         let mock_gateway = class {
           constructor(){}
-          refund({argumentation}){
+          refund(){
             return Promise.resolve(
               {
                 code: 200,
@@ -257,7 +253,7 @@ describe('helpers/transaction/Refund.js', () => {
                     expect(transaction_params).to.equal(transaction.id);
                     return Promise.resolve(merchant_provider);
                 }
-                get() {
+                get({id}) {
                     expect(id).to.equal(transaction.id);
                     return Promise.resolve(transaction);
                 }
@@ -272,7 +268,7 @@ describe('helpers/transaction/Refund.js', () => {
             let mock_gateway = class {
                 constructor(){}
 
-                refund({argumentation}){
+                refund(){
                     return Promise.resolve(
                         {
                             code: 200,

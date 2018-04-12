@@ -161,6 +161,23 @@ describe('controllers/providers/Register.js', () => {
   });
 
   beforeEach(() => {
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
+    });
+
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+        publish() {
+            return Promise.resolve({});
+        }
+        getRegion() {
+            return 'localhost';
+        }
+    });
+  });
+
+  beforeEach(() => {
     //global.SixCRM.localcache.clear('all');
   });
 

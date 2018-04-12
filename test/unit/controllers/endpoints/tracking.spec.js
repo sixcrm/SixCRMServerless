@@ -146,14 +146,20 @@ function getValidTrackers({campaigns, affiliates}){
 
 describe('tracking', () => {
 
-  beforeEach(() => {
+  before(() => {
     mockery.enable({
         useCleanCache: true,
         warnOnReplace: false,
         warnOnUnregistered: false
     });
-    mockery.resetCache();
-    mockery.deregisterAll();
+  });
+
+  beforeEach(() => {
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
+    });
   });
 
   afterEach(() => {
@@ -176,23 +182,11 @@ describe('tracking', () => {
 
     let global_user;
 
-    before(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-      mockery.enable({
-          useCleanCache: true,
-          warnOnReplace: false,
-          warnOnUnregistered: false
-      });
-    });
-
     beforeEach(() => {
       global_user = global.user;
     });
 
     afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
         global.user = global_user;
     });
 

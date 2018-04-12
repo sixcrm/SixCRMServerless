@@ -10,7 +10,6 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-let TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 
 function getValidTransaction(){
 
@@ -42,6 +41,25 @@ describe('helpers/entities/transaction/Transaction.js', () => {
       warnOnUnregistered: false
     });
 
+  });
+
+  beforeEach(() => {
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+      sendMessage() {
+        return Promise.resolve(true);
+      }
+    });
+
+    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+        publish() {
+            return Promise.resolve({});
+        }
+        getRegion() {
+            return 'localhost';
+        }
+    });
   });
 
   beforeEach(() => {
