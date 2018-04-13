@@ -2,17 +2,17 @@ const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLString = require('graphql').GraphQLString;
-const AnalyticsReportSelectionType = require('../../analytics-report-selection-type');
+const AnalyticsReportSelector = require('../common/analytics-report-selector');
 
 module.exports = new GraphQLInputObjectType({
-	name: 'AnalyticsReportInputFilterType',
+	name: 'AnalyticsReportFacetsRequest',
 	fields: () => ({
 		facets: {
 			type: new GraphQLList(GraphQLString),
-			description: 'Facets'
+			description: 'Facets to fetch'
 		},
 		reportType: {
-			type: new GraphQLNonNull(AnalyticsReportSelectionType),
+			type: new GraphQLNonNull(AnalyticsReportSelector),
 			description: 'The type of the analytics report'
 		},
 	})

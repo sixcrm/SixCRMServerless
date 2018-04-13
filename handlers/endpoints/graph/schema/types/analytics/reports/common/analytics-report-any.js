@@ -2,7 +2,7 @@ const GraphQLScalarType = require('graphql').GraphQLScalarType;
 const Kind = require('graphql').Kind;
 
 module.exports = new GraphQLScalarType({
-	name: 'AnyType',
+	name: 'AnalyticsReportAny',
 	serialize: anyValue,
 	parseValue: anyValue,
 	parseLiteral

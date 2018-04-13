@@ -1,7 +1,7 @@
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
-const AnalyticsReportDictionaryEntryType = require('./analytics-report-dictionary-entry-type');
+const AnalyticsReportDictionaryEntry = require('./analytics-report-dictionary-entry');
 
 module.exports = new GraphQLObjectType({
 	name: 'AnayticsReportFacetType',
@@ -11,7 +11,7 @@ module.exports = new GraphQLObjectType({
 			type: GraphQLString
 		},
 		values: {
-			type: new GraphQLList(AnalyticsReportDictionaryEntryType)
+			type: new GraphQLList(AnalyticsReportDictionaryEntry)
 		}
 	}),
 	interfaces: []

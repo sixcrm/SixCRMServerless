@@ -1,7 +1,7 @@
 const GraphQLEnumType = require('graphql').GraphQLEnumType;
 
 module.exports = new GraphQLEnumType({
-	name: 'AnalyticsReportSelectorType',
+	name: 'AnalyticsReportSelector',
 	values: {
 		revenueVersusOrders: {
 			value: 'revenueVersusOrders'

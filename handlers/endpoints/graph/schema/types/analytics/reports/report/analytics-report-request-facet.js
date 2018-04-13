@@ -1,17 +1,17 @@
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
-const AnalyticsReportAnyType = require('../analytics-report-any-type');
+const AnalyticsReportAny= require('../common/analytics-report-any');
 
 module.exports = new GraphQLInputObjectType({
-	name: 'AnayticsReportInputFacetType',
+	name: 'AnayticsReportRequestFacet',
 	description: 'Facet',
 	fields: () => ({
 		facet: {
 			type: GraphQLString
 		},
 		values: {
-			type: new GraphQLList(AnalyticsReportAnyType)
+			type: new GraphQLList(AnalyticsReportAny)
 		}
 	})
 });
