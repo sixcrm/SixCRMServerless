@@ -220,7 +220,7 @@ const IPCheckController = global.SixCRM.routes.include('controllers', 'endpoints
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Query',
-	fields: () => (Object.assign({
+	fields: () => Object.assign({}, {
 		/*
 		 * Esoteric requests
 		 */
@@ -2575,5 +2575,5 @@ module.exports.graphObj = new GraphQLObjectType({
 				return ipCheckController.checkIP();
 			}
 		}
-	}), analyticsQueryType)
+	}, analyticsQueryType)
 });
