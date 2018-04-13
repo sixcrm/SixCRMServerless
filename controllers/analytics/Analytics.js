@@ -365,6 +365,14 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	}
 
+	getReportFacets(parameters) {
+
+		return {
+			facets: []
+		};
+
+	}
+
 	getReport(parameters) {
 
 		du.debug('Get home chart timeseries');
