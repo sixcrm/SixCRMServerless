@@ -7,171 +7,184 @@ const ShippingStatusController = global.SixCRM.routes.include('controllers', 'he
 
 module.exports = class confirmDeliveredController extends workerController {
 
-    constructor(){
+	constructor() {
 
-      super();
+		super();
 
-      this.parameter_definition = {
-        execute: {
-          required: {
-            message: 'message'
-          },
-          optional:{}
-        }
-      };
+		this.parameter_definition = {
+			execute: {
+				required: {
+					message: 'message'
+				},
+				optional: {}
+			}
+		};
 
-      this.parameter_validation = {
-        'transactions': global.SixCRM.routes.path('model', 'entities/components/transactions.json'),
-        'shippedtransactionproducts': global.SixCRM.routes.path('model', 'workers/confirmDelivered/shippedtransactionproducts.json'),
-        'shippingreceipts': global.SixCRM.routes.path('model', 'entities/components/shippingreceipts.json'),
-        'productdeliveredstati':global.SixCRM.routes.path('model', 'workers/confirmDelivered/productdeliveredstati.json'),
-        'rebilldeliveredstatus':global.SixCRM.routes.path('model', 'workers/confirmDelivered/rebilldeliveredstatus.json')
-      };
+		this.parameter_validation = {
+			'transactions': global.SixCRM.routes.path('model', 'entities/components/transactions.json'),
+			'shippedtransactionproducts': global.SixCRM.routes.path('model', 'workers/confirmDelivered/shippedtransactionproducts.json'),
+			'shippingreceipts': global.SixCRM.routes.path('model', 'entities/components/shippingreceipts.json'),
+			'productdeliveredstati': global.SixCRM.routes.path('model', 'workers/confirmDelivered/productdeliveredstati.json'),
+			'rebilldeliveredstatus': global.SixCRM.routes.path('model', 'workers/confirmDelivered/rebilldeliveredstatus.json')
+		};
 
-      this.augmentParameters();
+		this.augmentParameters();
 
-    }
+	}
 
-    execute(message){
+	execute(message) {
 
-      du.debug('Execute');
+		du.debug('Execute');
 
-      return this.preamble(message)
-      .then(() => this.acquireTransactions())
-      .then(() => this.acquireTransactionProducts())
-      .then(() => this.acquireShippingReceipts())
-      .then(() => this.acquireProductDeliveredStati())
-      .then(() => this.setDeliveredStatus())
-      .then(() => this.respond())
-      .catch(error => {
-        du.error(error);
-        return super.respond('error', error.message);
-      });
+		return this.preamble(message)
+			.then(() => this.acquireTransactions())
+			.then(() => this.acquireTransactionProducts())
+			.then(() => this.acquireShippingReceipts())
+			.then(() => this.acquireProductDeliveredStati())
+			.then(() => this.setDeliveredStatus())
+			.then(() => this.respond())
+			.catch(error => {
+				du.error(error);
+				return super.respond('error', error.message);
+			});
 
-    }
+	}
 
-    acquireTransactions(){
+	acquireTransactions() {
 
-      du.debug('Acquire Transactions');
+		du.debug('Acquire Transactions');
 
-      let rebill = this.parameters.get('rebill');
+		let rebill = this.parameters.get('rebill');
 
-      if(!_.has(this, 'rebillController')){
-        const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-        this.rebillController = new RebillController();
-      }
+		if (!_.has(this, 'rebillController')) {
+			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+			this.rebillController = new RebillController();
+		}
 
-      return this.rebillController.listTransactions(rebill)
-      .then((result) => this.rebillController.getResult(result, 'transactions'))
-      .then(transactions => {
+		return this.rebillController.listTransactions(rebill)
+			.then((result) => this.rebillController.getResult(result, 'transactions'))
+			.then(transactions => {
 
-        this.parameters.set('transactions', transactions);
+				this.parameters.set('transactions', transactions);
 
-        return true;
+				return true;
 
-      });
+			});
 
-    }
+	}
 
-    acquireTransactionProducts(){
+	acquireTransactionProducts() {
 
-      du.debug('Acquire Transaction Products');
+		du.debug('Acquire Transaction Products');
 
-      let transactions = this.parameters.get('transactions');
+		let transactions = this.parameters.get('transactions');
 
-      if(!_.has(this, 'transactionHelperController')){
-        const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+		if (!_.has(this, 'transactionHelperController')) {
+			const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 
-        this.transactionHelperController = new TransactionHelperController();
-      }
+			this.transactionHelperController = new TransactionHelperController();
+		}
 
-      let transaction_products = this.transactionHelperController.getTransactionProducts(transactions);
+		let transaction_products = this.transactionHelperController.getTransactionProducts(transactions);
 
-      this.parameters.set('shippedtransactionproducts', transaction_products);
+		this.parameters.set('shippedtransactionproducts', transaction_products);
 
-      return Promise.resolve(true);
+		return Promise.resolve(true);
 
-    }
+	}
 
-    acquireShippingReceipts(){
+	acquireShippingReceipts() {
 
-      du.debug('Acquire Shipping Receipts');
+		du.debug('Acquire Shipping Receipts');
 
-      let transaction_products = this.parameters.get('shippedtransactionproducts');
+		let transaction_products = this.parameters.get('shippedtransactionproducts');
 
-      if(!_.has(this, 'shippingReceiptController')){
-          const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
-          this.shippingReceiptController = new ShippingReceiptController();
-      }
+		if (!_.has(this, 'shippingReceiptController')) {
+			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+			this.shippingReceiptController = new ShippingReceiptController();
+		}
 
-      let shipping_receipt_promises = arrayutilities.map(transaction_products, transaction_product => {
-        return this.shippingReceiptController.get({id:transaction_product.shipping_receipt});
-      });
+		let shipping_receipt_promises = arrayutilities.map(transaction_products, transaction_product => {
+			return this.shippingReceiptController.get({
+				id: transaction_product.shipping_receipt
+			});
+		});
 
-      return Promise.all(shipping_receipt_promises).then(shipping_receipts => {
+		return Promise.all(shipping_receipt_promises).then(shipping_receipts => {
 
-        this.parameters.set('shippingreceipts', shipping_receipts);
+			this.parameters.set('shippingreceipts', shipping_receipts);
 
-        return true;
+			return true;
 
-      });
+		});
 
-    }
+	}
 
-    acquireProductDeliveredStati(){
+	acquireProductDeliveredStati() {
 
-      du.debug('Acquire Product Delivered Stati');
+		du.debug('Acquire Product Delivered Stati');
 
-      let shipping_receipts = this.parameters.get('shippingreceipts');
+		let shipping_receipts = this.parameters.get('shippingreceipts');
 
-      let delivered_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
+		let delivered_stati = arrayutilities.map(shipping_receipts, (shipping_receipt) => {
 
-        let shippingStatusController = new ShippingStatusController();
+			let shippingStatusController = new ShippingStatusController();
 
-        return shippingStatusController.isDelivered({shipping_receipt: shipping_receipt});
+			return shippingStatusController.isDelivered({
+				shipping_receipt: shipping_receipt
+			});
 
-      });
+		});
 
-      return Promise.all(delivered_stati).then(delivered_stati => {
+		return Promise.all(delivered_stati).then(delivered_stati => {
 
-        this.parameters.set('productdeliveredstati', delivered_stati);
+			this.parameters.set('productdeliveredstati', delivered_stati);
 
-        return true;
+			return true;
 
-      });
+		});
 
-    }
+	}
 
-    setDeliveredStatus() {
+	setDeliveredStatus() {
 
-      du.debug('Confirm Delivered');
+		du.debug('Confirm Delivered');
 
-      let delivered_stati = this.parameters.get('productdeliveredstati');
+		let delivered_stati = this.parameters.get('productdeliveredstati');
 
-      let delivered = arrayutilities.every(delivered_stati, (delivered_status) => {
-        return delivered_status;
-      });
+		let delivered = arrayutilities.every(delivered_stati, (delivered_status) => {
+			return delivered_status;
+		});
 
-      this.parameters.set('rebilldeliveredstatus', delivered);
+		this.parameters.set('rebilldeliveredstatus', delivered);
 
-      return Promise.resolve(true);
+		return Promise.resolve(true);
 
-    }
+	}
 
-    respond(){
+	respond() {
 
-      du.debug('Respond');
+		du.debug('Respond');
 
-      let delivered = this.parameters.get('rebilldeliveredstatus');
+		let delivered = this.parameters.get('rebilldeliveredstatus');
 
-      if(delivered == true){
-        this.pushEvent({event_type: 'delivery_confirmation'});
-      }
+		let promise = () => Promise.resolve();
 
-      let response_code = (delivered == true)?'success':'noaction';
+		if (delivered == true) {
+			promise = this.pushEvent({
+				event_type: 'delivery_confirmation'
+			});
+		}
 
-      return super.respond(response_code);
+		return promise()
+			.then(() => {
 
-    }
+				let response_code = (delivered == true) ? 'success' : 'noaction';
+
+				return super.respond(response_code);
+
+			});
+
+	}
 
 }
