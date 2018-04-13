@@ -81,7 +81,7 @@ module.exports = class EventHelperController {
 				}
 
 				if(!_.has(value, 'StringValue') || !_.isString(value.StringValue)){
-					eu.throwError('server', 'Message attribute "'+key+'" DataType must be set and of type String.');
+					eu.throwError('server', 'Message attribute "'+key+'" StringValue must be set and of type String.');
 				}
 
 			});
