@@ -102,7 +102,7 @@ describe('controllers/workers/shipProduct', function () {
       shipProductController.parameters.set('rebill', rebill);
 
       return shipProductController.ship().then(result => {
-        expect(result).to.equal(true);
+
         expect(shipProductController.parameters.store['terminalresponse']).to.equal(terminal_response);
       });
 
