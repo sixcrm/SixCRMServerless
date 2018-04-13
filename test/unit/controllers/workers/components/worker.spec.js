@@ -4,237 +4,254 @@ const mockery = require('mockery');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-function getValidMessage(){
-    return MockEntities.getValidMessage()
+function getValidMessage() {
+	return MockEntities.getValidMessage()
 }
 
 describe('controllers/workers/components/worker.js', function () {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-    describe('constructor', () => {
+	describe('constructor', () => {
 
-        it('successfully constructs', () => {
+		it('successfully constructs', () => {
 
-            const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-            let workerController = new WorkerController();
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-            expect(objectutilities.getClassName(workerController)).to.equal('workerController');
-        });
-    });
+			expect(objectutilities.getClassName(workerController)).to.equal('workerController');
+		});
+	});
 
-    describe('setMessage', () => {
+	describe('setMessage', () => {
 
-        it('returns unchanged message when message is specified', () => {
+		it('returns unchanged message when message is specified', () => {
 
-            let message = getValidMessage();
+			let message = getValidMessage();
 
-            const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-            let workerController = new WorkerController();
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-            expect(workerController.setMessage(message)).to.equal(message);
-        });
+			expect(workerController.setMessage(message)).to.equal(message);
+		});
 
-        it('retrieves message when message is not specified', () => {
+		it('retrieves message when message is not specified', () => {
 
-            let message = getValidMessage();
+			let message = getValidMessage();
 
-            const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-            let workerController = new WorkerController();
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-            workerController.parameters.set('message', message);
+			workerController.parameters.set('message', message);
 
-            expect(workerController.setMessage()).to.equal(message);
-        });
-    });
+			expect(workerController.setMessage()).to.equal(message);
+		});
+	});
 
-    describe('setResponseField', () => {
+	describe('setResponseField', () => {
 
-        it('returns response field unchanged when response field is specified', () => {
+		it('returns response field unchanged when response field is specified', () => {
 
-            const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-            let workerController = new WorkerController();
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-            expect(workerController.setResponseField('a_response_field')).to.equal('a_response_field');
-        });
+			expect(workerController.setResponseField('a_response_field')).to.equal('a_response_field');
+		});
 
-        it('returns previously set response field when response field is not specified', () => {
+		it('returns previously set response field when response field is not specified', () => {
 
-            const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-            let workerController = new WorkerController();
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-            workerController.response_field = 'a_response_field';
+			workerController.response_field = 'a_response_field';
 
-            expect(workerController.setResponseField()).to.equal('a_response_field');
-        });
+			expect(workerController.setResponseField()).to.equal('a_response_field');
+		});
 
-        it('returns default response field when response field is not specified nor previously set', () => {
+		it('returns default response field when response field is not specified nor previously set', () => {
 
-            const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-            let workerController = new WorkerController();
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-            delete workerController.response_field;
+			delete workerController.response_field;
 
-            expect(workerController.setResponseField()).to.equal('id');
-        });
-    });
+			expect(workerController.setResponseField()).to.equal('id');
+		});
+	});
 
-    describe('pushEvent', () => {
+	describe('pushEvent', () => {
 
-      it('returns true under minimum conditions', () => {
+		it('returns true under minimum conditions', () => {
 
-        let context = {
-          event_type: 'test'
-        };
+			let context = {
+				event_type: 'test'
+			};
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-          constructor(){}
-          pushEvent(){
-            return Promise.resolve({});
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				constructor() {}
+				pushEvent() {
+					return Promise.resolve({});
+				}
+			});
 
-        const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-        let workerController = new WorkerController();
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-        let result = workerController.pushEvent({context: context});
-        expect(result).to.equal(true);
+			return workerController.pushEvent({
+				context: context
+			});
 
-      });
+		});
 
-      it('returns true when event type is not specified but is present in the context', () => {
+		it('returns true when event type is not specified but is present in the context', () => {
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-          constructor(){}
-          pushEvent(){
-            return Promise.resolve({});
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				constructor() {}
+				pushEvent() {
+					return Promise.resolve({});
+				}
+			});
 
-        const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-        let workerController = new WorkerController();
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-        let result = workerController.pushEvent({event_type: 'test'});
-        expect(result).to.equal(true);
+			return workerController.pushEvent({
+				event_type: 'test'
+			});
 
-      });
+		});
 
-      it('throws an error when event_type is not set', () => {
+		it('throws an error when event_type is not set', () => {
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-          constructor(){}
-          pushEvent(){
-            return Promise.resolve({});
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				constructor() {}
+				pushEvent() {
+					return Promise.resolve({});
+				}
+			});
 
-        const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-        let workerController = new WorkerController();
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-        try{
-          workerController.pushEvent({});
-        }catch(error){
+			try {
 
-          expect(error.message).to.equal('[500] Unable to identify event_type.');
+				return workerController.pushEvent({});
 
-        }
+			} catch (error) {
 
-      });
+				expect(error.message).to.equal('[500] Unable to identify event_type.');
 
-      it('throws an error when context is not set', () => {
+			}
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-          constructor(){}
-          pushEvent(){
-            return Promise.resolve({});
-          }
-        });
+		});
 
-        const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-        let workerController = new WorkerController();
+		it('throws an error when context is not set', () => {
 
-        delete workerController.parameters.store;
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				constructor() {}
+				pushEvent() {
+					return Promise.resolve({});
+				}
+			});
 
-        try{
-          workerController.pushEvent({event_type: 'test'});
-        }catch(error){
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-          expect(error.message).to.equal('[500] Unset context.');
+			delete workerController.parameters.store;
 
-        }
+			try {
 
-      });
+				return workerController.pushEvent({
+					event_type: 'test'
+				});
 
-      it('Sets default message attributes', () => {
+			} catch (error) {
 
-        const expected_message_attributes = {
-          'event_type':{
-            DataType: 'String',
-            StringValue: 'test'
-          }
-        };
+				expect(error.message).to.equal('[500] Unset context.');
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-          constructor(){}
-          pushEvent({event_type, message_attributes}){
-            expect(event_type).to.equal('test');
-            expect(message_attributes).to.deep.equal(expected_message_attributes);
-            return Promise.resolve({});
-          }
-        });
+			}
 
-        const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-        let workerController = new WorkerController();
+		});
 
-        let result = workerController.pushEvent({event_type: 'test'});
-        expect(result).to.equal(true);
+		it('Sets default message attributes', () => {
 
-      });
+			const expected_message_attributes = {
+				'event_type': {
+					DataType: 'String',
+					StringValue: 'test'
+				}
+			};
 
-      it('Sets explicit message attributes', () => {
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				constructor() {}
+				pushEvent({
+					event_type,
+					message_attributes
+				}) {
+					expect(event_type).to.equal('test');
+					expect(message_attributes).to.deep.equal(expected_message_attributes);
+					return Promise.resolve({});
+				}
+			});
 
-        const message_attributes = {
-          'event_type':{
-            DataType: 'String',
-            StringValue: 'test2'
-          }
-        };
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
 
-        const expected_message_attributes = {
-          'event_type':{
-            DataType: 'String',
-            StringValue: 'test2'
-          }
-        };
+			return workerController.pushEvent({
+				event_type: 'test'
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-          constructor(){}
-          pushEvent({event_type, message_attributes}){
-            expect(event_type).to.equal('test');
-            expect(message_attributes).to.deep.equal(expected_message_attributes);
-            return Promise.resolve({});
-          }
-        });
+		});
 
-        const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
-        let workerController = new WorkerController();
+		it('Sets explicit message attributes', () => {
 
-        let result = workerController.pushEvent({event_type: 'test', message_attributes: message_attributes});
-        expect(result).to.equal(true);
+			const message_attributes = {
+				'event_type': {
+					DataType: 'String',
+					StringValue: 'test2'
+				}
+			};
 
-      });
+			const expected_message_attributes = {
+				'event_type': {
+					DataType: 'String',
+					StringValue: 'test2'
+				}
+			};
 
-    });
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				constructor() {}
+				pushEvent({
+					event_type,
+					message_attributes
+				}) {
+					expect(event_type).to.equal('test');
+					expect(message_attributes).to.deep.equal(expected_message_attributes);
+					return Promise.resolve({});
+				}
+			});
+
+			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			let workerController = new WorkerController();
+
+			return workerController.pushEvent({
+				event_type: 'test',
+				message_attributes: message_attributes
+			});
+
+		});
+
+	});
 
 });

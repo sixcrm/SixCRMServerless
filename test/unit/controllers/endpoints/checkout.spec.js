@@ -647,9 +647,7 @@ describe('checkout', function () {
 
       checkoutController.parameters.set('confirmation', confirmation);
 
-      let result = checkoutController.postProcessing();
-
-      expect(result).to.deep.equal(true);
+      return checkoutController.postProcessing();
 
     });
 

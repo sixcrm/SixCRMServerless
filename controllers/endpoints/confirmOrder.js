@@ -89,9 +89,8 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
     .then(() => this.hydrateSessionProperties())
     .then(() => this.closeSession())
     .then(() => this.buildResponse())
-    .then(() => {
-
-      this.postProcessing();
+    .then(() => this.postProcessing())
+		.then(() => {
 
       return this.parameters.get('response');
 
@@ -206,9 +205,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
     du.debug('Post Processing');
 
-    this.pushEvent();
-
-    return true;
+    return this.pushEvent();
 
   }
 

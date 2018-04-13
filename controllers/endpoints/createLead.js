@@ -82,9 +82,8 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
       return this.assureLeadProperties()
       .then(() => this.createSessionPrototype())
 			.then(() => this.assureSession())
-      .then(() => {
-
-        this.postProcessing();
+			.then(() => this.postProcessing())
+			.then(() => {
 
         return this.parameters.get('session');
 
@@ -213,9 +212,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
       du.debug('Post Processing');
 
-      this.pushEvent()
-
-      return true;
+      return this.pushEvent()
 
     }
 

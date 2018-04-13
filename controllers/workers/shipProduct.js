@@ -6,72 +6,79 @@ const workerController = global.SixCRM.routes.include('controllers', 'workers/co
 
 module.exports = class shipProductController extends workerController {
 
-  constructor(){
+	constructor() {
 
-    super();
+		super();
 
-    this.parameter_definition = {
-      execute: {
-        required: {
-          message: 'message'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			execute: {
+				required: {
+					message: 'message'
+				},
+				optional: {}
+			}
+		};
 
-    this.parameter_validation = {
-      message: global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
-      rebill: global.SixCRM.routes.path('model', 'entities/rebill.json'),
-      terminalresponse: global.SixCRM.routes.path('model', 'workers/shipProduct/terminalresponse.json')
-    };
+		this.parameter_validation = {
+			message: global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
+			rebill: global.SixCRM.routes.path('model', 'entities/rebill.json'),
+			terminalresponse: global.SixCRM.routes.path('model', 'workers/shipProduct/terminalresponse.json')
+		};
 
-    this.augmentParameters();
+		this.augmentParameters();
 
-  }
+	}
 
-  execute(message){
+	execute(message) {
 
-    return this.preamble(message)
-    .then(() => this.ship())
-    .then(() => this.respond())
-    .catch(error => {
-        du.error(error);
-        return super.respond('error', error.message);
-    })
+		return this.preamble(message)
+			.then(() => this.ship())
+			.then(() => this.respond())
+			.catch(error => {
+				du.error(error);
+				return super.respond('error', error.message);
+			})
 
-  }
+	}
 
-  ship(){
+	ship() {
 
-    du.debug('Ship');
+		du.debug('Ship');
 
-    let rebill = this.parameters.get('rebill');
+		let rebill = this.parameters.get('rebill');
 
-    const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-    let terminalController = new TerminalController();
+		const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+		let terminalController = new TerminalController();
 
-    return terminalController.fulfill({rebill: rebill}).then(response => {
+		return terminalController.fulfill({
+			rebill: rebill
+		}).then(response => {
 
-      let terminal_response_code = response.getCode();
+			let terminal_response_code = response.getCode();
 
-      this.pushEvent({event_type: 'fulfillment_triggered_'+terminal_response_code});
+			return this.pushEvent({
+					event_type: 'fulfillment_triggered_' + terminal_response_code
+				})
+				.then(() => {
 
-      this.parameters.set('terminalresponse', response);
+					this.parameters.set('terminalresponse', response);
 
-      return Promise.resolve(true);
+					return;
 
-    });
+				});
 
-  }
+		});
 
-  respond(){
+	}
 
-    du.debug('Respond');
+	respond() {
 
-    let terminal_response = this.parameters.get('terminalresponse');
+		du.debug('Respond');
 
-    return super.respond(terminal_response.getCode());
+		let terminal_response = this.parameters.get('terminalresponse');
 
-  }
+		return super.respond(terminal_response.getCode());
+
+	}
 
 }
