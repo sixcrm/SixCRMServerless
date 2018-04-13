@@ -365,7 +365,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	}
 
-	getReportFacets(parameters) {
+	getReportFacets() {
 
 		return {
 			facets: []
