@@ -307,7 +307,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
       let creditcard = this.parameters.get('creditcard');
 
-      let binnumber = this.creditCardHelperController.getBINNumber(creditcard.number);
+      let binnumber = this.creditCardHelperController.getBINNumber(creditcard);
 
       if(_.isNull(binnumber)){
 

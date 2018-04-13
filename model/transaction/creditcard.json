@@ -51,10 +51,9 @@
 					},
 					"required":["line1","city","state","zip","country"]
 				},
-				"number":{
-					"type":"string",
-					"minLength":12
-				},
+				"token":{"$ref": "../definitions/creditcardtoken.json"},
+				"first_six":{"$ref": "../definitions/creditcardfirstsix.json"},
+				"last_four":{"$ref":"../definitions/creditcardlastfour.json"},
 				"ccv":{"$ref": "#/definitions/CreditCardCCV"},
 				"expiration":{"$ref": "#/definitions/CreditCardExpirationDate"},
 				"name":{
@@ -64,7 +63,7 @@
 				"created_at":{"$ref": "#/definitions/ISO8601"},
 				"updated_at":{"$ref": "#/definitions/ISO8601"}
 			},
-			"required":["account", "address", "number", "expiration","ccv", "name", "created_at", "updated_at"]
+			"required":["account", "address", "first_six", "token", "last_four", "expiration", "name", "created_at", "updated_at"]
 		},
 		{"$ref": "#/definitions/UUIDv4"}
 	]

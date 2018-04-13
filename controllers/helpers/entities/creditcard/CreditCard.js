@@ -69,9 +69,9 @@ module.exports = class CreditCardHelper {
 
     let cc_number = null;
 
-    if(_.has(creditcard, 'number')){
+    if(_.has(creditcard, 'first_six')){
 
-      cc_number = creditcard.number;
+      cc_number = creditcard.first_six;
 
     }else if(_.isString(creditcard)){
 

@@ -119,14 +119,12 @@ describe('billToHoldStressTest', () => {
             let merchantProviderGroupAssociation = getMerchantProviderGroupAssociation();
 
             let rebill_id = [rebill.id, uuidV4()];
-            let credit_card_number = [creditCard.number/*, "1111111111111111"*/];
             let customer_credit_card_id = [creditCard.id, uuidV4()];
             let second_attempt = randomutilities.randomBoolean();
             let first_attempt = randomutilities.randomBoolean();
 
             //create random scenarios
             rebill_id = randomutilities.selectRandomFromArray(rebill_id);
-            credit_card_number = randomutilities.selectRandomFromArray(credit_card_number);
             customer.creditcards[0] = randomutilities.selectRandomFromArray(customer_credit_card_id);
             if (first_attempt) rebill.first_attempt = timestamp.createTimestampSeconds();
             if (second_attempt) rebill.second_attempt = true;
@@ -141,11 +139,8 @@ describe('billToHoldStressTest', () => {
             session.completed = false;
             session.id = rebill.parentsession;
             session.product_schedules = rebill.product_schedules;
-            creditCard.number = credit_card_number;
-            bin.binnumber = parseInt(credit_card_number.slice(0,6));
-
-            //credit cards with number "1111111111111111" go to recover
-            //if (credit_card_number === "1111111111111111" ) number_of_failing++;
+            bin.binnumber = parseInt(creditCard.first_six);
+            creditCard.number = creditCard.first_six + "111111" + creditCard.last_four;
 
             //missing rebill goes to error
             //rebill with second attempt goes to error

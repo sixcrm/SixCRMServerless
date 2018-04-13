@@ -224,7 +224,7 @@ describe('controllers/helpers/entities/creditcard/CreditCard.js', () => {
 
           let creditCard = getValidCreditCard();
 
-          creditCard.number = '411111';
+          creditCard.first_six = '411111';
 
           let CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
           const creditCardHelperController = new CreditCardHelperController();
@@ -236,12 +236,12 @@ describe('controllers/helpers/entities/creditcard/CreditCard.js', () => {
 
           let creditCard = getValidCreditCard();
 
-          creditCard.number = '411111';
+          creditCard.first_six = '411111';
 
           let CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
           const creditCardHelperController = new CreditCardHelperController();
 
-          expect(creditCardHelperController.getBINNumber(creditCard.number)).to.equal('411111');
+          expect(creditCardHelperController.getBINNumber(creditCard.first_six)).to.equal('411111');
       });
 
       it('returns null when credit card number is a number', () => {

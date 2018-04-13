@@ -11,12 +11,14 @@
 		"creditcard":{
       "type":"object",
       "properties":{
-        "number":{"$ref":"../../definitions/creditcardnumber.json"},
+	    "token":{"$ref": "../../definitions/creditcardtoken.json"},
+	    "first_six":{"$ref": "../../definitions/creditcardfirstsix.json"},
+	    "last_four":{"$ref":"../../definitions/creditcardlastfour.json"},
         "ccv":{"$ref":"../../definitions/creditcardccv.json"},
         "expiration":{"$ref":"../../definitions/creditcardexpirationdate.json"},
         "address":{"$ref":"../../definitions/address.json"}
       },
-      "required":["number", "ccv", "expiration"]
+      "required":["first_six", "token", "last_four", "expiration"]
     },
 		"customer":{
       "firstname":{"$ref":"../../definitions/firstname.json"},

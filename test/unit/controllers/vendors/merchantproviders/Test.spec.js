@@ -50,32 +50,8 @@ function getValidRequestParametersObject(){
   return {
     amount: 100.00,
     count: 3,
-    creditcard: {
-      number: '5105105105105100',
-      ccv: '123',
-      expiration:'12/2014',
-      address: {
-        line1:'123 Main Street Apt. 1',
-        city:'Los Angeles',
-        state:'CA',
-        zip:'90066',
-        country: 'US'
-      }
-    },
-    customer: {
-      id: 'randomid',
-      firstname: 'John',
-      lastname: 'Doe',
-      email:'user5@example.com',
-      address: {
-        line1: '456 Another St.',
-        line2: 'Apartment 2',
-        city: 'Anaheim',
-        state: 'CA',
-        zip: '90067',
-        country: 'US'
-      }
-    }
+    creditcard: MockEntities.getValidPlaintextCreditCard(),
+    customer: MockEntities.getValidCustomer()
   };
 
 }
