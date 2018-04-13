@@ -43,9 +43,7 @@ module.exports = class HelperController {
       this.eventHelperController = new EventHelperController();
     }
 
-    this.eventHelperController.pushEvent({event_type: event_type, context: context, message_attributes: message_attributes});
-
-    return true;
+    return this.eventHelperController.pushEvent({event_type: event_type, context: context, message_attributes: message_attributes});
 
   }
 

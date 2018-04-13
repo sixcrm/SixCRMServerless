@@ -208,9 +208,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
     du.debug('Post Invite');
 
-    this.pushEvent({event_type: 'user_invited'});
-
-    return true;
+    return this.pushEvent({event_type: 'user_invited'});
 
   }
 
@@ -218,9 +216,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
     du.debug('Post Invite Resend');
 
-    this.pushEvent({event_type: 'user_invite_resent'});
-
-    return true;
+    return this.pushEvent({event_type: 'user_invite_resent'});
 
   }
 
@@ -228,9 +224,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
     du.debug('Post Accept');
 
-    this.pushEvent({event_type: 'user_invite_accepted'});
-
-    return true;
+    return this.pushEvent({event_type: 'user_invite_accepted'});
 
   }
 

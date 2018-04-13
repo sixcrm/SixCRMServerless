@@ -1,4 +1,5 @@
 const _ = require("underscore");
+const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
@@ -100,30 +101,33 @@ module.exports = class recoverBillingController extends workerController {
 			return false;
 		}
 
-		return arrayutilities.serial(transactions, (current, transaction) => {
+		return BBPromise.each(transactions, (transaction) => {
 
-			this.pushEvent({
-				event_type: 'transaction_recovery_' + transaction.result,
-				context: Object.assign({},
-					this.parmeters.store, {
-						transaction
-					})
-			});
+			return this.pushEvent({
+					event_type: 'transaction_recovery_' + transaction.result,
+					context: Object.assign({},
+						this.parmeters.store, {
+							transaction
+						})
+				})
+				.then(() => {
 
-			if (transaction.type != 'sale' || transaction.result != 'success') {
-				return false;
-			}
+					if (transaction.type != 'sale' || transaction.result != 'success') {
+						return false;
+					}
 
-			const merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+					const merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
-			return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
-				merchant_provider: transaction.merchant_provider,
-				day: transaction.created_at,
-				total: transaction.amount,
-				type: 'recurring'
-			});
+					return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
+						merchant_provider: transaction.merchant_provider,
+						day: transaction.created_at,
+						total: transaction.amount,
+						type: 'recurring'
+					});
 
-		}, Promise.resolve());
+				});
+
+		});
 
 	}
 

@@ -141,9 +141,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 		du.debug('Post Processing');
 
-		this.pushEvent(event_type);
-
-		return true;
+		return this.pushEvent(event_type);
 
 	}
 
@@ -177,7 +175,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 			this.eventHelperController = new EventHelperController();
 		}
 
-		this.eventHelperController.pushEvent({
+		return this.eventHelperController.pushEvent({
 			event_type: event_type,
 			context: Object.assign({
 				id: uuid.v4()

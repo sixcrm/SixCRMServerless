@@ -87,9 +87,9 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			.then(() => this.createRebill())
 			.then(() => this.processRebill())
 			.then(() => this.buildInfoObject())
+			.then(() => this.postProcessing())
 			.then(() => {
 
-				this.postProcessing();
 				//Technical Debt:  We're going to want to prune this a bit...
 				return this.parameters.get('info');
 
@@ -509,6 +509,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.updateSessionWithWatermark(),
 			this.addRebillToStateMachine()
 		]);
+
 	}
 
 	reversePreviousRebill() {
