@@ -773,9 +773,7 @@ describe('createLead', function () {
       createLeadController.parameters.set('session', session);
       createLeadController.parameters.set('event', event);
 
-      let result = createLeadController.postProcessing();
-
-      expect(result).to.equal(true);
+      return createLeadController.postProcessing();
 
     });
 

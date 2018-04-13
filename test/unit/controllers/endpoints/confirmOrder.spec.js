@@ -376,9 +376,7 @@ describe('confirmOrder', function () {
 
       confirmOrderController.parameters.set('session', session);
 
-      let result = confirmOrderController.postProcessing();
-
-      expect(result).to.equal(true);
+      return confirmOrderController.postProcessing();
 
     });
   });
