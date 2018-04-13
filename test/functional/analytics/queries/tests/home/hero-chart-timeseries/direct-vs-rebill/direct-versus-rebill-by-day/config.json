@@ -2,7 +2,7 @@
 	"method": "getReport",
 	"test_case": "Direct versus rebill revenue",
 	"input": {
-		"analyticsfacets": {
+		"facets": {
 			"facets": [{
 					"facet": "start",
 					"values": ["2017-01-01T00:00:00.000Z"]

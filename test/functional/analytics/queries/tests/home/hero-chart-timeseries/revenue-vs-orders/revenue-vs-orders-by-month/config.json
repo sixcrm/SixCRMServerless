@@ -2,7 +2,7 @@
 	"method": "getReport",
 	"test_case": "Successful revenue and orders by month",
 	"input": {
-		"analyticsfacets": {
+		"facets": {
 			"facets": [{
 					"facet": "start",
 					"values": ["2017-01-01T00:00:00.000Z"]
