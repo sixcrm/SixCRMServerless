@@ -2567,5 +2567,5 @@ const fields = Object.assign({}, {
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Query',
-	fields
+	fields: () => fields
 });
