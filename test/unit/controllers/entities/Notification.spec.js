@@ -150,37 +150,24 @@ describe('controllers/Notification.js', () => {
         });
     });
 
-    describe('listByTypes', () => {
+    describe('listByType', () => {
 
-        it('lists notifications by types', () => {
+        it('lists notifications by type', () => {
 
             let notification = getValidNotification();
 
             let params = {
                 types: ['a_type'],
-                onlyUnexpired: true,
                 pagination: {
                     limit:2
-                },
-                user: true
-            };
-
-            let query_params = {
-                filter_expression: 'a_filter',
-                expression_attribute_names: {},
-                expression_attribute_values: {}
+                }
             };
 
             PermissionTestGenerators.givenUserWithAllowed('read', 'notification');
 
             mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
-                appendDisjunctionQueryParameters(query_parameters, field_name, array) {
-                    expect(field_name).to.equal('type');
-                    expect(array).to.equal(params.types);
-                    return query_params;
-                }
                 queryRecords(table, parameters, index) {
-                    expect(index).to.equal('account-index');
+                    expect(index).to.equal('access_string-index');
                     expect(table).to.equal('notifications');
                     expect(parameters).to.have.property('expression_attribute_names');
                     expect(parameters).to.have.property('filter_expression');
@@ -196,7 +183,7 @@ describe('controllers/Notification.js', () => {
             let NotificationController = global.SixCRM.routes.include('controllers','entities/Notification.js');
             const notificationController = new NotificationController();
 
-            return notificationController.listByTypes(params).then((result) => {
+            return notificationController.listByType(params).then((result) => {
                 expect(result).to.deep.equal({
                     pagination: {
                         count: 1,
