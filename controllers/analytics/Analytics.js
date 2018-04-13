@@ -377,7 +377,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		du.debug('Get home chart timeseries');
 
-		switch (parameters.analyticsfacets.reportType) {
+		switch (parameters.facets.reportType) {
 
 			case 'revenueVersusOrders':
 				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams(), this.default_queue_account_filter)
@@ -406,10 +406,10 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		function _resolveParams() {
 
-			const start = parameters.analyticsfacets.facets.find(f => f.facet === 'start');
-			const end = parameters.analyticsfacets.facets.find(f => f.facet === 'end');
-			const period = parameters.analyticsfacets.facets.find(f => f.facet === 'period');
-			const campaign = parameters.analyticsfacets.facets.find(f => f.facet === 'campaign');
+			const start = parameters.facets.facets.find(f => f.facet === 'start');
+			const end = parameters.facets.facets.find(f => f.facet === 'end');
+			const period = parameters.facets.facets.find(f => f.facet === 'period');
+			const campaign = parameters.facets.facets.find(f => f.facet === 'campaign');
 
 			const params = {
 				start: start.values[0],

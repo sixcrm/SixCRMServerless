@@ -2,7 +2,7 @@
 	"method": "getReport",
 	"test_case": "Successful orders and upsells by day",
 	"input": {
-		"analyticsfacets": {
+		"facets": {
 			"facets": [{
 					"facet": "start",
 					"values": ["2017-01-01T00:00:00.000Z"]

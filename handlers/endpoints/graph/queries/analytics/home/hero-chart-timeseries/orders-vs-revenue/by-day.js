@@ -1,6 +1,6 @@
 const body = `
 	query {
-		analytics (analyticsfacets: {
+		analytics (facets: {
 			reportType: revenueVersusOrders 
 			facets: [{
 				facet: "start"

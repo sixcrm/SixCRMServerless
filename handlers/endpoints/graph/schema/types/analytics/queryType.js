@@ -9,7 +9,7 @@ module.exports = {
 	analytics: {
 		type: AnalyticsReportResponse,
 		args: {
-			analyticsfacets: {
+			facets: {
 				type: AnalyticsReportRequest
 			}
 		},
@@ -24,7 +24,7 @@ module.exports = {
 	analyticsfacets: {
 		type: AnalyticsReportFacetsResponse,
 		args: {
-			analyticsfacets: {
+			facets: {
 				type: AnalyticsReportFacetsRequest
 			}
 		},
