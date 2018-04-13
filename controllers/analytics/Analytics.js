@@ -365,11 +365,36 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	}
 
-	getReportFacets() {
+	getReportFacets(parameters) {
 
-		return {
+		const facets = parameters.facets.facets;
+
+		console.log('FACET REQUEST', facets);
+
+		const facetResponse = {
 			facets: []
 		};
+
+		switch (parameters.facets.reportType) {
+
+			default:
+
+				if (_.includes(facets, 'affiliate')) {
+
+					facetResponse.facets.push({
+						facet: 'affilite',
+						values: []
+					})
+
+				}
+
+			break;
+
+		}
+
+		console.log('FACET RESPONSE', facetResponse);
+
+		return facetResponse;
 
 	}
 
