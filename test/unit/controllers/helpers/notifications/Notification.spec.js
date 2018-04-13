@@ -33,7 +33,7 @@ describe('/helpers/notifications/Notification.js', () => {
 
     it('throws a 404 error when notification type is not recognized', () => {
 
-      let event_type = 'test';
+      let event_type = 'unrecognized_event_type';
       const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
       let notificationHelperClass = new NotificationHelperClass();
 
@@ -42,7 +42,7 @@ describe('/helpers/notifications/Notification.js', () => {
       try {
         notificationHelperClass.isNotificationEventType();
       }catch(error){
-        expect(error.statusCode).to.equal(404);
+        expect(error.message).to.equal("[404] Not a notification event type: " + event_type);
       }
 
     });
@@ -95,6 +95,23 @@ describe('/helpers/notifications/Notification.js', () => {
 
         expect(result).to.equal(true);
         expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('TestNotification');
+
+      });
+
+    });
+
+    it('instantiates default notification class when there is no matching notification file for event type', () => {
+
+      let event_type = 'unrecognized_event_type';
+      const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
+      let notificationHelperClass = new NotificationHelperClass();
+
+      notificationHelperClass.parameters.set('eventtype', event_type);
+
+      return notificationHelperClass.instantiateNotificationClass().then((result) => {
+
+        expect(result).to.equal(true);
+        expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('DefaultNotification');
 
       });
 
