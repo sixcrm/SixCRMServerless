@@ -144,12 +144,15 @@ describe('controllers/workers/components/worker.js', function () {
 			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
 			let workerController = new WorkerController();
 
-			return workerController.pushEvent({})
-				.catch((error) => {
+			try {
 
-					expect(error.message).to.equal('[500] Unable to identify event_type.');
+				return workerController.pushEvent({});
 
-				});
+			} catch (error) {
+
+				expect(error.message).to.equal('[500] Unable to identify event_type.');
+
+			}
 
 		});
 
@@ -167,14 +170,17 @@ describe('controllers/workers/components/worker.js', function () {
 
 			delete workerController.parameters.store;
 
-			return workerController.pushEvent({
+			try {
+
+				return workerController.pushEvent({
 					event_type: 'test'
-				})
-				.catch((error) => {
-
-					expect(error.message).to.equal('[500] Unset context.');
-
 				});
+
+			} catch (error) {
+
+				expect(error.message).to.equal('[500] Unset context.');
+
+			}
 
 		});
 

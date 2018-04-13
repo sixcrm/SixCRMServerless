@@ -247,10 +247,13 @@ describe('controllers/workers/confirmShipped', () => {
 
       confirmedShippedController.parameters.set('rebillshippedstatus', rebill_shipped_status);
 
-      let response = confirmedShippedController.respond();
+			return confirmedShippedController.respond()
+				.then((response) => {
 
-      expect(objectutilities.getClassName(response)).to.equal('WorkerResponse');
-      expect(response.getCode()).to.equal('success');
+					expect(objectutilities.getClassName(response)).to.equal('WorkerResponse');
+					expect(response.getCode()).to.equal('success');
+
+				});
 
     });
 
@@ -270,10 +273,13 @@ describe('controllers/workers/confirmShipped', () => {
 
       confirmedShippedController.parameters.set('rebillshippedstatus', rebill_shipped_status);
 
-      let response = confirmedShippedController.respond();
+			return confirmedShippedController.respond()
+				.then((response) => {
 
-      expect(objectutilities.getClassName(response)).to.equal('WorkerResponse');
-      expect(response.getCode()).to.equal('noaction');
+					expect(objectutilities.getClassName(response)).to.equal('WorkerResponse');
+					expect(response.getCode()).to.equal('noaction');
+
+				});
 
     });
 

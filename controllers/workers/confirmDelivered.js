@@ -171,7 +171,7 @@ module.exports = class confirmDeliveredController extends workerController {
 		let promise = () => Promise.resolve();
 
 		if (delivered == true) {
-			promise = this.pushEvent({
+			promise = () => this.pushEvent({
 				event_type: 'delivery_confirmation'
 			});
 		}

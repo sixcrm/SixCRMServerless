@@ -311,7 +311,7 @@ module.exports = class confirmShippedController extends workerController {
 		let promise = () => Promise.resolve();
 
 		if (shipped == true) {
-			promise = this.pushEvent({
+			promise = () => this.pushEvent({
 				event_type: 'shipping_confirmation'
 			});
 		}
