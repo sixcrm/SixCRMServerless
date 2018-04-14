@@ -8,7 +8,7 @@ const s3provider = new S3Provider();
 let last_commit = exec(`git rev-parse --verify HEAD`).toString().replace(/\r?\n|\r/g,'');
 let bucket_name = 'sixcrm-' + global.SixCRM.configuration.stage + '-resources';
 
-return s3provider.assureBucket({Bucket: bucket_name})
+s3provider.assureBucket({Bucket: bucket_name})
     .then(() => {
 
         let parameters = {

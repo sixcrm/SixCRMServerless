@@ -1,6 +1,4 @@
-'use strict'
 require('../SixCRM.js');
-
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -55,8 +53,12 @@ for(let i = 0; i < configuration.transaction_count; i++){
 
 }
 
-return Promise.all(promises).then(() => {
+Promise.all(promises).then(() => {
   //du.output(promises);
   du.highlight('Complete');
   return true;
+}).catch((ex) => {
+
+	du.error(ex);
+
 });

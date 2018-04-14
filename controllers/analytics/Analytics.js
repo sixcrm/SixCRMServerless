@@ -365,40 +365,61 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	}
 
-	getReportFacets() {
+	async getReportFacets(parameters) {
 
-		return {
+		const facets = parameters.filter.facets;
+
+		const facetResponse = {
 			facets: []
 		};
 
+		switch (parameters.filter.reportType) {
+
+			default:
+
+				if (_.includes(facets, 'affiliate')) {
+
+					const facet = await this.getResults('reports/affiliate/facets/affiliates', _resolveParams(), this.default_queue_account_filter);
+					facetResponse.facets.push(facet)
+
+				}
+
+			break;
+
+		}
+
+		return facetResponse;
+
+		function _resolveParams() {
+
+			const start = parameters.filter.filters.find(f => f.facet === 'start');
+			const end = parameters.filter.filters.find(f => f.facet === 'end');
+
+			const params = {
+				start: start.values[0],
+				end: end.values[0]
+			}
+
+			return params;
+
+		}
+
 	}
 
-	getReport(parameters) {
+	async getReport(parameters) {
 
 		du.debug('Get home chart timeseries');
 
 		switch (parameters.facets.reportType) {
 
 			case 'revenueVersusOrders':
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams(), this.default_queue_account_filter)
-					.then((results) => {
-						return results;
-					});
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams(), this.default_queue_account_filter);
 			case 'ordersVersusUpsells':
-				return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', _resolveParams(), this.default_queue_account_filter)
-					.then((results) => {
-						return results;
-					});
+				return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', _resolveParams(), this.default_queue_account_filter);
 			case 'directVersusRebill':
-				return this.getResults('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams(), this.default_queue_account_filter)
-					.then((results) => {
-						return results;
-					});
+				return this.getResults('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams(), this.default_queue_account_filter);
 			case 'averageRevenuePerOrder':
-				return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams(), this.default_queue_account_filter)
-					.then((results) => {
-						return results;
-					});
+				return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams(), this.default_queue_account_filter);
 			default:
 				throw new Error('Report not found');
 

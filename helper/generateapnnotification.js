@@ -1,4 +1,3 @@
-'use strict'
 require('../SixCRM.js');
 const APNProvider = global.SixCRM.routes.include('controllers', 'providers/apn-provider.js');
 const apnprovider = new APNProvider();
@@ -19,7 +18,7 @@ if (!user) {
 
 //Flesh out the user.  Make sure device tokens are set
 
-return apnprovider.sendNotifications(user, message).then((result) => {
+apnprovider.sendNotifications(user, message).then((result) => {
     du.output('Notification Result', result);
     return result;
 })

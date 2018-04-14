@@ -1,4 +1,3 @@
-'use strict';
 require('../../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -7,7 +6,7 @@ const ElasticacheDeployment = global.SixCRM.routes.include('deployment', 'utilit
 let stage = process.argv[2] || 'development';
 let elasticacheDeployment = new ElasticacheDeployment(stage);
 
-return elasticacheDeployment.deploy().then((result) => {
+elasticacheDeployment.deploy().then((result) => {
   return du.highlight(result);
 }).catch(error => {
   du.error(error);
