@@ -83,10 +83,6 @@ describe('vendors/shippingcarriers/Test/handler.js', () => {
     });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
     mockery.resetCache();
     mockery.deregisterAll();

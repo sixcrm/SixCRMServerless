@@ -20,10 +20,6 @@ describe('controllers/workers/snsevents/notificationEvents.js', () => {
     mockery.deregisterAll();
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

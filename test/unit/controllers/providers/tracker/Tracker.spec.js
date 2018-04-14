@@ -88,10 +88,6 @@ describe('controllers/providers/tracker/Tracker.js', function () {
     });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

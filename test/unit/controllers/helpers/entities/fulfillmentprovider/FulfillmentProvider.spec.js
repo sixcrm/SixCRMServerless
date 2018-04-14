@@ -115,10 +115,6 @@ describe('/helpers/entities/fulfillmentprovider/FulfillmentProvider.json', () =>
     });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

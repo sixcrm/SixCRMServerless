@@ -21,10 +21,6 @@ describe('controllers/workers/eventEmails', () => {
     mockery.deregisterAll();
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

@@ -35,10 +35,6 @@ describe('controllers/entities/UserACL.js', () => {
       });
     });
 
-    beforeEach(() => {
-        //global.SixCRM.localcache.clear('all');
-    });
-
     afterEach(() => {
         mockery.resetCache();
         mockery.deregisterAll();

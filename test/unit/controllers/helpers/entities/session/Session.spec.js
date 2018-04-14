@@ -44,10 +44,6 @@ describe('/helpers/entities/session/Session.js', () => {
       });
     });
 
-    beforeEach(() => {
-        //global.SixCRM.localcache.clear('all');
-    });
-
     afterEach(() => {
         mockery.resetCache();
         mockery.deregisterAll();

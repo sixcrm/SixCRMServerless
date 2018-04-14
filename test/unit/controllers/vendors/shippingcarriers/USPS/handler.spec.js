@@ -95,10 +95,6 @@ describe('vendors/shippingcarriers/USPS/handler.js', () => {
     });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
     mockery.resetCache();
     mockery.deregisterAll();

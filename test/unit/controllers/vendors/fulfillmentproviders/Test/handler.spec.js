@@ -76,10 +76,6 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
 
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
     mockery.resetCache();
     mockery.deregisterAll();

@@ -269,10 +269,6 @@ describe('/helpers/entities/Rebill.js', () => {
 			});
 		});
 
-		beforeEach(() => {
-			//global.SixCRM.localcache.clear('all');
-		});
-
 		afterEach(() => {
 			mockery.resetCache();
 			mockery.deregisterAll();

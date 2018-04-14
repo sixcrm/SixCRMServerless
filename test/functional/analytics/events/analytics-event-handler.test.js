@@ -14,23 +14,23 @@ const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-cont
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
 
-before(() => {
-
-	return Promise.resolve()
-		.then(() => sqsDeployment.deployQueues());
-
-});
-
-beforeEach(() => {
-
-	return Promise.resolve()
-		.then(() => sqsDeployment.purgeQueues())
-		.then(() => auroraSchemaDeployment.destroy())
-		.then(() => auroraSchemaDeployment.deploy());
-
-})
-
 describe('Push events to RDS', () => {
+
+	before(() => {
+
+		return Promise.resolve()
+			.then(() => sqsDeployment.deployQueues());
+
+	});
+
+	beforeEach(() => {
+
+		return Promise.resolve()
+			.then(() => sqsDeployment.purgeQueues())
+			.then(() => auroraSchemaDeployment.destroy())
+			.then(() => auroraSchemaDeployment.deploy());
+
+	})
 
 	const suiteDirectory = path.join(__dirname, 'tests');
 	const suites = fileutilities.getDirectoryList(suiteDirectory).filter(test => !test.includes('*'));

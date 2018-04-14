@@ -56,10 +56,6 @@ describe('controllers/authorizers/verifyTransactionJWT.js', () => {
     });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

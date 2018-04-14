@@ -80,10 +80,6 @@ describe('controllers/workers/processBilling', () => {
 
 	});
 
-	beforeEach(() => {
-		//global.SixCRM.localcache.clear('all');
-	});
-
 	afterEach(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();

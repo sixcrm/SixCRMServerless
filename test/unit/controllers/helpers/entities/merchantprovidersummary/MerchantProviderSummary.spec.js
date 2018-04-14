@@ -43,10 +43,6 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
     });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

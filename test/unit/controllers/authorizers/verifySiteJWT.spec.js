@@ -95,10 +95,6 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
       });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

@@ -1560,10 +1560,6 @@ describe('/helpers/entities/Rebill.js', () => {
         });
     });
 
-    beforeEach(() => {
-
-    });
-
     afterEach(() => {
       //Technical Debt:  This is causing issues when there is no network...
       mockery.resetCache();
