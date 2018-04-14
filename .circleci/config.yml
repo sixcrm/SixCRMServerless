@@ -4,8 +4,10 @@
 # Add Blue/Green for Production
 
 functional_tests_default: &functional-tests-default
-  machine:
-    image: circleci/node:8.10
+  docker:
+    - image: circleci/node:8.10
+      environment:
+        - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
 
 defaults: &job-defaults
   docker:
