@@ -71,7 +71,7 @@ jobs:
           name: update DOCKER_HOST to circle configs
           command: |
             cp /home/circleci/project/config/circle/site.yml /home/circleci/project/config/circle/site.yml.bak
-            cat /home/circleci/project/config/circle/site.yml.bak | sed "s/localhost/$DOCKER_HOST/" > /home/circleci/project/config/circle/site.yml
+            cat /home/circleci/project/config/circle/site.yml.bak | sed "s/<DOCKER_HOST>/$DOCKER_HOST/" > /home/circleci/project/config/circle/site.yml
       - run:
           name: Execute Functional Connectivity Test
           command: stage=circle npm run test-functional-connectivity
