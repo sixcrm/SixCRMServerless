@@ -68,6 +68,11 @@ jobs:
             docker-compose --file tools/docker/docker-compose.yml up -d
       - run: echo "Pausing to allow Docker to catch up..." && sleep 30
       - run:
+          name: update DOCKER_HOST to circle configs
+          command: |
+            cp /home/circleci/project/config/circle/site.yml /home/circleci/project/config/circle/site.yml.bak
+            cat /home/circleci/project/config/circle/site.yml.bak | sed "s/localhost/$DOCKER_HOST/" > /home/circleci/project/config/circle/site.yml
+      - run:
           name: Execute Functional Connectivity Test
           command: stage=circle npm run test-functional-connectivity
       - run:
