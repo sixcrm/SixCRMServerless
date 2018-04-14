@@ -4,228 +4,246 @@ const mockery = require('mockery');
 
 describe('controllers/providers/jwt-provider', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-    afterEach(() => {
-        mockery.resetCache();
-    });
+	beforeEach(() => {
 
-    after(() => {
-        mockery.deregisterAll();
-    });
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 
-    describe('createJWTContents', () => {
+	});
 
-        it('throws error when JWT type is unexpected', () => {
+	afterEach(() => {
+		mockery.resetCache();
+	});
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+	after(() => {
+		mockery.deregisterAll();
+	});
 
-            jwtprovider.jwt_type = 'invalid_type';
+	describe('createJWTContents', () => {
 
-            try{
-                jwtprovider.createJWTContents({user: 'a_user'})
-            }catch(error){
-                expect(error.message).to.equal('[500] Unrecognized JWT Type.');
-            }
-        });
-    });
+		it('throws error when JWT type is unexpected', () => {
 
-    describe('getUserEmail', () => {
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-        it('throws error when user email is undefined', () => {
+			jwtprovider.jwt_type = 'invalid_type';
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			try {
+				jwtprovider.createJWTContents({
+					user: 'a_user'
+				})
+			} catch (error) {
+				expect(error.message).to.equal('[500] Unrecognized JWT Type.');
+			}
+		});
+	});
 
-            try{
-                jwtprovider.getUserEmail({user: 'a_user'})
-            }catch(error){
-                expect(error.message).to.equal('[500] Unable to get user email.');
-            }
-        });
-    });
+	describe('getUserEmail', () => {
 
-    describe('getJWTType', () => {
+		it('throws error when user email is undefined', () => {
 
-        it('throws error when user email is undefined', () => {
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			try {
+				jwtprovider.getUserEmail({
+					user: 'a_user'
+				})
+			} catch (error) {
+				expect(error.message).to.equal('[500] Unable to get user email.');
+			}
+		});
+	});
 
-            delete jwtprovider.jwt_type;
+	describe('getJWTType', () => {
 
-            try{
-                jwtprovider.getJWTType()
-            }catch(error){
-                expect(error.message).to.equal('[500] Unset jwt_type property.');
-            }
-        });
-    });
+		it('throws error when user email is undefined', () => {
 
-    describe('validateInput', () => {
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-        it('throws error when validation function is not a function', () => {
+			delete jwtprovider.jwt_type;
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			try {
+				jwtprovider.getJWTType()
+			} catch (error) {
+				expect(error.message).to.equal('[500] Unset jwt_type property.');
+			}
+		});
+	});
 
-            try{
-                jwtprovider.validateInput({}, 'not_a_function')
-            }catch(error){
-                expect(error.message).to.equal('[500] Validation function is not a function.');
-            }
-        });
+	describe('validateInput', () => {
 
-        it('throws error when object is undefined', () => {
+		it('throws error when validation function is not a function', () => {
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-            try{
-                jwtprovider.validateInput(null, function () {})
-            }catch(error){
-                expect(error.message).to.equal('[500] Undefined object input.');
-            }
-        });
-    });
+			try {
+				jwtprovider.validateInput({}, 'not_a_function')
+			} catch (error) {
+				expect(error.message).to.equal('[500] Validation function is not a function.');
+			}
+		});
 
-    describe('getSigningKey', () => {
+		it('throws error when object is undefined', () => {
 
-        it('throws error when transaction JWT secret key is not defined', () => {
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			try {
+				jwtprovider.validateInput(null, function () {})
+			} catch (error) {
+				expect(error.message).to.equal('[500] Undefined object input.');
+			}
+		});
+	});
 
-            jwtprovider.jwt_type = 'transaction';
-            jwtprovider.jwt_parameters = {};
+	describe('getSigningKey', () => {
 
-            try{
-                jwtprovider.getSigningKey()
-            }catch(error){
-                expect(error.message).to.equal('[500] Transaction JWT secret key is not defined.');
-            }
-        });
+		it('throws error when transaction JWT secret key is not defined', () => {
 
-        it('throws error when site JST secret key is not defined', () => {
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			jwtprovider.jwt_type = 'transaction';
+			jwtprovider.jwt_parameters = {};
 
-            jwtprovider.jwt_type = 'site';
-            jwtprovider.jwt_parameters = {};
+			try {
+				jwtprovider.getSigningKey()
+			} catch (error) {
+				expect(error.message).to.equal('[500] Transaction JWT secret key is not defined.');
+			}
+		});
 
-            try{
-                jwtprovider.getSigningKey()
-            }catch(error){
-                expect(error.message).to.equal('[500] Site JST secret key is not defined.');
-            }
-        });
+		it('throws error when site JST secret key is not defined', () => {
 
-        it('throws error when JWT type is not valid', () => {
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			jwtprovider.jwt_type = 'site';
+			jwtprovider.jwt_parameters = {};
 
-            jwtprovider.jwt_type = 'unrecognized_type'; //invalid jwt type
+			try {
+				jwtprovider.getSigningKey()
+			} catch (error) {
+				expect(error.message).to.equal('[500] Site JST secret key is not defined.');
+			}
+		});
 
-            try{
-                jwtprovider.getSigningKey()
-            }catch(error){
-                expect(error.message).to.equal('[500] Unrecognized JWT Type.');
-            }
-        });
-    });
+		it('throws error when JWT type is not valid', () => {
 
-    describe('setJWTType', () => {
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-        it('throws error when jwt type is invalid', () => {
+			jwtprovider.jwt_type = 'unrecognized_type'; //invalid jwt type
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			try {
+				jwtprovider.getSigningKey()
+			} catch (error) {
+				expect(error.message).to.equal('[500] Unrecognized JWT Type.');
+			}
+		});
+	});
 
-            jwtprovider.jwt_type = 'unrecognized_type'; //invalid jwt type
+	describe('setJWTType', () => {
 
-            try{
-                jwtprovider.setJWTType('unrecognized_type')
-            }catch(error){
-                expect(error.message).to.equal('[500] Unrecognized JWT Type.');
-            }
-        });
-    });
+		it('throws error when jwt type is invalid', () => {
 
-    describe('signJWT', () => {
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-        it('returns response from jwt sign', () => {
+			jwtprovider.jwt_type = 'unrecognized_type'; //invalid jwt type
 
-            mockery.registerMock('jsonwebtoken', {
-                sign: () => {
-                    return 'a_jwt';
-                }
-            });
+			try {
+				jwtprovider.setJWTType('unrecognized_type')
+			} catch (error) {
+				expect(error.message).to.equal('[500] Unrecognized JWT Type.');
+			}
+		});
+	});
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+	describe('signJWT', () => {
 
-            jwtprovider.jwt_type = 'site'; //valid value
+		it('returns response from jwt sign', () => {
 
-            //secret key with example value
-            jwtprovider.jwt_parameters = {site_jwt_secret_key: 'a_key'};
+			mockery.registerMock('jsonwebtoken', {
+				sign: () => {
+					return 'a_jwt';
+				}
+			});
 
-            expect(jwtprovider.signJWT('a_body')).to.equal('a_jwt');
-        });
-    });
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-    describe('getUserAlias', () => {
+			jwtprovider.jwt_type = 'site'; //valid value
 
-        it('returns user alias', () => {
+			//secret key with example value
+			jwtprovider.jwt_parameters = {
+				site_jwt_secret_key: 'a_key'
+			};
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			expect(jwtprovider.signJWT('a_body')).to.equal('a_jwt');
+		});
+	});
 
-            expect(jwtprovider.getUserAlias({user_alias: 'an_alias'})).to.equal('an_alias');
-        });
+	describe('getUserAlias', () => {
 
-        it('returns user alias based on user id', () => {
+		it('returns user alias', () => {
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'munge-utilities.js'), {
-                munge: () => {
-                    return 'a_munge_string'
-                }
-            });
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			expect(jwtprovider.getUserAlias({
+				user_alias: 'an_alias'
+			})).to.equal('an_alias');
+		});
 
-            expect(jwtprovider.getUserAlias({id: 'an_id'})).to.equal('a_munge_string');
-        });
+		it('returns user alias based on user id', () => {
 
-        it('returns user alias based on user email', () => {
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'munge-utilities.js'), {
+				munge: () => {
+					return 'a_munge_string'
+				}
+			});
 
-            mockery.registerMock(global.SixCRM.routes.path('lib', 'munge-utilities.js'), {
-                munge: () => {
-                    return 'a_munge_string'
-                }
-            });
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			expect(jwtprovider.getUserAlias({
+				id: 'an_id'
+			})).to.equal('a_munge_string');
+		});
 
-            expect(jwtprovider.getUserAlias({email: 'an_email'})).to.equal('a_munge_string');
-        });
+		it('returns user alias based on user email', () => {
 
-        it('returns null when user alias, id and email are not defined', () => {
+			mockery.registerMock(global.SixCRM.routes.path('lib', 'munge-utilities.js'), {
+				munge: () => {
+					return 'a_munge_string'
+				}
+			});
 
-            const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-            const jwtprovider = new JWTProvider();
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
 
-            expect(jwtprovider.getUserAlias()).to.equal(null);
-        });
-    });
+			expect(jwtprovider.getUserAlias({
+				email: 'an_email'
+			})).to.equal('a_munge_string');
+		});
+
+		it('returns null when user alias, id and email are not defined', () => {
+
+			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+			const jwtprovider = new JWTProvider();
+
+			expect(jwtprovider.getUserAlias()).to.equal(null);
+		});
+	});
 });
