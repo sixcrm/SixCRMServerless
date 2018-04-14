@@ -25,9 +25,9 @@ provider:
     #Technical Debt:  Are these necessary here?
     aws_region: ${opt:region, self:provider.region}
     aws_account: ${self:provider.account}
-  # vpc:
-    # securityGroupIds: ${file(./config/${opt:stage}/site.yml):serverless.security_groups}
-    # subnetIds: ${file(./config/${opt:stage}/site.yml):serverless.subnets}
+    #vpc:
+      #securityGroupIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSecurityGroup}
+      #subnetIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSubnets}
 
 plugins:
   - serverless-dynamodb-local

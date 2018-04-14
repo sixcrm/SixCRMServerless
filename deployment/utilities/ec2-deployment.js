@@ -821,6 +821,35 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
   }
 
+  securityGroupExists(security_group_definition){
+
+    du.debug('Security Group Exists');
+
+    const argumentation = {
+      Filters:[{
+        Key:'group-name',
+        Values:[security_group_definition.GroupName]
+      }]
+    };
+
+    return this.ec2provider.describeSecurityGroups(argumentation).then(result => {
+
+      if(_.has(result, 'SecurityGroups') && _.isArray(result.SecurityGroups)){
+        if(arrayutilities.nonEmpty(result.SecurityGroups)){
+          if(result.SecurityGroups.length == 1){
+            return result.SecurityGroups[0];
+          }
+          eu.throwError('server', 'More than one result: ', result);
+        }
+        return null;
+      }
+
+      eu.throwError('server', 'Unexpected result: ', result);
+
+    });
+
+  }
+
   createIngressParameterGroup(security_group_definition){
 
     du.debug('Create Ingress Parameter Group');
