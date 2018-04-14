@@ -6,3 +6,4 @@ bin/*
 npm-debug.log
 .idea
 .vscode
+.nyc*
