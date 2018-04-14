@@ -6,443 +6,461 @@ const mockery = require('mockery');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-function getValidShippingReceipt(){
-  return MockEntities.getValidShippingReceipt();
+function getValidShippingReceipt() {
+	return MockEntities.getValidShippingReceipt();
 }
 
-function getValidFulfillmentProviderReference(){
-  return 'a858a0dd-3c12-4fcd-9f56-53fe939546ca';
+function getValidFulfillmentProviderReference() {
+	return 'a858a0dd-3c12-4fcd-9f56-53fe939546ca';
 }
 
-function getValidFulfillmentProvider(id){
+function getValidFulfillmentProvider(id) {
 
-  return MockEntities.getValidFulfillmentProvider(id, 'shipstation');
-
-}
-
-function getValidCustomer(){
-  return MockEntities.getValidCustomer();
-}
-
-function getValidProducts(){
-  return MockEntities.getValidProducts();
-}
-
-function getValidResponse(){
-
-  let body = {
-    orderId:185148831,
-    orderNumber:"a858a0dd-3c12-4fcd-9f56-53fe939546ca",
-    orderKey:"a858a0dd-3c12-4fcd-9f56-53fe939546ca",
-    orderDate:"2018-01-25T17:42:12.9570000",
-    createDate:"2018-01-25T17:42:13.4070000",
-    modifyDate:"2018-01-25T17:42:13.4070000",
-    paymentDate:null,
-    shipByDate:null,
-    orderStatus:"awaiting_shipment",
-    customerId:null,
-    customerUsername:null,
-    customerEmail:null,
-    billTo:{
-      name:"Caden Larson",
-      company:null,
-      street1:"246 Jarrod Curve",
-      street2:null,
-      street3:null,
-      city:"Lake Katrine",
-      state:"TX",
-      postalCode:"63441-7146",
-      country:"BE",
-      phone:"1-299-770-8971 x0389",
-      residential:null,
-      addressVerified:null
-    },
-    shipTo:{
-      name:"Caden Larson",
-      company:null,
-      street1:"246 Jarrod Curve",
-      street2:null,
-      street3:null,
-      city:"Lake Katrine",
-      state:"TX",
-      postalCode:"63441-7146",
-      country:"BE",
-      phone:"1-299-770-8971 x0389",
-      residential:false,
-      addressVerified:"Address validation warning"
-    },
-    items:[
-      {
-        orderItemId:249618155,
-        lineItemKey:null,
-        sku:"PYHAC58UQ9M1X2DC51M2",
-        name:"HF4UA41TTS48WYBVBU2K",
-        imageUrl:null,
-        weight:null,
-        quantity:1,
-        unitPrice:0.00,
-        taxAmount:null,
-        shippingAmount:null,
-        warehouseLocation:null,
-        options:[],
-        productId:null,
-        fulfillmentSku:"PYHAC58UQ9M1X2DC51M2",
-        adjustment:false,
-        upc:null,
-        createDate:"2018-01-25T17:42:13.407",
-        modifyDate:"2018-01-25T17:42:13.407"
-      },
-      {
-        orderItemId:249618156,
-        lineItemKey:null,
-        sku:"1H4N83GSCKFD184YC7RH",
-        name:"U655BCP7N4S8LQ42RKN6",
-        imageUrl:null,
-        weight:null,
-        quantity:1,
-        unitPrice:0.00,
-        taxAmount:null,
-        shippingAmount:null,
-        warehouseLocation:null,
-        options:[],
-        productId:null,
-        fulfillmentSku:"1H4N83GSCKFD184YC7RH",
-        adjustment:false,
-        upc:null,
-        createDate:"2018-01-25T17:42:13.407",
-        modifyDate:"2018-01-25T17:42:13.407"
-      },
-      {
-        orderItemId:249618157,
-        lineItemKey:null,
-        sku:"G279EWATGFVQDDKQ5KGH",
-        name:"YU6CP3SC2EVQDYA9UELU",
-        imageUrl:null,
-        weight:null,
-        quantity:1,
-        unitPrice:0.00,
-        taxAmount:null,
-        shippingAmount:null,
-        warehouseLocation:null,
-        options:[],
-        productId:null,
-        fulfillmentSku:"G279EWATGFVQDDKQ5KGH",
-        adjustment:false,
-        upc:null,
-        createDate:"2018-01-25T17:42:13.407",
-        modifyDate:"2018-01-25T17:42:13.407"
-      }
-    ],
-    orderTotal:0.00,
-    amountPaid:0.00,
-    taxAmount:0.00,
-    shippingAmount:0.00,
-    customerNotes:null,
-    internalNotes:null,
-    gift:false,
-    giftMessage:null,
-    paymentMethod:null,
-    requestedShippingService:null,
-    carrierCode:null,
-    serviceCode:null,
-    packageCode:null,
-    confirmation:"none",
-    shipDate:null,
-    holdUntilDate:null,
-    weight:{
-      value:0.00,
-      units:"ounces",
-      WeightUnits:1
-    },
-    dimensions:null,
-    insuranceOptions:{
-      provider:null,
-      insureShipment:false,
-      insuredValue:0.0
-    },
-    internationalOptions:{
-      contents:"merchandise",
-      customsItems:null,
-      nonDelivery:"return_to_sender"
-    },
-    advancedOptions:{
-      warehouseId:null,
-      nonMachinable:false,
-      saturdayDelivery:false,
-      containsAlcohol:false,
-      mergedOrSplit:false,
-      mergedIds:[],
-      parentId:null,
-      storeId:249017,
-      customField1:null,
-      customField2:null,
-      customField3:null,
-      source:null,
-      billToParty:null,
-      billToAccount:null,
-      billToPostalCode:null,
-      billToCountryCode:null,
-      billToMyOtherAccount:null
-    },
-    tagIds:null,
-    userId:null,
-    externallyFulfilled:false,
-    externallyFulfilledBy:null,
-    labelMessages:null
-  };
-
-  return {
-    error: null,
-    body: body,
-    response: {
-      statusCode: 200,
-      statusMessage: 'OK',
-      body: body
-    }
-  };
+	return MockEntities.getValidFulfillmentProvider(id, 'shipstation');
 
 }
 
-function getValidBadResponse(){
+function getValidCustomer() {
+	return MockEntities.getValidCustomer();
+}
 
-  return {
-    error: null,
-    body: '401 Unauthorized',
-    response: {
-      statusCode: 401,
-      statusMessage: 'Unauthorized',
-      body: '401 Unauthorized'
-    }
-  };
+function getValidProducts() {
+	return MockEntities.getValidProducts();
+}
+
+function getValidResponse() {
+
+	let body = {
+		orderId: 185148831,
+		orderNumber: "a858a0dd-3c12-4fcd-9f56-53fe939546ca",
+		orderKey: "a858a0dd-3c12-4fcd-9f56-53fe939546ca",
+		orderDate: "2018-01-25T17:42:12.9570000",
+		createDate: "2018-01-25T17:42:13.4070000",
+		modifyDate: "2018-01-25T17:42:13.4070000",
+		paymentDate: null,
+		shipByDate: null,
+		orderStatus: "awaiting_shipment",
+		customerId: null,
+		customerUsername: null,
+		customerEmail: null,
+		billTo: {
+			name: "Caden Larson",
+			company: null,
+			street1: "246 Jarrod Curve",
+			street2: null,
+			street3: null,
+			city: "Lake Katrine",
+			state: "TX",
+			postalCode: "63441-7146",
+			country: "BE",
+			phone: "1-299-770-8971 x0389",
+			residential: null,
+			addressVerified: null
+		},
+		shipTo: {
+			name: "Caden Larson",
+			company: null,
+			street1: "246 Jarrod Curve",
+			street2: null,
+			street3: null,
+			city: "Lake Katrine",
+			state: "TX",
+			postalCode: "63441-7146",
+			country: "BE",
+			phone: "1-299-770-8971 x0389",
+			residential: false,
+			addressVerified: "Address validation warning"
+		},
+		items: [{
+				orderItemId: 249618155,
+				lineItemKey: null,
+				sku: "PYHAC58UQ9M1X2DC51M2",
+				name: "HF4UA41TTS48WYBVBU2K",
+				imageUrl: null,
+				weight: null,
+				quantity: 1,
+				unitPrice: 0.00,
+				taxAmount: null,
+				shippingAmount: null,
+				warehouseLocation: null,
+				options: [],
+				productId: null,
+				fulfillmentSku: "PYHAC58UQ9M1X2DC51M2",
+				adjustment: false,
+				upc: null,
+				createDate: "2018-01-25T17:42:13.407",
+				modifyDate: "2018-01-25T17:42:13.407"
+			},
+			{
+				orderItemId: 249618156,
+				lineItemKey: null,
+				sku: "1H4N83GSCKFD184YC7RH",
+				name: "U655BCP7N4S8LQ42RKN6",
+				imageUrl: null,
+				weight: null,
+				quantity: 1,
+				unitPrice: 0.00,
+				taxAmount: null,
+				shippingAmount: null,
+				warehouseLocation: null,
+				options: [],
+				productId: null,
+				fulfillmentSku: "1H4N83GSCKFD184YC7RH",
+				adjustment: false,
+				upc: null,
+				createDate: "2018-01-25T17:42:13.407",
+				modifyDate: "2018-01-25T17:42:13.407"
+			},
+			{
+				orderItemId: 249618157,
+				lineItemKey: null,
+				sku: "G279EWATGFVQDDKQ5KGH",
+				name: "YU6CP3SC2EVQDYA9UELU",
+				imageUrl: null,
+				weight: null,
+				quantity: 1,
+				unitPrice: 0.00,
+				taxAmount: null,
+				shippingAmount: null,
+				warehouseLocation: null,
+				options: [],
+				productId: null,
+				fulfillmentSku: "G279EWATGFVQDDKQ5KGH",
+				adjustment: false,
+				upc: null,
+				createDate: "2018-01-25T17:42:13.407",
+				modifyDate: "2018-01-25T17:42:13.407"
+			}
+		],
+		orderTotal: 0.00,
+		amountPaid: 0.00,
+		taxAmount: 0.00,
+		shippingAmount: 0.00,
+		customerNotes: null,
+		internalNotes: null,
+		gift: false,
+		giftMessage: null,
+		paymentMethod: null,
+		requestedShippingService: null,
+		carrierCode: null,
+		serviceCode: null,
+		packageCode: null,
+		confirmation: "none",
+		shipDate: null,
+		holdUntilDate: null,
+		weight: {
+			value: 0.00,
+			units: "ounces",
+			WeightUnits: 1
+		},
+		dimensions: null,
+		insuranceOptions: {
+			provider: null,
+			insureShipment: false,
+			insuredValue: 0.0
+		},
+		internationalOptions: {
+			contents: "merchandise",
+			customsItems: null,
+			nonDelivery: "return_to_sender"
+		},
+		advancedOptions: {
+			warehouseId: null,
+			nonMachinable: false,
+			saturdayDelivery: false,
+			containsAlcohol: false,
+			mergedOrSplit: false,
+			mergedIds: [],
+			parentId: null,
+			storeId: 249017,
+			customField1: null,
+			customField2: null,
+			customField3: null,
+			source: null,
+			billToParty: null,
+			billToAccount: null,
+			billToPostalCode: null,
+			billToCountryCode: null,
+			billToMyOtherAccount: null
+		},
+		tagIds: null,
+		userId: null,
+		externallyFulfilled: false,
+		externallyFulfilledBy: null,
+		labelMessages: null
+	};
+
+	return {
+		error: null,
+		body: body,
+		response: {
+			statusCode: 200,
+			statusMessage: 'OK',
+			body: body
+		}
+	};
 
 }
 
-function getValidGoodResponse(){
+function getValidBadResponse() {
 
-  return {
-    error: null,
-    body: {
-      fulfillments: [],
-      total: 0,
-      page: 1,
-      pages: 0
-    },
-    response: {
-      statusCode: 200,
-      statusMessage: 'OK',
-      body: {
-        fulfillments: [],
-        total: 0,
-        page: 1,
-        pages: 0
-      }
-    }
-  };
+	return {
+		error: null,
+		body: '401 Unauthorized',
+		response: {
+			statusCode: 401,
+			statusMessage: 'Unauthorized',
+			body: '401 Unauthorized'
+		}
+	};
 
 }
 
-describe('vendors/fulfillmentproviders/ShipStation/handler.js', () =>{
+function getValidGoodResponse() {
 
-  before(() => {
+	return {
+		error: null,
+		body: {
+			fulfillments: [],
+			total: 0,
+			page: 1,
+			pages: 0
+		},
+		response: {
+			statusCode: 200,
+			statusMessage: 'OK',
+			body: {
+				fulfillments: [],
+				total: 0,
+				page: 1,
+				pages: 0
+			}
+		}
+	};
 
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
+}
 
-  });
+describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
+	before(() => {
 
-  afterEach(() => {
-    mockery.resetCache();
-    mockery.deregisterAll();
-  });
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
 
-  describe('constructor', () => {
+	});
 
-    it('successfully constructs', () => {
+	beforeEach(() => {
 
-      let fulfillment_provider = getValidFulfillmentProvider();
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 
-      const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
-      let shipStationController = new ShipStationController({fulfillment_provider: fulfillment_provider});
+	});
 
-      expect(objectutilities.getClassName(shipStationController)).to.equal('ShipStationController');
-      expect(shipStationController.parameters.store['fulfillmentprovider']).to.deep.equal(fulfillment_provider);
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-    });
+	describe('constructor', () => {
 
-  });
+		it('successfully constructs', () => {
 
-  describe('createAuthorizationString', () => {
+			let fulfillment_provider = getValidFulfillmentProvider();
 
-    it('Successfully creates a authorization string', () => {
+			const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
+			let shipStationController = new ShipStationController({
+				fulfillment_provider: fulfillment_provider
+			});
 
-      let fulfillment_provider = getValidFulfillmentProvider();
+			expect(objectutilities.getClassName(shipStationController)).to.equal('ShipStationController');
+			expect(shipStationController.parameters.store['fulfillmentprovider']).to.deep.equal(fulfillment_provider);
 
-      fulfillment_provider.provider.api_key = 'ShipStation';
-      fulfillment_provider.provider.api_secret = 'Rocks';
+		});
 
-      const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
-      let shipStationController = new ShipStationController({fulfillment_provider: fulfillment_provider});
+	});
 
-      expect(shipStationController.createAuthorizationString()).to.deep.equal('Basic U2hpcFN0YXRpb246Um9ja3M=');
+	describe('createAuthorizationString', () => {
 
-    });
+		it('Successfully creates a authorization string', () => {
 
-  });
+			let fulfillment_provider = getValidFulfillmentProvider();
 
-  describe('test', () => {
+			fulfillment_provider.provider.api_key = 'ShipStation';
+			fulfillment_provider.provider.api_secret = 'Rocks';
 
-    it('successfully executes a test to failure', () => {
+			const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
+			let shipStationController = new ShipStationController({
+				fulfillment_provider: fulfillment_provider
+			});
 
-      let fulfillment_provider = getValidFulfillmentProvider();
+			expect(shipStationController.createAuthorizationString()).to.deep.equal('Basic U2hpcFN0YXRpb246Um9ja3M=');
 
-      fulfillment_provider.provider.api_key = 'ShipStation';
-      fulfillment_provider.provider.api_secret = 'Rocks';
+		});
 
-      let bad_response = getValidBadResponse();
+	});
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-        getJSON() {
-          return Promise.resolve(bad_response);
-        }
-        createQueryString(querystring_object) {
-          return querystring.stringify(querystring_object);
-        }
-      });
+	describe('test', () => {
 
-      const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
-      let shipStationController = new ShipStationController({fulfillment_provider: fulfillment_provider});
+		it('successfully executes a test to failure', () => {
 
-      return shipStationController.test().then(result => {
+			let fulfillment_provider = getValidFulfillmentProvider();
 
-        expect(objectutilities.getClassName(result)).to.equal('ShipStationResponse');
-        expect(result.getCode()).to.equal('fail');
-        expect(result.getMessage()).to.equal('Failed');
-        expect(result.getResponse().body).to.equal('401 Unauthorized');
-        expect(result.getParsedResponse()).to.be.defined;
+			fulfillment_provider.provider.api_key = 'ShipStation';
+			fulfillment_provider.provider.api_secret = 'Rocks';
 
-      });
+			let bad_response = getValidBadResponse();
 
-    });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				getJSON() {
+					return Promise.resolve(bad_response);
+				}
+				createQueryString(querystring_object) {
+					return querystring.stringify(querystring_object);
+				}
+			});
 
-    it('successfully executes a test to success', () => {
+			const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
+			let shipStationController = new ShipStationController({
+				fulfillment_provider: fulfillment_provider
+			});
 
-      let fulfillment_provider = getValidFulfillmentProvider();
+			return shipStationController.test().then(result => {
 
-      fulfillment_provider.provider.api_key = '7836433d83cc4c79ac45df5346754e0c';
-      fulfillment_provider.provider.api_secret = '4890d92038de4476aa9b1f9c22213bbb';
+				expect(objectutilities.getClassName(result)).to.equal('ShipStationResponse');
+				expect(result.getCode()).to.equal('fail');
+				expect(result.getMessage()).to.equal('Failed');
+				expect(result.getResponse().body).to.equal('401 Unauthorized');
+				expect(result.getParsedResponse()).to.be.defined;
 
-      let good_response = getValidGoodResponse();
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-        getJSON() {
-          return Promise.resolve(good_response);
-        }
-        createQueryString(querystring_object) {
-          return querystring.stringify(querystring_object);
-        }
-      });
+		});
 
-      const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
-      let shipStationController = new ShipStationController({fulfillment_provider: fulfillment_provider});
+		it('successfully executes a test to success', () => {
 
-      return shipStationController.test().then(result => {
+			let fulfillment_provider = getValidFulfillmentProvider();
 
-        expect(objectutilities.getClassName(result)).to.equal('ShipStationResponse');
-        expect(result.getCode()).to.equal('success');
-        expect(result.getMessage()).to.equal('Success');
-        expect(result.getResponse().body).to.deep.equal(good_response.response.body);
-        expect(result.getParsedResponse()).to.be.defined;
+			fulfillment_provider.provider.api_key = '7836433d83cc4c79ac45df5346754e0c';
+			fulfillment_provider.provider.api_secret = '4890d92038de4476aa9b1f9c22213bbb';
 
-      });
+			let good_response = getValidGoodResponse();
 
-    });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				getJSON() {
+					return Promise.resolve(good_response);
+				}
+				createQueryString(querystring_object) {
+					return querystring.stringify(querystring_object);
+				}
+			});
 
-  });
+			const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
+			let shipStationController = new ShipStationController({
+				fulfillment_provider: fulfillment_provider
+			});
 
-  describe('fulfill', () => {
+			return shipStationController.test().then(result => {
 
-    it('successfully executes a fulfill to failure', () => {
+				expect(objectutilities.getClassName(result)).to.equal('ShipStationResponse');
+				expect(result.getCode()).to.equal('success');
+				expect(result.getMessage()).to.equal('Success');
+				expect(result.getResponse().body).to.deep.equal(good_response.response.body);
+				expect(result.getParsedResponse()).to.be.defined;
 
-      let fulfillment_provider = getValidFulfillmentProvider();
-      //fulfillment_provider.provider.api_key = '7836433d83cc4c79ac45df5346754e0c';
-      //fulfillment_provider.provider.api_secret = '4890d92038de4476aa9b1f9c22213bbb';
+			});
 
-      let good_response = getValidResponse();
+		});
 
-      let customer = getValidCustomer();
-      let products = getValidProducts();
+	});
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-        postJSON() {
-          return Promise.resolve(good_response);
-        }
-        createQueryString(querystring_object) {
-          return querystring.stringify(querystring_object);
-        }
-      });
+	describe('fulfill', () => {
 
-      const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
-      let shipStationController = new ShipStationController({fulfillment_provider: fulfillment_provider});
+		it('successfully executes a fulfill to failure', () => {
 
-      return shipStationController.fulfill({customer: customer, products: products}).then(result => {
+			let fulfillment_provider = getValidFulfillmentProvider();
+			//fulfillment_provider.provider.api_key = '7836433d83cc4c79ac45df5346754e0c';
+			//fulfillment_provider.provider.api_secret = '4890d92038de4476aa9b1f9c22213bbb';
 
-        expect(objectutilities.getClassName(result)).to.equal('ShipStationResponse');
-        expect(result.getCode()).to.equal('success');
-        expect(result.getMessage()).to.equal('Success');
-        expect(result.getResponse().body).to.deep.equal(good_response.response.body);
-        expect(result.getParsedResponse()).to.be.defined;
+			let good_response = getValidResponse();
 
-      });
+			let customer = getValidCustomer();
+			let products = getValidProducts();
 
-    });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				postJSON() {
+					return Promise.resolve(good_response);
+				}
+				createQueryString(querystring_object) {
+					return querystring.stringify(querystring_object);
+				}
+			});
 
-  });
+			const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
+			let shipStationController = new ShipStationController({
+				fulfillment_provider: fulfillment_provider
+			});
 
-  describe('info', () => {
+			return shipStationController.fulfill({
+				customer: customer,
+				products: products
+			}).then(result => {
 
-    it('successfully executes a info request', () => {
+				expect(objectutilities.getClassName(result)).to.equal('ShipStationResponse');
+				expect(result.getCode()).to.equal('success');
+				expect(result.getMessage()).to.equal('Success');
+				expect(result.getResponse().body).to.deep.equal(good_response.response.body);
+				expect(result.getParsedResponse()).to.be.defined;
 
-      let fulfillment_provider = getValidFulfillmentProvider();
-      //fulfillment_provider.provider.api_key = '7836433d83cc4c79ac45df5346754e0c';
-      //fulfillment_provider.provider.api_secret = '4890d92038de4476aa9b1f9c22213bbb';
+			});
 
-      let shipping_receipt = getValidShippingReceipt();
+		});
 
-      shipping_receipt.fulfillment_provider_reference = getValidFulfillmentProviderReference();
+	});
 
-      let good_response = getValidGoodResponse();
+	describe('info', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-        getJSON() {
-          return Promise.resolve(good_response);
-        }
-        createQueryString(querystring_object) {
-          return querystring.stringify(querystring_object);
-        }
-      });
+		it('successfully executes a info request', () => {
 
-      const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
-      let shipStationController = new ShipStationController({fulfillment_provider: fulfillment_provider});
+			let fulfillment_provider = getValidFulfillmentProvider();
+			//fulfillment_provider.provider.api_key = '7836433d83cc4c79ac45df5346754e0c';
+			//fulfillment_provider.provider.api_secret = '4890d92038de4476aa9b1f9c22213bbb';
 
-      return shipStationController.info({shipping_receipt: shipping_receipt}).then(result => {
+			let shipping_receipt = getValidShippingReceipt();
 
-        expect(objectutilities.getClassName(result)).to.equal('ShipStationResponse');
-        expect(result.getCode()).to.equal('success');
-        expect(result.getMessage()).to.equal('Success');
-        expect(result.getResponse().body).to.deep.equal(good_response.response.body);
-        expect(result.getParsedResponse()).to.be.defined;
+			shipping_receipt.fulfillment_provider_reference = getValidFulfillmentProviderReference();
 
-      });
+			let good_response = getValidGoodResponse();
 
-    });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				getJSON() {
+					return Promise.resolve(good_response);
+				}
+				createQueryString(querystring_object) {
+					return querystring.stringify(querystring_object);
+				}
+			});
 
-  });
+			const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
+			let shipStationController = new ShipStationController({
+				fulfillment_provider: fulfillment_provider
+			});
+
+			return shipStationController.info({
+				shipping_receipt: shipping_receipt
+			}).then(result => {
+
+				expect(objectutilities.getClassName(result)).to.equal('ShipStationResponse');
+				expect(result.getCode()).to.equal('success');
+				expect(result.getMessage()).to.equal('Success');
+				expect(result.getResponse().body).to.deep.equal(good_response.response.body);
+				expect(result.getParsedResponse()).to.be.defined;
+
+			});
+
+		});
+
+	});
 
 });
