@@ -42,7 +42,7 @@ sqs:
 
 sns:
   region: 'localhost'
-  endpoint: 'localhost':9911'
+  endpoint: 'localhost:9911'
 
 cloudsearch:
   domainname: 'sixcrm'
