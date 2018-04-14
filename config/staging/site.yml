@@ -96,12 +96,3 @@ tokenization:
     id: 2029633460477211
     api_key: XnIOBNQVmQRyfRMiQdA5FuQBalGDDTxWlgoJBL8N
     base: https://test-api.tokenex.com
-    
-# These won't be right in production, fix this when we create the subnets there
-serverless:
-  subnets:
-    - subnet-2deee170
-    - subnet-d407e1b3
-    - subnet-a15a538e
-  security_groups:
-    - sg-e36f99aa
