@@ -1,0 +1,17 @@
+[
+  {
+    "Name":"sixcrm-subnet1",
+    "CidrBlock":"{{vpc.cidr.1}}.{{vpc.cidr.2}}.128.0/20",
+    "AvailabilityZone":"us-east-1a"
+  },
+  {
+    "Name":"sixcrm-subnet2",
+    "CidrBlock":"{{vpc.cidr.1}}.{{vpc.cidr.2}}.144.0/20",
+    "AvailabilityZone":"us-east-1b"
+  },
+  {
+    "Name":"sixcrm-subnet3",
+    "CidrBlock":"{{vpc.cidr.1}}.{{vpc.cidr.2}}.160.0/20",
+    "AvailabilityZone":"us-east-1c"
+  }
+]

@@ -27,6 +27,410 @@ module.exports = class EC2Provider extends AWSProvider {
 
     }
 
+    describeVpcs(parameters){
+
+      du.debug('Describe VPCs');
+
+      return new Promise((resolve) => {
+
+        this.ec2.describeVpcs(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data));
+
+        });
+
+      });
+
+    }
+
+    createDefaultVpc(){
+
+      du.debug('Create Default VPC');
+
+      const params = {};
+
+      return new Promise((resolve) => {
+
+        this.ec2.createDefaultVpc(params, (error, data) => {
+
+          resolve(this.AWSCallback(error, data));
+
+        });
+
+      });
+
+    }
+
+    createVPC(parameters){
+
+      du.debug('Create VPC');
+
+      let params = objectutilities.transcribe(
+        {
+          CidrBlock: 'CidrBlock',
+        },
+        parameters,
+        {},
+        true
+      );
+
+      params = objectutilities.transcribe(
+        {
+          AmazonProvidedIpv6CidrBlock: 'AmazonProvidedIpv6CidrBlock',
+          DryRun: 'DryRun',
+          InstanceTenancy: 'InstanceTenancy'
+        },
+        parameters,
+        params,
+        false
+      );
+
+      return new Promise((resolve) => {
+
+        this.ec2.createVpc(params, (error, data) => {
+
+          resolve(this.AWSCallback(error, data));
+
+        });
+
+      });
+
+    }
+
+    describeRoutes(parameters){
+
+      du.debug('Describe Routes');
+
+      return new Promise((resolve) => {
+
+        this.ec2.describeRoutes(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data));
+
+        });
+
+      });
+
+    }
+
+    replaceRoute(parameters){
+
+      du.debug('Replace Route');
+
+      let params = objectutilities.transcribe(
+        {
+          RouteTableId: 'RouteTableId'
+        },
+        parameters,
+        {},
+        true
+      );
+
+      params = objectutilities.transcribe(
+        {
+          DestinationCidrBlock: 'DestinationCidrBlock',
+          DestinationIpv6CidrBlock: 'DestinationIpv6CidrBlock',
+          DryRun: 'DryRun',
+          EgressOnlyInternetGatewayId: 'EgressOnlyInternetGatewayId',
+          GatewayId: 'GatewayId',
+          InstanceId: 'InstanceId',
+          NatGatewayId: 'NatGatewayId',
+          NetworkInterfaceId: 'NetworkInterfaceId',
+          VpcPeeringConnectionId: 'VpcPeeringConnectionId'
+        },
+        parameters,
+        params,
+        false
+      );
+
+      return new Promise((resolve) => {
+
+        this.ec2.replaceRoute(params, (error, data) => {
+
+          resolve(this.AWSCallback(error, data));
+
+        });
+
+      });
+
+    }
+
+    createRoute(parameters){
+
+      du.debug('Create Route');
+
+      let params = objectutilities.transcribe(
+        {
+          RouteTableId: 'RouteTableId'
+        },
+        parameters,
+        {},
+        true
+      );
+
+      params = objectutilities.transcribe(
+        {
+          DestinationCidrBlock: 'DestinationCidrBlock',
+          DestinationIpv6CidrBlock: 'DestinationIpv6CidrBlock',
+          DryRun: 'DryRun',
+          EgressOnlyInternetGatewayId: 'EgressOnlyInternetGatewayId',
+          GatewayId: 'GatewayId',
+          InstanceId: 'InstanceId',
+          NatGatewayId: 'NatGatewayId',
+          NetworkInterfaceId: 'NetworkInterfaceId',
+          VpcPeeringConnectionId: 'VpcPeeringConnectionId'
+        },
+        parameters,
+        params,
+        false
+      );
+
+      return new Promise((resolve) => {
+
+        this.ec2.createRoute(params, (error, data) => {
+
+          resolve(this.tolerantCallback(error, data, false));
+
+        });
+
+      });
+
+    }
+
+    createInternetGateway(){
+
+      du.debug('Create Internet Gateway');
+
+      return new Promise((resolve) => {
+
+        this.ec2.createInternetGateway({}, (error, data) => {
+
+          resolve(this.AWSCallback(error, data));
+
+        });
+
+      });
+
+    }
+
+    describeInternetGateways(parameters){
+
+      du.debug('Describe Internet Gateways');
+
+      return new Promise((resolve) => {
+
+        this.ec2.describeInternetGateways(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data));
+
+        });
+
+      });
+
+    }
+
+    associateRouteTable(parameters){
+
+      du.debug('Associate Route Table');
+
+      return new Promise((resolve) => {
+
+        this.ec2.associateRouteTable(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data));
+
+        });
+
+      });
+
+    }
+
+    createRouteTable(parameters){
+
+      du.debug('Create Route Table');
+
+      return new Promise((resolve) => {
+
+        this.ec2.createRouteTable(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data));
+
+        });
+
+      });
+
+    }
+
+    describeRouteTables(parameters){
+
+      du.debug('Describe Route Tables');
+
+      return new Promise((resolve) => {
+
+        this.ec2.describeRouteTables(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data))
+
+        });
+
+      });
+
+    }
+
+    createNatGateway(parameters){
+
+      du.debug('Create NAT Gateway');
+
+      return new Promise((resolve) => {
+
+        this.ec2.createNatGateway(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data))
+
+        });
+
+      });
+
+    }
+
+
+    describeNatGateways(parameters){
+
+      du.debug('Describe NAT Gateways');
+
+      return new Promise((resolve) => {
+
+        this.ec2.describeNatGateways(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data))
+
+        });
+
+      });
+
+    }
+
+    allocateAddress(){
+
+      du.debug('Allocate Address');
+
+      const parameters = {
+        Domain: 'vpc'
+      };
+
+      return new Promise((resolve) => {
+
+        this.ec2.allocateAddress(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data))
+
+        });
+
+      });
+
+    }
+
+    describeAddresses(parameters){
+
+      du.debug('Describe Addresses');
+
+      return new Promise((resolve) => {
+
+        this.ec2.describeAddresses(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data))
+
+        });
+
+      });
+
+    }
+
+    createTags(parameters){
+
+      du.debug('Create Tags');
+
+      return new Promise((resolve) => {
+
+        this.ec2.createTags(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data))
+
+        });
+
+      });
+
+    }
+
+    createSubnet(parameters){
+
+      du.debug('Create Subnet');
+
+      let params = objectutilities.transcribe(
+        {
+          CidrBlock: 'CidrBlock',
+          VpcId: 'VpcId'
+        },
+        parameters,
+        {},
+        true
+      );
+
+      params = objectutilities.transcribe(
+        {
+          AvailabilityZone: 'AvailabilityZone',
+          DryRun: 'DryRun',
+          Ipv6CidrBlock: 'Ipv6CidrBlock'
+        },
+        parameters,
+        params,
+        false
+      );
+
+      return new Promise((resolve) => {
+
+        this.ec2.createSubnet(params, (error, data) => {
+
+          resolve(this.AWSCallback(error, data))
+
+        });
+
+      });
+
+    }
+
+    describeVPCs(parameters){
+
+      du.debug('Describe VPCs');
+
+      return new Promise((resolve) => {
+
+        this.ec2.describeVpcs(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data))
+
+        });
+
+      });
+
+    }
+
+    describeSubnets(parameters){
+
+      du.debug('Describe Subnets');
+
+      return new Promise((resolve) => {
+
+        this.ec2.describeSubnets(parameters, (error, data) => {
+
+          resolve(this.AWSCallback(error, data))
+
+        });
+
+      });
+
+    }
+
     assureSecurityGroup(parameters){
 
       du.debug('Assure Security Group');
