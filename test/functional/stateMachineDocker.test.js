@@ -45,14 +45,6 @@ describe('stateMachineDocker', () => {
 
     });
 
-    beforeEach(() => {
-    });
-
-    afterEach(() => {
-        // sqsDeployment.purgeQueues().then(() => done());
-    });
-
-
     after((done) => {
         Promise.all([
             sqsDeployment.purgeQueues(),

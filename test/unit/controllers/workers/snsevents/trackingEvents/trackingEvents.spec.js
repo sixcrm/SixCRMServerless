@@ -18,10 +18,6 @@ describe('controllers/workers/snsevents/trackingEvents', () => {
     mockery.deregisterAll();
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

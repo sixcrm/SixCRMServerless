@@ -75,10 +75,6 @@ describe('controllers/providers/register/Receipt.js', () => {
     });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

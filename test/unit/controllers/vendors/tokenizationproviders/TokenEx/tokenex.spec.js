@@ -16,10 +16,6 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
 
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
     mockery.resetCache();
     mockery.deregisterAll();

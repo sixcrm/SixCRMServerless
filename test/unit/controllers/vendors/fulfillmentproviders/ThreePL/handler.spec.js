@@ -98,10 +98,6 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
     mockery.resetCache();
     mockery.deregisterAll();

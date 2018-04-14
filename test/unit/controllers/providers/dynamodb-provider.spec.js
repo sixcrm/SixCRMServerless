@@ -21,10 +21,6 @@ describe('controllers/providers/dynamodb-provider', () => {
       });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

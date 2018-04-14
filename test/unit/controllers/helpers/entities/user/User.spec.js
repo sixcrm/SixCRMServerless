@@ -33,10 +33,6 @@ describe('controllers/helpers/entities/user/User.js', () => {
     });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

@@ -68,10 +68,6 @@ describe('controllers/helpers/indexing/Indexing.js', () => {
       });
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

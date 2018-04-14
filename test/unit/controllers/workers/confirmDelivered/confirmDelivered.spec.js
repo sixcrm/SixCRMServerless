@@ -67,10 +67,6 @@ describe('controllers/workers/confirmDelivered', () => {
 		});
 	});
 
-	beforeEach(() => {
-		//global.SixCRM.localcache.clear('all');
-	});
-
 	afterEach(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();

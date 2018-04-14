@@ -36,10 +36,6 @@ describe('controllers/workers/getRebills', () => {
     mockery.deregisterAll();
   });
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
-
   afterEach(() => {
       mockery.resetCache();
       mockery.deregisterAll();

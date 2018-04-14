@@ -93,10 +93,6 @@ describe('controllers/workers/recoverBilling', () => {
 		});
 	});
 
-	beforeEach(() => {
-		//global.SixCRM.localcache.clear('all');
-	});
-
 	afterEach(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();
