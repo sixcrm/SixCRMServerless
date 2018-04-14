@@ -88,6 +88,7 @@ jobs:
         - checkout
         - restore_cache:
             key: dependency-cache-{{ checksum "package.json" }}
+        - setup_remote_docker
         - run:
             name: Install Docker Compose
             command: |
