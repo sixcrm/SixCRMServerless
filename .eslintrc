@@ -10,6 +10,10 @@
 	"extends": [
 		"eslint:recommended"
 	],
+	"parserOptions": {
+		"ecmaVersion": 2016,
+		"sourceType": "module"
+	},
 	"rules": {
 		"no-console": "error",
 		"no-trailing-spaces": "warn",

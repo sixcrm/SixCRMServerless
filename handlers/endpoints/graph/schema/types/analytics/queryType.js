@@ -24,7 +24,7 @@ module.exports = {
 	analyticsfacets: {
 		type: AnalyticsReportFacetsResponse,
 		args: {
-			facets: {
+			filter: {
 				type: AnalyticsReportFacetsRequest
 			}
 		},

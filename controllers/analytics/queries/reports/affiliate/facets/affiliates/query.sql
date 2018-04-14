@@ -1,6 +1,6 @@
 SELECT
   DISTINCT affiliate
 FROM
-  analytics f_events
+  analytics.f_events
 WHERE
-  datetime BETWEEN {{start}}} AND {{end}}
+  datetime BETWEEN '{{start}}' AND '{{end}}' {{filter}}
