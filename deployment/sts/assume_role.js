@@ -1,4 +1,3 @@
-'use strict';
 require('../../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -33,7 +32,7 @@ objectutilities.map(cli_parameters, key => {
 
 let awsdu = new AWSDeploymentUtilities();
 
-return awsdu.setRole(configuration.branch).then(() => {
+awsdu.setRole(configuration.branch).then(() => {
 
   du.highlight('Role Updated.');
   du.info(process.env);

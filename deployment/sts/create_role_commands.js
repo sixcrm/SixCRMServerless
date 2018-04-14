@@ -1,4 +1,3 @@
-'use strict';
 require('../../SixCRMLite.js');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -47,7 +46,7 @@ function transformToBash(role_json){
 
 }
 
-return awsdu.getRoleCredentials(configuration.branch).then((result) => {
+awsdu.getRoleCredentials(configuration.branch).then((result) => {
 
   du.debug(result);
   return fileutilities.writeFile(configuration.output, transformToBash(result));

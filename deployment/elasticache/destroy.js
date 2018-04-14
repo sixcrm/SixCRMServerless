@@ -7,7 +7,7 @@ const ElasticacheDeployment = global.SixCRM.routes.include('deployment', 'utilit
 let stage = process.argv[2] || 'development';
 let elasticacheDeployment = new ElasticacheDeployment(stage);
 
-return elasticacheDeployment.destroy().then((result) => {
+elasticacheDeployment.destroy().then((result) => {
   return du.highlight(result);
 }).catch(error => {
   du.error(error);

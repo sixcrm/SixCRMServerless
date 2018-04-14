@@ -1,5 +1,3 @@
-'use strict'
-
 require('../../SixCRM.js');
 
 const NotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/Notification.js');
@@ -27,13 +25,11 @@ let user = process.argv[4];
 if (!body) {
     du.output('Body is required');
     printHelp();
-    return;
 }
 
 if (!account) {
     du.output('Account is required');
     printHelp();
-    return;
 }
 
 let notification_object = {

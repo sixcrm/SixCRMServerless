@@ -1,6 +1,6 @@
-'use strict';
 require('../SixCRM.js');
 
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
@@ -30,4 +30,4 @@ objectutilities.map(cli_parameters, key => {
 
 });
 
-return reIndexingHelperController.execute(configuration.fix === 'true').then(() => process.exit());
+reIndexingHelperController.execute(configuration.fix).then(() => process.exit()).catch((ex) => du.error(ex));

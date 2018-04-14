@@ -1,5 +1,3 @@
-'use strict'
-
 require('../../SixCRM.js');
 
 const SlackNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/channels/slack.js');
@@ -26,25 +24,21 @@ let webhook = process.argv[5];
 if (!body) {
     du.output('Body is required');
     printHelp();
-    return;
 }
 
 if (!account) {
     du.output('Account is required');
     printHelp();
-    return;
 }
 
 if (!user) {
     du.output('User is required');
     printHelp();
-    return;
 }
 
 if (!webhook) {
     du.output('Webhook is required');
     printHelp();
-    return;
 }
 
 let notification_object = {

@@ -1,5 +1,3 @@
-'use strict'
-
 require('../../SixCRM.js');
 
 const SmsNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/channels/sms.js');
@@ -26,25 +24,21 @@ let phone_number = process.argv[5];
 if (!body) {
     du.output('Body is required');
     printHelp();
-    return;
 }
 
 if (!account) {
     du.output('Account is required');
     printHelp();
-    return;
 }
 
 if (!user) {
     du.output('User is required');
     printHelp();
-    return;
 }
 
 if (!phone_number) {
     du.output('Phone number is required');
     printHelp();
-    return;
 }
 
 let notification_object = {

@@ -6,7 +6,7 @@ const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-
 
 let ec2Deployment = new EC2Deployment();
 
-return ec2Deployment.destroySecurityGroups().then((result) => {
+ec2Deployment.destroySecurityGroups().then((result) => {
   return du.highlight(result);
 }).catch(error => {
   du.error(error);
