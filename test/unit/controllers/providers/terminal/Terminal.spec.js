@@ -7,30 +7,40 @@ const mockery = require('mockery');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-function getValidVendorResponseClass(action){
+function getValidVendorResponseClass(action) {
 
-  let valid_vendor_response = getValidVendorResponse();
+	let valid_vendor_response = getValidVendorResponse();
 
-  let VendorResponseClass = global.SixCRM.routes.include('vendors','fulfillmentproviders/ThreePL/Response.js');
+	let VendorResponseClass = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/Response.js');
 
-  return new VendorResponseClass({vendor_response: {error: null, response: valid_vendor_response, body: valid_vendor_response.body}, action: action, additional_parameters:{reference_number: uuidV4()}})
+	return new VendorResponseClass({
+		vendor_response: {
+			error: null,
+			response: valid_vendor_response,
+			body: valid_vendor_response.body
+		},
+		action: action,
+		additional_parameters: {
+			reference_number: uuidV4()
+		}
+	})
 
 }
 
-function getValidVendorResponse(){
+function getValidVendorResponse() {
 
-  return {
-    statusCode:200,
-    statusMessage: 'OK',
-    body: getValidVendorResponseBody()
-  }
+	return {
+		statusCode: 200,
+		statusMessage: 'OK',
+		body: getValidVendorResponseBody()
+	}
 }
 
-function getValidVendorResponseBody(){
+function getValidVendorResponseBody() {
 
-  return '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><FindOrders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">&lt;orders&gt;&lt;order&gt;&lt;CustomerName&gt;Tests Hashtag Tests&lt;/CustomerName&gt;&lt;CustomerEmail&gt;Charlie.C@Hashtagfulfillment.com&lt;/CustomerEmail&gt;&lt;CustomerPhone&gt;&lt;/CustomerPhone&gt;&lt;Facility&gt;Hashtag Fulfillment&lt;/Facility&gt;&lt;FacilityID&gt;2&lt;/FacilityID&gt;&lt;WarehouseTransactionID&gt;1181282&lt;/WarehouseTransactionID&gt;&lt;ReferenceNum&gt;Order 682&lt;/ReferenceNum&gt;&lt;PONum&gt;&lt;/PONum&gt;&lt;Retailer /&gt;&lt;ShipToCompanyName&gt;Example Company&lt;/ShipToCompanyName&gt;&lt;ShipToName&gt;Example Company&lt;/ShipToName&gt;&lt;ShipToEmail&gt;&lt;/ShipToEmail&gt;&lt;ShipToPhone&gt;&lt;/ShipToPhone&gt;&lt;ShipToAddress1&gt;Example Address&lt;/ShipToAddress1&gt;&lt;ShipToAddress2&gt;&lt;/ShipToAddress2&gt;&lt;ShipToCity&gt;Example City&lt;/ShipToCity&gt;&lt;ShipToState&gt;CA&lt;/ShipToState&gt;&lt;ShipToZip&gt;90505&lt;/ShipToZip&gt;&lt;ShipToCountry&gt;US&lt;/ShipToCountry&gt;&lt;ShipMethod&gt;Next Day Air&lt;/ShipMethod&gt;&lt;MarkForName&gt;&lt;/MarkForName&gt;&lt;BatchOrderID /&gt;&lt;CreationDate&gt;2016-01-19T14:56:00&lt;/CreationDate&gt;&lt;EarliestShipDate /&gt;&lt;ShipCancelDate /&gt;&lt;PickupDate /&gt;&lt;Carrier&gt;Fed Ex&lt;/Carrier&gt;&lt;BillingCode&gt;BillThirdParty&lt;/BillingCode&gt;&lt;TotWeight&gt;0.33&lt;/TotWeight&gt;&lt;TotCuFt&gt;0.00&lt;/TotCuFt&gt;&lt;TotPackages&gt;1.0000&lt;/TotPackages&gt;&lt;TotOrdQty&gt;1.0000&lt;/TotOrdQty&gt;&lt;TotLines&gt;1.00&lt;/TotLines&gt;&lt;Notes&gt;&lt;/Notes&gt;&lt;OverAllocated&gt;&lt;/OverAllocated&gt;&lt;PickTicketPrintDate /&gt;&lt;ProcessDate&gt;2016-01-19&lt;/ProcessDate&gt;&lt;TrackingNumber&gt;&lt;/TrackingNumber&gt;&lt;LoadNumber&gt;&lt;/LoadNumber&gt;&lt;BillOfLading&gt;&lt;/BillOfLading&gt;&lt;MasterBillOfLading&gt;&lt;/MasterBillOfLading&gt;&lt;ASNSentDate /&gt;&lt;ConfirmASNSentDate&gt;&lt;/ConfirmASNSentDate&gt;&lt;RememberRowInfo&gt;1181282:10:2::2016/01/19:0:False:1:735163&lt;/RememberRowInfo&gt;&lt;/order&gt;&lt;/orders&gt;</FindOrders><totalOrders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">2786</totalOrders></soap:Body></soap:Envelope>';
+	return '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><FindOrders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">&lt;orders&gt;&lt;order&gt;&lt;CustomerName&gt;Tests Hashtag Tests&lt;/CustomerName&gt;&lt;CustomerEmail&gt;Charlie.C@Hashtagfulfillment.com&lt;/CustomerEmail&gt;&lt;CustomerPhone&gt;&lt;/CustomerPhone&gt;&lt;Facility&gt;Hashtag Fulfillment&lt;/Facility&gt;&lt;FacilityID&gt;2&lt;/FacilityID&gt;&lt;WarehouseTransactionID&gt;1181282&lt;/WarehouseTransactionID&gt;&lt;ReferenceNum&gt;Order 682&lt;/ReferenceNum&gt;&lt;PONum&gt;&lt;/PONum&gt;&lt;Retailer /&gt;&lt;ShipToCompanyName&gt;Example Company&lt;/ShipToCompanyName&gt;&lt;ShipToName&gt;Example Company&lt;/ShipToName&gt;&lt;ShipToEmail&gt;&lt;/ShipToEmail&gt;&lt;ShipToPhone&gt;&lt;/ShipToPhone&gt;&lt;ShipToAddress1&gt;Example Address&lt;/ShipToAddress1&gt;&lt;ShipToAddress2&gt;&lt;/ShipToAddress2&gt;&lt;ShipToCity&gt;Example City&lt;/ShipToCity&gt;&lt;ShipToState&gt;CA&lt;/ShipToState&gt;&lt;ShipToZip&gt;90505&lt;/ShipToZip&gt;&lt;ShipToCountry&gt;US&lt;/ShipToCountry&gt;&lt;ShipMethod&gt;Next Day Air&lt;/ShipMethod&gt;&lt;MarkForName&gt;&lt;/MarkForName&gt;&lt;BatchOrderID /&gt;&lt;CreationDate&gt;2016-01-19T14:56:00&lt;/CreationDate&gt;&lt;EarliestShipDate /&gt;&lt;ShipCancelDate /&gt;&lt;PickupDate /&gt;&lt;Carrier&gt;Fed Ex&lt;/Carrier&gt;&lt;BillingCode&gt;BillThirdParty&lt;/BillingCode&gt;&lt;TotWeight&gt;0.33&lt;/TotWeight&gt;&lt;TotCuFt&gt;0.00&lt;/TotCuFt&gt;&lt;TotPackages&gt;1.0000&lt;/TotPackages&gt;&lt;TotOrdQty&gt;1.0000&lt;/TotOrdQty&gt;&lt;TotLines&gt;1.00&lt;/TotLines&gt;&lt;Notes&gt;&lt;/Notes&gt;&lt;OverAllocated&gt;&lt;/OverAllocated&gt;&lt;PickTicketPrintDate /&gt;&lt;ProcessDate&gt;2016-01-19&lt;/ProcessDate&gt;&lt;TrackingNumber&gt;&lt;/TrackingNumber&gt;&lt;LoadNumber&gt;&lt;/LoadNumber&gt;&lt;BillOfLading&gt;&lt;/BillOfLading&gt;&lt;MasterBillOfLading&gt;&lt;/MasterBillOfLading&gt;&lt;ASNSentDate /&gt;&lt;ConfirmASNSentDate&gt;&lt;/ConfirmASNSentDate&gt;&lt;RememberRowInfo&gt;1181282:10:2::2016/01/19:0:False:1:735163&lt;/RememberRowInfo&gt;&lt;/order&gt;&lt;/orders&gt;</FindOrders><totalOrders xmlns="http://www.JOI.com/schemas/ViaSub.WMS/">2786</totalOrders></soap:Body></soap:Envelope>';
 
 }
 
@@ -90,1112 +100,1142 @@ function getValidVendorResponseBody(){
 
 }*/
 
-function getValidShippingReceipt(){
+function getValidShippingReceipt() {
 
-  return MockEntities.getValidShippingReceipt()
-
-}
-
-function getValidSession(){
-
-  return MockEntities.getValidSession()
+	return MockEntities.getValidShippingReceipt()
 
 }
 
-function getValidCustomer(id){
+function getValidSession() {
 
-  return MockEntities.getValidCustomer(id);
-}
-
-function getValidGroupedShipableTransactionProducts(ids, extended){
-
-  let return_object = {};
-
-  return_object[uuidV4()] = getValidAugmentedTransactionProducts(ids, extended);
-  return_object[uuidV4()] = getValidAugmentedTransactionProducts(ids, extended);
-
-  return return_object;
+	return MockEntities.getValidSession()
 
 }
 
-function getValidCompoundFulfillmentResponse(){
+function getValidCustomer(id) {
 
-  return {
-    shipping_receipt: getValidShippingReceipt(),
-    vendor_response_class: getValidVendorResponseClass('fulfill')
-  };
+	return MockEntities.getValidCustomer(id);
+}
+
+function getValidGroupedShipableTransactionProducts(ids, extended) {
+
+	let return_object = {};
+
+	return_object[uuidV4()] = getValidAugmentedTransactionProducts(ids, extended);
+	return_object[uuidV4()] = getValidAugmentedTransactionProducts(ids, extended);
+
+	return return_object;
 
 }
 
-function getValidFulfillmentProvider(){
+function getValidCompoundFulfillmentResponse() {
 
-  return MockEntities.getValidFulfillmentProvider();
-
-}
-
-function getValidShippableTransactionProductGroup(ids, extended){
-
-  return getValidAugmentedTransactionProducts(ids, extended);
+	return {
+		shipping_receipt: getValidShippingReceipt(),
+		vendor_response_class: getValidVendorResponseClass('fulfill')
+	};
 
 }
 
-function getValidAugmentedTransactionProducts(ids, extended){
+function getValidFulfillmentProvider() {
 
-  let transaction_products = getValidTransactionProducts(ids, extended);
-
-  return arrayutilities.map(transaction_products, transaction_product => {
-    return objectutilities.merge(transaction_product, {transaction: getValidTransaction()});
-  });
+	return MockEntities.getValidFulfillmentProvider();
 
 }
 
-function getValidRebill(id){
+function getValidShippableTransactionProductGroup(ids, extended) {
 
-  return MockEntities.getValidRebill(id);
-
-}
-
-function getValidTransaction(id){
-
-  return MockEntities.getValidTransaction(id);
+	return getValidAugmentedTransactionProducts(ids, extended);
 
 }
 
-function getValidTransactions(){
+function getValidAugmentedTransactionProducts(ids, extended) {
 
-  return [
-    getValidTransaction(),
-    getValidTransaction()
-  ];
+	let transaction_products = getValidTransactionProducts(ids, extended);
 
-}
-
-function getValidTransactionProducts(ids, expanded){
-
-  return MockEntities.getValidTransactionProducts(ids, expanded);
+	return arrayutilities.map(transaction_products, transaction_product => {
+		return objectutilities.merge(transaction_product, {
+			transaction: getValidTransaction()
+		});
+	});
 
 }
 
-function getValidProducts(product_ids){
+function getValidRebill(id) {
 
-  if(_.isUndefined(product_ids)){
-    product_ids = [uuidV4(), uuidV4()];
-  }
+	return MockEntities.getValidRebill(id);
 
-  return arrayutilities.map(product_ids, product_id => {
-    return MockEntities.getValidProduct(product_id);
-  });
+}
+
+function getValidTransaction(id) {
+
+	return MockEntities.getValidTransaction(id);
+
+}
+
+function getValidTransactions() {
+
+	return [
+		getValidTransaction(),
+		getValidTransaction()
+	];
+
+}
+
+function getValidTransactionProducts(ids, expanded) {
+
+	return MockEntities.getValidTransactionProducts(ids, expanded);
+
+}
+
+function getValidProducts(product_ids) {
+
+	if (_.isUndefined(product_ids)) {
+		product_ids = [uuidV4(), uuidV4()];
+	}
+
+	return arrayutilities.map(product_ids, product_id => {
+		return MockEntities.getValidProduct(product_id);
+	});
 
 }
 
 describe('controllers/providers/terminal/Terminal.js', function () {
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-  beforeEach(() => {
-    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-      sendMessage() {
-        return Promise.resolve(true);
-      }
-    });
+	beforeEach(() => {
 
-    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
-        publish() {
-            return Promise.resolve({});
-        }
-        getRegion() {
-            return 'localhost';
-        }
-    });
-  });
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 
-  beforeEach(() => {
-    //global.SixCRM.localcache.clear('all');
-  });
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+			sendMessage() {
+				return Promise.resolve(true);
+			}
+		});
 
-  afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-  });
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+			publish() {
+				return Promise.resolve({});
+			}
+			getRegion() {
+				return 'localhost';
+			}
+		});
+	});
 
-  describe('constructor', () => {
+	beforeEach(() => {
+		//global.SixCRM.localcache.clear('all');
+	});
 
-    it('successfully constructs', () => {
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+	describe('constructor', () => {
 
-      expect(objectutilities.getClassName(terminalController)).to.equal('TerminalController');
+		it('successfully constructs', () => {
 
-    });
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-  });
+			expect(objectutilities.getClassName(terminalController)).to.equal('TerminalController');
 
-  describe('acquireRebill', () => {
+		});
 
-    it('successfully acquires a rebill', () => {
+	});
 
-      let rebill = getValidRebill();
+	describe('acquireRebill', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
-        get() {
-          return Promise.resolve(rebill);
-        }
-      })
+		it('successfully acquires a rebill', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let rebill = getValidRebill();
 
-      terminalController.parameters.set('rebill', rebill);
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get() {
+					return Promise.resolve(rebill);
+				}
+			})
 
-      return terminalController.acquireRebill().then(result => {
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-        expect(result).to.equal(true);
-        expect(terminalController.parameters.store['rebill']).to.deep.equal(rebill);
+			terminalController.parameters.set('rebill', rebill);
 
-      });
+			return terminalController.acquireRebill().then(result => {
 
-    });
+				expect(result).to.equal(true);
+				expect(terminalController.parameters.store['rebill']).to.deep.equal(rebill);
 
-  });
+			});
 
-  describe('acquireTransactions', () => {
+		});
 
-    it('successfully acquires rebill transactions', () => {
+	});
 
-      let rebill = getValidRebill();
-      let transactions =  getValidTransactions();
+	describe('acquireTransactions', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
-        listTransactions() {
-          return Promise.resolve({transactions: transactions});
-        }
-        getResult(result, field) {
-          du.debug('Get Result');
-          if(_.isUndefined(field)){
-            field = this.descriptive_name+'s';
-          }
-          if(_.has(result, field)){
-            return Promise.resolve(result[field]);
-          }else{
-            return Promise.resolve(null);
-          }
-        }
-      });
+		it('successfully acquires rebill transactions', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let rebill = getValidRebill();
+			let transactions = getValidTransactions();
 
-      terminalController.parameters.set('rebill', rebill);
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({
+						transactions: transactions
+					});
+				}
+				getResult(result, field) {
+					du.debug('Get Result');
+					if (_.isUndefined(field)) {
+						field = this.descriptive_name + 's';
+					}
+					if (_.has(result, field)) {
+						return Promise.resolve(result[field]);
+					} else {
+						return Promise.resolve(null);
+					}
+				}
+			});
 
-      return terminalController.acquireTransactions().then(result => {
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-        expect(result).to.equal(true);
-        expect(terminalController.parameters.store['transactions']).to.deep.equal(transactions);
+			terminalController.parameters.set('rebill', rebill);
 
-      });
-    });
-  });
+			return terminalController.acquireTransactions().then(result => {
 
-  describe('setAugmentedTransactionProducts', () => {
+				expect(result).to.equal(true);
+				expect(terminalController.parameters.store['transactions']).to.deep.equal(transactions);
 
-    it('successfully sets augmented transaction products', () => {
+			});
+		});
+	});
 
-      let transactions = getValidTransactions();
-      let transaction_products = getValidTransactionProducts(null, true);
+	describe('setAugmentedTransactionProducts', () => {
 
-      let mock_transaction_helper_controller = class {
-        constructor(){
+		it('successfully sets augmented transaction products', () => {
 
-        }
-        getTransactionProducts(){
-          return transaction_products;
-        }
-      };
+			let transactions = getValidTransactions();
+			let transaction_products = getValidTransactionProducts(null, true);
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
+			let mock_transaction_helper_controller = class {
+				constructor() {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+				}
+				getTransactionProducts() {
+					return transaction_products;
+				}
+			};
 
-      terminalController.parameters.set('transactions', transactions);
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
-      let result = terminalController.setAugmentedTransactionProducts();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['augmentedtransactionproducts']).to.be.defined;
-      arrayutilities.map(terminalController.parameters.store['augmentedtransactionproducts'], augmented_transaction_product => {
-        expect(_.contains(transactions, augmented_transaction_product.transaction)).to.equal(true);
-      });
+			terminalController.parameters.set('transactions', transactions);
 
-    });
+			let result = terminalController.setAugmentedTransactionProducts();
 
-  });
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['augmentedtransactionproducts']).to.be.defined;
+			arrayutilities.map(terminalController.parameters.store['augmentedtransactionproducts'], augmented_transaction_product => {
+				expect(_.contains(transactions, augmented_transaction_product.transaction)).to.equal(true);
+			});
 
-  describe('acquireProducts', () => {
+		});
 
-    it('successfully acquires products', () => {
+	});
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
-      let products = getValidProducts();
+	describe('acquireProducts', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
-        getListByAccount() {
-          return Promise.resolve({products: products});
-        }
-        getResult(result, field) {
-          du.debug('Get Result');
-          if(_.isUndefined(field)){
-            field = this.descriptive_name+'s';
-          }
-          if(_.has(result, field)){
-            return Promise.resolve(result[field]);
-          }else{
-            return Promise.resolve(null);
-          }
-        }
-      });
+		it('successfully acquires products', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let products = getValidProducts();
 
-      terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+				getListByAccount() {
+					return Promise.resolve({
+						products: products
+					});
+				}
+				getResult(result, field) {
+					du.debug('Get Result');
+					if (_.isUndefined(field)) {
+						field = this.descriptive_name + 's';
+					}
+					if (_.has(result, field)) {
+						return Promise.resolve(result[field]);
+					} else {
+						return Promise.resolve(null);
+					}
+				}
+			});
 
-      return terminalController.acquireProducts().then(result => {
-        expect(result).to.equal(true);
-        expect(terminalController.parameters.store['products']).to.deep.equal(products);
-      });
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-    });
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
 
-  });
+			return terminalController.acquireProducts().then(result => {
+				expect(result).to.equal(true);
+				expect(terminalController.parameters.store['products']).to.deep.equal(products);
+			});
 
-  describe('getShipableProductIDs', () => {
+		});
 
-    it('successfully sets shippable product ids (mixed case)', () => {
+	});
 
-      let products = getValidProducts();
+	describe('getShipableProductIDs', () => {
 
-      products[0].ship = false;
-      products[1].ship = true;
+		it('successfully sets shippable product ids (mixed case)', () => {
 
-      let shipable_products = [products[1].id];
+			let products = getValidProducts();
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			products[0].ship = false;
+			products[1].ship = true;
 
-      terminalController.parameters.set('products', products);
+			let shipable_products = [products[1].id];
 
-      let result = terminalController.getShipableProductIDs();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipableproductids']).to.deep.equal(shipable_products);
+			terminalController.parameters.set('products', products);
 
-    });
+			let result = terminalController.getShipableProductIDs();
 
-    it('successfully sets shippable product ids (all)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipableproductids']).to.deep.equal(shipable_products);
 
-      let products = getValidProducts();
+		});
 
-      products[0].ship = true;
-      products[1].ship = true;
+		it('successfully sets shippable product ids (all)', () => {
 
-      let shipable_products = [products[0].id, products[1].id];
+			let products = getValidProducts();
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			products[0].ship = true;
+			products[1].ship = true;
 
-      terminalController.parameters.set('products', products);
+			let shipable_products = [products[0].id, products[1].id];
 
-      let result = terminalController.getShipableProductIDs();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipableproductids']).to.deep.equal(shipable_products);
+			terminalController.parameters.set('products', products);
 
-    });
+			let result = terminalController.getShipableProductIDs();
 
-    it('successfully sets shippable product ids (none)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipableproductids']).to.deep.equal(shipable_products);
 
-      let products = getValidProducts();
+		});
 
-      products[0].ship = false;
-      products[1].ship = false;
+		it('successfully sets shippable product ids (none)', () => {
 
-      let shipable_products = [];
+			let products = getValidProducts();
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			products[0].ship = false;
+			products[1].ship = false;
 
-      terminalController.parameters.set('products', products);
+			let shipable_products = [];
 
-      let result = terminalController.getShipableProductIDs();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipableproductids']).to.deep.equal(shipable_products);
+			terminalController.parameters.set('products', products);
 
-    });
+			let result = terminalController.getShipableProductIDs();
 
-  });
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipableproductids']).to.deep.equal(shipable_products);
 
-  describe('createShipableTransactionProductGroup', () => {
+		});
 
-    it('successfully creates a shipable transaction product group', () => {
+	});
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
-      let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product.id;
-      });
+	describe('createShipableTransactionProductGroup', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+		it('successfully creates a shipable transaction product group', () => {
 
-      terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
-      terminalController.parameters.set('shipableproductids', shipable_product_ids);
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
+				return augmented_transaction_product.product.id;
+			});
 
-      let result = terminalController.createShipableTransactionProductGroup();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal(augmented_transaction_products);
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			terminalController.parameters.set('shipableproductids', shipable_product_ids);
 
-    });
+			let result = terminalController.createShipableTransactionProductGroup();
 
-    it('successfully creates a shipable transaction product group (subset)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal(augmented_transaction_products);
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
-      let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product.id;
-      });
+		});
 
-      shipable_product_ids.pop();
-      shipable_product_ids.pop();
-      shipable_product_ids.pop();
+		it('successfully creates a shipable transaction product group (subset)', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
+				return augmented_transaction_product.product.id;
+			});
 
-      terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
-      terminalController.parameters.set('shipableproductids', shipable_product_ids);
+			shipable_product_ids.pop();
+			shipable_product_ids.pop();
+			shipable_product_ids.pop();
 
-      let result = terminalController.createShipableTransactionProductGroup();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[0]]);
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			terminalController.parameters.set('shipableproductids', shipable_product_ids);
 
-    });
+			let result = terminalController.createShipableTransactionProductGroup();
 
-    it('successfully creates a shipable transaction product group (subset-2)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[0]]);
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
-      let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product.id;
-      });
+		});
 
-      shipable_product_ids.shift();
-      shipable_product_ids.shift();
-      shipable_product_ids.shift();
+		it('successfully creates a shipable transaction product group (subset-2)', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
+				return augmented_transaction_product.product.id;
+			});
 
-      terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
-      terminalController.parameters.set('shipableproductids', shipable_product_ids);
+			shipable_product_ids.shift();
+			shipable_product_ids.shift();
+			shipable_product_ids.shift();
 
-      let result = terminalController.createShipableTransactionProductGroup();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[3]]);
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			terminalController.parameters.set('shipableproductids', shipable_product_ids);
 
-    });
+			let result = terminalController.createShipableTransactionProductGroup();
 
-    it('successfully creates a shipable transaction product group (none)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[3]]);
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
-      let shipable_product_ids = [];
+		});
 
-      shipable_product_ids.pop();
-      shipable_product_ids.pop();
-      shipable_product_ids.pop();
+		it('successfully creates a shipable transaction product group (none)', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let shipable_product_ids = [];
 
-      terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
-      terminalController.parameters.set('shipableproductids', shipable_product_ids);
+			shipable_product_ids.pop();
+			shipable_product_ids.pop();
+			shipable_product_ids.pop();
 
-      let result = terminalController.createShipableTransactionProductGroup();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([]);
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			terminalController.parameters.set('shipableproductids', shipable_product_ids);
 
-    });
+			let result = terminalController.createShipableTransactionProductGroup();
 
-    it('successfully creates a shipable transaction product group (subset - shipping_receipt)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([]);
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
-      let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product.id;
-      });
+		});
 
-      augmented_transaction_products[0].shipping_receipt = uuidV4();
-      augmented_transaction_products[2].shipping_receipt = uuidV4();
-      augmented_transaction_products[3].shipping_receipt = uuidV4();
+		it('successfully creates a shipable transaction product group (subset - shipping_receipt)', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
+				return augmented_transaction_product.product.id;
+			});
 
-      terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
-      terminalController.parameters.set('shipableproductids', shipable_product_ids);
+			augmented_transaction_products[0].shipping_receipt = uuidV4();
+			augmented_transaction_products[2].shipping_receipt = uuidV4();
+			augmented_transaction_products[3].shipping_receipt = uuidV4();
 
-      let result = terminalController.createShipableTransactionProductGroup();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[1]]);
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			terminalController.parameters.set('shipableproductids', shipable_product_ids);
 
-    });
+			let result = terminalController.createShipableTransactionProductGroup();
 
-    it('successfully creates a shipable transaction product group (subset2 - shipping_receipt)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[1]]);
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
-      let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product.id;
-      });
+		});
 
-      augmented_transaction_products[0].shipping_receipt = uuidV4();
-      augmented_transaction_products[1].shipping_receipt = uuidV4();
-      augmented_transaction_products[2].shipping_receipt = uuidV4();
-      augmented_transaction_products[3].shipping_receipt = uuidV4();
+		it('successfully creates a shipable transaction product group (subset2 - shipping_receipt)', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
+				return augmented_transaction_product.product.id;
+			});
 
-      terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
-      terminalController.parameters.set('shipableproductids', shipable_product_ids);
+			augmented_transaction_products[0].shipping_receipt = uuidV4();
+			augmented_transaction_products[1].shipping_receipt = uuidV4();
+			augmented_transaction_products[2].shipping_receipt = uuidV4();
+			augmented_transaction_products[3].shipping_receipt = uuidV4();
 
-      let result = terminalController.createShipableTransactionProductGroup();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([]);
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			terminalController.parameters.set('shipableproductids', shipable_product_ids);
 
-    });
+			let result = terminalController.createShipableTransactionProductGroup();
 
-    it('successfully creates a shipable transaction product group (subset - no_ship)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([]);
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
-      let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product.id;
-      });
+		});
 
-      augmented_transaction_products[0].no_ship = true;
-      augmented_transaction_products[2].no_ship = true;
-      augmented_transaction_products[3].no_ship = true;
+		it('successfully creates a shipable transaction product group (subset - no_ship)', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
+				return augmented_transaction_product.product.id;
+			});
 
-      terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
-      terminalController.parameters.set('shipableproductids', shipable_product_ids);
+			augmented_transaction_products[0].no_ship = true;
+			augmented_transaction_products[2].no_ship = true;
+			augmented_transaction_products[3].no_ship = true;
 
-      let result = terminalController.createShipableTransactionProductGroup();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[1]]);
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			terminalController.parameters.set('shipableproductids', shipable_product_ids);
 
-    });
+			let result = terminalController.createShipableTransactionProductGroup();
 
-    it('successfully creates a shipable transaction product group (none - no_ship)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[1]]);
 
-      let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
-      let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
-        return augmented_transaction_product.product.id;
-      });
+		});
 
-      augmented_transaction_products[0].no_ship = true;
-      augmented_transaction_products[1].no_ship = true;
-      augmented_transaction_products[2].no_ship = true;
-      augmented_transaction_products[3].no_ship = true;
+		it('successfully creates a shipable transaction product group (none - no_ship)', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
+				return augmented_transaction_product.product.id;
+			});
 
-      terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
-      terminalController.parameters.set('shipableproductids', shipable_product_ids);
+			augmented_transaction_products[0].no_ship = true;
+			augmented_transaction_products[1].no_ship = true;
+			augmented_transaction_products[2].no_ship = true;
+			augmented_transaction_products[3].no_ship = true;
 
-      let result = terminalController.createShipableTransactionProductGroup();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([]);
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			terminalController.parameters.set('shipableproductids', shipable_product_ids);
 
-    });
+			let result = terminalController.createShipableTransactionProductGroup();
 
-  });
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([]);
 
-  describe('groupShipableTransactionProductGroupByFulfillmentProvider', () => {
+		});
 
-    it('successfully groups shipable products by fulfillment providers (empty)', () => {
+	});
 
-      let shippable_transaction_product_group = getValidShippableTransactionProductGroup(null, true);
-      let products = getValidProducts();
+	describe('groupShipableTransactionProductGroupByFulfillmentProvider', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+		it('successfully groups shipable products by fulfillment providers (empty)', () => {
 
-      terminalController.parameters.set('products', products);
-      terminalController.parameters.set('shipabletransactionproductgroup', shippable_transaction_product_group);
+			let shippable_transaction_product_group = getValidShippableTransactionProductGroup(null, true);
+			let products = getValidProducts();
 
-      let result = terminalController.groupShipableTransactionProductGroupByFulfillmentProvider();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.be.defined;
-      expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.deep.equal({});
+			terminalController.parameters.set('products', products);
+			terminalController.parameters.set('shipabletransactionproductgroup', shippable_transaction_product_group);
 
-    });
+			let result = terminalController.groupShipableTransactionProductGroupByFulfillmentProvider();
 
-    it('successfully groups shipable products by fulfillment providers (one group)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.be.defined;
+			expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.deep.equal({});
 
-      let shipable_transaction_product_group = getValidShippableTransactionProductGroup([uuidV4(), uuidV4()], true);
-      let products = getValidProducts();
+		});
 
-      products[0].id = shipable_transaction_product_group[0].product.id;
-      products[1].id = shipable_transaction_product_group[1].product.id;
-      products[1].fulfillment_provider = products[0].fulfillment_provider;
+		it('successfully groups shipable products by fulfillment providers (one group)', () => {
 
-      let grouped_products = {};
+			let shipable_transaction_product_group = getValidShippableTransactionProductGroup([uuidV4(), uuidV4()], true);
+			let products = getValidProducts();
 
-      grouped_products[products[1].fulfillment_provider] = shipable_transaction_product_group;
+			products[0].id = shipable_transaction_product_group[0].product.id;
+			products[1].id = shipable_transaction_product_group[1].product.id;
+			products[1].fulfillment_provider = products[0].fulfillment_provider;
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let grouped_products = {};
 
-      terminalController.parameters.set('products', products);
-      terminalController.parameters.set('shipabletransactionproductgroup', shipable_transaction_product_group);
+			grouped_products[products[1].fulfillment_provider] = shipable_transaction_product_group;
 
-      let result = terminalController.groupShipableTransactionProductGroupByFulfillmentProvider();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.be.defined;
-      expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.deep.equal(grouped_products);
+			terminalController.parameters.set('products', products);
+			terminalController.parameters.set('shipabletransactionproductgroup', shipable_transaction_product_group);
 
-    });
+			let result = terminalController.groupShipableTransactionProductGroupByFulfillmentProvider();
 
-    it('successfully groups shipable products by fulfillment providers (one group)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.be.defined;
+			expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.deep.equal(grouped_products);
 
-      let shipable_transaction_product_group = getValidShippableTransactionProductGroup([uuidV4(), uuidV4()], true);
-      let products = getValidProducts();
+		});
 
-      products[0].id = shipable_transaction_product_group[0].product.id;
-      products[1].id = shipable_transaction_product_group[1].product.id;
-      products[1].fulfillment_provider = products[0].fulfillment_provider;
+		it('successfully groups shipable products by fulfillment providers (one group)', () => {
 
-      let grouped_products = {}
+			let shipable_transaction_product_group = getValidShippableTransactionProductGroup([uuidV4(), uuidV4()], true);
+			let products = getValidProducts();
 
-      grouped_products[products[1].fulfillment_provider] = shipable_transaction_product_group;
+			products[0].id = shipable_transaction_product_group[0].product.id;
+			products[1].id = shipable_transaction_product_group[1].product.id;
+			products[1].fulfillment_provider = products[0].fulfillment_provider;
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let grouped_products = {}
 
-      terminalController.parameters.set('products', products);
-      terminalController.parameters.set('shipabletransactionproductgroup', shipable_transaction_product_group);
+			grouped_products[products[1].fulfillment_provider] = shipable_transaction_product_group;
 
-      let result = terminalController.groupShipableTransactionProductGroupByFulfillmentProvider();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.be.defined;
-      expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.deep.equal(grouped_products);
+			terminalController.parameters.set('products', products);
+			terminalController.parameters.set('shipabletransactionproductgroup', shipable_transaction_product_group);
 
-    });
+			let result = terminalController.groupShipableTransactionProductGroupByFulfillmentProvider();
 
-    it('successfully groups shipable products by fulfillment providers (two groups)', () => {
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.be.defined;
+			expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.deep.equal(grouped_products);
 
-      let shipable_transaction_product_group = getValidShippableTransactionProductGroup([uuidV4(), uuidV4()], true);
-      let products = getValidProducts();
+		});
 
-      products[0].id = shipable_transaction_product_group[0].product.id;
-      products[1].id = shipable_transaction_product_group[1].product.id;
+		it('successfully groups shipable products by fulfillment providers (two groups)', () => {
 
-      let grouped_products = {}
+			let shipable_transaction_product_group = getValidShippableTransactionProductGroup([uuidV4(), uuidV4()], true);
+			let products = getValidProducts();
 
-      grouped_products[products[0].fulfillment_provider] = [shipable_transaction_product_group[0]];
-      grouped_products[products[1].fulfillment_provider] = [shipable_transaction_product_group[1]];
+			products[0].id = shipable_transaction_product_group[0].product.id;
+			products[1].id = shipable_transaction_product_group[1].product.id;
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let grouped_products = {}
 
-      terminalController.parameters.set('products', products);
-      terminalController.parameters.set('shipabletransactionproductgroup', shipable_transaction_product_group);
+			grouped_products[products[0].fulfillment_provider] = [shipable_transaction_product_group[0]];
+			grouped_products[products[1].fulfillment_provider] = [shipable_transaction_product_group[1]];
 
-      let result = terminalController.groupShipableTransactionProductGroupByFulfillmentProvider();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result).to.equal(true);
-      expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.be.defined;
-      expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.deep.equal(grouped_products);
+			terminalController.parameters.set('products', products);
+			terminalController.parameters.set('shipabletransactionproductgroup', shipable_transaction_product_group);
 
-    });
+			let result = terminalController.groupShipableTransactionProductGroupByFulfillmentProvider();
 
-  });
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.be.defined;
+			expect(terminalController.parameters.store['groupedshipabletransactionproducts']).to.deep.equal(grouped_products);
 
-  describe('transformFulfillResponses', () => {
+		});
 
-    it('successfully evaluates compound fulfillment responses', () => {
+	});
 
-      let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
+	describe('transformFulfillResponses', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+		it('successfully evaluates compound fulfillment responses', () => {
 
-      terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
+			let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
 
-      let response = terminalController.transformFulfillResponses();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(response).to.equal(true);
-      expect(terminalController.parameters.store['responsecode']).to.equal('success');
+			terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
 
-    });
+			let response = terminalController.transformFulfillResponses();
 
-    it('successfully evaluates fulfillment responses (fail)', () => {
+			expect(response).to.equal(true);
+			expect(terminalController.parameters.store['responsecode']).to.equal('success');
 
-      let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
+		});
 
-      compound_fulfillment_responses[0].vendor_response_class.setCode('fail');
+		it('successfully evaluates fulfillment responses (fail)', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
 
-      terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
+			compound_fulfillment_responses[0].vendor_response_class.setCode('fail');
 
-      let response = terminalController.transformFulfillResponses();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(response).to.equal(true);
-      expect(terminalController.parameters.store['responsecode']).to.equal('fail');
+			terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
 
-    });
+			let response = terminalController.transformFulfillResponses();
 
-    it('successfully evaluates fulfillment responses (error)', () => {
+			expect(response).to.equal(true);
+			expect(terminalController.parameters.store['responsecode']).to.equal('fail');
 
-      let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
+		});
 
-      compound_fulfillment_responses[0].vendor_response_class.setCode('error');
+		it('successfully evaluates fulfillment responses (error)', () => {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
 
-      terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
+			compound_fulfillment_responses[0].vendor_response_class.setCode('error');
 
-      let response = terminalController.transformFulfillResponses();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(response).to.equal(true);
-      expect(terminalController.parameters.store['responsecode']).to.equal('error');
+			terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
 
-    });
+			let response = terminalController.transformFulfillResponses();
 
-    it('successfully evaluates fulfillment responses (noaction)', () => {
+			expect(response).to.equal(true);
+			expect(terminalController.parameters.store['responsecode']).to.equal('error');
 
-        const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-        let terminalController = new TerminalController();
+		});
 
-        terminalController.parameters.set('compoundfulfillmentresponses', []);
+		it('successfully evaluates fulfillment responses (noaction)', () => {
 
-        let response = terminalController.transformFulfillResponses();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-        expect(response).to.equal(true);
-        expect(terminalController.parameters.store['responsecode']).to.equal('noaction');
+			terminalController.parameters.set('compoundfulfillmentresponses', []);
 
-    });
+			let response = terminalController.transformFulfillResponses();
 
-  });
+			expect(response).to.equal(true);
+			expect(terminalController.parameters.store['responsecode']).to.equal('noaction');
 
-  describe('respond', () => {
+		});
 
-    it('successfully responds', () => {
+	});
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+	describe('respond', () => {
 
-      terminalController.parameters.set('responsecode', 'success');
+		it('successfully responds', () => {
 
-      let result = terminalController.respond();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      expect(result.getCode()).to.equal('success');
+			terminalController.parameters.set('responsecode', 'success');
 
-    });
+			let result = terminalController.respond();
 
-  });
+			expect(result.getCode()).to.equal('success');
 
-    describe('transformFulfillResponses', () => {
+		});
 
-      it('successfully evaluates compound fulfillment responses', () => {
+	});
 
-        let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
+	describe('transformFulfillResponses', () => {
 
-        const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-        let terminalController = new TerminalController();
+		it('successfully evaluates compound fulfillment responses', () => {
 
-        terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
+			let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
 
-        let response = terminalController.transformFulfillResponses();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-        expect(response).to.equal(true);
-        expect(terminalController.parameters.store['responsecode']).to.equal('success');
+			terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
 
-      });
+			let response = terminalController.transformFulfillResponses();
 
-      it('successfully evaluates fulfillment responses (fail)', () => {
+			expect(response).to.equal(true);
+			expect(terminalController.parameters.store['responsecode']).to.equal('success');
 
-        let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
+		});
 
-        compound_fulfillment_responses[0].vendor_response_class.setCode('fail');
+		it('successfully evaluates fulfillment responses (fail)', () => {
 
-        const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-        let terminalController = new TerminalController();
+			let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
 
-        terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
+			compound_fulfillment_responses[0].vendor_response_class.setCode('fail');
 
-        let response = terminalController.transformFulfillResponses();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-        expect(response).to.equal(true);
-        expect(terminalController.parameters.store['responsecode']).to.equal('fail');
+			terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
 
-      });
+			let response = terminalController.transformFulfillResponses();
 
-      it('successfully evaluates fulfillment responses (error)', () => {
+			expect(response).to.equal(true);
+			expect(terminalController.parameters.store['responsecode']).to.equal('fail');
 
-        let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
+		});
 
-        compound_fulfillment_responses[0].vendor_response_class.setCode('error');
+		it('successfully evaluates fulfillment responses (error)', () => {
 
-        const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-        let terminalController = new TerminalController();
+			let compound_fulfillment_responses = [getValidCompoundFulfillmentResponse(), getValidCompoundFulfillmentResponse()];
 
-        terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
+			compound_fulfillment_responses[0].vendor_response_class.setCode('error');
 
-        let response = terminalController.transformFulfillResponses();
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-        expect(response).to.equal(true);
-        expect(terminalController.parameters.store['responsecode']).to.equal('error');
+			terminalController.parameters.set('compoundfulfillmentresponses', compound_fulfillment_responses);
 
-      });
+			let response = terminalController.transformFulfillResponses();
 
-    });
+			expect(response).to.equal(true);
+			expect(terminalController.parameters.store['responsecode']).to.equal('error');
 
-  describe('info', () => {
+		});
 
-    it('Successfully executes a info operation on a shipping receipt', () => {
+	});
 
-      let shipping_receipt = getValidShippingReceipt();
-      let fulfillment_provider = getValidFulfillmentProvider();
+	describe('info', () => {
 
-      fulfillment_provider.provider.username = 'kristest';
-		  fulfillment_provider.provider.password = 'kristest',
-      fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
-      fulfillment_provider.provider.threepl_customer_id = 10;
+		it('Successfully executes a info operation on a shipping receipt', () => {
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
-        get() {
-          return Promise.resolve(fulfillment_provider);
-        }
-        sanitize(input) {
-          expect(input).to.equal(false);
-        }
-      });
+			let shipping_receipt = getValidShippingReceipt();
+			let fulfillment_provider = getValidFulfillmentProvider();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
-        get() {
-          return Promise.resolve(shipping_receipt);
-        }
-      });
+			fulfillment_provider.provider.username = 'kristest';
+			fulfillment_provider.provider.password = 'kristest',
+				fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
+				fulfillment_provider.provider.threepl_customer_id = 10;
 
-      let response_body = getValidVendorResponseBody();
-      let vendor_response = {
-        statusCode: 200,
-        body: response_body
-      }
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+				get() {
+					return Promise.resolve(fulfillment_provider);
+				}
+				sanitize(input) {
+					expect(input).to.equal(false);
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-        post() {
-          return Promise.resolve({error: null, response: vendor_response, body: response_body});
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+				get() {
+					return Promise.resolve(shipping_receipt);
+				}
+			});
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			let response_body = getValidVendorResponseBody();
+			let vendor_response = {
+				statusCode: 200,
+				body: response_body
+			}
 
-      return terminalController.info({shipping_receipt: shipping_receipt}).then(result => {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				post() {
+					return Promise.resolve({
+						error: null,
+						response: vendor_response,
+						body: response_body
+					});
+				}
+			});
 
-        expect(objectutilities.getClassName(result)).to.equal('TerminalResponse');
-        expect(result.getCode()).to.equal('success');
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      });
+			return terminalController.info({
+				shipping_receipt: shipping_receipt
+			}).then(result => {
 
-    });
+				expect(objectutilities.getClassName(result)).to.equal('TerminalResponse');
+				expect(result.getCode()).to.equal('success');
 
-  });
+			});
 
-  describe('test', () => {
+		});
 
-    it('Successfully executes a test of a fulfillment provider', () => {
+	});
 
-      let fulfillment_provider = getValidFulfillmentProvider();
+	describe('test', () => {
 
-      fulfillment_provider.provider.username = 'kristest';
-      fulfillment_provider.provider.password = 'kristest',
-      fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
-      fulfillment_provider.provider.threepl_customer_id = 10;
-      let vendor_response_class = getValidVendorResponseClass('test');
+		it('Successfully executes a test of a fulfillment provider', () => {
 
-      /*let test_helper_mock = class {
-        constructor(){
+			let fulfillment_provider = getValidFulfillmentProvider();
 
-        }
-        execute(){
-          return Promise.resolve(vendor_response_class);
-        }
-      };*/
+			fulfillment_provider.provider.username = 'kristest';
+			fulfillment_provider.provider.password = 'kristest',
+				fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
+				fulfillment_provider.provider.threepl_customer_id = 10;
+			let vendor_response_class = getValidVendorResponseClass('test');
 
-      //mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Test.js'), test_helper_mock);
+			/*let test_helper_mock = class {
+			  constructor(){
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
-        get() {
-          return Promise.resolve(fulfillment_provider);
-        }
-        sanitize(input) {
-          expect(input).to.equal(false);
-        }
-      });
+			  }
+			  execute(){
+			    return Promise.resolve(vendor_response_class);
+			  }
+			};*/
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+			//mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Test.js'), test_helper_mock);
 
-      let response_body = getValidVendorResponseBody();
-      let vendor_response = {
-        statusCode: 200,
-        body: response_body
-      }
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+				get() {
+					return Promise.resolve(fulfillment_provider);
+				}
+				sanitize(input) {
+					expect(input).to.equal(false);
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-        post() {
-          return Promise.resolve({error: null, response: vendor_response, body: response_body});
-        }
-      });
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      return terminalController.test({fulfillment_provider_id: fulfillment_provider.id}).then(result => {
+			let response_body = getValidVendorResponseBody();
+			let vendor_response = {
+				statusCode: 200,
+				body: response_body
+			}
 
-        expect(objectutilities.getClassName(result)).to.equal('TerminalResponse');
-        expect(result.getCode()).to.equal('success');
-        expect(vendor_response_class.getParsedResponse()).to.deep.equal({success: true, message:'Successfully validated.'});
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				post() {
+					return Promise.resolve({
+						error: null,
+						response: vendor_response,
+						body: response_body
+					});
+				}
+			});
 
-      });
+			return terminalController.test({
+				fulfillment_provider_id: fulfillment_provider.id
+			}).then(result => {
 
-    });
+				expect(objectutilities.getClassName(result)).to.equal('TerminalResponse');
+				expect(result.getCode()).to.equal('success');
+				expect(vendor_response_class.getParsedResponse()).to.deep.equal({
+					success: true,
+					message: 'Successfully validated.'
+				});
 
-  });
+			});
 
-  describe('fulfill', () => {
+		});
 
-    it('successfully ships a rebill', () => {
+	});
 
-      let rebill = getValidRebill();
-      let transactions = getValidTransactions();
-      let product_ids = [];
-      let session = getValidSession();
-      let customer = getValidCustomer(session.customer);
+	describe('fulfill', () => {
 
-      arrayutilities.map(transactions, transaction => {
-        arrayutilities.map(transaction.products, transaction_product => {
-          delete transaction_product.shipping_receipt;
+		it('successfully ships a rebill', () => {
 
-          return product_ids.push(transaction_product.product.id);
-        })
-      });
+			let rebill = getValidRebill();
+			let transactions = getValidTransactions();
+			let product_ids = [];
+			let session = getValidSession();
+			let customer = getValidCustomer(session.customer);
 
-      let products = getValidProducts(product_ids);
+			arrayutilities.map(transactions, transaction => {
+				arrayutilities.map(transaction.products, transaction_product => {
+					delete transaction_product.shipping_receipt;
 
-      arrayutilities.map(products, (product, index) => {
-        products[index].ship = true;
-        products[index].sku = 'SKU 10'
-      });
+					return product_ids.push(transaction_product.product.id);
+				})
+			});
 
-      let shipping_receipt = getValidShippingReceipt();
+			let products = getValidProducts(product_ids);
 
-      let fulfillment_provider = getValidFulfillmentProvider();
+			arrayutilities.map(products, (product, index) => {
+				products[index].ship = true;
+				products[index].sku = 'SKU 10'
+			});
 
-      fulfillment_provider.provider.username = 'kristest';
-      fulfillment_provider.provider.password = 'kristest',
-      fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
-      fulfillment_provider.provider.threepl_customer_id = 10;
+			let shipping_receipt = getValidShippingReceipt();
 
-      let mocked_receipt_class = class {
-        constructor(){
+			let fulfillment_provider = getValidFulfillmentProvider();
 
-        }
-        issueReceipt(){
-          return Promise.resolve(shipping_receipt);
-        }
-      };
+			fulfillment_provider.provider.username = 'kristest';
+			fulfillment_provider.provider.password = 'kristest',
+				fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
+				fulfillment_provider.provider.threepl_customer_id = 10;
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
-        get() {
-          return Promise.resolve(fulfillment_provider);
-        }
-        sanitize(input) {
-          expect(input).to.equal(false);
-        }
-      });
+			let mocked_receipt_class = class {
+				constructor() {
 
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Receipt.js'), mocked_receipt_class);
+				}
+				issueReceipt() {
+					return Promise.resolve(shipping_receipt);
+				}
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
-        listTransactions() {
-          return Promise.resolve({transactions: transactions});
-        }
-        getResult(result, field) {
-          du.debug('Get Result');
-          if(_.isUndefined(field)){
-            field = this.descriptive_name+'s';
-          }
-          if(_.has(result, field)){
-            return Promise.resolve(result[field]);
-          }else{
-            return Promise.resolve(null);
-          }
-        }
-        getSession() {
-          return Promise.resolve(session)
-        }
-        get() {
-          return Promise.resolve(rebill);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
+				get() {
+					return Promise.resolve(fulfillment_provider);
+				}
+				sanitize(input) {
+					expect(input).to.equal(false);
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
-        getListByAccount() {
-          return Promise.resolve({products: products});
-        }
-        getResult(result, field) {
-          du.debug('Get Result');
-          if(_.isUndefined(field)){
-            field = this.descriptive_name+'s';
-          }
-          if(_.has(result, field)){
-            return Promise.resolve(result[field]);
-          }else{
-            return Promise.resolve(null);
-          }
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Receipt.js'), mocked_receipt_class);
 
-      let mock_customer = class {
-          constructor(){}
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({
+						transactions: transactions
+					});
+				}
+				getResult(result, field) {
+					du.debug('Get Result');
+					if (_.isUndefined(field)) {
+						field = this.descriptive_name + 's';
+					}
+					if (_.has(result, field)) {
+						return Promise.resolve(result[field]);
+					} else {
+						return Promise.resolve(null);
+					}
+				}
+				getSession() {
+					return Promise.resolve(session)
+				}
+				get() {
+					return Promise.resolve(rebill);
+				}
+			});
 
-          get () {
-              return Promise.resolve(customer)
-          }
-      };
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Product.js'), class {
+				getListByAccount() {
+					return Promise.resolve({
+						products: products
+					});
+				}
+				getResult(result, field) {
+					du.debug('Get Result');
+					if (_.isUndefined(field)) {
+						field = this.descriptive_name + 's';
+					}
+					if (_.has(result, field)) {
+						return Promise.resolve(result[field]);
+					} else {
+						return Promise.resolve(null);
+					}
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
+			let mock_customer = class {
+				constructor() {}
 
-      let mocked_fulfillment_class = class {
-        constructor(){
+				get() {
+					return Promise.resolve(customer)
+				}
+			};
 
-        }
-        execute(){
-          return Promise.resolve(getValidVendorResponseClass('fulfill'));
-        }
-      };
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Fulfill.js'), mocked_fulfillment_class);
+			let mocked_fulfillment_class = class {
+				constructor() {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+				}
+				execute() {
+					return Promise.resolve(getValidVendorResponseClass('fulfill'));
+				}
+			};
 
-      return terminalController.fulfill({rebill: rebill}).then(result => {
-        expect(result.getCode()).to.equal('success');
-        expect(objectutilities.getClassName(result)).to.equal('TerminalResponse');
-      });
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Fulfill.js'), mocked_fulfillment_class);
 
-    });
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-  });
+			return terminalController.fulfill({
+				rebill: rebill
+			}).then(result => {
+				expect(result.getCode()).to.equal('success');
+				expect(objectutilities.getClassName(result)).to.equal('TerminalResponse');
+			});
 
-  describe('executeFulfill', () => {
+		});
 
-    it('successfully executes', () => {
+	});
 
-      let grouped_shipable_transaction_products = getValidGroupedShipableTransactionProducts(null, true);
+	describe('executeFulfill', () => {
 
-      let mocked_fulfillment_class = class {
-        constructor(){
+		it('successfully executes', () => {
 
-        }
-        execute(){
-          return Promise.resolve(getValidVendorResponseClass('fulfill'));
-        }
-      };
+			let grouped_shipable_transaction_products = getValidGroupedShipableTransactionProducts(null, true);
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Fulfill.js'), mocked_fulfillment_class);
+			let mocked_fulfillment_class = class {
+				constructor() {
 
-      let mocked_terminal_receipt_class = class {
-        constructor(){
+				}
+				execute() {
+					return Promise.resolve(getValidVendorResponseClass('fulfill'));
+				}
+			};
 
-        }
-        issueReceipt(){
-          return Promise.resolve(getValidShippingReceipt());
-        }
-      };
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'shipment/Fulfill.js'), mocked_fulfillment_class);
 
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Receipt.js'), mocked_terminal_receipt_class);
+			let mocked_terminal_receipt_class = class {
+				constructor() {
 
-      const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-      let terminalController = new TerminalController();
+				}
+				issueReceipt() {
+					return Promise.resolve(getValidShippingReceipt());
+				}
+			};
 
-      terminalController.parameters.set('groupedshipabletransactionproducts', grouped_shipable_transaction_products);
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'terminal/Receipt.js'), mocked_terminal_receipt_class);
 
-      return terminalController.executeFulfill().then(result => {
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-        expect(result).to.equal(true);
+			terminalController.parameters.set('groupedshipabletransactionproducts', grouped_shipable_transaction_products);
 
-        arrayutilities.map(terminalController.parameters.get('compoundfulfillmentresponses'), compound_fulfillment_response => {
-          expect(compound_fulfillment_response.vendor_response_class.getCode()).to.equal('success');
-        });
+			return terminalController.executeFulfill().then(result => {
 
-      });
+				expect(result).to.equal(true);
 
-    });
+				arrayutilities.map(terminalController.parameters.get('compoundfulfillmentresponses'), compound_fulfillment_response => {
+					expect(compound_fulfillment_response.vendor_response_class.getCode()).to.equal('success');
+				});
 
-  });
+			});
 
-  describe('transformTestResponse', () => {
+		});
 
-      it('transforms test response when vendor response code is a success', () => {
+	});
 
-          let vendor_response_class = getValidVendorResponseClass('info');
+	describe('transformTestResponse', () => {
 
-          const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-          let terminalController = new TerminalController();
+		it('transforms test response when vendor response code is a success', () => {
 
-          terminalController.parameters.set('vendorresponseclass', vendor_response_class);
+			let vendor_response_class = getValidVendorResponseClass('info');
 
-          expect(terminalController.transformTestResponse()).to.equal(true);
-          expect(terminalController.parameters.store['responsecode']).to.deep.equal('success');
-      });
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
 
-      it('transforms test response when vendor response code is an error', () => {
+			terminalController.parameters.set('vendorresponseclass', vendor_response_class);
 
-          let vendor_response_class = getValidVendorResponseClass('test');
+			expect(terminalController.transformTestResponse()).to.equal(true);
+			expect(terminalController.parameters.store['responsecode']).to.deep.equal('success');
+		});
 
-          const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
-          let terminalController = new TerminalController();
+		it('transforms test response when vendor response code is an error', () => {
 
-          vendor_response_class.setCode('error');
-          terminalController.parameters.set('vendorresponseclass', vendor_response_class);
+			let vendor_response_class = getValidVendorResponseClass('test');
 
-          expect(terminalController.transformTestResponse()).to.equal(true);
-          expect(terminalController.parameters.store['responsecode']).to.deep.equal('error');
-      });
-  });
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
+
+			vendor_response_class.setCode('error');
+			terminalController.parameters.set('vendorresponseclass', vendor_response_class);
+
+			expect(terminalController.transformTestResponse()).to.equal(true);
+			expect(terminalController.parameters.store['responsecode']).to.deep.equal('error');
+		});
+	});
 
 });
