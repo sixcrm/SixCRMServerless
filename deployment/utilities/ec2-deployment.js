@@ -603,7 +603,8 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
     du.debug('Set VPC');
 
-    const deployment_vpc = this.getConfigurationJSON('vpc');
+    //Technical Debt:  Enable deploying to non-default VPCs
+    //const deployment_vpc = this.getConfigurationJSON('vpcs');
 
     let argumentation = {
       Filters:[
@@ -614,6 +615,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
       ]
     };
 
+    /*
     if(_.has(deployment_vpc, 'ID')){
 
       argumentation = {
@@ -626,6 +628,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
       };
 
     }
+    */
 
     return this.ec2provider.describeVPCs(argumentation).then(result => {
 
