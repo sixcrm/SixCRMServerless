@@ -230,10 +230,6 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 		});
 	});
 
-	beforeEach(() => {
-		//global.SixCRM.localcache.clear('all');
-	});
-
 	afterEach(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();
