@@ -1,0 +1,7 @@
+[
+  {
+    "Name":"sixcrm-lambda-nat",
+    "AllocationName": "sixcrm-lambda-nat",
+    "SubnetName": "sixcrm-subnet1"
+  }
+]

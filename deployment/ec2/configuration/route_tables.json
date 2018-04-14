@@ -1,0 +1,17 @@
+[{
+  "Name": "lambda-nat-routing-table",
+  "AssociatedSubnets": [{
+      "Name": "sixcrm-subnet1"
+    },
+    {
+      "Name": "sixcrm-subnet2"
+    },
+    {
+      "Name": "sixcrm-subnet3"
+    }
+  ],
+  "Routes": [{
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayName": "sixcrm-lambda-nat"
+  }]
+}]
