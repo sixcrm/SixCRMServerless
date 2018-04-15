@@ -248,7 +248,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
       if(stringutilities.isMatch(host, /^[a-zA-Z0-9.-:]*$/)){
 
-        return global.SixCRM.configuration.setEnvironmentConfig('redshift.host', host);
+        //return global.SixCRM.configuration.setEnvironmentConfig('redshift.host', host);
 
       }else{
 

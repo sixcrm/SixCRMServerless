@@ -3,13 +3,13 @@ const _ = require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+//const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+//const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+//const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
-const CloudsearchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudsearch-provider.js');
-const RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-const RedshiftProvider = global.SixCRM.routes.include('controllers', 'providers/redshift-provider.js');
+//const CloudsearchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudsearch-provider.js');
+//const RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+//const RedshiftProvider = global.SixCRM.routes.include('controllers', 'providers/redshift-provider.js');
 
 module.exports = class Configuration extends ConfigurationUtilities {
 
@@ -63,25 +63,19 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
 		this.site_config = this.getSiteConfig();
 
-		this.evaluateStatus();
+		//this.evaluateStatus();
 
 	}
+
 
 	setEnvironmentConfigurationFile() {
 
 		du.debug('Set Environment Configuration Files');
 
-		return this.getEnvironmentConfig(null, false, null).then((result) => {
-
-			this.environment_config = result;
-
-			this.evaluateStatus();
-
-			return;
-
-		});
+		return;
 
 	}
+
 
 	getServerlessConfig() {
 
@@ -103,6 +97,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
 		} catch (error) {
 
+			du.error(error);
 			eu.throwError('server', 'Configuration.getSiteConfig was unable to identify file ' + global.SixCRM.routes.path('config', this.stage + '/site.yml'));
 
 		}
@@ -111,6 +106,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
 	}
 
+	/*
 	setEnvironmentConfig(key, value) {
 
 		du.debug('Set Environment Config');
@@ -128,6 +124,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 		}
 
 	}
+
 
 	regenerateConfiguration(key) {
 
@@ -269,11 +266,22 @@ module.exports = class Configuration extends ConfigurationUtilities {
 		return validates;
 
 	}
+	*/
 
 	getEnvironmentFields() {
 		//use promise all
 	}
 
+	getEnvironmentConfig(field /*, use_cache , waitfor*/){
+
+		if(_.has(process.env, field)){
+			return Promise.resolve(process.env[field]);
+		}
+
+		eu.throwError('server', 'Process.env missing key: "'+field+'".');
+
+	}
+	/*
 	getEnvironmentConfig(field, use_cache, wait_for) {
 
 		du.debug('Get Environment Config');
@@ -799,5 +807,6 @@ module.exports = class Configuration extends ConfigurationUtilities {
 		});
 
 	}
+	*/
 
 }

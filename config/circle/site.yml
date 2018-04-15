@@ -5,6 +5,14 @@ aws:
   region: 'us-east-1'
   account: ''
 
+lambda:
+  region: 'localhost'
+  security_group: 'public-lambda'
+  subnets:
+    - sixcrm-subnet1
+    - sixcrm-subnet2
+    - sixcrm-subnet3
+
 s3:
   account_resources_bucket: 'account-resources'
 
@@ -47,9 +55,6 @@ sns:
 cloudsearch:
   domainname: 'sixcrm'
   domainendpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
-
-lambda:
-  region: 'localhost'
 
 aurora:
   release: 2

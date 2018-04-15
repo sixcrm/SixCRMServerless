@@ -25,9 +25,13 @@ provider:
     #Technical Debt:  Are these necessary here?
     aws_region: ${opt:region, self:provider.region}
     aws_account: ${self:provider.account}
+    test: 'atest'
     #vpc:
       #securityGroupIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSecurityGroup}
       #subnetIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSubnets}
+    cloudsearch.domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
+    aurora.host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
+    #redshift.host: ${file(./config/controllers/configuration_acquisition.js):getRedshiftClusterEndpoint}
 
 plugins:
   - serverless-dynamodb-local
