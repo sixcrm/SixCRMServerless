@@ -1,5 +1,6 @@
+
 const _ = require('lodash');
-const BBPromise = require('bluebird');
+const au = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -103,7 +104,7 @@ module.exports = class processBillingController extends workerController {
 			return false;
 		}
 
-		return BBPromise.each(transactions, (transaction) => {
+		return au.serialPromises(au.map(transactions, (transaction) => {
 
 			return this.pushEvent({
 					event_type: 'transaction_' + transaction.result,
@@ -129,7 +130,7 @@ module.exports = class processBillingController extends workerController {
 
 				});
 
-		});
+		}));
 
 	}
 

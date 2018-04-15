@@ -1,7 +1,6 @@
 const _ = require('lodash');
-const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const au = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
@@ -97,11 +96,11 @@ module.exports = class recoverBillingController extends workerController {
 
 		const transactions = this.parameters.get('transactions', null, false);
 
-		if (_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)) {
+		if (_.isNull(transactions) || !au.nonEmpty(transactions)) {
 			return false;
 		}
 
-		return BBPromise.each(transactions, (transaction) => {
+		return au.serialPromises(au.map(transactions, (transaction) => {
 
 			return this.pushEvent({
 					event_type: 'transaction_recovery_' + transaction.result,
@@ -127,7 +126,7 @@ module.exports = class recoverBillingController extends workerController {
 
 				});
 
-		});
+		}));
 
 	}
 

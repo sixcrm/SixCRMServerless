@@ -3,7 +3,7 @@ const chai = require("chai");
 const expect = chai.expect;
 const path = require('path');
 const fs = require('fs');
-const BBPromise = require('bluebird');
+const au = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
@@ -50,7 +50,7 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 
 					});
 
-					return BBPromise.each(tests, (test) => {
+					return au.serialPromises(au.map(tests, (test) => {
 
 						const message = MockEntities.getValidSNSMessage(test.event);
 
@@ -60,7 +60,7 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 
 						});
 
-					});
+					}));
 
 				});
 

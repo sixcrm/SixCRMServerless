@@ -3,7 +3,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
-const BBPromise = require('bluebird');
 
 module.exports = class CreateOrderController extends transactionEndpointController {
 
@@ -561,7 +560,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		const transactions = this.parameters.get('transactions', null, false) || [];
 
-		return BBPromise.each(transactions, (transaction) => {
+		return arrayutilities.serialPromises(arrayutilities.map((transaction) => {
 
 			return super.pushEvent({
 				event_type: 'transaction_' + transaction.result,
@@ -570,7 +569,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				})
 			});
 
-		});
+		}));
 
 	}
 
