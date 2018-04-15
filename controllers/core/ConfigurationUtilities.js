@@ -1,118 +1,11 @@
-'use strict';
 const _ = require('underscore');
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 module.exports = class ConfigurationUtilities {
 
-  constructor(){
-
-    this.stati = ['loading', 'ready'];
-
-    this.maximum_attempts = 200;
-
-    this.setStatus('loading');
-
-  }
-
-  evaluateStatus(){
-
-    du.debug('Evaluate Status');
-
-    if(_.has(this, 'environment_config') && _.has(this, 'site_config') && _.has(this, 'serverless_config')){
-
-      this.setStatus('ready');
-
-    }else{
-
-      this.setStatus('loading');
-
-    }
-
-  }
-
-  waitForStatus(status, attempt_count){
-
-    du.debug('Wait For Status');
-
-    if(!_.contains(this.stati, status)){
-      eu.throwError('server', 'Unrecognized status');
-    }
-
-    if(_.isUndefined(attempt_count)){
-      attempt_count = 0;
-    }
-
-    if(!numberutilities.isInteger(attempt_count)){
-      eu.throwError('server', 'Attempt count is not an integer');
-    }
-
-    if(attempt_count < 0){
-      eu.throwError('server', 'Attempt count is improper');
-    }
-
-    if(this.status == status){
-
-      return Promise.resolve(true);
-
-    }else{
-
-      if(attempt_count < this.maximum_attempts){
-
-        attempt_count++;
-
-        du.deep('Pausing for status update ('+numberutilities.appendOrdinalSuffix(attempt_count)+' attempt)...');
-
-        return timestamp.delay(100)().then(() => {
-
-          return this.waitForStatus(status, attempt_count);
-
-        });
-
-      }else{
-
-          if (process.env.TEST_MODE === 'true') {
-              du.debug('Test Mode');
-              return Promise.resolve();
-          }
-
-        eu.throwError('server', 'Maximum attempts exhausted.');
-
-      }
-
-    }
-
-  }
-
-  setStatus(status){
-
-    du.debug('Set Status');
-
-    if(!_.contains(this.stati, status)){
-      eu.throwError('server', 'Unrecognized status');
-    }
-
-    du.highlight('Configuration status: '+status);
-
-    this.status = status;
-
-  }
-
-  getStatus(){
-
-    du.debug('Get Status');
-
-    if(!_.has(this, 'status')){
-      eu.throwError('server', 'Unset status variable.');
-    }
-
-    return this.status;
-
-  }
+  constructor(){}
 
   setEnvironmentVariable(key, value){
 
@@ -312,20 +205,6 @@ module.exports = class ConfigurationUtilities {
     }
 
     return use_cache;
-
-  }
-
-  setWaitFor(wait_for){
-
-    if(_.isUndefined(wait_for)){
-      wait_for = 'ready';
-    }
-
-    if(!_.isNull(wait_for) && !_.contains(this.stati, wait_for)){
-      eu.throwError('server', 'Configuration.waitFor assumes a null or string valued argument that matches stati definitions.');
-    }
-
-    return wait_for;
 
   }
 
