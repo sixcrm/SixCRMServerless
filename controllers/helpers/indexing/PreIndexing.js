@@ -1,5 +1,5 @@
 
-const _ =  require('underscore');
+const _ =  require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -121,7 +121,7 @@ module.exports = class PreIndexingHelperController {
 
     let preindexing_entity = this.parameters.get('preindexingentity');
 
-    if(!_.contains(this.indexing_entities, preindexing_entity.entity_type)){
+    if(!_.includes(this.indexing_entities, preindexing_entity.entity_type)){
       du.highlight('Not a indexed entity type: '+preindexing_entity.entity_type);
       return Promise.reject(true);
     }

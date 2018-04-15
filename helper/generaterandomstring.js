@@ -1,6 +1,6 @@
 
 require('../SixCRM.js');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const random = global.SixCRM.routes.include('lib', 'random');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');

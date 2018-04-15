@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -347,7 +347,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
           du.debug('Global account identified.  Appending to the entity.');
 
-          if(!_.contains(this.nonaccounts, this.descriptive_name)){
+          if(!_.includes(this.nonaccounts, this.descriptive_name)){
 
             entity.account = global.account;
 
@@ -457,7 +457,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       if(!this.accountFilterDisabled()){
 
-        if(!_.contains(this.nonaccounts, this.descriptive_name)){
+        if(!_.includes(this.nonaccounts, this.descriptive_name)){
 
           if(!this.isMasterAccount() || literal_master){
 
@@ -484,7 +484,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
       if(this.accountFilterDisabled() !== true){
 
-        if(!_.contains(this.nonaccounts, this.descriptive_name)){
+        if(!_.includes(this.nonaccounts, this.descriptive_name)){
 
           if(!this.isMasterAccount()){
 

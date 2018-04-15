@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const ResponseController = global.SixCRM.routes.include('providers', 'Response.js');
 
 module.exports = class WorkerResponse extends ResponseController {

@@ -1,5 +1,5 @@
 
-const _  = require('underscore');
+const _  = require('lodash');
 //const AWSXRay = require('aws-xray-sdk');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');

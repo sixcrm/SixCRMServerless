@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 
@@ -41,7 +41,7 @@ module.exports = class InnovioResponse extends Response {
 
       return 'fail';
 
-    }else if(_.contains(['reverse','refund'], action)){
+    }else if(_.includes(['reverse','refund'], action)){
 
       body = this.parseBody(body);
 

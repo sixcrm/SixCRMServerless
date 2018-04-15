@@ -1,5 +1,5 @@
 
-var _ =  require('underscore');
+var _ =  require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');

@@ -1,5 +1,5 @@
 
-var _ = require("underscore");
+var _ = require('lodash');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');

@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -130,7 +130,7 @@ module.exports = class S3Provider extends AWSProvider {
       if (!_.isUndefined(additional_properties) && _.isObject(additional_properties)) {
 
         for (var key in additional_properties) {
-          if (_.contains(['Delimiter', 'EncodingType', 'FetchOwner', 'StartAfter', 'RequestPayer', 'Prefix'], key)) {
+          if (_.includes(['Delimiter', 'EncodingType', 'FetchOwner', 'StartAfter', 'RequestPayer', 'Prefix'], key)) {
             parameters[key] = additional_properties[key];
           }
         }
@@ -524,7 +524,7 @@ module.exports = class S3Provider extends AWSProvider {
 
     return this.getBucketList().then((bucket_list) => {
 
-        return _.contains(bucket_list, bucket_name);
+        return _.includes(bucket_list, bucket_name);
 
     });
 

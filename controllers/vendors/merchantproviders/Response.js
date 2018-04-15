@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');

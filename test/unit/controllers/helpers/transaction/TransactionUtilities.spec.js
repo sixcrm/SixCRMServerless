@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
@@ -15,7 +15,7 @@ function getInvalidArgumentsArray(omit){
 
   return arrayutilities.filter(invalid_arguments, (invalid_argument) => {
     if(arrayutilities.nonEmpty(omit)){
-      return !(_.contains(omit, invalid_argument));
+      return !(_.includes(omit, invalid_argument));
     }
     return true;
   });
@@ -190,7 +190,7 @@ describe('helpers/transaction/TransactionUtilities.spec.js', () => {
 
       return Promise.all(instantiated_gateways).then(instantiated_gateways => {
         arrayutilities.map(instantiated_gateways, instantiated_gateway => {
-          expect(_.contains(getValidGatewayConstructorNames(), instantiated_gateway.constructor.name)).to.equal(true);
+          expect(_.includes(getValidGatewayConstructorNames(), instantiated_gateway.constructor.name)).to.equal(true);
         });
       });
 

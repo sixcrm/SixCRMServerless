@@ -1,6 +1,6 @@
 
 require('../../../SixCRM.js');
-const _ = require('underscore');
+const _ = require('lodash');
 
 var LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
 var publicHTMLController = global.SixCRM.routes.include('controllers', 'endpoints/publichtml.js');

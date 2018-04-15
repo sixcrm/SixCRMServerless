@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 module.exports.verifytransactionjwt = (event, context, callback) => {
 

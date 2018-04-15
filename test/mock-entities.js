@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
 const creditcardgenerator = require('creditcard-generator');
 
@@ -560,7 +560,7 @@ class MockEntities {
 
   static getValidFulfillmentProvider(id, type) {
 
-    type = (_.isUndefined(type) || !_.contains(['ShipStation', 'Hashtag', 'ThreePL', 'Test'], type)) ? 'Hashtag' : type;
+    type = (_.isUndefined(type) || !_.includes(['ShipStation', 'Hashtag', 'ThreePL', 'Test'], type)) ? 'Hashtag' : type;
 
     let provider = this.getValidFulfillmentProviderProvider(type);
 
@@ -827,7 +827,7 @@ class MockEntities {
 
     let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
 
-    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);
+    type = (!_.isUndefined(type) && !_.isNull(type) && _.includes(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);
 
     name = (!_.isUndefined(name) && !_.isNull(name)) ? name : spoofer.createRandomName('full');
 
@@ -849,7 +849,7 @@ class MockEntities {
 
     let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
 
-    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);
+    type = (!_.isUndefined(type) && !_.isNull(type) && _.includes(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);
 
     return creditcardgenerator.GenCC(type).shift();
 
@@ -879,7 +879,7 @@ class MockEntities {
 
     let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
 
-    type = (!_.isUndefined(type) && !_.isNull(type) && _.contains(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);
+    type = (!_.isUndefined(type) && !_.isNull(type) && _.includes(creditcard_types, type)) ? type : randomutilities.selectRandomFromArray(creditcard_types);
 
     if (type == 'Amex') {
 

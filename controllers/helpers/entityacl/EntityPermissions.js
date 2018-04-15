@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 class EntityPermissionsHelper {
     static isShared(action, acl) {
@@ -9,8 +9,8 @@ class EntityPermissionsHelper {
 
         const target = { account, user, action };
 
-        if (!_.any(deny, entry => this.match(entry, target))) return true;
-        if (_.any(allow, entry => this.match(entry, target))) return true;
+        if (!_.some(deny, entry => this.match(entry, target))) return true;
+        if (_.some(allow, entry => this.match(entry, target))) return true;
         return false;
     }
 

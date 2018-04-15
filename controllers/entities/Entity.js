@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -549,7 +549,7 @@ module.exports = class entityController extends entityUtilitiesController {
       }).then((existing_entity) => {
 
         objectutilities.map(properties, key => {
-          if(!_.contains(['account', 'user', 'created_at', this.primary_key], key)){
+          if(!_.includes(['account', 'user', 'created_at', this.primary_key], key)){
             existing_entity[key] = properties[key];
           }else{
             eu.throwError('bad_request', 'You can not use updateProperties to update a entity\'s '+key+' property');

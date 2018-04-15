@@ -1,5 +1,5 @@
 
-let _ = require('underscore');
+let _ = require('lodash');
 let encodeutilities = global.SixCRM.routes.include('lib', 'encode.js');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities');
 let eu = global.SixCRM.routes.include('lib', 'error-utilities');

@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 var du = global.SixCRM.routes.include('lib', 'debug-utilities.js');

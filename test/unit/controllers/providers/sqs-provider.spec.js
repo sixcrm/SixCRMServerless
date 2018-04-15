@@ -1,6 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-const _ = require('underscore');
+const _ = require('lodash');
 
 describe('controllers/providers/sqs-provider', () => {
 

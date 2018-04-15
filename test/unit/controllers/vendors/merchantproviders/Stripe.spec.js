@@ -3,7 +3,7 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-const _ = require('underscore');
+const _ = require('lodash');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
@@ -28,8 +28,8 @@ function getValidMerchantProvider(id){
 
 function getValidCreateRefundsResponse(response_type, action){
 
-  response_type = (_.contains(['success','fail'], response_type))?response_type:'success';
-  action = (_.contains(['refund','reverse'], response_type))?response_type:'refund';
+  response_type = (_.includes(['success','fail'], response_type))?response_type:'success';
+  action = (_.includes(['refund','reverse'], response_type))?response_type:'refund';
 
   let responses = {
     refund: {
@@ -93,7 +93,7 @@ function getValidCreateRefundsResponse(response_type, action){
 
 function getValidCreateChargeResponse(response_type){
 
-  response_type = (_.contains(['success','decline'], response_type))?response_type:'success';
+  response_type = (_.includes(['success','decline'], response_type))?response_type:'success';
 
   let responses = {
     success: {
@@ -183,7 +183,7 @@ function getValidCreateChargeResponse(response_type){
 
 function getValidListChargesResponse(response_type){
 
-  response_type = (_.contains(['success','fail'], response_type))?response_type:'success';
+  response_type = (_.includes(['success','fail'], response_type))?response_type:'success';
 
   let responses = {
     success: {

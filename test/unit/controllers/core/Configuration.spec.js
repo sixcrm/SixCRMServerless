@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const mockery = require('mockery');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const Configuration = global.SixCRM.routes.include('controllers', 'core/Configuration.js');

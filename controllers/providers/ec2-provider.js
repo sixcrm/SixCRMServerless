@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -698,7 +698,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
       let clean_rule;
 
-      if(_.contains(['tcp','udp'], rule.IpProtocol)){
+      if(_.includes(['tcp','udp'], rule.IpProtocol)){
 
         clean_rule = objectutilities.additiveFilter(['IpProtocol', 'IpRanges','FromPort','ToPort', 'UserIdGroupPairs'], rule);
 

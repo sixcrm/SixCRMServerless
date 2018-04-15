@@ -1,6 +1,6 @@
 
 
-const _ = require('underscore');
+const _ = require('lodash');
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');

@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
@@ -81,7 +81,7 @@ module.exports = class ElasticacheProvider extends AWSProvider{
 
       return new Promise((resolve) => {
 
-        if(!_.contains(this.clusterStati, status)){ eu.throwError('server', 'Unknown status type.'); }
+        if(!_.includes(this.clusterStati, status)){ eu.throwError('server', 'Unknown status type.'); }
 
         this.elasticache.waitFor(status, parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 

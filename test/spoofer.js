@@ -1,5 +1,5 @@
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const _ = require('underscore');
+const _ = require('lodash');
 const faker = require('faker/locale/en');
 
 module.exports = class Spoofer{
@@ -24,7 +24,7 @@ module.exports = class Spoofer{
 
     segment = (_.isUndefined(segment))?'full':segment;
 
-    if(!_.contains(['line1','line2','city','state','zip', 'country', 'full'], segment)){
+    if(!_.includes(['line1','line2','city','state','zip', 'country', 'full'], segment)){
       eu.throwError('server', 'Unknown address segment: '+segment);
     }
 
@@ -45,7 +45,7 @@ module.exports = class Spoofer{
 
     segment = (_.isUndefined(segment))?'full':segment;
 
-    if(!_.contains(['first','middle','last','full'], segment)){
+    if(!_.includes(['first','middle','last','full'], segment)){
       eu.throwError('server', 'Unknown name segment: '+segment)
     }
 

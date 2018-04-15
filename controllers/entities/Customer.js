@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du =  global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu =  global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -103,7 +103,7 @@ module.exports = class CustomerController extends entityController {
 	  	const customerUpdatePromise = Promise.resolve().then(() => {
 	  		if (_.has(customer, 'creditcards')) {
 	  			arrayutilities.isArray(customer.creditcards, true);
-	  			if (_.contains(customer.creditcards, creditcard.id)) {
+	  			if (_.includes(customer.creditcards, creditcard.id)) {
 	  				return customer;
 	  			}
 	  			customer.creditcards.push(creditcard.id);
@@ -117,7 +117,7 @@ module.exports = class CustomerController extends entityController {
 	  	const creditcardUpdatePromise = Promise.resolve().then(() => {
 	  		if (_.has(creditcard, 'customers')) {
 	  			arrayutilities.isArray(creditcard.customers, true);
-	  			if (_.contains(creditcard.customers, customer.id)) {
+	  			if (_.includes(creditcard.customers, customer.id)) {
 	  				return creditcard;
 	  			}
 	  			creditcard.customers.push(customer.id);

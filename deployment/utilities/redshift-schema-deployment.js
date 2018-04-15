@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
@@ -309,7 +309,7 @@ module.exports = class RedshiftSchemaDeployment extends RedshiftDeployment {
 
     du.debug('Execute Query');
 
-    if (_.contains(['local', 'local-docker', 'circle'], global.SixCRM.configuration.stage)) { // Technical Debt: This REALLY shouldn't be hardcoded here.
+    if (_.includes(['local', 'local-docker', 'circle'], global.SixCRM.configuration.stage)) { // Technical Debt: This REALLY shouldn't be hardcoded here.
       query = this.transformQuery(query);
       du.info(query);
     }

@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');

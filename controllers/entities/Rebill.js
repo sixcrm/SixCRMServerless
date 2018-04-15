@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 //Technical Debt:  We shouldn't need the AWS utility classes here...
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');

@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -111,7 +111,7 @@ module.exports = class MerchantProviderGeneralFilter {
         return this.makeGeneralBrandString(accepted_payment_method);
       });
 
-      return _.contains(accepted_payment_methods_array, this.makeGeneralBrandString(creditcard.properties.brand));
+      return _.includes(accepted_payment_methods_array, this.makeGeneralBrandString(creditcard.properties.brand));
 
     });
 

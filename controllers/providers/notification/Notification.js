@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib','error-utilities.js');
@@ -400,7 +400,7 @@ module.exports = class NotificationProvider {
 
     du.debug('Get Notification Category Opt-In');
 
-    return _.contains(augmented_normalized_notification_settings.notification_categories, category);
+    return _.includes(augmented_normalized_notification_settings.notification_categories, category);
 
   }
 
@@ -408,7 +408,7 @@ module.exports = class NotificationProvider {
 
     du.debug('Is Immutable');
 
-    if(_.has(notification_prototype, 'type') && _.contains(this.immutable_types, notification_prototype.type)){
+    if(_.has(notification_prototype, 'type') && _.includes(this.immutable_types, notification_prototype.type)){
       return true;
     }
 
@@ -623,7 +623,7 @@ module.exports = class NotificationProvider {
       });
       if(found_notification){
         if(_.has(found_notification, 'channels') && _.isArray(found_notification.channels)){
-          if(_.contains(found_notification.channels, 'all') || _.contains(found_notification.channels, channel)){
+          if(_.includes(found_notification.channels, 'all') || _.includes(found_notification.channels, channel)){
             return true;
           }
           return false;
@@ -631,7 +631,7 @@ module.exports = class NotificationProvider {
       }
 
       if(_.has(found_category, 'default') && _.isArray(found_category.default)){
-        if(_.contains(found_category.default, 'all') || _.contains(found_category.default, channel)){
+        if(_.includes(found_category.default, 'all') || _.includes(found_category.default, channel)){
           return true;
         }
       }

@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -128,7 +128,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
       let params = {};
 
       for(var k in search_parameters){
-        if(_.contains(this.search_fields, k)){
+        if(_.includes(this.search_fields, k)){
           params[k] = search_parameters[k];
         }
       }
@@ -185,7 +185,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
             let params = {};
 
             for(var k in suggest_parameters){
-                if(_.contains(this.suggest_fields, k)){
+                if(_.includes(this.suggest_fields, k)){
                     params[k] = suggest_parameters[k];
                 }
             }

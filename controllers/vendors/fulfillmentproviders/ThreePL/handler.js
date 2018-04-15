@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 //Technical Debt:  need a "XML-Helper" class
 const js2xmlparser = require("js2xmlparser2");

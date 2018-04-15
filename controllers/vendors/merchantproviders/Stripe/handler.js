@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const stripe = require('stripe');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');

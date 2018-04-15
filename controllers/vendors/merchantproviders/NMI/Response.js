@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const querystring = require('querystring');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
@@ -44,7 +44,7 @@ module.exports = class NMIResponse extends Response {
 
       return 'fail';
 
-    }else if(_.contains(['reverse','refund'], action)){
+    }else if(_.includes(['reverse','refund'], action)){
 
       if(response.statusCode == 200 && response.statusMessage == 'OK' && body.response == '1'){
         return 'success';

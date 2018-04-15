@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
@@ -702,7 +702,7 @@ describe('controllers/Session.js', () => {
             let alias = sessionController.createAlias(session);
 
             expect(alias).to.be.a('string');
-            expect(_.contains(alias, 'S')).to.equal(true);
+            expect(_.includes(alias, 'S')).to.equal(true);
         });
     });
 });

@@ -1,7 +1,7 @@
 const chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
 const expect = chai.expect;
-const _ = require('underscore');
+const _ = require('lodash');
 const path = require('path');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -128,7 +128,7 @@ function getDirectories(root) {
 
 		const files = fileutilities.getDirectoryFilesSync(path.join(root, d));
 
-		if (_.contains(files, 'config.json')) {
+		if (_.includes(files, 'config.json')) {
 
 			m.push(path.join(root, d));
 

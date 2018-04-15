@@ -1,5 +1,5 @@
 
-let _ = require('underscore');
+let _ = require('lodash');
 
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;

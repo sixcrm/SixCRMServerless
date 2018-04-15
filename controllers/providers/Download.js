@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const j2csv = require('json2csv');
 var XLSX = require('xlsx');
 
@@ -113,7 +113,7 @@ module.exports = class DownloadController {
 
         }
 
-        if(!_.contains(this.available_types, parameters.type)){
+        if(!_.includes(this.available_types, parameters.type)){
 
             eu.throwError('bad_request','Download type is not supported.');
 

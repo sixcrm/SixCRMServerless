@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -397,13 +397,13 @@ class mockSQSProvider extends AWSProvider {
 
 				this.existing_queues = existing_queues;
 
-				return (_.contains(this.existing_queues, shortname));
+				return (_.includes(this.existing_queues, shortname));
 
 			});
 
 		} else {
 
-			return Promise.resolve((_.contains(this.existing_queues, shortname)));
+			return Promise.resolve((_.includes(this.existing_queues, shortname)));
 
 		}
 

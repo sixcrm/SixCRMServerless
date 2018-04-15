@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const nodemailer = require('nodemailer');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -54,7 +54,7 @@ module.exports = class SMTPProvider {
 
         connection_object = this.addDefaults(connection_object);
 
-        if(_.has(connection_object, 'port') && _.contains(this.secure_ports, connection_object.port)){
+        if(_.has(connection_object, 'port') && _.includes(this.secure_ports, connection_object.port)){
             connection_object.secure = true;
         }
 

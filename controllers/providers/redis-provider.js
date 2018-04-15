@@ -1,12 +1,12 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 
-const {promisify} = require("es6-promisify");
+const util = require('util');
 const redis = require('redis');
 
 module.exports = class RedisProvider {
@@ -69,7 +69,7 @@ module.exports = class RedisProvider {
           du.warning('Redis Warning: ', warning)
         });
 
-      this.redis_client_promisified = promisify(this.redis_client.send_command.bind(this.redis_client));
+      this.redis_client_promisified = util.promisify(this.redis_client.send_command.bind(this.redis_client));
 
     });
 
@@ -254,4 +254,3 @@ module.exports = class RedisProvider {
   }
 
 }
-

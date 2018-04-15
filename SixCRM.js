@@ -1,6 +1,6 @@
 
 
-const _ = require('underscore');
+const _ = require('lodash');
 const SixCRMBase = require('./SixCRMBase');
 
 class SixCRM extends SixCRMBase {

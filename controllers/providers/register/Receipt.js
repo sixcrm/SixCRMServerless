@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
@@ -78,7 +78,7 @@ module.exports = class RegisterRecieptGenerator {
       processor_response: processor_response
     };
 
-    if(_.contains(['reverse','refund'], transaction_type)){
+    if(_.includes(['reverse','refund'], transaction_type)){
       let associated_transaction = this.parameters.get('associatedtransaction');
 
       transaction_prototype = objectutilities.merge(transaction_prototype, {
@@ -88,7 +88,7 @@ module.exports = class RegisterRecieptGenerator {
       });
     }
 
-    if(_.contains(['sale'], transaction_type)){
+    if(_.includes(['sale'], transaction_type)){
 
       let merchant_provider = this.parameters.get('merchantprovider');
       let transaction_products = this.parameters.get('transactionproducts');

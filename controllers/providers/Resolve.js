@@ -1,5 +1,5 @@
 
-const _ = require("underscore");
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const DownloadController = global.SixCRM.routes.include('providers', 'Download');
 
@@ -36,7 +36,7 @@ module.exports = class ResolveController {
 
         }
 
-        if(_.has(this, 'download_parameters') && _.has(this.download_parameters, 'type') && _.contains(this.downloadController.available_types, this.download_parameters.type)){
+        if(_.has(this, 'download_parameters') && _.has(this.download_parameters, 'type') && _.includes(this.downloadController.available_types, this.download_parameters.type)){
 
             return this.downloadController.resolveDownload(this.download_parameters, data_aquisition_function);
 

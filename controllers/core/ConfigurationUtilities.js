@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -29,7 +29,7 @@ module.exports = class ConfigurationUtilities {
 
         let stage_names = objectutilities.getKeys(stages);
 
-        if(!_.contains(stage_names, stage)){
+        if(!_.includes(stage_names, stage)){
 
           eu.throwError('server', 'Configuration.resolveStage unable to validate stage name: '+stage);
 

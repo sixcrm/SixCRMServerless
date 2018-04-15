@@ -1,5 +1,5 @@
 
-let _ = require('underscore');
+let _ = require('lodash');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 

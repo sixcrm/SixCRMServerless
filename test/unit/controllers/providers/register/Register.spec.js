@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
@@ -133,7 +133,7 @@ function getInvalidArgumentsArray(omit) {
 
 	omit = (_.isUndefined(omit)) ? [] : omit;
 	return arrayutilities.filter(invalid_arguments, (invalid_argument) => {
-		return !(_.contains(omit, invalid_argument));
+		return !(_.includes(omit, invalid_argument));
 	});
 
 }

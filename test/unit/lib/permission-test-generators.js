@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const anyAction = 'someAction';
 const anyEntity = 'someEntity';
 const anyPermission = `${anyEntity}/${anyAction}`;

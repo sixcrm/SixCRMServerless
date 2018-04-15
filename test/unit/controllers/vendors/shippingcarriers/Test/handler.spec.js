@@ -1,6 +1,6 @@
 
 
-const _ = require('underscore');
+const _ = require('lodash');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');

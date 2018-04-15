@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -372,7 +372,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		if (!this.sessionHelperController.isCurrent({
 				session: session
 			})) {
-			if (!_.contains(['*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c'], global.account)) {
+			if (!_.includes(['*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c'], global.account)) {
 				eu.throwError('bad_request', 'Session has expired.');
 			}
 		}

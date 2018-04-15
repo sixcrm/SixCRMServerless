@@ -1,5 +1,5 @@
 
-const _ =  require('underscore');
+const _ =  require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
@@ -46,7 +46,7 @@ module.exports = class IndexingHelperController {
     let optional_fields = global.SixCRM.routes.include('model','helpers/indexing/indexelement.json').properties;
 
     objectutilities.map(optional_fields, optional_field => {
-      if(!_.contains(objectutilities.getValues(this.document_transcription.required), optional_field)){
+      if(!_.includes(objectutilities.getValues(this.document_transcription.required), optional_field)){
         this.document_transcription.optional[optional_field] = optional_field;
       }
     });

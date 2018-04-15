@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
@@ -259,7 +259,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
           shipping_receipt.status = shipping_status;
 
-          if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+          if(_.includes(['intransit', 'delivered', 'returned'], shipping_status)){
 
             shipping_receipt.tracking = {
               carrier: 'USPS',
@@ -432,7 +432,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
         shipping_receipt.status = 'not that';
 
-        if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+        if(_.includes(['intransit', 'delivered', 'returned'], shipping_status)){
 
           shipping_receipt.tracking = {
             carrier: 'USPS',
@@ -474,7 +474,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
         shipping_receipt.status = 'not that';
 
-        if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+        if(_.includes(['intransit', 'delivered', 'returned'], shipping_status)){
 
           shipping_receipt.tracking = {
             id: randomutilities.createRandomString(20)
@@ -515,7 +515,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
         shipping_receipt.status = 'not that';
 
-        if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+        if(_.includes(['intransit', 'delivered', 'returned'], shipping_status)){
 
           shipping_receipt.tracking = {
             carrier:'USPS'
@@ -556,7 +556,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
         shipping_receipt.status = 'not that';
 
-        if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+        if(_.includes(['intransit', 'delivered', 'returned'], shipping_status)){
 
           shipping_receipt.tracking = {
             carrier: 'USPS',
@@ -592,7 +592,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
         shipping_receipt.status = shipping_status;
 
-        if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+        if(_.includes(['intransit', 'delivered', 'returned'], shipping_status)){
 
           shipping_receipt.tracking = {
             carrier: 'USPS',
@@ -690,7 +690,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
         shipping_receipt.status = shipping_status;
 
-        if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+        if(_.includes(['intransit', 'delivered', 'returned'], shipping_status)){
 
           shipping_receipt.tracking = {
             carrier: 'USPS',
@@ -737,7 +737,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
         shipping_receipt.status = shipping_status;
 
-        if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+        if(_.includes(['intransit', 'delivered', 'returned'], shipping_status)){
 
           shipping_receipt.tracking = {
             carrier: 'USPS',
@@ -784,7 +784,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
         shipping_receipt.status = shipping_status;
 
-        if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+        if(_.includes(['intransit', 'delivered', 'returned'], shipping_status)){
 
           shipping_receipt.tracking = {
             carrier: 'USPS',
@@ -831,7 +831,7 @@ describe('controllers/helpers/entities/shippingreceipt/ShippingReceipt.js', () =
 
         shipping_receipt.status = shipping_status;
 
-        if(_.contains(['intransit', 'delivered', 'returned'], shipping_status)){
+        if(_.includes(['intransit', 'delivered', 'returned'], shipping_status)){
 
           shipping_receipt.tracking = {
             carrier: 'USPS',
