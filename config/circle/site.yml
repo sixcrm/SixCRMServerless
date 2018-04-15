@@ -96,7 +96,7 @@ cache:
   cachebuster: 'somerandomthing1236901cacdda'
 
 elasticache:
-  max_attempts: 3
+  max_attempts: 0
   retry_time: 100
   endpoint: 0.0.0.0
   port: 6379
