@@ -265,4 +265,3 @@ module.exports = class RDSProvider extends AWSProvider {
   }
 
 }
-

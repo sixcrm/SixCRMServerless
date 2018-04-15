@@ -826,10 +826,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
     du.debug('Security Group Exists');
 
     const argumentation = {
-      Filters:[{
-        Key:'group-name',
-        Values:[security_group_definition.GroupName]
-      }]
+      GroupNames:[security_group_definition.GroupName]
     };
 
     return this.ec2provider.describeSecurityGroups(argumentation).then(result => {
