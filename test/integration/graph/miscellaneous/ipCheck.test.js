@@ -41,7 +41,7 @@ describe('IP Check Test', function() {
 			if (err) return done(err);
 
 			du.output(response.body);
-			const ipAddress = response.body.response.data.ipCheck.ipAddress;
+			const ipAddress = response.body.response.data.ipcheck.ip_address;
 			assert.isString(ipAddress);
 
 			ec2.describeNatGateways({

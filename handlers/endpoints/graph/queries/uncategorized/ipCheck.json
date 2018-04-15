@@ -1,5 +1,5 @@
 {
 	"requestContext":{"authorizer":{ "user": "super.user@test.com" }},
 	"pathParameters": {"account": "*"},
-	"body":"query {ipCheck {ipAddress}}"
+	"body":"query {ipcheck {ip_address}}"
 }
