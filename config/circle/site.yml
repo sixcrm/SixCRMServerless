@@ -98,7 +98,7 @@ cache:
 elasticache:
   max_attempts: 0
   retry_time: 100
-  endpoint: 'localhost'
+  endpoint: 0.0.0.0
   port: 6380
   default_expiration: 300
 
