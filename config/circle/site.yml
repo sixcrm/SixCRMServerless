@@ -40,17 +40,17 @@ jwt:
 
 dynamodb:
   region: 'localhost'
-  endpoint: 'http://localhost:8000'
+  endpoint: 'http://dynamodb:8000'
 
 sqs:
   region: 'localhost'
   deadletter_postfix: '_deadletter'
   max_receive_count: 5
-  endpoint: 'http://localhost:9324'
+  endpoint: 'http://sqs:9324'
 
 sns:
   region: 'localhost'
-  endpoint: 'http://localhost:9911'
+  endpoint: 'http://sns:9911'
 
 cloudsearch:
   domainname: 'sixcrm'
@@ -63,8 +63,8 @@ aurora:
   user: 'postgres'
   database: 'postgres'
   password: ''
-  host: 'localhost'
-  port: 5440
+  host: 'aurora'
+  port: 5432
   max: 10
   idle_timeout: 3000
   randomdata:
@@ -76,7 +76,7 @@ redshift:
   user: 'postgres'
   database: 'postgres'
   password: ''
-  host: 'localhost'
+  host: 'redshift'
   port: 5439
   max: 10
   idle_timeout: 3000
@@ -98,8 +98,8 @@ cache:
 elasticache:
   max_attempts: 0
   retry_time: 100
-  endpoint: 0.0.0.0
-  port: 6380
+  endpoint: 'elasticache'
+  port: 6379
   default_expiration: 300
 
 logging:
