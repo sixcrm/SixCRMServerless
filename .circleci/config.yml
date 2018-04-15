@@ -5,10 +5,6 @@
 
 functional_tests_default: &functional-tests-default
   machine: true
-  # docker:
-  #   - image: circleci/node:8.10
-  #     environment:
-  #       - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
 
 defaults: &job-defaults
   docker:
@@ -69,23 +65,20 @@ jobs:
             docker-compose --file tools/docker/docker-compose.yml up -d
       - run: echo "Pausing to allow Docker to catch up..." && sleep 30
       - run:
-          name: Test DOCKER PATHS
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 ls -la
-      - run:
           name: Execute Functional Connectivity Test
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-connectivity --prefix=/sixcrmserverless -e stage=circle
+          command: docker run -e stage=circle -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-connectivity --prefix=/sixcrmserverless
       - run:
           name: Execute Functional Redis-Provider Test
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-redis-provider --prefix=/sixcrmserverless -e stage=circle
+          command: docker run -e stage=circle -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-redis-provider --prefix=/sixcrmserverless
       - run:
           name: Deploy Local Dynamo
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless -e stage=circle
+          command: docker run -e stage=circle -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless
       - run:
           name: Deploy Local SQS
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 node ./deployment/sqs/deploy_queues.js --prefix=/sixcrmserverless -e stage=circle
+          command: docker run -e stage=circle -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 node ./deployment/sqs/deploy_queues.js --prefix=/sixcrmserverless
       - run:
           name: Execute State Machine Tests In Docker
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=0 npm run test-functional-state-machine-docker --prefix=/sixcrmserverless -e stage=circle
+          command: docker run -e stage=circle -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=0 npm run test-functional-state-machine-docker --prefix=/sixcrmserverless
   query_tests:
       <<: *functional-tests-default
       steps:
@@ -107,13 +100,13 @@ jobs:
         - run: echo "Pausing to allow docker to catch up..." && sleep 30
         - run:
             name: Execute Functional Connectivity Test
-            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-connectivity --prefix=/sixcrmserverless -e stage=circle
+            command: docker run -e stage=circle -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-connectivity --prefix=/sixcrmserverless
         - run:
             name: Deploy Local Dynamo
-            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless -e stage=circle
+            command: docker run -e stage=circle -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless
         - run:
             name: Execute Functional Analytics Tests in Docker
-            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=0 run test-functional-analytics --prefix=/sixcrmserverless -e stage=circle
+            command: docker run -e stage=circle -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=0 run test-functional-analytics --prefix=/sixcrmserverless
   pre_deploy:
     <<: *job-defaults
     steps:
