@@ -4,11 +4,11 @@
 # Add Blue/Green for Production
 
 functional_tests_default: &functional-tests-default
-  machine: true
-  # docker:
-  #   - image: circleci/node:8.10
-  #     environment:
-  #       - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+  # machine: true
+  docker:
+    - image: circleci/node:8.10
+      environment:
+        - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
 
 defaults: &job-defaults
   docker:
@@ -55,7 +55,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      # - setup_remote_docker
+      - setup_remote_docker
       - run:
           name: Install Docker Compose
           command: |
@@ -68,33 +68,33 @@ jobs:
             set -x
             docker-compose --file tools/docker/docker-compose.yml up -d
       - run: echo "Pausing to allow Docker to catch up..." && sleep 30
-      # - run:
-      #     name: update DOCKER_HOST to circle configs
-      #     command: |
-      #       cp /home/circleci/project/config/circle/site.yml /home/circleci/project/config/circle/site.yml.bak
-      #       cat /home/circleci/project/config/circle/site.yml.bak | sed "s/<DOCKER_HOST>/$DOCKER_HOST/" > /home/circleci/project/config/circle/site.yml
       - run:
           name: Execute Functional Connectivity Test
-          command: stage=circle npm run test-functional-connectivity
+          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 stage=circle npm run test-functional-connectivity --prefix=/sixcrmserverless
+          # command: stage=circle npm run test-functional-connectivity
       - run:
           name: Execute Functional Redis-Provider Test
-          command: stage=circle npm run test-functional-redis-provider
+          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 stage=circle npm run test-functional-redis-provider --prefix=/sixcrmserverless
+          # command: stage=circle npm run test-functional-redis-provider
       - run:
           name: Deploy Local Dynamo
-          command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
+          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless
+          # command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
       - run:
           name: Deploy Local SQS
-          command: SIX_VERBOSE=2 stage=circle node ./deployment/sqs/deploy_queues.js
+          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 stage=circle node ./deployment/sqs/deploy_queues.js --prefix=/sixcrmserverless
+          # command: SIX_VERBOSE=2 stage=circle node ./deployment/sqs/deploy_queues.js
       - run:
           name: Execute State Machine Tests In Docker
-          command: SIX_VERBOSE=0 stage=circle npm run test-functional-state-machine-docker
+          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=0 stage=circle npm run test-functional-state-machine-docker --prefix=/sixcrmserverless
+          # command: SIX_VERBOSE=0 stage=circle npm run test-functional-state-machine-docker
   query_tests:
       <<: *functional-tests-default
       steps:
         - checkout
         - restore_cache:
             key: dependency-cache-{{ checksum "package.json" }}
-        # - setup_remote_docker
+        - setup_remote_docker
         - run:
             name: Install Docker Compose
             command: |
@@ -109,13 +109,16 @@ jobs:
         - run: echo "Pausing to allow docker to catch up..." && sleep 30
         - run:
             name: Execute Functional Connectivity Test
-            command: stage=circle npm run test-functional-connectivity
+            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 stage=circle npm run test-functional-connectivity --prefix=/sixcrmserverless
+            # command: stage=circle npm run test-functional-connectivity
         - run:
             name: Deploy Local Dynamo
-            command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
+            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless
+            # command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
         - run:
             name: Execute Functional Analytics Tests in Docker
-            command: SIX_VERBOSE=0 stage=circle npm run test-functional-analytics
+            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=0 stage=circle npm run test-functional-analytics --prefix=/sixcrmserverless
+            # command: SIX_VERBOSE=0 stage=circle npm run test-functional-analytics
   pre_deploy:
     <<: *job-defaults
     steps:
