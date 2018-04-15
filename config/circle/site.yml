@@ -40,17 +40,17 @@ jwt:
 
 dynamodb:
   region: 'localhost'
-  endpoint: 'localhost:8000'
+  endpoint: 'http://localhost:8000'
 
 sqs:
   region: 'localhost'
   deadletter_postfix: '_deadletter'
   max_receive_count: 5
-  endpoint: 'localhost:9324'
+  endpoint: 'http://localhost:9324'
 
 sns:
   region: 'localhost'
-  endpoint: 'localhost:9911'
+  endpoint: 'http://localhost:9911'
 
 cloudsearch:
   domainname: 'sixcrm'
