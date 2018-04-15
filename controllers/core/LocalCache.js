@@ -1,4 +1,4 @@
-'use strict'
+
 let _ = require('underscore');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let eu = global.SixCRM.routes.include('lib', 'error-utilities.js');

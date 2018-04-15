@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.verifysitejwt = (event, context, callback) => {
 

@@ -1,4 +1,4 @@
-'use strict';
+
 
 const _ = require('underscore');
 const encryptionutilities = global.SixCRM.routes.include('lib', 'encryption-utilities.js');

@@ -1,4 +1,4 @@
-'use strict'
+
 require('../SixCRM.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');

@@ -1,4 +1,4 @@
-'use strict'
+
 const _ = require('underscore');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');

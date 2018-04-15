@@ -1,4 +1,4 @@
-'use strict'
+
 const _ = require('underscore');
 
 const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');

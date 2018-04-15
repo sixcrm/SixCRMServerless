@@ -1,4 +1,4 @@
-'use strict';
+
 const _ = require('underscore');
 
 //Technical Debt:  We shouldn't need the AWS utility classes here...

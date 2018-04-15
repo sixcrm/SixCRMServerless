@@ -1,4 +1,4 @@
-'use strict';
+
 require('../../SixCRMLite.js');
 
 const expect = require('chai').expect;

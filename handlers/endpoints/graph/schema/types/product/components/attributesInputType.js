@@ -1,4 +1,4 @@
-'use strict';
+
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 

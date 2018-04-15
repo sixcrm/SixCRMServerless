@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.shippedtodelivered = (event, context, callback) => {
 

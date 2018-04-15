@@ -1,4 +1,4 @@
-'use strict';
+
 require('../../../SixCRM.js');
 
 var LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');

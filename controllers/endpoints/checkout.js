@@ -1,4 +1,4 @@
-'use strict';
+
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');

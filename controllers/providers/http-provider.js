@@ -1,4 +1,4 @@
-'use strict'
+
 const _ = require('underscore');
 
 //Technical Debt:  This adds a lot of time.

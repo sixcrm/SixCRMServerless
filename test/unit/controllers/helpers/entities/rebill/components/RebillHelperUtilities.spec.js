@@ -1,4 +1,4 @@
-'use strict'
+
 let chai = require('chai');
 const expect = chai.expect;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');

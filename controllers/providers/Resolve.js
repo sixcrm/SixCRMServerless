@@ -1,4 +1,4 @@
-'use strict';
+
 const _ = require("underscore");
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const DownloadController = global.SixCRM.routes.include('providers', 'Download');

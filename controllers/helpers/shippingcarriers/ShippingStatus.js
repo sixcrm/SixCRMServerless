@@ -1,4 +1,4 @@
-'use strict';
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class ShippingStatusController {

@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.pendingfailedtopending = (event, context, callback) => {
 

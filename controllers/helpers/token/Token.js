@@ -1,4 +1,4 @@
-'use strict';
+
 
 //Technical Debt:  What's this doing here?!
 require('../../../SixCRM.js');

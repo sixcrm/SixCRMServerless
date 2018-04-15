@@ -1,4 +1,4 @@
-'use strict';
+
 function init() {
     let files = require('fs').readdirSync(__dirname);
     let types = {};

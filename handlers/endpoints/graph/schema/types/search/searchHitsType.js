@@ -1,4 +1,4 @@
-'use strict';
+
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;

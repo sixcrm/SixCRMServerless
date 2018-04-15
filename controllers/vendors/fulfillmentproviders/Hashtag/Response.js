@@ -1,4 +1,4 @@
-'use strict';
+
 
 const ThreePLResponse = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ThreePL/Response.js');
 

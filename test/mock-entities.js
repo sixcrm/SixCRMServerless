@@ -1,4 +1,4 @@
-'use strict';
+
 const _ = require('underscore');
 const uuidV4 = require('uuid/v4');
 const creditcardgenerator = require('creditcard-generator');

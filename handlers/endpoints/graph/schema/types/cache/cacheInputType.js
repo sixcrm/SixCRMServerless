@@ -1,4 +1,4 @@
-'use strict';
+
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 

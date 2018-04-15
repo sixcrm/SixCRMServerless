@@ -1,4 +1,4 @@
-'use strict';
+
 const _ = require('underscore');
 const j2csv = require('json2csv');
 var XLSX = require('xlsx');

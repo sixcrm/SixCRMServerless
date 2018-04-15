@@ -1,4 +1,4 @@
-'use strict';
+
 const _ = require('underscore');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 

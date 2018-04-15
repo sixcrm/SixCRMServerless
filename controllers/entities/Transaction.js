@@ -1,4 +1,4 @@
-'use strict';
+
 const _ = require('underscore');
 var random = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');

@@ -1,4 +1,4 @@
-'use strict';
+
 let arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 

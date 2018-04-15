@@ -1,4 +1,4 @@
-'use strict'
+
 const _ = require('underscore');
 
 const smtpprovider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');

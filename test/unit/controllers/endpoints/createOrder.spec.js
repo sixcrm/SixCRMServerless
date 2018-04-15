@@ -1,4 +1,4 @@
-'use strict'
+
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');

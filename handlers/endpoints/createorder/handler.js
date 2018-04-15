@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.createorder = (event, context, callback) => {
 

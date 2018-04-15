@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.sendnotificationstoarchive = (event, context, callback) => {
 
