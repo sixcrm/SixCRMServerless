@@ -560,7 +560,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		const transactions = this.parameters.get('transactions', null, false) || [];
 
-		return arrayutilities.serialPromises(arrayutilities.map((transaction) => {
+		return arrayutilities.serialPromises(arrayutilities.map(transactions, (transaction) => {
 
 			return super.pushEvent({
 				event_type: 'transaction_' + transaction.result,
