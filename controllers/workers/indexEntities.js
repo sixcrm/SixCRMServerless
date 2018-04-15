@@ -7,149 +7,149 @@ var workerController = global.SixCRM.routes.include('controllers', 'workers/comp
 
 module.exports = class IndexEntitiesController extends workerController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameter_definition = {
-        execute: {
-          required: {
-            messages: 'messages'
-          },
-          optional:{}
-        }
-      };
+		this.parameter_definition = {
+			execute: {
+				required: {
+					messages: 'messages'
+				},
+				optional:{}
+			}
+		};
 
-      this.parameter_validation = {
-        'parsedmessagebodies': global.SixCRM.routes.path('model', 'workers/indexEntities/parsedmessagebodies.json'),
-        'indexingdocument': global.SixCRM.routes.path('model','workers/indexEntities/indexingdocument.json'),
-        'cloudsearchresponse': global.SixCRM.routes.path('model','workers/indexEntities/cloudsearchresponse.json'),
-        'responsecode': global.SixCRM.routes.path('model','workers/workerresponsetype.json')
-      };
+		this.parameter_validation = {
+			'parsedmessagebodies': global.SixCRM.routes.path('model', 'workers/indexEntities/parsedmessagebodies.json'),
+			'indexingdocument': global.SixCRM.routes.path('model','workers/indexEntities/indexingdocument.json'),
+			'cloudsearchresponse': global.SixCRM.routes.path('model','workers/indexEntities/cloudsearchresponse.json'),
+			'responsecode': global.SixCRM.routes.path('model','workers/workerresponsetype.json')
+		};
 
-      const IndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/Indexing.js');
+		const IndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/Indexing.js');
 
-      this.indexingHelperController = new IndexingHelperController();
+		this.indexingHelperController = new IndexingHelperController();
 
-      this.cloudsearchprovider = new CloudsearchProvider();
+		this.cloudsearchprovider = new CloudsearchProvider();
 
-      this.augmentParameters();
+		this.augmentParameters();
 
-    }
+	}
 
-    execute(messages){
+	execute(messages){
 
-      du.debug('Execute');
+		du.debug('Execute');
 
-      return this.setParameters({argumentation: {messages: messages}, action: 'execute'})
-      .then(() => this.preprocessing())
-      .then(() => this.createIndexingDocument())
-      .then(() => this.pushDocumentToCloudsearch())
-      .then(() => this.setResponseCode())
-      .then(() => this.respond());
+		return this.setParameters({argumentation: {messages: messages}, action: 'execute'})
+			.then(() => this.preprocessing())
+			.then(() => this.createIndexingDocument())
+			.then(() => this.pushDocumentToCloudsearch())
+			.then(() => this.setResponseCode())
+			.then(() => this.respond());
 
-    }
+	}
 
-    preprocessing(){
+	preprocessing(){
 
-      du.debug('Preprocessing');
+		du.debug('Preprocessing');
 
-      return this.parseMessages();
+		return this.parseMessages();
 
-    }
+	}
 
-    parseMessages(){
+	parseMessages(){
 
-      du.debug('Parse Messages');
+		du.debug('Parse Messages');
 
-      let messages = this.parameters.get('messages');
+		let messages = this.parameters.get('messages');
 
-      let message_bodies = arrayutilities.map(messages, (message) => {
+		let message_bodies = arrayutilities.map(messages, (message) => {
 
-        try{
+			try{
 
-          return JSON.parse(message.Body);
+				return JSON.parse(message.Body);
 
-        }catch(error){
+			}catch(error){
 
-          //send the message to the failure queue??
-          du.error(error);
-          return false;
+				//send the message to the failure queue??
+				du.error(error);
+				return false;
 
-        }
+			}
 
-      });
+		});
 
-      let parsed_message_bodies = arrayutilities.filter(message_bodies, (message_body) => {
-        return objectutilities.isObject(message_body);
-      });
+		let parsed_message_bodies = arrayutilities.filter(message_bodies, (message_body) => {
+			return objectutilities.isObject(message_body);
+		});
 
-      this.parameters.set('parsedmessagebodies', parsed_message_bodies);
+		this.parameters.set('parsedmessagebodies', parsed_message_bodies);
 
-      return Promise.resolve(true);
+		return Promise.resolve(true);
 
-    }
+	}
 
-    createIndexingDocument(){
+	createIndexingDocument(){
 
-      du.debug('Create Indexing Document');
+		du.debug('Create Indexing Document');
 
-      let parsedmessagebodies = this.parameters.get('parsedmessagebodies');
+		let parsedmessagebodies = this.parameters.get('parsedmessagebodies');
 
-      return this.indexingHelperController.createIndexingDocument(parsedmessagebodies).then(result => {
-        this.parameters.set('indexingdocument', result);
-        return true;
-      });
+		return this.indexingHelperController.createIndexingDocument(parsedmessagebodies).then(result => {
+			this.parameters.set('indexingdocument', result);
+			return true;
+		});
 
-    }
+	}
 
-    pushDocumentToCloudsearch(){
+	pushDocumentToCloudsearch(){
 
-      du.debug('Push Document To Cloudsearch');
+		du.debug('Push Document To Cloudsearch');
 
-      let index_document = this.parameters.get('indexingdocument');
+		let index_document = this.parameters.get('indexingdocument');
 
-      return this.cloudsearchprovider.uploadDocuments(index_document)
-      .then((response) => {
+		return this.cloudsearchprovider.uploadDocuments(index_document)
+			.then((response) => {
 
-        this.parameters.set('cloudsearchresponse', response);
-        return true;
+				this.parameters.set('cloudsearchresponse', response);
+				return true;
 
-      }).catch(error => {
-        //Technical Debt: Refactor!
-        //this.parameters.set('cloudsearchresponse', {status: 'error', adds: 0, deletes: 0});
-        du.error(error);
-        eu.throwError(error);
+			}).catch(error => {
+				//Technical Debt: Refactor!
+				//this.parameters.set('cloudsearchresponse', {status: 'error', adds: 0, deletes: 0});
+				du.error(error);
+				eu.throwError(error);
 
-      });
+			});
 
-    }
+	}
 
-    setResponseCode(){
+	setResponseCode(){
 
-      du.debug('Set Response Code');
+		du.debug('Set Response Code');
 
-      let cloudsearch_response = this.parameters.get('cloudsearchresponse', null, false);
+		let cloudsearch_response = this.parameters.get('cloudsearchresponse', null, false);
 
-      if(cloudsearch_response.status == 'success'){
-        this.parameters.set('responsecode', 'success');
-      }else{
-        //do we have an error?  Otherwise, it's a fail.
-        this.parameters.set('responsecode', 'fail');
-      }
+		if(cloudsearch_response.status == 'success'){
+			this.parameters.set('responsecode', 'success');
+		}else{
+			//do we have an error?  Otherwise, it's a fail.
+			this.parameters.set('responsecode', 'fail');
+		}
 
-      return Promise.resolve(true);
+		return Promise.resolve(true);
 
-    }
+	}
 
-    respond(){
+	respond(){
 
-      du.debug('Respond');
+		du.debug('Respond');
 
-      let response_code = this.parameters.get('responsecode');
+		let response_code = this.parameters.get('responsecode');
 
-      return super.respond(response_code);
+		return super.respond(response_code);
 
-    }
+	}
 
 }

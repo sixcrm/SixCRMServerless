@@ -7,17 +7,17 @@ let emailTemplateType = require('./emailTemplateType');
 let paginationType = require('../pagination/paginationType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'EmailTemplates',
-    description: 'Email tempates for use.',
-    fields: () => ({
-        emailtemplates: {
-            type: new GraphQLList(emailTemplateType.graphObj),
-            description: 'The email templates',
-        },
-        pagination: {
-            type: new GraphQLNonNull(paginationType.graphObj),
-            description: 'Query pagination',
-        }
-    }),
-    interfaces: []
+	name: 'EmailTemplates',
+	description: 'Email tempates for use.',
+	fields: () => ({
+		emailtemplates: {
+			type: new GraphQLList(emailTemplateType.graphObj),
+			description: 'The email templates',
+		},
+		pagination: {
+			type: new GraphQLNonNull(paginationType.graphObj),
+			description: 'Query pagination',
+		}
+	}),
+	interfaces: []
 });

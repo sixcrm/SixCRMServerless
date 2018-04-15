@@ -20,382 +20,382 @@ const EncryptionHelper = global.SixCRM.routes.include('helpers', 'encryption/Enc
 
 module.exports = class entityUtilitiesController extends PermissionedController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.search_fields = [];
+		this.search_fields = [];
 
-      const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
-      this.preIndexingHelperController = new PreIndexingHelperController();
+		const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
+		this.preIndexingHelperController = new PreIndexingHelperController();
 
-      this.encryptionhelper = new EncryptionHelper(this);
-      this.sanitization = true;
+		this.encryptionhelper = new EncryptionHelper(this);
+		this.sanitization = true;
 
-    }
+	}
 
-    sanitize(sanitize) {
-        if (!_.isBoolean(sanitize)) {
-            eu.throwError('server', 'sanitize argument is not a boolean.');
-        }
+	sanitize(sanitize) {
+		if (!_.isBoolean(sanitize)) {
+			eu.throwError('server', 'sanitize argument is not a boolean.');
+		}
 
-        this.sanitization = sanitize;
-        return this;
-    }
+		this.sanitization = sanitize;
+		return this;
+	}
 
-    //Technical Debt:  Refactor.
-    catchPermissions(permissions, action){
+	//Technical Debt:  Refactor.
+	catchPermissions(permissions, action){
 
-      du.debug('Catch Permissions');
+		du.debug('Catch Permissions');
 
-      du.warning('Permissions', permissions, 'Action', action);
+		du.warning('Permissions', permissions, 'Action', action);
 
-      action = (_.isUndefined(action))?'read':action;
+		action = (_.isUndefined(action))?'read':action;
 
-      if(permissions == false){
+		if(permissions == false){
 
-        this.throwPermissionsError();
+			this.throwPermissionsError();
 
-      }
+		}
 
-      return permissions;
+		return permissions;
 
-    }
+	}
 
-    handleErrors(error, fatal){
+	handleErrors(error, fatal){
 
-      du.debug('Handle Errors');
+		du.debug('Handle Errors');
 
-      fatal = (_.isUndefined(fatal))?false:fatal;
+		fatal = (_.isUndefined(fatal))?false:fatal;
 
-      if(_.has(error, 'code')){
-        //Technical Debt: This appears bound to permissions...
-        if(error.code == 403 && fatal == false){
+		if(_.has(error, 'code')){
+			//Technical Debt: This appears bound to permissions...
+			if(error.code == 403 && fatal == false){
 
-          return null;
+				return null;
 
-        }
+			}
 
-        eu.throw(error);
+			eu.throw(error);
 
-      }
+		}
 
-      eu.throwError('server', error);
+		eu.throwError('server', error);
 
-    }
+	}
 
-    prune(entity, primary_key){
+	prune(entity, primary_key){
 
-      du.debug('Prune');
+		du.debug('Prune');
 
-      primary_key = (_.isUndefined(primary_key))?this.primary_key:primary_key;
+		primary_key = (_.isUndefined(primary_key))?this.primary_key:primary_key;
 
-      if(objectutilities.isObject(entity)){
+		if(objectutilities.isObject(entity)){
 
-          objectutilities.map(entity, entity_property => {
+			objectutilities.map(entity, entity_property => {
 
-            if(_.has(entity[entity_property], primary_key)){
+				if(_.has(entity[entity_property], primary_key)){
 
-              entity[entity_property] = entity[entity_property][primary_key];
+					entity[entity_property] = entity[entity_property][primary_key];
 
-            }else{
+				}else{
 
-              return this.prune(entity[entity_property]);
+					return this.prune(entity[entity_property]);
 
 
-            }
+				}
 
-          });
+			});
 
-      }
+		}
 
-      return entity;
+		return entity;
 
-    }
+	}
 
-    validate(object, path_to_model){
+	validate(object, path_to_model){
 
-      du.debug('Validate');
+		du.debug('Validate');
 
-      if(_.isUndefined(path_to_model)){
-        path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
-      }
+		if(_.isUndefined(path_to_model)){
+			path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
+		}
 
-      let valid = mvu.validateModel(object, path_to_model);
+		let valid = mvu.validateModel(object, path_to_model);
 
-      if(_.isError(valid)){
-        return Promise.reject(valid);
-      }
+		if(_.isError(valid)){
+			return Promise.reject(valid);
+		}
 
-      return Promise.resolve(valid);
+		return Promise.resolve(valid);
 
-    }
+	}
 
-    getUUID(){
+	getUUID(){
 
-      du.debug('Get UUID');
+		du.debug('Get UUID');
 
-      return stringutilities.getUUID();
+		return stringutilities.getUUID();
 
-    }
+	}
 
-    isUUID(string, version){
+	isUUID(string, version){
 
-      du.debug('Is UUID');
+		du.debug('Is UUID');
 
-      return stringutilities.isUUID(string, version);
+		return stringutilities.isUUID(string, version);
 
-    }
+	}
 
-    isEmail(string){
+	isEmail(string){
 
-      du.debug('Is Email');
+		du.debug('Is Email');
 
-      return stringutilities.isEmail(string);
+		return stringutilities.isEmail(string);
 
-    }
+	}
 
-    //Technical Debt:  This seems strange.
-    acquireGlobalUser(){
+	//Technical Debt:  This seems strange.
+	acquireGlobalUser(){
 
-        du.debug('Acquire Global User');
+		du.debug('Acquire Global User');
 
-        if(_.has(global, 'user')){
+		if(_.has(global, 'user')){
 
-            return global.user;
+			return global.user;
 
-        }
+		}
 
-        return null;
+		return null;
 
-    }
+	}
 
-    //Technical Debt:  This seems strange.
-    acquireGlobalAccount(){
+	//Technical Debt:  This seems strange.
+	acquireGlobalAccount(){
 
-        du.debug('Acquire Global Account');
+		du.debug('Acquire Global Account');
 
-        if(_.has(global, 'account')){
+		if(_.has(global, 'account')){
 
-            return global.account;
+			return global.account;
 
-        }
+		}
 
-        return null;
+		return null;
 
-    }
+	}
 
-    removeFromSearchIndex(id, entity_type){
+	removeFromSearchIndex(id, entity_type){
 
-      du.debug('Remove From Search Index');
+		du.debug('Remove From Search Index');
 
-      let entity = {id:id, entity_type: entity_type};
+		let entity = {id:id, entity_type: entity_type};
 
-      return this.preIndexingHelperController.removeFromSearchIndex(entity);
+		return this.preIndexingHelperController.removeFromSearchIndex(entity);
 
-    }
+	}
 
-    addToSearchIndex(entity, entity_type){
+	addToSearchIndex(entity, entity_type){
 
-      du.debug('Add To Search Index');
+		du.debug('Add To Search Index');
 
-      entity.entity_type = entity_type;
+		entity.entity_type = entity_type;
 
-      return this.preIndexingHelperController.addToSearchIndex(entity);
+		return this.preIndexingHelperController.addToSearchIndex(entity);
 
-    }
+	}
 
-    setCreatedAt(entity, created_at){
+	setCreatedAt(entity, created_at){
 
-        du.debug('Set Created At');
+		du.debug('Set Created At');
 
-        if(_.isUndefined(created_at)){
+		if(_.isUndefined(created_at)){
 
-            entity['created_at'] = timestamp.getISO8601();
+			entity['created_at'] = timestamp.getISO8601();
 
-        }else{
+		}else{
 
-            entity['created_at'] = created_at;
+			entity['created_at'] = created_at;
 
-        }
+		}
 
-        entity = this.setUpdatedAt(entity);
+		entity = this.setUpdatedAt(entity);
 
-        return entity;
+		return entity;
 
-    }
+	}
 
-    setUpdatedAt(entity){
+	setUpdatedAt(entity){
 
-        du.debug('Set Updated At');
+		du.debug('Set Updated At');
 
-        if(!_.has(entity, 'created_at')){
+		if(!_.has(entity, 'created_at')){
 
-            eu.throwError('validation','Entity lacks a "created_at" property');
+			eu.throwError('validation','Entity lacks a "created_at" property');
 
-        }
+		}
 
-        if(!_.has(entity, 'updated_at')){
+		if(!_.has(entity, 'updated_at')){
 
-            entity['updated_at'] = entity.created_at;
+			entity['updated_at'] = entity.created_at;
 
-        }else{
+		}else{
 
-            entity['updated_at'] = timestamp.getISO8601();
+			entity['updated_at'] = timestamp.getISO8601();
 
-        }
+		}
 
-        return entity;
+		return entity;
 
-    }
+	}
 
-    persistCreatedUpdated(entity, exists){
+	persistCreatedUpdated(entity, exists){
 
-        du.debug('Persist Created Updated');
+		du.debug('Persist Created Updated');
 
-        if(!_.has(exists, 'created_at')){
-            eu.throwError('validation','Entity lacks "created_at" property.');
-        }
+		if(!_.has(exists, 'created_at')){
+			eu.throwError('validation','Entity lacks "created_at" property.');
+		}
 
-        if(!_.has(exists, 'updated_at')){
-            eu.throwError('validation','Entity lacks "updated_at" property.');
-        }
+		if(!_.has(exists, 'updated_at')){
+			eu.throwError('validation','Entity lacks "updated_at" property.');
+		}
 
-        entity['created_at'] = exists.created_at;
-        entity['updated_at'] = exists.updated_at;
+		entity['created_at'] = exists.created_at;
+		entity['updated_at'] = exists.updated_at;
 
-        return entity;
+		return entity;
 
-    }
+	}
 
-    marryQueryParameters(empirical_parameters, secondary_parameters){
+	marryQueryParameters(empirical_parameters, secondary_parameters){
 
-      du.debug('Marry Query Parameters');
+		du.debug('Marry Query Parameters');
 
-      if(_.isUndefined(empirical_parameters) || !_.isObject(empirical_parameters)){
-        return secondary_parameters;
-      }
+		if(_.isUndefined(empirical_parameters) || !_.isObject(empirical_parameters)){
+			return secondary_parameters;
+		}
 
-      arrayutilities.map(objectutilities.getKeys(secondary_parameters), key => {
+		arrayutilities.map(objectutilities.getKeys(secondary_parameters), key => {
 
-        if(!_.has(empirical_parameters, key)){
-          empirical_parameters[key] = secondary_parameters[key];
-        }
+			if(!_.has(empirical_parameters, key)){
+				empirical_parameters[key] = secondary_parameters[key];
+			}
 
-      });
+		});
 
-      return empirical_parameters;
+		return empirical_parameters;
 
-    }
+	}
 
-    assureSingular(results){
+	assureSingular(results){
 
-      du.debug('Assure Singular');
+		du.debug('Assure Singular');
 
-      if(_.isNull(results)){
-        return null;
-      }
+		if(_.isNull(results)){
+			return null;
+		}
 
-      if(arrayutilities.isArray(results, true)){
+		if(arrayutilities.isArray(results, true)){
 
-        if(results.length == 1){
-          return results[0];
-        }
+			if(results.length == 1){
+				return results[0];
+			}
 
-        if(results.length == 0){
-          return null;
-        }
+			if(results.length == 0){
+				return null;
+			}
 
-        eu.throwError('server', 'Non-specific '+this.descriptive_name+' entity results.');
+			eu.throwError('server', 'Non-specific '+this.descriptive_name+' entity results.');
 
-      }
+		}
 
-    }
+	}
 
-    assignPrimaryKey(entity){
+	assignPrimaryKey(entity){
 
-      du.debug('Assign Primary Key');
+		du.debug('Assign Primary Key');
 
-      if(!_.has(entity, this.primary_key)){
+		if(!_.has(entity, this.primary_key)){
 
-        if(this.primary_key == 'id'){
+			if(this.primary_key == 'id'){
 
-            entity[this.primary_key] = stringutilities.getUUID();
+				entity[this.primary_key] = stringutilities.getUUID();
 
-        }else{
+			}else{
 
-            du.warning('Unable to assign primary key "'+this.primary_key+'" property');
+				du.warning('Unable to assign primary key "'+this.primary_key+'" property');
 
-        }
+			}
 
-      }
+		}
 
-      return entity;
+		return entity;
 
-    }
+	}
 
-    assignAccount(entity){
+	assignAccount(entity){
 
-      du.debug('Assign Account');
+		du.debug('Assign Account');
 
-      if(!_.has(entity, 'account')){
+		if(!_.has(entity, 'account')){
 
-        du.debug('No account specified in the entity record');
+			du.debug('No account specified in the entity record');
 
-        //Technical Debt:  This is inappropriate here...
-        if(_.has(global, 'account')){
+			//Technical Debt:  This is inappropriate here...
+			if(_.has(global, 'account')){
 
-          du.debug('Global account identified.  Appending to the entity.');
+				du.debug('Global account identified.  Appending to the entity.');
 
-          if(!_.includes(this.nonaccounts, this.descriptive_name)){
+				if(!_.includes(this.nonaccounts, this.descriptive_name)){
 
-            entity.account = global.account;
+					entity.account = global.account;
 
-          }else{
+				}else{
 
-              du.debug('Entity exists in the non-account list.');
+					du.debug('Entity exists in the non-account list.');
 
-          }
+				}
 
-        }else{
+			}else{
 
-            du.debug('No global account value available.');
+				du.debug('No global account value available.');
 
-        }
+			}
 
-      }else{
+		}else{
 
-        du.debug('Entity already bound to a account.');
-        //Technical Debt: Critical
-        //Technical Debt:  Need to validate that the user that is creating the entity has permission to assign to the account.
+			du.debug('Entity already bound to a account.');
+			//Technical Debt: Critical
+			//Technical Debt:  Need to validate that the user that is creating the entity has permission to assign to the account.
 
-      }
+		}
 
-      return entity;
+		return entity;
 
-    }
+	}
 
-    //Technical Debt:  Why was the account condition stuff here?
-    appendUserCondition({query_parameters, user}){
+	//Technical Debt:  Why was the account condition stuff here?
+	appendUserCondition({query_parameters, user}){
 
-      du.debug('Append User Condition');
+		du.debug('Append User Condition');
 
-      //Technical Debt:  This is inappropriate here...
-      user = (_.isUndefined(user))?global.user:user;
+		//Technical Debt:  This is inappropriate here...
+		user = (_.isUndefined(user))?global.user:user;
 
-      query_parameters = this.appendKeyConditionExpression(query_parameters, '#user = :userv');
-      query_parameters = this.appendExpressionAttributeValues(query_parameters, ':userv', this.getID(user));
-      query_parameters = this.appendExpressionAttributeNames(query_parameters, '#user', 'user');
+		query_parameters = this.appendKeyConditionExpression(query_parameters, '#user = :userv');
+		query_parameters = this.appendExpressionAttributeValues(query_parameters, ':userv', this.getID(user));
+		query_parameters = this.appendExpressionAttributeNames(query_parameters, '#user', 'user');
 
-      return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    appendSearchConditions({query_parameters, search}){
+	appendSearchConditions({query_parameters, search}){
 
-      du.debug('Append Updated At Condition');
+		du.debug('Append Updated At Condition');
 
-      /*
+		/*
       //validate...
       if(objectutilities.hasRecursive(search, 'name')){
 
@@ -408,502 +408,502 @@ module.exports = class entityUtilitiesController extends PermissionedController 
       }
       */
 
-      if(objectutilities.hasRecursive(search, 'name') && search.name && arrayutilities.isArray(this.search_fields) && arrayutilities.nonEmpty(this.search_fields)){
-        let filterExpression = '';
+		if(objectutilities.hasRecursive(search, 'name') && search.name && arrayutilities.isArray(this.search_fields) && arrayutilities.nonEmpty(this.search_fields)){
+			let filterExpression = '';
 
-        this.search_fields.forEach(field => {
-          filterExpression += (filterExpression ? ' OR ' : '') + `contains(#search_${field}, :${field}_v)`;
-          query_parameters = this.appendExpressionAttributeNames(query_parameters, `#search_${field}`, field);
-          query_parameters = this.appendExpressionAttributeValues(query_parameters, `:${field}_v`, search.name);
-        });
+			this.search_fields.forEach(field => {
+				filterExpression += (filterExpression ? ' OR ' : '') + `contains(#search_${field}, :${field}_v)`;
+				query_parameters = this.appendExpressionAttributeNames(query_parameters, `#search_${field}`, field);
+				query_parameters = this.appendExpressionAttributeValues(query_parameters, `:${field}_v`, search.name);
+			});
 
-        query_parameters = this.appendFilterExpression(query_parameters, filterExpression);
-      }
+			query_parameters = this.appendFilterExpression(query_parameters, filterExpression);
+		}
 
-      if(objectutilities.hasRecursive(search, 'updated_at.after')){
-        query_parameters = this.appendFilterExpression(query_parameters, '#updated_at_after_k > :updated_at_after_v');
-        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#updated_at_after_k', 'updated_at');
-        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':updated_at_after_v', search.updated_at.after);
-      }
+		if(objectutilities.hasRecursive(search, 'updated_at.after')){
+			query_parameters = this.appendFilterExpression(query_parameters, '#updated_at_after_k > :updated_at_after_v');
+			query_parameters = this.appendExpressionAttributeNames(query_parameters, '#updated_at_after_k', 'updated_at');
+			query_parameters = this.appendExpressionAttributeValues(query_parameters, ':updated_at_after_v', search.updated_at.after);
+		}
 
-      if(objectutilities.hasRecursive(search, 'updated_at.before')){
-        query_parameters = this.appendFilterExpression(query_parameters, '#updated_at_before_k < :updated_at_before_v');
-        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#updated_at_before_k', 'updated_at');
-        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':updated_at_before_v', search.updated_at.before);
-      }
+		if(objectutilities.hasRecursive(search, 'updated_at.before')){
+			query_parameters = this.appendFilterExpression(query_parameters, '#updated_at_before_k < :updated_at_before_v');
+			query_parameters = this.appendExpressionAttributeNames(query_parameters, '#updated_at_before_k', 'updated_at');
+			query_parameters = this.appendExpressionAttributeValues(query_parameters, ':updated_at_before_v', search.updated_at.before);
+		}
 
-      if(objectutilities.hasRecursive(search, 'created_at.after')){
-        query_parameters = this.appendFilterExpression(query_parameters, '#created_at_after_k > :created_at_after_v');
-        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#created_at_after_k', 'created_at');
-        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':created_at_after_v', search.created_at.after);
-      }
+		if(objectutilities.hasRecursive(search, 'created_at.after')){
+			query_parameters = this.appendFilterExpression(query_parameters, '#created_at_after_k > :created_at_after_v');
+			query_parameters = this.appendExpressionAttributeNames(query_parameters, '#created_at_after_k', 'created_at');
+			query_parameters = this.appendExpressionAttributeValues(query_parameters, ':created_at_after_v', search.created_at.after);
+		}
 
-      if(objectutilities.hasRecursive(search, 'created_at.before')){
-        query_parameters = this.appendFilterExpression(query_parameters, '#created_at_before_k < :created_at_before_v');
-        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#created_at_before_k', 'created_at');
-        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':created_at_before_v', search.created_at.before);
-      }
+		if(objectutilities.hasRecursive(search, 'created_at.before')){
+			query_parameters = this.appendFilterExpression(query_parameters, '#created_at_before_k < :created_at_before_v');
+			query_parameters = this.appendExpressionAttributeNames(query_parameters, '#created_at_before_k', 'created_at');
+			query_parameters = this.appendExpressionAttributeValues(query_parameters, ':created_at_before_v', search.created_at.before);
+		}
 
-      return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    appendAccountCondition({query_parameters, account, literal_master}){
+	appendAccountCondition({query_parameters, account, literal_master}){
 
-      du.debug('Append Account Condition');
+		du.debug('Append Account Condition');
 
-      //Technical Debt:  This is inappropriate here...
-      account = (_.isUndefined(account))?global.account:account;
+		//Technical Debt:  This is inappropriate here...
+		account = (_.isUndefined(account))?global.account:account;
 
-      if(!this.accountFilterDisabled()){
+		if(!this.accountFilterDisabled()){
 
-        if(!_.includes(this.nonaccounts, this.descriptive_name)){
+			if(!_.includes(this.nonaccounts, this.descriptive_name)){
 
-          if(!this.isMasterAccount() || literal_master){
+				if(!this.isMasterAccount() || literal_master){
 
-            query_parameters = this.appendKeyConditionExpression(query_parameters, '#account = :accountv');
-            query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', this.getID(account));
-            query_parameters = this.appendExpressionAttributeNames(query_parameters, '#account', 'account');
+					query_parameters = this.appendKeyConditionExpression(query_parameters, '#account = :accountv');
+					query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', this.getID(account));
+					query_parameters = this.appendExpressionAttributeNames(query_parameters, '#account', 'account');
 
-          }
+				}
 
-        }
+			}
 
-      }
+		}
 
-      return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    appendAccountFilter({query_parameters, account}){
+	appendAccountFilter({query_parameters, account}){
 
-      du.debug('Append Account Filter');
+		du.debug('Append Account Filter');
 
-      //Technical Debt:  This is inappropriate here...
-      account = (_.isUndefined(account))?global.account:account;
+		//Technical Debt:  This is inappropriate here...
+		account = (_.isUndefined(account))?global.account:account;
 
-      if(this.accountFilterDisabled() !== true){
+		if(this.accountFilterDisabled() !== true){
 
-        if(!_.includes(this.nonaccounts, this.descriptive_name)){
+			if(!_.includes(this.nonaccounts, this.descriptive_name)){
 
-          if(!this.isMasterAccount()){
+				if(!this.isMasterAccount()){
 
-            query_parameters = this.appendFilterExpression(query_parameters, 'account = :accountv');
+					query_parameters = this.appendFilterExpression(query_parameters, 'account = :accountv');
 
-            query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', account);
+					query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', account);
 
-          }
+				}
 
-        }
+			}
 
-      }
+		}
 
-      return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    appendPagination({query_parameters, pagination}){
+	appendPagination({query_parameters, pagination}){
 
-        du.debug('Append Pagination');
+		du.debug('Append Pagination');
 
-        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
-        if(!_.isUndefined(pagination) && _.isObject(pagination)){
+		if(!_.isUndefined(pagination) && _.isObject(pagination)){
 
-            if(_.has(pagination, 'limit')){
+			if(_.has(pagination, 'limit')){
 
-              query_parameters = this.appendLimit({query_parameters: query_parameters, limit: pagination.limit});
+				query_parameters = this.appendLimit({query_parameters: query_parameters, limit: pagination.limit});
 
-            }
+			}
 
-            if(_.has(pagination, 'exclusive_start_key')){
+			if(_.has(pagination, 'exclusive_start_key')){
 
-                query_parameters = this.appendExclusiveStartKey(query_parameters, pagination.exclusive_start_key);
+				query_parameters = this.appendExclusiveStartKey(query_parameters, pagination.exclusive_start_key);
 
-            }else if(_.has(pagination, 'cursor')){
+			}else if(_.has(pagination, 'cursor')){
 
-                query_parameters = this.appendCursor(query_parameters, pagination.cursor);
+				query_parameters = this.appendCursor(query_parameters, pagination.cursor);
 
-            }
+			}
 
-        }
+		}
 
-        return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    appendLimit({query_parameters, limit}){
+	appendLimit({query_parameters, limit}){
 
-        du.debug('Append Limit');
+		du.debug('Append Limit');
 
-        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
-        limit = (_.isUndefined(limit))?100:limit;
+		limit = (_.isUndefined(limit))?100:limit;
 
-        if(_.isString(limit) || _.isNumber(limit)){
-          limit = parseInt(limit);
-        }else{
-          limit = 100;
-        }
+		if(_.isString(limit) || _.isNumber(limit)){
+			limit = parseInt(limit);
+		}else{
+			limit = 100;
+		}
 
-        if(limit < 1){
-          eu.throwError('forbidded', 'The graph API limit minimum is 1.');
-        }
+		if(limit < 1){
+			eu.throwError('forbidded', 'The graph API limit minimum is 1.');
+		}
 
-        if(limit > 100){
-          eu.throwError('forbidded', 'The graph API record limit is 100.');
-        }
+		if(limit > 100){
+			eu.throwError('forbidded', 'The graph API record limit is 100.');
+		}
 
-        query_parameters['limit'] = limit;
+		query_parameters['limit'] = limit;
 
-        return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    appendExclusiveStartKey(query_parameters, exclusive_start_key){
+	appendExclusiveStartKey(query_parameters, exclusive_start_key){
 
-        du.debug('Append Exclusive Start Key', query_parameters, exclusive_start_key);
+		du.debug('Append Exclusive Start Key', query_parameters, exclusive_start_key);
 
-        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
-        if(!_.isUndefined(exclusive_start_key)){
+		if(!_.isUndefined(exclusive_start_key)){
 
-            if(_.isString(exclusive_start_key)){
+			if(_.isString(exclusive_start_key)){
 
-                if(this.isUUID(exclusive_start_key) || this.isEmail(exclusive_start_key)){
+				if(this.isUUID(exclusive_start_key) || this.isEmail(exclusive_start_key)){
 
-                    query_parameters['ExclusiveStartKey'] = this.appendCursor(exclusive_start_key);
+					query_parameters['ExclusiveStartKey'] = this.appendCursor(exclusive_start_key);
 
-                }else{
+				}else{
 
-                    let key_object = JSON.parse(exclusive_start_key);
+					let key_object = JSON.parse(exclusive_start_key);
 
-                    if (this.getAccountFilterIfPresent(query_parameters)) {
-                      key_object['account'] = this.getAccountFilterIfPresent(query_parameters);
-                    }
+					if (this.getAccountFilterIfPresent(query_parameters)) {
+						key_object['account'] = this.getAccountFilterIfPresent(query_parameters);
+					}
 
-                    query_parameters['ExclusiveStartKey'] =  key_object;
+					query_parameters['ExclusiveStartKey'] =  key_object;
 
-                }
+				}
 
-            }else{
+			}else{
 
-                eu.throwError('bad_request','Unrecognized Exclusive Start Key format.');
+				eu.throwError('bad_request','Unrecognized Exclusive Start Key format.');
 
-            }
+			}
 
-        }
+		}
 
-        return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    getAccountFilterIfPresent(query_parameters) {
-      if (query_parameters.expression_attribute_values && query_parameters.expression_attribute_values[':accountv']) {
-        return query_parameters.expression_attribute_values[':accountv'];
-      }
+	getAccountFilterIfPresent(query_parameters) {
+		if (query_parameters.expression_attribute_values && query_parameters.expression_attribute_values[':accountv']) {
+			return query_parameters.expression_attribute_values[':accountv'];
+		}
 
-      return null;
-    }
+		return null;
+	}
 
 
-    appendCursor(query_parameters, cursor){
+	appendCursor(query_parameters, cursor){
 
-        du.debug('Append Cursor');
+		du.debug('Append Cursor');
 
-        du.debug(cursor);
+		du.debug(cursor);
 
-        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
-        if(!_.isUndefined(cursor) && !_.isNull(cursor)){
+		if(!_.isUndefined(cursor) && !_.isNull(cursor)){
 
-            if(_.isString(cursor)){
+			if(_.isString(cursor)){
 
-                if(this.isEmail(cursor) || this.isUUID(cursor) || cursor == '*'){
+				if(this.isEmail(cursor) || this.isUUID(cursor) || cursor == '*'){
 
-                  query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify({id: cursor}));
+					query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify({id: cursor}));
 
-                  //query_parameters['ExclusiveStartKey'] = { id: cursor };
+					//query_parameters['ExclusiveStartKey'] = { id: cursor };
 
-                }else{
+				}else{
 
-                    let parsed_cursor;
+					let parsed_cursor;
 
-                    try{
+					try{
 
-                        parsed_cursor = JSON.parse(cursor);
+						parsed_cursor = JSON.parse(cursor);
 
-                    }catch(e){
+					}catch(e){
 
-                        du.warning('Unable to parse cursor:', cursor, e);
+						du.warning('Unable to parse cursor:', cursor, e);
 
-                    }
+					}
 
-                    if(parsed_cursor){
+					if(parsed_cursor){
 
-                        query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify(parsed_cursor));
+						query_parameters = this.appendExclusiveStartKey(query_parameters, JSON.stringify(parsed_cursor));
 
-                    }else{
+					}else{
 
-                        eu.throwError('validation','Unrecognized format for Exclusive Start Key.')
+						eu.throwError('validation','Unrecognized format for Exclusive Start Key.')
 
-                    }
+					}
 
-                }
+				}
 
-            }else{
+			}else{
 
-                eu.throwError('validation','Unrecognized format for Cursor.')
+				eu.throwError('validation','Unrecognized format for Cursor.')
 
-            }
+			}
 
-        }
+		}
 
-        return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    assurePresence(thing, field, default_value){
+	assurePresence(thing, field, default_value){
 
-        du.debug('Assure Presence');
+		du.debug('Assure Presence');
 
-        if(_.isUndefined(default_value)){
+		if(_.isUndefined(default_value)){
 
-            default_value = {};
+			default_value = {};
 
-        }
+		}
 
-        if(!_.has(thing, field) || _.isNull(thing[field]) || _.isUndefined(thing[field])){
+		if(!_.has(thing, field) || _.isNull(thing[field]) || _.isUndefined(thing[field])){
 
-            thing[field] = default_value;
+			thing[field] = default_value;
 
-        }
+		}
 
-        return thing;
+		return thing;
 
-    }
+	}
 
-    appendExpressionAttributeNames(query_parameters, key, value){
+	appendExpressionAttributeNames(query_parameters, key, value){
 
-        du.debug('Append Expression Attribute Names');
+		du.debug('Append Expression Attribute Names');
 
-        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
-        query_parameters = this.assurePresence(query_parameters, 'expression_attribute_names');
+		query_parameters = this.assurePresence(query_parameters, 'expression_attribute_names');
 
-        query_parameters.expression_attribute_names[key] = value;
+		query_parameters.expression_attribute_names[key] = value;
 
-        return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    appendKeyConditionExpression(query_parameters, condition_expression, conjunction){
+	appendKeyConditionExpression(query_parameters, condition_expression, conjunction){
 
-        du.debug('Append Key Condition Expression');
+		du.debug('Append Key Condition Expression');
 
-        conjunction = (_.isUndefined(conjunction))?'AND':conjunction;
+		conjunction = (_.isUndefined(conjunction))?'AND':conjunction;
 
-        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
-        query_parameters = this.assurePresence(query_parameters, 'key_condition_expression');
+		query_parameters = this.assurePresence(query_parameters, 'key_condition_expression');
 
-        if(stringutilities.nonEmpty(query_parameters.key_condition_expression)){
-          query_parameters.key_condition_expression += ' '+conjunction+' '+condition_expression;
-        }else{
-          query_parameters.key_condition_expression = condition_expression;
-        }
+		if(stringutilities.nonEmpty(query_parameters.key_condition_expression)){
+			query_parameters.key_condition_expression += ' '+conjunction+' '+condition_expression;
+		}else{
+			query_parameters.key_condition_expression = condition_expression;
+		}
 
-        return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    appendExpressionAttributeValues(query_parameters, key, value){
+	appendExpressionAttributeValues(query_parameters, key, value){
 
-        du.debug('Append Expression Attribute Values');
+		du.debug('Append Expression Attribute Values');
 
-        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
-        query_parameters = this.assurePresence(query_parameters, 'expression_attribute_values');
+		query_parameters = this.assurePresence(query_parameters, 'expression_attribute_values');
 
-        query_parameters.expression_attribute_values[key] = value;
+		query_parameters.expression_attribute_values[key] = value;
 
-        return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
 
-    appendFilterExpression(query_parameters, filter_expression){
+	appendFilterExpression(query_parameters, filter_expression){
 
-        du.debug('Append Filter Expression');
+		du.debug('Append Filter Expression');
 
-        query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
+		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
-        if (_.has(query_parameters, 'filter_expression')){
+		if (_.has(query_parameters, 'filter_expression')){
 
-            if(_.isNull(query_parameters.filter_expression) || _.isUndefined(query_parameters.filter_expression)){
+			if(_.isNull(query_parameters.filter_expression) || _.isUndefined(query_parameters.filter_expression)){
 
-                query_parameters.filter_expression = filter_expression;
+				query_parameters.filter_expression = filter_expression;
 
-            }else if(_.isString(query_parameters.filter_expression)){
+			}else if(_.isString(query_parameters.filter_expression)){
 
-                if(query_parameters.filter_expression.trim() == ''){
+				if(query_parameters.filter_expression.trim() == ''){
 
-                    query_parameters.filter_expression = filter_expression;
+					query_parameters.filter_expression = filter_expression;
 
-                }else{
+				}else{
 
-                    query_parameters.filter_expression += ' AND '+filter_expression;
+					query_parameters.filter_expression += ' AND '+filter_expression;
 
-                }
+				}
 
-            }else{
+			}else{
 
-                eu.throwError('bad_request','Unrecognized query parameter filter expression type.');
+				eu.throwError('bad_request','Unrecognized query parameter filter expression type.');
 
-            }
+			}
 
-        }else{
+		}else{
 
-            query_parameters.filter_expression = filter_expression;
+			query_parameters.filter_expression = filter_expression;
 
-        }
+		}
 
-        return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    buildPaginationObject(data){
+	buildPaginationObject(data){
 
-        du.debug('Build Pagnination Object');
+		du.debug('Build Pagnination Object');
 
-        var pagination_object = {
-            count: '',
-            end_cursor: '',
-            has_next_page: 'true',
-            last_evaluated: ''
-        }
+		var pagination_object = {
+			count: '',
+			end_cursor: '',
+			has_next_page: 'true',
+			last_evaluated: ''
+		}
 
-      // Technical Debt: We should improve the way we validate the data, either by using dedicated
-      // response objects, JSON schema validation or both.
+		// Technical Debt: We should improve the way we validate the data, either by using dedicated
+		// response objects, JSON schema validation or both.
 
-        if(_.has(data, "Count")){
-            pagination_object.count = data.Count;
-        }
+		if(_.has(data, "Count")){
+			pagination_object.count = data.Count;
+		}
 
-        if(_.has(data, "LastEvaluatedKey")){
+		if(_.has(data, "LastEvaluatedKey")){
 
-            pagination_object.last_evaluated = JSON.stringify(data.LastEvaluatedKey);
+			pagination_object.last_evaluated = JSON.stringify(data.LastEvaluatedKey);
 
-            if(_.has(data.LastEvaluatedKey, this.primary_key)){
-                pagination_object.end_cursor = data.LastEvaluatedKey[this.primary_key];
-            }
+			if(_.has(data.LastEvaluatedKey, this.primary_key)){
+				pagination_object.end_cursor = data.LastEvaluatedKey[this.primary_key];
+			}
 
-        }
+		}
 
-      //Technical Debt:  This doesn't appear to be working correctly
-        if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
-            pagination_object.has_next_page = 'false';
-        }
+		//Technical Debt:  This doesn't appear to be working correctly
+		if(!_.has(data, "LastEvaluatedKey")  || (_.has(data, "LastEvaluatedKey") && data.LastEvaluatedKey == null)){
+			pagination_object.has_next_page = 'false';
+		}
 
-        //du.info(data);
+		//du.info(data);
 
-        return pagination_object;
+		return pagination_object;
 
-    }
+	}
 
-    /*
+	/*
     * This adds the pagination fields as well as the descriptive name of the entity before the array
     */
 
-    buildResponse(data, secondary_function){
+	buildResponse(data, secondary_function){
 
-      du.debug('Build Response');
+		du.debug('Build Response');
 
-      objectutilities.isObject(data, true);
+		objectutilities.isObject(data, true);
 
-      if(!_.has(data, "Items")){
-        du.warning('Missing Items property');
-        return data;
-      }
+		if(!_.has(data, "Items")){
+			du.warning('Missing Items property');
+			return data;
+		}
 
-      arrayutilities.isArray(data.Items, true);
+		arrayutilities.isArray(data.Items, true);
 
-      if (this.sanitization) {
-          arrayutilities.forEach(data.Items, item => this.censorEncryptedAttributes(item));
-      } else {
-          arrayutilities.forEach(data.Items, item => this.decryptAttributes(item));
-      }
+		if (this.sanitization) {
+			arrayutilities.forEach(data.Items, item => this.censorEncryptedAttributes(item));
+		} else {
+			arrayutilities.forEach(data.Items, item => this.decryptAttributes(item));
+		}
 
-      if(!arrayutilities.nonEmpty(data.Items)){
-          data.Items = null;
-      }
+		if(!arrayutilities.nonEmpty(data.Items)){
+			data.Items = null;
+		}
 
-      let resolve_object = {
-        pagination: this.buildPaginationObject(data)
-      };
+		let resolve_object = {
+			pagination: this.buildPaginationObject(data)
+		};
 
-      let name = stringutilities.pluralize(this.descriptive_name);
+		let name = stringutilities.pluralize(this.descriptive_name);
 
-      resolve_object[name] = data.Items;
+		resolve_object[name] = data.Items;
 
-      if(_.isFunction(secondary_function)){
-        resolve_object = secondary_function(resolve_object);
-      }
+		if(_.isFunction(secondary_function)){
+			resolve_object = secondary_function(resolve_object);
+		}
 
-      return resolve_object;
+		return resolve_object;
 
-    }
+	}
 
-    getItems(data){
-
-
-      du.debug('Get Items');
-
-      objectutilities.isObject(data, true);
+	getItems(data){
 
 
-      if(_.has(data, "Items") && _.isArray(data.Items)){
-        if (this.sanitization) {
-          arrayutilities.forEach(data.Items, item => this.censorEncryptedAttributes(item));
-        } else {
-          arrayutilities.forEach(data.Items, item => this.decryptAttributes(item));
-        }
+		du.debug('Get Items');
 
-        return data.Items;
-      }
-
-      return null;
-
-    }
+		objectutilities.isObject(data, true);
 
 
-    //Technical Debt:  This really doesn't need to return a promise
-    getResult(result, field){
+		if(_.has(data, "Items") && _.isArray(data.Items)){
+			if (this.sanitization) {
+				arrayutilities.forEach(data.Items, item => this.censorEncryptedAttributes(item));
+			} else {
+				arrayutilities.forEach(data.Items, item => this.decryptAttributes(item));
+			}
 
-      du.debug('Get Result');
+			return data.Items;
+		}
 
-      if(_.isUndefined(field)){
-        field = this.descriptive_name+'s';
-      }
+		return null;
 
-      if(_.has(result, field)){
-        return Promise.resolve(result[field]);
-      }else{
-        return Promise.resolve(null);
-      }
+	}
 
-    }
 
-    getID(object){
+	//Technical Debt:  This really doesn't need to return a promise
+	getResult(result, field){
 
-        du.debug('Get ID');
+		du.debug('Get Result');
 
-        if(_.isString(object)){
+		if(_.isUndefined(field)){
+			field = this.descriptive_name+'s';
+		}
 
-            //Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
-            return object;
+		if(_.has(result, field)){
+			return Promise.resolve(result[field]);
+		}else{
+			return Promise.resolve(null);
+		}
 
-            /*
+	}
+
+	getID(object){
+
+		du.debug('Get ID');
+
+		if(_.isString(object)){
+
+			//Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
+			return object;
+
+			/*
             if(this.isUUID(object)){
 
                 return object;
@@ -919,267 +919,267 @@ module.exports = class entityUtilitiesController extends PermissionedController 
             }
             */
 
-        }else if(_.isObject(object)){
+		}else if(_.isObject(object)){
 
-            if(_.has(object, this.primary_key)){
+			if(_.has(object, this.primary_key)){
 
-              return object[this.primary_key];
+				return object[this.primary_key];
 
-            }
+			}
 
-        }else if(_.isNull(object)){
+		}else if(_.isNull(object)){
 
-            return null;
+			return null;
 
-        } else if(_.isNumber(object)){
+		} else if(_.isNumber(object)){
 
-					return object;
+			return object;
 
+		}
+
+		//du.warning('here');
+		eu.throwError('bad_request','Could not determine identifier.');
+
+	}
+
+	getDescriptiveName(){
+
+		du.deep('Get Descriptive Name');
+
+		if(_.has(this, 'descriptive_name')){
+			return this.descriptive_name;
+		}
+
+		return null;
+
+	}
+
+	setNames(name){
+
+		du.deep('Set Names');
+
+		this.descriptive_name = name;
+
+		this.setEnvironmentTableName(name);
+
+		this.setTableName(name);
+
+	}
+
+	setPrimaryKey(){
+
+		du.deep('Set Primary Key');
+
+		if(!_.has(this, 'primary_key')){
+
+			this.primary_key = 'id';
+
+		}
+
+	}
+
+	setEnvironmentTableName(name){
+
+		du.deep('Set Environment Table Name');
+
+		let key = this.buildTableKey(name);
+		let value = this.buildTableName(name);
+
+		if(!_.has(process.env, key)){
+			process.env[key] = value;
+		}
+
+	}
+
+	setTableName(name){
+
+		du.deep('Set Table Name');
+
+		let key = this.buildTableKey(name);
+
+		this.table_name = process.env[key];
+
+	}
+
+	buildTableKey(name){
+
+		du.deep('Build Table Key');
+
+		name = stringutilities.pluralize(name);
+
+		return name+'_table';
+
+	}
+
+
+	buildTableName(name){
+
+		du.deep('Build Table Name');
+
+		return stringutilities.pluralize(name);
+
+	}
+
+	asyncronousCreateBehaviors({entity: entity}){
+
+		//Technical Debt:  This is inappropriate here...  These belong in helpers
+		this.createAnalyticsActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+
+		this.addToSearchIndex(entity, this.descriptive_name);
+
+	}
+
+	pushEvent({event_type, context, message_attributes}){
+
+		du.debug('Push Event');
+
+		if(_.isUndefined(event_type) || _.isNull(event_type)){
+			if(_.has(this, 'event_type')){
+				event_type = this.event_type;
+			}else if (!_.isUndefined(context) && !_.isNull(context) && _.has(context, 'event_type') && _.isString(context.event_type)){
+				event_type = context.event_type;
+			}else{
+				eu.throwError('server', 'Unable to identify event_type.');
+			}
+		}
+
+		if(_.isUndefined(context) || _.isNull(context)){
+			if(objectutilities.hasRecursive(this, 'parameters.store')){
+				context = this.parameters.store;
+			}else{
+				eu.throwError('server', 'Unset context.');
+			}
+		}
+
+		if(_.isUndefined(message_attributes) || _.isNull(message_attributes)){
+			message_attributes = {
+				'event_type': {
+					DataType:'String',
+					StringValue: event_type
 				}
+			};
+		}
 
-        //du.warning('here');
-        eu.throwError('bad_request','Could not determine identifier.');
+		if(!_.has(this, 'eventHelperController')){
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			this.eventHelperController = new EventHelperController();
+		}
 
-    }
+		return this.eventHelperController.pushEvent({event_type: event_type, context: context, message_attributes: message_attributes});
 
-    getDescriptiveName(){
+	}
 
-      du.deep('Get Descriptive Name');
 
-      if(_.has(this, 'descriptive_name')){
-        return this.descriptive_name;
-      }
+	createAnalyticsActivityRecord(actor, action, acted_upon, associated_with){
 
-      return null;
+		//Technical Debt:  This is inappropriate here...
+		let ActivityHelper = global.SixCRM.routes.include('helpers', 'analytics/Activity.js');
+		const activityHelper = new ActivityHelper();
 
-    }
+		return activityHelper.createActivity(actor, action, acted_upon, associated_with);
 
-    setNames(name){
+	}
 
-      du.deep('Set Names');
+	transformListArray(list_array){
 
-      this.descriptive_name = name;
+		du.debug('Transform List Array');
 
-      this.setEnvironmentTableName(name);
+		if(arrayutilities.nonEmpty(list_array)){
 
-      this.setTableName(name);
+			list_array = arrayutilities.filter(list_array, (list_item) => {
+				return stringutilities.nonEmpty(list_item);
+			});
 
-    }
+			if(arrayutilities.nonEmpty(list_array)){
+				return list_array;
+			}
 
-    setPrimaryKey(){
+		}
 
-      du.deep('Set Primary Key');
+		return null;
 
-      if(!_.has(this, 'primary_key')){
+	}
 
-        this.primary_key = 'id';
+	executeAssociatedEntityFunction(controller_name, function_name, function_arguments, retry){
 
-      }
+		du.debug('Execute Associated Entity Function');
 
-    }
+		retry = (_.isUndefined(retry))?false:retry;
 
-    setEnvironmentTableName(name){
+		if(_.has(this, controller_name) && _.isFunction(this[controller_name][function_name])){
 
-        du.deep('Set Environment Table Name');
+			this[controller_name].sanitization = this.sanitization;
+			return this[controller_name][function_name](function_arguments);
 
-        let key = this.buildTableKey(name);
-        let value = this.buildTableName(name);
+		}else{
 
-        if(!_.has(process.env, key)){
-            process.env[key] = value;
-        }
+			if(retry){
 
-    }
+				eu.throwError('server', 'Unable to execute controller function: '+controller_name+'.'+function_name+'('+JSON.stringify(function_arguments)+')');
 
-    setTableName(name){
+			}
 
-        du.deep('Set Table Name');
+			let controller_file_name = this.translateControllerNameToFilename(controller_name);
 
-        let key = this.buildTableKey(name);
+			this[controller_name] = global.SixCRM.routes.include('entities', controller_file_name);
 
-        this.table_name = process.env[key];
+			// Technical Debt: The following statement will not be necessary after singleton refactoring is finished.
+			if (!_.isFunction(this[controller_name][function_name])) {
+				this[controller_name] = new this[controller_name];
+			}
 
-    }
+			return this.executeAssociatedEntityFunction(controller_name, function_name, function_arguments, true);
 
-    buildTableKey(name){
+		}
 
-      du.deep('Build Table Key');
+	}
 
-      name = stringutilities.pluralize(name);
+	translateControllerNameToFilename(controller_name){
 
-      return name+'_table';
+		du.debug('Translate Controller Name To Filename');
 
-    }
+		return stringutilities.uppercaseFirst(controller_name).replace('Controller', '')+'.js';
 
+	}
 
-    buildTableName(name){
+	//Technical Debt:  Evaluate the utility of this method.
+	createEndOfPaginationResponse(items_name, items) {
 
-      du.deep('Build Table Name');
+		du.debug('Create End Of Pagination Response');
 
-      return stringutilities.pluralize(name);
+		let pagination = {};
 
-    }
+		pagination.count = items.length;
+		pagination.end_cursor = '';
+		pagination.has_next_page = false;
 
-    asyncronousCreateBehaviors({entity: entity}){
+		let response = {};
 
-      //Technical Debt:  This is inappropriate here...  These belong in helpers
-      this.createAnalyticsActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+		response[items_name] = items;
+		response['pagination'] = pagination;
 
-      this.addToSearchIndex(entity, this.descriptive_name);
+		du.debug('Returning', response);
 
-    }
+		return Promise.resolve(response);
 
-    pushEvent({event_type, context, message_attributes}){
+	}
 
-      du.debug('Push Event');
+	encryptAttributes(entity) {
+		du.debug('Encrypt Attributes');
+		return this.encryptionhelper.encryptAttributes(this.encrypted_attribute_paths, entity);
+	}
 
-      if(_.isUndefined(event_type) || _.isNull(event_type)){
-        if(_.has(this, 'event_type')){
-          event_type = this.event_type;
-        }else if (!_.isUndefined(context) && !_.isNull(context) && _.has(context, 'event_type') && _.isString(context.event_type)){
-          event_type = context.event_type;
-        }else{
-          eu.throwError('server', 'Unable to identify event_type.');
-        }
-      }
+	decryptAttributes(entity) {
+		du.debug('Decrypt Attributes');
+		return this.encryptionhelper.decryptAttributes(this.encrypted_attribute_paths, entity);
+	}
 
-      if(_.isUndefined(context) || _.isNull(context)){
-        if(objectutilities.hasRecursive(this, 'parameters.store')){
-          context = this.parameters.store;
-        }else{
-          eu.throwError('server', 'Unset context.');
-        }
-      }
+	censorEncryptedAttributes(entity, custom_censor_fn) {
+		du.debug('Censor Encrypted Attributes');
+		return this.encryptionhelper.censorEncryptedAttributes(this.encrypted_attribute_paths, entity, custom_censor_fn);
+	}
 
-      if(_.isUndefined(message_attributes) || _.isNull(message_attributes)){
-        message_attributes = {
-          'event_type': {
-            DataType:'String',
-            StringValue: event_type
-          }
-        };
-      }
-
-      if(!_.has(this, 'eventHelperController')){
-        const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-        this.eventHelperController = new EventHelperController();
-      }
-
-      return this.eventHelperController.pushEvent({event_type: event_type, context: context, message_attributes: message_attributes});
-
-    }
-
-
-    createAnalyticsActivityRecord(actor, action, acted_upon, associated_with){
-
-        //Technical Debt:  This is inappropriate here...
-        let ActivityHelper = global.SixCRM.routes.include('helpers', 'analytics/Activity.js');
-        const activityHelper = new ActivityHelper();
-
-        return activityHelper.createActivity(actor, action, acted_upon, associated_with);
-
-    }
-
-    transformListArray(list_array){
-
-      du.debug('Transform List Array');
-
-      if(arrayutilities.nonEmpty(list_array)){
-
-        list_array = arrayutilities.filter(list_array, (list_item) => {
-          return stringutilities.nonEmpty(list_item);
-        });
-
-        if(arrayutilities.nonEmpty(list_array)){
-          return list_array;
-        }
-
-      }
-
-      return null;
-
-    }
-
-    executeAssociatedEntityFunction(controller_name, function_name, function_arguments, retry){
-
-      du.debug('Execute Associated Entity Function');
-
-      retry = (_.isUndefined(retry))?false:retry;
-
-      if(_.has(this, controller_name) && _.isFunction(this[controller_name][function_name])){
-
-        this[controller_name].sanitization = this.sanitization;
-        return this[controller_name][function_name](function_arguments);
-
-      }else{
-
-        if(retry){
-
-          eu.throwError('server', 'Unable to execute controller function: '+controller_name+'.'+function_name+'('+JSON.stringify(function_arguments)+')');
-
-        }
-
-        let controller_file_name = this.translateControllerNameToFilename(controller_name);
-
-        this[controller_name] = global.SixCRM.routes.include('entities', controller_file_name);
-
-        // Technical Debt: The following statement will not be necessary after singleton refactoring is finished.
-        if (!_.isFunction(this[controller_name][function_name])) {
-          this[controller_name] = new this[controller_name];
-        }
-
-        return this.executeAssociatedEntityFunction(controller_name, function_name, function_arguments, true);
-
-      }
-
-    }
-
-    translateControllerNameToFilename(controller_name){
-
-      du.debug('Translate Controller Name To Filename');
-
-      return stringutilities.uppercaseFirst(controller_name).replace('Controller', '')+'.js';
-
-    }
-
-    //Technical Debt:  Evaluate the utility of this method.
-    createEndOfPaginationResponse(items_name, items) {
-
-      du.debug('Create End Of Pagination Response');
-
-      let pagination = {};
-
-      pagination.count = items.length;
-      pagination.end_cursor = '';
-      pagination.has_next_page = false;
-
-      let response = {};
-
-      response[items_name] = items;
-      response['pagination'] = pagination;
-
-      du.debug('Returning', response);
-
-      return Promise.resolve(response);
-
-    }
-
-    encryptAttributes(entity) {
-      du.debug('Encrypt Attributes');
-      return this.encryptionhelper.encryptAttributes(this.encrypted_attribute_paths, entity);
-    }
-
-    decryptAttributes(entity) {
-      du.debug('Decrypt Attributes');
-      return this.encryptionhelper.decryptAttributes(this.encrypted_attribute_paths, entity);
-    }
-
-    censorEncryptedAttributes(entity, custom_censor_fn) {
-      du.debug('Censor Encrypted Attributes');
-      return this.encryptionhelper.censorEncryptedAttributes(this.encrypted_attribute_paths, entity, custom_censor_fn);
-    }
-
-      /*
+	/*
       getFromCache(cache_object_key, data_function){
 
           du.debug('Get From Cache');

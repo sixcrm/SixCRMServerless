@@ -3,18 +3,18 @@ const forwardSessionMessageController = global.SixCRM.routes.include('controller
 
 module.exports = class RebillToArchivedForwardMessageController extends forwardSessionMessageController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameters.set('params', {
-        name: 'rebilltoarchive',
-        workerfunction: 'createRebills.js',
-        origin_queue: 'rebill',
-        failure_queue: 'rebill_failed',
-        error_queue: 'rebill_error'
-      })
+		this.parameters.set('params', {
+			name: 'rebilltoarchive',
+			workerfunction: 'createRebills.js',
+			origin_queue: 'rebill',
+			failure_queue: 'rebill_failed',
+			error_queue: 'rebill_error'
+		})
 
-    }
+	}
 
 };

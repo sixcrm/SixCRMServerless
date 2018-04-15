@@ -6,14 +6,14 @@ var createUpsellController = global.SixCRM.routes.include('controllers', 'endpoi
 
 module.exports.createupsell= (event, context, callback) => {
 
-    createUpsellController.execute(event).then((response) => {
+	createUpsellController.execute(event).then((response) => {
 
-      return new LambdaResponse().issueSuccess(response, callback);
+		return new LambdaResponse().issueSuccess(response, callback);
 
-    }).catch((error) =>{
+	}).catch((error) =>{
 
-        return new LambdaResponse().issueError(error, event, callback);
+		return new LambdaResponse().issueError(error, event, callback);
 
-    });
+	});
 
 };

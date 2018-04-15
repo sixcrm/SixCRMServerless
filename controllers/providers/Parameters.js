@@ -9,207 +9,207 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 
 module.exports = class Parameters {
 
-  constructor({validation, definition}){
+	constructor({validation, definition}){
 
-    this.store = {};
+		this.store = {};
 
-    this.setParameterValidation({parameter_validation: validation});
+		this.setParameterValidation({parameter_validation: validation});
 
-    this.setParameterDefinition({parameter_definition: definition});
+		this.setParameterDefinition({parameter_definition: definition});
 
-  }
+	}
 
-  setParameterValidation({parameter_validation}){
+	setParameterValidation({parameter_validation}){
 
-    du.debug('Set Parameter Validation');
+		du.debug('Set Parameter Validation');
 
-    parameter_validation = _.isUndefined(parameter_validation)?{}:parameter_validation;
+		parameter_validation = _.isUndefined(parameter_validation)?{}:parameter_validation;
 
-    if(!_.has(this, 'parameter_validation')){
-      this.parameter_validation = {};
-    }
+		if(!_.has(this, 'parameter_validation')){
+			this.parameter_validation = {};
+		}
 
-    this.parameter_validation = objectutilities.merge(this.parameter_validation, parameter_validation);
+		this.parameter_validation = objectutilities.merge(this.parameter_validation, parameter_validation);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  setParameterDefinition({parameter_definition}){
+	setParameterDefinition({parameter_definition}){
 
-    du.debug('Set Parameter Definition');
+		du.debug('Set Parameter Definition');
 
-    parameter_definition = _.isUndefined(parameter_definition)?{}:parameter_definition;
+		parameter_definition = _.isUndefined(parameter_definition)?{}:parameter_definition;
 
-    if(!_.has(this, 'parameter_definition')){
-      this.parameter_definition = {};
-    }
+		if(!_.has(this, 'parameter_definition')){
+			this.parameter_definition = {};
+		}
 
-    this.parameter_definition = objectutilities.merge(this.parameter_definition, parameter_definition);
+		this.parameter_definition = objectutilities.merge(this.parameter_definition, parameter_definition);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  push(key, value, valuekey){
+	push(key, value, valuekey){
 
-    du.debug('Push');
+		du.debug('Push');
 
-    valuekey = (_.isNull(valuekey) || _.isUndefined(valuekey))?null:valuekey;
+		valuekey = (_.isNull(valuekey) || _.isUndefined(valuekey))?null:valuekey;
 
-    if(!_.isNull(valuekey)){
-      this.validate(valuekey, value);
-    }
+		if(!_.isNull(valuekey)){
+			this.validate(valuekey, value);
+		}
 
-    if(_.has(this.store, key)){
+		if(_.has(this.store, key)){
 
-      if(_.isArray(this.store[key])){
+			if(_.isArray(this.store[key])){
 
-        this.store[key].push(value);
+				this.store[key].push(value);
 
-        return true;
+				return true;
 
-      }
+			}
 
-      eu.throwError('server','"'+key+'" is not of type array.');
+			eu.throwError('server','"'+key+'" is not of type array.');
 
-    }else{
+		}else{
 
-      du.highlight('Exists');
+			du.highlight('Exists');
 
-      this.store[key] = [value];
+			this.store[key] = [value];
 
-    }
+		}
 
-    return true;
+		return true;
 
-  }
+	}
 
-  set(key, value){
+	set(key, value){
 
-    du.debug('Set');
+		du.debug('Set');
 
-    if(this.validate(key, value)){
+		if(this.validate(key, value)){
 
-      this.store[key] = value;
+			this.store[key] = value;
 
-    }
+		}
 
-    return true;
+		return true;
 
-  }
+	}
 
-  unset(key){
+	unset(key){
 
-    du.debug('Unset');
+		du.debug('Unset');
 
-    if(_.has(this.store, key)){
+		if(_.has(this.store, key)){
 
-      delete this.store[key];
+			delete this.store[key];
 
-    }
+		}
 
-  }
+	}
 
-  getAll(){
+	getAll(){
 
-    du.debug('Get All');
+		du.debug('Get All');
 
-    return this.store;
+		return this.store;
 
-  }
+	}
 
-  get(key, additional_parameters, fatal){
+	get(key, additional_parameters, fatal){
 
-    du.debug('Get');
+		du.debug('Get');
 
-    fatal = (_.isUndefined(fatal))?true:fatal;
+		fatal = (_.isUndefined(fatal))?true:fatal;
 
-    let return_object = null;
+		let return_object = null;
 
-    if(_.has(this.store, key)){
+		if(_.has(this.store, key)){
 
-      return_object = this.store[key];
+			return_object = this.store[key];
 
-      if(arrayutilities.nonEmpty(additional_parameters)){
+			if(arrayutilities.nonEmpty(additional_parameters)){
 
-        let missing_parameter = arrayutilities.find(additional_parameters, (additional_parameter) => {
-          if(objectutilities.hasRecursive(return_object, additional_parameter)){
-            return false;
-          }
-          return true;
-        });
+				let missing_parameter = arrayutilities.find(additional_parameters, (additional_parameter) => {
+					if(objectutilities.hasRecursive(return_object, additional_parameter)){
+						return false;
+					}
+					return true;
+				});
 
-        if(stringutilities.isString(missing_parameter) && fatal){
-          eu.throwError('server', key+' is missing "'+missing_parameter+'" property.');
-        }
+				if(stringutilities.isString(missing_parameter) && fatal){
+					eu.throwError('server', key+' is missing "'+missing_parameter+'" property.');
+				}
 
-      }
+			}
 
-    }
+		}
 
-    if(_.isNull(return_object) && fatal){
-      eu.throwError('server', '"'+key+'" property is not set.');
-    }
+		if(_.isNull(return_object) && fatal){
+			eu.throwError('server', '"'+key+'" property is not set.');
+		}
 
-    return return_object;
+		return return_object;
 
-  }
+	}
 
-  validate(key, value, fatal){
+	validate(key, value, fatal){
 
-    du.debug('Validate');
+		du.debug('Validate');
 
-    fatal = (_.isUndefined(fatal))?true:fatal;
+		fatal = (_.isUndefined(fatal))?true:fatal;
 
-    if(_.has(this.parameter_validation, key)){
+		if(_.has(this.parameter_validation, key)){
 
-      return mvu.validateModel(value, this.parameter_validation[key], null, fatal);
+			return mvu.validateModel(value, this.parameter_validation[key], null, fatal);
 
-    }else{
+		}else{
 
-      du.warning('Missing Model: '+ key);
+			du.warning('Missing Model: '+ key);
 
-    }
+		}
 
-    return true;
+		return true;
 
-  }
+	}
 
-  setParameters({argumentation: argumentation, action: action}){
+	setParameters({argumentation: argumentation, action: action}){
 
-    du.debug('Set Parameters');
+		du.debug('Set Parameters');
 
-    let local_parameters = {};
+		let local_parameters = {};
 
-    if(objectutilities.hasRecursive(this, 'parameter_definition.'+action+'.required', true)){
+		if(objectutilities.hasRecursive(this, 'parameter_definition.'+action+'.required', true)){
 
-      local_parameters = objectutilities.transcribe(this.parameter_definition[action].required, argumentation, local_parameters, true);
+			local_parameters = objectutilities.transcribe(this.parameter_definition[action].required, argumentation, local_parameters, true);
 
-    }
+		}
 
-    if(objectutilities.hasRecursive(this, 'parameter_definition.'+action+'.optional')){
+		if(objectutilities.hasRecursive(this, 'parameter_definition.'+action+'.optional')){
 
-      local_parameters = objectutilities.transcribe(this.parameter_definition[action].optional, argumentation, local_parameters);
+			local_parameters = objectutilities.transcribe(this.parameter_definition[action].optional, argumentation, local_parameters);
 
-    }
+		}
 
-    objectutilities.map(local_parameters, local_parameter => {
+		objectutilities.map(local_parameters, local_parameter => {
 
-      this.set(local_parameter, local_parameters[local_parameter]);
+			this.set(local_parameter, local_parameters[local_parameter]);
 
-    });
+		});
 
-    return true;
+		return true;
 
-  }
+	}
 
-  isSet(key){
+	isSet(key){
 
-    du.debug('Is Set');
+		du.debug('Is Set');
 
-    return (_.has(this.store, key));
+		return (_.has(this.store, key));
 
-  }
+	}
 
 }

@@ -7,8 +7,8 @@ const SNSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sns-
 const snsDeployment = new SNSDeployment();
 
 snsDeployment.addSubscriptions().then(result => {
-  return du.highlight(result);
+	return du.highlight(result);
 }).catch((error) => {
-  du.error(error);
-  du.warning(error.message);
+	du.error(error);
+	du.warning(error.message);
 });

@@ -22,19 +22,19 @@ let ShipStationType = require('./types/fulfillmentprovider/providers/ShipStation
 let providerType = require('./types/fulfillmentprovider/providers/providerType');
 
 module.exports = new GraphQLSchema({
-  query: queryType.graphObj,
-  mutation: mutationType.graphObj,
-  types: [
-    NMIType.graphObj,
-    TestMerchantProviderType.graphObj,
-    InnovioType.graphObj,
-    StripeType.graphObj,
-    GatewayType.graphObj,
-    HashtagType.graphObj,
-    ThreePLType.graphObj,
-    ShipStationType.graphObj,
-    TestFulfillmentProviderType.graphObj,
-    providerType.graphObj,
-    //TransactionalProductScheduleType.graphObj
-  ]
+	query: queryType.graphObj,
+	mutation: mutationType.graphObj,
+	types: [
+		NMIType.graphObj,
+		TestMerchantProviderType.graphObj,
+		InnovioType.graphObj,
+		StripeType.graphObj,
+		GatewayType.graphObj,
+		HashtagType.graphObj,
+		ThreePLType.graphObj,
+		ShipStationType.graphObj,
+		TestFulfillmentProviderType.graphObj,
+		providerType.graphObj,
+		//TransactionalProductScheduleType.graphObj
+	]
 });

@@ -5,9 +5,9 @@ const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLString = require('graphql').GraphQLString;
 
 module.exports.graphObj = new GraphQLInputObjectType({
-    name: 'WeightInput',
-    fields: () => ({
-      units:              { type: new GraphQLNonNull(GraphQLFloat) },
-      unitofmeasurement:  { type: new GraphQLNonNull(GraphQLString) }
-    })
+	name: 'WeightInput',
+	fields: () => ({
+		units:              { type: new GraphQLNonNull(GraphQLFloat) },
+		unitofmeasurement:  { type: new GraphQLNonNull(GraphQLString) }
+	})
 });

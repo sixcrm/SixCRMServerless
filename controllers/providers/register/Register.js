@@ -18,542 +18,542 @@ const rebillController = new RebillController();
 
 module.exports = class Register extends RegisterUtilities {
 
-  constructor(){
-
-    super();
-
-    this.processor_response_map = {
-      success:'success',
-      fail:'fail',
-      error:'error'
-    };
-
-    this.transactionController = new TransactionsController();
-    this.merchantProviderController = new MerchantProviderController();
-
-    this.parameter_definitions = {
-      refund: {
-        required: {
-          transaction: 'transaction'
-        },
-        optional: {
-          amount: 'amount'
-        }
-      },
-      reverse:{
-        required: {
-          transaction: 'transaction'
-        },
-        optional: {}
-      },
-      process:{
-        required:{
-          rebill: 'rebill'
-        },
-        optional:{
-          rawcreditcard: 'creditcard'
-        }
-      }
-    };
-
-    this.parameter_validation = {
-      'processorresponse': global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
-      'transaction': global.SixCRM.routes.path('model', 'functional/register/transactioninput.json'),
-      'receipttransaction': global.SixCRM.routes.path('model', 'entities/transaction.json'),
-      'associatedtransaction':global.SixCRM.routes.path('model', 'entities/transaction.json'),
-      'associated_transactions':global.SixCRM.routes.path('model', 'functional/register/associatedtransactions.json'),
-      'amount':global.SixCRM.routes.path('model', 'definitions/currency.json'),
-      'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
-      'productschedule':global.SixCRM.routes.path('model', 'entities/productschedule.json'),
-      'rebill':global.SixCRM.routes.path('model', 'entities/rebill.json'),
-      'transactionproducts': global.SixCRM.routes.path('model', 'workers/processBilling/transactionproducts.json'),
-      'productschedules':global.SixCRM.routes.path('model', 'workers/processBilling/productschedules.json'),
-      'parentsession': global.SixCRM.routes.path('model', 'entities/session.json'),
-      'creditcards': global.SixCRM.routes.path('model', 'workers/processBilling/creditcards.json'),
-      'selectedcreditcard': global.SixCRM.routes.path('model', 'entities/creditcard.json'),
-      'rawcreditcard':global.SixCRM.routes.path('model', 'general/rawcreditcard.json'),
-      'transactiontype':global.SixCRM.routes.path('model', 'functional/register/transactiontype.json'),
-      'merchantprovider':global.SixCRM.routes.path('model', 'entities/merchantprovider.json')
-    };
-
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
-
-    this.action_to_transaction_type = {
-      process: 'sale',
-      refund: 'refund',
-      reverse: 'reverse'
-    }
-
-    this.customerController = new CustomerController();
-    this.creditCardController = new CreditCardController();
-    this.rebillController = new RebillController();
-
-    this.merchantProviderController.sanitize(false);
-    this.customerController.sanitize(false);
-    this.creditCardController.sanitize(false);
-  }
+	constructor(){
+
+		super();
+
+		this.processor_response_map = {
+			success:'success',
+			fail:'fail',
+			error:'error'
+		};
+
+		this.transactionController = new TransactionsController();
+		this.merchantProviderController = new MerchantProviderController();
+
+		this.parameter_definitions = {
+			refund: {
+				required: {
+					transaction: 'transaction'
+				},
+				optional: {
+					amount: 'amount'
+				}
+			},
+			reverse:{
+				required: {
+					transaction: 'transaction'
+				},
+				optional: {}
+			},
+			process:{
+				required:{
+					rebill: 'rebill'
+				},
+				optional:{
+					rawcreditcard: 'creditcard'
+				}
+			}
+		};
+
+		this.parameter_validation = {
+			'processorresponse': global.SixCRM.routes.path('model', 'functional/register/processorresponse.json'),
+			'transaction': global.SixCRM.routes.path('model', 'functional/register/transactioninput.json'),
+			'receipttransaction': global.SixCRM.routes.path('model', 'entities/transaction.json'),
+			'associatedtransaction':global.SixCRM.routes.path('model', 'entities/transaction.json'),
+			'associated_transactions':global.SixCRM.routes.path('model', 'functional/register/associatedtransactions.json'),
+			'amount':global.SixCRM.routes.path('model', 'definitions/currency.json'),
+			'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
+			'productschedule':global.SixCRM.routes.path('model', 'entities/productschedule.json'),
+			'rebill':global.SixCRM.routes.path('model', 'entities/rebill.json'),
+			'transactionproducts': global.SixCRM.routes.path('model', 'workers/processBilling/transactionproducts.json'),
+			'productschedules':global.SixCRM.routes.path('model', 'workers/processBilling/productschedules.json'),
+			'parentsession': global.SixCRM.routes.path('model', 'entities/session.json'),
+			'creditcards': global.SixCRM.routes.path('model', 'workers/processBilling/creditcards.json'),
+			'selectedcreditcard': global.SixCRM.routes.path('model', 'entities/creditcard.json'),
+			'rawcreditcard':global.SixCRM.routes.path('model', 'general/rawcreditcard.json'),
+			'transactiontype':global.SixCRM.routes.path('model', 'functional/register/transactiontype.json'),
+			'merchantprovider':global.SixCRM.routes.path('model', 'entities/merchantprovider.json')
+		};
+
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
+
+		this.action_to_transaction_type = {
+			process: 'sale',
+			refund: 'refund',
+			reverse: 'reverse'
+		}
+
+		this.customerController = new CustomerController();
+		this.creditCardController = new CreditCardController();
+		this.rebillController = new RebillController();
+
+		this.merchantProviderController.sanitize(false);
+		this.customerController.sanitize(false);
+		this.creditCardController.sanitize(false);
+	}
 
-  refundTransaction(){
+	refundTransaction(){
 
-    du.debug('Refund Transaction');
+		du.debug('Refund Transaction');
 
-    return this.can({action: 'refund', object: 'register', fatal: true})
-    .then(() => this.setParameters({argumentation: arguments[0], action: 'refund'}))
-    .then(() => this.hydrateTransaction())
-    .then(() => this.getAssociatedTransactions())
-    .then(() => this.setAmount())
-    .then(() => this.validateAmount())
-    .then(() => this.executeRefund())
-    .then(() => this.issueReceipt())
-    .then(() => this.acquireRefundTransactionSubProperties())
-    .then(() => this.transformResponse());
+		return this.can({action: 'refund', object: 'register', fatal: true})
+			.then(() => this.setParameters({argumentation: arguments[0], action: 'refund'}))
+			.then(() => this.hydrateTransaction())
+			.then(() => this.getAssociatedTransactions())
+			.then(() => this.setAmount())
+			.then(() => this.validateAmount())
+			.then(() => this.executeRefund())
+			.then(() => this.issueReceipt())
+			.then(() => this.acquireRefundTransactionSubProperties())
+			.then(() => this.transformResponse());
 
-  }
+	}
 
-  reverseTransaction(){
+	reverseTransaction(){
 
-    du.debug('Reverse Transaction');
+		du.debug('Reverse Transaction');
 
-    return this.can({action: 'reverse', object: 'register', fatal: true})
-    .then(() => this.setParameters({argumentation: arguments[0], action: 'refund'}))
-    .then(() => this.hydrateTransaction())
-    .then(() => this.getAssociatedTransactions())
-    .then(() => this.validateAssociatedTransactions())
-    .then(() => this.setAmount())
-    .then(() => this.validateAmount())
-    .then(() => this.executeReverse())
-    .then(() => this.issueReceipt())
-    .then(() => this.acquireRefundTransactionSubProperties())
-    .then(() => this.transformResponse());
+		return this.can({action: 'reverse', object: 'register', fatal: true})
+			.then(() => this.setParameters({argumentation: arguments[0], action: 'refund'}))
+			.then(() => this.hydrateTransaction())
+			.then(() => this.getAssociatedTransactions())
+			.then(() => this.validateAssociatedTransactions())
+			.then(() => this.setAmount())
+			.then(() => this.validateAmount())
+			.then(() => this.executeReverse())
+			.then(() => this.issueReceipt())
+			.then(() => this.acquireRefundTransactionSubProperties())
+			.then(() => this.transformResponse());
 
-  }
+	}
 
-  processTransaction(){
+	processTransaction(){
 
-    du.debug('Process Transaction');
+		du.debug('Process Transaction');
 
-    return this.can({action: 'process', object: 'register', fatal: true})
-    .then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))
-    .then(() => this.acquireRebillProperties())
-    .then(() => this.validateRebillForProcessing())
-    .then(() => this.acquireRebillSubProperties())
-    .then(() => this.executeProcesses())
-    .then(() => this.transformResponse());
+		return this.can({action: 'process', object: 'register', fatal: true})
+			.then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))
+			.then(() => this.acquireRebillProperties())
+			.then(() => this.validateRebillForProcessing())
+			.then(() => this.acquireRebillSubProperties())
+			.then(() => this.executeProcesses())
+			.then(() => this.transformResponse());
 
-  }
+	}
 
-  getAssociatedTransactions(){
+	getAssociatedTransactions(){
 
-    du.debug('Get Associated Transactions');
+		du.debug('Get Associated Transactions');
 
-    let associated_transaction = this.parameters.get('associatedtransaction');
+		let associated_transaction = this.parameters.get('associatedtransaction');
 
-    return this.transactionController.listByAssociatedTransaction({id: associated_transaction, types:['reverse','refund'], results: ['success']})
-    .then(associated_transactions => this.transactionController.getResult(associated_transactions, 'transactions'))
-    .then(associated_transactions => {
+		return this.transactionController.listByAssociatedTransaction({id: associated_transaction, types:['reverse','refund'], results: ['success']})
+			.then(associated_transactions => this.transactionController.getResult(associated_transactions, 'transactions'))
+			.then(associated_transactions => {
 
-      associated_transactions = (arrayutilities.nonEmpty(associated_transactions))?associated_transactions:[];
+				associated_transactions = (arrayutilities.nonEmpty(associated_transactions))?associated_transactions:[];
 
-      return this.parameters.set('associated_transactions', associated_transactions);
+				return this.parameters.set('associated_transactions', associated_transactions);
 
-    });
+			});
 
-  }
+	}
 
-  validateAssociatedTransactions(){
+	validateAssociatedTransactions(){
 
-    du.debug('Validate Associated Transactions');
+		du.debug('Validate Associated Transactions');
 
-    let associated_transactions = this.parameters.get('associated_transactions', null, false);
+		let associated_transactions = this.parameters.get('associated_transactions', null, false);
 
-    if(arrayutilities.nonEmpty(associated_transactions)){
-      eu.throwError('forbidden', 'A transaction with pre-existing refunds or reversals can not be reversed.');
-    }
+		if(arrayutilities.nonEmpty(associated_transactions)){
+			eu.throwError('forbidden', 'A transaction with pre-existing refunds or reversals can not be reversed.');
+		}
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  setAmount(){
+	setAmount(){
 
-    du.debug('Set Amount');
+		du.debug('Set Amount');
 
-    let amount  = this.parameters.get('amount', null, false);
+		let amount  = this.parameters.get('amount', null, false);
 
-    if(_.isNull(amount) || _.isUndefined(amount)){
+		if(_.isNull(amount) || _.isUndefined(amount)){
 
-      let associated_transaction = this.parameters.get('associatedtransaction');
+			let associated_transaction = this.parameters.get('associatedtransaction');
 
-      this.parameters.set('amount', associated_transaction.amount);
+			this.parameters.set('amount', associated_transaction.amount);
 
-    }
+		}
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  //Note:  This is te (???)
-  calculateReversedAmount(associated_transactions){
+	//Note:  This is te (???)
+	calculateReversedAmount(associated_transactions){
 
-    du.debug('Calculate Resolved Amount');
+		du.debug('Calculate Resolved Amount');
 
-    let base = 0;
+		let base = 0;
 
-    if(arrayutilities.nonEmpty(associated_transactions)){
+		if(arrayutilities.nonEmpty(associated_transactions)){
 
-      let associated_transaction_amounts = arrayutilities.map(associated_transactions, associated_transaction => {
-        return parseFloat(associated_transaction.amount);
-      });
+			let associated_transaction_amounts = arrayutilities.map(associated_transactions, associated_transaction => {
+				return parseFloat(associated_transaction.amount);
+			});
 
-      base += mathutilities.sum(associated_transaction_amounts);
+			base += mathutilities.sum(associated_transaction_amounts);
 
-    }
+		}
 
-    return base;
+		return base;
 
-  }
+	}
 
-  validateAmount(){
+	validateAmount(){
 
-    du.debug('Validate Amount');
+		du.debug('Validate Amount');
 
-    //This is the original transaction with the maximum amount
-    let transaction = this.parameters.get('associatedtransaction');
+		//This is the original transaction with the maximum amount
+		let transaction = this.parameters.get('associatedtransaction');
 
-    //This is the amount that we are proposing to reverse
-    let amount = this.parameters.get('amount');
+		//This is the amount that we are proposing to reverse
+		let amount = this.parameters.get('amount');
 
-    //These are all of the existing transactions which are of type reverse or refund and thus have negative value.
-    let associated_transactions = this.parameters.get('associated_transactions', null, false);
+		//These are all of the existing transactions which are of type reverse or refund and thus have negative value.
+		let associated_transactions = this.parameters.get('associated_transactions', null, false);
 
-    //This is the total, preexisting reversed amount
-    let resolved_amount = this.calculateReversedAmount(associated_transactions);
+		//This is the total, preexisting reversed amount
+		let resolved_amount = this.calculateReversedAmount(associated_transactions);
 
-    //This is the remaining positive balance associated with the transaction
-    let balance = (transaction.amount - resolved_amount);
+		//This is the remaining positive balance associated with the transaction
+		let balance = (transaction.amount - resolved_amount);
 
-    //If the proposed amount is greater than positive balance, we have a problem
-    if(amount > balance){
-      eu.throwError('forbidden', 'The proposed resolved transaction amount is negative.');
-    }
+		//If the proposed amount is greater than positive balance, we have a problem
+		if(amount > balance){
+			eu.throwError('forbidden', 'The proposed resolved transaction amount is negative.');
+		}
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  executeRefund(){
+	executeRefund(){
 
-    du.debug('Execute Refund');
+		du.debug('Execute Refund');
 
-    const RefundController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js');
-    let refundController = new RefundController();
+		const RefundController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js');
+		let refundController = new RefundController();
 
-    let transaction = this.parameters.get('associatedtransaction');
-    let amount = this.parameters.get('amount');
+		let transaction = this.parameters.get('associatedtransaction');
+		let amount = this.parameters.get('amount');
 
-    return refundController.refund({transaction: transaction, amount: amount}).then(result => {
-      this.parameters.set('processorresponse', this.extractProcessorResponse(result));
-      return true;
-    });
+		return refundController.refund({transaction: transaction, amount: amount}).then(result => {
+			this.parameters.set('processorresponse', this.extractProcessorResponse(result));
+			return true;
+		});
 
-  }
+	}
 
-  executeReverse(){
+	executeReverse(){
 
-    du.debug('Execute Reverse');
+		du.debug('Execute Reverse');
 
-    const ReverseController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
-    let reverseController = new ReverseController();
+		const ReverseController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
+		let reverseController = new ReverseController();
 
-    let transaction = this.parameters.get('associatedtransaction');
-    //let amount = this.parameters.get('amount');
+		let transaction = this.parameters.get('associatedtransaction');
+		//let amount = this.parameters.get('amount');
 
-    return reverseController.reverse({transaction: transaction}).then(result => {
-      this.parameters.set('processorresponse', result);
-      return true;
-    });
+		return reverseController.reverse({transaction: transaction}).then(result => {
+			this.parameters.set('processorresponse', result);
+			return true;
+		});
 
-  }
+	}
 
-  issueReceipt(){
+	issueReceipt(){
 
-    du.debug('Issue Receipt');
+		du.debug('Issue Receipt');
 
-    const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
-    let registerReceiptController = new RegisterReceiptController();
+		const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
+		let registerReceiptController = new RegisterReceiptController();
 
-    this.transformProcessorResponse();
+		this.transformProcessorResponse();
 
-    let parameters = this.parameters.getAll();
+		let parameters = this.parameters.getAll();
 
-    let argumentation_object = {
-      amount: parameters.amount,
-      transactiontype: parameters.transactiontype,
-      processorresponse: parameters.processorresponse,
-      merchant_provider: parameters.associatedtransaction.merchant_provider,
-      transaction_products: parameters.associatedtransaction.products,
-      associatedtransaction: parameters.associatedtransaction
-    };
+		let argumentation_object = {
+			amount: parameters.amount,
+			transactiontype: parameters.transactiontype,
+			processorresponse: parameters.processorresponse,
+			merchant_provider: parameters.associatedtransaction.merchant_provider,
+			transaction_products: parameters.associatedtransaction.products,
+			associatedtransaction: parameters.associatedtransaction
+		};
 
-    return rebillController.get({id: parameters.associatedtransaction.rebill })
-      .then(rebill => argumentation_object.rebill = rebill)
-      .then(() => registerReceiptController.issueReceipt(argumentation_object))
-      .then(receipt_transaction => this.parameters.set('receipttransaction', receipt_transaction));
-  }
+		return rebillController.get({id: parameters.associatedtransaction.rebill })
+			.then(rebill => argumentation_object.rebill = rebill)
+			.then(() => registerReceiptController.issueReceipt(argumentation_object))
+			.then(receipt_transaction => this.parameters.set('receipttransaction', receipt_transaction));
+	}
 
-  transformResponse(){
+	transformResponse(){
 
-    du.debug('Transform Response');
+		du.debug('Transform Response');
 
-    let transaction_receipts = this.parameters.isSet('transactionreceipts') ? this.parameters.get('transactionreceipts') : [this.parameters.get('receipttransaction')];
-    let processor_responses = this.parameters.isSet('processorresponses') ? this.parameters.get('processorresponses') : [this.parameters.get('processorresponse')];
-    let creditcard = this.parameters.get('selectedcreditcard');
-    let response_category = this.getProcessorResponseCategory();
+		let transaction_receipts = this.parameters.isSet('transactionreceipts') ? this.parameters.get('transactionreceipts') : [this.parameters.get('receipttransaction')];
+		let processor_responses = this.parameters.isSet('processorresponses') ? this.parameters.get('processorresponses') : [this.parameters.get('processorresponse')];
+		let creditcard = this.parameters.get('selectedcreditcard');
+		let response_category = this.getProcessorResponseCategory();
 
-    let register_response = new RegisterResponse({
-      transactions: transaction_receipts,
-      processor_responses: processor_responses,
-      response_type: response_category,
-      creditcard: creditcard
-    });
+		let register_response = new RegisterResponse({
+			transactions: transaction_receipts,
+			processor_responses: processor_responses,
+			response_type: response_category,
+			creditcard: creditcard
+		});
 
-    //du.info(register_response);
+		//du.info(register_response);
 
-    return Promise.resolve(register_response);
+		return Promise.resolve(register_response);
 
-  }
+	}
 
-  transformProcessorResponse() {
+	transformProcessorResponse() {
 
-      let transaction = this.parameters.get('associatedtransaction');
+		let transaction = this.parameters.get('associatedtransaction');
 
-      if(_.has(transaction, 'processor_response') && (_.isObject(transaction.processor_response))){
+		if(_.has(transaction, 'processor_response') && (_.isObject(transaction.processor_response))){
 
-          try{
-              transaction.processor_response = JSON.stringify(transaction.processor_response);
-          }catch(error){
-              eu.throwError('validation', 'Unrecognized format for processor response.')
-          }
+			try{
+				transaction.processor_response = JSON.stringify(transaction.processor_response);
+			}catch(error){
+				eu.throwError('validation', 'Unrecognized format for processor response.')
+			}
 
-          this.parameters.set('associatedtransaction', transaction);
-      }
-  }
+			this.parameters.set('associatedtransaction', transaction);
+		}
+	}
 
-  getProcessorResponseCategory(){
+	getProcessorResponseCategory(){
 
-    du.debug('Get Processor Response Category');
+		du.debug('Get Processor Response Category');
 
-    let processor_responses = this.parameters.isSet('processorresponses') ? this.parameters.get('processorresponses') : [this.parameters.get('processorresponse')];
+		let processor_responses = this.parameters.isSet('processorresponses') ? this.parameters.get('processorresponses') : [this.parameters.get('processorresponse')];
 
-    let successful = arrayutilities.find(processor_responses, processor_response => {
-      return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.success);
-    });
+		let successful = arrayutilities.find(processor_responses, processor_response => {
+			return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.success);
+		});
 
-    if(successful){
-      return this.processor_response_map.success;
-    }
+		if(successful){
+			return this.processor_response_map.success;
+		}
 
-    let error = arrayutilities.find(processor_responses, processor_response => {
-      return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.error);
-    });
+		let error = arrayutilities.find(processor_responses, processor_response => {
+			return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.error);
+		});
 
-    if(error){
-      return this.processor_response_map.error;
-    }
+		if(error){
+			return this.processor_response_map.error;
+		}
 
-    return this.processor_response_map.fail;
+		return this.processor_response_map.fail;
 
-  }
+	}
 
-  issueProductGroupReceipt({amount, processor_result, transaction_type, merchant_provider}){
+	issueProductGroupReceipt({amount, processor_result, transaction_type, merchant_provider}){
 
-    du.debug('Issue Product Group Receipt');
+		du.debug('Issue Product Group Receipt');
 
-    const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
-    let registerReceiptController = new RegisterReceiptController();
+		const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
+		let registerReceiptController = new RegisterReceiptController();
 
-    let rebill = this.parameters.get('rebill');
-    let transaction_products = this.getTransactionProductsFromMerchantProviderGroup({merchant_provider: merchant_provider});
+		let rebill = this.parameters.get('rebill');
+		let transaction_products = this.getTransactionProductsFromMerchantProviderGroup({merchant_provider: merchant_provider});
 
-    let argumentation_object = {
-      rebill: rebill,
-      amount: amount,
-      transactiontype: transaction_type,
-      processorresponse: processor_result,
-      merchant_provider: merchant_provider,
-      transaction_products: transaction_products
-    };
+		let argumentation_object = {
+			rebill: rebill,
+			amount: amount,
+			transactiontype: transaction_type,
+			processorresponse: processor_result,
+			merchant_provider: merchant_provider,
+			transaction_products: transaction_products
+		};
 
-    return registerReceiptController.issueReceipt(argumentation_object);
+		return registerReceiptController.issueReceipt(argumentation_object);
 
-  }
+	}
 
-  getTransactionProductsFromMerchantProviderGroup({merchant_provider}){
+	getTransactionProductsFromMerchantProviderGroup({merchant_provider}){
 
-    du.debug('getTransactionProductsFromMerchantProviderGroup');
+		du.debug('getTransactionProductsFromMerchantProviderGroup');
 
-    let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
+		let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
 
-    let return_object = [];
+		let return_object = [];
 
-    if(_.has(merchant_provider_groups, merchant_provider)){
+		if(_.has(merchant_provider_groups, merchant_provider)){
 
-      arrayutilities.map(merchant_provider_groups[merchant_provider], merchant_provider_group => {
+			arrayutilities.map(merchant_provider_groups[merchant_provider], merchant_provider_group => {
 
-        arrayutilities.map(merchant_provider_group, product_group => {
-          return_object.push(product_group);
-        });
-      });
+				arrayutilities.map(merchant_provider_group, product_group => {
+					return_object.push(product_group);
+				});
+			});
 
-    }
+		}
 
-    return return_object;
+		return return_object;
 
-  }
+	}
 
-  executeProcesses(){
+	executeProcesses(){
 
-    du.debug('Execute Processes');
+		du.debug('Execute Processes');
 
-    let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
+		let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
 
-    let process_promises = objectutilities.map(merchant_provider_groups, merchant_provider => {
+		let process_promises = objectutilities.map(merchant_provider_groups, merchant_provider => {
 
-      let amount = this.calculateAmountFromProductGroups(merchant_provider_groups[merchant_provider]);
+			let amount = this.calculateAmountFromProductGroups(merchant_provider_groups[merchant_provider]);
 
-      return this.executeProcess({merchant_provider: merchant_provider, amount: amount});
+			return this.executeProcess({merchant_provider: merchant_provider, amount: amount});
 
-    });
+		});
 
-    return Promise.all(process_promises).then(() => {
+		return Promise.all(process_promises).then(() => {
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  executeProcess({merchant_provider: merchant_provider, amount: amount}){
+	executeProcess({merchant_provider: merchant_provider, amount: amount}){
 
-    du.debug('Execute Process');
+		du.debug('Execute Process');
 
-    let customer = this.parameters.get('customer');
-    let creditcard = this.parameters.get('selectedcreditcard');
+		let customer = this.parameters.get('customer');
+		let creditcard = this.parameters.get('selectedcreditcard');
 
-    return this.processMerchantProviderGroup({
-      customer: customer,
-      creditcard: creditcard,
-      merchant_provider: merchant_provider,
-      amount: amount
-    }).then((processor_result) => {
+		return this.processMerchantProviderGroup({
+			customer: customer,
+			creditcard: creditcard,
+			merchant_provider: merchant_provider,
+			amount: amount
+		}).then((processor_result) => {
 
-      return this.issueProductGroupReceipt({
-        amount: amount,
-        processor_result: processor_result,
-        transaction_type: 'sale',
-        merchant_provider: merchant_provider
-      }).then((transaction_receipt) => {
+			return this.issueProductGroupReceipt({
+				amount: amount,
+				processor_result: processor_result,
+				transaction_type: 'sale',
+				merchant_provider: merchant_provider
+			}).then((transaction_receipt) => {
 
-        this.parameters.push('transactionreceipts', transaction_receipt);
+				this.parameters.push('transactionreceipts', transaction_receipt);
 
-        return true;
+				return true;
 
-      });
+			});
 
-    });
+		});
 
-  }
+	}
 
-  processMerchantProviderGroup(){
+	processMerchantProviderGroup(){
 
-    const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
-    let processController = new ProcessController();
+		const ProcessController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
+		let processController = new ProcessController();
 
-    return processController.process(arguments[0]).then((result) => {
+		return processController.process(arguments[0]).then((result) => {
 
-      return {
-        code: result.getCode(),
-        message: result.getMessage(),
-        result: result.getResult(),
-        merchant_provider: result.merchant_provider,
-        creditcard: result.creditcard
-      };
+			return {
+				code: result.getCode(),
+				message: result.getMessage(),
+				result: result.getResult(),
+				merchant_provider: result.merchant_provider,
+				creditcard: result.creditcard
+			};
 
-    }).then((result) => {
+		}).then((result) => {
 
-      this.parameters.push('processorresponses', result);
+			this.parameters.push('processorresponses', result);
 
-      return result;
+			return result;
 
-    });
+		});
 
-  }
+	}
 
-  calculateAmountFromProductGroups(product_groups){
+	calculateAmountFromProductGroups(product_groups){
 
-    du.debug('Calculate Amount From Product Groups');
+		du.debug('Calculate Amount From Product Groups');
 
-    return arrayutilities.reduce(
-      product_groups,
-      (sum, product_group) => {
+		return arrayutilities.reduce(
+			product_groups,
+			(sum, product_group) => {
 
-        let subtotal = arrayutilities.reduce(
-          product_group,
-          (subtotal, product) => {
+				let subtotal = arrayutilities.reduce(
+					product_group,
+					(subtotal, product) => {
 
-            //du.info(product);
-            let product_group_total = numberutilities.formatFloat((product.amount * product.quantity), 2);
+						//du.info(product);
+						let product_group_total = numberutilities.formatFloat((product.amount * product.quantity), 2);
 
-            return (subtotal + product_group_total);
+						return (subtotal + product_group_total);
 
-          },
-          0.0
-        );
+					},
+					0.0
+				);
 
-        return (sum + numberutilities.formatFloat(subtotal, 2));
+				return (sum + numberutilities.formatFloat(subtotal, 2));
 
-      },
-      0.0
-    );
+			},
+			0.0
+		);
 
-  }
+	}
 
-  validateProcessorResponse(){
+	validateProcessorResponse(){
 
-    du.debug('Validate Processor Response');
-    //Technical Debt:  Flesh me out, possible JSON schema embellishment?
+		du.debug('Validate Processor Response');
+		//Technical Debt:  Flesh me out, possible JSON schema embellishment?
 
-  }
+	}
 
-  acquireRefundTransactionSubProperties() {
+	acquireRefundTransactionSubProperties() {
 
-    return this.acquireRebill()
-    .then(() => this.acquireRebillProperties())
-    .then(() => this.acquireRebillSubProperties());
+		return this.acquireRebill()
+			.then(() => this.acquireRebillProperties())
+			.then(() => this.acquireRebillSubProperties());
 
-  }
+	}
 
-  setParameters({argumentation, action}){
+	setParameters({argumentation, action}){
 
-    du.debug('Set Parameters');
+		du.debug('Set Parameters');
 
-    this.parameters.setParameters({argumentation: argumentation, action: action});
+		this.parameters.setParameters({argumentation: argumentation, action: action});
 
-    this.parameters.set('transactiontype', this.action_to_transaction_type[action]);
+		this.parameters.set('transactiontype', this.action_to_transaction_type[action]);
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  extractProcessorResponse(response) {
+	extractProcessorResponse(response) {
 
-    du.debug('Extract Processor Response');
+		du.debug('Extract Processor Response');
 
-    if (objectutilities.hasRecursive(response, 'parameters.store')) {
-      return objectutilities.clone(response.parameters.store);
-    }
+		if (objectutilities.hasRecursive(response, 'parameters.store')) {
+			return objectutilities.clone(response.parameters.store);
+		}
 
-    return response;
-  }
+		return response;
+	}
 
 }

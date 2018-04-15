@@ -7,44 +7,44 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 
 module.exports = class BillController extends entityController {
 
-  constructor(){
+	constructor(){
 
-    super('bill');
+		super('bill');
 
-  }
+	}
 
-  update(){
+	update(){
 
-    du.debug('Update');
+		du.debug('Update');
 
-    //Technical Debt:  This doesn't work with the seeding strategy (permissionUtilties.disableACLs)
-    if(this.isMasterAccount()){
-      return super.update(arguments[0]);
-    }
+		//Technical Debt:  This doesn't work with the seeding strategy (permissionUtilties.disableACLs)
+		if(this.isMasterAccount()){
+			return super.update(arguments[0]);
+		}
 
-    eu.throwError('forbidden');
+		eu.throwError('forbidden');
 
-  }
+	}
 
-  create(){
+	create(){
 
-    du.debug('Create');
+		du.debug('Create');
 
-    //Technical Debt:  This doesn't work with the seeding strategy (permissionUtilties.disableACLs)
-    if(this.isMasterAccount()){
-      return super.create(arguments[0]);
-    }
+		//Technical Debt:  This doesn't work with the seeding strategy (permissionUtilties.disableACLs)
+		if(this.isMasterAccount()){
+			return super.create(arguments[0]);
+		}
 
-    eu.throwError('forbidden');
+		eu.throwError('forbidden');
 
-  }
+	}
 
-  updatePaidResult({entity}){
+	updatePaidResult({entity}){
 
-    du.debug('Update Paid Result');
+		du.debug('Update Paid Result');
 
-    return super.update({entity: entity});
+		return super.update({entity: entity});
 
-  }
+	}
 
 }

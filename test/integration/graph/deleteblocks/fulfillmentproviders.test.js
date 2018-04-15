@@ -8,16 +8,16 @@ const FulfillmentProviderTest = global.SixCRM.routes.include('test', 'integratio
 
 describe('Fulfillment Provider (Product) Delete Block Test', () => {
 
-  it('Should not allow the delete', () => {
+	it('Should not allow the delete', () => {
 
-    let fulfillmentProviderTest = new FulfillmentProviderTest();
+		let fulfillmentProviderTest = new FulfillmentProviderTest();
 
-    return fulfillmentProviderTest.executeProductBlockTest().then(results => {
+		return fulfillmentProviderTest.executeProductBlockTest().then(results => {
 
-      return expect(results.statusCode).to.equal(200);
+			return expect(results.statusCode).to.equal(200);
 
-    });
+		});
 
-  });
+	});
 
 });

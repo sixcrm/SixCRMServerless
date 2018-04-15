@@ -8,16 +8,16 @@ const CampaignTest = global.SixCRM.routes.include('test', 'integration/classes/C
 
 describe('Campaign (Tracker) Delete Block Test', () => {
 
-  it('Should not allow the delete', () => {
+	it('Should not allow the delete', () => {
 
-    let campaignTest = new CampaignTest();
+		let campaignTest = new CampaignTest();
 
-    return campaignTest.executeTrackerBlockTest().then(results => {
+		return campaignTest.executeTrackerBlockTest().then(results => {
 
-      return expect(results.statusCode).to.equal(200);
+			return expect(results.statusCode).to.equal(200);
 
-    });
+		});
 
-  });
+	});
 
 });

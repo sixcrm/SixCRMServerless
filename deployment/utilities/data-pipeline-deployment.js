@@ -35,19 +35,19 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 
 		du.debug('Assure Pipeline');
 
-			let create_parameters = {
-				name: 'Seed Dynamo Pipeline', /* required */
-				uniqueId: `${this.unique_id}`, /* required */
-				description: 'Seeds Dynamo Table'
-			};
+		let create_parameters = {
+			name: 'Seed Dynamo Pipeline', /* required */
+			uniqueId: `${this.unique_id}`, /* required */
+			description: 'Seeds Dynamo Table'
+		};
 
 
-			return this.datapipelineprovider.createPipeline({ parameters: create_parameters })
-				.then(result => this.buildPipelineDefinitionParams({pipeline_id: result.pipelineId}))
-				.then(definition => this.datapipelineprovider.validatePipelineDefinition({parameters: definition}))
-				.then(definition => this.datapipelineprovider.putPipelineDefinition({parameters: definition}))
-				.then(definition => this.datapipelineprovider.activatePipeline({parameters: {pipelineId: definition.pipelineId}}))
-				.catch(error => eu.throwError('server', error.message));
+		return this.datapipelineprovider.createPipeline({ parameters: create_parameters })
+			.then(result => this.buildPipelineDefinitionParams({pipeline_id: result.pipelineId}))
+			.then(definition => this.datapipelineprovider.validatePipelineDefinition({parameters: definition}))
+			.then(definition => this.datapipelineprovider.putPipelineDefinition({parameters: definition}))
+			.then(definition => this.datapipelineprovider.activatePipeline({parameters: {pipelineId: definition.pipelineId}}))
+			.catch(error => eu.throwError('server', error.message));
 
 	}
 

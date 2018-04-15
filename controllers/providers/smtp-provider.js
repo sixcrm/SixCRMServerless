@@ -10,165 +10,165 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 
 module.exports = class SMTPProvider {
 
-    constructor(options){
+	constructor(options){
 
-      this.default_port = 465;
+		this.default_port = 465;
 
-      this.secure_ports = [this.default_port];
+		this.secure_ports = [this.default_port];
 
-      if(_.isUndefined(options) || _.isNull(options)){
+		if(_.isUndefined(options) || _.isNull(options)){
 
-        options = this.createConnectionObjectFromSiteConfig();
+			options = this.createConnectionObjectFromSiteConfig();
 
-      }
+		}
 
-      this.connect(options);
+		this.connect(options);
 
-    }
+	}
 
-    createConnectionObjectFromSiteConfig(){
+	createConnectionObjectFromSiteConfig(){
 
-      du.debug('Create Connection Object From Site Config');
+		du.debug('Create Connection Object From Site Config');
 
-      return {
-        hostname: global.SixCRM.configuration.site_config.ses.hostname,
-        password: global.SixCRM.configuration.site_config.ses.smtp_password,
-        username: global.SixCRM.configuration.site_config.ses.smtp_username,
-      };
+		return {
+			hostname: global.SixCRM.configuration.site_config.ses.hostname,
+			password: global.SixCRM.configuration.site_config.ses.smtp_password,
+			username: global.SixCRM.configuration.site_config.ses.smtp_username,
+		};
 
-    }
+	}
 
-    connect(options){
+	connect(options){
 
-        du.debug('Connect');
+		du.debug('Connect');
 
-        this.validateConnectionOptions(options, true);
+		this.validateConnectionOptions(options, true);
 
-        let connection_object = {
-            host: options.hostname,
-            auth: {
-                user: options.username,
-                pass: options.password
-            }
-        };
+		let connection_object = {
+			host: options.hostname,
+			auth: {
+				user: options.username,
+				pass: options.password
+			}
+		};
 
-        connection_object = this.addDefaults(connection_object);
+		connection_object = this.addDefaults(connection_object);
 
-        if(_.has(connection_object, 'port') && _.includes(this.secure_ports, connection_object.port)){
-            connection_object.secure = true;
-        }
+		if(_.has(connection_object, 'port') && _.includes(this.secure_ports, connection_object.port)){
+			connection_object.secure = true;
+		}
 
-        this.connection = nodemailer.createTransport(connection_object);
+		this.connection = nodemailer.createTransport(connection_object);
 
-    }
+	}
 
-    addDefaults(connection_object){
+	addDefaults(connection_object){
 
-      du.debug('Add Defaults');
+		du.debug('Add Defaults');
 
-      if(!_.has(connection_object, 'tls')){
+		if(!_.has(connection_object, 'tls')){
 
-          connection_object['tls'] = { rejectUnauthorized: false };
+			connection_object['tls'] = { rejectUnauthorized: false };
 
-      }
+		}
 
-      if(!_.has(connection_object, 'port')){
-        connection_object['port'] = this.default_port;
-      }
+		if(!_.has(connection_object, 'port')){
+			connection_object['port'] = this.default_port;
+		}
 
-      return connection_object;
+		return connection_object;
 
-    }
+	}
 
-    validateConnectionOptions(options){
+	validateConnectionOptions(options){
 
-      du.debug('Validate Connection Options');
+		du.debug('Validate Connection Options');
 
-      mvu.validateModel(options, global.SixCRM.routes.path('model','general/smtp_connection_options.json'));
+		mvu.validateModel(options, global.SixCRM.routes.path('model','general/smtp_connection_options.json'));
 
-    }
+	}
 
-    createFromString(name, email){
+	createFromString(name, email){
 
-      du.debug('Create From String');
+		du.debug('Create From String');
 
-      let escaped_name = stringutilities.escapeCharacter(name, '"');
+		let escaped_name = stringutilities.escapeCharacter(name, '"');
 
-      return '"'+escaped_name+'" <'+email+'>';
+		return '"'+escaped_name+'" <'+email+'>';
 
-    }
+	}
 
-    createToString(to_array){
+	createToString(to_array){
 
-      du.debug('Create To String');
+		du.debug('Create To String');
 
-      return arrayutilities.compress(arrayutilities.unique(to_array), ', ','');
+		return arrayutilities.compress(arrayutilities.unique(to_array), ', ','');
 
-    }
+	}
 
-    validateSendObject(send_object){
+	validateSendObject(send_object){
 
-      du.debug('Validate Send Object');
+		du.debug('Validate Send Object');
 
-      mvu.validateModel(send_object, global.SixCRM.routes.path('model','general/smtp_send_object.json'));
+		mvu.validateModel(send_object, global.SixCRM.routes.path('model','general/smtp_send_object.json'));
 
-    }
+	}
 
-    //Technical Debt: Complete...
-    sanitizeSubject(subject_string){
+	//Technical Debt: Complete...
+	sanitizeSubject(subject_string){
 
-      du.debug('Sanitize Subject');
+		du.debug('Sanitize Subject');
 
-      return subject_string;
+		return subject_string;
 
-    }
+	}
 
-    setMailOptions(send_object){
+	setMailOptions(send_object){
 
-      du.debug('Set Mail Options');
+		du.debug('Set Mail Options');
 
-      let from_string = this.createFromString(send_object.sender_name, send_object.sender_email);
-      let to_string = this.createToString(send_object.recepient_emails);
-      let text = stringutilities.stripHTML(send_object.body);
-      let html = send_object.body;
-      let subject = this.sanitizeSubject(send_object.subject);
+		let from_string = this.createFromString(send_object.sender_name, send_object.sender_email);
+		let to_string = this.createToString(send_object.recepient_emails);
+		let text = stringutilities.stripHTML(send_object.body);
+		let html = send_object.body;
+		let subject = this.sanitizeSubject(send_object.subject);
 
-      let mailOptions = {
-          from: from_string,
-          to: to_string,
-          subject: subject,
-          text: text,
-          html: html
-      };
+		let mailOptions = {
+			from: from_string,
+			to: to_string,
+			subject: subject,
+			text: text,
+			html: html
+		};
 
-      return mailOptions;
+		return mailOptions;
 
-    }
+	}
 
-    send(send_object){
+	send(send_object){
 
-      du.debug('Send');
+		du.debug('Send');
 
-      return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-        if(!_.has(this, 'connection')){ return reject(eu.getError('validation','SMTP library missing connection.')); }
+			if(!_.has(this, 'connection')){ return reject(eu.getError('validation','SMTP library missing connection.')); }
 
-        this.validateSendObject(send_object);
+			this.validateSendObject(send_object);
 
-        let mail_options = this.setMailOptions(send_object);
+			let mail_options = this.setMailOptions(send_object);
 
-        return this.connection.sendMail(mail_options, (error, info) => {
+			return this.connection.sendMail(mail_options, (error, info) => {
 
-          if (error) { return reject(error); }
+				if (error) { return reject(error); }
 
-          du.warning('Message '+info.messageId+' sent: '+info.response);
+				du.warning('Message '+info.messageId+' sent: '+info.response);
 
-          return resolve(info);
+				return resolve(info);
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
 }

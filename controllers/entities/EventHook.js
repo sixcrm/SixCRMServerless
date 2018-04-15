@@ -3,9 +3,9 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 
 module.exports = class EventHookController extends entityController {
 
-  constructor(){
-    super('eventhook');
-  }
+	constructor(){
+		super('eventhook');
+	}
 
 }
 

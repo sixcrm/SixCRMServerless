@@ -8,15 +8,15 @@ const mbu = global.SixCRM.routes.include('lib','model-builder-utilities.js');
 
 module.exports = class Token {
 
-  getTokensSchema(){
+	getTokensSchema(){
 
-    du.debug('Token List');
+		du.debug('Token List');
 
-    let model = mbu.build('tokens/all.json');
+		let model = mbu.build('tokens/all.json');
 
-    return {tokens: model};
+		return {tokens: model};
 
-  }
+	}
 
 }
 

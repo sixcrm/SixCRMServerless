@@ -7,17 +7,17 @@ let customerType = require('./customerType');
 let paginationType = require('../pagination/paginationType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'Customers',
-    description: 'Customers',
-    fields: () => ({
-        customers: {
-            type: new GraphQLList(customerType.graphObj),
-            description: 'The customers',
-        },
-        pagination: {
-            type: new GraphQLNonNull(paginationType.graphObj),
-            description: 'Query pagination',
-        }
-    }),
-    interfaces: []
+	name: 'Customers',
+	description: 'Customers',
+	fields: () => ({
+		customers: {
+			type: new GraphQLList(customerType.graphObj),
+			description: 'The customers',
+		},
+		pagination: {
+			type: new GraphQLNonNull(paginationType.graphObj),
+			description: 'Query pagination',
+		}
+	}),
+	interfaces: []
 });

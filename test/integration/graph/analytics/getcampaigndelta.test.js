@@ -22,15 +22,15 @@ let test_name = 'Campaign delta';
 
 //set the test user
 let test_user = {
-    name:"Super User",
-    email:"super.user@test.com",
-    role:"Owner"
+	name:"Super User",
+	email:"super.user@test.com",
+	role:"Owner"
 };
 
 //set the test account
 let account = {
-    name: 'Master Account',
-    id: '*'
+	name: 'Master Account',
+	id: '*'
 };
 
 let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getCampaignDelta.json');
@@ -39,34 +39,34 @@ let this_request = request(global.integration_test_config.endpoint);
 
 describe('Get '+test_name+' Test', function() {
 
-    let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
+	let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-    it('Should return return a 200 HTTP response code and a correctly formatted response', function (done) {
+	it('Should return return a 200 HTTP response code and a correctly formatted response', function (done) {
 
-        var query = tu.getQuery(test_query);
+		var query = tu.getQuery(test_query);
 
-        du.info(test_jwt, account.id, query);
+		du.info(test_jwt, account.id, query);
 
-        this_request.post('graph/'+account.id, {timeout: 5000})
-				.set('Authorization', test_jwt)
-				.send(query)
-				.expect(200)
-				.expect('Content-Type', 'application/json')
-				.expect('Access-Control-Allow-Origin','*')
-				.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-				.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-				.end(function(err, response){
+		this_request.post('graph/'+account.id, {timeout: 5000})
+			.set('Authorization', test_jwt)
+			.send(query)
+			.expect(200)
+			.expect('Content-Type', 'application/json')
+			.expect('Access-Control-Allow-Origin','*')
+			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
+			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
+			.end(function(err, response){
 
-					du.debug(response.body);
+				du.debug(response.body);
 
-          assert.isObject(response.body.response, JSON.stringify(response.body));
+				assert.isObject(response.body.response, JSON.stringify(response.body));
 
-          assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/campaign/campaigndelta'));
+				assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/campaign/campaigndelta'));
 
-          done();
+				done();
 
-        });
+			});
 
-    });
+	});
 
 });

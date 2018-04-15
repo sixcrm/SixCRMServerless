@@ -6,14 +6,14 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 //Technical Debt:  The create method must assure a user/account
 module.exports = class NotificationSettingController extends entityController {
 
-    constructor() {
-        super('notificationsetting');
-    }
+	constructor() {
+		super('notificationsetting');
+	}
 
-    getDefaultProfile(){
+	getDefaultProfile(){
 
-      return Promise.resolve(global.SixCRM.routes.include('model', 'general/default_notification_settings.json'));
+		return Promise.resolve(global.SixCRM.routes.include('model', 'general/default_notification_settings.json'));
 
-    }
+	}
 
 }

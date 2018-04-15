@@ -7,59 +7,59 @@ const Response = global.SixCRM.routes.include('providers', 'Response.js');
 
 module.exports = class TerminalResponse extends Response {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.parameter_validation = {
-      'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
-      'vendorresponse':global.SixCRM.routes.path('model','providers/shipping/terminal/responses/vendorresponseclass.json')
-    };
+		this.parameter_validation = {
+			'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
+			'vendorresponse':global.SixCRM.routes.path('model','providers/shipping/terminal/responses/vendorresponseclass.json')
+		};
 
-    this.parameter_definition = {
-      'constructor':{
-        required:{
+		this.parameter_definition = {
+			'constructor':{
+				required:{
 
-        },
-        optional:{
-          rebill: 'rebill',
-          response_type:'response_type',
-          //providerresponse:'provider_response',
-          vendorresponse: 'vendor_response'
-        }
-      }
-    }
+				},
+				optional:{
+					rebill: 'rebill',
+					response_type:'response_type',
+					//providerresponse:'provider_response',
+					vendorresponse: 'vendor_response'
+				}
+			}
+		}
 
-    this.initialize();
+		this.initialize();
 
-    if(objectutilities.nonEmpty(arguments)){
-      this.parameters.setParameters({argumentation: arguments[0], action: 'constructor'});
-    }
+		if(objectutilities.nonEmpty(arguments)){
+			this.parameters.setParameters({argumentation: arguments[0], action: 'constructor'});
+		}
 
-  }
+	}
 
-  setVendorResponse(vendor_response){
+	setVendorResponse(vendor_response){
 
-    du.debug('Set Vendor Response');
+		du.debug('Set Vendor Response');
 
-    this.parameters.set('vendorresponse', vendor_response);
+		this.parameters.set('vendorresponse', vendor_response);
 
-  }
+	}
 
-  getVendorResponse(){
+	getVendorResponse(){
 
-    du.debug('Get Vendor Response');
+		du.debug('Get Vendor Response');
 
-    let vendor_response = this.parameters.get('vendorresponse', null, false);
+		let vendor_response = this.parameters.get('vendorresponse', null, false);
 
-    if(_.isNull(vendor_response) || _.isUndefined(vendor_response)){
-      return null;
-    }
+		if(_.isNull(vendor_response) || _.isUndefined(vendor_response)){
+			return null;
+		}
 
-    return vendor_response;
+		return vendor_response;
 
-  }
-  /*
+	}
+	/*
   setProviderResponse(provider_response){
 
     this.parameters.set('providerresponse', provider_response);

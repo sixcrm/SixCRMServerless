@@ -8,246 +8,246 @@ const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/red
 
 module.exports = class cacheController {
 
-    constructor(prefix){
+	constructor(prefix){
 
-        if(_.isString(prefix)){
-            this.key_prefix = prefix;
-        }
+		if(_.isString(prefix)){
+			this.key_prefix = prefix;
+		}
 
-        this.redisprovider = new RedisProvider();
+		this.redisprovider = new RedisProvider();
 
-    }
+	}
 
-    //Technical Debt:  Refactor this this to be testable!
-    //Technical Debt:  The data_promise variable is executed regardless of whether there are cached results or not.
-    useCache(parameters, data_promise, expiration){
+	//Technical Debt:  Refactor this this to be testable!
+	//Technical Debt:  The data_promise variable is executed regardless of whether there are cached results or not.
+	useCache(parameters, data_promise, expiration){
 
-        du.debug('Use Cache');
+		du.debug('Use Cache');
 
-        this.validatePromise(data_promise);
+		this.validatePromise(data_promise);
 
-        if(this.cacheActive() && this.cacheEnabled()){
+		if(this.cacheActive() && this.cacheEnabled()){
 
-            let cache_key = this.createKey(parameters);
+			let cache_key = this.createKey(parameters);
 
-            return this.getCache(cache_key).then((cached_result) => {
+			return this.getCache(cache_key).then((cached_result) => {
 
-              if(!_.isNull(cached_result)){
+				if(!_.isNull(cached_result)){
 
-                du.warning('Redis Hit: '+ cache_key);
+					du.warning('Redis Hit: '+ cache_key);
 
-                cached_result = this.parseResult(cached_result);
+					cached_result = this.parseResult(cached_result);
 
-                du.deep('Cached Result', cached_result);
+					du.deep('Cached Result', cached_result);
 
-                return Promise.resolve(cached_result);
+					return Promise.resolve(cached_result);
 
-              }else{
+				}else{
 
-                du.warning('Redis Miss: '+ cache_key);
+					du.warning('Redis Miss: '+ cache_key);
 
-                return data_promise().then((results) => {
+					return data_promise().then((results) => {
 
-                  du.deep('Data Promise Result:', results);
+						du.deep('Data Promise Result:', results);
 
-                  return this.setCache(cache_key, JSON.stringify(results), expiration).then((reply) => {
+						return this.setCache(cache_key, JSON.stringify(results), expiration).then((reply) => {
 
-                    du.warning('Redis Set for key "'+cache_key+'": '+reply);
+							du.warning('Redis Set for key "'+cache_key+'": '+reply);
 
-                    return Promise.resolve(results);
+							return Promise.resolve(results);
 
-                  });
+						});
 
-                });
+					});
 
-              }
+				}
 
-            });
+			});
 
-        }else{
+		}else{
 
-            return data_promise().then((results) => {
+			return data_promise().then((results) => {
 
-                if(this.cacheActive()){
+				if(this.cacheActive()){
 
-                    return this.createKey(parameters).then((key) => {
+					return this.createKey(parameters).then((key) => {
 
-                        return this.setCache(key, JSON.stringify(results), expiration).then((reply) => {
+						return this.setCache(key, JSON.stringify(results), expiration).then((reply) => {
 
-                            du.warning('Redis Set for key "'+key+'": '+reply);
+							du.warning('Redis Set for key "'+key+'": '+reply);
 
-                            return Promise.resolve(results);
+							return Promise.resolve(results);
 
-                        });
+						});
 
-                    });
+					});
 
-                }else{
+				}else{
 
-                    return Promise.resolve(results);
+					return Promise.resolve(results);
 
-                }
+				}
 
 
-            });
+			});
 
-        }
+		}
 
-    }
+	}
 
-    parseResult(result){
+	parseResult(result){
 
-        du.debug('Parse Result');
+		du.debug('Parse Result');
 
-        try{
+		try{
 
-            let return_value = JSON.parse(result);
+			let return_value = JSON.parse(result);
 
-            return return_value;
+			return return_value;
 
-        }catch(error){
+		}catch(error){
 
-            return result;
+			return result;
 
-        }
+		}
 
-    }
+	}
 
-    getCache(key){
+	getCache(key){
 
-        du.debug('Get Cache');
+		du.debug('Get Cache');
 
-        return this.redisprovider.get(key);
+		return this.redisprovider.get(key);
 
-    }
+	}
 
-    setCache(key, result, expiration){
+	setCache(key, result, expiration){
 
-        du.debug('Set Cache');
+		du.debug('Set Cache');
 
-        return this.redisprovider.set(key, result, expiration);
+		return this.redisprovider.set(key, result, expiration);
 
-    }
+	}
 
-    createKey(parameters){
+	createKey(parameters){
 
-        du.debug('Create Key');
+		du.debug('Create Key');
 
-        let prehash = parameters;
+		let prehash = parameters;
 
-        if(_.isArray(parameters)){
+		if(_.isArray(parameters)){
 
-            prehash = 'array'+parameters.sort().join(':');
+			prehash = 'array'+parameters.sort().join(':');
 
-        }else if(_.isString(parameters)){
+		}else if(_.isString(parameters)){
 
-            prehash = 'string'+parameters.trim();
+			prehash = 'string'+parameters.trim();
 
-        }else if(_.isObject(parameters)){
+		}else if(_.isObject(parameters)){
 
-            prehash = 'object';
-            for (var k in parameters){
-                if(parameters.hasOwnProperty(k)) {
-                    prehash += k+':'+parameters[k];
-                }
-            }
+			prehash = 'object';
+			for (var k in parameters){
+				if(parameters.hasOwnProperty(k)) {
+					prehash += k+':'+parameters[k];
+				}
+			}
 
-        }
+		}
 
-        prehash = this.prependPrefix(prehash);
+		prehash = this.prependPrefix(prehash);
 
-        prehash = this.appendCachebuster(prehash);
+		prehash = this.appendCachebuster(prehash);
 
-        return crypto.createHash('sha1').update(prehash).digest('hex');
+		return crypto.createHash('sha1').update(prehash).digest('hex');
 
-    }
+	}
 
-    prependPrefix(prehash){
+	prependPrefix(prehash){
 
-        du.debug('Prepend Prefix');
+		du.debug('Prepend Prefix');
 
-        if(_.has(this, 'key_prefix')){
-            prehash = this.key_prefix+'-'+prehash;
-        }
+		if(_.has(this, 'key_prefix')){
+			prehash = this.key_prefix+'-'+prehash;
+		}
 
-        return prehash;
+		return prehash;
 
-    }
+	}
 
-    appendCachebuster(prehash){
+	appendCachebuster(prehash){
 
-        du.debug('Append Cachebuster');
+		du.debug('Append Cachebuster');
 
-        if(_.has(process.env, 'cachebuster')){
-            prehash = prehash+'-'+process.env.cachebuster;
-        }
+		if(_.has(process.env, 'cachebuster')){
+			prehash = prehash+'-'+process.env.cachebuster;
+		}
 
-        return prehash;
+		return prehash;
 
-    }
+	}
 
-    validatePromise(data_promise){
+	validatePromise(data_promise){
 
-        du.debug('Validate Promise');
+		du.debug('Validate Promise');
 
-        if(!_.isFunction(data_promise)){
+		if(!_.isFunction(data_promise)){
 
-            eu.throwError('server','Callback_promise.then is not a function.');
+			eu.throwError('server','Callback_promise.then is not a function.');
 
-        }
+		}
 
-        return true;
+		return true;
 
-    }
+	}
 
-    cacheActive(){
+	cacheActive(){
 
-        du.debug('Cache Active');
+		du.debug('Cache Active');
 
-        if(_.has(process.env, 'usecache') && parseInt(process.env.usecache) > 0){
+		if(_.has(process.env, 'usecache') && parseInt(process.env.usecache) > 0){
 
-            du.warning('Cache Active');
+			du.warning('Cache Active');
 
-            return true;
+			return true;
 
-        }
+		}
 
-        du.warning('The cache is not active.  Please check serverless configuration.');
+		du.warning('The cache is not active.  Please check serverless configuration.');
 
-        return false;
+		return false;
 
-    }
+	}
 
-    setDisable(setting){
+	setDisable(setting){
 
-        du.debug('Set Disable');
+		du.debug('Set Disable');
 
-        this.disable = setting;
+		this.disable = setting;
 
-    }
+	}
 
-    cacheEnabled(){
+	cacheEnabled(){
 
-        du.debug('Cache Enabled');
+		du.debug('Cache Enabled');
 
-        if(_.has(this, 'disable') && this.disable === true){
+		if(_.has(this, 'disable') && this.disable === true){
 
-            du.warning('Cache Disabled (Local Setting)');
+			du.warning('Cache Disabled (Local Setting)');
 
-            return false;
+			return false;
 
-        }
+		}
 
-        if(_.has(global, 'use_cache') && global.use_cache == false){
+		if(_.has(global, 'use_cache') && global.use_cache == false){
 
-            du.warning('Cache Disabled (Global Setting)');
+			du.warning('Cache Disabled (Global Setting)');
 
-            return false;
+			return false;
 
-        }
+		}
 
-        return true;
+		return true;
 
-    }
+	}
 
 }

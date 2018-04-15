@@ -10,134 +10,134 @@ const ProductScheduleController = global.SixCRM.routes.include('controllers', 'e
 
 module.exports = class InfoController extends transactionEndpointController{
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.required_permissions = [
-        'product/read',
-        'productschedule/read'
-      ];
+		this.required_permissions = [
+			'product/read',
+			'productschedule/read'
+		];
 
-      this.parameter_definitions = {
-        execute: {
-          required : {
-            event:'event'
-          }
-        }
-      };
+		this.parameter_definitions = {
+			execute: {
+				required : {
+					event:'event'
+				}
+			}
+		};
 
-      this.parameter_validation = {
-        'event':global.SixCRM.routes.path('model', 'endpoints/info/event.json'),
-        'products':global.SixCRM.routes.path('model', 'entities/components/products.json'),
-        'product_schedules':global.SixCRM.routes.path('model', 'entities/components/productschedules.json')
-      };
+		this.parameter_validation = {
+			'event':global.SixCRM.routes.path('model', 'endpoints/info/event.json'),
+			'products':global.SixCRM.routes.path('model', 'entities/components/products.json'),
+			'product_schedules':global.SixCRM.routes.path('model', 'entities/components/productschedules.json')
+		};
 
-      this.productController = new ProductController();
-      this.productScheduleController = new ProductScheduleController();
+		this.productController = new ProductController();
+		this.productScheduleController = new ProductScheduleController();
 
-      this.initialize();
+		this.initialize();
 
-    }
+	}
 
-    execute(event){
+	execute(event){
 
-      du.debug('Execute');
+		du.debug('Execute');
 
-      return this.preamble(event)
+		return this.preamble(event)
 			.then(() => this.acquireInfoRequestProperties())
-      //Note: filtering or validation here?
-      .then(() => this.respond());
+		//Note: filtering or validation here?
+			.then(() => this.respond());
 
-    }
+	}
 
-    acquireInfoRequestProperties(){
+	acquireInfoRequestProperties(){
 
-      du.debug('Acquire Request Properties');
+		du.debug('Acquire Request Properties');
 
-      let promises = [];
+		let promises = [];
 
-      promises.push(this.acquireProducts());
-      promises.push(this.acquireProductSchedules());
+		promises.push(this.acquireProducts());
+		promises.push(this.acquireProductSchedules());
 
-      return Promise.all(promises).then(() => {
-        return true;
-      });
+		return Promise.all(promises).then(() => {
+			return true;
+		});
 
-    }
+	}
 
-    acquireProducts(){
+	acquireProducts(){
 
-      du.debug('Acquire Products');
+		du.debug('Acquire Products');
 
-      let event = this.parameters.get('event');
+		let event = this.parameters.get('event');
 
-      if(!_.has(event, 'products') || !arrayutilities.nonEmpty(event.products)){ return null; }
+		if(!_.has(event, 'products') || !arrayutilities.nonEmpty(event.products)){ return null; }
 
-      return this.productController.getListByAccount({ids: event.products}).then(result => {
-        return this.parameters.set('products', result.products);
-      });
+		return this.productController.getListByAccount({ids: event.products}).then(result => {
+			return this.parameters.set('products', result.products);
+		});
 
-    }
+	}
 
-    acquireProductSchedules(){
+	acquireProductSchedules(){
 
-      du.debug('Acquire Product Schedules');
+		du.debug('Acquire Product Schedules');
 
-      let event = this.parameters.get('event');
+		let event = this.parameters.get('event');
 
-      if(!_.has(event, 'productschedules') || !arrayutilities.nonEmpty(event.productschedules)){ return null; }
+		if(!_.has(event, 'productschedules') || !arrayutilities.nonEmpty(event.productschedules)){ return null; }
 
-      const ProductScheduleHelper = global.SixCRM.routes.include('helpers','entities/productschedule/ProductSchedule.js');
-      let productScheduleHelper = new ProductScheduleHelper();
+		const ProductScheduleHelper = global.SixCRM.routes.include('helpers','entities/productschedule/ProductSchedule.js');
+		let productScheduleHelper = new ProductScheduleHelper();
 
-      return this.productScheduleController.getListByAccount({ids: event.productschedules}).then(product_schedules_result => {
+		return this.productScheduleController.getListByAccount({ids: event.productschedules}).then(product_schedules_result => {
 
-        let hydrated_product_schedules_promises = arrayutilities.map(product_schedules_result.productschedules, product_schedule => {
+			let hydrated_product_schedules_promises = arrayutilities.map(product_schedules_result.productschedules, product_schedule => {
 
-          return this.productScheduleController.getProducts(product_schedule).then(products_result => {
-            du.info(products_result);
-            return productScheduleHelper.marryProductsToSchedule({product_schedule: product_schedule, products: products_result.products});
-          });
-        });
+				return this.productScheduleController.getProducts(product_schedule).then(products_result => {
+					du.info(products_result);
+					return productScheduleHelper.marryProductsToSchedule({product_schedule: product_schedule, products: products_result.products});
+				});
+			});
 
-        return Promise.all(hydrated_product_schedules_promises).then(hydrated_product_schedules_promises => {
+			return Promise.all(hydrated_product_schedules_promises).then(hydrated_product_schedules_promises => {
 
-          return this.parameters.set('productschedules', hydrated_product_schedules_promises);
+				return this.parameters.set('productschedules', hydrated_product_schedules_promises);
 
-        })
+			})
 
-      });
+		});
 
-    }
+	}
 
-    respond(){
+	respond(){
 
-      du.debug('Respond');
+		du.debug('Respond');
 
-      let response_object = {};
+		let response_object = {};
 
-      let event = this.parameters.get('event');
+		let event = this.parameters.get('event');
 
-      if(_.has(event, 'products')){
+		if(_.has(event, 'products')){
 
-        let products = this.parameters.get('products', false, null);
+			let products = this.parameters.get('products', false, null);
 
-        response_object.products = products;
+			response_object.products = products;
 
-      }
+		}
 
-      if(_.has(event, 'productschedules')){
+		if(_.has(event, 'productschedules')){
 
-        let product_schedules = this.parameters.get('productschedules', false, null);
+			let product_schedules = this.parameters.get('productschedules', false, null);
 
-        response_object.productschedules = product_schedules;
+			response_object.productschedules = product_schedules;
 
-      }
+		}
 
-      return response_object;
+		return response_object;
 
-    }
+	}
 
 }
 

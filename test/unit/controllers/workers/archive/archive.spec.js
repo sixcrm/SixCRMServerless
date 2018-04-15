@@ -7,684 +7,684 @@ const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 function getValidMessage(){
 
-  return MockEntities.getValidMessage();
+	return MockEntities.getValidMessage();
 
 }
 
 function getValidProducts(){
 
-  return MockEntities.getValidProducts();
+	return MockEntities.getValidProducts();
 
 }
 
 function getValidProductsForArchive(){
 
-    return [{
-        product: MockEntities.getValidProduct()
-    },
-    {
-        product: MockEntities.getValidProduct()
-    }];
+	return [{
+		product: MockEntities.getValidProduct()
+	},
+	{
+		product: MockEntities.getValidProduct()
+	}];
 
 }
 
 function getValidRebill(){
 
-  return MockEntities.getValidRebill();
+	return MockEntities.getValidRebill();
 
 }
 
 function getValidTransactions(){
 
-  return MockEntities.getValidTransactions();
+	return MockEntities.getValidTransactions();
 
 }
 
 describe('controllers/workers/archive', function () {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-    afterEach(() => {
-        mockery.resetCache();
-    });
+	afterEach(() => {
+		mockery.resetCache();
+	});
 
-    after(() => {
-        mockery.deregisterAll();
-    });
+	after(() => {
+		mockery.deregisterAll();
+	});
 
-    describe('confirmSecondAttempt', () => {
+	describe('confirmSecondAttempt', () => {
 
-      it('determines second attempt', () => {
+		it('determines second attempt', () => {
 
-        let rebill = getValidRebill();
+			let rebill = getValidRebill();
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('rebill', rebill);
+			archiveController.parameters.set('rebill', rebill);
 
-        return archiveController.confirmSecondAttempt().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['responsecode']).to.equal('noaction');
-        });
+			return archiveController.confirmSecondAttempt().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['responsecode']).to.equal('noaction');
+			});
 
-      });
+		});
 
-      it('determines second attempt', () => {
+		it('determines second attempt', () => {
 
-        let rebill = getValidRebill();
+			let rebill = getValidRebill();
 
-        rebill.second_attempt = true;
+			rebill.second_attempt = true;
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('rebill', rebill);
+			archiveController.parameters.set('rebill', rebill);
 
-        return archiveController.confirmSecondAttempt().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['responsecode']).to.equal('success');
-        });
+			return archiveController.confirmSecondAttempt().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['responsecode']).to.equal('success');
+			});
 
-      });
+		});
 
-    });
+	});
 
-    describe('getRebillTransactions', () => {
+	describe('getRebillTransactions', () => {
 
-      it('acquires rebill transactions', () => {
+		it('acquires rebill transactions', () => {
 
-        let transactions = getValidTransactions();
-        let rebill = getValidRebill();
+			let transactions = getValidTransactions();
+			let rebill = getValidRebill();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('rebill', rebill);
+			archiveController.parameters.set('rebill', rebill);
 
-        return archiveController.getRebillTransactions().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['transactions']).to.deep.equal(transactions);
-        });
+			return archiveController.getRebillTransactions().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['transactions']).to.deep.equal(transactions);
+			});
 
-      });
+		});
 
-    });
+	});
 
-    describe('getTransactionProducts', () => {
+	describe('getTransactionProducts', () => {
 
-      it('acquires transaction products', () => {
+		it('acquires transaction products', () => {
 
-        let transactions = getValidTransactions();
-        let products = getValidProductsForArchive();
+			let transactions = getValidTransactions();
+			let products = getValidProductsForArchive();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('transactions', transactions);
+			archiveController.parameters.set('transactions', transactions);
 
-        return archiveController.getTransactionProducts().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['products'][0]).to.deep.equal(products[0].product);
-        });
+			return archiveController.getTransactionProducts().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['products'][0]).to.deep.equal(products[0].product);
+			});
 
-      });
+		});
 
-    });
+	});
 
-    describe('getTransactionProducts', () => {
+	describe('getTransactionProducts', () => {
 
-      it('acquires transaction products', () => {
+		it('acquires transaction products', () => {
 
-        let archive_filter = 'all';
+			let archive_filter = 'all';
 
-        process.env.archivefilter = archive_filter;
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
-        let result = archiveController.setArchiveFilter();
+			process.env.archivefilter = archive_filter;
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
+			let result = archiveController.setArchiveFilter();
 
-        expect(result).to.equal(true);
-        expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
+			expect(result).to.equal(true);
+			expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
 
-      });
+		});
 
-    });
+	});
 
-    describe('areProductsNoShip', () => {
+	describe('areProductsNoShip', () => {
 
-      it('Are products no ship (false)', () => {
+		it('Are products no ship (false)', () => {
 
-        let products = getValidProducts();
+			let products = getValidProducts();
 
-        products.forEach(product => {
-            product.ship = true;
-        });
+			products.forEach(product => {
+				product.ship = true;
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('products', products);
+			archiveController.parameters.set('products', products);
 
-        let result = archiveController.areProductsNoShip();
+			let result = archiveController.areProductsNoShip();
 
-        expect(result).to.equal(false);
+			expect(result).to.equal(false);
 
-      });
+		});
 
-      it('Are products no ship (true)', () => {
+		it('Are products no ship (true)', () => {
 
-        let products = getValidProducts();
+			let products = getValidProducts();
 
-        products.forEach(product => {
-            product.ship = false;
-        });
+			products.forEach(product => {
+				product.ship = false;
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('products', products);
+			archiveController.parameters.set('products', products);
 
-        let result = archiveController.areProductsNoShip();
+			let result = archiveController.areProductsNoShip();
 
-        expect(result).to.equal(true);
+			expect(result).to.equal(true);
 
-      });
+		});
 
-    });
+	});
 
-    describe('confirmNoShip', () => {
+	describe('confirmNoShip', () => {
 
-      it('some ship', () => {
+		it('some ship', () => {
 
-        let rebill = getValidRebill();
-        let products = getValidProductsForArchive();
-        let transactions = getValidTransactions();
+			let rebill = getValidRebill();
+			let products = getValidProductsForArchive();
+			let transactions = getValidTransactions();
 
-        products[0].product.ship = true;
-        products[1].product.ship = false;
+			products[0].product.ship = true;
+			products[1].product.ship = false;
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('rebill', rebill);
+			archiveController.parameters.set('rebill', rebill);
 
-        return archiveController.confirmNoShip().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['responsecode']).to.equal('noaction');
-        });
+			return archiveController.confirmNoShip().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['responsecode']).to.equal('noaction');
+			});
 
-      });
+		});
 
-      it('all no ship', () => {
+		it('all no ship', () => {
 
-        let rebill = getValidRebill();
-        let products = getValidProductsForArchive();
-        let transactions = getValidTransactions();
+			let rebill = getValidRebill();
+			let products = getValidProductsForArchive();
+			let transactions = getValidTransactions();
 
-        products.forEach(products => {
-            products.product.ship = false;
-        });
+			products.forEach(products => {
+				products.product.ship = false;
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('rebill', rebill);
+			archiveController.parameters.set('rebill', rebill);
 
-        return archiveController.confirmNoShip().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['responsecode']).to.equal('success');
-        });
+			return archiveController.confirmNoShip().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['responsecode']).to.equal('success');
+			});
 
-      });
+		});
 
-    });
+	});
 
-    describe('archive', () => {
+	describe('archive', () => {
 
-      it('Successfully runs archive (all)', () => {
+		it('Successfully runs archive (all)', () => {
 
-        let archivefilter = 'all';
+			let archivefilter = 'all';
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('archivefilter', archivefilter);
+			archiveController.parameters.set('archivefilter', archivefilter);
 
-        return archiveController.archive().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['responsecode']).to.equal('success');
-        });
-      });
+			return archiveController.archive().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['responsecode']).to.equal('success');
+			});
+		});
 
-      it('Successfully runs archive (noship, success)', () => {
+		it('Successfully runs archive (noship, success)', () => {
 
-        let archivefilter = 'noship';
+			let archivefilter = 'noship';
 
-        let rebill = getValidRebill();
-        let products = getValidProductsForArchive();
-        let transactions = getValidTransactions();
+			let rebill = getValidRebill();
+			let products = getValidProductsForArchive();
+			let transactions = getValidTransactions();
 
-        products.forEach(products => {
-            products.product.ship = false;
-        });
+			products.forEach(products => {
+				products.product.ship = false;
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('archivefilter', archivefilter);
-        archiveController.parameters.set('rebill', rebill);
+			archiveController.parameters.set('archivefilter', archivefilter);
+			archiveController.parameters.set('rebill', rebill);
 
-        return archiveController.archive().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['responsecode']).to.equal('success');
-        });
-      });
+			return archiveController.archive().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['responsecode']).to.equal('success');
+			});
+		});
 
-      it('Successfully runs archive (noship, noaction)', () => {
+		it('Successfully runs archive (noship, noaction)', () => {
 
-        let archivefilter = 'noship';
+			let archivefilter = 'noship';
 
-        let rebill = getValidRebill();
-        let products = getValidProductsForArchive();
-        let transactions = getValidTransactions();
+			let rebill = getValidRebill();
+			let products = getValidProductsForArchive();
+			let transactions = getValidTransactions();
 
-        products.forEach(products => {
-            products.product.ship = true;
-        });
+			products.forEach(products => {
+				products.product.ship = true;
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('archivefilter', archivefilter);
-        archiveController.parameters.set('rebill', rebill);
+			archiveController.parameters.set('archivefilter', archivefilter);
+			archiveController.parameters.set('rebill', rebill);
 
-        return archiveController.archive().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['responsecode']).to.equal('noaction');
-        });
-      });
+			return archiveController.archive().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['responsecode']).to.equal('noaction');
+			});
+		});
 
-      it('Successfully runs archive (twoattempts, noaction)', () => {
+		it('Successfully runs archive (twoattempts, noaction)', () => {
 
-        let archivefilter = 'twoattempts';
-        let rebill = getValidRebill();
+			let archivefilter = 'twoattempts';
+			let rebill = getValidRebill();
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('archivefilter', archivefilter);
-        archiveController.parameters.set('rebill', rebill);
+			archiveController.parameters.set('archivefilter', archivefilter);
+			archiveController.parameters.set('rebill', rebill);
 
-        return archiveController.archive().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['responsecode']).to.equal('noaction');
-        });
-      });
+			return archiveController.archive().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['responsecode']).to.equal('noaction');
+			});
+		});
 
-      it('Successfully runs archive (twoattempts, success)', () => {
+		it('Successfully runs archive (twoattempts, success)', () => {
 
-        let archivefilter = 'twoattempts';
-        let rebill = getValidRebill();
+			let archivefilter = 'twoattempts';
+			let rebill = getValidRebill();
 
-        rebill.second_attempt = true;
+			rebill.second_attempt = true;
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('archivefilter', archivefilter);
-        archiveController.parameters.set('rebill', rebill);
+			archiveController.parameters.set('archivefilter', archivefilter);
+			archiveController.parameters.set('rebill', rebill);
 
-        return archiveController.archive().then(result => {
-          expect(result).to.equal(true);
-          expect(archiveController.parameters.store['responsecode']).to.equal('success');
-        });
-      });
+			return archiveController.archive().then(result => {
+				expect(result).to.equal(true);
+				expect(archiveController.parameters.store['responsecode']).to.equal('success');
+			});
+		});
 
-    });
+	});
 
-    describe('respond', () => {
+	describe('respond', () => {
 
-      it('Successfully responds (success)', () => {
+		it('Successfully responds (success)', () => {
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('responsecode', 'success');
+			archiveController.parameters.set('responsecode', 'success');
 
-        let result = archiveController.respond();
+			let result = archiveController.respond();
 
-        expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-        expect(result.getCode()).to.equal('success');
+			expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+			expect(result.getCode()).to.equal('success');
 
-      });
+		});
 
-      it('Successfully responds (success)', () => {
+		it('Successfully responds (success)', () => {
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('responsecode', 'noaction');
+			archiveController.parameters.set('responsecode', 'noaction');
 
-        let result = archiveController.respond();
+			let result = archiveController.respond();
 
-        expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-        expect(result.getCode()).to.equal('noaction');
+			expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+			expect(result.getCode()).to.equal('noaction');
 
-      });
+		});
 
-      it('Successfully responds (success)', () => {
+		it('Successfully responds (success)', () => {
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        archiveController.parameters.set('responsecode', 'error');
+			archiveController.parameters.set('responsecode', 'error');
 
-        let result = archiveController.respond();
+			let result = archiveController.respond();
 
-        expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-        expect(result.getCode()).to.equal('error');
+			expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+			expect(result.getCode()).to.equal('error');
 
-      });
+		});
 
-    });
+	});
 
-    describe('execute', () => {
+	describe('execute', () => {
 
-      it('Successfully executes (noship, noaction)', () => {
+		it('Successfully executes (noship, noaction)', () => {
 
-        let archive_filter = 'noship';
+			let archive_filter = 'noship';
 
-        process.env.archivefilter = archive_filter;
+			process.env.archivefilter = archive_filter;
 
-        let message = getValidMessage();
-        let rebill = getValidRebill();
-        let products = getValidProductsForArchive();
-        let transactions = getValidTransactions();
+			let message = getValidMessage();
+			let rebill = getValidRebill();
+			let products = getValidProductsForArchive();
+			let transactions = getValidTransactions();
 
-        products.forEach(products => {
-            products.product.ship = true;
-        });
+			products.forEach(products => {
+				products.product.ship = true;
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-          get() {
-            return Promise.resolve(rebill);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+				get() {
+					return Promise.resolve(rebill);
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        return archiveController.execute(message).then(result => {
-          expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-          expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
-          expect(result.getCode()).to.equal('noaction');
-        });
-      });
+			return archiveController.execute(message).then(result => {
+				expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+				expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
+				expect(result.getCode()).to.equal('noaction');
+			});
+		});
 
-      it('Successfully executes (noship, success)', () => {
+		it('Successfully executes (noship, success)', () => {
 
-        let archive_filter = 'noship';
+			let archive_filter = 'noship';
 
-        process.env.archivefilter = archive_filter
+			process.env.archivefilter = archive_filter
 
-        let message = getValidMessage();
-        let rebill = getValidRebill();
-        let products = getValidProductsForArchive();
+			let message = getValidMessage();
+			let rebill = getValidRebill();
+			let products = getValidProductsForArchive();
 
-        products.forEach(products => {
-            products.product.ship = false;
-        });
+			products.forEach(products => {
+				products.product.ship = false;
+			});
 
-        let transactions = getValidTransactions();
+			let transactions = getValidTransactions();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-          get() {
-            return Promise.resolve(rebill);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+				get() {
+					return Promise.resolve(rebill);
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        return archiveController.execute(message).then(result => {
-          expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-          expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
-          expect(result.getCode()).to.equal('success');
-        });
-      });
+			return archiveController.execute(message).then(result => {
+				expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+				expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
+				expect(result.getCode()).to.equal('success');
+			});
+		});
 
-      it('Successfully executes (all, success)', () => {
+		it('Successfully executes (all, success)', () => {
 
-        let archive_filter = 'all';
+			let archive_filter = 'all';
 
-        process.env.archivefilter = archive_filter;
+			process.env.archivefilter = archive_filter;
 
-        let message = getValidMessage();
-        let rebill = getValidRebill();
-        let products = getValidProductsForArchive();
-        let transactions = getValidTransactions();
+			let message = getValidMessage();
+			let rebill = getValidRebill();
+			let products = getValidProductsForArchive();
+			let transactions = getValidTransactions();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-          get() {
-            return Promise.resolve(rebill);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+				get() {
+					return Promise.resolve(rebill);
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        return archiveController.execute(message).then(result => {
-          expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-            expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
-          expect(result.getCode()).to.equal('success');
-        });
+			return archiveController.execute(message).then(result => {
+				expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+				expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
+				expect(result.getCode()).to.equal('success');
+			});
 
-      });
+		});
 
-      it('Successfully executes (twoattempts, success)', () => {
+		it('Successfully executes (twoattempts, success)', () => {
 
-        let archive_filter = 'twoattempts';
+			let archive_filter = 'twoattempts';
 
-        process.env.archivefilter = archive_filter;
+			process.env.archivefilter = archive_filter;
 
-        let message = getValidMessage();
-        let rebill = getValidRebill();
+			let message = getValidMessage();
+			let rebill = getValidRebill();
 
-        rebill.second_attempt = true;
-        let products = getValidProductsForArchive();
-        let transactions = getValidTransactions();
+			rebill.second_attempt = true;
+			let products = getValidProductsForArchive();
+			let transactions = getValidTransactions();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-          get() {
-            return Promise.resolve(rebill);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+				get() {
+					return Promise.resolve(rebill);
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        return archiveController.execute(message).then(result => {
-          expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-            expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
-          expect(result.getCode()).to.equal('success');
-        });
+			return archiveController.execute(message).then(result => {
+				expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+				expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
+				expect(result.getCode()).to.equal('success');
+			});
 
-      });
+		});
 
-      it('Successfully executes (twoattempts, noaction)', () => {
+		it('Successfully executes (twoattempts, noaction)', () => {
 
-        let archive_filter = 'twoattempts';
+			let archive_filter = 'twoattempts';
 
-        process.env.archivefilter = archive_filter;
+			process.env.archivefilter = archive_filter;
 
-        let message = getValidMessage();
-        let rebill = getValidRebill();
-        let products = getValidProductsForArchive();
-        let transactions = getValidTransactions();
+			let message = getValidMessage();
+			let rebill = getValidRebill();
+			let products = getValidProductsForArchive();
+			let transactions = getValidTransactions();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-          get() {
-            return Promise.resolve(rebill);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+				get() {
+					return Promise.resolve(rebill);
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        return archiveController.execute(message).then(result => {
-          expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-            expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
-          expect(result.getCode()).to.equal('noaction');
-        });
+			return archiveController.execute(message).then(result => {
+				expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+				expect(archiveController.parameters.store['archivefilter']).to.equal(archive_filter);
+				expect(result.getCode()).to.equal('noaction');
+			});
 
-      });
+		});
 
-      it('Successfully executes (null, success)', () => {
+		it('Successfully executes (null, success)', () => {
 
-        delete process.env.archivefilter;
+			delete process.env.archivefilter;
 
-        let message = getValidMessage();
-        let rebill = getValidRebill();
-        let products = getValidProductsForArchive();
-        let transactions = getValidTransactions();
+			let message = getValidMessage();
+			let rebill = getValidRebill();
+			let products = getValidProductsForArchive();
+			let transactions = getValidTransactions();
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
-          getProducts() {
-            return Promise.resolve(products);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				getProducts() {
+					return Promise.resolve(products);
+				}
+			});
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
-          listTransactions() {
-              return Promise.resolve({ transactions: transactions });
-          }
-          get() {
-            return Promise.resolve(rebill);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve({ transactions: transactions });
+				}
+				get() {
+					return Promise.resolve(rebill);
+				}
+			});
 
-        const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
-        let archiveController = new ArchiveController();
+			const ArchiveController = global.SixCRM.routes.include('controllers', 'workers/archive.js');
+			let archiveController = new ArchiveController();
 
-        return archiveController.execute(message).then(result => {
-          expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-            expect(archiveController.parameters.store['archivefilter']).to.not.be.defined;
-          expect(result.getCode()).to.equal('success');
-        });
+			return archiveController.execute(message).then(result => {
+				expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+				expect(archiveController.parameters.store['archivefilter']).to.not.be.defined;
+				expect(result.getCode()).to.equal('success');
+			});
 
-      });
+		});
 
-    });
+	});
 
 });

@@ -38,83 +38,83 @@ let testing_jwt = tu.createTestAuth0JWT('super.user@test.com', global.SixCRM.con
 //Technical Debt:  Test pagination using all roles
 
 entities.forEach((entity) => {
-    describe('Graph Test', function() {
+	describe('Graph Test', function() {
 	  describe('Let\'s test the graph '+entity.camel+' endpoint for pagination properties!', function() {
-      it(entity.camel+' Page 1 JSON results', function (done) {
+			it(entity.camel+' Page 1 JSON results', function (done) {
 
-          var limit = 1;
-          let query_path = global.SixCRM.routes.path('handlers', 'endpoints/graph/queries/pagination/get'+entity.camel+'.json');
-          var raw_query = tu.getQuery(query_path);
-          var query = raw_query.split('{argumentation}');
-          var query_arguments = 'pagination:{limit:"'+limit+'"}';
+				var limit = 1;
+				let query_path = global.SixCRM.routes.path('handlers', 'endpoints/graph/queries/pagination/get'+entity.camel+'.json');
+				var raw_query = tu.getQuery(query_path);
+				var query = raw_query.split('{argumentation}');
+				var query_arguments = 'pagination:{limit:"'+limit+'"}';
 
         	query = query[0]+query_arguments+query[1];
 
-          var this_request = request(endpoint);
+				var this_request = request(endpoint);
 
-          var account = tu.getAccount(global.SixCRM.routes.path('handlers', 'endpoints/graph/queries/pagination/get'+entity.camel+'.json'));
+				var account = tu.getAccount(global.SixCRM.routes.path('handlers', 'endpoints/graph/queries/pagination/get'+entity.camel+'.json'));
 
-          du.debug('Query: ', query, 'Account: '+account, 'JWT: '+testing_jwt);
+				du.debug('Query: ', query, 'Account: '+account, 'JWT: '+testing_jwt);
 
-          this_request.post('graph/'+account)
-				.set('Authorization', testing_jwt)
-				.send(query)
-				.expect(200)
-				.expect('Content-Type', 'application/json')
-				.expect('Access-Control-Allow-Origin','*')
-				.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-				.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-				.end(function(err, response){
-    du.debug(response.body);
-    tu.assertResultSet(response, global.test_users[0].role);
+				this_request.post('graph/'+account)
+					.set('Authorization', testing_jwt)
+					.send(query)
+					.expect(200)
+					.expect('Content-Type', 'application/json')
+					.expect('Access-Control-Allow-Origin','*')
+					.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
+					.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
+					.end(function(err, response){
+						du.debug(response.body);
+						tu.assertResultSet(response, global.test_users[0].role);
 
-    du.output(response.body.response);
+						du.output(response.body.response);
 
-    tu.validateGraphResponse(response.body, `entities/operations/index_mandatory_pagination`);
+						tu.validateGraphResponse(response.body, `entities/operations/index_mandatory_pagination`);
 
-    if(_.isArray(response.body.response.data[entity.lower+'list'][entity.lower+'s'])){
-        assert.equal(response.body.response.data[entity.lower+'list'][entity.lower+'s'].length, limit);
-    }else{
-        du.warning('strange:',response.body.response.data[entity.lower+'list'][entity.lower+'s']);
-    }
+						if(_.isArray(response.body.response.data[entity.lower+'list'][entity.lower+'s'])){
+							assert.equal(response.body.response.data[entity.lower+'list'][entity.lower+'s'].length, limit);
+						}else{
+							du.warning('strange:',response.body.response.data[entity.lower+'list'][entity.lower+'s']);
+						}
 
-    assert.isAtMost(response.body.response.data[entity.lower+'list'].pagination.count, limit);
+						assert.isAtMost(response.body.response.data[entity.lower+'list'].pagination.count, limit);
 
-		var cursor = response.body.response.data[entity.lower+'list'].pagination.end_cursor;
-		var last_evaluated = response.body.response.data[entity.lower+'list'].pagination.last_evaluated;
+						var cursor = response.body.response.data[entity.lower+'list'].pagination.end_cursor;
+						var last_evaluated = response.body.response.data[entity.lower+'list'].pagination.last_evaluated;
 
-		if(_.isArray(response.body.response.data[entity.lower+'list'][entity.lower+'s'])){
-			var returned_id = response.body.response.data[entity.lower+'list'][entity.lower+'s'][0].id;
+						if(_.isArray(response.body.response.data[entity.lower+'list'][entity.lower+'s'])){
+							var returned_id = response.body.response.data[entity.lower+'list'][entity.lower+'s'][0].id;
 
-			assert.property(response.body.response.data[entity.lower+'list'][entity.lower+'s'][0], 'id');
+							assert.property(response.body.response.data[entity.lower+'list'][entity.lower+'s'][0], 'id');
 
-			if (cursor !== '') {
-                assert.equal(returned_id, cursor);
-			}
-		}
+							if (cursor !== '') {
+								assert.equal(returned_id, cursor);
+							}
+						}
 
-    if(response.body.response.data[entity.lower+'list'].pagination.has_next_page == 'true'){
+						if(response.body.response.data[entity.lower+'list'].pagination.has_next_page == 'true'){
 
-        //assert.equal(response.body.response.data[entity.lower+'list'].pagination.count, limit);
-        assert.isString(response.body.response.data[entity.lower+'list'].pagination.end_cursor);
-        assert.isAbove(response.body.response.data[entity.lower+'list'].pagination.end_cursor.length, 0);
+							//assert.equal(response.body.response.data[entity.lower+'list'].pagination.count, limit);
+							assert.isString(response.body.response.data[entity.lower+'list'].pagination.end_cursor);
+							assert.isAbove(response.body.response.data[entity.lower+'list'].pagination.end_cursor.length, 0);
 
-        var query = raw_query.split('{argumentation}');
-        var query_arguments = 'pagination:{limit:"'+limit+'", cursor: "'+cursor+'", exclusive_start_key: '+JSON.stringify(last_evaluated)+'}';
+							var query = raw_query.split('{argumentation}');
+							var query_arguments = 'pagination:{limit:"'+limit+'", cursor: "'+cursor+'", exclusive_start_key: '+JSON.stringify(last_evaluated)+'}';
 
-        query = query[0]+query_arguments+query[1];
+							query = query[0]+query_arguments+query[1];
 
-        du.debug('Query: ', query, 'Account: '+account, 'JWT: '+testing_jwt);
+							du.debug('Query: ', query, 'Account: '+account, 'JWT: '+testing_jwt);
 
-        this_request.post('graph/'+account)
-							.set('Authorization', testing_jwt)
-							.send(query)
-							.expect(200)
-							.expect('Content-Type', 'application/json')
-							.expect('Access-Control-Allow-Origin','*')
-							.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-							.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-							.end(function(err, response){
+							this_request.post('graph/'+account)
+								.set('Authorization', testing_jwt)
+								.send(query)
+								.expect(200)
+								.expect('Content-Type', 'application/json')
+								.expect('Access-Control-Allow-Origin','*')
+								.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
+								.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
+								.end(function(err, response){
 
     						du.debug(response.body);
     						tu.assertResultSet(response, global.test_users[0].role);
@@ -130,14 +130,14 @@ entities.forEach((entity) => {
     					}else{
         				done();
     					}
-});
+								});
 
-    }else{
-        done();
-    }
+						}else{
+							done();
+						}
 
-}, done);
-      });
-  });
-    });
+					}, done);
+			});
+		});
+	});
 });

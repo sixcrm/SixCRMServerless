@@ -8,16 +8,16 @@ const SMTPProviderTest = global.SixCRM.routes.include('test', 'integration/class
 
 describe('SMTP Provider (Email Template) Delete Block Test', () => {
 
-  it('Should not allow the delete', () => {
+	it('Should not allow the delete', () => {
 
-    let sMTPProviderTest = new SMTPProviderTest();
+		let sMTPProviderTest = new SMTPProviderTest();
 
-    return sMTPProviderTest.executeEmailTemplateBlockTest().then(results => {
+		return sMTPProviderTest.executeEmailTemplateBlockTest().then(results => {
 
-      return expect(results.statusCode).to.equal(200);
+			return expect(results.statusCode).to.equal(200);
 
-    });
+		});
 
-  });
+	});
 
 });

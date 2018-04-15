@@ -4,14 +4,14 @@ const BaseNotification = global.SixCRM.routes.include('helpers','notifications/n
 
 module.exports = class TestNotification extends BaseNotification {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.category = 'test';
-    this.name = 'test';
+		this.category = 'test';
+		this.name = 'test';
 
-  }
+	}
 
 }
 

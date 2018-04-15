@@ -7,17 +7,17 @@ let paginationType = require('../pagination/paginationType');
 let SMTPProviderType = require('./SMTPProviderType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'SMTPProvider',
-    description: 'SMTP Providers.',
-    fields: () => ({
-        smtpproviders: {
-            type: new GraphQLList(SMTPProviderType.graphObj),
-            description: 'The SMTP providers',
-        },
-        pagination: {
-            type: new GraphQLNonNull(paginationType.graphObj),
-            description: 'Query pagination',
-        }
-    }),
-    interfaces: []
+	name: 'SMTPProvider',
+	description: 'SMTP Providers.',
+	fields: () => ({
+		smtpproviders: {
+			type: new GraphQLList(SMTPProviderType.graphObj),
+			description: 'The SMTP providers',
+		},
+		pagination: {
+			type: new GraphQLNonNull(paginationType.graphObj),
+			description: 'Query pagination',
+		}
+	}),
+	interfaces: []
 });

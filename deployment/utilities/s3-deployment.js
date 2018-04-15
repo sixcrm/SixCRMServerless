@@ -222,7 +222,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 				destination: destination_bucket,
 				role: replication_role.Role.Arn
 			}))
-		.then(() => this.s3provider.putBucketLifecycleConfiguration(destination_bucket));
+			.then(() => this.s3provider.putBucketLifecycleConfiguration(destination_bucket));
 
 	}
 

@@ -6,323 +6,323 @@ const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js'
 
 describe('controllers/providers/rds-provider', () => {
 
-  describe('construct', () => {
+	describe('construct', () => {
 
-    it('successfully constructs', () => {
+		it('successfully constructs', () => {
 
-      let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-      const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-      expect(objectutilities.getClassName(rdsprovider)).to.equal('RDSProvider');
+			expect(objectutilities.getClassName(rdsprovider)).to.equal('RDSProvider');
 
-    });
+		});
 
-  });
+	});
 
-  describe('describeClusters', () => {
+	describe('describeClusters', () => {
 
-    it('successfully describes cluster with cluster identifier', () => {
+		it('successfully describes cluster with cluster identifier', () => {
 
-      let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-      const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-      rdsprovider.rds = {
-        describeDBClusters:(parameters, callback) => {
-          let error = new Error('DBClusterNotFoundFault: DBCluster '+parameters.DBClusterIdentifier+' not found');
+			rdsprovider.rds = {
+				describeDBClusters:(parameters, callback) => {
+					let error = new Error('DBClusterNotFoundFault: DBCluster '+parameters.DBClusterIdentifier+' not found');
 
-          error.statusCode = 404
-          callback(error, null);
-        }
-      };
+					error.statusCode = 404
+					callback(error, null);
+				}
+			};
 
-      let parameters = {
-        DBClusterIdentifier:'sixcrm'
-      };
+			let parameters = {
+				DBClusterIdentifier:'sixcrm'
+			};
 
-      return rdsprovider.describeClusters(parameters).then(result => {
-        expect(result).to.have.property('ResponseMetadata');
-        expect(result).to.have.property('DBClusters');
-      });
+			return rdsprovider.describeClusters(parameters).then(result => {
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result).to.have.property('DBClusters');
+			});
 
-    });
+		});
 
-    it('successfully describes clusters', () => {
+		it('successfully describes clusters', () => {
 
-      let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-      const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-      rdsprovider.rds = {
-        describeDBClusters:(parameters, callback) => {
-          callback(null, {ResponseMetadata:{}, DBClusters:[]});
-        }
-      };
+			rdsprovider.rds = {
+				describeDBClusters:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBClusters:[]});
+				}
+			};
 
-      return rdsprovider.describeClusters({}).then(result => {
-        expect(result).to.have.property('ResponseMetadata');
-        expect(result).to.have.property('DBClusters');
+			return rdsprovider.describeClusters({}).then(result => {
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result).to.have.property('DBClusters');
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('describeDBInstances', () => {
+	describe('describeDBInstances', () => {
 
-    it('throws error when db instance identifier is not found', () => {
+		it('throws error when db instance identifier is not found', () => {
 
-      let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-      const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-      rdsprovider.rds = {
-        describeDBInstances:(parameters, callback) => {
-          let error = new Error('DBInstanceNotFoundFault: DBInstance '+parameters.DBInstanceIdentifier+' not found');
+			rdsprovider.rds = {
+				describeDBInstances:(parameters, callback) => {
+					let error = new Error('DBInstanceNotFoundFault: DBInstance '+parameters.DBInstanceIdentifier+' not found');
 
-          error.statusCode = 404;
-          callback(error, null);
-        }
-      };
+					error.statusCode = 404;
+					callback(error, null);
+				}
+			};
 
-      let parameters = {
-          DBInstanceIdentifier:'sixcrm'
-      };
+			let parameters = {
+				DBInstanceIdentifier:'sixcrm'
+			};
 
-      return rdsprovider.describeDBInstances(parameters).then(result => {
-        expect(result).to.have.property('ResponseMetadata');
-        expect(result).to.have.property('DBInstances');
-      });
+			return rdsprovider.describeDBInstances(parameters).then(result => {
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result).to.have.property('DBInstances');
+			});
 
-    });
+		});
 
-    it('successfully describes db instances', () => {
+		it('successfully describes db instances', () => {
 
-      let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-      const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-      rdsprovider.rds = {
-        describeDBInstances:(parameters, callback) => {
-          callback(null, {ResponseMetadata:{}, DBInstances:[]});
-        }
-      };
+			rdsprovider.rds = {
+				describeDBInstances:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBInstances:[]});
+				}
+			};
 
-      return rdsprovider.describeDBInstances({}).then(result => {
-        expect(result).to.have.property('ResponseMetadata');
-        expect(result).to.have.property('DBInstances');
+			return rdsprovider.describeDBInstances({}).then(result => {
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result).to.have.property('DBInstances');
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('createDBInstance', () => {
+	describe('createDBInstance', () => {
 
-    it('successfully creates db instance', () => {
+		it('successfully creates db instance', () => {
 
-      let parameters = {
-          DBInstanceClass:'db.r4.large',
-          DBInstanceIdentifier: 'sixcrm',
-          Engine:'aurora-postgresql'
-      };
+			let parameters = {
+				DBInstanceClass:'db.r4.large',
+				DBInstanceIdentifier: 'sixcrm',
+				Engine:'aurora-postgresql'
+			};
 
-      let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-      const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-      rdsprovider.rds = {
-        createDBInstance:(parameters, callback) => {
-          callback(null, {ResponseMetadata:{}, DBInstances:[]});
-        }
-      };
+			rdsprovider.rds = {
+				createDBInstance:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBInstances:[]});
+				}
+			};
 
-      return rdsprovider.createDBInstance(parameters).then(result => {
-        expect(result).to.have.property('ResponseMetadata');
-        expect(result).to.have.property('DBInstances');
+			return rdsprovider.createDBInstance(parameters).then(result => {
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result).to.have.property('DBInstances');
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('putDBInstance', () => {
+	describe('putDBInstance', () => {
 
-    it('successfully creates and describes db instance', () => {
+		it('successfully creates and describes db instance', () => {
 
-      let parameters = {
-          DBInstanceClass:'db.r4.large',
-          DBInstanceIdentifier: 'sixcrm',
-          Engine:'aurora-postgresql'
-      };
+			let parameters = {
+				DBInstanceClass:'db.r4.large',
+				DBInstanceIdentifier: 'sixcrm',
+				Engine:'aurora-postgresql'
+			};
 
-      let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-      const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-      rdsprovider.rds = {
-        createDBInstance:(parameters, callback) => {
-            callback(null, {ResponseMetadata:{}, DBInstances:[]});
-        },
-        describeDBInstances:(parameters, callback) => {
-            callback(null, {ResponseMetadata:{}, DBInstances:[]});
-        }
-      };
+			rdsprovider.rds = {
+				createDBInstance:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBInstances:[]});
+				},
+				describeDBInstances:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBInstances:[]});
+				}
+			};
 
-      return rdsprovider.putDBInstance(parameters).then(result => {
-        expect(result).to.have.property('ResponseMetadata');
-        expect(result).to.have.property('DBInstances');
+			return rdsprovider.putDBInstance(parameters).then(result => {
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result).to.have.property('DBInstances');
 
-      });
+			});
 
-    });
+		});
 
-    it('successfully puts db instance', () => {
+		it('successfully puts db instance', () => {
 
-      let parameters = {
-          DBInstanceIdentifier: 'sixcrm'
-      };
+			let parameters = {
+				DBInstanceIdentifier: 'sixcrm'
+			};
 
-      let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-      const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-      rdsprovider.rds = {
-        describeDBInstances:(parameters, callback) => {
-            callback(null, {ResponseMetadata:{}, DBInstances:[{DBInstanceArn: {}}]});
-        }
-      };
+			rdsprovider.rds = {
+				describeDBInstances:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBInstances:[{DBInstanceArn: {}}]});
+				}
+			};
 
-      return rdsprovider.putDBInstance(parameters).then(result => {
-        expect(result).to.have.property('DBInstanceArn');
-      });
+			return rdsprovider.putDBInstance(parameters).then(result => {
+				expect(result).to.have.property('DBInstanceArn');
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('createCluster', () => {
+	describe('createCluster', () => {
 
-      it('successfully creates cluster', () => {
+		it('successfully creates cluster', () => {
 
-          let parameters = {
-              DBClusterIdentifier: 'sixcrm',
-              Engine:'aurora-postgresql'
-          };
+			let parameters = {
+				DBClusterIdentifier: 'sixcrm',
+				Engine:'aurora-postgresql'
+			};
 
-          let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-          const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-          rdsprovider.rds = {
-              createDBCluster:(parameters, callback) => {
-                  callback(null, {ResponseMetadata:{}, DBCluster:[]});
-              }
-          };
+			rdsprovider.rds = {
+				createDBCluster:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBCluster:[]});
+				}
+			};
 
-          return rdsprovider.createCluster(parameters).then(result => {
-              expect(result).to.have.property('ResponseMetadata');
-              expect(result).to.have.property('DBCluster');
+			return rdsprovider.createCluster(parameters).then(result => {
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result).to.have.property('DBCluster');
 
-          });
+			});
 
-      });
+		});
 
-  });
+	});
 
-  describe('describeClusters', () => {
+	describe('describeClusters', () => {
 
-      it('throws error when db cluster identifier is not found', () => {
+		it('throws error when db cluster identifier is not found', () => {
 
-          let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-          const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-          rdsprovider.rds = {
-              describeDBClusters:(parameters, callback) => {
-                  let error = new Error('DBClusterNotFoundFault: DBCluster '+parameters.DBClusterIdentifier+' not found');
+			rdsprovider.rds = {
+				describeDBClusters:(parameters, callback) => {
+					let error = new Error('DBClusterNotFoundFault: DBCluster '+parameters.DBClusterIdentifier+' not found');
 
-                  error.statusCode = 404;
-                  callback(error, null);
-              }
-          };
+					error.statusCode = 404;
+					callback(error, null);
+				}
+			};
 
-          let parameters = {
-              DBClusterIdentifier:'sixcrm'
-          };
+			let parameters = {
+				DBClusterIdentifier:'sixcrm'
+			};
 
-          return rdsprovider.describeClusters(parameters).then(result => {
-              expect(result).to.have.property('ResponseMetadata');
-              expect(result).to.have.property('DBClusters');
-          });
+			return rdsprovider.describeClusters(parameters).then(result => {
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result).to.have.property('DBClusters');
+			});
 
-      });
+		});
 
-      it('successfully describes db clusters', () => {
+		it('successfully describes db clusters', () => {
 
-          let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-          const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-          rdsprovider.rds = {
-              describeDBClusters:(parameters, callback) => {
-                  callback(null, {ResponseMetadata:{}, DBClusters:[]});
-              }
-          };
+			rdsprovider.rds = {
+				describeDBClusters:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBClusters:[]});
+				}
+			};
 
-          return rdsprovider.describeClusters({}).then(result => {
-              expect(result).to.have.property('ResponseMetadata');
-              expect(result).to.have.property('DBClusters');
+			return rdsprovider.describeClusters({}).then(result => {
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result).to.have.property('DBClusters');
 
-          });
+			});
 
-      });
+		});
 
-  });
+	});
 
-    describe('putCluster', () => {
+	describe('putCluster', () => {
 
-        it('successfully creates and describes db cluster', () => {
+		it('successfully creates and describes db cluster', () => {
 
-            let parameters = {
-                DBClusterIdentifier: 'sixcrm',
-                Engine:'aurora-postgresql'
-            };
+			let parameters = {
+				DBClusterIdentifier: 'sixcrm',
+				Engine:'aurora-postgresql'
+			};
 
-            let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-            const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-            rdsprovider.rds = {
-                createDBCluster:(parameters, callback) => {
-                    callback(null, {ResponseMetadata:{}, DBCluster:[]});
-                },
-                describeDBClusters:(parameters, callback) => {
-                    callback(null, {ResponseMetadata:{}, DBClusters:[]});
-                }
-            };
+			rdsprovider.rds = {
+				createDBCluster:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBCluster:[]});
+				},
+				describeDBClusters:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBClusters:[]});
+				}
+			};
 
-            return rdsprovider.putCluster(parameters).then(result => {
-                expect(result).to.have.property('ResponseMetadata');
-                expect(result).to.have.property('DBCluster');
+			return rdsprovider.putCluster(parameters).then(result => {
+				expect(result).to.have.property('ResponseMetadata');
+				expect(result).to.have.property('DBCluster');
 
-            });
+			});
 
-        });
+		});
 
-        it('successfully puts db cluster', () => {
+		it('successfully puts db cluster', () => {
 
-            let parameters = {
-                DBClusterIdentifier: 'sixcrm'
-            };
+			let parameters = {
+				DBClusterIdentifier: 'sixcrm'
+			};
 
-            let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
-            const rdsprovider = new RDSProvider();
+			let RDSProvider = global.SixCRM.routes.include('controllers', 'providers/rds-provider.js');
+			const rdsprovider = new RDSProvider();
 
-            rdsprovider.rds = {
-                describeDBClusters:(parameters, callback) => {
-                    callback(null, {ResponseMetadata:{}, DBClusters:[{}]});
-                }
-            };
+			rdsprovider.rds = {
+				describeDBClusters:(parameters, callback) => {
+					callback(null, {ResponseMetadata:{}, DBClusters:[{}]});
+				}
+			};
 
-            return rdsprovider.putCluster(parameters).then(result => {
-                expect(result).to.have.property('DBClusters');
-            });
+			return rdsprovider.putCluster(parameters).then(result => {
+				expect(result).to.have.property('DBClusters');
+			});
 
-        });
+		});
 
-    });
+	});
 
 });

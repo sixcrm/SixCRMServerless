@@ -5,311 +5,311 @@ const InviteUtilities = global.SixCRM.routes.include('helpers', 'invite/InviteUt
 
 module.exports = class InviteHelperClass extends InviteUtilities {
 
-  constructor(){
-
-    super();
-
-    this.parameter_validation = {
-      account: global.SixCRM.routes.path('model','entities/account.json'),
-      role: global.SixCRM.routes.path('model','entities/role.json'),
-      useracl: global.SixCRM.routes.path('model','entities/useracl.json'),
-      user: global.SixCRM.routes.path('model','entities/user.json'),
-
-    };
+	constructor(){
+
+		super();
+
+		this.parameter_validation = {
+			account: global.SixCRM.routes.path('model','entities/account.json'),
+			role: global.SixCRM.routes.path('model','entities/role.json'),
+			useracl: global.SixCRM.routes.path('model','entities/useracl.json'),
+			user: global.SixCRM.routes.path('model','entities/user.json'),
+
+		};
 
-    this.parameter_definition = {
-      invite:{
-        required:{
-          userinvite:'user_invite'
-        },
-        optional:{}
-      },
-      acceptInvite:{
-        required:{
-          invite: 'invite'
-        },
-        optional:{}
-      },
-      inviteResend:{
-        required:{
-          userinvite:'user_invite'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			invite:{
+				required:{
+					userinvite:'user_invite'
+				},
+				optional:{}
+			},
+			acceptInvite:{
+				required:{
+					invite: 'invite'
+				},
+				optional:{}
+			},
+			inviteResend:{
+				required:{
+					userinvite:'user_invite'
+				},
+				optional:{}
+			}
+		};
 
-    const AccountController = global.SixCRM.routes.include('entities', 'Account.js');
-    this.accountController = new AccountController();
+		const AccountController = global.SixCRM.routes.include('entities', 'Account.js');
+		this.accountController = new AccountController();
 
-    const RoleController = global.SixCRM.routes.include('entities', 'Role.js');
-    this.roleController = new RoleController();
+		const RoleController = global.SixCRM.routes.include('entities', 'Role.js');
+		this.roleController = new RoleController();
 
-    const UserController = global.SixCRM.routes.include('entities', 'User.js');
-    this.userController = new UserController();
+		const UserController = global.SixCRM.routes.include('entities', 'User.js');
+		this.userController = new UserController();
 
-    const UserACLController = global.SixCRM.routes.include('entities', 'UserACL.js');
-    this.userACLController = new UserACLController();
+		const UserACLController = global.SixCRM.routes.include('entities', 'UserACL.js');
+		this.userACLController = new UserACLController();
 
-    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-  }
+	}
 
-  invite(){
+	invite(){
 
-    du.debug('Invite');
+		du.debug('Invite');
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'invite'}))
-    .then(() => this.hydrateInviteProperties())
-    .then(() => this.validateRequest())
-    .then(() => this.createInviteACL())
-    .then(() => this.sendInviteEmail())
-    .then(() => this.postInvite())
-    .then(() => {
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'invite'}))
+			.then(() => this.hydrateInviteProperties())
+			.then(() => this.validateRequest())
+			.then(() => this.createInviteACL())
+			.then(() => this.sendInviteEmail())
+			.then(() => this.postInvite())
+			.then(() => {
 
-      let link = this.parameters.get('invitelink');
-      return {link: link};
+				let link = this.parameters.get('invitelink');
+				return {link: link};
 
-    });
+			});
 
-  }
+	}
 
-  inviteResend() {
+	inviteResend() {
 
-    du.debug('Invite Resend');
+		du.debug('Invite Resend');
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'inviteResend'}))
-    .then(() => this.hydrateInviteACL())
-    .then(() => this.validateRequest())
-    .then(() => this.sendInviteEmail())
-    .then(() => this.postInviteResend())
-    .then(() => {
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'inviteResend'}))
+			.then(() => this.hydrateInviteACL())
+			.then(() => this.validateRequest())
+			.then(() => this.sendInviteEmail())
+			.then(() => this.postInviteResend())
+			.then(() => {
 
-      let link = this.parameters.get('invitelink');
-      return {link: link};
+				let link = this.parameters.get('invitelink');
+				return {link: link};
 
-    });
+			});
 
-  }
+	}
 
-  acceptInvite(){
+	acceptInvite(){
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'acceptInvite'}))
-    .then(() => {
-      let invite = this.parameters.get('invite');
-      let decoded_invite_parameters = this.decodeAndValidate(invite.token, invite.parameters);
-      this.parameters.set('decodedinviteparameters', decoded_invite_parameters);
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'acceptInvite'}))
+			.then(() => {
+				let invite = this.parameters.get('invite');
+				let decoded_invite_parameters = this.decodeAndValidate(invite.token, invite.parameters);
+				this.parameters.set('decodedinviteparameters', decoded_invite_parameters);
 
-      return true;
-    })
-    .then(() => this.assureUser())
-    .then(() => this.updatePendingACL())
-    .then(() => this.postAccept())
-    .then(() => {
-      return this.parameters.get('user');
-    });
+				return true;
+			})
+			.then(() => this.assureUser())
+			.then(() => this.updatePendingACL())
+			.then(() => this.postAccept())
+			.then(() => {
+				return this.parameters.get('user');
+			});
 
-  }
+	}
 
-  hydrateInviteProperties(){
+	hydrateInviteProperties(){
 
-    du.debug('Hydrate Invite Properties');
+		du.debug('Hydrate Invite Properties');
 
-    let user_invite = this.parameters.get('userinvite');
+		let user_invite = this.parameters.get('userinvite');
 
-    let properties = [];
+		let properties = [];
 
-    properties.push(this.accountController.get({id: user_invite.account}));
-    properties.push(this.roleController.get({id: user_invite.role}));
-    properties.push(this.userController.assureUser(user_invite.email));
-    properties.push(this.roleController.getShared({id: user_invite.role}));
+		properties.push(this.accountController.get({id: user_invite.account}));
+		properties.push(this.roleController.get({id: user_invite.role}));
+		properties.push(this.userController.assureUser(user_invite.email));
+		properties.push(this.roleController.getShared({id: user_invite.role}));
 
-    return Promise.all(properties).then(([account, role, user, shared_role]) => {
+		return Promise.all(properties).then(([account, role, user, shared_role]) => {
 
-      this.parameters.set('account', account);
-      if (role) {
-        this.parameters.set('role', role);
-      } else {
-        this.parameters.set('role', shared_role);
-      }
-      this.parameters.set('user', user);
+			this.parameters.set('account', account);
+			if (role) {
+				this.parameters.set('role', role);
+			} else {
+				this.parameters.set('role', shared_role);
+			}
+			this.parameters.set('user', user);
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  validateRequest(){
+	validateRequest(){
 
-    du.debug('Validate Request');
+		du.debug('Validate Request');
 
-    //Technical Debt:  Finish...
-    //Make sure that the global user has the ability to invite users on the account,
-    //has the ability to invite with role,
-    //user not already on the account...
+		//Technical Debt:  Finish...
+		//Make sure that the global user has the ability to invite users on the account,
+		//has the ability to invite with role,
+		//user not already on the account...
 
-    return true;
+		return true;
 
-  }
+	}
 
-  createInviteACL(){
+	createInviteACL(){
 
-    du.debug('Create Invite ACL');
+		du.debug('Create Invite ACL');
 
-    let user = this.parameters.get('user');
-    let account = this.parameters.get('account');
-    let role = this.parameters.get('role');
+		let user = this.parameters.get('user');
+		let account = this.parameters.get('account');
+		let role = this.parameters.get('role');
 
-    const acl_object = {
-      user: user.id,
-      account: account.id,
-      role: role.id,
-      pending: 'Invite Sent'
-    };
+		const acl_object = {
+			user: user.id,
+			account: account.id,
+			role: role.id,
+			pending: 'Invite Sent'
+		};
 
-    return this.userACLController.create({entity: acl_object}).then(acl => {
-      this.parameters.set('useracl', acl);
-      return true;
-    });
+		return this.userACLController.create({entity: acl_object}).then(acl => {
+			this.parameters.set('useracl', acl);
+			return true;
+		});
 
-  }
+	}
 
-  sendInviteEmail(){
+	sendInviteEmail(){
 
-    du.debug('Send Invite Email');
+		du.debug('Send Invite Email');
 
-    let acl = this.parameters.get('useracl');
-    let invitor = global.user.id;
-    let account = this.parameters.get('account');
-    let role = this.parameters.get('role');
-    let user = this.parameters.get('user');
+		let acl = this.parameters.get('useracl');
+		let invitor = global.user.id;
+		let account = this.parameters.get('account');
+		let role = this.parameters.get('role');
+		let user = this.parameters.get('user');
 
-    const invite_parameters = {
-      email: user.id,
-      acl: acl.id,
-      invitor: invitor,
-      account: account.name,
-      account_id: account.id,
-      role: role.name
-    };
+		const invite_parameters = {
+			email: user.id,
+			acl: acl.id,
+			invitor: invitor,
+			account: account.name,
+			account_id: account.id,
+			role: role.name
+		};
 
-    return this.executeSendInviteEmail(invite_parameters).then((link) => {
-      this.parameters.set('invitelink', link);
-      return true;
-    });
+		return this.executeSendInviteEmail(invite_parameters).then((link) => {
+			this.parameters.set('invitelink', link);
+			return true;
+		});
 
-  }
+	}
 
-  postInvite(){
+	postInvite(){
 
-    du.debug('Post Invite');
+		du.debug('Post Invite');
 
-    return this.pushEvent({event_type: 'user_invited'});
+		return this.pushEvent({event_type: 'user_invited'});
 
-  }
+	}
 
-  postInviteResend(){
+	postInviteResend(){
 
-    du.debug('Post Invite Resend');
+		du.debug('Post Invite Resend');
 
-    return this.pushEvent({event_type: 'user_invite_resent'});
+		return this.pushEvent({event_type: 'user_invite_resent'});
 
-  }
+	}
 
-  postAccept(){
+	postAccept(){
 
-    du.debug('Post Accept');
+		du.debug('Post Accept');
 
-    return this.pushEvent({event_type: 'user_invite_accepted'});
+		return this.pushEvent({event_type: 'user_invite_accepted'});
 
-  }
+	}
 
-  assureUser(){
+	assureUser(){
 
-    du.debug('Assure User');
+		du.debug('Assure User');
 
-    let decoded_invite_parameters = this.parameters.get('decodedinviteparameters');
-    let user_id = decoded_invite_parameters.email;
+		let decoded_invite_parameters = this.parameters.get('decodedinviteparameters');
+		let user_id = decoded_invite_parameters.email;
 
-    return this.userController.assureUser(user_id).then((user) => {
-      this.parameters.set('user',user);
-      return true;
-    });
+		return this.userController.assureUser(user_id).then((user) => {
+			this.parameters.set('user',user);
+			return true;
+		});
 
-  }
+	}
 
-  updatePendingACL(){
+	updatePendingACL(){
 
-    du.debug('Update Pending ACL');
+		du.debug('Update Pending ACL');
 
-    let decoded_invite_parameters = this.parameters.get('decodedinviteparameters');
+		let decoded_invite_parameters = this.parameters.get('decodedinviteparameters');
 
-    return this.userACLController.get({id: decoded_invite_parameters.acl})
-    .then((acl) => {
+		return this.userACLController.get({id: decoded_invite_parameters.acl})
+			.then((acl) => {
 
-      if (!_.has(acl, 'pending')){
-        eu.throwError('bad_request', 'User ACL is not pending.');
-      }
+				if (!_.has(acl, 'pending')){
+					eu.throwError('bad_request', 'User ACL is not pending.');
+				}
 
-      delete acl.pending;
+				delete acl.pending;
 
-      return this.userACLController.update({entity: acl}).then(() => {
-        return true;
-      });
+				return this.userACLController.update({entity: acl}).then(() => {
+					return true;
+				});
 
-    });
+			});
 
-  }
+	}
 
-  hydrateInviteACL(){
+	hydrateInviteACL(){
 
-    du.debug('Hydrate Invite ACL');
+		du.debug('Hydrate Invite ACL');
 
-    let user_invite = this.parameters.get('userinvite');
+		let user_invite = this.parameters.get('userinvite');
 
-    return this.userACLController.get({id:user_invite.acl}).then(acl => {
+		return this.userACLController.get({id:user_invite.acl}).then(acl => {
 
-      if(_.isNull(acl)){
-        eu.throwError('bad_request','Non Existing User ACL.');
-      }
+			if(_.isNull(acl)){
+				eu.throwError('bad_request','Non Existing User ACL.');
+			}
 
-      if (!_.has(acl, 'pending')){
-        eu.throwError('bad_request','Can\'t resend invite, User ACL is not pending.');
-      }
+			if (!_.has(acl, 'pending')){
+				eu.throwError('bad_request','Can\'t resend invite, User ACL is not pending.');
+			}
 
-      this.parameters.set('useracl', acl);
+			this.parameters.set('useracl', acl);
 
-      return acl;
+			return acl;
 
-    }).then((acl) => {
+		}).then((acl) => {
 
-      let properties = [];
+			let properties = [];
 
-      properties.push(this.accountController.get({id: acl.account}));
-      properties.push(this.roleController.get({id: acl.role}));
-      properties.push(this.userController.get({id: acl.user}));
-      properties.push(this.roleController.getShared({id: acl.role}));
+			properties.push(this.accountController.get({id: acl.account}));
+			properties.push(this.roleController.get({id: acl.role}));
+			properties.push(this.userController.get({id: acl.user}));
+			properties.push(this.roleController.getShared({id: acl.role}));
 
-      return Promise.all(properties).then(([account, role, user, shared_role]) => {
+			return Promise.all(properties).then(([account, role, user, shared_role]) => {
 
-        this.parameters.set('account', account);
-        if (role) {
-          this.parameters.set('role', role);
-        } else {
-          this.parameters.set('role', shared_role);
-        }
-        this.parameters.set('user', user);
+				this.parameters.set('account', account);
+				if (role) {
+					this.parameters.set('role', role);
+				} else {
+					this.parameters.set('role', shared_role);
+				}
+				this.parameters.set('user', user);
 
-        return true;
+				return true;
 
-      });
+			});
 
-    });
+		});
 
-  }
+	}
 
 }

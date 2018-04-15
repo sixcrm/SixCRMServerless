@@ -125,8 +125,8 @@ module.exports = class SQSProvider extends AWSProvider {
 
 				parametersClone.limit =
 					parametersClone.limit !== undefined && parametersClone.limit < 10 ?
-					parametersClone.limit :
-					self.batch_read_limit;
+						parametersClone.limit :
+						self.batch_read_limit;
 
 			}
 

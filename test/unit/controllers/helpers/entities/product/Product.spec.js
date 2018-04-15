@@ -20,53 +20,53 @@ let ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/
 
 describe('helpers/entites/product/Product.js', () => {
 
-  describe('constructor', () => {
+	describe('constructor', () => {
 
-    it('successfully constructs', () => {
+		it('successfully constructs', () => {
 
-      let productHelperController = new ProductHelperController();
+			let productHelperController = new ProductHelperController();
 
-      expect(objectutilities.getClassName(productHelperController)).to.equal('ProductHelperController');
-    });
+			expect(objectutilities.getClassName(productHelperController)).to.equal('ProductHelperController');
+		});
 
-  });
+	});
 
-  describe('getDistributionBySKU', () => {
+	describe('getDistributionBySKU', () => {
 
-    it('successfully returns a distribution by SKU', () => {
+		it('successfully returns a distribution by SKU', () => {
 
-      let products = []
-      let product_one_count = randomutilities.randomInt(1,100);
-      let product_one_sku = randomutilities.createRandomString(20);
+			let products = []
+			let product_one_count = randomutilities.randomInt(1,100);
+			let product_one_sku = randomutilities.createRandomString(20);
 
-      let product_two_count = randomutilities.randomInt(1,100);
-      let product_two_sku = randomutilities.createRandomString(20);
+			let product_two_count = randomutilities.randomInt(1,100);
+			let product_two_sku = randomutilities.createRandomString(20);
 
-      let product_three_count = randomutilities.randomInt(1,100);
-      let product_three_sku = randomutilities.createRandomString(20);
+			let product_three_count = randomutilities.randomInt(1,100);
+			let product_three_sku = randomutilities.createRandomString(20);
 
-      for(var i=0; i<product_one_count; i++){
-        products.push({sku: product_one_sku});
-      }
+			for(var i=0; i<product_one_count; i++){
+				products.push({sku: product_one_sku});
+			}
 
-      for(var j=0; j<product_two_count; j++){
-        products.push({sku: product_two_sku});
-      }
+			for(var j=0; j<product_two_count; j++){
+				products.push({sku: product_two_sku});
+			}
 
-      for(var k=0; k<product_three_count; k++){
-        products.push({sku: product_three_sku});
-      }
+			for(var k=0; k<product_three_count; k++){
+				products.push({sku: product_three_sku});
+			}
 
-      let productHelperController = new ProductHelperController();
-      let distribution = productHelperController.getDistributionBySKU({products: products});
+			let productHelperController = new ProductHelperController();
+			let distribution = productHelperController.getDistributionBySKU({products: products});
 
-      expect(products.length).to.equal((product_one_count + product_two_count + product_three_count));
-      expect(distribution[product_one_sku]).to.equal(product_one_count);
-      expect(distribution[product_two_sku]).to.equal(product_two_count);
-      expect(distribution[product_three_sku]).to.equal(product_three_count);
+			expect(products.length).to.equal((product_one_count + product_two_count + product_three_count));
+			expect(distribution[product_one_sku]).to.equal(product_one_count);
+			expect(distribution[product_two_sku]).to.equal(product_two_count);
+			expect(distribution[product_three_sku]).to.equal(product_three_count);
 
-    });
+		});
 
-  });
+	});
 
 });

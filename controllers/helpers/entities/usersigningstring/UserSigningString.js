@@ -5,12 +5,12 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 
 module.exports = class UserSigningStringHelperController{
 
-  static generateSigningString(){
+	static generateSigningString(){
 
-    du.debug('Generate Signing String');
+		du.debug('Generate Signing String');
 
-    return randomutilities.createRandomString(40);
+		return randomutilities.createRandomString(40);
 
-  }
+	}
 
 }

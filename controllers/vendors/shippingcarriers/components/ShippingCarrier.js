@@ -6,65 +6,65 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 module.exports = class ShippingCarrierController {
 
-  constructor(){
+	constructor(){
 
-    let parameter_validation = {}
+		let parameter_validation = {}
 
-    let parameter_definition = {};
+		let parameter_definition = {};
 
-    const ParametersController = global.SixCRM.routes.include('providers', 'Parameters.js');
+		const ParametersController = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-    this.parameters = new ParametersController({
-      validation: parameter_validation,
-      definition: parameter_definition
-    });
+		this.parameters = new ParametersController({
+			validation: parameter_validation,
+			definition: parameter_definition
+		});
 
-  }
+	}
 
-  augmentParameters(){
+	augmentParameters(){
 
-    du.debug('Augment Parameters');
+		du.debug('Augment Parameters');
 
-    this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
-    this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
+		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
+		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
-    return true;
+		return true;
 
-  }
+	}
 
-  setParameters(parameters_object){
+	setParameters(parameters_object){
 
-    du.debug('Set Parameters');
+		du.debug('Set Parameters');
 
-    this.parameters.setParameters(parameters_object);
+		this.parameters.setParameters(parameters_object);
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  respond({additional_parameters}){
+	respond({additional_parameters}){
 
-    du.debug('Respond');
+		du.debug('Respond');
 
-    let vendor_response = this.parameters.get('vendorresponse');
-    let action = this.parameters.get('action');
+		let vendor_response = this.parameters.get('vendorresponse');
+		let action = this.parameters.get('action');
 
-    const VendorResponseClass = global.SixCRM.routes.include('vendors', 'shippingcarriers/'+this.getVendorName()+'/Response.js');
+		const VendorResponseClass = global.SixCRM.routes.include('vendors', 'shippingcarriers/'+this.getVendorName()+'/Response.js');
 
-    let response_object = {vendor_response: vendor_response, action: action};
+		let response_object = {vendor_response: vendor_response, action: action};
 
-    if(!_.isNull(additional_parameters) && !_.isUndefined(additional_parameters)){
-      response_object['additional_parameters'] = additional_parameters;
-    }
+		if(!_.isNull(additional_parameters) && !_.isUndefined(additional_parameters)){
+			response_object['additional_parameters'] = additional_parameters;
+		}
 
-    return new VendorResponseClass(response_object);
+		return new VendorResponseClass(response_object);
 
-  }
+	}
 
-  getVendorName(){
+	getVendorName(){
 
-    return objectutilities.getClassName(this).replace('Controller', '');
+		return objectutilities.getClassName(this).replace('Controller', '');
 
-  }
+	}
 
 }

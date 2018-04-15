@@ -9,24 +9,24 @@ const ReIndexingHelperController = global.SixCRM.routes.include('helpers', 'inde
 let reIndexingHelperController = new ReIndexingHelperController();
 
 let configuration = {
-    fix: false
+	fix: false
 };
 
 let cli_parameters = {
-    'fix': /^--fix=.*$/
+	'fix': /^--fix=.*$/
 };
 
 objectutilities.map(cli_parameters, key => {
 
-    let regex = cli_parameters[key];
+	let regex = cli_parameters[key];
 
-    arrayutilities.find(process.argv, (argument) => {
-        if(stringutilities.isMatch(argument, regex)){
-            configuration[key] = argument.split('=')[1];
-            return true;
-        }
-        return false;
-    });
+	arrayutilities.find(process.argv, (argument) => {
+		if(stringutilities.isMatch(argument, regex)){
+			configuration[key] = argument.split('=')[1];
+			return true;
+		}
+		return false;
+	});
 
 });
 

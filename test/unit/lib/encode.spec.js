@@ -8,27 +8,27 @@ const base64_object = 'eyJyYW5kb21fa2V5IjoiYV9yYW5kb21fc3RyaW5nIn0='; //from ran
 
 describe('lib/encode', () => {
 
-    it('converts from string to base64', () => {
-        const encode = global.SixCRM.routes.include('lib', 'encode.js');
+	it('converts from string to base64', () => {
+		const encode = global.SixCRM.routes.include('lib', 'encode.js');
 
-        expect(encode.toBase64(any_string)).to.equal(base64_string);
-    });
+		expect(encode.toBase64(any_string)).to.equal(base64_string);
+	});
 
-    it('converts from base64 to string', () => {
-        const encode = global.SixCRM.routes.include('lib', 'encode.js');
+	it('converts from base64 to string', () => {
+		const encode = global.SixCRM.routes.include('lib', 'encode.js');
 
-        expect(encode.fromBase64(base64_string)).to.equal(any_string);
-    });
+		expect(encode.fromBase64(base64_string)).to.equal(any_string);
+	});
 
-    it('converts object to base64', () => {
-        const encode = global.SixCRM.routes.include('lib', 'encode.js');
+	it('converts object to base64', () => {
+		const encode = global.SixCRM.routes.include('lib', 'encode.js');
 
-        expect(encode.objectToBase64(random_object)).to.equal(base64_object);
-    });
+		expect(encode.objectToBase64(random_object)).to.equal(base64_object);
+	});
 
-    it('converts base64 to object', () => {
-        const encode = global.SixCRM.routes.include('lib', 'encode.js');
+	it('converts base64 to object', () => {
+		const encode = global.SixCRM.routes.include('lib', 'encode.js');
 
-        expect(encode.base64ToObject(base64_object)).to.deep.equal(random_object);
-    });
+		expect(encode.base64ToObject(base64_object)).to.deep.equal(random_object);
+	});
 });

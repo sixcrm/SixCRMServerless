@@ -6,192 +6,192 @@ const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-p
 
 module.exports = class IAMProvider extends AWSProvider {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      //Technical Debt:  Get this out of the constructor?
-      this.instantiateAWS();
+		//Technical Debt:  Get this out of the constructor?
+		this.instantiateAWS();
 
-      this.iam = new this.AWS.IAM({apiVersion: '2010-05-08'});
+		this.iam = new this.AWS.IAM({apiVersion: '2010-05-08'});
 
-    }
+	}
 
-    roleExists(parameters){
+	roleExists(parameters){
 
-      du.debug('Role Exists');
+		du.debug('Role Exists');
 
-      return this.getRole(parameters).then((role) => {
+		return this.getRole(parameters).then((role) => {
 
-        if(_.has(role, 'Role')){ return role; }
+			if(_.has(role, 'Role')){ return role; }
 
-        return false;
+			return false;
 
-      }).catch((error) => {
+		}).catch((error) => {
 
-        if(_.has(error, 'code') && error.code == 'NoSuchEntity'){
-          return false;
-        }
+			if(_.has(error, 'code') && error.code == 'NoSuchEntity'){
+				return false;
+			}
 
-        eu.throwError('server', error);
+			eu.throwError('server', error);
 
-      });
+		});
 
-    }
+	}
 
-    createPolicy(parameters){
+	createPolicy(parameters){
 
-      du.debug('Create Policy');
+		du.debug('Create Policy');
 
-      return new Promise((resolve) => {
-        this.iam.createPolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-      });
+		return new Promise((resolve) => {
+			this.iam.createPolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+		});
 
-    }
+	}
 
-    deletePolicy(parameters){
+	deletePolicy(parameters){
 
-      du.debug('Delete Policy');
+		du.debug('Delete Policy');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.iam.deletePolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.iam.deletePolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-      });
+		});
 
-    }
+	}
 
-    listEntitiesForPolicy(parameters){
+	listEntitiesForPolicy(parameters){
 
-      du.debug('List Entities For Policy');
+		du.debug('List Entities For Policy');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.iam.listEntitiesForPolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.iam.listEntitiesForPolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-      });
+		});
 
-    }
+	}
 
-    detachRolePolicy(parameters){
+	detachRolePolicy(parameters){
 
-      du.debug('Detach Role Policy');
+		du.debug('Detach Role Policy');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.iam.detachRolePolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.iam.detachRolePolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-      });
+		});
 
-    }
+	}
 
-    getPolicy(parameters){
+	getPolicy(parameters){
 
-      du.debug('Get Policy');
+		du.debug('Get Policy');
 
-      return new Promise((resolve) => {
-        this.iam.getPolicy(parameters, (error, data) => {
-          if(!_.isNull(error)){
-            if(error.statusCode == '404'){
-              return resolve(null);
-            }
-            eu.throwError(error);
-          }
-          return resolve(data);
-        });
-
-      });
-
-    }
-
-    createRole(parameters){
-
-      du.debug('Create Role');
-
-      return new Promise((resolve) => {
-
-        this.iam.createRole(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-      });
-
-    }
-
-    deleteRole(parameters){
-
-      du.debug('Delete Role');
-
-      return new Promise((resolve) => {
-
-        this.iam.deleteRole(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-      });
-
-    }
-
-    getRole(parameters){
-
-      du.debug('Get Role');
-
-      return new Promise((resolve, reject) => {
-
-        this.iam.getRole(parameters, (error, data) => {
-          if(error){
-            return reject(error);
-          }
-          return resolve(data);
-        });
-
-      });
-
-    }
-
-    attachRolePolicy(parameters){
-
-      du.debug('Attach Role Policy');
-
-      return new Promise((resolve) => {
-
-        this.iam.attachRolePolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-      });
-
-    }
-
-    listAttachedRolePolicies(parameters){
-
-      du.debug('List Attached Role Policies');
-
-      return new Promise((resolve) => {
-
-        this.iam.listAttachedRolePolicies(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-      });
-
-		}
-
-		createInstanceProfile(parameters){
-
-			du.debug('Create Instance Profile');
-
-			return new Promise((resolve) => {
-
-					return this.iam.createInstanceProfile(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
+		return new Promise((resolve) => {
+			this.iam.getPolicy(parameters, (error, data) => {
+				if(!_.isNull(error)){
+					if(error.statusCode == '404'){
+						return resolve(null);
+					}
+					eu.throwError(error);
+				}
+				return resolve(data);
 			});
 
-		}
+		});
 
-		addRoleToInstanceProfile(parameters){
+	}
 
-			du.debug('Create Instance Profile');
+	createRole(parameters){
 
-			return new Promise((resolve) => {
+		du.debug('Create Role');
 
-					return this.iam.addRoleToInstanceProfile(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+		return new Promise((resolve) => {
 
+			this.iam.createRole(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+
+		});
+
+	}
+
+	deleteRole(parameters){
+
+		du.debug('Delete Role');
+
+		return new Promise((resolve) => {
+
+			this.iam.deleteRole(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+
+		});
+
+	}
+
+	getRole(parameters){
+
+		du.debug('Get Role');
+
+		return new Promise((resolve, reject) => {
+
+			this.iam.getRole(parameters, (error, data) => {
+				if(error){
+					return reject(error);
+				}
+				return resolve(data);
 			});
 
-		}
+		});
+
+	}
+
+	attachRolePolicy(parameters){
+
+		du.debug('Attach Role Policy');
+
+		return new Promise((resolve) => {
+
+			this.iam.attachRolePolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+
+		});
+
+	}
+
+	listAttachedRolePolicies(parameters){
+
+		du.debug('List Attached Role Policies');
+
+		return new Promise((resolve) => {
+
+			this.iam.listAttachedRolePolicies(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+
+		});
+
+	}
+
+	createInstanceProfile(parameters){
+
+		du.debug('Create Instance Profile');
+
+		return new Promise((resolve) => {
+
+			return this.iam.createInstanceProfile(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+
+		});
+
+	}
+
+	addRoleToInstanceProfile(parameters){
+
+		du.debug('Create Instance Profile');
+
+		return new Promise((resolve) => {
+
+			return this.iam.addRoleToInstanceProfile(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+
+		});
+
+	}
 
 }
 

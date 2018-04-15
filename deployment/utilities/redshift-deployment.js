@@ -7,35 +7,35 @@ const RedshiftProvider = global.SixCRM.routes.include('controllers', 'providers/
 
 module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
 
-  constructor() {
+	constructor() {
 
-    super();
+		super();
 
-    this.redshiftprovider = new RedshiftProvider();
+		this.redshiftprovider = new RedshiftProvider();
 
-    this.setConfigurationFile();
+		this.setConfigurationFile();
 
-  }
+	}
 
-  setConfigurationFile(){
+	setConfigurationFile(){
 
-    du.debug('Get Configuration File');
+		du.debug('Get Configuration File');
 
-    //Technical Debt:  Just make this look for a file that matches the stage name
-    if(_.includes(['local', 'local-docker', 'circle', 'development','staging','production'], process.env.stage)){
-        this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/'+process.env.stage+'.json');
-    }else {
-      this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/default.json');
-    }
+		//Technical Debt:  Just make this look for a file that matches the stage name
+		if(_.includes(['local', 'local-docker', 'circle', 'development','staging','production'], process.env.stage)){
+			this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/'+process.env.stage+'.json');
+		}else {
+			this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/default.json');
+		}
 
-  }
+	}
 
-  getTableNameFromFilename(filename){
+	getTableNameFromFilename(filename){
 
-    du.debug('Get Table Name From Filename');
+		du.debug('Get Table Name From Filename');
 
-    return filename.replace('.sql', '');
+		return filename.replace('.sql', '');
 
-  }
+	}
 
 }

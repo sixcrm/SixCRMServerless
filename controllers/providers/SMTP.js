@@ -9,101 +9,101 @@ const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
 
 module.exports = class SMTPProvider {
 
-    constructor(smtp_provider){
+	constructor(smtp_provider){
 
-        this.required_options = ['hostname', 'username', 'password'];
-        this.optional_options = ['port'];
+		this.required_options = ['hostname', 'username', 'password'];
+		this.optional_options = ['port'];
 
-        this.setOptions(smtp_provider);
+		this.setOptions(smtp_provider);
 
-        this.setConnection();
+		this.setConnection();
 
-    }
+	}
 
-    setOptions(smtp_provider){
+	setOptions(smtp_provider){
 
-        du.debug('Set Options');
+		du.debug('Set Options');
 
-        this.required_options.forEach((required_option) => {
+		this.required_options.forEach((required_option) => {
 
-            if(!_.has(smtp_provider, required_option)){
+			if(!_.has(smtp_provider, required_option)){
 
-                eu.throwError('server','SMTP Object requires "'+required_option+'" option.');
+				eu.throwError('server','SMTP Object requires "'+required_option+'" option.');
 
-            }else{
+			}else{
 
-                this[required_option] = smtp_provider[required_option];
+				this[required_option] = smtp_provider[required_option];
 
-            }
+			}
 
-        });
+		});
 
-        this.optional_options.forEach((optional_option) => {
+		this.optional_options.forEach((optional_option) => {
 
-            if(_.has(smtp_provider, optional_option)){
+			if(_.has(smtp_provider, optional_option)){
 
-                this[optional_option] = smtp_provider[optional_option];
+				this[optional_option] = smtp_provider[optional_option];
 
-            }
+			}
 
-        });
+		});
 
-    }
+	}
 
-    getOptions(){
+	getOptions(){
 
-        du.debug('Get Options');
+		du.debug('Get Options');
 
-        let options = arrayutilities.merge(this.required_options, this.optional_options);
+		let options = arrayutilities.merge(this.required_options, this.optional_options);
 
-        let options_object = {};
+		let options_object = {};
 
-        options.forEach((option) => {
+		options.forEach((option) => {
 
-            if(_.has(this, option)){
-                options_object[option] = this[option];
-            }
+			if(_.has(this, option)){
+				options_object[option] = this[option];
+			}
 
-        });
+		});
 
-        this.validateOptions(options_object);
+		this.validateOptions(options_object);
 
-        return options_object;
+		return options_object;
 
-    }
+	}
 
-    validateOptions(options_object){
+	validateOptions(options_object){
 
-        du.debug('Validate Options');
+		du.debug('Validate Options');
 
-        mvu.validateModel(options_object, global.SixCRM.routes.path('model', 'general/smtp_options.json'));
+		mvu.validateModel(options_object, global.SixCRM.routes.path('model', 'general/smtp_options.json'));
 
-    }
+	}
 
-    setConnection(){
+	setConnection(){
 
-        du.debug('Set Connection');
+		du.debug('Set Connection');
 
-        let options = this.getOptions();
+		let options = this.getOptions();
 
-        this.connection = new smtpprovider(options);
+		this.connection = new smtpprovider(options);
 
-    }
+	}
 
-    send(send_object){
+	send(send_object){
 
-        du.debug('Send');
+		du.debug('Send');
 
-        return this.connection.send(send_object).then((send_result) => {
+		return this.connection.send(send_object).then((send_result) => {
 
-          return Promise.resolve(send_result);
+			return Promise.resolve(send_result);
 
-        }).catch(error => {
+		}).catch(error => {
 
-          return Promise.reject(error);
+			return Promise.reject(error);
 
-        });
+		});
 
-    }
+	}
 
 }

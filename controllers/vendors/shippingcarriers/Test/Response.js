@@ -6,99 +6,99 @@ const ShippingCarrierVendorResponse = global.SixCRM.routes.include('vendors', 's
 
 module.exports = class TestResponse extends ShippingCarrierVendorResponse {
 
-  constructor(){
+	constructor(){
 
-    super(arguments[0]);
+		super(arguments[0]);
 
-    this.parameter_definition = {};
+		this.parameter_definition = {};
 
-    this.parameter_validation = {
-      'trackingnumber':global.SixCRM.routes.path('model','vendors/shippingcarriers/Test/trackingnumber.json')
-    }
+		this.parameter_validation = {
+			'trackingnumber':global.SixCRM.routes.path('model','vendors/shippingcarriers/Test/trackingnumber.json')
+		}
 
-    this.augmentParameters();
+		this.augmentParameters();
 
-    this.transformResponse();
+		this.transformResponse();
 
-  }
+	}
 
-  transformResponse(){
+	transformResponse(){
 
-    du.debug('Transform Response');
+		du.debug('Transform Response');
 
-    let action = this.parameters.get('action');
+		let action = this.parameters.get('action');
 
-    let transformers = {
-      'info':() => this.transformInfoResponse()
-    }
+		let transformers = {
+			'info':() => this.transformInfoResponse()
+		}
 
-    return transformers[action]();
+		return transformers[action]();
 
-  }
+	}
 
-  transformInfoResponse(){
+	transformInfoResponse(){
 
-    du.debug('Transform Info Response');
+		du.debug('Transform Info Response');
 
-    let vendor_response = this.parameters.get('vendorresponse');
+		let vendor_response = this.parameters.get('vendorresponse');
 
-    if(vendor_response.statusCode == 200){
+		if(vendor_response.statusCode == 200){
 
-      this.setTrackingNumber();
-      this.setStatus();
-      this.setDetail();
+			this.setTrackingNumber();
+			this.setStatus();
+			this.setDetail();
 
-      this.infoResponse();
+			this.infoResponse();
 
-    }
-  }
+		}
+	}
 
-  setTrackingNumber(){
+	setTrackingNumber(){
 
-    du.debug('Set Tracking Number');
+		du.debug('Set Tracking Number');
 
-    let vendor_response = this.parameters.get('vendorresponse');
+		let vendor_response = this.parameters.get('vendorresponse');
 
-    this.parameters.set('trackingnumber', vendor_response.body.response.tracking_number);
+		this.parameters.set('trackingnumber', vendor_response.body.response.tracking_number);
 
-  }
+	}
 
-  setStatus(){
+	setStatus(){
 
-    du.debug('Set Status');
+		du.debug('Set Status');
 
-    let vendor_response = this.parameters.get('vendorresponse');
+		let vendor_response = this.parameters.get('vendorresponse');
 
-    this.parameters.set('status', vendor_response.body.response.status);
+		this.parameters.set('status', vendor_response.body.response.status);
 
-  }
+	}
 
-  setDetail(){
+	setDetail(){
 
-    du.debug('Set Detail');
+		du.debug('Set Detail');
 
-    let vendor_response = this.parameters.get('vendorresponse');
+		let vendor_response = this.parameters.get('vendorresponse');
 
-    this.parameters.set('detail', vendor_response.body.response.detail.detail);
+		this.parameters.set('detail', vendor_response.body.response.detail.detail);
 
-  }
+	}
 
-  setMessage(message){
+	setMessage(message){
 
-    du.debug('Set Message');
+		du.debug('Set Message');
 
-    this.parameters.set('message', message);
+		this.parameters.set('message', message);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  getMessage(){
+	getMessage(){
 
-    du.debug('Get Message');
+		du.debug('Get Message');
 
-    return this.parameters.get('message')
+		return this.parameters.get('message')
 
-  }
+	}
 
 }

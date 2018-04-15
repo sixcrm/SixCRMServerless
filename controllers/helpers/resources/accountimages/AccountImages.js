@@ -16,22 +16,22 @@ module.exports = class AccountImages extends ResourcesController {
 
 	constructor() {
 
-    super();
+		super();
 
-    this.parameter_validation = {
-      'base64imagedata': global.SixCRM.routes.path('model','definitions/base64string.json')
-    };
+		this.parameter_validation = {
+			'base64imagedata': global.SixCRM.routes.path('model','definitions/base64string.json')
+		};
 
-    this.parameter_definition = {
-      upload:{
-        required:{
-          base64imagedata: 'data'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			upload:{
+				required:{
+					base64imagedata: 'data'
+				},
+				optional:{}
+			}
+		};
 
-    this.augmentParameters();
+		this.augmentParameters();
 
 	}
 
@@ -39,70 +39,70 @@ module.exports = class AccountImages extends ResourcesController {
 
 		du.debug('Upload');
 		return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'upload'}))
-    .then(() => this.uploadImageToS3())
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'upload'}))
+			.then(() => this.uploadImageToS3())
 
 	}
 
-  convertImageDataToBase64(image_data){
+	convertImageDataToBase64(image_data){
 
-    du.info('Convert Image Data to Base64');
+		du.info('Convert Image Data to Base64');
 
-    return hashutilities.toBase64(image_data);
+		return hashutilities.toBase64(image_data);
 
-  }
+	}
 
-  getAccountResourcesBucketName(){
+	getAccountResourcesBucketName(){
 
-    du.debug('Get Account Uploads Bucket');
+		du.debug('Get Account Uploads Bucket');
 
-    return arrayutilities.compress(['sixcrm', global.SixCRM.configuration.stage, global.SixCRM.configuration.site_config.s3.account_resources_bucket],'-','');
+		return arrayutilities.compress(['sixcrm', global.SixCRM.configuration.stage, global.SixCRM.configuration.site_config.s3.account_resources_bucket],'-','');
 
-  }
+	}
 
-  getAccountImageUploadPrefix(){
+	getAccountImageUploadPrefix(){
 
-    du.debug('Get Account Image Upload Prefix');
+		du.debug('Get Account Image Upload Prefix');
 
-    let prefix = [
-      global.account,
-      'user',
-      'images'
-    ];
+		let prefix = [
+			global.account,
+			'user',
+			'images'
+		];
 
-    return arrayutilities.compress(prefix, '/', '');
+		return arrayutilities.compress(prefix, '/', '');
 
-  }
+	}
 
-  createImageFilename(base64_image, image_data){
+	createImageFilename(base64_image, image_data){
 
-    du.debug('Create Image Filename');
+		du.debug('Create Image Filename');
 
-    let sha1 = hashutilities.toSHA1(base64_image);
+		let sha1 = hashutilities.toSHA1(base64_image);
 
-    let extension = imageprovider.getImageExtension(image_data);
+		let extension = imageprovider.getImageExtension(image_data);
 
-    return arrayutilities.compress([sha1, extension],'.','');
+		return arrayutilities.compress([sha1, extension],'.','');
 
-  }
+	}
 
-  convertImageDataToBinary(base64_image_data){
+	convertImageDataToBinary(base64_image_data){
 
-    du.debug('Convert Image Data To Binary');
+		du.debug('Convert Image Data To Binary');
 
-    return Buffer.from(base64_image_data, 'base64')
+		return Buffer.from(base64_image_data, 'base64')
 
-  }
+	}
 
 	uploadImageToS3(){
 
-    let base64_image_data = this.parameters.get('base64imagedata');
+		let base64_image_data = this.parameters.get('base64imagedata');
 
-    let image_data = this.convertImageDataToBinary(base64_image_data);
+		let image_data = this.convertImageDataToBinary(base64_image_data);
 		let bucket = this.getAccountResourcesBucketName();
-    let prefix = this.getAccountImageUploadPrefix();
-    let filename = this.createImageFilename(base64_image_data, image_data);
-    let content_type = imageprovider.getImageMimeType(image_data);
+		let prefix = this.getAccountImageUploadPrefix();
+		let filename = this.createImageFilename(base64_image_data, image_data);
+		let content_type = imageprovider.getImageMimeType(image_data);
 
 		let location = arrayutilities.compress(['https://s3.amazonaws.com', bucket, prefix, filename], '/', '');
 

@@ -10,831 +10,831 @@ const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-p
 
 module.exports = class EC2Provider extends AWSProvider {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      //Technical Debt:  Get this out of the constructor?
-      this.instantiateAWS();
+		//Technical Debt:  Get this out of the constructor?
+		this.instantiateAWS();
 
-      this.ec2 = new this.AWS.EC2({
-        apiVersion: '2016-11-15',
-        region: this.getRegion()
-      });
+		this.ec2 = new this.AWS.EC2({
+			apiVersion: '2016-11-15',
+			region: this.getRegion()
+		});
 
-      this.max_retry_attempts = 3;
-      this.retry_pause = 3000;
+		this.max_retry_attempts = 3;
+		this.retry_pause = 3000;
 
-    }
+	}
 
-    describeVpcs(parameters){
+	describeVpcs(parameters){
 
-      du.debug('Describe VPCs');
+		du.debug('Describe VPCs');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.describeVpcs(parameters, (error, data) => {
+			this.ec2.describeVpcs(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data));
+				resolve(this.AWSCallback(error, data));
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    createDefaultVpc(){
+	createDefaultVpc(){
 
-      du.debug('Create Default VPC');
+		du.debug('Create Default VPC');
 
-      const params = {};
+		const params = {};
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.createDefaultVpc(params, (error, data) => {
+			this.ec2.createDefaultVpc(params, (error, data) => {
 
-          resolve(this.AWSCallback(error, data));
+				resolve(this.AWSCallback(error, data));
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    createVPC(parameters){
+	createVPC(parameters){
 
-      du.debug('Create VPC');
+		du.debug('Create VPC');
 
-      let params = objectutilities.transcribe(
-        {
-          CidrBlock: 'CidrBlock',
-        },
-        parameters,
-        {},
-        true
-      );
+		let params = objectutilities.transcribe(
+			{
+				CidrBlock: 'CidrBlock',
+			},
+			parameters,
+			{},
+			true
+		);
 
-      params = objectutilities.transcribe(
-        {
-          AmazonProvidedIpv6CidrBlock: 'AmazonProvidedIpv6CidrBlock',
-          DryRun: 'DryRun',
-          InstanceTenancy: 'InstanceTenancy'
-        },
-        parameters,
-        params,
-        false
-      );
+		params = objectutilities.transcribe(
+			{
+				AmazonProvidedIpv6CidrBlock: 'AmazonProvidedIpv6CidrBlock',
+				DryRun: 'DryRun',
+				InstanceTenancy: 'InstanceTenancy'
+			},
+			parameters,
+			params,
+			false
+		);
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.createVpc(params, (error, data) => {
+			this.ec2.createVpc(params, (error, data) => {
 
-          resolve(this.AWSCallback(error, data));
+				resolve(this.AWSCallback(error, data));
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    describeRoutes(parameters){
+	describeRoutes(parameters){
 
-      du.debug('Describe Routes');
+		du.debug('Describe Routes');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.describeRoutes(parameters, (error, data) => {
+			this.ec2.describeRoutes(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data));
+				resolve(this.AWSCallback(error, data));
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    replaceRoute(parameters){
+	replaceRoute(parameters){
 
-      du.debug('Replace Route');
+		du.debug('Replace Route');
 
-      let params = objectutilities.transcribe(
-        {
-          RouteTableId: 'RouteTableId'
-        },
-        parameters,
-        {},
-        true
-      );
+		let params = objectutilities.transcribe(
+			{
+				RouteTableId: 'RouteTableId'
+			},
+			parameters,
+			{},
+			true
+		);
 
-      params = objectutilities.transcribe(
-        {
-          DestinationCidrBlock: 'DestinationCidrBlock',
-          DestinationIpv6CidrBlock: 'DestinationIpv6CidrBlock',
-          DryRun: 'DryRun',
-          EgressOnlyInternetGatewayId: 'EgressOnlyInternetGatewayId',
-          GatewayId: 'GatewayId',
-          InstanceId: 'InstanceId',
-          NatGatewayId: 'NatGatewayId',
-          NetworkInterfaceId: 'NetworkInterfaceId',
-          VpcPeeringConnectionId: 'VpcPeeringConnectionId'
-        },
-        parameters,
-        params,
-        false
-      );
+		params = objectutilities.transcribe(
+			{
+				DestinationCidrBlock: 'DestinationCidrBlock',
+				DestinationIpv6CidrBlock: 'DestinationIpv6CidrBlock',
+				DryRun: 'DryRun',
+				EgressOnlyInternetGatewayId: 'EgressOnlyInternetGatewayId',
+				GatewayId: 'GatewayId',
+				InstanceId: 'InstanceId',
+				NatGatewayId: 'NatGatewayId',
+				NetworkInterfaceId: 'NetworkInterfaceId',
+				VpcPeeringConnectionId: 'VpcPeeringConnectionId'
+			},
+			parameters,
+			params,
+			false
+		);
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.replaceRoute(params, (error, data) => {
+			this.ec2.replaceRoute(params, (error, data) => {
 
-          resolve(this.AWSCallback(error, data));
+				resolve(this.AWSCallback(error, data));
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    createRoute(parameters){
+	createRoute(parameters){
 
-      du.debug('Create Route');
+		du.debug('Create Route');
 
-      let params = objectutilities.transcribe(
-        {
-          RouteTableId: 'RouteTableId'
-        },
-        parameters,
-        {},
-        true
-      );
+		let params = objectutilities.transcribe(
+			{
+				RouteTableId: 'RouteTableId'
+			},
+			parameters,
+			{},
+			true
+		);
 
-      params = objectutilities.transcribe(
-        {
-          DestinationCidrBlock: 'DestinationCidrBlock',
-          DestinationIpv6CidrBlock: 'DestinationIpv6CidrBlock',
-          DryRun: 'DryRun',
-          EgressOnlyInternetGatewayId: 'EgressOnlyInternetGatewayId',
-          GatewayId: 'GatewayId',
-          InstanceId: 'InstanceId',
-          NatGatewayId: 'NatGatewayId',
-          NetworkInterfaceId: 'NetworkInterfaceId',
-          VpcPeeringConnectionId: 'VpcPeeringConnectionId'
-        },
-        parameters,
-        params,
-        false
-      );
+		params = objectutilities.transcribe(
+			{
+				DestinationCidrBlock: 'DestinationCidrBlock',
+				DestinationIpv6CidrBlock: 'DestinationIpv6CidrBlock',
+				DryRun: 'DryRun',
+				EgressOnlyInternetGatewayId: 'EgressOnlyInternetGatewayId',
+				GatewayId: 'GatewayId',
+				InstanceId: 'InstanceId',
+				NatGatewayId: 'NatGatewayId',
+				NetworkInterfaceId: 'NetworkInterfaceId',
+				VpcPeeringConnectionId: 'VpcPeeringConnectionId'
+			},
+			parameters,
+			params,
+			false
+		);
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.createRoute(params, (error, data) => {
+			this.ec2.createRoute(params, (error, data) => {
 
-          resolve(this.tolerantCallback(error, data, false));
+				resolve(this.tolerantCallback(error, data, false));
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    createInternetGateway(){
+	createInternetGateway(){
 
-      du.debug('Create Internet Gateway');
+		du.debug('Create Internet Gateway');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.createInternetGateway({}, (error, data) => {
+			this.ec2.createInternetGateway({}, (error, data) => {
 
-          resolve(this.AWSCallback(error, data));
+				resolve(this.AWSCallback(error, data));
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    describeInternetGateways(parameters){
+	describeInternetGateways(parameters){
 
-      du.debug('Describe Internet Gateways');
+		du.debug('Describe Internet Gateways');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.describeInternetGateways(parameters, (error, data) => {
+			this.ec2.describeInternetGateways(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data));
+				resolve(this.AWSCallback(error, data));
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    associateRouteTable(parameters){
+	associateRouteTable(parameters){
 
-      du.debug('Associate Route Table');
+		du.debug('Associate Route Table');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.associateRouteTable(parameters, (error, data) => {
+			this.ec2.associateRouteTable(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data));
+				resolve(this.AWSCallback(error, data));
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    createRouteTable(parameters){
+	createRouteTable(parameters){
 
-      du.debug('Create Route Table');
+		du.debug('Create Route Table');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.createRouteTable(parameters, (error, data) => {
+			this.ec2.createRouteTable(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data));
+				resolve(this.AWSCallback(error, data));
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    describeRouteTables(parameters){
+	describeRouteTables(parameters){
 
-      du.debug('Describe Route Tables');
+		du.debug('Describe Route Tables');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.describeRouteTables(parameters, (error, data) => {
+			this.ec2.describeRouteTables(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data))
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    createNatGateway(parameters){
+	createNatGateway(parameters){
 
-      du.debug('Create NAT Gateway');
+		du.debug('Create NAT Gateway');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.createNatGateway(parameters, (error, data) => {
+			this.ec2.createNatGateway(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data))
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
 
-    describeNatGateways(parameters){
+	describeNatGateways(parameters){
 
-      du.debug('Describe NAT Gateways');
+		du.debug('Describe NAT Gateways');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.describeNatGateways(parameters, (error, data) => {
+			this.ec2.describeNatGateways(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data))
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    allocateAddress(){
+	allocateAddress(){
 
-      du.debug('Allocate Address');
+		du.debug('Allocate Address');
 
-      const parameters = {
-        Domain: 'vpc'
-      };
+		const parameters = {
+			Domain: 'vpc'
+		};
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.allocateAddress(parameters, (error, data) => {
+			this.ec2.allocateAddress(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data))
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    describeAddresses(parameters){
+	describeAddresses(parameters){
 
-      du.debug('Describe Addresses');
+		du.debug('Describe Addresses');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.describeAddresses(parameters, (error, data) => {
+			this.ec2.describeAddresses(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data))
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    createTags(parameters){
+	createTags(parameters){
 
-      du.debug('Create Tags');
+		du.debug('Create Tags');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.createTags(parameters, (error, data) => {
+			this.ec2.createTags(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data))
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    createSubnet(parameters){
+	createSubnet(parameters){
 
-      du.debug('Create Subnet');
+		du.debug('Create Subnet');
 
-      let params = objectutilities.transcribe(
-        {
-          CidrBlock: 'CidrBlock',
-          VpcId: 'VpcId'
-        },
-        parameters,
-        {},
-        true
-      );
+		let params = objectutilities.transcribe(
+			{
+				CidrBlock: 'CidrBlock',
+				VpcId: 'VpcId'
+			},
+			parameters,
+			{},
+			true
+		);
 
-      params = objectutilities.transcribe(
-        {
-          AvailabilityZone: 'AvailabilityZone',
-          DryRun: 'DryRun',
-          Ipv6CidrBlock: 'Ipv6CidrBlock'
-        },
-        parameters,
-        params,
-        false
-      );
+		params = objectutilities.transcribe(
+			{
+				AvailabilityZone: 'AvailabilityZone',
+				DryRun: 'DryRun',
+				Ipv6CidrBlock: 'Ipv6CidrBlock'
+			},
+			parameters,
+			params,
+			false
+		);
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.createSubnet(params, (error, data) => {
+			this.ec2.createSubnet(params, (error, data) => {
 
-          resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data))
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    describeVPCs(parameters){
+	describeVPCs(parameters){
 
-      du.debug('Describe VPCs');
+		du.debug('Describe VPCs');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.describeVpcs(parameters, (error, data) => {
+			this.ec2.describeVpcs(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data))
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    describeSubnets(parameters){
+	describeSubnets(parameters){
 
-      du.debug('Describe Subnets');
+		du.debug('Describe Subnets');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.describeSubnets(parameters, (error, data) => {
+			this.ec2.describeSubnets(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data))
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    assureSecurityGroup(parameters){
+	assureSecurityGroup(parameters){
 
-      du.debug('Assure Security Group');
+		du.debug('Assure Security Group');
 
-      let security_group_identifier;
+		let security_group_identifier;
 
-      if(_.has(parameters, 'GroupName')){
+		if(_.has(parameters, 'GroupName')){
 
-        security_group_identifier = parameters.GroupName;
+			security_group_identifier = parameters.GroupName;
 
-      }else if(_.has(parameters, 'GroupId')){
+		}else if(_.has(parameters, 'GroupId')){
 
-        security_group_identifier = parameters.GroupId;
+			security_group_identifier = parameters.GroupId;
 
-      }else{
+		}else{
 
-        eu.throwError('server', 'EC2Provider.assureSecurityGroup expects GroupName of GroupId arguments');
+			eu.throwError('server', 'EC2Provider.assureSecurityGroup expects GroupName of GroupId arguments');
 
-      }
+		}
 
-      return this.securityGroupExists(security_group_identifier).then((result) => {
+		return this.securityGroupExists(security_group_identifier).then((result) => {
 
-        if(result !== false){
+			if(result !== false){
 
-          du.info('Security group exists ('+security_group_identifier+')...');
+				du.info('Security group exists ('+security_group_identifier+')...');
 
-          return result;
+				return result;
 
-        }else{
+			}else{
 
-          du.info('Creating security group ('+security_group_identifier+')...');
+				du.info('Creating security group ('+security_group_identifier+')...');
 
-          return this.createSecurityGroup(parameters);
+				return this.createSecurityGroup(parameters);
 
-        }
+			}
 
-      });
+		});
 
-    }
+	}
 
-    securityGroupExists(security_group, use_cache, retry){
+	securityGroupExists(security_group, use_cache, retry){
 
-      du.debug('Security Group Exists');
+		du.debug('Security Group Exists');
 
-      if(_.isUndefined(retry)){
-        retry = 0;
-      }
+		if(_.isUndefined(retry)){
+			retry = 0;
+		}
 
-      if(_.isUndefined(use_cache)){
-        use_cache = true;
-      }
+		if(_.isUndefined(use_cache)){
+			use_cache = true;
+		}
 
-      if(use_cache == true && _.has(this, 'security_group_descriptions') && _.has(this.security_group_descriptions, 'SecurityGroups')){
+		if(use_cache == true && _.has(this, 'security_group_descriptions') && _.has(this.security_group_descriptions, 'SecurityGroups')){
 
-        let security_group_description = arrayutilities.find(this.security_group_descriptions.SecurityGroups, (description) => {
-          if(description.GroupName == security_group || description.GroupId == security_group){ return true; }
-          return false;
-        });
+			let security_group_description = arrayutilities.find(this.security_group_descriptions.SecurityGroups, (description) => {
+				if(description.GroupName == security_group || description.GroupId == security_group){ return true; }
+				return false;
+			});
 
-        if(!_.isUndefined(security_group_description)){
+			if(!_.isUndefined(security_group_description)){
 
-          return Promise.resolve(security_group_description);
+				return Promise.resolve(security_group_description);
 
-        }
+			}
 
-      }else{
+		}else{
 
-        return this.describeSecurityGroups({}).then((results) => {
+			return this.describeSecurityGroups({}).then((results) => {
 
-          this.security_group_descriptions = results;
+				this.security_group_descriptions = results;
 
-          return this.securityGroupExists(security_group, true, retry);
+				return this.securityGroupExists(security_group, true, retry);
 
-        });
+			});
 
-      }
+		}
 
-      if(retry !== false && retry < this.max_retry_attempts){
+		if(retry !== false && retry < this.max_retry_attempts){
 
-        retry += 1;
+			retry += 1;
 
-        du.info('Retrying ('+numberutilities.appendOrdinalSuffix(retry)+' attempt...)');
+			du.info('Retrying ('+numberutilities.appendOrdinalSuffix(retry)+' attempt...)');
 
-        return Promise.resolve().then(timestamp.delay(this.retry_pause)).then(() => {
+			return Promise.resolve().then(timestamp.delay(this.retry_pause)).then(() => {
 
-          return this.securityGroupExists(security_group, false, retry);
+				return this.securityGroupExists(security_group, false, retry);
 
-        });
+			});
 
-      }else{
+		}else{
 
-        return Promise.resolve(false);
+			return Promise.resolve(false);
 
-      }
+		}
 
 
-    }
+	}
 
-    describeSecurityGroups(parameters){
+	describeSecurityGroups(parameters){
 
-      du.debug('Describe Security Groups');
+		du.debug('Describe Security Groups');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.describeSecurityGroups(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.ec2.describeSecurityGroups(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-      });
+		});
 
-    }
+	}
 
-    createSecurityGroup(parameters){
+	createSecurityGroup(parameters){
 
-      du.debug('Create Security Group');
+		du.debug('Create Security Group');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        let handle = this.ec2.createSecurityGroup(parameters);
+			let handle = this.ec2.createSecurityGroup(parameters);
 
-        handle.on('success', (response) => {
-          du.highlight('Security Group Created.');
-          return resolve(response);
-        }).on('error',(error) => {
-          eu.throwError('server', error);
-        });
+			handle.on('success', (response) => {
+				du.highlight('Security Group Created.');
+				return resolve(response);
+			}).on('error',(error) => {
+				eu.throwError('server', error);
+			});
 
-        handle.send();
+			handle.send();
 
-      });
+		});
 
-    }
+	}
 
-    determineGroupIDFromName(group_name){
+	determineGroupIDFromName(group_name){
 
-      du.debug('Determine Group ID From Name');
+		du.debug('Determine Group ID From Name');
 
-      return this.securityGroupExists(group_name).then((results) => {
+		return this.securityGroupExists(group_name).then((results) => {
 
-        if(results == false){
-          eu.throwError('server', 'Security group does not exist.');
-        }
+			if(results == false){
+				eu.throwError('server', 'Security group does not exist.');
+			}
 
-        if(!_.has(results, 'GroupId')){
-          eu.throwError('server', 'Unexpected response group structure.');
-        }
+			if(!_.has(results, 'GroupId')){
+				eu.throwError('server', 'Unexpected response group structure.');
+			}
 
-        return results.GroupId;
+			return results.GroupId;
 
-      });
+		});
 
-    }
+	}
 
-    addSecurityGroupIngressRules(parameters){
+	addSecurityGroupIngressRules(parameters){
 
-      du.debug('Add Security Group Ingress Rules');
+		du.debug('Add Security Group Ingress Rules');
 
-      if(!_.has(parameters, 'GroupId')){
+		if(!_.has(parameters, 'GroupId')){
 
-        if(!_.has(parameters, 'GroupName')){
+			if(!_.has(parameters, 'GroupName')){
 
-          eu.throwError('server', 'Inappropriate Parameterization');
+				eu.throwError('server', 'Inappropriate Parameterization');
 
-        }
+			}
 
-        return this.determineGroupIDFromName(parameters.GroupName).then((group_id) => {
+			return this.determineGroupIDFromName(parameters.GroupName).then((group_id) => {
 
-          parameters.GroupId = group_id;
+				parameters.GroupId = group_id;
 
-          return this.addSecurityGroupIngressRules(parameters);
+				return this.addSecurityGroupIngressRules(parameters);
 
-        });
+			});
 
-      }else{
+		}else{
 
-        return new Promise((resolve) => {
+			return new Promise((resolve) => {
 
-          return this.removeExistingIngressRules(parameters).then(() => {
-            return this.ec2.authorizeSecurityGroupIngress(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-          });
+				return this.removeExistingIngressRules(parameters).then(() => {
+					return this.ec2.authorizeSecurityGroupIngress(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+				});
 
-        });
+			});
 
-      }
+		}
 
-    }
+	}
 
-    addSecurityGroupEgressRules(parameters){
+	addSecurityGroupEgressRules(parameters){
 
-      du.debug('Add Security Group Egress Rules');
+		du.debug('Add Security Group Egress Rules');
 
-      if(!_.has(parameters, 'GroupId')){
+		if(!_.has(parameters, 'GroupId')){
 
-        if(!_.has(parameters, 'GroupName')){
+			if(!_.has(parameters, 'GroupName')){
 
-          eu.throwError('server', 'Inappropriate Parameterization');
+				eu.throwError('server', 'Inappropriate Parameterization');
 
-        }
+			}
 
-        return this.determineGroupIDFromName(parameters.GroupName).then((group_id) => {
+			return this.determineGroupIDFromName(parameters.GroupName).then((group_id) => {
 
-          parameters.GroupId = group_id;
+				parameters.GroupId = group_id;
 
-          return this.addSecurityGroupEgressRules(parameters);
+				return this.addSecurityGroupEgressRules(parameters);
 
-        });
+			});
 
-      }else{
+		}else{
 
-        return new Promise((resolve) => {
+			return new Promise((resolve) => {
 
-          return this.removeExistingEgressRules(parameters).then(() => {
+				return this.removeExistingEgressRules(parameters).then(() => {
 
-            parameters = objectutilities.subtractiveFilter(['GroupName'], parameters);
+					parameters = objectutilities.subtractiveFilter(['GroupName'], parameters);
 
-            return this.ec2.authorizeSecurityGroupEgress(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+					return this.ec2.authorizeSecurityGroupEgress(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-          });
+				});
 
-        });
+			});
 
-      }
+		}
 
-    }
+	}
 
-    removeExistingIngressRules(parameters){
+	removeExistingIngressRules(parameters){
 
-      du.debug('Remove Existing Ingress Rules');
+		du.debug('Remove Existing Ingress Rules');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        return this.securityGroupExists(parameters.GroupId).then((result) => {
+			return this.securityGroupExists(parameters.GroupId).then((result) => {
 
-          if(_.has(result, 'IpPermissions') && _.isArray(result.IpPermissions) && result.IpPermissions.length > 0){
+				if(_.has(result, 'IpPermissions') && _.isArray(result.IpPermissions) && result.IpPermissions.length > 0){
 
-            let ip_permissions = arrayutilities.map(result.IpPermissions, this.filterRule);
+					let ip_permissions = arrayutilities.map(result.IpPermissions, this.filterRule);
 
-            result.IpPermissions = ip_permissions;
+					result.IpPermissions = ip_permissions;
 
-            result = objectutilities.subtractiveFilter(['Description', 'OwnerId', 'IpPermissionsEgress','Tags','VpcId'], result);
+					result = objectutilities.subtractiveFilter(['Description', 'OwnerId', 'IpPermissionsEgress','Tags','VpcId'], result);
 
-            return this.revokeSecurityGroupIngress(result).then((result) => {
+					return this.revokeSecurityGroupIngress(result).then((result) => {
 
-              du.highlight('Successfully revoked ingress rules');
+						du.highlight('Successfully revoked ingress rules');
 
-              return resolve(result);
+						return resolve(result);
 
-            });
+					});
 
-          }else{
+				}else{
 
-            du.highlight('No ingress rules to revoke...');
+					du.highlight('No ingress rules to revoke...');
 
-            return resolve(false);
+					return resolve(false);
 
-          }
+				}
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    filterRule(rule){
+	filterRule(rule){
 
-      du.debug('Filter Rule');
+		du.debug('Filter Rule');
 
-      let clean_rule;
+		let clean_rule;
 
-      if(_.includes(['tcp','udp'], rule.IpProtocol)){
+		if(_.includes(['tcp','udp'], rule.IpProtocol)){
 
-        clean_rule = objectutilities.additiveFilter(['IpProtocol', 'IpRanges','FromPort','ToPort', 'UserIdGroupPairs'], rule);
+			clean_rule = objectutilities.additiveFilter(['IpProtocol', 'IpRanges','FromPort','ToPort', 'UserIdGroupPairs'], rule);
 
-      }else if(rule.IpProtocol == '-1'){
-        clean_rule = objectutilities.additiveFilter(['IpProtocol', 'IpRanges', 'UserIdGroupPairs'], rule);
-      }
+		}else if(rule.IpProtocol == '-1'){
+			clean_rule = objectutilities.additiveFilter(['IpProtocol', 'IpRanges', 'UserIdGroupPairs'], rule);
+		}
 
-      if(_.has(clean_rule, 'IpRanges') && clean_rule.IpRanges.length < 1){
-        delete clean_rule.IpRanges;
-      }
+		if(_.has(clean_rule, 'IpRanges') && clean_rule.IpRanges.length < 1){
+			delete clean_rule.IpRanges;
+		}
 
-      if(_.has(clean_rule, 'UserIdGroupPairs') && clean_rule.UserIdGroupPairs.length < 1){
-        delete clean_rule.UserIdGroupPairs;
-      }
+		if(_.has(clean_rule, 'UserIdGroupPairs') && clean_rule.UserIdGroupPairs.length < 1){
+			delete clean_rule.UserIdGroupPairs;
+		}
 
-      return clean_rule;
+		return clean_rule;
 
 
-    }
+	}
 
-    removeExistingEgressRules(parameters){
+	removeExistingEgressRules(parameters){
 
-      du.debug('Remove Existing Egress Rules');
+		du.debug('Remove Existing Egress Rules');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        return this.securityGroupExists(parameters.GroupId).then((result) => {
+			return this.securityGroupExists(parameters.GroupId).then((result) => {
 
-          if(_.has(result, 'IpPermissionsEgress') && _.isArray(result.IpPermissionsEgress) && result.IpPermissionsEgress.length > 0){
+				if(_.has(result, 'IpPermissionsEgress') && _.isArray(result.IpPermissionsEgress) && result.IpPermissionsEgress.length > 0){
 
-            let ip_permissions_egress = arrayutilities.map(result.IpPermissionsEgress, this.filterRule);
+					let ip_permissions_egress = arrayutilities.map(result.IpPermissionsEgress, this.filterRule);
 
-            result.IpPermissions = ip_permissions_egress;
+					result.IpPermissions = ip_permissions_egress;
 
-            result = objectutilities.subtractiveFilter(['GroupName', 'Description', 'OwnerId', 'IpPermissionsEgress', 'Tags', 'VpcId'], result);
+					result = objectutilities.subtractiveFilter(['GroupName', 'Description', 'OwnerId', 'IpPermissionsEgress', 'Tags', 'VpcId'], result);
 
-            return this.revokeSecurityGroupEgress(result).then((result) => {
+					return this.revokeSecurityGroupEgress(result).then((result) => {
 
-              du.highlight('Successfully revoked egress rules');
+						du.highlight('Successfully revoked egress rules');
 
-              return resolve(result);
+						return resolve(result);
 
-            });
+					});
 
-          }else{
+				}else{
 
-            du.highlight('No egress rules to revoke...');
+					du.highlight('No egress rules to revoke...');
 
-            return resolve(false);
+					return resolve(false);
 
-          }
+				}
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    revokeSecurityGroupIngress(parameters){
+	revokeSecurityGroupIngress(parameters){
 
-      du.debug('Revoke Security Group Ingress');
+		du.debug('Revoke Security Group Ingress');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.revokeSecurityGroupIngress(parameters, (error, data) => {
+			this.ec2.revokeSecurityGroupIngress(parameters, (error, data) => {
 
-          resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data))
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    revokeSecurityGroupEgress(parameters){
+	revokeSecurityGroupEgress(parameters){
 
-      du.debug('Revoke Security Group Egress');
+		du.debug('Revoke Security Group Egress');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.ec2.revokeSecurityGroupEgress(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.ec2.revokeSecurityGroupEgress(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-      });
+		});
 
-    }
+	}
 
-    getSecurityGroupIdentifier(object){
+	getSecurityGroupIdentifier(object){
 
-      du.debug('Get Security Group Identifier');
+		du.debug('Get Security Group Identifier');
 
-      let identifier = null;
+		let identifier = null;
 
-      if(_.has(object, 'GroupId')){
-        identifier = object.GroupId;
-      }else if(_.has(object,'GroupName')){
-        identifier = object.GroupName;
-      }
+		if(_.has(object, 'GroupId')){
+			identifier = object.GroupId;
+		}else if(_.has(object,'GroupName')){
+			identifier = object.GroupName;
+		}
 
-      return identifier;
+		return identifier;
 
-    }
+	}
 
-    destroySecurityGroup(parameters){
+	destroySecurityGroup(parameters){
 
-      du.debug('Create Security Group');
+		du.debug('Create Security Group');
 
-      return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-        let identifier = this.getSecurityGroupIdentifier(parameters);
+			let identifier = this.getSecurityGroupIdentifier(parameters);
 
-        return this.securityGroupExists(identifier).then((results) => {
+			return this.securityGroupExists(identifier).then((results) => {
 
-          if(results === false){
+				if(results === false){
 
-            du.highlight('Security Group does not exist');
+					du.highlight('Security Group does not exist');
 
-            return resolve(false);
+					return resolve(false);
 
-          }else{
+				}else{
 
-            let handle = this.ec2.deleteSecurityGroup(parameters);
+					let handle = this.ec2.deleteSecurityGroup(parameters);
 
-            handle.on('success',(result) => {
-              du.highlight('Security Group destroyed');
-              return resolve(result);
-            }).on('error',(error) => {
-              return reject(eu.getError('server', error));
-            });
+					handle.on('success',(result) => {
+						du.highlight('Security Group destroyed');
+						return resolve(result);
+					}).on('error',(error) => {
+						return reject(eu.getError('server', error));
+					});
 
-            return handle.send();
-          }
+					return handle.send();
+				}
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
 }

@@ -47,12 +47,12 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 				},
 				optional: {}
 			},
-            updateRebillUpsell: {
-                required: {
-                    rebill: 'rebill',
-                    upsell: 'upsell'
-                }
-            },
+			updateRebillUpsell: {
+				required: {
+					rebill: 'rebill',
+					upsell: 'upsell'
+				}
+			},
 		};
 
 		this.parameter_validation = {
@@ -216,24 +216,24 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 	}
 
-    updateRebillUpsell() {
-        du.debug('Update Rebill Upsell');
+	updateRebillUpsell() {
+		du.debug('Update Rebill Upsell');
 
-        return Promise.resolve()
-            .then(() => this.parameters.setParameters({
-                argumentation: arguments[0],
-                action: 'updateRebillUpsell'
-            }))
-            .then(() => this.acquireRebill())
-            .then(() => this.setRebillUpsell())
-            .then(() => this.updateRebill());
-    }
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({
+				argumentation: arguments[0],
+				action: 'updateRebillUpsell'
+			}))
+			.then(() => this.acquireRebill())
+			.then(() => this.setRebillUpsell())
+			.then(() => this.updateRebill());
+	}
 
-    setRebillUpsell() {
-        const rebill = this.parameters.get('rebill');
-        const upsell = this.parameters.get('upsell');
-        rebill.upsell = upsell;
-    }
+	setRebillUpsell() {
+		const rebill = this.parameters.get('rebill');
+		const upsell = this.parameters.get('upsell');
+		rebill.upsell = upsell;
+	}
 
 	buildUpdatedRebillPrototype() {
 
@@ -453,7 +453,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		let now = timestamp.createDate();
 
 		if (!_.has(this, 'rebillController')) {
-            const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js')
+			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js')
 			this.rebillController = new RebillController();
 		}
 
@@ -632,8 +632,8 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		}
 
 		return this.shippingReceiptController.getListByAccount({
-				ids: shipping_receipt_ids
-			})
+			ids: shipping_receipt_ids
+		})
 			.then((results) => this.shippingReceiptController.getResult(results))
 			.then(shipping_receipts => {
 

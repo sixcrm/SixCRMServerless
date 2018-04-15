@@ -3,61 +3,61 @@ const workerController = global.SixCRM.routes.include('controllers', 'workers/co
 
 module.exports = class PickRebillsController extends workerController {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.parameter_definition = {
-      execute: {
-        required: {
-          message: 'message'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			execute: {
+				required: {
+					message: 'message'
+				},
+				optional:{}
+			}
+		};
 
-    this.parameter_validation = {
-      message: global.SixCRM.routes.path('model', 'helpers/rebill/spoofedrebillmessage.json')
-    };
+		this.parameter_validation = {
+			message: global.SixCRM.routes.path('model', 'helpers/rebill/spoofedrebillmessage.json')
+		};
 
-    const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+		const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
-    this.rebillHelperController = new RebillHelperController();
+		this.rebillHelperController = new RebillHelperController();
 
-    this.augmentParameters();
+		this.augmentParameters();
 
-  }
+	}
 
-  execute(message){
+	execute(message){
 
-    du.debug('Execute');
+		du.debug('Execute');
 
-    return this.preamble(message)
-    .then(() => this.markRebillAsProcessing())
-    .then(() => this.respond());
+		return this.preamble(message)
+			.then(() => this.markRebillAsProcessing())
+			.then(() => this.respond());
 
-  }
+	}
 
-  markRebillAsProcessing(){
+	markRebillAsProcessing(){
 
-    du.debug('Mark Rebills As Processing');
+		du.debug('Mark Rebills As Processing');
 
-    let rebill = this.parameters.get('rebill');
+		let rebill = this.parameters.get('rebill');
 
-    return this.rebillHelperController.updateRebillProcessing({rebill: rebill, processing: true}).then(() => {
+		return this.rebillHelperController.updateRebillProcessing({rebill: rebill, processing: true}).then(() => {
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  respond(){
+	respond(){
 
-    du.debug('Respond');
+		du.debug('Respond');
 
-    return super.respond('success');
+		return super.respond('success');
 
-  }
+	}
 
 }

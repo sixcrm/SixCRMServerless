@@ -9,24 +9,24 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
 let configuration = {
-  branch: 'development'
+	branch: 'development'
 };
 
 let cli_parameters = {
-  'branch': /^--branch=.*$/
+	'branch': /^--branch=.*$/
 }
 
 objectutilities.map(cli_parameters, key => {
 
-  let regex = cli_parameters[key];
+	let regex = cli_parameters[key];
 
-  arrayutilities.find(process.argv, (argument) => {
-    if(stringutilities.isMatch(argument, regex)){
-      configuration[key] = argument.split('=')[1];
-      return true;
-    }
-    return false;
-  });
+	arrayutilities.find(process.argv, (argument) => {
+		if(stringutilities.isMatch(argument, regex)){
+			configuration[key] = argument.split('=')[1];
+			return true;
+		}
+		return false;
+	});
 
 });
 
@@ -34,14 +34,14 @@ let awsdu = new AWSDeploymentUtilities();
 
 awsdu.setRole(configuration.branch).then(() => {
 
-  du.highlight('Role Updated.');
-  du.info(process.env);
+	du.highlight('Role Updated.');
+	du.info(process.env);
 
-  return true;
+	return true;
 
 }).catch(error => {
 
-  du.error(error);
-  du.warning(error.message);
+	du.error(error);
+	du.warning(error.message);
 
 });

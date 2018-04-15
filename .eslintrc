@@ -17,8 +17,8 @@
 	"rules": {
 		"no-console": "error",
 		"no-trailing-spaces": "warn",
-		"indent": "off",
-		"no-mixed-spaces-and-tabs": "off",
+		"indent": ["error", "tab"],
+		"no-mixed-spaces-and-tabs": "error",
 		"no-unused-vars": "error",
 		"promise/always-return": "warn",
 		"promise/catch-or-return": "warn",

@@ -9,61 +9,61 @@ const ShippingReceiptController = global.SixCRM.routes.include('entities', 'Ship
 
 module.exports = class TrackerUtilitiesController extends PermissionedController  {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.parameter_definition = {
-      info:{
-        required: {
-          shippingreceipt:'shipping_receipt'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			info:{
+				required: {
+					shippingreceipt:'shipping_receipt'
+				},
+				optional:{}
+			}
+		};
 
-    this.parameter_validation = {
-      shippingreceipt: global.SixCRM.routes.path('model', 'providers/tracker/trackableshippingreceipt.json')
-    };
+		this.parameter_validation = {
+			shippingreceipt: global.SixCRM.routes.path('model', 'providers/tracker/trackableshippingreceipt.json')
+		};
 
-    this.shippingReceiptController = new ShippingReceiptController();
+		this.shippingReceiptController = new ShippingReceiptController();
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-  }
+	}
 
-  acquireShippingReceipt(){
+	acquireShippingReceipt(){
 
-    du.debug('Acquire Shipping Receipt');
+		du.debug('Acquire Shipping Receipt');
 
-    let shipping_receipt = this.parameters.get('shippingreceipt');
+		let shipping_receipt = this.parameters.get('shippingreceipt');
 
-    return this.shippingReceiptController.get({id: shipping_receipt.id}).then(shipping_receipt => {
+		return this.shippingReceiptController.get({id: shipping_receipt.id}).then(shipping_receipt => {
 
-      this.parameters.set('shippingreceipt', shipping_receipt);
+			this.parameters.set('shippingreceipt', shipping_receipt);
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  respond(){
+	respond(){
 
-    du.debug('Respond');
+		du.debug('Respond');
 
-    let response_prototype = {
-      response_type: this.parameters.get('responsecode')
-    };
+		let response_prototype = {
+			response_type: this.parameters.get('responsecode')
+		};
 
-    let vendor_response_class = this.parameters.get('vendorresponseclass', null, false);
+		let vendor_response_class = this.parameters.get('vendorresponseclass', null, false);
 
-    if(!_.isNull(vendor_response_class) && _.isFunction(vendor_response_class.getParsedResponse)){
-      response_prototype.vendor_response = vendor_response_class.getParsedResponse();
-    }
+		if(!_.isNull(vendor_response_class) && _.isFunction(vendor_response_class.getParsedResponse)){
+			response_prototype.vendor_response = vendor_response_class.getParsedResponse();
+		}
 
-    return new TrackerResponse(response_prototype);
+		return new TrackerResponse(response_prototype);
 
-  }
+	}
 
 }

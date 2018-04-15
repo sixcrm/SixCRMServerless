@@ -6,52 +6,52 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 
 module.exports = class EmailTemplateController extends entityController {
 
-    constructor(){
+	constructor(){
 
-        super('emailtemplate');
+		super('emailtemplate');
 
-        this.search_fields = ['name'];
+		this.search_fields = ['name'];
 
-    }
+	}
 
-    listBySMTPProvider({smtpprovider: smtpprovider, pagination: pagination}){
+	listBySMTPProvider({smtpprovider: smtpprovider, pagination: pagination}){
 
-      du.debug('List By SMTP Provider');
+		du.debug('List By SMTP Provider');
 
-      let query_parameters = {
-        filter_expression: '#f1 = :smtpprovider_id',
-        expression_attribute_values: {
-          ':smtpprovider_id':this.getID(smtpprovider)
-        },
-        expression_attribute_names: {
-          '#f1':'smtp_provider'
-        }
-      };
+		let query_parameters = {
+			filter_expression: '#f1 = :smtpprovider_id',
+			expression_attribute_values: {
+				':smtpprovider_id':this.getID(smtpprovider)
+			},
+			expression_attribute_names: {
+				'#f1':'smtp_provider'
+			}
+		};
 
-      //Technical Debt:  Use listByAccount()
-      return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
+		//Technical Debt:  Use listByAccount()
+		return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
 
-    }
+	}
 
-    getSMTPProvider(emailtemplate){
+	getSMTPProvider(emailtemplate){
 
-      du.debug('Get SMTP Provider', emailtemplate);
+		du.debug('Get SMTP Provider', emailtemplate);
 
-      if(_.has(emailtemplate, 'smtp_provider')){
+		if(_.has(emailtemplate, 'smtp_provider')){
 
-        du.debug('Get SMTP Provider - returning from controller.');
+			du.debug('Get SMTP Provider - returning from controller.');
 
-        return this.executeAssociatedEntityFunction('SMTPProviderController', 'get', {id: emailtemplate.smtp_provider});
+			return this.executeAssociatedEntityFunction('SMTPProviderController', 'get', {id: emailtemplate.smtp_provider});
 
-      }else{
+		}else{
 
-        du.debug('Get SMTP Provider - returning null.');
+			du.debug('Get SMTP Provider - returning null.');
 
-        return Promise.resolve(null);
+			return Promise.resolve(null);
 
-      }
+		}
 
-    }
+	}
 
 }
 

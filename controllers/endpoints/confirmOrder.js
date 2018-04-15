@@ -10,203 +10,203 @@ const transactionEndpointController = global.SixCRM.routes.include('controllers'
 
 module.exports = class ConfirmOrderController extends transactionEndpointController{
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.required_permissions = [
-      'user/read',
-      'account/read',
-      'session/create',
-      'session/read',
-      'session/update',
-      'campaign/read',
-      'creditcard/create',
-      'creditcard/update',
-      'creditcard/read',
-      'productschedule/read',
-      'merchantprovidergroup/read',
-      'merchantprovidergroupassociation/read',
-      'product/read',
-      'affiliate/read',
-      'transaction/read',
-      'rebill/read',
-      'notifications/create',
-      'tracker/read'
-    ];
+		this.required_permissions = [
+			'user/read',
+			'account/read',
+			'session/create',
+			'session/read',
+			'session/update',
+			'campaign/read',
+			'creditcard/create',
+			'creditcard/update',
+			'creditcard/read',
+			'productschedule/read',
+			'merchantprovidergroup/read',
+			'merchantprovidergroupassociation/read',
+			'product/read',
+			'affiliate/read',
+			'transaction/read',
+			'rebill/read',
+			'notifications/create',
+			'tracker/read'
+		];
 
-    this.notification_parameters = {
-      type: 'session',
-      action: 'closed',
-      title: 'Completed Session',
-      body: 'A customer has completed a session.'
-    };
+		this.notification_parameters = {
+			type: 'session',
+			action: 'closed',
+			title: 'Completed Session',
+			body: 'A customer has completed a session.'
+		};
 
-    this.parameter_definitions = {
-      execute: {
-        required : {
-          event:'event'
-        }
-      }
-    };
+		this.parameter_definitions = {
+			execute: {
+				required : {
+					event:'event'
+				}
+			}
+		};
 
-    this.parameter_validation = {
-      'event':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/event.json'),
-      'session':global.SixCRM.routes.path('model', 'entities/session.json'),
-      'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
-      'campaign': global.SixCRM.routes.path('model', 'entities/campaign.json'),
-      'transactionproducts':global.SixCRM.routes.path('model', 'endpoints/components/transactionproducts.json'),
-      'transactions':global.SixCRM.routes.path('model', 'endpoints/components/transactions.json'),
-      'response':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
-    };
+		this.parameter_validation = {
+			'event':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/event.json'),
+			'session':global.SixCRM.routes.path('model', 'entities/session.json'),
+			'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
+			'campaign': global.SixCRM.routes.path('model', 'entities/campaign.json'),
+			'transactionproducts':global.SixCRM.routes.path('model', 'endpoints/components/transactionproducts.json'),
+			'transactions':global.SixCRM.routes.path('model', 'endpoints/components/transactions.json'),
+			'response':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
+		};
 
-    this.transactionHelperController = new TransactionHelperController();
-    this.sessionHelperController = new SessionHelperController();
+		this.transactionHelperController = new TransactionHelperController();
+		this.sessionHelperController = new SessionHelperController();
 
-    this.sessionController = new SessionController();
+		this.sessionController = new SessionController();
 
-    this.event_type = 'confirm';
+		this.event_type = 'confirm';
 
-    this.initialize();
+		this.initialize();
 
-  }
+	}
 
-  execute(event){
+	execute(event){
 
-    du.debug('Execute');
+		du.debug('Execute');
 
-    return this.preamble(event)
-    .then(() => this.confirmOrder());
+		return this.preamble(event)
+			.then(() => this.confirmOrder());
 
-  }
+	}
 
-  confirmOrder(){
+	confirmOrder(){
 
-    du.debug('Confirm Order');
+		du.debug('Confirm Order');
 
-    return this.hydrateSession()
-    .then(() => this.validateSession())
-    .then(() => this.hydrateSessionProperties())
-    .then(() => this.closeSession())
-    .then(() => this.buildResponse())
-    .then(() => this.postProcessing())
-		.then(() => {
+		return this.hydrateSession()
+			.then(() => this.validateSession())
+			.then(() => this.hydrateSessionProperties())
+			.then(() => this.closeSession())
+			.then(() => this.buildResponse())
+			.then(() => this.postProcessing())
+			.then(() => {
 
-      return this.parameters.get('response');
+				return this.parameters.get('response');
 
-    });
+			});
 
-  }
+	}
 
-  hydrateSession(){
+	hydrateSession(){
 
-    du.debug('Hydrate Session');
+		du.debug('Hydrate Session');
 
-    let event = this.parameters.get('event');
+		let event = this.parameters.get('event');
 
-    return this.sessionController.get({id: event.session}).then(session => {
+		return this.sessionController.get({id: event.session}).then(session => {
 
-      this.parameters.set('session', session);
-      return true;
+			this.parameters.set('session', session);
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  validateSession(){
+	validateSession(){
 
-    du.debug('Validate Session');
+		du.debug('Validate Session');
 
-    let session = this.parameters.get('session');
+		let session = this.parameters.get('session');
 
-    if(this.sessionHelperController.isComplete({session: session})){
-      eu.throwError('bad_request', 'The specified session is already complete.');
-    }
+		if(this.sessionHelperController.isComplete({session: session})){
+			eu.throwError('bad_request', 'The specified session is already complete.');
+		}
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  hydrateSessionProperties(){
+	hydrateSessionProperties(){
 
-    du.debug('Hydrate Session Properties');
+		du.debug('Hydrate Session Properties');
 
-    let session = this.parameters.get('session');
+		let session = this.parameters.get('session');
 
-    let promises = [
-      this.sessionController.getCustomer(session),
-      this.sessionController.listTransactions(session),
-      this.sessionController.getCampaign(session)
-    ];
+		let promises = [
+			this.sessionController.getCustomer(session),
+			this.sessionController.listTransactions(session),
+			this.sessionController.getCampaign(session)
+		];
 
-    return Promise.all(promises).then(promises => {
+		return Promise.all(promises).then(promises => {
 
-      this.parameters.set('customer', promises[0]);
-      this.parameters.set('transactions', promises[1]);
-      this.parameters.set('campaign', promises[2]);
+			this.parameters.set('customer', promises[0]);
+			this.parameters.set('transactions', promises[1]);
+			this.parameters.set('campaign', promises[2]);
 
-      return true;
+			return true;
 
-    })
-    .then(() => this.setTransactionProducts());
+		})
+			.then(() => this.setTransactionProducts());
 
-  }
+	}
 
-  setTransactionProducts(){
+	setTransactionProducts(){
 
-    du.debug('Set Transaction Products');
+		du.debug('Set Transaction Products');
 
-    let transactions = this.parameters.get('transactions');
+		let transactions = this.parameters.get('transactions');
 
-    let transaction_products = this.transactionHelperController.getTransactionProducts(transactions);
+		let transaction_products = this.transactionHelperController.getTransactionProducts(transactions);
 
-    this.parameters.set('transactionproducts', transaction_products);
+		this.parameters.set('transactionproducts', transaction_products);
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
 
-  closeSession(){
+	closeSession(){
 
-    du.debug('Confirm Order');
+		du.debug('Confirm Order');
 
-    let session = this.parameters.get('session');
+		let session = this.parameters.get('session');
 
-    return this.sessionController.closeSession(session).then(() => {
+		return this.sessionController.closeSession(session).then(() => {
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  buildResponse(){
+	buildResponse(){
 
-    du.debug('Build Response');
+		du.debug('Build Response');
 
-    let session = this.parameters.get('session');
-    let customer = this.parameters.get('customer');
-    let transactions = this.parameters.get('transactions');
-    let transaction_products = this.parameters.get('transactionproducts');
+		let session = this.parameters.get('session');
+		let customer = this.parameters.get('customer');
+		let transactions = this.parameters.get('transactions');
+		let transaction_products = this.parameters.get('transactionproducts');
 
-    this.parameters.set('response', {
-      session:session,
-      customer: customer,
-      transactions: transactions,
-      transaction_products: transaction_products
-    });
+		this.parameters.set('response', {
+			session:session,
+			customer: customer,
+			transactions: transactions,
+			transaction_products: transaction_products
+		});
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  postProcessing(){
+	postProcessing(){
 
-    du.debug('Post Processing');
+		du.debug('Post Processing');
 
-    return this.pushEvent();
+		return this.pushEvent();
 
-  }
+	}
 
 }

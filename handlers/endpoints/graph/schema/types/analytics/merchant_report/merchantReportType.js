@@ -7,17 +7,17 @@ const merchantReportRowType = require('./merchantReportRowType');
 const analyticsPaginationType = require('./../paginationType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'MerchantReportType',
-    description: 'Merchant Report',
-    fields: () => ({
-      merchants: {
-          type: new GraphQLList(merchantReportRowType.graphObj),
-          description: 'A transaction',
-      },
-      pagination: {
-          type: new GraphQLNonNull(analyticsPaginationType.graphObj),
-          description: 'A transaction',
-      }
-    }),
-    interfaces: []
+	name: 'MerchantReportType',
+	description: 'Merchant Report',
+	fields: () => ({
+		merchants: {
+			type: new GraphQLList(merchantReportRowType.graphObj),
+			description: 'A transaction',
+		},
+		pagination: {
+			type: new GraphQLNonNull(analyticsPaginationType.graphObj),
+			description: 'A transaction',
+		}
+	}),
+	interfaces: []
 });

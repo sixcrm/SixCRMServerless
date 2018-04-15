@@ -2,20 +2,20 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class UserACLHelperController {
 
-  constructor(){}
+	constructor(){}
 
-  getPrototypeUserACL({user, account, role}){
+	getPrototypeUserACL({user, account, role}){
 
-    du.debug('Get Prototype User ACL');
+		du.debug('Get Prototype User ACL');
 
-    let acl_prototype = {
-        user: user,
-        account: account,
-        role: role
-    };
+		let acl_prototype = {
+			user: user,
+			account: account,
+			role: role
+		};
 
-    return acl_prototype;
+		return acl_prototype;
 
-  }
+	}
 
 }

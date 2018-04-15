@@ -68,24 +68,24 @@ module.exports = class WriteTransactionRecords {
 		const queryArgs = _.flatten(records.map(r => {
 
 			return [
-					r.id,
-					r.datetime,
-					r.session,
-					r.customer,
-					r.creditcard,
-					r.merchantProvider,
-					r.campaign,
-					r.affiliate,
-					r.amount,
-					r.processorResult,
-					r.account,
-					r.type,
-					r.subtype || 'main',
-					r.subaffiliate1,
-					r.subaffiliate2,
-					r.subaffiliate3,
-					r.subaffiliate4,
-					r.subaffiliate5
+				r.id,
+				r.datetime,
+				r.session,
+				r.customer,
+				r.creditcard,
+				r.merchantProvider,
+				r.campaign,
+				r.affiliate,
+				r.amount,
+				r.processorResult,
+				r.account,
+				r.type,
+				r.subtype || 'main',
+				r.subaffiliate1,
+				r.subaffiliate2,
+				r.subaffiliate3,
+				r.subaffiliate4,
+				r.subaffiliate5
 			];
 
 		}));

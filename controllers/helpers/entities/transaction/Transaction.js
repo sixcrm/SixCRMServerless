@@ -10,203 +10,203 @@ const TransactionController = global.SixCRM.routes.include('controllers', 'entit
 
 module.exports = class TransactionHelperController {
 
-  constructor(){
+	constructor(){
 
-    this.parameter_definition = {
-      markTransactionChargeback: {
-        required: {
-          transactionid:'transactionid',
-          chargebackstatus: 'chargeback_status'
-        },
-        optional:{}
-      },
-      updateTransactionProducts:{
-        required:{
-          transactionid:'transaction_id',
-          updatedtransactionproducts:'updated_transaction_products'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			markTransactionChargeback: {
+				required: {
+					transactionid:'transactionid',
+					chargebackstatus: 'chargeback_status'
+				},
+				optional:{}
+			},
+			updateTransactionProducts:{
+				required:{
+					transactionid:'transaction_id',
+					updatedtransactionproducts:'updated_transaction_products'
+				},
+				optional:{}
+			}
+		};
 
-    this.parameter_validation = {
-      'transactionid': global.SixCRM.routes.path('model','definitions/uuidv4.json'),
-      'transaction': global.SixCRM.routes.path('model','entities/transaction.json'),
-      'chargebackstatus': global.SixCRM.routes.path('model','helpers/transaction/chargeback.json'),
-      'updatedtransactionproducts': global.SixCRM.routes.path('model', 'helpers/entities/transaction/updatedtransactionproducts.json')
-    };
+		this.parameter_validation = {
+			'transactionid': global.SixCRM.routes.path('model','definitions/uuidv4.json'),
+			'transaction': global.SixCRM.routes.path('model','entities/transaction.json'),
+			'chargebackstatus': global.SixCRM.routes.path('model','helpers/transaction/chargeback.json'),
+			'updatedtransactionproducts': global.SixCRM.routes.path('model', 'helpers/entities/transaction/updatedtransactionproducts.json')
+		};
 
-    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-    this.transactionController = new TransactionController();
+		this.transactionController = new TransactionController();
 
-  }
+	}
 
-  getTransactionProducts(transactions){
+	getTransactionProducts(transactions){
 
-    du.debug('Get Transaction Products');
+		du.debug('Get Transaction Products');
 
-    let transaction_products = [];
+		let transaction_products = [];
 
-    arrayutilities.map(transactions, transaction => {
-      if(_.has(transaction, 'products')){
-        arrayutilities.map(transaction.products, transaction_product => {
-          transaction_products.push(transaction_product);
-        });
-      }
-    });
+		arrayutilities.map(transactions, transaction => {
+			if(_.has(transaction, 'products')){
+				arrayutilities.map(transaction.products, transaction_product => {
+					transaction_products.push(transaction_product);
+				});
+			}
+		});
 
-    return transaction_products;
+		return transaction_products;
 
-  }
+	}
 
-  markTransactionChargeback(){
+	markTransactionChargeback(){
 
-    du.debug('Mark Transaction Chargeback');
+		du.debug('Mark Transaction Chargeback');
 
-    return Promise.resolve(true)
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'markTransactionChargeback'}))
-    .then(() => this.acquireTransaction())
-    .then(() => this.setChargebackStatus())
-    .then(() => this.updateTransaction())
-    .then(() => {
-      return this.parameters.get('transaction');
-    })
+		return Promise.resolve(true)
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'markTransactionChargeback'}))
+			.then(() => this.acquireTransaction())
+			.then(() => this.setChargebackStatus())
+			.then(() => this.updateTransaction())
+			.then(() => {
+				return this.parameters.get('transaction');
+			})
 
-  }
+	}
 
-  acquireTransaction(){
+	acquireTransaction(){
 
-    du.debug('Acquire Transaction');
+		du.debug('Acquire Transaction');
 
-    let transaction_id = this.parameters.get('transactionid');
+		let transaction_id = this.parameters.get('transactionid');
 
-    return this.transactionController.get({id: transaction_id}).then(transaction => {
+		return this.transactionController.get({id: transaction_id}).then(transaction => {
 
-      if(_.isNull(transaction)){
-        eu.throwError('notfound', 'Transaction not found.');
-      }
+			if(_.isNull(transaction)){
+				eu.throwError('notfound', 'Transaction not found.');
+			}
 
-      this.parameters.set('transaction', transaction);
-      return true;
+			this.parameters.set('transaction', transaction);
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  setChargebackStatus(){
+	setChargebackStatus(){
 
-    du.debug('Set Chargeback Status');
+		du.debug('Set Chargeback Status');
 
-    let chargeback_status = this.parameters.get('chargebackstatus');
-    let transaction = this.parameters.get('transaction');
+		let chargeback_status = this.parameters.get('chargebackstatus');
+		let transaction = this.parameters.get('transaction');
 
-    transaction.chargeback = chargeback_status;
+		transaction.chargeback = chargeback_status;
 
-    this.parameters.set('transaction', transaction);
+		this.parameters.set('transaction', transaction);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  updateTransaction(){
+	updateTransaction(){
 
-    du.debug('Update Transaction');
+		du.debug('Update Transaction');
 
-    let transaction = this.parameters.get('transaction');
+		let transaction = this.parameters.get('transaction');
 
-    return this.transactionController.update({entity: transaction}).then(transaction => {
-      this.parameters.set('transaction', transaction);
-      return true;
-    });
+		return this.transactionController.update({entity: transaction}).then(transaction => {
+			this.parameters.set('transaction', transaction);
+			return true;
+		});
 
-  }
+	}
 
-  updateTransactionProducts(){
+	updateTransactionProducts(){
 
-    du.debug('Update Transaction Product');
+		du.debug('Update Transaction Product');
 
-    du.output(arguments[0]);
+		du.output(arguments[0]);
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateTransactionProducts'}))
-    .then(() => this.acquireTransaction())
-    .then(() => this.updateTransactionProductsPrototype())
-    .then(() => this.updateTransaction())
-    .then(() => {
-      return this.parameters.get('transaction');
-    });
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'updateTransactionProducts'}))
+			.then(() => this.acquireTransaction())
+			.then(() => this.updateTransactionProductsPrototype())
+			.then(() => this.updateTransaction())
+			.then(() => {
+				return this.parameters.get('transaction');
+			});
 
-  }
+	}
 
-  updateTransactionProductsPrototype(){
+	updateTransactionProductsPrototype(){
 
-    du.debug('Update Transaction Product Prototype');
+		du.debug('Update Transaction Product Prototype');
 
-    let transaction =  this.parameters.get('transaction');
-    let updated_transaction_products = this.parameters.get('updatedtransactionproducts');
+		let transaction =  this.parameters.get('transaction');
+		let updated_transaction_products = this.parameters.get('updatedtransactionproducts');
 
-    let missed_transaction_products = arrayutilities.filter(updated_transaction_products, updated_transaction_product => {
+		let missed_transaction_products = arrayutilities.filter(updated_transaction_products, updated_transaction_product => {
 
-      let found_product = arrayutilities.find(transaction.products, (transaction_product_group, index) => {
+			let found_product = arrayutilities.find(transaction.products, (transaction_product_group, index) => {
 
-        if(transaction_product_group.product.id == updated_transaction_product.product && transaction_product_group.amount == updated_transaction_product.amount){
+				if(transaction_product_group.product.id == updated_transaction_product.product && transaction_product_group.amount == updated_transaction_product.amount){
 
-          transaction.products[index].shipping_receipt = updated_transaction_product.shipping_receipt;
+					transaction.products[index].shipping_receipt = updated_transaction_product.shipping_receipt;
 
-          return true;
+					return true;
 
-        }
+				}
 
-        return false;
+				return false;
 
-      });
+			});
 
-      if(_.isNull(found_product) || _.isUndefined(found_product)){
-        return true;
-      }
+			if(_.isNull(found_product) || _.isUndefined(found_product)){
+				return true;
+			}
 
-      return false;
+			return false;
 
-    });
+		});
 
-    if(arrayutilities.nonEmpty(missed_transaction_products)){
+		if(arrayutilities.nonEmpty(missed_transaction_products)){
 
-      eu.throwError('server', 'Unaccounted for transaction products in update.');
+			eu.throwError('server', 'Unaccounted for transaction products in update.');
 
-    }
+		}
 
-    this.parameters.set('transaction', transaction);
+		this.parameters.set('transaction', transaction);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  getDistributionBySKU({products}){
+	getDistributionBySKU({products}){
 
-    du.debug('Get Distribution By SKU');
+		du.debug('Get Distribution By SKU');
 
-    let grouped_products = arrayutilities.group(products, (product) => {
-      return product.sku;
-    });
+		let grouped_products = arrayutilities.group(products, (product) => {
+			return product.sku;
+		});
 
-    objectutilities.map(grouped_products, (sku) => {
-      grouped_products[sku] = grouped_products[sku].length;
-    });
+		objectutilities.map(grouped_products, (sku) => {
+			grouped_products[sku] = grouped_products[sku].length;
+		});
 
-    return grouped_products;
+		return grouped_products;
 
-  }
+	}
 
-  getTransactionsAmount(transactions){
+	getTransactionsAmount(transactions){
 
-    du.debug('Get Transactions Amount');
+		du.debug('Get Transactions Amount');
 
-    return arrayutilities.reduce(transactions, (sum, transaction) => {
-      return (sum + numberutilities.toNumber(transaction.amount));
-    }, 0.0);
+		return arrayutilities.reduce(transactions, (sum, transaction) => {
+			return (sum + numberutilities.toNumber(transaction.amount));
+		}, 0.0);
 
-  }
+	}
 }

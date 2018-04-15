@@ -14,74 +14,74 @@ const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/
 
 function getValidVendorResponse(){
 
-  return {
-    code:'success',
-    response:{
-      body: ''
-    },
-    message:'Success'
-  };
+	return {
+		code:'success',
+		response:{
+			body: ''
+		},
+		message:'Success'
+	};
 
 }
 
 describe('/providers/terminal/Response.js', () => {
 
-  describe('constructor', () => {
+	describe('constructor', () => {
 
-    it('successfully constructs', () => {
+		it('successfully constructs', () => {
 
-      const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
-      let terminalResponse = new TerminalResponse();
+			const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
+			let terminalResponse = new TerminalResponse();
 
-      expect(objectutilities.getClassName(terminalResponse)).to.equal('TerminalResponse');
+			expect(objectutilities.getClassName(terminalResponse)).to.equal('TerminalResponse');
 
-    });
+		});
 
-  });
+	});
 
-  describe('setVendorResponse', () => {
+	describe('setVendorResponse', () => {
 
-    it('successfully sets the vendor response', () => {
+		it('successfully sets the vendor response', () => {
 
-      let vendor_response = getValidVendorResponse();
+			let vendor_response = getValidVendorResponse();
 
-      const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
-      let terminalResponse = new TerminalResponse();
+			const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
+			let terminalResponse = new TerminalResponse();
 
-      terminalResponse.setVendorResponse(vendor_response);
-      expect(terminalResponse.parameters.store['vendorresponse']).to.deep.equal(vendor_response);
-    });
+			terminalResponse.setVendorResponse(vendor_response);
+			expect(terminalResponse.parameters.store['vendorresponse']).to.deep.equal(vendor_response);
+		});
 
-  });
+	});
 
-  describe('setVendorResponse', () => {
+	describe('setVendorResponse', () => {
 
-    it('successfully sets the provider response', () => {
+		it('successfully sets the provider response', () => {
 
-      let vendor_response = getValidVendorResponse();
+			let vendor_response = getValidVendorResponse();
 
-      const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
-      let terminalResponse = new TerminalResponse();
+			const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
+			let terminalResponse = new TerminalResponse();
 
-      terminalResponse.parameters.set('vendorresponse', vendor_response);
+			terminalResponse.parameters.set('vendorresponse', vendor_response);
 
-      let result = terminalResponse.getVendorResponse();
+			let result = terminalResponse.getVendorResponse();
 
-      expect(result).to.deep.equal(vendor_response);
+			expect(result).to.deep.equal(vendor_response);
 
-    });
+		});
 
-    it('successfully get the provider response when the response is not set', () => {
+		it('successfully get the provider response when the response is not set', () => {
 
-      const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
-      let terminalResponse = new TerminalResponse();
+			const TerminalResponse = global.SixCRM.routes.include('providers', 'terminal/Response.js');
+			let terminalResponse = new TerminalResponse();
 
-      let result = terminalResponse.getVendorResponse();
+			let result = terminalResponse.getVendorResponse();
 
-      expect(result).to.be.null;
+			expect(result).to.be.null;
 
-    });
+		});
 
-  });
+	});
 
 });

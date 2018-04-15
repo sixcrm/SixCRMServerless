@@ -7,59 +7,59 @@ const MerchantProviderResponse = global.SixCRM.routes.include('vendors', 'mercha
 
 module.exports = class StripeResponse extends MerchantProviderResponse {
 
-  constructor(){
+	constructor(){
 
-    super(arguments[0]);
+		super(arguments[0]);
 
-  }
+	}
 
-  determineResultCode({response, body, action}){
+	determineResultCode({response, body, action}){
 
-    du.debug('Determine Result Code');
+		du.debug('Determine Result Code');
 
-    if(action == 'process'){
+		if(action == 'process'){
 
-      if(_.has(body, 'id') && _.has(body, 'status') && body.status == 'succeeded'){
-        return 'success';
-      }
+			if(_.has(body, 'id') && _.has(body, 'status') && body.status == 'succeeded'){
+				return 'success';
+			}
 
-      return 'fail';
+			return 'fail';
 
-    }else if(action == 'test'){
+		}else if(action == 'test'){
 
-      if(response.statusCode == '200' && response.statusMessage == 'OK' && _.has(body, 'object')){
+			if(response.statusCode == '200' && response.statusMessage == 'OK' && _.has(body, 'object')){
 
-        return 'success';
+				return 'success';
 
-      }
+			}
 
-      return 'fail';
+			return 'fail';
 
-    }else if(action == 'refund'){
+		}else if(action == 'refund'){
 
-      if(_.has(body, 'id') && _.has(body, 'status') && body.status == 'succeeded'){
+			if(_.has(body, 'id') && _.has(body, 'status') && body.status == 'succeeded'){
 
-        return 'success';
+				return 'success';
 
-      }
+			}
 
-      return 'fail';
+			return 'fail';
 
-    }else if(action == 'reverse'){
+		}else if(action == 'reverse'){
 
-      if(_.has(body, 'id') && _.has(body, 'status') && body.status == 'succeeded'){
+			if(_.has(body, 'id') && _.has(body, 'status') && body.status == 'succeeded'){
 
-        return 'success';
+				return 'success';
 
-      }
+			}
 
-      return 'fail';
+			return 'fail';
 
-    }
+		}
 
-    return 'error';
+		return 'error';
 
 
-  }
+	}
 
 }

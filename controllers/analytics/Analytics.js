@@ -375,14 +375,14 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		switch (parameters.filter.reportType) {
 
-			default:
+		default:
 
-				if (_.includes(facets, 'affiliate')) {
+			if (_.includes(facets, 'affiliate')) {
 
-					const facet = await this.getResults('reports/affiliate/facets/affiliates', _resolveParams(), this.default_queue_account_filter);
-					facetResponse.facets.push(facet)
+				const facet = await this.getResults('reports/affiliate/facets/affiliates', _resolveParams(), this.default_queue_account_filter);
+				facetResponse.facets.push(facet)
 
-				}
+			}
 
 			if (_.includes(facets, 'campaign')) {
 
@@ -419,16 +419,16 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		switch (parameters.facets.reportType) {
 
-			case 'revenueVersusOrders':
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams(), this.default_queue_account_filter);
-			case 'ordersVersusUpsells':
-				return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', _resolveParams(), this.default_queue_account_filter);
-			case 'directVersusRebill':
-				return this.getResults('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams(), this.default_queue_account_filter);
-			case 'averageRevenuePerOrder':
-				return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams(), this.default_queue_account_filter);
-			default:
-				throw new Error('Report not found');
+		case 'revenueVersusOrders':
+			return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams(), this.default_queue_account_filter);
+		case 'ordersVersusUpsells':
+			return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', _resolveParams(), this.default_queue_account_filter);
+		case 'directVersusRebill':
+			return this.getResults('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams(), this.default_queue_account_filter);
+		case 'averageRevenuePerOrder':
+			return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams(), this.default_queue_account_filter);
+		default:
+			throw new Error('Report not found');
 
 		}
 

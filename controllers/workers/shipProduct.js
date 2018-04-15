@@ -57,8 +57,8 @@ module.exports = class shipProductController extends workerController {
 			let terminal_response_code = response.getCode();
 
 			return this.pushEvent({
-					event_type: 'fulfillment_triggered_' + terminal_response_code
-				})
+				event_type: 'fulfillment_triggered_' + terminal_response_code
+			})
 				.then(() => {
 
 					this.parameters.set('terminalresponse', response);

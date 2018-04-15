@@ -9,22 +9,22 @@ let last_commit = exec(`git rev-parse --verify HEAD`).toString().replace(/\r?\n|
 let bucket_name = 'sixcrm-' + global.SixCRM.configuration.stage + '-resources';
 
 s3provider.assureBucket({Bucket: bucket_name})
-    .then(() => {
+	.then(() => {
 
-        let parameters = {
-            Bucket: bucket_name,
-            Key: 'last_commit.txt',
-            Body: last_commit
-        };
+		let parameters = {
+			Bucket: bucket_name,
+			Key: 'last_commit.txt',
+			Body: last_commit
+		};
 
-        return s3provider.putObject(parameters);
+		return s3provider.putObject(parameters);
 
-    })
-    .then(() => {
-        du.output('Successfully uploaded last commit (' + last_commit + ') to S3');
-        return process.exit();
-    })
-    .catch((error) => {
-        du.error(error);
-        process.exit();
-    });
+	})
+	.then(() => {
+		du.output('Successfully uploaded last commit (' + last_commit + ') to S3');
+		return process.exit();
+	})
+	.catch((error) => {
+		du.error(error);
+		process.exit();
+	});

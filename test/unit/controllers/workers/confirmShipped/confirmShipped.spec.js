@@ -11,237 +11,237 @@ const ShippingProviderResponse  = global.SixCRM.routes.include('vendors', 'shipp
 
 function getValidShippingProviderResponse(){
 
-  return new ShippingProviderResponse({
-    shortname: 'usps',
-    parameters: {
-      delivered: true,
-      status: 'in-transit',
-      detail: 'May 30 11:07 am NOTICE LEFT WILMINGTON DE 19801.'
-    },
-    result: 'success'
-  });
+	return new ShippingProviderResponse({
+		shortname: 'usps',
+		parameters: {
+			delivered: true,
+			status: 'in-transit',
+			detail: 'May 30 11:07 am NOTICE LEFT WILMINGTON DE 19801.'
+		},
+		result: 'success'
+	});
 
 }
 
 function getValidMessage(id){
 
-  return MockEntities.getValidMessage(id);
+	return MockEntities.getValidMessage(id);
 
 }
 
 function getValidShippingReceipt(){
 
-  return MockEntities.getValidShippingReceipt();
+	return MockEntities.getValidShippingReceipt();
 
 }
 
 function getValidShippingReceipts(){
 
-  return [
-    getValidShippingReceipt(),
-    getValidShippingReceipt(),
-    getValidShippingReceipt()
-  ];
+	return [
+		getValidShippingReceipt(),
+		getValidShippingReceipt(),
+		getValidShippingReceipt()
+	];
 
 }
 
 function getValidTransactionProducts(ids, expanded){
 
-  return MockEntities.getValidTransactionProducts(ids, expanded);
+	return MockEntities.getValidTransactionProducts(ids, expanded);
 
 }
 
 function getValidRebill(){
 
-  return MockEntities.getValidRebill();
+	return MockEntities.getValidRebill();
 
 }
 
 function getValidTransactions(){
 
-  return [
-    MockEntities.getValidTransaction(),
-    MockEntities.getValidTransaction()
-  ];
+	return [
+		MockEntities.getValidTransaction(),
+		MockEntities.getValidTransaction()
+	];
 
 }
 
 describe('controllers/workers/confirmShipped', () => {
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-  afterEach(() => {
-    mockery.resetCache();
-    mockery.deregisterAll();
-  });
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-  describe('constructor', () => {
+	describe('constructor', () => {
 
-    it('instantiates the confirmShippedController class', () => {
+		it('instantiates the confirmShippedController class', () => {
 
-      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-      let confirmedShippedController = new ConfirmedShippedController();
+			const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+			let confirmedShippedController = new ConfirmedShippedController();
 
-      expect(objectutilities.getClassName(confirmedShippedController)).to.equal('confirmShippedController');
+			expect(objectutilities.getClassName(confirmedShippedController)).to.equal('confirmShippedController');
 
-    });
+		});
 
-  });
+	});
 
-  describe('acquireTransactions', () => {
+	describe('acquireTransactions', () => {
 
-    it('successfully acquires transactions', () => {
+		it('successfully acquires transactions', () => {
 
-      let rebill = getValidRebill();
-      let transactions = getValidTransactions();
+			let rebill = getValidRebill();
+			let transactions = getValidTransactions();
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
-        listTransactions() {
-          return Promise.resolve(transactions);
-        }
-        getResult() {
-          return Promise.resolve(transactions);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve(transactions);
+				}
+				getResult() {
+					return Promise.resolve(transactions);
+				}
+			});
 
-      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-      let confirmedShippedController = new ConfirmedShippedController();
+			const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+			let confirmedShippedController = new ConfirmedShippedController();
 
-      confirmedShippedController.parameters.set('rebill', rebill);
+			confirmedShippedController.parameters.set('rebill', rebill);
 
-      return confirmedShippedController.acquireTransactions().then(result => {
+			return confirmedShippedController.acquireTransactions().then(result => {
 
-        expect(result).to.equal(true);
-        expect(confirmedShippedController.parameters.store['transactions']).to.deep.equal(transactions);
+				expect(result).to.equal(true);
+				expect(confirmedShippedController.parameters.store['transactions']).to.deep.equal(transactions);
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('acquireTransactionProducts', () => {
+	describe('acquireTransactionProducts', () => {
 
-    it('successfully acquires transaction products', () => {
+		it('successfully acquires transaction products', () => {
 
-      let transactions = getValidTransactions();
-      let transaction_products = getValidTransactionProducts(null, true);
+			let transactions = getValidTransactions();
+			let transaction_products = getValidTransactionProducts(null, true);
 
-      transaction_products.forEach(transaction_product => {
-        transaction_product.shipping_receipt = uuidV4()
-      });
+			transaction_products.forEach(transaction_product => {
+				transaction_product.shipping_receipt = uuidV4()
+			});
 
-      let mock_transaction_helper_controller = class {
-        constructor(){
+			let mock_transaction_helper_controller = class {
+				constructor(){
 
-        }
-        getTransactionProducts(){
-          return transaction_products;
-        }
-      };
+				}
+				getTransactionProducts(){
+					return transaction_products;
+				}
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
-      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-      let confirmedShippedController = new ConfirmedShippedController();
+			const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+			let confirmedShippedController = new ConfirmedShippedController();
 
-      confirmedShippedController.parameters.set('transactions', transactions);
+			confirmedShippedController.parameters.set('transactions', transactions);
 
-      return confirmedShippedController.acquireTransactionProducts().then(result => {
+			return confirmedShippedController.acquireTransactionProducts().then(result => {
 
-        expect(result).to.equal(true);
-        expect(confirmedShippedController.parameters.store['shippedtransactionproducts']).to.deep.equal(transaction_products);
+				expect(result).to.equal(true);
+				expect(confirmedShippedController.parameters.store['shippedtransactionproducts']).to.deep.equal(transaction_products);
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('acquireShippingReceipts', () => {
+	describe('acquireShippingReceipts', () => {
 
-    it('successfully acquires shipping receipts', () => {
+		it('successfully acquires shipping receipts', () => {
 
-      let transaction_products = getValidTransactionProducts(null, true);
+			let transaction_products = getValidTransactionProducts(null, true);
 
-      transaction_products.forEach(transaction_product => {
-          transaction_product.shipping_receipt = uuidV4()
-      });
+			transaction_products.forEach(transaction_product => {
+				transaction_product.shipping_receipt = uuidV4()
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
-        get() {
-          return Promise.resolve(getValidShippingReceipt());
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+				get() {
+					return Promise.resolve(getValidShippingReceipt());
+				}
+			});
 
-      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-      let confirmedShippedController = new ConfirmedShippedController();
+			const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+			let confirmedShippedController = new ConfirmedShippedController();
 
-      confirmedShippedController.parameters.set('shippedtransactionproducts', transaction_products);
+			confirmedShippedController.parameters.set('shippedtransactionproducts', transaction_products);
 
-      return confirmedShippedController.acquireShippingReceipts().then(result => {
+			return confirmedShippedController.acquireShippingReceipts().then(result => {
 
-        expect(result).to.equal(true);
-        expect(confirmedShippedController.parameters.store['shippingreceipts']).to.be.defined;
+				expect(result).to.equal(true);
+				expect(confirmedShippedController.parameters.store['shippingreceipts']).to.be.defined;
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('acquireProductShippedStati', () => {
+	describe('acquireProductShippedStati', () => {
 
-    xit('successfully acquires shipping stati', () => {
+		xit('successfully acquires shipping stati', () => {
 
-      let shipping_receipts = getValidShippingReceipts();
-      let shipping_status_object = getValidShippingProviderResponse();
+			let shipping_receipts = getValidShippingReceipts();
+			let shipping_status_object = getValidShippingProviderResponse();
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), {
-        getStatus:() => {
-          return Promise.resolve(shipping_status_object);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), {
+				getStatus:() => {
+					return Promise.resolve(shipping_status_object);
+				}
+			});
 
-      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-      let confirmedShippedController = new ConfirmedShippedController();
+			const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+			let confirmedShippedController = new ConfirmedShippedController();
 
-      confirmedShippedController.parameters.set('shippingreceipts', shipping_receipts);
+			confirmedShippedController.parameters.set('shippingreceipts', shipping_receipts);
 
-      return confirmedShippedController.acquireProductShippedStati().then(result => {
+			return confirmedShippedController.acquireProductShippedStati().then(result => {
 
-        expect(result).to.equal(true);
-        expect(confirmedShippedController.parameters.store['productshippedstati']).to.be.defined;
+				expect(result).to.equal(true);
+				expect(confirmedShippedController.parameters.store['productshippedstati']).to.be.defined;
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('respond', () => {
+	describe('respond', () => {
 
-    it('successfully responds', () => {
+		it('successfully responds', () => {
 
-      let rebill_shipped_status = true;
+			let rebill_shipped_status = true;
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-        constructor(){}
-        pushEvent(){
-          return Promise.resolve({});
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
+				constructor(){}
+				pushEvent(){
+					return Promise.resolve({});
+				}
+			});
 
-      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-      let confirmedShippedController = new ConfirmedShippedController();
+			const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+			let confirmedShippedController = new ConfirmedShippedController();
 
-      confirmedShippedController.parameters.set('rebillshippedstatus', rebill_shipped_status);
+			confirmedShippedController.parameters.set('rebillshippedstatus', rebill_shipped_status);
 
 			return confirmedShippedController.respond()
 				.then((response) => {
@@ -251,23 +251,23 @@ describe('controllers/workers/confirmShipped', () => {
 
 				});
 
-    });
+		});
 
-    it('successfully responds', () => {
+		it('successfully responds', () => {
 
-      let rebill_shipped_status = false;
+			let rebill_shipped_status = false;
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-        constructor(){}
-        pushEvent(){
-          return Promise.resolve({});
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
+				constructor(){}
+				pushEvent(){
+					return Promise.resolve({});
+				}
+			});
 
-      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-      let confirmedShippedController = new ConfirmedShippedController();
+			const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+			let confirmedShippedController = new ConfirmedShippedController();
 
-      confirmedShippedController.parameters.set('rebillshippedstatus', rebill_shipped_status);
+			confirmedShippedController.parameters.set('rebillshippedstatus', rebill_shipped_status);
 
 			return confirmedShippedController.respond()
 				.then((response) => {
@@ -277,138 +277,138 @@ describe('controllers/workers/confirmShipped', () => {
 
 				});
 
-    });
+		});
 
-  });
+	});
 
-  describe('execute', () => {
+	describe('execute', () => {
 
-    xit('successfully executes (success)', () => {
+		xit('successfully executes (success)', () => {
 
-      let message = getValidMessage('00c103b4-670a-439e-98d4-5a2834bb5f00');
-      let rebill = getValidRebill();
-      let transactions = getValidTransactions();
-      let transaction_products = getValidTransactionProducts();
-      let shipping_status_object = getValidShippingProviderResponse();
+			let message = getValidMessage('00c103b4-670a-439e-98d4-5a2834bb5f00');
+			let rebill = getValidRebill();
+			let transactions = getValidTransactions();
+			let transaction_products = getValidTransactionProducts();
+			let shipping_status_object = getValidShippingProviderResponse();
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), {
-        getStatus:() => {
-          return Promise.resolve(shipping_status_object);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), {
+				getStatus:() => {
+					return Promise.resolve(shipping_status_object);
+				}
+			});
 
-      let mock_transaction_helper_controller = class {
-        constructor(){
+			let mock_transaction_helper_controller = class {
+				constructor(){
 
-        }
-        getTransactionProducts(){
-          return transaction_products;
-        }
-      };
+				}
+				getTransactionProducts(){
+					return transaction_products;
+				}
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
-        listTransactions() {
-          return Promise.resolve(transactions);
-        }
-        getResult() {
-          return Promise.resolve(transactions);
-        }
-        get() {
-          return Promise.resolve(rebill);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve(transactions);
+				}
+				getResult() {
+					return Promise.resolve(transactions);
+				}
+				get() {
+					return Promise.resolve(rebill);
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
-        get() {
-          return Promise.resolve(getValidShippingReceipt());
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+				get() {
+					return Promise.resolve(getValidShippingReceipt());
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-        constructor(){}
-        pushEvent(){
-          return Promise.resolve({});
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
+				constructor(){}
+				pushEvent(){
+					return Promise.resolve({});
+				}
+			});
 
-      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-      let confirmedShippedController = new ConfirmedShippedController();
+			const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+			let confirmedShippedController = new ConfirmedShippedController();
 
-      return confirmedShippedController.execute(message).then((response) => {
+			return confirmedShippedController.execute(message).then((response) => {
 
-        expect(objectutilities.getClassName(response)).to.equal('WorkerResponse');
-        expect(response.getCode()).to.equal('success');
+				expect(objectutilities.getClassName(response)).to.equal('WorkerResponse');
+				expect(response.getCode()).to.equal('success');
 
-      });
+			});
 
-    });
+		});
 
-    xit('successfully executes (noaction)', () => {
+		xit('successfully executes (noaction)', () => {
 
-      let message = getValidMessage('00c103b4-670a-439e-98d4-5a2834bb5f00');
-      let rebill = getValidRebill();
-      let transactions = getValidTransactions();
-      let transaction_products = getValidTransactionProducts();
-      let shipping_status_object = getValidShippingProviderResponse();
+			let message = getValidMessage('00c103b4-670a-439e-98d4-5a2834bb5f00');
+			let rebill = getValidRebill();
+			let transactions = getValidTransactions();
+			let transaction_products = getValidTransactionProducts();
+			let shipping_status_object = getValidShippingProviderResponse();
 
-      shipping_status_object.parameters.store['status'] = 'unknown';
+			shipping_status_object.parameters.store['status'] = 'unknown';
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), {
-        getStatus:() => {
-          return Promise.resolve(shipping_status_object);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'helpers/shippingcarriers/ShippingStatus.js'), {
+				getStatus:() => {
+					return Promise.resolve(shipping_status_object);
+				}
+			});
 
-      let mock_transaction_helper_controller = class {
-        constructor(){
+			let mock_transaction_helper_controller = class {
+				constructor(){
 
-        }
-        getTransactionProducts(){
-          return transaction_products;
-        }
-      };
+				}
+				getTransactionProducts(){
+					return transaction_products;
+				}
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), mock_transaction_helper_controller);
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
-        listTransactions() {
-          return Promise.resolve(transactions);
-        }
-        getResult() {
-          return Promise.resolve(transactions);
-        }
-        get() {
-          return Promise.resolve(rebill);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve(transactions);
+				}
+				getResult() {
+					return Promise.resolve(transactions);
+				}
+				get() {
+					return Promise.resolve(rebill);
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
-        get() {
-          return Promise.resolve(getValidShippingReceipt());
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+				get() {
+					return Promise.resolve(getValidShippingReceipt());
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-        constructor(){}
-        pushEvent(){
-          return Promise.resolve({});
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
+				constructor(){}
+				pushEvent(){
+					return Promise.resolve({});
+				}
+			});
 
-      const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
-      let confirmedShippedController = new ConfirmedShippedController();
+			const ConfirmedShippedController = global.SixCRM.routes.include('controllers', 'workers/confirmShipped.js');
+			let confirmedShippedController = new ConfirmedShippedController();
 
-      return confirmedShippedController.execute(message).then((response) => {
+			return confirmedShippedController.execute(message).then((response) => {
 
-        expect(objectutilities.getClassName(response)).to.equal('WorkerResponse');
-        expect(response.getCode()).to.equal('noaction');
+				expect(objectutilities.getClassName(response)).to.equal('WorkerResponse');
+				expect(response.getCode()).to.equal('noaction');
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
 });

@@ -8,7 +8,7 @@ module.exports = class DataPipelineProvider extends AWSProvider {
 		super();
 
 		//Technical Debt:  Get this out of the constructor?
-    this.instantiateAWS();
+		this.instantiateAWS();
 
 		this.AWS.config.apiVersions = { datapipeline: '2012-10-29' };
 		this.datapipeline = new this.AWS.DataPipeline();

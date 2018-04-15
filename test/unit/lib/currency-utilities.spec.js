@@ -4,66 +4,66 @@ const currencyutilities = global.SixCRM.routes.include('lib', 'currency-utilitie
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 function getValidCurrencyStrings(){
-  return ['$1.00', '$32.94', '$0.22', '$0.00'];
+	return ['$1.00', '$32.94', '$0.22', '$0.00'];
 }
 
 function getValidCurrencyNumbers(){
-  return [1.00, 32.94, 0.22, 0.00];
+	return [1.00, 32.94, 0.22, 0.00];
 }
 
 describe('lib/currency-utilities.js', () => {
 
-    it('toCurrency from number', () => {
+	it('toCurrency from number', () => {
 
-      let currency_numbers = getValidCurrencyNumbers();
+		let currency_numbers = getValidCurrencyNumbers();
 
-      arrayutilities.map(currency_numbers, currency_number => {
+		arrayutilities.map(currency_numbers, currency_number => {
 
-        expect(currencyutilities.toCurrency(currency_number)).to.equal(currency_number.toFixed(2));
+			expect(currencyutilities.toCurrency(currency_number)).to.equal(currency_number.toFixed(2));
 
-      });
+		});
 
-    });
+	});
 
-    it('toCurrency from string', () => {
+	it('toCurrency from string', () => {
 
-        let currency_numbers = getValidCurrencyNumbers();
-        let currency_strings = getValidCurrencyStrings();
+		let currency_numbers = getValidCurrencyNumbers();
+		let currency_strings = getValidCurrencyStrings();
 
-        let index = 0;
+		let index = 0;
 
-        arrayutilities.map(currency_strings, currency_string => {
+		arrayutilities.map(currency_strings, currency_string => {
 
-            currency_string = currency_string.substring(1);
+			currency_string = currency_string.substring(1);
 
-            expect(currencyutilities.toCurrency(currency_string)).to.equal(currency_numbers[index].toFixed(2));
-            index++;
-        });
+			expect(currencyutilities.toCurrency(currency_string)).to.equal(currency_numbers[index].toFixed(2));
+			index++;
+		});
 
-    });
+	});
 
-    it('toCurrency from invalid values', () => {
+	it('toCurrency from invalid values', () => {
 
-        let any_currency_values = [true, false]; //random values that are not string nor int
+		let any_currency_values = [true, false]; //random values that are not string nor int
 
-        expect(currencyutilities.toCurrency(any_currency_values)).to.equal(null);
+		expect(currencyutilities.toCurrency(any_currency_values)).to.equal(null);
 
-    });
+	});
 
-    it('toCurrencyString', () => {
+	it('toCurrencyString', () => {
 
-      let currency_numbers = getValidCurrencyNumbers();
-      let currency_strings = getValidCurrencyStrings();
+		let currency_numbers = getValidCurrencyNumbers();
+		let currency_strings = getValidCurrencyStrings();
 
-      let index = 0;
+		let index = 0;
 
-      arrayutilities.map(currency_numbers, currency_number => {
+		arrayutilities.map(currency_numbers, currency_number => {
 
-        expect(currencyutilities.toCurrencyString(currency_number)).to.equal(currency_strings[index]);
-        index++;
+			expect(currencyutilities.toCurrencyString(currency_number)).to.equal(currency_strings[index]);
+			index++;
 
-      });
+		});
 
-    });
+	});
 
 });

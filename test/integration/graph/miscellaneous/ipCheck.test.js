@@ -11,8 +11,8 @@ const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 let endpoint = global.integration_test_config.endpoint;
 
 let test = {
-    name: "uncategorized",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/ipCheck.json')
+	name: "uncategorized",
+	query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/ipCheck.json')
 };
 
 let test_user = {
@@ -32,38 +32,38 @@ describe('IP Check Test', function() {
 		var query = tu.getQuery(test.query);
 
 		this_request.post('graph/'+account)
-					.set('Authorization', test_jwt)
-					.send(query)
-					.expect(200)
-					.expect('Content-Type', 'application/json')
-					.end(function(err, response){
+			.set('Authorization', test_jwt)
+			.send(query)
+			.expect(200)
+			.expect('Content-Type', 'application/json')
+			.end(function(err, response){
 
-			if (err) return done(err);
-
-			du.output(response.body);
-			const ipAddress = response.body.response.data.ipcheck.ip_address;
-			assert.isString(ipAddress);
-
-			ec2.describeNatGateways({
-				Filter: [
-					{
-						Name: "tag:Name",
-						Values: ["public-lambda"]
-					}
-				]
-			}, function(err, result) {
-
-				du.output(result);
 				if (err) return done(err);
 
-				assert.equal(result.NatGateways.length, 1, "Zero or multiple NAT Gateways found for public-lambda");
-				assert.equal(result.NatGateways[0].NatGatewayAddresses[0].PublicIp, ipAddress, "Outgoing IP Address does not match NAT Gateway");
+				du.output(response.body);
+				const ipAddress = response.body.response.data.ipcheck.ip_address;
+				assert.isString(ipAddress);
 
-				done();
+				ec2.describeNatGateways({
+					Filter: [
+						{
+							Name: "tag:Name",
+							Values: ["public-lambda"]
+						}
+					]
+				}, function(err, result) {
 
-			})
+					du.output(result);
+					if (err) return done(err);
 
-		});
+					assert.equal(result.NatGateways.length, 1, "Zero or multiple NAT Gateways found for public-lambda");
+					assert.equal(result.NatGateways[0].NatGatewayAddresses[0].PublicIp, ipAddress, "Outgoing IP Address does not match NAT Gateway");
+
+					done();
+
+				})
+
+			});
 
 	});
 

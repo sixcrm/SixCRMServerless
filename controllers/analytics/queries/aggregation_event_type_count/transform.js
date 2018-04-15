@@ -5,57 +5,57 @@ let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = function(results, parameters){
 
-    du.debug('Transformation Function');
+	du.debug('Transformation Function');
 
-    return new Promise((resolve) => {
+	return new Promise((resolve) => {
 
-        let return_object = [];
+		let return_object = [];
 
-        results.forEach((result) => {
+		results.forEach((result) => {
 
-            let result_date_iso8601 = timestamp.convertToISO8601(result[parameters.period].toString());
+			let result_date_iso8601 = timestamp.convertToISO8601(result[parameters.period].toString());
 
-            let match_identified = false;
+			let match_identified = false;
 
-            if(return_object.length > 0){
+			if(return_object.length > 0){
 
-                for(var i = 0; i < return_object.length; i++){
+				for(var i = 0; i < return_object.length; i++){
 
-                    if(_.has(return_object[i], 'datetime') && return_object[i].datetime == result_date_iso8601){
+					if(_.has(return_object[i], 'datetime') && return_object[i].datetime == result_date_iso8601){
 
-                        match_identified = true;
+						match_identified = true;
 
-                        return return_object[i].byeventtype.push({
-                            event_type: result.event_type.toString(),
-                            count: result.event_count.toString()
-                        });
+						return return_object[i].byeventtype.push({
+							event_type: result.event_type.toString(),
+							count: result.event_count.toString()
+						});
 
-                    }
+					}
 
-                }
+				}
 
-            }
+			}
 
-            if(match_identified == false){
+			if(match_identified == false){
 
-                return_object.push({
-                    datetime: result_date_iso8601,
-                    byeventtype: [{
-                        event_type: result.event_type.toString(),
-                        count: result.event_count.toString()
-                    }]
-                });
+				return_object.push({
+					datetime: result_date_iso8601,
+					byeventtype: [{
+						event_type: result.event_type.toString(),
+						count: result.event_count.toString()
+					}]
+				});
 
-            }
+			}
 
-        });
+		});
 
-        du.info("Observation Count: "+return_object.length);
+		du.info("Observation Count: "+return_object.length);
 
-        return resolve({
-            events:return_object
-        });
+		return resolve({
+			events:return_object
+		});
 
-    });
+	});
 
 }

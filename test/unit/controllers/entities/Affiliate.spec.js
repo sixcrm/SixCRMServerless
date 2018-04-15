@@ -4,48 +4,48 @@ const mockery = require('mockery');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidAffiliate() {
-    return MockEntities.getValidAffiliate()
+	return MockEntities.getValidAffiliate()
 }
 
 describe('controllers/Affiliate.js', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-    describe('getByAffiliateID', () => {
+	describe('getByAffiliateID', () => {
 
-        it('successfully retrieves affiliate', () => {
-            let affiliate = getValidAffiliate();
+		it('successfully retrieves affiliate', () => {
+			let affiliate = getValidAffiliate();
 
-            let mock_entity = class {
-                constructor(){}
+			let mock_entity = class {
+				constructor(){}
 
-                getBySecondaryIndex({field, index_value, index_name}) {
-                    expect(field).to.equal('affiliate_id');
-                    expect(index_value).to.equal(affiliate.id);
-                    expect(index_name).to.equal('affiliate_id-index');
-                    return Promise.resolve(affiliate);
-                }
-            };
+				getBySecondaryIndex({field, index_value, index_name}) {
+					expect(field).to.equal('affiliate_id');
+					expect(index_value).to.equal(affiliate.id);
+					expect(index_name).to.equal('affiliate_id-index');
+					return Promise.resolve(affiliate);
+				}
+			};
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Entity.js'), mock_entity);
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Entity.js'), mock_entity);
 
-            let AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
-            const affiliateController = new AffiliateController();
+			let AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
+			const affiliateController = new AffiliateController();
 
-            return affiliateController.getByAffiliateID(affiliate.id).then((result) => {
-                expect(result).to.deep.equal(affiliate);
-            });
-        });
-    });
+			return affiliateController.getByAffiliateID(affiliate.id).then((result) => {
+				expect(result).to.deep.equal(affiliate);
+			});
+		});
+	});
 });

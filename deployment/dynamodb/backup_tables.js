@@ -9,32 +9,32 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 let configuration = {
-  branch: 'development',
-  version: null
+	branch: 'development',
+	version: null
 };
 
 let cli_parameters = {
-  'branch': /^--branch=.*$/,
-  'version': /^--version=.*$/
+	'branch': /^--branch=.*$/,
+	'version': /^--version=.*$/
 }
 
 objectutilities.map(cli_parameters, key => {
 
-  let regex = cli_parameters[key];
+	let regex = cli_parameters[key];
 
-  arrayutilities.find(process.argv, (argument) => {
-    if(stringutilities.isMatch(argument, regex)){
-      configuration[key] = argument.split('=')[1];
-      return true;
-    }
-    return false;
-  });
+	arrayutilities.find(process.argv, (argument) => {
+		if(stringutilities.isMatch(argument, regex)){
+			configuration[key] = argument.split('=')[1];
+			return true;
+		}
+		return false;
+	});
 
 });
 
 dynamoDBDeployment.backupTables(configuration).then((result) => {
-  return du.highlight(result);
+	return du.highlight(result);
 }).catch(error => {
-  du.error(error);
-  du.warning(error.message);
+	du.error(error);
+	du.warning(error.message);
 });

@@ -10,45 +10,45 @@ const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/la
 
 module.exports = class TrackerViewController{
 
-    constructor(){
+	constructor(){
 
-    }
+	}
 
-    view(argumentation_object){
+	view(argumentation_object){
 
-        du.debug('View');
+		du.debug('View');
 
-        du.highlight(argumentation_object);
+		du.highlight(argumentation_object);
 
-        if(!_.has(argumentation_object, 'pathParameters')){ return Promise.reject(eu.getError('bad_request','Argumentation object missing pathParameters.')); }
+		if(!_.has(argumentation_object, 'pathParameters')){ return Promise.reject(eu.getError('bad_request','Argumentation object missing pathParameters.')); }
 
-        if(!_.has(argumentation_object.pathParameters, 'tracker')){ return Promise.reject(eu.getError('bad_request','Invalid Argumentation')); }
+		if(!_.has(argumentation_object.pathParameters, 'tracker')){ return Promise.reject(eu.getError('bad_request','Invalid Argumentation')); }
 
-        let tracker = argumentation_object.pathParameters.tracker;
+		let tracker = argumentation_object.pathParameters.tracker;
 
-        trackerController.disableACLs();
-        return trackerController.get({id: tracker}).then((tracker) => {
-            trackerController.enableACLs();
+		trackerController.disableACLs();
+		return trackerController.get({id: tracker}).then((tracker) => {
+			trackerController.enableACLs();
 
-            if(trackerController.validate(tracker)){
+			if(trackerController.validate(tracker)){
 
-                if(tracker.type == 'html'){
+				if(tracker.type == 'html'){
 
-                    let lr = new LambdaResponse;
+					let lr = new LambdaResponse;
 
-                    lr.setGlobalHeaders({"Content-Type":"text/html;charset=UTF-8"});
+					lr.setGlobalHeaders({"Content-Type":"text/html;charset=UTF-8"});
 
-                    return Promise.resolve(tracker.body);
+					return Promise.resolve(tracker.body);
 
-                }
+				}
 
-            }
+			}
 
-            return Promise.reject(eu.throwError('not_found','Tracker not found.'));
+			return Promise.reject(eu.throwError('not_found','Tracker not found.'));
 
-        });
+		});
 
-    }
+	}
 
 }
 

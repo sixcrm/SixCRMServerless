@@ -10,52 +10,52 @@ const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-p
 
 module.exports = class STSProvider extends AWSProvider {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    //Technical Debt:  Get this out of the constructor?
-    this.instantiateAWS();
+		//Technical Debt:  Get this out of the constructor?
+		this.instantiateAWS();
 
-    this.sts = new this.AWS.STS({
-      apiVersion: '2011-06-15'
-    });
+		this.sts = new this.AWS.STS({
+			apiVersion: '2011-06-15'
+		});
 
-  }
+	}
 
-  assumeRole(parameters){
+	assumeRole(parameters){
 
-    du.debug('Assume Role');
+		du.debug('Assume Role');
 
-    let transcribe_parameters = {
-      required:{
-        RoleArn:'RoleArn'
-      },
-      optional:{
-        DurationSeconds: 'DurationSeconds',
-        RoleSessionName: 'RoleSessionName',
-        Policy:'Policy',
-        ExternalId:'ExternalId'
-      }
-    };
+		let transcribe_parameters = {
+			required:{
+				RoleArn:'RoleArn'
+			},
+			optional:{
+				DurationSeconds: 'DurationSeconds',
+				RoleSessionName: 'RoleSessionName',
+				Policy:'Policy',
+				ExternalId:'ExternalId'
+			}
+		};
 
-    let new_parameters = objectutilities.transcribe(transcribe_parameters.required, parameters, {}, true);
+		let new_parameters = objectutilities.transcribe(transcribe_parameters.required, parameters, {}, true);
 
-    new_parameters = objectutilities.transcribe( transcribe_parameters.optional, parameters, new_parameters, false);
+		new_parameters = objectutilities.transcribe( transcribe_parameters.optional, parameters, new_parameters, false);
 
-    if(!_.has(new_parameters.RoleSessionName)){
-      new_parameters.RoleSessionName = random.createRandomString(20);
-    }
+		if(!_.has(new_parameters.RoleSessionName)){
+			new_parameters.RoleSessionName = random.createRandomString(20);
+		}
 
-    mvu.validateModel(new_parameters, global.SixCRM.routes.path('model', 'deployment/sts/assumerolerequest.json'))
+		mvu.validateModel(new_parameters, global.SixCRM.routes.path('model', 'deployment/sts/assumerolerequest.json'))
 
-    return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-      this.sts.assumeRole(new_parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.sts.assumeRole(new_parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-    });
+		});
 
-  }
+	}
 
 }
 

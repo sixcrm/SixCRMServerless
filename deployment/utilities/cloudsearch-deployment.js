@@ -9,206 +9,206 @@ const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utili
 
 module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
-    constructor(instantiate_csd) {
+	constructor(instantiate_csd) {
 
-      super();
+		super();
 
-      instantiate_csd = (_.isUndefined(instantiate_csd) || _.isNull(instantiate_csd))?true:instantiate_csd;
+		instantiate_csd = (_.isUndefined(instantiate_csd) || _.isNull(instantiate_csd))?true:instantiate_csd;
 
-      this.cloudsearchprovider = new CloudsearchProvider(instantiate_csd);
+		this.cloudsearchprovider = new CloudsearchProvider(instantiate_csd);
 
-    }
+	}
 
-    deploy(){
+	deploy(){
 
-      return this.createCloudsearchDomain().then(() => {
-        return this.createCloudsearchIndexes()
-        .then(() => this.indexCloudsearchDocuments())
-        .then(() => { return 'Complete'; });
-      });
+		return this.createCloudsearchDomain().then(() => {
+			return this.createCloudsearchIndexes()
+				.then(() => this.indexCloudsearchDocuments())
+				.then(() => { return 'Complete'; });
+		});
 
-    }
+	}
 
-    destroy(){
+	destroy(){
 
-      return this.deleteCloudsearchDomain()
-      .then(() => { return 'Complete'; });
+		return this.deleteCloudsearchDomain()
+			.then(() => { return 'Complete'; });
 
-    }
+	}
 
-    purge(){
+	purge(){
 
-      return this.cloudsearchDomainExists().then((result) => {
-        if(_.isObject(result)){
-          return this.getCloudsearchPurgeDocument()
-          .then((purge_document) => this.purgeCloudsearchDocuments(purge_document))
-          .then(() => {
-            return 'Complete';
-          });
-        }else{
-          return 'Complete';
-        }
-      });
-    }
+		return this.cloudsearchDomainExists().then((result) => {
+			if(_.isObject(result)){
+				return this.getCloudsearchPurgeDocument()
+					.then((purge_document) => this.purgeCloudsearchDocuments(purge_document))
+					.then(() => {
+						return 'Complete';
+					});
+			}else{
+				return 'Complete';
+			}
+		});
+	}
 
-    getCloudsearchPurgeDocument(){
+	getCloudsearchPurgeDocument(){
 
-      let query_parameters = {
-          queryParser: 'structured',
-          query: 'matchall',
-          size: '10000'
-      };
+		let query_parameters = {
+			queryParser: 'structured',
+			query: 'matchall',
+			size: '10000'
+		};
 
-      return this.cloudsearchprovider.search(query_parameters).then((results) => {
+		return this.cloudsearchprovider.search(query_parameters).then((results) => {
 
-        du.warning(results);
+			du.warning(results);
 
-        let documents = [];
+			let documents = [];
 
-        if(_.has(results, 'hits')){
+			if(_.has(results, 'hits')){
 
-          if(_.has(results.hits, 'found')){
+				if(_.has(results.hits, 'found')){
 
-            du.highlight('Removing '+results.hits.found+' documents');
+					du.highlight('Removing '+results.hits.found+' documents');
 
-          }else{
+				}else{
 
-            eu.throwError('server','Unable to identify found count in search results.');
+					eu.throwError('server','Unable to identify found count in search results.');
 
-          }
+				}
 
-          if(_.has(results.hits, 'hit') && _.isArray(results.hits.hit)){
+				if(_.has(results.hits, 'hit') && _.isArray(results.hits.hit)){
 
-            results.hits.hit.forEach((hit) => {
+					results.hits.hit.forEach((hit) => {
 
-              documents.push('{"type": "delete", "id": "'+hit.id+'"}');
+						documents.push('{"type": "delete", "id": "'+hit.id+'"}');
 
-            });
+					});
 
-          }else{
+				}else{
 
-            eu.throwError('server','Unable to identify hit property in search results hits.');
+					eu.throwError('server','Unable to identify hit property in search results hits.');
 
-          }
+				}
 
-        }else{
+			}else{
 
-          eu.throwError('server','Unable to identify hits property in search results.');
+				eu.throwError('server','Unable to identify hits property in search results.');
 
-        }
+			}
 
-        if(documents.length > 0){
+			if(documents.length > 0){
 
-          return '['+arrayutilities.compress(documents, ',', '')+']';
+				return '['+arrayutilities.compress(documents, ',', '')+']';
 
-        }else{
+			}else{
 
-          return false;
+				return false;
 
-        }
+			}
 
-      });
+		});
 
-    }
+	}
 
-    purgeCloudsearchDocuments(purge_document){
+	purgeCloudsearchDocuments(purge_document){
 
-      du.debug('Purge Cloudsearch Documents');
+		du.debug('Purge Cloudsearch Documents');
 
-      if(purge_document == false){
+		if(purge_document == false){
 
-        du.highlight('No documents to purge.');
+			du.highlight('No documents to purge.');
 
-        return Promise.resolve(null);
+			return Promise.resolve(null);
 
-      }else{
+		}else{
 
-        return this.cloudsearchprovider.uploadDocuments(purge_document).then((response) => {
+			return this.cloudsearchprovider.uploadDocuments(purge_document).then((response) => {
 
-          du.highlight('Purge Response: ', response);
+				du.highlight('Purge Response: ', response);
 
-          return response;
+				return response;
 
-        });
+			});
 
-      }
+		}
 
-    }
+	}
 
-    domainExists(domain_definition){
+	domainExists(domain_definition){
 
-      du.debug('Domain Exists');
+		du.debug('Domain Exists');
 
-      //Technical Debt:  Due to old provider code...
-      let parameters = [domain_definition.DomainName];
+		//Technical Debt:  Due to old provider code...
+		let parameters = [domain_definition.DomainName];
 
-      return this.cloudsearchprovider.describeDomains(parameters).then(result => {
+		return this.cloudsearchprovider.describeDomains(parameters).then(result => {
 
-        if(_.has(result, 'DomainStatusList') && _.isArray(result.DomainStatusList)){
-          if(arrayutilities.nonEmpty(result.DomainStatusList)){
-            if(result.DomainStatusList.length == 1){
-              return result.DomainStatusList[0];
-            }
-            eu.throwError('server', 'Multiple results returned: ', result);
-          }
-          return null;
-        }
-        eu.throwError('server', 'Unexpected result: ', result);
-      });
+			if(_.has(result, 'DomainStatusList') && _.isArray(result.DomainStatusList)){
+				if(arrayutilities.nonEmpty(result.DomainStatusList)){
+					if(result.DomainStatusList.length == 1){
+						return result.DomainStatusList[0];
+					}
+					eu.throwError('server', 'Multiple results returned: ', result);
+				}
+				return null;
+			}
+			eu.throwError('server', 'Unexpected result: ', result);
+		});
 
-    }
+	}
 
-    createCloudsearchDomain() {
+	createCloudsearchDomain() {
 
-      du.debug('Create Cloudsearch Domain');
+		du.debug('Create Cloudsearch Domain');
 
-      return this.cloudsearchDomainExists().then((result) => {
+		return this.cloudsearchDomainExists().then((result) => {
 
-        if(result == false){
+			if(result == false){
 
-          return this.cloudsearchprovider.createDomain()
-            .then(() => this.cloudsearchprovider.waitFor('ready'))
-            .then(() => this.cloudsearchprovider.saveDomainConfiguration())
+				return this.cloudsearchprovider.createDomain()
+					.then(() => this.cloudsearchprovider.waitFor('ready'))
+					.then(() => this.cloudsearchprovider.saveDomainConfiguration())
 
-        }else{
+			}else{
 
-          if(_.has(result, 'Processing')){
+				if(_.has(result, 'Processing')){
 
-            if(result.Processing == true){
-              du.highlight('Domain is processing...');
-              return this.cloudsearchprovider.waitFor('ready');
-            }else{
-              return result;
-            }
+					if(result.Processing == true){
+						du.highlight('Domain is processing...');
+						return this.cloudsearchprovider.waitFor('ready');
+					}else{
+						return result;
+					}
 
-          }
-        }
-        return false;
+				}
+			}
+			return false;
 
-      });
+		});
 
-    }
+	}
 
-    createCloudsearchIndexes() {
+	createCloudsearchIndexes() {
 
-      du.debug('Create Cloudsearch Indexes');
+		du.debug('Create Cloudsearch Indexes');
 
-      let index_objects = this.getIndexConfigurations();
+		let index_objects = this.getIndexConfigurations();
 
-      let index_promises = index_objects.map((index_object) => { return () => this.createCloudsearchIndex(index_object); });
+		let index_promises = index_objects.map((index_object) => { return () => this.createCloudsearchIndex(index_object); });
 
-      return arrayutilities.reduce(
-        index_promises,
-        (current, next) => {
-          if(_.isUndefined(current)){
-            return next;
-          }
-          return current.then(next);
-        },
-        Promise.resolve()
-      );
+		return arrayutilities.reduce(
+			index_promises,
+			(current, next) => {
+				if(_.isUndefined(current)){
+					return next;
+				}
+				return current.then(next);
+			},
+			Promise.resolve()
+		);
 
-      /*
+		/*
       return index_promises.reduce(function(current, next) {
           if(_.isUndefined(current)){
             return next;
@@ -217,100 +217,100 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
       }, Promise.resolve());
       */
 
-    }
+	}
 
-    getIndexConfigurations(){
+	getIndexConfigurations(){
 
-      du.debug('Get Index Objects');
+		du.debug('Get Index Objects');
 
-      let files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','cloudsearch/indexes'));
+		let files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','cloudsearch/indexes'));
 
-      let index_objects = arrayutilities.map(files, (file) => {
+		let index_objects = arrayutilities.map(files, (file) => {
 
-        let index_object = global.SixCRM.routes.include('deployment','cloudsearch/indexes/'+file);
+			let index_object = global.SixCRM.routes.include('deployment','cloudsearch/indexes/'+file);
 
-        index_object.DomainName = global.SixCRM.configuration.site_config.cloudsearch.domainname;
+			index_object.DomainName = global.SixCRM.configuration.site_config.cloudsearch.domainname;
 
-        return index_object;
+			return index_object;
 
-      });
+		});
 
-      return index_objects;
+		return index_objects;
 
-    }
+	}
 
-    createCloudsearchIndex(index_object) {
+	createCloudsearchIndex(index_object) {
 
-      du.debug('Create Cloudsearch Index');
+		du.debug('Create Cloudsearch Index');
 
-      return this.cloudsearchprovider.defineIndexField(index_object);
+		return this.cloudsearchprovider.defineIndexField(index_object);
 
-    }
+	}
 
-    indexCloudsearchDocuments(domainname) {
+	indexCloudsearchDocuments(domainname) {
 
-      du.debug('Index Cloudsearch Documents');
+		du.debug('Index Cloudsearch Documents');
 
-      return this.cloudsearchprovider.indexDocuments(domainname);
+		return this.cloudsearchprovider.indexDocuments(domainname);
 
-    }
+	}
 
-    deleteCloudsearchDomain(domainname){
+	deleteCloudsearchDomain(domainname){
 
-      du.debug('Delete Cloudsearch Domain');
+		du.debug('Delete Cloudsearch Domain');
 
-      return this.cloudsearchDomainExists(domainname).then((result) => {
+		return this.cloudsearchDomainExists(domainname).then((result) => {
 
-        if(_.isObject(result)){
+			if(_.isObject(result)){
 
-          return this.cloudsearchprovider.deleteDomain(domainname).then(() => {
-            return this.cloudsearchprovider.waitFor('deleted');
-          });
+				return this.cloudsearchprovider.deleteDomain(domainname).then(() => {
+					return this.cloudsearchprovider.waitFor('deleted');
+				});
 
-        }
+			}
 
-        return false;
+			return false;
 
-      });
+		});
 
-    }
+	}
 
-    cloudsearchDomainExists(domainname){
+	cloudsearchDomainExists(domainname){
 
-      du.debug('Cloudsearch Domain Exists');
+		du.debug('Cloudsearch Domain Exists');
 
-      if(_.isUndefined(domainname)){
-        domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;
-      }
+		if(_.isUndefined(domainname)){
+			domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;
+		}
 
-      return this.cloudsearchprovider.describeDomains([domainname]).then((results) => {
+		return this.cloudsearchprovider.describeDomains([domainname]).then((results) => {
 
-        if(_.has(results, 'DomainStatusList') && _.isArray(results.DomainStatusList) && results.DomainStatusList.length > 0){
+			if(_.has(results, 'DomainStatusList') && _.isArray(results.DomainStatusList) && results.DomainStatusList.length > 0){
 
-            let found = arrayutilities.find(results.DomainStatusList, (domain) => {
+				let found = arrayutilities.find(results.DomainStatusList, (domain) => {
 
-              if(domain.DomainName == domainname){
-                return true;
-              }
-              return false;
+					if(domain.DomainName == domainname){
+						return true;
+					}
+					return false;
 
-            });
+				});
 
-            if(_.isObject(found)){
+				if(_.isObject(found)){
 
-              du.highlight('Domain exists');
-              return found;
+					du.highlight('Domain exists');
+					return found;
 
-            }
+				}
 
-        }
+			}
 
-        du.highlight('Domain not found');
-        return false;
+			du.highlight('Domain not found');
+			return false;
 
 
-      });
+		});
 
-    }
+	}
 
 }

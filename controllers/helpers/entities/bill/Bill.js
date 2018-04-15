@@ -9,100 +9,100 @@ const BillController = global.SixCRM.routes.include('entities', 'Bill.js');
 //Technical Debt:  Refactor
 module.exports = class BillHelperController {
 
-  constructor(){
+	constructor(){
 
-    this.parameter_definition = {
-      setPayment: {
-        required:{
-          billid: 'id',
-          token: 'token'
-        }
-      }
-    };
+		this.parameter_definition = {
+			setPayment: {
+				required:{
+					billid: 'id',
+					token: 'token'
+				}
+			}
+		};
 
-    this.parameter_validation = {
-      'billid': global.SixCRM.routes.path('model','definitions/uuidv4.json'),
-      'token':global.SixCRM.routes.path('model','definitions/stripetoken.json'),
-      'bill':global.SixCRM.routes.path('model', 'entities/bill.json')
-    };
+		this.parameter_validation = {
+			'billid': global.SixCRM.routes.path('model','definitions/uuidv4.json'),
+			'token':global.SixCRM.routes.path('model','definitions/stripetoken.json'),
+			'bill':global.SixCRM.routes.path('model', 'entities/bill.json')
+		};
 
-    this.billController = new BillController();
+		this.billController = new BillController();
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-  }
+	}
 
-  setPayment(){
+	setPayment(){
 
-    du.debug('Set Payment');
+		du.debug('Set Payment');
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'setPayment'}))
-    .then(() => this.acquireBill())
-    .then(() => this.validateBill())
-    //.then(() => this.acquireTokenProperties())
-    //.then(() => this.validateToken())
-    .then(() => this.updateBillWithPaymentToken())
-    .then(() => {
-      return this.parameters.get('bill');
-    });
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'setPayment'}))
+			.then(() => this.acquireBill())
+			.then(() => this.validateBill())
+		//.then(() => this.acquireTokenProperties())
+		//.then(() => this.validateToken())
+			.then(() => this.updateBillWithPaymentToken())
+			.then(() => {
+				return this.parameters.get('bill');
+			});
 
-  }
+	}
 
-  acquireBill(){
+	acquireBill(){
 
-    du.debug('Acquire Bill');
+		du.debug('Acquire Bill');
 
-    let bill_id =  this.parameters.get('billid');
+		let bill_id =  this.parameters.get('billid');
 
-    return this.billController.get({id: bill_id}).then(bill => {
+		return this.billController.get({id: bill_id}).then(bill => {
 
-      this.parameters.set('bill', bill);
+			this.parameters.set('bill', bill);
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  validateBill(){
+	validateBill(){
 
-    du.debug('Validate Bill');
+		du.debug('Validate Bill');
 
-    let bill = this.parameters.get('bill');
+		let bill = this.parameters.get('bill');
 
-    if(this.isPaid(bill)){
-      eu.throwError('bad_request', 'Bill is already paid.');
-    }
+		if(this.isPaid(bill)){
+			eu.throwError('bad_request', 'Bill is already paid.');
+		}
 
-    return true;
+		return true;
 
-  }
+	}
 
-  updateBillWithPaymentToken(){
+	updateBillWithPaymentToken(){
 
-    du.debug('Update Bill With Payment Token');
+		du.debug('Update Bill With Payment Token');
 
-    let bill = this.parameters.get('bill');
-    let token = this.parameters.get('token');
+		let bill = this.parameters.get('bill');
+		let token = this.parameters.get('token');
 
-    bill.paid_result = token;
-    bill.paid = true;
-    if(_.has(bill, 'overdue')){
-      delete bill.overdue;
-    }
+		bill.paid_result = token;
+		bill.paid = true;
+		if(_.has(bill, 'overdue')){
+			delete bill.overdue;
+		}
 
-    return this.billController.updatePaidResult({entity: bill}).then(bill => {
+		return this.billController.updatePaidResult({entity: bill}).then(bill => {
 
-      this.parameters.set('bill', bill);
+			this.parameters.set('bill', bill);
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  /*
+	/*
   acquireTokenProperties(){
 
     du.debug('Acquire Token Properties');
@@ -139,20 +139,20 @@ module.exports = class BillHelperController {
 
   */
 
-  isPaid(bill){
+	isPaid(bill){
 
-    du.debug('Is Paid');
+		du.debug('Is Paid');
 
-    if(bill.paid == true){
-      return true;
-    }
+		if(bill.paid == true){
+			return true;
+		}
 
-    if(_.has(bill, 'paid_result')){
-      return true;
-    }
+		if(_.has(bill, 'paid_result')){
+			return true;
+		}
 
-    return false;
+		return false;
 
-  }
+	}
 
 }

@@ -8,171 +8,171 @@ const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-p
 
 module.exports = class PreIndexingHelperController {
 
-  constructor(){
+	constructor(){
 
-    this.parameter_definitions = {
-      required:{
-        transaction: 'transaction'
-      },
-      optional:{
-        amount: 'amount'
-      }
-    };
+		this.parameter_definitions = {
+			required:{
+				transaction: 'transaction'
+			},
+			optional:{
+				amount: 'amount'
+			}
+		};
 
-    this.parameter_validation = {
-      'preindexingentity': global.SixCRM.routes.path('model','helpers/indexing/preindexingentity.json'),
-      'abridgedentity': global.SixCRM.routes.path('model','helpers/indexing/indexelement.json'),
-      'packagedabridgedentity': global.SixCRM.routes.path('model','helpers/indexing/packagedabridgedentity.json')
-    };
+		this.parameter_validation = {
+			'preindexingentity': global.SixCRM.routes.path('model','helpers/indexing/preindexingentity.json'),
+			'abridgedentity': global.SixCRM.routes.path('model','helpers/indexing/indexelement.json'),
+			'packagedabridgedentity': global.SixCRM.routes.path('model','helpers/indexing/packagedabridgedentity.json')
+		};
 
-    this.initialize();
+		this.initialize();
 
-  }
+	}
 
-  initialize(){
+	initialize(){
 
-    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
 
-    this.sqsprovider = new SQSProvider();
+		this.sqsprovider = new SQSProvider();
 
-    this.setIndexingEntities();
-    this.setAbridgedEntityMap();
+		this.setIndexingEntities();
+		this.setAbridgedEntityMap();
 
-    return true;
+		return true;
 
-  }
+	}
 
-  setIndexingEntities(){
+	setIndexingEntities(){
 
-    du.debug('Set Indexing Entities');
+		du.debug('Set Indexing Entities');
 
-    this.indexing_entities = global.SixCRM.routes.include('model', 'helpers/indexing/entitytype.json').enum;
+		this.indexing_entities = global.SixCRM.routes.include('model', 'helpers/indexing/entitytype.json').enum;
 
-    return true;
+		return true;
 
-  }
+	}
 
-  setAbridgedEntityMap(){
+	setAbridgedEntityMap(){
 
-    du.debug('Set Abridged Entity Map');
+		du.debug('Set Abridged Entity Map');
 
-    let index_element_fields = global.SixCRM.routes.include('model','helpers/indexing/indexelement.json').properties;
+		let index_element_fields = global.SixCRM.routes.include('model','helpers/indexing/indexelement.json').properties;
 
-    if(!_.has(this, 'abridged_entity_map')){
-      this.abridged_entity_map = {};
-    }
+		if(!_.has(this, 'abridged_entity_map')){
+			this.abridged_entity_map = {};
+		}
 
-    objectutilities.map(index_element_fields, key => {
-      this.abridged_entity_map[key] = key;
-    });
+		objectutilities.map(index_element_fields, key => {
+			this.abridged_entity_map[key] = key;
+		});
 
-    return true;
+		return true;
 
-  }
+	}
 
-  //Entrypoint
-  removeFromSearchIndex(entity){
+	//Entrypoint
+	removeFromSearchIndex(entity){
 
-    du.debug('Remove From Search Index');
+		du.debug('Remove From Search Index');
 
-    entity.index_action = 'delete';
+		entity.index_action = 'delete';
 
-    this.parameters.set('preindexingentity', entity);
+		this.parameters.set('preindexingentity', entity);
 
-    return this.executePreIndexing();
+		return this.executePreIndexing();
 
-  }
+	}
 
-  //Entrypoint
-  addToSearchIndex(entity){
+	//Entrypoint
+	addToSearchIndex(entity){
 
-    du.debug('Add To Search Index')
+		du.debug('Add To Search Index')
 
-    entity.index_action = 'add';
+		entity.index_action = 'add';
 
-    this.parameters.set('preindexingentity', entity);
+		this.parameters.set('preindexingentity', entity);
 
-    return this.executePreIndexing();
+		return this.executePreIndexing();
 
-  }
+	}
 
-  executePreIndexing(){
+	executePreIndexing(){
 
-    du.debug('execute');
+		du.debug('execute');
 
-    return this.validateEntityForIndexing()
-    .then(() => {
-      return this.abridgeEntity()
-      .then(() => this.packageEntity())
-      .then(() => this.pushToIndexingBucket());
-    })
-    .catch((result) => {
-      if(result == true){
-        return Promise.resolve(true);
-      }
-      eu.throwError(result);
-    });
+		return this.validateEntityForIndexing()
+			.then(() => {
+				return this.abridgeEntity()
+					.then(() => this.packageEntity())
+					.then(() => this.pushToIndexingBucket());
+			})
+			.catch((result) => {
+				if(result == true){
+					return Promise.resolve(true);
+				}
+				eu.throwError(result);
+			});
 
-  }
+	}
 
-  validateEntityForIndexing(){
+	validateEntityForIndexing(){
 
-    let preindexing_entity = this.parameters.get('preindexingentity');
+		let preindexing_entity = this.parameters.get('preindexingentity');
 
-    if(!_.includes(this.indexing_entities, preindexing_entity.entity_type)){
-      du.highlight('Not a indexed entity type: '+preindexing_entity.entity_type);
-      return Promise.reject(true);
-    }
+		if(!_.includes(this.indexing_entities, preindexing_entity.entity_type)){
+			du.highlight('Not a indexed entity type: '+preindexing_entity.entity_type);
+			return Promise.reject(true);
+		}
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  abridgeEntity(){
+	abridgeEntity(){
 
-    du.debug('Abridge Entity');
+		du.debug('Abridge Entity');
 
-    let preindexing_entity = this.parameters.get('preindexingentity');
+		let preindexing_entity = this.parameters.get('preindexingentity');
 
-    let abridged_entity = objectutilities.transcribe(this.abridged_entity_map, preindexing_entity, {});
+		let abridged_entity = objectutilities.transcribe(this.abridged_entity_map, preindexing_entity, {});
 
-    this.parameters.set('abridgedentity', abridged_entity);
+		this.parameters.set('abridgedentity', abridged_entity);
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  packageEntity(){
+	packageEntity(){
 
-    du.debug('Package Entity');
+		du.debug('Package Entity');
 
-    let abridged_entity = this.parameters.get('abridgedentity');
+		let abridged_entity = this.parameters.get('abridgedentity');
 
-    let packaged_abridged_entity = JSON.stringify(abridged_entity);
+		let packaged_abridged_entity = JSON.stringify(abridged_entity);
 
-    this.parameters.set('packagedabridgedentity', packaged_abridged_entity);
+		this.parameters.set('packagedabridgedentity', packaged_abridged_entity);
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  pushToIndexingBucket(){
+	pushToIndexingBucket(){
 
-    du.debug('Push To Indexing Bucket');
+		du.debug('Push To Indexing Bucket');
 
-    let packaged_abridged_entity = this.parameters.get('packagedabridgedentity');
+		let packaged_abridged_entity = this.parameters.get('packagedabridgedentity');
 
-    //Technical Debt:  Queue name should be configured...
-    return this.sqsprovider.sendMessage({message_body: packaged_abridged_entity, queue: 'search_indexing'}).then(() => {
+		//Technical Debt:  Queue name should be configured...
+		return this.sqsprovider.sendMessage({message_body: packaged_abridged_entity, queue: 'search_indexing'}).then(() => {
 
-      du.debug('Message sent to the queue.');
+			du.debug('Message sent to the queue.');
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
 }

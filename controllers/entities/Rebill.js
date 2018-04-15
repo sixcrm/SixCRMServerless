@@ -1,4 +1,3 @@
-
 const _ = require('lodash');
 
 //Technical Debt:  We shouldn't need the AWS utility classes here...
@@ -12,200 +11,245 @@ const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities
 
 module.exports = class RebillController extends entityController {
 
-    constructor(){
+	constructor() {
 
-      super('rebill');
+		super('rebill');
 
-      this.rebillHelperController = new RebillHelperController();
+		this.rebillHelperController = new RebillHelperController();
 
-      this.search_fields = ['state'];
+		this.search_fields = ['state'];
 
-    }
+	}
 
-    //Technical Debt: finish!
-    associatedEntitiesCheck(){
-      return Promise.resolve([]);
-    }
+	//Technical Debt: finish!
+	associatedEntitiesCheck() {
+		return Promise.resolve([]);
+	}
 
-    listBySession({session}){
+	listBySession({
+		session
+	}) {
 
-      du.debug('List By Session');
+		du.debug('List By Session');
 
-      return this.queryBySecondaryIndex({field: 'parentsession', index_value: this.getID(session), index_name: 'parentsession-index'});
+		return this.queryBySecondaryIndex({
+			field: 'parentsession',
+			index_value: this.getID(session),
+			index_name: 'parentsession-index'
+		});
 
-    }
+	}
 
-    getMerchantProvider(rebill){
+	getMerchantProvider(rebill) {
 
-      du.debug('Get Merchant Provider');
+		du.debug('Get Merchant Provider');
 
-      if(_.has(rebill, 'merchant_provider')){
+		if (_.has(rebill, 'merchant_provider')) {
 
-        return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: rebill.merchant_provider});
+			return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {
+				id: rebill.merchant_provider
+			});
 
-      }
+		}
 
-      return null;
+		return null;
 
-    }
+	}
 
-	  //Note: rebills don't get product associations, only product schedules
-    //Technical Debt:  Is this deprecated?
-    getProducts(rebill){
+	//Note: rebills don't get product associations, only product schedules
+	//Technical Debt:  Is this deprecated?
+	getProducts(rebill) {
 
-      du.debug('Get Products');
+		du.debug('Get Products');
 
-      if(_.has(rebill, 'products') && arrayutilities.nonEmpty(rebill.products)){
+		if (_.has(rebill, 'products') && arrayutilities.nonEmpty(rebill.products)) {
 
-        return this.executeAssociatedEntityFunction('ProductController', 'listBy', {list_array: rebill.products})
-        .then(products => this.getResult(products, 'products'));
+			return this.executeAssociatedEntityFunction('ProductController', 'listBy', {
+				list_array: rebill.products
+			})
+				.then(products => this.getResult(products, 'products'));
 
-      }else{
+		} else {
 
-        return null;
+			return null;
 
-      }
+		}
 
-    }
+	}
 
-    listProductSchedules(rebill) {
+	listProductSchedules(rebill) {
 
-      du.debug('List Product Schedules');
+		du.debug('List Product Schedules');
 
-      if(_.has(rebill, 'product_schedules') && arrayutilities.nonEmpty(rebill.product_schedules)){
+		if (_.has(rebill, 'product_schedules') && arrayutilities.nonEmpty(rebill.product_schedules)) {
 
-        let list_array = arrayutilities.filter(rebill.product_schedules, (list_item) => {
-          return stringutilities.nonEmpty(list_item);
-        });
+			let list_array = arrayutilities.filter(rebill.product_schedules, (list_item) => {
+				return stringutilities.nonEmpty(list_item);
+			});
 
-        if(arrayutilities.nonEmpty(list_array)){
+			if (arrayutilities.nonEmpty(list_array)) {
 
-          let query_parameters = this.createINQueryParameters({field: 'id', list_array: list_array});
+				let query_parameters = this.createINQueryParameters({
+					field: 'id',
+					list_array: list_array
+				});
 
-          return this.executeAssociatedEntityFunction('ProductScheduleController', 'listByAccount', {query_parameters: query_parameters})
-          .then((product_schedules) => this.getResult(product_schedules, 'productschedules'));
+				return this.executeAssociatedEntityFunction('ProductScheduleController', 'listByAccount', {
+					query_parameters: query_parameters
+				})
+					.then((product_schedules) => this.getResult(product_schedules, 'productschedules'));
 
-        }
+			}
 
-      }
+		}
 
-      return null;
+		return null;
 
-    }
+	}
 
-    listTransactions(rebill){
+	listTransactions(rebill) {
 
-      du.debug('List Transactions');
+		du.debug('List Transactions');
 
-      return this.executeAssociatedEntityFunction('transactionController', 'listTransactionsByRebillID', {id: this.getID(rebill)});
+		return this.executeAssociatedEntityFunction('transactionController', 'listTransactionsByRebillID', {
+			id: this.getID(rebill)
+		});
 
-    }
+	}
 
-    getParentSession(rebill){
+	getParentSession(rebill) {
 
-      if(!_.has(rebill, 'parentsession')){ return null; }
+		if (!_.has(rebill, 'parentsession')) {
+			return null;
+		}
 
-      return this.executeAssociatedEntityFunction('SessionController', 'get', {id: this.getID(rebill.parentsession)});
+		return this.executeAssociatedEntityFunction('SessionController', 'get', {
+			id: this.getID(rebill.parentsession)
+		});
 
-    }
+	}
 
-    getParentSessionHydrated(rebill){
+	getParentSessionHydrated(rebill) {
 
-      if(!_.has(rebill, 'parentsession')){ return null; }
+		if (!_.has(rebill, 'parentsession')) {
+			return null;
+		}
 
-      return this.executeAssociatedEntityFunction('SessionController', 'getSessionHydrated', {id: rebill.parentsession});
+		return this.executeAssociatedEntityFunction('SessionController', 'getSessionHydrated', {
+			id: rebill.parentsession
+		});
 
-    }
+	}
 
-    getRebillsAfterTimestamp(a_timestamp){
+	getRebillsAfterTimestamp(a_timestamp) {
 
-      let timestamp_iso8601 = timestamp.castToISO8601(a_timestamp);
+		let timestamp_iso8601 = timestamp.castToISO8601(a_timestamp);
+
+		let query_parameters = {
+			filter_expression: '#bill_at < :timestamp_iso8601v AND #processing <> :processingv',
+			expression_attribute_values: {
+				':timestamp_iso8601v': timestamp_iso8601,
+				':processingv': 'true'
+			},
+			expression_attribute_names: {
+				'#bill_at': 'bill_at',
+				'#processing': 'processing'
+			}
+		};
 
-      let query_parameters = {
-        filter_expression: '#bill_at < :timestamp_iso8601v AND #processing <> :processingv',
-        expression_attribute_values: {
-          ':timestamp_iso8601v': timestamp_iso8601,
-          ':processingv': 'true'
-        },
-        expression_attribute_names: {
-          '#bill_at': 'bill_at',
-          '#processing': 'processing'
-        }
-      };
+		return this.listByAccount({
+			query_parameters: query_parameters
+		}).then((data) => {
 
-      return this.listByAccount({query_parameters: query_parameters}).then((data) => {
+			return data.rebills || [];
 
-          return data.rebills || [];
+		});
 
-      });
+	}
 
-    }
+	getPendingRebills({
+		pagination,
+		fatal,
+		search
+	}) {
 
-    getPendingRebills({pagination, fatal, search}){
+		let query_parameters = {
+			filter_expression: '#processing <> :processingv',
+			expression_attribute_values: {
+				':processingv': 'true'
+			},
+			expression_attribute_names: {
+				'#processing': 'processing'
+			}
+		};
 
-        let query_parameters = {
-            filter_expression: '#processing <> :processingv',
-            expression_attribute_values: {
-                ':processingv': 'true'
-            },
-            expression_attribute_names: {
-                '#processing': 'processing'
-            }
-        };
+		return this.listByAccount({
+			query_parameters: query_parameters,
+			pagination: pagination,
+			fatal: fatal,
+			search: search
+		});
 
-        return this.listByAccount({query_parameters: query_parameters, pagination: pagination, fatal: fatal, search: search});
+	}
 
-    }
+	getRebillsBilledAfter(after) {
 
-    getRebillsBilledAfter(after){
+		const query_parameters = {
+			filter_expression: '#bill_at >= :after_iso8601v',
+			expression_attribute_values: {
+				':after_iso8601v': after
+			},
+			expression_attribute_names: {
+				'#bill_at': 'bill_at'
+			}
+		};
 
-      const query_parameters = {
-        filter_expression: '#bill_at >= :after_iso8601v',
-        expression_attribute_values: {
-          ':after_iso8601v': after
-        },
-        expression_attribute_names: {
-          '#bill_at': 'bill_at'
-        }
-      };
+		return this.listByAccount({
+			query_parameters: query_parameters
+		}).then((data) => {
 
-      return this.listByAccount({query_parameters: query_parameters}).then((data) => {
+			return data.rebills || [];
 
-        return data.rebills || [];
+		});
 
-      });
+	}
 
-    }
+	listByState({
+		state,
+		state_changed_after,
+		state_changed_before,
+		pagination
+	}) {
 
-    listByState({state, state_changed_after, state_changed_before, pagination}){
+		du.debug('List By State');
 
-      du.debug('List By State');
+		//du.debug(`List By State: state: '${state}', state_changed_after: '${state_changed_after}', state_changed_before: '${state_changed_before}'`);
 
-      //du.debug(`List By State: state: '${state}', state_changed_after: '${state_changed_after}', state_changed_before: '${state_changed_before}'`);
+		let query_parameters = {};
 
-      let query_parameters = {};
+		if (state) {
+			query_parameters = this.appendFilterExpression(query_parameters, '#state = :statev');
+			query_parameters = this.appendExpressionAttributeNames(query_parameters, '#state', 'state');
+			query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statev', state);
+		}
 
-      if (state) {
-        query_parameters = this.appendFilterExpression(query_parameters, '#state = :statev');
-        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#state', 'state');
-        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statev', state);
-      }
+		if (state_changed_after) {
+			query_parameters = this.appendFilterExpression(query_parameters, '#statechangedafter > :statechangedafterv');
+			query_parameters = this.appendExpressionAttributeNames(query_parameters, '#statechangedafter', 'state_changed_at');
+			query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statechangedafterv', state_changed_after);
+		}
 
-      if (state_changed_after) {
-        query_parameters = this.appendFilterExpression(query_parameters, '#statechangedafter > :statechangedafterv');
-        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#statechangedafter', 'state_changed_at');
-        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statechangedafterv', state_changed_after);
-      }
+		if (state_changed_before) {
+			query_parameters = this.appendFilterExpression(query_parameters, '#statechangedbefore <= :statechangedbeforev');
+			query_parameters = this.appendExpressionAttributeNames(query_parameters, '#statechangedbefore', 'state_changed_at');
+			query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statechangedbeforev', state_changed_before);
+		}
 
-      if (state_changed_before) {
-        query_parameters = this.appendFilterExpression(query_parameters, '#statechangedbefore <= :statechangedbeforev');
-        query_parameters = this.appendExpressionAttributeNames(query_parameters, '#statechangedbefore', 'state_changed_at');
-        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':statechangedbeforev', state_changed_before);
-      }
+		return this.listByAccount({
+			query_parameters: query_parameters,
+			pagination: pagination
+		});
 
-      return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
-
-    }
+	}
 
 }
-

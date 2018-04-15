@@ -9,103 +9,103 @@ const ShippingCarrierController = global.SixCRM.routes.include('controllers', 'v
 
 module.exports = class TestController extends ShippingCarrierController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameter_definition = {
-        info: {
-          required: {
-            trackingnumber: 'tracking_number'
-          },
-          optional:{}
-        }
-      };
+		this.parameter_definition = {
+			info: {
+				required: {
+					trackingnumber: 'tracking_number'
+				},
+				optional:{}
+			}
+		};
 
-      this.parameter_validation = {
-        'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/Test/trackingnumber.json'),
-        'action':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/action.json'),
-        'requestjson':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/Test/inforequest.json'),
-        'requesturi':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/Test/inforequesturi.json'),
-        'vendorresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/Test/response.json')
-      };
+		this.parameter_validation = {
+			'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/Test/trackingnumber.json'),
+			'action':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/action.json'),
+			'requestjson':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/Test/inforequest.json'),
+			'requesturi':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/Test/inforequesturi.json'),
+			'vendorresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/Test/response.json')
+		};
 
-      this.augmentParameters();
+		this.augmentParameters();
 
-    }
+	}
 
-    info(){
+	info(){
 
-      du.debug('info');
+		du.debug('info');
 
-      this.parameters.set('action', 'info');
+		this.parameters.set('action', 'info');
 
-      return Promise.resolve()
-      .then(() => this.setParameters({argumentation: arguments[0], action: 'info'}))
-      .then(() => this.acquireAPIResult())
-      .then(() => this.respond({}));
+		return Promise.resolve()
+			.then(() => this.setParameters({argumentation: arguments[0], action: 'info'}))
+			.then(() => this.acquireAPIResult())
+			.then(() => this.respond({}));
 
-    }
+	}
 
-    acquireAPIResult(){
+	acquireAPIResult(){
 
-      du.debug('Acquire API Result');
+		du.debug('Acquire API Result');
 
-      return Promise.resolve()
-      .then(() => this.buildRequestJSON())
-      .then(() => this.buildRequestURI())
-      .then(() => this.executeAPIRequest())
+		return Promise.resolve()
+			.then(() => this.buildRequestJSON())
+			.then(() => this.buildRequestURI())
+			.then(() => this.executeAPIRequest())
 
-    }
+	}
 
-    buildRequestURI(){
+	buildRequestURI(){
 
-      du.debug('Build Request URI');
+		du.debug('Build Request URI');
 
-      let vendor_configuration = global.SixCRM.routes.include('config', global.SixCRM.configuration.stage+'/vendors/shippingcarriers/Test.yml');
+		let vendor_configuration = global.SixCRM.routes.include('config', global.SixCRM.configuration.stage+'/vendors/shippingcarriers/Test.yml');
 
-      this.parameters.set('requesturi', vendor_configuration.endpoint+'getinfo');
+		this.parameters.set('requesturi', vendor_configuration.endpoint+'getinfo');
 
-      return true;
+		return true;
 
-    }
+	}
 
-    buildRequestJSON(){
+	buildRequestJSON(){
 
-      du.debug('Build Request JSON');
+		du.debug('Build Request JSON');
 
-      let tracking_number = this.parameters.get('trackingnumber');
+		let tracking_number = this.parameters.get('trackingnumber');
 
-      this.parameters.set('requestjson', {tracking_number: tracking_number});
+		this.parameters.set('requestjson', {tracking_number: tracking_number});
 
-      return true;
+		return true;
 
-    }
+	}
 
-    executeAPIRequest(){
+	executeAPIRequest(){
 
-      du.debug('Execute API Request');
+		du.debug('Execute API Request');
 
-      let request_uri = this.parameters.get('requesturi');
-      let request_json = this.parameters.get('requestjson');
+		let request_uri = this.parameters.get('requesturi');
+		let request_json = this.parameters.get('requestjson');
 
-      let parameters = {
-        body: request_json,
-        url: request_uri
-      }
+		let parameters = {
+			body: request_json,
+			url: request_uri
+		}
 
-      return httpprovider.postJSON(parameters).then(response => {
+		return httpprovider.postJSON(parameters).then(response => {
 
-        if(response.error){
-          eu.throw(response.error);
-        }
+			if(response.error){
+				eu.throw(response.error);
+			}
 
-        this.parameters.set('vendorresponse', response.response);
+			this.parameters.set('vendorresponse', response.response);
 
-        return true;
+			return true;
 
-      });
+		});
 
-    }
+	}
 
 }

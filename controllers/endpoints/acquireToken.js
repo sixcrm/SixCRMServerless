@@ -9,133 +9,133 @@ const transactionEndpointController = global.SixCRM.routes.include('controllers'
 
 module.exports = class AcquireTokenController extends transactionEndpointController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.required_permissions = [
-        'user/read',
-        'account/read',
-        'campaign/read',
-        'affiliate/read',
-        'affiliate/create',
-        'tracker/read'
-      ];
+		this.required_permissions = [
+			'user/read',
+			'account/read',
+			'campaign/read',
+			'affiliate/read',
+			'affiliate/create',
+			'tracker/read'
+		];
 
-      this.parameter_definitions = {
-        execute: {
-          required : {
-            event:'event'
-          }
-        }
-      };
+		this.parameter_definitions = {
+			execute: {
+				required : {
+					event:'event'
+				}
+			}
+		};
 
-      this.parameter_validation = {
-        'updatedevent':global.SixCRM.routes.path('model', 'endpoints/acquireToken/updatedevent.json'),
-        'event':global.SixCRM.routes.path('model', 'endpoints/acquireToken/event.json'),
-        'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
-        'transactionjwt':global.SixCRM.routes.path('model', 'definitions/jwt.json'),
-        'affiliates':global.SixCRM.routes.path('model','endpoints/components/affiliates.json')
-      };
+		this.parameter_validation = {
+			'updatedevent':global.SixCRM.routes.path('model', 'endpoints/acquireToken/updatedevent.json'),
+			'event':global.SixCRM.routes.path('model', 'endpoints/acquireToken/event.json'),
+			'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
+			'transactionjwt':global.SixCRM.routes.path('model', 'definitions/jwt.json'),
+			'affiliates':global.SixCRM.routes.path('model','endpoints/components/affiliates.json')
+		};
 
-      this.event_type = 'click';
+		this.event_type = 'click';
 
-      this.initialize();
+		this.initialize();
 
-    }
+	}
 
-    execute(event){
+	execute(event){
 
-      du.debug('Execute');
+		du.debug('Execute');
 
-      return this.preamble(event)
-      .then(() => this.validateCampaign())
-      .then(() => this.acquireToken())
-      .then(() => this.postProcessing())
-      .then(() => {
-        return this.parameters.get('transactionjwt');
-      });
+		return this.preamble(event)
+			.then(() => this.validateCampaign())
+			.then(() => this.acquireToken())
+			.then(() => this.postProcessing())
+			.then(() => {
+				return this.parameters.get('transactionjwt');
+			});
 
-    }
+	}
 
-    validateCampaign(){
+	validateCampaign(){
 
-      du.debug('Validate Campaign');
+		du.debug('Validate Campaign');
 
-      let event = this.parameters.get('event');
+		let event = this.parameters.get('event');
 
-      if(!_.has(this, 'campaignController')){
-        const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
-        this.campaignController = new CampaignController();
-      }
+		if(!_.has(this, 'campaignController')){
+			const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
+			this.campaignController = new CampaignController();
+		}
 
-      return this.campaignController.get({id: event.campaign}).then((campaign) => {
+		return this.campaignController.get({id: event.campaign}).then((campaign) => {
 
-        if(!_.has(campaign, 'id')){
-          eu.throwError('bad_request','Invalid Campaign ID: '+event.campaign);
-        }
+			if(!_.has(campaign, 'id')){
+				eu.throwError('bad_request','Invalid Campaign ID: '+event.campaign);
+			}
 
-        this.parameters.set('campaign', campaign);
+			this.parameters.set('campaign', campaign);
 
-        return true;
+			return true;
 
-      });
+		});
 
-    }
+	}
 
-    acquireToken(){
+	acquireToken(){
 
-      du.debug('Acquire Token');
+		du.debug('Acquire Token');
 
-      let jwt_prototype = {
-        user:{
-          user_alias: global.user.alias
-        }
-      };
+		let jwt_prototype = {
+			user:{
+				user_alias: global.user.alias
+			}
+		};
 
-      let transaction_jwt = jwtprovider.getJWT(jwt_prototype, 'transaction');
+		let transaction_jwt = jwtprovider.getJWT(jwt_prototype, 'transaction');
 
-      this.parameters.set('transactionjwt', transaction_jwt);
+		this.parameters.set('transactionjwt', transaction_jwt);
 
-      return Promise.resolve(true);
+		return Promise.resolve(true);
 
-    }
+	}
 
-    postProcessing(){
+	postProcessing(){
 
-      du.debug('Post Processing');
+		du.debug('Post Processing');
 
-      return this.handleAffiliateInformation().then(() => this.pushEvent());
+		return this.handleAffiliateInformation().then(() => this.pushEvent());
 
-    }
+	}
 
-    handleAffiliateInformation(){
+	handleAffiliateInformation(){
 
-      du.debug('Handle Affiliate Information');
+		du.debug('Handle Affiliate Information');
 
-      let event = this.parameters.get('event');
+		let event = this.parameters.get('event');
 
-      if(!_.has(this, 'affiliateHelperController')){
-        const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
+		if(!_.has(this, 'affiliateHelperController')){
+			const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
 
-        this.affiliateHelperController = new AffiliateHelperController();
-      }
+			this.affiliateHelperController = new AffiliateHelperController();
+		}
 
-      return this.affiliateHelperController.handleAffiliateInformation(event).then(results => {
+		return this.affiliateHelperController.handleAffiliateInformation(event).then(results => {
 
-        if(_.has(results, 'affiliates')){
+			if(_.has(results, 'affiliates')){
 
-          this.parameters.set('affiliates', results.affiliates);
+				this.parameters.set('affiliates', results.affiliates);
 
-          return true;
+				return true;
 
-        }
+			}
 
-        return false;
+			return false;
 
-      });
+		});
 
-    }
+	}
 
 }
 

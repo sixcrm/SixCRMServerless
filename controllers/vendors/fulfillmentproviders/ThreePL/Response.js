@@ -14,235 +14,235 @@ const FulfillmentProviderVendorResponse = global.SixCRM.routes.include('vendors'
 
 module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse {
 
-  constructor(){
+	constructor(){
 
-    super(arguments[0]);
+		super(arguments[0]);
 
-  }
+	}
 
-  translateResponse(response){
+	translateResponse(response){
 
-    du.debug('Translate Response');
+		du.debug('Translate Response');
 
-    let action = this.parameters.get('action');
+		let action = this.parameters.get('action');
 
-    let translation_methods = {
-      test:'translateTest',
-      info:'translateInfo',
-      fulfill:'translateFulfill'
-    };
+		let translation_methods = {
+			test:'translateTest',
+			info:'translateInfo',
+			fulfill:'translateFulfill'
+		};
 
-    return this[translation_methods[action]](response);
+		return this[translation_methods[action]](response);
 
-  }
+	}
 
-  translateInfo(response){
+	translateInfo(response){
 
-    du.debug('Translate Info');
+		du.debug('Translate Info');
 
-    if(!stringutilities.nonEmpty(response.body)){ return null; }
+		if(!stringutilities.nonEmpty(response.body)){ return null; }
 
-    let parsed_response = xmlutilities.parse(response.body);
+		let parsed_response = xmlutilities.parse(response.body);
 
-    if(objectutilities.hasRecursive(parsed_response, 'soap:Envelope.soap:Body.0.totalOrders.0._', false)){
-      return this.parseFindOrdersResponse(parsed_response);
-    }
+		if(objectutilities.hasRecursive(parsed_response, 'soap:Envelope.soap:Body.0.totalOrders.0._', false)){
+			return this.parseFindOrdersResponse(parsed_response);
+		}
 
-    eu.throwError('server', 'Unrecognized response from ThreePL');
+		eu.throwError('server', 'Unrecognized response from ThreePL');
 
-  }
+	}
 
-  translateTest(response){
+	translateTest(response){
 
-    du.debug('Translate Test');
+		du.debug('Translate Test');
 
-    if(!stringutilities.nonEmpty(response.body)){
-      //Technical Debt:  Throw Error?
-      return null;
-    }
+		if(!stringutilities.nonEmpty(response.body)){
+			//Technical Debt:  Throw Error?
+			return null;
+		}
 
-    let parsed_response = xmlutilities.parse(response.body);
+		let parsed_response = xmlutilities.parse(response.body);
 
-    if(objectutilities.hasRecursive(parsed_response, 'soap:Envelope.soap:Body.0.FindOrders.0._', false)){
+		if(objectutilities.hasRecursive(parsed_response, 'soap:Envelope.soap:Body.0.FindOrders.0._', false)){
 
-      return {
-        success: true,
-        message: 'Successfully validated.'
-      };
+			return {
+				success: true,
+				message: 'Successfully validated.'
+			};
 
-    }
+		}
 
-    if(objectutilities.hasRecursive(parsed_response, 'soap:Envelope.soap:Body.0.soap:Fault.0')){
+		if(objectutilities.hasRecursive(parsed_response, 'soap:Envelope.soap:Body.0.soap:Fault.0')){
 
-      return {
-        success: false,
-        message: parsed_response['soap:Envelope']['soap:Body'][0]['soap:Fault'][0].faultstring
-      }
-    }
+			return {
+				success: false,
+				message: parsed_response['soap:Envelope']['soap:Body'][0]['soap:Fault'][0].faultstring
+			}
+		}
 
-    eu.throwError('server', "Unrecognized ThreePL response body: "+response.body);
+		eu.throwError('server', "Unrecognized ThreePL response body: "+response.body);
 
-  }
+	}
 
-  translateFulfill(response){
+	translateFulfill(response){
 
-    du.debug('Translate Fulfill');
+		du.debug('Translate Fulfill');
 
-    if(!stringutilities.nonEmpty(response.body)){ return null; }
+		if(!stringutilities.nonEmpty(response.body)){ return null; }
 
-    let reference_number = this.acquireReferenceNumber();
+		let reference_number = this.acquireReferenceNumber();
 
-    let response_prototype = {
-      success: false,
-      message: 'Non-specific failure.',
-      reference_number:reference_number
-    };
+		let response_prototype = {
+			success: false,
+			message: 'Non-specific failure.',
+			reference_number:reference_number
+		};
 
-    let parsed_response = xmlutilities.parse(response.body);
+		let parsed_response = xmlutilities.parse(response.body);
 
-    if(objectutilities.hasRecursive(parsed_response, 'soap:Envelope.soap:Body.0.Int32.0._', false)){
+		if(objectutilities.hasRecursive(parsed_response, 'soap:Envelope.soap:Body.0.Int32.0._', false)){
 
-      let response = parsed_response['soap:Envelope']['soap:Body'][0].Int32[0]['_'];
+			let response = parsed_response['soap:Envelope']['soap:Body'][0].Int32[0]['_'];
 
-      if(response == 1){
+			if(response == 1){
 
-        response_prototype.success = true;
-        response_prototype.message = 'Success';
+				response_prototype.success = true;
+				response_prototype.message = 'Success';
 
-      }
+			}
 
-    }
+		}
 
-    return response_prototype;
+		return response_prototype;
 
-  }
+	}
 
-  acquireReferenceNumber(fatal){
+	acquireReferenceNumber(fatal){
 
-    du.debug('Acquire Reference Number');
+		du.debug('Acquire Reference Number');
 
-    fatal = _.isUndefined(fatal)?true:fatal;
+		fatal = _.isUndefined(fatal)?true:fatal;
 
-    let additional_parameters = this.parameters.get('additionalparameters', null, false);
+		let additional_parameters = this.parameters.get('additionalparameters', null, false);
 
-    if(!_.isNull(additional_parameters)){
+		if(!_.isNull(additional_parameters)){
 
-      if(_.has(additional_parameters, 'reference_number')){
+			if(_.has(additional_parameters, 'reference_number')){
 
-        return additional_parameters.reference_number;
+				return additional_parameters.reference_number;
 
-      }else{
+			}else{
 
-        if(fatal){ eu.throwError('server', 'Missing reference_number in vendor response additional_parameters.'); }
+				if(fatal){ eu.throwError('server', 'Missing reference_number in vendor response additional_parameters.'); }
 
-      }
+			}
 
-    }else{
+		}else{
 
-      if(fatal){ eu.throwError('server', 'Missing additional_parameters in vendor response.'); }
+			if(fatal){ eu.throwError('server', 'Missing additional_parameters in vendor response.'); }
 
-    }
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
-  parseFindOrdersResponse(parsed_response){
+	parseFindOrdersResponse(parsed_response){
 
-    du.debug('Parse Find Orders Response');
+		du.debug('Parse Find Orders Response');
 
-    let order_count = parsed_response['soap:Envelope']['soap:Body'][0].totalOrders[0]['_'];
-    let orders = [];
+		let order_count = parsed_response['soap:Envelope']['soap:Body'][0].totalOrders[0]['_'];
+		let orders = [];
 
-    if(order_count > 0){
+		if(order_count > 0){
 
-      orders = this.getOrdersFromFindOrdersResponse(parsed_response);
+			orders = this.getOrdersFromFindOrdersResponse(parsed_response);
 
-    }
+		}
 
-    return {
-      orders: orders
-    };
+		return {
+			orders: orders
+		};
 
-  }
+	}
 
-  getOrdersFromFindOrdersResponse(parsed_response){
+	getOrdersFromFindOrdersResponse(parsed_response){
 
-    du.debug('Get Orders From Find Orders Response');
+		du.debug('Get Orders From Find Orders Response');
 
-    parsed_response = xmlutilities.parse(parsed_response['soap:Envelope']['soap:Body'][0].FindOrders[0]['_']);
+		parsed_response = xmlutilities.parse(parsed_response['soap:Envelope']['soap:Body'][0].FindOrders[0]['_']);
 
-    return arrayutilities.map(parsed_response.orders.order, order => {
+		return arrayutilities.map(parsed_response.orders.order, order => {
 
-      return {
-        customer: this.createCustomer(order),
-        shipping: this.createShippingInformation(order),
-        reference_number: this.createReferenceNumber(order),
-        created_at: this.createCreatedAt(order)
-      };
+			return {
+				customer: this.createCustomer(order),
+				shipping: this.createShippingInformation(order),
+				reference_number: this.createReferenceNumber(order),
+				created_at: this.createCreatedAt(order)
+			};
 
-    });
+		});
 
-  }
+	}
 
-  createCustomer(order){
+	createCustomer(order){
 
-    du.debug('Create Customer');
+		du.debug('Create Customer');
 
-    let customer = {
-      name:order.CustomerName[0],
-      email:(stringutilities.nonEmpty(order.CustomerEmail[0]))?order.CustomerEmail[0]:null,
-      phone:(stringutilities.nonEmpty(order.CustomerPhone[0]))?order.CustomerPhone[0]:null,
-    };
+		let customer = {
+			name:order.CustomerName[0],
+			email:(stringutilities.nonEmpty(order.CustomerEmail[0]))?order.CustomerEmail[0]:null,
+			phone:(stringutilities.nonEmpty(order.CustomerPhone[0]))?order.CustomerPhone[0]:null,
+		};
 
-    if(stringutilities.nonEmpty(order.ShipToAddress2[0])){
-      customer.address.line2 = order.ShipToAddress2[0];
-    }
+		if(stringutilities.nonEmpty(order.ShipToAddress2[0])){
+			customer.address.line2 = order.ShipToAddress2[0];
+		}
 
-    return customer;
+		return customer;
 
-  }
+	}
 
-  createShippingInformation(order){
+	createShippingInformation(order){
 
-    du.debug('Create Shipping Information');
+		du.debug('Create Shipping Information');
 
-    let address = {
-      name: order.ShipToName[0],
-      line1:order.ShipToAddress1[0],
-      city:order.ShipToCity[0],
-      state:order.ShipToState[0],
-      zip:order.ShipToZip[0],
-      country:order.ShipToCountry[0]
-    };
+		let address = {
+			name: order.ShipToName[0],
+			line1:order.ShipToAddress1[0],
+			city:order.ShipToCity[0],
+			state:order.ShipToState[0],
+			zip:order.ShipToZip[0],
+			country:order.ShipToCountry[0]
+		};
 
-    if(stringutilities.nonEmpty(order.ShipToAddress2[0])){
-      address.line2 = order.ShipToAddress2[0];
-    }
+		if(stringutilities.nonEmpty(order.ShipToAddress2[0])){
+			address.line2 = order.ShipToAddress2[0];
+		}
 
-    return {
-      address: address,
-      carrier:order.Carrier[0],
-      tracking_number: (stringutilities.nonEmpty(order.TrackingNumber[0]))?order.TrackingNumber[0]:null,
-      method: (stringutilities.nonEmpty(order.ShipMethod[0]))?order.ShipMethod[0]:null
-    };
+		return {
+			address: address,
+			carrier:order.Carrier[0],
+			tracking_number: (stringutilities.nonEmpty(order.TrackingNumber[0]))?order.TrackingNumber[0]:null,
+			method: (stringutilities.nonEmpty(order.ShipMethod[0]))?order.ShipMethod[0]:null
+		};
 
-  }
+	}
 
-  createReferenceNumber(order){
+	createReferenceNumber(order){
 
-    du.debug('Create Reference Number');
+		du.debug('Create Reference Number');
 
-    return order.ReferenceNum[0];
+		return order.ReferenceNum[0];
 
-  }
+	}
 
-  createCreatedAt(order){
+	createCreatedAt(order){
 
-    du.debug('Create Created At');
+		du.debug('Create Created At');
 
-    return timestamp.convertToISO8601(order.CreationDate[0]);
+		return timestamp.convertToISO8601(order.CreationDate[0]);
 
-  }
+	}
 
 }

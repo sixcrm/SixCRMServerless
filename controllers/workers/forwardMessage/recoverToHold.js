@@ -3,19 +3,19 @@ const forwardRebillMessageController = global.SixCRM.routes.include('controllers
 
 module.exports = class RecoverToHoldForwardMessageController extends forwardRebillMessageController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameters.set('params', {
-        name: 'recovertohold',
-        origin_queue: 'recover',
-        destination_queue: 'hold',
-        workerfunction: 'recoverBilling.js',
-        failure_queue: 'recover_failed',
-        error_queue: 'recover_error'
-      });
+		this.parameters.set('params', {
+			name: 'recovertohold',
+			origin_queue: 'recover',
+			destination_queue: 'hold',
+			workerfunction: 'recoverBilling.js',
+			failure_queue: 'recover_failed',
+			error_queue: 'recover_error'
+		});
 
-    }
+	}
 
 };

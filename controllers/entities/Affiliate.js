@@ -6,36 +6,36 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 
 module.exports = class AffiliateController extends entityController {
 
-    constructor(){
+	constructor(){
 
-        super('affiliate');
+		super('affiliate');
 
-        this.search_fields = ['name', 'affiliate_id'];
+		this.search_fields = ['name', 'affiliate_id'];
 
-    }
+	}
 
-    getByAffiliateID(affiliate_id){
+	getByAffiliateID(affiliate_id){
 
-      du.debug('Get By Affiliate ID');
+		du.debug('Get By Affiliate ID');
 
-      return this.getBySecondaryIndex({field: 'affiliate_id', index_value: affiliate_id, index_name:'affiliate_id-index'});
+		return this.getBySecondaryIndex({field: 'affiliate_id', index_value: affiliate_id, index_name:'affiliate_id-index'});
 
-    }
+	}
 
-    getCampaigns({affiliate, pagination}){
+	getCampaigns({affiliate, pagination}){
 
-      du.debug('Get Campaigns');
+		du.debug('Get Campaigns');
 
-      return this.executeAssociatedEntityFunction('SessionController', 'listByAffiliate', {affiliate: affiliate, pagination: pagination});
+		return this.executeAssociatedEntityFunction('SessionController', 'listByAffiliate', {affiliate: affiliate, pagination: pagination});
 
-    }
+	}
 
-    getTrackers({affiliate, pagination}){
+	getTrackers({affiliate, pagination}){
 
-      du.debug('Get Trackers');
+		du.debug('Get Trackers');
 
-      return this.executeAssociatedEntityFunction('TrackerController', 'listByAffiliate', {affiliate: affiliate, pagination: pagination});
+		return this.executeAssociatedEntityFunction('TrackerController', 'listByAffiliate', {affiliate: affiliate, pagination: pagination});
 
-    }
+	}
 
 }

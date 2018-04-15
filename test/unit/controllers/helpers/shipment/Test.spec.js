@@ -192,52 +192,52 @@ function getValidFulfillmentProvider(){
 
 describe('helpers/shipment/Test.js', () => {
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-  beforeEach(() => {
-    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 
-    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-      sendMessage() {
-        return Promise.resolve(true);
-      }
-    });
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+			sendMessage() {
+				return Promise.resolve(true);
+			}
+		});
 
-    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
-        publish() {
-            return Promise.resolve({});
-        }
-        getRegion() {
-            return 'localhost';
-        }
-    });
-  });
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+			publish() {
+				return Promise.resolve({});
+			}
+			getRegion() {
+				return 'localhost';
+			}
+		});
+	});
 
-  afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-  });
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-  describe('constructor', () => {
+	describe('constructor', () => {
 
-    it('successfully constructs', () => {
+		it('successfully constructs', () => {
 
-      let TestController = global.SixCRM.routes.include('helpers', 'shipment/Test.js');
-      let testController = new TestController();
+			let TestController = global.SixCRM.routes.include('helpers', 'shipment/Test.js');
+			let testController = new TestController();
 
-      expect(objectutilities.getClassName(testController)).to.equal('TestController');
+			expect(objectutilities.getClassName(testController)).to.equal('TestController');
 
-    });
+		});
 
-  });
+	});
 
-  /*
+	/*
   describe('executeFulfillment', () => {
     it('successfully executes fulfillment', () => {
 

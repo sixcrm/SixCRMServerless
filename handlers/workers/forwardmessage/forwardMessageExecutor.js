@@ -2,17 +2,17 @@
 
 module.exports = (forwardMessageController, event, callback) => {
 
-  require('../../../SixCRM.js');
-  const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
+	require('../../../SixCRM.js');
+	const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
 
-  return forwardMessageController.execute().then(() => {
+	return forwardMessageController.execute().then(() => {
 
-    new LambdaResponse().issueResponse(200, {}, callback);
-    return true;
+		new LambdaResponse().issueResponse(200, {}, callback);
+		return true;
 
-  }).catch((error) =>{
+	}).catch((error) =>{
 
-    new LambdaResponse().issueError(error.message, event, callback);
+		new LambdaResponse().issueError(error.message, event, callback);
 
-  });
+	});
 };

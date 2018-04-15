@@ -5,35 +5,35 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 module.exports = function(results, parameters){
 
-    du.debug('Transformation Function');
+	du.debug('Transformation Function');
 
-    du.info(results);
+	du.info(results);
 
-    return new Promise((resolve) => {
+	return new Promise((resolve) => {
 
-      let result_array = arrayutilities.map(results, (result) => {
-        return {
-          merchant_provider:result.merchant_provider,
-          sale_count:result.sale_count,
-          sale_gross_revenue:result.sale_gross_revenue,
-          refund_expenses:result.refund_expenses,
-          refund_count:result.refund_count,
-          net_revenue:result.net_revenue,
-          mtd_sales_count:result.mtd_sales_count,
-          mtd_gross_count:result.mtd_gross_count
-        };
-      });
+		let result_array = arrayutilities.map(results, (result) => {
+			return {
+				merchant_provider:result.merchant_provider,
+				sale_count:result.sale_count,
+				sale_gross_revenue:result.sale_gross_revenue,
+				refund_expenses:result.refund_expenses,
+				refund_count:result.refund_count,
+				net_revenue:result.net_revenue,
+				mtd_sales_count:result.mtd_sales_count,
+				mtd_gross_count:result.mtd_gross_count
+			};
+		});
 
-      parameters['count'] = results.length;
+		parameters['count'] = results.length;
 
-      let pagination_object = paginationutilities.createSQLPaginationObject(parameters);
+		let pagination_object = paginationutilities.createSQLPaginationObject(parameters);
 
-      let return_object = {merchants:result_array, pagination: pagination_object};
+		let return_object = {merchants:result_array, pagination: pagination_object};
 
-      du.info(return_object);
+		du.info(return_object);
 
-      return resolve(return_object);
+		return resolve(return_object);
 
-    });
+	});
 
 }

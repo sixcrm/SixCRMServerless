@@ -3,18 +3,18 @@ const forwardRebillMessageController = global.SixCRM.routes.include('controllers
 
 module.exports = class DeliveredToArchiveForwardMessageController extends forwardRebillMessageController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameters.set('params', {
-        name: 'deliveredtoarchive',
-        workerfunction: 'archive.js',
-        origin_queue: 'delivered',
-        failure_queue: 'delivered_failed',
-        error_queue: 'delivered_error'
-      })
+		this.parameters.set('params', {
+			name: 'deliveredtoarchive',
+			workerfunction: 'archive.js',
+			origin_queue: 'delivered',
+			failure_queue: 'delivered_failed',
+			error_queue: 'delivered_error'
+		})
 
-    }
+	}
 
 };

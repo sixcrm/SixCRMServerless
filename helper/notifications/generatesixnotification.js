@@ -23,34 +23,34 @@ let account = process.argv[3];
 let user = process.argv[4];
 
 if (!body) {
-    du.output('Body is required');
-    printHelp();
+	du.output('Body is required');
+	printHelp();
 }
 
 if (!account) {
-    du.output('Account is required');
-    printHelp();
+	du.output('Account is required');
+	printHelp();
 }
 
 let notification_object = {
-    account: account,
-    type: 'notification',
-    category: 'message',
-    action: 'test',
-    title: 'testing notification',
-    body: body
+	account: account,
+	type: 'notification',
+	category: 'message',
+	action: 'test',
+	title: 'testing notification',
+	body: body
 };
 
 if (user) {
-    notification_object['user'] = user;
-    notificationProvider.createNotificationForAccountAndUser(notification_object);
+	notification_object['user'] = user;
+	notificationProvider.createNotificationForAccountAndUser(notification_object);
 } else {
-    notificationProvider.createNotificationsForAccount(notification_object);
+	notificationProvider.createNotificationsForAccount(notification_object);
 }
 
 du.output('Attempted to insert a notification', notification_object);
 
 function printHelp() {
-    du.output('Helper for inserting notification for the given account and user. User is optional.');
-    du.output('Parameters: body account [user]');
+	du.output('Helper for inserting notification for the given account and user. User is optional.');
+	du.output('Parameters: body account [user]');
 }

@@ -8,86 +8,86 @@ const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-p
 
 module.exports = class ElasticacheProvider extends AWSProvider{
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'elasticache.region'))?global.SixCRM.configuration.site_config.elasticache.region:this.getRegion();
+		let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'elasticache.region'))?global.SixCRM.configuration.site_config.elasticache.region:this.getRegion();
 
-      //Technical Debt:  Get this out of the constructor?
-      this.instantiateAWS();
+		//Technical Debt:  Get this out of the constructor?
+		this.instantiateAWS();
 
-      this.elasticache = new this.AWS.ElastiCache({
-        apiVersion: '2015-02-02',
-        region: region,
-        endpoint: global.SixCRM.configuration.site_config.elasticache.endpoint
-      });
+		this.elasticache = new this.AWS.ElastiCache({
+			apiVersion: '2015-02-02',
+			region: region,
+			endpoint: global.SixCRM.configuration.site_config.elasticache.endpoint
+		});
 
-      this.clusterStati = ['cacheClusterAvailable','cacheClusterDeleted','replicationGroupAvailable','replicationGroupDeleted'];
+		this.clusterStati = ['cacheClusterAvailable','cacheClusterDeleted','replicationGroupAvailable','replicationGroupDeleted'];
 
-    }
+	}
 
-    destroyCluster(parameters){
+	destroyCluster(parameters){
 
-      du.debug('Destroy Cluster');
+		du.debug('Destroy Cluster');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.elasticache.deleteCacheCluster(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.elasticache.deleteCacheCluster(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-      });
+		});
 
-    }
+	}
 
-    createCluster(parameters){
+	createCluster(parameters){
 
-      du.debug('Create Cluster');
+		du.debug('Create Cluster');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.elasticache.createCacheCluster(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.elasticache.createCacheCluster(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-      });
+		});
 
-    }
+	}
 
-    describeClusters(parameters){
+	describeClusters(parameters){
 
-      du.debug('Describe Clusters');
+		du.debug('Describe Clusters');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        this.elasticache.describeCacheClusters(parameters, (error, data) => {
+			this.elasticache.describeCacheClusters(parameters, (error, data) => {
 
-          if(error){
-            if(error.code == 'CacheClusterNotFound'){
-              return resolve(null);
-            }else{
-              eu.throwError('server', error);
-            }
-          }
+				if(error){
+					if(error.code == 'CacheClusterNotFound'){
+						return resolve(null);
+					}else{
+						eu.throwError('server', error);
+					}
+				}
 
-          return resolve(data);
+				return resolve(data);
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    waitFor(parameters, status){
+	waitFor(parameters, status){
 
-      du.debug('Wait For');
+		du.debug('Wait For');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        if(!_.includes(this.clusterStati, status)){ eu.throwError('server', 'Unknown status type.'); }
+			if(!_.includes(this.clusterStati, status)){ eu.throwError('server', 'Unknown status type.'); }
 
-        this.elasticache.waitFor(status, parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.elasticache.waitFor(status, parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-      });
+		});
 
-    }
+	}
 
 
 }

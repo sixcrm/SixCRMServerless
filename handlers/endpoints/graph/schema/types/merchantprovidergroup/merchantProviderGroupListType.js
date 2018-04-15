@@ -7,17 +7,17 @@ let paginationType = require('../pagination/paginationType');
 let merchantProviderGroupType = require('./merchantProviderGroupType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'MerchantProviderGroups',
-    description: 'Merchant Provider Groups',
-    fields: () => ({
-        merchantprovidergroups: {
-            type: new GraphQLList(merchantProviderGroupType.graphObj),
-            description: 'The Merchant Provider Groups',
-        },
-        pagination: {
-            type: new GraphQLNonNull(paginationType.graphObj),
-            description: 'Query pagination',
-        }
-    }),
-    interfaces: []
+	name: 'MerchantProviderGroups',
+	description: 'Merchant Provider Groups',
+	fields: () => ({
+		merchantprovidergroups: {
+			type: new GraphQLList(merchantProviderGroupType.graphObj),
+			description: 'The Merchant Provider Groups',
+		},
+		pagination: {
+			type: new GraphQLNonNull(paginationType.graphObj),
+			description: 'Query pagination',
+		}
+	}),
+	interfaces: []
 });

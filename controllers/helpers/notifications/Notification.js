@@ -9,126 +9,126 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 
 module.exports = class NotificationHelperClass {
 
-  constructor(){
+	constructor(){
 
-    //Technical Debt:  Need to add validation schemas here...
-    this.parameter_validation = {};
+		//Technical Debt:  Need to add validation schemas here...
+		this.parameter_validation = {};
 
-    this.parameter_definition = {
-      executeNotifications:{
-        required:{
-          eventtype: 'event_type',
-          context: 'context'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			executeNotifications:{
+				required:{
+					eventtype: 'event_type',
+					context: 'context'
+				},
+				optional:{}
+			}
+		};
 
-    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-  }
+	}
 
-  executeNotifications(){
+	executeNotifications(){
 
-    du.debug('Execute Notifications');
+		du.debug('Execute Notifications');
 
-    this.parameters.store = {};
+		this.parameters.store = {};
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'executeNotifications'}))
-    .then(() => this.isNotificationEventType())
-    .then(() => this.instantiateNotificationClass())
-    .then(() => this.transformContext())
-    .then(() => this.executeNotificationActions())
-    .catch((error) => {
-      if(error.statusCode == 404){
-        return Promise.resolve(true);
-      }
-      du.error(error);
-      return Promise.reject(error);
-    });
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'executeNotifications'}))
+			.then(() => this.isNotificationEventType())
+			.then(() => this.instantiateNotificationClass())
+			.then(() => this.transformContext())
+			.then(() => this.executeNotificationActions())
+			.catch((error) => {
+				if(error.statusCode == 404){
+					return Promise.resolve(true);
+				}
+				du.error(error);
+				return Promise.reject(error);
+			});
 
-  }
+	}
 
-  isNotificationEventType(){
+	isNotificationEventType(){
 
-    du.debug('Is Notification Event Type');
+		du.debug('Is Notification Event Type');
 
-    let event_type = this.parameters.get('eventtype');
+		let event_type = this.parameters.get('eventtype');
 
-    //Note:  These are a subset of event types which are notification events
-    let valid_event_type = mvu.validateModel(event_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationevent.json'), null, false);
+		//Note:  These are a subset of event types which are notification events
+		let valid_event_type = mvu.validateModel(event_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationevent.json'), null, false);
 
-    if(valid_event_type == true){
-      return true;
-    }
+		if(valid_event_type == true){
+			return true;
+		}
 
-    eu.throwError('not_found','Not a notification event type: '+event_type);
+		eu.throwError('not_found','Not a notification event type: '+event_type);
 
-  }
+	}
 
-  instantiateNotificationClass(){
+	instantiateNotificationClass(){
 
-    du.debug('Instantiate Notification Class');
+		du.debug('Instantiate Notification Class');
 
-    let event_type = this.parameters.get('eventtype');
+		let event_type = this.parameters.get('eventtype');
 
-    let NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/default.js');
-    let notification_class = new NotificationType();
-    this.parameters.set('notificationclass', notification_class);
+		let NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/default.js');
+		let notification_class = new NotificationType();
+		this.parameters.set('notificationclass', notification_class);
 
-    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('helpers','notifications/notificationtypes/'))
-    .then(directory_files => {
+		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('helpers','notifications/notificationtypes/'))
+			.then(directory_files => {
 
-      let matching_notification_file = arrayutilities.find(directory_files, directory_file => {
-        return stringutilities.isMatch(directory_file.replace('.json',''), new RegExp(event_type, "g"));
-      });
+				let matching_notification_file = arrayutilities.find(directory_files, directory_file => {
+					return stringutilities.isMatch(directory_file.replace('.json',''), new RegExp(event_type, "g"));
+				});
 
-      if(matching_notification_file){
+				if(matching_notification_file){
 
-        du.warning('Matching notification file for event_type ('+event_type+') '+matching_notification_file);
+					du.warning('Matching notification file for event_type ('+event_type+') '+matching_notification_file);
 
-        NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+matching_notification_file);
-        let notification_class = new NotificationType();
-        this.parameters.set('notificationclass', notification_class);
+					NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+matching_notification_file);
+					let notification_class = new NotificationType();
+					this.parameters.set('notificationclass', notification_class);
 
-      }else{
+				}else{
 
-        du.warning('No matching notification file for event type: '+event_type);
+					du.warning('No matching notification file for event type: '+event_type);
 
-      }
+				}
 
-      return true;
+				return true;
 
-    });
+			});
 
-  }
+	}
 
-  transformContext(){
+	transformContext(){
 
-    du.debug('Transform Context');
+		du.debug('Transform Context');
 
-    let context = this.parameters.get('context');
-    let notification_class = this.parameters.get('notificationclass');
+		let context = this.parameters.get('context');
+		let notification_class = this.parameters.get('notificationclass');
 
-    let transformed_context = notification_class.transformContext(context);
+		let transformed_context = notification_class.transformContext(context);
 
-    this.parameters.set('transformedcontext', transformed_context);
+		this.parameters.set('transformedcontext', transformed_context);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  executeNotificationActions(){
+	executeNotificationActions(){
 
-    du.debug('Execute Notification Actions');
+		du.debug('Execute Notification Actions');
 
-    let transformed_context = this.parameters.get('transformedcontext');
-    let notification_class = this.parameters.get('notificationclass');
+		let transformed_context = this.parameters.get('transformedcontext');
+		let notification_class = this.parameters.get('notificationclass');
 
-    return notification_class.triggerNotifications(transformed_context);
+		return notification_class.triggerNotifications(transformed_context);
 
-  }
+	}
 
 }

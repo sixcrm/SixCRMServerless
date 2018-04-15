@@ -7,17 +7,17 @@ let paginationType = require('../pagination/paginationType');
 let userSigningStringType = require('./userSigningStringType');
 
 module.exports.graphObj =  new GraphQLObjectType({
-    name: 'UserSigningStringList',
-    description: 'User Signing String.',
-    fields: () => ({
-        usersigningstrings: {
-            type: new GraphQLList(userSigningStringType.graphObj),
-            description: 'User Signing Strings.',
-        },
-        pagination: {
-            type: new GraphQLNonNull(paginationType.graphObj),
-            description: 'Query pagination',
-        }
-    }),
-    interfaces: []
+	name: 'UserSigningStringList',
+	description: 'User Signing String.',
+	fields: () => ({
+		usersigningstrings: {
+			type: new GraphQLList(userSigningStringType.graphObj),
+			description: 'User Signing Strings.',
+		},
+		pagination: {
+			type: new GraphQLNonNull(paginationType.graphObj),
+			description: 'Query pagination',
+		}
+	}),
+	interfaces: []
 });

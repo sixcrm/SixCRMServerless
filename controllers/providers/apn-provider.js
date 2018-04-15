@@ -6,148 +6,148 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 module.exports = class APNProvider {
 
-    constructor(){
+	constructor(){
 
-        du.debug('APN Providers Constructor');
+		du.debug('APN Providers Constructor');
 
-        this.necessary_configuration_parameters = [
-            'token_key',
-            'token_key_id',
-            'token_team_id',
-            'production'
-        ];
+		this.necessary_configuration_parameters = [
+			'token_key',
+			'token_key_id',
+			'token_team_id',
+			'production'
+		];
 
-        this.setConfiguationParameters();
-        this.instantiateAPNClass();
+		this.setConfiguationParameters();
+		this.instantiateAPNClass();
 
-    }
+	}
 
-    setConfiguationParameters(){
+	setConfiguationParameters(){
 
-        du.debug('Set Configuration Parameters');
+		du.debug('Set Configuration Parameters');
 
-        this.necessary_configuration_parameters.forEach((parameter) => {
+		this.necessary_configuration_parameters.forEach((parameter) => {
 
-          //Technical Debt:  Use configuration_object
-            if(!_.has(process.env.apn, parameter)){
+			//Technical Debt:  Use configuration_object
+			if(!_.has(process.env.apn, parameter)){
 
-                return Promise.reject(eu.getError('server','Missing necessary APN configuration setting: '+parameter));
+				return Promise.reject(eu.getError('server','Missing necessary APN configuration setting: '+parameter));
 
-            }
+			}
 
-            this.parameter = process.env.apn[parameter];
+			this.parameter = process.env.apn[parameter];
 
-        });
+		});
 
-    }
+	}
 
-    instantiateAPNClass(){
+	instantiateAPNClass(){
 
-        du.debug('Instantiate APN Class');
+		du.debug('Instantiate APN Class');
 
-        var options = {
-            token: {
-                key: this.token_key,
-                keyId: this.token_key_id,
-                teamId: this.token_team_id
-            },
-            production: this.production
-        };
+		var options = {
+			token: {
+				key: this.token_key,
+				keyId: this.token_key_id,
+				teamId: this.token_team_id
+			},
+			production: this.production
+		};
 
-        try{
+		try{
 
-            this.apn = new apn.Provider(options);
+			this.apn = new apn.Provider(options);
 
-        }catch(error){
+		}catch(error){
 
-            du.debug(error);
+			du.debug(error);
 
-            eu.throwError('server','Error instantiating APN class.');
+			eu.throwError('server','Error instantiating APN class.');
 
-        }
+		}
 
-    }
+	}
 
-    createNote(){
+	createNote(){
 
-        du.debug('Create Note');
+		du.debug('Create Note');
 
-        var note = new apn.Notification();
+		var note = new apn.Notification();
 
-        note.expiry = Math.floor(Date.now() / 1000) + 3600;
-        note.badge = 3;
-        note.sound = "ping.aiff";
-        note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
-        note.payload = {'messageFrom': 'John Appleseed'};
-        note.topic = "<your-app-bundle-id>";
+		note.expiry = Math.floor(Date.now() / 1000) + 3600;
+		note.badge = 3;
+		note.sound = "ping.aiff";
+		note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
+		note.payload = {'messageFrom': 'John Appleseed'};
+		note.topic = "<your-app-bundle-id>";
 
-        return Promise.resolve(note);
+		return Promise.resolve(note);
 
-    }
+	}
 
-    //Note:  user must be a hydrated model containing (atleast) the device_token
-    //Technical Debt:  Must be able to set note contents in the arguments
-    sendNotifications(user){
+	//Note:  user must be a hydrated model containing (atleast) the device_token
+	//Technical Debt:  Must be able to set note contents in the arguments
+	sendNotifications(user){
 
-        du.debug('Send Notifications');
+		du.debug('Send Notifications');
 
-        return this.validateUser(user)
-        .then(this.validateNote)
-        .then(this.createNote)
-        .then((note) => this.sendAllNotifications(user, note));
+		return this.validateUser(user)
+			.then(this.validateNote)
+			.then(this.createNote)
+			.then((note) => this.sendAllNotifications(user, note));
 
-    }
+	}
 
-    validateUser(user){
+	validateUser(user){
 
-        du.debug('Validate User');
+		du.debug('Validate User');
 
-      //Technical Debt: validate has device tokens
-      //Technical Debt: has configured iOS notifications ON
+		//Technical Debt: validate has device tokens
+		//Technical Debt: has configured iOS notifications ON
 
-        return Promise.resolve(user);
+		return Promise.resolve(user);
 
-    }
+	}
 
-    sendNotification(device_token, note){
+	sendNotification(device_token, note){
 
-        du.debug('Send Notification');
+		du.debug('Send Notification');
 
-        return this.apn.send(note, device_token);
+		return this.apn.send(note, device_token);
 
-    }
+	}
 
-    handleResponse(response){
+	handleResponse(response){
 
-        du.debug('Handle Response');
-        //Technical Debt: conditionally operate on responses
+		du.debug('Handle Response');
+		//Technical Debt: conditionally operate on responses
 
-        du.debug(response);
+		du.debug(response);
 
-        return Promise.resolve(response);
+		return Promise.resolve(response);
 
-    }
+	}
 
-    sendAllNotifications(user, note){
+	sendAllNotifications(user, note){
 
-        du.debug('Send All Notification');
+		du.debug('Send All Notification');
 
-        let promises = [];
+		let promises = [];
 
-        user.device_tokens.forEach((device_token) => {
+		user.device_tokens.forEach((device_token) => {
 
-            promises.push(this.sendNotification(device_token, note).then(this.handleResponse));
+			promises.push(this.sendNotification(device_token, note).then(this.handleResponse));
 
-        });
+		});
 
-        return Promise.all(promises).then((promises) => {
+		return Promise.all(promises).then((promises) => {
 
-            du.info('Notifications sent: ', promises);
+			du.info('Notifications sent: ', promises);
 
-            return true;
+			return true;
 
-        });
+		});
 
-    }
+	}
 
 }

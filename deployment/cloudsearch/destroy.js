@@ -6,8 +6,8 @@ const CloudsearchDeployment = global.SixCRM.routes.include('deployment', 'utilit
 const cloudsearchDeployment = new CloudsearchDeployment();
 
 cloudsearchDeployment.destroy().then((result) => {
-  return du.highlight(result);
+	return du.highlight(result);
 }).catch(error => {
-  du.error(error);
-  du.warning(error.message);
+	du.error(error);
+	du.warning(error.message);
 });

@@ -6,15 +6,15 @@ let watermarkProductSchedulesInput = require('./watermarkProductSchedulesInputTy
 let watermarkProductsInput = require('./watermarkProductsInputType');
 
 module.exports.graphObj = new GraphQLInputObjectType({
-  name: 'WatermarkInput',
-  fields: () => ({
-    product_schedules: {
-      type: new GraphQLList(watermarkProductSchedulesInput.graphObj),
-      description: 'The session watermark product schedules',
-    },
-    products:{
-      type: new GraphQLList(watermarkProductsInput.graphObj),
-      description: 'The session watermark products'
-    }
-  })
+	name: 'WatermarkInput',
+	fields: () => ({
+		product_schedules: {
+			type: new GraphQLList(watermarkProductSchedulesInput.graphObj),
+			description: 'The session watermark product schedules',
+		},
+		products:{
+			type: new GraphQLList(watermarkProductsInput.graphObj),
+			description: 'The session watermark products'
+		}
+	})
 });

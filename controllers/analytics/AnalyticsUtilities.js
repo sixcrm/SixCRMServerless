@@ -17,33 +17,33 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 		super();
 
 		this.period_options = [{
-				name: 'minute',
-				seconds: 60
-			},
-			{
-				name: 'hour',
-				seconds: 3600
-			},
-			{
-				name: 'day',
-				seconds: 86400
-			},
-			{
-				name: 'week',
-				seconds: 604800
-			},
-			{
-				name: 'month',
-				seconds: 2678400
-			},
-			{
-				name: 'quarter',
-				seconds: 7776000
-			},
-			{
-				name: 'year',
-				seconds: 30412800
-			}
+			name: 'minute',
+			seconds: 60
+		},
+		{
+			name: 'hour',
+			seconds: 3600
+		},
+		{
+			name: 'day',
+			seconds: 86400
+		},
+		{
+			name: 'week',
+			seconds: 604800
+		},
+		{
+			name: 'month',
+			seconds: 2678400
+		},
+		{
+			name: 'quarter',
+			seconds: 7776000
+		},
+		{
+			name: 'year',
+			seconds: 30412800
+		}
 		];
 
 		this.cacheController = new cacheController();
@@ -107,34 +107,34 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 			this.validateQueryParameters(query_name, parameters).then(() => {
 
-					parameters = this.appendAccount(parameters);
+				parameters = this.appendAccount(parameters);
 
-					parameters = this.createQueryFilter(parameters, query_filters);
+				parameters = this.createQueryFilter(parameters, query_filters);
 
-					return this.getQueryString(query_name).then((query) => {
+				return this.getQueryString(query_name).then((query) => {
 
-							query = this.parseQueryParameters(query, parameters);
+					query = this.parseQueryParameters(query, parameters);
 
-							du.highlight('Query:', query, parameters);
+					du.highlight('Query:', query, parameters);
 
-							let transformation_function = this.getTransformationFunction(query_name);
+					let transformation_function = this.getTransformationFunction(query_name);
 
-							const auroraContext = global.SixCRM.getResource('auroraContext');
+					const auroraContext = global.SixCRM.getResource('auroraContext');
 
-							return this.cacheController.useCache(query, () => auroraContext.connection.queryWithArgs(query, []).then(result => result.rows))
-								.then((results) => transformation_function(results, parameters))
-								.then((transformed_results) => {
-									return resolve(transformed_results);
-								});
-
-						})
-						.catch((error) => {
-
-							return reject(error);
-
+					return this.cacheController.useCache(query, () => auroraContext.connection.queryWithArgs(query, []).then(result => result.rows))
+						.then((results) => transformation_function(results, parameters))
+						.then((transformed_results) => {
+							return resolve(transformed_results);
 						});
 
 				})
+					.catch((error) => {
+
+						return reject(error);
+
+					});
+
+			})
 				.catch((error) => {
 
 					return reject(error);

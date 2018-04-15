@@ -15,71 +15,71 @@ const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities
 const rebillController = new RebillController();
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'Rebill',
-    description: 'A record denoting a rebill.',
-    fields: () => ({
-        id: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The id of the transaction.',
-        },
-        bill_at: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The date of the rebill.',
-        },
-        amount: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The amount of the rebill.',
-        },
-        parentsession: {
-            type: sessionType.graphObj,
-            description: 'The session associated with the transaction.',
-            resolve: rebill => rebillController.getParentSession(rebill),
-        },
-        product_schedules: {
-            type: new GraphQLList(productScheduleType.graphObj),
-            description:'The product schedules associated with the rebill',
-            resolve: rebill => rebillController.listProductSchedules(rebill),
-        },
-        transactions: {
-          type: new GraphQLList(transactionType.graphObj),
-          description: 'The transactions associated with the rebill',
-          resolve: (rebill) => {
-            return rebillController.listTransactions(rebill).then(response => response.transactions);
-          }
-        },
-        shippingreceipts: {
-          type: new GraphQLList(shippingReceiptType.graphObj),
-          description: 'The shipping receipts associated with the rebill',
-          resolve: (rebill) => {
-            const rebillHelperController = new RebillHelperController();
+	name: 'Rebill',
+	description: 'A record denoting a rebill.',
+	fields: () => ({
+		id: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'The id of the transaction.',
+		},
+		bill_at: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'The date of the rebill.',
+		},
+		amount: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'The amount of the rebill.',
+		},
+		parentsession: {
+			type: sessionType.graphObj,
+			description: 'The session associated with the transaction.',
+			resolve: rebill => rebillController.getParentSession(rebill),
+		},
+		product_schedules: {
+			type: new GraphQLList(productScheduleType.graphObj),
+			description:'The product schedules associated with the rebill',
+			resolve: rebill => rebillController.listProductSchedules(rebill),
+		},
+		transactions: {
+			type: new GraphQLList(transactionType.graphObj),
+			description: 'The transactions associated with the rebill',
+			resolve: (rebill) => {
+				return rebillController.listTransactions(rebill).then(response => response.transactions);
+			}
+		},
+		shippingreceipts: {
+			type: new GraphQLList(shippingReceiptType.graphObj),
+			description: 'The shipping receipts associated with the rebill',
+			resolve: (rebill) => {
+				const rebillHelperController = new RebillHelperController();
 
-            return rebillHelperController.getShippingReceipts({rebill: rebill});
-          }
-        },
-        created_at: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'ISO8601 datetime when the entity was created.',
-        },
-        updated_at: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'ISO8601 datetime when the entity was updated.',
-        },
-        state: {
-            type: GraphQLString,
-            description: 'State rebill is currently in.',
-        },
-        previous_state: {
-            type: GraphQLString,
-            description: 'State rebill is currently in.',
-        },
-        state_changed_at: {
-            type: GraphQLString,
-            description: 'ISO8601 datetime when the state of the rebill was changed.',
-        },
-        history: {
-            type: new GraphQLList(rebillStateHistoryItem.graphObj),
-            description: 'State history of the rebill',
-        },
-    }),
-    interfaces: []
+				return rebillHelperController.getShippingReceipts({rebill: rebill});
+			}
+		},
+		created_at: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'ISO8601 datetime when the entity was created.',
+		},
+		updated_at: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'ISO8601 datetime when the entity was updated.',
+		},
+		state: {
+			type: GraphQLString,
+			description: 'State rebill is currently in.',
+		},
+		previous_state: {
+			type: GraphQLString,
+			description: 'State rebill is currently in.',
+		},
+		state_changed_at: {
+			type: GraphQLString,
+			description: 'ISO8601 datetime when the state of the rebill was changed.',
+		},
+		history: {
+			type: new GraphQLList(rebillStateHistoryItem.graphObj),
+			description: 'State history of the rebill',
+		},
+	}),
+	interfaces: []
 });

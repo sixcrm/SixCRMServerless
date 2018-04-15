@@ -6,28 +6,28 @@ const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class ResourceUtilities {
 
-  constructor(){
+	constructor(){
 
-    this.parameter_validation = {};
+		this.parameter_validation = {};
 
-    this.parameter_definition = {};
+		this.parameter_definition = {};
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_defintion});
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_defintion});
 
-  }
+	}
 
-  augmentParameters(){
+	augmentParameters(){
 
-    du.debug('Augment Parameters');
+		du.debug('Augment Parameters');
 
-    this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
-    this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
+		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
+		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
-    return true;
+		return true;
 
-  }
+	}
 
-  getContentType(event){
+	getContentType(event){
 
 		let contentType = event.headers['content-type'];
 

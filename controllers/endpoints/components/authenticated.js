@@ -12,195 +12,195 @@ const endpointController = global.SixCRM.routes.include('controllers', 'endpoint
 
 module.exports = class AuthenticatedController extends endpointController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-    }
+	}
 
-    preprocessing(event){
+	preprocessing(event){
 
-      du.debug('Preprocessing');
+		du.debug('Preprocessing');
 
-      return this.normalizeEvent(event)
-      .then((event) => this.validateEvent(event))
-      .then((event) => this.acquireSubProperties(event))
+		return this.normalizeEvent(event)
+			.then((event) => this.validateEvent(event))
+			.then((event) => this.acquireSubProperties(event))
 			.then((event) => this.validateRequiredPermissions(event));
 
-    }
+	}
 
-    acquireSubProperties(event){
+	acquireSubProperties(event){
 
-      du.debug('Acquire Sub Properties');
+		du.debug('Acquire Sub Properties');
 
-      return Promise.all([
-        this.acquireAccount(event),
-        this.acquireUser(event)
-      ]).then(() => {
-        return event;
-      });
+		return Promise.all([
+			this.acquireAccount(event),
+			this.acquireUser(event)
+		]).then(() => {
+			return event;
+		});
 
-    }
+	}
 
-    acquireAccount(event){
+	acquireAccount(event){
 
-      du.debug('Acquire Account');
+		du.debug('Acquire Account');
 
-      if(objectutilities.hasRecursive(event, 'pathParameters.account')){
+		if(objectutilities.hasRecursive(event, 'pathParameters.account')){
 
-        let account = event.pathParameters.account;
+			let account = event.pathParameters.account;
 
-        permissionutilities.setGlobalAccount(account);
+			permissionutilities.setGlobalAccount(account);
 
-        return Promise.resolve(event);
+			return Promise.resolve(event);
 
-      }
+		}
 
-      eu.throwError('bad_request', 'Account missing in path parameter.');
+		eu.throwError('bad_request', 'Account missing in path parameter.');
 
-    }
+	}
 
-     //Technical Debt:  This is wrought with redundancies....
-    acquireUser(event){
+	//Technical Debt:  This is wrought with redundancies....
+	acquireUser(event){
 
-      du.debug('Acquire User');
+		du.debug('Acquire User');
 
-      objectutilities.hasRecursive(event, 'requestContext.authorizer.user', true);
+		objectutilities.hasRecursive(event, 'requestContext.authorizer.user', true);
 
-      let user_string = event.requestContext.authorizer.user;
+		let user_string = event.requestContext.authorizer.user;
 
-      du.debug('Event Request Context Authorizer User Alias:', user_string);
+		du.debug('Event Request Context Authorizer User Alias:', user_string);
 
-      if(!_.isString(user_string)){
+		if(!_.isString(user_string)){
 
-        eu.throwError('server','Event request context authorizer user is an unrecognized format.');
+			eu.throwError('server','Event request context authorizer user is an unrecognized format.');
 
-      }
+		}
 
-      if(!_.has(this, 'userController')){
-        const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-        this.userController = new UserController();
-      }
+		if(!_.has(this, 'userController')){
+			const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+			this.userController = new UserController();
+		}
 
-      if(stringutilities.isEmail(user_string)){
+		if(stringutilities.isEmail(user_string)){
 
-        return this.userController.getUserStrict(user_string).then((user) => {
+			return this.userController.getUserStrict(user_string).then((user) => {
 
-          if(_.has(user, 'id')){
+				if(_.has(user, 'id')){
 
-            this.userController.setGlobalUser(user);
+					this.userController.setGlobalUser(user);
 
-            return event;
+					return event;
 
-          }
+				}
 
-          if(!this.isUserIntrospection(event) && !this.isAcceptInvite(event)) {
-            eu.throwError('forbidden', 'Unknown user.  Please contact the system administrator.');
-          }
+				if(!this.isUserIntrospection(event) && !this.isAcceptInvite(event)) {
+					eu.throwError('forbidden', 'Unknown user.  Please contact the system administrator.');
+				}
 
-          du.warning('Unable to acquire user, setting global user to email.');
+				du.warning('Unable to acquire user, setting global user to email.');
 
-          this.userController.setGlobalUser(user_string);
+				this.userController.setGlobalUser(user_string);
 
-          return event;
+				return event;
 
-        });
+			});
 
-      }else{
+		}else{
 
-        if(!_.has(this, 'userController')){
-          const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
-          this.userController = new UserController();
-        }
+			if(!_.has(this, 'userController')){
+				const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
+				this.userController = new UserController();
+			}
 
-        return this.userController.getUserByAlias(user_string).then((user) => {
+			return this.userController.getUserByAlias(user_string).then((user) => {
 
-          if(_.has(user, 'id')){
+				if(_.has(user, 'id')){
 
-            this.userController.setGlobalUser(user);
+					this.userController.setGlobalUser(user);
 
-            return event;
+					return event;
 
-          }
+				}
 
-          if (!this.isUserIntrospection(event)) {
-            return Promise.reject(eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.'));
-          }
+				if (!this.isUserIntrospection(event)) {
+					return Promise.reject(eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.'));
+				}
 
-          du.warning('Unable to acquire user, setting global user to alias.');
+				du.warning('Unable to acquire user, setting global user to alias.');
 
-          this.userController.setGlobalUser(user_string);
+				this.userController.setGlobalUser(user_string);
 
-          return event;
+				return event;
 
-        });
+			});
 
-      }
+		}
 
-    }
+	}
 
-    //Technical Debt:  THis function does not need to return a promise...
-    //Technical Debt:  Refactor, this is gross...
-    validateRequiredPermissions(event){
+	//Technical Debt:  THis function does not need to return a promise...
+	//Technical Debt:  Refactor, this is gross...
+	validateRequiredPermissions(event){
 
-      du.debug('Validate Required Permissions');
+		du.debug('Validate Required Permissions');
 
-      if(_.has(this, 'required_permissions')){
+		if(_.has(this, 'required_permissions')){
 
-        let validated_permissions = arrayutilities.map(this.required_permissions, required_permission => {
+			let validated_permissions = arrayutilities.map(this.required_permissions, required_permission => {
 
-          let permission_array = required_permission.split('/');
+				let permission_array = required_permission.split('/');
 
-          let permission_utilities_state = JSON.stringify(permissionutilities.getState());
+				let permission_utilities_state = JSON.stringify(permissionutilities.getState());
 
-          let question = permission_utilities_state+permissionutilities.buildPermissionString(permission_array[1], permission_array[0]);
+				let question = permission_utilities_state+permissionutilities.buildPermissionString(permission_array[1], permission_array[0]);
 
-          let answer_function = () => {
+				let answer_function = () => {
 
-            let permission = permissionutilities.validatePermissions(permission_array[1], permission_array[0]);
+					let permission = permissionutilities.validatePermissions(permission_array[1], permission_array[0]);
 
-            return permission;
+					return permission;
 
-          }
+				}
 
-          return global.SixCRM.localcache.resolveQuestion(question, answer_function);
+				return global.SixCRM.localcache.resolveQuestion(question, answer_function);
 
-        });
+			});
 
-        if(_.includes(validated_permissions, false)){
+			if(_.includes(validated_permissions, false)){
 
-          eu.throwError('fobidden', 'Unable to execute action.  User lacks permission.');
+				eu.throwError('fobidden', 'Unable to execute action.  User lacks permission.');
 
-        }
+			}
 
-      }
+		}
 
-      return Promise.resolve(event);
+		return Promise.resolve(event);
 
-    }
+	}
 
-    isUserIntrospection(event) {
+	isUserIntrospection(event) {
 
-        du.debug('Is User Introspection');
+		du.debug('Is User Introspection');
 
-        if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(query)?[\s\n\r]*{[\s\n\r]*userintrospection[\s\n\r]*{/)) {
-            return true;
-        }
+		if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(query)?[\s\n\r]*{[\s\n\r]*userintrospection[\s\n\r]*{/)) {
+			return true;
+		}
 
-        return false;
+		return false;
 
-    }
+	}
 
-    isAcceptInvite(event) {
+	isAcceptInvite(event) {
 
-      du.debug('Is Accept Invite', event.body);
+		du.debug('Is Accept Invite', event.body);
 
-      if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(mutation)?[\s\n\r]*{[\s\n\r]*acceptinvite[\s\n\r]/)) {
-        return true;
-      }
+		if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(mutation)?[\s\n\r]*{[\s\n\r]*acceptinvite[\s\n\r]/)) {
+			return true;
+		}
 
-      return false;
+		return false;
 
-    }
+	}
 
 }

@@ -10,64 +10,64 @@ const TransactionController = global.SixCRM.routes.include('entities','Transacti
 //Technical Debt:  Look at disabling and enabling ACLs here...
 module.exports = class Refund extends TransactionUtilities{
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameter_definitions = {
-        required:{
-          transaction: 'transaction'
-        },
-        optional:{
-          amount: 'amount'
-        }
-      };
+		this.parameter_definitions = {
+			required:{
+				transaction: 'transaction'
+			},
+			optional:{
+				amount: 'amount'
+			}
+		};
 
-      this.parameter_validation = {
-        'refund': global.SixCRM.routes.path('model','transaction/refund.json'),
-        'transaction': global.SixCRM.routes.path('model','transaction/transaction.json'),
-        'merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
-        'selected_merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
-        'amount':global.SixCRM.routes.path('model','transaction/amount.json')
-      };
+		this.parameter_validation = {
+			'refund': global.SixCRM.routes.path('model','transaction/refund.json'),
+			'transaction': global.SixCRM.routes.path('model','transaction/transaction.json'),
+			'merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
+			'selected_merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
+			'amount':global.SixCRM.routes.path('model','transaction/amount.json')
+		};
 
-      this.transactionController = new TransactionController();
+		this.transactionController = new TransactionController();
 
-      this.instantiateParameters();
+		this.instantiateParameters();
 
-    }
+	}
 
-    refund(parameters){
+	refund(parameters){
 
-      du.debug('Refund');
+		du.debug('Refund');
 
-      return this.setParameters(parameters)
-      .then(() => this.hydrateParameters())
-      .then(() => this.refundTransaction());
+		return this.setParameters(parameters)
+			.then(() => this.hydrateParameters())
+			.then(() => this.refundTransaction());
 
-    }
+	}
 
-    //Technical Debt: Untested...
-    refundTransaction(){
+	//Technical Debt: Untested...
+	refundTransaction(){
 
-      du.debug('Process Transaction');
+		du.debug('Process Transaction');
 
-      return this.instantiateGateway()
-      .then(() => this.createProcessingParameters())
-      .then(() => {
+		return this.instantiateGateway()
+			.then(() => this.createProcessingParameters())
+			.then(() => {
 
-        let instantiated_gateway = this.parameters.get('instantiated_gateway');
-        let processing_parameters = this.parameters.get('refund');
+				let instantiated_gateway = this.parameters.get('instantiated_gateway');
+				let processing_parameters = this.parameters.get('refund');
 
-        processing_parameters = this.ensureTransactionId(processing_parameters);
+				processing_parameters = this.ensureTransactionId(processing_parameters);
 
-        return instantiated_gateway.refund(processing_parameters);
+				return instantiated_gateway.refund(processing_parameters);
 
-      });
+			});
 
-    }
+	}
 
-    /**
+	/**
      * It can happen that the transactionid is not stored in the processor response as expected. Some objects in our
      * database keep responses like this:
      *
@@ -78,76 +78,76 @@ module.exports = class Refund extends TransactionUtilities{
      *
      * This method attempts to retrieve a transaction id from such response, and attach it to the top level response object.
      */
-    ensureTransactionId(refund) {
+	ensureTransactionId(refund) {
 
-      du.debug('Ensure Transaction Id');
+		du.debug('Ensure Transaction Id');
 
-      let result = refund.transaction.processor_response.result;
+		let result = refund.transaction.processor_response.result;
 
-      if (objectutilities.hasRecursive(result, 'response.body') && _.isString(result.response.body)) {
-        let parsed_response = querystring.parse(result.response.body);
+		if (objectutilities.hasRecursive(result, 'response.body') && _.isString(result.response.body)) {
+			let parsed_response = querystring.parse(result.response.body);
 
-        if (_.has(parsed_response, 'transactionid')) {
-          result.transactionid = parsed_response.transactionid;
-        }
-      }
+			if (_.has(parsed_response, 'transactionid')) {
+				result.transactionid = parsed_response.transactionid;
+			}
+		}
 
-      return refund;
-    }
+		return refund;
+	}
 
-    createProcessingParameters(){
+	createProcessingParameters(){
 
-      du.debug('Create Processing Parameters');
+		du.debug('Create Processing Parameters');
 
-      let transaction = this.parameters.get('transaction');
+		let transaction = this.parameters.get('transaction');
 
-      if(_.has(transaction, 'processor_response')){
+		if(_.has(transaction, 'processor_response')){
 
-        try{
-          transaction.processor_response = JSON.parse(transaction.processor_response);
-        }catch(error){
-          //no biggie
-        }
+			try{
+				transaction.processor_response = JSON.parse(transaction.processor_response);
+			}catch(error){
+				//no biggie
+			}
 
-      }
+		}
 
-      let parameters = {
-        transaction: transaction
-      };
+		let parameters = {
+			transaction: transaction
+		};
 
-      let amount = this.parameters.get('amount', null, false);
+		let amount = this.parameters.get('amount', null, false);
 
-      if(!_.isNull(amount)){
-        parameters.amount = amount;
-      }
+		if(!_.isNull(amount)){
+			parameters.amount = amount;
+		}
 
-      this.parameters.set('refund', parameters);
+		this.parameters.set('refund', parameters);
 
-      return Promise.resolve(parameters);
+		return Promise.resolve(parameters);
 
-    }
+	}
 
-    //Technical Debt: Add Amount
-    hydrateParameters(){
+	//Technical Debt: Add Amount
+	hydrateParameters(){
 
-      du.debug('Hydrate Parameters');
+		du.debug('Hydrate Parameters');
 
-      let transaction = this.parameters.get('transaction');
+		let transaction = this.parameters.get('transaction');
 
-      return this.transactionController.get({id: transaction})
-      .then((transaction) => {
+		return this.transactionController.get({id: transaction})
+			.then((transaction) => {
 
-        return this.transactionController.getMerchantProvider(transaction);
+				return this.transactionController.getMerchantProvider(transaction);
 
-      })
-      .then((merchantprovider) => {
+			})
+			.then((merchantprovider) => {
 
-        this.parameters.set('selected_merchantprovider', merchantprovider);
+				this.parameters.set('selected_merchantprovider', merchantprovider);
 
-        return true;
+				return true;
 
-      });
+			});
 
-    }
+	}
 
 }

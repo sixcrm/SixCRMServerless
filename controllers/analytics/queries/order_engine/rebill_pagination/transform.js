@@ -6,25 +6,25 @@ let paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilit
 
 module.exports = function(results, parameters){
 
-  du.debug('Transformation Function');
+	du.debug('Transformation Function');
 
-  let result_array = [];
+	let result_array = [];
 
-  arrayutilities.map(results, (result) => {
+	arrayutilities.map(results, (result) => {
 
-    result_array.push({
-      datetime: result.datetime,
-      count: result.count
-    });
+		result_array.push({
+			datetime: result.datetime,
+			count: result.count
+		});
 
-  });
+	});
 
-  parameters['count'] = results.length;
+	parameters['count'] = results.length;
 
-  let pagination_object = paginationutilities.createSQLPaginationObject(parameters);
+	let pagination_object = paginationutilities.createSQLPaginationObject(parameters);
 
-  let return_object = {summary:result_array, pagination: pagination_object};
+	let return_object = {summary:result_array, pagination: pagination_object};
 
-  return Promise.resolve(return_object);
+	return Promise.resolve(return_object);
 
 }

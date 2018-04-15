@@ -5,134 +5,134 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 /* eslint-disable no-console */
 describe('lib/debug-utilities', () => {
 
-    let verbose_level;
-    let log;
+	let verbose_level;
+	let log;
 
-    before(() => {
-        verbose_level = process.env.SIX_VERBOSE;
-        log = console.log;
-        console.log = function(){
-            expect(arguments).to.be.defined;
-        }
-    });
+	before(() => {
+		verbose_level = process.env.SIX_VERBOSE;
+		log = console.log;
+		console.log = function(){
+			expect(arguments).to.be.defined;
+		}
+	});
 
-    after(() => {
-        process.env.SIX_VERBOSE = verbose_level;
-        console.log = log;
-    });
+	after(() => {
+		process.env.SIX_VERBOSE = verbose_level;
+		console.log = log;
+	});
 
-    describe('emit', () => {
-      before(() => {
-          console.log = log;
-      });
-      after(() => {
-          console.log = function(){
-              expect(arguments).to.be.defined;
-          }
-      });
+	describe('emit', () => {
+		before(() => {
+			console.log = log;
+		});
+		after(() => {
+			console.log = function(){
+				expect(arguments).to.be.defined;
+			}
+		});
 
-      it('does not emit if SIX_VERBOSE is not set', () => {
-          delete process.env.SIX_VERBOSE;
-          expect(du.emit()).to.equal(false);
-      });
+		it('does not emit if SIX_VERBOSE is not set', () => {
+			delete process.env.SIX_VERBOSE;
+			expect(du.emit()).to.equal(false);
+		});
 
-      it('does not emit if selected level is greater than configured level', () => {
-          process.env.SIX_VERBOSE = 5;
-          expect(du.emit(6)).to.equal(false);
-      });
+		it('does not emit if selected level is greater than configured level', () => {
+			process.env.SIX_VERBOSE = 5;
+			expect(du.emit(6)).to.equal(false);
+		});
 
-      it('emits if selected level is equal to configured level', () => {
-          process.env.SIX_VERBOSE = 5;
-          expect(du.emit(5)).to.equal(true);
-      });
+		it('emits if selected level is equal to configured level', () => {
+			process.env.SIX_VERBOSE = 5;
+			expect(du.emit(5)).to.equal(true);
+		});
 
-      it('emits if selected level is less than configured level', () => {
-          process.env.SIX_VERBOSE = 5;
-          expect(du.emit(4)).to.equal(true);
-      });
+		it('emits if selected level is less than configured level', () => {
+			process.env.SIX_VERBOSE = 5;
+			expect(du.emit(4)).to.equal(true);
+		});
 
-    });
+	});
 
-    describe('immutable', () => {
+	describe('immutable', () => {
 
-        it('prints output', () => {
-            process.env.SIX_VERBOSE = 6;
-            du.immutable('test');
-        });
+		it('prints output', () => {
+			process.env.SIX_VERBOSE = 6;
+			du.immutable('test');
+		});
 
-    });
+	});
 
-    describe('debug', () => {
+	describe('debug', () => {
 
-        it('prints output', () => {
-            process.env.SIX_VERBOSE = 6;
-            du.debug('test');
-        });
+		it('prints output', () => {
+			process.env.SIX_VERBOSE = 6;
+			du.debug('test');
+		});
 
-    });
+	});
 
-    describe('critical', () => {
+	describe('critical', () => {
 
-        it('prints output', () => {
-            process.env.SIX_VERBOSE = 6;
-            du.critical('test');
-        });
+		it('prints output', () => {
+			process.env.SIX_VERBOSE = 6;
+			du.critical('test');
+		});
 
-    });
+	});
 
-    describe('deep', () => {
+	describe('deep', () => {
 
-        it('prints output', () => {
-            process.env.SIX_VERBOSE = 6;
-            du.deep('test');
-        });
+		it('prints output', () => {
+			process.env.SIX_VERBOSE = 6;
+			du.deep('test');
+		});
 
-    });
+	});
 
-    describe('warning', () => {
+	describe('warning', () => {
 
-        it('prints output', () => {
-            process.env.SIX_VERBOSE = 6;
-            du.warning('test');
-        });
+		it('prints output', () => {
+			process.env.SIX_VERBOSE = 6;
+			du.warning('test');
+		});
 
-    });
+	});
 
-    describe('highlight', () => {
+	describe('highlight', () => {
 
-        it('prints output', () => {
-            process.env.SIX_VERBOSE = 6;
-            du.highlight('test');
-        });
+		it('prints output', () => {
+			process.env.SIX_VERBOSE = 6;
+			du.highlight('test');
+		});
 
-    });
+	});
 
-    describe('output', () => {
+	describe('output', () => {
 
-        it('prints output', () => {
-            process.env.SIX_VERBOSE = 6;
-            du.output('test');
-        });
+		it('prints output', () => {
+			process.env.SIX_VERBOSE = 6;
+			du.output('test');
+		});
 
-    });
+	});
 
-    describe('error', () => {
+	describe('error', () => {
 
-        it('prints output', () => {
-            process.env.SIX_VERBOSE = 6;
-            du.error('test');
-        });
+		it('prints output', () => {
+			process.env.SIX_VERBOSE = 6;
+			du.error('test');
+		});
 
-    });
+	});
 
-    describe('info', () => {
+	describe('info', () => {
 
-        it('prints output', () => {
-            process.env.SIX_VERBOSE = 6;
-            du.info('test');
-        });
+		it('prints output', () => {
+			process.env.SIX_VERBOSE = 6;
+			du.info('test');
+		});
 
-    });
+	});
 
 
 

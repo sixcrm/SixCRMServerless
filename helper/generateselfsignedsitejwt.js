@@ -17,11 +17,11 @@ let email = process.argv[2];
 let signing_string = process.argv[3];
 
 if(_.isUndefined(email) || _.isNull(email)){
-    du.error('You must specify a user email.')
+	du.error('You must specify a user email.')
 }
 
 if(_.isUndefined(signing_string) || _.isNull(signing_string)){
-    du.error('You must specify a signing string.')
+	du.error('You must specify a signing string.')
 }
 
 process.env.site_jwt_secret_key = signing_string;

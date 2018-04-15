@@ -7,17 +7,17 @@ let notificationType = require('./notificationType');
 let paginationType = require('../pagination/paginationType');
 
 module.exports.graphObj =  new GraphQLObjectType({
-    name: 'NotificationList',
-    description: 'Notifications.',
-    fields: () => ({
-        notifications: {
-            type: new GraphQLList(notificationType.graphObj),
-            description: 'Notifications.',
-        },
-        pagination: {
-            type: new GraphQLNonNull(paginationType.graphObj),
-            description: 'Pagination',
-        }
-    }),
-    interfaces: []
+	name: 'NotificationList',
+	description: 'Notifications.',
+	fields: () => ({
+		notifications: {
+			type: new GraphQLList(notificationType.graphObj),
+			description: 'Notifications.',
+		},
+		pagination: {
+			type: new GraphQLNonNull(paginationType.graphObj),
+			description: 'Pagination',
+		}
+	}),
+	interfaces: []
 });

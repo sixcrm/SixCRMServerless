@@ -8,226 +8,226 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 
 module.exports = class workerController {
 
-    constructor(){
+	constructor(){
 
-      this.setPermissions();
-      this.initialize();
+		this.setPermissions();
+		this.initialize();
 
-    }
+	}
 
-    setPermissions(){
+	setPermissions(){
 
-      du.debug('Set Permissions');
+		du.debug('Set Permissions');
 
-      this.permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
-      this.permissionutilities.setPermissions('*',['*/*'],[])
+		this.permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
+		this.permissionutilities.setPermissions('*',['*/*'],[])
 
-    }
+	}
 
-    initialize(){
+	initialize(){
 
-      du.debug('Initialize');
+		du.debug('Initialize');
 
-      let parameter_validation = {
-        'message': global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
-        'messages':global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
-        'parsedmessagebody': global.SixCRM.routes.path('model', 'workers/parsedmessagebody.json'),
-        'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
-        'session': global.SixCRM.routes.path('model', 'entities/session.json'),
-        'responsecode': global.SixCRM.routes.path('model', 'workers/workerresponsetype.json')
-      }
+		let parameter_validation = {
+			'message': global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
+			'messages':global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
+			'parsedmessagebody': global.SixCRM.routes.path('model', 'workers/parsedmessagebody.json'),
+			'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
+			'session': global.SixCRM.routes.path('model', 'entities/session.json'),
+			'responsecode': global.SixCRM.routes.path('model', 'workers/workerresponsetype.json')
+		}
 
-      let parameter_definition = {};
+		let parameter_definition = {};
 
-      const ParametersController = global.SixCRM.routes.include('providers', 'Parameters.js');
+		const ParametersController = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-      this.parameters = new ParametersController({
-        validation: parameter_validation,
-        definition: parameter_definition
-      });
+		this.parameters = new ParametersController({
+			validation: parameter_validation,
+			definition: parameter_definition
+		});
 
-    }
+	}
 
-    augmentParameters(){
+	augmentParameters(){
 
-      du.debug('Augment Parameters');
+		du.debug('Augment Parameters');
 
-      this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
-      this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
+		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
+		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
-      return true;
+		return true;
 
-    }
+	}
 
-    preamble(message){
+	preamble(message){
 
-      du.debug('Preamble');
+		du.debug('Preamble');
 
-      return this.setParameters({argumentation: {message: message}, action: 'execute'})
-      .then(() => this.parseMessageBody())
-      .then(() => this.acquireRebill());
+		return this.setParameters({argumentation: {message: message}, action: 'execute'})
+			.then(() => this.parseMessageBody())
+			.then(() => this.acquireRebill());
 
-    }
+	}
 
-    setParameters(parameters_object){
+	setParameters(parameters_object){
 
-      du.debug('Set Parameters');
+		du.debug('Set Parameters');
 
-      this.parameters.setParameters(parameters_object);
+		this.parameters.setParameters(parameters_object);
 
-      return Promise.resolve(true);
+		return Promise.resolve(true);
 
-    }
+	}
 
-    //Technical Debt: This is kind of gross...
-    parseMessageBody(message, response_field){
+	//Technical Debt: This is kind of gross...
+	parseMessageBody(message, response_field){
 
-      du.debug('Parse Message Body');
+		du.debug('Parse Message Body');
 
-      response_field = this.setResponseField(response_field);
-      message = this.setMessage();
+		response_field = this.setResponseField(response_field);
+		message = this.setMessage();
 
-      let message_body;
+		let message_body;
 
-      try{
-        message_body = JSON.parse(message.Body);
-      }catch(error){
-        du.error(error);
-        eu.throwError('server', 'Unable to parse message body: '+message);
-      }
+		try{
+			message_body = JSON.parse(message.Body);
+		}catch(error){
+			du.error(error);
+			eu.throwError('server', 'Unable to parse message body: '+message);
+		}
 
-      objectutilities.hasRecursive(message_body, response_field, true);
+		objectutilities.hasRecursive(message_body, response_field, true);
 
-      this.parameters.set('parsedmessagebody', message_body);
+		this.parameters.set('parsedmessagebody', message_body);
 
-      return Promise.resolve(true);
+		return Promise.resolve(true);
 
-    }
+	}
 
-    setMessage(message){
+	setMessage(message){
 
-      du.debug('Set Message');
+		du.debug('Set Message');
 
-      if(!_.isUndefined(message) && !_.isNull(message) && objectutilities.isObject(message, false)){
-        return message;
-      }
+		if(!_.isUndefined(message) && !_.isNull(message) && objectutilities.isObject(message, false)){
+			return message;
+		}
 
-      return this.parameters.get('message');
+		return this.parameters.get('message');
 
-    }
+	}
 
-    setResponseField(response_field){
+	setResponseField(response_field){
 
-      du.debug('Set Response Field');
+		du.debug('Set Response Field');
 
-      if(!_.isUndefined(response_field) && !_.isNull(response_field) && stringutilities.isString(response_field, false)){
-        return response_field;
-      }
+		if(!_.isUndefined(response_field) && !_.isNull(response_field) && stringutilities.isString(response_field, false)){
+			return response_field;
+		}
 
-      if(_.has(this, 'response_field')){
-        return this.response_field;
-      }
+		if(_.has(this, 'response_field')){
+			return this.response_field;
+		}
 
-      return 'id';
+		return 'id';
 
-    }
+	}
 
-    acquireRebill(){
+	acquireRebill(){
 
-      du.debug('Acquire Rebill');
+		du.debug('Acquire Rebill');
 
-      let parsed_message_body = this.parameters.get('parsedmessagebody');
+		let parsed_message_body = this.parameters.get('parsedmessagebody');
 
-      if(!_.has(this, 'rebillController')){
-        const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-        this.rebillController = new RebillController();
-      }
+		if(!_.has(this, 'rebillController')){
+			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+			this.rebillController = new RebillController();
+		}
 
-      return this.rebillController.get({id: parsed_message_body.id}).then((rebill) => {
+		return this.rebillController.get({id: parsed_message_body.id}).then((rebill) => {
 
-        this.parameters.set('rebill', rebill);
+			this.parameters.set('rebill', rebill);
 
-        return true;
+			return true;
 
-      });
+		});
 
-    }
+	}
 
-    acquireSession(){
+	acquireSession(){
 
-      du.debug('Acquire Session');
+		du.debug('Acquire Session');
 
-      let parsed_message_body = this.parameters.get('parsedmessagebody');
+		let parsed_message_body = this.parameters.get('parsedmessagebody');
 
-      if(!_.has(this, 'sessionController')){
-        const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-        this.sessionController = new SessionController();
-      }
+		if(!_.has(this, 'sessionController')){
+			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
+		}
 
-      return this.sessionController.get({id: parsed_message_body.id}).then((session) => {
+		return this.sessionController.get({id: parsed_message_body.id}).then((session) => {
 
-        this.parameters.set('session', session);
+			this.parameters.set('session', session);
 
-        return true;
+			return true;
 
-      });
+		});
 
-    }
+	}
 
-    respond(response, additional_information){
+	respond(response, additional_information){
 
-      du.debug('Respond');
+		du.debug('Respond');
 
-      const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
+		const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
 
-      response = new WorkerResponse(response);
+		response = new WorkerResponse(response);
 
-      if(!_.isUndefined(additional_information)){
-        response.setAdditionalInformation(additional_information);
-      }
+		if(!_.isUndefined(additional_information)){
+			response.setAdditionalInformation(additional_information);
+		}
 
-      return response;
+		return response;
 
-    }
+	}
 
-    pushEvent({event_type, context, message_attributes}){
+	pushEvent({event_type, context, message_attributes}){
 
-      du.debug('Push Event');
+		du.debug('Push Event');
 
-      if(_.isUndefined(event_type) || _.isNull(event_type)){
-        if(_.has(this, 'event_type')){
-          event_type = this.event_type;
-        }else if (!_.isUndefined(context) && !_.isNull(context) && _.has(context, 'event_type') && _.isString(context.event_type)){
-          event_type = context.event_type;
-        }else{
-          eu.throwError('server', 'Unable to identify event_type.');
-        }
-      }
+		if(_.isUndefined(event_type) || _.isNull(event_type)){
+			if(_.has(this, 'event_type')){
+				event_type = this.event_type;
+			}else if (!_.isUndefined(context) && !_.isNull(context) && _.has(context, 'event_type') && _.isString(context.event_type)){
+				event_type = context.event_type;
+			}else{
+				eu.throwError('server', 'Unable to identify event_type.');
+			}
+		}
 
-      if(_.isUndefined(context) || _.isNull(context)){
-        if(objectutilities.hasRecursive(this, 'parameters.store')){
-          context = this.parameters.store;
-        }else{
-          eu.throwError('server', 'Unset context.');
-        }
-      }
+		if(_.isUndefined(context) || _.isNull(context)){
+			if(objectutilities.hasRecursive(this, 'parameters.store')){
+				context = this.parameters.store;
+			}else{
+				eu.throwError('server', 'Unset context.');
+			}
+		}
 
-      if(_.isUndefined(message_attributes) || _.isNull(message_attributes)){
-        message_attributes = {
-          'event_type': {
-            DataType:'String',
-            StringValue: event_type
-          }
-        };
-      }
+		if(_.isUndefined(message_attributes) || _.isNull(message_attributes)){
+			message_attributes = {
+				'event_type': {
+					DataType:'String',
+					StringValue: event_type
+				}
+			};
+		}
 
-      if(!_.has(this, 'eventHelperController')){
-        const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-        this.eventHelperController = new EventHelperController();
-      }
+		if(!_.has(this, 'eventHelperController')){
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			this.eventHelperController = new EventHelperController();
+		}
 
-      return this.eventHelperController.pushEvent({event_type: event_type, context: context, message_attributes: message_attributes});
+		return this.eventHelperController.pushEvent({event_type: event_type, context: context, message_attributes: message_attributes});
 
-    }
+	}
 
 }

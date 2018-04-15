@@ -5,47 +5,47 @@ const RoleController = global.SixCRM.routes.include('controllers', 'entities/Rol
 
 describe('controllers/Role.js', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-    beforeEach(() => {
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-        sendMessage() {
-          return Promise.resolve(true);
-        }
-      });
-    });
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+			sendMessage() {
+				return Promise.resolve(true);
+			}
+		});
+	});
 
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-    describe('getPermissions', () => {
+	describe('getPermissions', () => {
 
-        it('returns role permission', () => {
+		it('returns role permission', () => {
 
-            let role = {
-                permissions: 'a_permission'
-            };
+			let role = {
+				permissions: 'a_permission'
+			};
 
-            const roleController = new RoleController();
+			const roleController = new RoleController();
 
-            expect(roleController.getPermissions(role)).to.equal('a_permission');
-        });
+			expect(roleController.getPermissions(role)).to.equal('a_permission');
+		});
 
-        it('returns null when role permission is not defined', () => {
+		it('returns null when role permission is not defined', () => {
 
-            let role = {};
+			let role = {};
 
-            const roleController = new RoleController();
+			const roleController = new RoleController();
 
-            expect(roleController.getPermissions(role)).to.equal(null);
-        });
-    });
+			expect(roleController.getPermissions(role)).to.equal(null);
+		});
+	});
 });

@@ -8,16 +8,16 @@ const CreditCardTest = global.SixCRM.routes.include('test', 'integration/classes
 
 describe('Credit Card (Customer) Delete Block Test', () => {
 
-  it('Should not allow the delete', () => {
+	it('Should not allow the delete', () => {
 
-    let creditCardTest = new CreditCardTest();
+		let creditCardTest = new CreditCardTest();
 
-    return creditCardTest.executeCustomerBlockTest().then(results => {
+		return creditCardTest.executeCustomerBlockTest().then(results => {
 
-      return expect(results.statusCode).to.equal(200);
+			return expect(results.statusCode).to.equal(200);
 
-    });
+		});
 
-  });
+	});
 
 });

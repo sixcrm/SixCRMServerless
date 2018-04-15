@@ -5,18 +5,18 @@ const SixCRMBase = require('./SixCRMBase');
 
 class SixCRM extends SixCRMBase {
 
-  clearState() {
+	clearState() {
 
-    super.clearState();
+		super.clearState();
 
-    this.setConfigurationFile();
+		this.setConfigurationFile();
 
-  }
+	}
 
 }
 
 if (!_.has(global, 'SixCRM')) {
-  global.SixCRM = new SixCRM();
-  global.SixCRM.instantiate();
-  global.SixCRM.setConfigurationFile();
+	global.SixCRM = new SixCRM();
+	global.SixCRM.instantiate();
+	global.SixCRM.setConfigurationFile();
 }

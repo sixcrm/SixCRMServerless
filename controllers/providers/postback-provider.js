@@ -6,41 +6,41 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 
 module.exports = class PostbackProvider {
 
-    constructor(){
+	constructor(){
 
-    }
+	}
 
-    executePostback(url, data){
+	executePostback(url, data){
 
-        du.debug('Execute Postback');
+		du.debug('Execute Postback');
 
-        let parsed_url = parserutilities.parse(url, data);
+		let parsed_url = parserutilities.parse(url, data);
 
-        return this.executeRequest(parsed_url);
+		return this.executeRequest(parsed_url);
 
-    }
+	}
 
-    executeRequest(parsed_url){
+	executeRequest(parsed_url){
 
-        du.debug('Execute Request');
+		du.debug('Execute Request');
 
-        return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-            var request_options = {
-                url: parsed_url
-            };
+			var request_options = {
+				url: parsed_url
+			};
 
-            request.get(request_options, (error, response) => {
+			request.get(request_options, (error, response) => {
 
-                if(error){ return reject(error); }
+				if(error){ return reject(error); }
 
-                return resolve(response);
+				return resolve(response);
 
-            });
+			});
 
-        });
+		});
 
-    }
+	}
 
 }
 

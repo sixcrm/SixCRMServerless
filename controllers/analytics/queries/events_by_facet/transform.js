@@ -5,47 +5,47 @@ let mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 
 module.exports = function(results, parameters){
 
-    du.debug('Transformation Function');
+	du.debug('Transformation Function');
 
-    return new Promise((resolve) => {
+	return new Promise((resolve) => {
 
-        du.debug(results);
+		du.debug(results);
 
-        let facets = [];
+		let facets = [];
 
-        let count_sum = 0;
+		let count_sum = 0;
 
-        if(_.isArray(results) && results.length > 0){
+		if(_.isArray(results) && results.length > 0){
 
-            results.forEach((result) => {
+			results.forEach((result) => {
 
-                count_sum = parseInt(result.all_events_count);
+				count_sum = parseInt(result.all_events_count);
 
-                let total = Math.max(parseInt(result.all_events_count), 1);
+				let total = Math.max(parseInt(result.all_events_count), 1);
 
-                let percentage = mathutilities.formatToPercentage(mathutilities.safePercentage(result.events_count, total))+'%';
+				let percentage = mathutilities.formatToPercentage(mathutilities.safePercentage(result.events_count, total))+'%';
 
-                facets.push(
-                    {
-                        facet: result[parameters.facet],
-                        count: parseInt(result.events_count),
-                        percentage: percentage
-                    }
-                );
+				facets.push(
+					{
+						facet: result[parameters.facet],
+						count: parseInt(result.events_count),
+						percentage: percentage
+					}
+				);
 
 
-            });
+			});
 
-        }
+		}
 
-        let return_object = {
-            count: count_sum,
-            facet_type: parameters.facet,
-            facets:facets
-        };
+		let return_object = {
+			count: count_sum,
+			facet_type: parameters.facet,
+			facets:facets
+		};
 
-        return resolve(return_object);
+		return resolve(return_object);
 
-    });
+	});
 
 }

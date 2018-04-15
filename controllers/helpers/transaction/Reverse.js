@@ -8,106 +8,106 @@ const TransactionController = global.SixCRM.routes.include('entities','Transacti
 //Technical Debt:  Look at disabling and enabling ACLs here...
 module.exports = class Reverse extends TransactionUtilities{
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameter_definitions = {
-        required:{
-          transaction: 'transaction'
-        },
-        optional:{}
-      };
+		this.parameter_definitions = {
+			required:{
+				transaction: 'transaction'
+			},
+			optional:{}
+		};
 
-      this.parameter_validation = {
-        'reverse': global.SixCRM.routes.path('model','transaction/reverse.json'),
-        'transaction': global.SixCRM.routes.path('model','transaction/transaction.json'),
-        'merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
-        'selected_merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
-        //'amount':global.SixCRM.routes.path('model','transaction/amount.json')
-      };
+		this.parameter_validation = {
+			'reverse': global.SixCRM.routes.path('model','transaction/reverse.json'),
+			'transaction': global.SixCRM.routes.path('model','transaction/transaction.json'),
+			'merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
+			'selected_merchantprovider': global.SixCRM.routes.path('model','transaction/merchantprovider.json'),
+			//'amount':global.SixCRM.routes.path('model','transaction/amount.json')
+		};
 
-      this.transactionController = new TransactionController();
+		this.transactionController = new TransactionController();
 
-      this.instantiateParameters();
+		this.instantiateParameters();
 
-    }
+	}
 
-    reverse(parameters){
+	reverse(parameters){
 
-      du.debug('Reverse');
+		du.debug('Reverse');
 
-      return this.setParameters(parameters)
-      .then(() => this.hydrateParameters())
-      .then(() => this.reverseTransaction());
+		return this.setParameters(parameters)
+			.then(() => this.hydrateParameters())
+			.then(() => this.reverseTransaction());
 
-    }
+	}
 
-    //Technical Debt: Untested...
-    reverseTransaction(){
+	//Technical Debt: Untested...
+	reverseTransaction(){
 
-      du.debug('Reverse Transaction');
+		du.debug('Reverse Transaction');
 
-      return this.instantiateGateway()
-      .then(() => this.createProcessingParameters())
-      .then(() => {
+		return this.instantiateGateway()
+			.then(() => this.createProcessingParameters())
+			.then(() => {
 
-        let instantiated_gateway = this.parameters.get('instantiated_gateway');
-        let processing_parameters = this.parameters.get('reverse');
+				let instantiated_gateway = this.parameters.get('instantiated_gateway');
+				let processing_parameters = this.parameters.get('reverse');
 
-        return instantiated_gateway.reverse(processing_parameters);
+				return instantiated_gateway.reverse(processing_parameters);
 
-      });
+			});
 
-    }
+	}
 
-    createProcessingParameters(){
+	createProcessingParameters(){
 
-      du.debug('Create Processing Parameters');
+		du.debug('Create Processing Parameters');
 
-      let transaction = this.parameters.get('transaction');
+		let transaction = this.parameters.get('transaction');
 
-      if(_.has(transaction, 'processor_response')){
-        try{
-          transaction.processor_response = JSON.parse(transaction.processor_response);
-        }catch(error){
-          //no biggie
-        }
+		if(_.has(transaction, 'processor_response')){
+			try{
+				transaction.processor_response = JSON.parse(transaction.processor_response);
+			}catch(error){
+				//no biggie
+			}
 
-      }
+		}
 
-      let parameters = {
-        transaction: transaction
-      };
+		let parameters = {
+			transaction: transaction
+		};
 
-      this.parameters.set('reverse', parameters);
+		this.parameters.set('reverse', parameters);
 
-      return Promise.resolve(parameters);
+		return Promise.resolve(parameters);
 
-    }
+	}
 
-    hydrateParameters(){
+	hydrateParameters(){
 
-      du.debug('Hydrate Parameters');
+		du.debug('Hydrate Parameters');
 
-      let transaction = this.parameters.get('transaction');
+		let transaction = this.parameters.get('transaction');
 
-      return this.transactionController.get({id: transaction})
-      .then((transaction) => {
+		return this.transactionController.get({id: transaction})
+			.then((transaction) => {
 
-        this.parameters.set('transaction', transaction);
+				this.parameters.set('transaction', transaction);
 
-        return this.transactionController.getMerchantProvider(transaction);
+				return this.transactionController.getMerchantProvider(transaction);
 
-      })
-      .then((merchantprovider) => {
+			})
+			.then((merchantprovider) => {
 
-        this.parameters.set('selected_merchantprovider', merchantprovider);
+				this.parameters.set('selected_merchantprovider', merchantprovider);
 
-        return true;
+				return true;
 
-      });
+			});
 
-    }
+	}
 
 }

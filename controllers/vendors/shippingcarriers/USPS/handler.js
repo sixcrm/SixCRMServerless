@@ -8,80 +8,80 @@ const ShippingCarrierController = global.SixCRM.routes.include('controllers', 'v
 
 module.exports = class USPSController extends ShippingCarrierController {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.parameter_definition = {
-      info: {
-        required: {
-          trackingnumber: 'tracking_number'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			info: {
+				required: {
+					trackingnumber: 'tracking_number'
+				},
+				optional:{}
+			}
+		};
 
-    this.parameter_validation = {
-      'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/trackingnumber.json'),
-      'userid': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/userid.json'),
-      'requestxml': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requestxml.json'),
-      'requesturi': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requesturi.json'),
-      'vendorresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/response.json')
-    };
+		this.parameter_validation = {
+			'trackingnumber': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/trackingnumber.json'),
+			'userid': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/userid.json'),
+			'requestxml': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requestxml.json'),
+			'requesturi': global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/requesturi.json'),
+			'vendorresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/USPS/response.json')
+		};
 
-    this.augmentParameters();
+		this.augmentParameters();
 
-    this.acquireConfigurationInformation();
+		this.acquireConfigurationInformation();
 
-  }
+	}
 
-  acquireConfigurationInformation(){
+	acquireConfigurationInformation(){
 
-    du.debug('Acquire Configuration Information');
+		du.debug('Acquire Configuration Information');
 
-    let vendor_configuration = global.SixCRM.routes.include('config', global.SixCRM.configuration.stage+'/vendors/shippingcarriers/USPS.yml');
+		let vendor_configuration = global.SixCRM.routes.include('config', global.SixCRM.configuration.stage+'/vendors/shippingcarriers/USPS.yml');
 
-    this.parameters.set('userid', vendor_configuration.user_id);
-    //this.parameters.set('password', vendor_configuration.password);
+		this.parameters.set('userid', vendor_configuration.user_id);
+		//this.parameters.set('password', vendor_configuration.password);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  info(){
+	info(){
 
-    du.debug('info');
+		du.debug('info');
 
-    this.parameters.set('action', 'info');
+		this.parameters.set('action', 'info');
 
-    return Promise.resolve()
-    .then(() => this.setParameters({argumentation: arguments[0], action: 'info'}))
-    .then(() => this.acquireAPIResult())
-    .then(() => this.respond({}));
+		return Promise.resolve()
+			.then(() => this.setParameters({argumentation: arguments[0], action: 'info'}))
+			.then(() => this.acquireAPIResult())
+			.then(() => this.respond({}));
 
-  }
+	}
 
-  acquireAPIResult(){
+	acquireAPIResult(){
 
-    du.debug('Acquire API Result');
+		du.debug('Acquire API Result');
 
-    return Promise.resolve()
-    .then(() => this.buildRequestXML())
-    .then(() => this.buildRequestURI())
-    .then(() => this.executeAPIRequest());
+		return Promise.resolve()
+			.then(() => this.buildRequestXML())
+			.then(() => this.buildRequestURI())
+			.then(() => this.executeAPIRequest());
 
-  }
+	}
 
-  buildRequestXML(){
+	buildRequestXML(){
 
-    du.debug('Build Request XML');
+		du.debug('Build Request XML');
 
-    let tracking_number = this.parameters.get('trackingnumber');
-    let user_id = this.parameters.get('userid');
+		let tracking_number = this.parameters.get('trackingnumber');
+		let user_id = this.parameters.get('userid');
 
-    //Technical Debt:  Do it this way...
-    //js2xmlparser
-    /*
+		//Technical Debt:  Do it this way...
+		//js2xmlparser
+		/*
     let prexml = {
       TrackFieldRequest:{
         '@':{
@@ -96,55 +96,55 @@ module.exports = class USPSController extends ShippingCarrierController {
     };
     */
 
-    let request_xml = '<?xml version="1.0" encoding="UTF-8" ?><TrackFieldRequest USERID="'+user_id+'"><TrackID ID="'+tracking_number+'"/></TrackFieldRequest>';
+		let request_xml = '<?xml version="1.0" encoding="UTF-8" ?><TrackFieldRequest USERID="'+user_id+'"><TrackID ID="'+tracking_number+'"/></TrackFieldRequest>';
 
-    this.parameters.set('requestxml', request_xml);
+		this.parameters.set('requestxml', request_xml);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  buildRequestURI(){
+	buildRequestURI(){
 
-    du.debug('Build URI');
+		du.debug('Build URI');
 
-    let request_xml = this.parameters.get('requestxml');
+		let request_xml = this.parameters.get('requestxml');
 
-    let request_uri = 'http://production.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML='+encodeURIComponent(request_xml);
+		let request_uri = 'http://production.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML='+encodeURIComponent(request_xml);
 
-    this.parameters.set('requesturi', request_uri);
+		this.parameters.set('requesturi', request_uri);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  executeAPIRequest(){
+	executeAPIRequest(){
 
-    du.debug('Execute API Request');
+		du.debug('Execute API Request');
 
-    let request_uri = this.parameters.get('requesturi');
+		let request_uri = this.parameters.get('requesturi');
 
-    return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-      request(request_uri, (error, response) => {
+			request(request_uri, (error, response) => {
 
-        if(error){
-          eu.throw(error);
-        }
+				if(error){
+					eu.throw(error);
+				}
 
-        du.info(response);
-        this.parameters.set('vendorresponse', response);
+				du.info(response);
+				this.parameters.set('vendorresponse', response);
 
-        return resolve(true);
+				return resolve(true);
 
-      });
+			});
 
-    });
+		});
 
-  }
+	}
 
 }
-    /*
+/*
     parseAPIResponseBody(){
 
       du.debug('Parse API Response Body');

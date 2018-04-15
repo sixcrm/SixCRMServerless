@@ -5,173 +5,173 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 module.exports = class ConfigurationUtilities {
 
-  constructor(){}
+	constructor(){}
 
-  setEnvironmentVariable(key, value){
+	setEnvironmentVariable(key, value){
 
-    du.debug('Set Environment Variable');
+		du.debug('Set Environment Variable');
 
-    process.env[key] = value;
+		process.env[key] = value;
 
-  }
+	}
 
-  resolveStage(stage){
+	resolveStage(stage){
 
-    du.debug('Resolve Stage');
+		du.debug('Resolve Stage');
 
-    if(_.isUndefined(stage)){
+		if(_.isUndefined(stage)){
 
-      if(_.has(process.env, 'stage')){
+			if(_.has(process.env, 'stage')){
 
-        stage = process.env.stage;
+				stage = process.env.stage;
 
-        let stages = global.SixCRM.routes.include('config', 'stages.yml');
+				let stages = global.SixCRM.routes.include('config', 'stages.yml');
 
-        let stage_names = objectutilities.getKeys(stages);
+				let stage_names = objectutilities.getKeys(stages);
 
-        if(!_.includes(stage_names, stage)){
+				if(!_.includes(stage_names, stage)){
 
-          eu.throwError('server', 'Configuration.resolveStage unable to validate stage name: '+stage);
+					eu.throwError('server', 'Configuration.resolveStage unable to validate stage name: '+stage);
 
-        }
+				}
 
-      }else{
+			}else{
 
-        stage = this.determineStageFromBranchName();
+				stage = this.determineStageFromBranchName();
 
-        if(_.isNull(stage)){
+				if(_.isNull(stage)){
 
-          stage = this.determineStageFromAccountIdentifier();
+					stage = this.determineStageFromAccountIdentifier();
 
-        }
+				}
 
-      }
+			}
 
-    }
+		}
 
-    if(_.isNull(stage) || _.isUndefined(stage)){
-      stage = 'local'
-    }
+		if(_.isNull(stage) || _.isUndefined(stage)){
+			stage = 'local'
+		}
 
-    du.critical('Stage: '+stage);
+		du.critical('Stage: '+stage);
 
-    return stage;
+		return stage;
 
-  }
+	}
 
-  determineStageFromBranchName(fatal = true){
+	determineStageFromBranchName(fatal = true){
 
-    du.debug('Determine Stage From Branch Name');
+		du.debug('Determine Stage From Branch Name');
 
-    let branch_name = this.getBranchName();
+		let branch_name = this.getBranchName();
 
-    if(!_.isNull(branch_name)){
+		if(!_.isNull(branch_name)){
 
-      let stages = global.SixCRM.routes.include('config','stages.yml');
+			let stages = global.SixCRM.routes.include('config','stages.yml');
 
-      let identified_stage = null;
+			let identified_stage = null;
 
-      objectutilities.map(stages, key => {
-        let stage = stages[key];
+			objectutilities.map(stages, key => {
+				let stage = stages[key];
 
-        if(stage.branch_name == branch_name){
-          identified_stage = key
-        }
-      });
+				if(stage.branch_name == branch_name){
+					identified_stage = key
+				}
+			});
 
-      if(!_.isNull(identified_stage)){
-        return identified_stage;
-      }
+			if(!_.isNull(identified_stage)){
+				return identified_stage;
+			}
 
-      if(fatal){
-        eu.throwError('server', 'Unrecognized branch_name in stage.yml: '+branch_name);
-      }
+			if(fatal){
+				eu.throwError('server', 'Unrecognized branch_name in stage.yml: '+branch_name);
+			}
 
-    }
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
-  determineStageFromAccountIdentifier(fatal = true){
+	determineStageFromAccountIdentifier(fatal = true){
 
-    du.debug('Determine Stage From Account Identifier');
+		du.debug('Determine Stage From Account Identifier');
 
-    let account_identifier = this.getAccountIdentifier();
+		let account_identifier = this.getAccountIdentifier();
 
-    if(!_.isNull(account_identifier)){
+		if(!_.isNull(account_identifier)){
 
-      let stages = global.SixCRM.routes.include('config','stages.yml');
+			let stages = global.SixCRM.routes.include('config','stages.yml');
 
-      let identified_stage = null;
+			let identified_stage = null;
 
-      objectutilities.map(stages, key => {
-        let stage = stages[key];
+			objectutilities.map(stages, key => {
+				let stage = stages[key];
 
-        if(_.has(stage, 'aws_account_id') && (stage.aws_account_id == account_identifier)){
-          identified_stage = key
-        }
-      });
+				if(_.has(stage, 'aws_account_id') && (stage.aws_account_id == account_identifier)){
+					identified_stage = key
+				}
+			});
 
-      if(!_.isNull(identified_stage)){
-        return identified_stage;
-      }
+			if(!_.isNull(identified_stage)){
+				return identified_stage;
+			}
 
-      if(fatal){
-        eu.throwError('server', 'Unrecognized account identifier in stage.yml: '+account_identifier);
-      }
+			if(fatal){
+				eu.throwError('server', 'Unrecognized account identifier in stage.yml: '+account_identifier);
+			}
 
-    }
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
-  getAccountIdentifier(){
+	getAccountIdentifier(){
 
-    du.debug('Get Account Identifier');
+		du.debug('Get Account Identifier');
 
-    return this.getAccountIdentifierFromEnvironment();
+		return this.getAccountIdentifierFromEnvironment();
 
-  }
+	}
 
-  getBranchName(){
+	getBranchName(){
 
-    du.debug('Get Branch Name');
+		du.debug('Get Branch Name');
 
-    let branch_name = this.getBranchNameFromEnvironment();
+		let branch_name = this.getBranchNameFromEnvironment();
 
-    return branch_name;
+		return branch_name;
 
-  }
+	}
 
-  getBranchNameFromEnvironment(){
+	getBranchNameFromEnvironment(){
 
-    du.debug('Get Branch Name From Environment');
+		du.debug('Get Branch Name From Environment');
 
-    if(_.has(process.env, 'CIRCLE_BRANCH')){
-      return process.env.CIRCLE_BRANCH;
-    }
+		if(_.has(process.env, 'CIRCLE_BRANCH')){
+			return process.env.CIRCLE_BRANCH;
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
-  getAccountIdentifierFromEnvironment(){
+	getAccountIdentifierFromEnvironment(){
 
-    du.debug('Get Account Identifier From Environment');
+		du.debug('Get Account Identifier From Environment');
 
-    if(_.has(process.env, 'AWS_ACCOUNT')){
-      return process.env.AWS_ACCOUNT;
-    }else if(_.has(process.env, 'aws_account')){
-      return process.env.aws_account;
-    }
+		if(_.has(process.env, 'AWS_ACCOUNT')){
+			return process.env.AWS_ACCOUNT;
+		}else if(_.has(process.env, 'aws_account')){
+			return process.env.aws_account;
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
-  isLocal() {
+	isLocal() {
 
 		du.debug('Is Local');
 
@@ -185,15 +185,15 @@ module.exports = class ConfigurationUtilities {
 			return false;
 		}
 
-    return true;
+		return true;
 
-  }
+	}
 
-  getEnvironmentConfig(field, fatal = true){
+	getEnvironmentConfig(field, fatal = true){
 
-    if (_.has(process.env, field)) {
-      return Promise.resolve(process.env[field]);
-    }
+		if (_.has(process.env, field)) {
+			return Promise.resolve(process.env[field]);
+		}
 
 		if(fatal){
 			eu.throwError('server', 'Process.env missing key: "' + field + '".');
@@ -201,6 +201,6 @@ module.exports = class ConfigurationUtilities {
 
 		return null;
 
-  }
+	}
 
 }

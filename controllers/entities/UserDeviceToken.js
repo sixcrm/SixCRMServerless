@@ -8,43 +8,43 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 //Technical Debt: Override the list method
 class UserDeviceTokenController extends entityController {
 
-    constructor(){
-        super('userdevicetoken');
-    }
+	constructor(){
+		super('userdevicetoken');
+	}
 
-    getUserDeviceTokensByUser(user){
+	getUserDeviceTokensByUser(user){
 
-        du.debug('Get Device Token By User');
+		du.debug('Get Device Token By User');
 
-        return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-            return this.queryBySecondaryIndex({field:'user', index_value: user, index_name: 'user-index'})
-              .then((results) => this.getResult(results))
-              .then((user_device_tokens) => {
+			return this.queryBySecondaryIndex({field:'user', index_value: user, index_name: 'user-index'})
+				.then((results) => this.getResult(results))
+				.then((user_device_tokens) => {
 
-                  if(_.isArray(user_device_tokens)){
+					if(_.isArray(user_device_tokens)){
 
-                      let resolve_object = {};
+						let resolve_object = {};
 
-                      resolve_object[this.descriptive_name+'s'] = user_device_tokens;
+						resolve_object[this.descriptive_name+'s'] = user_device_tokens;
 
-                      return resolve(resolve_object);
+						return resolve(resolve_object);
 
-                  }else{
+					}else{
 
-                      return resolve(null);
+						return resolve(null);
 
-                  }
+					}
 
-              }).catch((error) => {
+				}).catch((error) => {
 
-                  return reject(error);
+					return reject(error);
 
-              });
+				});
 
-        });
+		});
 
-    }
+	}
 
 }
 

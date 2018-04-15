@@ -17,38 +17,38 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidMessage(id){
 
-  return MockEntities.getValidMessage(id);
+	return MockEntities.getValidMessage(id);
 
 }
 
 let rebill_id = null
 
 process.argv.forEach((val, index, array) => {
-  if(stringutilities.isMatch(val, /^--rebill=[a-z0-9\-].*$/)){
-    rebill_id = val.split('=')[1];
-  }
+	if(stringutilities.isMatch(val, /^--rebill=[a-z0-9\-].*$/)){
+		rebill_id = val.split('=')[1];
+	}
 });
 
 describe('controllers/workers/recoverBilling', () => {
 
-  describe('execute', () => {
+	describe('execute', () => {
 
-    it('successfully executes', () => {
+		it('successfully executes', () => {
 
-      rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
-      let message = getValidMessage(rebill_id);
+			rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
+			let message = getValidMessage(rebill_id);
 
-      const RecoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
-      let recoverBillingController = new RecoverBillingController();
+			const RecoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
+			let recoverBillingController = new RecoverBillingController();
 
-      return recoverBillingController.execute(message).then(result => {
-        expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-        du.info(result, result.getCode());
-        expect(result.getCode()).to.equal('success');
-      });
+			return recoverBillingController.execute(message).then(result => {
+				expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+				du.info(result, result.getCode());
+				expect(result.getCode()).to.equal('success');
+			});
 
-    });
+		});
 
-  });
+	});
 
 });

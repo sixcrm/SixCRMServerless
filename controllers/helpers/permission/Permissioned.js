@@ -6,103 +6,103 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 module.exports = class PermissionedController {
 
-  constructor(){
+	constructor(){
 
-    this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+		this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
-  }
+	}
 
-  can({ object, action, fatal}){
+	can({ object, action, fatal}){
 
-    du.debug('Can');
+		du.debug('Can');
 
-    fatal = (_.isUndefined(fatal))?false:fatal;
+		fatal = (_.isUndefined(fatal))?false:fatal;
 
-    //Technical Debt:  Introduce account and ID
-    return Promise.resolve(this.permissionutilities.validatePermissions(action, object)).then(permission => {
+		//Technical Debt:  Introduce account and ID
+		return Promise.resolve(this.permissionutilities.validatePermissions(action, object)).then(permission => {
 
-      if(permission == false && fatal == true){
+			if(permission == false && fatal == true){
 
-        this.throwPermissionsError();
+				this.throwPermissionsError();
 
-      }
+			}
 
-      return permission;
+			return permission;
 
-    });
+		});
 
-  }
+	}
 
-  throwPermissionsError(){
+	throwPermissionsError(){
 
-    du.debug('Throw Permissions Error');
+		du.debug('Throw Permissions Error');
 
-    //Technical Debt:  Embellish this message
-    eu.throwError('forbidden', 'Invalid Permissions: user does not have sufficient permission to perform this action.');
+		//Technical Debt:  Embellish this message
+		eu.throwError('forbidden', 'Invalid Permissions: user does not have sufficient permission to perform this action.');
 
-  }
+	}
 
-  disableACLs(){
+	disableACLs(){
 
-      du.debug('Disable ACLs');
+		du.debug('Disable ACLs');
 
-      this.permissionutilities.disableACLs();
+		this.permissionutilities.disableACLs();
 
-      return;
+		return;
 
-  }
+	}
 
-  enableACLs(){
+	enableACLs(){
 
-    du.debug('Enable ACLs');
+		du.debug('Enable ACLs');
 
-    this.permissionutilities.enableACLs();
+		this.permissionutilities.enableACLs();
 
-    return;
+		return;
 
-  }
+	}
 
-  setGlobalUser(user){
+	setGlobalUser(user){
 
-    du.debug('Set Global User');
+		du.debug('Set Global User');
 
-    if(_.has(user, 'id') || this.isEmail(user)){
+		if(_.has(user, 'id') || this.isEmail(user)){
 
-        this.permissionutilities.setGlobalUser(user);
+			this.permissionutilities.setGlobalUser(user);
 
-    }
+		}
 
-    return;
+		return;
 
-  }
+	}
 
-  unsetGlobalUser(){
+	unsetGlobalUser(){
 
-    du.debug('Unset Global User');
+		du.debug('Unset Global User');
 
-    this.permissionutilities.unsetGlobalUser();
+		this.permissionutilities.unsetGlobalUser();
 
-    return;
+		return;
 
-  }
+	}
 
-  isMasterAccount(){
+	isMasterAccount(){
 
-    du.debug('Is Master Account');
+		du.debug('Is Master Account');
 
-    return this.permissionutilities.isMasterAccount();
+		return this.permissionutilities.isMasterAccount();
 
-  }
+	}
 
-  accountFilterDisabled(){
+	accountFilterDisabled(){
 
-    du.debug('Account Filter Disabled');
+		du.debug('Account Filter Disabled');
 
-    return this.permissionutilities.accountFilterDisabled()
+		return this.permissionutilities.accountFilterDisabled()
 
-  }
+	}
 
-  /*
+	/*
   Technical Debt:  Re-implement Caching
   createCanCacheKeyObject(action, entity){
 
@@ -120,7 +120,7 @@ module.exports = class PermissionedController {
   }
   */
 
-  /*
+	/*
   Deprecated version for reference
   can(action, fatal){
 
