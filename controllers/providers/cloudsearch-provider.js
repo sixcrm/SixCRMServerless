@@ -7,15 +7,20 @@ const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-p
 
 module.exports = class CloudSearchProvider extends AWSProvider {
 
-    constructor(){
+    constructor(instantiate_csd){
 
         super();
+
+        instantiate_csd = (_.isUndefined(instantiate_csd) || _.isNull(instantiate_csd))?true:instantiate_csd;
 
         this.max_attempts = 200;
 
         this.setDomainName();
 
-        this.setCloudsearchDomainEndpoint();
+        //Technical Debt:  The cloudsearch provider should be two classes, query and deploy
+        if(instantiate_csd){
+          this.setCloudsearchDomainEndpoint();
+        }
 
         //Technical Debt:  Get this out of the constructor...
         this.instantiateAWS();

@@ -35,7 +35,7 @@ module.exports.getCloudsearchSearchEndpoint = () => {
   require('../../SixCRM.js');
 
   const CloudsearchUtilities = global.SixCRM.routes.include('deployment', 'utilities/cloudsearch-deployment.js');
-  let cloudsearchutilities = new CloudsearchUtilities();
+  let cloudsearchutilities = new CloudsearchUtilities(false);
 
   return cloudsearchutilities.domainExists({DomainName: global.SixCRM.configuration.site_config.cloudsearch.domainname}).then(result => {
     return result.DocService.Endpoint;

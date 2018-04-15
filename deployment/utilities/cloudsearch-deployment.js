@@ -5,30 +5,17 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const CloudsearchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudsearch-provider.js');
+const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-module.exports = class CloudsearchDeployment{
+module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
-    constructor() {
+    constructor(instantiate_csd) {
 
-      this.cloudsearchprovider = new CloudsearchProvider();
+      super();
 
-      this.setDomainName()
+      instantiate_csd = (_.isUndefined(instantiate_csd) || _.isNull(instantiate_csd))?true:instantiate_csd;
 
-    }
-
-    setDomainName(){
-
-      let site_config = global.SixCRM.configuration.site_config;
-
-      if(_.has(site_config, 'cloudsearch') && _.has(site_config.cloudsearch, 'domainname')){
-
-        this.domainname = site_config.cloudsearch.domainname;
-
-      }else{
-
-        eu.throwError('server', 'Unable to identify configured domainname.');
-
-      }
+      this.cloudsearchprovider = new CloudsearchProvider(instantiate_csd);
 
     }
 
@@ -242,7 +229,7 @@ module.exports = class CloudsearchDeployment{
 
         let index_object = global.SixCRM.routes.include('deployment','cloudsearch/indexes/'+file);
 
-        index_object.DomainName = this.domainname;
+        index_object.DomainName = global.SixCRM.configuration.site_config.cloudsearch.domainname;
 
         return index_object;
 
@@ -293,7 +280,7 @@ module.exports = class CloudsearchDeployment{
       du.debug('Cloudsearch Domain Exists');
 
       if(_.isUndefined(domainname)){
-        domainname = this.domainname;
+        domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;
       }
 
       return this.cloudsearchprovider.describeDomains([domainname]).then((results) => {
