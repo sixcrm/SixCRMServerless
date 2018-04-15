@@ -6,77 +6,77 @@ const cloudsearchprovider = new CloudsearchProvider();
 
 module.exports = class SuggestController {
 
-    constructor(){
+	constructor(){
 
-    }
+	}
 
-    suggest(suggestion_parameters){
+	suggest(suggestion_parameters){
 
-        return this.retrieveSuggestions(suggestion_parameters).then((results) => this.flattenResults(results));
+		return this.retrieveSuggestions(suggestion_parameters).then((results) => this.flattenResults(results));
 
-    }
+	}
 
-    retrieveSuggestions(suggestion_parameters){
+	retrieveSuggestions(suggestion_parameters){
 
-        return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-            du.debug('Suggestion Parameters:', suggestion_parameters);
+			du.debug('Suggestion Parameters:', suggestion_parameters);
 
-            cloudsearchprovider.suggest(suggestion_parameters).then((results) => {
+			cloudsearchprovider.suggest(suggestion_parameters).then((results) => {
 
-                du.debug('Raw Results:', results);
+				du.debug('Raw Results:', results);
 
-                return resolve(results);
+				return resolve(results);
 
-            }).catch((error) => {
+			}).catch((error) => {
 
-                return reject(error);
+				return reject(error);
 
-            });
+			});
 
-        });
+		});
 
-    }
+	}
 
-    flattenResults(results){
+	flattenResults(results){
 
-        du.debug('Flattening Suggestion Results');
+		du.debug('Flattening Suggestion Results');
 
-        if(_.has(results, 'suggest') && _.has(results.suggest, 'suggestions') && _.isArray(results.suggest.suggestions)){
+		if(_.has(results, 'suggest') && _.has(results.suggest, 'suggestions') && _.isArray(results.suggest.suggestions)){
 
-            let flattened_suggestions = [];
+			let flattened_suggestions = [];
 
-            results.suggest.suggestions.forEach((result) => {
+			results.suggest.suggestions.forEach((result) => {
 
-                var flattened_suggestion = {};
+				var flattened_suggestion = {};
 
-                for(var k in result){
+				for(var k in result){
 
-                    if(k != 'suggestion'){
+					if(k != 'suggestion'){
 
-                        flattened_suggestion[k] = result[k];
+						flattened_suggestion[k] = result[k];
 
-                    }else{
+					}else{
 
-                        flattened_suggestion[k] = result[k].replace(/(^")|("$)/g, '');
+						flattened_suggestion[k] = result[k].replace(/(^")|("$)/g, '');
 
-                    }
+					}
 
-                }
+				}
 
-                flattened_suggestions.push(flattened_suggestion);
+				flattened_suggestions.push(flattened_suggestion);
 
-            });
+			});
 
-            results.suggest['suggestions'] = flattened_suggestions;
+			results.suggest['suggestions'] = flattened_suggestions;
 
-        }
+		}
 
-        du.debug('Flattened Results', results);
+		du.debug('Flattened Results', results);
 
-        return Promise.resolve(results);
+		return Promise.resolve(results);
 
-    }
+	}
 
 }
 

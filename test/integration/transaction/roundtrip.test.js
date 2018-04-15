@@ -19,595 +19,595 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function createSignature(){
 
-  let request_time = timestamp.createTimestampMilliseconds();
-  let secret_key = config.access_keys.super_user.secret_key;
-  let access_key = config.access_keys.super_user.access_key;
-  let signature = signatureutilities.createSignature(secret_key, request_time);
+	let request_time = timestamp.createTimestampMilliseconds();
+	let secret_key = config.access_keys.super_user.secret_key;
+	let access_key = config.access_keys.super_user.access_key;
+	let signature = signatureutilities.createSignature(secret_key, request_time);
 
-  return access_key+':'+request_time+':'+signature;
+	return access_key+':'+request_time+':'+signature;
 
 }
 
 function createAffiliates(){
 
-  let affiliates = null;
+	let affiliates = null;
 
-  arrayutilities.map(['affiliate', 'subaffiliate1', 'subaffiliate2', 'subaffiliate3', 'subaffiliate4', 'subaffiliate5', 'cid'], (field) => {
-    if(random.randomBoolean()){
-      if(_.isNull(affiliates)){
-        affiliates = {};
-      }
-      affiliates[field] = random.createRandomString(20);
-    }
-  });
+	arrayutilities.map(['affiliate', 'subaffiliate1', 'subaffiliate2', 'subaffiliate3', 'subaffiliate4', 'subaffiliate5', 'cid'], (field) => {
+		if(random.randomBoolean()){
+			if(_.isNull(affiliates)){
+				affiliates = {};
+			}
+			affiliates[field] = random.createRandomString(20);
+		}
+	});
 
-  return affiliates;
+	return affiliates;
 
 }
 
 function getValidAcquireTokenPostBody(campaign){
 
-  let affiliates = createAffiliates();
+	let affiliates = createAffiliates();
 
-  let return_object = {
-    campaign:(_.has(campaign, 'id'))?campaign.id:campaign
-  };
+	let return_object = {
+		campaign:(_.has(campaign, 'id'))?campaign.id:campaign
+	};
 
-  if(!_.isNull(affiliates)){
-    return_object.affiliates = affiliates;
-  }
+	if(!_.isNull(affiliates)){
+		return_object.affiliates = affiliates;
+	}
 
-  return return_object;
+	return return_object;
 
 }
 
 function confirmOrder(token, session){
 
-  du.output('Confirm Order');
+	du.output('Confirm Order');
 
-  let account = config.account;
+	let account = config.account;
 
-  let querystring = httpprovider.createQueryString({session: session});
+	let querystring = httpprovider.createQueryString({session: session});
 
-  let argument_object = {
-    //Technical Debt:  This is a hack - http-provider.js should be adding the querystring from the qs parameter
-    url: config.endpoint+'order/confirm/'+account+'?'+querystring,
-    headers:{
-      Authorization: token
-    }
-  };
+	let argument_object = {
+		//Technical Debt:  This is a hack - http-provider.js should be adding the querystring from the qs parameter
+		url: config.endpoint+'order/confirm/'+account+'?'+querystring,
+		headers:{
+			Authorization: token
+		}
+	};
 
-  return httpprovider.getJSON(argument_object)
-  .then((result) => {
-    du.debug(result.body);
-    expect(result.response.statusCode).to.equal(200);
-    expect(result.response.statusMessage).to.equal('OK');
-    expect(result.body).to.have.property('success');
-    expect(result.body).to.have.property('code');
-    expect(result.body).to.have.property('response');
-    expect(result.body.success).to.equal(true);
-    expect(result.body.code).to.equal(200);
+	return httpprovider.getJSON(argument_object)
+		.then((result) => {
+			du.debug(result.body);
+			expect(result.response.statusCode).to.equal(200);
+			expect(result.response.statusMessage).to.equal('OK');
+			expect(result.body).to.have.property('success');
+			expect(result.body).to.have.property('code');
+			expect(result.body).to.have.property('response');
+			expect(result.body.success).to.equal(true);
+			expect(result.body.code).to.equal(200);
 
 
-    let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json'));
+			let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json'));
 
-    expect(validated).to.equal(true);
-    return result.body;
-  });
+			expect(validated).to.equal(true);
+			return result.body;
+		});
 
 }
 
 function createUpsell(token, session, sale_object, previous_order){
 
-  du.output('Create Upsell');
+	du.output('Create Upsell');
 
-  const account = config.account;
-  const post_body = createOrderBody(session, sale_object);
+	const account = config.account;
+	const post_body = createOrderBody(session, sale_object);
 
-  delete post_body.creditcard;
-  post_body.transaction_subtype = 'upsell1';
+	delete post_body.creditcard;
+	post_body.transaction_subtype = 'upsell1';
 
-  if (previous_order) {
-    const previous_rebill_id = previous_order.response.rebill.id;
-    post_body.reverse_on_complete = previous_rebill_id;
-  }
+	if (previous_order) {
+		const previous_rebill_id = previous_order.response.rebill.id;
+		post_body.reverse_on_complete = previous_rebill_id;
+	}
 
-  let argument_object = {
-    url: config.endpoint+'order/create/'+account,
-    body: post_body,
-    headers:{
-      Authorization: token
-    }
-  };
+	let argument_object = {
+		url: config.endpoint+'order/create/'+account,
+		body: post_body,
+		headers:{
+			Authorization: token
+		}
+	};
 
-  return httpprovider.postJSON(argument_object)
-  .then((result) => {
-    du.debug(result.body);
-    expect(result.response.statusCode).to.equal(200);
-    expect(result.response.statusMessage).to.equal('OK');
-    expect(result.body).to.have.property('success');
-    expect(result.body).to.have.property('code');
-    expect(result.body).to.have.property('response');
-    expect(result.body.success).to.equal(true);
-    expect(result.body.code).to.equal(200);
+	return httpprovider.postJSON(argument_object)
+		.then((result) => {
+			du.debug(result.body);
+			expect(result.response.statusCode).to.equal(200);
+			expect(result.response.statusMessage).to.equal('OK');
+			expect(result.body).to.have.property('success');
+			expect(result.body).to.have.property('code');
+			expect(result.body).to.have.property('response');
+			expect(result.body.success).to.equal(true);
+			expect(result.body.code).to.equal(200);
 
-    let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createOrder/response.json'))
+			let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createOrder/response.json'))
 
-    expect(validated).to.equal(true);
+			expect(validated).to.equal(true);
 
-    return result.body;
+			return result.body;
 
-  });
+		});
 
 }
 
 function createOrder(token, session, sale_object, customer){
 
-  du.output('Create Order');
+	du.output('Create Order');
 
-  let account = config.account;
-  let post_body = createOrderBody(session, sale_object, customer);
+	let account = config.account;
+	let post_body = createOrderBody(session, sale_object, customer);
 
-  let argument_object = {
-    url: config.endpoint+'order/create/'+account,
-    body: post_body,
-    headers:{
-      Authorization: token
-    }
-  };
+	let argument_object = {
+		url: config.endpoint+'order/create/'+account,
+		body: post_body,
+		headers:{
+			Authorization: token
+		}
+	};
 
-  return httpprovider.postJSON(argument_object)
-  .then((result) => {
-    du.debug(result.body);
-    expect(result.response.statusCode).to.equal(200);
-    expect(result.response.statusMessage).to.equal('OK');
-    expect(result.body).to.have.property('success');
-    expect(result.body).to.have.property('code');
-    expect(result.body).to.have.property('response');
-    expect(result.body.success).to.equal(true);
-    expect(result.body.code).to.equal(200);
+	return httpprovider.postJSON(argument_object)
+		.then((result) => {
+			du.debug(result.body);
+			expect(result.response.statusCode).to.equal(200);
+			expect(result.response.statusMessage).to.equal('OK');
+			expect(result.body).to.have.property('success');
+			expect(result.body).to.have.property('code');
+			expect(result.body).to.have.property('response');
+			expect(result.body.success).to.equal(true);
+			expect(result.body.code).to.equal(200);
 
-    let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createOrder/response.json'))
+			let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createOrder/response.json'))
 
-    expect(validated).to.equal(true);
+			expect(validated).to.equal(true);
 
-    return result.body;
-  });
+			return result.body;
+		});
 
 }
 
 function createLead(token, campaign, customer){
 
-  du.output('Create Lead');
-  let account = config.account;
-  let post_body = createLeadBody(campaign, customer);
+	du.output('Create Lead');
+	let account = config.account;
+	let post_body = createLeadBody(campaign, customer);
 
-  let argument_object = {
-    url: config.endpoint+'lead/create/'+account,
-    body: post_body,
-    headers:{
-      Authorization: token
-    }
-  };
+	let argument_object = {
+		url: config.endpoint+'lead/create/'+account,
+		body: post_body,
+		headers:{
+			Authorization: token
+		}
+	};
 
-  return httpprovider.postJSON(argument_object)
-  .then((result) => {
-    du.debug(result.body);
-    expect(result.response.statusCode).to.equal(200);
-    expect(result.response.statusMessage).to.equal('OK');
-    expect(result.body).to.have.property('success');
-    expect(result.body).to.have.property('code');
-    expect(result.body).to.have.property('response');
-    expect(result.body.success).to.equal(true);
-    expect(result.body.code).to.equal(200);
-    let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createLead/response.json'))
+	return httpprovider.postJSON(argument_object)
+		.then((result) => {
+			du.debug(result.body);
+			expect(result.response.statusCode).to.equal(200);
+			expect(result.response.statusMessage).to.equal('OK');
+			expect(result.body).to.have.property('success');
+			expect(result.body).to.have.property('code');
+			expect(result.body).to.have.property('response');
+			expect(result.body.success).to.equal(true);
+			expect(result.body.code).to.equal(200);
+			let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createLead/response.json'))
 
-    expect(validated).to.equal(true);
-    return result.body.response.id;
-  });
+			expect(validated).to.equal(true);
+			return result.body.response.id;
+		});
 
 }
 
 function acquireToken(campaign){
 
-  du.output('Acquire Token');
+	du.output('Acquire Token');
 
-  let account = config.account;
-  let authorization_string = createSignature();
-  var post_body = getValidAcquireTokenPostBody(campaign);
+	let account = config.account;
+	let authorization_string = createSignature();
+	var post_body = getValidAcquireTokenPostBody(campaign);
 
-  let argument_object = {
-    url: config.endpoint+'token/acquire/'+account,
-    body: post_body,
-    headers:{
-      Authorization: authorization_string
-    }
-  };
+	let argument_object = {
+		url: config.endpoint+'token/acquire/'+account,
+		body: post_body,
+		headers:{
+			Authorization: authorization_string
+		}
+	};
 
-  return httpprovider.postJSON(argument_object)
-  .then((result) => {
-    du.debug(result.body);
-    expect(result.response.statusCode).to.equal(200);
-    expect(result.response.statusMessage).to.equal('OK');
-    expect(result.body).to.have.property('success');
-    expect(result.body).to.have.property('code');
-    expect(result.body).to.have.property('response');
-    expect(result.body.success).to.equal(true);
-    expect(result.body.code).to.equal(200);
-    expect(_.isString(result.body.response)).to.equal(true);
-    let authorization_token = result.body.response;
+	return httpprovider.postJSON(argument_object)
+		.then((result) => {
+			du.debug(result.body);
+			expect(result.response.statusCode).to.equal(200);
+			expect(result.response.statusMessage).to.equal('OK');
+			expect(result.body).to.have.property('success');
+			expect(result.body).to.have.property('code');
+			expect(result.body).to.have.property('response');
+			expect(result.body.success).to.equal(true);
+			expect(result.body.code).to.equal(200);
+			expect(_.isString(result.body.response)).to.equal(true);
+			let authorization_token = result.body.response;
 
-    return authorization_token;
-  });
+			return authorization_token;
+		});
 
 }
 
 function createCustomer(){
 
-  let customer = MockEntities.getValidCustomer();
+	let customer = MockEntities.getValidCustomer();
 
-  delete customer.id;
-  delete customer.account;
-  delete customer.created_at;
-  delete customer.updated_at;
-  delete customer.creditcards;
-  customer.billing = customer.address;
+	delete customer.id;
+	delete customer.account;
+	delete customer.created_at;
+	delete customer.updated_at;
+	delete customer.creditcards;
+	customer.billing = customer.address;
 
-  return customer;
+	return customer;
 
 }
 
 function createCreditCard(){
 
-  let creditcard = MockEntities.getValidTransactionCreditCard();
+	let creditcard = MockEntities.getValidTransactionCreditCard();
 
-  creditcard.number = "4111111111111111";
+	creditcard.number = "4111111111111111";
 
-  return creditcard;
+	return creditcard;
 
 }
 
 function createLeadBody(campaign, customer){
 
-  let return_object = {
-    campaign:(_.has(campaign, 'id'))?campaign.id:campaign,
-    customer: customer || createCustomer()
-  };
+	let return_object = {
+		campaign:(_.has(campaign, 'id'))?campaign.id:campaign,
+		customer: customer || createCustomer()
+	};
 
-  let affiliates = createAffiliates();
+	let affiliates = createAffiliates();
 
-  if(!_.isNull(affiliates)){ return_object.affiliates = affiliates; }
+	if(!_.isNull(affiliates)){ return_object.affiliates = affiliates; }
 
-  return return_object;
+	return return_object;
 
 }
 
 function createOrderBody(session, sale_object, customer){
 
-  let return_object = objectutilities.clone(sale_object);
+	let return_object = objectutilities.clone(sale_object);
 
-  return_object.session = session;
-  return_object.creditcard = createCreditCard();
-  return_object.transaction_subtype = 'main';
+	return_object.session = session;
+	return_object.creditcard = createCreditCard();
+	return_object.transaction_subtype = 'main';
 
-  if (customer) {
-    return_object.customer = customer;
-  }
+	if (customer) {
+		return_object.customer = customer;
+	}
 
-  return return_object;
+	return return_object;
 
 }
 
 function refund(transaction, amount) {
 
-    du.output('Refund');
+	du.output('Refund');
 
-    let account = config.account;
-    let test_jwt = tu.createTestAuth0JWT(config.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
+	let account = config.account;
+	let test_jwt = tu.createTestAuth0JWT(config.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-    let argument_object = {
-        url: config.endpoint+'graph/'+account,
-        body: 'mutation { refund (refund: { amount:"' + amount + '", transaction:"' + transaction + '" } ) { transaction { id }, processor_response } }',
-        headers:{
-            Authorization: test_jwt
-        }
-    };
+	let argument_object = {
+		url: config.endpoint+'graph/'+account,
+		body: 'mutation { refund (refund: { amount:"' + amount + '", transaction:"' + transaction + '" } ) { transaction { id }, processor_response } }',
+		headers:{
+			Authorization: test_jwt
+		}
+	};
 
-    du.debug(argument_object);
+	du.debug(argument_object);
 
-    return httpprovider.post(argument_object)
-        .then((result) => {
-            du.debug(result.body);
+	return httpprovider.post(argument_object)
+		.then((result) => {
+			du.debug(result.body);
 
-            if (stringutilities.isString(result.body)) {
-                result.body = JSON.parse(result.body);
-            }
+			if (stringutilities.isString(result.body)) {
+				result.body = JSON.parse(result.body);
+			}
 
-            expect(result.response.statusCode).to.equal(200);
-            expect(result.response.statusMessage).to.equal('OK');
-            expect(result.body).to.have.property('success');
-            expect(result.body).to.have.property('code');
-            expect(result.body).to.have.property('response');
-            expect(result.body.success).to.equal(true);
-            expect(result.body.code).to.equal(200);
-            return result.body;
-        });
+			expect(result.response.statusCode).to.equal(200);
+			expect(result.response.statusMessage).to.equal('OK');
+			expect(result.body).to.have.property('success');
+			expect(result.body).to.have.property('code');
+			expect(result.body).to.have.property('response');
+			expect(result.body.success).to.equal(true);
+			expect(result.body.code).to.equal(200);
+			return result.body;
+		});
 }
 
 let config = global.SixCRM.routes.include('test', 'integration/config/'+process.env.stage+'.yml');
 let campaign = '70a6689a-5814-438b-b9fd-dd484d0812f9';
 
 describe('Transaction Endpoints Round Trip Test',() => {
-  describe('Straight Sale', () => {
-    it('successfully executes', () => {
+	describe('Straight Sale', () => {
+		it('successfully executes', () => {
 
-      let sale_object = {
-        products:[{
-          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-          quantity:2
-        }]
-      };
+			let sale_object = {
+				products:[{
+					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+					quantity:2
+				}]
+			};
 
-      return acquireToken(campaign)
-      .then((token) => {
+			return acquireToken(campaign)
+				.then((token) => {
 
-        return createLead(token, campaign)
-        .then((session) => {
-          return createOrder(token, session, sale_object)
-          .then(() => confirmOrder(token, session));
-        });
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrder(token, session, sale_object)
+								.then(() => confirmOrder(token, session));
+						});
 
-      });
+				});
 
-    });
+		});
 
-    it('succeeds with partial customer lead', () => {
-      let sale_object = {
-        products:[{
-          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-          quantity:2
-        }]
-      };
+		it('succeeds with partial customer lead', () => {
+			let sale_object = {
+				products:[{
+					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+					quantity:2
+				}]
+			};
 
-      return acquireToken(campaign)
-      .then((token) => {
-        const customer = createCustomer();
-        const customerPartial = { email: customer.email };
-        return createLead(token, campaign, customerPartial)
-        .then((session) => {
-          return createOrder(token, session, sale_object, customer)
-          .then(() => confirmOrder(token, session));
-        });
+			return acquireToken(campaign)
+				.then((token) => {
+					const customer = createCustomer();
+					const customerPartial = { email: customer.email };
+					return createLead(token, campaign, customerPartial)
+						.then((session) => {
+							return createOrder(token, session, sale_object, customer)
+								.then(() => confirmOrder(token, session));
+						});
 
-      });
-    });
+				});
+		});
 
-  });
+	});
 
-  describe('Straight Sale with Upsell', () => {
-    it('successfully executes', () => {
+	describe('Straight Sale with Upsell', () => {
+		it('successfully executes', () => {
 
-      let sale_object = {
-        products:[{
-          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-          quantity:2
-        }]
-      };
+			let sale_object = {
+				products:[{
+					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+					quantity:2
+				}]
+			};
 
-      let upsale_sale_object = {
-        products:[{
-          product: "4d3419f6-526b-4a68-9050-fc3ffcb552b4",
-          quantity:1
-        }]
-      };
+			let upsale_sale_object = {
+				products:[{
+					product: "4d3419f6-526b-4a68-9050-fc3ffcb552b4",
+					quantity:1
+				}]
+			};
 
-      return acquireToken(campaign)
-      .then((token) => {
+			return acquireToken(campaign)
+				.then((token) => {
 
-        return createLead(token, campaign)
-        .then((session) => {
-          return createOrder(token, session, sale_object)
-          .then(response => createUpsell(token, session, upsale_sale_object, response))
-          .then(() => confirmOrder(token, session));
-        });
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrder(token, session, sale_object)
+								.then(response => createUpsell(token, session, upsale_sale_object, response))
+								.then(() => confirmOrder(token, session));
+						});
 
-      });
+				});
 
-    });
+		});
 
-    it('refunds multiple transactions', () => {
+		it('refunds multiple transactions', () => {
 
-      let sale_object = {
-        products:[{
-          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-          quantity:2
-        }]
-      };
+			let sale_object = {
+				products:[{
+					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+					quantity:2
+				}]
+			};
 
-      let upsale_sale_object = {
-        products:[{
-          product: "4d3419f6-526b-4a68-9050-fc3ffcb552b4",
-          quantity:1
-        }]
-      };
+			let upsale_sale_object = {
+				products:[{
+					product: "4d3419f6-526b-4a68-9050-fc3ffcb552b4",
+					quantity:1
+				}]
+			};
 
-      return acquireToken(campaign)
-      .then((token) => {
+			return acquireToken(campaign)
+				.then((token) => {
 
-        return createLead(token, campaign)
-        .then((session) => {
-          return createOrder(token, session, sale_object)
-          .then(() => createUpsell(token, session, upsale_sale_object))
-          .then(() => confirmOrder(token, session))
-          .then((result) => {
-              result.response.transactions.forEach(transaction => {
-                  return refund(transaction.id, transaction.amount)});
-              })
-        });
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrder(token, session, sale_object)
+								.then(() => createUpsell(token, session, upsale_sale_object))
+								.then(() => confirmOrder(token, session))
+								.then((result) => {
+									result.response.transactions.forEach(transaction => {
+										return refund(transaction.id, transaction.amount)});
+								})
+						});
 
-      });
+				});
 
-    });
+		});
 
-  });
+	});
 
-  describe('Product Schedule Sale', () => {
-    it('successfully executes', () => {
+	describe('Product Schedule Sale', () => {
+		it('successfully executes', () => {
 
-      let sale_object = {
-        product_schedules:[{
-          product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
-          quantity:2
-        }]
-      };
+			let sale_object = {
+				product_schedules:[{
+					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					quantity:2
+				}]
+			};
 
-      return acquireToken(campaign)
-      .then((token) => {
+			return acquireToken(campaign)
+				.then((token) => {
 
-        return createLead(token, campaign)
-        .then((session) => {
-          return createOrder(token, session, sale_object)
-          .then(() => confirmOrder(token, session));
-        });
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrder(token, session, sale_object)
+								.then(() => confirmOrder(token, session));
+						});
 
-      });
+				});
 
-    });
+		});
 
-  });
+	});
 
-  describe('Mixed Sale', () => {
-    it('successfully executes', () => {
+	describe('Mixed Sale', () => {
+		it('successfully executes', () => {
 
-      let sale_object = {
-        products:[{
-          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-          quantity:2
-        }],
-        product_schedules:[{
-          product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
-          quantity:2
-        }]
-      };
+			let sale_object = {
+				products:[{
+					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+					quantity:2
+				}],
+				product_schedules:[{
+					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					quantity:2
+				}]
+			};
 
-      return acquireToken(campaign)
-      .then((token) => {
+			return acquireToken(campaign)
+				.then((token) => {
 
-        return createLead(token, campaign)
-        .then((session) => {
-          return createOrder(token, session, sale_object)
-          .then(() => confirmOrder(token, session));
-        });
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrder(token, session, sale_object)
+								.then(() => confirmOrder(token, session));
+						});
 
-      });
+				});
 
-    });
+		});
 
-  });
+	});
 
-  describe('Dynamically Priced Products', () => {
-    it('successfully executes', () => {
+	describe('Dynamically Priced Products', () => {
+		it('successfully executes', () => {
 
-      let sale_object = {
-        products:[{
-          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-          quantity:2,
-          price: 12.99
-        }]
-      };
+			let sale_object = {
+				products:[{
+					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+					quantity:2,
+					price: 12.99
+				}]
+			};
 
-      return acquireToken(campaign)
-      .then((token) => {
+			return acquireToken(campaign)
+				.then((token) => {
 
-        return createLead(token, campaign)
-        .then((session) => {
-          return createOrder(token, session, sale_object)
-          .then(() => confirmOrder(token, session));
-        });
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrder(token, session, sale_object)
+								.then(() => confirmOrder(token, session));
+						});
 
-      });
+				});
 
-    });
+		});
 
-  });
+	});
 
-  describe('Dynamic Product Schedule', () => {
-    it('successfully executes', () => {
+	describe('Dynamic Product Schedule', () => {
+		it('successfully executes', () => {
 
-      let sale_object = {
-        product_schedules:[{
-          product_schedule: {
-            schedule:[
-              {
-                product: {
-                  id: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-                  name: "Dynamic Watermark Product"
-                },
-                start: 0,
-                period: 30,
-                price: 12.49
-              }
-            ]
-          },
-          quantity:1
-        }]
-      };
+			let sale_object = {
+				product_schedules:[{
+					product_schedule: {
+						schedule:[
+							{
+								product: {
+									id: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+									name: "Dynamic Watermark Product"
+								},
+								start: 0,
+								period: 30,
+								price: 12.49
+							}
+						]
+					},
+					quantity:1
+				}]
+			};
 
-      return acquireToken(campaign)
-      .then((token) => {
+			return acquireToken(campaign)
+				.then((token) => {
 
-        return createLead(token, campaign)
-        .then((session) => {
-          return createOrder(token, session, sale_object)
-          .then(() => confirmOrder(token, session));
-        });
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrder(token, session, sale_object)
+								.then(() => confirmOrder(token, session));
+						});
 
-      });
+				});
 
-    });
+		});
 
-  });
+	});
 
-  describe('Dynamic Product Schedule', () => {
-    it('successfully executes', () => {
+	describe('Dynamic Product Schedule', () => {
+		it('successfully executes', () => {
 
-      let sale_object = {
-        product_schedules:[{
-          product_schedule: {
-            schedule:[
-              {
-                product: {
-                  id: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-                  name: "Dynamic Watermark Product"
-                },
-                start: 0,
-                period: 30,
-                price: 12.49
-              }
-            ]
-          },
-          quantity:1
-        }],
-        products:[{
-          product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-          quantity:2,
-          price: 12.99
-        }]
-      };
+			let sale_object = {
+				product_schedules:[{
+					product_schedule: {
+						schedule:[
+							{
+								product: {
+									id: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+									name: "Dynamic Watermark Product"
+								},
+								start: 0,
+								period: 30,
+								price: 12.49
+							}
+						]
+					},
+					quantity:1
+				}],
+				products:[{
+					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+					quantity:2,
+					price: 12.99
+				}]
+			};
 
-      return acquireToken(campaign)
-      .then((token) => {
+			return acquireToken(campaign)
+				.then((token) => {
 
-        return createLead(token, campaign)
-        .then((session) => {
-          return createOrder(token, session, sale_object)
-          .then(() => confirmOrder(token, session));
-        });
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrder(token, session, sale_object)
+								.then(() => confirmOrder(token, session));
+						});
 
-      });
+				});
 
-    });
+		});
 
-  });
+	});
 
 });

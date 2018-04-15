@@ -8,161 +8,161 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 
 module.exports = class MerchantProviderGroupController extends entityController {
 
-    constructor(){
+	constructor(){
 
-      super('merchantprovidergroup');
+		super('merchantprovidergroup');
 
-      this.search_fields = ['name'];
+		this.search_fields = ['name'];
 
-    }
+	}
 
-    associatedEntitiesCheck({id}){
+	associatedEntitiesCheck({id}){
 
-      du.debug('Associated Entities Check');
+		du.debug('Associated Entities Check');
 
-      let return_array = [];
+		let return_array = [];
 
-      let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('ProductScheduleController', 'listByMerchantProviderGroup', {merchantprovidergroup:id})
-      ];
+		let data_acquisition_promises = [
+			this.executeAssociatedEntityFunction('ProductScheduleController', 'listByMerchantProviderGroup', {merchantprovidergroup:id})
+		];
 
-      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+		return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
 
-        let productschedules = data_acquisition_promises[0];
+			let productschedules = data_acquisition_promises[0];
 
-        if(_.has(productschedules, 'productschedules') && arrayutilities.nonEmpty(productschedules.productschedules)){
-          arrayutilities.map(productschedules.productschedules, (productschedule) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Product Schedule', object: productschedule}));
-          });
-        }
+			if(_.has(productschedules, 'productschedules') && arrayutilities.nonEmpty(productschedules.productschedules)){
+				arrayutilities.map(productschedules.productschedules, (productschedule) => {
+					return_array.push(this.createAssociatedEntitiesObject({name:'Product Schedule', object: productschedule}));
+				});
+			}
 
-        return return_array;
+			return return_array;
 
-      });
+		});
 
-    }
+	}
 
 
-    listByMerchantProviderID({id}){
+	listByMerchantProviderID({id}){
 
-      du.debug('List By Merchant Provider ID');
+		du.debug('List By Merchant Provider ID');
 
-      return this.listByAccount({}).then(merchantprovidergroups => {
+		return this.listByAccount({}).then(merchantprovidergroups => {
 
-        let return_array = [];
+			let return_array = [];
 
-        if(_.has(merchantprovidergroups, 'merchantprovidergroups') && arrayutilities.nonEmpty(merchantprovidergroups.merchantprovidergroups)){
+			if(_.has(merchantprovidergroups, 'merchantprovidergroups') && arrayutilities.nonEmpty(merchantprovidergroups.merchantprovidergroups)){
 
-          arrayutilities.map(merchantprovidergroups.merchantprovidergroups, (merchantprovidergroup) => {
+				arrayutilities.map(merchantprovidergroups.merchantprovidergroups, (merchantprovidergroup) => {
 
-            if(_.has(merchantprovidergroup, 'merchantproviders') && arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
+					if(_.has(merchantprovidergroup, 'merchantproviders') && arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
 
-              arrayutilities.find(merchantprovidergroup.merchantproviders, (merchant_provider_configuration) => {
+						arrayutilities.find(merchantprovidergroup.merchantproviders, (merchant_provider_configuration) => {
 
-                if(_.has(merchant_provider_configuration, 'id') && merchant_provider_configuration.id == id){
+							if(_.has(merchant_provider_configuration, 'id') && merchant_provider_configuration.id == id){
 
-                  return_array.push(merchantprovidergroup);
-                  return true;
+								return_array.push(merchantprovidergroup);
+								return true;
 
-                }
+							}
 
-                return false;
+							return false;
 
-              });
+						});
 
-            }
+					}
 
-          });
+				});
 
-        }
+			}
 
-        return return_array;
+			return return_array;
 
-      });
+		});
 
-    }
+	}
 
-    //Note:  Used in Graph schema
-    getMerchantProviderConfigurations(merchantprovidergroup){
+	//Note:  Used in Graph schema
+	getMerchantProviderConfigurations(merchantprovidergroup){
 
-        du.debug('Get Merchant Provider Configurations');
+		du.debug('Get Merchant Provider Configurations');
 
-        return arrayutilities.map(merchantprovidergroup.merchantproviders, (merchantproviderconfiguration) => {
+		return arrayutilities.map(merchantprovidergroup.merchantproviders, (merchantproviderconfiguration) => {
 
-            return {
-                "distribution": merchantproviderconfiguration.distribution,
-                "merchantprovider": merchantproviderconfiguration.id
-            };
+			return {
+				"distribution": merchantproviderconfiguration.distribution,
+				"merchantprovider": merchantproviderconfiguration.id
+			};
 
-        });
+		});
 
-    }
+	}
 
-    //Note:  Used in Graph schema
-    getMerchantProviderConfiguration(merchantproviderconfiguration){
+	//Note:  Used in Graph schema
+	getMerchantProviderConfiguration(merchantproviderconfiguration){
 
-      du.debug('Get Merchant Provider Configuration');
+		du.debug('Get Merchant Provider Configuration');
 
-      return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: merchantproviderconfiguration.merchantprovider});
+		return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: merchantproviderconfiguration.merchantprovider});
 
-    }
+	}
 
-    getMerchantProviders(merchantprovidergroup){
+	getMerchantProviders(merchantprovidergroup){
 
-      du.debug('Get Merchant Providers');
+		du.debug('Get Merchant Providers');
 
-      if(arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
+		if(arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
 
-        let promises = arrayutilities.map(merchantprovidergroup.merchantproviders, (merchant_provider) => {
+			let promises = arrayutilities.map(merchantprovidergroup.merchantproviders, (merchant_provider) => {
 
-          //Technical Debt:  This is likely broken.
-          return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: merchant_provider});
+				//Technical Debt:  This is likely broken.
+				return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: merchant_provider});
 
-        });
+			});
 
-        return Promise.all(promises);
+			return Promise.all(promises);
 
-      }else{
+		}else{
 
-        return null;
+			return null;
 
-      }
+		}
 
-    }
+	}
 
-    //Note: Necessary because of the meta-object
-    getMerchantProviderGroupHydrated(id){
+	//Note: Necessary because of the meta-object
+	getMerchantProviderGroupHydrated(id){
 
-      du.debug('Get Merchantprovidergroup Hydrated');
+		du.debug('Get Merchantprovidergroup Hydrated');
 
-      return this.get({id: id}).then((merchantprovidergroup) => {
+		return this.get({id: id}).then((merchantprovidergroup) => {
 
-        return this.getMerchantProviders(merchantprovidergroup).then((merchant_providers) =>{
+			return this.getMerchantProviders(merchantprovidergroup).then((merchant_providers) =>{
 
-          //Note: This marries the merchant provider to the meta object.
-          for(var i = 0; i < merchantprovidergroup.merchantproviders.length; i++){
+				//Note: This marries the merchant provider to the meta object.
+				for(var i = 0; i < merchantprovidergroup.merchantproviders.length; i++){
 
-            for(var j = 0; j < merchant_providers.length; j++){
+					for(var j = 0; j < merchant_providers.length; j++){
 
-              if(merchantprovidergroup.merchantproviders[i].id == merchant_providers[j].id){
+						if(merchantprovidergroup.merchantproviders[i].id == merchant_providers[j].id){
 
-                var distribution = merchantprovidergroup.merchantproviders[i].distribution;
+							var distribution = merchantprovidergroup.merchantproviders[i].distribution;
 
-                merchantprovidergroup.merchantproviders[i] = {merchantprovider: merchant_providers[j], distribution: distribution};
+							merchantprovidergroup.merchantproviders[i] = {merchantprovider: merchant_providers[j], distribution: distribution};
 
-              }
+						}
 
-            }
+					}
 
-          }
+				}
 
-          return merchantprovidergroup;
+				return merchantprovidergroup;
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
 }
 

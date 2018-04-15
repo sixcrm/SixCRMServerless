@@ -14,10 +14,10 @@ describe('controllers/entities/Bin.js', () => {
 
 	beforeEach(() => {
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-      sendMessage() {
-        return Promise.resolve(true);
-      }
-    });
+			sendMessage() {
+				return Promise.resolve(true);
+			}
+		});
 	});
 
 	afterEach(() => {

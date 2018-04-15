@@ -3,106 +3,106 @@ const expect = chai.expect;
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 describe('controllers/providers/redis-provider', () => {
-  let redisprovider = null;
+	let redisprovider = null;
 
-  beforeEach(function () {
+	beforeEach(function () {
 
-    const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
-    redisprovider = new RedisProvider();
+		const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
+		redisprovider = new RedisProvider();
 
-    redisprovider.redis = {
+		redisprovider.redis = {
 
-      createClient(config) {
+			createClient(config) {
 
-        let spoofing_client = {
-          config: config,
-          recent_command: null,
-          on: (key, callback) => {
-            callback();
-            return spoofing_client;
-          },
-          send_command: function (...command_info) {
-            let callback = command_info.pop();
+				let spoofing_client = {
+					config: config,
+					recent_command: null,
+					on: (key, callback) => {
+						callback();
+						return spoofing_client;
+					},
+					send_command: function (...command_info) {
+						let callback = command_info.pop();
 
-            spoofing_client.recent_command = command_info;
-            callback(null, 'OK');
-          }
-        };
+						spoofing_client.recent_command = command_info;
+						callback(null, 'OK');
+					}
+				};
 
-        return spoofing_client;
-      }
-    };
-  });
+				return spoofing_client;
+			}
+		};
+	});
 
-  describe('connect', () => {
+	describe('connect', () => {
 
-    it('properly configured redis', () => {
+		it('properly configured redis', () => {
 
-      let orig_create_config = redisprovider.redis.createClient;
+			let orig_create_config = redisprovider.redis.createClient;
 
-      redisprovider.redis = {
+			redisprovider.redis = {
 
-        createClient(config) {
+				createClient(config) {
 
-          expect(config.host).to.equal(redisprovider.endpoint);
-          expect(config.port).to.equal(global.SixCRM.configuration.site_config.elasticache.port);
-          expect(config.connect_timeout).to.be.a('number');
-          expect(config.retry_strategy).to.be.a('function');
+					expect(config.host).to.equal(redisprovider.endpoint);
+					expect(config.port).to.equal(global.SixCRM.configuration.site_config.elasticache.port);
+					expect(config.connect_timeout).to.be.a('number');
+					expect(config.retry_strategy).to.be.a('function');
 
-          return orig_create_config(config);
+					return orig_create_config(config);
 
-        }
-      };
+				}
+			};
 
-      redisprovider.connect();
+			redisprovider.connect();
 
-    });
-  });
+		});
+	});
 
-  describe('quit', () => {
+	describe('quit', () => {
 
-    it('properly quiting redis', () => {
+		it('properly quiting redis', () => {
 
-      redisprovider.connect();
+			redisprovider.connect();
 
-      return redisprovider.quit()
-        .then(() => {
+			return redisprovider.quit()
+				.then(() => {
 
-          expect(redisprovider.redis_client.recent_command).to.be.deep.equal(['quit'])
+					expect(redisprovider.redis_client.recent_command).to.be.deep.equal(['quit'])
 
-          return true;
-        })
-    });
-  });
+					return true;
+				})
+		});
+	});
 
-  describe('scheduleQuit', () => {
+	describe('scheduleQuit', () => {
 
-    it('properly scheduling immediately quiting redis', () => {
+		it('properly scheduling immediately quiting redis', () => {
 
-      redisprovider.connect();
+			redisprovider.connect();
 
-      redisprovider.quiting_timer_timeout_ms = 0;
+			redisprovider.quiting_timer_timeout_ms = 0;
 
-      return redisprovider.scheduleQuit()
-        .then(() => {
+			return redisprovider.scheduleQuit()
+				.then(() => {
 
-          expect(redisprovider.redis_client.recent_command).to.be.not.deep.equal(['quit'])
+					expect(redisprovider.redis_client.recent_command).to.be.not.deep.equal(['quit'])
 
-          return true;
+					return true;
 
-        })
-        .then(timestamp.delay(10))
-        .then(() => {
+				})
+				.then(timestamp.delay(10))
+				.then(() => {
 
-          expect(redisprovider.redis_client.recent_command).to.be.deep.equal(['quit'])
+					expect(redisprovider.redis_client.recent_command).to.be.deep.equal(['quit'])
 
-          return true;
+					return true;
 
-        })
-    });
+				})
+		});
 
-    //Technical Debt:  Resolve! (Failing in Circle)
-    /*
+		//Technical Debt:  Resolve! (Failing in Circle)
+		/*
       1) lib/redis-provider scheduleQuit properly scheduling postponed quiting redis:
 
       AssertionError: expected [ 'quit' ] to not deeply equal [ 'quit' ]
@@ -122,169 +122,169 @@ describe('controllers/providers/redis-provider', () => {
       at node_modules/async-listener/glue.js:188:31
     */
 
-    xit('properly scheduling postponed quiting redis', () => {
+		xit('properly scheduling postponed quiting redis', () => {
 
-      redisprovider.connect();
+			redisprovider.connect();
 
-      redisprovider.quiting_timer_timeout_ms = 30;
+			redisprovider.quiting_timer_timeout_ms = 30;
 
-      return redisprovider.scheduleQuit()
-        .then(() => {
+			return redisprovider.scheduleQuit()
+				.then(() => {
 
-          expect(redisprovider.redis_client.recent_command).to.be.not.deep.equal(['quit'])
+					expect(redisprovider.redis_client.recent_command).to.be.not.deep.equal(['quit'])
 
-          return true;
+					return true;
 
-        })
-        .then(timestamp.delay(redisprovider.quiting_timer_timeout_ms / 2))
-        .then(() => {
+				})
+				.then(timestamp.delay(redisprovider.quiting_timer_timeout_ms / 2))
+				.then(() => {
 
-          expect(redisprovider.redis_client.recent_command).to.be.not.deep.equal(['quit'])
+					expect(redisprovider.redis_client.recent_command).to.be.not.deep.equal(['quit'])
 
-          return true;
+					return true;
 
-        })
-        .then(timestamp.delay(redisprovider.quiting_timer_timeout_ms))
-        .then(() => {
+				})
+				.then(timestamp.delay(redisprovider.quiting_timer_timeout_ms))
+				.then(() => {
 
-          expect(redisprovider.redis_client.recent_command).to.be.deep.equal(['quit'])
+					expect(redisprovider.redis_client.recent_command).to.be.deep.equal(['quit'])
 
-          return true;
+					return true;
 
-        })
-    });
-  });
+				})
+		});
+	});
 
-  describe('get', () => {
-    it('properly called', () => {
-      return redisprovider.get('abc')
-        .then(() => {
+	describe('get', () => {
+		it('properly called', () => {
+			return redisprovider.get('abc')
+				.then(() => {
 
-          expect(redisprovider.redis_client.recent_command).to.be.deep.equal(['get', ['abc']]);
+					expect(redisprovider.redis_client.recent_command).to.be.deep.equal(['get', ['abc']]);
 
-          return true;
+					return true;
 
-        });
-    });
-  });
+				});
+		});
+	});
 
-  describe('set', () => {
+	describe('set', () => {
 
-    it('properly called', () => {
+		it('properly called', () => {
 
-      let value = {a: 123};
+			let value = {a: 123};
 
-      return redisprovider.set('abc', value)
-        .then(() => {
+			return redisprovider.set('abc', value)
+				.then(() => {
 
-          expect(redisprovider.redis_client.recent_command).to.have.property(0).to.be.equal('set');
+					expect(redisprovider.redis_client.recent_command).to.have.property(0).to.be.equal('set');
 
-          expect(redisprovider.redis_client.recent_command).to.have.property(1).to.be.deep.equal(['abc', JSON.stringify(value), 'EX', redisprovider.default_expiration]);
+					expect(redisprovider.redis_client.recent_command).to.have.property(1).to.be.deep.equal(['abc', JSON.stringify(value), 'EX', redisprovider.default_expiration]);
 
-          return true;
+					return true;
 
-        });
-    });
-  });
+				});
+		});
+	});
 
-  describe('flushAll', () => {
+	describe('flushAll', () => {
 
-    it('properly called', () => {
+		it('properly called', () => {
 
-      return redisprovider.flushAll()
-        .then(() => {
+			return redisprovider.flushAll()
+				.then(() => {
 
-          expect(redisprovider.redis_client.recent_command).to.be.deep.equal(['flushdb']);
+					expect(redisprovider.redis_client.recent_command).to.be.deep.equal(['flushdb']);
 
-          return true;
+					return true;
 
-        });
-    });
-  });
+				});
+		});
+	});
 
-  describe('getExpiration', () => {
+	describe('getExpiration', () => {
 
-    it('retrieves default expiration', () => {
+		it('retrieves default expiration', () => {
 
-      expect(redisprovider.getExpiration()).to.equal(global.SixCRM.configuration.site_config.elasticache.default_expiration);
+			expect(redisprovider.getExpiration()).to.equal(global.SixCRM.configuration.site_config.elasticache.default_expiration);
 
-    });
+		});
 
-    it('throws invalid expiration error', () => {
+		it('throws invalid expiration error', () => {
 
-      const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
-      const redisprovider = new RedisProvider();
+			const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
+			const redisprovider = new RedisProvider();
 
-      try {
+			try {
 
-        redisprovider.getExpiration(-1)
+				redisprovider.getExpiration(-1)
 
-      } catch (error) {
+			} catch (error) {
 
-        expect(error.message).to.equal('[500] Invalid expiration.');
+				expect(error.message).to.equal('[500] Invalid expiration.');
 
-      }
+			}
 
-    });
-  });
+		});
+	});
 
-  describe('prepareValue', () => {
+	describe('prepareValue', () => {
 
-    it('throws error when specified value is not a string or an object', () => {
+		it('throws error when specified value is not a string or an object', () => {
 
-      try {
+			try {
 
-        redisprovider.prepareValue(123)
+				redisprovider.prepareValue(123)
 
-      } catch (error) {
+			} catch (error) {
 
-        expect(error.message).to.equal('[500] Value must be a string or an object');
+				expect(error.message).to.equal('[500] Value must be a string or an object');
 
-      }
+			}
 
-    });
+		});
 
-    it('returns appointed object as string value', () => {
+		it('returns appointed object as string value', () => {
 
-      expect(redisprovider.prepareValue({'test': 'sample_data'})).to.deep.equal('{"test":"sample_data"}');
-    });
+			expect(redisprovider.prepareValue({'test': 'sample_data'})).to.deep.equal('{"test":"sample_data"}');
+		});
 
-  });
+	});
 
-  describe('retryStrategy', () => {
+	describe('retryStrategy', () => {
 
-    it('properly configured max_attempts', () => {
+		it('properly configured max_attempts', () => {
 
-      const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
-      const redisprovider = new RedisProvider();
+			const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
+			const redisprovider = new RedisProvider();
 
-      expect(redisprovider.max_attempts).to.equal(global.SixCRM.configuration.site_config.elasticache.max_attempts);
+			expect(redisprovider.max_attempts).to.equal(global.SixCRM.configuration.site_config.elasticache.max_attempts);
 
-      expect(redisprovider.max_attempts).to.be.at.least(2);
+			expect(redisprovider.max_attempts).to.be.at.least(2);
 
-    });
+		});
 
-    it('reconnects when there haven\'t been any errors and number of attempts is not exceeded', () => {
+		it('reconnects when there haven\'t been any errors and number of attempts is not exceeded', () => {
 
-      const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
-      const redisprovider = new RedisProvider();
+			const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
+			const redisprovider = new RedisProvider();
 
-      let options = {attempt: redisprovider.max_attempts};
+			let options = {attempt: redisprovider.max_attempts};
 
-      expect(redisprovider.retryStrategy(options)).to.equal(Math.min(redisprovider.max_attempts * 100, 1000));
+			expect(redisprovider.retryStrategy(options)).to.equal(Math.min(redisprovider.max_attempts * 100, 1000));
 
-    });
+		});
 
-    it('returns undefined when there have been more than 10 attempts', () => {
+		it('returns undefined when there have been more than 10 attempts', () => {
 
-      const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
-      const redisprovider = new RedisProvider();
+			const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
+			const redisprovider = new RedisProvider();
 
-      let options = {attempt: redisprovider.max_attempts + 1};
+			let options = {attempt: redisprovider.max_attempts + 1};
 
-      expect(redisprovider.retryStrategy(options)).to.equal(undefined);
+			expect(redisprovider.retryStrategy(options)).to.equal(undefined);
 
-    });
-  });
+		});
+	});
 
 });

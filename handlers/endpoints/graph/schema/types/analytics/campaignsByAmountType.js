@@ -5,13 +5,13 @@ const GraphQLList = require('graphql').GraphQLList;
 const campaignsByAmountGroupType = require('./campaignsByAmountGroupType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'campaignsByAmountType',
-    description: 'Campaigns By Amount',
-    fields: () => ({
-        campaigns: {
-            type: new GraphQLList(campaignsByAmountGroupType.graphObj),
-            description: 'The campaigns',
-        }
-    }),
-    interfaces: []
+	name: 'campaignsByAmountType',
+	description: 'Campaigns By Amount',
+	fields: () => ({
+		campaigns: {
+			type: new GraphQLList(campaignsByAmountGroupType.graphObj),
+			description: 'The campaigns',
+		}
+	}),
+	interfaces: []
 });

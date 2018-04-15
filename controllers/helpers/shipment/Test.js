@@ -5,60 +5,60 @@ const ShipmentUtilities = global.SixCRM.routes.include('helpers', 'shipment/Ship
 
 module.exports = class TestController extends ShipmentUtilities {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.parameter_validation = {
-      'vendorresponseclass':global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/response/responseclass.json')
-    };
+		this.parameter_validation = {
+			'vendorresponseclass':global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/response/responseclass.json')
+		};
 
-    this.parameter_definition = {
-      execute:{
-        required:{
-          fulfillmentproviderid:'fulfillment_provider_id'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			execute:{
+				required:{
+					fulfillmentproviderid:'fulfillment_provider_id'
+				},
+				optional:{}
+			}
+		};
 
-    this.response_validation = global.SixCRM.routes.path('model', 'providers/shipping/terminal/responses/test.json');
+		this.response_validation = global.SixCRM.routes.path('model', 'providers/shipping/terminal/responses/test.json');
 
-    this.augmentParameters();
+		this.augmentParameters();
 
-  }
+	}
 
-  execute(){
+	execute(){
 
-    du.debug('Fulfill');
+		du.debug('Fulfill');
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'execute'}))
-    .then(() => this.hydrateFulfillmentProvider())
-    .then(() => this.instantiateFulfillmentProviderClass())
-    .then(() => this.executeTest())
-    .then(() => this.validateResponse())
-    .then(() => this.pruneResponse())
-    .then(() => {
-      return this.parameters.get('vendorresponseclass');
-    });
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'execute'}))
+			.then(() => this.hydrateFulfillmentProvider())
+			.then(() => this.instantiateFulfillmentProviderClass())
+			.then(() => this.executeTest())
+			.then(() => this.validateResponse())
+			.then(() => this.pruneResponse())
+			.then(() => {
+				return this.parameters.get('vendorresponseclass');
+			});
 
-  }
+	}
 
-  executeTest(){
+	executeTest(){
 
-    du.debug('Execute Fulfillment');
+		du.debug('Execute Fulfillment');
 
-    let instantiated_fulfillment_provider = this.parameters.get('instantiatedfulfillmentprovider');
+		let instantiated_fulfillment_provider = this.parameters.get('instantiatedfulfillmentprovider');
 
-    return instantiated_fulfillment_provider.test().then(vendorresponseclass =>{
+		return instantiated_fulfillment_provider.test().then(vendorresponseclass =>{
 
-      this.parameters.set('vendorresponseclass', vendorresponseclass);
+			this.parameters.set('vendorresponseclass', vendorresponseclass);
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
 }

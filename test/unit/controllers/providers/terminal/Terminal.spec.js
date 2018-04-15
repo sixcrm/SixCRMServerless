@@ -906,8 +906,8 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
 			fulfillment_provider.provider.username = 'kristest';
 			fulfillment_provider.provider.password = 'kristest',
-				fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
-				fulfillment_provider.provider.threepl_customer_id = 10;
+			fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
+			fulfillment_provider.provider.threepl_customer_id = 10;
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
 				get() {
@@ -964,8 +964,8 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
 			fulfillment_provider.provider.username = 'kristest';
 			fulfillment_provider.provider.password = 'kristest',
-				fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
-				fulfillment_provider.provider.threepl_customer_id = 10;
+			fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
+			fulfillment_provider.provider.threepl_customer_id = 10;
 			let vendor_response_class = getValidVendorResponseClass('test');
 
 			/*let test_helper_mock = class {
@@ -1055,8 +1055,8 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
 			fulfillment_provider.provider.username = 'kristest';
 			fulfillment_provider.provider.password = 'kristest',
-				fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
-				fulfillment_provider.provider.threepl_customer_id = 10;
+			fulfillment_provider.provider.threepl_key = '{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}',
+			fulfillment_provider.provider.threepl_customer_id = 10;
 
 			let mocked_receipt_class = class {
 				constructor() {

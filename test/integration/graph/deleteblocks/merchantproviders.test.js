@@ -8,17 +8,17 @@ const MerchantProviderTest = global.SixCRM.routes.include('test', 'integration/c
 
 describe('Merchant Provider Group Delete Block Test', () => {
 
-  it('Should not allow the delete', () => {
+	it('Should not allow the delete', () => {
 
-    let merchantProviderTest = new MerchantProviderTest();
+		let merchantProviderTest = new MerchantProviderTest();
 
-    return merchantProviderTest.executeMerchantProviderGroupBlockTest().then(results => {
+		return merchantProviderTest.executeMerchantProviderGroupBlockTest().then(results => {
 
-      return expect(results.statusCode).to.equal(200);
+			return expect(results.statusCode).to.equal(200);
 
-    });
+		});
 
-  });
+	});
 
 });
 

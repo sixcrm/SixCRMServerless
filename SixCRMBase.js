@@ -3,44 +3,44 @@ require('./routes.js');
 
 class SixCRMBase {
 
-  constructor() {
+	constructor() {
 
-    this.routes = global.routes;
-    this._resources = {};
+		this.routes = global.routes;
+		this._resources = {};
 
-  }
+	}
 
-  clearState() {
+	clearState() {
 
-    this.instantiate();
+		this.instantiate();
 
-  }
+	}
 
-  instantiate() {
+	instantiate() {
 
-    const Configuration = this.routes.include('core', 'Configuration.js');
-    const LocalCache = this.routes.include('core', 'LocalCache.js');
+		const Configuration = this.routes.include('core', 'Configuration.js');
+		const LocalCache = this.routes.include('core', 'LocalCache.js');
 
-    this.configuration = new Configuration();
-    this.localcache = new LocalCache();
+		this.configuration = new Configuration();
+		this.localcache = new LocalCache();
 
-  }
+	}
 
-  setConfigurationFile() {
+	setConfigurationFile() {
 
-  }
+	}
 
-  setResource(identifer, resource) {
+	setResource(identifer, resource) {
 
-    this._resources[identifer] = resource;
+		this._resources[identifer] = resource;
 
-  }
+	}
 
-  getResource(identifier) {
+	getResource(identifier) {
 
-    return this._resources[identifier];
+		return this._resources[identifier];
 
-  }
+	}
 
 }
 

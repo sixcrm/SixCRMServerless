@@ -5,223 +5,223 @@ const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-p
 
 module.exports = class SNSProvider extends AWSProvider{
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.instantiateSNS();
+		this.instantiateSNS();
 
-    }
+	}
 
-    instantiateSNS(){
+	instantiateSNS(){
 
-      du.debug('Instantiate SNS');
+		du.debug('Instantiate SNS');
 
-      let sns_region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sns.region'))?global.SixCRM.configuration.site_config.sns.region:this.getRegion();
-      let parameters = {
-        apiVersion: 'latest',
-        region: sns_region
-      };
+		let sns_region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sns.region'))?global.SixCRM.configuration.site_config.sns.region:this.getRegion();
+		let parameters = {
+			apiVersion: 'latest',
+			region: sns_region
+		};
 
-      if(objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sns.endpoint')){
-        parameters.endpoint = global.SixCRM.configuration.site_config.sns.endpoint;
-      }
+		if(objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sns.endpoint')){
+			parameters.endpoint = global.SixCRM.configuration.site_config.sns.endpoint;
+		}
 
-      //Technical Debt:  Get this out of the constructor?
-      this.instantiateAWS();
+		//Technical Debt:  Get this out of the constructor?
+		this.instantiateAWS();
 
-      this.sns = new this.AWS.SNS(parameters);
+		this.sns = new this.AWS.SNS(parameters);
 
-    }
+	}
 
-    createTopic(parameters){
+	createTopic(parameters){
 
-      du.debug('Create Topic');
+		du.debug('Create Topic');
 
-      let params = objectutilities.transcribe(
-        {
-          Name:'Name'
-        },
-        parameters,
-        {},
-        true
-      );
+		let params = objectutilities.transcribe(
+			{
+				Name:'Name'
+			},
+			parameters,
+			{},
+			true
+		);
 
-      return new Promise((resolve, reject) => {
-        this.sns.createTopic(params, function(error, data) {
-          if (error){
-            du.error(error);
-            return reject(error);
-          }
-          return resolve(data);
-        });
-      });
+		return new Promise((resolve, reject) => {
+			this.sns.createTopic(params, function(error, data) {
+				if (error){
+					du.error(error);
+					return reject(error);
+				}
+				return resolve(data);
+			});
+		});
 
-    }
+	}
 
-    addPermission(parameters){
+	addPermission(parameters){
 
-      du.debug('Add Permission');
+		du.debug('Add Permission');
 
-      let params = objectutilities.transcribe(
-        {
-          AWSAccountId:'aws_account_id',
-          ActionName: 'action_name',
-          Label:'label',
-          TopicArn:'topic_arn'
-        },
-        parameters,
-        {},
-        true
-      );
+		let params = objectutilities.transcribe(
+			{
+				AWSAccountId:'aws_account_id',
+				ActionName: 'action_name',
+				Label:'label',
+				TopicArn:'topic_arn'
+			},
+			parameters,
+			{},
+			true
+		);
 
-      return new Promise((resolve, reject) => {
-        this.sns.addPermission(params, function(error, data) {
-          if (error){
-            du.error(error);
-            return reject(error);
-          }
-          return resolve(data);
-        });
-      });
+		return new Promise((resolve, reject) => {
+			this.sns.addPermission(params, function(error, data) {
+				if (error){
+					du.error(error);
+					return reject(error);
+				}
+				return resolve(data);
+			});
+		});
 
-    }
+	}
 
-    subscribe(parameters){
+	subscribe(parameters){
 
-      du.debug('Subscribe');
+		du.debug('Subscribe');
 
-      let params = objectutilities.transcribe(
-        {
-          Protocol:'Protocol',
-          TopicArn:'TopicArn'
-        },
-        parameters,
-        {},
-        true
-      );
+		let params = objectutilities.transcribe(
+			{
+				Protocol:'Protocol',
+				TopicArn:'TopicArn'
+			},
+			parameters,
+			{},
+			true
+		);
 
-      params = objectutilities.transcribe(
-        {
-          Endpoint:'Endpoint',
-        },
-        parameters,
-        params
-      );
+		params = objectutilities.transcribe(
+			{
+				Endpoint:'Endpoint',
+			},
+			parameters,
+			params
+		);
 
-      return new Promise((resolve, reject) => {
-        this.sns.subscribe(params, function(error, data) {
-          if (error){
-            du.error(error);
-            return reject(error);
-          }
-          return resolve(data);
-        });
-      });
+		return new Promise((resolve, reject) => {
+			this.sns.subscribe(params, function(error, data) {
+				if (error){
+					du.error(error);
+					return reject(error);
+				}
+				return resolve(data);
+			});
+		});
 
-    }
+	}
 
-    setSubscriptionAttributes(parameters){
+	setSubscriptionAttributes(parameters){
 
-      du.debug('Set Subscription Attributes');
+		du.debug('Set Subscription Attributes');
 
-      let params = objectutilities.transcribe(
-        {
-          AttributeName: 'AttributeName',
-          SubscriptionArn: 'SubscriptionArn'
-        },
-        parameters,
-        {},
-        true
-      );
+		let params = objectutilities.transcribe(
+			{
+				AttributeName: 'AttributeName',
+				SubscriptionArn: 'SubscriptionArn'
+			},
+			parameters,
+			{},
+			true
+		);
 
-      params = objectutilities.transcribe(
-        {
-          AttributeValue:'AttributeValue',
-        },
-        parameters,
-        params
-      );
+		params = objectutilities.transcribe(
+			{
+				AttributeValue:'AttributeValue',
+			},
+			parameters,
+			params
+		);
 
-      return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-        this.sns.setSubscriptionAttributes(params, function(error, data) {
-          if (error){
-            du.error(error);
-            return reject(error);
-          }
-          return resolve(data);
-        });
+			this.sns.setSubscriptionAttributes(params, function(error, data) {
+				if (error){
+					du.error(error);
+					return reject(error);
+				}
+				return resolve(data);
+			});
 
-      });
+		});
 
-    }
+	}
 
-    publish(parameters){
+	publish(parameters){
 
-      du.debug('Publish');
+		du.debug('Publish');
 
-      let params = objectutilities.transcribe(
-        {
-          Message:'Message'
-        },
-        parameters,
-        {},
-        true
-      );
+		let params = objectutilities.transcribe(
+			{
+				Message:'Message'
+			},
+			parameters,
+			{},
+			true
+		);
 
-      params = objectutilities.transcribe(
-        {
-          MessageAttributes:'MessageAttributes',
-          MessageStructure: 'MessageStructure',
-          PhoneNumber: 'PhoneNumber',
-          Subject:'Subject',
-          TargetArn: 'TargetArn',
-          TopicArn: 'TopicArn'
-        },
-        parameters,
-        params,
-        false
-      );
+		params = objectutilities.transcribe(
+			{
+				MessageAttributes:'MessageAttributes',
+				MessageStructure: 'MessageStructure',
+				PhoneNumber: 'PhoneNumber',
+				Subject:'Subject',
+				TargetArn: 'TargetArn',
+				TopicArn: 'TopicArn'
+			},
+			parameters,
+			params,
+			false
+		);
 
-      return new Promise((resolve, reject) => {
-        this.sns.publish(params, function(error, data) {
-          if (error){
-            du.error(error);
-            return reject(error);
-          }
-          return resolve(data);
-        });
-      });
+		return new Promise((resolve, reject) => {
+			this.sns.publish(params, function(error, data) {
+				if (error){
+					du.error(error);
+					return reject(error);
+				}
+				return resolve(data);
+			});
+		});
 
-    }
+	}
 
-    sendSMS(text, phone_number) {
+	sendSMS(text, phone_number) {
 
-        return new Promise((resolve, reject) => {
-            let params = {
-                Message: text,
-                PhoneNumber: phone_number,
-            };
+		return new Promise((resolve, reject) => {
+			let params = {
+				Message: text,
+				PhoneNumber: phone_number,
+			};
 
-            du.debug('Sending SMS message with parameters', params);
+			du.debug('Sending SMS message with parameters', params);
 
-            this.sns.publish(params, (error, data) => {
-                if (error) {
-                    du.debug('SNS Error!', error);
+			this.sns.publish(params, (error, data) => {
+				if (error) {
+					du.debug('SNS Error!', error);
 
-                    return reject(error);
-                }
+					return reject(error);
+				}
 
-                if (data) {
-                    du.debug('SNS Success:', data);
+				if (data) {
+					du.debug('SNS Success:', data);
 
-                    return resolve(data);
-                }
-            });
-        });
+					return resolve(data);
+				}
+			});
+		});
 
-    }
+	}
 
 }
 

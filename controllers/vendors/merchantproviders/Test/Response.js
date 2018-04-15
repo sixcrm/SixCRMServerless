@@ -9,68 +9,68 @@ const Response = global.SixCRM.routes.include('vendors', 'merchantproviders/Resp
 
 module.exports = class TestResponse extends Response {
 
-  constructor(){
+	constructor(){
 
-    super(arguments[0]);
+		super(arguments[0]);
 
-  }
+	}
 
-  getTransactionID(transaction){
+	getTransactionID(transaction){
 
-    du.debug('Get Transaction ID');
+		du.debug('Get Transaction ID');
 
-    let processor_response = null;
+		let processor_response = null;
 
-    if(_.has(transaction, 'processor_response')){
-      processor_response = transaction.processor_response;
-      try{
-        processor_response = JSON.parse(processor_response);
-      }catch(error){
-        //do nothing
-      }
-    }
+		if(_.has(transaction, 'processor_response')){
+			processor_response = transaction.processor_response;
+			try{
+				processor_response = JSON.parse(processor_response);
+			}catch(error){
+				//do nothing
+			}
+		}
 
-    if(objectutilities.hasRecursive(processor_response, 'response.transactionid')){
-      return processor_response.response.transactionid;
-    }
+		if(objectutilities.hasRecursive(processor_response, 'response.transactionid')){
+			return processor_response.response.transactionid;
+		}
 
-    eu.throwError('server', 'Unable to identify the Transaction ID');
+		eu.throwError('server', 'Unable to identify the Transaction ID');
 
-  }
+	}
 
-  mapResponseCode({parsed_response}){
+	mapResponseCode({parsed_response}){
 
-    du.debug('Map Response Code');
+		du.debug('Map Response Code');
 
-    if(parsed_response.success == true){
-      return 'success';
-    }else if(parsed_response.response == '2'){
-      return 'fail';
-    }
+		if(parsed_response.success == true){
+			return 'success';
+		}else if(parsed_response.response == '2'){
+			return 'fail';
+		}
 
-    return 'error';
+		return 'error';
 
-  }
+	}
 
-  mapResponseMessage({parsed_response}){
+	mapResponseMessage({parsed_response}){
 
-    du.debug('Map Response Message');
+		du.debug('Map Response Message');
 
-    if(_.has(parsed_response, 'success')){
-      return 'Success';
-    }
+		if(_.has(parsed_response, 'success')){
+			return 'Success';
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
-  parseResponse({ body:body}){
+	parseResponse({ body:body}){
 
-    du.debug('Parse Response');
+		du.debug('Parse Response');
 
-    return body;
+		return body;
 
 
-  }
+	}
 
 }

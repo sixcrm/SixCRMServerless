@@ -9,80 +9,80 @@ const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js
 
 module.exports = class RebillHelperUtilities {
 
-  constructor(){
+	constructor(){
 
-  }
+	}
 
-  calculateDayInCycle(created_at){
+	calculateDayInCycle(created_at){
 
-    du.debug('Calculate Day In Cycle');
+		du.debug('Calculate Day In Cycle');
 
-    if(_.isUndefined(created_at) || _.isNull(created_at)){
+		if(_.isUndefined(created_at) || _.isNull(created_at)){
 
-      created_at = null;
+			created_at = null;
 
-      let session = this.parameters.get('session', null, false);
+			let session = this.parameters.get('session', null, false);
 
-      if(!_.isNull(session)){
+			if(!_.isNull(session)){
 
-        created_at = session.created_at;
+				created_at = session.created_at;
 
-      }
+			}
 
-    }
+		}
 
-    if(timestamp.isISO8601(created_at)){
+		if(timestamp.isISO8601(created_at)){
 
-      let day = timestamp.getDaysDifference(created_at);
+			let day = timestamp.getDaysDifference(created_at);
 
-      this.parameters.set('day', day);
+			this.parameters.set('day', day);
 
-      return day;
+			return day;
 
-    }
+		}
 
-    eu.throwError('server', 'created_at is not a proper ISO-8601');
+		eu.throwError('server', 'created_at is not a proper ISO-8601');
 
-  }
+	}
 
-  calculateAmount(){
+	calculateAmount(){
 
-    du.debug('Calculate Amount');
+		du.debug('Calculate Amount');
 
-    let products = this.parameters.get('transactionproducts', null, false);
+		let products = this.parameters.get('transactionproducts', null, false);
 
-    let amount = 0.0;
+		let amount = 0.0;
 
-    if(!_.isNull(products) && arrayutilities.nonEmpty(products)){
-      amount = arrayutilities.reduce(products, (sum, object) => {
-        return sum + numberutilities.formatFloat((object.amount * object.quantity), 2);
-      }, amount);
-    }
+		if(!_.isNull(products) && arrayutilities.nonEmpty(products)){
+			amount = arrayutilities.reduce(products, (sum, object) => {
+				return sum + numberutilities.formatFloat((object.amount * object.quantity), 2);
+			}, amount);
+		}
 
-    this.parameters.set('amount', numberutilities.formatFloat(amount, 2));
+		this.parameters.set('amount', numberutilities.formatFloat(amount, 2));
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
-  calculateBillAt(){
+	calculateBillAt(){
 
-    du.debug('Calculate Bill At');
+		du.debug('Calculate Bill At');
 
-    let bill_day = this.parameters.get('nextproductschedulebilldaynumber');
+		let bill_day = this.parameters.get('nextproductschedulebilldaynumber');
 
-    let session_start = parseInt(timestamp.dateToTimestamp(this.parameters.get('session').created_at));
+		let session_start = parseInt(timestamp.dateToTimestamp(this.parameters.get('session').created_at));
 
-    let additional_seconds = timestamp.getDayInSeconds() * bill_day;
+		let additional_seconds = timestamp.getDayInSeconds() * bill_day;
 
-    let bill_date = timestamp.toISO8601(session_start + additional_seconds);
+		let bill_date = timestamp.toISO8601(session_start + additional_seconds);
 
-    du.warning(this.parameters.get('session').created_at+' plus '+bill_day+' days should equal '+bill_date);
+		du.warning(this.parameters.get('session').created_at+' plus '+bill_day+' days should equal '+bill_date);
 
-    this.parameters.set('billdate', bill_date);
+		this.parameters.set('billdate', bill_date);
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
 }

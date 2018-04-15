@@ -5,16 +5,16 @@ const AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'worker
 
 module.exports.analyticsevents = (event, context, callback) => {
 
-  return new AnalyticsEventBroker().execute(event).then((result) => {
+	return new AnalyticsEventBroker().execute(event).then((result) => {
 
-    return new LambdaResponse().issueResponse(200, {
-        message: result
-    }, callback);
+		return new LambdaResponse().issueResponse(200, {
+			message: result
+		}, callback);
 
-  }).catch((error) =>{
+	}).catch((error) =>{
 
-    return new LambdaResponse().issueError(error.message, event, callback);
+		return new LambdaResponse().issueError(error.message, event, callback);
 
-  });
+	});
 
 }

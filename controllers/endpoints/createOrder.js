@@ -71,7 +71,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		this.parameters.store = {};
 
 		return this.preamble(event)
-		.then(() => this.createOrder());
+			.then(() => this.createOrder());
 
 	}
 
@@ -238,11 +238,11 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 			this.creditCardController.sanitize(false);
 			return this.creditCardController.assureCreditCard(event.creditcard)
-			.then(creditcard => {
-				this.parameters.set('creditcard', creditcard);
-				return true;
-			})
-			.then(() => this.addCreditCardToCustomer());
+				.then(creditcard => {
+					this.parameters.set('creditcard', creditcard);
+					return true;
+				})
+				.then(() => this.addCreditCardToCustomer());
 
 		}
 
@@ -286,16 +286,16 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}
 
 		return this.customerController.get({
-				id: session.customer
-			}).then(customer => {
-				if (_.has(event, 'customer')) {
-					Object.assign(customer, event.customer);
-					return this.customerController.update({
-						entity: customer
-					});
-				}
-				return customer;
-			})
+			id: session.customer
+		}).then(customer => {
+			if (_.has(event, 'customer')) {
+				Object.assign(customer, event.customer);
+				return this.customerController.update({
+					entity: customer
+				});
+			}
+			return customer;
+		})
 			.then(customer => {
 				this.parameters.set('customer', customer);
 				return true;
@@ -347,8 +347,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}
 
 		if (this.sessionHelperController.isComplete({
-				session: session
-			})) {
+			session: session
+		})) {
 			eu.throwError('bad_request', 'The session is already complete.');
 		}
 
@@ -369,8 +369,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}
 
 		if (!this.sessionHelperController.isCurrent({
-				session: session
-			})) {
+			session: session
+		})) {
 			if (!_.includes(['*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c'], global.account)) {
 				eu.throwError('bad_request', 'Session has expired.');
 			}
@@ -441,26 +441,26 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}
 
 		return this.registerController.processTransaction(argumentation)
-		.then((register_response) => {
+			.then((register_response) => {
 
-			if (!_.has(this, 'transactionHelperController')) {
-				const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+				if (!_.has(this, 'transactionHelperController')) {
+					const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 
-				this.transactionHelperController = new TransactionHelperController();
-			}
+					this.transactionHelperController = new TransactionHelperController();
+				}
 
-			this.parameters.set('registerresponse', register_response);
+				this.parameters.set('registerresponse', register_response);
 
-			let amount = this.transactionHelperController.getTransactionsAmount(register_response.parameters.get('transactions'));
+				let amount = this.transactionHelperController.getTransactionsAmount(register_response.parameters.get('transactions'));
 
-			this.parameters.set('creditcard', register_response.getCreditCard());
-			this.parameters.set('transactions', register_response.parameters.get('transactions'));
-			this.parameters.set('result', register_response.parameters.get('response_type'));
-			this.parameters.set('amount', amount);
+				this.parameters.set('creditcard', register_response.getCreditCard());
+				this.parameters.set('transactions', register_response.parameters.get('transactions'));
+				this.parameters.set('result', register_response.parameters.get('response_type'));
+				this.parameters.set('amount', amount);
 
-			return true;
+				return true;
 
-		});
+			});
 
 	}
 
@@ -535,9 +535,9 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}
 
 		return this.rebillHelperController.updateRebillUpsell({
-				rebill: previous_rebill,
-				upsell: rebill
-			})
+			rebill: previous_rebill,
+			upsell: rebill
+		})
 			.then(() => this.rebillController.listTransactions(previous_rebill))
 			.then(results => this.rebillController.getResult(results, 'transactions'))
 			.then(transactions => Promise.all(

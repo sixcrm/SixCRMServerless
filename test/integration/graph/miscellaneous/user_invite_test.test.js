@@ -12,15 +12,15 @@ let endpoint = global.integration_test_config.endpoint;
 
 let entity = 'User Invite';
 let tests = [{
-    name: "uncategorized",
-    query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/sendUserInvite.json')
+	name: "uncategorized",
+	query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/uncategorized/sendUserInvite.json')
 }];
 
 let test_users = [
-    {
-        name: 'Known User',
-        email: 'super.user@test.com'
-    }
+	{
+		name: 'Known User',
+		email: 'super.user@test.com'
+	}
 ];
 
 du.output(endpoint);
@@ -30,23 +30,23 @@ let account = '*';
 
 describe('Graph '+entity+' Test', function() {
 
-    test_users.forEach((test_user) => {
+	test_users.forEach((test_user) => {
 
-        describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials.', function() {
+		describe('Test the graph '+entity+' endpoint using "'+test_user.name+'" credentials.', function() {
 
-            var test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
+			var test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-            du.output(test_jwt);
+			du.output(test_jwt);
 
-            tests.forEach((test) => {
+			tests.forEach((test) => {
 
-                it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
+				it('Should return only '+test_user.name+' fields for '+entity+' '+test.name+'.', function (done) {
 
-                    var query = tu.getQuery(test.query);
+					var query = tu.getQuery(test.query);
 
-                    du.output(query);
+					du.output(query);
 
-                    this_request.post('graph/'+account)
+					this_request.post('graph/'+account)
 						.set('Authorization', test_jwt)
 						.send(query)
 						.expect(200)
@@ -55,16 +55,16 @@ describe('Graph '+entity+' Test', function() {
 						.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 						.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 						.end(function(err, response){
-    du.output(response.body);
-    assert.isObject(response.body.response);
-    du.output(response.body.response);
-    done();
-});
-                });
-            });
+							du.output(response.body);
+							assert.isObject(response.body.response);
+							du.output(response.body.response);
+							done();
+						});
+				});
+			});
 
-        });
+		});
 
-    });
+	});
 
 });

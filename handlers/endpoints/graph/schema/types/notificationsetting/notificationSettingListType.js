@@ -6,17 +6,17 @@ let paginationType = require('../pagination/paginationType');
 let notificationSettingType = require('./notificationSettingType');
 
 module.exports.graphObj = new GraphQLObjectType({
-  name: 'NotificationSettingList',
-  description: 'Notification Settings.',
-  fields: () => ({
-    notificationsettings: {
-      type: new GraphQLList(notificationSettingType.graphObj),
-      description: 'Notification Settings.',
-    },
-    pagination: {
-      type: new GraphQLNonNull(paginationType.graphObj),
-      description: 'Query pagination',
-    }
-  }),
-  interfaces: []
+	name: 'NotificationSettingList',
+	description: 'Notification Settings.',
+	fields: () => ({
+		notificationsettings: {
+			type: new GraphQLList(notificationSettingType.graphObj),
+			description: 'Notification Settings.',
+		},
+		pagination: {
+			type: new GraphQLNonNull(paginationType.graphObj),
+			description: 'Query pagination',
+		}
+	}),
+	interfaces: []
 });

@@ -7,72 +7,72 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 module.exports = class verifyTransactionJWTController {
 
-  constructor() {
+	constructor() {
 
-    this.messages = {
-      bypass: 'BYPASS'
-    }
+		this.messages = {
+			bypass: 'BYPASS'
+		}
 
-    jwtprovider.setJWTType('transaction');
+		jwtprovider.setJWTType('transaction');
 
-  }
+	}
 
-  execute(event) {
+	execute(event) {
 
-    this.assureResources();
+		this.assureResources();
 
-    return Promise.resolve(this.verifyJWT(this.acquireToken(event)));
+		return Promise.resolve(this.verifyJWT(this.acquireToken(event)));
 
-  }
+	}
 
-  assureResources() {
+	assureResources() {
 
-    du.debug('Assure Resources');
+		du.debug('Assure Resources');
 
-    if (!_.has(process.env, 'transaction_jwt_secret_key')) {
+		if (!_.has(process.env, 'transaction_jwt_secret_key')) {
 
-      eu.throwError('server', 'Missing JWT secret key.');
+			eu.throwError('server', 'Missing JWT secret key.');
 
-    }
+		}
 
-  }
+	}
 
-  acquireToken(event) {
+	acquireToken(event) {
 
-    du.debug('Acquire Token');
+		du.debug('Acquire Token');
 
-    if (_.has(event, 'authorizationToken')) {
+		if (_.has(event, 'authorizationToken')) {
 
-      return event.authorizationToken;
+			return event.authorizationToken;
 
-    }
+		}
 
-    return false;
+		return false;
 
-  }
+	}
 
-  verifyJWT(token) {
+	verifyJWT(token) {
 
-    du.debug('Verify JWT');
+		du.debug('Verify JWT');
 
-    let decoded_token = this.validateToken(token);
+		let decoded_token = this.validateToken(token);
 
-    du.debug('Decoded Token: ', decoded_token);
+		du.debug('Decoded Token: ', decoded_token);
 
-    if (decoded_token == false) {
-      return false;
-    }
+		if (decoded_token == false) {
+			return false;
+		}
 
-    return decoded_token.user_alias; //Note: We know that this property exists because of the validation in the JWT Utilities class
+		return decoded_token.user_alias; //Note: We know that this property exists because of the validation in the JWT Utilities class
 
-  }
+	}
 
-  validateToken(token) {
+	validateToken(token) {
 
-    du.debug('Validate Token');
+		du.debug('Validate Token');
 
-    return jwtprovider.verifyJWT(token, 'transaction');
+		return jwtprovider.verifyJWT(token, 'transaction');
 
-  }
+	}
 
 }

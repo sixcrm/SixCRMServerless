@@ -16,288 +16,288 @@ const SNSEventController = global.SixCRM.routes.include('controllers','workers/c
 
 module.exports = class EventEmailsController extends SNSEventController {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.parameter_definition = {};
+		this.parameter_definition = {};
 
-    this.parameter_validation = {
-      'campaign':global.SixCRM.routes.path('model','entities/campaign.json'),
-      'customer':global.SixCRM.routes.path('model','entities/customer.json'),
-      'smtpproviders':global.SixCRM.routes.path('model','entities/components/smtpproviders.json'),
-      'emailtemplates':global.SixCRM.routes.path('model','entities/components/emailtemplates.json')
-    };
+		this.parameter_validation = {
+			'campaign':global.SixCRM.routes.path('model','entities/campaign.json'),
+			'customer':global.SixCRM.routes.path('model','entities/customer.json'),
+			'smtpproviders':global.SixCRM.routes.path('model','entities/components/smtpproviders.json'),
+			'emailtemplates':global.SixCRM.routes.path('model','entities/components/emailtemplates.json')
+		};
 
-    this.event_record_handler = 'triggerEmails';
+		this.event_record_handler = 'triggerEmails';
 
-    this.campaignController = new CampaignController();
-    this.customerController = new CustomerController();
-    this.smtpProviderController = new SMTPProviderController();
-    this.emailTemplatesController = new EmailTemplateController();
+		this.campaignController = new CampaignController();
+		this.customerController = new CustomerController();
+		this.smtpProviderController = new SMTPProviderController();
+		this.emailTemplatesController = new EmailTemplateController();
 
-    this.smtpProviderController.sanitize(false);
-    this.emailTemplatesController.sanitize(false);
+		this.smtpProviderController.sanitize(false);
+		this.emailTemplatesController.sanitize(false);
 
-    this.augmentParameters();
+		this.augmentParameters();
 
-  }
+	}
 
-  triggerEmails(){
+	triggerEmails(){
 
-    du.debug('Trigger Emails');
+		du.debug('Trigger Emails');
 
-    return this.acquireCampaign()
-    .then(() => this.acquireCustomer())
-    .then(() => this.acquireEmailTemplates())
-    .then(() => this.acquireSMTPProvider())
-    .then(() => this.sendEmails())
-    .catch(error => {
-      du.error(error);
-      return true;
-    });
+		return this.acquireCampaign()
+			.then(() => this.acquireCustomer())
+			.then(() => this.acquireEmailTemplates())
+			.then(() => this.acquireSMTPProvider())
+			.then(() => this.sendEmails())
+			.catch(error => {
+				du.error(error);
+				return true;
+			});
 
-  }
+	}
 
-  acquireCampaign(){
+	acquireCampaign(){
 
-    du.debug('Acquire Campaign');
+		du.debug('Acquire Campaign');
 
-    let message = this.parameters.get('message');
+		let message = this.parameters.get('message');
 
-    let campaign = objectutilities.recurseByDepth(message.context, (key, value) => {
+		let campaign = objectutilities.recurseByDepth(message.context, (key, value) => {
 
-      if(key == 'campaign'){
-        if(_.isObject(value) && _.has(value, 'id')){
-          return true;
-        }
-        if(_.isString(value) && this.campaignController.isUUID(value)){
-          return true;
-        }
-      }
+			if(key == 'campaign'){
+				if(_.isObject(value) && _.has(value, 'id')){
+					return true;
+				}
+				if(_.isString(value) && this.campaignController.isUUID(value)){
+					return true;
+				}
+			}
 
-      return false;
+			return false;
 
-    });
+		});
 
-    if(_.isUndefined(campaign) || _.isNull(campaign)){
-      eu.throwError('server', 'Unable to identify campaign');
-    }
+		if(_.isUndefined(campaign) || _.isNull(campaign)){
+			eu.throwError('server', 'Unable to identify campaign');
+		}
 
-    return this.campaignController.get({id: campaign}).then(result => {
-      this.parameters.set('campaign', result);
-      return true;
-    });
+		return this.campaignController.get({id: campaign}).then(result => {
+			this.parameters.set('campaign', result);
+			return true;
+		});
 
-  }
+	}
 
-  acquireCustomer(){
+	acquireCustomer(){
 
-    du.debug('Acquire Customer');
+		du.debug('Acquire Customer');
 
-    let message = this.parameters.get('message');
+		let message = this.parameters.get('message');
 
-    let customer = objectutilities.recurseByDepth(message.context, (key, value) => {
+		let customer = objectutilities.recurseByDepth(message.context, (key, value) => {
 
-      if(key == 'customer'){
-        if(_.isObject(value) && _.has(value, 'id')){
-          return true;
-        }
-        if(_.isString(value) && this.customerController.isUUID(value)){
-          return true;
-        }
-      }
+			if(key == 'customer'){
+				if(_.isObject(value) && _.has(value, 'id')){
+					return true;
+				}
+				if(_.isString(value) && this.customerController.isUUID(value)){
+					return true;
+				}
+			}
 
-      return false;
+			return false;
 
-    });
+		});
 
-    if(_.isUndefined(customer) || _.isNull(customer)){
-      eu.throwError('server', 'Unable to identify customer');
-    }
+		if(_.isUndefined(customer) || _.isNull(customer)){
+			eu.throwError('server', 'Unable to identify customer');
+		}
 
-    return this.customerController.get({id: customer}).then((result) => {
-      this.parameters.set('customer', result);
-      return true;
-    });
+		return this.customerController.get({id: customer}).then((result) => {
+			this.parameters.set('customer', result);
+			return true;
+		});
 
-  }
+	}
 
-  acquireEmailTemplates(){
+	acquireEmailTemplates(){
 
-    du.debug('Acquire Email Templates');
+		du.debug('Acquire Email Templates');
 
-    let message = this.parameters.get('message');
-    let campaign = this.parameters.get('campaign');
+		let message = this.parameters.get('message');
+		let campaign = this.parameters.get('campaign');
 
-    return this.campaignController.getEmailTemplates(campaign).then(results => {
+		return this.campaignController.getEmailTemplates(campaign).then(results => {
 
-      if(_.isNull(results) || !arrayutilities.nonEmpty(results)){
-        return true;
-      }
+			if(_.isNull(results) || !arrayutilities.nonEmpty(results)){
+				return true;
+			}
 
-      let email_templates = arrayutilities.filter(results, result => {
-        return result.type == message.event_type;
-      });
+			let email_templates = arrayutilities.filter(results, result => {
+				return result.type == message.event_type;
+			});
 
-      return email_templates;
+			return email_templates;
 
-    }).then(results => {
+		}).then(results => {
 
-      if(!_.isNull(results) && arrayutilities.nonEmpty(results)){
-        this.parameters.set('emailtemplates', results);
-        return true;
-      }
+			if(!_.isNull(results) && arrayutilities.nonEmpty(results)){
+				this.parameters.set('emailtemplates', results);
+				return true;
+			}
 
-      return false;
+			return false;
 
-    });
+		});
 
-  }
+	}
 
-  acquireSMTPProvider(){
+	acquireSMTPProvider(){
 
-    du.debug('Acquire SMTP Provider');
+		du.debug('Acquire SMTP Provider');
 
-    let email_templates = this.parameters.get('emailtemplates', null, false);
+		let email_templates = this.parameters.get('emailtemplates', null, false);
 
-    if(!_.isNull(email_templates)){
+		if(!_.isNull(email_templates)){
 
-      let smtp_provider_promises = arrayutilities.map(email_templates, email_template => {
-        return this.emailTemplatesController.getSMTPProvider(email_template);
-      });
+			let smtp_provider_promises = arrayutilities.map(email_templates, email_template => {
+				return this.emailTemplatesController.getSMTPProvider(email_template);
+			});
 
-      return Promise.all(smtp_provider_promises).then(results => {
-        let smtp_providers = arrayutilities.filter(results, result => {
-          return !_.isNull(result);
-        });
+			return Promise.all(smtp_provider_promises).then(results => {
+				let smtp_providers = arrayutilities.filter(results, result => {
+					return !_.isNull(result);
+				});
 
-        this.parameters.set('smtpproviders', smtp_providers);
-        return true;
-      });
+				this.parameters.set('smtpproviders', smtp_providers);
+				return true;
+			});
 
-    }
+		}
 
-    return true;
+		return true;
 
-  }
+	}
 
-  sendEmails(){
+	sendEmails(){
 
-    du.debug('Send Emails');
+		du.debug('Send Emails');
 
 
 
-    let email_templates  = this.parameters.get('emailtemplates', null, false);
+		let email_templates  = this.parameters.get('emailtemplates', null, false);
 
-    if(_.isNull(email_templates) || !arrayutilities.nonEmpty(email_templates)){
-      du.warning('No pertinent email templates.');
-      return true;
-    }
+		if(_.isNull(email_templates) || !arrayutilities.nonEmpty(email_templates)){
+			du.warning('No pertinent email templates.');
+			return true;
+		}
 
-    let email_promises = arrayutilities.map(email_templates, email_template => {
-      return this.sendEmail(email_template);
-    });
+		let email_promises = arrayutilities.map(email_templates, email_template => {
+			return this.sendEmail(email_template);
+		});
 
-    return Promise.all(email_promises).then(() => {
-      return true;
-    });
+		return Promise.all(email_promises).then(() => {
+			return true;
+		});
 
-  }
+	}
 
-  sendEmail(email_template){
+	sendEmail(email_template){
 
-    du.debug('Send Email');
+		du.debug('Send Email');
 
-    let customer = this.parameters.get('customer');
-    let paired_smtp_provider = this.getPairedSMTPProvider(email_template);
-    let parsed_email_template = this.parseEmailTemplate(email_template);
+		let customer = this.parameters.get('customer');
+		let paired_smtp_provider = this.getPairedSMTPProvider(email_template);
+		let parsed_email_template = this.parseEmailTemplate(email_template);
 
-    let options = {
-      sender_email: paired_smtp_provider.from_email,
-      sender_name: paired_smtp_provider.from_name,
-      subject: parsed_email_template.subject,
-      body: parsed_email_template.body,
-      recepient_emails:[customer.email],
-      recepient_name: this.createCustomerFullName()
-    };
+		let options = {
+			sender_email: paired_smtp_provider.from_email,
+			sender_name: paired_smtp_provider.from_name,
+			subject: parsed_email_template.subject,
+			body: parsed_email_template.body,
+			recepient_emails:[customer.email],
+			recepient_name: this.createCustomerFullName()
+		};
 
-    let customerEmailer = new CustomerMailerHelper({smtp_provider: paired_smtp_provider});
+		let customerEmailer = new CustomerMailerHelper({smtp_provider: paired_smtp_provider});
 
-    return customerEmailer.sendEmail({send_options: options})
+		return customerEmailer.sendEmail({send_options: options})
 
-  }
+	}
 
-  getPairedSMTPProvider(email_template){
+	getPairedSMTPProvider(email_template){
 
-    du.debug('Get Paired SMTP Provider');
+		du.debug('Get Paired SMTP Provider');
 
-    let smtp_providers = this.parameters.get('smtpproviders');
+		let smtp_providers = this.parameters.get('smtpproviders');
 
-    let paired_smtp_provider = arrayutilities.find(smtp_providers, smtp_provider => {
-      return (email_template.smtp_provider == smtp_provider.id);
-    });
+		let paired_smtp_provider = arrayutilities.find(smtp_providers, smtp_provider => {
+			return (email_template.smtp_provider == smtp_provider.id);
+		});
 
-    if(_.isUndefined(paired_smtp_provider) || _.isNull(paired_smtp_provider)){
-      eu.throwError('server', 'No SMTP provider configured for use with email template: '+email_template.id);
-    }
+		if(_.isUndefined(paired_smtp_provider) || _.isNull(paired_smtp_provider)){
+			eu.throwError('server', 'No SMTP provider configured for use with email template: '+email_template.id);
+		}
 
-    return paired_smtp_provider;
+		return paired_smtp_provider;
 
-  }
+	}
 
-  createCustomerFullName(){
+	createCustomerFullName(){
 
-    du.debug('Create Customer Full Name');
+		du.debug('Create Customer Full Name');
 
-    let customer = this.parameters.get('customer');
+		let customer = this.parameters.get('customer');
 
-    let customerHelperController = new CustomerHelperController();
+		let customerHelperController = new CustomerHelperController();
 
-    return customerHelperController.getFullName(customer);
+		return customerHelperController.getFullName(customer);
 
-  }
+	}
 
-  parseEmailTemplate(email_template){
+	parseEmailTemplate(email_template){
 
-    du.debug('Parse Email Template');
+		du.debug('Parse Email Template');
 
-    let parse_object = this.createParseObject();
+		let parse_object = this.createParseObject();
 
-    return {
-      subject: parserutilities.parse(email_template.subject, parse_object),
-      body: parserutilities.parse(email_template.body, parse_object)
-    };
+		return {
+			subject: parserutilities.parse(email_template.subject, parse_object),
+			body: parserutilities.parse(email_template.body, parse_object)
+		};
 
-  }
+	}
 
-  createParseObject(){
+	createParseObject(){
 
-    du.debug('Create Parse Object');
+		du.debug('Create Parse Object');
 
-    let parse_object = {
-      campaign: this.parameters.get('campaign'),
-      customer: this.parameters.get('customer')
-    }
+		let parse_object = {
+			campaign: this.parameters.get('campaign'),
+			customer: this.parameters.get('customer')
+		}
 
-    let optional_properties = {
-      rebill: null,
-      transactions: null,
-      transaction: null,
-      creditcard:null,
-      session: null
-    }
+		let optional_properties = {
+			rebill: null,
+			transactions: null,
+			transaction: null,
+			creditcard:null,
+			session: null
+		}
 
-    let message = this.parameters.get('message');
+		let message = this.parameters.get('message');
 
-    objectutilities.map(optional_properties, optional_property => {
-      optional_properties[optional_property] = objectutilities.recurseByDepth(message.context, (key) => {
-        return (key == optional_property);
-      });
-    });
+		objectutilities.map(optional_properties, optional_property => {
+			optional_properties[optional_property] = objectutilities.recurseByDepth(message.context, (key) => {
+				return (key == optional_property);
+			});
+		});
 
-    return objectutilities.merge(parse_object, optional_properties);
+		return objectutilities.merge(parse_object, optional_properties);
 
-  }
+	}
 
 }

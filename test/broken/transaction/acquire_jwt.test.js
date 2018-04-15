@@ -12,9 +12,9 @@ const tu =  require('../../../lib/test-utilities.js');
 const signature = require('../../../lib/signature.js');
 
 try {
-  var config = global.SixCRM.configuration.site_config;
+	var config = global.SixCRM.configuration.site_config;
 } catch (e) {
-  console.log(e);
+	console.log(e);
 }
 
 du.debug('Integration Config:', config);
@@ -23,41 +23,41 @@ var endpoint = config.endpoint;
 du.debug('Endpoint:'+ endpoint);
 
 describe('Site JWT Acquisition Integration Test', function() {
-  describe('Happy Path', function() {
-    it('should acquire a Site JWT', function (done) {
+	describe('Happy Path', function() {
+		it('should acquire a Site JWT', function (done) {
 
     	var request_time = timestamp.createTimestampMilliseconds();
-		var this_signature = signature.createSignature(config.secret_key, request_time);
+			var this_signature = signature.createSignature(config.secret_key, request_time);
 
-		du.debug('Signature: ', this_signature);
+			du.debug('Signature: ', this_signature);
 
     	var authorization_string = config.access_key+':'+request_time+':'+this_signature;
 
     	du.debug('Authorization String: ', authorization_string);
 
-		var this_request = request(endpoint);
+			var this_request = request(endpoint);
     	this_request.get('token/acquire/')
-			.set('Content-Type', 'application/json')
-			.set('Authorization', authorization_string)
-			.expect(200)
-			.expect('Content-Type', 'application/json')
-			.expect('Access-Control-Allow-Origin','*')
-			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
-			.end(function(err, response){
+				.set('Content-Type', 'application/json')
+				.set('Authorization', authorization_string)
+				.expect(200)
+				.expect('Content-Type', 'application/json')
+				.expect('Access-Control-Allow-Origin','*')
+				.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
+				.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
+				.end(function(err, response){
 
-				if(err){ du.warning(err); }
+					if(err){ du.warning(err); }
 
-				du.output(response.body);
+					du.output(response.body);
 
-				assert.isObject(response.body);
-				assert.property(response.body, "message");
-				assert.equal(response.body.message, "Success");
-				assert.property(response.body, "token");
-				assert.isString(response.body.token);
+					assert.isObject(response.body);
+					assert.property(response.body, "message");
+					assert.equal(response.body.message, "Success");
+					assert.property(response.body, "token");
+					assert.isString(response.body.token);
 
-			}, done);
-	});
+				}, done);
+		});
 
 	/*
 	describe('Broken Path(s)', function() {

@@ -7,70 +7,70 @@ const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/
 
 module.exports = class TrackingEventsController extends SNSEventController {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.compliant_event_types = ['lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
+		this.compliant_event_types = ['lead', 'order', 'upsell[0-9]*', 'downsell[0-9]*', 'confirm'];
 
-    this.event_record_handler = 'triggerTracking';
+		this.event_record_handler = 'triggerTracking';
 
-    const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
+		const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
 
-    this.contextHelperController = new ContextHelperController();
+		this.contextHelperController = new ContextHelperController();
 
-  }
+	}
 
-  triggerTracking(){
+	triggerTracking(){
 
-    du.debug('Trigger Tracking');
+		du.debug('Trigger Tracking');
 
-    return Promise.resolve()
-    .then(() => this.isCompliantEventType())
-    .then(() => this.acquireSession())
-    .then(() => this.executeTracker())
-    .catch(error => {
-      du.error(error);
-      return true;
-    });
+		return Promise.resolve()
+			.then(() => this.isCompliantEventType())
+			.then(() => this.acquireSession())
+			.then(() => this.executeTracker())
+			.catch(error => {
+				du.error(error);
+				return true;
+			});
 
-  }
+	}
 
-  acquireSession(){
+	acquireSession(){
 
-    du.debug('Acquire Session');
+		du.debug('Acquire Session');
 
-    let context = this.parameters.get('message').context;
+		let context = this.parameters.get('message').context;
 
-    let context_objects = this.contextHelperController.discoverObjectsFromContext(['session'], context, true);
+		let context_objects = this.contextHelperController.discoverObjectsFromContext(['session'], context, true);
 
-    if(!_.has(this, 'sessionController')){
-      const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-      this.sessionController = new SessionController();
-    }
+		if(!_.has(this, 'sessionController')){
+			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
+		}
 
-    return this.sessionController.get({id: context_objects.session}).then(result => {
-      if(_.isNull(result)){
-        eu.throwError('server','Unable to identify session from datastore: '+context_objects.session);
-      }
-      this.parameters.set('session', result);
-      return true;
-    });
+		return this.sessionController.get({id: context_objects.session}).then(result => {
+			if(_.isNull(result)){
+				eu.throwError('server','Unable to identify session from datastore: '+context_objects.session);
+			}
+			this.parameters.set('session', result);
+			return true;
+		});
 
-  }
+	}
 
-  executeTracker(){
+	executeTracker(){
 
-    du.debug('Execute Tracker');
+		du.debug('Execute Tracker');
 
-    let session = this.parameters.get('session');
-    let context = this.parameters.get('message').context;
+		let session = this.parameters.get('session');
+		let context = this.parameters.get('message').context;
 
-    const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
-    let trackerHelperController = new TrackerHelperController();
+		const TrackerHelperController = global.SixCRM.routes.include('helpers', 'entities/tracker/Tracker.js');
+		let trackerHelperController = new TrackerHelperController();
 
-    return trackerHelperController.handleTracking(session, context);
+		return trackerHelperController.handleTracking(session, context);
 
-  }
+	}
 
 }

@@ -9,117 +9,117 @@ const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 
 module.exports = class NotificationUtilities {
 
-  constructor(){
+	constructor(){
 
-    const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
-    this.contextHelperController = new ContextHelperController();
+		const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
+		this.contextHelperController = new ContextHelperController();
 
-  }
+	}
 
-  getName(){
+	getName(){
 
-    du.debug('Get Name');
+		du.debug('Get Name');
 
-    if(_.has(this, 'name')){
-      return this.name;
-    }
+		if(_.has(this, 'name')){
+			return this.name;
+		}
 
-    eu.throwError('server', 'Nameless notification, very cryptic.');
+		eu.throwError('server', 'Nameless notification, very cryptic.');
 
-  }
+	}
 
-  getNotificationCategory(){
+	getNotificationCategory(){
 
-    du.debug('Get Notification Category');
+		du.debug('Get Notification Category');
 
-    if(_.has(this, 'category')){
-      return this.category;
-    }
+		if(_.has(this, 'category')){
+			return this.category;
+		}
 
-    eu.throwError('server', 'Unable to determine notification category.');
+		eu.throwError('server', 'Unable to determine notification category.');
 
-  }
+	}
 
-  getNotificationType(){
+	getNotificationType(){
 
-    du.debug('Get Notification Type');
+		du.debug('Get Notification Type');
 
-    if(_.has(this, 'notification_type')){
+		if(_.has(this, 'notification_type')){
 
-      mvu.validateModel(this.notification_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationtype.json'));
+			mvu.validateModel(this.notification_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationtype.json'));
 
-      return this.notification_type;
+			return this.notification_type;
 
-    }
+		}
 
-    eu.throwError('server', 'Unable to determine notification type.');
+		eu.throwError('server', 'Unable to determine notification type.');
 
-  }
+	}
 
-  getUserFromContext(context){
+	getUserFromContext(context){
 
-    du.debug('Get User From Context');
+		du.debug('Get User From Context');
 
-    let resolved_user = null;
+		let resolved_user = null;
 
-    resolved_user = this.contextHelperController.getFromContext(context, 'user.id', 'id');
+		resolved_user = this.contextHelperController.getFromContext(context, 'user.id', 'id');
 
-    if(_.isNull(resolved_user)){
+		if(_.isNull(resolved_user)){
 
-      resolved_user = this.contextHelperController.getFromContext(context, 'user', 'email');
+			resolved_user = this.contextHelperController.getFromContext(context, 'user', 'email');
 
-    }
+		}
 
-    return resolved_user;
+		return resolved_user;
 
-  }
+	}
 
-  getAccountFromContext(context){
+	getAccountFromContext(context){
 
-    du.debug('Get User From Context');
+		du.debug('Get User From Context');
 
-    let resolved_account = null;
+		let resolved_account = null;
 
-    resolved_account = this.contextHelperController.getFromContext(context, 'account.id', 'id');
+		resolved_account = this.contextHelperController.getFromContext(context, 'account.id', 'id');
 
-    if(_.isNull(resolved_account)){
+		if(_.isNull(resolved_account)){
 
-      resolved_account = this.contextHelperController.getFromContext(context, 'account', 'id');
+			resolved_account = this.contextHelperController.getFromContext(context, 'account', 'id');
 
-    }
+		}
 
-    return resolved_account;
+		return resolved_account;
 
-  }
+	}
 
-  replaceFromContext(context, field){
+	replaceFromContext(context, field){
 
-    du.debug('Replace From Context');
+		du.debug('Replace From Context');
 
-    let replace_object = {};
+		let replace_object = {};
 
-    let tokens = parserutilities.getTokens(this[field]);
+		let tokens = parserutilities.getTokens(this[field]);
 
-    if(arrayutilities.nonEmpty(tokens)){
+		if(arrayutilities.nonEmpty(tokens)){
 
-      arrayutilities.map(tokens, token => {
+			arrayutilities.map(tokens, token => {
 
-        let token_value = this.contextHelperController.getFromContext(context, token, false);
+				let token_value = this.contextHelperController.getFromContext(context, token, false);
 
-        if(!_.isUndefined(token_value) && !_.isNull(token_value)){
-          replace_object[token] = token_value;
-        }
+				if(!_.isUndefined(token_value) && !_.isNull(token_value)){
+					replace_object[token] = token_value;
+				}
 
-      });
+			});
 
-    }
+		}
 
-    let replaced = parserutilities.parse(this[field], replace_object, true);
+		let replaced = parserutilities.parse(this[field], replace_object, true);
 
-    du.info(replaced);
+		du.info(replaced);
 
-    return replaced;
+		return replaced;
 
-  }
+	}
 
 }

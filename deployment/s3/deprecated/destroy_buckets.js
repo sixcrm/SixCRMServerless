@@ -15,19 +15,19 @@ let s3Deployment = new S3Deployment(environment);
 let bucket_list = Object.keys(s3Deployment.getConfig().buckets);
 
 bucket_list.map(bucket => {
-  let bucket_parameters = {Bucket: s3Deployment.getConfig().buckets[bucket].bucket,Key:'',Body: s3Deployment.getConfig().buckets[bucket].bucket}
+	let bucket_parameters = {Bucket: s3Deployment.getConfig().buckets[bucket].bucket,Key:'',Body: s3Deployment.getConfig().buckets[bucket].bucket}
 
-  Object.keys(s3Deployment.getConfig().buckets[bucket]).forEach((key) => {
-    if (key=='bucket')
-        return s3Deployment.bucketExists(bucket_parameters).then(exists => {
-            if (exists) {
-                du.warning('Bucket exists, destroying');
-                return s3Deployment.deleteBucketAndWait(bucket_parameters).then(response => {
-                  return du.output(response);
-                });
-            } else {
-                return du.output('Bucket does not exist, Aborting.');
-            }
-        }).then(() => { return du.highlight('Complete')} )
-  });
+	Object.keys(s3Deployment.getConfig().buckets[bucket]).forEach((key) => {
+		if (key=='bucket')
+			return s3Deployment.bucketExists(bucket_parameters).then(exists => {
+				if (exists) {
+					du.warning('Bucket exists, destroying');
+					return s3Deployment.deleteBucketAndWait(bucket_parameters).then(response => {
+						return du.output(response);
+					});
+				} else {
+					return du.output('Bucket does not exist, Aborting.');
+				}
+			}).then(() => { return du.highlight('Complete')} )
+	});
 });

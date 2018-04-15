@@ -5,8 +5,8 @@ const RedshiftSchemaDeployment = global.SixCRM.routes.include('deployment', 'uti
 const redshiftSchemaDeployment = new RedshiftSchemaDeployment();
 
 redshiftSchemaDeployment.seed().then((result) => {
-  return du.highlight(result);
+	return du.highlight(result);
 }).catch(error => {
-  du.error(error);
-  du.warning(error.message);
+	du.error(error);
+	du.warning(error.message);
 });

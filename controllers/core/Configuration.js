@@ -4,58 +4,58 @@ const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core
 
 module.exports = class Configuration extends ConfigurationUtilities {
 
-  constructor(stage) {
+	constructor(stage) {
 
-    super();
+		super();
 
-    this.handleStage(stage);
+		this.handleStage(stage);
 
-    this.setConfigurationFiles();
+		this.setConfigurationFiles();
 
-  }
+	}
 
-  handleStage(stage) {
+	handleStage(stage) {
 
-    du.debug('Handle Stage');
+		du.debug('Handle Stage');
 
-    this.stage = this.resolveStage(stage);
+		this.stage = this.resolveStage(stage);
 
-    this.setEnvironmentVariable('stage', this.stage);
+		this.setEnvironmentVariable('stage', this.stage);
 
-  }
+	}
 
-  setConfigurationFiles() {
+	setConfigurationFiles() {
 
-    du.debug('Set Configuration Files');
+		du.debug('Set Configuration Files');
 
-    this.serverless_config = this.getServerlessConfig();
+		this.serverless_config = this.getServerlessConfig();
 
-    this.site_config = this.getSiteConfig();
+		this.site_config = this.getSiteConfig();
 
-  }
+	}
 
-  getServerlessConfig() {
+	getServerlessConfig() {
 
-    du.debug('Get Serverless Config');
+		du.debug('Get Serverless Config');
 
-    return global.SixCRM.routes.include('root', 'serverless.yml');
+		return global.SixCRM.routes.include('root', 'serverless.yml');
 
-  }
+	}
 
-  getSiteConfig() {
+	getSiteConfig() {
 
-    du.debug('Get Site Config');
+		du.debug('Get Site Config');
 
-    let config;
+		let config;
 
-    try {
-      config = global.SixCRM.routes.include('config', this.stage + '/site.yml');
-    } catch (error) {
-      eu.throwError('server', 'Configuration.getSiteConfig was unable to identify file ' + global.SixCRM.routes.path('config', this.stage + '/site.yml'));
-    }
+		try {
+			config = global.SixCRM.routes.include('config', this.stage + '/site.yml');
+		} catch (error) {
+			eu.throwError('server', 'Configuration.getSiteConfig was unable to identify file ' + global.SixCRM.routes.path('config', this.stage + '/site.yml'));
+		}
 
-    return config;
+		return config;
 
-  }
+	}
 
 }

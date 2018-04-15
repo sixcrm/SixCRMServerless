@@ -23,39 +23,39 @@ let account = process.argv[3];
 let user = process.argv[4];
 
 if (!body) {
-    du.output('Body is required');
-    printHelp();
+	du.output('Body is required');
+	printHelp();
 }
 
 if (!account) {
-    du.output('Account is required');
-    printHelp();
+	du.output('Account is required');
+	printHelp();
 }
 
 if (!user) {
-    du.output('User is required');
-    printHelp();
+	du.output('User is required');
+	printHelp();
 }
 
 let notification_object = {
-    account: account,
-    user: user,
-    type: 'notification',
-    category: 'message',
-    action: 'test',
-    title: 'testing notification',
-    body: body
+	account: account,
+	user: user,
+	type: 'notification',
+	category: 'message',
+	action: 'test',
+	title: 'testing notification',
+	body: body
 };
 
 notificationProvider.createNotificationForAccountAndUser(notification_object).then(() => {
-    du.output('Attempted to insert and send a notification', notification_object);
-    return true;
+	du.output('Attempted to insert and send a notification', notification_object);
+	return true;
 }).catch((error) => {
-    du.error('Error while inserting or sending.', error);
+	du.error('Error while inserting or sending.', error);
 });
 
 
 function printHelp() {
-    du.output('Helper for inserting notification for the given account and user. Notifications are sent via all channels.');
-    du.output('Parameters: body account user');
+	du.output('Helper for inserting notification for the given account and user. Notifications are sent via all channels.');
+	du.output('Parameters: body account user');
 }

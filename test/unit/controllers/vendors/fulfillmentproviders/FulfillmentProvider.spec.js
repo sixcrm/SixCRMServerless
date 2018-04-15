@@ -6,89 +6,89 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidFulfillmentProvider() {
-    return MockEntities.getValidFulfillmentProvider()
+	return MockEntities.getValidFulfillmentProvider()
 }
 
 function getValidShippingReceipt() {
-    return MockEntities.getValidShippingReceipt()
+	return MockEntities.getValidShippingReceipt()
 }
 
 describe('vendors/fulfillmentproviders/FulfillmentProvider.js', () =>{
-    describe('constructor', () => {
+	describe('constructor', () => {
 
-        it('successfully constructs', () => {
+		it('successfully constructs', () => {
 
-            let FulfillmentProviderController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/FulfillmentProvider.js');
-            let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
+			let FulfillmentProviderController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/FulfillmentProvider.js');
+			let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
 
-            expect(objectutilities.getClassName(fulfillmentProviderController)).to.equal('fulfillmentProviderController');
-        })
-    });
+			expect(objectutilities.getClassName(fulfillmentProviderController)).to.equal('fulfillmentProviderController');
+		})
+	});
 
-    describe('getVendorName', () => {
+	describe('getVendorName', () => {
 
-        it('successfully retrieves vendor name', () => {
+		it('successfully retrieves vendor name', () => {
 
-            let FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
-            let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
+			let FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
+			let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
 
-            expect(fulfillmentProviderController.getVendorName()).to.equal('fulfillmentProvider');
-        })
-    });
+			expect(fulfillmentProviderController.getVendorName()).to.equal('fulfillmentProvider');
+		})
+	});
 
-    describe('createReferenceNumber', () => {
+	describe('createReferenceNumber', () => {
 
-        it('creates reference number', () => {
+		it('creates reference number', () => {
 
-            let FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
-            let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
+			let FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
+			let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
 
-            let reference_number = fulfillmentProviderController.createReferenceNumber();
+			let reference_number = fulfillmentProviderController.createReferenceNumber();
 
-            expect(stringutilities.isUUID(reference_number)).to.be.true;
-        })
-    });
+			expect(stringutilities.isUUID(reference_number)).to.be.true;
+		})
+	});
 
-    describe('augmentParameters', () => {
+	describe('augmentParameters', () => {
 
-        it('successfully augments parameters', () => {
+		it('successfully augments parameters', () => {
 
-            let FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
-            let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
+			let FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
+			let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
 
-            expect(fulfillmentProviderController.augmentParameters()).to.equal(true);
-            expect(fulfillmentProviderController.parameter_validation).to.be.defined;
-            expect(fulfillmentProviderController.parameter_definition).to.be.defined;
-        })
-    });
+			expect(fulfillmentProviderController.augmentParameters()).to.equal(true);
+			expect(fulfillmentProviderController.parameter_validation).to.be.defined;
+			expect(fulfillmentProviderController.parameter_definition).to.be.defined;
+		})
+	});
 
-    describe('setReferenceNumber', () => {
+	describe('setReferenceNumber', () => {
 
-        it('successfully sets reference number from shipping receipt', () => {
+		it('successfully sets reference number from shipping receipt', () => {
 
-            let shipping_receipt = getValidShippingReceipt();
+			let shipping_receipt = getValidShippingReceipt();
 
-            let FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
-            let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
+			let FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
+			let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
 
-            fulfillmentProviderController.parameters.set('shippingreceipt', shipping_receipt);
+			fulfillmentProviderController.parameters.set('shippingreceipt', shipping_receipt);
 
-            expect(fulfillmentProviderController.setReferenceNumber()).to.equal(true);
-            expect(fulfillmentProviderController.parameters.store['referencenumber']).to.equal(shipping_receipt.fulfillment_provider_reference);
-        });
+			expect(fulfillmentProviderController.setReferenceNumber()).to.equal(true);
+			expect(fulfillmentProviderController.parameters.store['referencenumber']).to.equal(shipping_receipt.fulfillment_provider_reference);
+		});
 
-        it('successfully creates and sets reference number', () => {
+		it('successfully creates and sets reference number', () => {
 
-            let FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
-            let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
+			let FulfillmentProviderController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/FulfillmentProvider.js');
+			let fulfillmentProviderController = new FulfillmentProviderController({fulfillment_provider: getValidFulfillmentProvider()});
 
-            fulfillmentProviderController.parameters.set('shippingreceipt', null);
+			fulfillmentProviderController.parameters.set('shippingreceipt', null);
 
-            expect(fulfillmentProviderController.setReferenceNumber()).to.equal(true);
+			expect(fulfillmentProviderController.setReferenceNumber()).to.equal(true);
 
-            let reference_number = fulfillmentProviderController.parameters.store['referencenumber'];
+			let reference_number = fulfillmentProviderController.parameters.store['referencenumber'];
 
-            expect(stringutilities.isUUID(reference_number)).to.be.true;
-        })
-    });
+			expect(stringutilities.isUUID(reference_number)).to.be.true;
+		})
+	});
 });

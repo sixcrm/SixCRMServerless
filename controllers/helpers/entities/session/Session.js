@@ -7,101 +7,101 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class SessionHelperController {
 
-  constructor(){
+	constructor(){
 
-    this.parameter_definition = {};
+		this.parameter_definition = {};
 
-    this.parameter_validation = {};
+		this.parameter_validation = {};
 
-    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-  }
+	}
 
-  isComplete({session}){
+	isComplete({session}){
 
-    du.debug('Is Complete');
+		du.debug('Is Complete');
 
-    if(session.completed == true){
-      return true;
-    }
+		if(session.completed == true){
+			return true;
+		}
 
-    return false;
+		return false;
 
-  }
+	}
 
-  isCurrent({session: session}){
+	isCurrent({session: session}){
 
-    du.debug('Is Current');
+		du.debug('Is Current');
 
-    let session_length = global.SixCRM.configuration.site_config.jwt.transaction.expiration;
+		let session_length = global.SixCRM.configuration.site_config.jwt.transaction.expiration;
 
-    let expired = session.created_at < timestamp.toISO8601(timestamp.createTimestampSeconds() - session_length);
+		let expired = session.created_at < timestamp.toISO8601(timestamp.createTimestampSeconds() - session_length);
 
-    return !expired;
+		return !expired;
 
-  }
+	}
 
-  getSessionByCustomerAndID({customer, id}){
+	getSessionByCustomerAndID({customer, id}){
 
-    du.debug('Get Session By Customer and ID');
+		du.debug('Get Session By Customer and ID');
 
-    if(!_.has(this, 'sessionController')){
-      const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-      this.sessionController = new SessionController();
-    }
+		if(!_.has(this, 'sessionController')){
+			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
+		}
 
-    return this.sessionController.get({id:id}).then(session => {
+		return this.sessionController.get({id:id}).then(session => {
 
-      if(_.isNull(session)){ return null; }
+			if(_.isNull(session)){ return null; }
 
-      return this.sessionController.getCustomer(session).then(customer_result => {
+			return this.sessionController.getCustomer(session).then(customer_result => {
 
-        if(_.has(customer_result, 'email') && (customer == customer_result.email)){ return session; }
+				if(_.has(customer_result, 'email') && (customer == customer_result.email)){ return session; }
 
-        return null;
+				return null;
 
-      });
+			});
 
-    });
+		});
 
-  }
+	}
 
-  getSessionByCustomerAndAlias({customer, alias}){
+	getSessionByCustomerAndAlias({customer, alias}){
 
-    du.debug('Get Session By Customer and Alias');
+		du.debug('Get Session By Customer and Alias');
 
-    if(!_.has(this, 'customerController')){
-      const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
-      this.customerController = new CustomerController();
-    }
+		if(!_.has(this, 'customerController')){
+			const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+			this.customerController = new CustomerController();
+		}
 
-    return this.customerController.getCustomerByEmail(customer).then(customer_result => {
+		return this.customerController.getCustomerByEmail(customer).then(customer_result => {
 
-      if(_.isNull(customer_result)){ return null; }
+			if(_.isNull(customer_result)){ return null; }
 
-      customer = customer_result;
+			customer = customer_result;
 
-      return this.customerController.getCustomerSessions(customer)
-      .then(sessions => {
+			return this.customerController.getCustomerSessions(customer)
+				.then(sessions => {
 
-        if(!arrayutilities.nonEmpty(sessions)){ return null; }
+					if(!arrayutilities.nonEmpty(sessions)){ return null; }
 
-        let matching_session = arrayutilities.find(sessions, session => {
-          return session.alias == alias;
-        });
+					let matching_session = arrayutilities.find(sessions, session => {
+						return session.alias == alias;
+					});
 
-        if(_.isObject(matching_session)){
-          return matching_session;
-        }
+					if(_.isObject(matching_session)){
+						return matching_session;
+					}
 
-        return null;
+					return null;
 
-      });
+				});
 
-    });
+		});
 
-  }
+	}
 
 }

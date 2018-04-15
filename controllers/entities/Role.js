@@ -5,23 +5,23 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 //Technical Debt: Override the list method
 module.exports = class RoleController extends entityController {
 
-    constructor(){
-        super('role');
+	constructor(){
+		super('role');
 
-        this.search_fields = ['name'];
-    }
+		this.search_fields = ['name'];
+	}
 
-    //Technical Debt: finish!
-    associatedEntitiesCheck(){
-      return Promise.resolve([]);
-    }
+	//Technical Debt: finish!
+	associatedEntitiesCheck(){
+		return Promise.resolve([]);
+	}
 
-    getPermissions(role){
-        if(_.has(role, 'permissions')){
-            return role.permissions;
-        }else{
-            return null
-        }
-    }
+	getPermissions(role){
+		if(_.has(role, 'permissions')){
+			return role.permissions;
+		}else{
+			return null
+		}
+	}
 }
 

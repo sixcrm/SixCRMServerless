@@ -10,230 +10,230 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 module.exports = class EndpointController {
 
-  constructor() {
+	constructor() {
 
-    this.clearState();
+		this.clearState();
 
-  }
+	}
 
-  /* lambda lifecycle */
+	/* lambda lifecycle */
 
-  // run the lambda lifecycle
-  execute(event) {
+	// run the lambda lifecycle
+	execute(event) {
 
-    du.debug('EndpointController.execute()');
+		du.debug('EndpointController.execute()');
 
-    return this.preamble(event)
-      .then(() => this.body(event))
-      .then((res) => this.epilogue().then(() => Promise.resolve(res)))
+		return this.preamble(event)
+			.then(() => this.body(event))
+			.then((res) => this.epilogue().then(() => Promise.resolve(res)))
 
-  }
+	}
 
-  // override
-  // eslint-disable-next-line no-unused-vars
-  preamble(event) {
+	// override
+	// eslint-disable-next-line no-unused-vars
+	preamble(event) {
 
-    du.debug('EndpointController.preamble()');
+		du.debug('EndpointController.preamble()');
 
-    return Promise.resolve();
+		return Promise.resolve();
 
-  }
+	}
 
 
-  // override
-  // eslint-disable-next-line no-unused-vars
-  body(event) {
+	// override
+	// eslint-disable-next-line no-unused-vars
+	body(event) {
 
-    du.debug('EndpointController.body()');
+		du.debug('EndpointController.body()');
 
-    return Promise.resolve();
+		return Promise.resolve();
 
-  }
+	}
 
-  // override
-  epilogue() {
+	// override
+	epilogue() {
 
-    du.debug('EndpointController.epilogue()');
+		du.debug('EndpointController.epilogue()');
 
-    return Promise.resolve();
+		return Promise.resolve();
 
-  }
+	}
 
-  /* end lambda lifecycle */
+	/* end lambda lifecycle */
 
-  normalizeEvent(event) {
+	normalizeEvent(event) {
 
-    du.debug('Normalize Event');
+		du.debug('Normalize Event');
 
-    let normalized = event;
+		let normalized = event;
 
-    try {
-      normalized = JSON.parse(event);
-    } catch (error) {
-      //do nothing
-    }
+		try {
+			normalized = JSON.parse(event);
+		} catch (error) {
+			//do nothing
+		}
 
-    return Promise.resolve(normalized);
+		return Promise.resolve(normalized);
 
-  }
+	}
 
-  //Technical Debt:  This is gross.  Refactor!
-  clearState() {
+	//Technical Debt:  This is gross.  Refactor!
+	clearState() {
 
-    du.debug('Clear State');
+		du.debug('Clear State');
 
-    this.pathParameters = undefined;
-    this.queryString = undefined;
+		this.pathParameters = undefined;
+		this.queryString = undefined;
 
-  }
+	}
 
-  acquireRequestProperties(event) {
+	acquireRequestProperties(event) {
 
-    du.debug('Acquire Request Properties');
+		du.debug('Acquire Request Properties');
 
-    let path_parameters = this.acquirePathParameters(event);
-    let body = this.acquireBody(event);
-    let querystring_parameters = this.acquireQueryStringParameters(event);
+		let path_parameters = this.acquirePathParameters(event);
+		let body = this.acquireBody(event);
+		let querystring_parameters = this.acquireQueryStringParameters(event);
 
-    //Technical Debt:  What happens if there is namespace collision?
-    let merged_properties = objectutilities.merge(path_parameters, body, querystring_parameters);
+		//Technical Debt:  What happens if there is namespace collision?
+		let merged_properties = objectutilities.merge(path_parameters, body, querystring_parameters);
 
-    return merged_properties;
+		return merged_properties;
 
-  }
+	}
 
-  acquireBody(event) {
+	acquireBody(event) {
 
-    du.debug('Acquire Body');
+		du.debug('Acquire Body');
 
-    let return_object = {};
+		let return_object = {};
 
-    if (_.has(event, 'body')) {
+		if (_.has(event, 'body')) {
 
-      if (objectutilities.isObject(event.body)) {
+			if (objectutilities.isObject(event.body)) {
 
-        return_object = event.body;
+				return_object = event.body;
 
-      } else if (stringutilities.isString(event.body)) {
+			} else if (stringutilities.isString(event.body)) {
 
-        try {
+				try {
 
-          return_object = stringutilities.parseJSONString(event.body, true);
+					return_object = stringutilities.parseJSONString(event.body, true);
 
-        } catch (e) {
+				} catch (e) {
 
-          du.error(e);
-          //Thing is not a sting or does not parse...
+					du.error(e);
+					//Thing is not a sting or does not parse...
 
-        }
+				}
 
-      }
+			}
 
-    }
+		}
 
-    return return_object;
+		return return_object;
 
-  }
+	}
 
-  acquirePathParameters(event) {
+	acquirePathParameters(event) {
 
-    du.debug('Acquire Path Parameters');
+		du.debug('Acquire Path Parameters');
 
-    let return_object = {};
+		let return_object = {};
 
-    if (_.has(event, 'pathParameters') && objectutilities.isObject(event.pathParameters)) {
-      return_object = event.pathParameters;
-    }
+		if (_.has(event, 'pathParameters') && objectutilities.isObject(event.pathParameters)) {
+			return_object = event.pathParameters;
+		}
 
-    return return_object;
+		return return_object;
 
-  }
+	}
 
-  acquireQueryStringParameters(event) {
+	acquireQueryStringParameters(event) {
 
-    du.debug('Acquire Query String');
+		du.debug('Acquire Query String');
 
-    let return_object = {};
+		let return_object = {};
 
-    if (_.has(event, 'queryStringParameters')) {
+		if (_.has(event, 'queryStringParameters')) {
 
-      if (_.isObject(event.queryStringParameters)) {
+			if (_.isObject(event.queryStringParameters)) {
 
-        return_object = event.queryStringParameters;
+				return_object = event.queryStringParameters;
 
-      } else {
+			} else {
 
-        try {
+				try {
 
-          return_object = querystring.parse(event.queryStringParameters);
+					return_object = querystring.parse(event.queryStringParameters);
 
-        } catch (error) {
+				} catch (error) {
 
-          //du.error(error);
-          //this.throwUnexpectedEventStructureError(event);
+					//du.error(error);
+					//this.throwUnexpectedEventStructureError(event);
 
-        }
+				}
 
-      }
+			}
 
-    }
+		}
 
-    return return_object;
+		return return_object;
 
-  }
+	}
 
 
-  validateEvent(event) {
+	validateEvent(event) {
 
-    du.debug('Validate Event');
+		du.debug('Validate Event');
 
-    //mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
+		//mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
 
-    try {
-      mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
-    } catch (error) {
-      du.error(error);
-      this.throwUnexpectedEventStructureError(event);
-    }
+		try {
+			mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
+		} catch (error) {
+			du.error(error);
+			this.throwUnexpectedEventStructureError(event);
+		}
 
-    return Promise.resolve(event);
+		return Promise.resolve(event);
 
-  }
+	}
 
-  parseEventQueryString(event) {
+	parseEventQueryString(event) {
 
-    du.debug('Parse Event Query String');
+		du.debug('Parse Event Query String');
 
-    return Promise.resolve().then(() => {
-        if (!_.has(event, 'queryStringParameters') || _.isNull(event.queryStringParameters)) {
-            return event;
-        }
+		return Promise.resolve().then(() => {
+			if (!_.has(event, 'queryStringParameters') || _.isNull(event.queryStringParameters)) {
+				return event;
+			}
 
-        if (_.isString(event.queryStringParameters)) {
-          event.queryStringParameters = querystring.parse(event.queryStringParameters);
-        }
+			if (_.isString(event.queryStringParameters)) {
+				event.queryStringParameters = querystring.parse(event.queryStringParameters);
+			}
 
-        if (
-            !_.isObject(event.queryStringParameters) ||
+			if (
+				!_.isObject(event.queryStringParameters) ||
             _.isArray(event.queryStringParameters) ||
             _.isFunction(event.queryStringParameters)
-        ) {
-            this.throwUnexpectedEventStructureError(event);
-        }
+			) {
+				this.throwUnexpectedEventStructureError(event);
+			}
 
-        return event;
-    });
+			return event;
+		});
 
-  }
+	}
 
-  throwUnexpectedEventStructureError(event) {
+	throwUnexpectedEventStructureError(event) {
 
-    du.debug('Throw Unexpected Event Structure Error');
+		du.debug('Throw Unexpected Event Structure Error');
 
-    du.warning(event);
+		du.warning(event);
 
-    eu.throwError('bad_request', 'Unexpected event structure.');
+		eu.throwError('bad_request', 'Unexpected event structure.');
 
-  }
+	}
 
 }

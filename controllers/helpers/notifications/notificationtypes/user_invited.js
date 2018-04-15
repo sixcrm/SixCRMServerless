@@ -4,16 +4,16 @@ const BaseNotification = global.SixCRM.routes.include('helpers','notifications/n
 
 module.exports = class UserInvitedNotification extends BaseNotification {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.name = 'user_invited';
-    this.context_required = ['user.id', 'role.name', 'account.name'];
-    this.category = 'account';
+		this.name = 'user_invited';
+		this.context_required = ['user.id', 'role.name', 'account.name'];
+		this.category = 'account';
 
-    this.account_wide = true;
+		this.account_wide = true;
 
-  }
+	}
 
 }

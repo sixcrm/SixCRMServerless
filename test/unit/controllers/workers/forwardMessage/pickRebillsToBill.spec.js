@@ -8,73 +8,73 @@ const uuidV4 = require('uuid/v4');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 function getValidMessages(){
-  return [
-    {
-      Body:JSON.stringify({id: uuidV4()}),
-      spoofed: true
-    },
-    {
-      Body:JSON.stringify({id: uuidV4()}),
-      spoofed: true
-    }
-  ];
+	return [
+		{
+			Body:JSON.stringify({id: uuidV4()}),
+			spoofed: true
+		},
+		{
+			Body:JSON.stringify({id: uuidV4()}),
+			spoofed: true
+		}
+	];
 }
 
 describe('workers/forwardMessage/pickRebillsToBillController', () => {
 
-  describe('constructor', () => {
+	describe('constructor', () => {
 
-    it('successfully constructs', () => {
+		it('successfully constructs', () => {
 
-      const PickRebillsToBillController = global.SixCRM.routes.include('workers', 'forwardMessage/pickRebillsToBill.js');
-      let pickRebillsToBillController = new PickRebillsToBillController();
+			const PickRebillsToBillController = global.SixCRM.routes.include('workers', 'forwardMessage/pickRebillsToBill.js');
+			let pickRebillsToBillController = new PickRebillsToBillController();
 
-      expect(objectutilities.getClassName(pickRebillsToBillController)).to.equal('PickRebillsToBillController');
+			expect(objectutilities.getClassName(pickRebillsToBillController)).to.equal('PickRebillsToBillController');
 
-    });
+		});
 
-  });
+	});
 
-  describe('invokeAdditionalLambdas', () => {
+	describe('invokeAdditionalLambdas', () => {
 
-    it('returns the messages object', () => {
+		it('returns the messages object', () => {
 
-      let messages = getValidMessages();
+			let messages = getValidMessages();
 
-      const PickRebillsToBillController = global.SixCRM.routes.include('workers', 'forwardMessage/pickRebillsToBill.js');
-      let pickRebillsToBillController = new PickRebillsToBillController();
+			const PickRebillsToBillController = global.SixCRM.routes.include('workers', 'forwardMessage/pickRebillsToBill.js');
+			let pickRebillsToBillController = new PickRebillsToBillController();
 
-      pickRebillsToBillController.parameters.set('messages', messages);
+			pickRebillsToBillController.parameters.set('messages', messages);
 
-      return pickRebillsToBillController.invokeAdditionalLambdas().then(() => {
-        let result = pickRebillsToBillController.parameters.get('messages');
+			return pickRebillsToBillController.invokeAdditionalLambdas().then(() => {
+				let result = pickRebillsToBillController.parameters.get('messages');
 
-        expect(result).to.deep.equal(messages);
-      });
+				expect(result).to.deep.equal(messages);
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('invokeAdditionalLambdas', () => {
+	describe('invokeAdditionalLambdas', () => {
 
-    it('returns the messages object', () => {
+		it('returns the messages object', () => {
 
-      let messages = getValidMessages();
+			let messages = getValidMessages();
 
-      const PickRebillsToBillController = global.SixCRM.routes.include('workers', 'forwardMessage/pickRebillsToBill.js');
-      let pickRebillsToBillController = new PickRebillsToBillController();
+			const PickRebillsToBillController = global.SixCRM.routes.include('workers', 'forwardMessage/pickRebillsToBill.js');
+			let pickRebillsToBillController = new PickRebillsToBillController();
 
-      pickRebillsToBillController.parameters.set('messages', messages);
+			pickRebillsToBillController.parameters.set('messages', messages);
 
-      return pickRebillsToBillController.validateMessages(messages).then(() => {
-        let result = pickRebillsToBillController.parameters.get('messages');
+			return pickRebillsToBillController.validateMessages(messages).then(() => {
+				let result = pickRebillsToBillController.parameters.get('messages');
 
-        expect(result).to.deep.equal(messages);
-      });
+				expect(result).to.deep.equal(messages);
+			});
 
-    });
+		});
 
-  });
+	});
 
 });

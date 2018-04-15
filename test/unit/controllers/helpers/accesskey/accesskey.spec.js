@@ -8,22 +8,22 @@ const accessKeyHelperController = global.SixCRM.routes.include('helpers', 'acces
 
 describe('helpers/transaction/Process.spec.js', () => {
 
-  it('creates a access key', () => {
+	it('creates a access key', () => {
 
-    let accesskey = accessKeyHelperController.generateAccessKey();
+		let accesskey = accessKeyHelperController.generateAccessKey();
 
-    expect(typeof accesskey).to.equal('string');
-    expect(accesskey.length).to.equal(40);
+		expect(typeof accesskey).to.equal('string');
+		expect(accesskey.length).to.equal(40);
 
-  });
+	});
 
-  it('creates a secret key', () => {
+	it('creates a secret key', () => {
 
-    let secretkey = accessKeyHelperController.generateSecretKey();
+		let secretkey = accessKeyHelperController.generateSecretKey();
 
-    expect(typeof secretkey).to.equal('string');
-    expect(secretkey).to.match(/^[0-9a-f]{40}$/);
+		expect(typeof secretkey).to.equal('string');
+		expect(secretkey).to.match(/^[0-9a-f]{40}$/);
 
-  });
+	});
 
 });

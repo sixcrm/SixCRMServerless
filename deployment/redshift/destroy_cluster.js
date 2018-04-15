@@ -4,8 +4,8 @@ const RedshiftClusterDeployment = global.SixCRM.routes.include('deployment', 'ut
 const redshiftClusterDeployment = new RedshiftClusterDeployment();
 
 redshiftClusterDeployment.destroy().then(result => {
-  return du.highlight(result);
+	return du.highlight(result);
 }).catch((error) => {
-  du.error(error);
-  du.warning(error.message);
+	du.error(error);
+	du.warning(error.message);
 });

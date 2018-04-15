@@ -4,81 +4,81 @@ let expect = chai.expect;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidMerchantProviderGroup() {
-    return MockEntities.getValidMerchantProviderGroup()
+	return MockEntities.getValidMerchantProviderGroup()
 }
 
 describe('controllers/MerchantProvider.js', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-    beforeEach(() => {
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-        sendMessage() {
-          return Promise.resolve(true);
-        }
-      });
-    });
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+			sendMessage() {
+				return Promise.resolve(true);
+			}
+		});
+	});
 
-    afterEach(() => {
-        mockery.resetCache();
-        mockery.deregisterAll();
-    });
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-    describe('associatedEntitiesCheck', () => {
+	describe('associatedEntitiesCheck', () => {
 
-        it('creates associated entities object', () => {
+		it('creates associated entities object', () => {
 
-            let a_merchant_provider_id = 'dummy_id';
+			let a_merchant_provider_id = 'dummy_id';
 
-            let merchantprovidergroup = getValidMerchantProviderGroup();
+			let merchantprovidergroup = getValidMerchantProviderGroup();
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), class {
-                listByMerchantProviderID({id}) {
-                    expect(id).to.equal(a_merchant_provider_id);
-                    return Promise.resolve([merchantprovidergroup]);
-                }
-            });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), class {
+				listByMerchantProviderID({id}) {
+					expect(id).to.equal(a_merchant_provider_id);
+					return Promise.resolve([merchantprovidergroup]);
+				}
+			});
 
-            let MerchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
-            const merchantProviderController = new MerchantProviderController();
+			let MerchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
+			const merchantProviderController = new MerchantProviderController();
 
-            return merchantProviderController.associatedEntitiesCheck({id : a_merchant_provider_id}).then((result) => {
-                expect(result).to.deep.equal([{
-                    entity: {
-                        id: merchantprovidergroup.id
-                    },
-                    name: "Merchant Provider Group"
-                }]);
-            });
-        });
+			return merchantProviderController.associatedEntitiesCheck({id : a_merchant_provider_id}).then((result) => {
+				expect(result).to.deep.equal([{
+					entity: {
+						id: merchantprovidergroup.id
+					},
+					name: "Merchant Provider Group"
+				}]);
+			});
+		});
 
-        it('throws error when object is missing an id', () => {
+		it('throws error when object is missing an id', () => {
 
-            let a_merchant_provider_id = 'dummy_id';
+			let a_merchant_provider_id = 'dummy_id';
 
-            let merchantprovidergroup = getValidMerchantProviderGroup();
+			let merchantprovidergroup = getValidMerchantProviderGroup();
 
-            delete merchantprovidergroup.id;
+			delete merchantprovidergroup.id;
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), class {
-                listByMerchantProviderID({id}) {
-                    expect(id).to.equal(a_merchant_provider_id);
-                    return Promise.resolve([merchantprovidergroup]);
-                }
-            });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), class {
+				listByMerchantProviderID({id}) {
+					expect(id).to.equal(a_merchant_provider_id);
+					return Promise.resolve([merchantprovidergroup]);
+				}
+			});
 
-            let MerchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
-            const merchantProviderController = new MerchantProviderController();
+			let MerchantProviderController = global.SixCRM.routes.include('controllers','entities/MerchantProvider.js');
+			const merchantProviderController = new MerchantProviderController();
 
-            return merchantProviderController.associatedEntitiesCheck({id : a_merchant_provider_id}).catch((error) => {
-                expect(error.message).to.equal('[500] Create Associated Entities expects the object parameter to have field "id"');
-            });
-        });
-    });
+			return merchantProviderController.associatedEntitiesCheck({id : a_merchant_provider_id}).catch((error) => {
+				expect(error.message).to.equal('[500] Create Associated Entities expects the object parameter to have field "id"');
+			});
+		});
+	});
 });

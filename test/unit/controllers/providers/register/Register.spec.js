@@ -2133,31 +2133,31 @@ describe('controllers/providers/Register.js', () => {
 		it('correctly calculates the amount', () => {
 
 			let test_cases = [{
-					a: 3.99,
-					b: 0.14
-				},
-				{
-					a: 3.99,
-					b: 1.00
-				},
-				{
-					a: 39239238923.99,
-					b: 123.00
-				}
+				a: 3.99,
+				b: 0.14
+			},
+			{
+				a: 3.99,
+				b: 1.00
+			},
+			{
+				a: 39239238923.99,
+				b: 123.00
+			}
 			];
 
 			arrayutilities.map(test_cases, test_case => {
 
 				let product_groups = [{
-						quantity: 1,
-						product: getValidProduct(),
-						amount: test_case.a
-					},
-					{
-						quantity: 1,
-						product: getValidProduct(),
-						amount: test_case.b
-					}
+					quantity: 1,
+					product: getValidProduct(),
+					amount: test_case.a
+				},
+				{
+					quantity: 1,
+					product: getValidProduct(),
+					amount: test_case.b
+				}
 				];
 
 				const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');

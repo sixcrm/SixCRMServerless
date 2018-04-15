@@ -5,65 +5,65 @@ const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-p
 
 module.exports = class AutoscalingProvider extends AWSProvider{
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    //Technical Debt:  Get this out of the constructor?
-    this.instantiateAWS();
+		//Technical Debt:  Get this out of the constructor?
+		this.instantiateAWS();
 
-    this.autoscaling = new this.AWS.ApplicationAutoScaling({
-      apiVersion: '2016-02-06'
-    });
+		this.autoscaling = new this.AWS.ApplicationAutoScaling({
+			apiVersion: '2016-02-06'
+		});
 
-  }
+	}
 
-  registerScalableTarget(parameters){
+	registerScalableTarget(parameters){
 
-    du.debug('Register Scalable Target');
+		du.debug('Register Scalable Target');
 
-    return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-      this.autoscaling.registerScalableTarget(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.autoscaling.registerScalableTarget(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-    });
+		});
 
-  }
+	}
 
-  putScalingPolicy(parameters){
+	putScalingPolicy(parameters){
 
-    du.debug('Put Scaling Policy');
+		du.debug('Put Scaling Policy');
 
-    return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-      this.autoscaling.putScalingPolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.autoscaling.putScalingPolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-    });
+		});
 
-  }
+	}
 
-  describeScalableTargets(parameters){
+	describeScalableTargets(parameters){
 
-    du.debug('Describe Scalable Targets');
+		du.debug('Describe Scalable Targets');
 
-    return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-      this.autoscaling.describeScalableTargets(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.autoscaling.describeScalableTargets(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-    });
+		});
 
-  }
+	}
 
-  describeScalingPolicies(parameters){
+	describeScalingPolicies(parameters){
 
-    du.debug('Describe Scaling Policies');
+		du.debug('Describe Scaling Policies');
 
-    return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-      this.autoscaling.describeScalingPolicies(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.autoscaling.describeScalingPolicies(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-    });
+		});
 
-  }
+	}
 
 }

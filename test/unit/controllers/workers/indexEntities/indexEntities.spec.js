@@ -13,281 +13,281 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 function getValidWorkerResponseTypes(){
 
-  return ['success','fail','error','noaction'];
+	return ['success','fail','error','noaction'];
 
 }
 
 function getValidIndexingDocument(){
 
-  return JSON.stringify([{
-    id:uuidV4(),
-    type:"add",
-    fields:{
-      name: 'A product name',
-      entity_type:"product",
-      active:true,
-      sku: randomutilities.createRandomString(10),
-      account:uuidV4(),
-      created_at:timestamp.getISO8601(),
-      updated_at:timestamp.getISO8601()
-    }
-  }]);
+	return JSON.stringify([{
+		id:uuidV4(),
+		type:"add",
+		fields:{
+			name: 'A product name',
+			entity_type:"product",
+			active:true,
+			sku: randomutilities.createRandomString(10),
+			account:uuidV4(),
+			created_at:timestamp.getISO8601(),
+			updated_at:timestamp.getISO8601()
+		}
+	}]);
 
 }
 
 function getValidIndexElements(){
 
-  return [
-    {
-      "entity_type":"product",
-      "id":uuidV4(),
-      "index_action":"add",
-      "active":true,
-      "sku": randomutilities.createRandomString(10),
-      "account":uuidV4(),
-      "created_at":timestamp.getISO8601(),
-      "updated_at":timestamp.getISO8601()
-    },
-    {
-      "entity_type":"product",
-      "id":uuidV4(),
-      "index_action":"delete"
-    }
-  ];
+	return [
+		{
+			"entity_type":"product",
+			"id":uuidV4(),
+			"index_action":"add",
+			"active":true,
+			"sku": randomutilities.createRandomString(10),
+			"account":uuidV4(),
+			"created_at":timestamp.getISO8601(),
+			"updated_at":timestamp.getISO8601()
+		},
+		{
+			"entity_type":"product",
+			"id":uuidV4(),
+			"index_action":"delete"
+		}
+	];
 
 }
 
 function getValidLambdaMessages(){
 
-  let valid_event_bodies = getValidIndexElements();
+	let valid_event_bodies = getValidIndexElements();
 
-  return arrayutilities.map(valid_event_bodies, (valid_event_body) => {
-    return {
-      "ReceiptHandle": randomutilities.createRandomString(20),
-      "Body":JSON.stringify(valid_event_body),
-      "MD5OfBody":randomutilities.createRandomString(40),
-      "MessageId":randomutilities.createRandomString(40)
-    };
-  });
+	return arrayutilities.map(valid_event_bodies, (valid_event_body) => {
+		return {
+			"ReceiptHandle": randomutilities.createRandomString(20),
+			"Body":JSON.stringify(valid_event_body),
+			"MD5OfBody":randomutilities.createRandomString(40),
+			"MessageId":randomutilities.createRandomString(40)
+		};
+	});
 
 }
 
 function getValidCloudsearchDomainResponse(){
 
-  return getValidCloudsearchDomainResponses()[0];
+	return getValidCloudsearchDomainResponses()[0];
 
 }
 
 function getValidCloudsearchDomainResponses(){
 
-  return [
-    {
-      status:'success',
-      adds:1,
-      deletes:1
-    }
-  ]
+	return [
+		{
+			status:'success',
+			adds:1,
+			deletes:1
+		}
+	]
 }
 
 describe('controllers/workers/indexEntities', () => {
 
-  let process_env;
+	let process_env;
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-  beforeEach(() => {
-    process_env = process.env;
-    process.env['cloudsearch_domainendpoint'] = 'doc-somethingsomething';
-  });
-  afterEach(() => {
-    mockery.resetCache();
-    process.env = process_env;
-  });
+	beforeEach(() => {
+		process_env = process.env;
+		process.env['cloudsearch_domainendpoint'] = 'doc-somethingsomething';
+	});
+	afterEach(() => {
+		mockery.resetCache();
+		process.env = process_env;
+	});
 
-  after(() => {
-    mockery.deregisterAll();
-  });
+	after(() => {
+		mockery.deregisterAll();
+	});
 
 	describe('constructor', () => {
 
-    it('successfully constructs', () => {
-      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
-      let indexEntitiesController = new IndexEntitiesController();
+		it('successfully constructs', () => {
+			const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+			let indexEntitiesController = new IndexEntitiesController();
 
-      expect(objectutilities.getClassName(indexEntitiesController)).to.equal('IndexEntitiesController');
-    });
-  });
+			expect(objectutilities.getClassName(indexEntitiesController)).to.equal('IndexEntitiesController');
+		});
+	});
 
-  describe('createIndexingDocument', () => {
+	describe('createIndexingDocument', () => {
 
-    it('successfully creates a indexing document', () => {
+		it('successfully creates a indexing document', () => {
 
-      let index_elements =  getValidIndexElements();
-      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
-      let indexEntitiesController = new IndexEntitiesController();
+			let index_elements =  getValidIndexElements();
+			const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+			let indexEntitiesController = new IndexEntitiesController();
 
-      indexEntitiesController.parameters.set('parsedmessagebodies', index_elements);
+			indexEntitiesController.parameters.set('parsedmessagebodies', index_elements);
 
-      return indexEntitiesController.createIndexingDocument().then(result => {
-        expect(result).to.equal(true);
-        expect(indexEntitiesController.parameters.store['indexingdocument']).to.be.defined;
-        //validate the document;
-      });
+			return indexEntitiesController.createIndexingDocument().then(result => {
+				expect(result).to.equal(true);
+				expect(indexEntitiesController.parameters.store['indexingdocument']).to.be.defined;
+				//validate the document;
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('pushDocumentToCloudSearch', () => {
+	describe('pushDocumentToCloudSearch', () => {
 
-    beforeEach(() => {
+		beforeEach(() => {
 
-        let cloudsearch_response = getValidCloudsearchDomainResponse();
+			let cloudsearch_response = getValidCloudsearchDomainResponse();
 
-        let indexing_document = getValidIndexingDocument();
+			let indexing_document = getValidIndexingDocument();
 
-        let mock_indexing_helper_controller = class {
-            constructor(){
+			let mock_indexing_helper_controller = class {
+				constructor(){
 
-            }
-            createIndexingDocument(){
-                return Promise.resolve(indexing_document);
-            }
-        };
+				}
+				createIndexingDocument(){
+					return Promise.resolve(indexing_document);
+				}
+			};
 
-        mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/Indexing.js'), mock_indexing_helper_controller);
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/Indexing.js'), mock_indexing_helper_controller);
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/cloudsearch-provider.js'), class {
-            uploadDocuments() {
-                return Promise.resolve(cloudsearch_response);
-            }
-        });
-    });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/cloudsearch-provider.js'), class {
+				uploadDocuments() {
+					return Promise.resolve(cloudsearch_response);
+				}
+			});
+		});
 
-    it('successfully pushes a document to Cloudsearch', () => {
+		it('successfully pushes a document to Cloudsearch', () => {
 
-      let indexing_document = getValidIndexingDocument();
+			let indexing_document = getValidIndexingDocument();
 
-      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
-      let indexEntitiesController = new IndexEntitiesController();
+			const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+			let indexEntitiesController = new IndexEntitiesController();
 
-      indexEntitiesController.parameters.set('indexingdocument', indexing_document);
+			indexEntitiesController.parameters.set('indexingdocument', indexing_document);
 
-      return indexEntitiesController.pushDocumentToCloudsearch()
-      .then(result => {
-        expect(result).to.equal(true);
-        expect(indexEntitiesController.parameters.store['cloudsearchresponse']).to.be.defined;
-      }).catch(error => {
-        //Technical Debt:  Eliminate this, refactor.
-        throw error;
-      });
+			return indexEntitiesController.pushDocumentToCloudsearch()
+				.then(result => {
+					expect(result).to.equal(true);
+					expect(indexEntitiesController.parameters.store['cloudsearchresponse']).to.be.defined;
+				}).catch(error => {
+					//Technical Debt:  Eliminate this, refactor.
+					throw error;
+				});
 
-    });
+		});
 
-  });
+	});
 
-  describe('setResponseCode', () => {
-    it('successfully sets response code', () => {
-      let cloudsearch_responses = getValidCloudsearchDomainResponses();
+	describe('setResponseCode', () => {
+		it('successfully sets response code', () => {
+			let cloudsearch_responses = getValidCloudsearchDomainResponses();
 
 
-      arrayutilities.map(cloudsearch_responses, cloudsearch_response => {
-      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
-      let indexEntitiesController = new IndexEntitiesController();
+			arrayutilities.map(cloudsearch_responses, cloudsearch_response => {
+				const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+				let indexEntitiesController = new IndexEntitiesController();
 
-        indexEntitiesController.parameters.set('cloudsearchresponse', cloudsearch_response);
-        return indexEntitiesController.setResponseCode().then(result => {
-          expect(result).to.equal(true);
-          expect(indexEntitiesController.parameters.store['responsecode']).to.be.defined;
-          if(cloudsearch_response.status == 'success'){
-            expect(indexEntitiesController.parameters.store['responsecode']).to.equal('success');
-          }else{
-            expect(indexEntitiesController.parameters.store['responsecode']).to.equal('fail');
-          }
-        });
-      })
+				indexEntitiesController.parameters.set('cloudsearchresponse', cloudsearch_response);
+				return indexEntitiesController.setResponseCode().then(result => {
+					expect(result).to.equal(true);
+					expect(indexEntitiesController.parameters.store['responsecode']).to.be.defined;
+					if(cloudsearch_response.status == 'success'){
+						expect(indexEntitiesController.parameters.store['responsecode']).to.equal('success');
+					}else{
+						expect(indexEntitiesController.parameters.store['responsecode']).to.equal('fail');
+					}
+				});
+			})
 
-    });
-  });
+		});
+	});
 
-  describe('respond', () => {
-    it('successfully responds', () => {
-      let worker_response_types = getValidWorkerResponseTypes();
+	describe('respond', () => {
+		it('successfully responds', () => {
+			let worker_response_types = getValidWorkerResponseTypes();
 
-      arrayutilities.map(worker_response_types, worker_response_type => {
+			arrayutilities.map(worker_response_types, worker_response_type => {
 
-      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
-      let indexEntitiesController = new IndexEntitiesController();
+				const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+				let indexEntitiesController = new IndexEntitiesController();
 
-        indexEntitiesController.parameters.set('responsecode', worker_response_type);
-        let response_object = indexEntitiesController.respond();
+				indexEntitiesController.parameters.set('responsecode', worker_response_type);
+				let response_object = indexEntitiesController.respond();
 
-        expect(objectutilities.getClassName(response_object)).to.equal('WorkerResponse');
-        expect(response_object.getCode()).to.equal(worker_response_type);
+				expect(objectutilities.getClassName(response_object)).to.equal('WorkerResponse');
+				expect(response_object.getCode()).to.equal(worker_response_type);
 
-      });
-    });
-  });
+			});
+		});
+	});
 
-  describe('parseMessages', () => {
-    it('successfully parses lambda messages', () => {
-      let lambda_messages = getValidLambdaMessages();
+	describe('parseMessages', () => {
+		it('successfully parses lambda messages', () => {
+			let lambda_messages = getValidLambdaMessages();
 
-      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
-      let indexEntitiesController = new IndexEntitiesController();
+			const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+			let indexEntitiesController = new IndexEntitiesController();
 
-      indexEntitiesController.parameters.set('messages', lambda_messages);
+			indexEntitiesController.parameters.set('messages', lambda_messages);
 
-      return indexEntitiesController.parseMessages().then(result => {
-        expect(result).to.equal(true);
-        expect(indexEntitiesController.parameters.store['parsedmessagebodies']).to.be.defined;
-        du.warning(indexEntitiesController.parameters.store['parsedmessagebodies']);
-      });
+			return indexEntitiesController.parseMessages().then(result => {
+				expect(result).to.equal(true);
+				expect(indexEntitiesController.parameters.store['parsedmessagebodies']).to.be.defined;
+				du.warning(indexEntitiesController.parameters.store['parsedmessagebodies']);
+			});
 
-    });
-  });
+		});
+	});
 
-  describe('execute', () => {
+	describe('execute', () => {
 
-    it('successfully executes cloudsearch indexing method', () => {
+		it('successfully executes cloudsearch indexing method', () => {
 
-      let indexing_document = getValidIndexingDocument();
-      let cloudsearch_response = getValidCloudsearchDomainResponse();
-      let lambda_messages = getValidLambdaMessages();
+			let indexing_document = getValidIndexingDocument();
+			let cloudsearch_response = getValidCloudsearchDomainResponse();
+			let lambda_messages = getValidLambdaMessages();
 
-      let mock_indexing_helper_controller = class {
-        constructor(){
+			let mock_indexing_helper_controller = class {
+				constructor(){
 
-        }
-        createIndexingDocument(){
-          return Promise.resolve(indexing_document);
-        }
-      };
+				}
+				createIndexingDocument(){
+					return Promise.resolve(indexing_document);
+				}
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/Indexing.js'), mock_indexing_helper_controller);
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/Indexing.js'), mock_indexing_helper_controller);
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/cloudsearch-provider.js'), class {
-        uploadDocuments() {
-          return Promise.resolve(cloudsearch_response);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/cloudsearch-provider.js'), class {
+				uploadDocuments() {
+					return Promise.resolve(cloudsearch_response);
+				}
+			});
 
-      const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
-      let indexEntitiesController = new IndexEntitiesController();
+			const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
+			let indexEntitiesController = new IndexEntitiesController();
 
-      return indexEntitiesController.execute(lambda_messages).then(result => {
-        expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-        expect(result.getCode()).to.equal('success');
-      });
+			return indexEntitiesController.execute(lambda_messages).then(result => {
+				expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+				expect(result.getCode()).to.equal('success');
+			});
 
-    });
+		});
 
-  });
+	});
 
 });

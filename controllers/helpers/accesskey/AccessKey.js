@@ -6,20 +6,20 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 
 module.exports = class AccessKey{
 
-  static generateAccessKey(){
+	static generateAccessKey(){
 
-    du.debug('Generate Access Key');
+		du.debug('Generate Access Key');
 
-    return randomutilities.createRandomString(40);
+		return randomutilities.createRandomString(40);
 
-  }
+	}
 
-  static generateSecretKey(){
+	static generateSecretKey(){
 
-    du.debug('Generate Secret Key');
+		du.debug('Generate Secret Key');
 
-    return hashutilities.toSHA1(randomutilities.createRandomString(40));
+		return hashutilities.toSHA1(randomutilities.createRandomString(40));
 
-  }
+	}
 
 }

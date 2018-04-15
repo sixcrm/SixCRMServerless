@@ -8,245 +8,245 @@ const Response = global.SixCRM.routes.include('providers', 'Response.js');
 
 module.exports = class MerchantProviderResponse extends Response{
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.parameter_definition = {
-      handleResponse:{
-        required: {
-          vendorresponse:'vendor_response',
-          action:'action'
-        },
-        optional:{
-          additionalparameters: 'additional_parameters'
-        }
-      }
-    };
+		this.parameter_definition = {
+			handleResponse:{
+				required: {
+					vendorresponse:'vendor_response',
+					action:'action'
+				},
+				optional:{
+					additionalparameters: 'additional_parameters'
+				}
+			}
+		};
 
-    this.parameter_validation = {
-      'vendorresponse':global.SixCRM.routes.path('model','vendors/merchantproviders/response/vendorresponse.json'),
-      'action':global.SixCRM.routes.path('model', 'vendors/merchantproviders/action.json'),
-      'additionalparameters': global.SixCRM.routes.path('model', 'vendors/merchantproviders/response/additionalparameters.json'),
-      //Technical Debt:  Bad Paths...
-      'code': global.SixCRM.routes.path('model','vendors/merchantproviders/response/code.json'),
-      'result': global.SixCRM.routes.path('model','vendors/merchantproviders/response/result.json'),
-      'message': global.SixCRM.routes.path('model','vendors/merchantproviders/response/message.json'),
-      'parsedresponse':global.SixCRM.routes.path('model','vendors/merchantproviders/response/parsedresponse.json')
-    };
+		this.parameter_validation = {
+			'vendorresponse':global.SixCRM.routes.path('model','vendors/merchantproviders/response/vendorresponse.json'),
+			'action':global.SixCRM.routes.path('model', 'vendors/merchantproviders/action.json'),
+			'additionalparameters': global.SixCRM.routes.path('model', 'vendors/merchantproviders/response/additionalparameters.json'),
+			//Technical Debt:  Bad Paths...
+			'code': global.SixCRM.routes.path('model','vendors/merchantproviders/response/code.json'),
+			'result': global.SixCRM.routes.path('model','vendors/merchantproviders/response/result.json'),
+			'message': global.SixCRM.routes.path('model','vendors/merchantproviders/response/message.json'),
+			'parsedresponse':global.SixCRM.routes.path('model','vendors/merchantproviders/response/parsedresponse.json')
+		};
 
-    this.result_messages = {
-      'success':'Success',
-      'fail': 'Failed',
-      'error': 'Error'
-    };
+		this.result_messages = {
+			'success':'Success',
+			'fail': 'Failed',
+			'error': 'Error'
+		};
 
-    this.initialize();
+		this.initialize();
 
-    this.handleResponse(arguments[0]);
+		this.handleResponse(arguments[0]);
 
-  }
+	}
 
-  getMerchantProviderName(){
+	getMerchantProviderName(){
 
-    du.debug('Get Merchant Provider Name');
+		du.debug('Get Merchant Provider Name');
 
-    return objectutilities.getClassName(this).replace('Response', '');
+		return objectutilities.getClassName(this).replace('Response', '');
 
-  }
+	}
 
-  handleResponse(){
+	handleResponse(){
 
-    du.debug('Handle Response');
+		du.debug('Handle Response');
 
-    this.parameters.setParameters({argumentation: arguments[0], action: 'handleResponse'});
+		this.parameters.setParameters({argumentation: arguments[0], action: 'handleResponse'});
 
-    let error = this.parameters.get('error', null, false);
+		let error = this.parameters.get('error', null, false);
 
-    if(!_.isNull(error)){
+		if(!_.isNull(error)){
 
-      this.handleError(error);
+			this.handleError(error);
 
-    }else{
+		}else{
 
-      if(_.isFunction(this.determineResultCode)){
+			if(_.isFunction(this.determineResultCode)){
 
-        let vendor_response = this.parameters.get('vendorresponse');
-        let action = this.parameters.get('action');
+				let vendor_response = this.parameters.get('vendorresponse');
+				let action = this.parameters.get('action');
 
-        let response = vendor_response.response;
-        let body = vendor_response.body;
+				let response = vendor_response.response;
+				let body = vendor_response.body;
 
-        this.parameters.set('response', response);
-        this.parameters.set('body', body);
+				this.parameters.set('response', response);
+				this.parameters.set('body', body);
 
-        this.validateVendorResponse();
+				this.validateVendorResponse();
 
-        let result_code = this.determineResultCode({response: response, body: body, action: action});
-        let result_message = this.determineResultMessage(result_code);
+				let result_code = this.determineResultCode({response: response, body: body, action: action});
+				let result_message = this.determineResultMessage(result_code);
 
-        if(_.isFunction(this.translateResponse)){
+				if(_.isFunction(this.translateResponse)){
 
-          let parsed_response = this.translateResponse(response);
+					let parsed_response = this.translateResponse(response);
 
-          if(!_.isNull(parsed_response)){
-            this.parameters.set('parsedresponse', parsed_response);
-          }
+					if(!_.isNull(parsed_response)){
+						this.parameters.set('parsedresponse', parsed_response);
+					}
 
-        }
+				}
 
-        this.setCode(result_code);
-        this.setMessage(result_message);
+				this.setCode(result_code);
+				this.setMessage(result_message);
 
-      }
+			}
 
-    }
+		}
 
-  }
+	}
 
-  getParsedResponse(){
+	getParsedResponse(){
 
-    du.debug('Get Parsed Response');
+		du.debug('Get Parsed Response');
 
-    return this.parameters.get('parsedresponse', null, false);
+		return this.parameters.get('parsedresponse', null, false);
 
-  }
+	}
 
-  setResponse(response){
+	setResponse(response){
 
-    du.debug('Set Response');
+		du.debug('Set Response');
 
-    this.parameters.set('response', response);
+		this.parameters.set('response', response);
 
-  }
+	}
 
-  setAllProperties({code, message}){
+	setAllProperties({code, message}){
 
-    du.debug('Set All Properties');
+		du.debug('Set All Properties');
 
-    this.setCode(code);
+		this.setCode(code);
 
-    this.setMessage(message);
+		this.setMessage(message);
 
-    //this.setResponse(response);
+		//this.setResponse(response);
 
-  }
+	}
 
-  determineResultCode({response: response}){
+	determineResultCode({response: response}){
 
-    du.debug('Determine Result');
+		du.debug('Determine Result');
 
-    if(_.has(response, 'statusCode')){
+		if(_.has(response, 'statusCode')){
 
-      if(response.statusCode == 200){
+			if(response.statusCode == 200){
 
-        return 'success';
+				return 'success';
 
-      }
+			}
 
-      return 'fail';
+			return 'fail';
 
-    }
+		}
 
-    return 'error';
+		return 'error';
 
-  }
+	}
 
-  determineResultMessage(result_code){
+	determineResultMessage(result_code){
 
-    du.debug('Determine Result Message');
+		du.debug('Determine Result Message');
 
-    return this.result_messages[result_code];
+		return this.result_messages[result_code];
 
-  }
+	}
 
-  validateVendorResponse(){
+	validateVendorResponse(){
 
-    du.debug('Validate Provider Response');
+		du.debug('Validate Provider Response');
 
-    let merchant_provider_name = this.getMerchantProviderName();
-    let response = this.parameters.get('response');
+		let merchant_provider_name = this.getMerchantProviderName();
+		let response = this.parameters.get('response');
 
-    mvu.validateModel(response, global.SixCRM.routes.path('model', 'vendors/merchantproviders/'+merchant_provider_name+'/response.json'));
+		mvu.validateModel(response, global.SixCRM.routes.path('model', 'vendors/merchantproviders/'+merchant_provider_name+'/response.json'));
 
-    return true;
+		return true;
 
-  }
+	}
 
-  handleError(error){
+	handleError(error){
 
-    du.debug('Handle Error');
+		du.debug('Handle Error');
 
-    this.setCode('error');
+		this.setCode('error');
 
-    if(_.has(error, 'message')){
-      this.setMessage(error.message);
-    }else{
-      this.setMessage(this.determineResultMessage('error'));
-    }
+		if(_.has(error, 'message')){
+			this.setMessage(error.message);
+		}else{
+			this.setMessage(this.determineResultMessage('error'));
+		}
 
-  }
+	}
 
-  getResult(){
+	getResult(){
 
-    du.debug('Get Result');
+		du.debug('Get Result');
 
-    return {
-      code: this.getCode(),
-      response: this.getResponse(),
-      message: this.getMessage()
-    };
+		return {
+			code: this.getCode(),
+			response: this.getResponse(),
+			message: this.getMessage()
+		};
 
-  }
+	}
 
-  getResponse(){
+	getResponse(){
 
-    du.debug('Get Response');
+		du.debug('Get Response');
 
-    return this.parameters.get('response', null, false);
+		return this.parameters.get('response', null, false);
 
-  }
+	}
 
-  setMessage(message){
+	setMessage(message){
 
-    du.debug('Set Message');
+		du.debug('Set Message');
 
-    this.parameters.set('message', message);
+		this.parameters.set('message', message);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  getMessage(){
+	getMessage(){
 
-    du.debug('Get Message');
+		du.debug('Get Message');
 
-    return this.parameters.get('message')
+		return this.parameters.get('message')
 
-  }
+	}
 
-  setCode(code){
+	setCode(code){
 
-    du.debug('Set Code');
+		du.debug('Set Code');
 
-    this.parameters.set('code', code);
+		this.parameters.set('code', code);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  getCode(){
+	getCode(){
 
-    du.debug('Get Code');
+		du.debug('Get Code');
 
-    let code = this.parameters.get('code', null, false);
+		let code = this.parameters.get('code', null, false);
 
-    if(_.isNull(code)){
-      return super.getCode();
-    }
+		if(_.isNull(code)){
+			return super.getCode();
+		}
 
-    return code;
+		return code;
 
-  }
+	}
 
 }

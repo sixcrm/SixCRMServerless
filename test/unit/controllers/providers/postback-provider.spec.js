@@ -4,83 +4,83 @@ const mockery = require('mockery');
 
 describe('controllers/providers/postback-provider', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-    afterEach(() => {
-        mockery.resetCache();
-    });
+	afterEach(() => {
+		mockery.resetCache();
+	});
 
-    after(() => {
-        mockery.deregisterAll();
-    });
+	after(() => {
+		mockery.deregisterAll();
+	});
 
-    describe('executeRequest', () => {
+	describe('executeRequest', () => {
 
-        it('successfully executes get request', () => {
+		it('successfully executes get request', () => {
 
-            let url = 'test';
+			let url = 'test';
 
-            let response = 'success';
+			let response = 'success';
 
-            mockery.registerMock('request', {
-                get: (request_options, callback) => {
-                    callback(null, response);
-                }
-            });
+			mockery.registerMock('request', {
+				get: (request_options, callback) => {
+					callback(null, response);
+				}
+			});
 
-            const PostbackProvider = global.SixCRM.routes.include('controllers', 'providers/postback-provider.js');
-            const postbackprovider = new PostbackProvider();
+			const PostbackProvider = global.SixCRM.routes.include('controllers', 'providers/postback-provider.js');
+			const postbackprovider = new PostbackProvider();
 
-            return postbackprovider.executeRequest(url).then((result) => {
-                expect(result).to.equal(response);
-            });
-        });
+			return postbackprovider.executeRequest(url).then((result) => {
+				expect(result).to.equal(response);
+			});
+		});
 
-        it('throws error when request is unsuccessfully executed', () => {
+		it('throws error when request is unsuccessfully executed', () => {
 
-            let url = 'test';
+			let url = 'test';
 
-            mockery.registerMock('request', {
-                get: (request_options, callback) => {
-                    callback('fail', null);
-                }
-            });
+			mockery.registerMock('request', {
+				get: (request_options, callback) => {
+					callback('fail', null);
+				}
+			});
 
-            const PostbackProvider = global.SixCRM.routes.include('controllers', 'providers/postback-provider.js');
-            const postbackprovider = new PostbackProvider();
+			const PostbackProvider = global.SixCRM.routes.include('controllers', 'providers/postback-provider.js');
+			const postbackprovider = new PostbackProvider();
 
-            return postbackprovider.executeRequest(url).catch((error) => {
-                expect(error).to.equal('fail');
-            });
-        });
-    });
+			return postbackprovider.executeRequest(url).catch((error) => {
+				expect(error).to.equal('fail');
+			});
+		});
+	});
 
-    describe('executePostback', () => {
+	describe('executePostback', () => {
 
-        it('successfully executes postback', () => {
+		it('successfully executes postback', () => {
 
-            let url = 'test';
+			let url = 'test';
 
-            let response = 'success';
+			let response = 'success';
 
-            mockery.registerMock('request', {
-                get: (request_options, callback) => {
-                    callback(null, response);
-                }
-            });
+			mockery.registerMock('request', {
+				get: (request_options, callback) => {
+					callback(null, response);
+				}
+			});
 
-            const PostbackProvider = global.SixCRM.routes.include('controllers', 'providers/postback-provider.js');
-            const postbackprovider = new PostbackProvider();
+			const PostbackProvider = global.SixCRM.routes.include('controllers', 'providers/postback-provider.js');
+			const postbackprovider = new PostbackProvider();
 
-            return postbackprovider.executePostback(url).then((result) => {
-                expect(result).to.equal(response);
-            });
-        });
-    });
+			return postbackprovider.executePostback(url).then((result) => {
+				expect(result).to.equal(response);
+			});
+		});
+	});
 });

@@ -7,252 +7,252 @@ const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-p
 
 module.exports = class CloudSearchProvider extends AWSProvider {
 
-    constructor(instantiate_csd){
+	constructor(instantiate_csd){
 
-        super();
+		super();
 
-        instantiate_csd = (_.isUndefined(instantiate_csd) || _.isNull(instantiate_csd))?true:instantiate_csd;
+		instantiate_csd = (_.isUndefined(instantiate_csd) || _.isNull(instantiate_csd))?true:instantiate_csd;
 
-        this.max_attempts = 200;
+		this.max_attempts = 200;
 
-        this.setDomainName();
+		this.setDomainName();
 
-        //Technical Debt:  The cloudsearch provider should be two classes, query and deploy
-        if(instantiate_csd){
-          this.setCloudsearchDomainEndpoint();
-        }
+		//Technical Debt:  The cloudsearch provider should be two classes, query and deploy
+		if(instantiate_csd){
+			this.setCloudsearchDomainEndpoint();
+		}
 
-        //Technical Debt:  Get this out of the constructor...
-        this.instantiateAWS();
+		//Technical Debt:  Get this out of the constructor...
+		this.instantiateAWS();
 
-        this.cs = new this.AWS.CloudSearch({
-            region: this.getRegion(),
-            apiVersion: '2013-01-01'
-        });
+		this.cs = new this.AWS.CloudSearch({
+			region: this.getRegion(),
+			apiVersion: '2013-01-01'
+		});
 
-        this.search_fields = [
-            'query',
-            'cursor',
-            'expr',
-            'facet',
-            'filterQuery',
-            'highlight',
-            'partial',
-            'queryOptions',
-            'queryParser',
-            'return',
-            'size',
-            'sort',
-            'start',
-            'stats'
-        ];
+		this.search_fields = [
+			'query',
+			'cursor',
+			'expr',
+			'facet',
+			'filterQuery',
+			'highlight',
+			'partial',
+			'queryOptions',
+			'queryParser',
+			'return',
+			'size',
+			'sort',
+			'start',
+			'stats'
+		];
 
-        this.suggest_fields = [
-            'query',
-            'suggester',
-            'size'
-        ];
+		this.suggest_fields = [
+			'query',
+			'suggester',
+			'size'
+		];
 
-    }
+	}
 
-    setCloudsearchDomainEndpoint() {
+	setCloudsearchDomainEndpoint() {
 
-      du.debug('Set Cloudsearch Domain Endpoint');
+		du.debug('Set Cloudsearch Domain Endpoint');
 
-      return global.SixCRM.configuration.getEnvironmentConfig('cloudsearch_domainendpoint').then((endpoint) => {
+		return global.SixCRM.configuration.getEnvironmentConfig('cloudsearch_domainendpoint').then((endpoint) => {
 
-        if (endpoint) {
+			if (endpoint) {
 
-          return this.instantiateCSD(endpoint);
+				return this.instantiateCSD(endpoint);
 
-        }
+			}
 
-      });
+		});
 
-    }
+	}
 
-    instantiateCSD(endpoint) {
+	instantiateCSD(endpoint) {
 
-      this.instantiateAWS();
+		this.instantiateAWS();
 
-      this.csd = new this.AWS.CloudSearchDomain({
-          region: this.getRegion(),
-          apiVersion: '2013-01-01',
-          endpoint: endpoint
-      });
+		this.csd = new this.AWS.CloudSearchDomain({
+			region: this.getRegion(),
+			apiVersion: '2013-01-01',
+			endpoint: endpoint
+		});
 
-      return endpoint;
+		return endpoint;
 
-    }
+	}
 
-    CSDExists(){
+	CSDExists(){
 
-      du.debug('CSD Exists');
+		du.debug('CSD Exists');
 
-      if(_.has(this, 'csd') && _.isFunction(this.csd.search)){
-        return true;
-      }
+		if(_.has(this, 'csd') && _.isFunction(this.csd.search)){
+			return true;
+		}
 
-      return false;
+		return false;
 
-    }
+	}
 
-    setDomainName(){
+	setDomainName(){
 
-      du.debug('Set Domain Name');
+		du.debug('Set Domain Name');
 
-      if (process.env.TEST_MODE === 'true') {
-          du.debug('Test Mode');
-          this.domainname = 'cloudsearch.local';
+		if (process.env.TEST_MODE === 'true') {
+			du.debug('Test Mode');
+			this.domainname = 'cloudsearch.local';
 
-          return true;
-      }
+			return true;
+		}
 
-      if(_.has(global.SixCRM.configuration.site_config, 'cloudsearch') && _.has(global.SixCRM.configuration.site_config.cloudsearch, 'domainname')){
+		if(_.has(global.SixCRM.configuration.site_config, 'cloudsearch') && _.has(global.SixCRM.configuration.site_config.cloudsearch, 'domainname')){
 
-        this.domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;
+			this.domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;
 
-        return true;
+			return true;
 
-      }
+		}
 
 
-      eu.throwError('server', 'Unable to determine configured CloudSearch domain name.');
+		eu.throwError('server', 'Unable to determine configured CloudSearch domain name.');
 
-    }
+	}
 
-    search(search_parameters){
+	search(search_parameters){
 
-      du.debug('Search');
+		du.debug('Search');
 
-      let params = {};
+		let params = {};
 
-      for(var k in search_parameters){
-        if(_.includes(this.search_fields, k)){
-          params[k] = search_parameters[k];
-        }
-      }
+		for(var k in search_parameters){
+			if(_.includes(this.search_fields, k)){
+				params[k] = search_parameters[k];
+			}
+		}
 
-      return this.executeStatedSearch(params);
+		return this.executeStatedSearch(params);
 
-    }
+	}
 
-    executeStatedSearch(parameters){
+	executeStatedSearch(parameters){
 
-      du.debug('Execute Stated Search');
+		du.debug('Execute Stated Search');
 
-      return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-        if(this.CSDExists()){
+			if(this.CSDExists()){
 
-          du.info(parameters);
+				du.info(parameters);
 
-           this.csd.search(parameters, function(error, data) {
+				this.csd.search(parameters, function(error, data) {
 
-            if (error){
+					if (error){
 
-              return reject(error);
+						return reject(error);
 
-            }else{
+					}else{
 
-              du.debug('Raw search results:', data);
+						du.debug('Raw search results:', data);
 
-              return resolve(data);
+						return resolve(data);
 
-            }
+					}
 
-          });
+				});
 
-        }else{
+			}else{
 
-          return this.executeStatedSearch(parameters)
-          .then(result => {
-              return resolve(result);
-          });
+				return this.executeStatedSearch(parameters)
+					.then(result => {
+						return resolve(result);
+					});
 
-        }
+			}
 
-      });
+		});
 
-    }
+	}
 
-    suggest(suggest_parameters){
+	suggest(suggest_parameters){
 
-        return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-            du.warning(suggest_parameters);
+			du.warning(suggest_parameters);
 
-            let params = {};
+			let params = {};
 
-            for(var k in suggest_parameters){
-                if(_.includes(this.suggest_fields, k)){
-                    params[k] = suggest_parameters[k];
-                }
-            }
+			for(var k in suggest_parameters){
+				if(_.includes(this.suggest_fields, k)){
+					params[k] = suggest_parameters[k];
+				}
+			}
 
-            this.csd.suggest(params, function(error, data) {
+			this.csd.suggest(params, function(error, data) {
 
-                if (error){
-                    return reject(error);
-                }else{
-                    return resolve(data);
-                }
+				if (error){
+					return reject(error);
+				}else{
+					return resolve(data);
+				}
 
-            });
+			});
 
-        });
+		});
 
-    }
+	}
 
-    uploadDocuments(structured_documents){
+	uploadDocuments(structured_documents){
 
-      du.debug('Uploading documents to Cloudsearch', structured_documents);
+		du.debug('Uploading documents to Cloudsearch', structured_documents);
 
-      return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-        let params = {
-          contentType: 'application/json',
-          documents: structured_documents
-        };
+			let params = {
+				contentType: 'application/json',
+				documents: structured_documents
+			};
 
-        du.debug('Cloudsearch Parameters', params);
+			du.debug('Cloudsearch Parameters', params);
 
-        return this.csd.uploadDocuments(params, (error, data) =>  {
-          if(error){
-              //du.warning('Cloudsearch error: ', error);
-              return reject(error);
-          }
-          //du.debug('Successful Indexing:', data);
-          return resolve(data);
-        });
+			return this.csd.uploadDocuments(params, (error, data) =>  {
+				if(error){
+					//du.warning('Cloudsearch error: ', error);
+					return reject(error);
+				}
+				//du.debug('Successful Indexing:', data);
+				return resolve(data);
+			});
 
-      });
+		});
 
-    }
+	}
 
-    defineIndexField(index_object){
+	defineIndexField(index_object){
 
-      du.debug('Define Index Field');
+		du.debug('Define Index Field');
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        let handle = this.cs.defineIndexField(index_object);
+			let handle = this.cs.defineIndexField(index_object);
 
-        handle.on('success', function(response) {
-          du.info('Create Index Success');
-          return resolve(response);
-        })
-        .on('error', function(response) {
-          du.error('Create Index Error', index_object);
-          eu.throwError('server', response);
-        })
-        .send();
+			handle.on('success', function(response) {
+				du.info('Create Index Success');
+				return resolve(response);
+			})
+				.on('error', function(response) {
+					du.error('Create Index Error', index_object);
+					eu.throwError('server', response);
+				})
+				.send();
 
-      });
+		});
 
-    }
+	}
 
-    /*
+	/*
     waitFor(waitfor_status, domainname, count){
 
       du.debug('Wait For');
@@ -310,177 +310,177 @@ module.exports = class CloudSearchProvider extends AWSProvider {
     }
     */
 
-    describeDomains(domainnames){
+	describeDomains(domainnames){
 
-      du.debug('Describe Domains');
+		du.debug('Describe Domains');
 
-        if (process.env.TEST_MODE === 'true') {
-            du.debug('Test Mode');
+		if (process.env.TEST_MODE === 'true') {
+			du.debug('Test Mode');
 
-            return Promise.resolve(this.AWSCallback(null, {DomainStatusList: [{DocService:{Endpoint: 'cloudsearch.domain'}}]}));
-        }
+			return Promise.resolve(this.AWSCallback(null, {DomainStatusList: [{DocService:{Endpoint: 'cloudsearch.domain'}}]}));
+		}
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        if(_.isUndefined(domainnames)){
-            domainnames = [this.domainname];
-        }
+			if(_.isUndefined(domainnames)){
+				domainnames = [this.domainname];
+			}
 
-        var parameters = {
-          DomainNames: domainnames
-        };
+			var parameters = {
+				DomainNames: domainnames
+			};
 
-        return this.cs.describeDomains(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			return this.cs.describeDomains(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 
-      });
+		});
 
-    }
+	}
 
-    createDomain(domainname){
+	createDomain(domainname){
 
-      return new Promise((resolve) => {
+		return new Promise((resolve) => {
 
-        if(_.isUndefined(domainname)){
+			if(_.isUndefined(domainname)){
 
-          domainname = this.domainname
+				domainname = this.domainname
 
-        }
+			}
 
-        let parameters = {
-          DomainName: domainname,
-        };
+			let parameters = {
+				DomainName: domainname,
+			};
 
-        let handle = this.cs.createDomain(parameters);
+			let handle = this.cs.createDomain(parameters);
 
-        handle.on('success', function(response) {
-          du.info('Create Domain Success');
-          return resolve(response);
-        })
-        .on('error', function(response) {
-          du.error('Create Domain Error');
-          eu.throwError('server', response);
-        })
-        .send();
+			handle.on('success', function(response) {
+				du.info('Create Domain Success');
+				return resolve(response);
+			})
+				.on('error', function(response) {
+					du.error('Create Domain Error');
+					eu.throwError('server', response);
+				})
+				.send();
 
-      });
+		});
 
-    }
+	}
 
-    indexDocuments(domain_name){
+	indexDocuments(domain_name){
 
-      du.debug('Index Documents');
+		du.debug('Index Documents');
 
-      if(_.isUndefined(domain_name)){
-        domain_name = this.domainname;
-      }
+		if(_.isUndefined(domain_name)){
+			domain_name = this.domainname;
+		}
 
-      return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-        const parameters = {
-          DomainName: domain_name,
-        };
+			const parameters = {
+				DomainName: domain_name,
+			};
 
-        this.cs.indexDocuments(parameters, (error, data) => {
+			this.cs.indexDocuments(parameters, (error, data) => {
 
-          if (error) {
+				if (error) {
 
-            du.error(error);
+					du.error(error);
 
-            return reject(error);
+					return reject(error);
 
-          }
+				}
 
-          return resolve(data);
+				return resolve(data);
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    getDomainNames(){
+	getDomainNames(){
 
-      du.debug('Get Domain Names');
+		du.debug('Get Domain Names');
 
-      return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-        this.cs.listDomainNames((error, data) => {
+			this.cs.listDomainNames((error, data) => {
 
-          if(error){ return reject(error); }
+				if(error){ return reject(error); }
 
-          let domain_names = Object.keys(data.DomainNames || {});
+				let domain_names = Object.keys(data.DomainNames || {});
 
-          return resolve(domain_names);
+				return resolve(domain_names);
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    deleteDomain(domain_name){
+	deleteDomain(domain_name){
 
-      du.debug('Delete Domain');
+		du.debug('Delete Domain');
 
-      if(_.isUndefined(domain_name)){
-        domain_name = this.domainname;
-      }
+		if(_.isUndefined(domain_name)){
+			domain_name = this.domainname;
+		}
 
-      return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-        let parameters = {
-            DomainName: domain_name
-        };
+			let parameters = {
+				DomainName: domain_name
+			};
 
-        this.cs.deleteDomain(parameters, (error, data) => {
+			this.cs.deleteDomain(parameters, (error, data) => {
 
-          if(error){ return reject(error); }
+				if(error){ return reject(error); }
 
-          return resolve(data);
+				return resolve(data);
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
-    //Technical Debt:  This totally doesn't belong here.  This is domain logic.
-    saveDomainConfiguration() {
+	//Technical Debt:  This totally doesn't belong here.  This is domain logic.
+	saveDomainConfiguration() {
 
-        du.debug('Save Domain Configuration');
+		du.debug('Save Domain Configuration');
 
-        if (process.env.TEST_MODE === 'true') {
-            du.debug('Test Mode');
-            return Promise.resolve();
-        }
+		if (process.env.TEST_MODE === 'true') {
+			du.debug('Test Mode');
+			return Promise.resolve();
+		}
 
-        return this.describeDomains([this.domainname]).then((results) => {
+		return this.describeDomains([this.domainname]).then((results) => {
 
-            if(objectutilities.hasRecursive(results, 'DomainStatusList.0.DocService.Endpoint')){
+			if(objectutilities.hasRecursive(results, 'DomainStatusList.0.DocService.Endpoint')){
 
-                let domain_endpoint = results.DomainStatusList[0].DocService.Endpoint;
+				let domain_endpoint = results.DomainStatusList[0].DocService.Endpoint;
 
-                if (!_.isNull(domain_endpoint) && stringutilities.isMatch(domain_endpoint, /^[a-zA-Z0-9.\-:]+$/)){
+				if (!_.isNull(domain_endpoint) && stringutilities.isMatch(domain_endpoint, /^[a-zA-Z0-9.\-:]+$/)){
 
-                  //global.SixCRM.configuration.setEnvironmentConfig('cloudsearch.domainendpoint', domain_endpoint);
+					//global.SixCRM.configuration.setEnvironmentConfig('cloudsearch.domainendpoint', domain_endpoint);
 
-                  return domain_endpoint;
+					return domain_endpoint;
 
-                }else{
+				}else{
 
-                  return eu.throwError('server', 'Attempting to set a null or non-compliant cloudshift.domainendpoint configuration globally.');
+					return eu.throwError('server', 'Attempting to set a null or non-compliant cloudshift.domainendpoint configuration globally.');
 
-                }
+				}
 
-            }else{
+			}else{
 
-              return eu.throwError('server', 'Attempting to set a null cloudshift.domainendpoint configuration globally.');
+				return eu.throwError('server', 'Attempting to set a null cloudshift.domainendpoint configuration globally.');
 
-            }
+			}
 
 
-        });
+		});
 
-    }
+	}
 
 }

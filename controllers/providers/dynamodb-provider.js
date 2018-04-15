@@ -12,530 +12,530 @@ const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-p
 
 module.exports = class DynamoDBProvider extends AWSProvider{
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-    }
+	}
 
-    instantiateDynamo(){
+	instantiateDynamo(){
 
-      du.debug('Set Dynamo Objects');
+		du.debug('Set Dynamo Objects');
 
-      let dynamo_region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'dynamodb.region'))?global.SixCRM.configuration.site_config.dynamodb.region:this.getRegion();
+		let dynamo_region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'dynamodb.region'))?global.SixCRM.configuration.site_config.dynamodb.region:this.getRegion();
 
-      let parameters = {
-        region: dynamo_region
-      }
+		let parameters = {
+			region: dynamo_region
+		}
 
-      if(objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'dynamodb.endpoint')){
-        parameters.endpoint = global.SixCRM.configuration.site_config.dynamodb.endpoint;
-        // when we are local and do not have ~./aws/credentials, it requires params to be set even though they are totally pointless
-        parameters.accessKeyId = 'X';
-        parameters.secretAccessKey = 'X';
-      }
+		if(objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'dynamodb.endpoint')){
+			parameters.endpoint = global.SixCRM.configuration.site_config.dynamodb.endpoint;
+			// when we are local and do not have ~./aws/credentials, it requires params to be set even though they are totally pointless
+			parameters.accessKeyId = 'X';
+			parameters.secretAccessKey = 'X';
+		}
 
-      if(!_.has(this, 'AWS')){
-        this.instantiateAWS();
-      }
+		if(!_.has(this, 'AWS')){
+			this.instantiateAWS();
+		}
 
-      this.dynamodb = new this.AWS.DynamoDB.DocumentClient(Object.assign({convertEmptyValues: true}, parameters));
-      this.dynamoraw = new this.AWS.DynamoDB(parameters);
+		this.dynamodb = new this.AWS.DynamoDB.DocumentClient(Object.assign({convertEmptyValues: true}, parameters));
+		this.dynamoraw = new this.AWS.DynamoDB(parameters);
 
-    }
+	}
 
-    get(table, key){
+	get(table, key){
 
-      du.debug('Get');
+		du.debug('Get');
 
-      let parameters = {
-          TableName: table,
-          Key: key
-      };
+		let parameters = {
+			TableName: table,
+			Key: key
+		};
 
-      return this.executeDynamoDBMethod({method: 'get', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'get', parameters: parameters});
 
-    }
+	}
 
-    scanRecords(table, additional_parameters){
+	scanRecords(table, additional_parameters){
 
-      du.debug('Scan Records');
+		du.debug('Scan Records');
 
-      var parameters = {
-          TableName: table
-      };
+		var parameters = {
+			TableName: table
+		};
 
-      parameters = this.translateParameters(additional_parameters, parameters);
+		parameters = this.translateParameters(additional_parameters, parameters);
 
-      return this.executeDynamoDBMethod({method: 'scan', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'scan', parameters: parameters});
 
-    }
+	}
 
-    queryRecords(table, additional_parameters, index){
+	queryRecords(table, additional_parameters, index){
 
-      du.debug('Query Records');
+		du.debug('Query Records');
 
-      var parameters = {
-          TableName: table,
-          IndexName: index
-      };
+		var parameters = {
+			TableName: table,
+			IndexName: index
+		};
 
-      parameters = this.translateParameters(additional_parameters, parameters);
+		parameters = this.translateParameters(additional_parameters, parameters);
 
-      if(_.has(parameters, 'FilterExpression')){
+		if(_.has(parameters, 'FilterExpression')){
 
-        return this.executeRecursiveQuery({parameters: parameters});
+			return this.executeRecursiveQuery({parameters: parameters});
 
-      }
+		}
 
-      return this.executeDynamoDBMethod({method: 'query', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'query', parameters: parameters});
 
-    }
+	}
 
-    executeRecursiveQuery({parameters, aggregated_results}){
+	executeRecursiveQuery({parameters, aggregated_results}){
 
-      du.debug('Execute Recursive Query');
+		du.debug('Execute Recursive Query');
 
-      if(!_.has(parameters, 'Limit')){
-        parameters.Limit = 100;
-      }
+		if(!_.has(parameters, 'Limit')){
+			parameters.Limit = 100;
+		}
 
-      let limit = parameters.Limit;
+		let limit = parameters.Limit;
 
-      if(_.isUndefined(aggregated_results)){
-        aggregated_results = {
-          Items:[],
-          ScannedCount:0
-        };
-      }
+		if(_.isUndefined(aggregated_results)){
+			aggregated_results = {
+				Items:[],
+				ScannedCount:0
+			};
+		}
 
-      if(_.has(aggregated_results, 'LastEvaluatedKey')){
+		if(_.has(aggregated_results, 'LastEvaluatedKey')){
 
-        parameters.ExclusiveStartKey = aggregated_results.LastEvaluatedKey;
+			parameters.ExclusiveStartKey = aggregated_results.LastEvaluatedKey;
 
-      }
+		}
 
-      return this.executeDynamoDBMethod({method: 'query', parameters: parameters}).then(result => {
+		return this.executeDynamoDBMethod({method: 'query', parameters: parameters}).then(result => {
 
-        let result_index = 0;
+			let result_index = 0;
 
-        if(arrayutilities.nonEmpty(result.Items) > 0){
+			if(arrayutilities.nonEmpty(result.Items) > 0){
 
-          //While we haven't met the limit and there are more results in the set.
-          while(aggregated_results.Items.length < limit && result_index < result.Items.length){
+				//While we haven't met the limit and there are more results in the set.
+				while(aggregated_results.Items.length < limit && result_index < result.Items.length){
 
-            aggregated_results.Items.push(result.Items[result_index]);
-            result_index++;
+					aggregated_results.Items.push(result.Items[result_index]);
+					result_index++;
 
-          }
+				}
 
-        }
+			}
 
-        aggregated_results.ScannedCount += result.ScannedCount;
+			aggregated_results.ScannedCount += result.ScannedCount;
 
-        if(!_.has(result, 'LastEvaluatedKey')){
-          if(_.has(aggregated_results, 'LastEvaluatedKey')){
-            delete aggregated_results.LastEvaluatedKey;
-          }
-          aggregated_results.Count = aggregated_results.Items.length;
+			if(!_.has(result, 'LastEvaluatedKey')){
+				if(_.has(aggregated_results, 'LastEvaluatedKey')){
+					delete aggregated_results.LastEvaluatedKey;
+				}
+				aggregated_results.Count = aggregated_results.Items.length;
 
-          return aggregated_results;
-        }
+				return aggregated_results;
+			}
 
-        //there are more results
-        if(aggregated_results.Items.length == limit){
+			//there are more results
+			if(aggregated_results.Items.length == limit){
 
-          aggregated_results.ScannedCount += ((-1 * result.ScannedCount)+ result_index);
-          aggregated_results.LastEvaluatedKey = this.determineLastEvaluatedKey(result, (result_index - 1));
-          aggregated_results.Count = aggregated_results.Items.length;
+				aggregated_results.ScannedCount += ((-1 * result.ScannedCount)+ result_index);
+				aggregated_results.LastEvaluatedKey = this.determineLastEvaluatedKey(result, (result_index - 1));
+				aggregated_results.Count = aggregated_results.Items.length;
 
-          return aggregated_results;
+				return aggregated_results;
 
-        }else{
+			}else{
 
-          aggregated_results.LastEvaluatedKey = result.LastEvaluatedKey;
+				aggregated_results.LastEvaluatedKey = result.LastEvaluatedKey;
 
-        }
+			}
 
-        return this.executeRecursiveQuery({parameters: parameters, aggregated_results: aggregated_results});
+			return this.executeRecursiveQuery({parameters: parameters, aggregated_results: aggregated_results});
 
-      });
+		});
 
-    }
+	}
 
-    determineLastEvaluatedKey(result, result_index){
+	determineLastEvaluatedKey(result, result_index){
 
-      du.debug('Determine LastEvaluatedKey');
+		du.debug('Determine LastEvaluatedKey');
 
-      if(!_.has(result, 'LastEvaluatedKey')){
-        eu.throwError('server', 'determineLastEvaluatedKey requires the LastEvaluatedKey property to be set');
-      }
+		if(!_.has(result, 'LastEvaluatedKey')){
+			eu.throwError('server', 'determineLastEvaluatedKey requires the LastEvaluatedKey property to be set');
+		}
 
-      let last_result_element = result.Items[result_index];
-      let new_last_evaluated_key = {};
+		let last_result_element = result.Items[result_index];
+		let new_last_evaluated_key = {};
 
-      objectutilities.map(result.LastEvaluatedKey, key => {
+		objectutilities.map(result.LastEvaluatedKey, key => {
 
-        if(!_.has(last_result_element, key)){
-          eu.throwError('server', 'Last result element requires key "'+key+'".');
-        }
+			if(!_.has(last_result_element, key)){
+				eu.throwError('server', 'Last result element requires key "'+key+'".');
+			}
 
-        new_last_evaluated_key[key] = last_result_element[key];
+			new_last_evaluated_key[key] = last_result_element[key];
 
-      });
+		});
 
-      return new_last_evaluated_key;
+		return new_last_evaluated_key;
 
-    }
+	}
 
-    countRecords(table, additional_parameters, index){
+	countRecords(table, additional_parameters, index){
 
-      du.debug('Count Records');
+		du.debug('Count Records');
 
-      var parameters = {
-          TableName: table,
-          IndexName: index,
-          Select: 'COUNT'
-      };
+		var parameters = {
+			TableName: table,
+			IndexName: index,
+			Select: 'COUNT'
+		};
 
-      parameters = this.translateParameters(additional_parameters, parameters);
+		parameters = this.translateParameters(additional_parameters, parameters);
 
-      return this.executeDynamoDBMethod({method: 'query', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'query', parameters: parameters});
 
-    }
+	}
 
-    saveRecord(table, item){
+	saveRecord(table, item){
 
-      du.debug('Save Record');
+		du.debug('Save Record');
 
-      item = JSON.parse(JSON.stringify(item));
+		item = JSON.parse(JSON.stringify(item));
 
-      var parameters = {
-          TableName:table,
-          Item:item
-      };
+		var parameters = {
+			TableName:table,
+			Item:item
+		};
 
-      return this.executeDynamoDBMethod({method: 'put', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'put', parameters: parameters});
 
-    }
+	}
 
-    updateRecord(table, key, expression, expression_params){
+	updateRecord(table, key, expression, expression_params){
 
-      du.debug('Update Record');
+		du.debug('Update Record');
 
-      var parameters = {
-          TableName:table,
-          Key: key,
-          UpdateExpression: expression,
-          ExpressionAttributeValues:expression_params,
-          ReturnValues:"UPDATED_NEW"
-      };
+		var parameters = {
+			TableName:table,
+			Key: key,
+			UpdateExpression: expression,
+			ExpressionAttributeValues:expression_params,
+			ReturnValues:"UPDATED_NEW"
+		};
 
-      return this.executeDynamoDBMethod({method: 'update', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'update', parameters: parameters});
 
-    }
+	}
 
-    deleteRecord(table, key, expression, expression_parameters){
+	deleteRecord(table, key, expression, expression_parameters){
 
-      du.debug('Delete Record');
+		du.debug('Delete Record');
 
-      var parameters = {
-          TableName:table,
-          Key: key,
-          ConditionExpression: expression,
-          ExpressionAttributeValues:expression_parameters
-      };
+		var parameters = {
+			TableName:table,
+			Key: key,
+			ConditionExpression: expression,
+			ExpressionAttributeValues:expression_parameters
+		};
 
-      return this.executeDynamoDBMethod({method: 'delete', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'delete', parameters: parameters});
 
-    }
+	}
 
-    //Technical Debt:  This belongs in a query builder helper
-    createINQueryParameters(field_name, in_array){
+	//Technical Debt:  This belongs in a query builder helper
+	createINQueryParameters(field_name, in_array){
 
-      du.debug('Create IN Query Parameters');
+		du.debug('Create IN Query Parameters');
 
-      stringutilities.nonEmpty(field_name, true);
-      arrayutilities.nonEmpty(in_array, true);
+		stringutilities.nonEmpty(field_name, true);
+		arrayutilities.nonEmpty(in_array, true);
 
-      if(!arrayutilities.assureEntries(in_array, 'string')){
-        eu.throwError('server', 'All entries in the "in_array" must be of type string.');
-      }
+		if(!arrayutilities.assureEntries(in_array, 'string')){
+			eu.throwError('server', 'All entries in the "in_array" must be of type string.');
+		}
 
-      let in_object = {};
+		let in_object = {};
 
-      arrayutilities.map(in_array, (value) => {
+		arrayutilities.map(in_array, (value) => {
 
-        //Technical Debt: convert to do,while
-        var in_key = ":"+random.createRandomString(10);
+			//Technical Debt: convert to do,while
+			var in_key = ":"+random.createRandomString(10);
 
-        //assure uniqueness
-        while(_.has(in_object, in_key)){
-          in_key = ":"+random.createRandomString(10);
-        }
+			//assure uniqueness
+			while(_.has(in_object, in_key)){
+				in_key = ":"+random.createRandomString(10);
+			}
 
-        in_object[in_key.toString()] = value;
+			in_object[in_key.toString()] = value;
 
-      });
+		});
 
-      return {
-          filter_expression : field_name+" IN ("+Object.keys(in_object).toString()+ ")",
-          expression_attribute_values : in_object
-      };
+		return {
+			filter_expression : field_name+" IN ("+Object.keys(in_object).toString()+ ")",
+			expression_attribute_values : in_object
+		};
 
-    }
+	}
 
-    appendDisjunctionQueryParameters(query_parameters, field_name, array){
+	appendDisjunctionQueryParameters(query_parameters, field_name, array){
 
-        du.debug('Append Disjunction Query Parameters');
+		du.debug('Append Disjunction Query Parameters');
 
-        // instantiate query_parameters object if undefined, or complete if incomplete
-        if (!query_parameters) {
-            query_parameters = {};
-        }
+		// instantiate query_parameters object if undefined, or complete if incomplete
+		if (!query_parameters) {
+			query_parameters = {};
+		}
 
-        if (!query_parameters.filter_expression) {
-            query_parameters.filter_expression = '';
-        }
+		if (!query_parameters.filter_expression) {
+			query_parameters.filter_expression = '';
+		}
 
-        if (!query_parameters.expression_attribute_names) {
-            query_parameters.expression_attribute_names = {};
-        }
+		if (!query_parameters.expression_attribute_names) {
+			query_parameters.expression_attribute_names = {};
+		}
 
-        if (!query_parameters.expression_attribute_values) {
-            query_parameters.expression_attribute_values = {};
-        }
+		if (!query_parameters.expression_attribute_values) {
+			query_parameters.expression_attribute_values = {};
+		}
 
-        let expression = '';
+		let expression = '';
 
-        // append OR fragment to expression, add value for each element in array and add attribute name
-        Object.keys(array).forEach(key => {
-            expression += (expression ? ' OR ' : '') + `#${field_name} = :${field_name}v` + key;
-            query_parameters.expression_attribute_values[`:${field_name}v` + key] = array[key];
-        });
+		// append OR fragment to expression, add value for each element in array and add attribute name
+		Object.keys(array).forEach(key => {
+			expression += (expression ? ' OR ' : '') + `#${field_name} = :${field_name}v` + key;
+			query_parameters.expression_attribute_values[`:${field_name}v` + key] = array[key];
+		});
 
-        query_parameters.filter_expression += '(' + expression + ')';
-        query_parameters.expression_attribute_names['#' + field_name] = field_name;
+		query_parameters.filter_expression += '(' + expression + ')';
+		query_parameters.expression_attribute_names['#' + field_name] = field_name;
 
-        return query_parameters;
+		return query_parameters;
 
-    }
+	}
 
-    translateParameters(parameters, new_parameter_object){
+	translateParameters(parameters, new_parameter_object){
 
-      du.debug('Translate Parameters');
+		du.debug('Translate Parameters');
 
-      if(_.isUndefined(new_parameter_object)){ new_parameter_object = {}; }
+		if(_.isUndefined(new_parameter_object)){ new_parameter_object = {}; }
 
-      let parameter_map = {
-        'key_condition_expression':'KeyConditionExpression',
-        'expression_attribute_values':'ExpressionAttributeValues',
-        'expression_attribute_names':'ExpressionAttributeNames',
-        'filter_expression':'FilterExpression',
-        'limit':'Limit',
-        'scan_index_forward':'ScanIndexForward',
-        'ExclusiveStartKey':'ExclusiveStartKey',
-        'exclusive_start_key':'ExclusiveStartKey',
-        'Select': 'Select',
-        'select': 'Select'
-      }
+		let parameter_map = {
+			'key_condition_expression':'KeyConditionExpression',
+			'expression_attribute_values':'ExpressionAttributeValues',
+			'expression_attribute_names':'ExpressionAttributeNames',
+			'filter_expression':'FilterExpression',
+			'limit':'Limit',
+			'scan_index_forward':'ScanIndexForward',
+			'ExclusiveStartKey':'ExclusiveStartKey',
+			'exclusive_start_key':'ExclusiveStartKey',
+			'Select': 'Select',
+			'select': 'Select'
+		}
 
-      objectutilities.map(parameter_map, key => {
-        if(_.has(parameters, key) && !_.isNull(parameters[key])){
-          new_parameter_object[parameter_map[key]] = parameters[key];
-        }
-      });
+		objectutilities.map(parameter_map, key => {
+			if(_.has(parameters, key) && !_.isNull(parameters[key])){
+				new_parameter_object[parameter_map[key]] = parameters[key];
+			}
+		});
 
-      return new_parameter_object
+		return new_parameter_object
 
-    }
+	}
 
-    createTable(parameters){
+	createTable(parameters){
 
-      du.debug('Create Table');
+		du.debug('Create Table');
 
-      return this.executeDynamoDBMethod({method: 'createTable', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'createTable', parameters: parameters});
 
-    }
+	}
 
-    updateTable(parameters){
+	updateTable(parameters){
 
-      du.debug('Update Table');
+		du.debug('Update Table');
 
-      return this.executeDynamoDBMethod({method: 'updateTable', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'updateTable', parameters: parameters});
 
-    }
+	}
 
-    describeTable(parameters, fatal) {
+	describeTable(parameters, fatal) {
 
-      du.debug('Describe Table');
+		du.debug('Describe Table');
 
-      if(_.isString(parameters)){
-        parameters = {
-          TableName:parameters
-        };
-      }
+		if(_.isString(parameters)){
+			parameters = {
+				TableName:parameters
+			};
+		}
 
-      return this.executeDynamoDBMethod({method: 'describeTable', parameters: parameters, fatal: fatal});
+		return this.executeDynamoDBMethod({method: 'describeTable', parameters: parameters, fatal: fatal});
 
-    }
+	}
 
-    deleteTable(parameters){
+	deleteTable(parameters){
 
-      du.debug('Delete Table');
+		du.debug('Delete Table');
 
-      if(_.isString(parameters)){
-        parameters = {
-          TableName:parameters
-        };
-      }
+		if(_.isString(parameters)){
+			parameters = {
+				TableName:parameters
+			};
+		}
 
-      return this.executeDynamoDBMethod({method: 'deleteTable', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'deleteTable', parameters: parameters});
 
-    }
+	}
 
-    listTables(parameters){
+	listTables(parameters){
 
-      du.debug('List Tables');
+		du.debug('List Tables');
 
-      parameters = (_.isUndefined(parameters) || _.isNull(parameters))?{}:parameters;
+		parameters = (_.isUndefined(parameters) || _.isNull(parameters))?{}:parameters;
 
-      return this.executeDynamoDBMethod({method: 'listTables', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'listTables', parameters: parameters});
 
-    }
+	}
 
-    createBackup(parameters){
+	createBackup(parameters){
 
-      du.debug('Create Backup');
+		du.debug('Create Backup');
 
-      if(_.isString(parameters)){
-        parameters = {
-          TableName: parameters
-        };
-      }
+		if(_.isString(parameters)){
+			parameters = {
+				TableName: parameters
+			};
+		}
 
-      if(!_.has(parameters, 'BackupName')){
-        parameters.BackupName = parameters.TableName+'-'+stringutilities.replaceAll(timestamp.getISO8601(),':','.');
-      }
+		if(!_.has(parameters, 'BackupName')){
+			parameters.BackupName = parameters.TableName+'-'+stringutilities.replaceAll(timestamp.getISO8601(),':','.');
+		}
 
-      return this.executeDynamoDBMethod({method: 'createBackup', parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'createBackup', parameters: parameters});
 
-    }
+	}
 
-    waitFor(parameters, status){
+	waitFor(parameters, status){
 
-      du.debug('Wait For');
+		du.debug('Wait For');
 
-      if(_.isString(parameters)){
-        parameters = {
-          TableName:parameters
-        };
-      }
+		if(_.isString(parameters)){
+			parameters = {
+				TableName:parameters
+			};
+		}
 
-      return this.executeDynamoDBMethod({method: 'waitFor', status: status, parameters: parameters});
+		return this.executeDynamoDBMethod({method: 'waitFor', status: status, parameters: parameters});
 
-    }
+	}
 
-    executeDynamoDBMethod({method, parameters, status, fatal}){
+	executeDynamoDBMethod({method, parameters, status, fatal}){
 
-      du.debug('Execute Dynamo DB Method');
+		du.debug('Execute Dynamo DB Method');
 
-      du.debug('Method: '+method);
+		du.debug('Method: '+method);
 
-      fatal = (_.isUndefined(fatal))?true:fatal;
+		fatal = (_.isUndefined(fatal))?true:fatal;
 
-      let valid_methods = {
-        document_client: ['get', 'scan', 'query', 'put', 'update', 'delete'],
-        raw: ['waitFor', 'deleteTable', 'describeTable', 'updateTable', 'createTable', 'createBackup','listTables']
-      }
+		let valid_methods = {
+			document_client: ['get', 'scan', 'query', 'put', 'update', 'delete'],
+			raw: ['waitFor', 'deleteTable', 'describeTable', 'updateTable', 'createTable', 'createBackup','listTables']
+		}
 
-      if(_.includes(valid_methods.document_client, method)){
+		if(_.includes(valid_methods.document_client, method)){
 
-        return new Promise((resolve, reject) => {
+			return new Promise((resolve, reject) => {
 
-          du.debug('DynamoDB Parameters (last hop):', parameters);
+				du.debug('DynamoDB Parameters (last hop):', parameters);
 
-          if(!_.has(this, 'dynamodb')){
-            this.instantiateDynamo();
-          }
+				if(!_.has(this, 'dynamodb')){
+					this.instantiateDynamo();
+				}
 
-          this.dynamodb[method](parameters, (error, data) => {
+				this.dynamodb[method](parameters, (error, data) => {
 
-            if(error){
+					if(error){
 
-              du.error(error);
+						du.error(error);
 
-              if(fatal){
-                eu.throwError('server', error);
-              }
+						if(fatal){
+							eu.throwError('server', error);
+						}
 
-              return reject(error);
+						return reject(error);
 
-            }
+					}
 
-            return resolve(data);
+					return resolve(data);
 
-          });
+				});
 
-        });
+			});
 
-      }
+		}
 
-      if(_.includes(valid_methods.raw, method)){
+		if(_.includes(valid_methods.raw, method)){
 
-        return new Promise((resolve, reject) => {
+			return new Promise((resolve, reject) => {
 
-          if(method == 'waitFor'){
+				if(method == 'waitFor'){
 
-            du.debug('DynamoDB Parameters (last hop):', parameters);
+					du.debug('DynamoDB Parameters (last hop):', parameters);
 
-            if(!_.has(this, 'dynamoraw')){
-              this.instantiateDynamo();
-            }
+					if(!_.has(this, 'dynamoraw')){
+						this.instantiateDynamo();
+					}
 
-            this.dynamoraw[method](status, parameters, (error, data) => {
+					this.dynamoraw[method](status, parameters, (error, data) => {
 
-              if(_.isError(error)){
-                if(fatal){
-                  eu.throwError('server', error);
-                }
-                return reject(error);
-              }
+						if(_.isError(error)){
+							if(fatal){
+								eu.throwError('server', error);
+							}
+							return reject(error);
+						}
 
-              return resolve(data);
+						return resolve(data);
 
-            });
+					});
 
-          }else{
+				}else{
 
-            du.debug('DynamoDB Parameters (last hop):', parameters);
+					du.debug('DynamoDB Parameters (last hop):', parameters);
 
-            if(!_.has(this, 'dynamoraw')){
-              this.instantiateDynamo();
-            }
+					if(!_.has(this, 'dynamoraw')){
+						this.instantiateDynamo();
+					}
 
-            this.dynamoraw[method](parameters, (error, data) => {
+					this.dynamoraw[method](parameters, (error, data) => {
 
-              du.error(error);
-              if(_.isError(error)){
-                if(fatal){
-                  eu.throwError('server', error);
-                }
-                return reject(error);
-              }
+						du.error(error);
+						if(_.isError(error)){
+							if(fatal){
+								eu.throwError('server', error);
+							}
+							return reject(error);
+						}
 
-              return resolve(data);
+						return resolve(data);
 
-            });
+					});
 
-          }
+				}
 
-        });
+			});
 
-      }
+		}
 
-      eu.throwError('server', 'Unknown method: '+method);
+		eu.throwError('server', 'Unknown method: '+method);
 
-    }
+	}
 
 }

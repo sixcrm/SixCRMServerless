@@ -1,4 +1,3 @@
-
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -10,194 +9,205 @@ const ShippingReceiptController = global.SixCRM.routes.include('entities', 'Ship
 
 module.exports = class TerminalRecieptGenerator {
 
-  constructor(){
+	constructor() {
 
-    this.shippingReceiptController = new ShippingReceiptController();
-    this.fulfillmentProviderController = new FulfillmentProviderController();
+		this.shippingReceiptController = new ShippingReceiptController();
+		this.fulfillmentProviderController = new FulfillmentProviderController();
 
-    const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+		const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 
-    this.transactionHelperController = new TransactionHelperController();
+		this.transactionHelperController = new TransactionHelperController();
 
-    this.parameter_definitions = {
-      issueReceipt:{
-        required:{
-          fulfillmentproviderid:'fulfillment_provider_id',
-          augmentedtransactionproducts: 'augmented_transaction_products',
-          fulfillmentproviderreference: 'fulfillment_provider_reference'
-        },
-        optional:{
-          trackingnumber:'tracking_number',
-        }
-      }
-    };
+		this.parameter_definitions = {
+			issueReceipt: {
+				required: {
+					fulfillmentproviderid: 'fulfillment_provider_id',
+					augmentedtransactionproducts: 'augmented_transaction_products',
+					fulfillmentproviderreference: 'fulfillment_provider_reference'
+				},
+				optional: {
+					trackingnumber: 'tracking_number',
+				}
+			}
+		};
 
-    this.parameter_validation = {
-      'fulfillmentproviderid':global.SixCRM.routes.path('model', 'definitions/uuidv4.json'),
-      'fulfillmentprovider':global.SixCRM.routes.path('model', 'entities/fulfillmentprovider.json'),
-      'shippingreceipt':global.SixCRM.routes.path('model', 'entities/shippingreceipt.json'),
-      'shippingreceiptprototype':global.SixCRM.routes.path('model', 'providers/shipping/terminal/shippingreceiptprototype.json'),
-      'account':global.SixCRM.routes.path('model', 'definitions/sixcrmaccountidentifier.json'),
-      'augmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproducts.json'),
-      'fulfillmentproviderreference': global.SixCRM.routes.path('model', 'definitions/uuidv4.json')
-    };
+		this.parameter_validation = {
+			'fulfillmentproviderid': global.SixCRM.routes.path('model', 'definitions/uuidv4.json'),
+			'fulfillmentprovider': global.SixCRM.routes.path('model', 'entities/fulfillmentprovider.json'),
+			'shippingreceipt': global.SixCRM.routes.path('model', 'entities/shippingreceipt.json'),
+			'shippingreceiptprototype': global.SixCRM.routes.path('model', 'providers/shipping/terminal/shippingreceiptprototype.json'),
+			'account': global.SixCRM.routes.path('model', 'definitions/sixcrmaccountidentifier.json'),
+			'augmentedtransactionproducts': global.SixCRM.routes.path('model', 'providers/shipping/terminal/augmentedtransactionproducts.json'),
+			'fulfillmentproviderreference': global.SixCRM.routes.path('model', 'definitions/uuidv4.json')
+		};
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
+		this.parameters = new Parameters({
+			validation: this.parameter_validation,
+			definition: this.parameter_definitions
+		});
 
-    this.fulfillmentProviderController.sanitize(false);
+		this.fulfillmentProviderController.sanitize(false);
 
-  }
+	}
 
-  issueReceipt(){
+	issueReceipt() {
 
-    du.debug('Issue Receipt');
+		du.debug('Issue Receipt');
 
-    this.parameters.setParameters({argumentation: arguments[0], action: 'issueReceipt'});
+		this.parameters.setParameters({
+			argumentation: arguments[0],
+			action: 'issueReceipt'
+		});
 
-    return this.hydrateProperties()
-    .then(() => this.createShippingReceiptPrototype())
-    .then(() => this.createShippingReceipt())
-    .then(() => this.associateShippingReceiptWithTransactionProducts())
-    .then(() => {
-      return this.parameters.get('shippingreceipt');
-    });
+		return this.hydrateProperties()
+			.then(() => this.createShippingReceiptPrototype())
+			.then(() => this.createShippingReceipt())
+			.then(() => this.associateShippingReceiptWithTransactionProducts())
+			.then(() => {
+				return this.parameters.get('shippingreceipt');
+			});
 
-  }
+	}
 
-  hydrateProperties(){
+	hydrateProperties() {
 
-    du.debug('Hydrate Properties');
+		du.debug('Hydrate Properties');
 
-    let hydration_promises = [
-      this.getAccount()
-    ];
+		let hydration_promises = [
+			this.getAccount()
+		];
 
-    return Promise.all(hydration_promises).then(() => {
-      return true;
-    });
+		return Promise.all(hydration_promises).then(() => {
+			return true;
+		});
 
-  }
+	}
 
-  getAccount(){
+	getAccount() {
 
-    du.debug('Get Account');
+		du.debug('Get Account');
 
-    let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
+		let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
 
-    return this.fulfillmentProviderController.get({id: fulfillment_provider_id }).then(result => {
+		return this.fulfillmentProviderController.get({
+			id: fulfillment_provider_id
+		}).then(result => {
 
-      this.parameters.set('fulfillmentprovider', result);
+			this.parameters.set('fulfillmentprovider', result);
 
-      this.parameters.set('account', result.account);
+			this.parameters.set('account', result.account);
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  createShippingReceiptPrototype(){
+	createShippingReceiptPrototype() {
 
-    du.debug('Create Shipping Receipt Prototype');
+		du.debug('Create Shipping Receipt Prototype');
 
-    let account = this.parameters.get('account');
-    let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
-    let fulfillment_provider_reference = this.parameters.get('fulfillmentproviderreference', null, false);
-    let tracking_number = this.parameters.get('trackingnumber', null, false);
+		let account = this.parameters.get('account');
+		let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
+		let fulfillment_provider_reference = this.parameters.get('fulfillmentproviderreference', null, false);
+		let tracking_number = this.parameters.get('trackingnumber', null, false);
 
-    let prototype = {
-      account: account,
-      fulfillment_provider: fulfillment_provider_id,
-  		status: 'pending',
-      history: [
-        {
-          created_at: timestamp.getISO8601(),
-          status:'pending',
-          detail: 'Fulfillment Provider notified.'
-        }
-      ]
-    };
+		let prototype = {
+			account: account,
+			fulfillment_provider: fulfillment_provider_id,
+			status: 'pending',
+			history: [{
+				created_at: timestamp.getISO8601(),
+				status: 'pending',
+				detail: 'Fulfillment Provider notified.'
+			}]
+		};
 
-    if(!_.isNull(fulfillment_provider_reference)){
-      prototype.fulfillment_provider_reference = fulfillment_provider_reference;
-    }
+		if (!_.isNull(fulfillment_provider_reference)) {
+			prototype.fulfillment_provider_reference = fulfillment_provider_reference;
+		}
 
-    if(!_.isNull(tracking_number)){
-      prototype.tracking = {
-        id: tracking_number,
-        carrier: 'USPS' //Technical Debt:  Wha? //Critical
-      }
-    }
+		if (!_.isNull(tracking_number)) {
+			prototype.tracking = {
+				id: tracking_number,
+				carrier: 'USPS' //Technical Debt:  Wha? //Critical
+			}
+		}
 
-    this.parameters.set('shippingreceiptprototype', prototype);
+		this.parameters.set('shippingreceiptprototype', prototype);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  createShippingReceipt(){
+	createShippingReceipt() {
 
-    du.debug('Create Shipping Receipt');
+		du.debug('Create Shipping Receipt');
 
-    let shipping_receipt_prototype = this.parameters.get('shippingreceiptprototype');
+		let shipping_receipt_prototype = this.parameters.get('shippingreceiptprototype');
 
-    return this.shippingReceiptController.create({entity: shipping_receipt_prototype}).then(shipping_receipt => {
-      this.parameters.set('shippingreceipt', shipping_receipt);
-      return true;
-    });
+		return this.shippingReceiptController.create({
+			entity: shipping_receipt_prototype
+		}).then(shipping_receipt => {
+			this.parameters.set('shippingreceipt', shipping_receipt);
+			return true;
+		});
 
-  }
+	}
 
-  associateShippingReceiptWithTransactionProducts(){
+	associateShippingReceiptWithTransactionProducts() {
 
-    du.debug('Associate Shipping Receipt With Transaction Products');
+		du.debug('Associate Shipping Receipt With Transaction Products');
 
-    let shipping_receipt = this.parameters.get('shippingreceipt');
-    let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
+		let shipping_receipt = this.parameters.get('shippingreceipt');
+		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
-    du.warning(shipping_receipt, augmented_transaction_products);
+		du.warning(shipping_receipt, augmented_transaction_products);
 
-    let grouped_augmented_transaction_products = this.groupAugmentedTransactionProducts(augmented_transaction_products);
+		let grouped_augmented_transaction_products = this.groupAugmentedTransactionProducts(augmented_transaction_products);
 
-    let transaction_update_promises = objectutilities.map(grouped_augmented_transaction_products, transaction_id => {
+		let transaction_update_promises = objectutilities.map(grouped_augmented_transaction_products, transaction_id => {
 
-      let updated_transaction_products = this.updateTransactionProducts(grouped_augmented_transaction_products[transaction_id]);
+			let updated_transaction_products = this.updateTransactionProducts(grouped_augmented_transaction_products[transaction_id]);
 
-      return () => this.transactionHelperController.updateTransactionProducts({transaction_id: transaction_id, updated_transaction_products: updated_transaction_products});
+			return () => this.transactionHelperController.updateTransactionProducts({
+				transaction_id: transaction_id,
+				updated_transaction_products: updated_transaction_products
+			});
 
-    });
+		});
 
-    return arrayutilities.serial(transaction_update_promises).then(() => {
-      //du.info(results);
-      return true;
-    });
+		return arrayutilities.serial(transaction_update_promises).then(() => {
+			//du.info(results);
+			return true;
+		});
 
-  }
+	}
 
-  groupAugmentedTransactionProducts(augmented_transaction_products){
+	groupAugmentedTransactionProducts(augmented_transaction_products) {
 
-    du.debug('groupAugmentedTransactionProductsByTransactionID');
+		du.debug('groupAugmentedTransactionProductsByTransactionID');
 
-    return arrayutilities.group(augmented_transaction_products, (augmented_transaction_product) => {
-      return augmented_transaction_product.transaction.id;
-    });
+		return arrayutilities.group(augmented_transaction_products, (augmented_transaction_product) => {
+			return augmented_transaction_product.transaction.id;
+		});
 
-  }
+	}
 
-  updateTransactionProducts(augmented_transaction_products){
+	updateTransactionProducts(augmented_transaction_products) {
 
-    du.debug('Update Transaction Products');
+		du.debug('Update Transaction Products');
 
-    let shipping_receipt = this.parameters.get('shippingreceipt');
+		let shipping_receipt = this.parameters.get('shippingreceipt');
 
-    return arrayutilities.map(augmented_transaction_products, transaction_product => {
-      return {
-        product: transaction_product.product.id,
-        shipping_receipt: shipping_receipt.id,
-        amount: transaction_product.amount
-      }
-    });
+		return arrayutilities.map(augmented_transaction_products, transaction_product => {
+			return {
+				product: transaction_product.product.id,
+				shipping_receipt: shipping_receipt.id,
+				amount: transaction_product.amount
+			}
+		});
 
-  }
+	}
 
 }

@@ -10,14 +10,14 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidMessage(id){
 
-  return MockEntities.getValidMessage(id);
+	return MockEntities.getValidMessage(id);
 
 }
 
 let rebill_id = null
 
 process.argv.forEach((val) => {
-  /* eslint-disable */
+	/* eslint-disable */
   if(stringutilities.isMatch(val, /^--rebill=[a-z0-9\-].*$/)){
     rebill_id = val.split('=')[1];
   }
@@ -26,50 +26,50 @@ process.argv.forEach((val) => {
 
 describe('controllers/workers/forwardmessage/shippedToDeliveredForwardMessage.js', () => {
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-  beforeEach(() => {
-    mockery.resetCache();
-    mockery.deregisterAll();
-  });
+	beforeEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-  describe('execute', () => {
+	describe('execute', () => {
 
-    it('successfully executes', () => {
+		it('successfully executes', () => {
 
-      rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
-      let message = getValidMessage(rebill_id);
+			rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
+			let message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-        receiveMessages({queue}) {
-          du.highlight('Message read from queue (mock): '+queue);
-          return Promise.resolve([message]);
-        }
-        sendMessage({ queue: queue}) {
-          du.highlight('Message sent to queue (mock): '+queue);
-          return Promise.resolve(true);
-        }
-        deleteMessage({queue}) {
-          du.highlight('Deleting message from queue: '+queue);
-          return Promise.resolve(true);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				receiveMessages({queue}) {
+					du.highlight('Message read from queue (mock): '+queue);
+					return Promise.resolve([message]);
+				}
+				sendMessage({ queue: queue}) {
+					du.highlight('Message sent to queue (mock): '+queue);
+					return Promise.resolve(true);
+				}
+				deleteMessage({queue}) {
+					du.highlight('Deleting message from queue: '+queue);
+					return Promise.resolve(true);
+				}
+			});
 
-      const ShippedToDeliveredForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/ShippedToDeliveredForwardMessage.js');
-      let shippedToDeliveredForwardMessageController = new ShippedToDeliveredForwardMessageController();
+			const ShippedToDeliveredForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/ShippedToDeliveredForwardMessage.js');
+			let shippedToDeliveredForwardMessageController = new ShippedToDeliveredForwardMessageController();
 
-      return shippedToDeliveredForwardMessageController.execute().then(result => {
-        du.info(result);
-      });
+			return shippedToDeliveredForwardMessageController.execute().then(result => {
+				du.info(result);
+			});
 
-    });
+		});
 
-  });
+	});
 
 });

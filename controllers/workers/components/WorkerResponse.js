@@ -4,41 +4,41 @@ const ResponseController = global.SixCRM.routes.include('providers', 'Response.j
 
 module.exports = class WorkerResponse extends ResponseController {
 
-  constructor(response_type){
+	constructor(response_type){
 
-    super();
+		super();
 
-    this.response_types = {
-      noaction:{
-        code: 'noaction'
-      }
-    };
+		this.response_types = {
+			noaction:{
+				code: 'noaction'
+			}
+		};
 
-    this.parameter_validation = {
-      response_type: global.SixCRM.routes.path('model', 'workers/workerresponsetype.json')
-    }
+		this.parameter_validation = {
+			response_type: global.SixCRM.routes.path('model', 'workers/workerresponsetype.json')
+		}
 
-    this.initialize();
+		this.initialize();
 
-    if(!_.isUndefined(response_type)){
-      this.setResponse(response_type);
-    }
-  }
+		if(!_.isUndefined(response_type)){
+			this.setResponse(response_type);
+		}
+	}
 
-  setAdditionalInformation(additional_information){
+	setAdditionalInformation(additional_information){
 
-    this.additional_information = additional_information;
+		this.additional_information = additional_information;
 
-  }
+	}
 
-  getAdditionalInformation(){
+	getAdditionalInformation(){
 
-    if(_.has(this, 'additional_information')){
-      return this.additional_information;
-    }
+		if(_.has(this, 'additional_information')){
+			return this.additional_information;
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
 }

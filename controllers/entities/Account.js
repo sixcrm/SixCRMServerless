@@ -6,59 +6,59 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 //Technical Debt: Override the list method
 class AccountController extends entityController {
 
-    constructor(){
+	constructor(){
 
-      super('account');
+		super('account');
 
-      this.search_fields = ['name'];
+		this.search_fields = ['name'];
 
-    }
+	}
 
-    //Technical Debt: finish!
-    associatedEntitiesCheck(){
-      return Promise.resolve([]);
-    }
+	//Technical Debt: finish!
+	associatedEntitiesCheck(){
+		return Promise.resolve([]);
+	}
 
-    //Technical Debt:  Shouldn't this be configured?
-    getMasterAccount(){
+	//Technical Debt:  Shouldn't this be configured?
+	getMasterAccount(){
 
-      du.debug('Get Master Account');
+		du.debug('Get Master Account');
 
-      return Promise.resolve({
-          "id":"*",
-          "name": "Master Account",
-          "active": true
-      });
+		return Promise.resolve({
+			"id":"*",
+			"name": "Master Account",
+			"active": true
+		});
 
-    }
+	}
 
-    //Technical Debt:  Name seems ubiquitous
-    getACL(account){
+	//Technical Debt:  Name seems ubiquitous
+	getACL(account){
 
-      du.debug('Get ACL');
+		du.debug('Get ACL');
 
-      return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: account});
+		return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: account});
 
-    }
+	}
 
-    //Technical Debt:  This needs to be adjusted.  Master users should see all accounts but non-master users should see all accounts that they have ACLs on.
-    list({pagination, fatal}){
+	//Technical Debt:  This needs to be adjusted.  Master users should see all accounts but non-master users should see all accounts that they have ACLs on.
+	list({pagination, fatal}){
 
-      du.debug("List");
+		du.debug("List");
 
-      let query_parameters = {};
+		let query_parameters = {};
 
-      if(global.account !== '*'){
+		if(global.account !== '*'){
 
-        query_parameters = this.appendFilterExpression(query_parameters, 'id = :accountv');
-        query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', global.account);
-        pagination = null;
+			query_parameters = this.appendFilterExpression(query_parameters, 'id = :accountv');
+			query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', global.account);
+			pagination = null;
 
-      }
+		}
 
-      return super.list({query_parameters: query_parameters, pagination: pagination, fatal: fatal});
+		return super.list({query_parameters: query_parameters, pagination: pagination, fatal: fatal});
 
-    }
+	}
 
 }
 

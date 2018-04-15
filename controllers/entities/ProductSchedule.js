@@ -9,172 +9,172 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 
 module.exports = class ProductScheduleController extends entityController {
 
-    constructor(){
+	constructor(){
 
-      super('productschedule');
+		super('productschedule');
 
-      this.productScheduleHelper = new ProductScheduleHelper();
+		this.productScheduleHelper = new ProductScheduleHelper();
 
-      this.search_fields = ['name'];
+		this.search_fields = ['name'];
 
-    }
+	}
 
-    //Technical Debt: Deprecated
-    getCampaigns(args){
+	//Technical Debt: Deprecated
+	getCampaigns(args){
 
-      du.debug('Get Campaigns');
+		du.debug('Get Campaigns');
 
-      //Technical Debt:  This looks redundant.
-      let product_schedule_id = this.getID(args.productschedule);
+		//Technical Debt:  This looks redundant.
+		let product_schedule_id = this.getID(args.productschedule);
 
-      return this.executeAssociatedEntityFunction('CampaignController', 'listCampaignsByProductSchedule', {productschedule: product_schedule_id, pagination: args.pagination});
+		return this.executeAssociatedEntityFunction('CampaignController', 'listCampaignsByProductSchedule', {productschedule: product_schedule_id, pagination: args.pagination});
 
-    }
+	}
 
-    listByProduct({product, pagination}){
+	listByProduct({product, pagination}){
 
-      du.debug('List By Product');
+		du.debug('List By Product');
 
-      let product_id = this.getID(product);
+		let product_id = this.getID(product);
 
-      return this.listByAccount({pagination: pagination})
-      .then((productschedules) => this.getResult(productschedules, 'productschedules'))
-      .then((productschedules) => {
+		return this.listByAccount({pagination: pagination})
+			.then((productschedules) => this.getResult(productschedules, 'productschedules'))
+			.then((productschedules) => {
 
-        let return_array = [];
+				let return_array = [];
 
-        if(arrayutilities.nonEmpty(productschedules)){
+				if(arrayutilities.nonEmpty(productschedules)){
 
-          arrayutilities.map(productschedules, productschedule => {
+					arrayutilities.map(productschedules, productschedule => {
 
-            if(arrayutilities.nonEmpty(productschedule.schedule)){
+						if(arrayutilities.nonEmpty(productschedule.schedule)){
 
-              let found = arrayutilities.find(productschedule.schedule, (schedule) => {
-                return (_.has(schedule, 'product') && schedule.product == product_id);
-              });
+							let found = arrayutilities.find(productschedule.schedule, (schedule) => {
+								return (_.has(schedule, 'product') && schedule.product == product_id);
+							});
 
-              if(!_.isUndefined(found)){
-                return_array.push(productschedule);
-              }
-            }
+							if(!_.isUndefined(found)){
+								return_array.push(productschedule);
+							}
+						}
 
-          });
+					});
 
-        }
+				}
 
-        return {
-          productschedules: return_array,
-          pagination: this.buildPaginationObject({
-            Count: return_array.length
-          })
-        }
+				return {
+					productschedules: return_array,
+					pagination: this.buildPaginationObject({
+						Count: return_array.length
+					})
+				}
 
-      });
+			});
 
-    }
+	}
 
-    getMerchantProviderGroup(product_schedule){
+	getMerchantProviderGroup(product_schedule){
 
-      du.debug('Get Merchant Provider Group');
+		du.debug('Get Merchant Provider Group');
 
-      if(!_.has(product_schedule, 'merchantprovidergroup')){ return Promise.resolve(null); }
+		if(!_.has(product_schedule, 'merchantprovidergroup')){ return Promise.resolve(null); }
 
-      return this.executeAssociatedEntityFunction('MerchantProviderGroupController', 'get', {id: product_schedule.merchantprovidergroup});
+		return this.executeAssociatedEntityFunction('MerchantProviderGroupController', 'get', {id: product_schedule.merchantprovidergroup});
 
-    }
+	}
 
-    getProduct(scheduled_product){
+	getProduct(scheduled_product){
 
-			du.debug('Get Product');
+		du.debug('Get Product');
 
-			let product_id = _.has(scheduled_product, 'product') ? scheduled_product.product : scheduled_product.product_id;
+		let product_id = _.has(scheduled_product, 'product') ? scheduled_product.product : scheduled_product.product_id;
 
-      //Technical Debt: Hack
-      if(_.isNull(product_id) || _.isUndefined(product_id)){ return Promise.resolve(null) }
+		//Technical Debt: Hack
+		if(_.isNull(product_id) || _.isUndefined(product_id)){ return Promise.resolve(null) }
 
-      return this.executeAssociatedEntityFunction('ProductController', 'get', {id: product_id});
+		return this.executeAssociatedEntityFunction('ProductController', 'get', {id: product_id});
 
-    }
+	}
 
-    getProducts(product_schedule){
+	getProducts(product_schedule){
 
-      du.debug('Get Products');
+		du.debug('Get Products');
 
-      if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
+		if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
-        let product_ids = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
+			let product_ids = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
 
-					//Techincal Debt: accounting for legacy deta, remove at earliest convenience
-					return _.has(product_schedule, 'product') ? product_schedule.product : product_schedule.product_id;
+				//Techincal Debt: accounting for legacy deta, remove at earliest convenience
+				return _.has(product_schedule, 'product') ? product_schedule.product : product_schedule.product_id;
 
-        });
+			});
 
-        if(arrayutilities.nonEmpty(product_ids)){
+			if(arrayutilities.nonEmpty(product_ids)){
 
-          let query_parameters = this.createINQueryParameters({field: 'id', list_array: product_ids});
+				let query_parameters = this.createINQueryParameters({field: 'id', list_array: product_ids});
 
-          du.warning(query_parameters);
-          return this.executeAssociatedEntityFunction('ProductController', 'listByAccount', {query_parameters: query_parameters});
+				du.warning(query_parameters);
+				return this.executeAssociatedEntityFunction('ProductController', 'listByAccount', {query_parameters: query_parameters});
 
-        }
+			}
 
-      }
+		}
 
-      return Promise.null;
+		return Promise.null;
 
-    }
+	}
 
-    //Technical Debt:  Can we make this work better?
-    getProductScheduleHydrated(id){
+	//Technical Debt:  Can we make this work better?
+	getProductScheduleHydrated(id){
 
-      du.debug('Get Product Schedule Hydrated');
+		du.debug('Get Product Schedule Hydrated');
 
-      return this.get({id: id}).then((product_schedule) => {
+		return this.get({id: id}).then((product_schedule) => {
 
-        if(_.has(product_schedule, 'schedule')){
+			if(_.has(product_schedule, 'schedule')){
 
-          return this.getProducts(product_schedule).then((products) => {
+				return this.getProducts(product_schedule).then((products) => {
 
-            return this.productScheduleHelper.marryProductsToSchedule({product_schedule: product_schedule, products: products});
+					return this.productScheduleHelper.marryProductsToSchedule({product_schedule: product_schedule, products: products});
 
-          });
+				});
 
-        }else{
+			}else{
 
-          return product_schedule;
+				return product_schedule;
 
-        }
+			}
 
-      });
+		});
 
-    }
+	}
 
-    listProductSchedulesByList({product_schedules}){
+	listProductSchedulesByList({product_schedules}){
 
-      du.debug('List Product Schedules By List');
+		du.debug('List Product Schedules By List');
 
-      let query_parameters = this.createINQueryParameters({field: 'id', list_array: product_schedules});
+		let query_parameters = this.createINQueryParameters({field: 'id', list_array: product_schedules});
 
-      return this.listByAccount({query_parameters: query_parameters});
+		return this.listByAccount({query_parameters: query_parameters});
 
-    }
+	}
 
-    listByMerchantProviderGroup({merchantprovidergroup, pagination}){
+	listByMerchantProviderGroup({merchantprovidergroup, pagination}){
 
-      du.debug('List By Merchant Provider Group');
+		du.debug('List By Merchant Provider Group');
 
-      let query_parameters = {
-        filter_expression: '#f1 = :merchantprovidergroup_id',
-        expression_attribute_values: {
-          ':merchantprovidergroup_id':this.getID(merchantprovidergroup)
-        },
-        expression_attribute_names: {
-          '#f1':'merchantprovidergroup'
-        }
-      };
+		let query_parameters = {
+			filter_expression: '#f1 = :merchantprovidergroup_id',
+			expression_attribute_values: {
+				':merchantprovidergroup_id':this.getID(merchantprovidergroup)
+			},
+			expression_attribute_names: {
+				'#f1':'merchantprovidergroup'
+			}
+		};
 
-      return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
+		return this.listByAccount({query_parameters: query_parameters, pagination: pagination});
 
-    }
+	}
 
 }

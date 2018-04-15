@@ -13,381 +13,381 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 //Technical Debt:  The list method here is tricky
 module.exports = class UserController extends entityController {
 
-    constructor(){
-        super('user');
+	constructor(){
+		super('user');
 
-        this.search_fields = ['name', 'firstname', 'lastname'];
+		this.search_fields = ['name', 'firstname', 'lastname'];
 
-    }
+	}
 
-    //Technical Debt: finish!
-    //usersigningstring
-    //usersetting
-    //userdevicetoken
-    //notificationread
-    //notification
-    //customernote
-    associatedEntitiesCheck({id}){
+	//Technical Debt: finish!
+	//usersigningstring
+	//usersetting
+	//userdevicetoken
+	//notificationread
+	//notification
+	//customernote
+	associatedEntitiesCheck({id}){
 
-      du.debug('Associated Entities Check');
+		du.debug('Associated Entities Check');
 
-      let return_array = [];
+		let return_array = [];
 
-      let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('userACLController', 'listByUser', {user: id})
-      ];
+		let data_acquisition_promises = [
+			this.executeAssociatedEntityFunction('userACLController', 'listByUser', {user: id})
+		];
 
-      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+		return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
 
-        let useracls = data_acquisition_promises[0];
+			let useracls = data_acquisition_promises[0];
 
-        if(_.has(useracls, 'useracls') && arrayutilities.nonEmpty(useracls.useracls)){
-          arrayutilities.map(useracls.useracls, (useracl) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Campaign', object: useracl}));
-          });
-        }
+			if(_.has(useracls, 'useracls') && arrayutilities.nonEmpty(useracls.useracls)){
+				arrayutilities.map(useracls.useracls, (useracl) => {
+					return_array.push(this.createAssociatedEntitiesObject({name:'Campaign', object: useracl}));
+				});
+			}
 
-        return return_array;
+			return return_array;
 
-      });
+		});
 
-    }
+	}
 
-    getUserByAlias(user_alias){
+	getUserByAlias(user_alias){
 
-      du.debug('Get User By Alias');
+		du.debug('Get User By Alias');
 
-      //Technical Debt:  Why are the ACL's disabled here?
-      return Promise.resolve(this.disableACLs())
-      .then(() => this.getBySecondaryIndex({field:'alias', index_value: user_alias, index_name: 'alias-index'}))
-      .then((user) => {
+		//Technical Debt:  Why are the ACL's disabled here?
+		return Promise.resolve(this.disableACLs())
+			.then(() => this.getBySecondaryIndex({field:'alias', index_value: user_alias, index_name: 'alias-index'}))
+			.then((user) => {
 
-        this.enableACLs();
-        return user;
+				this.enableACLs();
+				return user;
 
-      }).then((user) => {
+			}).then((user) => {
 
-        if(!_.has(user, 'id')){
-          eu.throwError('not_found', 'User not found: '+user_alias);
-        }
+				if(!_.has(user, 'id')){
+					eu.throwError('not_found', 'User not found: '+user_alias);
+				}
 
-        return user;
+				return user;
 
-      }).then((user) => {
+			}).then((user) => {
 
-        return Promise.resolve(this.disableACLs())
-        .then(() => this.getHydrated(user.id));
+				return Promise.resolve(this.disableACLs())
+					.then(() => this.getHydrated(user.id));
 
-      }).then((user) => {
+			}).then((user) => {
 
-        this.enableACLs();
-        return user;
+				this.enableACLs();
+				return user;
 
-      }).catch(error => {
+			}).catch(error => {
 
-        if(error.code == 404){
-          return Promise.resolve(false);
-        }
+				if(error.code == 404){
+					return Promise.resolve(false);
+				}
 
-        eu.throwError(error);
+				eu.throwError(error);
 
-      });
+			});
 
-    }
+	}
 
-    getUserStrict(user_email){
+	getUserStrict(user_email){
 
-      du.debug('Get User Strict');
+		du.debug('Get User Strict');
 
-      if(!stringutilities.isEmail(user_email)){
-        eu.throwError('bad_request','A user identifier or a email is required, "'+user_email+'" provided');
-      }
+		if(!stringutilities.isEmail(user_email)){
+			eu.throwError('bad_request','A user identifier or a email is required, "'+user_email+'" provided');
+		}
 
-      //Technical Debt:  Why are ACL's disabled here?
-      return Promise.resolve(this.disableACLs())
-      .then(() => this.get({id: user_email}))
-      .then((user) => {
+		//Technical Debt:  Why are ACL's disabled here?
+		return Promise.resolve(this.disableACLs())
+			.then(() => this.get({id: user_email}))
+			.then((user) => {
 
-        this.enableACLs();
+				this.enableACLs();
 
-        return user;
+				return user;
 
-      }).then((user) => {
+			}).then((user) => {
 
-        if(_.isNull(user) || !_.has(user, 'id')){
-          eu.throwError('not_found', 'User not found: '+user_email);
-        }
+				if(_.isNull(user) || !_.has(user, 'id')){
+					eu.throwError('not_found', 'User not found: '+user_email);
+				}
 
-        return user;
+				return user;
 
-      }).then((user) => {
+			}).then((user) => {
 
-        this.setGlobalUser(user);
+				this.setGlobalUser(user);
 
-        return user;
+				return user;
 
-      }).then((user) => {
+			}).then((user) => {
 
-        this.disableACLs();
-        return this.getACLPartiallyHydrated(user).then((acl) => {
-          this.enableACLs();
+				this.disableACLs();
+				return this.getACLPartiallyHydrated(user).then((acl) => {
+					this.enableACLs();
 
-          global.user.acl = acl;
-          return user;
-        });
+					global.user.acl = acl;
+					return user;
+				});
 
-      }).catch(error => {
+			}).catch(error => {
 
-        if(error.code == 404){
-          return Promise.resolve(false);
-        }
+				if(error.code == 404){
+					return Promise.resolve(false);
+				}
 
-        du.error(error);
-        eu.throwError(error);
+				du.error(error);
+				eu.throwError(error);
 
-      });
+			});
 
-    }
+	}
 
-    validateGlobalUser(){
+	validateGlobalUser(){
 
-      du.debug('Validate Global User');
+		du.debug('Validate Global User');
 
-      if(!objectutilities.hasRecursive(global, 'user.id') || !this.isEmail(global.user.id)){
-        eu.throwError('server', 'Unexpected argumentation');
-      }
+		if(!objectutilities.hasRecursive(global, 'user.id') || !this.isEmail(global.user.id)){
+			eu.throwError('server', 'Unexpected argumentation');
+		}
 
-      return true;
+		return true;
 
-    }
+	}
 
-    getHydrated(id){
+	getHydrated(id){
 
-      du.debug('Get Hydrated');
+		du.debug('Get Hydrated');
 
-      return this.get({id: id})
-      .then((user) => {
+		return this.get({id: id})
+			.then((user) => {
 
-        if (!_.has(user, 'id')) {
-          eu.throwError('not_found', 'User does not exist: '+id);
-        }
+				if (!_.has(user, 'id')) {
+					eu.throwError('not_found', 'User does not exist: '+id);
+				}
 
-        return Promise.all([user, this.getACLPartiallyHydrated(user)]);
+				return Promise.all([user, this.getACLPartiallyHydrated(user)]);
 
-      }).then(([user, acl]) => {
+			}).then(([user, acl]) => {
 
-        user.acl = acl;
+				user.acl = acl;
 
-        return user;
+				return user;
 
-      }).catch((error) => {
+			}).catch((error) => {
 
-        du.info(error);
-        if (error.code === 404) {
-          return null;
-        }
+				du.info(error);
+				if (error.code === 404) {
+					return null;
+				}
 
-        eu.throwError(error);
+				eu.throwError(error);
 
-      });
+			});
 
-    }
+	}
 
-    getACL(user){
+	getACL(user){
 
-      du.debug('Get ACL');
+		du.debug('Get ACL');
 
-      if(_.has(user, 'acl') && _.isArray(user.acl)){
-        return user.acl;
-      }
+		if(_.has(user, 'acl') && _.isArray(user.acl)){
+			return user.acl;
+		}
 
-      return this.executeAssociatedEntityFunction('userACLController', 'getACLByUser', {user: user.id})
-      .then(useracls => this.getResult(useracls, 'useracls'));
+		return this.executeAssociatedEntityFunction('userACLController', 'getACLByUser', {user: user.id})
+			.then(useracls => this.getResult(useracls, 'useracls'));
 
-    }
+	}
 
-    //Necessary?
-    getACLPartiallyHydrated(user){
+	//Necessary?
+	getACLPartiallyHydrated(user){
 
-      du.debug('Get ACL Partially Hydrated');
+		du.debug('Get ACL Partially Hydrated');
 
-      return this.executeAssociatedEntityFunction('userACLController','queryBySecondaryIndex', {field: 'user', index_value: user.id, index_name: 'user-index'})
-      .then((response) => this.getResult(response, 'useracls'))
-      .then((acls) => {
-        du.debug('ACLs: ', acls);
+		return this.executeAssociatedEntityFunction('userACLController','queryBySecondaryIndex', {field: 'user', index_value: user.id, index_name: 'user-index'})
+			.then((response) => this.getResult(response, 'useracls'))
+			.then((acls) => {
+				du.debug('ACLs: ', acls);
 
-        if(!arrayutilities.nonEmpty(acls)){
-          return null;
-        }
+				if(!arrayutilities.nonEmpty(acls)){
+					return null;
+				}
 
-        //Technical Debt:  Convert to a list query where applicable
-        let acl_promises = arrayutilities.map(acls, (acl) => {
-          return this.executeAssociatedEntityFunction('userACLController','getPartiallyHydratedACLObject', acl);
-        });
+				//Technical Debt:  Convert to a list query where applicable
+				let acl_promises = arrayutilities.map(acls, (acl) => {
+					return this.executeAssociatedEntityFunction('userACLController','getPartiallyHydratedACLObject', acl);
+				});
 
-        return Promise.all(acl_promises);
-      });
-    }
+				return Promise.all(acl_promises);
+			});
+	}
 
-    //Technical Debt: Why is this here?
-    getAccount(id){
+	//Technical Debt: Why is this here?
+	getAccount(id){
 
-      du.debug('Get Account');
+		du.debug('Get Account');
 
-      if(id == '*'){
-        return this.executeAssociatedEntityFunction('accountController', 'getMasterAccount', {});
-      }
+		if(id == '*'){
+			return this.executeAssociatedEntityFunction('accountController', 'getMasterAccount', {});
+		}
 
-      return this.executeAssociatedEntityFunction('accountController', 'get', {id: id});
+		return this.executeAssociatedEntityFunction('accountController', 'get', {id: id});
 
-    }
+	}
 
-    getAccessKey(id){
+	getAccessKey(id){
 
-      du.debug('Get Access Key');
+		du.debug('Get Access Key');
 
-      return this.executeAssociatedEntityFunction('accessKeyController', 'get', {id: id});
+		return this.executeAssociatedEntityFunction('accessKeyController', 'get', {id: id});
 
-    }
+	}
 
-    getAccessKeyByKey(id){
+	getAccessKeyByKey(id){
 
-      du.debug('Get Access Key By Key');
+		du.debug('Get Access Key By Key');
 
-      return this.executeAssociatedEntityFunction('accessKeyController', 'getAccessKeyByKey', {id: id});
+		return this.executeAssociatedEntityFunction('accessKeyController', 'getAccessKeyByKey', {id: id});
 
-    }
+	}
 
-    createStrict(user){
+	createStrict(user){
 
-      du.debug('Create Strict');
+		du.debug('Create Strict');
 
-      if(!objectutilities.hasRecursive(global, 'user.id')){
-        eu.throwError('server', 'Unset user in globals');
-      }
+		if(!objectutilities.hasRecursive(global, 'user.id')){
+			eu.throwError('server', 'Unset user in globals');
+		}
 
-      if(global.user.id != user.id){
-        eu.throwError('server', 'User ID does not match Global User ID');
-      }
+		if(global.user.id != user.id){
+			eu.throwError('server', 'User ID does not match Global User ID');
+		}
 
-      this.disableACLs();
+		this.disableACLs();
 
-      return Promise.resolve(this.disableACLs())
-      .then(() => this.create({entity: user}))
-      .then((user) => {
-        this.enableACLs();
-        return user;
-      });
+		return Promise.resolve(this.disableACLs())
+			.then(() => this.create({entity: user}))
+			.then((user) => {
+				this.enableACLs();
+				return user;
+			});
 
-    }
+	}
 
-    getUserByAccessKeyId(access_key_id){
+	getUserByAccessKeyId(access_key_id){
 
-      du.debug('Get User By Access Key ID');
+		du.debug('Get User By Access Key ID');
 
-      return this.getBySecondaryIndex({field: 'access_key_id', index_value: access_key_id, index_name: 'access_key_id-index'});
+		return this.getBySecondaryIndex({field: 'access_key_id', index_value: access_key_id, index_name: 'access_key_id-index'});
 
-    }
+	}
 
-    create({entity: user}){
+	create({entity: user}){
 
-      du.debug('User.create');
+		du.debug('User.create');
 
-      if(!_.has(this, 'userHelperController')){
+		if(!_.has(this, 'userHelperController')){
 
-        const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
-        this.userHelperController = new UserHelperController();
+			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
+			this.userHelperController = new UserHelperController();
 
-      }
+		}
 
-      user = this.userHelperController.appendAlias(user);
+		user = this.userHelperController.appendAlias(user);
 
-      return super.create({entity: user});
+		return super.create({entity: user});
 
-    }
+	}
 
-    assureUser(user_id){
+	assureUser(user_id){
 
-      du.debug('Assure User');
+		du.debug('Assure User');
 
-      return this.get({id: user_id})
-      .then((user) => {
+		return this.get({id: user_id})
+			.then((user) => {
 
-        if(_.has(user, 'id')){
-          return user;
-        }
+				if(_.has(user, 'id')){
+					return user;
+				}
 
-        if(!_.has(this, 'userHelperController')){
-          const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
-          this.userHelperController = new UserHelperController();
-        }
+				if(!_.has(this, 'userHelperController')){
+					const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
+					this.userHelperController = new UserHelperController();
+				}
 
-        return Promise.resolve()
-        .then(() => this.userHelperController.getPrototypeUser(user_id))
-        .then((user_prototype) => this.create({entity: user_prototype}));
+				return Promise.resolve()
+					.then(() => this.userHelperController.getPrototypeUser(user_id))
+					.then((user_prototype) => this.create({entity: user_prototype}));
 
-      }).then((user) => {
+			}).then((user) => {
 
-        if(!_.has(this, 'userSettingHelperController')){
-          const UserSettingHelperController = global.SixCRM.routes.include('helpers', 'entities/usersetting/UserSetting.js');
-          this.userSettingHelperController = new UserSettingHelperController();
-        }
+				if(!_.has(this, 'userSettingHelperController')){
+					const UserSettingHelperController = global.SixCRM.routes.include('helpers', 'entities/usersetting/UserSetting.js');
+					this.userSettingHelperController = new UserSettingHelperController();
+				}
 
-        return Promise.resolve()
-        .then(() => this.userSettingHelperController.getPrototypeUserSetting(user.id))
-        .then((user_setting_prototype) => this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: user_setting_prototype}))
-        .then(() => {
-          return user;
-        })
+				return Promise.resolve()
+					.then(() => this.userSettingHelperController.getPrototypeUserSetting(user.id))
+					.then((user_setting_prototype) => this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: user_setting_prototype}))
+					.then(() => {
+						return user;
+					})
 
-      });
+			});
 
-    }
+	}
 
-  getUsersByAccount({pagination, fatal}){
+	getUsersByAccount({pagination, fatal}){
 
-    du.debug('Get Users By Account');
+		du.debug('Get Users By Account');
 
-    if(this.isMasterAccount()){
-      return this.list({pagination: pagination, fatal: fatal});
-    }
+		if(this.isMasterAccount()){
+			return this.list({pagination: pagination, fatal: fatal});
+		}
 
-    return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: global.account, fatal: fatal})
-    .then((user_acl_objects) => {
+		return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: global.account, fatal: fatal})
+			.then((user_acl_objects) => {
 
-      if(arrayutilities.isArray(user_acl_objects) && user_acl_objects.length > 0){
+				if(arrayutilities.isArray(user_acl_objects) && user_acl_objects.length > 0){
 
-        let user_ids = arrayutilities.map(user_acl_objects, (user_acl) => {
-          if(_.has(user_acl, 'user')){
-            return user_acl.user;
-          }
-        });
+					let user_ids = arrayutilities.map(user_acl_objects, (user_acl) => {
+						if(_.has(user_acl, 'user')){
+							return user_acl.user;
+						}
+					});
 
-        user_ids = arrayutilities.unique(user_ids);
+					user_ids = arrayutilities.unique(user_ids);
 
-        let in_parameters = this.createINQueryParameters({field:'id', list_array: user_ids});
+					let in_parameters = this.createINQueryParameters({field:'id', list_array: user_ids});
 
-        //Technical Debt:  Refactor, must return all users with correct pagination
-        return this.list({pagination: pagination, query_parameters: in_parameters});
+					//Technical Debt:  Refactor, must return all users with correct pagination
+					return this.list({pagination: pagination, query_parameters: in_parameters});
 
-      }
+				}
 
-      return null;
+				return null;
 
-    });
+			});
 
-  }
+	}
 
-  can({account, object, action, id, fatal}){
+	can({account, object, action, id, fatal}){
 
-    du.debug('User.can()');
+		du.debug('User.can()');
 
-    if(action === 'update' && objectutilities.hasRecursive(global, 'user.id') && global.user.id === id) {
-      return Promise.resolve(true);
-    }
+		if(action === 'update' && objectutilities.hasRecursive(global, 'user.id') && global.user.id === id) {
+			return Promise.resolve(true);
+		}
 
-    return super.can({account: account, object: object, action: action, id: id, fatal: fatal})
+		return super.can({account: account, object: object, action: action, id: id, fatal: fatal})
 
-  }
+	}
 
 }

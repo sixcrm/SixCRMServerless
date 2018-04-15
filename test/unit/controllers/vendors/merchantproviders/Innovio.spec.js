@@ -7,27 +7,27 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidResponseBody(response_type, action){
 
-  let responses = {
-    process:{
-      success:'{"REQUEST_ACTION":"CCAUTHCAP","TRANS_STATUS_NAME":"APPROVED","TRANS_VALUE":30.23,"TRANS_ID":111600273,"CUST_ID":43005380,"XTL_CUST_ID":"7d2ad335-eadd-4c6a-972e-","PO_ID":99124294,"XTL_ORDER_ID":"","BATCH_ID":1130758,"PROC_NAME":"Test Processor","MERCH_ACCT_ID":47769,"CARD_BRAND_NAME":"Visa","PMT_L4":"1111","PROC_UDF01":"","PROC_UDF02":"","PROC_AUTH_RESPONSE":"TEST24478","PROC_RETRIEVAL_NUM":"13450A04-112A-41C5-B53E914E62A4A872","PROC_REFERENCE_NUM":"TEST385559842","AVS_RESPONSE":"M","CVV_RESPONSE":"M","REQUEST_API_VERSION":1,"PO_LI_ID_1":"53647821","PO_LI_COUNT_1":"1","PO_LI_AMOUNT_1":"30.23","PO_LI_PROD_ID_1":"64219"}\n',
-      decline:'{"REQUEST_ACTION":"CCAUTHCAP","TRANS_STATUS_NAME":"DECLINED","TRANS_VALUE":5.05,"TRANS_ID":111601416,"CUST_ID":43005380,"XTL_CUST_ID":"219d94a9-4fd1-427e-aad3-","MERCH_ACCT_ID":47769,"CARD_BRAND_NAME":"Visa","PMT_L4":"1111","API_RESPONSE":"0","API_ADVICE":" ","SERVICE_RESPONSE":600,"SERVICE_ADVICE":"Declined","PROCESSOR_RESPONSE":"505","PROCESSOR_ADVICE":"Declined","INDUSTRY_RESPONSE":"0","INDUSTRY_ADVICE":" ","REF_FIELD":"","PROC_NAME":"Test Processor","AVS_RESPONSE":"","CVV_RESPONSE":"","REQUEST_API_VERSION":1}\n'
-    }
-  };
+	let responses = {
+		process:{
+			success:'{"REQUEST_ACTION":"CCAUTHCAP","TRANS_STATUS_NAME":"APPROVED","TRANS_VALUE":30.23,"TRANS_ID":111600273,"CUST_ID":43005380,"XTL_CUST_ID":"7d2ad335-eadd-4c6a-972e-","PO_ID":99124294,"XTL_ORDER_ID":"","BATCH_ID":1130758,"PROC_NAME":"Test Processor","MERCH_ACCT_ID":47769,"CARD_BRAND_NAME":"Visa","PMT_L4":"1111","PROC_UDF01":"","PROC_UDF02":"","PROC_AUTH_RESPONSE":"TEST24478","PROC_RETRIEVAL_NUM":"13450A04-112A-41C5-B53E914E62A4A872","PROC_REFERENCE_NUM":"TEST385559842","AVS_RESPONSE":"M","CVV_RESPONSE":"M","REQUEST_API_VERSION":1,"PO_LI_ID_1":"53647821","PO_LI_COUNT_1":"1","PO_LI_AMOUNT_1":"30.23","PO_LI_PROD_ID_1":"64219"}\n',
+			decline:'{"REQUEST_ACTION":"CCAUTHCAP","TRANS_STATUS_NAME":"DECLINED","TRANS_VALUE":5.05,"TRANS_ID":111601416,"CUST_ID":43005380,"XTL_CUST_ID":"219d94a9-4fd1-427e-aad3-","MERCH_ACCT_ID":47769,"CARD_BRAND_NAME":"Visa","PMT_L4":"1111","API_RESPONSE":"0","API_ADVICE":" ","SERVICE_RESPONSE":600,"SERVICE_ADVICE":"Declined","PROCESSOR_RESPONSE":"505","PROCESSOR_ADVICE":"Declined","INDUSTRY_RESPONSE":"0","INDUSTRY_ADVICE":" ","REF_FIELD":"","PROC_NAME":"Test Processor","AVS_RESPONSE":"","CVV_RESPONSE":"","REQUEST_API_VERSION":1}\n'
+		}
+	};
 
-  return responses[action][response_type];
+	return responses[action][response_type];
 
 }
 
 function getValidCustomer(id){
-  return MockEntities.getValidCustomer(id);
+	return MockEntities.getValidCustomer(id);
 }
 
 function getValidCreditCard(id){
-  return MockEntities.getValidCreditCard(id);
+	return MockEntities.getValidCreditCard(id);
 }
 
 function getValidMerchantProvider(id, provider){
-  return MockEntities.getValidMerchantProvider(id, provider);
+	return MockEntities.getValidMerchantProvider(id, provider);
 }
 
 /*function getValidMerchantProviderConfiguation(){
@@ -58,146 +58,146 @@ function getValidMethodParametersObject(){
 
 function getValidTransaction(id){
 
-  return  MockEntities.getValidTransaction(id);
+	return  MockEntities.getValidTransaction(id);
 
 }
 
 describe('vendors/merchantproviders/Innovio.js', () => {
 
-  before(() => {
-      mockery.enable({
-          useCleanCache: true,
-          warnOnReplace: false,
-          warnOnUnregistered: false
-      });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-  afterEach(() => {
-      mockery.resetCache();
-  });
+	afterEach(() => {
+		mockery.resetCache();
+	});
 
-  after(() => {
-      mockery.deregisterAll();
-  });
+	after(() => {
+		mockery.deregisterAll();
+	});
 
-  describe('constructor', () => {
+	describe('constructor', () => {
 
-    it('Should to construct due to missing properties', () => {
+		it('Should to construct due to missing properties', () => {
 
-       const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+			const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
 
-       try {
-         new InnovioController({});
-       }catch(error){
-         expect(error.message).to.have.string('[500] Missing source object field:');
-       }
+			try {
+				new InnovioController({});
+			}catch(error){
+				expect(error.message).to.have.string('[500] Missing source object field:');
+			}
 
-     });
+		});
 
-     it('Should Instantiate the Innovio Controller', () => {
+		it('Should Instantiate the Innovio Controller', () => {
 
-        let merchant_provider = getValidMerchantProvider(null, 'Innovio');
+			let merchant_provider = getValidMerchantProvider(null, 'Innovio');
 
-        const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
-        let innovio_controller = new InnovioController({merchant_provider:merchant_provider});
+			const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+			let innovio_controller = new InnovioController({merchant_provider:merchant_provider});
 
-        expect(innovio_controller.constructor.name).to.equal('InnovioController');
+			expect(innovio_controller.constructor.name).to.equal('InnovioController');
 
-      });
+		});
 
-  });
+	});
 
-  describe('test', () => {
+	describe('test', () => {
 
-    it('successfully executes a test', () => {
+		it('successfully executes a test', () => {
 
-      let merchant_provider = getValidMerchantProvider(null, 'Innovio');
+			let merchant_provider = getValidMerchantProvider(null, 'Innovio');
 
-      let body = {SERVICE_ADVICE: "User Authorized"};
+			let body = {SERVICE_ADVICE: "User Authorized"};
 
-      let response_object = {
-        error: null,
-        response: {
-          statusCode: 200,
-          statusMessage: 'OK',
-          body: JSON.stringify(body)
-        },
-        body: JSON.stringify(body)
-      };
+			let response_object = {
+				error: null,
+				response: {
+					statusCode: 200,
+					statusMessage: 'OK',
+					body: JSON.stringify(body)
+				},
+				body: JSON.stringify(body)
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-        post() {
-          return Promise.resolve(response_object)
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				post() {
+					return Promise.resolve(response_object)
+				}
+			});
 
-      const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
-      let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
+			const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+			let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
 
-      return innovio_controller.test({}).then(result => {
+			return innovio_controller.test({}).then(result => {
 
-        expect(result.getResult()).to.have.property('code');
-        expect(result.getResult()).to.have.property('message');
-        expect(result.getResult()).to.have.property('response');
-        expect(result.getResult().code).to.equal('success');
-        expect(result.getResult().message).to.equal('Success');
+				expect(result.getResult()).to.have.property('code');
+				expect(result.getResult()).to.have.property('message');
+				expect(result.getResult()).to.have.property('response');
+				expect(result.getResult().code).to.equal('success');
+				expect(result.getResult().message).to.equal('Success');
 
-      });
+			});
 
-    });
+		});
 
-    it('successfully returns fail for a test', () => {
+		it('successfully returns fail for a test', () => {
 
-      let merchant_provider = getValidMerchantProvider(null, 'Innovio');
+			let merchant_provider = getValidMerchantProvider(null, 'Innovio');
 
-      let body = '{"REQUEST_ACTION":"","TRANS_STATUS_NAME":"","TRANS_VALUE":"","TRANS_ID":"","CUST_ID":"","XTL_CUST_ID":"","MERCH_ACCT_ID":"","CARD_BRAND_NAME":"","PMT_L4":"","API_RESPONSE":"101","API_ADVICE":"Invalid login information","SERVICE_RESPONSE":0,"SERVICE_ADVICE":" ","PROCESSOR_RESPONSE":0,"PROCESSOR_ADVICE":" ","INDUSTRY_RESPONSE":0,"INDUSTRY_ADVICE":" ","REF_FIELD":"","PROC_NAME":"","AVS_RESPONSE":"","CVV_RESPONSE":"","REQUEST_API_VERSION":1}\n';
+			let body = '{"REQUEST_ACTION":"","TRANS_STATUS_NAME":"","TRANS_VALUE":"","TRANS_ID":"","CUST_ID":"","XTL_CUST_ID":"","MERCH_ACCT_ID":"","CARD_BRAND_NAME":"","PMT_L4":"","API_RESPONSE":"101","API_ADVICE":"Invalid login information","SERVICE_RESPONSE":0,"SERVICE_ADVICE":" ","PROCESSOR_RESPONSE":0,"PROCESSOR_ADVICE":" ","INDUSTRY_RESPONSE":0,"INDUSTRY_ADVICE":" ","REF_FIELD":"","PROC_NAME":"","AVS_RESPONSE":"","CVV_RESPONSE":"","REQUEST_API_VERSION":1}\n';
 
-      let response_object = {
-        error: null,
-        response: {
-          statusCode: 200,
-          statusMessage: 'OK',
-          body: body
-        },
-        body: body
-      };
+			let response_object = {
+				error: null,
+				response: {
+					statusCode: 200,
+					statusMessage: 'OK',
+					body: body
+				},
+				body: body
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-        post() {
-          return Promise.resolve(response_object)
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				post() {
+					return Promise.resolve(response_object)
+				}
+			});
 
-      const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
-      let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
+			const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+			let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
 
-      return innovio_controller.test({}).then(result => {
+			return innovio_controller.test({}).then(result => {
 
-        expect(result.getResult()).to.have.property('code');
-        expect(result.getResult()).to.have.property('message');
-        expect(result.getResult()).to.have.property('response');
-        expect(result.getResult().code).to.equal('fail');
-        expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult()).to.have.property('code');
+				expect(result.getResult()).to.have.property('message');
+				expect(result.getResult()).to.have.property('response');
+				expect(result.getResult().code).to.equal('fail');
+				expect(result.getResult().message).to.equal('Failed');
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('process', () => {
+	describe('process', () => {
 
-    it('should successfully process a transaction', () => {
+		it('should successfully process a transaction', () => {
 
-      let customer = getValidCustomer();
-      let creditcard = getValidCreditCard();
+			let customer = getValidCustomer();
+			let creditcard = getValidCreditCard();
 
-      creditcard.number = '4111111111111111';
-      let amount = 30.23;
+			creditcard.number = '4111111111111111';
+			let amount = 30.23;
 
-      let merchant_provider = getValidMerchantProvider(null, 'Innovio');
+			let merchant_provider = getValidMerchantProvider(null, 'Innovio');
 
-      /*
+			/*
       merchant_provider.gateway = {
         name: 'Innovio',
         username: 'timothy.dalbey@sixrm.com',
@@ -208,120 +208,120 @@ describe('vendors/merchantproviders/Innovio.js', () => {
       };
       */
 
-      let body = getValidResponseBody('success', 'process');
+			let body = getValidResponseBody('success', 'process');
 
-      let response_object = {
-        error: null,
-        response: {
-          statusCode: 200,
-          statusMessage: 'OK',
-          body: body
-        },
-        body: body
-      };
+			let response_object = {
+				error: null,
+				response: {
+					statusCode: 200,
+					statusMessage: 'OK',
+					body: body
+				},
+				body: body
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-        post() {
-          return Promise.resolve(response_object)
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				post() {
+					return Promise.resolve(response_object)
+				}
+			});
 
-      const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
-      let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
+			const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+			let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
 
-      return innovio_controller.process({customer: customer, creditcard: creditcard, amount}).then(result => {
+			return innovio_controller.process({customer: customer, creditcard: creditcard, amount}).then(result => {
 
-        expect(result.getResult()).to.have.property('code');
-        expect(result.getResult()).to.have.property('message');
-        expect(result.getResult()).to.have.property('response');
-        expect(result.getResult().code).to.equal('success');
-        expect(result.getResult().message).to.equal('Success');
+				expect(result.getResult()).to.have.property('code');
+				expect(result.getResult()).to.have.property('message');
+				expect(result.getResult()).to.have.property('response');
+				expect(result.getResult().code).to.equal('success');
+				expect(result.getResult().message).to.equal('Success');
 
-      });
+			});
 
-    });
+		});
 
-    it('Should fail to process a transaction', () => {
+		it('Should fail to process a transaction', () => {
 
-      let customer = getValidCustomer();
-      let creditcard = getValidCreditCard();
+			let customer = getValidCustomer();
+			let creditcard = getValidCreditCard();
 
-      creditcard.number = '4111111111111111';
-      let amount = '5.05';
+			creditcard.number = '4111111111111111';
+			let amount = '5.05';
 
-      let merchant_provider = getValidMerchantProvider(null, 'Innovio');
+			let merchant_provider = getValidMerchantProvider(null, 'Innovio');
 
-      let body = getValidResponseBody('decline','process');
+			let body = getValidResponseBody('decline','process');
 
-      let response = {
-        error: null,
-        response:{
-          statusCode:200,
-          statusMessage: 'OK',
-          body: body
-        },
-        body: body
-      };
+			let response = {
+				error: null,
+				response:{
+					statusCode:200,
+					statusMessage: 'OK',
+					body: body
+				},
+				body: body
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-        post() {
-          return Promise.resolve(response);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				post() {
+					return Promise.resolve(response);
+				}
+			});
 
-      const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
-      let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
+			const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+			let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
 
-      return innovio_controller.process({customer: customer, creditcard: creditcard, amount}).then(result => {
+			return innovio_controller.process({customer: customer, creditcard: creditcard, amount}).then(result => {
 
-        expect(result.getResult()).to.have.property('code');
-        expect(result.getResult()).to.have.property('message');
-        expect(result.getResult()).to.have.property('response');
-        expect(result.getResult().code).to.equal('fail');
-        expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult()).to.have.property('code');
+				expect(result.getResult()).to.have.property('message');
+				expect(result.getResult()).to.have.property('response');
+				expect(result.getResult().code).to.equal('fail');
+				expect(result.getResult().message).to.equal('Failed');
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('reverse', () => {
+	describe('reverse', () => {
 
-    it('Should successfully reverse a transaction', () => {
+		it('Should successfully reverse a transaction', () => {
 
-      let transaction = getValidTransaction();
+			let transaction = getValidTransaction();
 
-      transaction.processor_response = {
-        message:"Success",
-        result:{
-          PO_ID:"17171717"
-        }
-      };
+			transaction.processor_response = {
+				message:"Success",
+				result:{
+					PO_ID:"17171717"
+				}
+			};
 
-      let body = {
-       TRANS_STATUS_NAME: 'APPROVED'
-      };
+			let body = {
+				TRANS_STATUS_NAME: 'APPROVED'
+			};
 
-      let response = {
-       error: null,
-       response:{
-         statusCode:200,
-         statusMessage: 'OK',
-         body: JSON.stringify(body)
-       },
-       body: JSON.stringify(body)
-      };
+			let response = {
+				error: null,
+				response:{
+					statusCode:200,
+					statusMessage: 'OK',
+					body: JSON.stringify(body)
+				},
+				body: JSON.stringify(body)
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-       post() {
-         return Promise.resolve(response);
-       }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				post() {
+					return Promise.resolve(response);
+				}
+			});
 
-       let merchant_provider = getValidMerchantProvider(null, 'Innovio');
+			let merchant_provider = getValidMerchantProvider(null, 'Innovio');
 
-       /*
+			/*
         merchant_provider.gateway = {
           name: 'Innovio',
           username: 'timothy.dalbey@sixrm.com',
@@ -332,183 +332,183 @@ describe('vendors/merchantproviders/Innovio.js', () => {
         };
         */
 
-       const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
-       let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
+			const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+			let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
 
-       return innovio_controller.reverse({transaction: transaction}).then(result => {
+			return innovio_controller.reverse({transaction: transaction}).then(result => {
 
-         expect(result.getResult()).to.have.property('code');
-         expect(result.getResult()).to.have.property('message');
-         expect(result.getResult()).to.have.property('response');
-         expect(result.getResult().code).to.equal('success');
-         expect(result.getResult().message).to.equal('Success');
+				expect(result.getResult()).to.have.property('code');
+				expect(result.getResult()).to.have.property('message');
+				expect(result.getResult()).to.have.property('response');
+				expect(result.getResult().code).to.equal('success');
+				expect(result.getResult().message).to.equal('Success');
 
-       });
+			});
 
-     });
+		});
 
-    it('Should fail to reverse a transaction', () => {
+		it('Should fail to reverse a transaction', () => {
 
-      let transaction = getValidTransaction();
+			let transaction = getValidTransaction();
 
-      transaction.processor_response = {
-        message:"Success",
-        result:{
-          PO_ID:"17171717"
-        }
-      };
+			transaction.processor_response = {
+				message:"Success",
+				result:{
+					PO_ID:"17171717"
+				}
+			};
 
-      let body = {
-       API_RESPONSE: 600,
-       TRANS_STATUS_NAME: 'Declined'
-      };
+			let body = {
+				API_RESPONSE: 600,
+				TRANS_STATUS_NAME: 'Declined'
+			};
 
-      let response = {
-       error: null,
-       response:{
-         statusCode:400,
-         body: JSON.stringify(body)
-       },
-       body: JSON.stringify(body)
-      };
+			let response = {
+				error: null,
+				response:{
+					statusCode:400,
+					body: JSON.stringify(body)
+				},
+				body: JSON.stringify(body)
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-       post() {
-         return Promise.resolve(response);
-       }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				post() {
+					return Promise.resolve(response);
+				}
+			});
 
-       let merchant_provider = getValidMerchantProvider(null, 'Innovio');
+			let merchant_provider = getValidMerchantProvider(null, 'Innovio');
 
-        merchant_provider.gateway = {
-          name: 'Innovio',
-          username: 'timothy.dalbey@sixrm.com',
-          password: 'vIngelB92SWGNBDHTTQK',
-          site_id: '45481',
-          merchant_account_id: '47769',
-          product_id: '64219'
-        };
+			merchant_provider.gateway = {
+				name: 'Innovio',
+				username: 'timothy.dalbey@sixrm.com',
+				password: 'vIngelB92SWGNBDHTTQK',
+				site_id: '45481',
+				merchant_account_id: '47769',
+				product_id: '64219'
+			};
 
-       const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
-       let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
+			const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+			let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
 
-       return innovio_controller.reverse({transaction: transaction}).then(result => {
+			return innovio_controller.reverse({transaction: transaction}).then(result => {
 
-         expect(result.getResult()).to.have.property('code');
-         expect(result.getResult()).to.have.property('message');
-         expect(result.getResult()).to.have.property('response');
-         expect(result.getResult().code).to.equal('fail');
-         expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult()).to.have.property('code');
+				expect(result.getResult()).to.have.property('message');
+				expect(result.getResult()).to.have.property('response');
+				expect(result.getResult().code).to.equal('fail');
+				expect(result.getResult().message).to.equal('Failed');
 
-       });
+			});
 
-     });
+		});
 
-  });
+	});
 
-  describe('refund', () => {
+	describe('refund', () => {
 
-    it('Should fail to refund a transaction', () => {
+		it('Should fail to refund a transaction', () => {
 
-      let transaction = getValidTransaction();
+			let transaction = getValidTransaction();
 
-      transaction.processor_response = {
-        message:"Success",
-        result:{
-          PO_ID:"17171717"
-        }
-      };
+			transaction.processor_response = {
+				message:"Success",
+				result:{
+					PO_ID:"17171717"
+				}
+			};
 
-      let amount = 30.00;
+			let amount = 30.00;
 
-       let body = {
-         API_RESPONSE: 600,
-         TRANS_STATUS_NAME: 'Declined'
-       };
+			let body = {
+				API_RESPONSE: 600,
+				TRANS_STATUS_NAME: 'Declined'
+			};
 
-       let response = {
-         error: null,
-         response:{
-           statusCode:400,
-           body: JSON.stringify(body)
-         },
-         body: JSON.stringify(body)
-       };
+			let response = {
+				error: null,
+				response:{
+					statusCode:400,
+					body: JSON.stringify(body)
+				},
+				body: JSON.stringify(body)
+			};
 
-       mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-         post() {
-           return Promise.resolve(response);
-         }
-       });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				post() {
+					return Promise.resolve(response);
+				}
+			});
 
-       let merchant_provider = getValidMerchantProvider(null, 'Innovio');
+			let merchant_provider = getValidMerchantProvider(null, 'Innovio');
 
-       const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
-       let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
+			const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+			let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
 
-       return innovio_controller.refund({transaction: transaction, amount: amount}).then(result => {
+			return innovio_controller.refund({transaction: transaction, amount: amount}).then(result => {
 
-         expect(result.getResult()).to.have.property('code');
-         expect(result.getResult()).to.have.property('message');
-         expect(result.getResult()).to.have.property('response');
-         expect(result.getResult().code).to.equal('fail');
-         expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult()).to.have.property('code');
+				expect(result.getResult()).to.have.property('message');
+				expect(result.getResult()).to.have.property('response');
+				expect(result.getResult().code).to.equal('fail');
+				expect(result.getResult().message).to.equal('Failed');
 
-       });
+			});
 
-     });
+		});
 
-     it('Should successfully refund a transaction', () => {
+		it('Should successfully refund a transaction', () => {
 
-       let transaction = getValidTransaction();
+			let transaction = getValidTransaction();
 
-       transaction.processor_response = {
-         message:"Success",
-         result:{
-           PO_ID:"17171717"
-         }
-       };
+			transaction.processor_response = {
+				message:"Success",
+				result:{
+					PO_ID:"17171717"
+				}
+			};
 
-       let amount = 30.00;
+			let amount = 30.00;
 
-        let body = {
-          TRANS_STATUS_NAME: 'APPROVED'
-        };
+			let body = {
+				TRANS_STATUS_NAME: 'APPROVED'
+			};
 
-        let response = {
-          error: null,
-          response:{
-            statusCode:200,
-            statusMessage: 'OK',
-            body: JSON.stringify(body)
-          },
-          body: JSON.stringify(body)
-        };
+			let response = {
+				error: null,
+				response:{
+					statusCode:200,
+					statusMessage: 'OK',
+					body: JSON.stringify(body)
+				},
+				body: JSON.stringify(body)
+			};
 
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-          post() {
-            return Promise.resolve(response);
-          }
-        });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
+				post() {
+					return Promise.resolve(response);
+				}
+			});
 
-        let merchant_provider = getValidMerchantProvider(null, 'Innovio');
+			let merchant_provider = getValidMerchantProvider(null, 'Innovio');
 
-        const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
-        let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
+			const InnovioController = global.SixCRM.routes.include('vendors', 'merchantproviders/Innovio/handler.js');
+			let innovio_controller = new InnovioController({merchant_provider: merchant_provider});
 
-        return innovio_controller.refund({transaction: transaction, amount: amount}).then(result => {
+			return innovio_controller.refund({transaction: transaction, amount: amount}).then(result => {
 
-          expect(result.getResult()).to.have.property('code');
-          expect(result.getResult()).to.have.property('message');
-          expect(result.getResult()).to.have.property('response');
-          expect(result.getResult().code).to.equal('success');
-          expect(result.getResult().message).to.equal('Success');
+				expect(result.getResult()).to.have.property('code');
+				expect(result.getResult()).to.have.property('message');
+				expect(result.getResult()).to.have.property('response');
+				expect(result.getResult().code).to.equal('success');
+				expect(result.getResult().message).to.equal('Success');
 
-        });
+			});
 
-      });
+		});
 
-  });
+	});
 
 
 

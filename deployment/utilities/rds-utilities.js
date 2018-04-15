@@ -6,42 +6,42 @@ const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utili
 
 module.exports = class RDSDeployment extends AWSDeploymentUtilities {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    const RDSProvider = global.SixCRM.routes.include('providers', 'rds-provider.js');
-    this.rdsprovider = new RDSProvider();
+		const RDSProvider = global.SixCRM.routes.include('providers', 'rds-provider.js');
+		this.rdsprovider = new RDSProvider();
 
-  }
+	}
 
-  clusterExists(cluster_definition){
+	clusterExists(cluster_definition){
 
-    du.debug('Cluster Exists');
+		du.debug('Cluster Exists');
 
-    let argumentation = {
-      DBClusterIdentifier: cluster_definition.DBClusterIdentifier
-    };
+		let argumentation = {
+			DBClusterIdentifier: cluster_definition.DBClusterIdentifier
+		};
 
-    return this.rdsprovider.describeClusters(argumentation).then(result => {
+		return this.rdsprovider.describeClusters(argumentation).then(result => {
 
-      if(_.has(result, 'DBClusters') && _.isArray(result.DBClusters)){
+			if(_.has(result, 'DBClusters') && _.isArray(result.DBClusters)){
 
-        if(arrayutilities.nonEmpty(result.DBClusters)){
-          if(result.DBClusters.length == 1){
-            return result.DBClusters[0];
-          }
-          eu.throwError('Multiple records returned: ', result);
-        }
+				if(arrayutilities.nonEmpty(result.DBClusters)){
+					if(result.DBClusters.length == 1){
+						return result.DBClusters[0];
+					}
+					eu.throwError('Multiple records returned: ', result);
+				}
 
-        return null;
+				return null;
 
-      }
+			}
 
-      eu.throwError('server','Unexpected result: ', result);
+			eu.throwError('server','Unexpected result: ', result);
 
-    });
+		});
 
-  }
+	}
 
 }

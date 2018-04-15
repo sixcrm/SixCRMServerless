@@ -11,9 +11,9 @@ process.env.SIX_VERBOSE = 2;
 let count = process.argv[2];
 
 if(_.isUndefined(count)){
-    count = 1;
+	count = 1;
 }
 
 for(var i = 0; i < count; i++){
-    du.output(uuidV4());
+	du.output(uuidV4());
 }

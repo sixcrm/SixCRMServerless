@@ -30,8 +30,8 @@ describe('Get ' + test_name + ' Test', function () {
 	it('Should return return a 200 HTTP response code and a correctly formatted response', function (done) {
 
 		this_request.post('graph/' + account.id, {
-				timeout: 5000
-			})
+			timeout: 5000
+		})
 			.set('Authorization', test_jwt)
 			.send(test_query.body)
 			.expect(200)

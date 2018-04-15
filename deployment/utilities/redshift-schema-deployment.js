@@ -8,358 +8,358 @@ const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-
 
 module.exports = class RedshiftSchemaDeployment extends RedshiftDeployment {
 
-  constructor() {
+	constructor() {
 
-    super();
+		super();
 
-    this.table_directories = ['tables'];
+		this.table_directories = ['tables'];
 
-  }
+	}
 
-  deployTables() {
+	deployTables() {
 
-    du.debug('Deploy Redshift tables');
+		du.debug('Deploy Redshift tables');
 
-    //Note:  Aldo, please see structure herein
-    return this.deployNonVersionedTables()
-      .then(() => {
-        return 'Complete';
-      });
+		//Note:  Aldo, please see structure herein
+		return this.deployNonVersionedTables()
+			.then(() => {
+				return 'Complete';
+			});
 
-  }
+	}
 
-  deployNonVersionedTables() {
+	deployNonVersionedTables() {
 
-    du.debug('Deploy Non-Versioned Tables');
+		du.debug('Deploy Non-Versioned Tables');
 
-    let deployment_promises = arrayutilities.map(this.table_directories, (directory) => {
+		let deployment_promises = arrayutilities.map(this.table_directories, (directory) => {
 
-      return () => this.deployDirectorySQL(directory);
+			return () => this.deployDirectorySQL(directory);
 
-    });
+		});
 
-    return arrayutilities.serial(deployment_promises).then(() => {
-      return true;
-    });
+		return arrayutilities.serial(deployment_promises).then(() => {
+			return true;
+		});
 
-  }
+	}
 
-  deployDirectorySQL(directory) {
+	deployDirectorySQL(directory) {
 
-    du.debug('Deploy Directory SQL');
+		du.debug('Deploy Directory SQL');
 
-    return this.getDirectorySQLFilepaths(directory)
-      .then((filepaths) => this.getQueries(filepaths))
-      .then((queries) => this.executeQueries(queries))
-      .then((result) => {
+		return this.getDirectorySQLFilepaths(directory)
+			.then((filepaths) => this.getQueries(filepaths))
+			.then((queries) => this.executeQueries(queries))
+			.then((result) => {
 
-        return result;
+				return result;
 
-      });
+			});
 
-  }
+	}
 
-  getDirectorySQLFilepaths(directory) {
+	getDirectorySQLFilepaths(directory) {
 
-    du.highlight('Get Directory SQL Filepaths');
+		du.highlight('Get Directory SQL Filepaths');
 
-    let directory_filepath = global.SixCRM.routes.path('model', 'redshift/' + directory);
+		let directory_filepath = global.SixCRM.routes.path('model', 'redshift/' + directory);
 
-    return fileutilities.getDirectoryFiles(directory_filepath).then((files) => {
+		return fileutilities.getDirectoryFiles(directory_filepath).then((files) => {
 
-      files = arrayutilities.filter(files, (file) => {
-        return file.match(/\.sql$/);
-      });
+			files = arrayutilities.filter(files, (file) => {
+				return file.match(/\.sql$/);
+			});
 
-      files = arrayutilities.map(files, (file) => {
-        return directory_filepath + '/' + file;
-      });
+			files = arrayutilities.map(files, (file) => {
+				return directory_filepath + '/' + file;
+			});
 
-      return files;
+			return files;
 
-    });
+		});
 
-  }
+	}
 
-  getQueries(query_filepaths) {
+	getQueries(query_filepaths) {
 
-    du.debug('Get Queries');
+		du.debug('Get Queries');
 
-    let queries = [];
+		let queries = [];
 
-    let query_promises = arrayutilities.map(query_filepaths, (filepath) => {
-      return () => this.getQueryFromPath(filepath).then((query) => {
-        queries.push(query);
-        return true;
-      });
-    });
+		let query_promises = arrayutilities.map(query_filepaths, (filepath) => {
+			return () => this.getQueryFromPath(filepath).then((query) => {
+				queries.push(query);
+				return true;
+			});
+		});
 
-    return arrayutilities.serial(query_promises).then(() => {
-      return queries;
-    })
+		return arrayutilities.serial(query_promises).then(() => {
+			return queries;
+		})
 
-  }
+	}
 
-  getQueryFromPath(filepath) {
+	getQueryFromPath(filepath) {
 
-    du.debug('Get Query From Path');
+		du.debug('Get Query From Path');
 
-    return fileutilities.getFileContents(filepath).then((query) => {
+		return fileutilities.getFileContents(filepath).then((query) => {
 
-      return Promise.resolve(query);
+			return Promise.resolve(query);
 
-    });
+		});
 
-  }
+	}
 
-  executeQueries(queries) {
+	executeQueries(queries) {
 
-    du.debug('Execute Queries');
+		du.debug('Execute Queries');
 
-    let query_promises = arrayutilities.map(queries, (query) => {
+		let query_promises = arrayutilities.map(queries, (query) => {
 
-      if (!_.isNull(query) && query !== '' && query !== false) {
+			if (!_.isNull(query) && query !== '' && query !== false) {
 
-        return () => this.execute(query);
+				return () => this.execute(query);
 
-      }
+			}
 
-      return () => {
-        return Promise.resolve(null);
-      };
+			return () => {
+				return Promise.resolve(null);
+			};
 
-    });
+		});
 
-    return arrayutilities.serial(query_promises).then(() => {
+		return arrayutilities.serial(query_promises).then(() => {
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  destroy() {
+	destroy() {
 
-    du.debug('Destroy');
+		du.debug('Destroy');
 
-    return this.getDestroyQuery()
-      .then((destroy_query) => this.execute(destroy_query))
-      .then(() => {
+		return this.getDestroyQuery()
+			.then((destroy_query) => this.execute(destroy_query))
+			.then(() => {
 
-        return 'Complete';
+				return 'Complete';
 
-      });
+			});
 
-  }
+	}
 
-  seed() {
+	seed() {
 
-    du.debug('Seed');
+		du.debug('Seed');
 
-    return this.getSeedQueries()
-      .then((seed_queries) => {
-        arrayutilities.isArray(seed_queries, true);
-        if (seed_queries.length > 0) {
-          return this.executeQueries(seed_queries);
-        }
-        return Promise.resolve(true);
-      })
-      .then(() => {
-        return 'Complete';
-      });
+		return this.getSeedQueries()
+			.then((seed_queries) => {
+				arrayutilities.isArray(seed_queries, true);
+				if (seed_queries.length > 0) {
+					return this.executeQueries(seed_queries);
+				}
+				return Promise.resolve(true);
+			})
+			.then(() => {
+				return 'Complete';
+			});
 
-  }
+	}
 
-  getSeedQueries() {
+	getSeedQueries() {
 
-    du.debug('Get Seed Queries');
+		du.debug('Get Seed Queries');
 
-    return this.getDirectorySQLFilepaths('seeds').then((filepaths) => {
+		return this.getDirectorySQLFilepaths('seeds').then((filepaths) => {
 
-      let query_promises = arrayutilities.map((filepaths), (filepath) => {
+			let query_promises = arrayutilities.map((filepaths), (filepath) => {
 
-        return this.getQueryFromPath(filepath);
+				return this.getQueryFromPath(filepath);
 
-      });
+			});
 
-      return Promise.all(query_promises);
+			return Promise.all(query_promises);
 
-    });
+		});
 
-  }
+	}
 
-  getDestroyQuery() {
+	getDestroyQuery() {
 
-    du.debug('Get Destroy Query');
+		du.debug('Get Destroy Query');
 
-    let table_drop_queries_promise = this.getTableDropQueries();
+		let table_drop_queries_promise = this.getTableDropQueries();
 
-    return Promise.all([
-      table_drop_queries_promise
-    ]).then((resolved_promises) => {
+		return Promise.all([
+			table_drop_queries_promise
+		]).then((resolved_promises) => {
 
-      let table_drop_queries = resolved_promises[0];
+			let table_drop_queries = resolved_promises[0];
 
-      arrayutilities.isArray(table_drop_queries, true);
+			arrayutilities.isArray(table_drop_queries, true);
 
-      let merged_queries_array = [];
+			let merged_queries_array = [];
 
-      if (table_drop_queries.length > 0) {
-        merged_queries_array = arrayutilities.merge(merged_queries_array, table_drop_queries);
-      }
+			if (table_drop_queries.length > 0) {
+				merged_queries_array = arrayutilities.merge(merged_queries_array, table_drop_queries);
+			}
 
-      if (merged_queries_array.length > 0) {
-        return arrayutilities.compress(merged_queries_array, ' ', '');
-      }
+			if (merged_queries_array.length > 0) {
+				return arrayutilities.compress(merged_queries_array, ' ', '');
+			}
 
 
-      return null;
+			return null;
 
-    });
+		});
 
-  }
+	}
 
-  getTableDropQueries() {
+	getTableDropQueries() {
 
-    du.debug('Get Table Drop Queries');
+		du.debug('Get Table Drop Queries');
 
-    return this.getTableFilenames('tables').then((table_filenames) => {
+		return this.getTableFilenames('tables').then((table_filenames) => {
 
-      return arrayutilities.map(table_filenames, (table_filename) => {
+			return arrayutilities.map(table_filenames, (table_filename) => {
 
-        let table_name = this.getTableNameFromFilename(table_filename);
+				let table_name = this.getTableNameFromFilename(table_filename);
 
-        return 'DROP TABLE IF EXISTS ' + table_name + ';';
+				return 'DROP TABLE IF EXISTS ' + table_name + ';';
 
-      });
+			});
 
-    });
+		});
 
-  }
+	}
 
-  purge() {
+	purge() {
 
-    du.debug('Purge');
+		du.debug('Purge');
 
-    let directory_purge_promises = arrayutilities.map(this.table_directories, (directory) => {
+		let directory_purge_promises = arrayutilities.map(this.table_directories, (directory) => {
 
-      return () => this.purgeTableDirectory(directory);
+			return () => this.purgeTableDirectory(directory);
 
-    });
+		});
 
-    return arrayutilities.serial(
-      directory_purge_promises
-    ).then(() => {
-      return 'Complete';
-    });
+		return arrayutilities.serial(
+			directory_purge_promises
+		).then(() => {
+			return 'Complete';
+		});
 
-  }
+	}
 
-  purgeTableDirectory(directory) {
+	purgeTableDirectory(directory) {
 
-    du.debug('Purge Table Directory');
+		du.debug('Purge Table Directory');
 
-    return this.getTableFilenames(directory)
-      .then((filenames) => this.getPurgeQueries(filenames))
-      .then((queries) => this.executePurgeQueries(queries))
-      .then(() => {
+		return this.getTableFilenames(directory)
+			.then((filenames) => this.getPurgeQueries(filenames))
+			.then((queries) => this.executePurgeQueries(queries))
+			.then(() => {
 
-        return 'Complete';
+				return 'Complete';
 
-      });
+			});
 
-  }
+	}
 
-  executePurgeQueries(queries) {
+	executePurgeQueries(queries) {
 
-    du.debug('Execute Purge Queries');
+		du.debug('Execute Purge Queries');
 
-    if (!_.isArray(queries)) {
-      eu.throwError('server', 'Not an array: ' + queries);
-    }
+		if (!_.isArray(queries)) {
+			eu.throwError('server', 'Not an array: ' + queries);
+		}
 
-    if (queries.length < 1) {
+		if (queries.length < 1) {
 
-      du.highlight('No purge queries to execute');
-      return Promise.resolve(false);
+			du.highlight('No purge queries to execute');
+			return Promise.resolve(false);
 
-    }
+		}
 
-    let purge_query = arrayutilities.compress(queries, ' ', '');
+		let purge_query = arrayutilities.compress(queries, ' ', '');
 
-    return this.execute(purge_query);
+		return this.execute(purge_query);
 
-  }
+	}
 
-  getTableFilenames(directory) {
+	getTableFilenames(directory) {
 
-    du.debug('Get Table Filenames');
+		du.debug('Get Table Filenames');
 
-    return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', 'redshift/' + directory)).then((files) => {
+		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('model', 'redshift/' + directory)).then((files) => {
 
-      files = files.filter(file => file.match(/\.sql$/));
+			files = files.filter(file => file.match(/\.sql$/));
 
-      return files;
+			return files;
 
-    });
+		});
 
-  }
+	}
 
-  execute(query) {
+	execute(query) {
 
-    du.debug('Execute Query');
+		du.debug('Execute Query');
 
-    if (_.includes(['local', 'local-docker', 'circle'], global.SixCRM.configuration.stage)) { // Technical Debt: This REALLY shouldn't be hardcoded here.
-      query = this.transformQuery(query);
-      du.info(query);
-    }
+		if (_.includes(['local', 'local-docker', 'circle'], global.SixCRM.configuration.stage)) { // Technical Debt: This REALLY shouldn't be hardcoded here.
+			query = this.transformQuery(query);
+			du.info(query);
+		}
 
-    return redshiftContext.withConnection((connection => {
+		return redshiftContext.withConnection((connection => {
 
-      return connection.query(query).then(result => result.rows);
+			return connection.query(query).then(result => result.rows);
 
-    }));
+		}));
 
-  }
+	}
 
-  getPurgeQueries(table_filenames) {
+	getPurgeQueries(table_filenames) {
 
-    du.highlight('Get Purge Queries');
+		du.highlight('Get Purge Queries');
 
-    return arrayutilities.map(table_filenames, (table_filename) => {
+		return arrayutilities.map(table_filenames, (table_filename) => {
 
-      let table_name = this.getTableNameFromFilename(table_filename);
+			let table_name = this.getTableNameFromFilename(table_filename);
 
-      return 'TRUNCATE TABLE ' + table_name + ';';
+			return 'TRUNCATE TABLE ' + table_name + ';';
 
-    });
+		});
 
-  }
+	}
 
-  transformQuery(query) {
-    /* Transforms query to PostgreSQL format by clearing Redshift specifics */
+	transformQuery(query) {
+		/* Transforms query to PostgreSQL format by clearing Redshift specifics */
 
-    return arrayutilities.map(query.split(/\r?\n/), (data) =>
-      data.replace(/(getdate.*|integer identity.*|DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*|ENCODE[A-Za-z0-9 ]*)(\,)?/, (match, p1, p2) => { // eslint-disable-line no-useless-escape
+		return arrayutilities.map(query.split(/\r?\n/), (data) =>
+			data.replace(/(getdate.*|integer identity.*|DISTSTYLE.*|DISTKEY.*|INTERLEAVED.*|SORTKEY.*|COMPOUND.*|encode[A-Za-z0-9 ]*|ENCODE[A-Za-z0-9 ]*)(\,)?/, (match, p1, p2) => { // eslint-disable-line no-useless-escape
 
-        if (p2 === ',') {
-          return `${p2}`;
-        } else if (p1.startsWith('encode')) {
-          return ''
-        } else if (p1.startsWith('ENCODE')) {
-          return ''
-        } else if (p1.startsWith('getdate')) {
-          return 'now();'
-        } else if (p1.startsWith('integer identity')) {
-          return 'serial ,'
-        }
-        else {
-          return ';'
-        }
+				if (p2 === ',') {
+					return `${p2}`;
+				} else if (p1.startsWith('encode')) {
+					return ''
+				} else if (p1.startsWith('ENCODE')) {
+					return ''
+				} else if (p1.startsWith('getdate')) {
+					return 'now();'
+				} else if (p1.startsWith('integer identity')) {
+					return 'serial ,'
+				}
+				else {
+					return ';'
+				}
 
-      })
-    ).join('\n');
+			})
+		).join('\n');
 
-  }
+	}
 
 }

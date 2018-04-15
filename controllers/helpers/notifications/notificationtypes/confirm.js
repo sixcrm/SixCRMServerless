@@ -4,17 +4,17 @@ const BaseNotification = global.SixCRM.routes.include('helpers','notifications/n
 
 module.exports = class ConfirmNotification extends BaseNotification {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.name = 'confirm';
-    this.context_required = ['campaign.name', 'session.id'];
-    this.category = 'transaction';
+		this.name = 'confirm';
+		this.context_required = ['campaign.name', 'session.id'];
+		this.category = 'transaction';
 
-    this.account_wide = true;
+		this.account_wide = true;
 
-  }
+	}
 
 }
 

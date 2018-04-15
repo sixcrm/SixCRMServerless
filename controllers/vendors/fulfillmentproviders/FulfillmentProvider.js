@@ -8,109 +8,109 @@ const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class fulfillmentProviderController {
 
-    constructor(){
+	constructor(){
 
-      this.parameter_validation = {
-        'fulfillmentprovider':global.SixCRM.routes.path('model','entities/fulfillmentprovider.json')
-      };
+		this.parameter_validation = {
+			'fulfillmentprovider':global.SixCRM.routes.path('model','entities/fulfillmentprovider.json')
+		};
 
-      this.parameter_definition = {
-        construct:{
-          required:{
-            fulfillmentprovider: 'fulfillment_provider'
-          },
-          optional:{
+		this.parameter_definition = {
+			construct:{
+				required:{
+					fulfillmentprovider: 'fulfillment_provider'
+				},
+				optional:{
 
-          }
-        }
-      };
+				}
+			}
+		};
 
-      this.parameters = new Parameters({definition: this.parameter_definition, validation: this.parameter_validation});
+		this.parameters = new Parameters({definition: this.parameter_definition, validation: this.parameter_validation});
 
-      this.parameters.setParameters({argumentation: arguments[0], action: 'construct'});
+		this.parameters.setParameters({argumentation: arguments[0], action: 'construct'});
 
-      this.search_fields = ['name'];
+		this.search_fields = ['name'];
 
-    }
+	}
 
-    augmentParameters(){
+	augmentParameters(){
 
-      du.debug('Augment Parameters');
+		du.debug('Augment Parameters');
 
-      this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
-      this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
+		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
+		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
-      return true;
+		return true;
 
-    }
+	}
 
-    respond({additional_parameters}){
+	respond({additional_parameters}){
 
-      du.debug('Respond');
+		du.debug('Respond');
 
-      let vendor_response = this.parameters.get('vendorresponse');
-      let action = this.parameters.get('action');
+		let vendor_response = this.parameters.get('vendorresponse');
+		let action = this.parameters.get('action');
 
-      const VendorResponseClass = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/'+this.getVendorName()+'/Response.js');
+		const VendorResponseClass = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/'+this.getVendorName()+'/Response.js');
 
-      let response_object = {vendor_response: vendor_response, action: action};
+		let response_object = {vendor_response: vendor_response, action: action};
 
-      if(!_.isNull(additional_parameters) && !_.isUndefined(additional_parameters)){
-        response_object['additional_parameters'] = additional_parameters;
-      }
+		if(!_.isNull(additional_parameters) && !_.isUndefined(additional_parameters)){
+			response_object['additional_parameters'] = additional_parameters;
+		}
 
-      return new VendorResponseClass(response_object);
+		return new VendorResponseClass(response_object);
 
-    }
+	}
 
-    getVendorName(){
+	getVendorName(){
 
-      return objectutilities.getClassName(this).replace('Controller', '');
+		return objectutilities.getClassName(this).replace('Controller', '');
 
-    }
+	}
 
-    setReferenceNumber(){
+	setReferenceNumber(){
 
-      du.debug('Set Reference Number');
+		du.debug('Set Reference Number');
 
-      let shipping_receipt = this.parameters.get('shippingreceipt', null, false);
+		let shipping_receipt = this.parameters.get('shippingreceipt', null, false);
 
-      if(!_.isNull(shipping_receipt)){
+		if(!_.isNull(shipping_receipt)){
 
-        this.parameters.set('referencenumber', shipping_receipt.fulfillment_provider_reference);
+			this.parameters.set('referencenumber', shipping_receipt.fulfillment_provider_reference);
 
-      }else{
+		}else{
 
-        this.parameters.set('referencenumber', this.createReferenceNumber());
+			this.parameters.set('referencenumber', this.createReferenceNumber());
 
-      }
+		}
 
-      return true;
+		return true;
 
-    }
+	}
 
-    createReferenceNumber(){
+	createReferenceNumber(){
 
-      du.debug('Create Reference Number');
+		du.debug('Create Reference Number');
 
-      return uuidV4();
+		return uuidV4();
 
-    }
+	}
 
-    setMethod(){
+	setMethod(){
 
-      du.debug('Set Method');
+		du.debug('Set Method');
 
-      let action = this.parameters.get('action');
+		let action = this.parameters.get('action');
 
-      if(objectutilities.hasRecursive(this, 'methods.'+action)){
+		if(objectutilities.hasRecursive(this, 'methods.'+action)){
 
-        this.parameters.set('method', this.methods[action]);
+			this.parameters.set('method', this.methods[action]);
 
-      }
+		}
 
-      return true;
+		return true;
 
-    }
+	}
 
 };

@@ -8,83 +8,83 @@ const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 module.exports = class AWSProvider {
 
-    constructor(){
+	constructor(){
 
-    }
+	}
 
-    instantiateAWS(){
+	instantiateAWS(){
 
-      du.deep('Instantiate AWS');
+		du.deep('Instantiate AWS');
 
-      if(!_.has(this, 'AWS')){
-        this.AWS = require('aws-sdk');
-      }
+		if(!_.has(this, 'AWS')){
+			this.AWS = require('aws-sdk');
+		}
 
-    }
+	}
 
-    getRegion(){
+	getRegion(){
 
-      du.deep('Get Region');
+		du.deep('Get Region');
 
-      return global.SixCRM.configuration.site_config.aws.region;
+		return global.SixCRM.configuration.site_config.aws.region;
 
-    }
+	}
 
-    AWSCallback(error, data){
+	AWSCallback(error, data){
 
-      du.deep('AWS Callback');
+		du.deep('AWS Callback');
 
-      if(error){
+		if(error){
 
-        eu.throwError('server', error);
+			eu.throwError('server', error);
 
-      }
+		}
 
-      return data;
+		return data;
 
-    }
+	}
 
-    tolerantCallback(error, data, fatal){
+	tolerantCallback(error, data, fatal){
 
-      du.deep('Tolerant Callback');
+		du.deep('Tolerant Callback');
 
-      fatal = (_.isUndefined(fatal))?true:fatal;
+		fatal = (_.isUndefined(fatal))?true:fatal;
 
-      if(error){
-        if(fatal){
-          eu.throwError('server', error);
-        }
+		if(error){
+			if(fatal){
+				eu.throwError('server', error);
+			}
 
-        return Promise.reject(error);
+			return Promise.reject(error);
 
-      }
+		}
 
-      return Promise.resolve(data);
+		return Promise.resolve(data);
 
-    }
+	}
 
-    hasCredentials(fatal){
+	hasCredentials(fatal){
 
-      du.deep('Has Credentials');
+		du.deep('Has Credentials');
 
-      fatal = (_.isUndefined(fatal))?true:fatal;
+		fatal = (_.isUndefined(fatal))?true:fatal;
 
-      let validation = mvu.validateModel(process.env, global.SixCRM.routes.path('model','general/process_env/hasawscredentials.json'), null, false)
+		let validation = mvu.validateModel(process.env, global.SixCRM.routes.path('model','general/process_env/hasawscredentials.json'), null, false)
 
-      if(!validation){
+		if(!validation){
 
-        if(fatal){
-          eu.throwError('server', 'Missing Credentials in process.env');
-        }
+			if(fatal){
+				eu.throwError('server', 'Missing Credentials in process.env');
+			}
 
-        du.warning('Missing Credentials in process.env');
+			du.warning('Missing Credentials in process.env');
 
-        return false;
+			return false;
 
-      }
+		}
 
-      return true;
+		return true;
 
-    }
+	}
 
 }

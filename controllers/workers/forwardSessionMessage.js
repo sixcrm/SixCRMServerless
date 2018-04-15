@@ -3,10 +3,10 @@ const forwardMessageController = global.SixCRM.routes.include('controllers', 'wo
 
 module.exports = class forwardSessionMessageController extends forwardMessageController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-    }
+	}
 
 };

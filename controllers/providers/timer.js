@@ -6,46 +6,46 @@ const timestamp = global.SixCRM.routes.include('lib', 'timestamp');
 
 module.exports = class Timer {
 
-    constructor(){
+	constructor(){
 
-    }
+	}
 
-    set(){
+	set(){
 
-        this.start = timestamp.createTimestampMilliseconds();
+		this.start = timestamp.createTimestampMilliseconds();
 
-    }
+	}
 
-    get(force){
+	get(force){
 
-        if(!_.has(this, 'start')){
+		if(!_.has(this, 'start')){
 
-          eu.throwError('server','You must set the timer with "set" before calling "get".');
+			eu.throwError('server','You must set the timer with "set" before calling "get".');
 
-        }
+		}
 
-        let now = timestamp.createTimestampMilliseconds();
+		let now = timestamp.createTimestampMilliseconds();
 
-        let elapsed = (now - this.start);
+		let elapsed = (now - this.start);
 
-        if(force){
+		if(force){
 
-            let verbose_setting = process.env.SIX_VERBOSE;
+			let verbose_setting = process.env.SIX_VERBOSE;
 
-            process.env.SIX_VERBOSE=2;
-            du.info('Execution Time: '+elapsed+' ms');
-            process.env.SIX_VERBOSE=verbose_setting;
+			process.env.SIX_VERBOSE=2;
+			du.info('Execution Time: '+elapsed+' ms');
+			process.env.SIX_VERBOSE=verbose_setting;
 
-        }else{
+		}else{
 
-            du.info('Execution Time: '+elapsed+' ms');
+			du.info('Execution Time: '+elapsed+' ms');
 
-        }
+		}
 
 
-        return elapsed;
+		return elapsed;
 
-    }
+	}
 
 
 }

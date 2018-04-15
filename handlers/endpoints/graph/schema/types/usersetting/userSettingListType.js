@@ -7,17 +7,17 @@ let paginationType = require('../pagination/paginationType');
 let userSettingType = require('./userSettingType');
 
 module.exports.graphObj =  new GraphQLObjectType({
-    name: 'UserSettingList',
-    description: 'User Settings.',
-    fields: () => ({
-        usersettings: {
-            type: new GraphQLList(userSettingType.graphObj),
-            description: 'User Settings.',
-        },
-        pagination: {
-            type: new GraphQLNonNull(paginationType.graphObj),
-            description: 'Query pagination',
-        }
-    }),
-    interfaces: []
+	name: 'UserSettingList',
+	description: 'User Settings.',
+	fields: () => ({
+		usersettings: {
+			type: new GraphQLList(userSettingType.graphObj),
+			description: 'User Settings.',
+		},
+		pagination: {
+			type: new GraphQLNonNull(paginationType.graphObj),
+			description: 'Query pagination',
+		}
+	}),
+	interfaces: []
 });

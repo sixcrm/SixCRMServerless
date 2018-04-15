@@ -9,246 +9,246 @@ const MerchantProviderSummaryController = global.SixCRM.routes.include('entities
 
 module.exports = class MerchantProviderSummaryHelperController {
 
-  constructor(){
+	constructor(){
 
-    this.parameter_definition = {
-      incrementMerchantProviderSummary:{
-        required:{
-          merchantproviderid:'merchant_provider',
-          day:'day',
-          type:'type',
-          total:'total'
-        },
-        optional:{}
-      },
-      getMerchantProviderSummaries:{
-        required:{
-          merchantproviders: 'merchant_providers'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			incrementMerchantProviderSummary:{
+				required:{
+					merchantproviderid:'merchant_provider',
+					day:'day',
+					type:'type',
+					total:'total'
+				},
+				optional:{}
+			},
+			getMerchantProviderSummaries:{
+				required:{
+					merchantproviders: 'merchant_providers'
+				},
+				optional:{}
+			}
+		};
 
-    this.parameter_validation = {
-      'merchantproviderid':global.SixCRM.routes.path('model','definitions/uuidv4.json'),
-      'merchantprovidersummary':global.SixCRM.routes.path('model', 'entities/merchantprovidersummary.json'),
-      'day':global.SixCRM.routes.path('model','definitions/iso8601.json'),
-      'type':global.SixCRM.routes.path('model','definitions/sixcrmtransactiontype.json'),
-      'total':global.SixCRM.routes.path('model','definitions/currency.json'),
-      'summary':global.SixCRM.routes.path('model','entities/merchantprovidersummary.json')
-    };
+		this.parameter_validation = {
+			'merchantproviderid':global.SixCRM.routes.path('model','definitions/uuidv4.json'),
+			'merchantprovidersummary':global.SixCRM.routes.path('model', 'entities/merchantprovidersummary.json'),
+			'day':global.SixCRM.routes.path('model','definitions/iso8601.json'),
+			'type':global.SixCRM.routes.path('model','definitions/sixcrmtransactiontype.json'),
+			'total':global.SixCRM.routes.path('model','definitions/currency.json'),
+			'summary':global.SixCRM.routes.path('model','entities/merchantprovidersummary.json')
+		};
 
-    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-    this.merchantProviderSummaryController = new MerchantProviderSummaryController();
+		this.merchantProviderSummaryController = new MerchantProviderSummaryController();
 
-  }
+	}
 
-  incrementMerchantProviderSummary(){
+	incrementMerchantProviderSummary(){
 
-    du.debug('Increment Merchant Provider Summary');
+		du.debug('Increment Merchant Provider Summary');
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'incrementMerchantProviderSummary'}))
-    .then(() => this.validateDay())
-    .then(() => this.getMerchantProviderSummary())
-    .then(() => this.incrementSummary());
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'incrementMerchantProviderSummary'}))
+			.then(() => this.validateDay())
+			.then(() => this.getMerchantProviderSummary())
+			.then(() => this.incrementSummary());
 
-  }
+	}
 
-  validateDay(){
+	validateDay(){
 
-    du.debug('Validate Day');
+		du.debug('Validate Day');
 
-    let day = this.parameters.get('day');
+		let day = this.parameters.get('day');
 
-    if(!timestamp.isToday(day, 10)){
-      eu.throwError('server','You may not increment a merchant provider summary for a day other than today.');
-    }
+		if(!timestamp.isToday(day, 10)){
+			eu.throwError('server','You may not increment a merchant provider summary for a day other than today.');
+		}
 
-    return true;
+		return true;
 
-  }
+	}
 
-  getMerchantProviderSummary(){
+	getMerchantProviderSummary(){
 
-    du.debug('Get Merchant Provider Summary');
+		du.debug('Get Merchant Provider Summary');
 
-    let day = this.parameters.get('day');
-    let type = this.parameters.get('type');
-    let merchant_provider = this.parameters.get('merchantproviderid');
+		let day = this.parameters.get('day');
+		let type = this.parameters.get('type');
+		let merchant_provider = this.parameters.get('merchantproviderid');
 
-    let start = timestamp.startOfDay(day);
-    let end = timestamp.endOfDay(day);
+		let start = timestamp.startOfDay(day);
+		let end = timestamp.endOfDay(day);
 
-    return this.merchantProviderSummaryController.listByMerchantProviderAndDateRange({merchant_providers:[merchant_provider], start:start, end:end, type: type})
-    .then((result) => this.merchantProviderSummaryController.getResult(result, 'merchantprovidersummaries'))
-    .then(result => {
+		return this.merchantProviderSummaryController.listByMerchantProviderAndDateRange({merchant_providers:[merchant_provider], start:start, end:end, type: type})
+			.then((result) => this.merchantProviderSummaryController.getResult(result, 'merchantprovidersummaries'))
+			.then(result => {
 
-      if(!_.isNull(result) && arrayutilities.nonEmpty(result)){
-        if(result.length != 1){
-          eu.throwError('server', 'Unexpected Dynamo response.');
-        }
-        this.parameters.set('merchantprovidersummary', result.pop());
-        return true;
-      }
+				if(!_.isNull(result) && arrayutilities.nonEmpty(result)){
+					if(result.length != 1){
+						eu.throwError('server', 'Unexpected Dynamo response.');
+					}
+					this.parameters.set('merchantprovidersummary', result.pop());
+					return true;
+				}
 
-      let merchant_provider_summary_prototype = this.createPrototype({merchant_provider: merchant_provider, day: day, type: type});
+				let merchant_provider_summary_prototype = this.createPrototype({merchant_provider: merchant_provider, day: day, type: type});
 
-      return this.merchantProviderSummaryController.create({entity: merchant_provider_summary_prototype}).then(result => {
-        this.parameters.set('merchantprovidersummary', result);
-        return true;
-      });
+				return this.merchantProviderSummaryController.create({entity: merchant_provider_summary_prototype}).then(result => {
+					this.parameters.set('merchantprovidersummary', result);
+					return true;
+				});
 
-    });
+			});
 
-  }
+	}
 
-  createPrototype({merchant_provider, day, type}){
+	createPrototype({merchant_provider, day, type}){
 
-    du.debug('Create Prototype');
+		du.debug('Create Prototype');
 
-    return {
-      merchant_provider: merchant_provider,
-      day: timestamp.startOfDay(day),
-      total: 0.0,
-      count: 0,
-      type: type
-    };
+		return {
+			merchant_provider: merchant_provider,
+			day: timestamp.startOfDay(day),
+			total: 0.0,
+			count: 0,
+			type: type
+		};
 
-  }
+	}
 
-  incrementSummary(){
+	incrementSummary(){
 
-    du.debug('Increment Summary');
+		du.debug('Increment Summary');
 
-    let merchant_provider_summary = this.parameters.get('merchantprovidersummary');
-    let total = this.parameters.get('total');
+		let merchant_provider_summary = this.parameters.get('merchantprovidersummary');
+		let total = this.parameters.get('total');
 
-    merchant_provider_summary.total = numberutilities.formatFloat((numberutilities.formatFloat(merchant_provider_summary.total) + numberutilities.formatFloat(total, 2)), 2);
-    merchant_provider_summary.count = merchant_provider_summary.count + 1;
+		merchant_provider_summary.total = numberutilities.formatFloat((numberutilities.formatFloat(merchant_provider_summary.total) + numberutilities.formatFloat(total, 2)), 2);
+		merchant_provider_summary.count = merchant_provider_summary.count + 1;
 
-    return this.merchantProviderSummaryController.update({entity: merchant_provider_summary}).then(result => {
-      this.parameters.set('merchantprovidersummary', result);
-      return true;
-    });
+		return this.merchantProviderSummaryController.update({entity: merchant_provider_summary}).then(result => {
+			this.parameters.set('merchantprovidersummary', result);
+			return true;
+		});
 
-  }
+	}
 
-  getMerchantProviderSummaries(){
+	getMerchantProviderSummaries(){
 
-    du.debug('Get Merchant Provider Summaries');
+		du.debug('Get Merchant Provider Summaries');
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'getMerchantProviderSummaries'}))
-    .then(() => this.acquireMerchantProviderSummaries())
-    .then(() => this.formatResponse());
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'getMerchantProviderSummaries'}))
+			.then(() => this.acquireMerchantProviderSummaries())
+			.then(() => this.formatResponse());
 
-  }
+	}
 
-  acquireMerchantProviderSummaries(){
+	acquireMerchantProviderSummaries(){
 
-    du.debug('Acquire Merchant Provider Summaries');
+		du.debug('Acquire Merchant Provider Summaries');
 
-    let merchant_providers = this.parameters.get('merchantproviders');
-    let start = timestamp.startOfMonth();
+		let merchant_providers = this.parameters.get('merchantproviders');
+		let start = timestamp.startOfMonth();
 
-    return this.merchantProviderSummaryController.listByMerchantProviderAndDateRange({merchant_providers: merchant_providers,start: start})
-    .then((result) => this.merchantProviderSummaryController.getResult(result, 'merchantprovidersummaries'))
-    .then(result => {
-      this.parameters.set('merchantprovidersummaries', result || []);
-      return true;
-    });
+		return this.merchantProviderSummaryController.listByMerchantProviderAndDateRange({merchant_providers: merchant_providers,start: start})
+			.then((result) => this.merchantProviderSummaryController.getResult(result, 'merchantprovidersummaries'))
+			.then(result => {
+				this.parameters.set('merchantprovidersummaries', result || []);
+				return true;
+			});
 
-  }
+	}
 
-  formatResponse(){
+	formatResponse(){
 
-    du.debug('Format Response');
+		du.debug('Format Response');
 
-    let merchant_providers = this.parameters.get('merchantproviders');
-    let merchant_provider_summaries = this.parameters.get('merchantprovidersummaries', null, false);
+		let merchant_providers = this.parameters.get('merchantproviders');
+		let merchant_provider_summaries = this.parameters.get('merchantprovidersummaries', null, false);
 
-    let return_object = {};
+		let return_object = {};
 
-    return_object.merchant_providers = arrayutilities.map(merchant_providers, merchant_provider => {
+		return_object.merchant_providers = arrayutilities.map(merchant_providers, merchant_provider => {
 
-      let merchant_provider_specific_merchant_provider_summaries = arrayutilities.filter(merchant_provider_summaries, merchant_provider_summary => {
-        return merchant_provider_summary.merchant_provider == merchant_provider;
-      });
+			let merchant_provider_specific_merchant_provider_summaries = arrayutilities.filter(merchant_provider_summaries, merchant_provider_summary => {
+				return merchant_provider_summary.merchant_provider == merchant_provider;
+			});
 
-      return {
-        merchant_provider: {
-          id: merchant_provider
-        },
-        summary: {
-          today: this.aggregateTodaysSummaries(merchant_provider_specific_merchant_provider_summaries),
-          thisweek: this.aggregateThisWeeksSummaries(merchant_provider_specific_merchant_provider_summaries),
-          thismonth: this.aggregateThisMonthsSummaries(merchant_provider_specific_merchant_provider_summaries)
-        }
-      }
+			return {
+				merchant_provider: {
+					id: merchant_provider
+				},
+				summary: {
+					today: this.aggregateTodaysSummaries(merchant_provider_specific_merchant_provider_summaries),
+					thisweek: this.aggregateThisWeeksSummaries(merchant_provider_specific_merchant_provider_summaries),
+					thismonth: this.aggregateThisMonthsSummaries(merchant_provider_specific_merchant_provider_summaries)
+				}
+			}
 
-    });
+		});
 
-    return return_object;
+		return return_object;
 
-  }
+	}
 
-  aggregateThisMonthsSummaries(merchant_provider_summaries){
+	aggregateThisMonthsSummaries(merchant_provider_summaries){
 
-    du.debug('Aggregate This Months Summaries');
+		du.debug('Aggregate This Months Summaries');
 
-    return this.aggregateAfter(merchant_provider_summaries, 'this_month');
+		return this.aggregateAfter(merchant_provider_summaries, 'this_month');
 
-  }
+	}
 
-  aggregateThisWeeksSummaries(merchant_provider_summaries){
+	aggregateThisWeeksSummaries(merchant_provider_summaries){
 
-    du.debug('Aggregate This Weeks Summaries');
+		du.debug('Aggregate This Weeks Summaries');
 
-    return this.aggregateAfter(merchant_provider_summaries, 'this_week');
+		return this.aggregateAfter(merchant_provider_summaries, 'this_week');
 
-  }
+	}
 
-  aggregateTodaysSummaries(merchant_provider_summaries){
+	aggregateTodaysSummaries(merchant_provider_summaries){
 
-    du.debug('Aggregate Todays Summaries');
+		du.debug('Aggregate Todays Summaries');
 
-    return this.aggregateAfter(merchant_provider_summaries, 'today');
+		return this.aggregateAfter(merchant_provider_summaries, 'today');
 
-  }
+	}
 
-  aggregateAfter(merchant_provider_summaries, start_indicator){
+	aggregateAfter(merchant_provider_summaries, start_indicator){
 
-    du.debug('Aggregate After');
+		du.debug('Aggregate After');
 
-    let starts = {
-      'today': timestamp.startOfDay(),
-      'this_week': timestamp.startOfWeek(),
-      'this_month':timestamp.startOfMonth()
-    };
+		let starts = {
+			'today': timestamp.startOfDay(),
+			'this_week': timestamp.startOfWeek(),
+			'this_month':timestamp.startOfMonth()
+		};
 
-    let start = starts[start_indicator];
-    let summary_object = {
-      count: 0,
-      amount: 0
-    };
+		let start = starts[start_indicator];
+		let summary_object = {
+			count: 0,
+			amount: 0
+		};
 
-    return arrayutilities.reduce(
-      merchant_provider_summaries,
-      (current, merchant_provider_summary) => {
-        if(merchant_provider_summary.day >= start){
-          current.count += parseInt(merchant_provider_summary.count);
-          current.amount += numberutilities.formatFloat(merchant_provider_summary.total, 2);
-        }
-        return current;
-      },
-      summary_object
-    );
+		return arrayutilities.reduce(
+			merchant_provider_summaries,
+			(current, merchant_provider_summary) => {
+				if(merchant_provider_summary.day >= start){
+					current.count += parseInt(merchant_provider_summary.count);
+					current.amount += numberutilities.formatFloat(merchant_provider_summary.total, 2);
+				}
+				return current;
+			},
+			summary_object
+		);
 
-  }
+	}
 
 
 

@@ -7,17 +7,17 @@ const affiliateReportSubaffiliateRowType = require('./affiliateReportSubaffiliat
 const analyticsPaginationType = require('./../paginationType');
 
 module.exports.graphObj = new GraphQLObjectType({
-  name: 'AffiliateReportSubaffiliatesType',
-  description: 'Affiliates Report Subaffiliates Type',
-  fields: () => ({
-    subaffiliates: {
-      type: new GraphQLList(affiliateReportSubaffiliateRowType.graphObj),
-      description: 'A subaffiliate'
-    },
-    pagination: {
-      type: new GraphQLNonNull(analyticsPaginationType.graphObj),
-      description: ''
-    }
-  }),
-  interfaces: []
+	name: 'AffiliateReportSubaffiliatesType',
+	description: 'Affiliates Report Subaffiliates Type',
+	fields: () => ({
+		subaffiliates: {
+			type: new GraphQLList(affiliateReportSubaffiliateRowType.graphObj),
+			description: 'A subaffiliate'
+		},
+		pagination: {
+			type: new GraphQLNonNull(analyticsPaginationType.graphObj),
+			description: ''
+		}
+	}),
+	interfaces: []
 });

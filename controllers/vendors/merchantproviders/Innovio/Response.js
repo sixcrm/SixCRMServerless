@@ -7,92 +7,92 @@ const Response = global.SixCRM.routes.include('vendors', 'merchantproviders/Resp
 
 module.exports = class InnovioResponse extends Response {
 
-  constructor(){
+	constructor(){
 
-    super(arguments[0]);
+		super(arguments[0]);
 
-  }
+	}
 
-  determineResultCode({response, body, action}){
+	determineResultCode({response, body, action}){
 
-    du.debug('Determine Result Code');
+		du.debug('Determine Result Code');
 
-    if(action == 'process'){
+		if(action == 'process'){
 
-      if(response.statusCode !== 200){
-        return 'error';
-      }
+			if(response.statusCode !== 200){
+				return 'error';
+			}
 
-      if(response.statusMessage !== 'OK'){
-        return 'error';
-      }
+			if(response.statusMessage !== 'OK'){
+				return 'error';
+			}
 
-      body = this.parseBody(body);
+			body = this.parseBody(body);
 
-      if(!_.has(body, 'TRANS_STATUS_NAME')){
+			if(!_.has(body, 'TRANS_STATUS_NAME')){
 
-        return 'error';
+				return 'error';
 
-      }
+			}
 
-      if(body.TRANS_STATUS_NAME == 'APPROVED'){
-        return 'success';
-      }
+			if(body.TRANS_STATUS_NAME == 'APPROVED'){
+				return 'success';
+			}
 
-      return 'fail';
+			return 'fail';
 
-    }else if(_.includes(['reverse','refund'], action)){
+		}else if(_.includes(['reverse','refund'], action)){
 
-      body = this.parseBody(body);
+			body = this.parseBody(body);
 
-      if(!_.has(body, 'TRANS_STATUS_NAME')){
+			if(!_.has(body, 'TRANS_STATUS_NAME')){
 
-        return 'error';
+				return 'error';
 
-      }
+			}
 
-      if(response.statusCode == 200 && response.statusMessage == 'OK' && body.TRANS_STATUS_NAME == 'APPROVED'){
-        return 'success';
-      }
+			if(response.statusCode == 200 && response.statusMessage == 'OK' && body.TRANS_STATUS_NAME == 'APPROVED'){
+				return 'success';
+			}
 
-      return 'fail';
+			return 'fail';
 
-    }else if( action == 'test'){
+		}else if( action == 'test'){
 
-      body = this.parseBody(body);
+			body = this.parseBody(body);
 
-      if(response.statusCode == 200 && response.statusMessage == 'OK' && body.SERVICE_ADVICE == 'User Authorized'){
-        return 'success';
-      }
+			if(response.statusCode == 200 && response.statusMessage == 'OK' && body.SERVICE_ADVICE == 'User Authorized'){
+				return 'success';
+			}
 
-      return 'fail';
+			return 'fail';
 
-    }
+		}
 
-    return 'error';
+		return 'error';
 
-  }
+	}
 
-  parseBody(body){
+	parseBody(body){
 
-    du.debug('Parse Response');
+		du.debug('Parse Response');
 
-    let parsed_response = null;
+		let parsed_response = null;
 
-    try{
+		try{
 
-      parsed_response = JSON.parse(body);
+			parsed_response = JSON.parse(body);
 
-    }catch(error){
+		}catch(error){
 
-      du.error(error);
+			du.error(error);
 
-      this.handleError(error);
+			this.handleError(error);
 
-    }
+		}
 
-    return parsed_response;
+		return parsed_response;
 
-  }
+	}
 
 }

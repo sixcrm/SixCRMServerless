@@ -8,170 +8,170 @@ const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 function getValidRebill(id){
 
-  return MockEntities.getValidRebill(id);
+	return MockEntities.getValidRebill(id);
 
 }
 
 function getValidSession(id){
 
-  return MockEntities.getValidSession(id);
+	return MockEntities.getValidSession(id);
 
 }
 
 function getValidMessage(id){
 
-  return MockEntities.getValidMessage(id);
+	return MockEntities.getValidMessage(id);
 
 }
 
 describe('controllers/workers/getRebills', () => {
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-    mockery.resetCache();
-    mockery.deregisterAll();
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-  afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-  });
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-  describe('constructor', () => {
+	describe('constructor', () => {
 
-    it('instantiates the createRebillsController class', () => {
+		it('instantiates the createRebillsController class', () => {
 
-      const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
-      let createRebillsController = new CreateRebillsController();
+			const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+			let createRebillsController = new CreateRebillsController();
 
-      expect(objectutilities.getClassName(createRebillsController)).to.equal('createRebillsController');
+			expect(objectutilities.getClassName(createRebillsController)).to.equal('createRebillsController');
 
-    });
+		});
 
-  });
+	});
 
-  describe('acquireSession', () => {
+	describe('acquireSession', () => {
 
-    it('successfully acquires a session', () => {
+		it('successfully acquires a session', () => {
 
-      let session = getValidSession();
-      let message = getValidMessage();
+			let session = getValidSession();
+			let message = getValidMessage();
 
-      message.Body = JSON.stringify({id: session.id});
+			message.Body = JSON.stringify({id: session.id});
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
-        get() {
-          return Promise.resolve(session)
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+				get() {
+					return Promise.resolve(session)
+				}
+			});
 
-      const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
-      let createRebillsController = new CreateRebillsController();
+			const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+			let createRebillsController = new CreateRebillsController();
 
-      createRebillsController.parameters.set('message', message);
+			createRebillsController.parameters.set('message', message);
 
-      return createRebillsController.acquireSession().then(result => {
-        expect(result).to.equal(true);
-        expect(createRebillsController.parameters.store['session']).to.deep.equal(session);
-      });
+			return createRebillsController.acquireSession().then(result => {
+				expect(result).to.equal(true);
+				expect(createRebillsController.parameters.store['session']).to.deep.equal(session);
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('createRebills', () => {
+	describe('createRebills', () => {
 
-    it('successfully creates rebills', () => {
+		it('successfully creates rebills', () => {
 
-      let session = getValidSession();
-      let rebill = getValidRebill();
+			let session = getValidSession();
+			let rebill = getValidRebill();
 
-      let mock_rebill_helper_controller = class {
-        constructor(){
+			let mock_rebill_helper_controller = class {
+				constructor(){
 
-        }
-        createRebill(){
-          return Promise.resolve(rebill);
-        }
-      };
+				}
+				createRebill(){
+					return Promise.resolve(rebill);
+				}
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper_controller);
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper_controller);
 
-      const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
-      let createRebillsController = new CreateRebillsController();
+			const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+			let createRebillsController = new CreateRebillsController();
 
-      createRebillsController.parameters.set('session', session);
+			createRebillsController.parameters.set('session', session);
 
-      return createRebillsController.createRebills().then(result => {
-        expect(result).to.equal(true);
-        expect(createRebillsController.parameters.store['rebill']).to.deep.equal(rebill);
-      });
+			return createRebillsController.createRebills().then(result => {
+				expect(result).to.equal(true);
+				expect(createRebillsController.parameters.store['rebill']).to.deep.equal(rebill);
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('respond', () => {
+	describe('respond', () => {
 
-    it('successfully responds', () => {
+		it('successfully responds', () => {
 
-      let rebill = getValidRebill();
+			let rebill = getValidRebill();
 
-      const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
-      let createRebillsController = new CreateRebillsController();
+			const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+			let createRebillsController = new CreateRebillsController();
 
-      createRebillsController.parameters.set('rebill', rebill);
+			createRebillsController.parameters.set('rebill', rebill);
 
-      let result = createRebillsController.respond();
+			let result = createRebillsController.respond();
 
-      expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+			expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
 
-    });
+		});
 
-  });
+	});
 
-  describe('execute', () => {
+	describe('execute', () => {
 
-    it('successfully executes', () => {
+		it('successfully executes', () => {
 
-      let session = getValidSession();
-      let message = getValidMessage();
-      let rebill = getValidRebill();
+			let session = getValidSession();
+			let message = getValidMessage();
+			let rebill = getValidRebill();
 
-      message.Body = JSON.stringify({id: session.id});
+			message.Body = JSON.stringify({id: session.id});
 
-      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
-        get() {
-          return Promise.resolve(session)
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+				get() {
+					return Promise.resolve(session)
+				}
+			});
 
-      let mock_rebill_helper_controller = class {
-        constructor(){
+			let mock_rebill_helper_controller = class {
+				constructor(){
 
-        }
-        createRebill(){
-          return Promise.resolve(rebill);
-        }
-      };
+				}
+				createRebill(){
+					return Promise.resolve(rebill);
+				}
+			};
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper_controller);
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), mock_rebill_helper_controller);
 
-      const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
-      let createRebillsController = new CreateRebillsController();
+			const CreateRebillsController = global.SixCRM.routes.include('controllers', 'workers/createRebills.js');
+			let createRebillsController = new CreateRebillsController();
 
-      return createRebillsController.execute(message).then(result => {
-        expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
-        expect(createRebillsController.parameters.store['session']).to.deep.equal(session);
-        expect(createRebillsController.parameters.store['rebill']).to.deep.equal(rebill);
-      });
+			return createRebillsController.execute(message).then(result => {
+				expect(objectutilities.getClassName(result)).to.equal('WorkerResponse');
+				expect(createRebillsController.parameters.store['session']).to.deep.equal(session);
+				expect(createRebillsController.parameters.store['rebill']).to.deep.equal(rebill);
+			});
 
-    });
+		});
 
-  });
+	});
 
 });

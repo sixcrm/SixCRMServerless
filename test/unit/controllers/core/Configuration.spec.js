@@ -8,176 +8,176 @@ const Configuration = global.SixCRM.routes.include('controllers', 'core/Configur
 
 describe('controllers/core/Configuration.js', () => {
 
-  const DEVELOPMENT_ACCOUNT = '068070110666';
+	const DEVELOPMENT_ACCOUNT = '068070110666';
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-  afterEach(() => {
-    mockery.resetCache();
-  });
+	afterEach(() => {
+		mockery.resetCache();
+	});
 
-  after(() => {
-    mockery.deregisterAll();
-  });
+	after(() => {
+		mockery.deregisterAll();
+	});
 
-  describe('constructor', () => {
-    it('instantiates', () => {
+	describe('constructor', () => {
+		it('instantiates', () => {
 
-      let configuration = new Configuration();
+			let configuration = new Configuration();
 
-      //expect(configuration.stage).to.equal('local');
-      expect(configuration.serverless_config).not.to.be.undefined;
-      expect(configuration.serverless_config).not.to.be.undefined;
-      expect(configuration.environment_config).not.to.be.null;
-      expect(configuration.environment_config).not.to.be.null;
-      expect(configuration.site_config).not.to.be.undefined;
-      expect(configuration.site_config).not.to.be.null;
+			//expect(configuration.stage).to.equal('local');
+			expect(configuration.serverless_config).not.to.be.undefined;
+			expect(configuration.serverless_config).not.to.be.undefined;
+			expect(configuration.environment_config).not.to.be.null;
+			expect(configuration.environment_config).not.to.be.null;
+			expect(configuration.site_config).not.to.be.undefined;
+			expect(configuration.site_config).not.to.be.null;
 
-    });
+		});
 
-    it('handles incorrect stage', () => {
-      try {
-        new Configuration('some_unknown_stage');
-      } catch (error) {
-        expect(error.code).to.equal(500);
-      }
-    });
+		it('handles incorrect stage', () => {
+			try {
+				new Configuration('some_unknown_stage');
+			} catch (error) {
+				expect(error.code).to.equal(500);
+			}
+		});
 
-  });
+	});
 
-  describe('getAccountIdentifier', () => {
+	describe('getAccountIdentifier', () => {
 
-    let _context = null;
-    let _process_env = null;
+		let _context = null;
+		let _process_env = null;
 
-    before(() => {
-      _process_env = process.env;
-      _context = context;
-    });
+		before(() => {
+			_process_env = process.env;
+			_context = context;
+		});
 
-    after(() => {
-      process.env = _process_env;
-      /* eslint-disable no-global-assign */
-      context = _context;
-    });
+		after(() => {
+			process.env = _process_env;
+			/* eslint-disable no-global-assign */
+			context = _context;
+		});
 
-    xit('determines account identifier', () => {
-      let configuration = new Configuration('development');
+		xit('determines account identifier', () => {
+			let configuration = new Configuration('development');
 
-      process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
+			process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
 
-      expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
-    });
+			expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
+		});
 
-    xit('determines account identifier - fallback to lambda', () => {
-      delete process.env.AWS_ACCOUNT;
-      // eslint-disable-next-line no-global-assign
-      context = {
-        invokedFunctionArn: DEVELOPMENT_ACCOUNT
-      };
-      let configuration = new Configuration();
+		xit('determines account identifier - fallback to lambda', () => {
+			delete process.env.AWS_ACCOUNT;
+			// eslint-disable-next-line no-global-assign
+			context = {
+				invokedFunctionArn: DEVELOPMENT_ACCOUNT
+			};
+			let configuration = new Configuration();
 
-      expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
-    });
+			expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
+		});
 
-  });
+	});
 
-  describe('determineStageFromAccountIdentifier', () => {
+	describe('determineStageFromAccountIdentifier', () => {
 
-    let _process_env = null;
+		let _process_env = null;
 
-    before(() => {
-      _process_env = process.env;
-    });
+		before(() => {
+			_process_env = process.env;
+		});
 
-    after(() => {
-      process.env = _process_env;
-    });
+		after(() => {
+			process.env = _process_env;
+		});
 
-    xit('determines stage from account identifier', () => {
-      let configuration = new Configuration();
+		xit('determines stage from account identifier', () => {
+			let configuration = new Configuration();
 
-      process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
+			process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
 
-      expect(configuration.determineStageFromAccountIdentifier()).to.equal('development');
-    });
+			expect(configuration.determineStageFromAccountIdentifier()).to.equal('development');
+		});
 
-  });
+	});
 
-  describe('getEnvironmentConfig', () => {
+	describe('getEnvironmentConfig', () => {
 
-  });
+	});
 
-  describe('handleStage', () => {
+	describe('handleStage', () => {
 
-    let process_env;
+		let process_env;
 
-    beforeEach(() => {
-      process_env = process.env;
-    });
+		beforeEach(() => {
+			process_env = process.env;
+		});
 
-    afterEach(() => {
-      process.env = process_env;
-    })
+		afterEach(() => {
+			process.env = process_env;
+		})
 
-    it('successfully identifies the stage based on branch name', () => {
+		it('successfully identifies the stage based on branch name', () => {
 
-      let stages = global.SixCRM.routes.include('config', 'stages.yml');
+			let stages = global.SixCRM.routes.include('config', 'stages.yml');
 
-      objectutilities.map(stages, key => {
+			objectutilities.map(stages, key => {
 
-        let stage = stages[key];
+				let stage = stages[key];
 
-        if(_.has(stage, 'branch_name')){
+				if(_.has(stage, 'branch_name')){
 
-          if (!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)) {
-            delete process.env.AWS_ACCOUNT;
-          }
+					if (!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)) {
+						delete process.env.AWS_ACCOUNT;
+					}
 
-          if (!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)) {
-            delete process.env.stage;
-          }
+					if (!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)) {
+						delete process.env.stage;
+					}
 
-          process.env.CIRCLE_BRANCH = stage.branch_name;
+					process.env.CIRCLE_BRANCH = stage.branch_name;
 
-          let configuration = new Configuration();
+					let configuration = new Configuration();
 
-          expect(configuration.stage).to.equal(key);
+					expect(configuration.stage).to.equal(key);
 
-        }
+				}
 
-      });
+			});
 
-    });
+		});
 
-    it('successfully identifies the stage (local) in absence of branch name or ', () => {
+		it('successfully identifies the stage (local) in absence of branch name or ', () => {
 
-      //let stages = global.SixCRM.routes.include('config', 'stages.yml');
+			//let stages = global.SixCRM.routes.include('config', 'stages.yml');
 
-      if (!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)) {
-        delete process.env.AWS_ACCOUNT;
-      }
+			if (!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)) {
+				delete process.env.AWS_ACCOUNT;
+			}
 
-      if (!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)) {
-        delete process.env.stage;
-      }
+			if (!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)) {
+				delete process.env.stage;
+			}
 
-      if (!_.isUndefined(process.env.CIRCLE_BRANCH) && !_.isNull(process.env.CIRCLE_BRANCH)) {
-        delete process.env.CIRCLE_BRANCH;
-      }
+			if (!_.isUndefined(process.env.CIRCLE_BRANCH) && !_.isNull(process.env.CIRCLE_BRANCH)) {
+				delete process.env.CIRCLE_BRANCH;
+			}
 
-      let configuration = new Configuration();
+			let configuration = new Configuration();
 
-      expect(configuration.stage).to.equal('local');
+			expect(configuration.stage).to.equal('local');
 
-    });
+		});
 
-  });
+	});
 
 });

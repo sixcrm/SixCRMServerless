@@ -46,21 +46,21 @@ function getValidRegisterResponse() {
 function getValidMessages() {
 
 	return [{
-			MessageId: "someMessageID",
-			ReceiptHandle: "SomeReceiptHandle",
-			Body: JSON.stringify({
-				id: uuidV4()
-			}),
-			MD5OfBody: "SomeMD5"
-		},
-		{
-			MessageId: "someMessageID",
-			ReceiptHandle: "SomeReceiptHandle",
-			Body: JSON.stringify({
-				id: uuidV4()
-			}),
-			MD5OfBody: "SomeMD5"
-		}
+		MessageId: "someMessageID",
+		ReceiptHandle: "SomeReceiptHandle",
+		Body: JSON.stringify({
+			id: uuidV4()
+		}),
+		MD5OfBody: "SomeMD5"
+	},
+	{
+		MessageId: "someMessageID",
+		ReceiptHandle: "SomeReceiptHandle",
+		Body: JSON.stringify({
+			id: uuidV4()
+		}),
+		MD5OfBody: "SomeMD5"
+	}
 	];
 
 }

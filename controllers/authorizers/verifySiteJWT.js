@@ -7,179 +7,179 @@ const UserSigningStringController = global.SixCRM.routes.include('controllers', 
 
 module.exports = class verifySiteJWTController {
 
-  constructor() {
+	constructor() {
 
-    this.parameter_definition = {
-      event: {
-        required: {
-          encoded_authorization_token: 'authorizationToken'
-        },
-        optional: {}
-      }
+		this.parameter_definition = {
+			event: {
+				required: {
+					encoded_authorization_token: 'authorizationToken'
+				},
+				optional: {}
+			}
 
-    }
+		}
 
-    this.parameter_validation = {
-      verified_authorization_token: global.SixCRM.routes.path('model', 'definitions/jwt.json'),
-      user_signing_strings: global.SixCRM.routes.path('model', 'authorization/usersigningstrings.json'),
-      encoded_authorization_token: global.SixCRM.routes.path('model', 'definitions/jwt.json'),
-      decoded_authorization_token: global.SixCRM.routes.path('model', 'authorization/decodedauthorizationtoken.json')
-    }
+		this.parameter_validation = {
+			verified_authorization_token: global.SixCRM.routes.path('model', 'definitions/jwt.json'),
+			user_signing_strings: global.SixCRM.routes.path('model', 'authorization/usersigningstrings.json'),
+			encoded_authorization_token: global.SixCRM.routes.path('model', 'definitions/jwt.json'),
+			decoded_authorization_token: global.SixCRM.routes.path('model', 'authorization/decodedauthorizationtoken.json')
+		}
 
-    this.messages = {
-      bypass: 'BYPASS'
-    }
+		this.messages = {
+			bypass: 'BYPASS'
+		}
 
-    this.jwtprovider = new JWTProvider();
-    this.jwtprovider.setJWTType('site');
+		this.jwtprovider = new JWTProvider();
+		this.jwtprovider.setJWTType('site');
 
-    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-    this.parameters = new Parameters({
-      validation: this.parameter_validation,
-      definition: this.parameter_definition
-    });
+		this.parameters = new Parameters({
+			validation: this.parameter_validation,
+			definition: this.parameter_definition
+		});
 
-    this.userSigningStringController = new UserSigningStringController();
+		this.userSigningStringController = new UserSigningStringController();
 
-  }
+	}
 
-  execute(event) {
+	execute(event) {
 
-    return this.setParameters(event)
-      .then(() => this.decodeToken())
-      .then(() => this.verifyEncodedTokenWithSiteSecretKey())
-      .then(() => this.verifyEncodedTokenWithUserSigningString())
-      .then(() => this.respond());
+		return this.setParameters(event)
+			.then(() => this.decodeToken())
+			.then(() => this.verifyEncodedTokenWithSiteSecretKey())
+			.then(() => this.verifyEncodedTokenWithUserSigningString())
+			.then(() => this.respond());
 
-  }
+	}
 
-  decodeToken() {
+	decodeToken() {
 
-    du.debug('Decode Token');
+		du.debug('Decode Token');
 
-    let token = this.parameters.get('encoded_authorization_token');
+		let token = this.parameters.get('encoded_authorization_token');
 
-    let decoded_token = this.jwtprovider.decodeJWT(token);
+		let decoded_token = this.jwtprovider.decodeJWT(token);
 
-    if (decoded_token) {
+		if (decoded_token) {
 
-      this.parameters.set('decoded_authorization_token', decoded_token);
+			this.parameters.set('decoded_authorization_token', decoded_token);
 
-      return Promise.resolve();
+			return Promise.resolve();
 
-    }
+		}
 
-    eu.throwError('bad_request', 'Unable to decode token.');
+		eu.throwError('bad_request', 'Unable to decode token.');
 
-  }
+	}
 
-  verifyEncodedTokenWithSiteSecretKey() {
+	verifyEncodedTokenWithSiteSecretKey() {
 
-    du.debug('Verify Encoded Token With Site Secret Key');
+		du.debug('Verify Encoded Token With Site Secret Key');
 
-    let encoded_token = this.parameters.get('encoded_authorization_token');
+		let encoded_token = this.parameters.get('encoded_authorization_token');
 
-    if (this.jwtprovider.verifyJWT(encoded_token)) {
+		if (this.jwtprovider.verifyJWT(encoded_token)) {
 
-      this.parameters.set('verified_authorization_token', encoded_token);
+			this.parameters.set('verified_authorization_token', encoded_token);
 
-    }
+		}
 
-    return Promise.resolve();
+		return Promise.resolve();
 
-  }
+	}
 
-  verifyEncodedTokenWithUserSigningString() {
+	verifyEncodedTokenWithUserSigningString() {
 
-    du.debug('Verify Encoded Token With User Signing String');
+		du.debug('Verify Encoded Token With User Signing String');
 
-    let verified_token = this.parameters.get('verified_authorization_token', null, false);
+		let verified_token = this.parameters.get('verified_authorization_token', null, false);
 
-    if (_.isNull(verified_token)) {
+		if (_.isNull(verified_token)) {
 
-      return this.getUserSigningStrings()
-        .then(() => this.verifyEncodedTokenWithUserSigningStrings());
+			return this.getUserSigningStrings()
+				.then(() => this.verifyEncodedTokenWithUserSigningStrings());
 
-    }
+		}
 
-    return Promise.resolve();
+		return Promise.resolve();
 
-  }
+	}
 
-  getUserSigningStrings() {
+	getUserSigningStrings() {
 
-    du.debug('Get User Signing Strings');
+		du.debug('Get User Signing Strings');
 
-    let user_id = this.parameters.get('decoded_authorization_token').email;
+		let user_id = this.parameters.get('decoded_authorization_token').email;
 
-    this.userSigningStringController.disableACLs();
-    //Technical Debt: update to list by user
-    return this.userSigningStringController.listByUser({
-        user: user_id
-      })
-      .then((results) => this.userSigningStringController.getResult(results, 'usersigningstrings'))
-      .then(usersigningstrings => {
-        this.userSigningStringController.enableACLs();
+		this.userSigningStringController.disableACLs();
+		//Technical Debt: update to list by user
+		return this.userSigningStringController.listByUser({
+			user: user_id
+		})
+			.then((results) => this.userSigningStringController.getResult(results, 'usersigningstrings'))
+			.then(usersigningstrings => {
+				this.userSigningStringController.enableACLs();
 
-        if (arrayutilities.nonEmpty(usersigningstrings)) {
-          return this.parameters.set('user_signing_strings', usersigningstrings);
-        }
+				if (arrayutilities.nonEmpty(usersigningstrings)) {
+					return this.parameters.set('user_signing_strings', usersigningstrings);
+				}
 
-        return true;
-      });
+				return true;
+			});
 
-  }
+	}
 
-  verifyEncodedTokenWithUserSigningStrings() {
+	verifyEncodedTokenWithUserSigningStrings() {
 
-    du.debug('Verify Encoded Token With User Signing Strings');
+		du.debug('Verify Encoded Token With User Signing Strings');
 
-    let user_signing_strings = this.parameters.get('user_signing_strings', null, false);
+		let user_signing_strings = this.parameters.get('user_signing_strings', null, false);
 
-    if (!_.isNull(user_signing_strings)) {
+		if (!_.isNull(user_signing_strings)) {
 
-      let encoded_token = this.parameters.get('encoded_authorization_token');
+			let encoded_token = this.parameters.get('encoded_authorization_token');
 
-      arrayutilities.find(user_signing_strings, (user_signing_string) => {
-        if (this.jwtprovider.decodeJWT(encoded_token, user_signing_string.signing_string)) {
-          this.parameters.set('verified_authorization_token', encoded_token);
-          return true;
-        }
-        return false;
-      });
+			arrayutilities.find(user_signing_strings, (user_signing_string) => {
+				if (this.jwtprovider.decodeJWT(encoded_token, user_signing_string.signing_string)) {
+					this.parameters.set('verified_authorization_token', encoded_token);
+					return true;
+				}
+				return false;
+			});
 
-    }
+		}
 
-  }
+	}
 
-  respond() {
+	respond() {
 
-    du.debug('Respond');
+		du.debug('Respond');
 
-    let verified_token = this.parameters.get('verified_authorization_token', null, false);
+		let verified_token = this.parameters.get('verified_authorization_token', null, false);
 
-    if (!_.isNull(verified_token)) {
+		if (!_.isNull(verified_token)) {
 
-      return this.parameters.get('decoded_authorization_token').email;
+			return this.parameters.get('decoded_authorization_token').email;
 
-    }
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
-  setParameters(event) {
+	setParameters(event) {
 
-    du.debug('Set Parameters');
+		du.debug('Set Parameters');
 
-    this.parameters.setParameters({
-      argumentation: event,
-      action: 'event'
-    });
+		this.parameters.setParameters({
+			argumentation: event,
+			action: 'event'
+		});
 
-    return Promise.resolve(true);
+		return Promise.resolve(true);
 
-  }
+	}
 
 }

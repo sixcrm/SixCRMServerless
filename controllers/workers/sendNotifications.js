@@ -14,82 +14,82 @@ var workerController = global.SixCRM.routes.include('controllers', 'workers/comp
 //Tecnhincal Debt:  Is this in use??
 module.exports = class sendNotificationsController extends workerController {
 
-  constructor(){
-    super();
-    this.messages = {
-      success:'SUCCESS',
-      successnoaction:'SUCCESSNOACTION',
-      failure:'FAIL'
-    }
-  }
+	constructor(){
+		super();
+		this.messages = {
+			success:'SUCCESS',
+			successnoaction:'SUCCESSNOACTION',
+			failure:'FAIL'
+		}
+	}
 
-  execute(event){
+	execute(event){
 
-    du.debug('Executing Send Notifications');
+		du.debug('Executing Send Notifications');
 
-    return this.getMessage(event)
-    .then((message) => this.validateMessage(message))
-    .then((message) => this.sendNotification(message))
-    .then((results) => this.respond(results))
-    .catch(() => {
-      return this.messages.failure;
-    });
+		return this.getMessage(event)
+			.then((message) => this.validateMessage(message))
+			.then((message) => this.sendNotification(message))
+			.then((results) => this.respond(results))
+			.catch(() => {
+				return this.messages.failure;
+			});
 
-  }
+	}
 
-  getMessage(event){
+	getMessage(event){
 
-    du.debug('Get Messages');
+		du.debug('Get Messages');
 
-    return this.parseInputEvent(event, false);
+		return this.parseInputEvent(event, false);
 
-  }
+	}
 
-  validateMessage(message){
+	validateMessage(message){
 
-    du.debug('Filter Invalid Messages');
+		du.debug('Filter Invalid Messages');
 
-    mvu.validateModel(message, global.SixCRM.routes.path('model', 'workers/sendnotification/notificationmessage.json'));
+		mvu.validateModel(message, global.SixCRM.routes.path('model', 'workers/sendnotification/notificationmessage.json'));
 
-    if(message.scope.user == true && !_.has(message, 'user')){
-      eu.throwError('server', 'The user email must be inclided if the scope.user setting is true.');
-    }
+		if(message.scope.user == true && !_.has(message, 'user')){
+			eu.throwError('server', 'The user email must be inclided if the scope.user setting is true.');
+		}
 
-    return message;
+		return message;
 
-  }
+	}
 
-  sendNotification(message){
+	sendNotification(message){
 
-    du.debug('Send Notification');
+		du.debug('Send Notification');
 
-    let cloned_message = objectutilities.clone(message);
+		let cloned_message = objectutilities.clone(message);
 
-    delete cloned_message.scope;
+		delete cloned_message.scope;
 
-    PermissionUtilities.disableACLs();
+		PermissionUtilities.disableACLs();
 
-    let notification_promise;
+		let notification_promise;
 
-    if(message.scope.user == true){
-      notification_promise = notificationProvider.createNotificationForAccountAndUser(cloned_message);
-    }else{
-      notification_promise = notificationProvider.createNotificationsForAccount(cloned_message);
-    }
+		if(message.scope.user == true){
+			notification_promise = notificationProvider.createNotificationForAccountAndUser(cloned_message);
+		}else{
+			notification_promise = notificationProvider.createNotificationsForAccount(cloned_message);
+		}
 
-    return Promise.resolve(notification_promise).then(result => {
-      PermissionUtilities.enableACLs();
-      return result;
-    });
+		return Promise.resolve(notification_promise).then(result => {
+			PermissionUtilities.enableACLs();
+			return result;
+		});
 
-  }
+	}
 
-  respond(){
+	respond(){
 
-    du.debug('Respond');
+		du.debug('Respond');
 
-    return this.messages.success;
+		return this.messages.success;
 
-  }
+	}
 
 }

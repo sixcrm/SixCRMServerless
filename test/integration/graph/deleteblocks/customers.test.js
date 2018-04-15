@@ -8,32 +8,32 @@ const CustomerTest = global.SixCRM.routes.include('test', 'integration/classes/C
 
 describe('Customer (Customer Note) Delete Block Test', () => {
 
-  it('Should not allow the delete', () => {
+	it('Should not allow the delete', () => {
 
-    let customerTest = new CustomerTest();
+		let customerTest = new CustomerTest();
 
-    return customerTest.executeCustomerNoteBlockTest().then(results => {
+		return customerTest.executeCustomerNoteBlockTest().then(results => {
 
-      return expect(results.statusCode).to.equal(200);
+			return expect(results.statusCode).to.equal(200);
 
-    });
+		});
 
-  });
+	});
 
 });
 
 describe('Customer (Session) Delete Block Test', () => {
 
-  it('Should not allow the delete', () => {
+	it('Should not allow the delete', () => {
 
-    let customerTest = new CustomerTest();
+		let customerTest = new CustomerTest();
 
-    return customerTest.executeSessionBlockTest().then(results => {
+		return customerTest.executeSessionBlockTest().then(results => {
 
-      return expect(results.statusCode).to.equal(200);
+			return expect(results.statusCode).to.equal(200);
 
-    });
+		});
 
-  });
+	});
 
 });

@@ -11,86 +11,86 @@ const modelvalidatorutilities = global.SixCRM.routes.include('lib', 'model-valid
 
 module.exports = class SystemMailer{
 
-    constructor(){
+	constructor(){
 
-      this.instantiateSMTPProvider();
+		this.instantiateSMTPProvider();
 
-    }
+	}
 
-    sendEmail(parameters){
+	sendEmail(parameters){
 
-      du.debug('Send Email');
+		du.debug('Send Email');
 
-      parameters = this.assureOptionalParameters(parameters);
+		parameters = this.assureOptionalParameters(parameters);
 
-      this.validateParameters(parameters);
+		this.validateParameters(parameters);
 
-      return this.send(parameters);
+		return this.send(parameters);
 
-    }
+	}
 
-    validateParameters(parameters){
+	validateParameters(parameters){
 
-      du.debug('Validate Parameters');
+		du.debug('Validate Parameters');
 
-      return modelvalidatorutilities.validateModel(parameters, global.SixCRM.routes.path('model', 'general/smtp_send_object.json'));
+		return modelvalidatorutilities.validateModel(parameters, global.SixCRM.routes.path('model', 'general/smtp_send_object.json'));
 
-    }
+	}
 
-    assureOptionalParameters(parameters){
+	assureOptionalParameters(parameters){
 
-      du.debug('Assure Optional Parameters');
+		du.debug('Assure Optional Parameters');
 
-      arrayutilities.map(['sender_email', 'sender_name'], (optional_parameter) => {
-        if(!_.has(parameters, optional_parameter)){
-          if(objectutilities.hasRecursive(global, 'SixCRM.configuration.site_config.ses.default_'+optional_parameter)){
-            parameters[optional_parameter] = global.SixCRM.configuration.site_config.ses['default_'+optional_parameter];
-          }
-        }
-      });
+		arrayutilities.map(['sender_email', 'sender_name'], (optional_parameter) => {
+			if(!_.has(parameters, optional_parameter)){
+				if(objectutilities.hasRecursive(global, 'SixCRM.configuration.site_config.ses.default_'+optional_parameter)){
+					parameters[optional_parameter] = global.SixCRM.configuration.site_config.ses['default_'+optional_parameter];
+				}
+			}
+		});
 
-      return parameters;
+		return parameters;
 
-    }
+	}
 
-    send(parameters){
+	send(parameters){
 
-      du.debug('Send');
+		du.debug('Send');
 
-      this.instantiateSMTPProvider();
+		this.instantiateSMTPProvider();
 
-      return this.smtpprovider.send(parameters);
+		return this.smtpprovider.send(parameters);
 
-    }
+	}
 
-    instantiateSMTPProvider(){
+	instantiateSMTPProvider(){
 
-      du.debug('Instantiate SMTP Utilities');
+		du.debug('Instantiate SMTP Utilities');
 
-      if(!_.has(this, 'smtpprovider')){
+		if(!_.has(this, 'smtpprovider')){
 
-        let smtp_options = this.createSMTPOptions();
+			let smtp_options = this.createSMTPOptions();
 
-        let SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
+			let SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 
-        this.smtpprovider = new SMTPProvider(smtp_options);
+			this.smtpprovider = new SMTPProvider(smtp_options);
 
-      }
+		}
 
-    }
+	}
 
-    createSMTPOptions(){
+	createSMTPOptions(){
 
-      du.debug('Create SMTP Options');
+		du.debug('Create SMTP Options');
 
-      return {
-        hostname: global.SixCRM.configuration.site_config.ses.hostname,
-        username: global.SixCRM.configuration.site_config.ses.smtp_username,
-        password: global.SixCRM.configuration.site_config.ses.smtp_password,
-        port: global.SixCRM.configuration.site_config.ses.port
-      };
+		return {
+			hostname: global.SixCRM.configuration.site_config.ses.hostname,
+			username: global.SixCRM.configuration.site_config.ses.smtp_username,
+			password: global.SixCRM.configuration.site_config.ses.smtp_password,
+			port: global.SixCRM.configuration.site_config.ses.port
+		};
 
-    }
+	}
 
 }
 

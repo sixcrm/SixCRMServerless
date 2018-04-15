@@ -4,9 +4,9 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 module.exports.graphObj = new GraphQLInputObjectType({
-    name: 'SMTPValidationInput',
-    fields: () => ({
-        email:		{ type: new GraphQLNonNull(GraphQLString) },
-        smtpprovider:	{ type: new GraphQLNonNull(GraphQLString) }
-    })
+	name: 'SMTPValidationInput',
+	fields: () => ({
+		email:		{ type: new GraphQLNonNull(GraphQLString) },
+		smtpprovider:	{ type: new GraphQLNonNull(GraphQLString) }
+	})
 });

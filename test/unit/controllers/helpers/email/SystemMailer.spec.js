@@ -7,486 +7,486 @@ let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js')
 
 function createValidEmailParameters(){
 
-  return {
-    sender_email:'test@sixcrm.com',
-    sender_name:'Test Email at SixCRM',
-    subject:'This is a test email',
-    body:'This email was sent as a part of a SixCRM unit test.',
-    recipient_emails:['test2@sixcrm.com'],
-    recipient_name:'Test Email 2 at SixCRM'
-  };
+	return {
+		sender_email:'test@sixcrm.com',
+		sender_name:'Test Email at SixCRM',
+		subject:'This is a test email',
+		body:'This email was sent as a part of a SixCRM unit test.',
+		recipient_emails:['test2@sixcrm.com'],
+		recipient_name:'Test Email 2 at SixCRM'
+	};
 
 }
 
 describe('helpers/transaction/SystemMailer.spec.js', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-    afterEach(() => {
-        mockery.resetCache();
-    });
+	afterEach(() => {
+		mockery.resetCache();
+	});
 
-    after(() => {
-        mockery.deregisterAll();
-    });
+	after(() => {
+		mockery.deregisterAll();
+	});
 
-    it('instantiates the System Mailer', () => {
+	it('instantiates the System Mailer', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      expect(objectutilities.getClassName(systemMailer)).to.equal('SystemMailer');
+		expect(objectutilities.getClassName(systemMailer)).to.equal('SystemMailer');
 
-    });
+	});
 
-    it('fails validation test email due to missing recipient emails', () => {
+	it('fails validation test email due to missing recipient emails', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      delete parameters.recipient_emails;
+		delete parameters.recipient_emails;
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-    });
+	});
 
-    it('fails validation test email due to missing recipient name', () => {
+	it('fails validation test email due to missing recipient name', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      delete parameters.recipient_name;
+		delete parameters.recipient_name;
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-    });
+	});
 
-    it('fails validation test email due to recipient email formatting', () => {
+	it('fails validation test email due to recipient email formatting', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      parameters.recipient_name = {};
+		parameters.recipient_name = {};
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters.recipient_name = [];
+		parameters.recipient_name = [];
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters.recipient_name = ['Blerf'];
+		parameters.recipient_name = ['Blerf'];
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters.recipient_name = '';
+		parameters.recipient_name = '';
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters.recipient_name = 'x';
+		parameters.recipient_name = 'x';
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-    });
+	});
 
-    it('fails validation test email due to recipient email formatting', () => {
+	it('fails validation test email due to recipient email formatting', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      parameters.recipient_emails = {};
+		parameters.recipient_emails = {};
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.recipient_emails = [];
+		parameters.recipient_emails = [];
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.recipient_emails = 'email@email.com';
+		parameters.recipient_emails = 'email@email.com';
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.recipient_emails = [''];
+		parameters.recipient_emails = [''];
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.recipient_emails = ['sdqdwqwdqowdoqwidoqa'];
+		parameters.recipient_emails = ['sdqdwqwdqowdoqwidoqa'];
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.recipient_emails = ['test@test'];
+		parameters.recipient_emails = ['test@test'];
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.recipient_emails = ['test@test.com','adwwadawdad'];
+		parameters.recipient_emails = ['test@test.com','adwwadawdad'];
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-    });
+	});
 
-    it('fails validation test email due to missing recipient emails', () => {
+	it('fails validation test email due to missing recipient emails', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      delete parameters.recipient_name;
+		delete parameters.recipient_name;
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-    });
+	});
 
-    it('fails validation test email due to body formatting', () => {
+	it('fails validation test email due to body formatting', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      parameters.body = [];
+		parameters.body = [];
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.body = {};
+		parameters.body = {};
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.body = 123;
+		parameters.body = 123;
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.body = 'a';
+		parameters.body = 'a';
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-    });
+	});
 
-    it('fails validation test email due to missing body', () => {
+	it('fails validation test email due to missing body', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      delete parameters.body;
+		delete parameters.body;
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-    });
+	});
 
-    it('fails validation test email due to subject formatting', () => {
+	it('fails validation test email due to subject formatting', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      parameters.subject = [];
+		parameters.subject = [];
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.subject = {};
+		parameters.subject = {};
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.subject = 123;
+		parameters.subject = 123;
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-      parameters = createValidEmailParameters();
+		parameters = createValidEmailParameters();
 
-      parameters.subject = 'a';
+		parameters.subject = 'a';
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-    });
+	});
 
-    it('fails validation test email due to missing subject', () => {
+	it('fails validation test email due to missing subject', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      delete parameters.subject;
+		delete parameters.subject;
 
-      try{
+		try{
 
-        systemMailer.sendEmail(parameters);
+			systemMailer.sendEmail(parameters);
 
-      }catch(error){
+		}catch(error){
 
-        expect(error.message).to.have.string('[500] One or more validation errors occurred:');
+			expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 
-      }
+		}
 
-    });
+	});
 
-    it('adds default field (sender_name) to email parameters', () => {
+	it('adds default field (sender_name) to email parameters', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      delete parameters.sender_name;
+		delete parameters.sender_name;
 
-      parameters = systemMailer.assureOptionalParameters(parameters);
+		parameters = systemMailer.assureOptionalParameters(parameters);
 
-      expect(parameters).to.have.property('sender_name');
+		expect(parameters).to.have.property('sender_name');
 
-      expect(parameters.sender_name).to.equal(global.SixCRM.configuration.site_config.ses.default_sender_name);
+		expect(parameters.sender_name).to.equal(global.SixCRM.configuration.site_config.ses.default_sender_name);
 
-    });
+	});
 
-    it('adds default field (sender_name) to email parameters', () => {
+	it('adds default field (sender_name) to email parameters', () => {
 
-      const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-      const systemMailer = new SystemMailer();
+		const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+		const systemMailer = new SystemMailer();
 
-      let parameters = createValidEmailParameters();
+		let parameters = createValidEmailParameters();
 
-      delete parameters.sender_email;
+		delete parameters.sender_email;
 
-      parameters = systemMailer.assureOptionalParameters(parameters);
+		parameters = systemMailer.assureOptionalParameters(parameters);
 
-      expect(parameters).to.have.property('sender_email');
+		expect(parameters).to.have.property('sender_email');
 
-      expect(parameters.sender_email).to.equal(global.SixCRM.configuration.site_config.ses.default_sender_email);
+		expect(parameters.sender_email).to.equal(global.SixCRM.configuration.site_config.ses.default_sender_email);
 
-    });
+	});
 
-    //Technical Debt:  It sends an email
+	//Technical Debt:  It sends an email
 
-    /*
+	/*
     it('sends an email', () => {
 
       mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/smtp-provider.js'), class {

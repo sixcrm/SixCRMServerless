@@ -6,58 +6,58 @@ const TrackerUtilities = global.SixCRM.routes.include('providers', 'tracker/Trac
 
 module.exports = class TrackerController extends TrackerUtilities {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-  }
+	}
 
-  info(){
+	info(){
 
-    du.debug('info');
+		du.debug('info');
 
-    return Promise.resolve(true)
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'info'}))
-    .then(() => this.acquireShippingReceipt())
-    .then(() => this.executeInfo())
-    .then(() => this.transformInfoResponse())
-    .then(() => this.respond());
+		return Promise.resolve(true)
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'info'}))
+			.then(() => this.acquireShippingReceipt())
+			.then(() => this.executeInfo())
+			.then(() => this.transformInfoResponse())
+			.then(() => this.respond());
 
-  }
+	}
 
-  executeInfo(){
+	executeInfo(){
 
-    du.debug('Execute Info');
+		du.debug('Execute Info');
 
-    let shipping_receipt = this.parameters.get('shippingreceipt');
+		let shipping_receipt = this.parameters.get('shippingreceipt');
 
-    let infoController = new InfoController();
+		let infoController = new InfoController();
 
-    return infoController.execute({shipping_receipt: shipping_receipt}).then(result => {
-      this.parameters.set('vendorresponseclass', result);
-      return true;
-    });
+		return infoController.execute({shipping_receipt: shipping_receipt}).then(result => {
+			this.parameters.set('vendorresponseclass', result);
+			return true;
+		});
 
-  }
+	}
 
-  transformInfoResponse(){
+	transformInfoResponse(){
 
-    du.debug('Transform Info Response');
+		du.debug('Transform Info Response');
 
-    let vendor_response = this.parameters.get('vendorresponseclass');
+		let vendor_response = this.parameters.get('vendorresponseclass');
 
-    let responsecode = 'fail';
+		let responsecode = 'fail';
 
-    if(vendor_response.getCode() == 'success' && vendor_response.getMessage() == 'Success'){
-      responsecode = 'success';
-    }else if(vendor_response.getCode() == 'error'){
-      responsecode = 'error';
-    }
+		if(vendor_response.getCode() == 'success' && vendor_response.getMessage() == 'Success'){
+			responsecode = 'success';
+		}else if(vendor_response.getCode() == 'error'){
+			responsecode = 'error';
+		}
 
-    this.parameters.set('responsecode', responsecode);
+		this.parameters.set('responsecode', responsecode);
 
-    return true;
+		return true;
 
-  }
+	}
 
 }

@@ -4,8 +4,8 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 
 module.exports.graphObj = new GraphQLInputObjectType({
-    name: 'DownloadInputType',
-    fields: () => ({
-        type: { type: new GraphQLNonNull(GraphQLString) }
-    })
+	name: 'DownloadInputType',
+	fields: () => ({
+		type: { type: new GraphQLNonNull(GraphQLString) }
+	})
 });

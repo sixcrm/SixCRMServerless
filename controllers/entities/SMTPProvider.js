@@ -9,87 +9,87 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 
 module.exports = class SMTPProviderController extends entityController {
 
-    constructor(){
+	constructor(){
 
-        super('smtpprovider');
+		super('smtpprovider');
 
-        this.search_fields = ['name'];
+		this.search_fields = ['name'];
 
-        this.encrypted_attribute_paths = [
-            'username',
-            'password'
-        ];
+		this.encrypted_attribute_paths = [
+			'username',
+			'password'
+		];
 
-    }
+	}
 
-    associatedEntitiesCheck({id}){
+	associatedEntitiesCheck({id}){
 
-      du.debug('Associated Entities Check');
+		du.debug('Associated Entities Check');
 
-      let return_array = [];
+		let return_array = [];
 
-      let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('EmailTemplateController', 'listBySMTPProvider', {smtpprovider:id})
-      ];
+		let data_acquisition_promises = [
+			this.executeAssociatedEntityFunction('EmailTemplateController', 'listBySMTPProvider', {smtpprovider:id})
+		];
 
-      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+		return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
 
-        let emailtemplates = data_acquisition_promises[0];
+			let emailtemplates = data_acquisition_promises[0];
 
-        if(_.has(emailtemplates, 'emailtemplates') && arrayutilities.nonEmpty(emailtemplates.emailtemplates)){
-          arrayutilities.map(emailtemplates.emailtemplates, (emailtemplate) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Email Template', object: emailtemplate}));
-          });
-        }
+			if(_.has(emailtemplates, 'emailtemplates') && arrayutilities.nonEmpty(emailtemplates.emailtemplates)){
+				arrayutilities.map(emailtemplates.emailtemplates, (emailtemplate) => {
+					return_array.push(this.createAssociatedEntitiesObject({name:'Email Template', object: emailtemplate}));
+				});
+			}
 
-        return return_array;
+			return return_array;
 
-      });
+		});
 
-    }
+	}
 
-    validateSMTPProvider({email, smtpprovider}){
+	validateSMTPProvider({email, smtpprovider}){
 
-      du.debug('Validate SMTP Provider');
+		du.debug('Validate SMTP Provider');
 
-      return this.get({id: smtpprovider}).then(smtpprovider => {
+		return this.get({id: smtpprovider}).then(smtpprovider => {
 
-        if(_.isNull(smtpprovider)){
-          eu.throwError('notfound', 'The SMTP Provider specified was not found.');
-        }
+			if(_.isNull(smtpprovider)){
+				eu.throwError('notfound', 'The SMTP Provider specified was not found.');
+			}
 
-        const SMTPProviderProvider = global.SixCRM.routes.include('providers', 'SMTP.js');
-        let smtp = new SMTPProviderProvider(smtpprovider);
+			const SMTPProviderProvider = global.SixCRM.routes.include('providers', 'SMTP.js');
+			let smtp = new SMTPProviderProvider(smtpprovider);
 
-        let send_object = {
-          sender_email: global.SixCRM.configuration.site_config.ses.default_sender_email,
-          sender_name: global.SixCRM.configuration.site_config.ses.default_sender_name,
-          subject:"Testing SMTP Provider",
-          body:  "This is a test of the SMTP provider ID :"+smtpprovider.id,
-          recepient_emails:[email]
-        };
+			let send_object = {
+				sender_email: global.SixCRM.configuration.site_config.ses.default_sender_email,
+				sender_name: global.SixCRM.configuration.site_config.ses.default_sender_name,
+				subject:"Testing SMTP Provider",
+				body:  "This is a test of the SMTP provider ID :"+smtpprovider.id,
+				recepient_emails:[email]
+			};
 
-        return smtp.send(send_object).then(smtp_response => {
+			return smtp.send(send_object).then(smtp_response => {
 
-          return {
-            send_properties: send_object,
-            smtp_response:smtp_response,
-            smtpprovider: smtpprovider
-          };
+				return {
+					send_properties: send_object,
+					smtp_response:smtp_response,
+					smtpprovider: smtpprovider
+				};
 
-        }).catch(error => {
+			}).catch(error => {
 
-          return {
-            send_properties: send_object,
-            smtp_response: {errormessage: error.message, error: error},
-            smtpprovider: smtpprovider
-          };
+				return {
+					send_properties: send_object,
+					smtp_response: {errormessage: error.message, error: error},
+					smtpprovider: smtpprovider
+				};
 
-        });
+			});
 
-      });
+		});
 
-    }
+	}
 
 }
 

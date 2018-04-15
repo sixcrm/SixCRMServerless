@@ -103,12 +103,12 @@ module.exports = class recoverBillingController extends workerController {
 		return au.serialPromises(au.map(transactions, (transaction) => {
 
 			return this.pushEvent({
-					event_type: 'transaction_recovery_' + transaction.result,
-					context: Object.assign({},
-						this.parmeters.store, {
-							transaction
-						})
-				})
+				event_type: 'transaction_recovery_' + transaction.result,
+				context: Object.assign({},
+					this.parmeters.store, {
+						transaction
+					})
+			})
 				.then(() => {
 
 					if (transaction.type != 'sale' || transaction.result != 'success') {

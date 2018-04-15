@@ -4,127 +4,127 @@ const mockery = require('mockery');
 
 describe('lib/file-utilities', () => {
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
-    });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-    afterEach(() => {
-        mockery.resetCache();
-    });
+	afterEach(() => {
+		mockery.resetCache();
+	});
 
-    after(() => {
-        mockery.deregisterAll();
-    });
+	after(() => {
+		mockery.deregisterAll();
+	});
 
-    describe('getFileContentsSync', () => {
+	describe('getFileContentsSync', () => {
 
-        it('reads file', () => {
+		it('reads file', () => {
 
-            mockery.registerMock('fs', {
-                readFileSync: () => {
-                    return 'success';
-                }
-            });
+			mockery.registerMock('fs', {
+				readFileSync: () => {
+					return 'success';
+				}
+			});
 
-            const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+			const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 
-            expect(fileutilities.getFileContentsSync('a_path')).to.equal('success');
-        });
-    });
+			expect(fileutilities.getFileContentsSync('a_path')).to.equal('success');
+		});
+	});
 
-    describe('getDirectoryFilesSync', () => {
+	describe('getDirectoryFilesSync', () => {
 
-        it('reads directory', () => {
+		it('reads directory', () => {
 
-            mockery.registerMock('fs', {
-                readdirSync: () => {
-                    return 'success';
-                }
-            });
+			mockery.registerMock('fs', {
+				readdirSync: () => {
+					return 'success';
+				}
+			});
 
-            const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+			const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 
-            expect(fileutilities.getDirectoryFilesSync('a_path')).to.equal('success');
-        });
-    });
+			expect(fileutilities.getDirectoryFilesSync('a_path')).to.equal('success');
+		});
+	});
 
-    describe('getFilenameFromPath', () => {
+	describe('getFilenameFromPath', () => {
 
-        it('retrieve filename from path', () => {
+		it('retrieve filename from path', () => {
 
-            const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+			const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 
-            expect(fileutilities.getFilenameFromPath('a_path')).to.equal('a_path');
-        });
-    });
+			expect(fileutilities.getFilenameFromPath('a_path')).to.equal('a_path');
+		});
+	});
 
-    describe('getDirectoryFiles', () => {
+	describe('getDirectoryFiles', () => {
 
-        it('retrieve directory files', () => {
+		it('retrieve directory files', () => {
 
-            mockery.registerMock('fs', {
-                readdir: (directory_path, callback) => {
-                    callback(null, 'success');
-                }
-            });
+			mockery.registerMock('fs', {
+				readdir: (directory_path, callback) => {
+					callback(null, 'success');
+				}
+			});
 
-            const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+			const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 
-            return fileutilities.getDirectoryFiles('a_path').then((result) => {
-                expect(result).to.equal('success');
-            });
-        });
+			return fileutilities.getDirectoryFiles('a_path').then((result) => {
+				expect(result).to.equal('success');
+			});
+		});
 
-        it('throws error from fs readdir', () => {
+		it('throws error from fs readdir', () => {
 
-            mockery.registerMock('fs', {
-                readdir: (directory_path, callback) => {
-                    callback(new Error('fail'), null);
-                }
-            });
+			mockery.registerMock('fs', {
+				readdir: (directory_path, callback) => {
+					callback(new Error('fail'), null);
+				}
+			});
 
-            const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+			const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 
-            return fileutilities.getDirectoryFiles('a_path').catch((error) => {
-                expect(error.message).to.equal('[500] fail');
-            });
-        });
-    });
+			return fileutilities.getDirectoryFiles('a_path').catch((error) => {
+				expect(error.message).to.equal('[500] fail');
+			});
+		});
+	});
 
-    describe('getFileContents', () => {
+	describe('getFileContents', () => {
 
-        it('retrieves file contents', () => {
+		it('retrieves file contents', () => {
 
-            mockery.registerMock('fs', {
-                readFile: (filepath, encoding, callback) => {
-                    callback(null, 'success');
-                }
-            });
+			mockery.registerMock('fs', {
+				readFile: (filepath, encoding, callback) => {
+					callback(null, 'success');
+				}
+			});
 
-            const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+			const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 
-            return fileutilities.getFileContents('a_path').then((result) => {
-                expect(result).to.equal('success');
-            });
-        });
+			return fileutilities.getFileContents('a_path').then((result) => {
+				expect(result).to.equal('success');
+			});
+		});
 
-        it('throws error from fs readFile', () => {
+		it('throws error from fs readFile', () => {
 
-            mockery.registerMock('fs', {
-                readFile: (filepath, encoding, callback) => {
-                    callback('fail', null);
-                }
-            });
+			mockery.registerMock('fs', {
+				readFile: (filepath, encoding, callback) => {
+					callback('fail', null);
+				}
+			});
 
-            const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+			const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 
-            return fileutilities.getFileContents('a_path').catch((error) => {
-                expect(error.message).to.equal('[500] fail');
-            });
-        });
-    });
+			return fileutilities.getFileContents('a_path').catch((error) => {
+				expect(error.message).to.equal('[500] fail');
+			});
+		});
+	});
 });

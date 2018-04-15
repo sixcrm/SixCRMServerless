@@ -7,34 +7,34 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 module.exports = class TranslationHelperController {
 
-  constructor(){}
+	constructor(){}
 
-  getTranslationFile(language_preference){
+	getTranslationFile(language_preference){
 
-    du.debug('Get Translation File');
+		du.debug('Get Translation File');
 
-    return translation(language_preference);
+		return translation(language_preference);
 
-  }
+	}
 
-  getTranslationObject(language_preference, path, fatal){
+	getTranslationObject(language_preference, path, fatal){
 
-    du.debug('Get Translation Object');
+		du.debug('Get Translation Object');
 
-    fatal = (_.isUndefined(fatal) || _.isNull(fatal))?false:fatal;
+		fatal = (_.isUndefined(fatal) || _.isNull(fatal))?false:fatal;
 
-    let translation_file = this.getTranslationFile(language_preference);
+		let translation_file = this.getTranslationFile(language_preference);
 
-    if(objectutilities.hasRecursive(translation_file, path)){
-      return objectutilities.getRecursive(translation_file, path);
-    }
+		if(objectutilities.hasRecursive(translation_file, path)){
+			return objectutilities.getRecursive(translation_file, path);
+		}
 
-    if(fatal){
-      eu.throwError('server', 'No translation at path "'+path+'" in '+language_preference+' translation file.');
-    }
+		if(fatal){
+			eu.throwError('server', 'No translation at path "'+path+'" in '+language_preference+' translation file.');
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
 }

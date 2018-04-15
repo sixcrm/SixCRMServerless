@@ -3,16 +3,16 @@ const forwardMessageController = global.SixCRM.routes.include('controllers', 'wo
 
 module.exports = class SendNotificationsToArchivedForwardMessageController extends forwardMessageController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameters.set('params', {
-        name: 'sendnotificationstoarchive',
-        origin_queue: 'send_notification',
-        workerfunction: 'sendNotifications.js'
-      })
+		this.parameters.set('params', {
+			name: 'sendnotificationstoarchive',
+			origin_queue: 'send_notification',
+			workerfunction: 'sendNotifications.js'
+		})
 
-    }
+	}
 
 };

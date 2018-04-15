@@ -15,7 +15,7 @@ const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/
 
 function getValidMessage(id){
 
-  return MockEntities.getValidMessage(id);
+	return MockEntities.getValidMessage(id);
 
 }
 
@@ -31,323 +31,323 @@ process.argv.forEach((val) => {
 
 describe('controllers/workers/forwardmessage/deliveredToArchive.js', () => {
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-  beforeEach(() => {
-    mockery.resetCache();
-    mockery.deregisterAll();
-  });
+	beforeEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-  describe('execute', () => {
+	describe('execute', () => {
 
-    it('leaves rebill in original state if filter is `noship` and product is shippable', () => {
+		it('leaves rebill in original state if filter is `noship` and product is shippable', () => {
 
-      rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
-      let message = getValidMessage(rebill_id);
+			rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
+			let message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-        receiveMessages({queue}) {
-          du.highlight('Message read from queue (mock): '+queue);
-          return Promise.resolve([message]);
-        }
-        sendMessage({queue: queue}) {
-          du.highlight('Message sent to queue (mock): '+queue);
-          return Promise.resolve(true);
-        }
-        deleteMessage({queue}) {
-          du.highlight('Deleting message from queue: '+queue);
-          return Promise.resolve(true);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				receiveMessages({queue}) {
+					du.highlight('Message read from queue (mock): '+queue);
+					return Promise.resolve([message]);
+				}
+				sendMessage({queue: queue}) {
+					du.highlight('Message sent to queue (mock): '+queue);
+					return Promise.resolve(true);
+				}
+				deleteMessage({queue}) {
+					du.highlight('Deleting message from queue: '+queue);
+					return Promise.resolve(true);
+				}
+			});
 
-      process.env.archivefilter = 'noship';
+			process.env.archivefilter = 'noship';
 
-      const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
-      let deliveredToArchiveController = new DeliveredToArchiveController();
+			const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
+			let deliveredToArchiveController = new DeliveredToArchiveController();
 
-      return deliveredToArchiveController.execute().then(result => {
-        du.info(result);
+			return deliveredToArchiveController.execute().then(result => {
+				du.info(result);
 
-          let rebillController = new RebillController();
+				let rebillController = new RebillController();
 
-          return rebillController.get({id: rebill_id}).then((rebill) => {
-              du.info(rebill);
+				return rebillController.get({id: rebill_id}).then((rebill) => {
+					du.info(rebill);
 
-            const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+					const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
 
-            expect(timeSinceCreation).to.be.above(2);
+					expect(timeSinceCreation).to.be.above(2);
 
-          });
-      });
+				});
+			});
 
-    });
+		});
 
-    it('leaves rebill in original state if filter is `twoattempts` but none of the products has `second_attempt`', () => {
+		it('leaves rebill in original state if filter is `twoattempts` but none of the products has `second_attempt`', () => {
 
-      rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
-      let message = getValidMessage(rebill_id);
+			rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
+			let message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-        receiveMessages({queue}) {
-          du.highlight('Message read from queue (mock): '+queue);
-          return Promise.resolve([message]);
-        }
-        sendMessage({queue: queue}) {
-          du.highlight('Message sent to queue (mock): '+queue);
-          return Promise.resolve(true);
-        }
-        deleteMessage({queue}) {
-          du.highlight('Deleting message from queue: '+queue);
-          return Promise.resolve(true);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				receiveMessages({queue}) {
+					du.highlight('Message read from queue (mock): '+queue);
+					return Promise.resolve([message]);
+				}
+				sendMessage({queue: queue}) {
+					du.highlight('Message sent to queue (mock): '+queue);
+					return Promise.resolve(true);
+				}
+				deleteMessage({queue}) {
+					du.highlight('Deleting message from queue: '+queue);
+					return Promise.resolve(true);
+				}
+			});
 
-      process.env.archivefilter = 'twoattempts';
+			process.env.archivefilter = 'twoattempts';
 
-      const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
-      let deliveredToArchiveController = new DeliveredToArchiveController();
+			const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
+			let deliveredToArchiveController = new DeliveredToArchiveController();
 
-      return deliveredToArchiveController.execute().then(result => {
-        du.info(result);
+			return deliveredToArchiveController.execute().then(result => {
+				du.info(result);
 
-          let rebillController = new RebillController();
+				let rebillController = new RebillController();
 
-          return rebillController.get({id: rebill_id}).then((rebill) => {
-              du.info(rebill);
+				return rebillController.get({id: rebill_id}).then((rebill) => {
+					du.info(rebill);
 
-            const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+					const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
 
-            expect(timeSinceCreation).to.be.above(2);
+					expect(timeSinceCreation).to.be.above(2);
 
-          });
-      });
+				});
+			});
 
-    });
+		});
 
-    it('successfully updates rebill state and date when filter is `all`', () => {
+		it('successfully updates rebill state and date when filter is `all`', () => {
 
-      rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
-      let message = getValidMessage(rebill_id);
+			rebill_id = (!_.isNull(rebill_id))?rebill_id:uuidV4();
+			let message = getValidMessage(rebill_id);
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-        receiveMessages({queue}) {
-          du.highlight('Message read from queue (mock): '+queue);
-          return Promise.resolve([message]);
-        }
-        sendMessage({queue: queue}) {
-          du.highlight('Message sent to queue (mock): '+queue);
-          return Promise.resolve(true);
-        }
-        deleteMessage({queue}) {
-          du.highlight('Deleting message from queue: '+queue);
-          return Promise.resolve(true);
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				receiveMessages({queue}) {
+					du.highlight('Message read from queue (mock): '+queue);
+					return Promise.resolve([message]);
+				}
+				sendMessage({queue: queue}) {
+					du.highlight('Message sent to queue (mock): '+queue);
+					return Promise.resolve(true);
+				}
+				deleteMessage({queue}) {
+					du.highlight('Deleting message from queue: '+queue);
+					return Promise.resolve(true);
+				}
+			});
 
-        process.env.archivefilter = 'all';
+			process.env.archivefilter = 'all';
 
-      const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
-      let deliveredToArchiveController = new DeliveredToArchiveController();
+			const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
+			let deliveredToArchiveController = new DeliveredToArchiveController();
 
-      return deliveredToArchiveController.execute().then(result => {
-        du.info(result);
+			return deliveredToArchiveController.execute().then(result => {
+				du.info(result);
 
-          let rebillController = new RebillController();
+				let rebillController = new RebillController();
 
-          return rebillController.get({id: rebill_id}).then((rebill) => {
-              du.info(rebill);
+				return rebillController.get({id: rebill_id}).then((rebill) => {
+					du.info(rebill);
 
-            const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+					const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
 
-            expect(rebill.state).to.equal('archived');
-            expect(rebill.previous_state).to.equal('delivered');
-            expect(timeSinceCreation).to.be.below(10);
+					expect(rebill.state).to.equal('archived');
+					expect(rebill.previous_state).to.equal('delivered');
+					expect(timeSinceCreation).to.be.below(10);
 
-          });
-      });
+				});
+			});
 
-    });
+		});
 
 
-      it('properly handles errors from worker function', () => {
+		it('properly handles errors from worker function', () => {
 
-          PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+			PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
 
-          rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
-          const message = getValidMessage(rebill_id);
+			rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
+			const message = getValidMessage(rebill_id);
 
-          mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-              receiveMessages() {
-                  return Promise.resolve([message]);
-              }
-              sendMessage({queue: queue}) {
-                  expect(queue).to.equal('delivered_error');
-                  return Promise.resolve(true);
-              }
-              deleteMessage({queue}) {
-                  expect(queue).to.equal('delivered');
-                  return Promise.resolve(true);
-              }
-          });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				receiveMessages() {
+					return Promise.resolve([message]);
+				}
+				sendMessage({queue: queue}) {
+					expect(queue).to.equal('delivered_error');
+					return Promise.resolve(true);
+				}
+				deleteMessage({queue}) {
+					expect(queue).to.equal('delivered');
+					return Promise.resolve(true);
+				}
+			});
 
-          process.env.archivefilter = 'all';
+			process.env.archivefilter = 'all';
 
-          mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/archive.js'), {
-              execute: () => {
-                  const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
-                  const response = new WorkerResponse('error');
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/archive.js'), {
+				execute: () => {
+					const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
+					const response = new WorkerResponse('error');
 
-                  return Promise.resolve(response);
-              }
-          });
+					return Promise.resolve(response);
+				}
+			});
 
-          const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
-          let deliveredToArchiveController = new DeliveredToArchiveController();
+			const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
+			let deliveredToArchiveController = new DeliveredToArchiveController();
 
-          return deliveredToArchiveController.execute().then(result => {
-              expect(result.response.code).to.equal('success');
+			return deliveredToArchiveController.execute().then(result => {
+				expect(result.response.code).to.equal('success');
 
-              let rebillController = new RebillController();
+				let rebillController = new RebillController();
 
-              return rebillController.get({id: rebill_id}).then((rebill) => {
-                  du.info(rebill);
+				return rebillController.get({id: rebill_id}).then((rebill) => {
+					du.info(rebill);
 
-                  const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+					const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
 
-                  expect(rebill.state).to.equal('delivered_error');
-                  expect(rebill.previous_state).to.equal('delivered');
-                  expect(timeSinceCreation).to.be.below(10);
+					expect(rebill.state).to.equal('delivered_error');
+					expect(rebill.previous_state).to.equal('delivered');
+					expect(timeSinceCreation).to.be.below(10);
 
-              });
-          })
+				});
+			})
 
-      });
+		});
 
-      it('properly handles failures from worker function', () => {
+		it('properly handles failures from worker function', () => {
 
-          PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+			PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
 
-          rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
-          const message = getValidMessage(rebill_id);
+			rebill_id = (!_.isNull(rebill_id)) ? rebill_id : uuidV4();
+			const message = getValidMessage(rebill_id);
 
-          mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-              receiveMessages() {
-                  return Promise.resolve([message]);
-              }
-              sendMessage({queue: queue}) {
-                  expect(queue).to.equal('delivered_failed');
-                  return Promise.resolve(true);
-              }
-              deleteMessage({queue}) {
-                  expect(queue).to.equal('delivered');
-                  return Promise.resolve(true);
-              }
-          });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				receiveMessages() {
+					return Promise.resolve([message]);
+				}
+				sendMessage({queue: queue}) {
+					expect(queue).to.equal('delivered_failed');
+					return Promise.resolve(true);
+				}
+				deleteMessage({queue}) {
+					expect(queue).to.equal('delivered');
+					return Promise.resolve(true);
+				}
+			});
 
-          process.env.archivefilter = 'all';
+			process.env.archivefilter = 'all';
 
-          mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/archive.js'), {
-              execute: () => {
-                  const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
-                  const response = new WorkerResponse('fail');
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'workers/archive.js'), {
+				execute: () => {
+					const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
+					const response = new WorkerResponse('fail');
 
-                  return Promise.resolve(response);
-              }
-          });
+					return Promise.resolve(response);
+				}
+			});
 
-          const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
-          let deliveredToArchiveController = new DeliveredToArchiveController();
+			const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
+			let deliveredToArchiveController = new DeliveredToArchiveController();
 
-          return deliveredToArchiveController.execute().then(result => {
-              expect(result.response.code).to.equal('success');
+			return deliveredToArchiveController.execute().then(result => {
+				expect(result.response.code).to.equal('success');
 
-              let rebillController = new RebillController();
+				let rebillController = new RebillController();
 
-              return rebillController.get({id: rebill_id}).then((rebill) => {
-                  du.info(rebill);
+				return rebillController.get({id: rebill_id}).then((rebill) => {
+					du.info(rebill);
 
-                  const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
+					const timeSinceCreation = timestamp.getSecondsDifference(rebill.updated_at);
 
-                  expect(rebill.state).to.equal('delivered_failed');
-                  expect(rebill.previous_state).to.equal('delivered');
-                  expect(timeSinceCreation).to.be.below(10);
+					expect(rebill.state).to.equal('delivered_failed');
+					expect(rebill.previous_state).to.equal('delivered');
+					expect(timeSinceCreation).to.be.below(10);
 
-              });
-          })
+				});
+			})
 
-      });
+		});
 
-      it('handles non-existant rebill', () => {
+		it('handles non-existant rebill', () => {
 
-          rebill_id = uuidV4();
-          let message = getValidMessage(rebill_id);
+			rebill_id = uuidV4();
+			let message = getValidMessage(rebill_id);
 
-          mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-              receiveMessages({queue}) {
-                  du.highlight('Message read from queue (mock): '+queue);
-                  return Promise.resolve([message]);
-              }
-              sendMessage({queue: queue}) {
-                  du.highlight('Message sent to queue (mock): '+queue);
-                  return Promise.resolve(true);
-              }
-              deleteMessage({queue}) {
-                  du.highlight('Deleting message from queue: '+queue);
-                  return Promise.resolve(true);
-              }
-          });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				receiveMessages({queue}) {
+					du.highlight('Message read from queue (mock): '+queue);
+					return Promise.resolve([message]);
+				}
+				sendMessage({queue: queue}) {
+					du.highlight('Message sent to queue (mock): '+queue);
+					return Promise.resolve(true);
+				}
+				deleteMessage({queue}) {
+					du.highlight('Deleting message from queue: '+queue);
+					return Promise.resolve(true);
+				}
+			});
 
-          process.env.archivefilter = 'noship';
+			process.env.archivefilter = 'noship';
 
-          const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
-          let deliveredToArchiveController = new DeliveredToArchiveController();
+			const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
+			let deliveredToArchiveController = new DeliveredToArchiveController();
 
-          return deliveredToArchiveController.execute().then(result => {
-              du.info(result);
+			return deliveredToArchiveController.execute().then(result => {
+				du.info(result);
 
-              expect(result.response.code).to.equal('error');
-          });
+				expect(result.response.code).to.equal('error');
+			});
 
-      });
+		});
 
-      it('handles incorrect rebill id', () => {
+		it('handles incorrect rebill id', () => {
 
-          rebill_id = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
-          let message = getValidMessage(rebill_id);
+			rebill_id = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+			let message = getValidMessage(rebill_id);
 
-          mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-              receiveMessages({queue}) {
-                  du.highlight('Message read from queue (mock): '+queue);
-                  return Promise.resolve([message]);
-              }
-              sendMessage({queue: queue}) {
-                  du.highlight('Message sent to queue (mock): '+queue);
-                  return Promise.resolve(true);
-              }
-              deleteMessage({queue}) {
-                  du.highlight('Deleting message from queue: '+queue);
-                  return Promise.resolve(true);
-              }
-          });
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				receiveMessages({queue}) {
+					du.highlight('Message read from queue (mock): '+queue);
+					return Promise.resolve([message]);
+				}
+				sendMessage({queue: queue}) {
+					du.highlight('Message sent to queue (mock): '+queue);
+					return Promise.resolve(true);
+				}
+				deleteMessage({queue}) {
+					du.highlight('Deleting message from queue: '+queue);
+					return Promise.resolve(true);
+				}
+			});
 
-          process.env.archivefilter = 'noship';
+			process.env.archivefilter = 'noship';
 
-          const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
-          let deliveredToArchiveController = new DeliveredToArchiveController();
+			const DeliveredToArchiveController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/deliveredToArchive.js');
+			let deliveredToArchiveController = new DeliveredToArchiveController();
 
-          return deliveredToArchiveController.execute().then(result => {
-              du.info(result);
+			return deliveredToArchiveController.execute().then(result => {
+				du.info(result);
 
-              expect(result.response.code).to.equal('error');
-          });
+				expect(result.response.code).to.equal('error');
+			});
 
-      });
-  });
+		});
+	});
 
 });

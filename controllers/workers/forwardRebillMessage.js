@@ -6,73 +6,73 @@ const forwardMessageController = global.SixCRM.routes.include('controllers', 'wo
 
 module.exports = class forwardRebillMessageController extends forwardMessageController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-    }
+	}
 
-    handleWorkerResponseObject(worker_response_object){
+	handleWorkerResponseObject(worker_response_object){
 
-      du.debug('Forward Rebill Message Controller: Handle Worker Response Object', worker_response_object);
+		du.debug('Forward Rebill Message Controller: Handle Worker Response Object', worker_response_object);
 
-      return this.updateRebillState(worker_response_object)
-      .then(() => { return super.handleWorkerResponseObject(worker_response_object); });
+		return this.updateRebillState(worker_response_object)
+			.then(() => { return super.handleWorkerResponseObject(worker_response_object); });
 
-    }
+	}
 
-    updateRebillState(compound_worker_response_object) {
+	updateRebillState(compound_worker_response_object) {
 
-      du.debug('Update Rebill State');
+		du.debug('Update Rebill State');
 
-      let params = this.parameters.get('params');
+		let params = this.parameters.get('params');
 
-      const rebill_id = JSON.parse(compound_worker_response_object.message.Body);
+		const rebill_id = JSON.parse(compound_worker_response_object.message.Body);
 
-      const previous_state = params.origin_queue;
-      let new_state  = params.destination_queue;
-      let code = compound_worker_response_object.worker_response_object.getCode();
+		const previous_state = params.origin_queue;
+		let new_state  = params.destination_queue;
+		let code = compound_worker_response_object.worker_response_object.getCode();
 
-      if (_.isUndefined(params.destination_queue)) {
-          new_state = 'archived';
-      }
+		if (_.isUndefined(params.destination_queue)) {
+			new_state = 'archived';
+		}
 
-      if (code === 'noaction') {
+		if (code === 'noaction') {
 
-          du.debug('No Action, leaving rebill unaltered.');
+			du.debug('No Action, leaving rebill unaltered.');
 
-          return Promise.resolve();
-      }
+			return Promise.resolve();
+		}
 
-      if (code === 'fail') {
-        new_state = params.failure_queue;
-      }
+		if (code === 'fail') {
+			new_state = params.failure_queue;
+		}
 
-      if (code === 'error') {
-        new_state = params.error_queue;
-      }
+		if (code === 'error') {
+			new_state = params.error_queue;
+		}
 
-      if(!_.has(this, 'rebillController')){
-        const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-        this.rebillController = new RebillController();
-      }
+		if(!_.has(this, 'rebillController')){
+			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+			this.rebillController = new RebillController();
+		}
 
-      return this.rebillController.get({id: rebill_id})
-      .then((rebill) => {
-        let rebillHelperController = new RebillHelperController();
-        let update_parameters = {rebill: rebill, new_state: new_state};
+		return this.rebillController.get({id: rebill_id})
+			.then((rebill) => {
+				let rebillHelperController = new RebillHelperController();
+				let update_parameters = {rebill: rebill, new_state: new_state};
 
-        if (previous_state) {
-            update_parameters.previous_state = previous_state;
-        }
+				if (previous_state) {
+					update_parameters.previous_state = previous_state;
+				}
 
-        if (!rebill) {
-            return Promise.resolve();
-        }
+				if (!rebill) {
+					return Promise.resolve();
+				}
 
-        return rebillHelperController.updateRebillState(update_parameters);
-      });
+				return rebillHelperController.updateRebillState(update_parameters);
+			});
 
-    }
+	}
 
 };

@@ -8,55 +8,55 @@ const ChannelNotification = global.SixCRM.routes.include('providers', 'notificat
 
 module.exports = class SlackNotification extends ChannelNotification {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-  }
+	}
 
-  validateNotificationProperties(notification_properties){
+	validateNotificationProperties(notification_properties){
 
-    du.debug('Validate Notification Properties');
+		du.debug('Validate Notification Properties');
 
-    if(!stringutilities.isURL(notification_properties)){
-      eu.throwError('server', 'notification_properties must be a valid URL for Slack notifications');
-    }
+		if(!stringutilities.isURL(notification_properties)){
+			eu.throwError('server', 'notification_properties must be a valid URL for Slack notifications');
+		}
 
-    return true;
+		return true;
 
-  }
+	}
 
-  resolveNotification(notification_object, notification_properties) {
+	resolveNotification(notification_object, notification_properties) {
 
-    du.debug('Resolve Notification');
+		du.debug('Resolve Notification');
 
-    let formatted_slack_notification = this.formatSlackMessage(notification_object);
+		let formatted_slack_notification = this.formatSlackMessage(notification_object);
 
-    return this.triggerWebhookNotification(formatted_slack_notification, notification_properties);
+		return this.triggerWebhookNotification(formatted_slack_notification, notification_properties);
 
-  }
+	}
 
-  formatSlackMessage(notification_object) {
+	formatSlackMessage(notification_object) {
 
-    du.debug('Format Message');
+		du.debug('Format Message');
 
-    return {
-      text: notification_object.title+'\n'+notification_object.body,
-      username: "markdownbot",
-      mrkdwn: true
-    };
+		return {
+			text: notification_object.title+'\n'+notification_object.body,
+			username: "markdownbot",
+			mrkdwn: true
+		};
 
-  }
+	}
 
-  triggerWebhookNotification(notification_object, webhook){
+	triggerWebhookNotification(notification_object, webhook){
 
-    du.debug('Trigger Webhook Notification');
+		du.debug('Trigger Webhook Notification');
 
-    return httpprovider.postJSON({
-      url: webhook,
-      body: notification_object
-    });
+		return httpprovider.postJSON({
+			url: webhook,
+			body: notification_object
+		});
 
-  }
+	}
 
 }

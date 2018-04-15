@@ -16,22 +16,22 @@ describe('helpers/events/Event.spec.js', () => {
 		});
 	});
 
-  beforeEach(() => {
-    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-      sendMessage() {
-        return Promise.resolve(true);
-      }
-    });
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+			sendMessage() {
+				return Promise.resolve(true);
+			}
+		});
 
-    mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
-        publish() {
-            return Promise.resolve({});
-        }
-        getRegion() {
-            return 'us-east-1';
-        }
-    });
-  });
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+			publish() {
+				return Promise.resolve({});
+			}
+			getRegion() {
+				return 'us-east-1';
+			}
+		});
+	});
 
 	afterEach(() => {
 		mockery.resetCache();
@@ -153,90 +153,90 @@ describe('helpers/events/Event.spec.js', () => {
 
 		it('returns unchanged forwarded object when message attributes are undefined', () => {
 
-            let params = {
+			let params = {
             	return_object: {}
-            };
+			};
 
 			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 			let eventHelperController = new EventHelperController();
 
-            expect(eventHelperController.addMessageAttributes(params)).to.equal(params.return_object);
+			expect(eventHelperController.addMessageAttributes(params)).to.equal(params.return_object);
 		});
 
 		it('adds message attributes to forwarded object', () => {
 
-            let params = {
+			let params = {
             	return_object: {},
 				message_attributes: {
-                    'event_type': {
-                        DataType:'String',
-                        StringValue: 'initial_order'
-                    }
-                }
-            };
+					'event_type': {
+						DataType:'String',
+						StringValue: 'initial_order'
+					}
+				}
+			};
 
 			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 			let eventHelperController = new EventHelperController();
 
-            expect(eventHelperController.addMessageAttributes(params)).to.deep.equal({
-                MessageAttributes: params.message_attributes
+			expect(eventHelperController.addMessageAttributes(params)).to.deep.equal({
+				MessageAttributes: params.message_attributes
 			});
 		});
 
 		it('throws error when "DataType" is not set', () => {
 
-            let params = {
+			let params = {
             	return_object: {},
 				message_attributes: {
-                    'event_type': {
-                        StringValue: 'initial_order'
-                    }
-                }
-            };
+					'event_type': {
+						StringValue: 'initial_order'
+					}
+				}
+			};
 
 			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 			let eventHelperController = new EventHelperController();
 
 			try {
-                eventHelperController.addMessageAttributes(params);
+				eventHelperController.addMessageAttributes(params);
 			} catch (error) {
-                expect(error.message).to.equal("[500] Message attribute \"event_type\" DataType must be set and of type String.");
+				expect(error.message).to.equal("[500] Message attribute \"event_type\" DataType must be set and of type String.");
 			}
 		});
 
 		it('throws error when "StringValue" is not set', () => {
 
-            let params = {
+			let params = {
             	return_object: {},
 				message_attributes: {
-                    'event_type': {
-                        DataType:'String'
-                    }
-                }
-            };
+					'event_type': {
+						DataType:'String'
+					}
+				}
+			};
 
 			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 			let eventHelperController = new EventHelperController();
 
 			try {
-                eventHelperController.addMessageAttributes(params);
+				eventHelperController.addMessageAttributes(params);
 			} catch (error) {
-                expect(error.message).to.equal("[500] Message attribute \"event_type\" StringValue must be set and of type String.");
+				expect(error.message).to.equal("[500] Message attribute \"event_type\" StringValue must be set and of type String.");
 			}
 		});
 
-        it('returns undefined when message attributes are not an object', () => {
+		it('returns undefined when message attributes are not an object', () => {
 
-            let params = {
-                return_object: {},
+			let params = {
+				return_object: {},
 				message_attributes: ''
-            };
+			};
 
-            const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-            let eventHelperController = new EventHelperController();
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
 
-            expect(eventHelperController.addMessageAttributes(params)).to.equal(undefined);
-        });
+			expect(eventHelperController.addMessageAttributes(params)).to.equal(undefined);
+		});
 
 	});
 

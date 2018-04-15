@@ -7,10 +7,10 @@ let weightInputType = require('./weightInputType');
 let imageInputType = require('./imageInputType');
 
 module.exports.graphObj = new GraphQLInputObjectType({
-    name: 'AttributesInput',
-    fields: () => ({
-      dimensions:			{ type: dimensionsInputType.graphObj },
-      weight:					{ type: weightInputType.graphObj },
-      images:					{ type: new GraphQLList(imageInputType.graphObj) }
-    })
+	name: 'AttributesInput',
+	fields: () => ({
+		dimensions:			{ type: dimensionsInputType.graphObj },
+		weight:					{ type: weightInputType.graphObj },
+		images:					{ type: new GraphQLList(imageInputType.graphObj) }
+	})
 });

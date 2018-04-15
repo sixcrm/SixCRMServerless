@@ -6,8 +6,8 @@ const IAMDeployment = global.SixCRM.routes.include('deployment', 'utilities/iam-
 const iamDeployment = new IAMDeployment();
 
 iamDeployment.deployUsers().then((result) => {
-  return du.highlight(result);
+	return du.highlight(result);
 }).catch(error => {
-  du.error(error);
-  du.warning(error.message);
+	du.error(error);
+	du.warning(error.message);
 });

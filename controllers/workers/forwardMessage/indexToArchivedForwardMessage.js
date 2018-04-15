@@ -3,19 +3,19 @@ const forwardMessageController = global.SixCRM.routes.include('controllers', 'wo
 
 module.exports = class IndexToArchivedForwardMessageController extends forwardMessageController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameters.set('params', {
-        name: 'indextoarchive',
-        origin_queue: 'search_indexing',
-        failure_queue: 'search_indexing_failed',
-        workerfunction: 'indexEntities.js',
-        error_queue: 'search_indexing_error',
-        bulk: true
-      })
+		this.parameters.set('params', {
+			name: 'indextoarchive',
+			origin_queue: 'search_indexing',
+			failure_queue: 'search_indexing_failed',
+			workerfunction: 'indexEntities.js',
+			error_queue: 'search_indexing_error',
+			bulk: true
+		})
 
-    }
+	}
 
 };

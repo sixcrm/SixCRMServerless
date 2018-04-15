@@ -14,177 +14,177 @@ const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidTrackerResponse({status, delivered, detail}){
 
-  status = (_.isUndefined(status) || _.isNull(status))?'delivered':status;
-  delivered = (_.isUndefined(delivered) || _.isNull(delivered))?true:delivered;
-  detail = (_.isUndefined(detail) || _.isNull(detail))?'Your item was delivered at 8:10 am on June 1 in Wilmington DE 19801.':detail;
+	status = (_.isUndefined(status) || _.isNull(status))?'delivered':status;
+	delivered = (_.isUndefined(delivered) || _.isNull(delivered))?true:delivered;
+	detail = (_.isUndefined(detail) || _.isNull(detail))?'Your item was delivered at 8:10 am on June 1 in Wilmington DE 19801.':detail;
 
-  return {
-    getVendorResponse: () => {
-      return {
-        delivered: delivered,
-        status: status,
-        detail: detail
-      };
-    }
-  };
+	return {
+		getVendorResponse: () => {
+			return {
+				delivered: delivered,
+				status: status,
+				detail: detail
+			};
+		}
+	};
 
 }
 
 function getValidShippingReceipt(){
 
-  return MockEntities.getValidShippingReceipt();
+	return MockEntities.getValidShippingReceipt();
 
 }
 
 describe('/controllers/helpers/shippingcarriers/ShippingStatus.js', () => {
 
-  before(() => {
-      mockery.enable({
-          useCleanCache: true,
-          warnOnReplace: false,
-          warnOnUnregistered: false
-      });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-  afterEach(() => {
-      mockery.resetCache();
-      mockery.deregisterAll();
-  });
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-  describe('constructor', () => {
-    it('successfully constructs', () => {
-      const ShippingStatusController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingStatus.js');
-      let shippingStatusController = new ShippingStatusController();
+	describe('constructor', () => {
+		it('successfully constructs', () => {
+			const ShippingStatusController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingStatus.js');
+			let shippingStatusController = new ShippingStatusController();
 
-      expect(objectutilities.getClassName(shippingStatusController)).to.equal('ShippingStatusController');
-    });
-  });
+			expect(objectutilities.getClassName(shippingStatusController)).to.equal('ShippingStatusController');
+		});
+	});
 
-  describe('getStatus', () => {
+	describe('getStatus', () => {
 
-    it('successfully returns shipping provider status', () => {
+		it('successfully returns shipping provider status', () => {
 
-      let shipping_receipt = getValidShippingReceipt();
+			let shipping_receipt = getValidShippingReceipt();
 
-      delete shipping_receipt.history;
+			delete shipping_receipt.history;
 
-      let tracker_response = getValidTrackerResponse('USPS');
+			let tracker_response = getValidTrackerResponse('USPS');
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), class {
-        constructor(){}
-        updateShippingReceipt(argumentation_object){
-          shipping_receipt.history = []
-          return Promise.resolve(shipping_receipt);
-        }
-        getTrackingNumber(shipping_receipt, fatal){
-          return shipping_receipt.tracking.id;
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), class {
+				constructor(){}
+				updateShippingReceipt(argumentation_object){
+					shipping_receipt.history = []
+					return Promise.resolve(shipping_receipt);
+				}
+				getTrackingNumber(shipping_receipt, fatal){
+					return shipping_receipt.tracking.id;
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/tracker/Tracker.js'), class {
-        constructor() {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/tracker/Tracker.js'), class {
+				constructor() {
 
-        }
-        info({shipping_receipt}){
-          return Promise.resolve(tracker_response);
-        }
-      });
+				}
+				info({shipping_receipt}){
+					return Promise.resolve(tracker_response);
+				}
+			});
 
-      const ShippingStatusController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingStatus.js');
-      let shippingStatusController = new ShippingStatusController();
+			const ShippingStatusController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingStatus.js');
+			let shippingStatusController = new ShippingStatusController();
 
-      return shippingStatusController.getStatus({shipping_receipt: shipping_receipt}).then(result => {
-        expect(result).to.deep.equal(tracker_response);
-        expect(shippingStatusController.parameters.store['shippingreceipt']).to.have.property('history');
+			return shippingStatusController.getStatus({shipping_receipt: shipping_receipt}).then(result => {
+				expect(result).to.deep.equal(tracker_response);
+				expect(shippingStatusController.parameters.store['shippingreceipt']).to.have.property('history');
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
-  describe('isDelivered', () => {
+	describe('isDelivered', () => {
 
-    it('successfully returns boolean delivered status (true)', () => {
+		it('successfully returns boolean delivered status (true)', () => {
 
-      let shipping_receipt = getValidShippingReceipt();
+			let shipping_receipt = getValidShippingReceipt();
 
-      delete shipping_receipt.history;
+			delete shipping_receipt.history;
 
-      let tracker_response = getValidTrackerResponse('USPS');
+			let tracker_response = getValidTrackerResponse('USPS');
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), class {
-        constructor(){}
-        updateShippingReceipt(argumentation_object){
-          shipping_receipt.history = []
-          return Promise.resolve(shipping_receipt);
-        }
-        getTrackingNumber(shipping_receipt, fatal){
-          return shipping_receipt.tracking.id;
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), class {
+				constructor(){}
+				updateShippingReceipt(argumentation_object){
+					shipping_receipt.history = []
+					return Promise.resolve(shipping_receipt);
+				}
+				getTrackingNumber(shipping_receipt, fatal){
+					return shipping_receipt.tracking.id;
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/tracker/Tracker.js'), class {
-        constructor() {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/tracker/Tracker.js'), class {
+				constructor() {
 
-        }
-        info({shipping_receipt}){
-          return Promise.resolve(tracker_response);
-        }
-      });
+				}
+				info({shipping_receipt}){
+					return Promise.resolve(tracker_response);
+				}
+			});
 
-      const ShippingStatusController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingStatus.js');
-      let shippingStatusController = new ShippingStatusController();
+			const ShippingStatusController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingStatus.js');
+			let shippingStatusController = new ShippingStatusController();
 
-      return shippingStatusController.isDelivered({shipping_receipt: shipping_receipt}).then(result => {
+			return shippingStatusController.isDelivered({shipping_receipt: shipping_receipt}).then(result => {
 
-        expect(result).to.equal(true);
-        expect(shippingStatusController.parameters.store['shippingreceipt']).to.have.property('history');
+				expect(result).to.equal(true);
+				expect(shippingStatusController.parameters.store['shippingreceipt']).to.have.property('history');
 
-      });
+			});
 
-    });
+		});
 
-    it('successfully returns boolean delivered status (false)', () => {
+		it('successfully returns boolean delivered status (false)', () => {
 
-      let shipping_receipt = getValidShippingReceipt();
+			let shipping_receipt = getValidShippingReceipt();
 
-      delete shipping_receipt.history;
+			delete shipping_receipt.history;
 
-      let tracker_response = getValidTrackerResponse({status: 'instransit', delivered: false, detail: 'Elvis has left the building.'});
+			let tracker_response = getValidTrackerResponse({status: 'instransit', delivered: false, detail: 'Elvis has left the building.'});
 
-      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), class {
-        constructor(){}
-        updateShippingReceipt(argumentation_object){
-          shipping_receipt.history = []
-          return Promise.resolve(shipping_receipt);
-        }
-        getTrackingNumber(shipping_receipt, fatal){
-          return shipping_receipt.tracking.id;
-        }
-      });
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/shippingreceipt/ShippingReceipt.js'), class {
+				constructor(){}
+				updateShippingReceipt(argumentation_object){
+					shipping_receipt.history = []
+					return Promise.resolve(shipping_receipt);
+				}
+				getTrackingNumber(shipping_receipt, fatal){
+					return shipping_receipt.tracking.id;
+				}
+			});
 
-      mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/tracker/Tracker.js'), class {
-        constructor() {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/tracker/Tracker.js'), class {
+				constructor() {
 
-        }
-        info({shipping_receipt}){
-          return Promise.resolve(tracker_response);
-        }
-      });
+				}
+				info({shipping_receipt}){
+					return Promise.resolve(tracker_response);
+				}
+			});
 
-      const ShippingStatusController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingStatus.js');
-      let shippingStatusController = new ShippingStatusController();
+			const ShippingStatusController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingStatus.js');
+			let shippingStatusController = new ShippingStatusController();
 
-      return shippingStatusController.isDelivered({shipping_receipt: shipping_receipt}).then(result => {
+			return shippingStatusController.isDelivered({shipping_receipt: shipping_receipt}).then(result => {
 
-        expect(result).to.equal(false);
-        expect(shippingStatusController.parameters.store['shippingreceipt']).to.have.property('history');
+				expect(result).to.equal(false);
+				expect(shippingStatusController.parameters.store['shippingreceipt']).to.have.property('history');
 
-      });
+			});
 
-    });
+		});
 
-  });
+	});
 
 });

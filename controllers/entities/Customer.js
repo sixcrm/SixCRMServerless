@@ -1,284 +1,339 @@
-
 const _ = require('lodash');
 
-const du =  global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu =  global.SixCRM.routes.include('lib', 'error-utilities.js');
-const arrayutilities =  global.SixCRM.routes.include('lib', 'array-utilities.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class CustomerController extends entityController {
 
-    constructor(){
+	constructor() {
 
-        super('customer');
+		super('customer');
 
-        this.search_fields = ['firstname', 'lastname'];
+		this.search_fields = ['firstname', 'lastname'];
 
-    }
+	}
 
-    associatedEntitiesCheck({id}){
+	associatedEntitiesCheck({
+		id
+	}) {
 
-      du.debug('Associated Entities Check');
+		du.debug('Associated Entities Check');
 
-      let return_array = [];
+		let return_array = [];
 
-      let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('CustomerNoteController', 'listByCustomer', {customer:id}).then(customernotes => this.getResult(customernotes, 'customernotes')),
-        this.executeAssociatedEntityFunction('SessionController', 'listByCustomer', {customer:id}).then(sessions => this.getResult(sessions, 'sessions'))
-      ];
+		let data_acquisition_promises = [
+			this.executeAssociatedEntityFunction('CustomerNoteController', 'listByCustomer', {
+				customer: id
+			}).then(customernotes => this.getResult(customernotes, 'customernotes')),
+			this.executeAssociatedEntityFunction('SessionController', 'listByCustomer', {
+				customer: id
+			}).then(sessions => this.getResult(sessions, 'sessions'))
+		];
 
-      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+		return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
 
-        let customernotes = data_acquisition_promises[0];
-        let sessions = data_acquisition_promises[1];
+			let customernotes = data_acquisition_promises[0];
+			let sessions = data_acquisition_promises[1];
 
-        if(arrayutilities.nonEmpty(customernotes)){
-          arrayutilities.map(customernotes, (customernote) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Customer Note', object: customernote}));
-          });
-        }
+			if (arrayutilities.nonEmpty(customernotes)) {
+				arrayutilities.map(customernotes, (customernote) => {
+					return_array.push(this.createAssociatedEntitiesObject({
+						name: 'Customer Note',
+						object: customernote
+					}));
+				});
+			}
 
-        if(arrayutilities.nonEmpty(sessions)){
-          arrayutilities.map(sessions, (session) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Session', object: session}));
-          });
-        }
+			if (arrayutilities.nonEmpty(sessions)) {
+				arrayutilities.map(sessions, (session) => {
+					return_array.push(this.createAssociatedEntitiesObject({
+						name: 'Session',
+						object: session
+					}));
+				});
+			}
 
-        return return_array;
+			return return_array;
 
-      });
+		});
 
-    }
+	}
 
 	// Deprecate: Recursive Scan Query
-    listByCreditCard({creditcard, pagination}){
+	listByCreditCard({
+		creditcard,
+		pagination
+	}) {
+
+		du.debug('List By Credit Card')
+
+		return this.listByAssociations({
+			id: this.getID(creditcard),
+			field: 'creditcards',
+			pagination: pagination
+		});
+
+	}
+
+	getAddress(customer) {
+
+		du.debug('Get Address');
+
+		return Promise.resolve(customer.address);
+
+	}
+
+	//Technical Debt:  This is somewhat messy.  Maybe we need to add this to a helper
+	addCreditCard(customer, creditcard) {
+
+		du.debug('Add Credit Card');
+
+		const customerPromise = Promise.resolve().then(() => {
+			if (!_.has(customer, this.primary_key)) {
+				return this.get({
+					id: customer
+				});
+			}
+			return customer;
+		})
+			.then(_customer => {
+				if (_.isNull(_customer)) {
+					eu.throwError('server', `Customer does not exist: ${customer}`);
+				}
+				return _customer;
+			});
+
+		const creditcardPromise = Promise.resolve().then(() => {
+			if (!_.has(creditcard, 'id')) {
+				return this.executeAssociatedEntityFunction('CreditCardController', 'get', {
+					id: creditcard
+				});
+			}
+			return creditcard;
+		})
+			.then(_creditcard => {
+				if (_.isNull(_creditcard)) {
+					eu.throwError('server', `Creditcard does not exist: ${creditcard}`);
+				}
+				return _creditcard;
+			});
 
-      du.debug('List By Credit Card')
+		return Promise.all([customerPromise, creditcardPromise])
+			.then(([customer, creditcard]) => {
+				const customerUpdatePromise = Promise.resolve().then(() => {
+					if (_.has(customer, 'creditcards')) {
+						arrayutilities.isArray(customer.creditcards, true);
+						if (_.includes(customer.creditcards, creditcard.id)) {
+							return customer;
+						}
+						customer.creditcards.push(creditcard.id);
+					} else {
+						customer.creditcards = [creditcard.id];
+					}
 
-      return this.listByAssociations({id: this.getID(creditcard), field: 'creditcards', pagination: pagination});
+					return this.update({
+						entity: customer
+					});
+				});
 
-    }
+				const creditcardUpdatePromise = Promise.resolve().then(() => {
+					if (_.has(creditcard, 'customers')) {
+						arrayutilities.isArray(creditcard.customers, true);
+						if (_.includes(creditcard.customers, customer.id)) {
+							return creditcard;
+						}
+						creditcard.customers.push(customer.id);
+					} else {
+						creditcard.customers = [customer.id];
+					}
 
-    getAddress(customer){
+					return this.executeAssociatedEntityFunction('CreditCardController', 'update', {
+						entity: creditcard
+					});
+				});
 
-      du.debug('Get Address');
+				return Promise.all([customerUpdatePromise, creditcardUpdatePromise]);
+			});
 
-      return Promise.resolve(customer.address);
+	}
 
-    }
+	getCreditCards(customer) {
 
-    //Technical Debt:  This is somewhat messy.  Maybe we need to add this to a helper
-    addCreditCard(customer, creditcard){
+		du.debug('Get Credit Cards');
 
-      du.debug('Add Credit Card');
+		if (_.has(customer, "creditcards") && arrayutilities.nonEmpty(customer.creditcards)) {
 
-	  const customerPromise = Promise.resolve().then(() => {
-	  	if (!_.has(customer, this.primary_key)) {
-	  		return this.get({id: customer});
-	  	}
-	  	return customer;
-	  })
-	  .then(_customer => {
-	  	if (_.isNull(_customer)) {
-	  		eu.throwError('server', `Customer does not exist: ${customer}`);
-	  	}
-	  	return _customer;
-	  });
+			let creditcardids = arrayutilities.map(customer.creditcards, creditcard => {
+				return this.getID(creditcard);
+			});
 
-	  const creditcardPromise = Promise.resolve().then(() => {
-	  	if (!_.has(creditcard, 'id')) {
-	  		return this.executeAssociatedEntityFunction('CreditCardController', 'get', {id: creditcard});
-	  	}
-	  	return creditcard;
-	  })
-	  .then(_creditcard => {
-	  	if (_.isNull(_creditcard)) {
-	  		eu.throwError('server', `Creditcard does not exist: ${creditcard}`);
-	  	}
-	  	return _creditcard;
-	  });
+			let query_parameters = this.createINQueryParameters({
+				field: 'id',
+				list_array: creditcardids
+			});
 
-	  return Promise.all([customerPromise, creditcardPromise])
-	  .then(([customer, creditcard]) => {
-	  	const customerUpdatePromise = Promise.resolve().then(() => {
-	  		if (_.has(customer, 'creditcards')) {
-	  			arrayutilities.isArray(customer.creditcards, true);
-	  			if (_.includes(customer.creditcards, creditcard.id)) {
-	  				return customer;
-	  			}
-	  			customer.creditcards.push(creditcard.id);
-	  		} else {
-	  			customer.creditcards = [creditcard.id];
-	  		}
+			return this.executeAssociatedEntityFunction('CreditCardController', 'listByAccount', {
+				query_parameters: query_parameters
+			})
+				.then(creditcards => this.getResult(creditcards, 'creditcards'));
 
-	  		return this.update({entity: customer});
-	  	});
+		}
 
-	  	const creditcardUpdatePromise = Promise.resolve().then(() => {
-	  		if (_.has(creditcard, 'customers')) {
-	  			arrayutilities.isArray(creditcard.customers, true);
-	  			if (_.includes(creditcard.customers, customer.id)) {
-	  				return creditcard;
-	  			}
-	  			creditcard.customers.push(customer.id);
-	  		} else {
-	  			creditcard.customers = [customer.id];
-	  		}
+		return Promise.resolve(null);
 
-	  		return this.executeAssociatedEntityFunction('CreditCardController', 'update', {entity: creditcard});
-	  	});
+	}
 
-	  	return Promise.all([customerUpdatePromise, creditcardUpdatePromise]);
-	  });
 
-    }
+	getMostRecentCreditCard(customer) {
 
-    getCreditCards(customer){
+		du.debug('Get Most Recent Credit Card');
 
-      du.debug('Get Credit Cards');
+		return this.get({
+			id: this.getID(customer)
+		}).then((customer) => {
 
-      if(_.has(customer, "creditcards") && arrayutilities.nonEmpty(customer.creditcards)){
+			if (_.isNull(customer)) {
+				return null;
+			}
 
-        let creditcardids = arrayutilities.map(customer.creditcards, creditcard => {
-          return this.getID(creditcard);
-        });
+			return this.getCreditCards(customer).then((credit_cards) => {
 
-        let query_parameters = this.createINQueryParameters({field: 'id', list_array: creditcardids});
+				if (arrayutilities.nonEmpty(credit_cards)) {
 
-        return this.executeAssociatedEntityFunction('CreditCardController', 'listByAccount', {query_parameters: query_parameters})
-        .then(creditcards => this.getResult(creditcards, 'creditcards'));
+					let sorted_credit_cards = arrayutilities.sort(credit_cards, (a, b) => {
 
-      }
+						if (a.updated_at > b.updated_at) {
+							return 1;
+						}
 
-      return Promise.resolve(null);
+						if (a.updated_at < b.updated_at) {
+							return -1;
+						}
 
-    }
+						return 0;
 
+					});
 
-    getMostRecentCreditCard(customer){
+					return sorted_credit_cards[0];
 
-      du.debug('Get Most Recent Credit Card');
+				}
 
-      return this.get({id: this.getID(customer)}).then((customer) => {
+				return null;
 
-        if(_.isNull(customer)){ return null; }
+			});
 
-        return this.getCreditCards(customer).then((credit_cards) => {
+		});
 
-          if(arrayutilities.nonEmpty(credit_cards)){
+	}
 
-            let sorted_credit_cards = arrayutilities.sort(credit_cards, (a, b) => {
+	getCustomerByEmail(email) {
 
-              if(a.updated_at > b.updated_at){ return 1; }
+		du.debug('Get Customer By Email');
 
-              if(a.updated_at < b.updated_at){ return -1; }
+		return this.getBySecondaryIndex({
+			field: 'email',
+			index_value: email,
+			index_name: 'email-index'
+		});
 
-              return 0;
+	}
 
-            });
+	getCustomerSessions(customer) {
 
-            return sorted_credit_cards[0];
+		du.debug('Get Customer Sessions');
 
-          }
+		return this.executeAssociatedEntityFunction('SessionController', 'getSessionByCustomer', this.getID(customer));
 
-          return null;
+	}
 
-        });
+	getCustomerRebills(customer) {
 
-      });
+		du.debug('Get Customer Rebills');
 
-    }
+		return this.getCustomerSessions(customer).then((sessions) => {
 
-    getCustomerByEmail(email){
+			if (arrayutilities.nonEmpty(sessions)) {
 
-      du.debug('Get Customer By Email');
+				let session_ids = []
 
-      return this.getBySecondaryIndex({field: 'email', index_value: email, index_name: 'email-index'});
+				arrayutilities.map(sessions, (session) => {
+					if (_.has(session, 'id')) {
+						session_ids.push(session.id);
+					}
+				});
 
-    }
+				session_ids = arrayutilities.unique(session_ids);
 
-    getCustomerSessions(customer){
+				return this.executeAssociatedEntityFunction('rebillController', 'listBy', {
+					list_array: session_ids,
+					field: 'parentsession'
+				})
+					.then(rebills => this.getResult(rebills, 'rebills'));
 
-      du.debug('Get Customer Sessions');
+			}
 
-      return this.executeAssociatedEntityFunction('SessionController', 'getSessionByCustomer', this.getID(customer));
+			return null;
 
-    }
+		});
 
-    getCustomerRebills(customer){
+	}
 
-      du.debug('Get Customer Rebills');
+	listCustomerSessions({
+		customer,
+		pagination
+	}) {
 
-      return this.getCustomerSessions(customer).then((sessions) => {
+		du.debug('List Customer Sessions');
 
-        if(arrayutilities.nonEmpty(sessions)){
+		return this.executeAssociatedEntityFunction('SessionController', 'listByCustomer', {
+			customer: customer,
+			pagination: pagination
+		});
 
-          let session_ids = []
+	}
 
-          arrayutilities.map(sessions, (session) => {
-            if(_.has(session, 'id')){
-              session_ids.push(session.id);
-            }
-          });
+	// Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
+	// we retrieve data in 2 steps (sessions first, then rebills for each session and combine the results).
+	listCustomerRebills({
+		customer
+	}) {
 
-          session_ids = arrayutilities.unique(session_ids);
+		du.debug('List Customer Rebills');
 
-          return this.executeAssociatedEntityFunction('rebillController', 'listBy', {list_array: session_ids, field: 'parentsession'})
-          .then(rebills => this.getResult(rebills, 'rebills'));
+		return this.getCustomerSessions(customer).then((sessions) => {
 
-        }
+			if (!sessions) {
+				return this.createEndOfPaginationResponse('rebills', []);
+			}
 
-        return null;
+			let rebill_promises = arrayutilities.map(sessions, (session) => {
+				return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {
+					session: session
+				});
+			});
 
-      });
+			return Promise.all(rebill_promises).then((rebill_lists) => {
 
-    }
+				let rebills = [];
 
-    listCustomerSessions({customer, pagination}) {
+				rebill_lists = rebill_lists || [];
 
-      du.debug('List Customer Sessions');
+				rebill_lists.forEach((rebill_list) => {
 
-      return this.executeAssociatedEntityFunction('SessionController', 'listByCustomer', {customer: customer, pagination: pagination});
+					let rebills_from_list = rebill_list.rebills || [];
 
-    }
+					rebills_from_list.forEach((rebill) => {
+						rebills.push(rebill);
+					});
+				});
 
-    // Technical Debt: This method ignores cursor and limit, returns all. Implementing proper pagination is tricky since
-    // we retrieve data in 2 steps (sessions first, then rebills for each session and combine the results).
-    listCustomerRebills({customer}) {
+				return this.createEndOfPaginationResponse('rebills', rebills);
 
-      du.debug('List Customer Rebills');
+			});
 
-        return this.getCustomerSessions(customer).then((sessions) => {
-
-            if (!sessions) {
-                return this.createEndOfPaginationResponse('rebills', []);
-            }
-
-            let rebill_promises = arrayutilities.map(sessions, (session) => {
-              return this.executeAssociatedEntityFunction('rebillController', 'listBySession', {session: session});
-            });
-
-            return Promise.all(rebill_promises).then((rebill_lists) => {
-
-                let rebills = [];
-
-                rebill_lists = rebill_lists || [];
-
-                rebill_lists.forEach((rebill_list) => {
-
-                    let rebills_from_list = rebill_list.rebills || [];
-
-                    rebills_from_list.forEach((rebill) => {
-                        rebills.push(rebill);
-                    });
-                });
-
-                return this.createEndOfPaginationResponse('rebills', rebills);
-
-            });
-
-        });
-    }
+		});
+	}
 
 }
-

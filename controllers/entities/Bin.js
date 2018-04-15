@@ -6,7 +6,7 @@ module.exports = class BinController extends entityController {
 
 	constructor() {
 		super('bin');
-        this.primary_key = 'binnumber';
+		this.primary_key = 'binnumber';
 	}
 
 	getCreditCardProperties({ binnumber }) {
@@ -21,7 +21,7 @@ module.exports = class BinController extends entityController {
 
 				du.warning(data);
 				return data;
-		});
+			});
 
 	}
 

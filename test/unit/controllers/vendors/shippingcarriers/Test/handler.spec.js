@@ -11,120 +11,120 @@ let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js')
 let MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidTrackingNumber(){
-  return MockEntities.getValidTrackingNumber('Test');
+	return MockEntities.getValidTrackingNumber('Test');
 }
 
 
 function getValidAPIResponse(tracking_number, type){
 
-  type = (_.isUndefined(type))?'success':type;
+	type = (_.isUndefined(type))?'success':type;
 
-  tracking_number = (_.isUndefined(tracking_number))?getValidTrackingNumber():tracking_number;
+	tracking_number = (_.isUndefined(tracking_number))?getValidTrackingNumber():tracking_number;
 
-  if(type == 'success'){
-    return {
-      statusCode: 200,
-      body: {
-        success: true,
-        code: 200,
-        response:
+	if(type == 'success'){
+		return {
+			statusCode: 200,
+			body: {
+				success: true,
+				code: 200,
+				response:
         { tracking_number: tracking_number,
-          status: 'delivered',
-          address:
+        	status: 'delivered',
+        	address:
           { name: 'John Doe',
-            line1: '54321 Shrinking Lane',
-            city: 'Miniapolis',
-            state: 'IN',
-            zip: '54321',
-            country: 'US'
+          	line1: '54321 Shrinking Lane',
+          	city: 'Miniapolis',
+          	state: 'IN',
+          	zip: '54321',
+          	country: 'US'
           },
-          detail:{
-            detail: 'Delivered to front porch',
-            delivered_at: '2018-01-04T20:11:26.376Z'
-          }
+        	detail:{
+        		detail: 'Delivered to front porch',
+        		delivered_at: '2018-01-04T20:11:26.376Z'
+        	}
         }
-      }
-    };
-  }
+			}
+		};
+	}
 
-  return {
-    statusCode: 200,
-    body: {
-      success: true,
-      code: 200,
-      response:
+	return {
+		statusCode: 200,
+		body: {
+			success: true,
+			code: 200,
+			response:
       { tracking_number: tracking_number,
-        status: 'delivered',
-        address:
+      	status: 'delivered',
+      	address:
         { name: 'John Doe',
-          line1: '54321 Shrinking Lane',
-          city: 'Miniapolis',
-          state: 'IN',
-          zip: '54321',
-          country: 'US'
+        	line1: '54321 Shrinking Lane',
+        	city: 'Miniapolis',
+        	state: 'IN',
+        	zip: '54321',
+        	country: 'US'
         },
-        detail:{
-          detail: 'Delivered to front porch',
-          delivered_at: '2018-01-04T20:11:26.376Z'
-        }
+      	detail:{
+      		detail: 'Delivered to front porch',
+      		delivered_at: '2018-01-04T20:11:26.376Z'
+      	}
       }
-    }
-  };
+		}
+	};
 
 }
 
 describe('vendors/shippingcarriers/Test/handler.js', () => {
 
-  before(() => {
-    mockery.enable({
-      useCleanCache: true,
-      warnOnReplace: false,
-      warnOnUnregistered: false
-    });
-  });
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
 
-  afterEach(() => {
-    mockery.resetCache();
-    mockery.deregisterAll();
-  });
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
-  describe('constructor', () => {
+	describe('constructor', () => {
 
-    it('successfully constructs', () => {
+		it('successfully constructs', () => {
 
-      const TestController = global.SixCRM.routes.include('vendors','shippingcarriers/Test/handler.js');
-      let testController = new TestController();
+			const TestController = global.SixCRM.routes.include('vendors','shippingcarriers/Test/handler.js');
+			let testController = new TestController();
 
-      expect(objectutilities.getClassName(testController)).to.equal('TestController');
+			expect(objectutilities.getClassName(testController)).to.equal('TestController');
 
-    });
+		});
 
-  });
+	});
 
-  describe('info', () => {
+	describe('info', () => {
 
-    it('successfully executes', () => {
+		it('successfully executes', () => {
 
-      let tracking_number = getValidTrackingNumber();
-      let api_response = getValidAPIResponse(tracking_number);
+			let tracking_number = getValidTrackingNumber();
+			let api_response = getValidAPIResponse(tracking_number);
 
-      mockery.registerMock('request', (request_uri, callback) => {
-        return callback(null, api_response, '');
-      });
+			mockery.registerMock('request', (request_uri, callback) => {
+				return callback(null, api_response, '');
+			});
 
-      const TestController = global.SixCRM.routes.include('vendors','shippingcarriers/Test/handler.js');
-      let testController = new TestController();
+			const TestController = global.SixCRM.routes.include('vendors','shippingcarriers/Test/handler.js');
+			let testController = new TestController();
 
-      return testController.info({tracking_number: tracking_number}).then(result => {
-        expect(result.getCode()).to.equal('success');
-        expect(result.getMessage()).to.equal('Success');
-        expect(result.getParsedResponse().tracking_number).to.equal(tracking_number);
-        expect(result.getParsedResponse().status).to.be.defined;
-        expect(result.getParsedResponse().detail).to.be.defined;
-      });
+			return testController.info({tracking_number: tracking_number}).then(result => {
+				expect(result.getCode()).to.equal('success');
+				expect(result.getMessage()).to.equal('Success');
+				expect(result.getParsedResponse().tracking_number).to.equal(tracking_number);
+				expect(result.getParsedResponse().status).to.be.defined;
+				expect(result.getParsedResponse().detail).to.be.defined;
+			});
 
-    });
+		});
 
-  });
+	});
 
 });

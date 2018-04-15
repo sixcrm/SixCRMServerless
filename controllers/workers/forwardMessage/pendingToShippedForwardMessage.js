@@ -3,19 +3,19 @@ const forwardRebillMessageController = global.SixCRM.routes.include('controllers
 
 module.exports = class PendingToShippedForwardMessageController extends forwardRebillMessageController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameters.set('params', {
-        name: 'pendingtoshipped',
-        workerfunction: 'confirmShipped.js',
-        origin_queue: 'pending',
-        failure_queue: 'pending_failed',
-        error_queue: 'pending_error',
-        destination_queue: 'shipped'
-      })
+		this.parameters.set('params', {
+			name: 'pendingtoshipped',
+			workerfunction: 'confirmShipped.js',
+			origin_queue: 'pending',
+			failure_queue: 'pending_failed',
+			error_queue: 'pending_error',
+			destination_queue: 'shipped'
+		})
 
-    }
+	}
 
 };

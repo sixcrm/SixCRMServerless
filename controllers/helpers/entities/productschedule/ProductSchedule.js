@@ -7,201 +7,201 @@ const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 
 module.exports = class ProductScheduleHelper {
 
-  //Tested
-  constructor(){
+	//Tested
+	constructor(){
 
-  }
+	}
 
-  getHydrated({id}){
+	getHydrated({id}){
 
-    du.debug('Get Hydrated');
+		du.debug('Get Hydrated');
 
-    let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-    const productScheduleController = new ProductScheduleController();
+		let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+		const productScheduleController = new ProductScheduleController();
 
-    return productScheduleController.get({id: id}).then(product_schedule => {
+		return productScheduleController.get({id: id}).then(product_schedule => {
 
-      return productScheduleController.getProducts(product_schedule).then(products => {
+			return productScheduleController.getProducts(product_schedule).then(products => {
 
-        return this.marryProductsToSchedule({product_schedule: product_schedule, products: products.products});
+				return this.marryProductsToSchedule({product_schedule: product_schedule, products: products.products});
 
-      });
+			});
 
-    });
+		});
 
-  }
+	}
 
-  //Tested
-  marryProductsToSchedule({product_schedule, products}){
+	//Tested
+	marryProductsToSchedule({product_schedule, products}){
 
-    du.debug('Marry Products To Schedules');
+		du.debug('Marry Products To Schedules');
 
-    if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
+		if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
-      if(arrayutilities.nonEmpty(products)){
+			if(arrayutilities.nonEmpty(products)){
 
-        arrayutilities.map(product_schedule.schedule, (schedule_element, index) => {
+				arrayutilities.map(product_schedule.schedule, (schedule_element, index) => {
 
-          let found_product = arrayutilities.find(products, product => {
+					let found_product = arrayutilities.find(products, product => {
 
-            // Technical Debt: accounting for legacy data ('product_id' exists in legacy data, switched to 'product')
-            // Remove at earliest convenience
-            return (product.id == schedule_element.product || product.id == schedule_element.product_id);
+						// Technical Debt: accounting for legacy data ('product_id' exists in legacy data, switched to 'product')
+						// Remove at earliest convenience
+						return (product.id == schedule_element.product || product.id == schedule_element.product_id);
 
-          });
+					});
 
-          if(!_.isNull(found_product)){
-            product_schedule.schedule[index].product = found_product;
-          }
+					if(!_.isNull(found_product)){
+						product_schedule.schedule[index].product = found_product;
+					}
 
-        });
+				});
 
-      }
+			}
 
-    }
+		}
 
-    return product_schedule;
+		return product_schedule;
 
-  }
+	}
 
-  //Tested
-  getScheduleElementsOnDayInSchedule({product_schedule, day}){
+	//Tested
+	getScheduleElementsOnDayInSchedule({product_schedule, day}){
 
-    du.debug('Get Schedule Element By Day In Schedule');
+		du.debug('Get Schedule Element By Day In Schedule');
 
-    let scheduled_elements = arrayutilities.filter(product_schedule.schedule, (scheduled_product) => {
+		let scheduled_elements = arrayutilities.filter(product_schedule.schedule, (scheduled_product) => {
 
-      if(parseInt(day) >= parseInt(scheduled_product.start)){
+			if(parseInt(day) >= parseInt(scheduled_product.start)){
 
-        if(!_.has(scheduled_product, "end") || (parseInt(day) < parseInt(scheduled_product.end))){
+				if(!_.has(scheduled_product, "end") || (parseInt(day) < parseInt(scheduled_product.end))){
 
-          return true;
+					return true;
 
-        }
+				}
 
-      }
+			}
 
-      return false;
+			return false;
 
-    });
+		});
 
-    return (_.isUndefined(scheduled_elements) || _.isNull(scheduled_elements))?null:scheduled_elements;
+		return (_.isUndefined(scheduled_elements) || _.isNull(scheduled_elements))?null:scheduled_elements;
 
-  }
+	}
 
-  //Tested
-  calculateNextBillingInSchedule({schedule_element, day}){
+	//Tested
+	calculateNextBillingInSchedule({schedule_element, day}){
 
-    du.debug('Calculate Next Billing In Schedule');
+		du.debug('Calculate Next Billing In Schedule');
 
-    return day + (parseInt(schedule_element.period) - (mathutilities.signIdempotentModulus((parseInt(day) - parseInt(schedule_element.start)), parseInt(schedule_element.period))));
+		return day + (parseInt(schedule_element.period) - (mathutilities.signIdempotentModulus((parseInt(day) - parseInt(schedule_element.start)), parseInt(schedule_element.period))));
 
-  }
+	}
 
-  //Tested
-  getNextScheduleElement({product_schedule, day}){
+	//Tested
+	getNextScheduleElement({product_schedule, day}){
 
-    du.debug('Get Next Schedule Element');
+		du.debug('Get Next Schedule Element');
 
-    //need to validate?
-    //has schedule, is non-empty array
+		//need to validate?
+		//has schedule, is non-empty array
 
-    product_schedule.schedule = arrayutilities.sort(product_schedule.schedule, (a, b) => {
-      return (a.start - b.start);
-    })
+		product_schedule.schedule = arrayutilities.sort(product_schedule.schedule, (a, b) => {
+			return (a.start - b.start);
+		})
 
-    let next_schedule_element = arrayutilities.find(product_schedule.schedule, (schedule_element) => {
+		let next_schedule_element = arrayutilities.find(product_schedule.schedule, (schedule_element) => {
 
-      if(_.has(schedule_element, 'end') && this.calculateNextBillingInSchedule({schedule_element: schedule_element, day: day}) > parseInt(schedule_element.end)){
-        return false;
-      }
+			if(_.has(schedule_element, 'end') && this.calculateNextBillingInSchedule({schedule_element: schedule_element, day: day}) > parseInt(schedule_element.end)){
+				return false;
+			}
 
-      return true;
+			return true;
 
-    });
+		});
 
-    if(_.isNull(next_schedule_element) || _.isUndefined(next_schedule_element)){
-      du.warning(day, product_schedule.schedule);
-    }
+		if(_.isNull(next_schedule_element) || _.isUndefined(next_schedule_element)){
+			du.warning(day, product_schedule.schedule);
+		}
 
-    //du.warning(product_schedule.schedule, day);
-    //du.info(next_schedule_element);
-    //du.info(next_schedule_element);
-    return next_schedule_element;
+		//du.warning(product_schedule.schedule, day);
+		//du.info(next_schedule_element);
+		//du.info(next_schedule_element);
+		return next_schedule_element;
 
-  }
+	}
 
-  //Tested
-  getNextScheduleElementStartDayNumber({day}){
+	//Tested
+	getNextScheduleElementStartDayNumber({day}){
 
-    du.debug('Get Next Period Day');
+		du.debug('Get Next Period Day');
 
-    let schedule_element = this.getNextScheduleElement(arguments[0]);
+		let schedule_element = this.getNextScheduleElement(arguments[0]);
 
-    if(_.has(schedule_element, 'start')){
+		if(_.has(schedule_element, 'start')){
 
-      if(day < schedule_element.start){
-        return schedule_element.start;
-      }
+			if(day < schedule_element.start){
+				return schedule_element.start;
+			}
 
-      return this.calculateNextBillingInSchedule({schedule_element: schedule_element, day: day});
+			return this.calculateNextBillingInSchedule({schedule_element: schedule_element, day: day});
 
-    }
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
-  //Tested
-  getTransactionProducts({day, product_schedules}){
+	//Tested
+	getTransactionProducts({day, product_schedules}){
 
-    du.debug('Get Transaction Products');
+		du.debug('Get Transaction Products');
 
-    let transaction_products = [];
+		let transaction_products = [];
 
-    product_schedules.forEach((product_schedule) => {
+		product_schedules.forEach((product_schedule) => {
 
-      let schedule_element = this.getScheduleElementByDay({day: day, schedule: product_schedule.schedule});
+			let schedule_element = this.getScheduleElementByDay({day: day, schedule: product_schedule.schedule});
 
-      transaction_products.push({
-        amount: parseFloat(schedule_element.price),
-        product: schedule_element.product
-      });
+			transaction_products.push({
+				amount: parseFloat(schedule_element.price),
+				product: schedule_element.product
+			});
 
-    });
+		});
 
-    return transaction_products;
+		return transaction_products;
 
-  }
+	}
 
-  //Tested
-  getScheduleElementByDay({day, schedule}){
+	//Tested
+	getScheduleElementByDay({day, schedule}){
 
-    du.debug('Get Schedule Element By Day');
+		du.debug('Get Schedule Element By Day');
 
-    schedule = arrayutilities.sort(schedule, (a, b) => { return a.start - b.start; });
+		schedule = arrayutilities.sort(schedule, (a, b) => { return a.start - b.start; });
 
-    let return_product = arrayutilities.find(schedule, (schedule_element) => {
+		let return_product = arrayutilities.find(schedule, (schedule_element) => {
 
-      if(parseInt(day) >= parseInt(schedule_element.start)){
+			if(parseInt(day) >= parseInt(schedule_element.start)){
 
-        if(!_.has(schedule_element, "end") || parseInt(day) < parseInt(schedule_element.end)){
+				if(!_.has(schedule_element, "end") || parseInt(day) < parseInt(schedule_element.end)){
 
-          return true;
+					return true;
 
-        }
+				}
 
-      }
+			}
 
-      return false;
+			return false;
 
-    });
+		});
 
-    return return_product;
+		return return_product;
 
-  }
+	}
 
-  /* Deprecated?
+	/* Deprecated?
   productSum({day, product_schedules}){
 
     du.debug('Product Sum');
@@ -222,45 +222,45 @@ module.exports = class ProductScheduleHelper {
   */
 
 
-  getSchedule({product_schedule}){
+	getSchedule({product_schedule}){
 
-    //Note:  This is a graph utility method
-    du.debug('Get Schedule');
+		//Note:  This is a graph utility method
+		du.debug('Get Schedule');
 
-    if(arrayutilities.nonEmpty(product_schedule.schedule)){
+		if(arrayutilities.nonEmpty(product_schedule.schedule)){
 
-      return arrayutilities.map(product_schedule.schedule, (schedule_element) => {
-        return this.transformScheduleElement({schedule_element: schedule_element});
-      });
+			return arrayutilities.map(product_schedule.schedule, (schedule_element) => {
+				return this.transformScheduleElement({schedule_element: schedule_element});
+			});
 
-    }else{
+		}else{
 
-      return null;
+			return null;
 
-    }
+		}
 
-  }
+	}
 
-  //Tested
-  transformScheduleElement({schedule_element}){
+	//Tested
+	transformScheduleElement({schedule_element}){
 
-    du.debug('Get Scheduled Product');
+		du.debug('Get Scheduled Product');
 
-    //Technical Debt:  Use the objectutilities.transcribe method.
-    let return_object = {
-      price: schedule_element.price,
-      start: schedule_element.start,
+		//Technical Debt:  Use the objectutilities.transcribe method.
+		let return_object = {
+			price: schedule_element.price,
+			start: schedule_element.start,
 			period: schedule_element.period,
 			//Techincal Debt: accounting for legacy deta, remove at earliest convenience
 			product: _.has(schedule_element, 'product') ? schedule_element.product : schedule_element.product_id
 		};
 
-    if(_.has(schedule_element, 'end')){
-      return_object.end = schedule_element.end;
-    }
+		if(_.has(schedule_element, 'end')){
+			return_object.end = schedule_element.end;
+		}
 
-    return return_object;
+		return return_object;
 
-  }
+	}
 
 }

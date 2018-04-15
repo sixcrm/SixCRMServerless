@@ -5,32 +5,32 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 module.exports = class ProductHelperController {
 
-  constructor(){
+	constructor(){
 
-    this.parameter_definition = {};
+		this.parameter_definition = {};
 
-    this.parameter_validation = {};
+		this.parameter_validation = {};
 
-    const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-  }
+	}
 
-  getDistributionBySKU({products}){
+	getDistributionBySKU({products}){
 
-    du.debug('Get Distribution By SKU');
+		du.debug('Get Distribution By SKU');
 
-    let grouped_products = arrayutilities.group(products, (product) => {
-      return product.sku;
-    });
+		let grouped_products = arrayutilities.group(products, (product) => {
+			return product.sku;
+		});
 
-    objectutilities.map(grouped_products, (sku) => {
-      grouped_products[sku] = grouped_products[sku].length;
-    });
+		objectutilities.map(grouped_products, (sku) => {
+			grouped_products[sku] = grouped_products[sku].length;
+		});
 
-    return grouped_products;
+		return grouped_products;
 
-  }
+	}
 
 }

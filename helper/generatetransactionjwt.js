@@ -17,7 +17,7 @@ process.env.jwt_issuer = site_config.jwt.issuer;
 let email = process.argv[2];
 
 if(_.isUndefined(email) || _.isNull(email)){
-    email = 'super.user@test.com';
+	email = 'super.user@test.com';
 }
 
 jwtprovider.setParameters();

@@ -11,183 +11,183 @@ const Parameters = global.SixCRM.routes.include('providers','Parameters.js');
 
 module.exports = class MerchantProviderLSSFilter {
 
-  constructor(){
+	constructor(){
 
-    this.parameter_validation = {
-      'merchantprovidergroup':global.SixCRM.routes.path('model','entities/merchantprovidergroup.json'),
-      'merchantproviders':global.SixCRM.routes.path('model','entities/components/merchantproviders.json'),
-      'amount':global.SixCRM.routes.path('model','definitions/currency.json'),
-      'distributiontargets':global.SixCRM.routes.path('model','helpers/transaction/merchantproviderselector/filters/LSS/distributiontargets.json'),
-      'hypotheticaldistributions':global.SixCRM.routes.path('model','helpers/transaction/merchantproviderselector/filters/LSS/distributiontargets.json')
-    };
+		this.parameter_validation = {
+			'merchantprovidergroup':global.SixCRM.routes.path('model','entities/merchantprovidergroup.json'),
+			'merchantproviders':global.SixCRM.routes.path('model','entities/components/merchantproviders.json'),
+			'amount':global.SixCRM.routes.path('model','definitions/currency.json'),
+			'distributiontargets':global.SixCRM.routes.path('model','helpers/transaction/merchantproviderselector/filters/LSS/distributiontargets.json'),
+			'hypotheticaldistributions':global.SixCRM.routes.path('model','helpers/transaction/merchantproviderselector/filters/LSS/distributiontargets.json')
+		};
 
-    this.parameter_definition = {
-      filter:{
-        required:{
-          merchantproviders:'merchant_providers',
-          merchantprovidergroup: 'merchantprovidergroup',
-          amount: 'amount'
-        },
-        optional:{}
-      }
-    };
+		this.parameter_definition = {
+			filter:{
+				required:{
+					merchantproviders:'merchant_providers',
+					merchantprovidergroup: 'merchantprovidergroup',
+					amount: 'amount'
+				},
+				optional:{}
+			}
+		};
 
-    this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
-  }
+	}
 
-  filter(){
+	filter(){
 
-    du.debug('Select Merchant Provider With Distribution Least Sum of Squares');
+		du.debug('Select Merchant Provider With Distribution Least Sum of Squares');
 
-    return Promise.resolve()
-    .then(() => this.parameters.setParameters({argumentation: arguments[0], action:'filter'}))
-    .then(() => this.executeFilter());
+		return Promise.resolve()
+			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'filter'}))
+			.then(() => this.executeFilter());
 
-  }
+	}
 
-  executeFilter(){
+	executeFilter(){
 
-    du.debug('Execute Filter');
+		du.debug('Execute Filter');
 
-    let merchant_providers = this.parameters.get('merchantproviders');
+		let merchant_providers = this.parameters.get('merchantproviders');
 
-    if(merchant_providers.length == 1){ return merchant_providers[0]; }
+		if(merchant_providers.length == 1){ return merchant_providers[0]; }
 
-    return this.calculateDistributionTargetsArray()
-    .then(() => this.calculateHypotheticalBaseDistributionArray())
-    .then(() => this.selectMerchantProviderFromLSS())
-    .then((result) => {
-      du.info({'Selected merchant provider': result})
-      return result;
-    });
+		return this.calculateDistributionTargetsArray()
+			.then(() => this.calculateHypotheticalBaseDistributionArray())
+			.then(() => this.selectMerchantProviderFromLSS())
+			.then((result) => {
+				du.info({'Selected merchant provider': result})
+				return result;
+			});
 
-  }
+	}
 
-  calculateDistributionTargetsArray(){
+	calculateDistributionTargetsArray(){
 
-    du.debug('Calculate Distribution Targets Array');
+		du.debug('Calculate Distribution Targets Array');
 
-    let merchant_providers = this.parameters.get('merchantproviders');
+		let merchant_providers = this.parameters.get('merchantproviders');
 
-    let distribution_targets_array = arrayutilities.map(merchant_providers, (merchant_provider) => {
-      return this.getMerchantProviderTargetDistribution({merchant_provider: merchant_provider});
-    });
+		let distribution_targets_array = arrayutilities.map(merchant_providers, (merchant_provider) => {
+			return this.getMerchantProviderTargetDistribution({merchant_provider: merchant_provider});
+		});
 
-    return Promise.all(distribution_targets_array).then(distribution_targets_array => {
+		return Promise.all(distribution_targets_array).then(distribution_targets_array => {
 
-      this.parameters.set('distributiontargets', distribution_targets_array);
+			this.parameters.set('distributiontargets', distribution_targets_array);
 
-      return true;
+			return true;
 
-    });
+		});
 
-  }
+	}
 
-  getMerchantProviderTargetDistribution({merchant_provider}){
+	getMerchantProviderTargetDistribution({merchant_provider}){
 
-    du.debug('Get Merchant Provider Target Distribution');
+		du.debug('Get Merchant Provider Target Distribution');
 
-    let merchantprovidergroup = this.parameters.get('merchantprovidergroup');
+		let merchantprovidergroup = this.parameters.get('merchantprovidergroup');
 
-    //Technical Debt:  Upgrade the JSON Schemas
-    if(!arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
-      eu.throwError('server','Process.getMerchantProviderTarget assumes that the selected_merchantprovidergroup.merchantproviders an array and has length greater than 0');
-    }
+		//Technical Debt:  Upgrade the JSON Schemas
+		if(!arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
+			eu.throwError('server','Process.getMerchantProviderTarget assumes that the selected_merchantprovidergroup.merchantproviders an array and has length greater than 0');
+		}
 
-    let merchantprovidergroup_mp = arrayutilities.find(merchantprovidergroup.merchantproviders, (lb_mp) => {
-      return (lb_mp.id == merchant_provider.id);
-    });
+		let merchantprovidergroup_mp = arrayutilities.find(merchantprovidergroup.merchantproviders, (lb_mp) => {
+			return (lb_mp.id == merchant_provider.id);
+		});
 
-    if(!_.has(merchantprovidergroup_mp, 'id') || !_.has(merchantprovidergroup_mp, 'distribution')){
-      eu.throwError('server','Process.getMerchantProviderTarget is unable to determine the merchant_provider');
-    }
+		if(!_.has(merchantprovidergroup_mp, 'id') || !_.has(merchantprovidergroup_mp, 'distribution')){
+			eu.throwError('server','Process.getMerchantProviderTarget is unable to determine the merchant_provider');
+		}
 
-    return Promise.resolve(merchantprovidergroup_mp.distribution);
+		return Promise.resolve(merchantprovidergroup_mp.distribution);
 
-  }
+	}
 
-  calculateHypotheticalBaseDistributionArray(){
+	calculateHypotheticalBaseDistributionArray(){
 
-    du.debug('Calculate Hypothetical Base Distribution Array');
+		du.debug('Calculate Hypothetical Base Distribution Array');
 
-    let merchant_providers = this.parameters.get('merchantproviders');
+		let merchant_providers = this.parameters.get('merchantproviders');
 
-    let hypothetical_distribution_base_array = arrayutilities.map(merchant_providers, (merchant_provider) => {
-      return this.getMerchantProviderHypotheticalBaseDistribution({merchant_provider: merchant_provider});
-    });
+		let hypothetical_distribution_base_array = arrayutilities.map(merchant_providers, (merchant_provider) => {
+			return this.getMerchantProviderHypotheticalBaseDistribution({merchant_provider: merchant_provider});
+		});
 
-    return Promise.all(hypothetical_distribution_base_array)
-    .then(hypothetical_distribution_base_array => {
+		return Promise.all(hypothetical_distribution_base_array)
+			.then(hypothetical_distribution_base_array => {
 
-      this.parameters.set('hypotheticaldistributions', hypothetical_distribution_base_array);
+				this.parameters.set('hypotheticaldistributions', hypothetical_distribution_base_array);
 
-      return true;
+				return true;
 
-    });
+			});
 
-  }
+	}
 
-  getMerchantProviderHypotheticalBaseDistribution({merchant_provider, additional_amount}){
+	getMerchantProviderHypotheticalBaseDistribution({merchant_provider, additional_amount}){
 
-    du.debug('Get Merchant Provider Hypothetical Base Distribution');
+		du.debug('Get Merchant Provider Hypothetical Base Distribution');
 
-    additional_amount = (_.isUndefined(additional_amount) || _.isNull(additional_amount))?0:numberutilities.toNumber(additional_amount);
+		additional_amount = (_.isUndefined(additional_amount) || _.isNull(additional_amount))?0:numberutilities.toNumber(additional_amount);
 
-    let amount = this.parameters.get('amount');
-    let merchantprovidergroup = this.parameters.get('merchantprovidergroup');
+		let amount = this.parameters.get('amount');
+		let merchantprovidergroup = this.parameters.get('merchantprovidergroup');
 
-    //Technical Debt:  Upgrade the JSON Schemas
-    if(!objectutilities.hasRecursive(merchantprovidergroup, 'summary.month.sum')){
-      eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that selected_merchantprovidergroup.monthly_sum is set');
-    }
+		//Technical Debt:  Upgrade the JSON Schemas
+		if(!objectutilities.hasRecursive(merchantprovidergroup, 'summary.month.sum')){
+			eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that selected_merchantprovidergroup.monthly_sum is set');
+		}
 
-    //Technical Debt:  Upgrade the JSON Schemas
-    if(!objectutilities.hasRecursive(merchant_provider, 'summary.summary.thismonth.amount')){
-      eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that merchantprovider.summary.summary.thismonth.amount property is set');
-    }
+		//Technical Debt:  Upgrade the JSON Schemas
+		if(!objectutilities.hasRecursive(merchant_provider, 'summary.summary.thismonth.amount')){
+			eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that merchantprovider.summary.summary.thismonth.amount property is set');
+		}
 
-    let numerator = (numberutilities.toNumber(merchant_provider.summary.summary.thismonth.amount) + additional_amount);
-    let denominator = (numberutilities.toNumber(merchantprovidergroup.summary.month.sum) + amount);
-    let percentage = mathutilities.safePercentage(numerator, denominator, 8);
+		let numerator = (numberutilities.toNumber(merchant_provider.summary.summary.thismonth.amount) + additional_amount);
+		let denominator = (numberutilities.toNumber(merchantprovidergroup.summary.month.sum) + amount);
+		let percentage = mathutilities.safePercentage(numerator, denominator, 8);
 
-    return (percentage / 100);
+		return (percentage / 100);
 
-  }
+	}
 
-  selectMerchantProviderFromLSS(){
+	selectMerchantProviderFromLSS(){
 
-    du.debug('Select Merchant Provider From LSS');
+		du.debug('Select Merchant Provider From LSS');
 
-    let hypothetical_distribution_base_array = this.parameters.get('hypotheticaldistributions');
-    let target_distribution_array = this.parameters.get('distributiontargets');
-    let merchant_providers = this.parameters.get('merchantproviders');
-    let amount = this.parameters.get('amount');
-    let lss = null;
+		let hypothetical_distribution_base_array = this.parameters.get('hypotheticaldistributions');
+		let target_distribution_array = this.parameters.get('distributiontargets');
+		let merchant_providers = this.parameters.get('merchantproviders');
+		let amount = this.parameters.get('amount');
+		let lss = null;
 
-    //Technical Debt:  This is difficult to test.
-    return arrayutilities.reduce(
-      merchant_providers,
-      (selected_merchant_provider, merchant_provider, index) => {
+		//Technical Debt:  This is difficult to test.
+		return arrayutilities.reduce(
+			merchant_providers,
+			(selected_merchant_provider, merchant_provider, index) => {
 
-        let hypothetical_distribution_base_array_clone = objectutilities.clone(hypothetical_distribution_base_array);
+				let hypothetical_distribution_base_array_clone = objectutilities.clone(hypothetical_distribution_base_array);
 
-        hypothetical_distribution_base_array_clone[(index - 1)] += this.getMerchantProviderHypotheticalBaseDistribution({merchant_provider: merchant_provider, amount: amount});
+				hypothetical_distribution_base_array_clone[(index - 1)] += this.getMerchantProviderHypotheticalBaseDistribution({merchant_provider: merchant_provider, amount: amount});
 
-        let ss = mathutilities.calculateLSS(target_distribution_array, hypothetical_distribution_base_array_clone);
+				let ss = mathutilities.calculateLSS(target_distribution_array, hypothetical_distribution_base_array_clone);
 
-        if(_.isNull(selected_merchant_provider) || !_.isNull(lss) && ss < lss){
-          lss = ss;
-          return  merchant_provider;
-        }
+				if(_.isNull(selected_merchant_provider) || !_.isNull(lss) && ss < lss){
+					lss = ss;
+					return  merchant_provider;
+				}
 
-        return selected_merchant_provider;
+				return selected_merchant_provider;
 
-      },
-      null
-    );
+			},
+			null
+		);
 
-  }
+	}
 
 }
 

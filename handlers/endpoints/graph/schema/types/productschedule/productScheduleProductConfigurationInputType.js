@@ -9,13 +9,13 @@ const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 const productScheduleProductConfigurationInputType = require('./productScheduleProductConfigurationInputType');
 
 module.exports.graphObj = new GraphQLInputObjectType({
-    name: 'ProductScheduleProductConfigurationInputType',
-    fields: () => ({
-        product:		{ type: new GraphQLNonNull(GraphQLString) },
-        price:				{ type: new GraphQLNonNull(GraphQLFloat) },
-        start:				{ type: new GraphQLNonNull(GraphQLInt) },
-        period:				{ type: new GraphQLNonNull(GraphQLInt) },
-        schedule:			{ type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj) },
-        end:				  { type: GraphQLInt }
-    })
+	name: 'ProductScheduleProductConfigurationInputType',
+	fields: () => ({
+		product:		{ type: new GraphQLNonNull(GraphQLString) },
+		price:				{ type: new GraphQLNonNull(GraphQLFloat) },
+		start:				{ type: new GraphQLNonNull(GraphQLInt) },
+		period:				{ type: new GraphQLNonNull(GraphQLInt) },
+		schedule:			{ type: new GraphQLList(productScheduleProductConfigurationInputType.graphObj) },
+		end:				  { type: GraphQLInt }
+	})
 });

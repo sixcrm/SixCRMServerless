@@ -6,99 +6,99 @@ const ResponseController = global.SixCRM.routes.include('providers', 'Response.j
 
 module.exports = class ShippingCarrierResponse extends ResponseController {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.parameter_validation = {
-      'action':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/action.json'),
-      'vendorresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/vendorresponse.json'),
-      'additionalparameters':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/additionalparameters.json'),
-      'detail':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/detail.json'),
-      'status':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/status.json'),
-      'parsedresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/parsedresponse.json')
-    };
+		this.parameter_validation = {
+			'action':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/action.json'),
+			'vendorresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/vendorresponse.json'),
+			'additionalparameters':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/additionalparameters.json'),
+			'detail':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/detail.json'),
+			'status':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/status.json'),
+			'parsedresponse':global.SixCRM.routes.path('model', 'vendors/shippingcarriers/response/parsedresponse.json')
+		};
 
-    this.parameter_definition = {
-      'constructor':{
-        required:{
-          vendorresponse:'vendor_response',
-          action:'action'
-        },
-        optional:{
-          additionalparameters: 'additional_parameters'
-        }
-      }
-    };
+		this.parameter_definition = {
+			'constructor':{
+				required:{
+					vendorresponse:'vendor_response',
+					action:'action'
+				},
+				optional:{
+					additionalparameters: 'additional_parameters'
+				}
+			}
+		};
 
-    this.result_messages = {
-      'success':'Success',
-      'fail': 'Failed',
-      'error': 'Error'
-    };
+		this.result_messages = {
+			'success':'Success',
+			'fail': 'Failed',
+			'error': 'Error'
+		};
 
-    this.initialize();
+		this.initialize();
 
-    this.parameters.setParameters({argumentation: arguments[0], action: 'constructor'});
+		this.parameters.setParameters({argumentation: arguments[0], action: 'constructor'});
 
-  }
+	}
 
-  augmentParameters(){
+	augmentParameters(){
 
-    du.debug('Augment Parameters');
+		du.debug('Augment Parameters');
 
-    this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
-    this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
+		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
+		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
-    return true;
+		return true;
 
-  }
+	}
 
-  infoResponse(){
+	infoResponse(){
 
-    du.debug('Info Response');
+		du.debug('Info Response');
 
-    let parsed_response = {
-      tracking_number: this.parameters.get('trackingnumber'),
-      status: this.parameters.get('status'),
-      detail: this.parameters.get('detail')
-    };
+		let parsed_response = {
+			tracking_number: this.parameters.get('trackingnumber'),
+			status: this.parameters.get('status'),
+			detail: this.parameters.get('detail')
+		};
 
-    this.setParsedResponse(parsed_response);
+		this.setParsedResponse(parsed_response);
 
-    this.setResponse('success');
-    this.setMessage(this.determineResultMessage('success'));
+		this.setResponse('success');
+		this.setMessage(this.determineResultMessage('success'));
 
-  }
+	}
 
-  determineResultMessage(response_type){
+	determineResultMessage(response_type){
 
-    du.debug('Determine Result Message');
+		du.debug('Determine Result Message');
 
-    if(_.has(this.result_messages, response_type)){
-      return this.result_messages[response_type];
-    }
+		if(_.has(this.result_messages, response_type)){
+			return this.result_messages[response_type];
+		}
 
-    eu.throwError('server', 'Unknow response type: '+response_type);
+		eu.throwError('server', 'Unknow response type: '+response_type);
 
-  }
+	}
 
-  setParsedResponse(parsed_response){
+	setParsedResponse(parsed_response){
 
-    du.debug('Set Parsed Response');
+		du.debug('Set Parsed Response');
 
-    this.parameters.set('parsedresponse', parsed_response);
+		this.parameters.set('parsedresponse', parsed_response);
 
-    return true;
+		return true;
 
-  }
+	}
 
-  getParsedResponse(){
+	getParsedResponse(){
 
-    du.debug('Get Parsed Response');
+		du.debug('Get Parsed Response');
 
-    return this.parameters.get('parsedresponse', null, false);
+		return this.parameters.get('parsedresponse', null, false);
 
-  }
+	}
 
 }

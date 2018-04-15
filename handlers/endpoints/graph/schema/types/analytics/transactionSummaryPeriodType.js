@@ -6,17 +6,17 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const transactionSummaryPeriodProcessorResultType = require('./transactionSummaryPeriodProcessorResultType');
 
 module.exports.graphObj = new GraphQLObjectType({
-    name: 'TransactionSummaryPeriodType',
-    description: 'Transaction summary',
-    fields: () => ({
-        datetime: {
-            type: new GraphQLNonNull(GraphQLString),
-            description: 'The period datetime (end) for the summary.',
-        },
-        byprocessorresult: {
-            type: new GraphQLList(transactionSummaryPeriodProcessorResultType.graphObj),
-            description: 'A transaction period processor result summary.',
-        },
-    }),
-    interfaces: []
+	name: 'TransactionSummaryPeriodType',
+	description: 'Transaction summary',
+	fields: () => ({
+		datetime: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'The period datetime (end) for the summary.',
+		},
+		byprocessorresult: {
+			type: new GraphQLList(transactionSummaryPeriodProcessorResultType.graphObj),
+			description: 'A transaction period processor result summary.',
+		},
+	}),
+	interfaces: []
 });

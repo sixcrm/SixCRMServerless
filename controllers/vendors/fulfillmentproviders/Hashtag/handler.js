@@ -4,18 +4,18 @@ const ThreePLController = global.SixCRM.routes.include('controllers', 'vendors/f
 
 module.exports = class HashtagController extends ThreePLController {
 
-  constructor(){
+	constructor(){
 
-    super(arguments[0]);
+		super(arguments[0]);
 
-    this.ThreePLID = 773;
-    this.ThreePLFacilityID = 2;
+		this.ThreePLID = 773;
+		this.ThreePLFacilityID = 2;
 
-    this.parameter_validation = {};
-    this.parameter_definition = {};
+		this.parameter_validation = {};
+		this.parameter_definition = {};
 
-    this.augmentParameters();
+		this.augmentParameters();
 
-  }
+	}
 
 }

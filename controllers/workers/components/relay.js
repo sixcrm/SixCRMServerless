@@ -15,175 +15,175 @@ const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/la
 //Technical Debt:  Test this!
 module.exports = class RelayController {
 
-    constructor(){
+	constructor(){
 
-      this.sqsprovider = new SQSProvider();
-      this.lambdaprovider = new LambdaProvider();
+		this.sqsprovider = new SQSProvider();
+		this.lambdaprovider = new LambdaProvider();
 
-      this.parameter_validation = {
-        'params': global.SixCRM.routes.path('model', 'workers/forwardmessage/processenv.json'),
-        'messages': global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
-        'workerresponses': global.SixCRM.routes.path('model', 'workers/forwardmessage/compoundworkerresponseobjects.json')
-      };
+		this.parameter_validation = {
+			'params': global.SixCRM.routes.path('model', 'workers/forwardmessage/processenv.json'),
+			'messages': global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
+			'workerresponses': global.SixCRM.routes.path('model', 'workers/forwardmessage/compoundworkerresponseobjects.json')
+		};
 
-      this.parameters = new Parameters({validation: this.parameter_validation});
+		this.parameters = new Parameters({validation: this.parameter_validation});
 
-      this.setPermissions();
-    }
+		this.setPermissions();
+	}
 
-    invokeAdditionalLambdas() {
+	invokeAdditionalLambdas() {
 
-      du.debug('Invoke Additional Lambdas');
+		du.debug('Invoke Additional Lambdas');
 
-      let params = this.parameters.get('params');
-      let messages = this.parameters.get('messages');
+		let params = this.parameters.get('params');
+		let messages = this.parameters.get('messages');
 
-      if (arrayutilities.nonEmpty(messages) && messages.length >= this.message_limit) {
+		if (arrayutilities.nonEmpty(messages) && messages.length >= this.message_limit) {
 
-        du.warning('Invoking additional lambda');
+			du.warning('Invoking additional lambda');
 
-        return this.lambdaprovider.invokeFunction({
-          function_name: this.lambdaprovider.buildLambdaName(params.name),
-          payload: JSON.stringify({}),
-          invocation_type: 'Event' //Asynchronous execution
-        }).then(() => {
-          return true;
-        });
+			return this.lambdaprovider.invokeFunction({
+				function_name: this.lambdaprovider.buildLambdaName(params.name),
+				payload: JSON.stringify({}),
+				invocation_type: 'Event' //Asynchronous execution
+			}).then(() => {
+				return true;
+			});
 
-      }
-      return Promise.resolve(true);
+		}
+		return Promise.resolve(true);
 
-    }
+	}
 
-    validateMessages(){
+	validateMessages(){
 
-      du.debug('Validate Messages');
+		du.debug('Validate Messages');
 
-      if(!this.parameters.isSet('messages')){
-        eu.throwError('server', 'Messages are not set correctly.');
-      }
+		if(!this.parameters.isSet('messages')){
+			eu.throwError('server', 'Messages are not set correctly.');
+		}
 
-      return Promise.resolve(true);
+		return Promise.resolve(true);
 
-    }
+	}
 
-    getMessages(){
+	getMessages(){
 
-      du.debug('Get Messages');
+		du.debug('Get Messages');
 
-      if(!_.has(this, 'message_acquisition_function')){
+		if(!_.has(this, 'message_acquisition_function')){
 
-        let params = this.parameters.get('params');
+			let params = this.parameters.get('params');
 
-        return this.sqsprovider.receiveMessages({queue: params.origin_queue, limit: this.message_limit}).then((messages) => {
+			return this.sqsprovider.receiveMessages({queue: params.origin_queue, limit: this.message_limit}).then((messages) => {
 
-          du.debug('Messages', messages);
+				du.debug('Messages', messages);
 
-          this.parameters.set('messages', messages);
+				this.parameters.set('messages', messages);
 
-          return messages;
+				return messages;
 
-        });
+			});
 
-      }else{
+		}else{
 
-        return this.message_acquisition_function().then((messages) => {
-            this.parameters.set('messages', messages);
+			return this.message_acquisition_function().then((messages) => {
+				this.parameters.set('messages', messages);
 
-            return messages;
-        });
+				return messages;
+			});
 
-      }
+		}
 
-    }
+	}
 
-    validateEnvironment(){
+	validateEnvironment(){
 
-      du.debug('Validate Parameters');
+		du.debug('Validate Parameters');
 
-      if(!this.parameters.isSet('params')){
-        eu.throwError('server', 'Invalid Forward Message Configuration.');
-      }
+		if(!this.parameters.isSet('params')){
+			eu.throwError('server', 'Invalid Forward Message Configuration.');
+		}
 
-      return Promise.resolve(true);
+		return Promise.resolve(true);
 
-    }
+	}
 
-    deleteMessage({queue, receipt_handle}){
+	deleteMessage({queue, receipt_handle}){
 
-      du.debug('Delete Message');
+		du.debug('Delete Message');
 
-      return this.sqsprovider.deleteMessage({
-        queue: queue,
-        receipt_handle: receipt_handle
-      });
+		return this.sqsprovider.deleteMessage({
+			queue: queue,
+			receipt_handle: receipt_handle
+		});
 
-    }
+	}
 
-    respond(response){
+	respond(response){
 
-      du.debug('Respond');
+		du.debug('Respond');
 
-      return new RelayResponse(response);
+		return new RelayResponse(response);
 
-    }
+	}
 
-    pushMessagetoQueue({body, queue}){
+	pushMessagetoQueue({body, queue}){
 
-      du.debug('Push Message To Queue');
+		du.debug('Push Message To Queue');
 
-      return this.sqsprovider.sendMessage({message_body: body, queue: queue});
+		return this.sqsprovider.sendMessage({message_body: body, queue: queue});
 
-    }
+	}
 
-    getReceiptHandle(message){
+	getReceiptHandle(message){
 
-      du.debug('Get Receipt Handle');
+		du.debug('Get Receipt Handle');
 
-      if(_.has(message, 'ReceiptHandle')){
-        return message.ReceiptHandle;
-      }
+		if(_.has(message, 'ReceiptHandle')){
+			return message.ReceiptHandle;
+		}
 
-      du.error(message);
-      eu.throwError('server', 'Message does not have a receipt handle.');
+		du.error(message);
+		eu.throwError('server', 'Message does not have a receipt handle.');
 
-    }
+	}
 
-    createDiagnosticMessageBody(compound_worker_response_object){
+	createDiagnosticMessageBody(compound_worker_response_object){
 
-      du.debug('Append Diagnostic Information');
+		du.debug('Append Diagnostic Information');
 
-      let params = this.parameters.get('params');
+		let params = this.parameters.get('params');
 
-      objectutilities.hasRecursive(compound_worker_response_object, 'message.Body', true);
+		objectutilities.hasRecursive(compound_worker_response_object, 'message.Body', true);
 
-      let message_body = compound_worker_response_object.message.Body;
+		let message_body = compound_worker_response_object.message.Body;
 
-      try{
-        message_body = JSON.parse(message_body);
-      }catch(error){
-        return message_body;
-      }
+		try{
+			message_body = JSON.parse(message_body);
+		}catch(error){
+			return message_body;
+		}
 
-      let additional_information = compound_worker_response_object.worker_response_object.getAdditionalInformation();
+		let additional_information = compound_worker_response_object.worker_response_object.getAdditionalInformation();
 
-      if(!_.isNull(additional_information)){
-        message_body.additional_information = additional_information;
-      }
+		if(!_.isNull(additional_information)){
+			message_body.additional_information = additional_information;
+		}
 
-      message_body.referring_workerfunction = global.SixCRM.routes.path('workers', params.workerfunction);
+		message_body.referring_workerfunction = global.SixCRM.routes.path('workers', params.workerfunction);
 
-      return JSON.stringify(message_body);
+		return JSON.stringify(message_body);
 
-    }
+	}
 
-    setPermissions(){
+	setPermissions(){
 
-        du.debug('Set Permissions');
+		du.debug('Set Permissions');
 
-        this.permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
-        this.permissionutilities.setPermissions('*',['*/*'],[])
+		this.permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
+		this.permissionutilities.setPermissions('*',['*/*'],[])
 
-    }
+	}
 
 }

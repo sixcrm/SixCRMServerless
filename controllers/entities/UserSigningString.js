@@ -7,39 +7,39 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 //Technical Debt: Override the list method
 class UserSigningStringController extends entityController {
 
-  constructor() {
-      super('usersigningstring');
-  }
+	constructor() {
+		super('usersigningstring');
+	}
 
-  create({entity}){
+	create({entity}){
 
-    du.debug('User Signing String Controller: Create');
+		du.debug('User Signing String Controller: Create');
 
-    const userSigningStringHelperController = global.SixCRM.routes.include('helpers', 'entities/usersigningstring/UserSigningString.js');
+		const userSigningStringHelperController = global.SixCRM.routes.include('helpers', 'entities/usersigningstring/UserSigningString.js');
 
-    if(!_.has(entity, 'signing_string')){
-      entity.signing_string = userSigningStringHelperController.generateSigningString();
-    }
+		if(!_.has(entity, 'signing_string')){
+			entity.signing_string = userSigningStringHelperController.generateSigningString();
+		}
 
-    return super.create({entity: entity});
+		return super.create({entity: entity});
 
-  }
+	}
 
-  update({entity, ignore_updated_at}){
+	update({entity, ignore_updated_at}){
 
-    du.debug('User Signing String Controller: Update');
+		du.debug('User Signing String Controller: Update');
 
-    return this.get({id: this.getID(entity)}).then(existing_user_signing_string => {
+		return this.get({id: this.getID(entity)}).then(existing_user_signing_string => {
 
-      if(objectutilities.isObject(existing_user_signing_string)){
-        entity = objectutilities.transcribe({signing_string: 'signing_string'}, existing_user_signing_string, entity, false);
-      }
+			if(objectutilities.isObject(existing_user_signing_string)){
+				entity = objectutilities.transcribe({signing_string: 'signing_string'}, existing_user_signing_string, entity, false);
+			}
 
-      return super.update({entity: entity, ignore_updated_at: ignore_updated_at});
+			return super.update({entity: entity, ignore_updated_at: ignore_updated_at});
 
-    });
+		});
 
-  }
+	}
 
 }
 

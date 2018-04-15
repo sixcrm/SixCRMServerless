@@ -107,12 +107,12 @@ module.exports = class processBillingController extends workerController {
 		return au.serialPromises(au.map(transactions, (transaction) => {
 
 			return this.pushEvent({
-					event_type: 'transaction_' + transaction.result,
-					context: Object.assign({},
-						this.parameters.store, {
-							transaction
-						})
-				})
+				event_type: 'transaction_' + transaction.result,
+				context: Object.assign({},
+					this.parameters.store, {
+						transaction
+					})
+			})
 				.then(() => {
 
 					if (transaction.type != 'sale' || transaction.result != 'success') {

@@ -6,60 +6,60 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 describe('config', () => {
 
-    let stage;
+	let stage;
 
-    beforeEach(() => {
-        stage = global.SixCRM.configuration.stage;
-    });
+	beforeEach(() => {
+		stage = global.SixCRM.configuration.stage;
+	});
 
-    afterEach(() => {
-        global.SixCRM.configuration.stage = stage;
-    });
+	afterEach(() => {
+		global.SixCRM.configuration.stage = stage;
+	});
 
-    describe('serverless', () => {
+	describe('serverless', () => {
 
-        it('should be valid', () => {
+		it('should be valid', () => {
 
-            let serverless_file = global.SixCRM.configuration.serverless_config;
+			let serverless_file = global.SixCRM.configuration.serverless_config;
 
-            mvu.validateModel(serverless_file, global.SixCRM.routes.path('test', 'unit/config/serverless.json'))
-        });
+			mvu.validateModel(serverless_file, global.SixCRM.routes.path('test', 'unit/config/serverless.json'))
+		});
 
-        it('names of lambda handlers should be correct', () => {
+		it('names of lambda handlers should be correct', () => {
 
-            let serverless_file = global.SixCRM.configuration.serverless_config;
+			let serverless_file = global.SixCRM.configuration.serverless_config;
 
-            // Name of the handler must match name of the function, for example:
-            //     billtohold:
-            //         handler: handlers/workers/forwardmessage/billtohold/handler.billtohold
-            // In the above example 'billtohold' must be spelled the same in both lines.
-            for (let lambda_name in serverless_file.functions) {
-                expect(lambda_name).to.equal(serverless_file.functions[lambda_name].handler.match(/\.[^/.]+$/)[0].replace('.',''));
-            }
+			// Name of the handler must match name of the function, for example:
+			//     billtohold:
+			//         handler: handlers/workers/forwardmessage/billtohold/handler.billtohold
+			// In the above example 'billtohold' must be spelled the same in both lines.
+			for (let lambda_name in serverless_file.functions) {
+				expect(lambda_name).to.equal(serverless_file.functions[lambda_name].handler.match(/\.[^/.]+$/)[0].replace('.',''));
+			}
 
-        });
+		});
 
-    });
+	});
 
-    describe('site config', () => {
+	describe('site config', () => {
 
-        let stages = [];
+		let stages = [];
 
-        for (let stage in global.SixCRM.configuration.stages) {
-            stages.push(global.SixCRM.configuration.stages[stage]);
-        }
+		for (let stage in global.SixCRM.configuration.stages) {
+			stages.push(global.SixCRM.configuration.stages[stage]);
+		}
 
-        arrayutilities.map(stages, (stage) => {
-            it('should be valid for ' + stage, () => {
+		arrayutilities.map(stages, (stage) => {
+			it('should be valid for ' + stage, () => {
 
-                global.SixCRM.configuration.stage = stage;
-                let site_config = global.SixCRM.configuration.getSiteConfig();
+				global.SixCRM.configuration.stage = stage;
+				let site_config = global.SixCRM.configuration.getSiteConfig();
 
-                mvu.validateModel(site_config, global.SixCRM.routes.path('test', 'unit/config/site_config.json'))
-            });
-        });
+				mvu.validateModel(site_config, global.SixCRM.routes.path('test', 'unit/config/site_config.json'))
+			});
+		});
 
 
-    });
+	});
 
 });

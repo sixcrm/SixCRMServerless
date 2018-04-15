@@ -19,7 +19,7 @@ module.exports = class AnalyticsEventBroker {
 
 			this._eventTypeHandlerMap = require('./analytics-event-router');
 
-	}
+		}
 
 		return au.serialPromises(au.map(records.Records, this._recordHandler.bind(this)));
 

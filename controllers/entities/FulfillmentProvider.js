@@ -8,42 +8,42 @@ var entityController = global.SixCRM.routes.include('controllers', 'entities/Ent
 
 module.exports = class FulfillmentProviderController extends entityController {
 
-    constructor(){
-      super('fulfillmentprovider');
+	constructor(){
+		super('fulfillmentprovider');
 
-      this.encrypted_attribute_paths = [
-          'provider.username',
-          'provider.password',
-          'provider.api_key',
-          'provider.api_secret'
-      ];
-    }
+		this.encrypted_attribute_paths = [
+			'provider.username',
+			'provider.password',
+			'provider.api_key',
+			'provider.api_secret'
+		];
+	}
 
-    associatedEntitiesCheck({id}){
+	associatedEntitiesCheck({id}){
 
-      du.debug('Associated Entities Check');
+		du.debug('Associated Entities Check');
 
-      let return_array = [];
+		let return_array = [];
 
-      let data_acquisition_promises = [
-        this.executeAssociatedEntityFunction('ProductController', 'listByFulfillmentProvider', {fulfillment_provider:id})
-      ];
+		let data_acquisition_promises = [
+			this.executeAssociatedEntityFunction('ProductController', 'listByFulfillmentProvider', {fulfillment_provider:id})
+		];
 
-      return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
+		return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
 
-        let products = data_acquisition_promises[0];
+			let products = data_acquisition_promises[0];
 
-        if(_.has(products, 'products') && arrayutilities.nonEmpty(products.products)){
-          arrayutilities.map(products.products, (product) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Product', object: product}));
-          });
-        }
+			if(_.has(products, 'products') && arrayutilities.nonEmpty(products.products)){
+				arrayutilities.map(products.products, (product) => {
+					return_array.push(this.createAssociatedEntitiesObject({name:'Product', object: product}));
+				});
+			}
 
-        return return_array;
+			return return_array;
 
-      });
+		});
 
-    }
+	}
 
 }
 

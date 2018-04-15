@@ -4,16 +4,16 @@ const BaseNotification = global.SixCRM.routes.include('helpers','notifications/n
 
 module.exports = class ConfirmedDeliveredNotification extends BaseNotification {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.name = 'confirm_delivered';
-    this.category = 'fulfillment';
-    this.context_required = ['rebill.id'];
-    this.account_wide = true;
+		this.name = 'confirm_delivered';
+		this.category = 'fulfillment';
+		this.context_required = ['rebill.id'];
+		this.account_wide = true;
 
-  }
+	}
 
 }
 

@@ -5,110 +5,110 @@ let eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 //Technical Debt:  This is largely unused...
 module.exports = class LocalCache {
 
-  constructor() {
+	constructor() {
 
-    this.clear('all');
+		this.clear('all');
 
-  }
+	}
 
-  resolveQuestion(question, answer_function) {
+	resolveQuestion(question, answer_function) {
 
-    du.debug('Resolve Question');
+		du.debug('Resolve Question');
 
-    let answer = this.get(question);
+		let answer = this.get(question);
 
-    du.deep('Asking: ' + question);
+		du.deep('Asking: ' + question);
 
-    if (_.isNull(answer)) {
+		if (_.isNull(answer)) {
 
-      du.deep('Executing Answer Function');
+			du.deep('Executing Answer Function');
 
-      if (!_.isFunction(answer_function)) {
-        eu.throwError('server', 'Answer function must be a function');
-      }
+			if (!_.isFunction(answer_function)) {
+				eu.throwError('server', 'Answer function must be a function');
+			}
 
-      return Promise.resolve(answer_function()).then((answer) => {
+			return Promise.resolve(answer_function()).then((answer) => {
 
-        global.SixCRM.localcache.set(question, answer);
+				global.SixCRM.localcache.set(question, answer);
 
-        du.warning('Caching Question: ' + question, answer)
+				du.warning('Caching Question: ' + question, answer)
 
-        return answer;
+				return answer;
 
-      });
+			});
 
-    } else {
+		} else {
 
-      du.deep('Returning existing answer.');
+			du.deep('Returning existing answer.');
 
-      return Promise.resolve(answer);
+			return Promise.resolve(answer);
 
-    }
+		}
 
-  }
+	}
 
-  get(key) {
+	get(key) {
 
-    du.debug('Get');
+		du.debug('Get');
 
-    if (!_.isString(key)) {
-      eu.throwError('server', 'Key should be a string');
-    }
+		if (!_.isString(key)) {
+			eu.throwError('server', 'Key should be a string');
+		}
 
-    if (_.has(this.cache, key)) {
+		if (_.has(this.cache, key)) {
 
-      return this.cache[key];
+			return this.cache[key];
 
-    }
+		}
 
-    return null;
+		return null;
 
-  }
+	}
 
-  set(key, value) {
+	set(key, value) {
 
-    du.debug('Set');
+		du.debug('Set');
 
-    if (!_.isString(key)) {
-      eu.throwError('server', 'Key should be a string');
-    }
+		if (!_.isString(key)) {
+			eu.throwError('server', 'Key should be a string');
+		}
 
-    if (_.has(this.cache, key) && _.isNull(value)) {
+		if (_.has(this.cache, key) && _.isNull(value)) {
 
-      this.clear(key);
+			this.clear(key);
 
-    } else {
+		} else {
 
-      if (!_.isNull(value)) {
+			if (!_.isNull(value)) {
 
-        this.cache[key] = value;
+				this.cache[key] = value;
 
-      }
+			}
 
-    }
+		}
 
-    return true;
+		return true;
 
-  }
+	}
 
-  clear(key) {
+	clear(key) {
 
-    du.debug('Clear');
+		du.debug('Clear');
 
-    if (_.isUndefined(key)) {
-      key = 'all';
-    }
+		if (_.isUndefined(key)) {
+			key = 'all';
+		}
 
-    if (!_.isString(key)) {
-      eu.throwError('server', 'Key should be a string');
-    }
+		if (!_.isString(key)) {
+			eu.throwError('server', 'Key should be a string');
+		}
 
-    if (key == 'all') {
-      this.cache = {};
-    } else {
-      delete this.cache[key];
-    }
+		if (key == 'all') {
+			this.cache = {};
+		} else {
+			delete this.cache[key];
+		}
 
-  }
+	}
 
 }

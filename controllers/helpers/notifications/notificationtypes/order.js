@@ -3,17 +3,17 @@ const BaseNotification = global.SixCRM.routes.include('helpers','notifications/n
 
 module.exports = class OrderNotification extends BaseNotification {
 
-  constructor(){
+	constructor(){
 
-    super();
+		super();
 
-    this.name = 'order';
-    this.context_required = ['campaign.name', 'session.id', 'transactionsubtype'];
-    this.category = 'transaction';
+		this.name = 'order';
+		this.context_required = ['campaign.name', 'session.id', 'transactionsubtype'];
+		this.category = 'transaction';
 
-    this.account_wide = true;
+		this.account_wide = true;
 
-  }
+	}
 
 }
 

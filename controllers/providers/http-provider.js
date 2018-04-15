@@ -10,165 +10,165 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 module.exports = class HTTPProvider {
 
-  constructor(){
+	constructor(){
 
-  }
+	}
 
-  removeIrrelevantFields(response){
+	removeIrrelevantFields(response){
 
-    du.debug('Remoce Irrelevant Fields');
+		du.debug('Remoce Irrelevant Fields');
 
-    response = objectutilities.transcribe(
-      {
-        statusCode: 'statusCode',
-        statusMessage: 'statusMessage',
-        body: 'body'
-      },
-      response,
-      {},
-      false
-    );
+		response = objectutilities.transcribe(
+			{
+				statusCode: 'statusCode',
+				statusMessage: 'statusMessage',
+				body: 'body'
+			},
+			response,
+			{},
+			false
+		);
 
-    return response;
+		return response;
 
-  }
+	}
 
-  post(parameters){
+	post(parameters){
 
-    du.debug('Post');
+		du.debug('Post');
 
-    let request_options = {
-      method: 'post'
-    };
+		let request_options = {
+			method: 'post'
+		};
 
-    request_options = objectutilities.transcribe(
-      {
-        url:'endpoint'
-      },
-      parameters,
-      request_options
-    );
+		request_options = objectutilities.transcribe(
+			{
+				url:'endpoint'
+			},
+			parameters,
+			request_options
+		);
 
-    request_options = objectutilities.transcribe(
-      {
-        headers:'headers',
-        body:'body',
-        url: 'url',
-        json: 'json'
-      },
-      parameters,
-      request_options,
-      false
-    );
+		request_options = objectutilities.transcribe(
+			{
+				headers:'headers',
+				body:'body',
+				url: 'url',
+				json: 'json'
+			},
+			parameters,
+			request_options,
+			false
+		);
 
-    return this.resolveRequest(request_options);
+		return this.resolveRequest(request_options);
 
-  }
+	}
 
-  postJSON(parameters){
+	postJSON(parameters){
 
-    du.debug('Post JSON');
+		du.debug('Post JSON');
 
-    let request_options = {
-      json: true
-    };
+		let request_options = {
+			json: true
+		};
 
-    request_options = objectutilities.transcribe(
-      {
-        url:'endpoint'
-      },
-      parameters,
-      request_options
-    );
+		request_options = objectutilities.transcribe(
+			{
+				url:'endpoint'
+			},
+			parameters,
+			request_options
+		);
 
-    request_options = objectutilities.transcribe(
-      {
-        headers:'headers',
-        body:'body',
-        url: 'url'
-      },
-      parameters,
-      request_options,
-      false
-    );
+		request_options = objectutilities.transcribe(
+			{
+				headers:'headers',
+				body:'body',
+				url: 'url'
+			},
+			parameters,
+			request_options,
+			false
+		);
 
-    if(!_.has(request_options, 'headers')){
-      request_options.headers = [];
-    }
+		if(!_.has(request_options, 'headers')){
+			request_options.headers = [];
+		}
 
-    request_options.headers['Content-Type'] = 'application/json';
+		request_options.headers['Content-Type'] = 'application/json';
 
-    return this.post(request_options);
+		return this.post(request_options);
 
-  }
+	}
 
-  getJSON(parameters){
+	getJSON(parameters){
 
-    du.debug('Get');
+		du.debug('Get');
 
-    let request_options = {
-      method: 'get',
-      json: true
-    };
+		let request_options = {
+			method: 'get',
+			json: true
+		};
 
-    request_options = objectutilities.transcribe(
-      {
-        url:'endpoint'
-      },
-      parameters,
-      request_options
-    );
+		request_options = objectutilities.transcribe(
+			{
+				url:'endpoint'
+			},
+			parameters,
+			request_options
+		);
 
-    request_options = objectutilities.transcribe(
-      {
-        headers:'headers',
-        qs:'querystring',
-        url: 'url'
-      },
-      parameters,
-      request_options,
-      false
-    );
+		request_options = objectutilities.transcribe(
+			{
+				headers:'headers',
+				qs:'querystring',
+				url: 'url'
+			},
+			parameters,
+			request_options,
+			false
+		);
 
-    return this.resolveRequest(request_options);
+		return this.resolveRequest(request_options);
 
-  }
+	}
 
-  resolveRequest(request_options){
+	resolveRequest(request_options){
 
-    du.debug('Resolve Request');
+		du.debug('Resolve Request');
 
-    return new Promise((resolve, reject) => {
+		return new Promise((resolve, reject) => {
 
-      request(request_options, (error, response, body) => {
+			request(request_options, (error, response, body) => {
 
-        let response_object = {
-          error: error,
-          response: response,
-          body: body
-        };
+				let response_object = {
+					error: error,
+					response: response,
+					body: body
+				};
 
-        if(_.isError(error)){
-          du.error(error);
-          reject(response_object);
-        }
+				if(_.isError(error)){
+					du.error(error);
+					reject(response_object);
+				}
 
-        resolve(response_object);
+				resolve(response_object);
 
-      });
+			});
 
-    });
+		});
 
-  }
+	}
 
-  createQueryString(parameters_object){
+	createQueryString(parameters_object){
 
-    du.debug('Create Querystring');
+		du.debug('Create Querystring');
 
-    objectutilities.isObject(parameters_object, true);
+		objectutilities.isObject(parameters_object, true);
 
-    return querystring.stringify(parameters_object);
+		return querystring.stringify(parameters_object);
 
-  }
+	}
 
 }

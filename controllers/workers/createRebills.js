@@ -5,91 +5,91 @@ const workerController = global.SixCRM.routes.include('controllers', 'workers/co
 
 module.exports = class createRebillsController extends workerController {
 
-    constructor(){
+	constructor(){
 
-      super();
+		super();
 
-      this.parameter_definition = {
-        execute: {
-          required: {
-            message: 'message'
-          },
-          optional:{}
-        }
-      };
+		this.parameter_definition = {
+			execute: {
+				required: {
+					message: 'message'
+				},
+				optional:{}
+			}
+		};
 
-      this.parameter_validation = {
-        message: global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
-        session: global.SixCRM.routes.path('model', 'entities/session.json'),
-        rebill: global.SixCRM.routes.path('model', 'entities/rebill.json')
-      };
+		this.parameter_validation = {
+			message: global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
+			session: global.SixCRM.routes.path('model', 'entities/session.json'),
+			rebill: global.SixCRM.routes.path('model', 'entities/rebill.json')
+		};
 
-      const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+		const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 
-      this.rebillHelperController = new RebillHelperController();
+		this.rebillHelperController = new RebillHelperController();
 
-      this.augmentParameters();
+		this.augmentParameters();
 
-    }
+	}
 
-    execute(message){
+	execute(message){
 
-      du.debug('Execute');
+		du.debug('Execute');
 
-      return this.setParameters({argumentation: {message: message}, action: 'execute'})
-      .then(() => this.acquireSession())
-      .then(() => this.createRebills())
-      .then(() => this.respond())
-      .catch(error => {
-        return super.respond('error', error.message);
-      });
+		return this.setParameters({argumentation: {message: message}, action: 'execute'})
+			.then(() => this.acquireSession())
+			.then(() => this.createRebills())
+			.then(() => this.respond())
+			.catch(error => {
+				return super.respond('error', error.message);
+			});
 
-    }
+	}
 
-    acquireSession(){
+	acquireSession(){
 
-      du.debug('Acquire Session');
+		du.debug('Acquire Session');
 
-      return Promise.resolve()
-      .then(() => this.parseMessageBody())
-      .then(() => {
-        return super.acquireSession();
-      });
+		return Promise.resolve()
+			.then(() => this.parseMessageBody())
+			.then(() => {
+				return super.acquireSession();
+			});
 
-    }
+	}
 
-    createRebills(){
+	createRebills(){
 
-      du.debug('Create Rebills');
+		du.debug('Create Rebills');
 
-      let session = this.parameters.get('session');
+		let session = this.parameters.get('session');
 
-      return this.rebillHelperController.createRebill({session: session}).then(rebill => {
+		return this.rebillHelperController.createRebill({session: session}).then(rebill => {
 
-        this.parameters.set('rebill', rebill);
+			this.parameters.set('rebill', rebill);
 
-        return true;
+			return true;
 
-      });
+		});
 
-    }
+	}
 
-    respond(){
+	respond(){
 
-      du.debug('Respond');
+		du.debug('Respond');
 
-      let rebill = this.parameters.get('rebill', null, false);
+		let rebill = this.parameters.get('rebill', null, false);
 
-      let response_code = 'fail';
+		let response_code = 'fail';
 
-      if(!_.isNull(rebill)){
+		if(!_.isNull(rebill)){
 
-        response_code = 'success';
+			response_code = 'success';
 
-      }
+		}
 
-      return super.respond(response_code);
+		return super.respond(response_code);
 
-    }
+	}
 
 }
