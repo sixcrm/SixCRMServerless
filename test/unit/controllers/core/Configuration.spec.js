@@ -4,582 +4,180 @@ const mockery = require('mockery');
 const _ = require('underscore');
 
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const Configuration = global.SixCRM.routes.include('controllers','core/Configuration.js');
+const Configuration = global.SixCRM.routes.include('controllers', 'core/Configuration.js');
 
 describe('controllers/core/Configuration.js', () => {
 
-    const DEVELOPMENT_ACCOUNT = '068070110666';
+  const DEVELOPMENT_ACCOUNT = '068070110666';
 
-    before(() => {
-        mockery.enable({
-            useCleanCache: true,
-            warnOnReplace: false,
-            warnOnUnregistered: false
-        });
+  before(() => {
+    mockery.enable({
+      useCleanCache: true,
+      warnOnReplace: false,
+      warnOnUnregistered: false
     });
+  });
 
-    afterEach(() => {
-        mockery.resetCache();
-    });
+  afterEach(() => {
+    mockery.resetCache();
+  });
 
-    after(() => {
-        mockery.deregisterAll();
-    });
+  after(() => {
+    mockery.deregisterAll();
+  });
 
+  describe('constructor', () => {
     it('instantiates', () => {
 
-        let configuration = new Configuration();
+      let configuration = new Configuration();
 
-        //expect(configuration.stage).to.equal('local');
-        expect(configuration.serverless_config).not.to.be.undefined;
-        expect(configuration.serverless_config).not.to.be.undefined;
-        expect(configuration.environment_config).not.to.be.null;
-        expect(configuration.environment_config).not.to.be.null;
-        expect(configuration.site_config).not.to.be.undefined;
-        expect(configuration.site_config).not.to.be.null;
+      //expect(configuration.stage).to.equal('local');
+      expect(configuration.serverless_config).not.to.be.undefined;
+      expect(configuration.serverless_config).not.to.be.undefined;
+      expect(configuration.environment_config).not.to.be.null;
+      expect(configuration.environment_config).not.to.be.null;
+      expect(configuration.site_config).not.to.be.undefined;
+      expect(configuration.site_config).not.to.be.null;
 
     });
 
     it('handles incorrect stage', () => {
-        try {
-            new Configuration('some_unknown_stage');
-        } catch (error) {
-            expect(error.code).to.equal(500);
-        }
+      try {
+        new Configuration('some_unknown_stage');
+      } catch (error) {
+        expect(error.code).to.equal(500);
+      }
     });
 
-    describe('getAccountIdentifier', () => {
+  });
 
-      let _context = null;
-      let _process_env = null;
+  describe('getAccountIdentifier', () => {
 
-      before(() => {
-        _process_env = process.env;
-        _context = context;
-      });
+    let _context = null;
+    let _process_env = null;
 
-      after(() => {
-        process.env = _process_env;
-        /* eslint-disable no-global-assign */
-        context = _context;
-      });
-
-      xit('determines account identifier', () => {
-          let configuration = new Configuration('development');
-
-          process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
-
-          expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
-      });
-
-      xit('determines account identifier - fallback to lambda', () => {
-          delete process.env.AWS_ACCOUNT;
-          // eslint-disable-next-line no-global-assign
-          context = {invokedFunctionArn: DEVELOPMENT_ACCOUNT};
-          let configuration = new Configuration();
-
-          expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
-      });
-
+    before(() => {
+      _process_env = process.env;
+      _context = context;
     });
 
-    describe('determineStageFromAccountIdentifier', () => {
-
-      let _process_env = null;
-
-      before(() => {
-        _process_env = process.env;
-      });
-
-      after(() => {
-        process.env = _process_env;
-      });
-
-      xit('determines stage from account identifier', () => {
-          let configuration = new Configuration();
-
-          process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
-
-          expect(configuration.determineStageFromAccountIdentifier()).to.equal('development');
-      });
-
+    after(() => {
+      process.env = _process_env;
+      /* eslint-disable no-global-assign */
+      context = _context;
     });
 
-    describe('getStatus', () => {
+    xit('determines account identifier', () => {
+      let configuration = new Configuration('development');
 
-        xit('determines status', () => {
+      process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
 
-            let configuration = new Configuration();
-
-            expect(configuration.getStatus()).to.equal('loading');
-
-            configuration.setStatus('ready');
-
-            expect(configuration.getStatus()).to.equal('ready');
-
-        });
-
-        xit('disallows setting incorrect status', () => {
-
-            let configuration = new Configuration();
-
-            expect(configuration.getStatus()).to.equal('loading');
-
-            try {
-                configuration.setStatus('incorrect_status');
-            } catch (error) {
-                expect(error.message).to.equal('[500] Unrecognized status');
-            }
-
-            expect(configuration.getStatus()).to.equal('loading');
-
-        });
-
+      expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
     });
 
-    xdescribe('setEnvironmentConfig', () => {
+    xit('determines account identifier - fallback to lambda', () => {
+      delete process.env.AWS_ACCOUNT;
+      // eslint-disable-next-line no-global-assign
+      context = {
+        invokedFunctionArn: DEVELOPMENT_ACCOUNT
+      };
+      let configuration = new Configuration();
 
-        it('sets environment config', () => {
-            let configuration = new Configuration('local');
-
-            return configuration.setEnvironmentConfig('test_key', 'test_value').then(() => {
-                return configuration.getConfiguration('native', 'test_key', true).then((value) => {
-                    expect(value).to.equal('test_value');
-                })
-            });
-        });
+      expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
     });
 
-    describe('getEnvironmentConfig', () => {
+  });
 
-        it('gets environment config when no value', () => {
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
-                objectExists() {
-                    return Promise.resolve(true);
-                }
-                getObject() {
-                    return Promise.resolve({
-                        Body: JSON.stringify({})
-                    });
-                }
-                putObject() {
-                    return Promise.resolve();
-                }
-                hasCredentials() {
-                  return true;
-                }
-            });
+  describe('determineStageFromAccountIdentifier', () => {
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/redis-provider.js'), class {
-                set() {
-                    return Promise.resolve();
-                }
-                get() {
-                    return Promise.resolve(null);
-                }
-            });
+    let _process_env = null;
 
-            let configuration = new Configuration('development');
-
-            //configuration.setEnvironmentConfigurationFile();
-
-            try{
-              configuration.getEnvironmentConfig('non_exiting_key');
-            }catch(error){
-              expect(error.message).to.equal('[500] Process.env missing key: "non_exiting_key".');
-            }
-
-        });
-
-        it('gets environment config when value exists', () => {
-
-            let configuration = new Configuration('development');
-
-            process.env.test_key = 'test_value';
-            //configuration.setEnvironmentConfigurationFile();
-
-            return configuration.getEnvironmentConfig('test_key').then((result) => {
-              expect(result).to.equal('test_value');
-              delete process.env.test_key;
-            })
-        });
+    before(() => {
+      _process_env = process.env;
     });
 
-    xdescribe('getNativeEnvironmentConfiguration', () => {
-
-        it('gets native environment config', () => {
-
-            let configuration = new Configuration();
-
-            //configuration.setEnvironmentConfigurationFile();
-
-            configuration.environment_config = {test_key: 'test_value'};
-
-            return configuration.getNativeEnvironmentConfiguration('test_key').then((result) => {
-                return expect(result).to.equal('test_value');
-            })
-        });
-
-        it('gets native environment config all', () => {
-
-            let configuration = new Configuration();
-
-            //configuration.setEnvironmentConfigurationFile();
-
-            configuration.environment_config = {test_key: 'test_value'};
-
-            return configuration.getNativeEnvironmentConfiguration('all').then((result) => {
-                return expect(result).to.equal(configuration.environment_config);
-            })
-        });
+    after(() => {
+      process.env = _process_env;
     });
 
-    xdescribe('getLocalCacheEnvironmentConfiguration', () => {
+    xit('determines stage from account identifier', () => {
+      let configuration = new Configuration();
 
-        it('gets local environment config all', () => {
+      process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
 
-            let configuration = new Configuration();
-
-            //configuration.setEnvironmentConfigurationFile();
-
-            configuration.environment_config = {test_key: 'test_value'};
-
-            return configuration.getLocalCacheEnvironmentConfiguration('all').then((result) => {
-              return expect(result).to.equal(configuration.environment_config);
-            });
-
-        });
-
+      expect(configuration.determineStageFromAccountIdentifier()).to.equal('development');
     });
 
-    xdescribe('getS3EnvironmentConfiguration', () => {
+  });
 
-        it('gets s3 config when value exists', () => {
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
-                objectExists() {
-                    return Promise.resolve(true);
-                }
-                getObject() {
-                    return Promise.resolve({
-                        Body: JSON.stringify({test_key: 'test_value'})
-                    });
-                }
-                putObject() {
-                    return Promise.resolve();
-                }
-                hasCredentials() {
-                  return true;
-                }
-            });
+  describe('getEnvironmentConfig', () => {
 
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/redis-provider.js'), class {
-                set() {
-                    return Promise.resolve();
-                }
-                get() {
-                    return Promise.resolve(JSON.stringify({}));
-                }
-            });
+  });
 
-            let configuration = new Configuration('development');
+  describe('handleStage', () => {
 
-            //configuration.setEnvironmentConfigurationFile();
+    let process_env = null;
 
-            return configuration.getS3EnvironmentConfiguration('test_key').then((result) => {
-                return expect(result).to.equal('test_value');
-            })
-        });
-
-        it('throws error when Body value is invalid', () => {
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
-                objectExists() {
-                    return Promise.resolve(true);
-                }
-                getObject() {
-                    return Promise.resolve({
-                        Body: 'an_unexpected_value'
-                    });
-                }
-                hasCredentials() {
-                  return true;
-                }
-            });
-
-            let configuration = new Configuration('development');
-
-            return configuration.getS3EnvironmentConfiguration('test_key').catch((error) => {
-                expect(error.message).to.equal('[500] Unexpected token a in JSON at position 0');
-            })
-        });
-
-        it('throws error when Body property is missing', () => {
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
-                objectExists() {
-                    return Promise.resolve(true);
-                }
-                getObject() {
-                    return Promise.resolve({});
-                }
-                hasCredentials() {
-                  return true;
-                }
-            });
-
-            let configuration = new Configuration('local');
-
-            return configuration.getS3EnvironmentConfiguration('test_key').catch((error) => {
-                expect(error.message).to.equal('[500] Result response is assumed to have Body property');
-            })
-        });
+    before(() => {
+      process_env = process.env;
     });
 
-    xdescribe('getRedisEnvironmentConfiguration', () => {
+    afterEach(() => {
+      process.env = process_env;
+    })
 
-        it('gets redis config when value exists', () => {
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
-                objectExists() {
-                    return Promise.resolve(true);
-                }
-                getObject() {
-                    return Promise.resolve({
-                        Body: JSON.stringify({})
-                    });
-                }
-                putObject() {
-                    return Promise.resolve();
-                }
-                hasCredentials() {
-                  return true;
-                }
-            });
-
-            mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/redis-provider.js'), class {
-                set() {
-                    return Promise.resolve();
-                }
-                get() {
-                    return Promise.resolve(JSON.stringify({test_key: 'test_value'}));
-                }
-            });
-
-            let configuration = new Configuration('development');
-
-            //configuration.setEnvironmentConfigurationFile();
-
-            return configuration.getRedisEnvironmentConfiguration('test_key').then((result) => {
-                return expect(result).to.equal('{"test_key":"test_value"}');
-            })
-        });
+    after(() => {
+      process.env = process_env;
     });
 
-    xdescribe('propagateToNativeCache', () => {
+    it('successfully identifies the stage based on branch name', () => {
 
-        it('sets environment config with specified values', () => {
+      let stages = global.SixCRM.routes.include('config', 'stages.yml');
 
-            let configuration = new Configuration('local');
+      objectutilities.map(stages, key => {
 
-            return configuration.propagateToNativeCache('a_key', 'a_value').then((result) => {
-                expect(configuration.environment_config).to.have.property('a_key');
-                expect(configuration.environment_config.a_key).to.equal('a_value');
-                expect(result).to.equal(true);
-            })
-        });
+        let stage = stages[key];
 
-        it('removes environment config when specified "value" is null', () => {
-
-            let configuration = new Configuration('local');
-
-            configuration.environment_config = {};
-
-            return configuration.propagateToNativeCache('a_key', null).then((result) => {
-                expect(configuration.environment_config).to.be.undefined;
-                expect(result).to.equal(true);
-            })
-        });
-
-        it('removes environment config when specified "value" is null and "key" is valid', () => {
-
-            let configuration = new Configuration('local');
-
-            //valid key, null value
-            return configuration.propagateToNativeCache('all', null).then((result) => {
-                expect(configuration.environment_config).to.be.undefined;
-                expect(result).to.equal(true);
-            })
-        });
-
-        it('sets environment config to specified value', () => {
-
-            let configuration = new Configuration('local');
-
-            //valid key, random value
-            return configuration.propagateToNativeCache('all', 'a_value').then((result) => {
-                expect(configuration.environment_config).to.be.defined;
-                expect(configuration.environment_config).to.equal('a_value');
-                expect(result).to.equal(true);
-            })
-        });
-    });
-
-    it('gets s3 config when value exists', () => {
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
-            objectExists() {
-                return Promise.resolve(true);
-            }
-            getObject() {
-                return Promise.resolve({
-                    Body: JSON.stringify({test_key: 'test_value'})
-                });
-            }
-            putObject() {
-                return Promise.resolve();
-            }
-            hasCredentials() {
-              return true;
-            }
-        });
-
-        it('throws error when "source" is not a string', () => {
-
-            let configuration = new Configuration('development');
-
-            try {
-                configuration.propagateCache(1, 'a_key', 'a_value')
-            } catch(error) {
-                expect(error.message).to.equal('[500] Source is assumed to be a string');
-            }
-        });
-
-        it('throws error when source destination is invalid', () => {
-
-            let configuration = new Configuration('development');
-
-            try {
-                configuration.propagateCache('an_unexpected_value', 'a_key', 'a_value')
-            } catch(error) {
-                expect(error.message).to.equal('[500] Unrecognized source destination');
-            }
-        });
-    });
-
-    it('gets redis config when value exists', () => {
-        mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/s3-provider.js'), class {
-            objectExists() {
-                return Promise.resolve(true);
-            }
-            getObject() {
-                return Promise.resolve({
-                    Body: JSON.stringify({})
-                });
-            }
-            putObject() {
-                return Promise.resolve();
-            }
-            hasCredentials() {
-              return true;
-            }
-        });
-
-        it('throws error when "key" is not set', () => {
-
-            let configuration = new Configuration('local');
-
-            try {
-                configuration.propagateToRedisCache()
-            } catch(error) {
-                expect(error.message).to.equal('[500] Key must be set');
-            }
-        });
-
-        it('throws error when "value" is not set', () => {
-
-            let configuration = new Configuration('local');
-
-            try {
-                configuration.propagateToRedisCache('a_key')
-            } catch(error) {
-                expect(error.message).to.equal('[500] Value must be set');
-            }
-        });
-    });
-
-    xdescribe('getConfiguration', () => {
-
-        it('throws error when "key" is not set', () => {
-
-            let configuration = new Configuration('local');
-
-            return configuration.getConfiguration('an_unexpected_source').catch((error) => {
-                expect(error.message).to.equal('[500] Configuration.getConfiguration did not recognize the source ' +
-                    'provided: "an_unexpected_source"');
-            })
-        });
-    });
-
-    describe('handleStage', () => {
-
-      let process_env = null;
-
-      before(() => {
-        process_env = process.env;
-      });
-
-      afterEach(() => {
-        process.env = process_env;
-      })
-
-      after(() => {
-        process.env = process_env;
-      });
-
-      it('successfully identifies the stage based on branch name', () => {
-
-        let stages = global.SixCRM.routes.include('config', 'stages.yml');
-
-        objectutilities.map(stages, key => {
-
-          let stage = stages[key];
-
-          if(!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)){
-            delete process.env.AWS_ACCOUNT;
-          }
-
-          if(!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)){
-            delete process.env.stage;
-          }
-
-          process.env.CIRCLE_BRANCH = stage.branch_name;
-
-          let configuration = new Configuration();
-
-          expect(configuration.stage).to.equal(key);
-
-        });
-
-      });
-
-      it('successfully identifies the stage (local) in absence of branch name or ', () => {
-
-        //let stages = global.SixCRM.routes.include('config', 'stages.yml');
-
-        if(!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)){
+        if (!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)) {
           delete process.env.AWS_ACCOUNT;
         }
 
-        if(!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)){
+        if (!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)) {
           delete process.env.stage;
         }
 
-        if(!_.isUndefined(process.env.CIRCLE_BRANCH) && !_.isNull(process.env.CIRCLE_BRANCH)){
-          delete process.env.CIRCLE_BRANCH;
-        }
+        process.env.CIRCLE_BRANCH = stage.branch_name;
 
         let configuration = new Configuration();
 
-        expect(configuration.stage).to.equal('local');
+        expect(configuration.stage).to.equal(key);
 
       });
 
     });
+
+    it('successfully identifies the stage (local) in absence of branch name or ', () => {
+
+      //let stages = global.SixCRM.routes.include('config', 'stages.yml');
+
+      if (!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)) {
+        delete process.env.AWS_ACCOUNT;
+      }
+
+      if (!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)) {
+        delete process.env.stage;
+      }
+
+      if (!_.isUndefined(process.env.CIRCLE_BRANCH) && !_.isNull(process.env.CIRCLE_BRANCH)) {
+        delete process.env.CIRCLE_BRANCH;
+      }
+
+      let configuration = new Configuration();
+
+      expect(configuration.stage).to.equal('local');
+
+    });
+
+  });
 
 });
