@@ -70,23 +70,23 @@ jobs:
       - run: echo "Pausing to allow Docker to catch up..." && sleep 30
       - run:
           name: Execute Functional Connectivity Test
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 stage=circle npm run test-functional-connectivity --prefix=/sixcrmserverless
+          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-connectivity --prefix=/sixcrmserverless -e stage=circle
           # command: stage=circle npm run test-functional-connectivity
       - run:
           name: Execute Functional Redis-Provider Test
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 stage=circle npm run test-functional-redis-provider --prefix=/sixcrmserverless
+          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-redis-provider --prefix=/sixcrmserverless -e stage=circle
           # command: stage=circle npm run test-functional-redis-provider
       - run:
           name: Deploy Local Dynamo
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless
+          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless -e stage=circle
           # command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
       - run:
           name: Deploy Local SQS
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 stage=circle node ./deployment/sqs/deploy_queues.js --prefix=/sixcrmserverless
+          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 node ./deployment/sqs/deploy_queues.js --prefix=/sixcrmserverless -e stage=circle
           # command: SIX_VERBOSE=2 stage=circle node ./deployment/sqs/deploy_queues.js
       - run:
           name: Execute State Machine Tests In Docker
-          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=0 stage=circle npm run test-functional-state-machine-docker --prefix=/sixcrmserverless
+          command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=0 npm run test-functional-state-machine-docker --prefix=/sixcrmserverless -e stage=circle
           # command: SIX_VERBOSE=0 stage=circle npm run test-functional-state-machine-docker
   query_tests:
       <<: *functional-tests-default
@@ -109,15 +109,15 @@ jobs:
         - run: echo "Pausing to allow docker to catch up..." && sleep 30
         - run:
             name: Execute Functional Connectivity Test
-            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 stage=circle npm run test-functional-connectivity --prefix=/sixcrmserverless
+            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-connectivity --prefix=/sixcrmserverless -e stage=circle
             # command: stage=circle npm run test-functional-connectivity
         - run:
             name: Deploy Local Dynamo
-            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless
+            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless -e stage=circle
             # command: SIX_VERBOSE=2 stage=circle node ./deployment/dynamodb/deploy_tables.js
         - run:
             name: Execute Functional Analytics Tests in Docker
-            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=0 stage=circle npm run test-functional-analytics --prefix=/sixcrmserverless
+            command: docker run -v /home/circleci/project:/sixcrmserverless node:8.10 SIX_VERBOSE=0 run test-functional-analytics --prefix=/sixcrmserverless -e stage=circle
             # command: SIX_VERBOSE=0 stage=circle npm run test-functional-analytics
   pre_deploy:
     <<: *job-defaults
