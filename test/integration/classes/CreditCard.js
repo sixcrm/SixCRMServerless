@@ -38,7 +38,7 @@ module.exports = class CreditCardTest extends IntegrationTest {
 
     du.output('Create Credit Card');
 
-    let creditcard_create_query = `mutation { createcreditcard (creditcard: { number: "3111111111111111", expiration: "1025", ccv: "999", name: "Rama2 Damunaste", address: { line1: "102 Skid Rw.", line2: "Suite 100", city: "Portland", state: "OR", zip: "97213", country: "US" }, id: "`+creditcard_id+`", customers:["${customer_id}"] }) { id } }`;
+    let creditcard_create_query = `mutation { createcreditcard (creditcard: { number: "3111111111111111", expiration: "1025", name: "Rama2 Damunaste", address: { line1: "102 Skid Rw.", line2: "Suite 100", city: "Portland", state: "OR", zip: "97213", country: "US" }, id: "`+creditcard_id+`", customers:["`+customer_id+`"] }) { id } }`;
 
     return this.executeQuery(creditcard_create_query);
 

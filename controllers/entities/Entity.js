@@ -760,7 +760,7 @@ module.exports = class entityController extends entityUtilitiesController {
       }else{
         primary_key = entity;
       }
-
+      
       return_entity = _.isUndefined(return_entity)?false:return_entity;
 
       let query_parameters = {

@@ -174,9 +174,8 @@ module.exports = class CreditCardController extends entityController {
     delete({id}){
 
       du.debug('CreditCard.delete()');
-
       return Promise.resolve(id)
-      .then((id) => this.exists({id: id, return_entity: true}))
+      .then((id) => this.exists({entity: {id: id}, return_entity: true}))
       .then((existing_entity) => {
 
         if(!_.has(existing_entity, 'id')){
