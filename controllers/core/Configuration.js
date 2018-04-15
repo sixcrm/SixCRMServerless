@@ -24,9 +24,9 @@ module.exports = class Configuration extends ConfigurationUtilities {
 		this.setConfigurationFiles();
 
 		this.mandatory_config_names = {
-			redshift_host: 'redshift.host',
-			aurora_host: 'aurora.host',
-			cloudsearch_domainendpoint: 'cloudsearch.domainendpoint'
+			redshift_host: 'redshift_host',
+			aurora_host: 'aurora_host',
+			cloudsearch_domainendpoint: 'cloudsearch_domainendpoint'
 		}
 
 	}

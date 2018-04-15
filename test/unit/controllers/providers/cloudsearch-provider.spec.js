@@ -30,7 +30,7 @@ describe('controllers/providers/cloudsearch-provider', () => {
 
     beforeEach(() => {
       process_env = process.env;
-      process.env['cloudsearch.domainendpoint'] = 'doc-somethingsomethingsomething';
+      process.env['cloudsearch_domainendpoint'] = 'doc-somethingsomethingsomething';
     });
 
     afterEach(() => {

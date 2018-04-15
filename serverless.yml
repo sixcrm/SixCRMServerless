@@ -29,8 +29,8 @@ provider:
     #vpc:
       #securityGroupIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSecurityGroup}
       #subnetIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSubnets}
-    cloudsearch.domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
-    aurora.host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
+    cloudsearch_domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
+    aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
     #redshift.host: ${file(./config/controllers/configuration_acquisition.js):getRedshiftClusterEndpoint}
 
 plugins:

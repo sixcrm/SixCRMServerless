@@ -103,7 +103,7 @@ describe('controllers/workers/indexEntities', () => {
 
   beforeEach(() => {
     process_env = process.env;
-    process.env['cloudsearch.domainendpoint'] = 'doc-somethingsomething';
+    process.env['cloudsearch_domainendpoint'] = 'doc-somethingsomething';
   });
   afterEach(() => {
     mockery.resetCache();
