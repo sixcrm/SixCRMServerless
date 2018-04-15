@@ -97,16 +97,16 @@ jobs:
             command: |
               set -x
               docker-compose --file tools/docker/docker-compose.yml up -d
-        # - run: echo "Pausing to allow docker to catch up..." && sleep 15
-        # - run:
-        #     name: Execute Functional Connectivity Test
-        #     command: docker run -e stage=circle -e SIX_VERBOSE=2 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-connectivity --prefix=/sixcrmserverless
-        # - run:
-        #     name: Deploy Local Dynamo
-        #     command: docker run -e stage=circle -e SIX_VERBOSE=2 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node:8.10 node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless
-        # - run:
-        #     name: Execute Functional Analytics Tests in Docker
-        #     command: docker run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-analytics --prefix=/sixcrmserverless
+        - run: echo "Pausing to allow docker to catch up..." && sleep 15
+        - run:
+            name: Execute Functional Connectivity Test
+            command: docker run -e stage=circle -e SIX_VERBOSE=2 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-connectivity --prefix=/sixcrmserverless
+        - run:
+            name: Deploy Local Dynamo
+            command: docker run -e stage=circle -e SIX_VERBOSE=2 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node:8.10 node ./deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless
+        - run:
+            name: Execute Functional Analytics Tests in Docker
+            command: docker run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node:8.10 npm run test-functional-analytics --prefix=/sixcrmserverless
   pre_deploy:
     <<: *job-defaults
     steps:
