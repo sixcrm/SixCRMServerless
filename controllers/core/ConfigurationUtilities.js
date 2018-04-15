@@ -29,10 +29,6 @@ module.exports = class ConfigurationUtilities {
 
         let stage_names = objectutilities.getKeys(stages);
 
-        stage_names.push('local'); // Technical Debt: avoid
-        stage_names.push('local-docker'); // Technical Debt: avoid
-        stage_names.push('circle');
-
         if(!_.contains(stage_names, stage)){
 
           eu.throwError('server', 'Configuration.resolveStage unable to validate stage name: '+stage);
@@ -55,7 +51,6 @@ module.exports = class ConfigurationUtilities {
 
     if(_.isNull(stage) || _.isUndefined(stage)){
       stage = 'local'
-      //eu.throwError('server', 'Configuration.resolveStage unable to determine stage.');
     }
 
     du.critical('Stage: '+stage);
@@ -64,11 +59,9 @@ module.exports = class ConfigurationUtilities {
 
   }
 
-  determineStageFromBranchName(fatal){
+  determineStageFromBranchName(fatal = true){
 
     du.debug('Determine Stage From Branch Name');
-
-    fatal = (_.isUndefined(fatal))?true:fatal;
 
     let branch_name = this.getBranchName();
 
@@ -100,11 +93,9 @@ module.exports = class ConfigurationUtilities {
 
   }
 
-  determineStageFromAccountIdentifier(fatal){
+  determineStageFromAccountIdentifier(fatal = true){
 
     du.debug('Determine Stage From Account Identifier');
-
-    fatal = (_.isUndefined(fatal))?true:fatal;
 
     let account_identifier = this.getAccountIdentifier();
 
@@ -117,7 +108,7 @@ module.exports = class ConfigurationUtilities {
       objectutilities.map(stages, key => {
         let stage = stages[key];
 
-        if(stage.aws_account_id == account_identifier){
+        if(_.has(stage, 'aws_account_id') && (stage.aws_account_id == account_identifier)){
           identified_stage = key
         }
       });
@@ -180,47 +171,35 @@ module.exports = class ConfigurationUtilities {
 
   }
 
-  setField(field){
+  isLocal() {
 
-    if(_.isUndefined(field) || _.isNull(field)){
-      field = 'all';
-    }
+		du.debug('Is Local');
 
-    if(!_.isString(field)){
-      eu.throwError('server', 'Configuration.setField assumes a string argument.');
-    }
+		let stages = global.SixCRM.routes.include('config', 'stages.yml');
 
-    return field;
+		if(!_.has(stages, global.SixCRM.configuration.stage)){
+			eu.throwError('server', 'Unrecognized stage: '+global.SixCRM.configuration.stage);
+		}
 
-  }
+		if(_.has(stages[global.SixCRM.configuration.stage], 'aws_account_id')){
+			return false;
+		}
 
-  setUseCache(use_cache){
-
-    if(_.isUndefined(use_cache)){
-      use_cache = true;
-    }
-
-    if(!_.isBoolean(use_cache)){
-      eu.throwError('server', 'Configuration.setUseCache assumes a boolean argument.');
-    }
-
-    return use_cache;
+    return true;
 
   }
 
-  buildLocalCacheKey(field){
+  getEnvironmentConfig(field, fatal = true){
 
-    du.debug('Build Local Cache Key');
+    if (_.has(process.env, field)) {
+      return Promise.resolve(process.env[field]);
+    }
 
-    return 'global.SixCRM.configuration.environment_config.'+field;
+		if(fatal){
+			eu.throwError('server', 'Process.env missing key: "' + field + '".');
+		}
 
-  }
-
-  buildRedisKey(field){
-
-    du.debug('Get Redis Key');
-
-    return 'global.SixCRM.configuration.environment_config.'+field;
+		return null;
 
   }
 

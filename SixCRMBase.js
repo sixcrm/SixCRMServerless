@@ -28,8 +28,6 @@ class SixCRMBase {
 
   setConfigurationFile() {
 
-    this.configuration.setEnvironmentConfigurationFile();
-
   }
 
   setResource(identifer, resource) {

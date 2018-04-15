@@ -116,19 +116,15 @@ describe('controllers/core/Configuration.js', () => {
 
   describe('handleStage', () => {
 
-    let process_env = null;
+    let process_env;
 
-    before(() => {
+    beforeEach(() => {
       process_env = process.env;
     });
 
     afterEach(() => {
       process.env = process_env;
     })
-
-    after(() => {
-      process.env = process_env;
-    });
 
     it('successfully identifies the stage based on branch name', () => {
 
@@ -138,19 +134,23 @@ describe('controllers/core/Configuration.js', () => {
 
         let stage = stages[key];
 
-        if (!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)) {
-          delete process.env.AWS_ACCOUNT;
+        if(_.has(stage, 'branch_name')){
+
+          if (!_.isUndefined(process.env.AWS_ACCOUNT) && !_.isNull(process.env.AWS_ACCOUNT)) {
+            delete process.env.AWS_ACCOUNT;
+          }
+
+          if (!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)) {
+            delete process.env.stage;
+          }
+
+          process.env.CIRCLE_BRANCH = stage.branch_name;
+
+          let configuration = new Configuration();
+
+          expect(configuration.stage).to.equal(key);
+
         }
-
-        if (!_.isUndefined(process.env.stage) && !_.isNull(process.env.stage)) {
-          delete process.env.stage;
-        }
-
-        process.env.CIRCLE_BRANCH = stage.branch_name;
-
-        let configuration = new Configuration();
-
-        expect(configuration.stage).to.equal(key);
 
       });
 

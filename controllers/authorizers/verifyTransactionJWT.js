@@ -1,4 +1,3 @@
-
 const _ = require("underscore");
 
 const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
@@ -8,70 +7,72 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 module.exports = class verifyTransactionJWTController {
 
-    constructor(){
+  constructor() {
 
-      this.messages = {
-          bypass: 'BYPASS'
-      }
+    this.messages = {
+      bypass: 'BYPASS'
+    }
 
-      jwtprovider.setJWTType('transaction');
+    jwtprovider.setJWTType('transaction');
+
+  }
+
+  execute(event) {
+
+    this.assureResources();
+
+    return Promise.resolve(this.verifyJWT(this.acquireToken(event)));
+
+  }
+
+  assureResources() {
+
+    du.debug('Assure Resources');
+
+    if (!_.has(process.env, 'transaction_jwt_secret_key')) {
+
+      eu.throwError('server', 'Missing JWT secret key.');
 
     }
 
-    execute(event){
+  }
 
-      this.assureResources();
+  acquireToken(event) {
 
-      return Promise.resolve(this.verifyJWT(this.acquireToken(event)));
+    du.debug('Acquire Token');
 
-    }
+    if (_.has(event, 'authorizationToken')) {
 
-    assureResources(){
-
-        du.debug('Assure Resources');
-
-        if(!_.has(process.env, 'transaction_jwt_secret_key')){
-
-            eu.throwError('server', 'Missing JWT secret key.');
-
-        }
+      return event.authorizationToken;
 
     }
 
-    acquireToken(event){
+    return false;
 
-      du.debug('Acquire Token');
+  }
 
-      if(_.has(event, 'authorizationToken')){
+  verifyJWT(token) {
 
-          return event.authorizationToken;
+    du.debug('Verify JWT');
 
-      }
+    let decoded_token = this.validateToken(token);
 
+    du.debug('Decoded Token: ', decoded_token);
+
+    if (decoded_token == false) {
       return false;
-
     }
 
-    verifyJWT(token){
+    return decoded_token.user_alias; //Note: We know that this property exists because of the validation in the JWT Utilities class
 
-      du.debug('Verify JWT');
+  }
 
-      let decoded_token = this.validateToken(token);
+  validateToken(token) {
 
-      du.debug('Decoded Token: ', decoded_token);
+    du.debug('Validate Token');
 
-      if(decoded_token == false){ return false; }
+    return jwtprovider.verifyJWT(token, 'transaction');
 
-      return decoded_token.user_alias; //Note: We know that this property exists because of the validation in the JWT Utilities class
-
-    }
-
-    validateToken(token){
-
-        du.debug('Validate Token');
-
-        return jwtprovider.verifyJWT(token, 'transaction');
-
-    }
+  }
 
 }
