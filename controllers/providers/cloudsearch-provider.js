@@ -59,7 +59,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
       du.debug('Set Cloudsearch Domain Endpoint');
 
-      return global.SixCRM.configuration.getEnvironmentConfig('cloudsearch.domainendpoint').then((endpoint) => {
+      return global.SixCRM.configuration.getEnvironmentConfig('cloudsearch_domainendpoint').then((endpoint) => {
 
         if (endpoint) {
 
