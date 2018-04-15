@@ -4,9 +4,7 @@
 # Add Blue/Green for Production
 
 functional_tests_default: &functional-tests-default
-  machine:
-    node:
-      version: 8.10.0
+  machine: true
   # docker:
   #   - image: circleci/node:8.10
   #     environment:
