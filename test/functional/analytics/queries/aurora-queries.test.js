@@ -109,7 +109,7 @@ function seedDatabase(test) {
 
 		const seeds = fileutilities.getDirectoryFilesSync(test.seeds);
 
-		return arrayutilities.serialPromises(seeds.map((seed) => {
+		return arrayutilities.serialPromises(arrayutilities.map(seeds, (seed) => {
 
 			return connection.query(fileutilities.getFileContentsSync(path.join(test.seeds, seed)));
 

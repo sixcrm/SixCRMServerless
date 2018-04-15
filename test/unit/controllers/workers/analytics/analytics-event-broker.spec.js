@@ -56,7 +56,9 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 
 						return new AnalyticsEventBroker().execute(message).then(result => {
 
-							return expect(result[0]).to.eql(test.result);
+							expect(result[0]).to.eql(test.result);
+
+							return Promise.resolve();
 
 						});
 

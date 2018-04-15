@@ -21,7 +21,7 @@ module.exports = class AnalyticsEventBroker {
 
 	}
 
-		return au.serialPromises(records.Records.map(this._recordHandler.bind(this)));
+		return au.serialPromises(au.map(records.Records, this._recordHandler.bind(this)));
 
 	}
 
