@@ -1,7 +1,7 @@
 // const fs = require('fs');
 // const uuid = require('uuid');
-const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const au = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 module.exports = class AnalyticsEventBroker {
 
@@ -19,9 +19,9 @@ module.exports = class AnalyticsEventBroker {
 
 			this._eventTypeHandlerMap = require('./analytics-event-router');
 
-		}
+	}
 
-		return BBPromise.each(records.Records.map(this._recordHandler.bind(this)), p => p);
+		return au.serialPromises(au.map(records.Records, this._recordHandler.bind(this)));
 
 	}
 

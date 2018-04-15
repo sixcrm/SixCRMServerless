@@ -1,7 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-//const BBPromise = require('bluebird');
 
 describe('controllers/providers/timer', () => {
 

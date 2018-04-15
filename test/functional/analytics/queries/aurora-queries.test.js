@@ -12,7 +12,6 @@ const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
-const BBPromise = require('bluebird');
 
 before(() => {
 
@@ -110,11 +109,11 @@ function seedDatabase(test) {
 
 		const seeds = fileutilities.getDirectoryFilesSync(test.seeds);
 
-		return BBPromise.each(seeds.map((seed) => {
+		return arrayutilities.serialPromises(arrayutilities.map(seeds, (seed) => {
 
 			return connection.query(fileutilities.getFileContentsSync(path.join(test.seeds, seed)));
 
-		}), (p) => p);
+		}));
 
 	}));
 
