@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
@@ -211,7 +211,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
 			objectutilities.map(required_properties, (key) => {
 				expect(parameters_object).to.have.property(key);
-				if (!_.contains(['endpoint', 'type'], key)) {
+				if (!_.includes(['endpoint', 'type'], key)) {
 					expect(parameters_object[key]).to.equal(merchant_provider.gateway[key]);
 				}
 			});

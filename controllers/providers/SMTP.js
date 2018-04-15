@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const smtpprovider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');

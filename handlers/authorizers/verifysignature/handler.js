@@ -1,6 +1,6 @@
 
 
-const _ = require("underscore");
+const _ = require('lodash');
 
 module.exports.verifysignature = (event, context, callback) => {
 

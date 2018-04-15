@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 const path = require('path');
 const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');

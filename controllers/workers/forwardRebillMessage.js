@@ -1,5 +1,5 @@
 
-const _ = require("underscore");
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
 const forwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');

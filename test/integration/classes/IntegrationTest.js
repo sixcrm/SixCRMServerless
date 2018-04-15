@@ -1,6 +1,6 @@
 
 const request = require('supertest');
-const _ = require('underscore');
+const _ = require('lodash');
 
 const tu = global.SixCRM.routes.include('lib','test-utilities.js');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');

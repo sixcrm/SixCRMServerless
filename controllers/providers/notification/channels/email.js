@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');

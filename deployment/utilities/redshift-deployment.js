@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
@@ -22,7 +22,7 @@ module.exports = class RedshiftDeployment extends AWSDeploymentUtilities {
     du.debug('Get Configuration File');
 
     //Technical Debt:  Just make this look for a file that matches the stage name
-    if(_.contains(['local', 'local-docker', 'circle', 'development','staging','production'], process.env.stage)){
+    if(_.includes(['local', 'local-docker', 'circle', 'development','staging','production'], process.env.stage)){
         this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/'+process.env.stage+'.json');
     }else {
       this.configuration_file = global.SixCRM.routes.include('deployment', 'redshift/config/default.json');

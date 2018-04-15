@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const chai = require("chai");
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
@@ -344,7 +344,7 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 			expect(result).to.equal(true);
 			expect(terminalController.parameters.store['augmentedtransactionproducts']).to.be.defined;
 			arrayutilities.map(terminalController.parameters.store['augmentedtransactionproducts'], augmented_transaction_product => {
-				expect(_.contains(transactions, augmented_transaction_product.transaction)).to.equal(true);
+				expect(_.includes(transactions, augmented_transaction_product.transaction)).to.equal(true);
 			});
 
 		});

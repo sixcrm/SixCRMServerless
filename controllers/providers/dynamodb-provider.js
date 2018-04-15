@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -449,7 +449,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
         raw: ['waitFor', 'deleteTable', 'describeTable', 'updateTable', 'createTable', 'createBackup','listTables']
       }
 
-      if(_.contains(valid_methods.document_client, method)){
+      if(_.includes(valid_methods.document_client, method)){
 
         return new Promise((resolve, reject) => {
 
@@ -481,7 +481,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
       }
 
-      if(_.contains(valid_methods.raw, method)){
+      if(_.includes(valid_methods.raw, method)){
 
         return new Promise((resolve, reject) => {
 

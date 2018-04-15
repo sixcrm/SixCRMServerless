@@ -1,5 +1,5 @@
 
-const _ =  require('underscore');
+const _ =  require('lodash');
 const Ajv = require('ajv');
 const jwt = require('jsonwebtoken');
 
@@ -116,7 +116,7 @@ module.exports = class JWTProvider {
 
         if(!_.isUndefined(jwt_type)){
 
-            if(_.contains(this.jwt_types, jwt_type)){
+            if(_.includes(this.jwt_types, jwt_type)){
                 this.jwt_type = jwt_type;
             }else{
                 this.unrecognzedJWTType();

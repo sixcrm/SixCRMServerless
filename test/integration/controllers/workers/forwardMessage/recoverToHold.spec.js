@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const chai = require("chai");
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;

@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 //Technical Debt: Override the list method

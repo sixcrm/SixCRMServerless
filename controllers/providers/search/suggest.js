@@ -1,5 +1,5 @@
 
-const _ = require("underscore");
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const CloudsearchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudsearch-provider.js');
 const cloudsearchprovider = new CloudsearchProvider();

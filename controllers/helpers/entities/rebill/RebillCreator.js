@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -267,7 +267,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
     }else{
       //Technical Debt:  But, but, but, didn't we get the product schedules from the session?
       arrayutilities.map(product_schedules, (product_schedule) => {
-        if(!_.contains(session.product_schedules, product_schedule.id)){
+        if(!_.includes(session.product_schedules, product_schedule.id)){
           eu.throwError('server', 'The specified product schedule is not contained in the session object: '+product_schedule.id);
         }
       });

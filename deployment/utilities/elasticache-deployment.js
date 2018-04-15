@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -200,7 +200,7 @@ module.exports = class ElasticacheDeployment {
 
     du.debug('Filter Parameters');
 
-    if(!_.contains(objectutilities.getKeys(this.parameterFilters), action)){
+    if(!_.includes(objectutilities.getKeys(this.parameterFilters), action)){
       eu.throwError('server', 'Unknown action');
     }
 

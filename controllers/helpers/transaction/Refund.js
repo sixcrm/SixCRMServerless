@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 const querystring = require('querystring');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');

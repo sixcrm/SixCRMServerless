@@ -1,5 +1,5 @@
 
-var _ =  require('underscore');
+var _ =  require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -224,7 +224,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
         return false;
       }
 
-      return _.contains(shipable_product_ids, augmented_transaction_product.product.id);
+      return _.includes(shipable_product_ids, augmented_transaction_product.product.id);
 
     });
 

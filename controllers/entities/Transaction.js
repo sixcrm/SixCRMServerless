@@ -1,5 +1,5 @@
 
-const _ = require('underscore');
+const _ = require('lodash');
 var random = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');

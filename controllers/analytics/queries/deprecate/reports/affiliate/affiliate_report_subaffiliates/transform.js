@@ -1,5 +1,5 @@
 
-let _ = require('underscore');
+let _ = require('lodash');
 let paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 

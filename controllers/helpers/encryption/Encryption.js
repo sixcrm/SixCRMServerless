@@ -1,6 +1,6 @@
 
 
-const _ = require('underscore');
+const _ = require('lodash');
 const encryptionutilities = global.SixCRM.routes.include('lib', 'encryption-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');

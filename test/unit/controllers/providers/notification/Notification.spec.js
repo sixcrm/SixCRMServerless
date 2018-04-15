@@ -1,6 +1,6 @@
 let chai = require('chai');
 let expect = chai.expect;
-const _ = require('underscore');
+const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
 const mockery = require('mockery');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -2082,14 +2082,14 @@ describe('controllers/providers/notification/Notification', () => {
         });
         if(found_notification){
           if(_.has(found_notification, 'channels') && arrayutilities.nonEmpty(found_notification.channels)){
-            if(_.contains(found_notification.channels, 'all') || _.contains(found_notification.channels, channel)){
+            if(_.includes(found_notification.channels, 'all') || _.includes(found_notification.channels, channel)){
               return true;
             }
           }
         }
 
         if(_.has(found_category, 'default') && arrayutilities.nonEmpty(found_category.default)){
-          if(_.contains(found_category.default, 'all') || _.contains(found_category.default, channel)){
+          if(_.includes(found_category.default, 'all') || _.includes(found_category.default, channel)){
             return true;
           }
         }

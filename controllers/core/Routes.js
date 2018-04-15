@@ -1,7 +1,7 @@
 require('require-yaml');
 
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 var fs = require('fs');
 
 module.exports = class Routes {

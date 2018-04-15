@@ -1,5 +1,5 @@
 
-const _ = require("underscore");
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -167,7 +167,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
         });
 
-        if(_.contains(validated_permissions, false)){
+        if(_.includes(validated_permissions, false)){
 
           eu.throwError('fobidden', 'Unable to execute action.  User lacks permission.');
 

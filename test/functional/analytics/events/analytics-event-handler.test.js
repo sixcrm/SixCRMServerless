@@ -3,7 +3,7 @@ const chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
 const expect = chai.expect;
 const path = require('path');
-const _ = require('underscore');
+const _ = require('lodash');
 const SQSTestUtils = require('../../sqs-test-utils');
 const AnalyticsEventHandler = require('../../../../controllers/workers/analytics/analytics-event-handler');
 

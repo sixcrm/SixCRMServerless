@@ -1,6 +1,6 @@
 
 
-const _ = require('underscore');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -147,7 +147,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
       let discovered_data = objectutilities.recurseByDepth(this.configuration_file, function(p_key) {
 
-        return (_.contains(translation_object[key], p_key));
+        return (_.includes(translation_object[key], p_key));
 
       });
 
@@ -155,7 +155,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
     });
 
-    if(_.contains(['create'], group_name)){
+    if(_.includes(['create'], group_name)){
 
       if(_.has(response_object, 'IamRoles')){
 

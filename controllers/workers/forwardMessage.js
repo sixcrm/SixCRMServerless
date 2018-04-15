@@ -1,5 +1,5 @@
 
-const _ = require("underscore");
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
@@ -240,7 +240,7 @@ module.exports = class forwardMessageController extends RelayController {
 
       du.debug('Handle Delete');
 
-      if(_.contains(['success', 'fail', 'error'], compound_worker_response_object.worker_response_object.getCode())){
+      if(_.includes(['success', 'fail', 'error'], compound_worker_response_object.worker_response_object.getCode())){
 
         let messages = this.getCompoundWorkerResponseMessages(compound_worker_response_object);
 
