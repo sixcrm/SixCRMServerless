@@ -1,4 +1,4 @@
-'use strict'
+
 const _ = require('underscore');
 const ResponseController = global.SixCRM.routes.include('providers', 'Response.js');
 

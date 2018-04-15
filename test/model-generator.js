@@ -1,4 +1,4 @@
-'use strict';
+
 
 const jsf = require('json-schema-faker');
 const uuidV4 = require('uuid/v4');

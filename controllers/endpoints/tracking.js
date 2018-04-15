@@ -1,4 +1,4 @@
-'use strict';
+
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');

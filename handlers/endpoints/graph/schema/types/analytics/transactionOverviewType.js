@@ -1,4 +1,4 @@
-'use strict';
+
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
 const transactionOverviewGroupType = require('./transactionOverviewGroupType');

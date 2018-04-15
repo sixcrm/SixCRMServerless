@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.rebilltoarchive = (event, context, callback) => {
 

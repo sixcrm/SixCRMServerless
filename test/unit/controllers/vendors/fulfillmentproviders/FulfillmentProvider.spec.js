@@ -1,4 +1,4 @@
-'use strict'
+
 const chai = require("chai");
 const expect = chai.expect;
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');

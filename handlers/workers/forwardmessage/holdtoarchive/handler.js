@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.holdtoarchive = (event, context, callback) => {
 

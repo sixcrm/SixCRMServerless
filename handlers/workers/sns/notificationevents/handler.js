@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.notificationevents = (event, context, callback) => {
 

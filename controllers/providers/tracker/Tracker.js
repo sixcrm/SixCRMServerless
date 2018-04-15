@@ -1,4 +1,4 @@
-'use strict';
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const InfoController = global.SixCRM.routes.include('helpers', 'shippingcarriers/Info.js');

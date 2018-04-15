@@ -1,4 +1,4 @@
-'use strict'
+
 require('../SixCRM.js');
 const qs = require('querystring');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');

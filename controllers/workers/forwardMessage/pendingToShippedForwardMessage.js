@@ -1,4 +1,4 @@
-'use strict';
+
 const forwardRebillMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardRebillMessage.js');
 
 module.exports = class PendingToShippedForwardMessageController extends forwardRebillMessageController {

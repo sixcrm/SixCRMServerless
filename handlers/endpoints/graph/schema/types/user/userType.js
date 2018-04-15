@@ -1,4 +1,4 @@
-'use strict';
+
 const _ = require('underscore');
 
 const GraphQLList = require('graphql').GraphQLList;

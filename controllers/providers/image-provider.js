@@ -1,4 +1,4 @@
-'use strict'
+
 const imagetype = require('image-type');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');

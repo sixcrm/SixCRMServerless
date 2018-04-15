@@ -1,4 +1,4 @@
-'use strict'
+
 const BaseNotification = global.SixCRM.routes.include('helpers','notifications/notificationtypes/components/BaseNotification.js');
 
 module.exports = class OrderNotification extends BaseNotification {

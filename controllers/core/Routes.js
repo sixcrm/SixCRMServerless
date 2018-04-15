@@ -1,4 +1,4 @@
-'use strict'
+
 require('require-yaml');
 
 const path = require('path');

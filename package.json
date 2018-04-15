@@ -94,7 +94,7 @@
     "lint-commit": "./tools/lintCommitEslint.sh && ./tools/lintCommitYml.sh"
   },
   "pre-commit": [
-    "lint-commit",
+    "lint",
     "test-unit"
   ],
   "repository": {

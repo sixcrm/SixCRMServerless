@@ -1,4 +1,4 @@
-'use strict'
+
 const request = require('request');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');

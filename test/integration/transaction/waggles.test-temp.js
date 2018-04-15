@@ -1,4 +1,4 @@
-'use strict'
+
 const _ = require('underscore');
 const chai = require('chai');
 const expect = chai.expect;

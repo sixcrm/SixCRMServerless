@@ -1,4 +1,4 @@
-'use strict'
+
 
 const expect = require('chai').expect;
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');

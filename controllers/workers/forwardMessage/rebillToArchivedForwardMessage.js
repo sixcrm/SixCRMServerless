@@ -1,4 +1,4 @@
-'use strict';
+
 const forwardSessionMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardSessionMessage.js');
 
 module.exports = class RebillToArchivedForwardMessageController extends forwardSessionMessageController {

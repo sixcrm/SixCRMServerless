@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.recovertoarchive = (event, context, callback) => {
 

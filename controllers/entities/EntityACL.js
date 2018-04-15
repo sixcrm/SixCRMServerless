@@ -1,4 +1,4 @@
-'use strict';
+
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class EntityACLController extends entityController {

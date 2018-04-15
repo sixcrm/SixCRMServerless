@@ -1,4 +1,4 @@
-'use strict'
+
 require('../SixCRM.js');
 const encode = global.SixCRM.routes.include('lib', 'encode');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');

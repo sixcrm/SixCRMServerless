@@ -1,4 +1,4 @@
-'use strict';
+
 let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');

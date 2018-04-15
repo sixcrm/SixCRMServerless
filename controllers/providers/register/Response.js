@@ -1,4 +1,4 @@
-'use strict'
+
 
 const Response = global.SixCRM.routes.include('providers', 'Response.js');
 

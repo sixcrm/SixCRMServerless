@@ -1,4 +1,4 @@
-'use strict';
+
 const GraphQLUnionType = require('graphql').GraphQLUnionType;
 
 let affiliateType = require('./affiliateType');

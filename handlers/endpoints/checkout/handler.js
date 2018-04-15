@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.checkout = (event, context, callback) => {
 

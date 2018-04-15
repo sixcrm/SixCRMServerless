@@ -1,4 +1,4 @@
-'use strict'
+
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');

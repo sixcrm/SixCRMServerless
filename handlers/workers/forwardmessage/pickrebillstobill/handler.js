@@ -1,4 +1,4 @@
-'use strict';
+
 
 module.exports.pickrebillstoboll = (event, context, callback) => {
 

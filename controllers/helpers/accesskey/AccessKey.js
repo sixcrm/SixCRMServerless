@@ -1,4 +1,4 @@
-'use strict';
+
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');

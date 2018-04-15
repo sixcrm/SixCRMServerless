@@ -1,4 +1,4 @@
-'use strict';
+
 
 const ThreePLController = global.SixCRM.routes.include('controllers', 'vendors/fulfillmentproviders/ThreePL/handler.js');
 

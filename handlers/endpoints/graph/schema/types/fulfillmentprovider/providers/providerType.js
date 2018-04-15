@@ -1,4 +1,4 @@
-'use strict';
+
 let _ = require('underscore');
 
 const GraphQLInterfaceType = require('graphql').GraphQLInterfaceType;

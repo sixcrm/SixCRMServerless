@@ -1,4 +1,4 @@
-'use strict'
+
 const apn = require('apn');
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');

@@ -1,4 +1,4 @@
-'use strict';
+
 const _ = require('underscore');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;

@@ -1,4 +1,4 @@
-'use strict';
+
 var _ =  require('underscore');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');

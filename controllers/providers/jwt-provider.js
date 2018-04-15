@@ -1,4 +1,4 @@
-'use strict'
+
 const _ =  require('underscore');
 const Ajv = require('ajv');
 const jwt = require('jsonwebtoken');

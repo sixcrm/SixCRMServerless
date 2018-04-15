@@ -1,4 +1,4 @@
-'use strict'
+
 //const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
