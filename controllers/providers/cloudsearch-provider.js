@@ -1,11 +1,8 @@
-'use strict'
 const _ = require('underscore');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
 module.exports = class CloudSearchProvider extends AWSProvider {
@@ -55,21 +52,13 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
     setCloudsearchDomainEndpoint() {
 
-      if (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'cloudsearch.domainendpoint')) {
-
-          return this.instantiateCSD(global.SixCRM.configuration.site_config.cloudsearch.domainendpoint);
-
-      }
+      du.debug('Set Cloudsearch Domain Endpoint');
 
       return global.SixCRM.configuration.getEnvironmentConfig('cloudsearch.domainendpoint').then((endpoint) => {
 
         if (endpoint) {
 
-            return this.instantiateCSD(endpoint);
-
-        } else {
-
-            return this.saveDomainConfiguration().then((configuration) => this.instantiateCSD(configuration));
+          return this.instantiateCSD(endpoint);
 
         }
 
@@ -79,7 +68,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
     instantiateCSD(endpoint) {
 
-      //Technical Debt:  Get this out of the constructor...
       this.instantiateAWS();
 
       this.csd = new this.AWS.CloudSearchDomain({
@@ -104,32 +92,6 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
     }
 
-    waitForCSD(count){
-
-      du.debug('Wait For CSD');
-
-      count = (_.isUndefined(count))?1:count;
-
-      if(count < 50){
-
-        return timestamp.delay(100)().then(() => {
-
-          if(this.CSDExists()){
-
-            return true;
-
-          }
-
-          return this.waitForCSD((count+1));
-
-        });
-
-      }
-
-      eu.throwError('server', 'Unable to establish connection to Cloudsearch Document endpoint.');
-
-    }
-
     setDomainName(){
 
       du.debug('Set Domain Name');
@@ -148,6 +110,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
         return true;
 
       }
+
 
       eu.throwError('server', 'Unable to determine configured CloudSearch domain name.');
 
@@ -197,8 +160,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
         }else{
 
-          return this.waitForCSD()
-          .then(() => this.executeStatedSearch(parameters))
+          return this.executeStatedSearch(parameters)
           .then(result => {
               return resolve(result);
           });
@@ -250,15 +212,14 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
         du.debug('Cloudsearch Parameters', params);
 
-        return this.waitForCSD()
-        .then(() => this.csd.uploadDocuments(params, function(error, data){
+        return this.csd.uploadDocuments(params, (error, data) =>  {
           if(error){
               //du.warning('Cloudsearch error: ', error);
               return reject(error);
           }
           //du.debug('Successful Indexing:', data);
           return resolve(data);
-        }));
+        });
 
       });
 
@@ -286,6 +247,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
     }
 
+    /*
     waitFor(waitfor_status, domainname, count){
 
       du.debug('Wait For');
@@ -341,6 +303,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
       });
 
     }
+    */
 
     describeDomains(domainnames){
 
@@ -494,7 +457,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
                 if (!_.isNull(domain_endpoint) && stringutilities.isMatch(domain_endpoint, /^[a-zA-Z0-9.\-:]+$/)){
 
-                  global.SixCRM.configuration.setEnvironmentConfig('cloudsearch.domainendpoint', domain_endpoint);
+                  //global.SixCRM.configuration.setEnvironmentConfig('cloudsearch.domainendpoint', domain_endpoint);
 
                   return domain_endpoint;
 

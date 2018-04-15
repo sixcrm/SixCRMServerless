@@ -91,6 +91,8 @@ function getValidCloudsearchDomainResponses(){
 
 describe('controllers/workers/indexEntities', () => {
 
+  let process_env;
+
   before(() => {
     mockery.enable({
       useCleanCache: true,
@@ -99,8 +101,13 @@ describe('controllers/workers/indexEntities', () => {
     });
   });
 
+  beforeEach(() => {
+    process_env = process.env;
+    process.env['cloudsearch.domainendpoint'] = 'doc-somethingsomething';
+  });
   afterEach(() => {
     mockery.resetCache();
+    process.env = process_env;
   });
 
   after(() => {
@@ -108,6 +115,7 @@ describe('controllers/workers/indexEntities', () => {
   });
 
 	describe('constructor', () => {
+
     it('successfully constructs', () => {
       const IndexEntitiesController = global.SixCRM.routes.include('controllers', 'workers/indexEntities.js');
       let indexEntitiesController = new IndexEntitiesController();

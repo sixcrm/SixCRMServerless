@@ -5,6 +5,13 @@ aws:
   region: 'us-east-1'
   account: '821071795213'
 
+lambda:
+  security_group: 'public-lambda'
+  subnets:
+    - sixcrm-subnet1
+    - sixcrm-subnet2
+    - sixcrm-subnet3
+    
 s3:
   account_resources_bucket: 'account-resources'
 

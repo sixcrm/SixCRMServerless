@@ -56,7 +56,7 @@ module.exports = class AuroraClusterDeployment {
 
 									}
 
-									global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
+									//global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
 
 								} else {
 
@@ -66,7 +66,7 @@ module.exports = class AuroraClusterDeployment {
 
 									}
 
-									global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBCluster.Endpoint);
+									//global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBCluster.Endpoint);
 
 								}
 

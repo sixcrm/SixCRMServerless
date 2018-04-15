@@ -148,6 +148,29 @@ module.exports = class CloudsearchDeployment{
 
     }
 
+    domainExists(domain_definition){
+
+      du.debug('Domain Exists');
+
+      //Technical Debt:  Due to old provider code...
+      let parameters = [domain_definition.DomainName];
+
+      return this.cloudsearchprovider.describeDomains(parameters).then(result => {
+
+        if(_.has(result, 'DomainStatusList') && _.isArray(result.DomainStatusList)){
+          if(arrayutilities.nonEmpty(result.DomainStatusList)){
+            if(result.DomainStatusList.length == 1){
+              return result.DomainStatusList[0];
+            }
+            eu.throwError('server', 'Multiple results returned: ', result);
+          }
+          return null;
+        }
+        eu.throwError('server', 'Unexpected result: ', result);
+      });
+
+    }
+
     createCloudsearchDomain() {
 
       du.debug('Create Cloudsearch Domain');
