@@ -242,7 +242,7 @@ module.exports = class ContextHelperController {
 				let identified_value = null
 
 				if(_.isObject(value)){
-					identified_value = objectutilities.getRecursive(value, field_path.slice(1));
+					identified_value = objectutilities.getRecursive(value, field_path.slice(field_path.length - 1));
 				}else{
 					identified_value = value;
 				}

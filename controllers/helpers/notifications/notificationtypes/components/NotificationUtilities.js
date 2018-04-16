@@ -80,11 +80,11 @@ module.exports = class NotificationUtilities {
 
 		let resolved_account = null;
 
-		resolved_account = this.contextHelperController.getFromContext(context, 'account.id', 'id');
+		resolved_account = this.contextHelperController.getFromContext(context, 'account', 'id');
 
 		if(_.isNull(resolved_account)){
 
-			resolved_account = this.contextHelperController.getFromContext(context, 'account', 'id');
+			resolved_account = this.contextHelperController.getFromContext(context, 'account.id', 'id');
 
 		}
 
