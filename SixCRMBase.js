@@ -1,4 +1,3 @@
-
 require('./routes.js');
 
 class SixCRMBase {
@@ -10,12 +9,6 @@ class SixCRMBase {
 
 	}
 
-	clearState() {
-
-		this.instantiate();
-
-	}
-
 	instantiate() {
 
 		const Configuration = this.routes.include('core', 'Configuration.js');
@@ -23,10 +16,6 @@ class SixCRMBase {
 
 		this.configuration = new Configuration();
 		this.localcache = new LocalCache();
-
-	}
-
-	setConfigurationFile() {
 
 	}
 
