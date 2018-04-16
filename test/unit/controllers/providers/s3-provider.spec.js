@@ -727,7 +727,7 @@ describe('controllers/providers/s3-provider', () => {
 			};
 
 			return s3provider.getObject('a_bucket', 'a_key').catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('[500] Error: fail');
 			});
 		});
 
