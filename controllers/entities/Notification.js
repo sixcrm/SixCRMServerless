@@ -15,7 +15,7 @@ module.exports = class NotificationController extends entityController {
 
 	create({entity}) {
 		entity.access_string = entity.user + '-' + entity.account + '-' + entity.type;
-		super.create({entity: entity});
+		return super.create({entity: entity});
 	}
 
 	numberOfUnseenNotifications() {
@@ -81,4 +81,3 @@ module.exports = class NotificationController extends entityController {
 	}
 
 }
-
