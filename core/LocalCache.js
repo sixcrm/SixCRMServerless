@@ -1,6 +1,6 @@
 let _ = require('lodash');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-let eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+let du = require('../lib/debug-utilities');
+let eu = require('../lib/error-utilities');
 
 //Technical Debt:  This is largely unused...
 module.exports = class LocalCache {

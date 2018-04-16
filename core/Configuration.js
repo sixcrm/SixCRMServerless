@@ -1,12 +1,12 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
+const du = require('../lib/debug-utilities');
+const eu = require('../lib/error-utilities');
+const ConfigurationUtilities = require('./ConfigurationUtilities');
 
 module.exports = class Configuration extends ConfigurationUtilities {
 
-	constructor(stage) {
+	constructor(routes, stage) {
 
-		super();
+		super(routes);
 
 		this.handleStage(stage);
 
@@ -38,7 +38,7 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
 		du.debug('Get Serverless Config');
 
-		return global.SixCRM.routes.include('root', 'serverless.yml');
+		return this.routes.include('root', 'serverless.yml');
 
 	}
 
@@ -49,9 +49,9 @@ module.exports = class Configuration extends ConfigurationUtilities {
 		let config;
 
 		try {
-			config = global.SixCRM.routes.include('config', this.stage + '/site.yml');
+			config = this.routes.include('config', this.stage + '/site.yml');
 		} catch (error) {
-			throw eu.getError('server', 'Configuration.getSiteConfig was unable to identify file ' + global.SixCRM.routes.path('config', this.stage + '/site.yml'));
+			throw eu.getError('server', 'Configuration.getSiteConfig was unable to identify file ' + this.routes.path('config', this.stage + '/site.yml'));
 		}
 
 		return config;

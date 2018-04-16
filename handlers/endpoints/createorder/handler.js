@@ -3,7 +3,6 @@
 module.exports.createorder = (event, context, callback) => {
 
 	require('../../../SixCRM.js');
-	global.SixCRM.clearState();
 
 	let LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
 	let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');

@@ -1,7 +1,8 @@
 const chai = require('chai');
 const expect = chai.expect;
+const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
 
-describe('controllers/core/ConfigurationUtilities.js', () => {
+describe('core/ConfigurationUtilities.js', () => {
 
 	describe('determineStageFromAccountIdentifier', () => {
 
@@ -23,8 +24,7 @@ describe('controllers/core/ConfigurationUtilities.js', () => {
 
 			let aws_account = process.env.AWS_ACCOUNT;
 
-			const ConfigurationUtilities = global.SixCRM.routes.include('controllers','core/ConfigurationUtilities.js');
-			let configurationUtilities = new ConfigurationUtilities();
+			let configurationUtilities = new ConfigurationUtilities(global.SixCRM.routes);
 
 			process.env.AWS_ACCOUNT = aws_account ? aws_account : 'an_aws_account'; //invalid aws account value
 
@@ -42,8 +42,7 @@ describe('controllers/core/ConfigurationUtilities.js', () => {
 			delete process.env.aws_account;
 			delete context.invokedFunctionArn;
 
-			const ConfigurationUtilities = global.SixCRM.routes.include('controllers','core/ConfigurationUtilities.js');
-			let configurationUtilities = new ConfigurationUtilities();
+			let configurationUtilities = new ConfigurationUtilities(global.SixCRM.routes);
 
 			expect(configurationUtilities.determineStageFromAccountIdentifier()).to.equal(null);
 		});
@@ -63,8 +62,7 @@ describe('controllers/core/ConfigurationUtilities.js', () => {
 
 		it('returns "local" when stage value is null', () => {
 
-			const ConfigurationUtilities = global.SixCRM.routes.include('controllers','core/ConfigurationUtilities.js');
-			let configurationUtilities = new ConfigurationUtilities();
+			let configurationUtilities = new ConfigurationUtilities(global.SixCRM.routes);
 
 			expect(configurationUtilities.resolveStage(null)).to.equal('local');
 		});
@@ -90,8 +88,7 @@ describe('controllers/core/ConfigurationUtilities.js', () => {
 
 			let aws_account = process.env.AWS_ACCOUNT;
 
-			const ConfigurationUtilities = global.SixCRM.routes.include('controllers','core/ConfigurationUtilities.js');
-			let configurationUtilities = new ConfigurationUtilities();
+			let configurationUtilities = new ConfigurationUtilities(global.SixCRM.routes);
 
 			process.env.AWS_ACCOUNT = aws_account ? aws_account : 'an_aws_account';
 
@@ -102,8 +99,7 @@ describe('controllers/core/ConfigurationUtilities.js', () => {
 
 			let aws_account = process.env.aws_account;
 
-			const ConfigurationUtilities = global.SixCRM.routes.include('controllers','core/ConfigurationUtilities.js');
-			let configurationUtilities = new ConfigurationUtilities();
+			let configurationUtilities = new ConfigurationUtilities(global.SixCRM.routes);
 
 			delete process.env.AWS_ACCOUNT;
 
@@ -114,8 +110,7 @@ describe('controllers/core/ConfigurationUtilities.js', () => {
 
 		it('returns null when an account identifier from environment is undefined', () => {
 
-			const ConfigurationUtilities = global.SixCRM.routes.include('controllers','core/ConfigurationUtilities.js');
-			let configurationUtilities = new ConfigurationUtilities();
+			let configurationUtilities = new ConfigurationUtilities(global.SixCRM.routes);
 
 			delete process.env.AWS_ACCOUNT;
 			delete process.env.aws_account;
@@ -144,8 +139,7 @@ describe('controllers/core/ConfigurationUtilities.js', () => {
 
 			let aws_account = process.env.AWS_ACCOUNT;
 
-			const ConfigurationUtilities = global.SixCRM.routes.include('controllers','core/ConfigurationUtilities.js');
-			let configurationUtilities = new ConfigurationUtilities();
+			let configurationUtilities = new ConfigurationUtilities(global.SixCRM.routes);
 
 			process.env.AWS_ACCOUNT = aws_account ? aws_account : 'an_aws_account';
 

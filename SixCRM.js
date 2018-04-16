@@ -1,15 +1,29 @@
-
-
 const _ = require('lodash');
-const SixCRMBase = require('./SixCRMBase');
+const Routes = require('./routes.js');
+const Configuration = require('./core/Configuration');
+const LocalCache = require('./core/LocalCache');
 
-class SixCRM extends SixCRMBase {
+class SixCRM {
 
-	clearState() {
+	constructor() {
 
-		super.clearState();
+		this.routes = new Routes();
+		this._resources = {};
 
-		this.setConfigurationFile();
+		this.configuration = new Configuration(this.routes);
+		this.localcache = new LocalCache();
+
+	}
+
+	setResource(identifer, resource) {
+
+		this._resources[identifer] = resource;
+
+	}
+
+	getResource(identifier) {
+
+		return this._resources[identifier];
 
 	}
 
@@ -17,6 +31,4 @@ class SixCRM extends SixCRMBase {
 
 if (!_.has(global, 'SixCRM')) {
 	global.SixCRM = new SixCRM();
-	global.SixCRM.instantiate();
-	global.SixCRM.setConfigurationFile();
 }

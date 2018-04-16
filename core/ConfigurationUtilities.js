@@ -1,11 +1,13 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const du = require('../lib/debug-utilities');
+const eu = require('../lib/error-utilities');
+const objectutilities = require('../lib/object-utilities');
 
 module.exports = class ConfigurationUtilities {
 
-	constructor(){}
+	constructor(routes){
+		this.routes = routes;
+	}
 
 	setEnvironmentVariable(key, value){
 
@@ -25,7 +27,7 @@ module.exports = class ConfigurationUtilities {
 
 				stage = process.env.stage;
 
-				let stages = global.SixCRM.routes.include('config', 'stages.yml');
+				let stages = this.routes.include('config', 'stages.yml');
 
 				let stage_names = objectutilities.getKeys(stages);
 
@@ -67,7 +69,7 @@ module.exports = class ConfigurationUtilities {
 
 		if(!_.isNull(branch_name)){
 
-			let stages = global.SixCRM.routes.include('config','stages.yml');
+			let stages = this.routes.include('config','stages.yml');
 
 			let identified_stage = null;
 
@@ -101,7 +103,7 @@ module.exports = class ConfigurationUtilities {
 
 		if(!_.isNull(account_identifier)){
 
-			let stages = global.SixCRM.routes.include('config','stages.yml');
+			let stages = this.routes.include('config','stages.yml');
 
 			let identified_stage = null;
 
@@ -175,7 +177,7 @@ module.exports = class ConfigurationUtilities {
 
 		du.debug('Is Local');
 
-		let stages = global.SixCRM.routes.include('config', 'stages.yml');
+		let stages = this.routes.include('config', 'stages.yml');
 
 		if(!_.has(stages, global.SixCRM.configuration.stage)){
 			throw eu.getError('server', 'Unrecognized stage: '+global.SixCRM.configuration.stage);

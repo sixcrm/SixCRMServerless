@@ -3,7 +3,7 @@ lib: /lib/
 controllers: /controllers/
 entities: /controllers/entities/
 helpers: /controllers/helpers/
-core: /controllers/core/
+core: /core/
 handlers: /handlers/
 test: /test/
 model: /model/

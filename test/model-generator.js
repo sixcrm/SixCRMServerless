@@ -79,4 +79,4 @@ class ModelGenerator {
 
 }
 
-module.exports = new ModelGenerator;
+module.exports = new ModelGenerator();

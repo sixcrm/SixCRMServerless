@@ -1125,7 +1125,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 			// Technical Debt: The following statement will not be necessary after singleton refactoring is finished.
 			if (!_.isFunction(this[controller_name][function_name])) {
-				this[controller_name] = new this[controller_name];
+				this[controller_name] = new this[controller_name]();
 			}
 
 			return this.executeAssociatedEntityFunction(controller_name, function_name, function_arguments, true);
