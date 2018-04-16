@@ -36,7 +36,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	sanitize(sanitize) {
 		if (!_.isBoolean(sanitize)) {
-			eu.throwError('server', 'sanitize argument is not a boolean.');
+			throw eu.getError('server', 'sanitize argument is not a boolean.');
 		}
 
 		this.sanitization = sanitize;
@@ -80,7 +80,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 		}
 
-		eu.throwError('server', error);
+		throw eu.getError('server', error);
 
 	}
 
@@ -231,7 +231,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 		if(!_.has(entity, 'created_at')){
 
-			eu.throwError('validation','Entity lacks a "created_at" property');
+			throw eu.getError('validation','Entity lacks a "created_at" property');
 
 		}
 
@@ -254,11 +254,11 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 		du.debug('Persist Created Updated');
 
 		if(!_.has(exists, 'created_at')){
-			eu.throwError('validation','Entity lacks "created_at" property.');
+			throw eu.getError('validation','Entity lacks "created_at" property.');
 		}
 
 		if(!_.has(exists, 'updated_at')){
-			eu.throwError('validation','Entity lacks "updated_at" property.');
+			throw eu.getError('validation','Entity lacks "updated_at" property.');
 		}
 
 		entity['created_at'] = exists.created_at;
@@ -306,7 +306,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 				return null;
 			}
 
-			eu.throwError('server', 'Non-specific '+this.descriptive_name+' entity results.');
+			throw eu.getError('server', 'Non-specific '+this.descriptive_name+' entity results.');
 
 		}
 
@@ -547,11 +547,11 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 		}
 
 		if(limit < 1){
-			eu.throwError('forbidded', 'The graph API limit minimum is 1.');
+			throw eu.getError('forbidded', 'The graph API limit minimum is 1.');
 		}
 
 		if(limit > 100){
-			eu.throwError('forbidded', 'The graph API record limit is 100.');
+			throw eu.getError('forbidded', 'The graph API record limit is 100.');
 		}
 
 		query_parameters['limit'] = limit;
@@ -588,7 +588,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 			}else{
 
-				eu.throwError('bad_request','Unrecognized Exclusive Start Key format.');
+				throw eu.getError('bad_request','Unrecognized Exclusive Start Key format.');
 
 			}
 
@@ -645,7 +645,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 					}else{
 
-						eu.throwError('validation','Unrecognized format for Exclusive Start Key.')
+						throw eu.getError('validation','Unrecognized format for Exclusive Start Key.')
 
 					}
 
@@ -653,7 +653,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 			}else{
 
-				eu.throwError('validation','Unrecognized format for Cursor.')
+				throw eu.getError('validation','Unrecognized format for Cursor.')
 
 			}
 
@@ -758,7 +758,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 			}else{
 
-				eu.throwError('bad_request','Unrecognized query parameter filter expression type.');
+				throw eu.getError('bad_request','Unrecognized query parameter filter expression type.');
 
 			}
 
@@ -938,7 +938,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 		}
 
 		//du.warning('here');
-		eu.throwError('bad_request','Could not determine identifier.');
+		throw eu.getError('bad_request','Could not determine identifier.');
 
 	}
 
@@ -1039,7 +1039,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 			}else if (!_.isUndefined(context) && !_.isNull(context) && _.has(context, 'event_type') && _.isString(context.event_type)){
 				event_type = context.event_type;
 			}else{
-				eu.throwError('server', 'Unable to identify event_type.');
+				throw eu.getError('server', 'Unable to identify event_type.');
 			}
 		}
 
@@ -1047,7 +1047,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 			if(objectutilities.hasRecursive(this, 'parameters.store')){
 				context = this.parameters.store;
 			}else{
-				eu.throwError('server', 'Unset context.');
+				throw eu.getError('server', 'Unset context.');
 			}
 		}
 
@@ -1115,7 +1115,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 			if(retry){
 
-				eu.throwError('server', 'Unable to execute controller function: '+controller_name+'.'+function_name+'('+JSON.stringify(function_arguments)+')');
+				throw eu.getError('server', 'Unable to execute controller function: '+controller_name+'.'+function_name+'('+JSON.stringify(function_arguments)+')');
 
 			}
 

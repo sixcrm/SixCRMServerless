@@ -103,19 +103,19 @@ module.exports = class DownloadController {
 
 		if(!_.isObject(parameters)){
 
-			eu.throwError('bad_request','Invalid download parameter type.');
+			throw eu.getError('bad_request','Invalid download parameter type.');
 
 		}
 
 		if(!_.has(parameters, 'type')){
 
-			eu.throwError('bad_request','Download parameters missing type field.');
+			throw eu.getError('bad_request','Download parameters missing type field.');
 
 		}
 
 		if(!_.includes(this.available_types, parameters.type)){
 
-			eu.throwError('bad_request','Download type is not supported.');
+			throw eu.getError('bad_request','Download type is not supported.');
 
 		}
 

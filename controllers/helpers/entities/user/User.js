@@ -88,8 +88,9 @@ module.exports = class UserHelperController{
 			.then(() => {
 
 				if(!stringutilities.isEmail(email)){
-					eu.throwError('server', 'Email is not a email: "'+email+'".');
+					throw eu.getError('server', 'Email is not a email: "'+email+'".');
 				}
+				return;
 
 			}).then(() => {
 
@@ -103,8 +104,9 @@ module.exports = class UserHelperController{
 				return this.userController.exists({entity: {id: email}}).then((exists) => {
 
 					if(exists == true){
-						eu.throwError('bad_request', 'A user account associated with the email "'+email+'" already exists.');
+						throw eu.getError('bad_request', 'A user account associated with the email "'+email+'" already exists.');
 					}
+					return;
 
 				});
 
@@ -267,11 +269,11 @@ module.exports = class UserHelperController{
 		if(_.isUndefined(user) || _.isNull(user)){
 
 			if(fatal){
-				eu.throwError('bad_request', 'Introspection method requires a user argument in fatal mode.');
+				throw eu.getError('bad_request', 'Introspection method requires a user argument in fatal mode.');
 			}
 
 			if(!_.has(global, 'user')){
-				eu.throwError('bad_request', 'Introspection method requires a global user or a user argument.');
+				throw eu.getError('bad_request', 'Introspection method requires a global user or a user argument.');
 			}
 
 			user = global.user;
@@ -331,11 +333,11 @@ module.exports = class UserHelperController{
 		]).then(([user_tncs, owner_tncs]) => {
 
 			if(_.isNull(user_tncs) || !_.has(user_tncs, 'version')){
-				eu.throwError('server', 'Unable to acquire Terms & Conditions');
+				throw eu.getError('server', 'Unable to acquire Terms & Conditions');
 			}
 
 			if(_.isNull(owner_tncs) || !_.has(owner_tncs, 'version')){
-				eu.throwError('server', 'Unable to acquire Owner Terms & Conditions');
+				throw eu.getError('server', 'Unable to acquire Owner Terms & Conditions');
 			}
 
 			return {

@@ -51,7 +51,7 @@ module.exports = class TrackingEventsController extends SNSEventController {
 
 		return this.sessionController.get({id: context_objects.session}).then(result => {
 			if(_.isNull(result)){
-				eu.throwError('server','Unable to identify session from datastore: '+context_objects.session);
+				throw eu.getError('server','Unable to identify session from datastore: '+context_objects.session);
 			}
 			this.parameters.set('session', result);
 			return true;

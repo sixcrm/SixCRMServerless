@@ -21,7 +21,7 @@ module.exports = class ImageProvider {
 			image_metadata = imagetype(image_data);
 		}catch(error){
 			du.error(error);
-			eu.throwError('server', 'Unable to identify image metadata.');
+			throw eu.getError('server', 'Unable to identify image metadata.');
 		}
 
 		return image_metadata;

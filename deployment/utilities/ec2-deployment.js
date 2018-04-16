@@ -117,12 +117,12 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 					if(result.Vpcs.length == 1){
 						return result.Vpcs[0];
 					}
-					eu.throwError('server','Multiple results returned: ', result);
+					throw eu.getError('server','Multiple results returned: ', result);
 				}
 				return null;
 			}
 
-			eu.throwError('server', 'Unexpected result', result);
+			throw eu.getError('server', 'Unexpected result', result);
 
 		});
 
@@ -192,11 +192,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 					if(result.InternetGateways.length == 1){
 						return result.InternetGateways[0];
 					}
-					eu.throwError('server', 'More than one result returned: ', result);
+					throw eu.getError('server', 'More than one result returned: ', result);
 				}
 				return null;
 			}
-			eu.throwError('server', 'Unexpected results: ', result);
+			throw eu.getError('server', 'Unexpected results: ', result);
 		});
 
 	}
@@ -279,6 +279,8 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 			}
 
+			return;
+
 		}).then(() => {
 
 			du.highlight('Route table deployed: '+route_table_definition.Name);
@@ -331,7 +333,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 		return this.ec2provider.createRouteTable(argumentation).then(result => {
 
 			if(!objectutilities.hasRecursive(result, 'RouteTable.RouteTableId')){
-				eu.throwError('server', 'Unexpected result: ', result);
+				throw eu.getError('server', 'Unexpected result: ', result);
 			}
 
 			return this.nameEC2Resource(result.RouteTable.RouteTableId, route_table_definition.Name).then(() => {
@@ -363,7 +365,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 						return result.RouteTables[0];
 					}
 
-					eu.throwError('server', 'More than one result returned: ', result);
+					throw eu.getError('server', 'More than one result returned: ', result);
 
 				}
 
@@ -371,7 +373,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 			}
 
-			eu.throwError('server', 'Unexpected result: ', result);
+			throw eu.getError('server', 'Unexpected result: ', result);
 
 		});
 
@@ -422,11 +424,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 		return Promise.all(associated_properties_promises).then(([eip, subnet]) => {
 
 			if(_.isNull(eip)){
-				eu.throwError('server', 'EIP does not exist: '+nat_definition.AllocationName);
+				throw eu.getError('server', 'EIP does not exist: '+nat_definition.AllocationName);
 			}
 
 			if(_.isNull(subnet)){
-				eu.throwError('server', 'Subnet does not exist: '+nat_definition.SubnetName);
+				throw eu.getError('server', 'Subnet does not exist: '+nat_definition.SubnetName);
 			}
 
 			let argumentation = {
@@ -437,7 +439,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 			return this.ec2provider.createNatGateway(argumentation).then(result => {
 
 				if(!objectutilities.hasRecursive(result, 'NatGateway.NatGatewayId')){
-					eu.throwError('server', 'Unexpected result: ', result);
+					throw eu.getError('server', 'Unexpected result: ', result);
 				}
 
 				return this.nameEC2Resource(result.NatGateway.NatGatewayId, nat_definition.Name);
@@ -472,7 +474,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 						return result.NatGateways[0];
 					}
 
-					eu.throwError('server', 'More than one NAT Gateway returned: ', result);
+					throw eu.getError('server', 'More than one NAT Gateway returned: ', result);
 
 				}
 
@@ -480,7 +482,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 			}
 
-			eu.throwError('server', 'Unexpected results: ', result);
+			throw eu.getError('server', 'Unexpected results: ', result);
 
 		});
 
@@ -511,7 +513,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 			if(_.isNull(result)){
 				du.highlight('EIP does not exist: '+eip_definition.Name);
 				return this.createEIP(eip_definition).then(() => {
-					du.highlight('EIP Allocated.');
+					return du.highlight('EIP Allocated.');
 				});
 			}
 
@@ -532,7 +534,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 				return this.nameEC2Resource(result.AllocationId, eip_definition.Name);
 			}
 
-			eu.throwError('server', 'Unexpected Response: ', result);
+			throw eu.getError('server', 'Unexpected Response: ', result);
 
 		});
 
@@ -565,7 +567,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 						return result.Addresses[0];
 					}
 
-					eu.throwError('server', 'More than one address was returned: ', result.Addresses);
+					throw eu.getError('server', 'More than one address was returned: ', result.Addresses);
 
 				}
 
@@ -573,7 +575,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 			}
 
-			eu.throwError('server', 'Unexpected results:', result);
+			throw eu.getError('server', 'Unexpected results:', result);
 
 		});
 
@@ -641,15 +643,15 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 						return this.vpc;
 					}
 
-					eu.throwError('server', 'More than one VPC returned: '+result.Vpcs);
+					throw eu.getError('server', 'More than one VPC returned: '+result.Vpcs);
 
 				}
 
-				eu.throwError('server', 'Unable to identify VPC');
+				throw eu.getError('server', 'Unable to identify VPC');
 
 			}
 
-			eu.throwError('server', 'Unable to describe VPCs: ', result);
+			throw eu.getError('server', 'Unable to describe VPCs: ', result);
 
 		});
 
@@ -695,7 +697,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 						return result.Subnets[0];
 					}
 
-					eu.throwError('Multiple subnets returned:', result);
+					throw eu.getError('Multiple subnets returned:', result);
 
 				}
 
@@ -703,7 +705,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 			}
 
-			eu.throwError('server', 'Unexpected response: ', result);
+			throw eu.getError('server', 'Unexpected response: ', result);
 
 		});
 
@@ -727,7 +729,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 				return this.nameEC2Resource(result.Subnet.SubnetId, subnet_definition.Name);
 			}
 
-			eu.throwError('server', 'Unexpected Response: ', result);
+			throw eu.getError('server', 'Unexpected Response: ', result);
 
 		});
 
@@ -836,12 +838,12 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 					if(result.SecurityGroups.length == 1){
 						return result.SecurityGroups[0];
 					}
-					eu.throwError('server', 'More than one result: ', result);
+					throw eu.getError('server', 'More than one result: ', result);
 				}
 				return null;
 			}
 
-			eu.throwError('server', 'Unexpected result: ', result);
+			throw eu.getError('server', 'Unexpected result: ', result);
 
 		});
 

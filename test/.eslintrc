@@ -6,8 +6,8 @@
 	},
 	"rules": {
 		"no-console": "error",
-		"no-trailing-spaces": "warn",
+		"no-trailing-spaces": "error",
 		"indent": ["error", "tab"],
-		"no-mixed-spaces-and-tabs": "error"
+		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"]
 	}
 }

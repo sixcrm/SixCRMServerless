@@ -80,7 +80,7 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then(items => this.assureSingular(items))
 			.then(acl => {
 				if(_.isNull(acl) || !EntityPermissionsHelper.isShared('read', acl)){
-					eu.throwError('forbidden');
+					throw eu.getError('forbidden');
 				}
 				//Nick: Isn't this already defined?
 				let query_parameters = {
@@ -113,10 +113,8 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then(data => {
 				const acls = this.getItems(data);
 
-				//Nick:  Please use the arrayutilities.filter and arrayutilities.map methods
-				const shared = _(acls)
-					.filter(acl => EntityPermissionsHelper.isShared('read', acl))
-					.map(acl => acl.entity);
+				let shared = arrayutilities.filter(acls, acl => EntityPermissionsHelper.isShared('read', acl))
+				shared = arrayutilities.map(shared, acl => acl.entity);
 
 				//Hasn't this already been defined?
 				let query_parameters = this.createINQueryParameters({field: this.primary_key, list_array: shared});
@@ -506,8 +504,7 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then((exists) => {
 
 				if(exists !== false){
-					eu.throwError('bad_request','A '+this.descriptive_name+' already exists with '+this.primary_key+': "'+entity[this.primary_key]+'"');
-					return false;
+					throw eu.getError('bad_request','A '+this.descriptive_name+' already exists with '+this.primary_key+': "'+entity[this.primary_key]+'"');
 				}
 
 				return true;
@@ -541,7 +538,7 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then((existing_entity) => {
 
 				if(existing_entity === null){
-					eu.throwError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist.');
+					throw eu.getError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+id+'" -  record doesn\'t exist.');
 				}
 
 				return existing_entity;
@@ -552,7 +549,7 @@ module.exports = class entityController extends entityUtilitiesController {
 					if(!_.includes(['account', 'user', 'created_at', this.primary_key], key)){
 						existing_entity[key] = properties[key];
 					}else{
-						eu.throwError('bad_request', 'You can not use updateProperties to update a entity\'s '+key+' property');
+						throw eu.getError('bad_request', 'You can not use updateProperties to update a entity\'s '+key+' property');
 					}
 				});
 
@@ -598,7 +595,7 @@ module.exports = class entityController extends entityUtilitiesController {
 		du.debug('Update');
 
 		if(!_.has(entity, this.primary_key)){
-			eu.throwError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
+			throw eu.getError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
 		}
 
 		return this.can({action: 'update', object: this.descriptive_name, id: entity[this.primary_key], fatal: true})
@@ -606,7 +603,7 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then((existing_entity) => {
 
 				if(existing_entity === null){
-					eu.throwError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist.');
+					throw eu.getError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist.');
 				}
 
 				return existing_entity;
@@ -617,7 +614,7 @@ module.exports = class entityController extends entityUtilitiesController {
 				if(_.isUndefined(ignore_updated_at) || ignore_updated_at !== true){
 
 					if(entity.updated_at !== existing_entity.updated_at){
-						eu.throwError('bad_request', 'Mismatched updated_at timestamps - can not update.');
+						throw eu.getError('bad_request', 'Mismatched updated_at timestamps - can not update.');
 					}
 
 				}
@@ -729,8 +726,7 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then(() => this.exists({entity: delete_parameters}))
 			.then((exists) => {
 				if(!exists){
-					eu.throwError('not_found','Unable to delete '+this.descriptive_name+' with '+this.primary_key+': "'+id+'" -  record doesn\'t exist or multiples returned.');
-					return false;
+					throw eu.getError('not_found','Unable to delete '+this.descriptive_name+' with '+this.primary_key+': "'+id+'" -  record doesn\'t exist or multiples returned.');
 				}
 				return true;
 			})
@@ -754,7 +750,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 		if(_.isObject(entity)){
 			if(!_.has(entity, this.primary_key)){
-				eu.throwError('server', 'Unable to create '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
+				throw eu.getError('server', 'Unable to create '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
 			}
 			primary_key = entity[this.primary_key];
 		}else{
@@ -821,7 +817,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 					let entity_name = this.getDescriptiveName();
 
-					eu.throwError(
+					throw eu.getError(
 						'forbidden',
 						'The '+entity_name+' entity that you are attempting to delete is currently associated with other entities.  Please delete the entity associations before deleting this '+entity_name+'.',
 						{associated_entites: JSON.stringify(associated_entities)}
@@ -848,7 +844,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 		//Technical Debt:  Not every entity has "ID"
 		if(!_.has(object, 'id')){
-			eu.throwError('server', 'Create Associated Entities expects the object parameter to have field "id"');
+			throw eu.getError('server', 'Create Associated Entities expects the object parameter to have field "id"');
 		}
 
 		return {

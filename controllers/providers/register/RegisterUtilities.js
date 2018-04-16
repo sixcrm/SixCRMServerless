@@ -78,7 +78,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		let day_in_cycle = this.rebillHelperController.calculateDayInCycle(parentsession.created_at);
 
 		if(!_.isNumber(day_in_cycle) || day_in_cycle < 0){
-			eu.throwError('server', 'Invalid day in cycle returned for session.');
+			throw eu.getError('server', 'Invalid day in cycle returned for session.');
 		}
 
 		return Promise.resolve(true);
@@ -93,7 +93,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 		if(_.has(rebill, 'second_attempt')){
 
-			eu.throwError('server','The rebill has already been attempted three times.');
+			throw eu.getError('server','The rebill has already been attempted three times.');
 
 		}
 
@@ -103,7 +103,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 			if(time_difference < (60 * 60 * 24)){
 
-				eu.throwError('server','Rebill\'s first attempt is too recent.');
+				throw eu.getError('server','Rebill\'s first attempt is too recent.');
 
 			}
 
@@ -120,7 +120,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		let rebill = this.parameters.get('rebill');
 
 		if(!this.rebillHelperController.isAvailable({rebill: rebill})){
-			eu.throwError('server', 'Rebill is not eligible for processing at this time.');
+			throw eu.getError('server', 'Rebill is not eligible for processing at this time.');
 		}
 
 		return Promise.resolve(true);
@@ -205,7 +205,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 			return this.creditCardController.get({id: selected_creditcard.id, hydrate_token: true}).then(result => {
 
 				if(_.isNull(result) || !_.has(result, 'number')){
-					eu.throwError('server', 'Unable to hydrate the selected creditcard');
+					throw eu.getError('server', 'Unable to hydrate the selected creditcard');
 				}
 
 				this.parameters.set('selectedcreditcard', result);
@@ -216,7 +216,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 		}
 
-		eu.throwError('server', 'Selected CreditCard must have either a number or a token.');
+		throw eu.getError('server', 'Selected CreditCard must have either a number or a token.');
 
 	}
 
@@ -253,7 +253,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 			);
 
 			if(_.isNull(selected_creditcard)){
-				eu.throwError('server', 'Unable to set credit card for customer');
+				throw eu.getError('server', 'Unable to set credit card for customer');
 			}
 
 		}

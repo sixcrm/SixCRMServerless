@@ -30,7 +30,7 @@ module.exports = class BaseNotification extends NotificationUtilities {
 					refined_context[context_required_element] = acquired_element;
 				}else{
 					du.error(context);
-					eu.throwError('server','Unable to identify "'+context_required_element+'" from context.');
+					throw eu.getError('server','Unable to identify "'+context_required_element+'" from context.');
 				}
 			});
 		}

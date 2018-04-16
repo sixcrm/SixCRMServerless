@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
 const BBPromise = require('bluebird');
-// const au = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
@@ -15,8 +14,6 @@ module.exports = class AuroraSchemaDeployment {
 		return auroraContext.withConnection(async (connection) => {
 
 			const migrations = await this._getVersionDirectories(connection, options);
-			// this just does not work for some reason, the promises execute out of order when the call is nested
-			// await au.serialPromises(au.map(migrations, m => this._deployMigration(m, connection)))
 			await BBPromise.each(migrations, m => this._deployMigration(m, connection));
 			return 'Aurora deploy complete';
 
@@ -86,14 +83,6 @@ module.exports = class AuroraSchemaDeployment {
 
 		const body = await fileutilities.getFileContents(path.join(migration.path, 'manifest.json'));
 		const manifests = JSON.parse(body);
-
-		// this just does not work for some reason, the promises execute out of order when the call is nested
-		// await au.serialPromises(au.map(manifests, async (m) => {
-
-		// 	const query = await fileutilities.getFileContents(path.join(migration.path, m.script));
-		// 	await this._executeQuery(connection, query);
-
-		// }));
 
 		await BBPromise.each(manifests, async (m) => {
 

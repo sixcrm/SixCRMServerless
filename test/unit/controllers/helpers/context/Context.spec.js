@@ -201,6 +201,31 @@ describe('helpers/context/Context.js', () => {
 
 		});
 
+		it('successfully identifies the account from context without false positives', () => {
+
+			let context = {
+				event: {
+					context: {
+						account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
+						user: {
+							acl: {
+								account: {
+									id: '*'
+								}
+							}
+						}
+					}
+				}
+			};
+
+			const ContextHelperController = global.SixCRM.routes.include('helpers','context/Context.js');
+			let contextHelperController = new ContextHelperController();
+
+			let discovered_account = contextHelperController.getFromContext(context, 'account', 'id');
+			expect(discovered_account).to.equal('d3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+		});
+
 		it('successfully identifies the campaign.name from context', () => {
 
 			let context = getExampleContext();

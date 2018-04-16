@@ -56,7 +56,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
 		}
 
-		eu.throwError('bad_request', 'Account missing in path parameter.');
+		throw eu.getError('bad_request', 'Account missing in path parameter.');
 
 	}
 
@@ -73,7 +73,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
 		if(!_.isString(user_string)){
 
-			eu.throwError('server','Event request context authorizer user is an unrecognized format.');
+			throw eu.getError('server','Event request context authorizer user is an unrecognized format.');
 
 		}
 
@@ -95,7 +95,7 @@ module.exports = class AuthenticatedController extends endpointController {
 				}
 
 				if(!this.isUserIntrospection(event) && !this.isAcceptInvite(event)) {
-					eu.throwError('forbidden', 'Unknown user.  Please contact the system administrator.');
+					throw eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.');
 				}
 
 				du.warning('Unable to acquire user, setting global user to email.');
@@ -169,7 +169,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
 			if(_.includes(validated_permissions, false)){
 
-				eu.throwError('fobidden', 'Unable to execute action.  User lacks permission.');
+				throw eu.getError('fobidden', 'Unable to execute action.  User lacks permission.');
 
 			}
 

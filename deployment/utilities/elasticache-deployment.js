@@ -86,7 +86,7 @@ module.exports = class ElasticacheDeployment {
 		return this.ec2provider.securityGroupExists(security_group_identifier).then((result) => {
 
 			if(_.isNull(result) || result == false || !_.has(result, 'GroupId')){
-				eu.throwError('server', 'Missing ephemeral property: Elasticache SecurityGroup ID.  Please check EC2 configuration.');
+				throw eu.getError('server', 'Missing ephemeral property: Elasticache SecurityGroup ID.  Please check EC2 configuration.');
 			}
 
 			parameters['SecurityGroupIds'] = [result.GroupId];
@@ -201,7 +201,7 @@ module.exports = class ElasticacheDeployment {
 		du.debug('Filter Parameters');
 
 		if(!_.includes(objectutilities.getKeys(this.parameterFilters), action)){
-			eu.throwError('server', 'Unknown action');
+			throw eu.getError('server', 'Unknown action');
 		}
 
 		let action_settings = this.parameterFilters[action];

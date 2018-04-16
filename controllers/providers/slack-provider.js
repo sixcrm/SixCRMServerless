@@ -64,7 +64,7 @@ module.exports = class SlackProvider {
 			return message;
 		}
 
-		eu.throwError('server', 'Unknown message format: '+message);
+		throw eu.getError('server', 'Unknown message format: '+message);
 	}
 
 	sendMessageToWebhook(message, webhook) {

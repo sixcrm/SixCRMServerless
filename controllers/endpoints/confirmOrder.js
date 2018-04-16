@@ -120,7 +120,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		let session = this.parameters.get('session');
 
 		if(this.sessionHelperController.isComplete({session: session})){
-			eu.throwError('bad_request', 'The specified session is already complete.');
+			throw eu.getError('bad_request', 'The specified session is already complete.');
 		}
 
 		return Promise.resolve(true);

@@ -100,7 +100,7 @@ module.exports = class NotificationProvider {
 		}
 
 		if (user_required && !_.has(notification_prototype, 'user')) {
-			eu.throwError('server', 'User is mandatory in notification prototypes when using the createNotificationsForAccountAndUser method.');
+			throw eu.getError('server', 'User is mandatory in notification prototypes when using the createNotificationsForAccountAndUser method.');
 		}
 
 		return true;
@@ -130,7 +130,7 @@ module.exports = class NotificationProvider {
 		let notification_prototype = this.parameters.get('notificationprototype');
 
 		if(!_.has(notification_prototype, 'user')){
-			eu.throwError('server', 'Unable to identify receipt user in notification prototype');
+			throw eu.getError('server', 'Unable to identify receipt user in notification prototype');
 		}
 
 		this.parameters.push('receiptusers', notification_prototype.user);
@@ -149,7 +149,7 @@ module.exports = class NotificationProvider {
 			.then((results) => {
 
 				if(!arrayutilities.nonEmpty(results)){
-					eu.throwError('server', 'Empty useracls element in account user_acl response');
+					throw eu.getError('server', 'Empty useracls element in account user_acl response');
 				}
 
 				arrayutilities.map(results, (user_acl_element) => {
@@ -250,7 +250,7 @@ module.exports = class NotificationProvider {
 				try{
 					parsed_notification_settings = JSON.parse(notification_settings.settings)
 				}catch(error){
-					eu.throwError(error);
+					throw eu.getError(error);
 				}
 
 			}else if(_.isObject(notification_settings.settings)){
@@ -259,7 +259,7 @@ module.exports = class NotificationProvider {
 
 			}else{
 
-				eu.throwError('server', 'Unrecognized notification_settions.settings property.');
+				throw eu.getError('server', 'Unrecognized notification_settions.settings property.');
 
 			}
 
@@ -494,7 +494,7 @@ module.exports = class NotificationProvider {
 
 		if(_.isNull(translation_object) && language_preference == 'English' && fatal){
 
-			eu.throwError('server', 'Missing '+language_preference+' Notification Translation: '+path);
+			throw eu.getError('server', 'Missing '+language_preference+' Notification Translation: '+path);
 
 		}else if(_.isNull(translation_object)){
 
@@ -535,7 +535,7 @@ module.exports = class NotificationProvider {
 
 		}
 
-		eu.throwError('server', 'Missing Notification Translation Prototype: '+language_preference+':'+notification_path);
+		throw eu.getError('server', 'Missing Notification Translation Prototype: '+language_preference+':'+notification_path);
 
 	}
 

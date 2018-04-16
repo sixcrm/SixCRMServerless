@@ -47,7 +47,7 @@ module.exports = class ContextHelperController {
 		if(fatal){
 			arrayutilities.map(search_objects, search_object => {
 				if(!_.has(return_object, search_object)){
-					eu.throwError('server','Unable to discover '+search_object+' in context.');
+					throw eu.getError('server','Unable to discover '+search_object+' in context.');
 				}
 			});
 		}
@@ -87,7 +87,7 @@ module.exports = class ContextHelperController {
 		}
 
 		if(!_.has(destination_object, 'account')){
-			eu.throwError('server', 'Unable to identify account.');
+			throw eu.getError('server', 'Unable to identify account.');
 		}
 
 		return destination_object;
@@ -111,7 +111,7 @@ module.exports = class ContextHelperController {
 		}
 
 		if(!_.has(destination_object, 'campaign') || !stringutilities.isUUID(destination_object.campaign)){
-			eu.throwError('server', 'Unable to determine campaign field.');
+			throw eu.getError('server', 'Unable to determine campaign field.');
 		}
 
 		return destination_object;
@@ -242,7 +242,7 @@ module.exports = class ContextHelperController {
 				let identified_value = null
 
 				if(_.isObject(value)){
-					identified_value = objectutilities.getRecursive(value, field_path.slice(1));
+					identified_value = objectutilities.getRecursive(value, field_path.slice(field_path.length - 1));
 				}else{
 					identified_value = value;
 				}

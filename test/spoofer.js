@@ -25,7 +25,7 @@ module.exports = class Spoofer{
 		segment = (_.isUndefined(segment))?'full':segment;
 
 		if(!_.includes(['line1','line2','city','state','zip', 'country', 'full'], segment)){
-			eu.throwError('server', 'Unknown address segment: '+segment);
+			throw eu.getError('server', 'Unknown address segment: '+segment);
 		}
 
 		let methods = {
@@ -46,7 +46,7 @@ module.exports = class Spoofer{
 		segment = (_.isUndefined(segment))?'full':segment;
 
 		if(!_.includes(['first','middle','last','full'], segment)){
-			eu.throwError('server', 'Unknown name segment: '+segment)
+			throw eu.getError('server', 'Unknown name segment: '+segment)
 		}
 
 		let methods = {

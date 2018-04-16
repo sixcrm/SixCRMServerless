@@ -66,7 +66,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 				if (permission !== true) {
 
-					eu.throwError('forbidden', 'Invalid Permissions: user can not perform this action on class Analytics.');
+					throw eu.getError('forbidden', 'Invalid Permissions: user can not perform this action on class Analytics.');
 
 				}
 
@@ -78,7 +78,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 		}
 
-		eu.throwError('server', 'AnalyticsController.' + function_name + ' is not defined.');
+		throw eu.getError('server', 'AnalyticsController.' + function_name + ' is not defined.');
 
 	}
 

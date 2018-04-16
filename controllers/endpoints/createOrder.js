@@ -349,7 +349,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		if (this.sessionHelperController.isComplete({
 			session: session
 		})) {
-			eu.throwError('bad_request', 'The session is already complete.');
+			throw eu.getError('bad_request', 'The session is already complete.');
 		}
 
 		return true;
@@ -372,7 +372,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			session: session
 		})) {
 			if (!_.includes(['*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c'], global.account)) {
-				eu.throwError('bad_request', 'Session has expired.');
+				throw eu.getError('bad_request', 'Session has expired.');
 			}
 		}
 
@@ -402,7 +402,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}
 
 		if (_.isNull(product_schedules) && _.isNull(products)) {
-			eu.throwError('server', 'Nothing to add to the rebill.');
+			throw eu.getError('server', 'Nothing to add to the rebill.');
 		}
 
 		if (!_.has(this, 'rebillCreatorHelperController')) {

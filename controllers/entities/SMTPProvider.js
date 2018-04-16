@@ -55,7 +55,7 @@ module.exports = class SMTPProviderController extends entityController {
 		return this.get({id: smtpprovider}).then(smtpprovider => {
 
 			if(_.isNull(smtpprovider)){
-				eu.throwError('notfound', 'The SMTP Provider specified was not found.');
+				throw eu.getError('notfound', 'The SMTP Provider specified was not found.');
 			}
 
 			const SMTPProviderProvider = global.SixCRM.routes.include('providers', 'SMTP.js');

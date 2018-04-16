@@ -190,11 +190,11 @@ module.exports = class ShipmentUtilities {
 		rebill_ids = arrayutilities.unique(rebill_ids);
 
 		if(!arrayutilities.nonEmpty(rebill_ids)){
-			eu.throwError('server', 'Unable to establish rebill ID.');
+			throw eu.getError('server', 'Unable to establish rebill ID.');
 		}
 
 		if(rebill_ids.length > 1){
-			eu.throwError('server', 'Non-distinct rebill ID.');
+			throw eu.getError('server', 'Non-distinct rebill ID.');
 		}
 
 		this.parameters.set('rebillid', rebill_ids[0]);

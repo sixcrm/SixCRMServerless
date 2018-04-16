@@ -61,7 +61,7 @@ module.exports = class ShippingReceiptHelperController {
 		}
 
 		if(fatal == true){
-			eu.throwError('server', 'Shipping Receipt missing property "trackingnumber"');
+			throw eu.getError('server', 'Shipping Receipt missing property "trackingnumber"');
 		}
 
 		return null;

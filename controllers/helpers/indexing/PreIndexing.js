@@ -112,7 +112,7 @@ module.exports = class PreIndexingHelperController {
 				if(result == true){
 					return Promise.resolve(true);
 				}
-				eu.throwError(result);
+				throw eu.getError(result);
 			});
 
 	}

@@ -79,7 +79,7 @@ describe('controllers/providers/sts-provider', () => {
 				constructor(){}
 				AWSCallback(error, data){
 					if(error){
-						//eu.throwError('server', error);
+						//throw eu.getError('server', error);
 					}
 					return data;
 				}

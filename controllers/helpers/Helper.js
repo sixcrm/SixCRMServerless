@@ -17,7 +17,7 @@ module.exports = class HelperController {
 			}else if (!_.isUndefined(context) && !_.isNull(context) && _.has(context, 'event_type') && _.isString(context.event_type)){
 				event_type = context.event_type;
 			}else{
-				eu.throwError('server', 'Unable to identify event_type.');
+				throw eu.getError('server', 'Unable to identify event_type.');
 			}
 		}
 
@@ -25,7 +25,7 @@ module.exports = class HelperController {
 			if(objectutilities.hasRecursive(this, 'parameters.store')){
 				context = this.parameters.store;
 			}else{
-				eu.throwError('server', 'Unset context.');
+				throw eu.getError('server', 'Unset context.');
 			}
 		}
 

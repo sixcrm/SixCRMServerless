@@ -28,7 +28,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 			let purge_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
 
 				if (!_.has(queue_definition, 'QueueName')) {
-					eu.throwError('server', 'Queue definition lacks QueueName property');
+					throw eu.getError('server', 'Queue definition lacks QueueName property');
 				}
 
 				let queue_name = this.resolveQueueName(queue_definition);
@@ -59,7 +59,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 			let create_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
 
 				if (!_.has(queue_definition, 'QueueName')) {
-					eu.throwError('server', 'Queue definition lacks QueueName property');
+					throw eu.getError('server', 'Queue definition lacks QueueName property');
 				}
 
 				let deadletter_queue_definition = this.createDeadLetterQueueDefinition(queue_definition);
@@ -121,7 +121,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 			let delete_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
 
 				if (!_.has(queue_definition, 'QueueName')) {
-					eu.throwError('server', 'Queue definition lacks QueueName property');
+					throw eu.getError('server', 'Queue definition lacks QueueName property');
 				}
 
 				let queue_name = this.resolveQueueName(queue_definition);
@@ -186,7 +186,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 		let queue_definition_clone = objectutilities.clone(queue_definition);
 
 		if (!_.has(queue_definition, 'QueueName')) {
-			eu.throwError('server', 'Queue definition lacks QueueName property');
+			throw eu.getError('server', 'Queue definition lacks QueueName property');
 		}
 
 		queue_definition_clone.QueueName = this.resolveQueueName(queue_definition, true)

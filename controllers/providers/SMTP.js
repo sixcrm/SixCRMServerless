@@ -28,7 +28,7 @@ module.exports = class SMTPProvider {
 
 			if(!_.has(smtp_provider, required_option)){
 
-				eu.throwError('server','SMTP Object requires "'+required_option+'" option.');
+				throw eu.getError('server','SMTP Object requires "'+required_option+'" option.');
 
 			}else{
 

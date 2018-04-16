@@ -66,7 +66,7 @@ module.exports = class MerchantProviderGeneralFilter {
 		du.debug('Filter Invalid Merchant Providers');
 
 		if(!arrayutilities.nonEmpty(merchant_providers)){
-			eu.throwError('server', 'No merchant providers to select from.');
+			throw eu.getError('server', 'No merchant providers to select from.');
 		}
 
 		let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
@@ -84,7 +84,7 @@ module.exports = class MerchantProviderGeneralFilter {
 		du.debug('Filter Disabled Merchant Providers');
 
 		if(!arrayutilities.nonEmpty(merchant_providers)){
-			eu.throwError('server', 'No merchant providers to select from.');
+			throw eu.getError('server', 'No merchant providers to select from.');
 		}
 
 		let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
@@ -102,7 +102,7 @@ module.exports = class MerchantProviderGeneralFilter {
 		let creditcard = this.parameters.get('creditcard');
 
 		if(!arrayutilities.nonEmpty(merchant_providers)){
-			eu.throwError('server', 'No merchant providers to select from.');
+			throw eu.getError('server', 'No merchant providers to select from.');
 		}
 
 		let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
@@ -126,7 +126,7 @@ module.exports = class MerchantProviderGeneralFilter {
 		let amount = this.parameters.get('amount');
 
 		if(!arrayutilities.nonEmpty(merchant_providers)){
-			eu.throwError('server', 'No merchant providers to select from.');
+			throw eu.getError('server', 'No merchant providers to select from.');
 		}
 
 		merchant_providers = arrayutilities.filter(merchant_providers, (merchant_provider) => {
@@ -158,7 +158,7 @@ module.exports = class MerchantProviderGeneralFilter {
 		du.debug('Filter Count Shortage Merchant Providers');
 
 		if(!arrayutilities.nonEmpty(merchant_providers)){
-			eu.throwError('server', 'No merchant providers to select from.');
+			throw eu.getError('server', 'No merchant providers to select from.');
 		}
 
 		let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {

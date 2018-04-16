@@ -17,7 +17,7 @@ module.exports = class RedisProvider {
 
 		this.endpoint = objectutilities.getRecursive(global, 'SixCRM.configuration.site_config.elasticache.endpoint', true);
 		if (!this.endpoint) {
-			return eu.throwError('server', 'Redis endpoint is unset');
+			throw eu.getError('server', 'Redis endpoint is unset');
 		}
 
 		this.port = objectutilities.getRecursive(global, 'SixCRM.configuration.site_config.elasticache.port', true);
@@ -103,7 +103,7 @@ module.exports = class RedisProvider {
 				.catch((error) => {
 					du.error(error);
 
-					eu.throwError('server', error);
+					throw eu.getError('server', error);
 
 				});
 		}, this.quiting_timer_timeout_ms);
@@ -133,7 +133,7 @@ module.exports = class RedisProvider {
 					.catch((error) => {
 						du.error(error);
 
-						eu.throwError('server', error);
+						throw eu.getError('server', error);
 
 					});
 			})
@@ -193,7 +193,7 @@ module.exports = class RedisProvider {
 		du.debug('Prepare Value');
 
 		if (!_.isString(value) && !_.isObject(value)) {
-			eu.throwError('server', 'Value must be a string or an object');
+			throw eu.getError('server', 'Value must be a string or an object');
 		}
 
 		if (_.isObject(value)) {
@@ -209,7 +209,7 @@ module.exports = class RedisProvider {
 		if (_.isUndefined(expiration)) {
 			if (!_.has(this, 'default_expiration')) {
 
-				eu.throwError('validation', 'No default expiration set.');
+				throw eu.getError('validation', 'No default expiration set.');
 
 			}
 
@@ -219,7 +219,7 @@ module.exports = class RedisProvider {
 
 		if (!numberutilities.isInteger(expiration) || expiration < 0) {
 
-			eu.throwError('validation', 'Invalid expiration.');
+			throw eu.getError('validation', 'Invalid expiration.');
 
 		}
 

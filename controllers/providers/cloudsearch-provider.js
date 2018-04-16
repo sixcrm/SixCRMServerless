@@ -67,6 +67,8 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 			}
 
+			return;
+
 		});
 
 	}
@@ -117,7 +119,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 		}
 
 
-		eu.throwError('server', 'Unable to determine configured CloudSearch domain name.');
+		throw eu.getError('server', 'Unable to determine configured CloudSearch domain name.');
 
 	}
 
@@ -244,7 +246,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 			})
 				.on('error', function(response) {
 					du.error('Create Index Error', index_object);
-					eu.throwError('server', response);
+					throw eu.getError('server', response);
 				})
 				.send();
 
@@ -274,7 +276,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
             return Promise.resolve(true);
           }
 
-          eu.throwError('server', 'Max attempts reached.');
+          throw eu.getError('server', 'Max attempts reached.');
         }
 
         return this.describeDomains([domainname]).then((status) => {
@@ -358,7 +360,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 			})
 				.on('error', function(response) {
 					du.error('Create Domain Error');
-					eu.throwError('server', response);
+					throw eu.getError('server', response);
 				})
 				.send();
 
@@ -468,13 +470,13 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 				}else{
 
-					return eu.throwError('server', 'Attempting to set a null or non-compliant cloudshift.domainendpoint configuration globally.');
+					throw eu.getError('server', 'Attempting to set a null or non-compliant cloudshift.domainendpoint configuration globally.');
 
 				}
 
 			}else{
 
-				return eu.throwError('server', 'Attempting to set a null cloudshift.domainendpoint configuration globally.');
+				throw eu.getError('server', 'Attempting to set a null cloudshift.domainendpoint configuration globally.');
 
 			}
 

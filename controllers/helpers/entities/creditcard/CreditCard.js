@@ -24,7 +24,7 @@ module.exports = class CreditCardHelper {
 		du.debug('Get Expiration Month');
 
 		if(!_.has(creditcard, 'expiration')){
-			eu.throwError('server', 'CreditCardHelper.getExpirationMonth assumes creditcard object contains the expiration property.');
+			throw eu.getError('server', 'CreditCardHelper.getExpirationMonth assumes creditcard object contains the expiration property.');
 		}
 
 		let expiration_first_two;
@@ -54,7 +54,7 @@ module.exports = class CreditCardHelper {
 		du.debug('Get Expiration Year');
 
 		if(!_.has(creditcard, 'expiration')){
-			eu.throwError('server', 'CreditCardHelper.getExpirationYear assumes creditcard object contains the expiration property.');
+			throw eu.getError('server', 'CreditCardHelper.getExpirationYear assumes creditcard object contains the expiration property.');
 		}
 
 		let expiration_last_two = creditcard.expiration.substr(creditcard.expiration.length - 2);
@@ -135,7 +135,7 @@ module.exports = class CreditCardHelper {
 			let message = 'Cards do not match.  Bad field: '+bad_field;
 
 			if(fatal == true){
-				eu.throwError('server', message);
+				throw eu.getError('server', message);
 			}
 
 			return false;

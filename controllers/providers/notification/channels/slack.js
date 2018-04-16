@@ -19,7 +19,7 @@ module.exports = class SlackNotification extends ChannelNotification {
 		du.debug('Validate Notification Properties');
 
 		if(!stringutilities.isURL(notification_properties)){
-			eu.throwError('server', 'notification_properties must be a valid URL for Slack notifications');
+			throw eu.getError('server', 'notification_properties must be a valid URL for Slack notifications');
 		}
 
 		return true;

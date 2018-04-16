@@ -20,7 +20,7 @@ module.exports = class Timer {
 
 		if(!_.has(this, 'start')){
 
-			eu.throwError('server','You must set the timer with "set" before calling "get".');
+			throw eu.getError('server','You must set the timer with "set" before calling "get".');
 
 		}
 

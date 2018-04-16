@@ -67,7 +67,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 		return this.iamprovider.roleExists(role_definition).then(result => {
 
 			if(result == false){
-				eu.throwError('server', 'Role does not exist: '+role_definition.RoleName);
+				throw eu.getError('server', 'Role does not exist: '+role_definition.RoleName);
 			}
 
 			this.parameters.set('autoscalingrole', result);
@@ -91,7 +91,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 				let table_definition = global.SixCRM.routes.include('tabledefinitions', directory_file_path);
 
 				if(!objectutilities.hasRecursive(table_definition, 'Table.TableName')){
-					eu.throwError('server', 'Bad table configuration: '+global.SixCRM.routes.path('tabledefinitions', directory_file_path));
+					throw eu.getError('server', 'Bad table configuration: '+global.SixCRM.routes.path('tabledefinitions', directory_file_path));
 				}
 
 				return table_definition.Table.TableName;

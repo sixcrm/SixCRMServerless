@@ -275,7 +275,7 @@ module.exports = class RedshiftSchemaDeployment extends RedshiftDeployment {
 		du.debug('Execute Purge Queries');
 
 		if (!_.isArray(queries)) {
-			eu.throwError('server', 'Not an array: ' + queries);
+			throw eu.getError('server', 'Not an array: ' + queries);
 		}
 
 		if (queries.length < 1) {

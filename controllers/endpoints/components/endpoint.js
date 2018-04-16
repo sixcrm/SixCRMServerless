@@ -232,7 +232,7 @@ module.exports = class EndpointController {
 
 		du.warning(event);
 
-		eu.throwError('bad_request', 'Unexpected event structure.');
+		throw eu.getError('bad_request', 'Unexpected event structure.');
 
 	}
 
