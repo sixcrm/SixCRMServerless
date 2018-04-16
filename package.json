@@ -83,7 +83,7 @@
     "test-unit-analytics-broker": "node_modules/.bin/_mocha --bail --require test/unit/dependencies.js './test/unit/**/analytics/**/*.spec.js'",
     "test-functional-analytics": "npm run test-functional-analytics-queries && npm run test-functional-analytics-events",
     "test-functional-analytics-events": "AWS_PROFILE=six nyc node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/analytics/events/**/*.test.js'",
-    "test-functional-analytics-queries": "AWS_PROFILE=six nyc node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/analytics/queries/**/*.test.js'",
+    "test-functional-analytics-queries": "AWS_PROFILE=six nyc node test/functional/analytics/queries/aurora-queries.js",
     "test-integration-analytics": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/analytics/**/*.test.js",
     "test-workers": "nyc node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive './test/unit/workers/**/*.spec.js'",
     "test-endpoints": "nyc node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js './test/unit/endpoints/**/*.spec.js'",

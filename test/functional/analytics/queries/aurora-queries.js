@@ -1,3 +1,4 @@
+require('../../../config/global.js');
 const Mocha = require('mocha');
 const chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
@@ -5,7 +6,6 @@ const expect = chai.expect;
 const _ = require('lodash');
 const path = require('path');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 const analyticsController = new AnalyticsController();
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
@@ -24,39 +24,34 @@ const querySuite = Mocha.Suite.create(mocha.suite, 'aurora-queries.js');
 
 const suites = fileutilities.getDirectoryList(path.join(__dirname, 'tests'));
 
-arrayutilities.map(suites, (suite) => {
+suites.map((suite) => {
 
 	const subSuite = Mocha.Suite.create(querySuite, suite);
 
 	const testDirectories = getDirectories(path.join(__dirname, 'tests', suite));
 
-	const tests = arrayutilities.map(testDirectories, (testDirectory) => {
+	const tests = testDirectories.map((testDirectory) => {
 
 		return prepareTest(testDirectory);
 
 	});
 
-	arrayutilities.map(tests, (test) => {
+	tests.map((test) => {
 
-		subSuite.addTest(new Mocha.Test(test.test_case, () => {
+		subSuite.addTest(new Mocha.Test(test.test_case, async () => {
 
 			PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
 
-			return prepareDatabase(test).then(() => {
+			await prepareDatabase(test);
 
-				return analyticsController.executeAnalyticsFunction(test.input, test.method).then((result) => {
+			const result = await analyticsController.executeAnalyticsFunction(test.input, test.method);
 
-					const result_name = test.result_name;
-					const result_value = (result_name === "undefined") ? result : result[result_name];
+			const result_name = test.result_name;
+			const result_value = (result_name === "undefined") ? result : result[result_name];
 
-					expect(result_value).to.not.equal(
-						undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
+			expect(result_value).to.not.equal(undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
 
-					return expect(result_value).to.be.eql(test.expect);
-
-				});
-
-			});
+			return expect(result_value).to.be.eql(test.expect);
 
 		}));
 
@@ -64,13 +59,15 @@ arrayutilities.map(suites, (suite) => {
 
 });
 
-function prepareDatabase(test) {
-	return Promise.resolve()
-		.then(() => auroraSchemaDeployment.destroy())
-		.then(() => auroraSchemaDeployment.deploy({
-			fromRevision: 0
-		}))
-		.then(() => seedDatabase(test));
+async function prepareDatabase(test) {
+
+	await auroraSchemaDeployment.destroy();
+
+	await auroraSchemaDeployment.deploy({
+		fromRevision: 0
+	});
+
+	await seedDatabase(test);
 }
 
 function prepareTest(suite) {
@@ -82,7 +79,7 @@ function prepareTest(suite) {
 
 }
 
-function seedDatabase(test) {
+async function seedDatabase(test) {
 
 	du.debug(`Seeding Test database with ${test.method}`);
 
@@ -92,15 +89,15 @@ function seedDatabase(test) {
 
 	}
 
-	return auroraContext.withConnection((connection => {
+	await auroraContext.withConnection((async connection => {
 
 		const seeds = fileutilities.getDirectoryFilesSync(test.seeds);
 
-		return arrayutilities.serialPromises(arrayutilities.map(seeds, (seed) => {
+		for (const seed of seeds) {
 
-			return connection.query(fileutilities.getFileContentsSync(path.join(test.seeds, seed)));
+			await connection.query(fileutilities.getFileContentsSync(path.join(test.seeds, seed)));
 
-		}));
+		}
 
 	}));
 
