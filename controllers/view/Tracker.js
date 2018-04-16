@@ -34,7 +34,7 @@ module.exports = class TrackerViewController{
 
 				if(tracker.type == 'html'){
 
-					let lr = new LambdaResponse;
+					let lr = new LambdaResponse();
 
 					lr.setGlobalHeaders({"Content-Type":"text/html;charset=UTF-8"});
 

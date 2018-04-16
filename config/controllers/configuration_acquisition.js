@@ -38,9 +38,9 @@ module.exports.getCloudsearchSearchEndpoint = () => {
 
 	require('../../SixCRM.js');
 
-	const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
+	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
 
-	if ((new ConfigurationUtilities).isLocal()) {
+	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
 
 		return Promise.resolve({
 			DocService: {
@@ -65,9 +65,9 @@ module.exports.getAuroraClusterEndpoint = () => {
 
 	require('../../SixCRM.js');
 
-	const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
+	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
 
-	if ((new ConfigurationUtilities).isLocal()) {
+	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
 
 		return Promise.resolve({
 			Endpoint: global.SixCRM.configuration.site_config.dynamodb.endpoint

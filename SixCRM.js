@@ -1,5 +1,5 @@
-require('./routes.js');
 const _ = require('lodash');
+const Routes = require('./routes.js');
 const Configuration = require('./core/Configuration');
 const LocalCache = require('./core/LocalCache');
 
@@ -7,7 +7,7 @@ class SixCRM {
 
 	constructor() {
 
-		this.routes = global.routes;
+		this.routes = new Routes();
 		this._resources = {};
 
 		this.configuration = new Configuration(this.routes);

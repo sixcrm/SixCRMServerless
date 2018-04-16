@@ -5,7 +5,7 @@ const path = require('path');
 const _ = require('lodash');
 var fs = require('fs');
 
-class Routes{
+module.exports = class Routes{
 
 	constructor(root_path){
 
@@ -70,5 +70,3 @@ class Routes{
 	}
 
 }
-
-global.routes = new Routes();

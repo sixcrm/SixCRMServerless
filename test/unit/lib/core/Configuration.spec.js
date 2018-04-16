@@ -6,7 +6,7 @@ const _ = require('lodash');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const Configuration = global.SixCRM.routes.include('core', 'Configuration.js');
 
-describe('controllers/core/Configuration.js', () => {
+describe('core/Configuration.js', () => {
 
 	const DEVELOPMENT_ACCOUNT = '068070110666';
 
@@ -29,7 +29,7 @@ describe('controllers/core/Configuration.js', () => {
 	describe('constructor', () => {
 		it('instantiates', () => {
 
-			let configuration = new Configuration();
+			let configuration = new Configuration(global.SixCRM.routes);
 
 			//expect(configuration.stage).to.equal('local');
 			expect(configuration.serverless_config).not.to.be.undefined;
@@ -43,7 +43,7 @@ describe('controllers/core/Configuration.js', () => {
 
 		it('handles incorrect stage', () => {
 			try {
-				new Configuration('some_unknown_stage');
+				new Configuration(global.SixCRM.routes, 'some_unknown_stage');
 			} catch (error) {
 				expect(error.code).to.equal(500);
 			}
@@ -68,7 +68,7 @@ describe('controllers/core/Configuration.js', () => {
 		});
 
 		xit('determines account identifier', () => {
-			let configuration = new Configuration('development');
+			let configuration = new Configuration(global.SixCRM.routes, 'development');
 
 			process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
 
@@ -81,7 +81,7 @@ describe('controllers/core/Configuration.js', () => {
 			context = {
 				invokedFunctionArn: DEVELOPMENT_ACCOUNT
 			};
-			let configuration = new Configuration();
+			let configuration = new Configuration(global.SixCRM.routes);
 
 			expect(configuration.getAccountIdentifier()).to.equal(DEVELOPMENT_ACCOUNT);
 		});
@@ -101,7 +101,7 @@ describe('controllers/core/Configuration.js', () => {
 		});
 
 		xit('determines stage from account identifier', () => {
-			let configuration = new Configuration();
+			let configuration = new Configuration(global.SixCRM.routes);
 
 			process.env.AWS_ACCOUNT = DEVELOPMENT_ACCOUNT;
 
@@ -146,7 +146,7 @@ describe('controllers/core/Configuration.js', () => {
 
 					process.env.CIRCLE_BRANCH = stage.branch_name;
 
-					let configuration = new Configuration();
+					let configuration = new Configuration(global.SixCRM.routes);
 
 					expect(configuration.stage).to.equal(key);
 
@@ -172,7 +172,7 @@ describe('controllers/core/Configuration.js', () => {
 				delete process.env.CIRCLE_BRANCH;
 			}
 
-			let configuration = new Configuration();
+			let configuration = new Configuration(global.SixCRM.routes);
 
 			expect(configuration.stage).to.equal('local');
 
