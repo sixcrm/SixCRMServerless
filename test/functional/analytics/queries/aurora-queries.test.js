@@ -1,3 +1,4 @@
+const Mocha = require('mocha');
 const chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
 const expect = chai.expect;
@@ -13,65 +14,51 @@ const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-cont
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
 
-before(() => {
+const mocha = new Mocha({
 
-	global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
-	global.user = 'admin.user@test.com';
-	global.SixCRM.setResource('auroraContext', auroraContext);
-	return auroraContext.init();
+	reporter: 'spec'
 
 });
 
-after(() => {
+const querySuite = Mocha.Suite.create(mocha.suite, 'aurora-queries.js');
 
-	const auroraContext = global.SixCRM.getResource('auroraContext');
-	return auroraContext.dispose();
+const suites = fileutilities.getDirectoryList(path.join(__dirname, 'tests'));
 
-});
+arrayutilities.map(suites, (suite) => {
 
-describe('queries/aurora-queries.js', () => {
+	const subSuite = Mocha.Suite.create(querySuite, suite);
 
-	const suites = fileutilities.getDirectoryList(path.join(__dirname, 'tests'));
+	const testDirectories = getDirectories(path.join(__dirname, 'tests', suite));
 
-	arrayutilities.map(suites, (suite) => {
+	const tests = arrayutilities.map(testDirectories, (testDirectory) => {
 
-		describe(suite, () => {
+		return prepareTest(testDirectory);
 
-			const testDirectories = getDirectories(path.join(__dirname, 'tests', suite));
+	});
 
-			const tests = arrayutilities.map(testDirectories, (testDirectory) => {
+	arrayutilities.map(tests, (test) => {
 
-				return prepareTest(testDirectory);
+		subSuite.addTest(new Mocha.Test(test.test_case, () => {
 
-			});
+			PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
 
-			arrayutilities.map(tests, (test) => {
+			return prepareDatabase(test).then(() => {
 
-				it(test.test_case, () => {
+				return analyticsController.executeAnalyticsFunction(test.input, test.method).then((result) => {
 
-					PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
+					const result_name = test.result_name;
+					const result_value = (result_name === "undefined") ? result : result[result_name];
 
-					return prepareDatabase(test).then(() => {
+					expect(result_value).to.not.equal(
+						undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
 
-						return analyticsController.executeAnalyticsFunction(test.input, test.method).then((result) => {
-
-							const result_name = test.result_name;
-							const result_value = (result_name === "undefined") ? result : result[result_name];
-
-							expect(result_value).to.not.equal(
-								undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
-							// fs.writeFileSync(uuid.v4(), JSON.stringify(result_value));
-							return expect(result_value).to.be.eql(test.expect);
-
-						});
-
-					});
+					return expect(result_value).to.be.eql(test.expect);
 
 				});
 
 			});
 
-		});
+		}));
 
 	});
 
@@ -140,3 +127,21 @@ function getDirectories(root) {
 	}), []);
 
 }
+
+querySuite.beforeAll(() => {
+
+	global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
+	global.user = 'admin.user@test.com';
+	global.SixCRM.setResource('auroraContext', auroraContext);
+	return auroraContext.init();
+
+});
+
+querySuite.afterAll(() => {
+
+	const auroraContext = global.SixCRM.getResource('auroraContext');
+	return auroraContext.dispose();
+
+});
+
+mocha.run();
