@@ -113,10 +113,8 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then(data => {
 				const acls = this.getItems(data);
 
-				//Nick:  Please use the arrayutilities.filter and arrayutilities.map methods
-				const shared = _(acls)
-					.filter(acl => EntityPermissionsHelper.isShared('read', acl))
-					.map(acl => acl.entity);
+				let shared = arrayutilities.filter(acls, acl => EntityPermissionsHelper.isShared('read', acl))
+				shared = arrayutilities.map(shared, acl => acl.entity);
 
 				//Hasn't this already been defined?
 				let query_parameters = this.createINQueryParameters({field: this.primary_key, list_array: shared});
