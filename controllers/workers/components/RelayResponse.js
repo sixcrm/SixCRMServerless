@@ -38,7 +38,7 @@ module.exports = class RelayResponse{
 		if(_.has(this.response_types, response_type)){
 			this.response = this.response_types[response_type];
 		}else{
-			eu.throwError('server', 'Unexpected Response Type: "'+response_type+'".');
+			throw eu.getError('server', 'Unexpected Response Type: "'+response_type+'".');
 		}
 
 	}

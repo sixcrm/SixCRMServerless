@@ -94,7 +94,7 @@ module.exports = class SNSEventController {
 
 				}
 
-				return eu.throwError('server', 'Event record handler not set.');
+				throw eu.getError('server', 'Event record handler not set.');
 
 			})
 			.then((result) => {
@@ -121,7 +121,7 @@ module.exports = class SNSEventController {
 		} catch (error) {
 
 			du.error(error);
-			eu.throwError(error);
+			throw eu.getError(error);
 
 		}
 

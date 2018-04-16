@@ -30,7 +30,7 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 		let topic_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 'sns/configuration/topics/'));
 
 		if (!_.isArray(topic_files)) {
-			eu.throwError('server', 'SNSDeployment.createTopics assumes that the topic_files is an array of file names.');
+			throw eu.getError('server', 'SNSDeployment.createTopics assumes that the topic_files is an array of file names.');
 		}
 
 		let topic_promises = arrayutilities.map(topic_files, (topic_file) => {
@@ -64,7 +64,7 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 		let subscription_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 'sns/configuration/subscriptions/'));
 
 		if (!_.isArray(subscription_files)) {
-			eu.throwError('server', 'SNSDeployment.addSubscriptions assumes that the subscription_files is an array of file names.');
+			throw eu.getError('server', 'SNSDeployment.addSubscriptions assumes that the subscription_files is an array of file names.');
 		}
 
 		let subscription_promises = arrayutilities.map(subscription_files, (subscription_file) => {
@@ -135,7 +135,7 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 			return subscription_result.SubscriptionArn;
 		}
 
-		eu.throwError('server', 'Unable to identify subscription ARN');
+		throw eu.getError('server', 'Unable to identify subscription ARN');
 
 	}
 

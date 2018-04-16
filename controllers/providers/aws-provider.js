@@ -36,7 +36,7 @@ module.exports = class AWSProvider {
 
 		if(error){
 
-			eu.throwError('server', error);
+			throw eu.getError('server', error);
 
 		}
 
@@ -52,7 +52,7 @@ module.exports = class AWSProvider {
 
 		if(error){
 			if(fatal){
-				eu.throwError('server', error);
+				throw eu.getError('server', error);
 			}
 
 			return Promise.reject(error);
@@ -74,7 +74,7 @@ module.exports = class AWSProvider {
 		if(!validation){
 
 			if(fatal){
-				eu.throwError('server', 'Missing Credentials in process.env');
+				throw eu.getError('server', 'Missing Credentials in process.env');
 			}
 
 			du.warning('Missing Credentials in process.env');

@@ -65,7 +65,7 @@ module.exports = class MerchantProviderSummaryHelperController {
 		let day = this.parameters.get('day');
 
 		if(!timestamp.isToday(day, 10)){
-			eu.throwError('server','You may not increment a merchant provider summary for a day other than today.');
+			throw eu.getError('server','You may not increment a merchant provider summary for a day other than today.');
 		}
 
 		return true;
@@ -89,7 +89,7 @@ module.exports = class MerchantProviderSummaryHelperController {
 
 				if(!_.isNull(result) && arrayutilities.nonEmpty(result)){
 					if(result.length != 1){
-						eu.throwError('server', 'Unexpected Dynamo response.');
+						throw eu.getError('server', 'Unexpected Dynamo response.');
 					}
 					this.parameters.set('merchantprovidersummary', result.pop());
 					return true;

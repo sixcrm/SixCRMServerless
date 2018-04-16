@@ -24,7 +24,7 @@ class TransactionController extends entityController {
       if(id == '3e0fda0a-a64b-4752-bed8-152a98285be7'){
         return Promise.resolve([]);
       }
-      eu.throwError('403', 'Transactions are not available for deletion via the SixCRM API.');
+      throw eu.getError('403', 'Transactions are not available for deletion via the SixCRM API.');
       */
 	}
 
@@ -293,7 +293,7 @@ class TransactionController extends entityController {
 		//make sure that the transaction was successful
 
 		if(refund.amount > transaction.amount){
-			eu.throwError('validation', 'Refund amount is greater than the transaction amount');
+			throw eu.getError('validation', 'Refund amount is greater than the transaction amount');
 		}
 
 		return Promise.resolve(true);

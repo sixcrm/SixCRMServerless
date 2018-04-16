@@ -66,11 +66,11 @@ module.exports = class S3Provider extends AWSProvider {
 		du.deep(parameters);
 
 		if (!_.has(parameters, 'Bucket')) {
-			eu.throwError('server', 'This operation requires a "Bucket" parameter.');
+			throw eu.getError('server', 'This operation requires a "Bucket" parameter.');
 		}
 
 		if (!_.has(parameters, 'Key')) {
-			eu.throwError('server', 'This operation requires a "Key" parameter.');
+			throw eu.getError('server', 'This operation requires a "Key" parameter.');
 		}
 
 		return new Promise((resolve) => {
@@ -140,7 +140,7 @@ module.exports = class S3Provider extends AWSProvider {
 			this.s3.listObjectsV2(parameters, (error, data) => {
 
 				if (error) {
-					eu.throwError('server', error);
+					throw eu.getError('server', error);
 				}
 
 				if (_.has(data, 'Contents')) {
@@ -180,7 +180,7 @@ module.exports = class S3Provider extends AWSProvider {
 		return new Promise((resolve) => {
 
 			if (!_.isArray(bucket_objects)) {
-				eu.throwError('server', 'Delete Objects assumes that the bucket objects argument is an array.');
+				throw eu.getError('server', 'Delete Objects assumes that the bucket objects argument is an array.');
 			}
 
 			if (bucket_objects.length < 1) {
@@ -192,7 +192,7 @@ module.exports = class S3Provider extends AWSProvider {
 			let delete_bucket_objects = bucket_objects.map((bucket_object) => {
 
 				if (!_.has(bucket_object, 'Key')) {
-					eu.throwError('server', 'Malformed bucket object.');
+					throw eu.getError('server', 'Malformed bucket object.');
 				}
 
 				return {
@@ -232,13 +232,13 @@ module.exports = class S3Provider extends AWSProvider {
 
 			if (!_.isArray(bucket_objects)) {
 
-				eu.throwError('server', 'S3Provider.deleteObjects assumes bucket_objects to be an array');
+				throw eu.getError('server', 'S3Provider.deleteObjects assumes bucket_objects to be an array');
 
 			}
 
 			if (bucket_objects.length > this.maximum_delete_batch_size) {
 
-				eu.throwError('server', 'S3Provider.deleteObjects bucket_objects array is too large');
+				throw eu.getError('server', 'S3Provider.deleteObjects bucket_objects array is too large');
 
 			}
 
@@ -253,7 +253,7 @@ module.exports = class S3Provider extends AWSProvider {
 
 				if (error) {
 					du.error(error);
-					eu.throwError('server', error.message);
+					throw eu.getError('server', error.message);
 				}
 
 				return resolve(data);
@@ -506,7 +506,7 @@ module.exports = class S3Provider extends AWSProvider {
 
 				if (error) {
 					du.error(error);
-					eu.throwError('server', error.message);
+					throw eu.getError('server', error.message);
 				}
 
 				return resolve(data);

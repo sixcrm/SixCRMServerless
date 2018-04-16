@@ -31,7 +31,7 @@ module.exports = class ConfigurationUtilities {
 
 				if(!_.includes(stage_names, stage)){
 
-					eu.throwError('server', 'Configuration.resolveStage unable to validate stage name: '+stage);
+					throw eu.getError('server', 'Configuration.resolveStage unable to validate stage name: '+stage);
 
 				}
 
@@ -84,7 +84,7 @@ module.exports = class ConfigurationUtilities {
 			}
 
 			if(fatal){
-				eu.throwError('server', 'Unrecognized branch_name in stage.yml: '+branch_name);
+				throw eu.getError('server', 'Unrecognized branch_name in stage.yml: '+branch_name);
 			}
 
 		}
@@ -118,7 +118,7 @@ module.exports = class ConfigurationUtilities {
 			}
 
 			if(fatal){
-				eu.throwError('server', 'Unrecognized account identifier in stage.yml: '+account_identifier);
+				throw eu.getError('server', 'Unrecognized account identifier in stage.yml: '+account_identifier);
 			}
 
 		}
@@ -178,7 +178,7 @@ module.exports = class ConfigurationUtilities {
 		let stages = global.SixCRM.routes.include('config', 'stages.yml');
 
 		if(!_.has(stages, global.SixCRM.configuration.stage)){
-			eu.throwError('server', 'Unrecognized stage: '+global.SixCRM.configuration.stage);
+			throw eu.getError('server', 'Unrecognized stage: '+global.SixCRM.configuration.stage);
 		}
 
 		if(_.has(stages[global.SixCRM.configuration.stage], 'aws_account_id')){
@@ -196,7 +196,7 @@ module.exports = class ConfigurationUtilities {
 		}
 
 		if(fatal){
-			eu.throwError('server', 'Process.env missing key: "' + field + '".');
+			throw eu.getError('server', 'Process.env missing key: "' + field + '".');
 		}
 
 		return null;

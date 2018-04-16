@@ -43,7 +43,7 @@ module.exports = class NotificationController extends entityController {
 
 				}
 
-				return eu.throwError('server', 'Response data is missing the "Count" field.');
+				throw eu.getError('server', 'Response data is missing the "Count" field.');
 			});
 
 	}

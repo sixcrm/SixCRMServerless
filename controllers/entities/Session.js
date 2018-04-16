@@ -570,7 +570,7 @@ module.exports = class SessionController extends entityController {
 
 			if(!session){
 
-				return eu.throwError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist.');
+				throw eu.getError('not_found','Unable to update '+this.descriptive_name+' with ID: "'+entity.id+'" -  record doesn\'t exist.');
 
 			}
 

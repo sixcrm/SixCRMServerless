@@ -92,7 +92,7 @@ module.exports = class MerchantProviderLSSFilter {
 
 		//Technical Debt:  Upgrade the JSON Schemas
 		if(!arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
-			eu.throwError('server','Process.getMerchantProviderTarget assumes that the selected_merchantprovidergroup.merchantproviders an array and has length greater than 0');
+			throw eu.getError('server','Process.getMerchantProviderTarget assumes that the selected_merchantprovidergroup.merchantproviders an array and has length greater than 0');
 		}
 
 		let merchantprovidergroup_mp = arrayutilities.find(merchantprovidergroup.merchantproviders, (lb_mp) => {
@@ -100,7 +100,7 @@ module.exports = class MerchantProviderLSSFilter {
 		});
 
 		if(!_.has(merchantprovidergroup_mp, 'id') || !_.has(merchantprovidergroup_mp, 'distribution')){
-			eu.throwError('server','Process.getMerchantProviderTarget is unable to determine the merchant_provider');
+			throw eu.getError('server','Process.getMerchantProviderTarget is unable to determine the merchant_provider');
 		}
 
 		return Promise.resolve(merchantprovidergroup_mp.distribution);
@@ -139,12 +139,12 @@ module.exports = class MerchantProviderLSSFilter {
 
 		//Technical Debt:  Upgrade the JSON Schemas
 		if(!objectutilities.hasRecursive(merchantprovidergroup, 'summary.month.sum')){
-			eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that selected_merchantprovidergroup.monthly_sum is set');
+			throw eu.getError('server', 'Process.getMerchantProviderDistribution assumes that selected_merchantprovidergroup.monthly_sum is set');
 		}
 
 		//Technical Debt:  Upgrade the JSON Schemas
 		if(!objectutilities.hasRecursive(merchant_provider, 'summary.summary.thismonth.amount')){
-			eu.throwError('server', 'Process.getMerchantProviderDistribution assumes that merchantprovider.summary.summary.thismonth.amount property is set');
+			throw eu.getError('server', 'Process.getMerchantProviderDistribution assumes that merchantprovider.summary.summary.thismonth.amount property is set');
 		}
 
 		let numerator = (numberutilities.toNumber(merchant_provider.summary.summary.thismonth.amount) + additional_amount);

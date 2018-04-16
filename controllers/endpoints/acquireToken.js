@@ -72,7 +72,7 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 		return this.campaignController.get({id: event.campaign}).then((campaign) => {
 
 			if(!_.has(campaign, 'id')){
-				eu.throwError('bad_request','Invalid Campaign ID: '+event.campaign);
+				throw eu.getError('bad_request','Invalid Campaign ID: '+event.campaign);
 			}
 
 			this.parameters.set('campaign', campaign);

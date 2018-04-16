@@ -89,7 +89,7 @@ module.exports = class ShipStationResponse extends FulfillmentProviderVendorResp
 
 		}
 
-		eu.throwError('server', 'Unrecognized response from ShipStation');
+		throw eu.getError('server', 'Unrecognized response from ShipStation');
 
 	}
 
@@ -177,13 +177,13 @@ module.exports = class ShipStationResponse extends FulfillmentProviderVendorResp
 
 			}else{
 
-				if(fatal){ eu.throwError('server', 'Missing reference_number in vendor response additional_parameters.'); }
+				if(fatal){ throw eu.getError('server', 'Missing reference_number in vendor response additional_parameters.'); }
 
 			}
 
 		}else{
 
-			if(fatal){ eu.throwError('server', 'Missing additional_parameters in vendor response.'); }
+			if(fatal){ throw eu.getError('server', 'Missing additional_parameters in vendor response.'); }
 
 		}
 

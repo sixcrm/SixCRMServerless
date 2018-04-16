@@ -69,7 +69,7 @@ module.exports = class CreditCardController extends entityController {
 				if (hydrate_token === true) {
 
 					if (!_.has(result, 'token')) {
-						eu.throwError('server', 'Unable to detokenize: entity is missing the token field');
+						throw eu.getError('server', 'Unable to detokenize: entity is missing the token field');
 					}
 
 					const TokenController = global.SixCRM.routes.include('providers', 'token/Token.js');
@@ -164,7 +164,7 @@ module.exports = class CreditCardController extends entityController {
 			}) => {
 
 				if (!_.has(existing_creditcard, 'id')) {
-					eu.throwError('not_found', 'Credit Card not found.');
+					throw eu.getError('not_found', 'Credit Card not found.');
 				}
 
 				return {
@@ -216,7 +216,7 @@ module.exports = class CreditCardController extends entityController {
 			.then((existing_entity) => {
 
 				if (!_.has(existing_entity, 'id')) {
-					eu.throwError('not_found', 'Unable to identify creditcard for delete.');
+					throw eu.getError('not_found', 'Unable to identify creditcard for delete.');
 				}
 
 				if (!_.has(this, 'tokenController')) {
@@ -261,7 +261,7 @@ module.exports = class CreditCardController extends entityController {
 			.then((existing_creditcard) => {
 
 				if (!_.has(existing_creditcard, 'id')) {
-					eu.throwError('not_found', 'Credit Card not found.');
+					throw eu.getError('not_found', 'Credit Card not found.');
 				}
 
 				return existing_creditcard;
@@ -316,7 +316,7 @@ module.exports = class CreditCardController extends entityController {
 		du.debug('Assure Credit Card', creditcard);
 
 		if (this.sanitization) {
-			eu.throwError('server', 'Cannot Assure Credit Card while sanitizing results');
+			throw eu.getError('server', 'Cannot Assure Credit Card while sanitizing results');
 		}
 
 		if (!_.has(creditcard, 'last_four')) {

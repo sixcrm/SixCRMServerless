@@ -42,11 +42,11 @@ module.exports = class LambdaProvider extends AWSProvider{
 		du.debug('Build Lambda Name');
 
 		if(!objectutilities.hasRecursive(global, 'SixCRM.configuration.serverless_config.service')){
-			eu.throwError('server', 'Unavailable service name in serverless configuration object');
+			throw eu.getError('server', 'Unavailable service name in serverless configuration object');
 		}
 
 		if(!objectutilities.hasRecursive(process, 'env.stage')){
-			eu.throwError('server', 'Unavailable environment stage in process');
+			throw eu.getError('server', 'Unavailable environment stage in process');
 		}
 
 		let name_parameters = {
@@ -236,7 +236,7 @@ module.exports = class LambdaProvider extends AWSProvider{
 					parsed_policy = JSON.parse(result.Policy);
 				}catch(error){
 					du.error(error);
-					eu.throwError('server', error);
+					throw eu.getError('server', error);
 				}
 
 				if(_.has(parsed_policy, 'Statement') && arrayutilities.nonEmpty(parsed_policy.Statement)){

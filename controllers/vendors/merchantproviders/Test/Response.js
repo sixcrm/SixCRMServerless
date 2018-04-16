@@ -34,7 +34,7 @@ module.exports = class TestResponse extends Response {
 			return processor_response.response.transactionid;
 		}
 
-		eu.throwError('server', 'Unable to identify the Transaction ID');
+		throw eu.getError('server', 'Unable to identify the Transaction ID');
 
 	}
 

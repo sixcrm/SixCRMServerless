@@ -52,7 +52,7 @@ module.exports = class sendNotificationsController extends workerController {
 		mvu.validateModel(message, global.SixCRM.routes.path('model', 'workers/sendnotification/notificationmessage.json'));
 
 		if(message.scope.user == true && !_.has(message, 'user')){
-			eu.throwError('server', 'The user email must be inclided if the scope.user setting is true.');
+			throw eu.getError('server', 'The user email must be inclided if the scope.user setting is true.');
 		}
 
 		return message;

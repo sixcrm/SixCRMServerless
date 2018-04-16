@@ -691,7 +691,7 @@ describe('controllers/entities/User.js', () => {
 			const userController = new UserController();
 
 			return userController.assureUser(user_id).catch((error) => {
-				expect(error.message).to.equal('[500] User retrieving failed.');
+				expect(error.message).to.equal('[500] Error: User retrieving failed.');
 			});
 		});
 	});

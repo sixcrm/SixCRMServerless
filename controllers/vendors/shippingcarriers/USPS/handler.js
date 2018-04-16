@@ -156,7 +156,7 @@ module.exports = class USPSController extends ShippingCarrierController {
         parseString(api_response_body, (error, result) => {
 
           if(_.isError(error)){
-            eu.throwError('server', 'Unable to parse API response body.');
+            throw eu.getError('server', 'Unable to parse API response body.');
           }
 
           this.parameters.set('parsedapiresponsebody', result);

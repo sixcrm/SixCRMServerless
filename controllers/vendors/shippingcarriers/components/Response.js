@@ -79,7 +79,7 @@ module.exports = class ShippingCarrierResponse extends ResponseController {
 			return this.result_messages[response_type];
 		}
 
-		eu.throwError('server', 'Unknow response type: '+response_type);
+		throw eu.getError('server', 'Unknow response type: '+response_type);
 
 	}
 

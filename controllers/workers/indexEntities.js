@@ -119,7 +119,7 @@ module.exports = class IndexEntitiesController extends workerController {
 				//Technical Debt: Refactor!
 				//this.parameters.set('cloudsearchresponse', {status: 'error', adds: 0, deletes: 0});
 				du.error(error);
-				eu.throwError(error);
+				throw eu.getError(error);
 
 			});
 

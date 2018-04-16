@@ -81,7 +81,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		});
 
 		if(_.isUndefined(campaign) || _.isNull(campaign)){
-			eu.throwError('server', 'Unable to identify campaign');
+			throw eu.getError('server', 'Unable to identify campaign');
 		}
 
 		return this.campaignController.get({id: campaign}).then(result => {
@@ -113,7 +113,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		});
 
 		if(_.isUndefined(customer) || _.isNull(customer)){
-			eu.throwError('server', 'Unable to identify customer');
+			throw eu.getError('server', 'Unable to identify customer');
 		}
 
 		return this.customerController.get({id: customer}).then((result) => {
@@ -239,7 +239,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		});
 
 		if(_.isUndefined(paired_smtp_provider) || _.isNull(paired_smtp_provider)){
-			eu.throwError('server', 'No SMTP provider configured for use with email template: '+email_template.id);
+			throw eu.getError('server', 'No SMTP provider configured for use with email template: '+email_template.id);
 		}
 
 		return paired_smtp_provider;

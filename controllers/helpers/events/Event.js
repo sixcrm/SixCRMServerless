@@ -71,17 +71,17 @@ module.exports = class EventHelperController {
 			objectutilities.map(message_attributes, (key) => {
 
 				if(!_.isString(key)){
-					eu.throwError('server', 'Message attribute key must be a string: '+key);
+					throw eu.getError('server', 'Message attribute key must be a string: '+key);
 				}
 
 				let value = message_attributes[key];
 
 				if(!_.has(value, 'DataType') || !_.isString(value.DataType)){
-					eu.throwError('server', 'Message attribute "'+key+'" DataType must be set and of type String.');
+					throw eu.getError('server', 'Message attribute "'+key+'" DataType must be set and of type String.');
 				}
 
 				if(!_.has(value, 'StringValue') || !_.isString(value.StringValue)){
-					eu.throwError('server', 'Message attribute "'+key+'" StringValue must be set and of type String.');
+					throw eu.getError('server', 'Message attribute "'+key+'" StringValue must be set and of type String.');
 				}
 
 			});

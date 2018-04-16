@@ -28,7 +28,7 @@ module.exports = class InviteUtilities extends HelperController{
 		return this._sendEmailToInvitedUser(invite_object, link).then((sent) => {
 
 			if(sent != true){
-				eu.throwError('server','Could not send invite email');
+				throw eu.getError('server','Could not send invite email');
 			}
 
 			return link;
@@ -49,7 +49,7 @@ module.exports = class InviteUtilities extends HelperController{
 			return parameters;
 		}
 
-		eu.throwError('validation','Invalid invite.');
+		throw eu.getError('validation','Invalid invite.');
 
 	}
 
@@ -160,7 +160,7 @@ module.exports = class InviteUtilities extends HelperController{
 		try{
 			decoded_parameters = JSON.parse(decoded_parameters);
 		}catch(error){
-			eu.throwError('bad_request', 'Invalid invite parameters');
+			throw eu.getError('bad_request', 'Invalid invite parameters');
 		}
 
 		return decoded_parameters;

@@ -95,13 +95,13 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 
 			}else{
 
-				if(fatal){ eu.throwError('server', 'Missing reference_number in vendor response additional_parameters.'); }
+				if(fatal){ throw eu.getError('server', 'Missing reference_number in vendor response additional_parameters.'); }
 
 			}
 
 		}else{
 
-			if(fatal){ eu.throwError('server', 'Missing additional_parameters in vendor response.'); }
+			if(fatal){ throw eu.getError('server', 'Missing additional_parameters in vendor response.'); }
 
 		}
 

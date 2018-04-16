@@ -424,7 +424,7 @@ module.exports = class MerchantProvider {
 			return this['issue' + method + 'Request']();
 		}
 
-		eu.throwError('server', 'Missing Isssue Request method: "' + method + '".');
+		throw eu.getError('server', 'Missing Isssue Request method: "' + method + '".');
 
 	}
 

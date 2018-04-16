@@ -449,7 +449,7 @@ describe('controllers/Entity.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
 				queryRecords() {
-					eu.throwError('server','Reading failed.');
+					throw eu.getError('server','Reading failed.');
 				}
 			});
 
@@ -548,7 +548,7 @@ describe('controllers/Entity.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
 				queryRecords() {
-					eu.throwError('server','Reading failed.');
+					throw eu.getError('server','Reading failed.');
 				}
 			});
 
@@ -702,7 +702,7 @@ describe('controllers/Entity.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
 				queryRecords() {
-					eu.throwError('server', 'Reading failed.');
+					throw eu.getError('server', 'Reading failed.');
 				}
 			});
 
@@ -728,7 +728,7 @@ describe('controllers/Entity.js', () => {
 					return Promise.resolve({Items:[anEntity]});
 				}
 				deleteRecord() {
-					eu.throwError('server','Deleting failed.');
+					throw eu.getError('server','Deleting failed.');
 				}
 			});
 
@@ -894,7 +894,7 @@ describe('controllers/Entity.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
 				queryRecords() {
-					eu.throwError('server','Reading failed.');
+					throw eu.getError('server','Reading failed.');
 				}
 			});
 
@@ -1046,7 +1046,7 @@ describe('controllers/Entity.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
 				scanRecords() {
-					eu.throwError('server','Scanning failed.');
+					throw eu.getError('server','Scanning failed.');
 				}
 			});
 
@@ -1172,7 +1172,7 @@ describe('controllers/Entity.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
 				queryRecords() {
-					eu.throwError('server','Query failed.');
+					throw eu.getError('server','Query failed.');
 				}
 			});
 

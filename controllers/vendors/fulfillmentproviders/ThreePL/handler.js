@@ -216,7 +216,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 			return facility_id;
 		}
 
-		eu.throwError('server', 'Unable to establish ThreePL Facility ID.');
+		throw eu.getError('server', 'Unable to establish ThreePL Facility ID.');
 
 	}
 
@@ -254,7 +254,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 			return this.ThreePLID;
 		}
 
-		eu.throwError('Unknown ThreePL ID');
+		throw eu.getError('Unknown ThreePL ID');
 
 	}
 

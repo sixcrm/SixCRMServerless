@@ -70,7 +70,7 @@ module.exports = class verifySiteJWTController {
 
 		}
 
-		eu.throwError('bad_request', 'Unable to decode token.');
+		throw eu.getError('bad_request', 'Unable to decode token.');
 
 	}
 

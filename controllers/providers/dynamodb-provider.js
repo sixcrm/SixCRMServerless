@@ -168,7 +168,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 		du.debug('Determine LastEvaluatedKey');
 
 		if(!_.has(result, 'LastEvaluatedKey')){
-			eu.throwError('server', 'determineLastEvaluatedKey requires the LastEvaluatedKey property to be set');
+			throw eu.getError('server', 'determineLastEvaluatedKey requires the LastEvaluatedKey property to be set');
 		}
 
 		let last_result_element = result.Items[result_index];
@@ -177,7 +177,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 		objectutilities.map(result.LastEvaluatedKey, key => {
 
 			if(!_.has(last_result_element, key)){
-				eu.throwError('server', 'Last result element requires key "'+key+'".');
+				throw eu.getError('server', 'Last result element requires key "'+key+'".');
 			}
 
 			new_last_evaluated_key[key] = last_result_element[key];
@@ -259,7 +259,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 		arrayutilities.nonEmpty(in_array, true);
 
 		if(!arrayutilities.assureEntries(in_array, 'string')){
-			eu.throwError('server', 'All entries in the "in_array" must be of type string.');
+			throw eu.getError('server', 'All entries in the "in_array" must be of type string.');
 		}
 
 		let in_object = {};
@@ -466,7 +466,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 						du.error(error);
 
 						if(fatal){
-							eu.throwError('server', error);
+							throw eu.getError('server', error);
 						}
 
 						return reject(error);
@@ -497,7 +497,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 						if(_.isError(error)){
 							if(fatal){
-								eu.throwError('server', error);
+								throw eu.getError('server', error);
 							}
 							return reject(error);
 						}
@@ -519,7 +519,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 						du.error(error);
 						if(_.isError(error)){
 							if(fatal){
-								eu.throwError('server', error);
+								throw eu.getError('server', error);
 							}
 							return reject(error);
 						}
@@ -534,7 +534,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 		}
 
-		eu.throwError('server', 'Unknown method: '+method);
+		throw eu.getError('server', 'Unknown method: '+method);
 
 	}
 

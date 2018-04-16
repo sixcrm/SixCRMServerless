@@ -335,7 +335,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
 		if (_.isNull(binnumber)) {
 
-			eu.throwError('server', 'Unable to determine BIN Number.');
+			throw eu.getError('server', 'Unable to determine BIN Number.');
 
 		}
 
@@ -358,7 +358,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 		}).then((properties) => {
 
 			if (_.isNull(properties)) {
-				eu.throwError('not_found', 'Unable to identify credit card properties.');
+				throw eu.getError('not_found', 'Unable to identify credit card properties.');
 			}
 
 			creditcard.properties = properties;
@@ -408,7 +408,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 			}
 
 			if (_.isNull(associated_merchant_provider_group) || _.isUndefined(associated_merchant_provider_group)) {
-				eu.throwError('server', 'Unable to establish a merchantprovidergroup association with product: ' + product_group.product.id);
+				throw eu.getError('server', 'Unable to establish a merchantprovidergroup association with product: ' + product_group.product.id);
 			}
 
 			product_group.merchantprovidergroupassociation = associated_merchant_provider_group;

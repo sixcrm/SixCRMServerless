@@ -38,7 +38,7 @@ module.exports = class PermissionedController {
 		du.debug('Throw Permissions Error');
 
 		//Technical Debt:  Embellish this message
-		eu.throwError('forbidden', 'Invalid Permissions: user does not have sufficient permission to perform this action.');
+		throw eu.getError('forbidden', 'Invalid Permissions: user does not have sufficient permission to perform this action.');
 
 	}
 

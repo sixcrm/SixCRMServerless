@@ -26,7 +26,7 @@ module.exports = class IntegrationTest {
 
 		arrayutilities.map(required_properties, (required_property) => {
 			if(!_.has(this, required_property)){
-				eu.throwError('server', 'IntegrationTest.executeQuery requires "'+required_property+'" to be set.');
+				throw eu.getError('server', 'IntegrationTest.executeQuery requires "'+required_property+'" to be set.');
 			}
 		});
 

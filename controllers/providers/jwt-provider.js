@@ -134,7 +134,7 @@ module.exports = class JWTProvider {
 
 		}
 
-		eu.throwError('validation','Unset jwt_type property.');
+		throw eu.getError('validation','Unset jwt_type property.');
 
 	}
 
@@ -217,7 +217,7 @@ module.exports = class JWTProvider {
 		du.debug('Validate Input');
 
 		if(!_.isFunction(validation_function)){
-			eu.throwError('server','Validation function is not a function.');
+			throw eu.getError('server','Validation function is not a function.');
 		}
 
 		if(_.isUndefined(object)){
@@ -233,7 +233,7 @@ module.exports = class JWTProvider {
 
 			du.warning(validation);
 
-			eu.throwError(
+			throw eu.getError(
 				'validation',
 				'One or more validation errors occurred.',
 				{issues: validation.errors.map(e => e.message)}
@@ -324,7 +324,7 @@ module.exports = class JWTProvider {
 		case 'transaction':
 
 			if(!_.has(this.jwt_parameters, 'transaction_jwt_secret_key')){
-				eu.throwError('validation','Transaction JWT secret key is not defined.');
+				throw eu.getError('validation','Transaction JWT secret key is not defined.');
 			}
 
 			du.warning(this.jwt_parameters.transaction_jwt_secret_key);
@@ -334,7 +334,7 @@ module.exports = class JWTProvider {
 		case 'site':
 
 			if(!_.has(this.jwt_parameters, 'site_jwt_secret_key')){
-				eu.throwError('validation','Site JST secret key is not defined.');
+				throw eu.getError('validation','Site JST secret key is not defined.');
 			}
 
 			return this.jwt_parameters.site_jwt_secret_key;
@@ -349,7 +349,7 @@ module.exports = class JWTProvider {
 
 	unrecognzedJWTType(){
 
-		eu.throwError('validation','Unrecognized JWT Type.');
+		throw eu.getError('validation','Unrecognized JWT Type.');
 
 	}
 
@@ -399,7 +399,7 @@ module.exports = class JWTProvider {
 		if(_.has(parameters, 'user') && _.has(parameters.user, 'email')){
 			return parameters.user.email;
 		}
-		eu.throwError('validation','Unable to get user email.');
+		throw eu.getError('validation','Unable to get user email.');
 	}
 
 }

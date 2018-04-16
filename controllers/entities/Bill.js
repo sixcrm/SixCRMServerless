@@ -22,7 +22,7 @@ module.exports = class BillController extends entityController {
 			return super.update(arguments[0]);
 		}
 
-		eu.throwError('forbidden');
+		throw eu.getError('forbidden');
 
 	}
 
@@ -35,7 +35,7 @@ module.exports = class BillController extends entityController {
 			return super.create(arguments[0]);
 		}
 
-		eu.throwError('forbidden');
+		throw eu.getError('forbidden');
 
 	}
 

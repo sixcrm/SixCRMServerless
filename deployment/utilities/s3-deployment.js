@@ -29,7 +29,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets'));
 
 		if (!_.isArray(bucket_group_files)) {
-			eu.throwError('server', 'S3Deployment.createBuckets assumes that the bucket_group_files is an array of file names.');
+			throw eu.getError('server', 'S3Deployment.createBuckets assumes that the bucket_group_files is an array of file names.');
 		}
 
 		let bucket_promises = [];
@@ -40,7 +40,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 			let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/' + bucket_group_file);
 
-			if (!_.isArray(bucket_group_file_contents)) { eu.throwError('server', 'S3Deployment.createBuckets assumes that the JSON files are arrays.'); }
+			if (!_.isArray(bucket_group_file_contents)) { throw eu.getError('server', 'S3Deployment.createBuckets assumes that the JSON files are arrays.'); }
 
 			bucket_promises.push(this.createBucketFromGroupFileDefinition(bucket_group_file_contents));
 
@@ -60,7 +60,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets_backup'));
 
 		if (!_.isArray(bucket_group_files)) {
-			eu.throwError('server', 'S3Deployment.createBackupBuckets assumes that the bucket_group_files is an array of file names.');
+			throw eu.getError('server', 'S3Deployment.createBackupBuckets assumes that the bucket_group_files is an array of file names.');
 		}
 
 		let bucket_promises = [];
@@ -71,7 +71,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 			let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/' + bucket_group_file);
 
-			if (!_.isArray(bucket_group_file_contents)) { eu.throwError('server', 'S3Deployment.createBuckets assumes that the JSON files are arrays.'); }
+			if (!_.isArray(bucket_group_file_contents)) { throw eu.getError('server', 'S3Deployment.createBuckets assumes that the JSON files are arrays.'); }
 
 			bucket_promises.push(this.createBucketFromGroupFileDefinition(bucket_group_file_contents));
 
@@ -91,7 +91,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 		let bucket_group_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 's3/buckets'));
 
-		if (!_.isArray(bucket_group_files)) { eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.'); }
+		if (!_.isArray(bucket_group_files)) { throw eu.getError('server', 'S3Deployment.destroyBuckets assumes that the bucket_group_files is an array of file names.'); }
 
 		let bucket_promises = [];
 
@@ -99,7 +99,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 			let bucket_group_file_contents = global.SixCRM.routes.include('deployment', 's3/buckets/' + bucket_group_file);
 
-			if (!_.isArray(bucket_group_file_contents)) { eu.throwError('server', 'S3Deployment.destroyBuckets assumes that the JSON files are arrays.'); }
+			if (!_.isArray(bucket_group_file_contents)) { throw eu.getError('server', 'S3Deployment.destroyBuckets assumes that the JSON files are arrays.'); }
 
 			bucket_promises.push(this.deleteBucketFromGroupFileDefinition(bucket_group_file_contents));
 
@@ -191,7 +191,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 		let backup_definitions = global.SixCRM.routes.include('deployment', 's3/configuration/backup_defintions.json');
 
-		if (!_.isArray(backup_definitions)) { eu.throwError('server', 'S3Deployment.configureBucketBackup assumes that the JSON files are arrays.'); }
+		if (!_.isArray(backup_definitions)) { throw eu.getError('server', 'S3Deployment.configureBucketBackup assumes that the JSON files are arrays.'); }
 
 		backup_definitions.forEach((backup_definition) => {
 
@@ -239,7 +239,7 @@ module.exports = class S3Deployment extends AWSDeploymentUtilities {
 
 				if (result == false) {
 
-					eu.throwError('server', 'Role does not exist: ' + role_definition[0].RoleName);
+					throw eu.getError('server', 'Role does not exist: ' + role_definition[0].RoleName);
 
 				}
 

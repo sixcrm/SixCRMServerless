@@ -7,7 +7,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 let anyItem = { property: 'value' };
 let anyTableName = 'tableName';
-let serverError = '[500] An error occurred.';
+let serverError = '[500] Server Error: [500] An error occurred.';
 
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
@@ -456,7 +456,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			};
 
 			return dynamodbprovider.deleteTable(aTableName).catch((error) => {
-				expect(error.message).to.deep.equal('[500] fail');
+				expect(error.message).to.deep.equal('[500] Error: fail');
 			});
 		});
 
@@ -499,7 +499,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			};
 
 			return dynamodbprovider.waitFor(aTableName, anyStatus).catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('[500] Error: fail');
 			});
 		});
 

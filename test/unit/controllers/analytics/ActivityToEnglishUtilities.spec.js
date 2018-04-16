@@ -253,7 +253,7 @@ describe('controllers/ActivityToEnglishUtilities.js', () => {
 			};
 
 			return aceuController.get('test').catch((error) => {
-				expect(error.message).to.equal('[500] Failed to retrieve an entity');
+				expect(error.message).to.equal('[500] Error: Failed to retrieve an entity');
 			});
 		});
 	});

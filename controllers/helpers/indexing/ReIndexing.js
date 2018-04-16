@@ -36,7 +36,7 @@ module.exports = class ReIndexingHelperController {
 			.then(() => this.printStatistics())
 			.then(() => this.fixIndex(fix))
 			.then(() => {
-				du.output('Finished');
+				return du.output('Finished');
 			});
 	}
 
@@ -81,7 +81,7 @@ module.exports = class ReIndexingHelperController {
 
 		indexing_entities.map(entity => {
 			promises.push(() => dynamodbprovider.scanRecords(entity + 's').then(r => {
-				r.Items.map(c => {
+				return r.Items.map(c => {
 					entities_dynamodb.push({
 						id: c.id,
 						entity_type: entity,

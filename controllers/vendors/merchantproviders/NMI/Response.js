@@ -116,7 +116,7 @@ module.exports = class NMIResponse extends Response {
 			return processor_response.result.transactionid;
 		}
 
-		eu.throwError('server', 'Unable to identify the Transaction ID');
+		throw eu.getError('server', 'Unable to identify the Transaction ID');
 
 	}
 

@@ -30,7 +30,7 @@ module.exports = class TranslationHelperController {
 		}
 
 		if(fatal){
-			eu.throwError('server', 'No translation at path "'+path+'" in '+language_preference+' translation file.');
+			throw eu.getError('server', 'No translation at path "'+path+'" in '+language_preference+' translation file.');
 		}
 
 		return null;

@@ -31,14 +31,14 @@ module.exports = class RDSDeployment extends AWSDeploymentUtilities {
 					if(result.DBClusters.length == 1){
 						return result.DBClusters[0];
 					}
-					eu.throwError('Multiple records returned: ', result);
+					throw eu.getError('Multiple records returned: ', result);
 				}
 
 				return null;
 
 			}
 
-			eu.throwError('server','Unexpected result: ', result);
+			throw eu.getError('server','Unexpected result: ', result);
 
 		});
 

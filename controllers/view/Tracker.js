@@ -44,7 +44,7 @@ module.exports = class TrackerViewController{
 
 			}
 
-			return Promise.reject(eu.throwError('not_found','Tracker not found.'));
+			return Promise.reject(eu.getError('not_found','Tracker not found.'));
 
 		});
 
