@@ -83,7 +83,11 @@ module.exports = class TokenEx {
 		du.debug('Parse Response');
 
 		if(!_.has(result.body, 'Success') || result.body.Success !== true){
-			eu.throwError('server','Tokenization request failed (TokenEx.com): "'+request_name+'".  ('+result.Error+')');
+			if(request_name == 'deleteToken' && _.has(result.body, 'Error') && _.includes(result.body.Error, 'Token does not exist')){
+				du.warning('Token does not exist');
+			}else{
+				eu.throwError('server','Tokenization request failed (TokenEx.com): "'+request_name+'".  ('+result.body.Error+')');
+			}
 		}
 
 		return {

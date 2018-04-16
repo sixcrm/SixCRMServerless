@@ -1,5 +1,5 @@
 {
 	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
 	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation {deletecreditcard (id: \"feef3f06-0cad-4e88-aa2b-91cd99b15a05\") {id}}"
+	"body":"mutation {deletecreditcard (id: \"105207a0-928d-4dd4-a0d6-889965a621fa\") {id}}"
 }
