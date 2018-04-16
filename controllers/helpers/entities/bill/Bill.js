@@ -72,7 +72,7 @@ module.exports = class BillHelperController {
 		let bill = this.parameters.get('bill');
 
 		if(this.isPaid(bill)){
-			eu.throwError('bad_request', 'Bill is already paid.');
+			throw eu.getError('bad_request', 'Bill is already paid.');
 		}
 
 		return true;
@@ -128,7 +128,7 @@ module.exports = class BillHelperController {
 
     make sure that the token amount is equal to the bill amount
     if(this.getBillAmount(bill) !== token_properties.amount){
-      eu.throwError('server', 'Bill total does not equal the token amount.');
+      throw eu.getError('server', 'Bill total does not equal the token amount.');
     }
 
     //make sure that the token is unique in our database

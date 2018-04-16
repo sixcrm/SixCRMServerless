@@ -47,12 +47,12 @@ class mockSQSProvider extends AWSProvider {
 			if (_.has(queue_name, 'QueueName')) {
 				queue_name = queue_name.QueueName;
 			} else {
-				eu.throwError('server', 'Missing QueueName property');
+				throw eu.getError('server', 'Missing QueueName property');
 			}
 		}
 
 		if (!_.isString(queue_name)) {
-			eu.throwError('server', 'Improper argumentation for getQueueARN');
+			throw eu.getError('server', 'Improper argumentation for getQueueARN');
 		}
 
 		if (global.SixCRM.configuration.site_config.sqs.region === 'localhost') {
@@ -92,7 +92,7 @@ class mockSQSProvider extends AWSProvider {
 		du.debug('Get Queue Parameters');
 
 		if (_.isNull(queue_name) || _.isUndefined(queue_name)) {
-			eu.throwError('server', 'Unable to determine queue name.');
+			throw eu.getError('server', 'Unable to determine queue name.');
 		}
 
 		let parameters = {
@@ -281,7 +281,7 @@ class mockSQSProvider extends AWSProvider {
 			} else {
 
 				if (!_.has(parameters, 'QueueName')) {
-					eu.throwError('server', 'Purge Queue parameters objects assumed to have QueueName property');
+					throw eu.getError('server', 'Purge Queue parameters objects assumed to have QueueName property');
 				}
 
 				queue_name = parameters.QueueName;

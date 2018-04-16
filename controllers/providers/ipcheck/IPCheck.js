@@ -19,7 +19,7 @@ module.exports = class IPCheck {
 			if(_.has(result, 'body') && _.isString(result.body)){
 				return {ip_address: result.body};
 			}
-			eu.throwError('server', 'Unexpected response: '+result);
+			throw eu.getError('server', 'Unexpected response: '+result);
 
 		});
 

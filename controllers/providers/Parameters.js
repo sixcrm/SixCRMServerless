@@ -71,7 +71,7 @@ module.exports = class Parameters {
 
 			}
 
-			eu.throwError('server','"'+key+'" is not of type array.');
+			throw eu.getError('server','"'+key+'" is not of type array.');
 
 		}else{
 
@@ -141,7 +141,7 @@ module.exports = class Parameters {
 				});
 
 				if(stringutilities.isString(missing_parameter) && fatal){
-					eu.throwError('server', key+' is missing "'+missing_parameter+'" property.');
+					throw eu.getError('server', key+' is missing "'+missing_parameter+'" property.');
 				}
 
 			}
@@ -149,7 +149,7 @@ module.exports = class Parameters {
 		}
 
 		if(_.isNull(return_object) && fatal){
-			eu.throwError('server', '"'+key+'" property is not set.');
+			throw eu.getError('server', '"'+key+'" property is not set.');
 		}
 
 		return return_object;

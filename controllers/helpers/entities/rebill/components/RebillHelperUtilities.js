@@ -41,7 +41,7 @@ module.exports = class RebillHelperUtilities {
 
 		}
 
-		eu.throwError('server', 'created_at is not a proper ISO-8601');
+		throw eu.getError('server', 'created_at is not a proper ISO-8601');
 
 	}
 

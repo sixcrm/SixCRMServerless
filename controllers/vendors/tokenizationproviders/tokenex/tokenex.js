@@ -86,7 +86,7 @@ module.exports = class TokenEx {
 			if(request_name == 'deleteToken' && _.has(result.body, 'Error') && _.includes(result.body.Error, 'Token does not exist')){
 				du.warning('Token does not exist');
 			}else{
-				eu.throwError('server','Tokenization request failed (TokenEx.com): "'+request_name+'".  ('+result.body.Error+')');
+				throw eu.getError('server','Tokenization request failed (TokenEx.com): "'+request_name+'".  ('+result.body.Error+')');
 			}
 		}
 
@@ -95,13 +95,13 @@ module.exports = class TokenEx {
 				if(_.has(result.body, 'Token')){
 					return { token: result.body.Token };
 				}
-				eu.throwError('server', 'Tokenization Response missing "Token" field (TokenEx.com).');
+				throw eu.getError('server', 'Tokenization Response missing "Token" field (TokenEx.com).');
 			},
 			getToken:(result) => {
 				if(_.has(result.body, 'Value')){
 					return { value: result.body.Value };
 				}
-				eu.throwError('server', 'Tokenization Response missing "Value" field (TokenEx.com).');
+				throw eu.getError('server', 'Tokenization Response missing "Value" field (TokenEx.com).');
 			},
 			deleteToken:() => {
 				return true;
@@ -128,7 +128,7 @@ module.exports = class TokenEx {
 		du.debug('Create Full Request URL');
 
 		if(!_.has(this.request_paths, request_name)){
-			eu.throwError('server', 'Unknown token request: '+request_name);
+			throw eu.getError('server', 'Unknown token request: '+request_name);
 		}
 
 		return this.base+'/'+this.request_paths[request_name];

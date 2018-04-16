@@ -447,7 +447,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		}else{
 
-			eu.throwError('server', 'EC2Provider.assureSecurityGroup expects GroupName of GroupId arguments');
+			throw eu.getError('server', 'EC2Provider.assureSecurityGroup expects GroupName of GroupId arguments');
 
 		}
 
@@ -553,7 +553,7 @@ module.exports = class EC2Provider extends AWSProvider {
 				du.highlight('Security Group Created.');
 				return resolve(response);
 			}).on('error',(error) => {
-				eu.throwError('server', error);
+				throw eu.getError('server', error);
 			});
 
 			handle.send();
@@ -569,11 +569,11 @@ module.exports = class EC2Provider extends AWSProvider {
 		return this.securityGroupExists(group_name).then((results) => {
 
 			if(results == false){
-				eu.throwError('server', 'Security group does not exist.');
+				throw eu.getError('server', 'Security group does not exist.');
 			}
 
 			if(!_.has(results, 'GroupId')){
-				eu.throwError('server', 'Unexpected response group structure.');
+				throw eu.getError('server', 'Unexpected response group structure.');
 			}
 
 			return results.GroupId;
@@ -590,7 +590,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 			if(!_.has(parameters, 'GroupName')){
 
-				eu.throwError('server', 'Inappropriate Parameterization');
+				throw eu.getError('server', 'Inappropriate Parameterization');
 
 			}
 
@@ -624,7 +624,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 			if(!_.has(parameters, 'GroupName')){
 
-				eu.throwError('server', 'Inappropriate Parameterization');
+				throw eu.getError('server', 'Inappropriate Parameterization');
 
 			}
 

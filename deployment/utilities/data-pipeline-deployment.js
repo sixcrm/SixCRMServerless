@@ -26,7 +26,7 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 
 		return this.assureSeeds()
 			.then(() => this.assurePipeline())
-			.catch(error => eu.throwError('server', error));
+			.catch(error => { throw eu.getError('server', error) });
 
 
 	}
@@ -47,7 +47,7 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 			.then(definition => this.datapipelineprovider.validatePipelineDefinition({parameters: definition}))
 			.then(definition => this.datapipelineprovider.putPipelineDefinition({parameters: definition}))
 			.then(definition => this.datapipelineprovider.activatePipeline({parameters: {pipelineId: definition.pipelineId}}))
-			.catch(error => eu.throwError('server', error.message));
+			.catch(error => { throw eu.getError('server', error.message) });
 
 	}
 

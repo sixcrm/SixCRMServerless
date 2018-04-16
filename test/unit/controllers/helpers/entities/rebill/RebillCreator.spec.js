@@ -1282,7 +1282,7 @@ describe('/helpers/entities/Rebill.js', () => {
 				createINQueryParameters(field_name, in_array) {
 					arrayutilities.nonEmpty(in_array, true);
 					if(!arrayutilities.assureEntries(in_array, 'string')){
-						eu.throwError('server', 'All entries in the "in_array" must be of type string.');
+						throw eu.getError('server', 'All entries in the "in_array" must be of type string.');
 					}
 					let in_object = {};
 
@@ -1645,7 +1645,7 @@ describe('/helpers/entities/Rebill.js', () => {
         createINQueryParameters(field_name, in_array) {
           arrayutilities.nonEmpty(in_array, true);
           if(!arrayutilities.assureEntries(in_array, 'string')){
-            eu.throwError('server', 'All entries in the "in_array" must be of type string.');
+            throw eu.getError('server', 'All entries in the "in_array" must be of type string.');
           }
           let in_object = {};
 
@@ -1762,7 +1762,7 @@ describe('/helpers/entities/Rebill.js', () => {
 				createINQueryParameters(field_name, in_array) {
 					arrayutilities.nonEmpty(in_array, true);
 					if(!arrayutilities.assureEntries(in_array, 'string')){
-						eu.throwError('server', 'All entries in the "in_array" must be of type string.');
+						throw eu.getError('server', 'All entries in the "in_array" must be of type string.');
 					}
 					let in_object = {};
 
@@ -1963,7 +1963,7 @@ describe('/helpers/entities/Rebill.js', () => {
 				createINQueryParameters(field_name, in_array) {
 					arrayutilities.nonEmpty(in_array, true);
 					if(!arrayutilities.assureEntries(in_array, 'string')){
-						eu.throwError('server', 'All entries in the "in_array" must be of type string.');
+						throw eu.getError('server', 'All entries in the "in_array" must be of type string.');
 					}
 					let in_object = {};
 

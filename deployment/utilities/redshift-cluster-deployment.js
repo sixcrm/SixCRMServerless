@@ -212,7 +212,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
 					}else{
 
-						return eu.throwError('server', 'Security group does not exist: '+security_group_name);
+						throw eu.getError('server', 'Security group does not exist: '+security_group_name);
 
 					}
 
@@ -238,7 +238,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
 		if(!objectutilities.hasRecursive(data, 'Clusters.0.Endpoint.Address')){
 
-			eu.throwError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
+			throw eu.getError('server', 'Data object does not contain appropriate key: Clusters.0.Endpoint.Address');
 
 		}
 
@@ -252,13 +252,13 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
 			}else{
 
-				eu.throwError('server', 'Attempting to set redshift.host configuration globally when value does not match regular expression validation.');
+				throw eu.getError('server', 'Attempting to set redshift.host configuration globally when value does not match regular expression validation.');
 
 			}
 
 		}else{
 
-			eu.throwError('server', 'Attempting to set a null or redshift.host configuration globally.');
+			throw eu.getError('server', 'Attempting to set a null or redshift.host configuration globally.');
 
 		}
 

@@ -130,7 +130,7 @@ module.exports = class forwardMessageController extends RelayController {
 
 		if(objectutilities.getClassName(compound_worker_response_object.worker_response_object) !== 'WorkerResponse'){
 			du.error('Unrecognized worker response:', compound_worker_response_object.worker_response_object);
-			eu.throwError('server', 'Unrecognized worker response: '+compound_worker_response_object.worker_response_object);
+			throw eu.getError('server', 'Unrecognized worker response: '+compound_worker_response_object.worker_response_object);
 		}
 
 		return Promise.resolve(compound_worker_response_object);

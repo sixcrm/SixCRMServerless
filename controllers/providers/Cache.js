@@ -192,7 +192,7 @@ module.exports = class cacheController {
 
 		if(!_.isFunction(data_promise)){
 
-			eu.throwError('server','Callback_promise.then is not a function.');
+			throw eu.getError('server','Callback_promise.then is not a function.');
 
 		}
 

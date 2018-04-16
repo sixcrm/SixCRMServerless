@@ -28,7 +28,7 @@ module.exports = class Token {
 
 		}
 
-		eu.throwError('server', 'Unknown token provider: "'+provider+'".');
+		throw eu.getError('server', 'Unknown token provider: "'+provider+'".');
 
 	}
 
@@ -44,7 +44,7 @@ module.exports = class Token {
 
 		}
 
-		eu.throwError('server', 'Unknown token provider: "'+provider+'".');
+		throw eu.getError('server', 'Unknown token provider: "'+provider+'".');
 
 	}
 
@@ -60,7 +60,7 @@ module.exports = class Token {
 
 		}
 
-		eu.throwError('server', 'Unknown token provider: "'+provider+'".');
+		throw eu.getError('server', 'Unknown token provider: "'+provider+'".');
 
 	}
 

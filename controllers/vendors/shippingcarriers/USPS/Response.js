@@ -60,7 +60,7 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 
 		}else{
 
-			eu.throwError('server', 'USPS returned a non-200 HTTP status code.');
+			throw eu.getError('server', 'USPS returned a non-200 HTTP status code.');
 		}
 
 	}

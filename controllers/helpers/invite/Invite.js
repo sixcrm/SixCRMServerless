@@ -252,7 +252,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 			.then((acl) => {
 
 				if (!_.has(acl, 'pending')){
-					eu.throwError('bad_request', 'User ACL is not pending.');
+					throw eu.getError('bad_request', 'User ACL is not pending.');
 				}
 
 				delete acl.pending;
@@ -274,11 +274,11 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 		return this.userACLController.get({id:user_invite.acl}).then(acl => {
 
 			if(_.isNull(acl)){
-				eu.throwError('bad_request','Non Existing User ACL.');
+				throw eu.getError('bad_request','Non Existing User ACL.');
 			}
 
 			if (!_.has(acl, 'pending')){
-				eu.throwError('bad_request','Can\'t resend invite, User ACL is not pending.');
+				throw eu.getError('bad_request','Can\'t resend invite, User ACL is not pending.');
 			}
 
 			this.parameters.set('useracl', acl);

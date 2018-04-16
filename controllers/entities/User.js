@@ -68,7 +68,7 @@ module.exports = class UserController extends entityController {
 			}).then((user) => {
 
 				if(!_.has(user, 'id')){
-					eu.throwError('not_found', 'User not found: '+user_alias);
+					throw eu.getError('not_found', 'User not found: '+user_alias);
 				}
 
 				return user;
@@ -89,7 +89,7 @@ module.exports = class UserController extends entityController {
 					return Promise.resolve(false);
 				}
 
-				eu.throwError(error);
+				throw eu.getError(error);
 
 			});
 
@@ -100,7 +100,7 @@ module.exports = class UserController extends entityController {
 		du.debug('Get User Strict');
 
 		if(!stringutilities.isEmail(user_email)){
-			eu.throwError('bad_request','A user identifier or a email is required, "'+user_email+'" provided');
+			throw eu.getError('bad_request','A user identifier or a email is required, "'+user_email+'" provided');
 		}
 
 		//Technical Debt:  Why are ACL's disabled here?
@@ -115,7 +115,7 @@ module.exports = class UserController extends entityController {
 			}).then((user) => {
 
 				if(_.isNull(user) || !_.has(user, 'id')){
-					eu.throwError('not_found', 'User not found: '+user_email);
+					throw eu.getError('not_found', 'User not found: '+user_email);
 				}
 
 				return user;
@@ -143,7 +143,7 @@ module.exports = class UserController extends entityController {
 				}
 
 				du.error(error);
-				eu.throwError(error);
+				throw eu.getError(error);
 
 			});
 
@@ -154,7 +154,7 @@ module.exports = class UserController extends entityController {
 		du.debug('Validate Global User');
 
 		if(!objectutilities.hasRecursive(global, 'user.id') || !this.isEmail(global.user.id)){
-			eu.throwError('server', 'Unexpected argumentation');
+			throw eu.getError('server', 'Unexpected argumentation');
 		}
 
 		return true;
@@ -169,7 +169,7 @@ module.exports = class UserController extends entityController {
 			.then((user) => {
 
 				if (!_.has(user, 'id')) {
-					eu.throwError('not_found', 'User does not exist: '+id);
+					throw eu.getError('not_found', 'User does not exist: '+id);
 				}
 
 				return Promise.all([user, this.getACLPartiallyHydrated(user)]);
@@ -187,7 +187,7 @@ module.exports = class UserController extends entityController {
 					return null;
 				}
 
-				eu.throwError(error);
+				throw eu.getError(error);
 
 			});
 
@@ -263,11 +263,11 @@ module.exports = class UserController extends entityController {
 		du.debug('Create Strict');
 
 		if(!objectutilities.hasRecursive(global, 'user.id')){
-			eu.throwError('server', 'Unset user in globals');
+			throw eu.getError('server', 'Unset user in globals');
 		}
 
 		if(global.user.id != user.id){
-			eu.throwError('server', 'User ID does not match Global User ID');
+			throw eu.getError('server', 'User ID does not match Global User ID');
 		}
 
 		this.disableACLs();

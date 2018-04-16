@@ -86,7 +86,7 @@ module.exports = class TransactionHelperController {
 		return this.transactionController.get({id: transaction_id}).then(transaction => {
 
 			if(_.isNull(transaction)){
-				eu.throwError('notfound', 'Transaction not found.');
+				throw eu.getError('notfound', 'Transaction not found.');
 			}
 
 			this.parameters.set('transaction', transaction);
@@ -174,7 +174,7 @@ module.exports = class TransactionHelperController {
 
 		if(arrayutilities.nonEmpty(missed_transaction_products)){
 
-			eu.throwError('server', 'Unaccounted for transaction products in update.');
+			throw eu.getError('server', 'Unaccounted for transaction products in update.');
 
 		}
 

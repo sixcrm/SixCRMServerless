@@ -131,7 +131,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		}
 
 		if(_.isNull(products) && _.isNull(product_schedules)){
-			eu.throwError('server', 'Nothing to add to the rebill.');
+			throw eu.getError('server', 'Nothing to add to the rebill.');
 		}
 
 		return true;
@@ -211,7 +211,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 					return this.productController.get({id: product_group.product}).then(result => {
 						if(_.isNull(result)){
-							eu.throwError('not_found', 'Product does not exist: '+product_group.product);
+							throw eu.getError('not_found', 'Product does not exist: '+product_group.product);
 						}
 						product_group.product = result;
 						return product_group;
@@ -247,11 +247,11 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		if(arrayutilities.nonEmpty(normalized_product_schedules)){
 			arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
 				if(!objectutilities.hasRecursive(normalized_product_schedule, 'product_schedule.schedule')){
-					eu.throwError('bad_request','Normalized product schedule is missing product_schedule.schedule element');
+					throw eu.getError('bad_request','Normalized product schedule is missing product_schedule.schedule element');
 				}
 				arrayutilities.map(normalized_product_schedule.product_schedule.schedule, schedule_element => {
 					if(_.has(schedule_element, 'end') && schedule_element.end <= schedule_element.start){
-						eu.throwError('bad_request','A schedule element end can not be less than or equal to a schedule element start.');
+						throw eu.getError('bad_request','A schedule element end can not be less than or equal to a schedule element start.');
 					}
 				})
 			});
@@ -268,7 +268,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
       //Technical Debt:  But, but, but, didn't we get the product schedules from the session?
       arrayutilities.map(product_schedules, (product_schedule) => {
         if(!_.includes(session.product_schedules, product_schedule.id)){
-          eu.throwError('server', 'The specified product schedule is not contained in the session object: '+product_schedule.id);
+          throw eu.getError('server', 'The specified product schedule is not contained in the session object: '+product_schedule.id);
         }
       });
     }
@@ -301,7 +301,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		});
 
 		if (!valid) {
-			eu.throwError('bad_request', 'Price must be within product\'s dynamic price range.');
+			throw eu.getError('bad_request', 'Price must be within product\'s dynamic price range.');
 		}
 
 		return valid;
@@ -331,7 +331,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		});
 
 		if (!valid) {
-			eu.throwError('bad_request', 'Price must be within product\'s dynamic price range.');
+			throw eu.getError('bad_request', 'Price must be within product\'s dynamic price range.');
 		}
 
 		return valid;
@@ -404,7 +404,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 			}else{
 
-				eu.throwError('server', 'Unrecognized case: day is greater than or equal to 0 but there are no normalized product schedules.');
+				throw eu.getError('server', 'Unrecognized case: day is greater than or equal to 0 but there are no normalized product schedules.');
 
 			}
 
@@ -526,7 +526,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			return product_group.product.default_price;
 		}
 
-		eu.throwError('server', 'Unable to identify price for product: '+product_group.product.id);
+		throw eu.getError('server', 'Unable to identify price for product: '+product_group.product.id);
 
 	}
 

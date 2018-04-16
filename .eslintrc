@@ -16,14 +16,14 @@
 	},
 	"rules": {
 		"no-console": "error",
-		"no-trailing-spaces": "warn",
+		"no-trailing-spaces": "error",
 		"indent": ["error", "tab"],
-		"no-mixed-spaces-and-tabs": "error",
+		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
 		"no-unused-vars": "error",
-		"promise/always-return": "warn",
-		"promise/catch-or-return": "warn",
-		"promise/no-return-wrap": "warn",
-		"promise/param-names": "warn",
+		"promise/always-return": "error",
+		"promise/catch-or-return": "error",
+		"promise/no-return-wrap": "error",
+		"promise/param-names": "error",
 		"no-return-await": "error"
 	}
 }

@@ -62,7 +62,7 @@ module.exports = class APNProvider {
 
 			du.debug(error);
 
-			eu.throwError('server','Error instantiating APN class.');
+			throw eu.getError('server','Error instantiating APN class.');
 
 		}
 

@@ -118,7 +118,7 @@ module.exports = class AffiliateHelperController {
 		du.debug('Validate All Affiliates Replaced');
 
 		if(_.isUndefined(event) || _.isNull(event)){
-			eu.throwError('server', 'validateAllAffiliatesReplaced assumes event input.');
+			throw eu.getError('server', 'validateAllAffiliatesReplaced assumes event input.');
 		}
 
 		arrayutilities.map(this.affiliate_fields, affiliate_field => {
@@ -129,7 +129,7 @@ module.exports = class AffiliateHelperController {
 				}
 
 				if(!this.affiliateController.isUUID(event.affiliates[affiliate_field])){
-					eu.throwError('server', 'Unable to assure '+affiliate_field+': "'+event.affiliates[affiliate_field]+'".');
+					throw eu.getError('server', 'Unable to assure '+affiliate_field+': "'+event.affiliates[affiliate_field]+'".');
 				}
 			}
 		});
@@ -147,7 +147,7 @@ module.exports = class AffiliateHelperController {
 		});
 
 		if(all_strings == false){
-			eu.throwError('server', 'affiliateHelperController.assureAffiliates assumes all affiliate ID\'s are strings.');
+			throw eu.getError('server', 'affiliateHelperController.assureAffiliates assumes all affiliate ID\'s are strings.');
 		}
 
 	}
@@ -177,18 +177,18 @@ module.exports = class AffiliateHelperController {
 		du.debug('Validate Assured Affiliates');
 
 		if(_.isUndefined(affiliate_ids) || _.isNull(affiliate_ids)){
-			eu.throwError('server', 'validateAssuredAffiliates assumes affiliate_ids input.');
+			throw eu.getError('server', 'validateAssuredAffiliates assumes affiliate_ids input.');
 		}
 
 		if(_.isUndefined(assured_affiliates) || _.isNull(assured_affiliates)){
-			eu.throwError('server', 'validateAssuredAffiliates assumes assured_affiliates input.');
+			throw eu.getError('server', 'validateAssuredAffiliates assumes assured_affiliates input.');
 		}
 
 		arrayutilities.nonEmpty(assured_affiliates, true);
 		arrayutilities.nonEmpty(affiliate_ids, true);
 
 		if(assured_affiliates.length != affiliate_ids.length){
-			eu.throwError('server', 'Assured affiliates result has different length than input ID array.');
+			throw eu.getError('server', 'Assured affiliates result has different length than input ID array.');
 		}
 
 		return assured_affiliates;
@@ -200,11 +200,11 @@ module.exports = class AffiliateHelperController {
 		du.debug('Assure Affiliates Array Transform');
 
 		if(_.isUndefined(affiliate_ids) || _.isNull(affiliate_ids)){
-			eu.throwError('server', 'assureAffiliatesArrayTransform assumes affiliate_ids input.');
+			throw eu.getError('server', 'assureAffiliatesArrayTransform assumes affiliate_ids input.');
 		}
 
 		if(_.isUndefined(affiliates)){
-			eu.throwError('server', 'assureAffiliatesArrayTransform assumes affiliates input.');
+			throw eu.getError('server', 'assureAffiliatesArrayTransform assumes affiliates input.');
 		}
 
 		if(_.isNull(affiliates)){

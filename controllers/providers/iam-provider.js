@@ -33,7 +33,7 @@ module.exports = class IAMProvider extends AWSProvider {
 				return false;
 			}
 
-			eu.throwError('server', error);
+			throw eu.getError('server', error);
 
 		});
 
@@ -95,7 +95,7 @@ module.exports = class IAMProvider extends AWSProvider {
 					if(error.statusCode == '404'){
 						return resolve(null);
 					}
-					eu.throwError(error);
+					throw eu.getError(error);
 				}
 				return resolve(data);
 			});

@@ -63,7 +63,7 @@ module.exports = class ElasticacheProvider extends AWSProvider{
 					if(error.code == 'CacheClusterNotFound'){
 						return resolve(null);
 					}else{
-						eu.throwError('server', error);
+						throw eu.getError('server', error);
 					}
 				}
 
@@ -81,7 +81,7 @@ module.exports = class ElasticacheProvider extends AWSProvider{
 
 		return new Promise((resolve) => {
 
-			if(!_.includes(this.clusterStati, status)){ eu.throwError('server', 'Unknown status type.'); }
+			if(!_.includes(this.clusterStati, status)){ throw eu.getError('server', 'Unknown status type.'); }
 
 			this.elasticache.waitFor(status, parameters, (error, data) => resolve(this.AWSCallback(error, data)));
 

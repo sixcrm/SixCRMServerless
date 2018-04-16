@@ -70,7 +70,7 @@ module.exports = class AWSDeploymentUtilities {
 		let environments_json = global.SixCRM.routes.include('deployment', 'sts/config/accounts.json');
 
 		if(!_.has(environments_json.deployment_accounts, environment_key)){
-			eu.throwError('server', 'Unknown deployment environment: '+environment_key);
+			throw eu.getError('server', 'Unknown deployment environment: '+environment_key);
 		}
 
 		let account_id = environments_json.deployment_accounts[environment_key].account_id;
@@ -89,18 +89,18 @@ module.exports = class AWSDeploymentUtilities {
 		du.deep('Create Parameter Group');
 
 		if(!_.has(this.parameter_groups, action)){
-			eu.throwError('server', 'AWSDeploymentUtilities.createParameterGroup assumes parameter group has action property.');
+			throw eu.getError('server', 'AWSDeploymentUtilities.createParameterGroup assumes parameter group has action property.');
 		}
 		if(!_.isNull(subaction)){
 			if(!_.has(this.parameter_groups[action], subaction)){
-				eu.throwError('server', 'AWSDeploymentUtilities.createParameterGroup assumes parameter group action has property subaction.');
+				throw eu.getError('server', 'AWSDeploymentUtilities.createParameterGroup assumes parameter group action has property subaction.');
 			}
 			if(!_.has(this.parameter_groups[action][subaction], 'required')){
-				eu.throwError('server', 'AWSDeploymentUtilities.createParameterGroup assumes parameter group action.subaction has property required.');
+				throw eu.getError('server', 'AWSDeploymentUtilities.createParameterGroup assumes parameter group action.subaction has property required.');
 			}
 		}else{
 			if(!_.has(this.parameter_groups[action], 'required')){
-				eu.throwError('server', 'AWSDeploymentUtilities.createParameterGroup assumes parameter group action has property required.');
+				throw eu.getError('server', 'AWSDeploymentUtilities.createParameterGroup assumes parameter group action has property required.');
 			}
 		}
 

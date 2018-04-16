@@ -24,7 +24,7 @@ module.exports = class LocalCache {
 			du.deep('Executing Answer Function');
 
 			if (!_.isFunction(answer_function)) {
-				eu.throwError('server', 'Answer function must be a function');
+				throw eu.getError('server', 'Answer function must be a function');
 			}
 
 			return Promise.resolve(answer_function()).then((answer) => {
@@ -52,7 +52,7 @@ module.exports = class LocalCache {
 		du.debug('Get');
 
 		if (!_.isString(key)) {
-			eu.throwError('server', 'Key should be a string');
+			throw eu.getError('server', 'Key should be a string');
 		}
 
 		if (_.has(this.cache, key)) {
@@ -70,7 +70,7 @@ module.exports = class LocalCache {
 		du.debug('Set');
 
 		if (!_.isString(key)) {
-			eu.throwError('server', 'Key should be a string');
+			throw eu.getError('server', 'Key should be a string');
 		}
 
 		if (_.has(this.cache, key) && _.isNull(value)) {
@@ -100,7 +100,7 @@ module.exports = class LocalCache {
 		}
 
 		if (!_.isString(key)) {
-			eu.throwError('server', 'Key should be a string');
+			throw eu.getError('server', 'Key should be a string');
 		}
 
 		if (key == 'all') {

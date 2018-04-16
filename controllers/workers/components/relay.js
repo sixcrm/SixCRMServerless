@@ -60,7 +60,7 @@ module.exports = class RelayController {
 		du.debug('Validate Messages');
 
 		if(!this.parameters.isSet('messages')){
-			eu.throwError('server', 'Messages are not set correctly.');
+			throw eu.getError('server', 'Messages are not set correctly.');
 		}
 
 		return Promise.resolve(true);
@@ -102,7 +102,7 @@ module.exports = class RelayController {
 		du.debug('Validate Parameters');
 
 		if(!this.parameters.isSet('params')){
-			eu.throwError('server', 'Invalid Forward Message Configuration.');
+			throw eu.getError('server', 'Invalid Forward Message Configuration.');
 		}
 
 		return Promise.resolve(true);
@@ -145,7 +145,7 @@ module.exports = class RelayController {
 		}
 
 		du.error(message);
-		eu.throwError('server', 'Message does not have a receipt handle.');
+		throw eu.getError('server', 'Message does not have a receipt handle.');
 
 	}
 

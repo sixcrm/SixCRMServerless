@@ -105,7 +105,7 @@ module.exports = class ProductController extends entityController {
 		du.debug('Get Product Schedules');
 
 		if(!_.has(args, 'product')){
-			eu.throwError('bad_request','getProductSchedules requires a product argument.');
+			throw eu.getError('bad_request','getProductSchedules requires a product argument.');
 		}
 
 		return this.executeAssociatedEntityFunction('ProductScheduleController', 'listByProduct', {product: args.product, pagination: args.pagination});

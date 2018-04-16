@@ -73,7 +73,7 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 				}else{
 
-					eu.throwError('server','Unable to identify found count in search results.');
+					throw eu.getError('server','Unable to identify found count in search results.');
 
 				}
 
@@ -87,13 +87,13 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 				}else{
 
-					eu.throwError('server','Unable to identify hit property in search results hits.');
+					throw eu.getError('server','Unable to identify hit property in search results hits.');
 
 				}
 
 			}else{
 
-				eu.throwError('server','Unable to identify hits property in search results.');
+				throw eu.getError('server','Unable to identify hits property in search results.');
 
 			}
 
@@ -149,11 +149,11 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 					if(result.DomainStatusList.length == 1){
 						return result.DomainStatusList[0];
 					}
-					eu.throwError('server', 'Multiple results returned: ', result);
+					throw eu.getError('server', 'Multiple results returned: ', result);
 				}
 				return null;
 			}
-			eu.throwError('server', 'Unexpected result: ', result);
+			throw eu.getError('server', 'Unexpected result: ', result);
 		});
 
 	}

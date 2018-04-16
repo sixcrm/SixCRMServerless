@@ -31,7 +31,7 @@ module.exports = class verifyTransactionJWTController {
 
 		if (!_.has(process.env, 'transaction_jwt_secret_key')) {
 
-			eu.throwError('server', 'Missing JWT secret key.');
+			throw eu.getError('server', 'Missing JWT secret key.');
 
 		}
 

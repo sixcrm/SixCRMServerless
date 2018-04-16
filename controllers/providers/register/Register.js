@@ -167,7 +167,7 @@ module.exports = class Register extends RegisterUtilities {
 		let associated_transactions = this.parameters.get('associated_transactions', null, false);
 
 		if(arrayutilities.nonEmpty(associated_transactions)){
-			eu.throwError('forbidden', 'A transaction with pre-existing refunds or reversals can not be reversed.');
+			throw eu.getError('forbidden', 'A transaction with pre-existing refunds or reversals can not be reversed.');
 		}
 
 		return Promise.resolve(true);
@@ -234,7 +234,7 @@ module.exports = class Register extends RegisterUtilities {
 
 		//If the proposed amount is greater than positive balance, we have a problem
 		if(amount > balance){
-			eu.throwError('forbidden', 'The proposed resolved transaction amount is negative.');
+			throw eu.getError('forbidden', 'The proposed resolved transaction amount is negative.');
 		}
 
 		return Promise.resolve(true);
@@ -332,7 +332,7 @@ module.exports = class Register extends RegisterUtilities {
 			try{
 				transaction.processor_response = JSON.stringify(transaction.processor_response);
 			}catch(error){
-				eu.throwError('validation', 'Unrecognized format for processor response.')
+				throw eu.getError('validation', 'Unrecognized format for processor response.')
 			}
 
 			this.parameters.set('associatedtransaction', transaction);

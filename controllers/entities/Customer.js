@@ -100,7 +100,7 @@ module.exports = class CustomerController extends entityController {
 		})
 			.then(_customer => {
 				if (_.isNull(_customer)) {
-					eu.throwError('server', `Customer does not exist: ${customer}`);
+					throw eu.getError('server', `Customer does not exist: ${customer}`);
 				}
 				return _customer;
 			});
@@ -115,7 +115,7 @@ module.exports = class CustomerController extends entityController {
 		})
 			.then(_creditcard => {
 				if (_.isNull(_creditcard)) {
-					eu.throwError('server', `Creditcard does not exist: ${creditcard}`);
+					throw eu.getError('server', `Creditcard does not exist: ${creditcard}`);
 				}
 				return _creditcard;
 			});

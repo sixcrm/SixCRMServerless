@@ -24,7 +24,7 @@ module.exports = class NotificationUtilities {
 			return this.name;
 		}
 
-		eu.throwError('server', 'Nameless notification, very cryptic.');
+		throw eu.getError('server', 'Nameless notification, very cryptic.');
 
 	}
 
@@ -36,7 +36,7 @@ module.exports = class NotificationUtilities {
 			return this.category;
 		}
 
-		eu.throwError('server', 'Unable to determine notification category.');
+		throw eu.getError('server', 'Unable to determine notification category.');
 
 	}
 
@@ -52,7 +52,7 @@ module.exports = class NotificationUtilities {
 
 		}
 
-		eu.throwError('server', 'Unable to determine notification type.');
+		throw eu.getError('server', 'Unable to determine notification type.');
 
 	}
 

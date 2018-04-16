@@ -64,7 +64,7 @@ module.exports = class NotificationHelperClass {
 			return true;
 		}
 
-		eu.throwError('not_found','Not a notification event type: '+event_type);
+		throw eu.getError('not_found','Not a notification event type: '+event_type);
 
 	}
 
