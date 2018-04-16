@@ -4,7 +4,7 @@ const mockery = require('mockery');
 const _ = require('lodash');
 
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const Configuration = global.SixCRM.routes.include('controllers', 'core/Configuration.js');
+const Configuration = global.SixCRM.routes.include('core', 'Configuration.js');
 
 describe('controllers/core/Configuration.js', () => {
 

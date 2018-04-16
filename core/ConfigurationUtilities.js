@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const du = require('../lib/debug-utilities');
+const eu = require('../lib/error-utilities');
+const objectutilities = require('../lib/object-utilities');
 
 module.exports = class ConfigurationUtilities {
 

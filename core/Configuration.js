@@ -1,6 +1,6 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
+const du = require('../lib/debug-utilities');
+const eu = require('../lib/error-utilities');
+const ConfigurationUtilities = require('./ConfigurationUtilities');
 
 module.exports = class Configuration extends ConfigurationUtilities {
 
