@@ -54,7 +54,7 @@ sns:
 
 cloudsearch:
   domainname: 'sixcrm'
-  domainendpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
+  domainendpoint: 'local-docker:15808'
 
 aurora:
   release: 2
@@ -99,7 +99,7 @@ elasticache:
   max_attempts: 3
   retry_time: 1800000
   endpoint: local-docker
-  port: 6379
+  port: 6380
   default_expiration: 300
 
 slack:

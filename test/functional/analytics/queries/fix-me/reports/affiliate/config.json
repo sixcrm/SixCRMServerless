@@ -1,0 +1,24 @@
+{
+	"method": "getReport",
+	"test_case": "Affiliate traffic report",
+	"input": {
+		"facets": {
+			"facets": [{
+					"facet": "start",
+					"values": ["2017-01-01T00:00:00.000Z"]
+				},
+				{
+					"facet": "end",
+					"values": ["2017-01-03T00:00:00.000Z"]
+				}
+			],
+			"reportType": "averageRevenuePerOrder"
+		}
+	},
+	"result_name": "facets",
+	"expect": [
+		[
+			"99999999-999e-44aa-999e-aaa9a99a9999"
+		]
+	]
+}
