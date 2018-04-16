@@ -1,30 +1,38 @@
 const _ = require('lodash');
 const path = require('path');
 const BBPromise = require('bluebird');
+// const au = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
 
 module.exports = class AuroraSchemaDeployment {
 
-	deploy(options = {}) {
+	async deploy(options = {}) {
 
 		du.debug('AuroraSchemaDeployment.deploy()');
 
-		return Promise.resolve()
-			.then(() => this._getVersionDirectories(options))
-			.then((migrations) => BBPromise.each(migrations, this._deployMigration.bind(this)))
-			.then(() => 'Aurora deploy complete');
+		return auroraContext.withConnection(async (connection) => {
+
+			const migrations = await this._getVersionDirectories(connection, options);
+			// this just does not work for some reason, the promises execute out of order when the call is nested
+			// await au.serialPromises(au.map(migrations, m => this._deployMigration(m, connection)))
+			await BBPromise.each(migrations, m => this._deployMigration(m, connection));
+			return 'Aurora deploy complete';
+
+		});
 
 	}
 
-	destroy() {
+	async destroy() {
 
 		du.debug('AuroraSchemaDeployment.destroy()');
 
-		return Promise.resolve()
-			.then(this._getDestroyQuery.bind(this))
-			.then(this._executeQuery.bind(this));
+		return auroraContext.withConnection(async (connection) => {
+
+			return this._executeQuery(connection, 'DROP SCHEMA IF EXISTS analytics CASCADE');
+
+		});
 
 	}
 
@@ -32,95 +40,91 @@ module.exports = class AuroraSchemaDeployment {
 		We want all revisions from the current version from the database up until the configured version
 		in the configuration, and then run them sequentially
 	*/
-	_getVersionDirectories(options) {
+	async _getVersionDirectories(connection, options) {
 
 		du.debug('AuroraSchemaDeployment._getVersionDirectories()');
 
 		const release = global.SixCRM.configuration.site_config.aurora.release;
 
-		return Promise.resolve()
-			.then(() => fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'aurora/migrations')))
-			.then((results) => results.map((r) => {
-				return {
-					version: Number(r),
-					path: path.join(global.SixCRM.routes.path('deployment', 'aurora/migrations'), r)
-				};
-			}))
-			.then((migrations) => this._executeQuery('SELECT id FROM analytics.m_release ORDER BY id DESC LIMIT 1').then((currentRevision) => {
-				return {
-					currentRevision: Number(currentRevision.rows.length ? currentRevision.rows[0] : 0),
-					migrations
-				}
-			}).catch((ex) => {
+		const results = await fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'aurora/migrations'));
 
-				du.warning('Could not resolve the current aurora schema version', ex);
+		const migrations = results.map((r) => {
+			return {
+				version: Number(r),
+				path: path.join(global.SixCRM.routes.path('deployment', 'aurora/migrations'), r)
+			};
+		});
 
-				return {
-					currentRevision: 0,
-					migrations
-				}
+		let currentRevision = null;
 
-			}))
-			.then((result) => _.sortBy(_.filter(result.migrations, (f) => {
+		try {
 
-				const currentRevision = (options.fromRevision ? options.fromRevision : result.currentRevision) || 0;
+			const currentRevisionRaw = await this._executeQuery(connection, 'SELECT id FROM analytics.m_release ORDER BY id DESC LIMIT 1');
+			currentRevision = Number(currentRevisionRaw.rows.length ? currentRevisionRaw.rows[0] : 0);
 
-				return f.version <= Number(release) && f.version > currentRevision;
+		} catch (ex) {
 
-			}), 'version'))
+			du.warning('Could not resolve the current aurora schema version', ex);
+
+			currentRevision = 0;
+
+		}
+
+		return _.sortBy(_.filter(migrations, (f) => {
+
+			const revision = (options.fromRevision ? options.fromRevision : currentRevision) || 0;
+
+			return f.version <= Number(release) && f.version > revision;
+
+		}), 'version');
 
 	}
 
-	_deployMigration(migration) {
+	async _deployMigration(migration, connection) {
 
 		du.debug('AuroraSchemaDeployment._deployMigration()', migration);
 
-		return Promise.resolve()
-			.then(() => fileutilities.getFileContents(path.join(migration.path, 'manifest.json')))
-			.then((manifests) => BBPromise.each(JSON.parse(manifests), (m) => {
+		const body = await fileutilities.getFileContents(path.join(migration.path, 'manifest.json'));
+		const manifests = JSON.parse(body);
 
-				return Promise.resolve()
-					.then(() => fileutilities.getFileContents(path.join(migration.path, m.script)))
-					.then(this._executeQuery.bind(this));
+		// this just does not work for some reason, the promises execute out of order when the call is nested
+		// await au.serialPromises(au.map(manifests, async (m) => {
 
-			}))
-			// force the timestamp to update
-			.then(() => this._executeQuery('INSERT INTO analytics.m_release (id) VALUES($1) ON CONFLICT (id) DO UPDATE SET id = $2', [migration.version, migration.version]));
+		// 	const query = await fileutilities.getFileContents(path.join(migration.path, m.script));
+		// 	await this._executeQuery(connection, query);
+
+		// }));
+
+		await BBPromise.each(manifests, async (m) => {
+
+			const query = await fileutilities.getFileContents(path.join(migration.path, m.script));
+			await this._executeQuery(connection, query);
+
+		});
+
+		await this._executeQuery(connection, 'INSERT INTO analytics.m_release (id) VALUES($1) ON CONFLICT (id) DO UPDATE SET id = $2', [migration.version, migration.version]);
 
 	}
 
-	_getDestroyQuery() {
-
-		du.debug('AuroraSchemaDeployment._getDestroyQuery()');
-
-		return Promise.resolve()
-			.then(() => this._executeQuery('DROP SCHEMA IF EXISTS analytics CASCADE'));
-
-	}
-
-	_executeQuery(query, args) {
+	async _executeQuery(connection, query, args) {
 
 		du.debug('AuroraSchemaDeployment._executeQuery()');
 
 		if (!query) {
 
-			return Promise.resolve();
+			return;
 
 		}
 
-		return auroraContext.withConnection((connection => {
+		if (args && args.length) {
 
-			if (args && args.length) {
+			return connection.queryWithArgs(query, args);
 
-				return connection.queryWithArgs(query, args);
+		} else {
 
-			} else {
+			return connection.query(query);
 
-				return connection.query(query);
-
-			}
-
-		}));
+		}
 
 	}
 
