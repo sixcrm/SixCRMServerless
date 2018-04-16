@@ -1,5 +1,5 @@
 
-require('../../SixCRMLite.js');
+require('../../SixCRM.js');
 
 const expect = require('chai').expect;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
