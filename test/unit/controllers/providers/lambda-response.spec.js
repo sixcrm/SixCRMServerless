@@ -275,7 +275,8 @@ describe('controllers/providers/lambda-response', () => {
 		return {
 			statusCode: anyCode,
 			headers: {
-				'Access-Control-Allow-Origin': '*'
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Max-Age': 86400
 			},
 			body: '{}'
 		};
@@ -285,7 +286,8 @@ describe('controllers/providers/lambda-response', () => {
 		return {
 			statusCode: 500,
 			headers: {
-				'Access-Control-Allow-Origin': '*'
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Max-Age': 86400
 			},
 			body: '{}'
 		};
@@ -295,7 +297,8 @@ describe('controllers/providers/lambda-response', () => {
 		return {
 			statusCode: anyCode,
 			headers: {
-				'Access-Control-Allow-Origin': '*'
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Max-Age': 86400
 			},
 			body: JSON.stringify({
 				success: false,
@@ -311,7 +314,8 @@ describe('controllers/providers/lambda-response', () => {
 		return {
 			statusCode: 500,
 			headers: {
-				'Access-Control-Allow-Origin': '*'
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Max-Age': 86400
 			},
 			body:JSON.stringify({
 				success:false,
@@ -328,7 +332,8 @@ describe('controllers/providers/lambda-response', () => {
 		return {
 			statusCode: 500,
 			headers: {
-				'Access-Control-Allow-Origin': '*'
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Max-Age': 86400
 			},
 			body: JSON.stringify({
 				success:false,

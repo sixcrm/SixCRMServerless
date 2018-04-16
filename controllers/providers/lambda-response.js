@@ -8,7 +8,8 @@ module.exports = class LambdaResponse {
 		this.lambda_response = {
 			statusCode: 500,
 			headers: {
-				"Access-Control-Allow-Origin": "*"
+				"Access-Control-Allow-Origin": "*",
+				"Access-Control-Max-Age":86400
 			},
 			body: JSON.stringify(this.createResponseBody(false, 500, null, 'Server Error', 'Internal Service Error.'))
 		};
