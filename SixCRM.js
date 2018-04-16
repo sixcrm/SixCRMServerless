@@ -10,11 +10,7 @@ class SixCRM {
 		this.routes = global.routes;
 		this._resources = {};
 
-	}
-
-	instantiate() {
-
-		this.configuration = new Configuration();
+		this.configuration = new Configuration(this.routes);
 		this.localcache = new LocalCache();
 
 	}
@@ -35,5 +31,4 @@ class SixCRM {
 
 if (!_.has(global, 'SixCRM')) {
 	global.SixCRM = new SixCRM();
-	global.SixCRM.instantiate();
 }
