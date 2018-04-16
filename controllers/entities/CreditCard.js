@@ -215,7 +215,6 @@ module.exports = class CreditCardController extends entityController {
 			}))
 			.then((existing_entity) => {
 
-				du.info(existing_entity);
 				if (!_.has(existing_entity, 'id')) {
 					eu.throwError('not_found', 'Unable to identify creditcard for delete.');
 				}
