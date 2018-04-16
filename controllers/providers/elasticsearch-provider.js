@@ -1,7 +1,4 @@
-
-const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
 
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
