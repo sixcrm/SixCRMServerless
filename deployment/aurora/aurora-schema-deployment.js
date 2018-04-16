@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const path = require('path');
-const au = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const BBPromise = require('bluebird');
+// const au = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
@@ -13,7 +14,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		return Promise.resolve()
 			.then(() => this._getVersionDirectories(options))
-			.then((migrations) => au.serialPromises(au.map(migrations, this._deployMigration.bind(this))))
+			.then((migrations) => BBPromise.each(migrations, this._deployMigration.bind(this)))
 			.then(() => 'Aurora deploy complete');
 
 	}
@@ -77,13 +78,13 @@ module.exports = class AuroraSchemaDeployment {
 
 		return Promise.resolve()
 			.then(() => fileutilities.getFileContents(path.join(migration.path, 'manifest.json')))
-			.then((manifests) => au.serialPromises(au.map(JSON.parse(manifests), (m) => {
+			.then((manifests) => BBPromise.each(JSON.parse(manifests), (m) => {
 
 				return Promise.resolve()
 					.then(() => fileutilities.getFileContents(path.join(migration.path, m.script)))
 					.then(this._executeQuery.bind(this));
 
-			})))
+			}))
 			// force the timestamp to update
 			.then(() => this._executeQuery('INSERT INTO analytics.m_release (id) VALUES($1) ON CONFLICT (id) DO UPDATE SET id = $2', [migration.version, migration.version]));
 
