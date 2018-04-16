@@ -6,7 +6,9 @@ module.exports.getLambdaSubnets = () => {
 	let ec2_deployment = new EC2Deployment();
 
 	let subnet_promises = arrayutilities.map(global.SixCRM.configuration.site_config.lambda.subnets, subnet => {
-		return ec2_deployment.subnetExists({Name: subnet});
+		return ec2_deployment.subnetExists({
+			Name: subnet
+		});
 	});
 
 	return Promise.all(subnet_promises).then((subnets) => {
@@ -24,7 +26,9 @@ module.exports.getLambdaSecurityGroup = () => {
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 
-	return ec2_deployment.securityGroupExists({GroupName: global.SixCRM.configuration.site_config.lambda.security_group}).then(result => {
+	return ec2_deployment.securityGroupExists({
+		GroupName: global.SixCRM.configuration.site_config.lambda.security_group
+	}).then(result => {
 		return result.GroupId;
 	});
 
@@ -34,10 +38,24 @@ module.exports.getCloudsearchSearchEndpoint = () => {
 
 	require('../../SixCRM.js');
 
+	const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
+
+	if ((new ConfigurationUtilities).isLocal()) {
+
+		return Promise.resolve({
+			DocService: {
+				Endpoint: global.SixCRM.configuration.site_config.cloudsearch.domainendpoint
+			}
+		});
+
+	}
+
 	const CloudsearchUtilities = global.SixCRM.routes.include('deployment', 'utilities/cloudsearch-deployment.js');
 	let cloudsearchutilities = new CloudsearchUtilities(false);
 
-	return cloudsearchutilities.domainExists({DomainName: global.SixCRM.configuration.site_config.cloudsearch.domainname}).then(result => {
+	return cloudsearchutilities.domainExists({
+		DomainName: global.SixCRM.configuration.site_config.cloudsearch.domainname
+	}).then(result => {
 		return result.DocService.Endpoint;
 	});
 
@@ -47,10 +65,22 @@ module.exports.getAuroraClusterEndpoint = () => {
 
 	require('../../SixCRM.js');
 
+	const ConfigurationUtilities = global.SixCRM.routes.include('controllers', 'core/ConfigurationUtilities.js');
+
+	if ((new ConfigurationUtilities).isLocal()) {
+
+		return Promise.resolve({
+			Endpoint: global.SixCRM.configuration.site_config.dynamodb.endpoint
+		});
+
+	}
+
 	const RDSUtilities = global.SixCRM.routes.include('deployment', 'utilities/rds-utilities.js');
 	let rdsutilities = new RDSUtilities();
 
-	return rdsutilities.clusterExists({DBClusterIdentifier: global.SixCRM.configuration.site_config.aurora.default_cluster_identifier}).then(result => {
+	return rdsutilities.clusterExists({
+		DBClusterIdentifier: global.SixCRM.configuration.site_config.aurora.default_cluster_identifier
+	}).then(result => {
 		return result.Endpoint;
 	});
 
