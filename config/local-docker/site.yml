@@ -99,7 +99,7 @@ elasticache:
   max_attempts: 3
   retry_time: 1800000
   endpoint: local-docker
-  port: 6380
+  port: 6379
   default_expiration: 300
 
 slack:
