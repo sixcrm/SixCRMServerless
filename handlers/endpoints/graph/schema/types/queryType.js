@@ -150,6 +150,8 @@ let secondaryIdentifierInputType = require('./general/secondaryIdentifierInputTy
 
 let ipCheckType = require('./ipcheck/ipCheckType');
 
+const connectionTestType = require('./test/connectionTestType.js');
+
 let list_fatal = true;
 let get_fatal = true;
 
@@ -203,7 +205,6 @@ const SuggestController = global.SixCRM.routes.include('controllers', 'providers
 
 const AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 const IPCheckController = global.SixCRM.routes.include('providers', 'ipcheck/IPCheck.js');
-
 const fields = Object.assign({}, {
 	/*
    * Esoteric requests
@@ -2384,6 +2385,13 @@ const fields = Object.assign({}, {
 			const ipCheckController = new IPCheckController();
 
 			return ipCheckController.checkIP();
+		}
+	},
+	connectiontest: {
+		type: connectionTestType.graphObj,
+		args: {},
+		resolve:() => {
+			return true;
 		}
 	}
 }, analyticsQueryType)

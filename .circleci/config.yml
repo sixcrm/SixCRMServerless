@@ -159,7 +159,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Serveless Deploy
-          command: SLS_DEBUG=* && node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
+          command: SLS_DEBUG=* node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
   deploy_security_groups:
     <<: *job-defaults
     steps:

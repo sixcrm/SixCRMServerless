@@ -538,4 +538,17 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 	}
 
+	test(){
+
+		du.debug('Test');
+
+		return this.describeTable('products').then(result => {
+			if(_.has(result, 'Table')){
+				return {status:'OK', message: 'Successfully connected to DynamoDB.'};
+			}
+			return {status:'ERROR', message: 'Could not connect to DynamoDB.'};
+		}).catch(error => {
+			return {status: 'ERROR', message: error.message};
+		})
+	}
 }

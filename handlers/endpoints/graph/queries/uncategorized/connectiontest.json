@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "super.user@test.com" }},
+	"pathParameters": {"account": "*"},
+	"body":"query {connectiontest {elasticsearch {status, message}, elasticache {status, message}, dynamodb {status, message}, cloudsearch {status, message}}}"
+}

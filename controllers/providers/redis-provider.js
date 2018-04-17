@@ -253,4 +253,18 @@ module.exports = class RedisProvider {
 		return Math.min(options.attempt * 100, 1000);
 	}
 
+	test(){
+
+		du.debug('Test');
+
+		return this.set('test', 'test').then(result => {
+			if(result == 'OK'){
+				return {status: 'OK', message: 'Successfully connected to ElastiCache.'};
+			}
+			return {status: 'ERROR', message: 'Unable to connect to ElastiCache.'};
+		}).catch(error => {
+			return {status: 'ERROR', message: error.message};
+		})
+	}
+
 }
