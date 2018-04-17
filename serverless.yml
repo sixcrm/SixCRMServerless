@@ -31,11 +31,11 @@ provider:
       #subnetIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSubnets}
     cloudsearch_domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
     aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
+    elasticsearch_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElasticSearchEndpoint}
     #redshift.host: ${file(./config/controllers/configuration_acquisition.js):getRedshiftClusterEndpoint}
 
 plugins:
   - serverless-dynamodb-local
-  - serverless-plugin-tracing
   - serverless-prune-plugin
 
 custom:
@@ -331,3 +331,10 @@ functions:
            name: verifytransactionjwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
+
+########################
+# Utility
+########################
+
+  logger:
+    handler: handlers/utilities/logger/hander.logger
