@@ -18,7 +18,7 @@ Check Pagination Response Group
 */
 
 let test_name = 'Campaigns By Amount';
-let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getCampaignsByAmount.json');
+let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/get-campaigns-by-amount.json');
 
 //set the test user
 let test_user = {
