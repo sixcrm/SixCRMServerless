@@ -7,18 +7,18 @@ const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-p
 
 module.exports = class CloudSearchProvider extends AWSProvider {
 
-	constructor(instantiate_csd){
+	constructor(instantiate_csd) {
 
 		super();
 
-		instantiate_csd = (_.isUndefined(instantiate_csd) || _.isNull(instantiate_csd))?true:instantiate_csd;
+		instantiate_csd = (_.isUndefined(instantiate_csd) || _.isNull(instantiate_csd)) ? true : instantiate_csd;
 
 		this.max_attempts = 200;
 
 		this.setDomainName();
 
 		//Technical Debt:  The cloudsearch provider should be two classes, query and deploy
-		if(instantiate_csd){
+		if (instantiate_csd) {
 			this.setCloudsearchDomainEndpoint();
 		}
 
@@ -87,11 +87,11 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	CSDExists(){
+	CSDExists() {
 
 		du.debug('CSD Exists');
 
-		if(_.has(this, 'csd') && _.isFunction(this.csd.search)){
+		if (_.has(this, 'csd') && _.isFunction(this.csd.search)) {
 			return true;
 		}
 
@@ -99,7 +99,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	setDomainName(){
+	setDomainName() {
 
 		du.debug('Set Domain Name');
 
@@ -110,7 +110,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 			return true;
 		}
 
-		if(_.has(global.SixCRM.configuration.site_config, 'cloudsearch') && _.has(global.SixCRM.configuration.site_config.cloudsearch, 'domainname')){
+		if (_.has(global.SixCRM.configuration.site_config, 'cloudsearch') && _.has(global.SixCRM.configuration.site_config.cloudsearch, 'domainname')) {
 
 			this.domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;
 
@@ -123,14 +123,14 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	search(search_parameters){
+	search(search_parameters) {
 
 		du.debug('Search');
 
 		let params = {};
 
-		for(var k in search_parameters){
-			if(_.includes(this.search_fields, k)){
+		for (var k in search_parameters) {
+			if (_.includes(this.search_fields, k)) {
 				params[k] = search_parameters[k];
 			}
 		}
@@ -139,23 +139,23 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	executeStatedSearch(parameters){
+	executeStatedSearch(parameters) {
 
 		du.debug('Execute Stated Search');
 
 		return new Promise((resolve, reject) => {
 
-			if(this.CSDExists()){
+			if (this.CSDExists()) {
 
 				du.info(parameters);
 
 				this.csd.search(parameters, function(error, data) {
 
-					if (error){
+					if (error) {
 
 						return reject(error);
 
-					}else{
+					} else {
 
 						du.debug('Raw search results:', data);
 
@@ -165,12 +165,11 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 				});
 
-			}else{
+			} else {
 
-				return this.executeStatedSearch(parameters)
-					.then(result => {
-						return resolve(result);
-					});
+				return this.setCloudsearchDomainEndpoint()
+					.then(() => this.executeStatedSearch(parameters))
+					.then((result) => resolve(result));
 
 			}
 
@@ -178,7 +177,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	suggest(suggest_parameters){
+	suggest(suggest_parameters) {
 
 		return new Promise((resolve, reject) => {
 
@@ -186,17 +185,17 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 			let params = {};
 
-			for(var k in suggest_parameters){
-				if(_.includes(this.suggest_fields, k)){
+			for (var k in suggest_parameters) {
+				if (_.includes(this.suggest_fields, k)) {
 					params[k] = suggest_parameters[k];
 				}
 			}
 
 			this.csd.suggest(params, function(error, data) {
 
-				if (error){
+				if (error) {
 					return reject(error);
-				}else{
+				} else {
 					return resolve(data);
 				}
 
@@ -206,7 +205,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	uploadDocuments(structured_documents){
+	uploadDocuments(structured_documents) {
 
 		du.debug('Uploading documents to Cloudsearch', structured_documents);
 
@@ -219,8 +218,8 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 			du.debug('Cloudsearch Parameters', params);
 
-			return this.csd.uploadDocuments(params, (error, data) =>  {
-				if(error){
+			return this.csd.uploadDocuments(params, (error, data) => {
+				if (error) {
 					//du.warning('Cloudsearch error: ', error);
 					return reject(error);
 				}
@@ -232,7 +231,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	defineIndexField(index_object){
+	defineIndexField(index_object) {
 
 		du.debug('Define Index Field');
 
@@ -240,11 +239,11 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 			let handle = this.cs.defineIndexField(index_object);
 
-			handle.on('success', function(response) {
+			handle.on('success', (response) => {
 				du.info('Create Index Success');
 				return resolve(response);
 			})
-				.on('error', function(response) {
+				.on('error', (response) => {
 					du.error('Create Index Error', index_object);
 					throw eu.getError('server', response);
 				})
@@ -254,77 +253,25 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	/*
-    waitFor(waitfor_status, domainname, count){
-
-      du.debug('Wait For');
-
-      return new Promise((resolve) => {
-
-        if(_.isUndefined(domainname) || _.isNull(domainname)){
-          domainname = this.domainname;
-        }
-
-        if(_.isUndefined(count)){
-          count = 0;
-        }
-
-        if(count > this.max_attempts){
-
-          if (process.env.TEST_MODE === 'true') {
-            du.debug('Test Mode');
-            return Promise.resolve(true);
-          }
-
-          throw eu.getError('server', 'Max attempts reached.');
-        }
-
-        return this.describeDomains([domainname]).then((status) => {
-
-          if(waitfor_status == 'ready'){
-
-            if(status.DomainStatusList[0].Created == true && status.DomainStatusList[0].Processing == false){
-
-              return resolve(true);
-
-            }
-
-          }else if(waitfor_status == 'deleted'){
-
-            if(!_.has(status, 'DomainStatusList') || !_.isArray(status.DomainStatusList) || status.DomainStatusList.length < 1){
-
-              return resolve(true);
-
-            }
-
-          }
-
-          count = count + 1;
-
-          du.output('Pausing for completion ('+numberutilities.appendOrdinalSuffix(count)+' attempt...)');
-
-          return timestamp.delay(8000)().then(() => { return this.waitFor(waitfor_status, domainname, count); });
-
-        });
-
-      });
-
-    }
-    */
-
-	describeDomains(domainnames){
+	describeDomains(domainnames) {
 
 		du.debug('Describe Domains');
 
 		if (process.env.TEST_MODE === 'true') {
 			du.debug('Test Mode');
 
-			return Promise.resolve(this.AWSCallback(null, {DomainStatusList: [{DocService:{Endpoint: 'cloudsearch.domain'}}]}));
+			return Promise.resolve(this.AWSCallback(null, {
+				DomainStatusList: [{
+					DocService: {
+						Endpoint: 'cloudsearch.domain'
+					}
+				}]
+			}));
 		}
 
 		return new Promise((resolve) => {
 
-			if(_.isUndefined(domainnames)){
+			if (_.isUndefined(domainnames)) {
 				domainnames = [this.domainname];
 			}
 
@@ -338,11 +285,11 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	createDomain(domainname){
+	createDomain(domainname) {
 
 		return new Promise((resolve) => {
 
-			if(_.isUndefined(domainname)){
+			if (_.isUndefined(domainname)) {
 
 				domainname = this.domainname
 
@@ -354,11 +301,11 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 			let handle = this.cs.createDomain(parameters);
 
-			handle.on('success', function(response) {
+			handle.on('success', (response) => {
 				du.info('Create Domain Success');
 				return resolve(response);
 			})
-				.on('error', function(response) {
+				.on('error', (response) => {
 					du.error('Create Domain Error');
 					throw eu.getError('server', response);
 				})
@@ -368,11 +315,11 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	indexDocuments(domain_name){
+	indexDocuments(domain_name) {
 
 		du.debug('Index Documents');
 
-		if(_.isUndefined(domain_name)){
+		if (_.isUndefined(domain_name)) {
 			domain_name = this.domainname;
 		}
 
@@ -400,7 +347,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	getDomainNames(){
+	getDomainNames() {
 
 		du.debug('Get Domain Names');
 
@@ -408,7 +355,9 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 			this.cs.listDomainNames((error, data) => {
 
-				if(error){ return reject(error); }
+				if (error) {
+					return reject(error);
+				}
 
 				let domain_names = Object.keys(data.DomainNames || {});
 
@@ -420,11 +369,11 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	deleteDomain(domain_name){
+	deleteDomain(domain_name) {
 
 		du.debug('Delete Domain');
 
-		if(_.isUndefined(domain_name)){
+		if (_.isUndefined(domain_name)) {
 			domain_name = this.domainname;
 		}
 
@@ -436,7 +385,9 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 			this.cs.deleteDomain(parameters, (error, data) => {
 
-				if(error){ return reject(error); }
+				if (error) {
+					return reject(error);
+				}
 
 				return resolve(data);
 
@@ -458,23 +409,23 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 		return this.describeDomains([this.domainname]).then((results) => {
 
-			if(objectutilities.hasRecursive(results, 'DomainStatusList.0.DocService.Endpoint')){
+			if (objectutilities.hasRecursive(results, 'DomainStatusList.0.DocService.Endpoint')) {
 
 				let domain_endpoint = results.DomainStatusList[0].DocService.Endpoint;
 
-				if (!_.isNull(domain_endpoint) && stringutilities.isMatch(domain_endpoint, /^[a-zA-Z0-9.\-:]+$/)){
+				if (!_.isNull(domain_endpoint) && stringutilities.isMatch(domain_endpoint, /^[a-zA-Z0-9.\-:]+$/)) {
 
 					//global.SixCRM.configuration.setEnvironmentConfig('cloudsearch.domainendpoint', domain_endpoint);
 
 					return domain_endpoint;
 
-				}else{
+				} else {
 
 					throw eu.getError('server', 'Attempting to set a null or non-compliant cloudshift.domainendpoint configuration globally.');
 
 				}
 
-			}else{
+			} else {
 
 				throw eu.getError('server', 'Attempting to set a null cloudshift.domainendpoint configuration globally.');
 
@@ -483,6 +434,32 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 		});
 
+	}
+
+	test() {
+
+		du.debug('Test');
+
+		let parameters = {
+			query: 'A'
+		};
+		return this.search(parameters).then(result => {
+			if (_.has(result, 'status')) {
+				return {
+					status: 'OK',
+					message: 'Successfully connected to Cloudsearch.'
+				};
+			}
+			return {
+				status: 'ERROR',
+				message: 'Unexpected response: ' + JSON.stringify(result)
+			};
+		}).catch(error => {
+			return {
+				status: 'ERROR',
+				message: error.message
+			};
+		});
 	}
 
 }

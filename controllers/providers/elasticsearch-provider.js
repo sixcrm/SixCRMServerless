@@ -1,5 +1,7 @@
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
+const HTTPProvider = global.SixCRM.routes.include('providers','http-provider.js');
 
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
@@ -72,6 +74,23 @@ module.exports = class ElasticSearchProvider extends AWSProvider{
 
 			});
 
+		});
+
+	}
+
+	test(){
+
+		du.debug('Test');
+
+		let httpprovider = new HTTPProvider();
+
+		return httpprovider.getJSON({endpoint: 'https://'+process.env.elasticsearch_endpoint}).then(results => {
+			if(_.has(results, 'body') && _.has(results.body, 'status') && results.body.status == 200){
+				return {status: 'OK', message: 'Successfully connected.'};
+			}
+			return {status: 'Error', message: 'Unexpected response from Elasticsearch: '+JSON.stringify(results)};
+		}).catch(error => {
+			return Promise.resolve({status:'Error',message: error.message});
 		});
 
 	}
