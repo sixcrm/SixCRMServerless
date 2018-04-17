@@ -1,0 +1,50 @@
+-- CREATE TABLE IF NOT EXISTS analytics.f_transaction_product (
+--     id VARCHAR(36) NOT NULL,
+--     datetime TIMESTAMP NOT NULL,
+--     session VARCHAR(36) NOT NULL,
+--     customer VARCHAR(36) NOT NULL,
+--     creditcard VARCHAR(36) NOT NULL,
+--     merchant_provider VARCHAR(36) NOT NULL,
+--     campaign VARCHAR(36) NOT NULL,
+--     affiliate VARCHAR(36),
+--     amount NUMERIC(8, 2) NOT NULL,
+--     processor_result VARCHAR(50) NOT NULL,
+--     account VARCHAR(36) NOT NULL,
+--     "type" VARCHAR(25) NOT NULL,
+--     subtype VARCHAR(25) NOT NULL,
+--     subaffiliate_1 VARCHAR(36),
+--     subaffiliate_2 VARCHAR(36),
+--     subaffiliate_3 VARCHAR(36),
+--     subaffiliate_4 VARCHAR(36),
+--     subaffiliate_5 VARCHAR(36),
+--     prepaid BOOLEAN,
+--     result VARCHAR(16),
+--     associated_transaction VARCHAR(36),
+--     CONSTRAINT pk_f_transaction PRIMARY KEY (id),
+--     CONSTRAINT fk_f_transaction_f_session FOREIGN KEY (session) REFERENCES analytics.f_session (id)
+-- );
+
+-- -- "product": {
+-- -- 	"updated_at": "2017-04-06T18:41:12.521Z",
+-- -- 	"name": "Test Product",
+-- -- 	"shipping_delay": 3600,
+-- -- 	"ship": false,
+-- -- 	"created_at": "2017-04-06T18:40:41.405Z",
+-- -- 	"id": "1b7ecefe-8be6-44cd-addb-d4e4350d7738",
+-- -- 	"sku": "123",
+-- -- 	"fulfillment_provider": "5d18d0fa-5812-4c37-b98c-7b1debdcb435",
+-- -- 	"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+-- -- },
+-- -- "amount": 34.99,
+-- -- "quantity": 1,
+-- -- "merchantprovidergroupassociation": {
+-- -- 	"entity_type": "product",
+-- -- 	"updated_at": "2018-03-23T21:58:45.505Z",
+-- -- 	"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+-- -- 	"created_at": "2018-03-23T21:58:45.505Z",
+-- -- 	"id": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+-- -- 	"merchantprovidergroup": "45367480-f1c1-4f61-a3d6-413c22a44dc3",
+-- -- 	"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+-- -- 	"entity": "1b7ecefe-8be6-44cd-addb-d4e4350d7738"
+-- -- }
+-- -- }],
