@@ -1,5 +1,0 @@
-{
-  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":"query {transactionoverview (analyticsfilter:{start:\"2018-01-20T00:00:00Z\", end:\"2018-01-25T23:59:59Z\"}) {overview{newsale {count, amount},rebill {count, amount}, fail {count, amount}, error {count, amount}, main {count, amount}, upsell {count, amount}}}}"
-}

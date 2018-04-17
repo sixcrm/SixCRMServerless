@@ -1,10 +1,8 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 const AnalyticsUtilities = global.SixCRM.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
-const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 
 module.exports = class AnalyticsController extends AnalyticsUtilities {
 
@@ -56,51 +54,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	}
 
-	getMerchantProviderSummaries(parameters) {
-
-		du.debug('Get Merchant Provider Summaries');
-
-		parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-		if (!_.has(parameters, 'order_field')) {
-			parameters.order_field = 'merchant_provider';
-		}
-
-		//Technical Debt: Get this out of here...
-		if (_.has(parameters, 'merchantprovider')) {
-			parameters.merchant_provider = parameters.merchantprovider;
-		}
-
-		//Technical Debt:  What.  A.  Mess.
-		if (_.has(parameters, 'merchant_provider') && _.isArray(parameters.merchant_provider) && parameters.merchant_provider.length > 0) {
-
-			let union = [];
-
-			parameters.merchant_provider.forEach((merchant_provider) => {
-
-				union.push("UNION ALL\nSELECT\n\t'" + merchant_provider + "'merchant_provider,\n\t0 num_transactions_today,\n\t0 num_transactions_week,\n\t0 num_transactions_month,\n\t0 amount_transactions_today,\n\t0 amount_transactions_week,\n\t0 amount_transactions_month");
-
-			});
-
-			union = arrayutilities.compress(union, "\n", '');
-			parameters.union = union;
-
-		}
-
-		return this.getResults('merchant_provider_summary', parameters, arrayutilities.merge(this.default_query_filters));
-
-	}
-
-	getEvents(parameters) {
-
-		du.debug('Get Events');
-
-		parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-		return this.getResults('events', parameters, this.default_query_filters);
-
-	}
-
 	getCampaignsByAmount(parameters) {
 
 		du.debug('Get Campaigns By Amount');
@@ -114,82 +67,12 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	}
 
-	getEventSummary(parameters) {
-
-		du.debug('Get Event Summary');
-
-		let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
-
-		let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
-
-		parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
-
-		return this.getResults('aggregation_event_type_count', parameters, this.default_query_filters);
-
-	}
-
 	getEventFunnel(parameters) {
 
 		du.debug('Get Event Funnel');
 
 		return this.getResults('event_funnel', parameters.analyticsfilter, this.default_query_filters);
 
-	}
-
-	getEventsByFacet(parameters) {
-
-		du.debug('Get Events By Facet');
-
-		let merged_parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-		merged_parameters.facet = parameters.facet;
-
-		return this.getResults('events_by_facet', merged_parameters, this.default_query_filters);
-
-	}
-
-	getTransactionsByFacet(parameters) {
-
-		du.debug('Get Transactions By Facet');
-
-		let merged_parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-		merged_parameters.facet = parameters.facet;
-
-		return this.getResults('transactions_by_facet', merged_parameters, this.default_query_filters);
-
-	}
-
-	getTransactionOverview(parameters) {
-
-		du.debug('Get Transaction Overview');
-		du.debug(parameters);
-
-		return this.getResults('transaction_summary', parameters.analyticsfilter, this.default_query_filters);
-
-	}
-
-	getTransactionOverviewWithRebills(parameters) {
-
-		du.debug('Get Transaction Overview With Rebills');
-
-		return this.getTransactionOverview(parameters)
-			.then((result) => {
-				const rebillController = new RebillController();
-
-				return rebillController.getRebillsBilledAfter(timestamp.getISO8601())
-					.then((rebills) => {
-						const count = rebills.length;
-						const amount = rebills.map(r => r.amount).reduce((a, b) => a + b, 0).toFixed(2);
-
-						result.overview.rebill = {
-							count: +count,
-							amount: +amount
-						};
-
-						return result;
-					})
-			})
 	}
 
 	getTransactionSummary(parameters) {
@@ -255,8 +138,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		return this.getResults('order_engine/rebills_in_queue', parameters, this.default_query_filters);
 
 	}
-
-	/* Report Pages */
 
 	getAffiliateReportSubaffiliates(parameters) {
 
@@ -327,21 +208,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		du.debug(parameters);
 
 		return this.getResults('deprecate/reports/merchantprovider/merchantprovider_report', parameters, this.default_query_filters);
-
-	}
-
-	/* End Report Pages */
-
-	getCampaignDelta(parameters) {
-
-		du.debug('Get Campaign Delta');
-
-		parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({
-			limit: 10,
-			order: 'desc'
-		}));
-
-		return this.getResults('campaign_delta', parameters, this.default_query_filters);
 
 	}
 
@@ -461,16 +327,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		if (_.has(parameters, 'pagination')) {
 			return parameters.pagination;
-		}
-
-		return null;
-
-	}
-
-	getBINNumber(parameters) {
-
-		if (_.has(parameters, 'binnumber')) {
-			return parameters.binnumber;
 		}
 
 		return null;
