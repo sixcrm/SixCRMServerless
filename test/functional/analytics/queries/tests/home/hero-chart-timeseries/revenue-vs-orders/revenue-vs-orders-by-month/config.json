@@ -1,15 +1,15 @@
 {
 	"method": "getReport",
-	"test_case": "Successful revenue and orders by month",
+	"test_case": "getReport Successful revenue and orders by month",
 	"input": {
 		"facets": {
 			"facets": [{
 					"facet": "start",
-					"values": ["2017-01-01T00:00:00.000Z"]
+					"values": ["2018-01-01T00:00:00.000Z"]
 				},
 				{
 					"facet": "end",
-					"values": ["2017-02-03T00:00:00.000Z"]
+					"values": ["2018-02-03T00:00:00.000Z"]
 				},
 				{
 					"facet": "period",
@@ -26,29 +26,23 @@
 	"result_name": "records",
 	"expect": [
 		[{
-				"key": "orders",
-				"value": [{
-						"datetime": "2017-01-01T00:00:00.000Z",
-						"value": 2
-					},
-					{
-						"datetime": "2017-02-01T00:00:00.000Z",
-						"value": 0
-					}
-				]
-			},
-			{
-				"key": "revenue",
-				"value": [{
-						"datetime": "2017-01-01T00:00:00.000Z",
-						"value": 322
-					},
-					{
-						"datetime": "2017-02-01T00:00:00.000Z",
-						"value": 0
-					}
-				]
-			}
-		]
+			"key": "orders",
+			"value": [{
+				"datetime": "2018-01-01T00:00:00.000Z",
+				"value": 28
+			}, {
+				"datetime": "2018-02-01T00:00:00.000Z",
+				"value": 0
+			}]
+		}, {
+			"key": "revenue",
+			"value": [{
+				"datetime": "2018-01-01T00:00:00.000Z",
+				"value": 1764.56
+			}, {
+				"datetime": "2018-02-01T00:00:00.000Z",
+				"value": 0
+			}]
+		}]
 	]
 }

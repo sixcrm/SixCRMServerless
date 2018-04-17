@@ -1,15 +1,15 @@
 {
 	"method": "getReportFacets",
-	"test_case": "Analytics report facets",
+	"test_case": "getReportFacets Analytics report facets",
 	"input": {
 		"filter": {
 			"filters": [{
 					"facet": "start",
-					"values": ["2017-01-01T00:00:00.000Z"]
+					"values": ["2018-01-01T00:00:00.000Z"]
 				},
 				{
 					"facet": "end",
-					"values": ["2017-01-10T00:00:00.000Z"]
+					"values": ["2018-02-10T00:00:00.000Z"]
 				}
 
 			],
@@ -21,14 +21,59 @@
 	"result_name": "facets",
 	"expect": [{
 		"facet": "affiliate",
-		"values": [{
-				"key": "6b6331f6-7f84-437a-9ac6-093ba301e455",
-				"value": "6b6331f6-7f84-437a-9ac6-093ba301e455"
-			},
+		"values": [
 			{
-				"key": "99999999-999e-44aa-999e-aaa9a99a9999",
-				"value": "99999999-999e-44aa-999e-aaa9a99a9999"
-			}
+				  "key": "034087fc-73a1-4594-86de-8490c4db2025",
+				  "value": "034087fc-73a1-4594-86de-8490c4db2025"
+				},
+				{
+				  "key": "1608a533-7ceb-4339-821d-631c15448656",
+				  "value": "1608a533-7ceb-4339-821d-631c15448656"
+				},
+				{
+				  "key": "29788a18-4e22-4f55-8b8d-115bc9d95dcc",
+				  "value": "29788a18-4e22-4f55-8b8d-115bc9d95dcc"
+				},
+				{
+				  "key": "2ab1b8c5-f3b0-4275-bfb1-048a880b86a7",
+				  "value": "2ab1b8c5-f3b0-4275-bfb1-048a880b86a7"
+				},
+				{
+				  "key": "2d97301d-567b-4625-8f85-4f7d0ea41a93",
+				  "value": "2d97301d-567b-4625-8f85-4f7d0ea41a93"
+				},
+				{
+				  "key": "36fb4e6a-237c-4ef8-9724-a1de00cea396",
+				  "value": "36fb4e6a-237c-4ef8-9724-a1de00cea396"
+				},
+				{
+				  "key": "4788988d-d7c9-4e7e-8ec6-ffb13fd782fb",
+				  "value": "4788988d-d7c9-4e7e-8ec6-ffb13fd782fb"
+				},
+				{
+				  "key": "50996747-85f1-4546-8b9c-d3c6bc3092f7",
+				  "value": "50996747-85f1-4546-8b9c-d3c6bc3092f7"
+				},
+				{
+				  "key": "75459f8f-a1e4-4c75-bf3d-ce9675be0c1e",
+				  "value": "75459f8f-a1e4-4c75-bf3d-ce9675be0c1e"
+				},
+				{
+				  "key": "9b0607b8-17e5-4a3f-a6f0-1f90636f37f9",
+				  "value": "9b0607b8-17e5-4a3f-a6f0-1f90636f37f9"
+				},
+				{
+				  "key": "d7435e1d-9c9e-43c0-b4de-e4d5eda14a4f",
+				  "value": "d7435e1d-9c9e-43c0-b4de-e4d5eda14a4f"
+				},
+				{
+				  "key": "e897438f-2407-4867-9073-f9097151408f",
+				  "value": "e897438f-2407-4867-9073-f9097151408f"
+				},
+				{
+				  "key": "f890226a-2bf0-47ca-acf5-dab8150ff4c4",
+				  "value": "f890226a-2bf0-47ca-acf5-dab8150ff4c4"
+				}
 		]
 	}]
 }

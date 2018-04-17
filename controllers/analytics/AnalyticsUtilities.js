@@ -121,6 +121,8 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 					const auroraContext = global.SixCRM.getResource('auroraContext');
 
+					// console.log(query);
+
 					return this.cacheController.useCache(query, () => auroraContext.connection.queryWithArgs(query, []).then(result => result.rows))
 						.then((results) => transformation_function(results, parameters))
 						.then((transformed_results) => {
