@@ -10,7 +10,6 @@
 			"type":"string",
 			"minLength":3
 		},
-		"merchantprovidergroup":{"$ref": "../definitions/uuidv4.json"},
 		"schedule":{
 			"type":"array",
 			"items":{
@@ -29,5 +28,5 @@
 		"created_at":{"$ref": "../definitions/iso8601.json"},
 		"updated_at":{"$ref": "../definitions/iso8601.json"}
 	},
-	"required":["name", "merchantprovidergroup", "schedule", "account", "created_at", "updated_at"]
+	"required":["name", "schedule", "account", "created_at", "updated_at"]
 }
