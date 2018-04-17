@@ -115,13 +115,8 @@ let suggestResultsType = require('./search/suggestResultsType');
 let searchInputType = require('./search/searchInputType');
 let searchResultsType = require('./search/searchResultsType');
 
-let listMerchantProviderSummariesType = require('./analytics/listMerchantProviderSummariesType');
 let transactionSummaryType = require('./analytics/transactionSummaryType');
-let listEventsType = require('./analytics/listEventsType');
-let eventSummaryType = require('./analytics/eventSummaryType');
-let transactionOverviewType = require('./analytics/transactionOverviewType');
 let eventFunnelType = require('./analytics/eventFunnelType');
-let campaignDeltaType = require('./analytics/campaignDeltaType');
 let campaignsByAmountType = require('./analytics/campaignsByAmountType');
 let binType = require('./bin/BINType');
 
@@ -133,9 +128,6 @@ let affiliateReportSubaffiliatesType = require('./analytics/affiliate_report/aff
 /* End Reports */
 
 let listActivityType = require('./analytics/listActivityType');
-
-let eventsByFacetType = require('./analytics/eventsByFacetType');
-let transactionsByFacetType = require('./analytics/transactionsByFacetType');
 
 let analyticsFilterInputType = require('./analytics/filterInputType');
 let analyticsPaginationInputType = require('./analytics/paginationInputType');
@@ -153,8 +145,6 @@ let currentQueueSummary = require('./analytics/order_engine/queuesummary/current
 let rebillsInQueueType = require('./analytics/order_engine/queuesummary/rebillsInQueueType');
 
 /* End State machine */
-
-let listQueueMessageType = require('./queue/listQueueMessageType');
 
 let secondaryIdentifierInputType = require('./general/secondaryIdentifierInputType');
 
@@ -837,27 +827,6 @@ const fields = Object.assign({}, {
 			return analyticsController.executeAnalyticsFunction(args, 'getCurrentQueueSummary');
 		}
 	},
-	listmerchantprovidersummaries: {
-		type: listMerchantProviderSummariesType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			},
-			pagination: {
-				type: analyticsPaginationInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getMerchantProviderSummaries');
-
-		}
-	},
 	bin: {
 		type: binType.graphObj,
 		args: {
@@ -891,57 +860,6 @@ const fields = Object.assign({}, {
 			return analyticsController.executeAnalyticsFunction(args, 'getTransactionSummary');
 		}
 	},
-	listevents: {
-		type: listEventsType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			pagination: {
-				type: analyticsPaginationInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getEvents');
-		}
-	},
-	eventsummary: {
-		type: eventSummaryType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getEventSummary');
-		}
-	},
-	transactionoverview: {
-		type: transactionOverviewType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getTransactionOverviewWithRebills');
-		}
-	},
 	eventfunnel: {
 		type: eventFunnelType.graphObj,
 		args: {
@@ -959,22 +877,6 @@ const fields = Object.assign({}, {
 			return analyticsController.executeAnalyticsFunction(args, 'getEventFunnel');
 		}
 	},
-	campaigndelta: {
-		type: campaignDeltaType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getCampaignDelta');
-		}
-	},
 	campaignsbyamount: {
 		type: campaignsByAmountType.graphObj,
 		args: {
@@ -989,50 +891,6 @@ const fields = Object.assign({}, {
 			const analyticsController = new AnalyticsController();
 
 			return analyticsController.executeAnalyticsFunction(args, 'getCampaignsByAmount');
-		}
-	},
-	eventsbyfacet: {
-		type: eventsByFacetType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			pagination: {
-				type: analyticsPaginationInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			},
-			facet: {
-				type: GraphQLString
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getEventsByFacet');
-		}
-	},
-	transactionsbyfacet: {
-		type: transactionsByFacetType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			pagination: {
-				type: analyticsPaginationInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			},
-			facet: {
-				type: GraphQLString
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getTransactionsByFacet');
 		}
 	},
 	listactivitybyidentifier: {
@@ -1052,24 +910,6 @@ const fields = Object.assign({}, {
 			const analyticsController = new AnalyticsController();
 
 			return analyticsController.executeAnalyticsFunction(args, 'getActivityByIdentifier');
-		}
-	},
-	listqueuemessage: {
-		type: listQueueMessageType.graphObj,
-		args: {
-			queuename: {
-				description: 'Name of a queue',
-				type: new GraphQLNonNull(GraphQLString)
-			},
-		},
-		resolve: function(root, args) {
-			const queueController = global.SixCRM.routes.include('controllers', 'helpers/queue/Queue.js');
-
-			return queueController.listMessages(args.queuename).then(messages => {
-				return Promise.resolve({
-					queuemessages: messages
-				})
-			});
 		}
 	},
 
@@ -2362,21 +2202,6 @@ const fields = Object.assign({}, {
 			}
 		}
 	},
-	/*
-  Note:  These entities do not require a list
-  notificationsettinglist: {
-  		type: notificationSettingListType.graphObj,
-  		args: {
-  				pagination: {type: paginationInputType.graphObj}
-  		},
-  		resolve: function(root, notification_setting) {
-  				const notificationSettingController = new NotificationSettingController();
-
-  				return notificationSettingController.list({pagination: notification_setting.pagination, fatal:list_fatal});
-  		}
-  },
-  */
-
 	userdevicetokenlist: {
 		type: userDeviceTokenListType.graphObj,
 		args: {
