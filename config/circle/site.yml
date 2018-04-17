@@ -13,6 +13,9 @@ lambda:
     - sixcrm-subnet2
     - sixcrm-subnet3
 
+elasticsearch:
+  domain_name: 'sixcrm'
+  
 s3:
   account_resources_bucket: 'account-resources'
 

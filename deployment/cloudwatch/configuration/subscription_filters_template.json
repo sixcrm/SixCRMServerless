@@ -1,0 +1,6 @@
+{
+    "destinationArn": "arn:aws:lambda:{{aws_account_region}}:{{aws_account_id}}:function:sixcrm-{{stage_name}}-{{logger_lambda_name}}",
+    "filterName": "{{lambda_name}}-logs-subscription-filter",
+    "filterPattern": "[timestamp=*Z, request_id=\"*-*\", event]",
+    "logGroupName": "/aws/lambda/sixcrm-{{stage_name}}-{{lambda_name}}"
+}

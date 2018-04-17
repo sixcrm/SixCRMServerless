@@ -85,3 +85,16 @@ module.exports.getAuroraClusterEndpoint = () => {
 	});
 
 }
+
+module.exports.getElasticSearchEndpoint = () => {
+
+	require('../../SixCRM.js');
+
+	const ElasticSearchUtilities = global.SixCRM.routes.include('deployment', 'utilities/elasticsearch-deployment.js');
+	let elasticsearchutilities = new ElasticSearchUtilities();
+
+	return elasticsearchutilities.domainExists({DomainName: global.SixCRM.configuration.site_config.elasticsearch.domain_name}).then(result => {
+		return result.DomainStatus.Endpoint;
+	});
+
+}

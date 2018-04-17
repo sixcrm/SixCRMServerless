@@ -11,7 +11,10 @@ lambda:
     - sixcrm-subnet1
     - sixcrm-subnet2
     - sixcrm-subnet3
-    
+
+elasticsearch:
+  domain_name: 'sixcrm-logs'
+
 s3:
   account_resources_bucket: 'account-resources'
 
