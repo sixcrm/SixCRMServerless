@@ -42,9 +42,12 @@ suites.map((suite) => {
 
 			PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
 
-			await prepareDatabase(test);
+			await prepareDatabase();
 
 			const result = await analyticsController.executeAnalyticsFunction(test.input, test.method);
+
+			// const fs = require('fs');
+			// await fs.writeFileSync(test.test_case + '.json', JSON.stringify(result));
 
 			const result_name = test.result_name;
 			const result_value = (result_name === "undefined") ? result : result[result_name];
@@ -59,7 +62,7 @@ suites.map((suite) => {
 
 });
 
-async function prepareDatabase(test) {
+async function prepareDatabase() {
 
 	await auroraSchemaDeployment.destroy();
 
@@ -67,35 +70,30 @@ async function prepareDatabase(test) {
 		fromRevision: 0
 	});
 
-	await seedDatabase(test);
+	await seedDatabase();
+
 }
 
 function prepareTest(suite) {
 
 	const test = require(path.join(suite, 'config.json'));
 	test.directory = path.basename(suite);
-	test.seeds = path.join(suite, 'seeds');
 	return test;
 
 }
 
-async function seedDatabase(test) {
+async function seedDatabase() {
 
-	du.debug(`Seeding Test database with ${test.method}`);
+	du.debug(`Seeding Test database`);
 
-	if (!fileutilities.fileExists(test.seeds)) {
-
-		return du.debug('Nothing to seed');
-
-	}
+	const seedPaths = path.join(__dirname, 'seeds');
+	const seeds = fileutilities.getDirectoryFilesSync(seedPaths);
 
 	await auroraContext.withConnection((async connection => {
 
-		const seeds = fileutilities.getDirectoryFilesSync(test.seeds);
-
 		for (const seed of seeds) {
 
-			await connection.query(fileutilities.getFileContentsSync(path.join(test.seeds, seed)));
+			await connection.query(fileutilities.getFileContentsSync(path.join(seedPaths, seed)));
 
 		}
 

@@ -3,4 +3,4 @@ SELECT
 FROM
   analytics.f_events
 WHERE
-  datetime BETWEEN '{{start}}' AND '{{end}}' {{filter}}
+  datetime BETWEEN '{{start}}' AND '{{end}}' AND affiliate IS NOT NULL {{filter}}

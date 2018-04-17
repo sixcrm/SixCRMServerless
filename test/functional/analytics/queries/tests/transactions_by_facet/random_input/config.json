@@ -1,12 +1,78 @@
 {
-  "method": "getTransactionsByFacet",
-  "test_case": "random input",
-  "input": {
-    "analyticsfilter":
-  { "start": "2017-01-01T00:00:00.000Z",
-    "end": "2017-01-13T00:00:00.000Z" },
-    "facet": "affiliate",
-    "pagination": { "limit": 10, "order": "asc", "offset": 0 } },
-  "result_name": "facets",
-  "expect": [{"facet":"6b6331f6-7f84-437a-9ac6-093ba301e455","count":1,"count_percentage":"100.00%","amount":139.99,"amount_percentage":"13999.00%"}] 
+	"method": "getTransactionsByFacet",
+	"test_case": "getTransactionsByFacet random input",
+	"input": {
+		"analyticsfilter": {
+			"start": "2018-01-01T00:00:00.000Z",
+			"end": "2018-02-13T00:00:00.000Z"
+		},
+		"facet": "affiliate",
+		"pagination": {
+			"limit": 10,
+			"order": "asc",
+			"offset": 0
+		}
+	},
+	"result_name": "facets",
+	"expect": [{
+		"facet": "36fb4e6a-237c-4ef8-9724-a1de00cea396",
+		"count": 1,
+		"count_percentage": "100.00%",
+		"amount": 4.99,
+		"amount_percentage": "499.00%"
+	}, {
+		"facet": "1608a533-7ceb-4339-821d-631c15448656",
+		"count": 1,
+		"count_percentage": "100.00%",
+		"amount": 4.99,
+		"amount_percentage": "499.00%"
+	}, {
+		"facet": "9b0607b8-17e5-4a3f-a6f0-1f90636f37f9",
+		"count": 1,
+		"count_percentage": "100.00%",
+		"amount": 4.99,
+		"amount_percentage": "499.00%"
+	}, {
+		"facet": "e897438f-2407-4867-9073-f9097151408f",
+		"count": 1,
+		"count_percentage": "100.00%",
+		"amount": 4.99,
+		"amount_percentage": "499.00%"
+	}, {
+		"facet": "75459f8f-a1e4-4c75-bf3d-ce9675be0c1e",
+		"count": 2,
+		"count_percentage": "200.00%",
+		"amount": 9.98,
+		"amount_percentage": "998.00%"
+	}, {
+		"facet": "2ab1b8c5-f3b0-4275-bfb1-048a880b86a7",
+		"count": 2,
+		"count_percentage": "200.00%",
+		"amount": 9.98,
+		"amount_percentage": "998.00%"
+	}, {
+		"facet": "4788988d-d7c9-4e7e-8ec6-ffb13fd782fb",
+		"count": 2,
+		"count_percentage": "200.00%",
+		"amount": 9.98,
+		"amount_percentage": "998.00%"
+	}, {
+		"facet": "50996747-85f1-4546-8b9c-d3c6bc3092f7",
+		"count": 2,
+		"count_percentage": "200.00%",
+		"amount": 9.98,
+		"amount_percentage": "998.00%"
+	}, {
+		"facet": "f890226a-2bf0-47ca-acf5-dab8150ff4c4",
+		"count": 3,
+		"count_percentage": "300.00%",
+		"amount": 110.96,
+		"amount_percentage": "11096.00%"
+	}, {
+		"facet": "d7435e1d-9c9e-43c0-b4de-e4d5eda14a4f",
+		"count": 14,
+		"count_percentage": "1400.00%",
+		"amount": 1593.72,
+		"amount_percentage": "159372.00%"
+	}]
 }
