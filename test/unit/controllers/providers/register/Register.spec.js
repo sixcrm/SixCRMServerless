@@ -787,6 +787,606 @@ describe('controllers/providers/Register.js', () => {
 
 	});
 
+	describe('refundTransaction', () => {
+		it('refunds transaction', () => {
+			const transaction = getValidTransactionObject();
+			const rebill = getValidRebill();
+			const processor_response = getProcessorResponseObject();
+			const receipt_transaction = getValidTransactionObject();
+			const session = getValidParentSession();
+			const customer = getValidCustomer();
+			const creditcard = getValidCreditCard();
+			const merchant_provider_groups = getValidMerchantProviderGroups();
+			const register_response = {};
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				get({id}) {
+					expect(id).to.equal(transaction.id);
+					return Promise.resolve(transaction);
+				}
+				listByAssociatedTransaction({id, types, results}) {
+					expect(id).to.equal(transaction);
+					expect(types).to.deep.equal(['reverse', 'refund']);
+					expect(results).to.deep.equal(['success']);
+					return Promise.resolve({});
+				}
+				getResult() {
+					return Promise.resolve(null);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Refund.js'), class {
+				refund({transaction: _transaction, amount: _amount}) {
+					expect(_transaction).to.equal(transaction);
+					expect(_amount).to.equal(transaction.amount);
+					return Promise.resolve(processor_response);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get({id}) {
+					expect(id).to.equal(transaction.rebill);
+					return Promise.resolve(rebill);
+				}
+				getParentSession(_rebill) {
+					expect(_rebill).to.equal(rebill);
+					return Promise.resolve(session);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
+				issueReceipt(data) {
+					expect(data.amount).to.equal(transaction.amount);
+					expect(data.transactiontype).to.equal('refund');
+					expect(data.processorresponse).to.equal(processor_response);
+					expect(data.merchant_provider).to.equal(transaction.merchant_provider);
+					expect(data.transaction_products).to.equal(transaction.products);
+					expect(data.associatedtransaction).to.equal(transaction);
+					expect(data.rebill).to.equal(rebill);
+					return Promise.resolve(receipt_transaction);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), class {
+				sanitize() {}
+				get({id}) {
+					expect(id).to.equal(session.customer);
+					return Promise.resolve(customer);
+				}
+				getCreditCards(_customer) {
+					expect(_customer).to.equal(customer);
+					return Promise.resolve([creditcard]);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				sanitize() {}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/MerchantProviderSelector.js'), class {
+				buildMerchantProviderGroups({rebill: _rebill, creditcard: _creditcard}) {
+					expect(_rebill).to.equal(rebill);
+					expect(_creditcard).to.equal(creditcard);
+					return Promise.resolve(merchant_provider_groups);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Response.js'), class {
+				constructor(data) {
+					expect(data.transactions).to.include(receipt_transaction);
+					expect(data.processor_responses).to.include(processor_response);
+					expect(data.response_type).to.equal('success');
+					expect(data.creditcard).to.equal(creditcard);
+					return register_response;
+				}
+			});
+
+			PermissionTestGenerators.givenUserWithAllowed('refund', 'register');
+
+			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+			const registerController = new RegisterController();
+			return registerController.refundTransaction({transaction: transaction.id})
+				.then(result => {
+					expect(result).to.equal(register_response);
+					return;
+				});
+		});
+
+		it('partially refunds transaction', () => {
+			const transaction = getValidTransactionObject();
+			const rebill = getValidRebill();
+			const processor_response = getProcessorResponseObject();
+			const receipt_transaction = getValidTransactionObject();
+			const session = getValidParentSession();
+			const customer = getValidCustomer();
+			const creditcard = getValidCreditCard();
+			const merchant_provider_groups = getValidMerchantProviderGroups();
+			const register_response = {};
+			const amount = transaction.amount - 2;
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				get({id}) {
+					expect(id).to.equal(transaction.id);
+					return Promise.resolve(transaction);
+				}
+				listByAssociatedTransaction({id, types, results}) {
+					expect(id).to.equal(transaction);
+					expect(types).to.deep.equal(['reverse', 'refund']);
+					expect(results).to.deep.equal(['success']);
+					return Promise.resolve({});
+				}
+				getResult() {
+					return Promise.resolve(null);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Refund.js'), class {
+				refund({transaction: _transaction, amount: _amount}) {
+					expect(_transaction).to.equal(transaction);
+					expect(_amount).to.equal(amount);
+					return Promise.resolve(processor_response);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get({id}) {
+					expect(id).to.equal(transaction.rebill);
+					return Promise.resolve(rebill);
+				}
+				getParentSession(_rebill) {
+					expect(_rebill).to.equal(rebill);
+					return Promise.resolve(session);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
+				issueReceipt(data) {
+					expect(data.amount).to.equal(amount);
+					expect(data.transactiontype).to.equal('refund');
+					expect(data.processorresponse).to.equal(processor_response);
+					expect(data.merchant_provider).to.equal(transaction.merchant_provider);
+					expect(data.transaction_products).to.equal(transaction.products);
+					expect(data.associatedtransaction).to.equal(transaction);
+					expect(data.rebill).to.equal(rebill);
+					return Promise.resolve(receipt_transaction);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), class {
+				sanitize() {}
+				get({id}) {
+					expect(id).to.equal(session.customer);
+					return Promise.resolve(customer);
+				}
+				getCreditCards(_customer) {
+					expect(_customer).to.equal(customer);
+					return Promise.resolve([creditcard]);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				sanitize() {}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/MerchantProviderSelector.js'), class {
+				buildMerchantProviderGroups({rebill: _rebill, creditcard: _creditcard}) {
+					expect(_rebill).to.equal(rebill);
+					expect(_creditcard).to.equal(creditcard);
+					return Promise.resolve(merchant_provider_groups);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Response.js'), class {
+				constructor(data) {
+					expect(data.transactions).to.include(receipt_transaction);
+					expect(data.processor_responses).to.include(processor_response);
+					expect(data.response_type).to.equal('success');
+					expect(data.creditcard).to.equal(creditcard);
+					return register_response;
+				}
+			});
+
+			PermissionTestGenerators.givenUserWithAllowed('refund', 'register');
+
+			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+			const registerController = new RegisterController();
+			return registerController.refundTransaction({transaction: transaction.id, amount})
+				.then(result => {
+					expect(result).to.equal(register_response);
+					return;
+				});
+		});
+	});
+
+	describe('reverseTransaction', () => {
+		it('reverses transaction', () => {
+			const transaction = getValidTransactionObject();
+			const rebill = getValidRebill();
+			const processor_response = getProcessorResponseObject();
+			const receipt_transaction = getValidTransactionObject();
+			const session = getValidParentSession();
+			const customer = getValidCustomer();
+			const creditcard = getValidCreditCard();
+			const merchant_provider_groups = getValidMerchantProviderGroups();
+			const register_response = {};
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				get({id}) {
+					expect(id).to.equal(transaction.id);
+					return Promise.resolve(transaction);
+				}
+				listByAssociatedTransaction({id, types, results}) {
+					expect(id).to.equal(transaction);
+					expect(types).to.deep.equal(['reverse', 'refund']);
+					expect(results).to.deep.equal(['success']);
+					return Promise.resolve({});
+				}
+				getResult() {
+					return Promise.resolve(null);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Reverse.js'), class {
+				reverse({transaction: _transaction}) {
+					expect(_transaction).to.equal(transaction);
+					return Promise.resolve(processor_response);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get({id}) {
+					expect(id).to.equal(transaction.rebill);
+					return Promise.resolve(rebill);
+				}
+				getParentSession(_rebill) {
+					expect(_rebill).to.equal(rebill);
+					return Promise.resolve(session);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
+				issueReceipt(data) {
+					expect(data.amount).to.equal(transaction.amount);
+					expect(data.transactiontype).to.equal('reverse');
+					expect(data.processorresponse).to.equal(processor_response);
+					expect(data.merchant_provider).to.equal(transaction.merchant_provider);
+					expect(data.transaction_products).to.equal(transaction.products);
+					expect(data.associatedtransaction).to.equal(transaction);
+					expect(data.rebill).to.equal(rebill);
+					return Promise.resolve(receipt_transaction);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), class {
+				sanitize() {}
+				get({id}) {
+					expect(id).to.equal(session.customer);
+					return Promise.resolve(customer);
+				}
+				getCreditCards(_customer) {
+					expect(_customer).to.equal(customer);
+					return Promise.resolve([creditcard]);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				sanitize() {}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/MerchantProviderSelector.js'), class {
+				buildMerchantProviderGroups({rebill: _rebill, creditcard: _creditcard}) {
+					expect(_rebill).to.equal(rebill);
+					expect(_creditcard).to.equal(creditcard);
+					return Promise.resolve(merchant_provider_groups);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Response.js'), class {
+				constructor(data) {
+					expect(data.transactions).to.include(receipt_transaction);
+					expect(data.processor_responses).to.include(processor_response);
+					expect(data.response_type).to.equal('success');
+					expect(data.creditcard).to.equal(creditcard);
+					return register_response;
+				}
+			});
+
+			PermissionTestGenerators.givenUserWithAllowed('reverse', 'register');
+
+			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+			const registerController = new RegisterController();
+			return registerController.reverseTransaction({transaction: transaction.id})
+				.then(result => {
+					expect(result).to.equal(register_response);
+					return;
+				});
+		});
+	});
+
+	describe('processTransaction', () => {
+		it('processes transactions', () => {
+			const rebill = getValidRebill();
+			const processor_response = getProcessorResponseObject();
+			const transaction_receipt = getValidTransactionObject();
+			const session = getValidParentSession();
+			const customer = getValidCustomer();
+			const selected_creditcard = getValidCreditCard();
+			const group_id = uuidV4();
+			const merchant_provider_groups = getValidMerchantProviderGroups([group_id]);
+			const transaction = getValidTransactionObject();
+			session.customer = customer;
+			transaction.rebill = rebill.id;
+			merchant_provider_groups[group_id] = [getValidTransactionProducts()];
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class MockRebill {
+				get({id}) {
+					expect(id).to.equal(rebill.id);
+					return Promise.resolve(rebill);
+				}
+				getParentSession(_rebill) {
+					expect(_rebill).to.equal(rebill);
+					return Promise.resolve(session);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), class MockCustomer {
+				sanitize() {}
+				get({id}) {
+					expect(id).to.equal(customer);
+					return Promise.resolve(customer);
+				}
+				getCreditCards(_customer) {
+					expect(_customer).to.equal(customer);
+					return Promise.resolve([selected_creditcard]);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/MerchantProviderSelector.js'), class MockMerchantProviderSelector {
+				buildMerchantProviderGroups(data) {
+					expect(data.rebill).to.equal(rebill);
+					expect(data.creditcard).to.equal(selected_creditcard);
+					return Promise.resolve(merchant_provider_groups);
+				}
+			});
+
+			class MockProcessResult {
+				constructor(data) {
+					this.creditcard = data.creditcard.id;
+					this.merchant_provider = data.merchant_provider;
+				}
+				getCode() {
+					return processor_response.code;
+				}
+				getMessage() {
+					return processor_response.message;
+				}
+				getResult() {
+					return processor_response.result;
+				}
+			}
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Process.js'), class {
+				process(data) {
+					return Promise.resolve(new MockProcessResult(data));
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
+				issueReceipt() {
+					return Promise.resolve(transaction_receipt);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Response.js'), class {
+				constructor({transactions, processor_responses, response_type, creditcard}) {
+					expect(transactions).to.include(transaction_receipt);
+					expect(processor_responses).to.include({
+						code: processor_response.code,
+						message: processor_response.message,
+						result: processor_response.result,
+						creditcard: creditcard.id,
+						merchant_provider: group_id
+					});
+					expect(response_type).to.equal('success');
+					expect(creditcard).to.equal(selected_creditcard);
+				}
+			});
+
+			PermissionTestGenerators.givenUserWithAllowed('process', 'register');
+
+			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+			const registerController = new RegisterController();
+			return registerController.processTransaction({rebill});
+		});
+	});
+
+	describe('issueReceipt', () => {
+		it('sets receipttransaction', () => {
+			const transaction = getValidTransactionObject();
+			const amount = transaction.amount;
+			const transaction_type = transaction.type;
+			const processor_response = getProcessorResponseObject();
+			const rebill = getValidRebill();
+			const receipt_transaction = getValidTransactionObject();
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				get() {
+					return Promise.resolve(rebill);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
+				issueReceipt(argumentation_object) {
+					expect(argumentation_object).to.deep.equal({
+						amount,
+						transactiontype: transaction_type,
+						processorresponse: processor_response,
+						merchant_provider: transaction.merchant_provider,
+						transaction_products: transaction.products,
+						associatedtransaction: transaction,
+						rebill
+					});
+					return Promise.resolve(receipt_transaction);
+				}
+			});
+
+			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+			const registerController = new RegisterController();
+			registerController.parameters.set('amount', amount);
+			registerController.parameters.set('transactiontype', transaction_type);
+			registerController.parameters.set('processorresponse', processor_response);
+			registerController.parameters.set('associatedtransaction', transaction);
+			return registerController.issueReceipt().then(() => {
+				expect(registerController.parameters.get('receipttransaction')).to.equal(receipt_transaction);
+				return;
+			});
+		});
+	});
+
+	describe('executeProcesses', () => {
+		it('executes processes', () => {
+			const group_id = uuidV4();
+			const merchant_provider_groups = getValidMerchantProviderGroups([group_id]);
+			const customer = getValidCustomer();
+			const creditcard = getValidCreditCard();
+			const processor_response = getProcessorResponseObject();
+			const transaction_receipt = getValidTransactionObject();
+			const rebill = getValidRebill();
+			merchant_provider_groups[group_id] = [getValidTransactionProducts()];
+
+			class MockProcessResult {
+				constructor(data) {
+					this.creditcard = data.creditcard.id;
+					this.merchant_provider = data.merchant_provider;
+				}
+				getCode() {
+					return processor_response.code;
+				}
+				getMessage() {
+					return processor_response.message;
+				}
+				getResult() {
+					return processor_response.result;
+				}
+			}
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Process.js'), class {
+				process(data) {
+					return Promise.resolve(new MockProcessResult(data));
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
+				issueReceipt() {
+					return Promise.resolve(transaction_receipt);
+				}
+			});
+
+			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+			const registerController = new RegisterController();
+			registerController.parameters.set('merchantprovidergroups', merchant_provider_groups);
+			registerController.parameters.set('customer', customer);
+			registerController.parameters.set('selectedcreditcard', creditcard);
+			registerController.parameters.set('rebill', rebill);
+			return registerController.executeProcesses().then(() => {
+				const processor_responses = registerController.parameters.get('processorresponses');
+				const transaction_receipts = registerController.parameters.get('transactionreceipts');
+				expect(processor_responses).to.include({
+					code: processor_response.code,
+					message: processor_response.message,
+					result: processor_response.result,
+					creditcard: creditcard.id,
+					merchant_provider: group_id
+				});
+				expect(transaction_receipts).to.include(transaction_receipt);
+				return;
+			});
+		});
+	});
+
+	describe('acquireRefundTransactionSubProperties', () => {
+		it('acquires properties', () => {
+			const session = getValidParentSession();
+			const customer = getValidCustomer();
+			const selected_creditcard = getValidCreditCard();
+			const merchant_provider_groups = getValidMerchantProviderGroups();
+			const transaction = getValidTransactionObject();
+			const rebill = getValidRebill();
+			session.customer = customer;
+			transaction.rebill = rebill.id;
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class MockRebill {
+				get({id}) {
+					expect(id).to.equal(rebill.id);
+					return Promise.resolve(rebill);
+				}
+				getParentSession(_rebill) {
+					expect(_rebill).to.equal(rebill);
+					return Promise.resolve(session);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), class MockCustomer {
+				sanitize() {}
+				get({id}) {
+					expect(id).to.equal(customer);
+					return Promise.resolve(customer);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/MerchantProviderSelector.js'), class MockMerchantProviderSelector {
+				buildMerchantProviderGroups(data) {
+					expect(data.rebill).to.equal(rebill);
+					expect(data.creditcard).to.equal(selected_creditcard);
+					return Promise.resolve(merchant_provider_groups);
+				}
+			});
+
+			PermissionTestGenerators.givenAnyUser();
+
+			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+			const registerController = new RegisterController();
+			registerController.parameters.set('transaction', transaction);
+			registerController.parameters.set('selectedcreditcard', selected_creditcard);
+			return registerController.acquireRefundTransactionSubProperties()
+				.then(() => {
+					expect(registerController.parameters.get('rebill')).to.equal(rebill);
+					expect(registerController.parameters.get('parentsession')).to.equal(session);
+					expect(registerController.parameters.get('customer')).to.equal(customer);
+					expect(registerController.parameters.get('merchantprovidergroups')).to.equal(merchant_provider_groups);
+					return;
+				});
+		});
+	});
+
+	describe('extractProcessorResponse', () => {
+		it('returns a clone of store if exists', () => {
+			const response = {
+				parameters: {
+					store: {
+						foo: true
+					}
+				}
+			};
+			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+			const registerController = new RegisterController();
+
+			const processorResponse = registerController.extractProcessorResponse(response);
+			expect(processorResponse).to.deep.equal(response.parameters.store);
+		});
+
+		it('returns the response if store not exists', () => {
+			const response = {
+				parameters: {}
+			};
+			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+			const registerController = new RegisterController();
+
+			const processorResponse = registerController.extractProcessorResponse(response);
+			expect(processorResponse).to.deep.equal(response);
+		});
+	});
+
 	describe('executeRefund', () => {
 
 		it('successfully executes a refund', () => {

@@ -14,7 +14,6 @@ const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js
 const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
 const MerchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
 const TransactionsController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-const rebillController = new RebillController();
 
 module.exports = class Register extends RegisterUtilities {
 
@@ -115,7 +114,7 @@ module.exports = class Register extends RegisterUtilities {
 		du.debug('Reverse Transaction');
 
 		return this.can({action: 'reverse', object: 'register', fatal: true})
-			.then(() => this.setParameters({argumentation: arguments[0], action: 'refund'}))
+			.then(() => this.setParameters({argumentation: arguments[0], action: 'reverse'}))
 			.then(() => this.hydrateTransaction())
 			.then(() => this.getAssociatedTransactions())
 			.then(() => this.validateAssociatedTransactions())
@@ -282,8 +281,6 @@ module.exports = class Register extends RegisterUtilities {
 		const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
 		let registerReceiptController = new RegisterReceiptController();
 
-		this.transformProcessorResponse();
-
 		let parameters = this.parameters.getAll();
 
 		let argumentation_object = {
@@ -295,7 +292,7 @@ module.exports = class Register extends RegisterUtilities {
 			associatedtransaction: parameters.associatedtransaction
 		};
 
-		return rebillController.get({id: parameters.associatedtransaction.rebill })
+		return this.rebillController.get({id: parameters.associatedtransaction.rebill })
 			.then(rebill => argumentation_object.rebill = rebill)
 			.then(() => registerReceiptController.issueReceipt(argumentation_object))
 			.then(receipt_transaction => this.parameters.set('receipttransaction', receipt_transaction));
@@ -321,22 +318,6 @@ module.exports = class Register extends RegisterUtilities {
 
 		return Promise.resolve(register_response);
 
-	}
-
-	transformProcessorResponse() {
-
-		let transaction = this.parameters.get('associatedtransaction');
-
-		if(_.has(transaction, 'processor_response') && (_.isObject(transaction.processor_response))){
-
-			try{
-				transaction.processor_response = JSON.stringify(transaction.processor_response);
-			}catch(error){
-				throw eu.getError('validation', 'Unrecognized format for processor response.')
-			}
-
-			this.parameters.set('associatedtransaction', transaction);
-		}
 	}
 
 	getProcessorResponseCategory(){
