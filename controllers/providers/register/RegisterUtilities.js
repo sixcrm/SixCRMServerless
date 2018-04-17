@@ -305,6 +305,9 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		let customer = this.parameters.get('customer');
 
 		return this.customerController.getCreditCards(customer).then(creditcards => {
+			if (creditcards === null) {
+				throw eu.getError('server', 'Unable to find creditcards for customer');
+			}
 
 			return this.parameters.set('creditcards', creditcards);
 
