@@ -12,16 +12,16 @@
 		"script": "tables/d_processor_result.sql"
 	},
 	{
-		"script": "tables/f_sessions.sql"
+		"script": "tables/f_session.sql"
 	},
 	{
-		"script": "tables/f_events.sql"
+		"script": "tables/f_event.sql"
 	},
 	{
-		"script": "tables/f_rebills.sql"
+		"script": "tables/f_rebill.sql"
 	},
 	{
-		"script": "tables/f_transactions.sql"
+		"script": "tables/f_transaction.sql"
 	},
 	{
 		"script": "tables/m_release.sql"

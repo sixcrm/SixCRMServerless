@@ -16,7 +16,7 @@ module.exports = class WriteRebillRecords {
 		du.debug('WriteRebillRecords.execute()');
 
 		let query =
-			'INSERT INTO analytics.f_rebills ( \
+			'INSERT INTO analytics.f_rebill ( \
 				id, \
 				current_queuename, \
 				previous_queuename, \

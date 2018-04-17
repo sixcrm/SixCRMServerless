@@ -8,7 +8,7 @@ FROM
     SELECT
       *
     FROM
-      analytics.f_transactions
+      analytics.f_transaction
     WHERE 1=1
       {{filter}}
       AND datetime BETWEEN TIMESTAMP '{{start}}' AND TIMESTAMP '{{end}}'

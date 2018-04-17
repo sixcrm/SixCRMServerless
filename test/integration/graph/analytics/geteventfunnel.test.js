@@ -18,7 +18,7 @@ Check Pagination Response Group
 */
 
 let test_name = 'Campaign Delta';
-let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/getEventFunnel.json');
+let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/get-event-funnel.json');
 
 //set the test user
 let test_user = {

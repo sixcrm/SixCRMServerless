@@ -16,7 +16,7 @@ module.exports = class WriteTransactionRecords {
 		du.debug('WriteTransactionRecords.execute()');
 
 		let query =
-			'INSERT INTO analytics.f_transactions ( \
+			'INSERT INTO analytics.f_transaction ( \
 				id, \
 				datetime, \
 				session, \
