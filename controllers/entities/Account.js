@@ -1,5 +1,6 @@
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -12,6 +13,16 @@ class AccountController extends entityController {
 
 		this.search_fields = ['name'];
 
+	}
+
+	create({entity: entity}) {
+		this.supplyLowercaseName({entity: entity});
+		return this.verifyAccountName({entity: entity}).then(() => super.create({entity: entity}))
+	}
+
+	update({entity: entity}) {
+		this.supplyLowercaseName({entity: entity});
+		return this.verifyAccountName({entity: entity}).then(() => super.update({entity: entity}))
 	}
 
 	//Technical Debt: finish!
@@ -58,6 +69,29 @@ class AccountController extends entityController {
 
 		return super.list({query_parameters: query_parameters, pagination: pagination, fatal: fatal});
 
+	}
+
+	supplyLowercaseName({entity}) {
+
+		du.deep('Supply Lowercase Name');
+
+		entity.name_lowercase = entity.name.toLowerCase();
+	}
+
+	verifyAccountName({entity}) {
+
+		du.debug('Verify Account Name');
+
+		let query_parameters = this.createINQueryParameters({field: 'name_lowercase', list_array: [entity.name_lowercase]});
+
+		return super.list({query_parameters: query_parameters})
+			.then(response => {
+				if (response.pagination.count > 0) {
+					throw eu.getError('bad_request', 'An account already exists with name: "' + entity.name + '"')
+				}
+
+				return;
+			})
 	}
 
 }
