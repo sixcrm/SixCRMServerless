@@ -16,7 +16,7 @@ module.exports = class WriteEventRecords {
 		du.debug('WriteEventRecords.execute()');
 
 		let query =
-			'INSERT INTO analytics.f_sessions ( \
+			'INSERT INTO analytics.f_session ( \
 				id, \
 				datetime, \
 				account, \

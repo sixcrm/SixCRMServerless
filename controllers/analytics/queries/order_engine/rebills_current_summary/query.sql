@@ -20,7 +20,7 @@ SELECT
        else 0
   end failed_rebill,
   datetime
-      FROM analytics.f_rebills fr
+      FROM analytics.f_rebill fr
       WHERE 1=1
         {{filter}}
         and (current_queuename = {{queuename}} or previous_queuename = {{queuename}})

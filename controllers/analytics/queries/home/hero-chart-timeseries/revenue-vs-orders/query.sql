@@ -8,7 +8,7 @@ FROM
 LEFT OUTER JOIN
 	( SELECT COUNT ( 1 ) AS orders,
 		DATE_TRUNC('{{period}}', datetime) as datetime
-		FROM analytics.f_events 
+		FROM analytics.f_event 
 		WHERE datetime BETWEEN TIMESTAMP '{{start}}'::DATE + '00:00:00'::TIME AND TIMESTAMP '{{end}}'::DATE + '23:59:59'::TIME AND "type" = 'order' {{filter}}
 		GROUP BY DATE_TRUNC('{{period}}', datetime)
 		) o
@@ -16,7 +16,7 @@ ON s.generate_series = o.datetime
 LEFT OUTER JOIN
 	( SELECT SUM ( amount ) AS revenue,
 		DATE_TRUNC('{{period}}', datetime) as datetime
-		FROM analytics.f_transactions
+		FROM analytics.f_transaction
 		WHERE processor_result = 'success' AND datetime BETWEEN TIMESTAMP '{{start}}'::DATE + '00:00:00'::TIME AND TIMESTAMP '{{end}}'::DATE + '23:59:59'::TIME {{filter}}
 		GROUP BY DATE_TRUNC('{{period}}', datetime)
 		) tr

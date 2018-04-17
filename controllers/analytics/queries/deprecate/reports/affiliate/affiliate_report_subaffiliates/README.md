@@ -46,8 +46,8 @@ ____
 ### Query notes
 
 Connection to two fact tables :
-* `f_transactions` - Fact table containing transactional data
-* `f_events` - Fact table containing events dataset
+* `f_transaction` - Fact table containing transactional data
+* `f_event` - Fact table containing events dataset
 
 **Data is joined based on common affiliates**
 
