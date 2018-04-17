@@ -6,10 +6,10 @@ const CloudwatchDeployment = global.SixCRM.routes.include('deployment', 'utiliti
 let cloudwatch_deployment = new CloudwatchDeployment();
 
 cloudwatch_deployment.deployLoggerPermissions()
-.then(() => cloudwatch_deployment.deploySubscriptionFilters())
-.then((result) => {
-	return du.highlight(result);
-}).catch(error => {
-	du.error(error);
-	du.warning(error.message);
-});
+	.then(() => cloudwatch_deployment.deploySubscriptionFilters())
+	.then((result) => {
+		return du.highlight(result);
+	}).catch(error => {
+		du.error(error);
+		du.warning(error.message);
+	});
