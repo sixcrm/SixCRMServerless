@@ -1,3 +1,6 @@
+serverless:
+  verbose: 0
+
 data_encryption:
   secret_key: '0ca75fc5b11c6ea70f57b6581c67e15c26dac751c5b6b1f94ab7ef4252d60dd3'
 

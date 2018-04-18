@@ -25,6 +25,7 @@ provider:
     #Technical Debt:  Are these necessary here?
     aws_region: ${opt:region, self:provider.region}
     aws_account: ${self:provider.account}
+    SIX_VERBOSE: ${file(./config/${opt:stage}/site.yml):serverless.verbose}
     test: 'atest'
     #vpc:
       #securityGroupIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSecurityGroup}
