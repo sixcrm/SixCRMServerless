@@ -122,7 +122,9 @@ class UserACLController extends entityController {
 			return useracl.account;
 		}
 
-		return this.executeAssociatedEntityFunction('accountController', 'get', {id: useracl.account});
+		return this.executeAssociatedEntityFunction('accountController', 'get', {id: useracl.account}).then(result => {
+			return result;
+		});
 
 	}
 
