@@ -1,6 +1,7 @@
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -16,13 +17,23 @@ class AccountController extends entityController {
 	}
 
 	create({entity: entity}) {
+
+		du.debug('Account.create()');
+
 		this.supplyLowercaseName({entity: entity});
-		return this.verifyAccountName({entity: entity}).then(() => super.create({entity: entity}))
+
+		return this.verifyAccountName({entity: entity}).then(() => super.create({entity: entity}));
+
 	}
 
 	update({entity: entity}) {
+
+		du.debug('Account.update()');
+
 		this.supplyLowercaseName({entity: entity});
-		return this.verifyAccountName({entity: entity}).then(() => super.update({entity: entity}))
+
+		return this.verifyAccountName({entity: entity}).then(() => super.update({entity: entity}));
+
 	}
 
 	//Technical Debt: finish!
@@ -86,12 +97,15 @@ class AccountController extends entityController {
 
 		return super.list({query_parameters: query_parameters})
 			.then(response => {
-				if (response.pagination.count > 0) {
-					throw eu.getError('bad_request', 'An account already exists with name: "' + entity.name + '"')
+
+				if(objectutilities.hasRecursive(response, 'pagination.count') && response.pagination.count > 0) {
+					eu.throwError('bad_request', 'An account already exists with name: "' + entity.name + '"')
 				}
 
 				return;
-			})
+
+			});
+
 	}
 
 }
