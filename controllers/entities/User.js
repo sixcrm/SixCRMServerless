@@ -349,7 +349,9 @@ module.exports = class UserController extends entityController {
 		du.debug('Get Users By Account');
 
 		if(this.isMasterAccount()){
-			return this.list({pagination: pagination, fatal: fatal});
+			return this.list({pagination: pagination, fatal: fatal}).then(result => {
+				return result;
+			});
 		}
 
 		return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: global.account, fatal: fatal})
@@ -368,7 +370,10 @@ module.exports = class UserController extends entityController {
 					let in_parameters = this.createINQueryParameters({field:'id', list_array: user_ids});
 
 					//Technical Debt:  Refactor, must return all users with correct pagination
-					return this.list({pagination: pagination, query_parameters: in_parameters});
+					return this.list({pagination: pagination, query_parameters: in_parameters}).then(result => {
+						du.warning(result);
+						return result;
+					});
 
 				}
 
