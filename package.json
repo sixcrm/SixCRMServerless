@@ -64,12 +64,12 @@
     "yaml-lint": "0.0.4"
   },
   "scripts": {
-    "test-environment": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/environment/*.test.js",
+    "test-environment": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/environment/*.test.js",
     "test-miscellaneous": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/miscellaneous/*.test.js",
     "test-entities": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/entities/*.test.js",
     "test-transactions": "node ./node_modules/mocha/bin/mocha --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/transaction/*.test.js",
     "test-deleteblocks": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/deleteblocks/*.test.js",
-    "test-integration": "node ./node_modules/mocha/bin/mocha --bail --retries 3 -- test/config/global.js test/bootstrap.test.js test/integration/graph/**/*.test.js test/integration/transaction/*.test.js",
+    "test-integration": "node ./node_modules/mocha/bin/mocha --retries 3 -- test/config/global.js test/bootstrap.test.js test/integration/graph/**/*.test.js test/integration/transaction/*.test.js",
     "test-unit": "node_modules/.bin/mocha --bail --require test/unit/dependencies.js --recursive './test/unit/**/*.spec.js'",
     "test-unit-circle": "nyc node_modules/.bin/mocha --bail --require test/unit/dependencies.js --recursive './test/unit/**/*.spec.js'",
     "test-local-integration": "mocha ./test/integration/local/createOrder/createOrder.test.js",
