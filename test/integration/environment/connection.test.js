@@ -23,32 +23,34 @@ let account = '*';
 
 describe('Connection Test', () => {
 
-  it('successfully connects to configured services', (done) => {
+	it('successfully connects to configured services', (done) => {
 
-    var test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
+		var test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-  	var query = tu.getQuery(test.query);
+		var query = tu.getQuery(test.query);
 
-  	this_request.post('graph/' + account)
-  		.set('Authorization', test_jwt)
-  		.send(query)
-  		.expect(200)
-  		.expect('Content-Type', 'application/json')
-  		.end(function(err, response) {
+		this_request.post('graph/' + account)
+			.set('Authorization', test_jwt)
+			.send(query)
+			.expect(200)
+			.expect('Content-Type', 'application/json')
+			.end(function (err, response) {
 
-  			if (err){
-          return done(err);
-        }
+				if (err) {
+					return done(err);
+				}
 
-  			const connection_tests = response.body.response.data.connectiontest;
-        du.debug(response.body);
-        objectutilities.map(connection_tests, key => {
-          assert.equal(connection_tests[key].status, 'OK');
-        })
-        done();
+				const connection_tests = response.body.response.data.connectiontest;
 
-  		});
+				du.debug(response.body);
 
-  });
+				objectutilities.map(connection_tests, key => {
+					assert.equal(connection_tests[key].status, 'OK');
+				})
+				done();
+
+			});
+
+	});
 
 });
