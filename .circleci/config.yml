@@ -630,7 +630,6 @@ workflows:
             - entity_integration_tests
             - deleteblock_integration_tests
             - analytics_integration_tests
-            - miscellaneous_integration_tests
           filters:
             branches:
               ignore:
