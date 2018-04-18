@@ -2,6 +2,7 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -97,8 +98,11 @@ class AccountController extends entityController {
 
 		return super.list({query_parameters: query_parameters})
 			.then(response => {
-
-				if(objectutilities.hasRecursive(response, 'pagination.count') && response.pagination.count > 0) {
+				if (
+					objectutilities.hasRecursive(response, 'accounts') &&
+					arrayutilities.isArray(response.accounts) &&
+					arrayutilities.filter(response.accounts, (account) => account.id !== entity.id).length > 0
+				) {
 					throw eu.getError('bad_request', 'An account already exists with name: "' + entity.name + '"')
 				}
 
