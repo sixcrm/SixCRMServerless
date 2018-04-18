@@ -64,6 +64,7 @@
     "yaml-lint": "0.0.4"
   },
   "scripts": {
+    "test-environment": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/environment/*.test.js",
     "test-miscellaneous": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/miscellaneous/*.test.js",
     "test-entities": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/entities/*.test.js",
     "test-transactions": "node ./node_modules/mocha/bin/mocha --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/transaction/*.test.js",

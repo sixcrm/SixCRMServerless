@@ -4,6 +4,7 @@ const assert = require('chai').assert;
 
 const tu = global.SixCRM.routes.include('lib', 'test-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 let endpoint = global.integration_test_config.endpoint;
 
@@ -39,9 +40,11 @@ describe('Connection Test', () => {
           return done(err);
         }
 
-  			du.output(response.body);
   			const connection_tests = response.body.response.data.connectiontest;
-        assert.isObject(connection_tests);
+        du.debug(response.body);
+        objectutilities.map(connection_tests, key => {
+          assert.equal(connection_tests[key].status, 'OK');
+        })
         done();
 
   		});
