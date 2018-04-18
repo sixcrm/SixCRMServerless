@@ -42,6 +42,8 @@ suites.map((suite) => {
 
 		subSuite.addTest(new Mocha.Test(test.test_case, async () => {
 
+			// PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
+
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
 
 			await prepareDatabase();
@@ -73,7 +75,7 @@ async function prepareDatabase() {
 	});
 
 	await seedDatabase();
-	// await seedDynamo();
+	await seedDynamo();
 
 }
 
