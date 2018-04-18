@@ -9,6 +9,11 @@
 		"product":{"$ref": "./watermark/watermarkproduct.json"},
 		"amount":{"$ref": "../../definitions/currency.json"},
 		"shipping_receipt":{"$ref": "../../definitions/uuidv4.json"},
+		"returns":{
+			"type":"array",
+			"items":{"$ref":"./transactionproductreturn.json"},
+			"minimum":1
+		},
 		"no_ship":{
 			"type":"boolean",
 			"enum":[true]

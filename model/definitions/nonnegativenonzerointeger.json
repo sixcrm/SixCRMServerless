@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "/definitions/nonnegativenonzerointeger.json",
+  "title": "Non-Negative, Non-Zero Integer",
+  "type":"integer",
+  "description": "Integer number greater than 0",
+  "minimum": 0,
+  "exclusiveMinimum": true
+}

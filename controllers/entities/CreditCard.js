@@ -109,20 +109,35 @@ module.exports = class CreditCardController extends entityController {
 
 			}).then(entity => {
 
-				if (!_.has(this, 'tokenController')) {
-					const TokenController = global.SixCRM.routes.include('providers', 'token/Token.js');
-					this.tokenController = new TokenController();
+				if(!_.has(entity, 'token')){
+
+					if (!_.has(this, 'tokenController')) {
+						const TokenController = global.SixCRM.routes.include('providers', 'token/Token.js');
+						this.tokenController = new TokenController();
+					}
+
+					return Promise.all([entity, this.tokenController.setToken({
+						entity: entity.number
+					})]);
+
+				}else{
+					return [entity, entity.token];
 				}
 
-				return Promise.all([entity, this.tokenController.setToken({
-					entity: entity.number
-				})]);
 
 			}).then(([entity, token]) => {
 
-				delete entity.number;
-				delete entity.cvv;
-				entity.token = token;
+				if(_.has(entity, 'number')){
+					delete entity.number;
+				}
+
+				if(_.has(entity, 'cvv')){
+					delete entity.cvv;
+				}
+
+				if(!_.has(entity, 'token')){
+					entity.token = token;
+				}
 
 				return entity;
 
@@ -360,8 +375,10 @@ module.exports = class CreditCardController extends entityController {
 
 		du.debug('Set Last Four');
 
-		if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
-			attributes.last_four = attributes.number.slice(-4);
+		if(!_.has(attributes, 'last_four')){
+			if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
+				attributes.last_four = attributes.number.slice(-4);
+			}
 		}
 
 	}
@@ -370,8 +387,10 @@ module.exports = class CreditCardController extends entityController {
 
 		du.debug('Set First Six');
 
-		if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
-			attributes.first_six = attributes.number.substring(0, 6);
+		if(!_.has(attributes, 'first_six')){
+			if (_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
+				attributes.first_six = attributes.number.substring(0, 6);
+			}
 		}
 
 	}

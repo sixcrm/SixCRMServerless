@@ -17,7 +17,7 @@ class AccountController extends entityController {
 
 	}
 
-	create({entity: entity}) {
+	create({entity}) {
 
 		du.debug('Account.create()');
 
@@ -27,13 +27,13 @@ class AccountController extends entityController {
 
 	}
 
-	update({entity: entity}) {
+	update({entity, ignore_updated_at}) {
 
 		du.debug('Account.update()');
 
 		this.supplyLowercaseName({entity: entity});
 
-		return this.verifyAccountName({entity: entity}).then(() => super.update({entity: entity}));
+		return this.verifyAccountName({entity: entity}).then(() => super.update({entity: entity, ignore_updated_at: ignore_updated_at}));
 
 	}
 
