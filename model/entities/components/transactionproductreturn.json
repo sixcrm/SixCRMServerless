@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/components/transactionproductreturn.json",
+	"title": "Transaction Product Return",
+	"type": "object",
+	"description": "A return record for a transaction product",
+	"properties":{
+		"id":{"$ref": "../../definitions/uuidv4.json"},
+		"quantity":{"$ref":"../../definitions/nonnegativenonzerointeger.json"}
+	},
+	"required":["id", "quantity"]
+}

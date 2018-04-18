@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "/definitions/returnalias.json",
+  "title": "Return Alias",
+  "description": "Alias of a return",
+  "type":"string",
+  "anyOf":[
+    {"type":"string","pattern":"^R[0-9A-Z]{9}$"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/components/returnproduct.json",
+	"title": "Return Product",
+	"type": "object",
+	"description": "A product on a return",
+	"properties": {
+		"product":{"$ref": "../../definitions/uuidv4.json"},
+		"quantity":{"$ref": "../../definitions/nonnegativeinteger.json"},
+		"history":{
+			"type":"array",
+			"items":{"$ref": "./returnstatehistoryelement.json"}
+		}
+	},
+	"required":["product", "history", "quantity"]
+}

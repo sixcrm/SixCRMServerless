@@ -19,7 +19,8 @@
     "amount":{"$ref":"../../definitions/currency.json"},
     "alias": {"anyOf":[
       {"$ref":"../../definitions/transactionalias.json"},
-      {"$ref":"../../definitions/sessionalias.json"}
+      {"$ref":"../../definitions/sessionalias.json"},
+      {"$ref":"../../definitions/returnalias.json"}
     ]},
     "first_six":{"$ref":"../../definitions/creditcardfirstsix.json"},
     "last_four":{"$ref":"../../definitions/creditcardlastfour.json"},

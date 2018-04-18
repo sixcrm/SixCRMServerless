@@ -13,7 +13,8 @@ module.exports = class AutoscalingProvider extends AWSProvider{
 		this.instantiateAWS();
 
 		this.autoscaling = new this.AWS.ApplicationAutoScaling({
-			apiVersion: '2016-02-06'
+			apiVersion: '2016-02-06',
+			region: global.SixCRM.configuration.site_config.aws.region
 		});
 
 	}
