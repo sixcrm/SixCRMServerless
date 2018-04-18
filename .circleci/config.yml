@@ -300,7 +300,7 @@ jobs:
           command: SIX_VERBOSE=2 node ./deployment/aurora/aurora-deploy-cluster.js
       - run:
           name: Aurora Create Tables
-          command: node ./deployment/aurora/aurora-deploy.js && echo "Pausing to allow queries to complete..." && sleep 240
+          command: SIX_VERBOSE=2 node ./deployment/aurora/aurora-deploy.js && echo "Pausing to allow queries to complete..." && sleep 240
   deploy_sns:
     <<: *job-defaults
     steps:
