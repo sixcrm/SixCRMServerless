@@ -13,7 +13,7 @@ module.exports = class ElasticSearchProvider extends AWSProvider{
 
 		this.instantiateAWS();
 
-		this.elasticsearch = new this.AWS.ES({apiVersion: '2015-01-01'});
+		this.elasticsearch = new this.AWS.ES({apiVersion: '2015-01-01', region: global.SixCRM.configuration.site_config.aws.region});
 
 	}
 
