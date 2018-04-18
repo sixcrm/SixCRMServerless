@@ -24,6 +24,9 @@
 		"script": "tables/f_transaction.sql"
 	},
 	{
+		"script": "tables/f_transaction_product.sql"
+	},
+	{
 		"script": "tables/m_release.sql"
 	},
 	{
