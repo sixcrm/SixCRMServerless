@@ -25,7 +25,17 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 			subaffiliate2: record.context.session.subaffiliate_2,
 			subaffiliate3: record.context.session.subaffiliate_3,
 			subaffiliate4: record.context.session.subaffiliate_4,
-			subaffiliate5: record.context.session.subaffiliate_5
+			subaffiliate5: record.context.session.subaffiliate_5,
+			products: record.context.transaction.products.map(p => {
+				return {
+					id: p.product.id,
+					name: p.product.name,
+					amount: p.amount,
+					quantity: p.quantity,
+					sku: p.product.sku,
+					fulfillmentProvider: p.product.fulfillment_provider
+				}
+			})
 		});
 
 	}
