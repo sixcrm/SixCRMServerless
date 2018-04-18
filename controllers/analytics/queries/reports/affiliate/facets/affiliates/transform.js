@@ -7,9 +7,11 @@ module.exports = async (results) => {
 
 	const ids = results.map(r => r.affiliate);
 
-	const affiliates = await (new AffiliateController()).getByAffiliateIds(ids).affiliates || [];
+	const controller = new AffiliateController();
+	const response = await controller.getByAffiliateIds(ids);
+	const affiliates = response.affiliates || [];
 
-	return Promise.resolve({
+	return {
 		facet: 'affiliate',
 		values: affiliates.map(r => {
 			return [{
@@ -20,6 +22,6 @@ module.exports = async (results) => {
 				value: r.name
 			}]
 		})
-	});
+	};
 
 }
