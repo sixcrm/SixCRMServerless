@@ -41,16 +41,16 @@ module.exports.graphObj = new GraphQLObjectType({
 				const cloudsearchProvider = new CloudsearchProvider(true);
 				return cloudsearchProvider.test();
 			}
-		}/*
+		},
 		aurora: {
 			type: new GraphQLNonNull(connectionTestResultType.graphObj),
 			description: 'Aurora Connectivity Test',
 			resolve: () => {
-				const RDSProvider = global.SixCRM.routes.include('providers', 'rds-provider.js');
-				const rDSProvider = new RDSProvider();
-				return rDSProvider.test();
+				const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
+				return auroraContext.init().then(auroraContext.testConnection);
 			}
-		},
+		}
+		/*
 		redshift: {
 			type: new GraphQLNonNull(connectionTestResultType.graphObj),
 			description: 'Redshift Connectivity Test',
