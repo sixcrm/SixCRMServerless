@@ -15,7 +15,7 @@ module.exports.graphObj = new GraphQLObjectType({
 				return elasticSearchProvider.test();
 			}
 		},
-		elasticache:{
+		elasticache: {
 			type: new GraphQLNonNull(connectionTestResultType.graphObj),
 			description: 'Elasticache Connectivity Test',
 			resolve: () => {
@@ -46,8 +46,9 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLNonNull(connectionTestResultType.graphObj),
 			description: 'Aurora Connectivity Test',
 			resolve: () => {
-				const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
-				return auroraContext.init().then(auroraContext.testConnection);
+				const PostgresContext = global.SixCRM.routes.include('lib', 'analytics/postgres-context.js');
+				const postgresContext = new PostgresContext('aurora');
+				return postgresContext.init().then(postgresContext.testConnection);
 			}
 		}
 		/*
