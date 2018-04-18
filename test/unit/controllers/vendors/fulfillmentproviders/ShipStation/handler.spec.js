@@ -4,6 +4,7 @@ const expect = chai.expect;
 const querystring = require('querystring');
 const mockery = require('mockery');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidShippingReceipt() {
@@ -332,7 +333,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 				expect(result.getCode()).to.equal('fail');
 				expect(result.getMessage()).to.equal('Failed');
 				expect(result.getResponse().body).to.equal('401 Unauthorized');
-				expect(result.getParsedResponse()).to.be.defined;
+				return expect(result.getParsedResponse()).to.be.defined;
 
 			});
 
@@ -367,7 +368,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 				expect(result.getCode()).to.equal('success');
 				expect(result.getMessage()).to.equal('Success');
 				expect(result.getResponse().body).to.deep.equal(good_response.response.body);
-				expect(result.getParsedResponse()).to.be.defined;
+				return expect(result.getParsedResponse()).to.be.defined;
 
 			});
 
@@ -411,7 +412,7 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 				expect(result.getCode()).to.equal('success');
 				expect(result.getMessage()).to.equal('Success');
 				expect(result.getResponse().body).to.deep.equal(good_response.response.body);
-				expect(result.getParsedResponse()).to.be.defined;
+				return expect(result.getParsedResponse()).to.be.defined;
 
 			});
 
@@ -455,10 +456,69 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 				expect(result.getCode()).to.equal('success');
 				expect(result.getMessage()).to.equal('Success');
 				expect(result.getResponse().body).to.deep.equal(good_response.response.body);
-				expect(result.getParsedResponse()).to.be.defined;
+				return expect(result.getParsedResponse()).to.be.defined;
 
 			});
 
+		});
+
+	});
+
+	describe('getCreateOrderRequestParameters', () => {
+
+		it('successfully creates request parameters for "CreateOrder"', () => {
+
+			let fulfillment_provider = getValidFulfillmentProvider();
+
+			let customer = getValidCustomer();
+
+			let products = getValidProducts();
+
+			let reference_number = getValidFulfillmentProviderReference();
+
+			customer.address.line2 = spoofer.createRandomAddress('line2');
+
+			const ShipStationController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/ShipStation/handler.js');
+			let shipStationController = new ShipStationController({
+				fulfillment_provider: fulfillment_provider
+			});
+
+			shipStationController.parameters.set('customer', customer);
+			shipStationController.parameters.set('products', products);
+			shipStationController.parameters.set('referencenumber', reference_number);
+
+			const expected_customer_data = {
+				city: customer.address.city,
+				company: null,
+				country: customer.address.country,
+				email: customer.email,
+				name: customer.firstname + ' ' + customer.lastname,
+				phone: customer.phone,
+				postalCode: customer.address.zip,
+				state: customer.address.state,
+				street1: customer.address.line1,
+				street2: customer.address.line2,
+				street3: null
+			};
+
+			let result = shipStationController.getCreateOrderRequestParameters();
+
+			expect(result.orderNumber).to.equal(reference_number);
+			expect(result.orderKey).to.equal(reference_number);
+			expect(result.orderStatus).to.equal('awaiting_shipment');
+			expect(result.customerEmail).to.equal(customer.email);
+			expect(result.customerUsername).to.equal(customer.email);
+			expect(result.billTo).to.deep.equal(expected_customer_data);
+			expect(result.shipTo).to.deep.equal(expected_customer_data);
+
+			products.forEach((product, index) => {
+				expect(result.items[index]).to.deep.equal({
+					fulfillmentSku: null,
+					name: product.name,
+					quantity: 1,
+					sku: product.sku,
+				});
+			});
 		});
 
 	});
