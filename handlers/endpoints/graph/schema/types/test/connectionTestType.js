@@ -48,7 +48,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			resolve: () => {
 				const PostgresContext = global.SixCRM.routes.include('lib', 'analytics/postgres-context.js');
 				const postgresContext = new PostgresContext('aurora');
-				return postgresContext.init().then(postgresContext.testConnection);
+				return postgresContext.init().then(() => postgresContext.testConnection());
 			}
 		}
 		/*
