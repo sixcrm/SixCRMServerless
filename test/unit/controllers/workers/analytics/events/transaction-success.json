@@ -24,7 +24,13 @@
 			"amount": 34.99,
 			"quantity": 1,
 			"sku": "123",
-			"fulfillmentProvider": "5d18d0fa-5812-4c37-b98c-7b1debdcb435"
+			"fulfillmentProvider": "5d18d0fa-5812-4c37-b98c-7b1debdcb435",
+			"productSchedules": [
+					{
+						"id": "12529a17-ac32-4e46-b05b-83862843055d",
+						"name": "7NPZBE4KEXZZD5AQ6CEN"
+					}
+			]
 		}]
 	},
 	"event": {
@@ -128,13 +134,13 @@
 				"watermark": {
 					"product_schedules": [{
 						"product_schedule": {
-							"id": "d06338c5-d2e5-4462-b71f-0efde51e835d",
+							"id": "12529a17-ac32-4e46-b05b-83862843055d",
 							"name": "7NPZBE4KEXZZD5AQ6CEN",
 							"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 							"merchantprovidergroup": "d9e40b57-55fe-4cdd-ae2c-b381a4d85f64",
 							"schedule": [{
 								"product": {
-									"id": "497b2e2d-1256-4485-9a23-d8cf34594265",
+									"id": "1b7ecefe-8be6-44cd-addb-d4e4350d7738",
 									"name": "3YC7WFEKT6PTY4SLQJC2",
 									"sku": "ZQS2M3DBA4P7TWBH4LDW",
 									"ship": false,
