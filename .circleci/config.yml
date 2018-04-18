@@ -358,7 +358,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Entity Integration Tests
-          command: npm run test-environment
+          command: SIX_VERBOSE=2 npm run test-environment
   purge:
     <<: *job-defaults
     steps:
