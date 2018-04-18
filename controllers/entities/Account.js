@@ -99,7 +99,7 @@ class AccountController extends entityController {
 			.then(response => {
 
 				if(objectutilities.hasRecursive(response, 'pagination.count') && response.pagination.count > 0) {
-					eu.throwError('bad_request', 'An account already exists with name: "' + entity.name + '"')
+					throw eu.getError('bad_request', 'An account already exists with name: "' + entity.name + '"')
 				}
 
 				return;
