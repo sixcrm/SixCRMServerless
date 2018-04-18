@@ -15,7 +15,7 @@ module.exports.graphObj = new GraphQLObjectType({
 				return elasticSearchProvider.test();
 			}
 		},
-		elasticache:{
+		elasticache: {
 			type: new GraphQLNonNull(connectionTestResultType.graphObj),
 			description: 'Elasticache Connectivity Test',
 			resolve: () => {
@@ -41,16 +41,17 @@ module.exports.graphObj = new GraphQLObjectType({
 				const cloudsearchProvider = new CloudsearchProvider(true);
 				return cloudsearchProvider.test();
 			}
-		}/*
+		},
 		aurora: {
 			type: new GraphQLNonNull(connectionTestResultType.graphObj),
 			description: 'Aurora Connectivity Test',
 			resolve: () => {
-				const RDSProvider = global.SixCRM.routes.include('providers', 'rds-provider.js');
-				const rDSProvider = new RDSProvider();
-				return rDSProvider.test();
+				const PostgresContext = global.SixCRM.routes.include('lib', 'analytics/postgres-context.js');
+				const postgresContext = new PostgresContext('aurora');
+				return postgresContext.init().then(() => postgresContext.testConnection());
 			}
-		},
+		}
+		/*
 		redshift: {
 			type: new GraphQLNonNull(connectionTestResultType.graphObj),
 			description: 'Redshift Connectivity Test',
