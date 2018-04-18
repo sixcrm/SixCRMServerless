@@ -350,6 +350,15 @@ jobs:
       #     name: AWS Services Available
       #     command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
   #Eh... not very useful currently
+  environment_test:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Entity Integration Tests
+          command: npm run test-environment
   purge:
     <<: *job-defaults
     steps:
@@ -423,20 +432,6 @@ jobs:
       - run:
           name: Transactional Integration Tests
           command: export SIX_VERBOSE=2; npm run test-transactions
-  miscellaneous_integration_tests:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Miscellaneous Integration Tests
-          command: export SIX_VERBOSE=2; npm run test-miscellaneous
   synchronize_index:
     <<: *job-defaults
     steps:
@@ -556,6 +551,10 @@ workflows:
           requires:
             - deploy_serverless
             - deploy_iam
+      - deploy_logsubscription:
+          requires:
+            - deploy_serverless
+            - deploy_iam
       - deploy_sqs:
           requires:
             - deploy_security_groups
@@ -588,9 +587,13 @@ workflows:
             # - deploy_redshift
             - deploy_aurora
             - deploy_sns
-      - seed:
+            - deploy_logsubscription
+      - environment_test:
           requires:
             - post_deployment
+      - seed:
+          requires:
+            - environment_test
       - entity_integration_tests:
           requires:
             - seed
@@ -603,16 +606,12 @@ workflows:
       - transactional_integration_tests:
           requires:
             - seed
-      - miscellaneous_integration_tests:
-          requires:
-            - seed
       - synchronize_index:
           requires:
             - transactional_integration_tests
             - entity_integration_tests
             - deleteblock_integration_tests
             - analytics_integration_tests
-            - miscellaneous_integration_tests
       - hold:
           type: approval
           requires:
@@ -620,7 +619,6 @@ workflows:
             - entity_integration_tests
             - deleteblock_integration_tests
             - analytics_integration_tests
-            - miscellaneous_integration_tests
           filters:
             branches:
               only:
