@@ -81,11 +81,11 @@ module.exports = class WriteTransactionRecords {
 				r.account,
 				r.type,
 				r.subtype || 'main',
-				r.subaffiliate1,
-				r.subaffiliate2,
-				r.subaffiliate3,
-				r.subaffiliate4,
-				r.subaffiliate5
+				r.subAffiliate1,
+				r.subAffiliate2,
+				r.subAffiliate3,
+				r.subAffiliate4,
+				r.subAffiliate5
 			];
 
 		}));
