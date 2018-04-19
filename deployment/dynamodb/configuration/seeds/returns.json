@@ -17,6 +17,7 @@
       "transaction":"b5a1753d-717a-4454-ab4e-2abeef1c306f",
       "products":[
         {
+          "alias":"XJ5000",
           "product":"d29950cc-1a4d-4e6e-90a5-c7fdf24b95ac",
           "quantity":1,
           "history":[

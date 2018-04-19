@@ -63,6 +63,9 @@ let productScheduleType = require('./productschedule/productScheduleType');
 let rebillInputType = require('./rebill/rebillInputType');
 let rebillType = require('./rebill/rebillType');
 
+let returnInputType = require('./return/returnInputType');
+let returnType = require('./return/returnType');
+
 let billInputType = require('./bill/billInputType');
 let billType = require('./bill/billType');
 
@@ -145,6 +148,7 @@ const UserSigningStringController = global.SixCRM.routes.include('controllers', 
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const ReturnController = global.SixCRM.routes.include('controllers', 'entities/Return.js');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
@@ -1433,6 +1437,56 @@ module.exports.graphObj = new GraphQLObjectType({
 				});
 			}
 		},
+		createreturn: {
+			type: returnType.graphObj,
+			description: 'Adds a new return.',
+			args: {
+				'return': {
+					type: returnInputType.graphObj
+				}
+			},
+			resolve: (value, args) => {
+				const returnController = new ReturnController();
+				return returnController.create({
+					entity: args.return
+				});
+			}
+		},/*
+		updaterebill: {
+			type: rebillType.graphObj,
+			description: 'Updates a rebill.',
+			args: {
+				rebill: {
+					type: rebillInputType.graphObj
+				}
+			},
+			resolve: (value, rebill) => {
+				const rebillController = new RebillController();
+
+				return rebillController.update({
+					entity: rebill.rebill
+				});
+			}
+		},
+		deleterebill: {
+			type: deleteOutputType.graphObj,
+			description: 'Deletes a rebill.',
+			args: {
+				id: {
+					description: 'id of the rebill',
+					type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, rebill) => {
+				var id = rebill.id;
+				const rebillController = new RebillController();
+
+				return rebillController.delete({
+					id: id
+				});
+			}
+		},
+		*/
 		createrebill: {
 			type: rebillType.graphObj,
 			description: 'Adds a new rebill.',
