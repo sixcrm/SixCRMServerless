@@ -33,7 +33,7 @@ mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-pro
 
 PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
 
-prepareDatabase().catch((ex) => console.log(ex));
+prepareDatabase().catch((ex) => du.error('server', ex));
 
 async function prepareDatabase() {
 
