@@ -70,7 +70,7 @@ module.exports = class WriteTransactionRecords {
 			return [
 				r.id,
 				r.datetime,
-				r.session,
+				r.session.id,
 				r.customer,
 				r.creditcard,
 				r.merchantProvider,
