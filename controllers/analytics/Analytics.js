@@ -264,6 +264,13 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 			}
 
+			if (_.includes(facets, 'productSchedules')) {
+
+				const facet = await this.getResults('reports/affiliate/facets/product-schedules', _resolveParams(), this.default_queue_account_filter);
+				facetResponse.facets.push(facet)
+
+			}
+
 			break;
 
 		}
