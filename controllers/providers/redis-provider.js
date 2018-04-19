@@ -11,15 +11,17 @@ module.exports = class RedisProvider {
 
 	constructor() {
 
-		this.default_expiration = objectutilities.getRecursive(global, 'SixCRM.configuration.site_config.elasticache.default_expiration', true);
+		const elasticache_config = global.SixCRM.configuration.site_config.elasticache;
 
-		this.endpoint = objectutilities.getRecursive(global, 'SixCRM.configuration.site_config.elasticache.endpoint', true);
+		this.default_expiration = elasticache_config.default_expiration;
+
+		this.endpoint = elasticache_config.endpoint;
 		if (!this.endpoint) {
 			throw eu.getError('server', 'Redis endpoint is unset');
 		}
 
-		this.port = objectutilities.getRecursive(global, 'SixCRM.configuration.site_config.elasticache.port', true);
-		this.max_attempts = objectutilities.getRecursive(global, 'SixCRM.configuration.site_config.elasticache.max_attempts', true);
+		this.port = elasticache_config.port;
+		this.max_attempts = elasticache_config.max_attempts;
 	}
 
 	connect() {
@@ -77,17 +79,21 @@ module.exports = class RedisProvider {
 		this.redis_client = null;
 	}
 
-	execute(promised_callback) {
+	async execute(promised_callback) {
 
 		du.deep('redis-utils: querying');
 
-		return promised_callback()
-			.catch((error) => {
-				du.error(error);
+		try {
 
-				throw eu.getError('server', error);
+			return await promised_callback();
 
-			});
+		}
+		catch(error) {
+
+			du.error(error);
+			throw eu.getError('server', error);
+
+		}
 	}
 
 	flushAll() {
