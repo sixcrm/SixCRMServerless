@@ -20,11 +20,11 @@ module.exports = class ClickTransform extends AnalyticsTransfrom {
 			result = Object.assign({}, result, {
 				cid: record.context.affiliates.cid,
 				affiliate: record.context.affiliates.affiliate,
-				subaffiliate1: record.context.affiliates.subaffiliate_1,
-				subaffiliate2: record.context.affiliates.subaffiliate_2,
-				subaffiliate3: record.context.affiliates.subaffiliate_3,
-				subaffiliate4: record.context.affiliates.subaffiliate_4,
-				subaffiliate5: record.context.affiliates.subaffiliate_5
+				subAffiliate1: record.context.affiliates.subaffiliate_1,
+				subAffiliate2: record.context.affiliates.subaffiliate_2,
+				subAffiliate3: record.context.affiliates.subaffiliate_3,
+				subAffiliate4: record.context.affiliates.subaffiliate_4,
+				subAffiliate5: record.context.affiliates.subaffiliate_5
 			})
 
 		}

@@ -5,13 +5,25 @@
 		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"campaign": "18fb65e7-b11f-46c3-af4a-5d11e5561ae9",
 		"datetime": "2018-03-26T13:15:23.763Z",
-		"session": "fc26cae6-c170-4140-9a41-f10ad52ba196",
+		"session": {
+			"id": "fc26cae6-c170-4140-9a41-f10ad52ba196",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"campaign": "1d1ff469-512c-474b-a7a1-4471d2ea36da",
+			"datetime": "2018-03-26T13:15:23.763Z",
+			"affiliate": "11750086-1f9f-454d-81b2-9fa40430f925",
+			"subAffiliate1": "9412f904-1416-42c4-85a3-450a800e2c99",
+			"subAffiliate2": "7a3a3d75-42d7-4398-80d7-ef5ea3d5a59b",
+			"subAffiliate3": "b2751e87-cd21-43c7-8e21-223a02f51137",
+			"subAffiliate4": "59802295-8087-4532-88a3-0d061c81bc72",
+			"subAffiliate5": "071842a0-7fc7-40f8-9674-fe48b5366811",
+			"cid": "64ad57ad-4da6-4495-8d00-3751e581702b"
+		},
 		"affiliate": "2JQ569RGXU3PT1ZRVFB7",
-		"subaffiliate_1": "6DTYLKQZ5HTEYQ7P58FC",
-		"subaffiliate_2": "J19H8FHPFUUV2VQN2AEV",
-		"subaffiliate_3": "2L95KJAB3A8J8T9GDHGB",
-		"subaffiliate_4": "14ALDTN55PC1SCA1RLJL",
-		"subaffiliate_5": "5FSZL2WU715BG1GVY6Z4",
+		"subAffiliate1": "6DTYLKQZ5HTEYQ7P58FC",
+		"subAffiliate2": "J19H8FHPFUUV2VQN2AEV",
+		"subAffiliate3": "2L95KJAB3A8J8T9GDHGB",
+		"subAffiliate4": "14ALDTN55PC1SCA1RLJL",
+		"subAffiliate5": "5FSZL2WU715BG1GVY6Z4",
 		"cid": "E8S1R25LHFQ2PH233GYC"
 	}]
 }

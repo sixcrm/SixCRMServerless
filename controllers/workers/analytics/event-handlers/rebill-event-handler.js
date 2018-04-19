@@ -9,12 +9,11 @@ module.exports = class RebillEventHandler {
 
 	}
 
-	execute(record) {
+	async execute(record) {
 
 		du.debug('RebillEventHandler.execute()', record);
 
-		return Promise.resolve()
-			.then(() => new WriteRebillRecords(this._auroraContext).execute([record]));
+		await new WriteRebillRecords(this._auroraContext).execute([record]);
 
 	}
 

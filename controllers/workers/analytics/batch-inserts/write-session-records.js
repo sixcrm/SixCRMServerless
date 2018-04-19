@@ -60,11 +60,11 @@ module.exports = class WriteEventRecords {
 				r.campaign,
 				r.cid,
 				r.affiliate,
-				r.subaffiliate_1,
-				r.subaffiliate_2,
-				r.subaffiliate_3,
-				r.subaffiliate_4,
-				r.subaffiliate_5
+				r.subAffiliate1,
+				r.subAffiliate2,
+				r.subAffiliate3,
+				r.subAffiliate4,
+				r.subAffiliate5
 			];
 
 		}));

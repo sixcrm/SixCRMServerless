@@ -11,7 +11,6 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 		return Promise.resolve({
 			id: record.context.transaction.id,
 			datetime: record.context.transaction.created_at,
-			session: record.context.session.id,
 			merchantProvider: record.context.transaction.merchant_provider,
 			processorResult: record.context.transaction.result,
 			amount: record.context.transaction.amount,
@@ -22,11 +21,24 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 			campaign: record.context.session.campaign,
 			account: record.context.session.account,
 			affiliate: record.context.session.affiliate,
-			subaffiliate1: record.context.session.subaffiliate_1,
-			subaffiliate2: record.context.session.subaffiliate_2,
-			subaffiliate3: record.context.session.subaffiliate_3,
-			subaffiliate4: record.context.session.subaffiliate_4,
-			subaffiliate5: record.context.session.subaffiliate_5,
+			subAffiliate1: record.context.session.subaffiliate_1,
+			subAffiliate2: record.context.session.subaffiliate_2,
+			subAffiliate3: record.context.session.subaffiliate_3,
+			subAffiliate4: record.context.session.subaffiliate_4,
+			subAffiliate5: record.context.session.subaffiliate_5,
+			session: {
+				id: record.context.session.id,
+				datetime: record.context.session.created_at,
+				account: record.context.session.account,
+				campaign: record.context.session.campaign,
+				cid: record.context.session.cid,
+				affiliate: record.context.session.affiliate,
+				subAffiliate1: record.context.session.subaffiliate_1,
+				subAffiliate2: record.context.session.subaffiliate_2,
+				subAffiliate3: record.context.session.subaffiliate_3,
+				subAffiliate4: record.context.session.subaffiliate_4,
+				subAffiliate5: record.context.session.subaffiliate_5
+			},
 			products: record.context.transaction.products.map(p => {
 
 				const productSchedules = [];

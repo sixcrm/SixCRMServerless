@@ -5,14 +5,19 @@
 		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"campaign": "aae23631-230d-434f-8b64-958c2cfa1018",
 		"datetime": "2018-03-26T13:15:36.499Z",
-		"session": "e427af34-0356-4b9d-9c2e-17f7914d21ae",
-		"affiliate": "1cb710f1-962f-4d72-9381-433b70e75cc7",
-		"subaffiliate1": "ff181a29-87eb-414d-ac92-9ea343664f09",
-		"subaffiliate2": "ca35b194-60e5-4967-b784-87e421658109",
-		"subaffiliate3": "c732a2cb-cd89-47d1-a101-69b465722a94",
-		"subaffiliate4": "98dd8910-eff6-4c45-9b9b-ec5e0fcbe686",
-		"subaffiliate5": "ce7dc716-30c5-416a-92a1-473f43a56b27",
-		"cid": "c9f90087-5905-47c4-bf28-3c129ce21048"
+		"session": {
+			"id": "e427af34-0356-4b9d-9c2e-17f7914d21ae",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"campaign": "acedb4bc-2c37-457e-b822-b66f307dde46",
+			"datetime": "2018-03-26T13:15:36.499Z",
+			"affiliate": "1cb710f1-962f-4d72-9381-433b70e75cc7",
+			"subAffiliate1": "ff181a29-87eb-414d-ac92-9ea343664f09",
+			"subAffiliate2": "ca35b194-60e5-4967-b784-87e421658109",
+			"subAffiliate3": "c732a2cb-cd89-47d1-a101-69b465722a94",
+			"subAffiliate4": "98dd8910-eff6-4c45-9b9b-ec5e0fcbe686",
+			"subAffiliate5": "ce7dc716-30c5-416a-92a1-473f43a56b27",
+			"cid": "c9f90087-5905-47c4-bf28-3c129ce21048"
+		}
 	},
 	"event": {
 		"event_type": "order",
