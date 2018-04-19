@@ -19,7 +19,7 @@ module.exports = class ConfirmTransform extends AnalyticsTransfrom {
 		if (record.context.session) {
 
 			Object.assign(result, {
-				datetime: record.context.session.created_at,
+				datetime: record.context.session.updated_at,
 				session: {
 					id: record.context.session.id,
 					datetime: record.context.session.created_at,
