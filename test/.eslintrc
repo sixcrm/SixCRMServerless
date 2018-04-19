@@ -8,6 +8,9 @@
 		"no-console": "error",
 		"no-trailing-spaces": "error",
 		"indent": ["error", "tab"],
-		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"]
+		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+		"promise/always-return": "off",
+		"promise/catch-or-return": "off",
+		"promise/no-return-wrap": "off"
 	}
 }
