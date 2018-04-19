@@ -31,6 +31,12 @@ module.exports = class ProductScheduleController extends entityController {
 
 	}
 
+	getByIds(ids) {
+
+		return this.listBy({list_array: ids, field: 'id'});
+
+	}
+
 	listByProduct({product, pagination}){
 
 		du.debug('List By Product');
