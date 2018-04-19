@@ -9,12 +9,11 @@ module.exports = class ActivityEventHandler {
 
 	}
 
-	execute(record) {
+	async execute(record) {
 
 		du.debug('ActivityEventHandler.execute()', record);
 
-		return Promise.resolve()
-			.then(() => new WriteActivityRecords(this._auroraContext).execute([record]));
+		await new WriteActivityRecords(this._auroraContext).execute([record]);
 
 	}
 
