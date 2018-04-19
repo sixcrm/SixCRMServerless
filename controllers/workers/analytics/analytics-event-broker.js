@@ -21,7 +21,7 @@ module.exports = class AnalyticsEventBroker {
 
 		}
 
-		return BBPromise.each(records.Records, this._recordHandler.bind(this));
+		return BBPromise.map(records.Records, this._recordHandler.bind(this));
 
 	}
 
