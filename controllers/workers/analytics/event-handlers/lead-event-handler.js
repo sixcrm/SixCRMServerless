@@ -10,13 +10,17 @@ module.exports = class LeadEventHandler {
 
 	}
 
-	execute(record) {
+	async execute(record) {
 
 		du.debug('LeadEventHandler.execute()', record);
 
-		return Promise.resolve()
-			.then(() => new WriteSessionRecords(this._auroraContext).execute([record.session]))
-			.then(() => new WriteEventRecords(this._auroraContext).execute([record]));
+		if (record.session) {
+
+			await new WriteSessionRecords(this._auroraContext).execute([record.session]);
+
+		}
+
+		await new WriteEventRecords(this._auroraContext).execute([record]);
 
 	}
 
