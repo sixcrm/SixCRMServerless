@@ -92,23 +92,22 @@ describe('Test connections to Docker Services', () => {
 
 	describe('Elasticache', () => {
 
-		it('successfully connects to the Docker Elasticache Instance', () => {
+		it('successfully connects to the Docker Elasticache Instance', async () => {
 
 			const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
 			let redisprovider = new RedisProvider();
 
 			expect(redisprovider).to.have.property('endpoint');
+			await redisprovider.connect();
 
 			let test_value = random.createRandomString(20);
 
-			return redisprovider.set('test', {'abc': test_value})
-				.then((result) => {
-					expect(result).to.equal('OK');
-					return redisprovider.get('test');
-				})
-				.then((result) => {
-					expect(result.abc).to.equal(test_value);
-				})
+			await redisprovider.set('test', {'abc': test_value});
+
+			let result = await redisprovider.get('test');
+			expect(result.abc).to.equal(test_value);
+
+			await redisprovider.dispose();
 
 		});
 

@@ -1,4 +1,3 @@
-
 const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -6,8 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 
-const util = require('util');
-const redis = require('redis');
+const Redis = require('@adexchange/aeg-redis');
 
 module.exports = class RedisProvider {
 
@@ -21,10 +19,7 @@ module.exports = class RedisProvider {
 		}
 
 		this.port = objectutilities.getRecursive(global, 'SixCRM.configuration.site_config.elasticache.port', true);
-		this.redis = redis;
 		this.max_attempts = objectutilities.getRecursive(global, 'SixCRM.configuration.site_config.elasticache.max_attempts', true);
-		this.quiting_timer = null;
-		this.quiting_timer_timeout_ms = 100;
 	}
 
 	connect() {
@@ -36,20 +31,22 @@ module.exports = class RedisProvider {
 		}
 		du.debug('Cache Enabled - Creating Redis Client...');
 
-		const configuration_object = {
+		const options = {
 			host: this.endpoint,
 			port: this.port,
 			connect_timeout: 3600,
 			retry_strategy: this.retryStrategy
 		};
 
-		du.debug('Redis Configuration: ', configuration_object);
+		du.debug('Redis Configuration: ', options);
 
 		this.when_redis_ready = new Promise((resolve, reject) => {
 
-			this.redis_client = this.redis.createClient(configuration_object)
+			this.redis_client = new Redis.Client(options);
+			this.redis_client.client
 				.on('ready', () => {
 					du.deep('Redis ready.');
+					this.redis_client.client.removeAllListeners('error');
 					return resolve();
 				})
 				.on('error', (error) => {
@@ -69,79 +66,26 @@ module.exports = class RedisProvider {
 					du.warning('Redis Warning: ', warning)
 				});
 
-			this.redis_client_promisified = util.promisify(this.redis_client.send_command.bind(this.redis_client));
-
 		});
-
-		this.scheduleQuit();
 
 		return this.when_redis_ready;
 	}
 
-	quit() {
-		du.debug('Closing Connection');
-		du.deep('redis-itils: quiting');
+	async dispose() {
+		await this.redis_client.dispose();
 
-		let ret = Promise.resolve(true);
-
-		if (this.redis_client_promisified) {
-
-			ret = this.redis_client_promisified('quit'); // TODO: find out the way to determine quit executed
-
-			this.redis_client_promisified = null;
-		}
-		return ret;
+		this.redis_client = null;
 	}
 
-	scheduleQuit() {
-		if (this.quiting_timer) {
-			clearTimeout(this.quiting_timer);
-		}
+	execute(promised_callback) {
 
-		this.quiting_timer = setTimeout(() => {
-			this.quit()
-				.catch((error) => {
-					du.error(error);
+		du.deep('redis-utils: querying');
 
-					throw eu.getError('server', error);
+		return promised_callback()
+			.catch((error) => {
+				du.error(error);
 
-				});
-		}, this.quiting_timer_timeout_ms);
-
-		return Promise.resolve();
-	}
-
-	executeAndScheduleQuit(promised_callback) {
-		let queue = Promise.resolve();
-
-		if (!this.redis_client_promisified) {
-			queue = queue.then(() => {
-				return this.connect();
-			});
-			du.deep('redis-utils: connected');
-		}
-		return queue
-			.then(() => {
-				du.deep('redis-utils: querying');
-
-				if (!this.redis_client_promisified) {
-					du.highlight('Redis client not available');
-					return Promise.resolve(false);
-				}
-
-				return promised_callback()
-					.catch((error) => {
-						du.error(error);
-
-						throw eu.getError('server', error);
-
-					});
-			})
-			.then((result) => {
-				du.deep('redis-utils: scheduling quit');
-
-				return this.scheduleQuit()
-					.then(() => result);
+				throw eu.getError('server', error);
 
 			});
 	}
@@ -149,31 +93,22 @@ module.exports = class RedisProvider {
 	flushAll() {
 		du.debug('Flush All');
 
-		return this.executeAndScheduleQuit(() => {
-
-			return this.redis_client_promisified('flushdb');
-
-		});
+		return this.execute(() => this.redis_client.client.flushdb());
 	}
 
-	get(key) {
+	async get(key) {
 		du.debug('Get');
 
-		return this.executeAndScheduleQuit(() => {
+		let result = await this.execute(() => this.redis_client.get(key));
 
-			return this.redis_client_promisified("get", [key]);
+		try {
 
-		})
-			.then(reply => {
-				try {
+			result = JSON.parse(result);
 
-					reply = JSON.parse(reply);
+		} catch (error) {	// Just tried to convert.
+		}
 
-				} catch (error) {
-					// Just tried to convert.
-				}
-				return reply;
-			});
+		return result;
 	}
 
 	set(key, value, expiration) {
@@ -182,11 +117,7 @@ module.exports = class RedisProvider {
 		value = this.prepareValue(value);
 		expiration = this.getExpiration(expiration);
 
-		return this.executeAndScheduleQuit(() => {
-
-			return this.redis_client_promisified("set", [key, value, 'EX', expiration]);
-
-		});
+		return this.execute(() => this.redis_client.set(key, value, { EX: expiration }));
 	}
 
 	prepareValue(value) {
