@@ -1,7 +1,7 @@
 // const fs = require('fs');
 // const uuid = require('uuid');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const au = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const BBPromise = require('bluebird');
 
 module.exports = class AnalyticsEventBroker {
 
@@ -21,7 +21,7 @@ module.exports = class AnalyticsEventBroker {
 
 		}
 
-		return au.serialPromises(au.map(records.Records, this._recordHandler.bind(this)));
+		return BBPromise.each(records.Records, this._recordHandler.bind(this));
 
 	}
 
@@ -30,6 +30,8 @@ module.exports = class AnalyticsEventBroker {
 		try {
 
 			const record = JSON.parse(snsRecord.Sns.Message);
+
+			du.debug('AnalyticsEventBroker._recordHandler(): message recieved', record);
 
 			const eventKeys = Object.keys(this._eventTypeHandlerMap);
 			const eventKey = eventKeys.find(ek => {
@@ -54,13 +56,13 @@ module.exports = class AnalyticsEventBroker {
 				.then(this._pushToQueue.bind(this))
 				.catch((ex) => {
 
-					du.error('AnalyticsEventBroker.recordHandler()', ex);
+					du.error('AnalyticsEventBroker.recordHandler(): ERROR', ex);
 
 				});
 
 		} catch (ex) {
 
-			du.error('AnalyticsEventBroker.recordHandler()', ex);
+			du.error('AnalyticsEventBroker.recordHandler(): ERROR', ex);
 
 		}
 
