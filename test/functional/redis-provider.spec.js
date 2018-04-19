@@ -1,139 +1,58 @@
-
-
 const expect = require('chai').expect;
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
 
 describe('Test redis providers functionality', () => {
 
 	it('successfully connects / disconnects to the Redis server', () => {
 
-		let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
 		const redisprovider = new RedisProvider();
+		expect(redisprovider.connect().then(() => redisprovider.dispose())).to.be.fulfilled;
 
-		return redisprovider.connect().then(() => {
-			expect(redisprovider).to.have.property("redis_client").to.have.property('connected').equal(true);
-			return redisprovider.quit().then(() => {
-				expect(redisprovider).to.have.property("redis_client").to.have.property('connected').equal(true);
-				return timestamp.delay(1)().then(() => {
-					expect(redisprovider).to.have.property("redis_client").to.have.property('connected').equal(false);
-					return true;
-				})
-			})
-		});
 	});
 
-	it('set/get plain string values', () => {
+	it('set/get plain string values', async () => {
 
-		let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
 		const redisprovider = new RedisProvider();
+		await redisprovider.connect();
 
 		let test_value = 'abcdef';
 
-		return redisprovider.set('test1', test_value)
-			.then((result) => {
-				expect(result).to.equal('OK');
-				return true;
-			})
-			.then(() => redisprovider.get('test1'))
-			.then((result) => {
-				expect(result).to.equal(test_value);
-				return true;
-			})
+		await redisprovider.set('test1', test_value);
+		let result = await redisprovider.get('test1');
+		expect(result).to.equal(test_value);
+
+		await redisprovider.dispose();
 
 	});
 
-	it('set/get object values', () => {
+	it('set/get object values', async () => {
 
-		let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
 		const redisprovider = new RedisProvider();
+		await redisprovider.connect();
 
 		let test_value = {'abc': 150, 'def': {'nested_value': 123}};
 
-		return redisprovider.set('test2', test_value)
-			.then((result) => {
-				expect(result).to.equal('OK');
-				return true;
-			})
-			.then(() => redisprovider.get('test2'))
-			.then((result) => {
-				expect(result).to.deep.equal(test_value);
-				return true;
-			})
+		await redisprovider.set('test2', test_value);
+		let result = await redisprovider.get('test2');
+		expect(result).to.deep.equal(test_value);
+
+		await redisprovider.dispose();
 
 	});
 
-	// Uses light white-box testing to determine connection reusage
-	it('set/get object values reusing the connection', () => {
+	it('flushing db', async () => {
 
-		let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
 		const redisprovider = new RedisProvider();
-
-		redisprovider.quiting_timer_timeout_ms = 1000;
-		let initial_redis_client_promisified;
-
-		let test_value = {'abc': 150, 'def': {'nested_value': 123}};
-
-		return redisprovider.set('test3', test_value)
-			.then((result) => {
-				initial_redis_client_promisified = redisprovider.redis_client_promisified;
-				expect(result).to.equal('OK');
-				return true;
-			})
-			.then(timestamp.delay(200))
-			.then(() => redisprovider.get('test3'))
-			.then((result) => {
-				expect(result).to.deep.equal(test_value);
-				expect(initial_redis_client_promisified).to.equal(redisprovider.redis_client_promisified);
-				return true;
-			})
-
-	});
-
-	// Uses light white-box testing to determine connection reusage
-	it('set/get object values shutting down the connection', () => {
-
-		let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
-		const redisprovider = new RedisProvider();
-
-		redisprovider.quiting_timer_timeout_ms = 100;
-		let initial_redis_client_promisified;
-
-		let test_value = {'abc': 150, 'def': {'nested_value': 123}};
-
-		return redisprovider.set('test4', test_value)
-			.then((result) => {
-				initial_redis_client_promisified = redisprovider.redis_client_promisified;
-				expect(result).to.equal('OK');
-				return true;
-			})
-			.then(timestamp.delay(200))
-			.then(() => redisprovider.get('test4'))
-			.then((result) => {
-				expect(result).to.deep.equal(test_value);
-				expect(initial_redis_client_promisified).to.not.equal(redisprovider.redis_client_promisified);
-				return true;
-			})
-
-	});
-
-	it('flushing db', () => {
-
-		let RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
-		const redisprovider = new RedisProvider();
+		await redisprovider.connect();
 
 		let test_value = 'abcdef';
 
-		return redisprovider.set('test5', test_value)
-			.then((result) => {
-				expect(result).to.equal('OK');
-				return true;
-			})
-			.then(() => redisprovider.flushAll())
-			.then(() => redisprovider.get('test5'))
-			.then((result) => {
-				expect(result).to.equal(null);
-				return true;
-			})
+		await redisprovider.set('test5', test_value);
+		await redisprovider.flushAll();
+		let result = await redisprovider.get('test5');
+		expect(result).to.equal(null);
+
+		await redisprovider.dispose();
 
 	});
 

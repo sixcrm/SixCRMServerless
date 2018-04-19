@@ -7,6 +7,7 @@
   "description": "Backend Processing Lambda Endpoints",
   "main": "index.js",
   "dependencies": {
+    "@adexchange/aeg-redis": "0.0.196",
     "@adexchange/aeg-redshift": "0.0.84",
     "ajv": "^6.4.0",
     "apn": "^2.2.0",
@@ -29,7 +30,6 @@
     "pg": "^6.4.1",
     "querystring": "^0.2.0",
     "randomstring": "^1.1.5",
-    "redis": "^2.8.0",
     "request": "^2.85.0",
     "require-yaml": "0.0.1",
     "sixcrm-translations": "git+ssh://git@bitbucket.org/sixcrm/crossrepositorytranslations.git",

@@ -167,13 +167,15 @@ module.exports = class ElasticacheDeployment {
 
 	}
 
-	purge(){
+	async purge(){
 
 		du.debug('Purge');
 
-		return this.redisprovider.flushAll().then(() => {
-			return 'Complete';
-		});
+		await this.redisprovider.connect();
+		await this.redisprovider.flushAll();
+		await this.redisprovider.dispose();
+
+		return 'Complete';
 
 	}
 
