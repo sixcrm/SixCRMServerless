@@ -33,15 +33,11 @@ mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-pro
 
 PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
 
-prepareDatabase().catch((ex) => du.error('server', ex));
+prepareDatabase().catch((ex) => {
+	throw ex;
+});
 
 async function prepareDatabase() {
-
-	await auroraSchemaDeployment.destroy();
-
-	await auroraSchemaDeployment.deploy({
-		fromRevision: 0
-	});
 
 	await seedDatabase();
 	await seedDynamo();
@@ -51,6 +47,12 @@ async function prepareDatabase() {
 async function seedDatabase() {
 
 	du.debug(`Seeding Test database`);
+
+	await auroraSchemaDeployment.destroy();
+
+	await auroraSchemaDeployment.deploy({
+		fromRevision: 0
+	});
 
 	const seedPaths = path.join(__dirname, 'aurora');
 	const seeds = fileutilities.getDirectoryFilesSync(seedPaths);
@@ -76,6 +78,8 @@ async function seedDynamo() {
 
 	const db = new DynamoDBDeployment();
 	await db.initializeControllers();
+	await db.destroyTables();
+	await db.deployTables();
 
 	for (const seed of seeds) {
 
