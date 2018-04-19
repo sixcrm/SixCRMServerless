@@ -3,12 +3,12 @@ const AffiliateController = global.SixCRM.routes.include('controllers', 'entitie
 
 module.exports = async (results) => {
 
-	du.debug('Transformation Function');
+	du.debug('Affiliate facet transformation function');
 
 	const ids = results.map(r => r.affiliate);
 
 	const controller = new AffiliateController();
-	const response = await controller.getByAffiliateIds(ids);
+	const response = await controller.getByIds(ids);
 
 	if (!response) {
 

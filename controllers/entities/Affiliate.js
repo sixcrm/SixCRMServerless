@@ -22,7 +22,7 @@ module.exports = class AffiliateController extends entityController {
 
 	}
 
-	getByAffiliateIds(ids) {
+	getByIds(ids) {
 
 		return this.listBy({list_array: ids, field: 'id'});
 

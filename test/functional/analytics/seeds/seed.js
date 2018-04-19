@@ -78,8 +78,8 @@ async function seedDynamo() {
 
 	const db = new DynamoDBDeployment();
 	await db.initializeControllers();
-	await db.destroyTables();
-	await db.deployTables();
+	// await db.destroyTables();
+	// await db.deployTables();
 
 	for (const seed of seeds) {
 

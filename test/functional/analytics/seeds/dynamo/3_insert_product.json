@@ -1,7 +1,7 @@
 {
 	"table": "products",
 	"seeds": [{
-			"account": "8882b1de-e4be-485b-b887-1a41ff93677e",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 			"attributes": {
 				"images": []
 			},
@@ -15,7 +15,7 @@
 			"updated_at": "2018-04-16T22:11:47.893Z"
 		},
 		{
-			"account": "8882b1de-e4be-485b-b887-1a41ff93677e",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 			"attributes": {
 				"images": []
 			},

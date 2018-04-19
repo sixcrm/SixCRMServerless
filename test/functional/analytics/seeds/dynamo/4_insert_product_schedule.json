@@ -1,7 +1,7 @@
 {
 	"table": "productschedules",
 	"seeds": [{
-		"account": "8882b1de-e4be-485b-b887-1a41ff93677e",
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"created_at": "2018-04-16T21:22:39.221Z",
 		"id": "336aea70-86f3-459f-b337-94ccdbf3b614",
 		"name": "e2e product schedule updated",
@@ -23,7 +23,7 @@
 		],
 		"updated_at": "2018-04-19T07:32:26.974Z"
 	}, {
-		"account": "8882b1de-e4be-485b-b887-1a41ff93677e",
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"created_at": "2018-04-16T21:22:39.221Z",
 		"id": "b54795ef-f987-48fd-b534-848134521405",
 		"name": "e2e product schedule updated 2",

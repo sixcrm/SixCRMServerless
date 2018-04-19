@@ -3,12 +3,12 @@ const CampaignController = global.SixCRM.routes.include('controllers', 'entities
 
 module.exports = async (results) => {
 
-	du.debug('Transformation Function');
+	du.debug('Campaign facet transformation function');
 
 	const ids = results.map(r => r.campaign);
 
 	const controller = new CampaignController();
-	const response = await controller.getByCampaignIds(ids);
+	const response = await controller.getByIds(ids);
 
 	if (!response) {
 
