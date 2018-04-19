@@ -191,7 +191,7 @@ module.exports = class CampaignController extends entityController {
 
 	}
 
-	getByCampaignIds(ids) {
+	getByIds(ids) {
 
 		return this.listBy({list_array: ids, field: 'id'});
 
