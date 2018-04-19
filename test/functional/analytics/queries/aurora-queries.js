@@ -177,6 +177,17 @@ querySuite.beforeAll(() => {
 	});
 
 
+	mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+
+		sendMessage() {
+
+			return Promise.resolve();
+
+		}
+
+	});
+
+
 	global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
 	global.user = 'admin.user@test.com';
 	global.SixCRM.setResource('auroraContext', auroraContext);
