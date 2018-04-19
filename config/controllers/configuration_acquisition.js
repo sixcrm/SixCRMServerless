@@ -90,6 +90,17 @@ module.exports.getElasticSearchEndpoint = () => {
 
 	require('../../SixCRM.js');
 
+	// probably need to add this to docker compose???
+	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
+
+	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
+
+		return Promise.resolve({
+			Endpoint: '????'
+		});
+
+	}
+
 	const ElasticSearchUtilities = global.SixCRM.routes.include('deployment', 'utilities/elasticsearch-deployment.js');
 	let elasticsearchutilities = new ElasticSearchUtilities();
 

@@ -21,15 +21,15 @@
 		},
 		{
 			"name": "lead",
-			"count": "90",
+			"count": "92",
 			"percentage": "0.00",
 			"relative_percentage": "0.00"
 		},
 		{
 			"name": "main",
-			"count": "28",
+			"count": "29",
 			"percentage": "0.00",
-			"relative_percentage": "31.11"
+			"relative_percentage": "31.52"
 		},
 		{
 			"name": "upsell",
@@ -39,9 +39,9 @@
 		},
 		{
 			"name": "confirm",
-			"count": "22",
+			"count": "23",
 			"percentage": "0.00",
-			"relative_percentage": "78.57"
+			"relative_percentage": "79.31"
 		}
 	]
 

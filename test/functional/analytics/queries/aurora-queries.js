@@ -1,4 +1,5 @@
 require('../../../config/global.js');
+const mockery = require('mockery');
 const Mocha = require('mocha');
 const chai = require('chai');
 chai.use(require('chai-shallow-deep-equal'));
@@ -13,6 +14,7 @@ const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
+const DynamoDBDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
 
 const mocha = new Mocha({
 
@@ -40,7 +42,9 @@ suites.map((suite) => {
 
 		subSuite.addTest(new Mocha.Test(test.test_case, async () => {
 
-			PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
+			// PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
 
 			await prepareDatabase();
 
@@ -71,6 +75,7 @@ async function prepareDatabase() {
 	});
 
 	await seedDatabase();
+	await seedDynamo();
 
 }
 
@@ -86,7 +91,7 @@ async function seedDatabase() {
 
 	du.debug(`Seeding Test database`);
 
-	const seedPaths = path.join(__dirname, 'seeds');
+	const seedPaths = path.join(__dirname, 'seeds', 'aurora');
 	const seeds = fileutilities.getDirectoryFilesSync(seedPaths);
 
 	await auroraContext.withConnection((async connection => {
@@ -98,6 +103,30 @@ async function seedDatabase() {
 		}
 
 	}));
+
+}
+
+async function seedDynamo() {
+
+	du.debug(`Seeding Test database`);
+
+	const seedPaths = path.join(__dirname, 'seeds', 'dynamo');
+	const seeds = fileutilities.getDirectoryFilesSync(seedPaths);
+
+	const db = new DynamoDBDeployment();
+	await db.initializeControllers();
+
+	for (const seed of seeds) {
+
+		const dataSeeds = JSON.parse(fileutilities.getFileContentsSync(path.join(seedPaths, seed)));
+
+		await db.executeSeedViaController({
+			Table: {
+				TableName: dataSeeds.table
+			}
+		}, dataSeeds.seeds)
+
+	}
 
 }
 
@@ -125,6 +154,29 @@ function getDirectories(root) {
 
 querySuite.beforeAll(() => {
 
+	mockery.enable({
+		useCleanCache: true,
+		warnOnReplace: false,
+		warnOnUnregistered: false
+	});
+
+	mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+
+		publish() {
+
+			return Promise.resolve();
+
+		}
+
+		getRegion() {
+
+			return 'localhost';
+
+		}
+
+	});
+
+
 	global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
 	global.user = 'admin.user@test.com';
 	global.SixCRM.setResource('auroraContext', auroraContext);
@@ -133,6 +185,9 @@ querySuite.beforeAll(() => {
 });
 
 querySuite.afterAll(() => {
+
+	mockery.resetCache();
+	mockery.deregisterAll();
 
 	const auroraContext = global.SixCRM.getResource('auroraContext');
 	return auroraContext.dispose();

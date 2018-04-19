@@ -50,6 +50,15 @@
 		"mtd_sales_count": "0",
 		"mtd_gross_count": "0"
 	}, {
+		"merchant_provider": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
+		"sale_count": "1",
+		"sale_gross_revenue": "19.98",
+		"refund_expenses": "0",
+		"refund_count": "0",
+		"net_revenue": "19.98",
+		"mtd_sales_count": "0",
+		"mtd_gross_count": "0"
+	}, {
 		"merchant_provider": "d7f54111-a9dd-4682-aa1e-acd21316ee4c",
 		"sale_count": "8",
 		"sale_gross_revenue": "967.84",

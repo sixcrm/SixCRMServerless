@@ -337,8 +337,8 @@
 				"amount": "0"
 			}, {
 				"processor_result": "success",
-				"count": "29",
-				"amount": "1764.56"
+				"count": "30",
+				"amount": "1784.54"
 			}]
 		}, {
 			"datetime": "2018-01-23T00:00:00.000Z",

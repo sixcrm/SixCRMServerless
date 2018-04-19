@@ -22,6 +22,12 @@ module.exports = class AffiliateController extends entityController {
 
 	}
 
+	getByAffiliateIds(ids) {
+
+		return this.listBy({list_array: ids, field: 'id'});
+
+	}
+
 	getCampaigns({affiliate, pagination}){
 
 		du.debug('Get Campaigns');
