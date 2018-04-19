@@ -252,7 +252,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 			})
 			.then((query_parameters) => this.dynamodbprovider.scanRecords(this.table_name, query_parameters))
-			.then((data) => { return this.buildResponse(data); })
+			.then((data) => this.buildResponse(data))
 			.catch((error) => this.handleErrors(error, fatal));
 
 	}
