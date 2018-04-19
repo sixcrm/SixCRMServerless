@@ -14,7 +14,8 @@
 
 			],
 			"facets": [
-				"affiliate"
+				"affiliate",
+				"campaign"
 			]
 		}
 	},
@@ -105,6 +106,24 @@
 			}, {
 				"key": "name",
 				"value": "Seed Affiliate 7"
+			}]
+		]
+	}, {
+		"facet": "campaign",
+		"values": [
+			[{
+				"key": "id",
+				"value": "70a6689a-5814-438b-b9fd-dd484d0812f9"
+			}, {
+				"key": "name",
+				"value": "Example Campaign"
+			}],
+			[{
+				"key": "id",
+				"value": "5c593d31-5001-4faf-8ea2-e8c1a1f85f04"
+			}, {
+				"key": "name",
+				"value": "Integeration Test Campaign"
 			}]
 		]
 	}]

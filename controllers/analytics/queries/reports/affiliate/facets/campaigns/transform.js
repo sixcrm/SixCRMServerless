@@ -1,17 +1,37 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
-module.exports = (results) => {
+module.exports = async (results) => {
 
 	du.debug('Transformation Function');
 
-	return Promise.resolve({
+	const ids = results.map(r => r.campaign);
+
+	const controller = new CampaignController();
+	const response = await controller.getByCampaignIds(ids);
+
+	if (!response) {
+
+		return {
+			facet: 'campaign',
+			values: []
+		};
+
+	}
+
+	const campaigns = response.campaigns || [];
+
+	return {
 		facet: 'campaign',
-		values: results.map(r => {
-			return {
-				key: r.campaign,
-				value: r.campaign
-			}
+		values: campaigns.map(r => {
+			return [{
+				key: 'id',
+				value: r.id
+			}, {
+				key: 'name',
+				value: r.name
+			}]
 		})
-	});
+	};
 
 }

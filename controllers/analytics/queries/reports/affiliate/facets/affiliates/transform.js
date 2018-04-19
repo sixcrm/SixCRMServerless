@@ -9,6 +9,16 @@ module.exports = async (results) => {
 
 	const controller = new AffiliateController();
 	const response = await controller.getByAffiliateIds(ids);
+
+	if (!response) {
+
+		return {
+			facet: 'affiliate',
+			values: []
+		};
+
+	}
+
 	const affiliates = response.affiliates || [];
 
 	return {
