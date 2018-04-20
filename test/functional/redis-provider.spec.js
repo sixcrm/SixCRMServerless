@@ -13,46 +13,46 @@ describe('Test redis providers functionality', () => {
 	it('set/get plain string values', async () => {
 
 		const redisprovider = new RedisProvider();
-		await redisprovider.connect();
+		await redisprovider.withConnection(async () => {
 
-		let test_value = 'abcdef';
+			let test_value = 'abcdef';
 
-		await redisprovider.set('test1', test_value);
-		let result = await redisprovider.get('test1');
-		expect(result).to.equal(test_value);
+			await redisprovider.set('test1', test_value);
+			let result = await redisprovider.get('test1');
+			expect(result).to.equal(test_value);
 
-		await redisprovider.dispose();
+		});
 
 	});
 
 	it('set/get object values', async () => {
 
 		const redisprovider = new RedisProvider();
-		await redisprovider.connect();
+		await redisprovider.withConnection(async () => {
 
-		let test_value = {'abc': 150, 'def': {'nested_value': 123}};
+			let test_value = {'abc': 150, 'def': {'nested_value': 123}};
 
-		await redisprovider.set('test2', test_value);
-		let result = await redisprovider.get('test2');
-		expect(result).to.deep.equal(test_value);
+			await redisprovider.set('test2', test_value);
+			let result = await redisprovider.get('test2');
+			expect(result).to.deep.equal(test_value);
 
-		await redisprovider.dispose();
+		});
 
 	});
 
 	it('flushing db', async () => {
 
 		const redisprovider = new RedisProvider();
-		await redisprovider.connect();
+		await redisprovider.withConnection(async () => {
 
-		let test_value = 'abcdef';
+			let test_value = 'abcdef';
 
-		await redisprovider.set('test5', test_value);
-		await redisprovider.flushAll();
-		let result = await redisprovider.get('test5');
-		expect(result).to.equal(null);
+			await redisprovider.set('test5', test_value);
+			await redisprovider.flushAll();
+			let result = await redisprovider.get('test5');
+			expect(result).to.equal(null);
 
-		await redisprovider.dispose();
+		});
 
 	});
 
