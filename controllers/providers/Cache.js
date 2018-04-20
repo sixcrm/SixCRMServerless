@@ -1,4 +1,3 @@
-
 const _ = require('lodash');
 const crypto = require('crypto');
 
@@ -8,9 +7,9 @@ const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/red
 
 module.exports = class cacheController {
 
-	constructor(prefix){
+	constructor(prefix) {
 
-		if(_.isString(prefix)){
+		if (_.isString(prefix)) {
 			this.key_prefix = prefix;
 		}
 
@@ -20,92 +19,69 @@ module.exports = class cacheController {
 
 	//Technical Debt:  Refactor this this to be testable!
 	//Technical Debt:  The data_promise variable is executed regardless of whether there are cached results or not.
-	useCache(parameters, data_promise, expiration){
+	async useCache(parameters, data_promise, expiration) {
 
 		du.debug('Use Cache');
 
 		this.validatePromise(data_promise);
 
-		if(this.cacheActive() && this.cacheEnabled()){
+		if (this.cacheActive() && this.cacheEnabled()) {
 
 			let cache_key = this.createKey(parameters);
 
-			return this.getCache(cache_key).then((cached_result) => {
+			await this.redisprovider.connect();
 
-				if(!_.isNull(cached_result)){
+			let cached_result = await this.getCache(cache_key)
 
-					du.warning('Redis Hit: '+ cache_key);
+			if (!_.isNull(cached_result)) {
 
-					cached_result = this.parseResult(cached_result);
+				du.warning('Redis Hit: ' + cache_key);
 
-					du.deep('Cached Result', cached_result);
+				cached_result = this.parseResult(cached_result);
 
-					return Promise.resolve(cached_result);
+				du.deep('Cached Result', cached_result);
 
-				}else{
+				await this.redisprovider.dispose();
 
-					du.warning('Redis Miss: '+ cache_key);
+				return cached_result;
 
-					return data_promise().then((results) => {
+			} else {
 
-						du.deep('Data Promise Result:', results);
+				du.warning('Redis Miss: ' + cache_key);
 
-						return this.setCache(cache_key, JSON.stringify(results), expiration).then((reply) => {
+				const results = await data_promise();
 
-							du.warning('Redis Set for key "'+cache_key+'": '+reply);
+				du.deep('Data Promise Result:', results);
 
-							return Promise.resolve(results);
+				const reply = await this.setCache(cache_key, JSON.stringify(results), expiration);
 
-						});
+				du.warning('Redis Set for key "' + cache_key + '": ' + reply);
 
-					});
+				await this.redisprovider.dispose();
 
-				}
+				return results
 
-			});
+			}
 
-		}else{
+		} else {
 
-			return data_promise().then((results) => {
-
-				if(this.cacheActive()){
-
-					return this.createKey(parameters).then((key) => {
-
-						return this.setCache(key, JSON.stringify(results), expiration).then((reply) => {
-
-							du.warning('Redis Set for key "'+key+'": '+reply);
-
-							return Promise.resolve(results);
-
-						});
-
-					});
-
-				}else{
-
-					return Promise.resolve(results);
-
-				}
-
-
-			});
+			return data_promise();
 
 		}
 
 	}
 
-	parseResult(result){
+	parseResult(result) {
 
 		du.debug('Parse Result');
 
-		try{
+		try {
 
 			let return_value = JSON.parse(result);
 
 			return return_value;
 
-		}catch(error){
+		} catch (error) {
 
 			return result;
 
@@ -113,7 +89,7 @@ module.exports = class cacheController {
 
 	}
 
-	getCache(key){
+	getCache(key) {
 
 		du.debug('Get Cache');
 
@@ -121,7 +97,7 @@ module.exports = class cacheController {
 
 	}
 
-	setCache(key, result, expiration){
+	setCache(key, result, expiration) {
 
 		du.debug('Set Cache');
 
@@ -129,26 +105,26 @@ module.exports = class cacheController {
 
 	}
 
-	createKey(parameters){
+	createKey(parameters) {
 
 		du.debug('Create Key');
 
 		let prehash = parameters;
 
-		if(_.isArray(parameters)){
+		if (_.isArray(parameters)) {
 
-			prehash = 'array'+parameters.sort().join(':');
+			prehash = 'array' + parameters.sort().join(':');
 
-		}else if(_.isString(parameters)){
+		} else if (_.isString(parameters)) {
 
-			prehash = 'string'+parameters.trim();
+			prehash = 'string' + parameters.trim();
 
-		}else if(_.isObject(parameters)){
+		} else if (_.isObject(parameters)) {
 
 			prehash = 'object';
-			for (var k in parameters){
-				if(parameters.hasOwnProperty(k)) {
-					prehash += k+':'+parameters[k];
+			for (var k in parameters) {
+				if (parameters.hasOwnProperty(k)) {
+					prehash += k + ':' + parameters[k];
 				}
 			}
 
@@ -162,37 +138,37 @@ module.exports = class cacheController {
 
 	}
 
-	prependPrefix(prehash){
+	prependPrefix(prehash) {
 
 		du.debug('Prepend Prefix');
 
-		if(_.has(this, 'key_prefix')){
-			prehash = this.key_prefix+'-'+prehash;
+		if (_.has(this, 'key_prefix')) {
+			prehash = this.key_prefix + '-' + prehash;
 		}
 
 		return prehash;
 
 	}
 
-	appendCachebuster(prehash){
+	appendCachebuster(prehash) {
 
 		du.debug('Append Cachebuster');
 
-		if(_.has(process.env, 'cachebuster')){
-			prehash = prehash+'-'+process.env.cachebuster;
+		if (_.has(process.env, 'cachebuster')) {
+			prehash = prehash + '-' + process.env.cachebuster;
 		}
 
 		return prehash;
 
 	}
 
-	validatePromise(data_promise){
+	validatePromise(data_promise) {
 
 		du.debug('Validate Promise');
 
-		if(!_.isFunction(data_promise)){
+		if (!_.isFunction(data_promise)) {
 
-			throw eu.getError('server','Callback_promise.then is not a function.');
+			throw eu.getError('server', 'Callback_promise.then is not a function.');
 
 		}
 
@@ -200,11 +176,11 @@ module.exports = class cacheController {
 
 	}
 
-	cacheActive(){
+	cacheActive() {
 
 		du.debug('Cache Active');
 
-		if(_.has(process.env, 'usecache') && parseInt(process.env.usecache) > 0){
+		if (_.has(process.env, 'usecache') && parseInt(process.env.usecache) > 0) {
 
 			du.warning('Cache Active');
 
@@ -218,7 +194,7 @@ module.exports = class cacheController {
 
 	}
 
-	setDisable(setting){
+	setDisable(setting) {
 
 		du.debug('Set Disable');
 
@@ -226,11 +202,11 @@ module.exports = class cacheController {
 
 	}
 
-	cacheEnabled(){
+	cacheEnabled() {
 
 		du.debug('Cache Enabled');
 
-		if(_.has(this, 'disable') && this.disable === true){
+		if (_.has(this, 'disable') && this.disable === true) {
 
 			du.warning('Cache Disabled (Local Setting)');
 
@@ -238,7 +214,7 @@ module.exports = class cacheController {
 
 		}
 
-		if(_.has(global, 'use_cache') && global.use_cache == false){
+		if (_.has(global, 'use_cache') && global.use_cache == false) {
 
 			du.warning('Cache Disabled (Global Setting)');
 
