@@ -71,7 +71,7 @@ module.exports = class ReturnHelper {
 				if (_.has(transaction, 'products') && _.isArray(transaction.products) && arrayutilities.nonEmpty(transaction.products)) {
 					arrayutilities.map(transaction.products, (product_group) => {
 						let matching_product_group = this.getMatchingProductGroup(entity, product_group);
-						if (_.isNull(matching_product_group)) {
+						if(_.isNull(matching_product_group) || _.isUndefined(matching_product_group)){
 							throw eu.getError('server', 'Missing product group: ' + product_group.alias);
 						}
 					});
@@ -117,18 +117,21 @@ module.exports = class ReturnHelper {
 		if (_.has(entity, 'transactions') && _.isArray(entity.transactions) && arrayutilities.nonEmpty(entity.transactions)) {
 			arrayutilities.find(entity.transactions, (transaction) => {
 				if (_.has(transaction, 'products') && _.isArray(transaction.products) && arrayutilities.nonEmpty(transaction.products)) {
+
 					stored_entity_product_group = arrayutilities.find(transaction.products, (entity_product_group) => {
 						return (entity_product_group.alias == product_group.alias);
 					});
-					if (!_.isNull(stored_entity_product_group)) {
+
+					if (!_.isNull(stored_entity_product_group) && !_.isUndefined(stored_entity_product_group)) {
 						return true;
 					}
+
 				}
 				return false;
 			});
 		}
 
-		return null;
+		return stored_entity_product_group;
 
 	}
 
@@ -202,21 +205,25 @@ module.exports = class ReturnHelper {
 
 		if (!_.isNull(new_event)) {
 
+			if(!_.isEqual(new_event, last_observed_event)){
 
-			if (!_.isNull(last_observed_event) && (new_event.created_at <= last_observed_event.created_at)) {
-				throw eu.getError('server', 'New event timestamp is less than last observed event.');
-			}
-
-			if (new_history.length == 0) {
-				if (new_event.state != 'created') {
-					throw eu.getError('server', 'The first event in a history must have stated "created", "' + new_event.state + '" given.');
+				if (!_.isNull(last_observed_event) && (new_event.created_at <= last_observed_event.created_at)) {
+					throw eu.getError('server', 'New event timestamp is less than last observed event.');
 				}
 
+				if (new_history.length == 0) {
+					if (new_event.state != 'created') {
+						throw eu.getError('server', 'The first event in a history must have stated "created", "' + new_event.state + '" given.');
+					}
+
+				}
+
+				new_history.push(new_event);
+
 			}
 
-			new_history.push(new_event);
-
 		}
+
 
 		entity.history = new_history;
 

@@ -1451,42 +1451,41 @@ module.exports.graphObj = new GraphQLObjectType({
 					entity: args.return
 				});
 			}
-		},/*
-		updaterebill: {
-			type: rebillType.graphObj,
-			description: 'Updates a rebill.',
+		},
+		updatereturn: {
+			type: returnType.graphObj,
+			description: 'Updates a return',
 			args: {
-				rebill: {
-					type: rebillInputType.graphObj
+				'return': {
+					type: returnInputType.graphObj
 				}
 			},
-			resolve: (value, rebill) => {
-				const rebillController = new RebillController();
+			resolve: (value, args) => {
+				const returnController = new ReturnController();
 
-				return rebillController.update({
-					entity: rebill.rebill
+				return returnController.update({
+					entity: args.rebill
 				});
 			}
 		},
-		deleterebill: {
+		deletereturn: {
 			type: deleteOutputType.graphObj,
-			description: 'Deletes a rebill.',
+			description: 'Deletes a return.',
 			args: {
 				id: {
-					description: 'id of the rebill',
+					description: 'id of the return',
 					type: new GraphQLNonNull(GraphQLString)
 				}
 			},
-			resolve: (value, rebill) => {
-				var id = rebill.id;
-				const rebillController = new RebillController();
+			resolve: (value, args) => {
+				var id = args.id;
+				const returnController = new ReturnController();
 
-				return rebillController.delete({
+				return returnController.delete({
 					id: id
 				});
 			}
 		},
-		*/
 		createrebill: {
 			type: rebillType.graphObj,
 			description: 'Adds a new rebill.',

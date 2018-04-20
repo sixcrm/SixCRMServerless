@@ -10,6 +10,9 @@ const returnHistoryInputType = require('./returnHistoryInputType');
 module.exports.graphObj = new GraphQLInputObjectType({
 	name: 'returnTransactionProductInputType',
 	fields: () => ({
+		alias: {
+			type: new GraphQLNonNull(GraphQLString)
+		},
 		product: {
 			type: new GraphQLNonNull(GraphQLString)
 		},

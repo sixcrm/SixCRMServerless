@@ -47,6 +47,7 @@ module.exports = class ReturnController extends entityController {
 
 		const ReturnHelperController = global.SixCRM.routes.include('helpers', 'entities/return/Return.js');
 		let returnHelperController = new ReturnHelperController();
+
 		return returnHelperController.mergeHistories(entity).then((entity) => super.update({
 			entity: entity,
 			ignore_updated_at: ignore_updated_at
