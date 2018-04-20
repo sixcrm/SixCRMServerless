@@ -12,6 +12,42 @@ const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
 class MockEntities {
 
+	static getValidReturn(id){
+
+		let a_iso8601 = timestamp.getISO8601();
+
+		return {
+			id: this.getValidId(id),
+			created_at: a_iso8601,
+			updated_at: a_iso8601,
+			transactions:[
+				{
+					transaction:this.getValidId(),
+					products:[
+						{
+							product:this.getValidId(),
+							alias: randomutilities.createRandomString(15),
+							quantity: randomutilities.randomInt(1,5),
+							history:[
+								{
+									state: 'created',
+									created_at: a_iso8601
+								}
+							]
+						}
+					]
+				}
+			],
+			history:[
+				{
+					state:'created',
+					created_at: a_iso8601
+				}
+			]
+		};
+
+	}
+
 	static getValidNotificationSettings(id) {
 
 		id = (_.isUndefined(id) || _.isNull(id)) ? spoofer.createRandomEmail() : id;

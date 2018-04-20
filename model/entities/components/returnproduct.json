@@ -5,6 +5,9 @@
 	"type": "object",
 	"description": "A product on a return",
 	"properties": {
+		"alias":{
+			"type":"string"
+		},
 		"product":{"$ref": "../../definitions/uuidv4.json"},
 		"quantity":{"$ref": "../../definitions/nonnegativeinteger.json"},
 		"history":{
@@ -12,5 +15,5 @@
 			"items":{"$ref": "./returnstatehistoryelement.json"}
 		}
 	},
-	"required":["product", "history", "quantity"]
+	"required":["alias", "product", "history", "quantity"]
 }

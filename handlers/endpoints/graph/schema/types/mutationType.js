@@ -63,6 +63,9 @@ let productScheduleType = require('./productschedule/productScheduleType');
 let rebillInputType = require('./rebill/rebillInputType');
 let rebillType = require('./rebill/rebillType');
 
+let returnInputType = require('./return/returnInputType');
+let returnType = require('./return/returnType');
+
 let billInputType = require('./bill/billInputType');
 let billType = require('./bill/billType');
 
@@ -145,6 +148,7 @@ const UserSigningStringController = global.SixCRM.routes.include('controllers', 
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const ReturnController = global.SixCRM.routes.include('controllers', 'entities/Return.js');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
@@ -1430,6 +1434,55 @@ module.exports.graphObj = new GraphQLObjectType({
 				return billHelperController.setPayment({
 					id: bill.id,
 					token: bill.token
+				});
+			}
+		},
+		createreturn: {
+			type: returnType.graphObj,
+			description: 'Adds a new return.',
+			args: {
+				'return': {
+					type: returnInputType.graphObj
+				}
+			},
+			resolve: (value, args) => {
+				const returnController = new ReturnController();
+				return returnController.create({
+					entity: args.return
+				});
+			}
+		},
+		updatereturn: {
+			type: returnType.graphObj,
+			description: 'Updates a return',
+			args: {
+				'return': {
+					type: returnInputType.graphObj
+				}
+			},
+			resolve: (value, args) => {
+				const returnController = new ReturnController();
+
+				return returnController.update({
+					entity: args.rebill
+				});
+			}
+		},
+		deletereturn: {
+			type: deleteOutputType.graphObj,
+			description: 'Deletes a return.',
+			args: {
+				id: {
+					description: 'id of the return',
+					type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, args) => {
+				var id = args.id;
+				const returnController = new ReturnController();
+
+				return returnController.delete({
+					id: id
 				});
 			}
 		},

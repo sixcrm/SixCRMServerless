@@ -87,6 +87,9 @@ let productScheduleType = require('./productschedule/productScheduleType');
 let rebillListType = require('./rebill/rebillListType');
 let rebillType = require('./rebill/rebillType');
 
+let returnListType = require('./return/returnListType');
+let returnType = require('./return/returnType');
+
 let roleType = require('./role/roleType');
 let roleListType = require('./role/roleListType');
 
@@ -184,6 +187,7 @@ const UserSigningStringController = global.SixCRM.routes.include('controllers', 
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const ReturnController = global.SixCRM.routes.include('controllers', 'entities/Return.js');
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
@@ -952,6 +956,23 @@ const fields = Object.assign({}, {
 			});
 		}
 	},
+	return: {
+		type: returnType.graphObj,
+		args: {
+			id: {
+				description: 'id of the return',
+				type: new GraphQLNonNull(GraphQLString)
+			}
+		},
+		resolve: function(root, returnentity) {
+			const returnController = new ReturnController();
+
+			return returnController.get({
+				id: returnentity.id,
+				fatal: get_fatal
+			});
+		}
+	},
 	rebill: {
 		type: rebillType.graphObj,
 		args: {
@@ -1251,6 +1272,26 @@ const fields = Object.assign({}, {
 				pagination,
 				search,
 				fatal: list_fatal
+			});
+		}
+	},
+	returnlist: {
+		type: returnListType.graphObj,
+		args: {
+			pagination: {
+				type: paginationInputType.graphObj
+			},
+			search: {
+				type: entitySearchInputType.graphObj
+			}
+		},
+		resolve: function(root, returnentity) {
+			const returnController = new ReturnController();
+
+			return returnController.listByAccount({
+				pagination: returnentity.pagination,
+				fatal: list_fatal,
+				search: returnentity.search
 			});
 		}
 	},
