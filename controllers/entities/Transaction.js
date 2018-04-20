@@ -28,6 +28,23 @@ class TransactionController extends entityController {
       */
 	}
 
+	listReturns({entity}){
+
+		du.debug('List Returns');
+
+		let ids = [];
+		if(_.has(entity, 'returns') && _.isArray(entity.returns) && arrayutilities.nonEmpty(entity.returns)){
+			arrayutilities.map(entity.returns, (areturn) => {
+				ids.push(areturn.id)
+			});
+		}else{
+			return Promise.resolve(null);
+		}
+
+		return this.executeAssociatedEntityFunction('ReturnController', 'getListByAccount', {ids: ids});
+
+	}
+
 	listByMerchantProviderID({id, pagination}){
 
 		du.debug('List By Merchant Provider ID');
