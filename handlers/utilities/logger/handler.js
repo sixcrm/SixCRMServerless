@@ -3,10 +3,9 @@ var https = require('https');
 var zlib = require('zlib');
 var crypto = require('crypto');
 
-
 var endpoint = process.env.elasticsearch_endpoint;
 
-module.exports.logger = function(input, context) {
+module.exports.logger = (input, context) => {
 
 	require('../../../SixCRM.js');
 	const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');

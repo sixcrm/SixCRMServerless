@@ -340,4 +340,4 @@ functions:
 ########################
 
   logger:
-    handler: handlers/utilities/logger/hander.logger
+    handler: handlers/utilities/logger/handler.logger
