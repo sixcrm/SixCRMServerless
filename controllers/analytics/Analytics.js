@@ -264,16 +264,23 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 			}
 
-			if (_.includes(facets, 'productSchedules')) {
+			if (_.includes(facets, 'productSchedule')) {
 
 				const facet = await this.getResults('reports/affiliate/facets/product-schedules', _resolveParams(), this.default_queue_account_filter);
 				facetResponse.facets.push(facet)
 
 			}
 
-			if (_.includes(facets, 'mids')) {
+			if (_.includes(facets, 'mid')) {
 
 				const facet = await this.getResults('reports/affiliate/facets/mids', _resolveParams(), this.default_queue_account_filter);
+				facetResponse.facets.push(facet)
+
+			}
+
+			if (_.includes(facets, 'subId')) {
+
+				const facet = await this.getResults('reports/affiliate/facets/sub-ids', _resolveParams(), this.default_queue_account_filter);
 				facetResponse.facets.push(facet)
 
 			}
