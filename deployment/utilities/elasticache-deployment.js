@@ -171,9 +171,7 @@ module.exports = class ElasticacheDeployment {
 
 		du.debug('Purge');
 
-		await this.redisprovider.connect();
-		await this.redisprovider.flushAll();
-		await this.redisprovider.dispose();
+		await this.redisprovider.withConnection(() => this.redisprovider.flushAll());
 
 		return 'Complete';
 

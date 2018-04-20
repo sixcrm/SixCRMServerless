@@ -24,6 +24,22 @@ module.exports = class RedisProvider {
 		this.max_attempts = elasticache_config.max_attempts;
 	}
 
+	/*
+	 * NOTE: A previous iteration of this provider connected automatically for every call, and scheduled
+	 * a disconnect.  This was redesigned to allow the local lambda scope to control the connection lifecycle.
+	 * In most cases, you will just connect when you open the scope, and dispose the connection when the
+	 * scope is disposed.  If you're using this provider without a lambda scope, you must connect first, and
+	 * dispose the connection when you are finished.  The withConnection() method does this for you.
+	 * Example:
+	 *
+	 * const redis_provider = new RedisProvider();
+	 * await redis_provider.withConnection(() => {
+	 *
+	 *   await redis_provider.set(key, value, expiration);
+	 *   ...
+	 *   value = await redis_provider.get(key);
+	 * });
+	 */
 	connect() {
 		if (!objectutilities.hasRecursive(global, 'SixCRM.configuration.site_config.cache.usecache') || (parseInt(global.SixCRM.configuration.site_config.cache.usecache) < 1)) {
 			du.debug('Cache Disabled.  Skipping Redis instantiation.');
@@ -77,6 +93,15 @@ module.exports = class RedisProvider {
 		await this.redis_client.dispose();
 
 		this.redis_client = null;
+	}
+
+	async withConnection(promised_callback) {
+		await this.connect();
+		try {
+			await promised_callback();
+		} finally {
+			await this.dispose();
+		}
 	}
 
 	async execute(promised_callback) {

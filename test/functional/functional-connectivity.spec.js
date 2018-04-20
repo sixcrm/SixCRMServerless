@@ -98,16 +98,16 @@ describe('Test connections to Docker Services', () => {
 			let redisprovider = new RedisProvider();
 
 			expect(redisprovider).to.have.property('endpoint');
-			await redisprovider.connect();
+			await redisprovider.withConnection(async () => {
 
-			let test_value = random.createRandomString(20);
+				let test_value = random.createRandomString(20);
 
-			await redisprovider.set('test', {'abc': test_value});
+				await redisprovider.set('test', {'abc': test_value});
 
-			let result = await redisprovider.get('test');
-			expect(result.abc).to.equal(test_value);
+				let result = await redisprovider.get('test');
+				expect(result.abc).to.equal(test_value);
 
-			await redisprovider.dispose();
+			});
 
 		});
 

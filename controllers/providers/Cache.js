@@ -29,39 +29,30 @@ module.exports = class cacheController {
 
 			let cache_key = this.createKey(parameters);
 
-			await this.redisprovider.connect();
+			let result;
+			await this.redisprovider.withConnection(async () => {
 
-			let cached_result = await this.getCache(cache_key)
+				result = await this.getCache(cache_key);
+				if (!_.isNull(result)) {
 
-			if (!_.isNull(cached_result)) {
+					du.warning('Redis Hit: ' + cache_key);
+					result = this.parseResult(result);
+					du.deep('Cached Result', result);
 
-				du.warning('Redis Hit: ' + cache_key);
+				} else {
 
-				cached_result = this.parseResult(cached_result);
+					du.warning('Redis Miss: ' + cache_key);
+					result = await data_promise();
+					du.deep('Data Promise Result:', result);
 
-				du.deep('Cached Result', cached_result);
+					const reply = await this.setCache(cache_key, JSON.stringify(result), expiration);
+					du.warning('Redis Set for key "' + cache_key + '": ' + reply);
 
-				await this.redisprovider.dispose();
+				}
 
-				return cached_result;
+			});
 
-			} else {
-
-				du.warning('Redis Miss: ' + cache_key);
-
-				const results = await data_promise();
-
-				du.deep('Data Promise Result:', results);
-
-				const reply = await this.setCache(cache_key, JSON.stringify(results), expiration);
-
-				du.warning('Redis Set for key "' + cache_key + '": ' + reply);
-
-				await this.redisprovider.dispose();
-
-				return results
-
-			}
+			return result;
 
 		} else {
 
