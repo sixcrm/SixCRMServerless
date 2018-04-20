@@ -13,9 +13,9 @@ module.exports.graphObj = new GraphQLObjectType({
 		return: {
 			type: new GraphQLNonNull(returnType.graphObj),
 			description: 'Return associated with the transaction product',
-			resolve: (transactionproduct) => {
+			resolve: (a_return) => {
 				const transactionController = new TransactionController();
-				return transactionController.getReturn(transactionproduct);
+				return transactionController.getReturn(a_return);
 			}
 		},
 		quantity:{
