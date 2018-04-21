@@ -322,7 +322,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		case 'averageRevenuePerOrder':
 			return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams(), this.default_queue_account_filter);
 		case 'affiliateTraffic':
-			return this.getResults('reports/affiliate-traffic/data', _resolveParams(), this.default_queue_account_filter);
+			return this.getResults('reports/affiliate-traffic', _resolveParams(), this.default_queue_account_filter);
 		default:
 			throw new Error('Report not found');
 
