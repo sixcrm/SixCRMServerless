@@ -241,14 +241,14 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		switch (parameters.filter.reportType) {
 
-			default:
+		default:
 
-				if (_.includes(facets, 'affiliate')) {
+			if (_.includes(facets, 'affiliate')) {
 
-					const facet = await this.getResults('reports/affiliate/facets/affiliates', _resolveParams(), this.default_queue_account_filter);
-					facetResponse.facets.push(facet)
+				const facet = await this.getResults('reports/affiliate/facets/affiliates', _resolveParams(), this.default_queue_account_filter);
+				facetResponse.facets.push(facet)
 
-				}
+			}
 
 			if (_.includes(facets, 'campaign')) {
 
