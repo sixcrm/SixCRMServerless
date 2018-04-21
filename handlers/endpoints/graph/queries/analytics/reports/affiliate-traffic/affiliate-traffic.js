@@ -17,7 +17,7 @@ query {
   }
 `;
 
-fs.writeFileSync(path.join(__dirname, 'traffic.json'), JSON.stringify({
+fs.writeFileSync(path.join(__dirname, 'affiliate-traffic.json'), JSON.stringify({
 	requestContext: {
 		authorizer: {
 			user: "owner.user@test.com"
