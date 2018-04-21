@@ -14,6 +14,9 @@ module.exports = new GraphQLEnumType({
 		},
 		averageRevenuePerOrder: {
 			value: 'averageRevenuePerOrder'
+		},
+		affiliateTraffic: {
+			value: 'affiliateTraffic'
 		}
 	}
 })
