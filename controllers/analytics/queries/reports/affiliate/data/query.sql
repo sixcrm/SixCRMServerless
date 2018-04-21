@@ -31,7 +31,7 @@ FROM
 	SELECT
 		affiliate,
 		COUNT(1) AS clicks
-	FROM f_event
+	FROM analytics.f_event
 	WHERE datetime BETWEEN '2018-01-01 00:00:00' AND '2019-01-01 00:00:00' AND "type" = 'click'
 	GROUP BY affiliate
 ) clicks

@@ -241,14 +241,14 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		switch (parameters.filter.reportType) {
 
-		default:
+			default:
 
-			if (_.includes(facets, 'affiliate')) {
+				if (_.includes(facets, 'affiliate')) {
 
-				const facet = await this.getResults('reports/affiliate/facets/affiliates', _resolveParams(), this.default_queue_account_filter);
-				facetResponse.facets.push(facet)
+					const facet = await this.getResults('reports/affiliate/facets/affiliates', _resolveParams(), this.default_queue_account_filter);
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
 			if (_.includes(facets, 'campaign')) {
 
@@ -321,6 +321,8 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			return this.getResults('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams(), this.default_queue_account_filter);
 		case 'averageRevenuePerOrder':
 			return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams(), this.default_queue_account_filter);
+		case 'affiliateTraffic':
+			return this.getResults('reports/affiliate/data', _resolveParams(), this.default_queue_account_filter);
 		default:
 			throw new Error('Report not found');
 
@@ -335,8 +337,13 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 			const params = {
 				start: start.values[0],
-				end: end.values[0],
-				period: period.values[0]
+				end: end.values[0]
+			}
+
+			if (period) {
+
+				params.period = period.values[0];
+
 			}
 
 			if (campaign) {
