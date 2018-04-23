@@ -854,6 +854,26 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	}
 
+	transformBatchIntoResponse(batch_result) {
+
+		du.debug('Transform Batch Into Response');
+
+		let key = Object.keys(batch_result.Responses)[0];
+
+		return {
+			Items: arrayutilities.map(batch_result.Responses[key], (item) => {
+				let ret_value = {};
+
+				for (let key in item) {
+					let value_key_name = Object.keys(item[key])[0];
+					ret_value[key]= item[key][value_key_name];
+				}
+
+				return ret_value;
+			})
+		}
+	}
+
 	getItems(data){
 
 

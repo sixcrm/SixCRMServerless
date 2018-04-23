@@ -485,6 +485,26 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	}
 
+
+	batchGet({ids, parameters}) {
+
+		du.debug('Batch Get');
+
+		return this.can({action: 'read', object: this.descriptive_name})
+			.then((permission) => this.catchPermissions(permission, 'read'))
+			.then(() => {
+
+				return this.dynamodbprovider.batchGet({table_name: this.table_name, ids: ids, parameters: parameters})
+					.then((data) => this.transformBatchIntoResponse(data))
+					.then((data) => this.buildResponse(data))
+					.catch((error) => {
+						return this.handleErrors(error)
+					})
+
+			});
+
+	}
+
 	//Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account
 	create({entity}){
 

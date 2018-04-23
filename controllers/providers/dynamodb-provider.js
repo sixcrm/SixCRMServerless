@@ -446,7 +446,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 		let valid_methods = {
 			document_client: ['get', 'scan', 'query', 'put', 'update', 'delete'],
-			raw: ['waitFor', 'deleteTable', 'describeTable', 'updateTable', 'createTable', 'createBackup','listTables']
+			raw: ['waitFor', 'deleteTable', 'describeTable', 'updateTable', 'createTable', 'createBackup','listTables', 'batchGetItem']
 		}
 
 		if(_.includes(valid_methods.document_client, method)){
@@ -535,6 +535,32 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 		}
 
 		throw eu.getError('server', 'Unknown method: '+method);
+
+	}
+
+	batchGet({table_name, ids, parameters}) {
+
+		du.debug('Batch Get');
+
+		if (!parameters) {
+
+			parameters = {
+				RequestItems: {}
+			};
+
+			let items = arrayutilities.map(ids, (id) => {
+				return {
+					'id': {
+						'S': id
+					}
+				}
+			});
+
+			parameters.RequestItems[table_name] = {'Keys': items};
+
+		}
+
+		return this.executeDynamoDBMethod({method: 'batchGetItem', parameters: parameters})
 
 	}
 
