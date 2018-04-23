@@ -158,7 +158,7 @@ describe('controllers/providers/aws-signedrequest-provider', () => {
 			process.env = process_env;
 		})
 
-		it.only('successfully performs a signed request', () => {
+		it('successfully performs a signed request', () => {
 
 			process.env.AWS_SECRET_ACCESS_KEY = 'abc123';
 			process.env.AWS_SESSION_TOKEN = 'blahblah';

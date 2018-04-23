@@ -29,6 +29,7 @@ module.exports = class AWSSignedRequestProvider {
 
 		du.debug('Validate Environment');
 
+		du.info(process.env);
 		if (!_.has(process.env, 'AWS_SESSION_TOKEN')) {
 			throw eu.getError('server', 'Missing "AWS_SESSION_TOKEN" in process.env');
 		}
@@ -121,7 +122,7 @@ module.exports = class AWSSignedRequestProvider {
 				'Content-Type': 'application/json',
 				'Host': endpoint,
 				'Content-Length': Buffer.byteLength(body),
-				'X-Amz-Security-Token': global.SixCRM.configuration.getEnvironmentConfig('AWS_SESSION_TOKEN'),
+				'X-Amz-Security-Token': process.env.AWS_SESSION_TOKEN,
 				'X-Amz-Date': datetime
 			}
 		};
@@ -160,7 +161,7 @@ module.exports = class AWSSignedRequestProvider {
 		].join('\n');
 
 		request.headers.Authorization = [
-			'AWS4-HMAC-SHA256 Credential=' + global.SixCRM.configuration.getEnvironmentConfig('AWS_ACCESS_KEY_ID') + '/' + credentialString,
+			'AWS4-HMAC-SHA256 Credential=' + process.env.AWS_ACCESS_KEY_ID + '/' + credentialString,
 			'SignedHeaders=' + signedHeaders,
 			'Signature=' + hashutilities.toHMAC(kSigning, stringToSign, 'hex')
 		].join(', ');
