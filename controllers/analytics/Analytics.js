@@ -24,40 +24,12 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			'account'
 		];
 
-		this.default_activity_query_filters = [
-			'action',
-			'actor',
-			'actor_type',
-			'acted_upon',
-			'acted_upon_type',
-			'associated_with',
-			'associated_with_type',
-			'account'
-		];
-
-		this.default_bin_query_filters = [
-			'binnumber',
-			'brand',
-			'bank',
-			'type',
-			'level',
-			'country',
-			'info',
-			'country_iso',
-			'country2_iso',
-			'country3_iso',
-			'webpage',
-			'phone'
-		];
-
-		this.default_queue_account_filter = [
-			'account'
-		];
-
 		this.cacheController = new CacheController();
 		this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
 	}
+
+	/* deprecate */
 
 	getCampaignsByAmount(parameters) {
 
@@ -102,7 +74,9 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		parameters = this.appendQueueName(parameters, queuename);
 
-		return this.getResults('order_engine/rebills_current_summary', parameters, this.default_queue_account_filter);
+		return this.getResults('order_engine/rebills_current_summary', parameters, [
+			'account'
+		]);
 
 	}
 
@@ -124,7 +98,9 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			name: period
 		});
 		du.debug(parameters);
-		return this.getResults('order_engine/rebill_pagination', parameters, this.default_queue_account_filter);
+		return this.getResults('order_engine/rebill_pagination', parameters, [
+			'account'
+		]);
 
 	}
 
@@ -222,7 +198,16 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		let parameters = paginationutilities.mergePagination(args.activityfilter, paginationutilities.createSQLPaginationInput(args.pagination));
 
-		let this_query_filter = this.default_activity_query_filters;
+		let this_query_filter = [
+			'action',
+			'actor',
+			'actor_type',
+			'acted_upon',
+			'acted_upon_type',
+			'associated_with',
+			'associated_with_type',
+			'account'
+		];
 
 		['actor', 'actor_type', 'acted_upon', 'acted_upon_type', 'associated_with', 'associated_with_type'].forEach((argument) => {
 			this_query_filter = arrayutilities.removeElement(this_query_filter, argument);
@@ -312,7 +297,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	async getReport(parameters) {
 
-		du.debug('Get home chart timeseries');
+		du.debug('Get report', parameters.reportType);
 
 		switch (parameters.facets.reportType) {
 
