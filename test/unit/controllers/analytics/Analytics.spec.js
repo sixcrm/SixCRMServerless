@@ -18,52 +18,6 @@ describe('controllers/Analytics.js', () => {
 		mockery.deregisterAll();
 	});
 
-	describe('getActivityFilter', () => {
-
-		it('returns null when activity filter is not set', () => {
-
-			let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-			const analyticsController = new AnalyticsController();
-
-			expect(analyticsController.getActivityFilter({})).to.equal(null);
-		});
-
-		it('successfully returns activity filter', () => {
-
-			let params = {
-				activityfilter: 'an_activity_filter'
-			};
-
-			let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-			const analyticsController = new AnalyticsController();
-
-			expect(analyticsController.getActivityFilter(params)).to.equal(params.activityfilter);
-		});
-	});
-
-	describe('getPagination', () => {
-
-		it('returns null when pagination is not set', () => {
-
-			let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-			const analyticsController = new AnalyticsController();
-
-			expect(analyticsController.getPagination({})).to.equal(null);
-		});
-
-		it('successfully returns pagination', () => {
-
-			let params = {
-				pagination: 'any_pagination'
-			};
-
-			let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-			const analyticsController = new AnalyticsController();
-
-			expect(analyticsController.getPagination(params)).to.equal(params.pagination);
-		});
-	});
-
 	describe('getActivityByIdentifier', () => {
 
 		it('successfully returns activity by identifier', () => {
