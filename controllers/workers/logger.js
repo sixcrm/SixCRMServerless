@@ -5,6 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const compressionutilities = global.SixCRM.routes.include('lib', 'compression-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSSignedRequestProvider = global.SixCRM.routes.include('providers', 'aws-signedrequest-provider.js');
 
@@ -44,13 +45,15 @@ module.exports = class LoggerController {
 			throw eu.getError('server', 'Invalid data.');
 		}
 
+		stringutilities.isString(input.awslogs.data, true);
+
 		return true;
 
 	}
 
 	unpackData(input) {
 
-		du.debuf('Unpack Data');
+		du.debug('Unpack Data');
 
 		let zipped_data = new Buffer(input.awslogs.data, 'base64');
 
@@ -66,13 +69,13 @@ module.exports = class LoggerController {
 			throw eu.getError('control', 'Control Message');
 		}
 
-		let bulkRequestBody = '';
+		let bulkRequestBody = [];
 
-		data.logEvents.forEach(function(logEvent) {
+		arrayutilities.map(data.logEvents, (logEvent) => {
 
 			let indexName = ['cwl-' + timestamp.convertToFormat(logEvent.timestamp, 'YYYY.MM.DD')]
 
-			var source = this.buildSource(logEvent.message, logEvent.extractedFields);
+			let source = this.buildSource(logEvent.message, logEvent.extractedFields);
 			source['@id'] = logEvent.id;
 			source['@timestamp'] = timestamp.toISO8601(logEvent.timestamp);
 			source['@message'] = logEvent.message;
@@ -80,7 +83,7 @@ module.exports = class LoggerController {
 			source['@log_group'] = data.logGroup;
 			source['@log_stream'] = data.logStream;
 
-			var action = {
+			let action = {
 				'index': {
 					'_index': indexName,
 					'_type': data.logGroup,
@@ -88,13 +91,12 @@ module.exports = class LoggerController {
 				}
 			};
 
-			bulkRequestBody += [
-				JSON.stringify(action),
-				JSON.stringify(source),
-			].join('\n') + '\n';
+			bulkRequestBody.push(JSON.stringify(action));
+			bulkRequestBody.push(JSON.stringify(source));
+
 		});
 
-		return bulkRequestBody;
+		return bulkRequestBody.join('\n');
 
 	}
 
@@ -130,6 +132,8 @@ module.exports = class LoggerController {
 				return_object[key] = stringutilities.toNumeric(value);
 
 			} else {
+
+				value = value.trim();
 
 				let json_substring = stringutilities.extractJSON(value);
 
