@@ -250,42 +250,42 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				if (_.includes(facets, 'affiliate')) {
 
-					const facet = await this.getResults('reports/facets/affiliates', _resolveParams(), this.default_queue_account_filter);
+					const facet = await this.query('reports/facets/affiliates', _resolveParams());
 					facetResponse.facets.push(facet)
 
 				}
 
 				if (_.includes(facets, 'campaign')) {
 
-					const facet = await this.getResults('reports/facets/campaigns', _resolveParams(), this.default_queue_account_filter);
+					const facet = await this.query('reports/facets/campaigns', _resolveParams());
 					facetResponse.facets.push(facet)
 
 				}
 
 				if (_.includes(facets, 'product')) {
 
-					const facet = await this.getResults('reports/facets/products', _resolveParams(), this.default_queue_account_filter);
+					const facet = await this.query('reports/facets/products', _resolveParams());
 					facetResponse.facets.push(facet)
 
 				}
 
 				if (_.includes(facets, 'productSchedule')) {
 
-					const facet = await this.getResults('reports/facets/product-schedules', _resolveParams(), this.default_queue_account_filter);
+					const facet = await this.query('reports/facets/product-schedules', _resolveParams());
 					facetResponse.facets.push(facet)
 
 				}
 
 				if (_.includes(facets, 'mid')) {
 
-					const facet = await this.getResults('reports/facets/mids', _resolveParams(), this.default_queue_account_filter);
+					const facet = await this.query('reports/facets/mids', _resolveParams());
 					facetResponse.facets.push(facet)
 
 				}
 
 				if (_.includes(facets, 'subId')) {
 
-					const facet = await this.getResults('reports/facets/sub-ids', _resolveParams(), this.default_queue_account_filter);
+					const facet = await this.query('reports/facets/sub-ids', _resolveParams());
 					facetResponse.facets.push(facet)
 
 				}
