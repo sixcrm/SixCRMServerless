@@ -3,4 +3,4 @@ SELECT
 FROM
   analytics.f_transaction
 WHERE
-  datetime BETWEEN '{{start}}' AND '{{end}}' AND campaign IS NOT NULL {{filter}}
+   datetime BETWEEN %L AND %L AND campaign IS NOT NULL %s
