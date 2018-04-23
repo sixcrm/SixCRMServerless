@@ -367,13 +367,13 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		}
 
-		const queryTransform = require(path.join(__dirname, 'queries', queryRoot, 'query-transform'));
+		const queryTransform = require(path.join(__dirname, 'queries', queryRoot, 'query'));
 		const query = await queryTransform(parameters);
 		const auroraContext = global.SixCRM.getResource('auroraContext');
 
 		// return this.cacheController.useCache(query, async () => {
 		const results = await auroraContext.connection.query(query);
-		const resultTransform = require(path.join(__dirname, 'queries', queryRoot, 'result-transform'));
+		const resultTransform = require(path.join(__dirname, 'queries', queryRoot, 'transform'));
 		return resultTransform(results.rows);
 		// });
 
