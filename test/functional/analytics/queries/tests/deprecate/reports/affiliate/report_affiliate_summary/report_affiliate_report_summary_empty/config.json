@@ -1,6 +1,6 @@
 {
 	"method": "getAffiliateReportSummary",
-	"test_case": "random input with out of bounds query input",
+	"test_case": "getAffiliateReportSummary random input with out of bounds query input",
 	"input": {
 		"analyticsfilter": {
 			"start": "2017-10-01T00:00:00.000Z",

@@ -1,6 +1,6 @@
 {
 	"method": "getAffiliateReportSummary",
-	"test_case": "random input",
+	"test_case": "getAffiliateReportSummary random input",
 	"input": {
 		"analyticsfilter": {
 			"start": "2018-01-01T00:00:00.000Z",

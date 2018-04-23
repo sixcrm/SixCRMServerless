@@ -17,8 +17,8 @@ Add Cache response group
 Check Pagination Response Group
 */
 
-let test_name = 'Campaigns By Amount';
-let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/get-campaigns-by-amount.json');
+let test_name = 'Campaign Delta';
+let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/deprecate/get-event-funnel.json');
 
 //set the test user
 let test_user = {
@@ -59,7 +59,7 @@ describe('Get '+test_name+' Test', function() {
 
 				assert.isObject(response.body.response, JSON.stringify(response.body));
 
-				assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/campaign/campaignsbyamount'));
+				assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/deprecate/event/eventfunnel'));
 
 				done();
 

@@ -1,6 +1,6 @@
 {
 	"method": "getMerchantReport",
-	"test_case": "random input with out of bounds query input",
+	"test_case": "getMerchantReport random input with out of bounds query input",
 	"input": {
 		"analyticsfilter": {
 			"start": "2017-03-01T00:00:00.000Z",
