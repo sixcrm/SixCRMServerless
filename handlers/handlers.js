@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
+const logger = require('./utilities/logger/handler');
+
 const AuthorizationHandler = require('./authorization-handler');
 const EndpointHandler = require('./endpoint-handler');
 const ForwardMessageHandler = require('./forward-message-handler');
@@ -41,6 +43,8 @@ const NotificationEventsController = global.SixCRM.routes.include('controllers',
 const TrackingEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/trackingEvents.js');
 
 module.exports = {
+
+	logger: logger,
 
 	authorizers: {
 
