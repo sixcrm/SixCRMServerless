@@ -17,8 +17,8 @@ Add Cache response group
 Check Pagination Response Group
 */
 
-let test_name = 'Activity By Identifier';
-let test_query = global.SixCRM.routes.path('handlers','/endpoints/graph/queries/analytics/get-activity-by-identifier.json');
+let test_name = 'Campaigns By Amount';
+let test_query = global.SixCRM.routes.path('handlers','endpoints/graph/queries/analytics/deprecate/get-campaigns-by-amount.json');
 
 //set the test user
 let test_user = {
@@ -52,14 +52,14 @@ describe('Get '+test_name+' Test', function() {
 			.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function(err, response){
 				if(err){
-      						//du.warning(err);
+					//du.warning(err);
 				}
 
-				// du.debug(response.body);
+				//du.debug(response.body);
 
 				assert.isObject(response.body.response, JSON.stringify(response.body));
 
-				assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/activity/listactivitybyidentity'));
+				assert.isTrue(tu.validateGraphResponse(response.body, 'analytics/deprecate/campaign/campaignsbyamount'));
 
 				done();
 

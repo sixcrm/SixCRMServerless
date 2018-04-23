@@ -40,7 +40,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			order: 'desc'
 		}));
 
-		return this.getResults('campaigns_by_amount', parameters, this.default_query_filters);
+		return this.getResults('deprecate/campaigns_by_amount', parameters, this.default_query_filters);
 
 	}
 
@@ -48,7 +48,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		du.debug('Get Event Funnel');
 
-		return this.getResults('event_funnel', parameters.analyticsfilter, this.default_query_filters);
+		return this.getResults('deprecate/event_funnel', parameters.analyticsfilter, this.default_query_filters);
 
 	}
 
@@ -62,7 +62,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
 
-		return this.getResults('aggregation_processor_amount', parameters, this.default_query_filters);
+		return this.getResults('deprecate/aggregation_processor_amount', parameters, this.default_query_filters);
 
 	}
 
@@ -74,7 +74,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		parameters = this.appendQueueName(parameters, queuename);
 
-		return this.getResults('order_engine/rebills_current_summary', parameters, [
+		return this.getResults('deprecate/order_engine/rebills_current_summary', parameters, [
 			'account'
 		]);
 
@@ -98,7 +98,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			name: period
 		});
 		du.debug(parameters);
-		return this.getResults('order_engine/rebill_pagination', parameters, [
+		return this.getResults('deprecate/order_engine/rebill_pagination', parameters, [
 			'account'
 		]);
 
@@ -116,7 +116,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			parameters = this.appendQueueName(parameters, queue_name);
 		}
 
-		return this.getResults('order_engine/rebills_in_queue', parameters, this.default_query_filters);
+		return this.getResults('deprecate/order_engine/rebills_in_queue', parameters, this.default_query_filters);
 
 	}
 
@@ -213,7 +213,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			this_query_filter = arrayutilities.removeElement(this_query_filter, argument);
 		});
 
-		return this.getResults('activity_by_identifier', parameters, this_query_filter);
+		return this.getResults('deprecate/activity_by_identifier', parameters, this_query_filter);
 
 	}
 
@@ -367,13 +367,13 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		}
 
-		const queryTransform = require(path.join(__dirname, 'queries', queryRoot, 'query-transform'));
+		const queryTransform = require(path.join(__dirname, 'queries', queryRoot, 'query'));
 		const query = await queryTransform(parameters);
 		const auroraContext = global.SixCRM.getResource('auroraContext');
 
 		// return this.cacheController.useCache(query, async () => {
 		const results = await auroraContext.connection.query(query);
-		const resultTransform = require(path.join(__dirname, 'queries', queryRoot, 'result-transform'));
+		const resultTransform = require(path.join(__dirname, 'queries', queryRoot, 'transform'));
 		return resultTransform(results.rows);
 		// });
 
