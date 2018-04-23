@@ -7,11 +7,11 @@ query {
       reportType: affiliateTraffic
       facets: [{
       facet: "start"
-        values: ["2018-03-10T14:32:28Z"]
+        values: ["2017-03-10T14:32:28Z"]
       },
       {
         facet: "end"
-        values: ["2018-04-09T14:32:28Z"]
+        values: ["2019-04-09T14:32:28Z"]
       }
     ]}) {records { key value }}
   }

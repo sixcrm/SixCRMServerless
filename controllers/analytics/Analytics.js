@@ -1,8 +1,11 @@
 const _ = require('lodash');
+const path = require('path');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 const AnalyticsUtilities = global.SixCRM.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
+const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
+const CacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
 module.exports = class AnalyticsController extends AnalyticsUtilities {
 
@@ -51,6 +54,9 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		this.default_queue_account_filter = [
 			'account'
 		];
+
+		this.cacheController = new CacheController();
+		this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
 	}
 
@@ -241,14 +247,14 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		switch (parameters.filter.reportType) {
 
-		default:
+			default:
 
-			if (_.includes(facets, 'affiliate')) {
+				if (_.includes(facets, 'affiliate')) {
 
-				const facet = await this.getResults('reports/facets/affiliates', _resolveParams(), this.default_queue_account_filter);
-				facetResponse.facets.push(facet)
+					const facet = await this.getResults('reports/facets/affiliates', _resolveParams(), this.default_queue_account_filter);
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
 			if (_.includes(facets, 'campaign')) {
 
@@ -313,18 +319,18 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		switch (parameters.facets.reportType) {
 
-		case 'revenueVersusOrders':
-			return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams(), this.default_queue_account_filter);
-		case 'ordersVersusUpsells':
-			return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', _resolveParams(), this.default_queue_account_filter);
-		case 'directVersusRebill':
-			return this.getResults('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams(), this.default_queue_account_filter);
-		case 'averageRevenuePerOrder':
-			return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams(), this.default_queue_account_filter);
-		case 'affiliateTraffic':
-			return this.getResults('reports/affiliate-traffic', _resolveParams(), this.default_queue_account_filter);
-		default:
-			throw new Error('Report not found');
+			case 'revenueVersusOrders':
+				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams(), this.default_queue_account_filter);
+			case 'ordersVersusUpsells':
+				return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', _resolveParams(), this.default_queue_account_filter);
+			case 'directVersusRebill':
+				return this.getResults('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams(), this.default_queue_account_filter);
+			case 'averageRevenuePerOrder':
+				return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams(), this.default_queue_account_filter);
+			case 'affiliateTraffic':
+				return this.query('reports/affiliate-traffic', _resolveParams());
+			default:
+				throw new Error('Report not found');
 
 		}
 
@@ -375,6 +381,27 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		}
 
 		return null;
+
+	}
+
+	async query(queryRoot, parameters) {
+
+		const clone = _.clone(parameters);
+
+		if (this.permissionutilities.areACLsDisabled() !== true && global.account !== '*') {
+
+			clone.account = global.account;
+
+		}
+
+		const queryTransform = require(path.join(__dirname, 'queries', queryRoot, 'query-transform'));
+		const query = await queryTransform(parameters);
+		const auroraContext = global.SixCRM.getResource('auroraContext');
+		return this.cacheController.useCache(query, async () => {
+			const results = await auroraContext.connection.query(query);
+			const resultTransform = require(path.join(__dirname, 'queries', queryRoot, 'result-transform'));
+			return resultTransform(results.rows);
+		});
 
 	}
 

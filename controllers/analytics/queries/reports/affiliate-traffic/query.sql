@@ -29,11 +29,11 @@ SELECT
 FROM
 (
 	SELECT
-		affiliate,
+		s.affiliate,
 		COUNT(1) AS clicks
-	FROM analytics.f_event
-	WHERE datetime BETWEEN '2018-01-01 00:00:00' AND '2019-01-01 00:00:00' AND "type" = 'click'
-	GROUP BY affiliate
+	FROM analytics.f_event s
+	WHERE %s AND "type" = 'click'
+	GROUP BY s.affiliate
 ) clicks
 
 LEFT OUTER JOIN
@@ -49,9 +49,9 @@ LEFT OUTER JOIN
 			DISTINCT s.id
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t on s.id = t.session
-		WHERE s.datetime BETWEEN '2018-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success') sub_success
+		WHERE %s AND t.processor_result = 'success') sub_success
 	ON s.id = sub_success.id
-	WHERE s.datetime BETWEEN '2018-01-01 00:00:00' AND '2019-01-01 00:00:00' AND sub_success.id IS NULL
+	WHERE %s AND sub_success.id IS NULL
 	GROUP BY s.affiliate
 
 ) partials
@@ -73,7 +73,7 @@ LEFT OUTER JOIN
 			DISTINCT s.id
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t on s.id = t.session
-		WHERE s.datetime BETWEEN '2018-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success') sub_success
+		WHERE %s AND t.processor_result = 'success') sub_success
 	ON s.id = sub_success.id
 	LEFT OUTER JOIN
 		(
@@ -82,9 +82,9 @@ LEFT OUTER JOIN
 			DISTINCT s.id
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t on s.id = t.session
-		WHERE s.datetime BETWEEN '2018-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'fail') sub_failure
+		WHERE %s AND t.processor_result = 'fail') sub_failure
 	ON s.id = sub_failure.id
-	WHERE s.datetime BETWEEN '2018-01-01 00:00:00' AND '2019-01-01 00:00:00' AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL
+	WHERE %s AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL
 	GROUP BY s.affiliate
 
 ) declines
@@ -100,7 +100,7 @@ LEFT OUTER JOIN
 		s.affiliate
 	FROM analytics.f_session s
 	INNER JOIN analytics.f_transaction t on s.id = t.session
-	WHERE s.datetime BETWEEN '2018-01-01 00:00:00' AND '2019-01-01 00:00:00'
+	WHERE %s
 	GROUP BY s.affiliate
 ) gross_orders
 
@@ -116,7 +116,7 @@ LEFT OUTER JOIN
 		s.affiliate
 	FROM analytics.f_session s
 	INNER JOIN analytics.f_transaction t on s.id = t.session
-	WHERE s.datetime BETWEEN '2018-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.subtype NOT LIKE 'upsell%'
+	WHERE %s AND t.processor_result = 'success' AND t.subtype NOT LIKE 'upsell%'
 	GROUP BY s.affiliate
 ) sales
 
@@ -132,7 +132,7 @@ LEFT OUTER JOIN
 		s.affiliate
 	FROM analytics.f_session s
 	INNER JOIN analytics.f_transaction t on s.id = t.session
-	WHERE s.datetime BETWEEN '2018-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.subtype LIKE 'upsell%'
+	WHERE %s AND t.processor_result = 'success' AND t.subtype LIKE 'upsell%'
 	GROUP BY s.affiliate
 ) upsells
 
