@@ -220,11 +220,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		du.debug('Get Activity By Identifier');
 
-		let activity_filter = this.getActivityFilter(args);
-
-		let pagination = this.getPagination(args);
-
-		let parameters = paginationutilities.mergePagination(activity_filter, paginationutilities.createSQLPaginationInput(pagination));
+		let parameters = paginationutilities.mergePagination(args.activityfilter, paginationutilities.createSQLPaginationInput(args.pagination));
 
 		let this_query_filter = this.default_activity_query_filters;
 
@@ -235,6 +231,8 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		return this.getResults('activity_by_identifier', parameters, this_query_filter);
 
 	}
+
+	/* new methods */
 
 	async getReportFacets(parameters) {
 
@@ -319,13 +317,13 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		switch (parameters.facets.reportType) {
 
 			case 'revenueVersusOrders':
-				return this.getResults('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams(), this.default_queue_account_filter);
+				return this.query('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams());
 			case 'ordersVersusUpsells':
-				return this.getResults('home/hero-chart-timeseries/orders-vs-upsells', _resolveParams(), this.default_queue_account_filter);
+				return this.query('home/hero-chart-timeseries/orders-vs-upsells', _resolveParams());
 			case 'directVersusRebill':
-				return this.getResults('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams(), this.default_queue_account_filter);
+				return this.query('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams());
 			case 'averageRevenuePerOrder':
-				return this.getResults('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams(), this.default_queue_account_filter);
+				return this.query('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams());
 			case 'affiliateTraffic':
 				return this.query('reports/affiliate-traffic', _resolveParams());
 			default:
@@ -371,26 +369,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			}
 
 		}
-
-	}
-
-	getPagination(parameters) {
-
-		if (_.has(parameters, 'pagination')) {
-			return parameters.pagination;
-		}
-
-		return null;
-
-	}
-
-	getActivityFilter(parameters) {
-
-		if (_.has(parameters, 'activityfilter')) {
-			return parameters.activityfilter;
-		}
-
-		return null;
 
 	}
 

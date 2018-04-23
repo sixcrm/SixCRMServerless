@@ -25,24 +25,10 @@
 		"values": [
 			[{
 				"key": "id",
-				"value": "29788a18-4e22-4f55-8b8d-115bc9d95dcc"
-			}, {
-				"key": "name",
-				"value": "Seed Affiliate 3"
-			}],
-			[{
-				"key": "id",
 				"value": "50996747-85f1-4546-8b9c-d3c6bc3092f7"
 			}, {
 				"key": "name",
 				"value": "Seed Affiliate 9"
-			}],
-			[{
-				"key": "id",
-				"value": "034087fc-73a1-4594-86de-8490c4db2025"
-			}, {
-				"key": "name",
-				"value": "Seed Affiliate"
 			}],
 			[{
 				"key": "id",
@@ -81,17 +67,17 @@
 			}],
 			[{
 				"key": "id",
+				"value": "d7435e1d-9c9e-43c0-b4de-e4d5eda14a4f"
+			}, {
+				"key": "name",
+				"value": "Seed Affiliate as Sub Id"
+			}],
+			[{
+				"key": "id",
 				"value": "1608a533-7ceb-4339-821d-631c15448656"
 			}, {
 				"key": "name",
 				"value": "Seed Affiliate 2"
-			}],
-			[{
-				"key": "id",
-				"value": "2d97301d-567b-4625-8f85-4f7d0ea41a93"
-			}, {
-				"key": "name",
-				"value": "Seed Affiliate 5"
 			}],
 			[{
 				"key": "id",

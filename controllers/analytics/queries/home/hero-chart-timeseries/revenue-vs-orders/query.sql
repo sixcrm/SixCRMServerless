@@ -4,20 +4,20 @@ SELECT
 	COALESCE(tr.revenue, 0) as revenue
 FROM
 	(	SELECT *
-		FROM generate_series( '{{start}}'::DATE + '00:00:00'::TIME, '{{end}}'::DATE + '00:00:00'::TIME, '1 {{period}}'::interval)) s
+		FROM generate_series( %L::DATE + '00:00:00'::TIME, %L::DATE + '00:00:00'::TIME, %L::interval)) s
 LEFT OUTER JOIN
 	( SELECT COUNT ( 1 ) AS orders,
-		DATE_TRUNC('{{period}}', datetime) as datetime
-		FROM analytics.f_event 
-		WHERE datetime BETWEEN TIMESTAMP '{{start}}'::DATE + '00:00:00'::TIME AND TIMESTAMP '{{end}}'::DATE + '23:59:59'::TIME AND "type" = 'order' {{filter}}
-		GROUP BY DATE_TRUNC('{{period}}', datetime)
+		DATE_TRUNC(%L, datetime) as datetime
+		FROM analytics.f_event
+		WHERE datetime BETWEEN TIMESTAMP %L::DATE + '00:00:00'::TIME AND TIMESTAMP %L::DATE + '23:59:59'::TIME AND "type" = 'order' %s
+		GROUP BY DATE_TRUNC(%L, datetime)
 		) o
 ON s.generate_series = o.datetime
 LEFT OUTER JOIN
 	( SELECT SUM ( amount ) AS revenue,
-		DATE_TRUNC('{{period}}', datetime) as datetime
+		DATE_TRUNC(%L, datetime) as datetime
 		FROM analytics.f_transaction
-		WHERE processor_result = 'success' AND datetime BETWEEN TIMESTAMP '{{start}}'::DATE + '00:00:00'::TIME AND TIMESTAMP '{{end}}'::DATE + '23:59:59'::TIME {{filter}}
-		GROUP BY DATE_TRUNC('{{period}}', datetime)
+		WHERE processor_result = 'success' AND datetime BETWEEN TIMESTAMP %L::DATE + '00:00:00'::TIME AND TIMESTAMP %L::DATE + '23:59:59'::TIME %s
+		GROUP BY DATE_TRUNC(%L, datetime)
 		) tr
 ON s.generate_series = tr.datetime;
