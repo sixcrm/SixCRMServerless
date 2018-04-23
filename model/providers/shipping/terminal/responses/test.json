@@ -8,7 +8,14 @@
       "type":"boolean"
     },
     "message":{
-      "type":"string"
+			"oneOf":[
+				{
+					"type":"string"
+				},
+				{
+					"type":"array"
+				}
+			]
     }
   },
   "required":["success", "message"]
