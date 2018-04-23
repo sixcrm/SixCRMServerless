@@ -4,7 +4,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
 const AnalyticsUtilities = global.SixCRM.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
-const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const CacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
 module.exports = class AnalyticsController extends AnalyticsUtilities {
@@ -256,42 +255,42 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				}
 
-			if (_.includes(facets, 'campaign')) {
+				if (_.includes(facets, 'campaign')) {
 
-				const facet = await this.getResults('reports/facets/campaigns', _resolveParams(), this.default_queue_account_filter);
-				facetResponse.facets.push(facet)
+					const facet = await this.getResults('reports/facets/campaigns', _resolveParams(), this.default_queue_account_filter);
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
-			if (_.includes(facets, 'product')) {
+				if (_.includes(facets, 'product')) {
 
-				const facet = await this.getResults('reports/facets/products', _resolveParams(), this.default_queue_account_filter);
-				facetResponse.facets.push(facet)
+					const facet = await this.getResults('reports/facets/products', _resolveParams(), this.default_queue_account_filter);
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
-			if (_.includes(facets, 'productSchedule')) {
+				if (_.includes(facets, 'productSchedule')) {
 
-				const facet = await this.getResults('reports/facets/product-schedules', _resolveParams(), this.default_queue_account_filter);
-				facetResponse.facets.push(facet)
+					const facet = await this.getResults('reports/facets/product-schedules', _resolveParams(), this.default_queue_account_filter);
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
-			if (_.includes(facets, 'mid')) {
+				if (_.includes(facets, 'mid')) {
 
-				const facet = await this.getResults('reports/facets/mids', _resolveParams(), this.default_queue_account_filter);
-				facetResponse.facets.push(facet)
+					const facet = await this.getResults('reports/facets/mids', _resolveParams(), this.default_queue_account_filter);
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
-			if (_.includes(facets, 'subId')) {
+				if (_.includes(facets, 'subId')) {
 
-				const facet = await this.getResults('reports/facets/sub-ids', _resolveParams(), this.default_queue_account_filter);
-				facetResponse.facets.push(facet)
+					const facet = await this.getResults('reports/facets/sub-ids', _resolveParams(), this.default_queue_account_filter);
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
-			break;
+				break;
 
 		}
 

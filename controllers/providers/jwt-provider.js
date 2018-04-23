@@ -1,5 +1,4 @@
-
-const _ =  require('lodash');
+const _ = require('lodash');
 const Ajv = require('ajv');
 const jwt = require('jsonwebtoken');
 
@@ -12,7 +11,7 @@ const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js')
 //Technical Debt: Refactor
 module.exports = class JWTProvider {
 
-	constructor(){
+	constructor() {
 
 		this.setParameters();
 
@@ -20,20 +19,20 @@ module.exports = class JWTProvider {
 
 	}
 
-	decodeJWT(jwt_string, jwt_signing_string){
+	decodeJWT(jwt_string, jwt_signing_string) {
 
 		let decoded_jwt;
 
-		try{
+		try {
 
-			if(!_.isUndefined(jwt_signing_string)){
+			if (!_.isUndefined(jwt_signing_string)) {
 				decoded_jwt = jwt.verify(jwt_string, jwt_signing_string);
-			}else{
+			} else {
 				decoded_jwt = jwt.decode(jwt_string);
 			}
 
 
-		}catch(error){
+		} catch (error) {
 
 			return false;
 
@@ -43,15 +42,15 @@ module.exports = class JWTProvider {
 
 	}
 
-	decodeAndValidateJWT(jwt_string, jwt_signing_string){
+	decodeAndValidateJWT(jwt_string, jwt_signing_string) {
 
 		let decoded_and_validated_jwt;
 
-		try{
+		try {
 
 			decoded_and_validated_jwt = jwt.verify(jwt_string, jwt_signing_string);
 
-		}catch(error){
+		} catch (error) {
 
 			du.error(error);
 
@@ -61,13 +60,15 @@ module.exports = class JWTProvider {
 
 		du.info(decoded_and_validated_jwt);
 
-		if(decoded_and_validated_jwt === false){ return false; }
+		if (decoded_and_validated_jwt === false) {
+			return false;
+		}
 
-		try{
+		try {
 
 			this.validateJWTContents(decoded_and_validated_jwt);
 
-		}catch(error){
+		} catch (error) {
 
 			return false;
 
@@ -78,9 +79,9 @@ module.exports = class JWTProvider {
 	}
 
 	/*
-    * Entrypoint
-    */
-	verifyJWT(submitted_jwt, jwt_type){
+	 * Entrypoint
+	 */
+	verifyJWT(submitted_jwt, jwt_type) {
 
 		this.setJWTType(jwt_type);
 
@@ -90,17 +91,17 @@ module.exports = class JWTProvider {
 
 	}
 
-	setParameters(){
+	setParameters() {
 
 		let parameters = ['jwt_issuer', 'transaction_jwt_expiration', 'transaction_jwt_secret_key', 'site_jwt_expiration', 'site_jwt_secret_key'];
 
-		if(_.isUndefined(this.jwt_parameters)){
+		if (_.isUndefined(this.jwt_parameters)) {
 			this.jwt_parameters = {};
 		}
 
 		parameters.forEach((parameter) => {
 
-			if(_.has(process.env, parameter)){
+			if (_.has(process.env, parameter)) {
 
 
 				this.jwt_parameters[parameter] = process.env[parameter];
@@ -111,14 +112,14 @@ module.exports = class JWTProvider {
 
 	}
 
-	setJWTType(jwt_type){
+	setJWTType(jwt_type) {
 		du.debug('Set JWT Type');
 
-		if(!_.isUndefined(jwt_type)){
+		if (!_.isUndefined(jwt_type)) {
 
-			if(_.includes(this.jwt_types, jwt_type)){
+			if (_.includes(this.jwt_types, jwt_type)) {
 				this.jwt_type = jwt_type;
-			}else{
+			} else {
 				this.unrecognzedJWTType();
 			}
 
@@ -126,19 +127,19 @@ module.exports = class JWTProvider {
 
 	}
 
-	getJWTType(){
+	getJWTType() {
 		du.debug('Get JWT Type');
-		if(_.has(this, 'jwt_type')){
+		if (_.has(this, 'jwt_type')) {
 
 			return this.jwt_type;
 
 		}
 
-		throw eu.getError('validation','Unset jwt_type property.');
+		throw eu.getError('validation', 'Unset jwt_type property.');
 
 	}
 
-	getJWT(parameters, jwt_type){
+	getJWT(parameters, jwt_type) {
 
 		du.debug('Get JWT');
 
@@ -150,29 +151,29 @@ module.exports = class JWTProvider {
 
 	}
 
-	createJWTContents(parameters){
+	createJWTContents(parameters) {
 
 		du.debug('Create JWT Contents');
 
 		let jwt_contents;
 
-		switch(this.getJWTType()){
+		switch (this.getJWTType()) {
 
-		case 'transaction':
+			case 'transaction':
 
-			jwt_contents = this.createTransactionJWTContents(parameters);
+				jwt_contents = this.createTransactionJWTContents(parameters);
 
-			break;
+				break;
 
-		case 'site':
+			case 'site':
 
-			jwt_contents = this.createSiteJWTContents(parameters);
+				jwt_contents = this.createSiteJWTContents(parameters);
 
-			break;
+				break;
 
-		default:
+			default:
 
-			this.unrecognzedJWTType();
+				this.unrecognzedJWTType();
 
 		}
 
@@ -182,29 +183,29 @@ module.exports = class JWTProvider {
 
 	}
 
-	validateJWTContents(jwt_contents){
+	validateJWTContents(jwt_contents) {
 
 		du.debug('Validate JWT Contents');
 
 		let validation_function;
 
-		switch(this.getJWTType()){
+		switch (this.getJWTType()) {
 
-		case 'transaction':
+			case 'transaction':
 
-			validation_function = this.validateTransactionJWTContents;
+				validation_function = this.validateTransactionJWTContents;
 
-			break;
+				break;
 
-		case 'site':
+			case 'site':
 
-			validation_function = this.validateSiteJWTContents
+				validation_function = this.validateSiteJWTContents
 
-			break;
+				break;
 
-		default:
+			default:
 
-			this.unrecognzedJWTType();
+				this.unrecognzedJWTType();
 
 		}
 
@@ -212,16 +213,16 @@ module.exports = class JWTProvider {
 
 	}
 
-	validateInput(object, validation_function){
+	validateInput(object, validation_function) {
 
 		du.debug('Validate Input');
 
-		if(!_.isFunction(validation_function)){
-			throw eu.getError('server','Validation function is not a function.');
+		if (!_.isFunction(validation_function)) {
+			throw eu.getError('server', 'Validation function is not a function.');
 		}
 
-		if(_.isUndefined(object)){
-			eu.getError('validation','Undefined object input.');
+		if (_.isUndefined(object)) {
+			eu.getError('validation', 'Undefined object input.');
 		}
 
 		//Technical Debt:  Why is this necessary?
@@ -229,21 +230,22 @@ module.exports = class JWTProvider {
 
 		let validation = validation_function(params);
 
-		if(_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0){
+		if (_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0) {
 
 			du.warning(validation);
 
 			throw eu.getError(
 				'validation',
-				'One or more validation errors occurred.',
-				{issues: validation.errors.map(e => e.message)}
+				'One or more validation errors occurred.', {
+					issues: validation.errors.map(e => e.message)
+				}
 			);
 
 		}
 
 	}
 
-	validateTransactionJWTContents(contents){
+	validateTransactionJWTContents(contents) {
 
 		let transaction_jwt_schema = global.SixCRM.routes.include('model', 'jwt/transaction');
 
@@ -265,7 +267,7 @@ module.exports = class JWTProvider {
 
 	}
 
-	validateSiteJWTContents(contents){
+	validateSiteJWTContents(contents) {
 
 		let site_jwt_schema = global.SixCRM.routes.include('model', 'jwt/site');
 
@@ -287,15 +289,15 @@ module.exports = class JWTProvider {
 
 	}
 
-	getUserAlias(user){
+	getUserAlias(user) {
 
 		du.debug('Get User Alias');
 
-		if(_.has(user, 'user_alias')){
+		if (_.has(user, 'user_alias')) {
 			return user.user_alias;
-		}else if(_.has(user, 'id')){
+		} else if (_.has(user, 'id')) {
 			return mungeutilities.munge(user.id);
-		}else if(_.has(user, 'email')){
+		} else if (_.has(user, 'email')) {
 			return mungeutilities.munge(user.email);
 		}
 
@@ -303,11 +305,11 @@ module.exports = class JWTProvider {
 
 	}
 
-	signJWT(jwt_body, signing_key){
+	signJWT(jwt_body, signing_key) {
 
 		du.debug('Sign JWT');
 
-		if(_.isUndefined(signing_key)){
+		if (_.isUndefined(signing_key)) {
 
 			signing_key = this.getSigningKey();
 
@@ -317,43 +319,43 @@ module.exports = class JWTProvider {
 
 	}
 
-	getSigningKey(){
+	getSigningKey() {
 
-		switch(this.getJWTType()){
+		switch (this.getJWTType()) {
 
-		case 'transaction':
+			case 'transaction':
 
-			if(!_.has(this.jwt_parameters, 'transaction_jwt_secret_key')){
-				throw eu.getError('validation','Transaction JWT secret key is not defined.');
-			}
+				if (!_.has(this.jwt_parameters, 'transaction_jwt_secret_key')) {
+					throw eu.getError('validation', 'Transaction JWT secret key is not defined.');
+				}
 
-			du.warning(this.jwt_parameters.transaction_jwt_secret_key);
+				du.warning(this.jwt_parameters.transaction_jwt_secret_key);
 
-			return this.jwt_parameters.transaction_jwt_secret_key;
+				return this.jwt_parameters.transaction_jwt_secret_key;
 
-		case 'site':
+			case 'site':
 
-			if(!_.has(this.jwt_parameters, 'site_jwt_secret_key')){
-				throw eu.getError('validation','Site JST secret key is not defined.');
-			}
+				if (!_.has(this.jwt_parameters, 'site_jwt_secret_key')) {
+					throw eu.getError('validation', 'Site JST secret key is not defined.');
+				}
 
-			return this.jwt_parameters.site_jwt_secret_key;
+				return this.jwt_parameters.site_jwt_secret_key;
 
-		default:
+			default:
 
-			this.unrecognzedJWTType();
+				this.unrecognzedJWTType();
 
 		}
 
 	}
 
-	unrecognzedJWTType(){
+	unrecognzedJWTType() {
 
-		throw eu.getError('validation','Unrecognized JWT Type.');
+		throw eu.getError('validation', 'Unrecognized JWT Type.');
 
 	}
 
-	createTransactionJWTContents(parameters){
+	createTransactionJWTContents(parameters) {
 
 		du.debug('Create Transaction JWT Contents');
 
@@ -374,7 +376,7 @@ module.exports = class JWTProvider {
 
 	}
 
-	createSiteJWTContents(parameters){
+	createSiteJWTContents(parameters) {
 
 		let email = this.getUserEmail(parameters);
 
@@ -394,12 +396,12 @@ module.exports = class JWTProvider {
 	}
 
 	//Technical Debt:  Seems deprecated...
-	getUserEmail(parameters){
+	getUserEmail(parameters) {
 		du.debug('Get User Email');
-		if(_.has(parameters, 'user') && _.has(parameters.user, 'email')){
+		if (_.has(parameters, 'user') && _.has(parameters.user, 'email')) {
 			return parameters.user.email;
 		}
-		throw eu.getError('validation','Unable to get user email.');
+		throw eu.getError('validation', 'Unable to get user email.');
 	}
 
 }

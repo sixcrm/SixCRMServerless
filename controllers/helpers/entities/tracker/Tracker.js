@@ -1,20 +1,19 @@
-
-const _ =  require('lodash');
+const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const PostbackProvider = global.SixCRM.routes.include('controllers', 'providers/postback-provider.js');
 
-module.exports = class TrackerHelperController{
+module.exports = class TrackerHelperController {
 
-	constructor(){
+	constructor() {
 
 		this.postbackprovider = new PostbackProvider();
 
 	}
 
-	handleTracking(session, data){
+	handleTracking(session, data) {
 
 		du.debug('Handle Tracking')
 
@@ -26,11 +25,11 @@ module.exports = class TrackerHelperController{
 
 	}
 
-	getAffiliateIDsFromSession(session){
+	getAffiliateIDsFromSession(session) {
 
 		du.debug('Get Affiliate IDs From Session');
 
-		if(!_.has(this, 'sessionController')){
+		if (!_.has(this, 'sessionController')) {
 			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 			this.sessionController = new SessionController();
 		}
@@ -40,11 +39,11 @@ module.exports = class TrackerHelperController{
 	}
 
 	//Note:  This structure allows for additional tracking behaviors.
-	executeAffiliatesTracking(affiliate_ids, data){
+	executeAffiliatesTracking(affiliate_ids, data) {
 
 		du.debug('Execute Affiliates Tracking');
 
-		if(!_.isArray(affiliate_ids) || affiliate_ids.length < 1){
+		if (!_.isArray(affiliate_ids) || affiliate_ids.length < 1) {
 
 			du.debug('No affiliate identifier information.');
 
@@ -68,18 +67,20 @@ module.exports = class TrackerHelperController{
 
 	}
 
-	executeAffiliateTrackers(affiliate_id, data){
+	executeAffiliateTrackers(affiliate_id, data) {
 
 		du.debug('Execute Affiliate Trackers');
 
-		if(!_.has(this, 'trackerController')){
+		if (!_.has(this, 'trackerController')) {
 			const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 			this.trackerController = new TrackerController();
 		}
 
-		return this.trackerController.listByAffiliate({affiliate: affiliate_id}).then((trackers) => {
+		return this.trackerController.listByAffiliate({
+			affiliate: affiliate_id
+		}).then((trackers) => {
 
-			if(!_.isArray(trackers)){
+			if (!_.isArray(trackers)) {
 
 				du.debug('No trackers associated with this affiliate.');
 
@@ -97,31 +98,31 @@ module.exports = class TrackerHelperController{
 
 	}
 
-	executeTracker(tracker, data){
+	executeTracker(tracker, data) {
 
 		du.debug('Execute Tracker');
 
 		return new Promise((resolve, reject) => {
 
-			switch(tracker.type){
+			switch (tracker.type) {
 
-			case 'postback':
+				case 'postback':
 
-				return this.executePostback(tracker, data).then((result) => {
+					return this.executePostback(tracker, data).then((result) => {
 
-					return resolve(result);
+						return resolve(result);
 
-				});
+					});
 
-			case 'html':
+				case 'html':
 
-				du.debug('Tracker has HTML type, skipping.');
+					du.debug('Tracker has HTML type, skipping.');
 
-				return resolve(null);
+					return resolve(null);
 
-			default:
+				default:
 
-				return reject(eu.getError('validation','Unrecognized Tracker type: '+tracker.type));
+					return reject(eu.getError('validation', 'Unrecognized Tracker type: ' + tracker.type));
 
 			}
 
@@ -129,7 +130,7 @@ module.exports = class TrackerHelperController{
 
 	}
 
-	executePostback(tracker, data){
+	executePostback(tracker, data) {
 
 		du.debug('Execute Postback');
 
