@@ -339,25 +339,36 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			const end = parameters.facets.facets.find(f => f.facet === 'end');
 			const period = parameters.facets.facets.find(f => f.facet === 'period');
 			const campaign = parameters.facets.facets.find(f => f.facet === 'campaign');
+			const affiliate = parameters.facets.facets.find(f => f.facet === 'affiliate');
+			const subId = parameters.facets.facets.find(f => f.facet === 'subId');
+			const mid = parameters.facets.facets.find(f => f.facet === 'mid');
+			const product = parameters.facets.facets.find(f => f.facet === 'product');
+			const productSchedule = parameters.facets.facets.find(f => f.facet === 'productSchedule');
 
 			const params = {
 				start: start.values[0],
 				end: end.values[0]
 			}
 
-			if (period) {
-
-				params.period = period.values[0];
-
-			}
-
-			if (campaign) {
-
-				params.campaign = campaign.values[0];
-
-			}
+			_resolveParamValue('period', period);
+			_resolveParamValue('campaign', campaign);
+			_resolveParamValue('affiliate', affiliate);
+			_resolveParamValue('subId', subId);
+			_resolveParamValue('mid', mid);
+			_resolveParamValue('product', product);
+			_resolveParamValue('productSchedule', productSchedule);
 
 			return params;
+
+			function _resolveParamValue(identifier, facet) {
+
+				if (facet) {
+
+					params[identifier] = facet.values[0];
+
+				}
+
+			}
 
 		}
 
@@ -396,11 +407,12 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		const queryTransform = require(path.join(__dirname, 'queries', queryRoot, 'query-transform'));
 		const query = await queryTransform(parameters);
 		const auroraContext = global.SixCRM.getResource('auroraContext');
-		return this.cacheController.useCache(query, async () => {
-			const results = await auroraContext.connection.query(query);
-			const resultTransform = require(path.join(__dirname, 'queries', queryRoot, 'result-transform'));
-			return resultTransform(results.rows);
-		});
+
+		// return this.cacheController.useCache(query, async () => {
+		const results = await auroraContext.connection.query(query);
+		const resultTransform = require(path.join(__dirname, 'queries', queryRoot, 'result-transform'));
+		return resultTransform(results.rows);
+		// });
 
 	}
 

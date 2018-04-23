@@ -28,11 +28,12 @@ SELECT
 	COALESCE(CAST(COALESCE(declines.declines, 0) AS DOUBLE PRECISION) / CAST(gross_orders.attempts AS DOUBLE PRECISION), 0) AS declines_percentage
 FROM
 (
+	-- todo: can we match these based on the session to particular products or schedules?
 	SELECT
 		s.affiliate,
 		COUNT(1) AS clicks
 	FROM analytics.f_event s
-	WHERE %s AND "type" = 'click'
+	WHERE %s AND "type" = 'click' -- i = 1
 	GROUP BY s.affiliate
 ) clicks
 
@@ -48,10 +49,12 @@ LEFT OUTER JOIN
 		(SELECT
 			DISTINCT s.id
 		FROM analytics.f_session s
-		INNER JOIN analytics.f_transaction t on s.id = t.session
-		WHERE %s AND t.processor_result = 'success') sub_success
+		INNER JOIN analytics.f_transaction t ON s.id = t.session
+		-- INNER JOIN analytics.f_transaction_product tp ON t.id = tp.transaction_id
+		-- LEFT OUTER JOIN analytics.f_transaction_product_schedule tps ON t.id = tps.transaction_id AND tp.product_id = tps.product_id
+		WHERE %s AND t.processor_result = 'success') sub_success  -- i = 2
 	ON s.id = sub_success.id
-	WHERE %s AND sub_success.id IS NULL
+	WHERE %s AND sub_success.id IS NULL  -- i = 3
 	GROUP BY s.affiliate
 
 ) partials
@@ -72,8 +75,10 @@ LEFT OUTER JOIN
 		SELECT
 			DISTINCT s.id
 		FROM analytics.f_session s
-		INNER JOIN analytics.f_transaction t on s.id = t.session
-		WHERE %s AND t.processor_result = 'success') sub_success
+		INNER JOIN analytics.f_transaction t ON s.id = t.session
+		-- INNER JOIN analytics.f_transaction_product tp ON t.id = tp.transaction_id
+		-- LEFT OUTER JOIN analytics.f_transaction_product_schedule tps ON t.id = tps.transaction_id AND tp.product_id = tps.product_id
+		WHERE %s AND t.processor_result = 'success') sub_success  -- i = 4
 	ON s.id = sub_success.id
 	LEFT OUTER JOIN
 		(
@@ -81,10 +86,12 @@ LEFT OUTER JOIN
 		SELECT
 			DISTINCT s.id
 		FROM analytics.f_session s
-		INNER JOIN analytics.f_transaction t on s.id = t.session
-		WHERE %s AND t.processor_result = 'fail') sub_failure
+		INNER JOIN analytics.f_transaction t ON s.id = t.session
+		-- INNER JOIN analytics.f_transaction_product tp ON t.id = tp.transaction_id
+		-- LEFT OUTER JOIN analytics.f_transaction_product_schedule tps ON t.id = tps.transaction_id AND tp.product_id = tps.product_id
+		WHERE %s AND t.processor_result = 'fail') sub_failure  -- i = 5
 	ON s.id = sub_failure.id
-	WHERE %s AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL
+	WHERE %s AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL  -- i = 6
 	GROUP BY s.affiliate
 
 ) declines
@@ -99,8 +106,10 @@ LEFT OUTER JOIN
 		COUNT(DISTINCT s.id) as attempts,
 		s.affiliate
 	FROM analytics.f_session s
-	INNER JOIN analytics.f_transaction t on s.id = t.session
-	WHERE %s
+	INNER JOIN analytics.f_transaction t ON s.id = t.session
+	-- INNER JOIN analytics.f_transaction_product tp ON t.id = tp.transaction_id
+	-- LEFT OUTER JOIN analytics.f_transaction_product_schedule tps ON t.id = tps.transaction_id AND tp.product_id = tps.product_id
+	WHERE %s  -- i = 7
 	GROUP BY s.affiliate
 ) gross_orders
 
@@ -115,8 +124,15 @@ LEFT OUTER JOIN
 		SUM(t.amount) as renveue,
 		s.affiliate
 	FROM analytics.f_session s
-	INNER JOIN analytics.f_transaction t on s.id = t.session
-	WHERE %s AND t.processor_result = 'success' AND t.subtype NOT LIKE 'upsell%'
+	INNER JOIN analytics.f_transaction t ON s.id = t.session
+	-- INNER JOIN (
+	-- 	SELECT DISTINCT id
+	-- 	FROM analytics.f_transaction t
+		-- INNER JOIN analytics.f_transaction_product tp ON t.id = tp.transaction_id
+		-- LEFT OUTER JOIN analytics.f_transaction_product_schedule tps ON t.id = tps.transaction_id AND tp.product_id = tps.product_id
+	-- 	WHERE 1 = 1 %s --filter on product id  -- i = 8
+	-- ) tp ON tp.id = t.id
+	WHERE %s AND t.processor_result = 'success' AND t.subtype NOT LIKE 'upsell%'  -- i = 9
 	GROUP BY s.affiliate
 ) sales
 
@@ -131,8 +147,15 @@ LEFT OUTER JOIN
 		SUM(t.amount) as renveue,
 		s.affiliate
 	FROM analytics.f_session s
-	INNER JOIN analytics.f_transaction t on s.id = t.session
-	WHERE %s AND t.processor_result = 'success' AND t.subtype LIKE 'upsell%'
+	INNER JOIN analytics.f_transaction t ON s.id = t.session
+	-- INNER JOIN (
+	-- 	SELECT DISTINCT id
+	-- 	FROM analytics.f_transaction t
+		-- INNER JOIN analytics.f_transaction_product tp ON t.id = tp.transaction_id
+		-- LEFT OUTER JOIN analytics.f_transaction_product_schedule tps ON t.id = tps.transaction_id AND tp.product_id = tps.product_id
+	-- 	WHERE 1 = 1 %s --filter on product id  -- i = 10
+	-- ) tp ON tp.id = t.id
+	WHERE %s AND t.processor_result = 'success' AND t.subtype LIKE 'upsell%'  -- i = 11
 	GROUP BY s.affiliate
 ) upsells
 
