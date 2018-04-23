@@ -238,42 +238,42 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				}
 
-			if (_.includes(facets, 'campaign')) {
+				if (_.includes(facets, 'campaign')) {
 
-				const facet = await this.query('reports/facets/campaigns', _resolveParams());
-				facetResponse.facets.push(facet)
+					const facet = await this.query('reports/facets/campaigns', _resolveParams());
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
-			if (_.includes(facets, 'product')) {
+				if (_.includes(facets, 'product')) {
 
-				const facet = await this.query('reports/facets/products', _resolveParams());
-				facetResponse.facets.push(facet)
+					const facet = await this.query('reports/facets/products', _resolveParams());
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
-			if (_.includes(facets, 'productSchedule')) {
+				if (_.includes(facets, 'productSchedule')) {
 
-				const facet = await this.query('reports/facets/product-schedules', _resolveParams());
-				facetResponse.facets.push(facet)
+					const facet = await this.query('reports/facets/product-schedules', _resolveParams());
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
-			if (_.includes(facets, 'mid')) {
+				if (_.includes(facets, 'mid')) {
 
-				const facet = await this.query('reports/facets/mids', _resolveParams());
-				facetResponse.facets.push(facet)
+					const facet = await this.query('reports/facets/mids', _resolveParams());
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
-			if (_.includes(facets, 'subId')) {
+				if (_.includes(facets, 'subId')) {
 
-				const facet = await this.query('reports/facets/sub-ids', _resolveParams());
-				facetResponse.facets.push(facet)
+					const facet = await this.query('reports/facets/sub-ids', _resolveParams());
+					facetResponse.facets.push(facet)
 
-			}
+				}
 
-			break;
+				break;
 
 		}
 
