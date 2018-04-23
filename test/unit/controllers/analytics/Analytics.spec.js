@@ -36,7 +36,7 @@ describe('controllers/Analytics.js', () => {
 				}
 
 				getResults(query_name, parameters, query_filters) {
-					expect(query_name).to.equal('activity_by_identifier');
+					expect(query_name).to.equal('deprecate/activity_by_identifier');
 					expect(parameters).to.deep.equal({
 						an_activity_filter: params.activityfilter.an_activity_filter,
 						order: params.pagination.order,
@@ -74,7 +74,7 @@ describe('controllers/Analytics.js', () => {
 				}
 
 				getResults(query_name, parameters, query_filters) {
-					expect(query_name).to.equal('campaigns_by_amount');
+					expect(query_name).to.equal('deprecate/campaigns_by_amount');
 					expect(parameters).to.deep.equal({
 						an_analytics_filter: params.analyticsfilter.an_analytics_filter,
 						order: 'desc',
@@ -110,7 +110,7 @@ describe('controllers/Analytics.js', () => {
 				}
 
 				getResults(query_name, parameters, query_filters) {
-					expect(query_name).to.equal('event_funnel');
+					expect(query_name).to.equal('deprecate/event_funnel');
 					expect(parameters).to.equal(params.analyticsfilter);
 					expect(query_filters).to.be.defined;
 					return Promise.resolve('any_results')
