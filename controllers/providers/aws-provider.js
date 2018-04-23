@@ -1,6 +1,4 @@
-
 const _  = require('lodash');
-//const AWSXRay = require('aws-xray-sdk');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');

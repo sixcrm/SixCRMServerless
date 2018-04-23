@@ -17,6 +17,7 @@
     "faker": "^4.1.0",
     "graphql": "^0.9.0",
     "graphql-type-json": "^0.1.4",
+    "https": "^1.0.0",
     "image-type": "^3.0.0",
     "js2xmlparser2": "^0.2.0",
     "json2csv": "^3.11.5",
@@ -39,10 +40,11 @@
     "util": "^0.10.3",
     "uuid": "^3.2.1",
     "xlsx": "^0.10.5",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "aws-sdk": "^2.225.1",
+    "aws-sdk": "^2.226.1",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "chai-json-schema": "^1.4.0",
