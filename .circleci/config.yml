@@ -623,25 +623,25 @@ workflows:
                 - development
       - deploy_iam:
           requires:
-            - pre_deploy
+            - deploy_route_tables
             - lint
             - unit_tests
             - backup_datastore
       - deploy_s3:
           requires:
-            - pre_deploy
+            - deploy_route_tables
             - lint
             - unit_tests
             - backup_datastore
       - deploy_elasticsearch:
           requires:
-            - pre_deploy
+            - deploy_route_tables
             - lint
             - unit_tests
             - backup_datastore
       - deploy_serverless:
           requires:
-            - pre_deploy
+            - deploy_route_tables
             - lint
             - unit_tests
             - backup_datastore
