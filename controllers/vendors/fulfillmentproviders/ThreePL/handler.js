@@ -210,10 +210,10 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 			return this.ThreePLFacilityID;
 		}
 
-		let facility_id = this.parameters.get('fulfillment_provider', 'provider.threepl_facility_id', false);
+		let fulfillment_provider = this.parameters.get('fulfillmentprovider', 'provider.threepl_facility_id', false);
 
-		if(!_.isNull(facility_id)){
-			return facility_id;
+		if(!_.isNull(fulfillment_provider)){
+			return fulfillment_provider.provider.threepl_facility_id;
 		}
 
 		throw eu.getError('server', 'Unable to establish ThreePL Facility ID.');
@@ -252,6 +252,12 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 
 		if(_.has(this, 'ThreePLID')){
 			return this.ThreePLID;
+		}
+
+		let fulfillment_provider = this.parameters.get('fulfillmentprovider', 'provider.threepl_id', false);
+
+		if(!_.isNull(fulfillment_provider)){
+			return fulfillment_provider.provider.threepl_id;
 		}
 
 		throw eu.getError('Unknown ThreePL ID');
