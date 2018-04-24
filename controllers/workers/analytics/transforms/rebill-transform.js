@@ -3,7 +3,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class RebillTransform extends AnalyticsTransfrom {
 
-	transform(record) {
+	async transform(record) {
 
 		du.debug('RebillTransform.transform()');
 

@@ -2,6 +2,9 @@ require('../../../SixCRM.js');
 const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
 const AnalyticsEventHandler = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-handler.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context');
+const PermissionUtilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+
+PermissionUtilities.disableACLs();
 
 module.exports.analyticseventhandler = (event, context, callback) => {
 

@@ -3,7 +3,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class ClickTransform extends AnalyticsTransfrom {
 
-	transform(record) {
+	async transform(record) {
 
 		du.debug('ClickTransform.transform()');
 

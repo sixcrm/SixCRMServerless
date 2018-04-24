@@ -2,23 +2,26 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class AnalyticsTransform {
 
-	execute(record) {
+	async execute(record) {
 
 		du.debug('AnalyticsTransform.execute()');
 
-		return this.transform(record)
-			.catch((ex) => {
+		try {
 
-				du.error('AnalyticsTransform.execute()', record, ex);
+			return await this.transform(record)
 
-				throw ex;
+		} catch (ex) {
 
-			});
+			du.error('AnalyticsTransform.execute()', record, ex);
+
+			throw ex;
+
+		}
 
 	}
 
 	// override
-	transform(record) {
+	async transform(record) {
 
 		return new Promise(record);
 

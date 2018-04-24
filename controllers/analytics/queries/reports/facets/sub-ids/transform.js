@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
 
@@ -19,7 +20,7 @@ module.exports = async (results) => {
 
 	}
 
-	const affiliates = response.affiliates || [];
+	const affiliates = _.sortBy(response.affiliates, 'name') || [];
 
 	return {
 		facet: 'subId',

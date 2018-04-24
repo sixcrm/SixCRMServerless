@@ -15,7 +15,11 @@
 			"subAffiliate4": "c15faf77-0667-4f19-8be4-8793d2244b22",
 			"subAffiliate5": "25997dc4-44e6-49ec-a1c8-faa8c7344f28"
 		},
-		"merchantProvider": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
+		"merchantProvider": {
+			"id": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
+			"name": "Test MID 1",
+			"monthlyCap": 1000000000
+		},
 		"processorResult": "fail",
 		"amount": 34.99,
 		"type": "sale",

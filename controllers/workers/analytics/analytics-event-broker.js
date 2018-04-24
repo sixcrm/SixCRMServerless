@@ -2,12 +2,14 @@
 // const uuid = require('uuid');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const BBPromise = require('bluebird');
+const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 
 module.exports = class AnalyticsEventBroker {
 
 	constructor() {
 
 		this._eventTypeHandlerMap = null;
+		this._sqsProvider = new SQSProvider();
 
 	}
 
@@ -25,7 +27,7 @@ module.exports = class AnalyticsEventBroker {
 
 	}
 
-	_recordHandler(snsRecord) {
+	async _recordHandler(snsRecord) {
 
 		try {
 
@@ -50,15 +52,9 @@ module.exports = class AnalyticsEventBroker {
 			}
 
 			const Transform = require(`./transforms/${handerMap.transform}`);
-
-			return Promise.resolve()
-				.then(() => new Transform().execute(record))
-				.then(this._pushToQueue.bind(this))
-				.catch((ex) => {
-
-					du.error('AnalyticsEventBroker.recordHandler(): ERROR', ex);
-
-				});
+			const result = await new Transform().execute(record);
+			await this._pushToQueue(result);
+			return result;
 
 		} catch (ex) {
 
@@ -68,7 +64,7 @@ module.exports = class AnalyticsEventBroker {
 
 	}
 
-	_pushToQueue(record) {
+	async _pushToQueue(record) {
 
 		du.debug('AnalyticsEventBroker.pushToQueue()');
 
@@ -76,19 +72,12 @@ module.exports = class AnalyticsEventBroker {
 
 		const sqsMessage = JSON.stringify(record);
 
-		const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
-		const sqsprovider = new SQSProvider();
-
 		const queue = global.SixCRM.configuration.isLocal() ? 'analytics' : 'analytics.fifo';
 
-		return sqsprovider.sendMessage({
+		await this._sqsProvider.sendMessage({
 			message_body: sqsMessage,
 			queue,
 			messageGroupId: 'analytics'
-		}).then(() => {
-
-			return record;
-
 		});
 
 	}

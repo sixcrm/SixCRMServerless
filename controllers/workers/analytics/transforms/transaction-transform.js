@@ -1,17 +1,20 @@
 const _ = require('lodash');
 const AnalyticsTransfrom = require('../analytics-transform');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
 module.exports = class TransactionTransform extends AnalyticsTransfrom {
 
-	transform(record) {
+	async transform(record) {
 
 		du.debug('TransactionTransform.transform()', record.event_type);
 
-		return Promise.resolve({
+		const result = {
 			id: record.context.transaction.id,
 			datetime: record.context.transaction.created_at,
-			merchantProvider: record.context.transaction.merchant_provider,
+			merchantProvider: {
+				id: record.context.transaction.merchant_provider
+			},
 			processorResult: record.context.transaction.result,
 			amount: record.context.transaction.amount,
 			type: record.context.transaction.type,
@@ -83,7 +86,25 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 					})
 				}
 			})
-		});
+		};
+
+		try {
+
+			const controller = new MerchantProviderController();
+			const response = await controller.get({
+				id: record.context.transaction.merchant_provider,
+				fatal: true
+			});
+			result.merchantProvider.name = response.name;
+			result.merchantProvider.monthlyCap = response.processing.monthly_cap;
+
+		} catch (ex) {
+
+			du.warning('TransactionTransform.transform(): could not resolve merchant provider', ex);
+
+		}
+
+		return result;
 
 	}
 

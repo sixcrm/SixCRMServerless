@@ -4,7 +4,7 @@ const moment = require('moment-timezone');
 
 module.exports = class ConfirmTransform extends AnalyticsTransfrom {
 
-	transform(record) {
+	async transform(record) {
 
 		du.debug('ConfirmTransform.transform()');
 

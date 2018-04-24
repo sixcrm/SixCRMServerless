@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 
@@ -19,7 +20,7 @@ module.exports = async (results) => {
 
 	}
 
-	const mids = response.merchantproviders || [];
+	const mids = _.sortBy(response.merchantproviders, 'name') || [];
 
 	return {
 		facet: 'mid',
