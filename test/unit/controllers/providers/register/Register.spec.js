@@ -43,6 +43,10 @@ function getValidCreditCard() {
 	return MockEntities.getValidCreditCard();
 }
 
+function getValidCreditCardNumber() {
+	return MockEntities.getValidCreditCardNumber();
+}
+
 /*
 function getValidPlaintextCreditCard(){
   return MockEntities.getValidPlaintextCreditCard();
@@ -861,6 +865,10 @@ describe('controllers/providers/Register.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
 				sanitize() {}
+				get() {
+					creditcard.number = getValidCreditCardNumber();
+					return Promise.resolve(creditcard);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/MerchantProviderSelector.js'), class {
@@ -966,6 +974,10 @@ describe('controllers/providers/Register.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
 				sanitize() {}
+				get() {
+					creditcard.number = getValidCreditCardNumber();
+					return Promise.resolve(creditcard);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/MerchantProviderSelector.js'), class {
@@ -1071,6 +1083,10 @@ describe('controllers/providers/Register.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
 				sanitize() {}
+				get() {
+					creditcard.number = getValidCreditCardNumber();
+					return Promise.resolve(creditcard);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/MerchantProviderSelector.js'), class {
@@ -1138,6 +1154,14 @@ describe('controllers/providers/Register.js', () => {
 				getCreditCards(_customer) {
 					expect(_customer).to.equal(customer);
 					return Promise.resolve([selected_creditcard]);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				sanitize() {}
+				get() {
+					selected_creditcard.number = getValidCreditCardNumber();
+					return Promise.resolve(selected_creditcard);
 				}
 			});
 
@@ -1331,6 +1355,14 @@ describe('controllers/providers/Register.js', () => {
 				get({id}) {
 					expect(id).to.equal(customer);
 					return Promise.resolve(customer);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				sanitize() {}
+				get() {
+					selected_creditcard.number = getValidCreditCardNumber();
+					return Promise.resolve(selected_creditcard);
 				}
 			});
 
@@ -2151,6 +2183,7 @@ describe('controllers/providers/Register.js', () => {
 			let rebill = getValidRebill();
 			let parentsession = getValidParentSession();
 			let merchant_provider_groups = getValidMerchantProviderGroups();
+			let creditcard = getValidCreditCard();
 
 			let mock_customer = class {
 				constructor() {}
@@ -2159,7 +2192,7 @@ describe('controllers/providers/Register.js', () => {
 					return Promise.resolve(getValidCustomer())
 				}
 				getCreditCards() {
-					return Promise.resolve(getValidCreditCards())
+					return Promise.resolve([creditcard])
 				}
 				sanitize(input) {
 					expect(input).to.equal(false);
@@ -2167,6 +2200,14 @@ describe('controllers/providers/Register.js', () => {
 			};
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
+				sanitize() {}
+				get() {
+					creditcard.number = getValidCreditCardNumber();
+					return Promise.resolve(creditcard);
+				}
+			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/MerchantProviderSelector.js'), class {
 				constructor() {}

@@ -1,5 +1,6 @@
 
 const _ = require('lodash');
+const creditCardType = require('credit-card-type');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -111,7 +112,15 @@ module.exports = class MerchantProviderGeneralFilter {
 				return this.makeGeneralBrandString(accepted_payment_method);
 			});
 
-			return _.includes(accepted_payment_methods_array, this.makeGeneralBrandString(creditcard.properties.brand));
+			const creditcard_types = creditCardType(creditcard.bin);
+
+			if (creditcard_types.length !== 1) {
+				throw eu.getError('server', 'Could not determine credit card type.');
+			}
+
+			const creditcard_type = this.makeGeneralBrandString(creditcard_types[0].niceType);
+
+			return _.includes(accepted_payment_methods_array, creditcard_type);
 
 		});
 
@@ -221,4 +230,3 @@ module.exports = class MerchantProviderGeneralFilter {
 	}
 
 }
-

@@ -82,8 +82,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 		du.debug('Acquire CreditCard Properties');
 
 		return this.acquireCreditCard()
-			.then(() => this.setCreditCardBINNumber())
-			.then(() => this.getCreditCardProperties());
+			.then(() => this.setCreditCardBINNumber());
 
 	}
 

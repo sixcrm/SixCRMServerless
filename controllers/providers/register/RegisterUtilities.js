@@ -134,6 +134,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		return this.acquireCustomer()
 			.then(() => this.acquireCustomerCreditCards())
 			.then(() => this.selectCustomerCreditCard())
+			.then(() => this.hydrateSelectedCreditCard())
 			.then(() => this.acquireMerchantProviderGroups());
 
 	}
