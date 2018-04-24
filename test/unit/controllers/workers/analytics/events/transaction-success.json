@@ -1,6 +1,7 @@
 {
 	"result": {
 		"id": "0a35f59b-88d9-4227-a7ef-5272da0a785d",
+		"type": "transaction_success",
 		"datetime": "2018-03-23T21:58:46.068Z",
 		"session": {
 			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
@@ -22,7 +23,7 @@
 		},
 		"processorResult": "success",
 		"amount": 34.99,
-		"type": "sale",
+		"transactionType": "sale",
 		"subtype": "main",
 		"customer": "b1cf3769-a541-43f2-b03f-2f2e468a10f5",
 		"creditcard": "4111111111111111",

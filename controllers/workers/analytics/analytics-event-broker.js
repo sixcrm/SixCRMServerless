@@ -2,14 +2,12 @@
 // const uuid = require('uuid');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const BBPromise = require('bluebird');
-const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 
 module.exports = class AnalyticsEventBroker {
 
 	constructor() {
 
 		this._eventTypeHandlerMap = null;
-		this._sqsProvider = new SQSProvider();
 
 	}
 
@@ -74,7 +72,9 @@ module.exports = class AnalyticsEventBroker {
 
 		const queue = global.SixCRM.configuration.isLocal() ? 'analytics' : 'analytics.fifo';
 
-		await this._sqsProvider.sendMessage({
+		const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
+
+		await new SQSProvider().sendMessage({
 			message_body: sqsMessage,
 			queue,
 			messageGroupId: 'analytics'
