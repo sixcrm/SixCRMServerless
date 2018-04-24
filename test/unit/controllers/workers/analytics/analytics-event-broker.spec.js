@@ -19,6 +19,22 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 			warnOnUnregistered: false
 		});
 
+		mockery.registerMock(global.SixCRM.routes.path('controllers','entities/MerchantProvider.js'), class {
+
+			async get() {
+
+				return {
+					id: "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
+					name: "Test MID 1",
+					processing: {
+						monthly_cap: 1000000000
+					}
+				}
+
+			}
+
+		});
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {
 				return Promise.resolve(true);
