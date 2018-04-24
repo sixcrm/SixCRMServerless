@@ -1,4 +1,4 @@
--- Partial	Session without a successful transaction
+-- Partial	"Leads - session wit a successful transaction"
 -- Gross orders	Sessions with a transaction
 -- Sale	Session with at least one successful transaction
 -- Sale Percentage	Sales / Gross Orders
