@@ -51,7 +51,7 @@ module.exports = class LeadTransform extends AnalyticsTransfrom {
 
 		}
 
-		return Promise.resolve(result);
+		return result;
 
 	}
 

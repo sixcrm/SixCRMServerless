@@ -29,7 +29,7 @@ module.exports = class ClickTransform extends AnalyticsTransfrom {
 
 		}
 
-		return Promise.resolve(result);
+		return result;
 
 	}
 

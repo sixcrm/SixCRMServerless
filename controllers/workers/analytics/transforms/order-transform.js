@@ -51,7 +51,7 @@ module.exports = class OrderTransform extends AnalyticsTransfrom {
 
 		}
 
-		return Promise.resolve(result);
+		return result;
 
 	}
 
