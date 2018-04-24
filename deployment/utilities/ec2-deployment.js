@@ -86,7 +86,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 					return this.ec2provider.createDefaultVpc();
 				}
 
-				return this.ec2provider.createVpc(vpc_definition);
+				return this.ec2provider.createVPC(vpc_definition);
 
 			}).then(result => {
 
@@ -150,6 +150,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		return this.gatewayExists(ig_definition).then(result => {
 
+			du.info(result);
 			if(_.isNull(result)){
 				du.highlight('Internet Gateway does not exist: '+ig_definition.Name);
 				return this.createInternetGateway(ig_definition);
@@ -158,7 +159,32 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 			du.highlight('Internet Gateway exists: '+ig_definition.Name);
 			return result;
 
+		}).then((internet_gateway) => {
+
+			return this.setVPC('sixcrm').then(() => {
+				return this.attachInternetGateway(internet_gateway).catch(error => {
+					if(error.code == 'Resource.AlreadyAssociated'){
+						du.highlight('Internet Gateway already associated');
+						return true;
+					}
+					throw error;
+				})
+			});
+
 		});
+
+	}
+
+	attachInternetGateway(internet_gateway){
+
+		du.debug('Attach Internet Gateway');
+
+		let argumentation = {
+			InternetGatewayId: internet_gateway.InternetGatewayId,
+			VpcId: this.vpc.VpcId
+		};
+
+		return this.ec2provider.attachInternetGateway(argumentation);
 
 	}
 
@@ -169,7 +195,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 		return this.ec2provider.createInternetGateway().then(result => {
 			return this.nameEC2Resource(result.InternetGateway.InternetGatewayId, ig_definition.Name).then(() => {
 				du.highlight('Internet Gateway Created: '+ig_definition.name);
-				return result;
+				return result.InternetGateway;
 			});
 		});
 
@@ -207,7 +233,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		const route_tables = this.getConfigurationJSON('route_tables');
 
-		return this.setVPC().then(() => {
+		return this.setVPC('sixcrm').then(() => {
 
 			let route_table_promises = arrayutilities.map(route_tables, (route_table) => {
 
@@ -248,11 +274,18 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 					let subnet_associations = arrayutilities.map(subnets, subnet => {
 
 						if(_.has(subnet, 'SubnetId')){
-							let argumentation = {RouteTableId: route_table.RouteTableId, SubnetId: subnet.SubnetId};
+
+							let argumentation = {
+								RouteTableId: route_table.RouteTableId,
+								SubnetId: subnet.SubnetId
+							};
+
 							return () => this.ec2provider.associateRouteTable(argumentation);
+
 						}
 
 						du.warning('Unknown subnet structure: ', subnet);
+
 						return () => Promise.resolve(null);
 
 					});
@@ -306,6 +339,8 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 				NatGatewayId: nat.NatGatewayId,
 			});
 
+			du.warning(argumentation);
+
 			return this.ec2provider.createRoute(argumentation).then(()=> {
 				du.highlight('Route created.');
 				return true;
@@ -337,7 +372,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 			}
 
 			return this.nameEC2Resource(result.RouteTable.RouteTableId, route_table_definition.Name).then(() => {
-				return result;
+				return result.RouteTable;
 			});
 
 		});
@@ -587,7 +622,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		const subnets = this.getConfigurationJSON('subnets');
 
-		return this.setVPC().then(() => {
+		return this.setVPC('sixcrm').then(() => {
 
 			let subnet_promises = arrayutilities.map(subnets, (subnet) => {
 
@@ -601,12 +636,9 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	setVPC(){
+	setVPC(vpc_name = null){
 
 		du.debug('Set VPC');
-
-		//Technical Debt:  Enable deploying to non-default VPCs
-		//const deployment_vpc = this.getConfigurationJSON('vpcs');
 
 		let argumentation = {
 			Filters:[
@@ -617,20 +649,18 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 			]
 		};
 
-		/*
-    if(_.has(deployment_vpc, 'ID')){
+		if(!_.isNull(vpc_name)){
 
-      argumentation = {
-        Filters:[
-          {
-            Name: 'vpc-id',
-            Values:[deployment_vpc.ID]
-          }
-        ]
-      };
+			argumentation = {
+				Filters: [
+					{
+						Name: 'tag:Name',
+						Values: [vpc_name]
+					}
+				]
+			};
 
-    }
-    */
+		}
 
 		return this.ec2provider.describeVPCs(argumentation).then(result => {
 

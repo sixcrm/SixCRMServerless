@@ -6,6 +6,7 @@ module.exports.getLambdaSubnets = () => {
 	let ec2_deployment = new EC2Deployment();
 
 	let subnet_promises = arrayutilities.map(global.SixCRM.configuration.site_config.lambda.subnets, subnet => {
+		console.log(subnet);
 		return ec2_deployment.subnetExists({
 			Name: subnet
 		});

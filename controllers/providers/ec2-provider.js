@@ -197,6 +197,22 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
+	attachInternetGateway(parameters){
+
+		du.debug('Attach Internet Gateway');
+
+		return new Promise((resolve) => {
+
+			this.ec2.attachInternetGateway(parameters, (error, data) => {
+
+				resolve(this.tolerantCallback(error, data, false));
+
+			});
+
+		});
+
+	}
+
 	createInternetGateway(){
 
 		du.debug('Create Internet Gateway');
@@ -232,6 +248,8 @@ module.exports = class EC2Provider extends AWSProvider {
 	associateRouteTable(parameters){
 
 		du.debug('Associate Route Table');
+
+		du.warning(parameters);
 
 		return new Promise((resolve) => {
 

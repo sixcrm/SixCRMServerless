@@ -132,6 +132,90 @@ jobs:
       - run:
           name: Debugging 2
           command: printenv
+  deploy_vpc:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy VPC
+          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_vpc.js
+  deploy_subnets:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy Subnets
+          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_subnets.js
+  deploy_eips:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy Elastic IP Addresses
+          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_eips.js
+  deploy_internet_gateways:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy Internet Gateways
+          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_internet_gateways.js
+  deploy_nats:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy NATs
+          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_nats.js
+  deploy_route_tables:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy Route Tables
+          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_route_tables.js
   backup_datastore:
     <<: *job-defaults
     steps:
@@ -509,6 +593,27 @@ workflows:
             - build
             - unit_tests
             - lint
+      - deploy_vpc:
+          requires:
+            - pre_deploy
+      - deploy_security_groups:
+          requires:
+            - deploy_vpc
+      - deploy_subnets:
+          requires:
+            - deploy_security_groups
+      - deploy_eips:
+          requires:
+            - deploy_subnets
+      - deploy_internet_gateways:
+          requires:
+            - deploy_subnets
+      - deploy_nats:
+          requires:
+            - deploy_internet_gateways
+      - deploy_route_tables:
+          requires:
+            - deploy_nats
       - backup_datastore:
           requires:
             - pre_deploy
@@ -516,12 +621,6 @@ workflows:
             branches:
               ignore:
                 - development
-      - deploy_security_groups:
-          requires:
-            - pre_deploy
-            - lint
-            - unit_tests
-            - backup_datastore
       - deploy_iam:
           requires:
             - pre_deploy
@@ -557,15 +656,12 @@ workflows:
             - deploy_iam
       - deploy_sqs:
           requires:
-            - deploy_security_groups
             - deploy_iam
       - deploy_elasticache:
           requires:
-            - deploy_security_groups
             - deploy_iam
       - deploy_dynamodb:
           requires:
-            - deploy_security_groups
             - deploy_iam
       # - deploy_redshift:
       #     requires:
@@ -573,12 +669,10 @@ workflows:
       #       - deploy_iam
       - deploy_aurora:
           requires:
-            - deploy_security_groups
             - deploy_iam
       - post_deployment:
           requires:
             - deploy_serverless
-            - deploy_security_groups
             - deploy_s3
             - deploy_sqs
             - deploy_elasticache

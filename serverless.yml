@@ -26,10 +26,9 @@ provider:
     aws_region: ${opt:region, self:provider.region}
     aws_account: ${self:provider.account}
     SIX_VERBOSE: ${file(./config/${opt:stage}/site.yml):serverless.verbose}
-    test: 'atest'
-    #vpc:
-      #securityGroupIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSecurityGroup}
-      #subnetIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSubnets}
+    vpc:
+      securityGroupIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSecurityGroup}
+      subnetIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSubnets}
     cloudsearch_domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
     aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
     elasticsearch_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElasticSearchEndpoint}
