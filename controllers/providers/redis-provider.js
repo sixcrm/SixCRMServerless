@@ -215,18 +215,31 @@ module.exports = class RedisProvider {
 		return Math.min(options.attempt * 100, 1000);
 	}
 
-	test(){
+	async test() {
 
 		du.debug('Test');
 
-		return this.set('test', 'test').then(result => {
-			if(result == 'OK'){
+		try {
+
+			await this.connect();
+
+			let result = await this.set('test', 'test');
+			if (result == 'OK') {
 				return {status: 'OK', message: 'Successfully connected to ElastiCache.'};
+			} else {
+				return {status: 'ERROR', message: 'Unable to connect to ElastiCache.'};
 			}
-			return {status: 'ERROR', message: 'Unable to connect to ElastiCache.'};
-		}).catch(error => {
-			return {status: 'ERROR', message: error.message};
-		})
+
+		} catch(error) {
+
+			return { status: 'ERROR', message: error.message };
+
+		} finally {
+
+			await this.dispose();
+
+		}
+
 	}
 
 }
