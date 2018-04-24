@@ -3,11 +3,11 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class RebillTransform extends AnalyticsTransfrom {
 
-	transform(record) {
+	async transform(record) {
 
 		du.debug('RebillTransform.transform()');
 
-		return Promise.resolve({
+		return {
 			id: record.context.transformedrebill.id,
 			datetime: record.context.transformedrebill.datetime,
 			currentQueuename: record.context.transformedrebill.current_queuename,
@@ -15,7 +15,7 @@ module.exports = class RebillTransform extends AnalyticsTransfrom {
 			account: record.context.transformedrebill.account,
 			amount: record.context.transformedrebill.amount,
 			type: record.event_type
-		});
+		};
 
 	}
 

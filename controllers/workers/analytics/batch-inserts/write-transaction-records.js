@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const ATTRIBUTES = 18;
+const ATTRIBUTES = 20;
 
 module.exports = class WriteTransactionRecords {
 
@@ -23,6 +23,8 @@ module.exports = class WriteTransactionRecords {
 				customer, \
 				creditcard, \
 				merchant_provider, \
+				merchant_provider_name, \
+				merchant_provider_monthly_cap, \
 				campaign, \
 				affiliate, \
 				amount, \
@@ -52,6 +54,8 @@ module.exports = class WriteTransactionRecords {
 			customer = EXCLUDED.customer, \
 			creditcard = EXCLUDED.creditcard, \
 			merchant_provider = EXCLUDED.merchant_provider, \
+			merchant_provider_name = EXCLUDED.merchant_provider_name, \
+			merchant_provider_monthly_cap = EXCLUDED.merchant_provider_monthly_cap, \
 			campaign = EXCLUDED.campaign, \
 			affiliate = EXCLUDED.affiliate, \
 			amount = EXCLUDED.amount, \
@@ -73,7 +77,9 @@ module.exports = class WriteTransactionRecords {
 				r.session.id,
 				r.customer,
 				r.creditcard,
-				r.merchantProvider,
+				r.merchantProvider.id,
+				r.merchantProvider.name,
+				r.merchantProvider.monthlyCap,
 				r.campaign,
 				r.affiliate,
 				r.amount,

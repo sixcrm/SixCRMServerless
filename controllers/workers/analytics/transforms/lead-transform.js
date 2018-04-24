@@ -4,7 +4,7 @@ const moment = require('moment-timezone');
 
 module.exports = class LeadTransform extends AnalyticsTransfrom {
 
-	transform(record) {
+	async transform(record) {
 
 		du.debug('LeadTransform.transform()');
 
@@ -51,7 +51,7 @@ module.exports = class LeadTransform extends AnalyticsTransfrom {
 
 		}
 
-		return Promise.resolve(result);
+		return result;
 
 	}
 

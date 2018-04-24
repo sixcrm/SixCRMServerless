@@ -3,11 +3,11 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class ActivityTransform extends AnalyticsTransfrom {
 
-	transform(record) {
+	async transform(record) {
 
 		du.debug('ActivityTransform.transform()');
 
-		let result = {
+		return {
 			id: record.context.id,
 			datetime: record.datetime,
 			type: record.event_type,
@@ -21,8 +21,6 @@ module.exports = class ActivityTransform extends AnalyticsTransfrom {
 			associatedWith: record.context.associated_with,
 			associatedWithType: record.context.associated_with_type,
 		};
-
-		return Promise.resolve(result);
 
 	}
 

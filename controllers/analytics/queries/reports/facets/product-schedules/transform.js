@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
@@ -19,7 +20,7 @@ module.exports = async (results) => {
 
 	}
 
-	const productSchedules = response.productschedules || [];
+	const productSchedules = _.sortBy(response.productschedules, 'name') || [];
 
 	return {
 		facet: 'productSchedule',

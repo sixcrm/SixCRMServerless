@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
@@ -19,7 +20,7 @@ module.exports = async (results) => {
 
 	}
 
-	const campaigns = response.campaigns || [];
+	const campaigns = _.sortBy(response.campaigns, 'name') || [];
 
 	return {
 		facet: 'campaign',

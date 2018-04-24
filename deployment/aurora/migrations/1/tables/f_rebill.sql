@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS analytics.f_rebill (
     previous_queuename VARCHAR(20) NOT NULL,
     account VARCHAR(36) NOT NULL,
     datetime TIMESTAMP,
-    amount NUMERIC(8, 2),
+    amount NUMERIC(12, 2),
     CONSTRAINT pk_f_rebill PRIMARY KEY (id, account, datetime)
 );

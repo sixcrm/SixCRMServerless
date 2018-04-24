@@ -7,6 +7,7 @@ const au = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 
@@ -36,6 +37,8 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 	describe('execute', () => {
 
 		it('successfully executes against cases', () => {
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
 
 			const eventsDir = path.join(__dirname, 'events');
 
