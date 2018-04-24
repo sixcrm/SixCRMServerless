@@ -11,9 +11,17 @@ module.exports = class WriteTransactionProductScheduleRecords {
 
 	}
 
-	execute(transactionId, productId, records) {
+	async execute(transactionId, productId, records) {
 
 		du.debug('WriteTransactionProductScheduleRecords.execute()');
+
+		if (records.length === 0) {
+
+			du.debug('WriteTransactionProductScheduleRecords.execute(): no records');
+
+			return;
+
+		}
 
 		let query =
 			'INSERT INTO analytics.f_transaction_product_schedule ( \

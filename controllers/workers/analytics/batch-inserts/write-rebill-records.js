@@ -11,9 +11,17 @@ module.exports = class WriteRebillRecords {
 
 	}
 
-	execute(records) {
+	async execute(records) {
 
 		du.debug('WriteRebillRecords.execute()');
+
+		if (records.length === 0) {
+
+			du.debug('WriteRebillRecords.execute(): no records');
+
+			return;
+
+		}
 
 		let query =
 			'INSERT INTO analytics.f_rebill ( \
