@@ -873,7 +873,7 @@ class MockEntities {
 			name: name,
 			number: this.getValidCreditCardNumber(type),
 			expiration: this.getValidCreditCardExpiration(),
-			ccv: this.getValidCreditCardCCV(type),
+			cvv: this.getValidCreditCardCVV(type),
 			address: address
 		};
 
@@ -909,9 +909,9 @@ class MockEntities {
 
 	}
 
-	static getValidCreditCardCCV(type) {
+	static getValidCreditCardCVV(type) {
 
-		du.debug('Get Valid CreditCard CCV');
+		du.debug('Get Valid CreditCard CVV');
 
 		let creditcard_types = ['VISA', 'Amex', 'Mastercard'];
 
@@ -931,7 +931,7 @@ class MockEntities {
 		return this.getValidPlaintextCreditCard(id);
 
 		//card.number = encryptionutilities.encryptAES256(card.id, card.number);
-		//card.ccv = encryptionutilities.encryptAES256(card.id, card.ccv);
+		//card.cvv = encryptionutilities.encryptAES256(card.id, card.cvv);
 		//return card;
 	}
 

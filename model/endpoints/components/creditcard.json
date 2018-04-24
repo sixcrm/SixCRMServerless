@@ -6,9 +6,9 @@
 	"properties": {
 		"address":{"$ref": "../../definitions/address.json"},
 		"number":{"$ref": "../../definitions/creditcardnumber.json"},
-		"ccv":{"$ref": "../../definitions/creditcardccv.json"},
+		"cvv":{"$ref": "../../definitions/creditcardcvv.json"},
 		"expiration":{"$ref": "../../definitions/creditcardexpirationdate.json"},
 		"name":{"$ref": "../../definitions/creditcardname.json"}
 	},
-	"required":["address", "number", "expiration","ccv", "name"]
+	"required":["address", "number", "expiration", "cvv", "name"]
 }

@@ -23,7 +23,7 @@
 		},
 		"amount":{"$ref": "../../definitions/currency.json"},
 		"ccnumber":{"$ref": "../../definitions/creditcardnumber.json"},
-		"ccv":{"$ref": "../../definitions/creditcardccv.json"},
+		"ccv":{"$ref": "../../definitions/creditcardcvv.json"},
 		"ccexp":{"$ref": "../../definitions/creditcardexpirationdate.json"},
 		"firstname":{
 			"type":"string"

@@ -40,7 +40,7 @@ class NMIController extends MerchantProvider {
 				required: {
 					amount:'amount',
 					ccnumber:'creditcard.number',
-					ccv:'creditcard.ccv',
+					ccv:'creditcard.cvv',
 					ccexp:'creditcard.expiration'
 				},
 				optional:{

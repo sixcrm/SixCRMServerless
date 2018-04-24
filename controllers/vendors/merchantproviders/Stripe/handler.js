@@ -195,7 +195,7 @@ class StripeController extends MerchantProvider {
 		let token_request_object = objectutilities.transcribe(
 			{
 				number: 'number',
-				cvc: 'ccv'
+				cvc: 'cvv'
 			},
 			creditcard,
 			{}
