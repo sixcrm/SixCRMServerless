@@ -30,6 +30,9 @@
 		"script": "tables/f_transaction_product_schedule.sql"
 	},
 	{
+		"script": "tables/f_transaction_merchant_provider.sql"
+	},
+	{
 		"script": "tables/m_release.sql"
 	},
 	{
