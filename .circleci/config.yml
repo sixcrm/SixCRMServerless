@@ -145,7 +145,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy VPC
-          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_vpc.js
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_vpcs.js
   deploy_subnets:
     <<: *job-defaults
     steps:
@@ -159,7 +159,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Subnets
-          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_subnets.js
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_subnets.js
   deploy_eips:
     <<: *job-defaults
     steps:
@@ -173,7 +173,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Elastic IP Addresses
-          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_eips.js
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_eips.js
   deploy_internet_gateways:
     <<: *job-defaults
     steps:
@@ -187,7 +187,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Internet Gateways
-          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_internet_gateways.js
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_internet_gateways.js
   deploy_nats:
     <<: *job-defaults
     steps:
@@ -201,7 +201,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy NATs
-          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_nats.js
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_nats.js
   deploy_route_tables:
     <<: *job-defaults
     steps:
@@ -215,7 +215,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Route Tables
-          command: export SIX_VERBOSE=2 && node deployment/ec2/deploy_route_tables.js
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_route_tables.js
   backup_datastore:
     <<: *job-defaults
     steps:
