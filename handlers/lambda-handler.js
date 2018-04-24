@@ -1,5 +1,5 @@
 const LambdaContext = require('./lambda-context');
-const ServerlessRuntime = require('./core/serverless-runtime');
+const ServerlessRuntime = require('../core/ServerlessRuntime');
 
 module.exports = class LambdaHandler
 {

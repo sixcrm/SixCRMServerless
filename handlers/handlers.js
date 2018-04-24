@@ -28,13 +28,13 @@ const DeliveredToArchiveForwardMessageController = global.SixCRM.routes.include(
 const HoldToArchivedForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/holdToArchivedForwardMessage.js');
 const HoldToPendingForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/holdToPendingForwardMessage.js');
 const IndexToArchivedForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/indexToArchivedForwardMessage.js');
-const PendingFailedToPendingForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pendingFailedToPendingForwardMessage.js');
+// const PendingFailedToPendingForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pendingFailedToPendingForwardMessage.js'); // deprecated
 const PendingToShippedForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pendingToShippedForwardMessage.js');
-const PickRebillsToBillForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pickRebillsToBillForwardMessage.js');
-const RebillToArchiveForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/rebillToArchiveForwardMessage.js');
-const RecoverToArchiveForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToArchiveForwardMessage.js');
-const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHoldForwardMessage.js');
-const SendNotificationsToArchiveForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/sendNotificationsToArchiveForwardMessage.js');
+const PickRebillsToBillForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/pickRebillsToBill.js');
+const RebillToArchiveForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/rebillToArchivedForwardMessage.js');
+const RecoverToArchiveForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToArchivedForwardMessage.js');
+const RecoverToHoldForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/recoverToHold.js');
+const SendNotificationsToArchiveForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/sendNotificationsToArchivedForwardMessage.js');
 const ShippedToDeliveredForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage/shippedToDeliveredForwardMessage.js');
 
 const AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
@@ -48,7 +48,7 @@ module.exports = {
 
 	authorizers: {
 
-		verifySignature: handleAuthorization(async (event) => {
+		verifysignature: handleAuthorization(async (event) => {
 			let authority_user = await new VerifySignatureController().execute(event);
 			if (_.isObject(authority_user) && _.has(authority_user, 'id')) {
 				return { allow: true, response: authority_user.id }
@@ -57,7 +57,7 @@ module.exports = {
 			}
 		}),
 
-		verifySiteJwt: handleAuthorization(async (event) => {
+		verifysitejwt: handleAuthorization(async (event) => {
 			let controller = new VerifySiteJWTController();
 			let response = await controller.execute(event);
 			if(stringutilities.isEmail(response)){
@@ -71,7 +71,7 @@ module.exports = {
 			}
 		}),
 
-		verifyTransactionJwt: handleAuthorization(async (event) => {
+		verifytransactionjwt: handleAuthorization(async (event) => {
 			let response = await new VerifyTransactionJWTController().execute(event);
 			if (_.isString(response)) {
 				return { allow: true, response }
@@ -85,11 +85,11 @@ module.exports = {
 	endpoints: {
 
 		// For TS: Convert to generics e.g. handleEndpoint<AcquireTokenController>
-		acquireToken: handleEndpoint((event) => new AcquireTokenController().execute(event)),
+		acquiretoken: handleEndpoint((event) => new AcquireTokenController().execute(event)),
 		checkout: handleEndpoint((event) => new CheckoutController().execute(event)),
-		confirmOrder: handleEndpoint((event) => new ConfirmOrderController().execute(event)),
-		createLead: handleEndpoint((event) => new CreateLeadController().execute(event)),
-		createOrder: handleEndpoint((event) => new CreateOrderController().execute(event)),
+		confirmorder: handleEndpoint((event) => new ConfirmOrderController().execute(event)),
+		createlead: handleEndpoint((event) => new CreateLeadController().execute(event)),
+		createorder: handleEndpoint((event) => new CreateOrderController().execute(event)),
 		graph: handleEndpoint((event) => new GraphController().execute(event)),
 		info: handleEndpoint((event) => new InfoController().execute(event)),
 		tracking: handleEndpoint((event) => new TrackingController().execute(event))
@@ -98,23 +98,23 @@ module.exports = {
 
 	workers: {
 
-		analytics: handleAnalytics(),
+		analyticsevenhandler: handleAnalytics(),
 
 		forwardMessage: {
 
-			billToHold: handleForwardMessage((event) => new BillToHoldForwardMessageController().execute(event)),
-			deliveredToArchive: handleForwardMessage((event) => new DeliveredToArchiveForwardMessageController().execute(event)),
-			holdToArchived: handleForwardMessage((event) => new HoldToArchivedForwardMessageController().execute(event)),
-			holdToPending: handleForwardMessage((event) => new HoldToPendingForwardMessageController().execute(event)),
-			indexToArchived: handleForwardMessage((event) => new IndexToArchivedForwardMessageController().execute(event)),
-			pendingFailedToPending: handleForwardMessage((event) => new PendingFailedToPendingForwardMessageController().execute(event)),
-			pendingToShipped: handleForwardMessage((event) => new PendingToShippedForwardMessageController().execute(event)),
-			pickRebillsToBill: handleForwardMessage((event) => new PickRebillsToBillForwardMessageController().execute(event)),
-			rebillToArchive: handleForwardMessage((event) => new RebillToArchiveForwardMessageController().execute(event)),
-			recoverToArchive: handleForwardMessage((event) => new RecoverToArchiveForwardMessageController().execute(event)),
-			recoverToHold: handleForwardMessage((event) => new RecoverToHoldForwardMessageController().execute(event)),
-			sendNotificationsToArchive: handleForwardMessage((event) => new SendNotificationsToArchiveForwardMessageController().execute(event)),
-			shippedToDelivered: handleForwardMessage((event) => new ShippedToDeliveredForwardMessageController().execute(event)),
+			billtohold: handleForwardMessage((event) => new BillToHoldForwardMessageController().execute(event)),
+			deliveredtoarchive: handleForwardMessage((event) => new DeliveredToArchiveForwardMessageController().execute(event)),
+			holdtoarchived: handleForwardMessage((event) => new HoldToArchivedForwardMessageController().execute(event)),
+			holdtopending: handleForwardMessage((event) => new HoldToPendingForwardMessageController().execute(event)),
+			indextoarchived: handleForwardMessage((event) => new IndexToArchivedForwardMessageController().execute(event)),
+			// pendingfailedtopending: handleForwardMessage((event) => new PendingFailedToPendingForwardMessageController().execute(event)), // deprecated
+			pendingtoshipped: handleForwardMessage((event) => new PendingToShippedForwardMessageController().execute(event)),
+			pickrebillstobill: handleForwardMessage((event) => new PickRebillsToBillForwardMessageController().execute(event)),
+			rebilltoarchive: handleForwardMessage((event) => new RebillToArchiveForwardMessageController().execute(event)),
+			recovertoarchive: handleForwardMessage((event) => new RecoverToArchiveForwardMessageController().execute(event)),
+			recovertohold: handleForwardMessage((event) => new RecoverToHoldForwardMessageController().execute(event)),
+			sendnotificationstoarchive: handleForwardMessage((event) => new SendNotificationsToArchiveForwardMessageController().execute(event)),
+			shippedtodelivered: handleForwardMessage((event) => new ShippedToDeliveredForwardMessageController().execute(event)),
 
 		},
 
@@ -122,10 +122,10 @@ module.exports = {
 
 		sns: {
 
-			analyticsEvents: handleSns((event) => new AnalyticsEventBroker().execute(event)),
-			customerEmail: handleSns((event) => new EventEmailsController().execute(event)),
-			notificationEvents: handleSns((event) => new NotificationEventsController().execute(event)),
-			trackingEvents: handleSns((event) => new TrackingEventsController().execute(event))
+			analyticsevents: handleSns((event) => new AnalyticsEventBroker().execute(event)),
+			customeremail: handleSns((event) => new EventEmailsController().execute(event)),
+			notificationevents: handleSns((event) => new NotificationEventsController().execute(event)),
+			trackingevents: handleSns((event) => new TrackingEventsController().execute(event))
 
 		}
 
@@ -134,25 +134,25 @@ module.exports = {
 }
 
 function handleAuthorization(delegate) {
-	return (event, context, callback) => new AuthorizationHandler.handle(event, context, callback, delegate);
+	return (event, context, callback) => new AuthorizationHandler().handle(event, context, callback, delegate);
 }
 
 function handleEndpoint(delegate) {
-	return (event, context, callback) => new EndpointHandler.handle(event, context, callback, delegate);
+	return (event, context, callback) => new EndpointHandler().handle(event, context, callback, delegate);
 }
 
 function handleAnalytics() {
-	return (event, context, callback) => new AnalyticsHandler.handle(event, context, callback);
+	return (event, context, callback) => new AnalyticsHandler().handle(event, context, callback);
 }
 
 function handleForwardMessage(delegate) {
-	return (event, context, callback) => new ForwardMessageHandler.handle(event, context, callback, delegate);
+	return (event, context, callback) => new ForwardMessageHandler().handle(event, context, callback, delegate);
 }
 
 function handleReindex() {
-	return (event, context, callback) => new ReindexHandler.handle(event, context, callback);
+	return (event, context, callback) => new ReindexHandler().handle(event, context, callback);
 }
 
 function handleSns(delegate) {
-	return (event, context, callback) => new SnsHandler.handle(event, context, callback, delegate);
+	return (event, context, callback) => new SnsHandler().handle(event, context, callback, delegate);
 }

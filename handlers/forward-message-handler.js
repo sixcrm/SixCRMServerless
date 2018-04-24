@@ -7,7 +7,7 @@ module.exports = class ForwardMessageHandler extends LambdaHandler {
 
 		try {
 
-			await handlerDelegate.execute();
+			await handlerDelegate();
 
 			new LambdaResponse().issueResponse(200, {}, lambdaCallback);
 			return true;

@@ -7,7 +7,7 @@ module.exports = class SnsHandler extends LambdaHandler {
 
 		try {
 
-			const result = await handlerDelegate.execute(event);
+			const result = await handlerDelegate(event);
 
 			return new LambdaResponse().issueResponse(200, { message: result }, lambdaCallback);
 
