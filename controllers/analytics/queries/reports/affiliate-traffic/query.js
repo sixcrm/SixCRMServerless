@@ -31,18 +31,12 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
 	_resolveFilterValueSubId(local, parameters);
-	_resolveFilterValue(local, 't', 'mid', parameters);
-	// _resolveFilterValue(local, 'tp', 'product', parameters);
-	// _resolveFilterValue(local, 'tps', 'productSchedule', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
 		account: true,
 		campaign: true,
 		affiliate: true,
-		subId: true,
-		mid: true,
-		// product: true,
-		// productSchedule: true
+		subId: true
 	});
 	queryParameters.push(format.withArray(filter, local));
 
@@ -52,12 +46,14 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
 	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
 		account: true,
 		campaign: true,
 		affiliate: true,
-		subId: true
+		subId: true,
+		mid: true
 	});
 	queryParameters.push(format.withArray(filter, local));
 
@@ -68,17 +64,13 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
 	_resolveFilterValueSubId(local, parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
-	// _resolveFilterValue(local, 'tp', 'product', parameters);
-	// _resolveFilterValue(local, 'tps', 'productSchedule', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
 		account: true,
 		campaign: true,
 		affiliate: true,
 		subId: true,
-		mid: true,
-		// product: true,
-		// productSchedule: true
+		mid: true
 	});
 	queryParameters.push(format.withArray(filter, local));
 
@@ -89,17 +81,13 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
 	_resolveFilterValueSubId(local, parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
-	// _resolveFilterValue(local, 'tp', 'product', parameters);
-	// _resolveFilterValue(local, 'tps', 'productSchedule', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
 		account: true,
 		campaign: true,
 		affiliate: true,
 		subId: true,
-		mid: true,
-		// product: true,
-		// productSchedule: true
+		mid: true
 	});
 	queryParameters.push(format.withArray(filter, local));
 
@@ -125,27 +113,30 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
 	_resolveFilterValueSubId(local, parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
-	// _resolveFilterValue(local, 'tp', 'product', parameters);
-	// _resolveFilterValue(local, 'tps', 'productSchedule', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
 		account: true,
 		campaign: true,
 		affiliate: true,
 		subId: true,
-		mid: true,
-		// product: true,
-		// productSchedule: true
+		mid: true
 	});
 	queryParameters.push(format.withArray(filter, local));
 
 	// 8
-	local = [];
-	// _resolveFilterValue(local, 'tp', 'product', parameters);
-	// _resolveFilterValue(local, 'tps', 'productSchedule', parameters);
+	local = ['s', parameters.start, parameters.end];
+	_resolveFilterValue(local, 's', 'account', parameters);
+	_resolveFilterValue(local, 's', 'campaign', parameters);
+	_resolveFilterValue(local, 's', 'affiliate', parameters);
+	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
 	filter = _resolveFilterQuery(parameters, {
-		// product: true,
-		// productSchedule: true
+		range: true,
+		account: true,
+		campaign: true,
+		affiliate: true,
+		subId: true,
+		mid: true
 	});
 	queryParameters.push(format.withArray(filter, local));
 
@@ -166,36 +157,9 @@ module.exports = async (parameters = {}) => {
 	});
 	queryParameters.push(format.withArray(filter, local));
 
-	// 10
-	local = [];
-	// _resolveFilterValue(local, 'tp', 'product', parameters);
-	// _resolveFilterValue(local, 'tps', 'productSchedule', parameters);
-	filter = _resolveFilterQuery(parameters, {
-		// product: true,
-		// productSchedule: true
-	});
-	queryParameters.push(format.withArray(filter, local));
-
-	// 11
-	local = ['s', parameters.start, parameters.end];
-	_resolveFilterValue(local, 's', 'account', parameters);
-	_resolveFilterValue(local, 's', 'campaign', parameters);
-	_resolveFilterValue(local, 's', 'affiliate', parameters);
-	_resolveFilterValueSubId(local, parameters);
-	_resolveFilterValue(local, 't', 'mid', parameters);
-	filter = _resolveFilterQuery(parameters, {
-		range: true,
-		account: true,
-		campaign: true,
-		affiliate: true,
-		subId: true,
-		mid: true
-	});
-	queryParameters.push(format.withArray(filter, local));
-
 	const finalQuery = format.withArray(query, queryParameters);
 
-	// console.log(finalQuery);
+	console.log(finalQuery);
 
 	return finalQuery;
 
@@ -238,18 +202,6 @@ function _resolveFilterQuery(parameters, options = {}) {
 	if (options.mid) {
 
 		filter = _resolveFilterQueryValue(filter, 'mid', 'merchant_provider', parameters);
-
-	}
-
-	if (options.product) {
-
-		filter = _resolveFilterQueryValue(filter, 'product', 'product_id', parameters);
-
-	}
-
-	if (options.productSchedule) {
-
-		filter = _resolveFilterQueryValue(filter, 'productSchedule', 'product_schedule_id', parameters);
 
 	}
 
