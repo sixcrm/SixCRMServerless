@@ -11,9 +11,17 @@ module.exports = class WriteActivityRecords {
 
 	}
 
-	execute(records) {
+	async execute(records) {
 
 		du.debug('WriteActivityRecords.execute()');
+
+		if (records.length === 0) {
+
+			du.debug('WriteActivityRecords.execute(): no records');
+
+			return;
+
+		}
 
 		let query =
 			'INSERT INTO analytics.f_activity ( \

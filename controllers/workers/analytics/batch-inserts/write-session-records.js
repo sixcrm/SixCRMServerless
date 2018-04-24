@@ -11,9 +11,17 @@ module.exports = class WriteEventRecords {
 
 	}
 
-	execute(records) {
+	async execute(records) {
 
-		du.debug('WriteEventRecords.execute()');
+		du.debug('WriteSessionRecords.execute()');
+
+		if (records.length === 0) {
+
+			du.debug('WriteSessionRecords.execute(): no records');
+
+			return;
+
+		}
 
 		let query =
 			'INSERT INTO analytics.f_session ( \

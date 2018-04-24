@@ -11,9 +11,17 @@ module.exports = class WriteTransactionProductRecords {
 
 	}
 
-	execute(transactionId, records) {
+	async execute(transactionId, records) {
 
 		du.debug('WriteTransactionProductRecords.execute()');
+
+		if (records.length === 0) {
+
+			du.debug('WriteTransactionProductRecords.execute(): no records');
+
+			return;
+
+		}
 
 		let query =
 			'INSERT INTO analytics.f_transaction_product ( \
