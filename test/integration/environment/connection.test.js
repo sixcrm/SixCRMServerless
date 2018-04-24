@@ -36,13 +36,13 @@ describe('Connection Test', () => {
 			.expect('Content-Type', 'application/json')
 			.end(function (err, response) {
 
+				du.debug(response.body);
+
 				if (err) {
 					return done(err);
 				}
 
 				const connection_tests = response.body.response.data.connectiontest;
-
-				du.debug(response.body);
 
 				objectutilities.map(connection_tests, key => {
 					assert.equal(connection_tests[key].status, 'OK');

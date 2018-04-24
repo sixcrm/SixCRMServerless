@@ -222,13 +222,8 @@ module.exports = class RedisProvider {
 		try {
 
 			await this.connect();
-
-			let result = await this.set('test', 'test');
-			if (result == 'OK') {
-				return {status: 'OK', message: 'Successfully connected to ElastiCache.'};
-			} else {
-				return {status: 'ERROR', message: 'Unable to connect to ElastiCache.'};
-			}
+			await this.set('test', 'test');
+			return {status: 'OK', message: 'Successfully connected to ElastiCache.'};
 
 		} catch(error) {
 
