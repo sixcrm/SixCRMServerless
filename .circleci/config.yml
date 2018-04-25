@@ -633,7 +633,7 @@ workflows:
             - deploy_nats
       - deploy_aurora:
           requires:
-            - security_groups
+            - deploy_security_groups
       - deploy_elasticsearch:
           requires:
             - deploy_route_tables
