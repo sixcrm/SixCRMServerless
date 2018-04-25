@@ -433,7 +433,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		let raw_creditcard = this.parameters.get('raw_creditcard', null, false);
 
 		let argumentation = {
-			rebill: rebill
+			rebill: rebill,
+			transactionsubtype: this.parameters.get('transactionsubtype')
 		};
 
 		if(!_.isNull(raw_creditcard)){
@@ -544,33 +545,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				arrayutilities.map(transactions, transaction =>
 					this.registerController.reverseTransaction(transaction))
 			));
-	}
-
-	pushEvent() {
-
-		du.debug('Push Event');
-
-		return Promise.resolve()
-			.then(() => super.pushEvent())
-			.then(() => this.pushTransactionEvents());
-
-	}
-
-	pushTransactionEvents() {
-
-		const transactions = this.parameters.get('transactions', null, false) || [];
-
-		return arrayutilities.serialPromises(arrayutilities.map(transactions, (transaction) => {
-
-			return super.pushEvent({
-				event_type: 'transaction_' + transaction.result,
-				context: Object.assign({}, this.parameters.store, {
-					transaction
-				})
-			});
-
-		}));
-
 	}
 
 	incrementMerchantProviderSummary() {
