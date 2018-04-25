@@ -39,7 +39,7 @@ module.exports = class AuroraClusterDeployment {
 		parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
 		parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
 
-		const securityGroup = await this._getSecurityGroupIds();
+		const securityGroup = await this._getSecurityGroupIds(parameters.VpcSecurityGroupIds[0]);
 		parameters.VpcSecurityGroupIds = [securityGroup.GroupId];
 
 		const putClusterResponse = await this._rdsprovider.putCluster(parameters);
@@ -152,7 +152,7 @@ module.exports = class AuroraClusterDeployment {
 
 	}
 
-	async _getSecurityGroupIds() {
+	async _getSecurityGroupIds(groupName) {
 
 		if (!_.has(this, 'ec2provider')) {
 
@@ -162,7 +162,7 @@ module.exports = class AuroraClusterDeployment {
 		}
 
 		return this.ec2provider.securityGroupExists({
-			GroupName: 'SixCRM-Aurora'
+			GroupName: groupName
 		});
 
 	}
