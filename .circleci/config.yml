@@ -637,6 +637,9 @@ workflows:
       - deploy_elasticsearch:
           requires:
             - deploy_route_tables
+      - deploy_cloudsearch:
+          requires:
+            - deploy_route_tables
       - backup_datastore:
           requires:
             - pre_deploy
