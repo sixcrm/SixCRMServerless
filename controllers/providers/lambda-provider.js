@@ -112,10 +112,10 @@ module.exports = class LambdaProvider extends AWSProvider{
 			callback = () => true;
 		}
 
-		let function_name = this.buildHandlerFunctionName(parameters.FunctionName);
-		let lambda = this.getLambdaInstance(function_name);
-
 		return new Promise((resolve, reject) => {
+
+			let function_name = this.buildHandlerFunctionName(parameters.FunctionName);
+			let lambda = this.getLambdaInstance(function_name);
 
 			// Parameters of every lambda are:
 			// 1. serialized event,
@@ -146,15 +146,12 @@ module.exports = class LambdaProvider extends AWSProvider{
 			// Finally, we execute the function.
 			du.debug('Executing Lambda locally', function_name, serialized_payload);
 
-			lambda[function_name](serialized_payload, context, lambda_callback);
+			lambda(serialized_payload, context, lambda_callback);
 		});
 	}
 
 	getLambdaInstance(lambda_name) {
 		let lambda = global.SixCRM.configuration.serverless_config.functions[lambda_name];
-		let handler = lambda.handler.replace(/\.[^/.]+$/, '') ; // strip function name from path, i.e. 'handler.billtohold'
-
-		let path = global.SixCRM.routes.root + '/' + handler;
 
 		if (lambda.environment) {
 			for (let key in lambda.environment) {
@@ -162,8 +159,15 @@ module.exports = class LambdaProvider extends AWSProvider{
 			}
 		}
 
+		let splitIndex = lambda.handler.indexOf('.');
+		let modulePath = lambda.handler.substring(0, splitIndex);
+		let methodName = lambda.handler.substring(splitIndex + 1);
+
+		let path = global.SixCRM.routes.root + '/' + modulePath;
 		delete require.cache[require.resolve(path)];
-		return require(path);
+		let module = require(path);
+
+		return _.at(module, [methodName])[0];
 	}
 
 	buildAddPermissionParameters(parameters){

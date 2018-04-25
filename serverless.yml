@@ -55,10 +55,10 @@ functions:
 ########################
 
   verifysignature:
-    handler: handlers/authorizers/verifysignature/handler.verifysignature
+    handler: handlers/handlers.authorizers.verifysignature
 
   verifytransactionjwt:
-    handler: handlers/authorizers/verifytransactionjwt/handler.verifytransactionjwt
+    handler: handlers/handlers.authorizers.verifytransactionjwt
     environment:
       #Technical Debt:  These don't need to be defined here.
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
@@ -66,7 +66,7 @@ functions:
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
 
   verifysitejwt:
-    handler: handlers/authorizers/verifysitejwt/handler.verifysitejwt
+    handler: handlers/handlers.authorizers.verifysitejwt
     environment:
       #Technical Debt:  These don't need to be defined here.
       site_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site.secret_key}
@@ -78,7 +78,7 @@ functions:
 ########################
 
   graph:
-    handler: handlers/endpoints/graph/handler.graph
+    handler: handlers/handlers.endpoints.graph
     events:
       - http:
           path: graph/{account}
@@ -101,42 +101,42 @@ functions:
 ########################
 
   billtohold:
-    handler: handlers/workers/forwardmessage/billtohold/handler.billtohold
+    handler: handlers/handlers.workers.forwardMessage.billtohold
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
 
   recovertohold:
-    handler: handlers/workers/forwardmessage/recovertohold/handler.recovertohold
+    handler: handlers/handlers.workers.forwardMessage.recovertohold
     events:
       - schedule:
           rate: cron(0 1 ? * FRI *)
           enabled: true
 
   holdtopending:
-    handler: handlers/workers/forwardmessage/holdtopending/handler.holdtopending
+    handler: handlers/handlers.workers.forwardMessage.holdtopending
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
 
   pendingtoshipped:
-    handler: handlers/workers/forwardmessage/pendingtoshipped/handler.pendingtoshipped
+    handler: handlers/handlers.workers.forwardMessage.pendingtoshipped
     events:
       - schedule:
           rate: rate(6 hours)
           enabled: true
 
   shippedtodelivered:
-    handler: handlers/workers/forwardmessage/shippedtodelivered/handler.shippedtodelivered
+    handler: handlers/handlers.workers.forwardMessage.shippedtodelivered
     events:
       - schedule:
           rate: rate(6 hours)
           enabled: true
 
   deliveredtoarchive:
-    handler: handlers/workers/forwardmessage/deliveredtoarchive/handler.deliveredtoarchive
+    handler: handlers/handlers.workers.forwardMessage.deliveredtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -145,7 +145,7 @@ functions:
       archivefilter: 'all'
 
   holdtoarchive:
-    handler: handlers/workers/forwardmessage/holdtoarchive/handler.holdtoarchive
+    handler: handlers/handlers.workers.forwardMessage.holdtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -154,7 +154,7 @@ functions:
       archivefilter: 'noship'
 
   rebilltoarchive:
-    handler: handlers/workers/forwardmessage/rebilltoarchive/handler.rebilltoarchive
+    handler: handlers/handlers.workers.forwardMessage.rebilltoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -163,7 +163,7 @@ functions:
       archivefilter: 'all'
 
   recovertoarchive:
-    handler: handlers/workers/forwardmessage/recovertoarchive/handler.recovertoarchive
+    handler: handlers/handlers.workers.forwardMessage.recovertoarchive
     events:
       - schedule:
           rate: rate(6 hours)
@@ -172,7 +172,7 @@ functions:
       archivefilter: 'twoattempts'
 
   indextoarchive:
-    handler: handlers/workers/forwardmessage/indextoarchive/handler.indextoarchive
+    handler: handlers/handlers.workers.forwardMessage.indextoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -182,7 +182,7 @@ functions:
 
   #Technical Debt:  Is this deprecated?
   sendnotificationstoarchive:
-    handler: handlers/workers/forwardmessage/sendnotificationstoarchive/handler.sendnotificationstoarchive
+    handler: handlers/handlers.workers.forwardMessage.sendnotificationstoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -191,7 +191,7 @@ functions:
       archivefilter: 'all'
 
   pickrebillstobill:
-    handler: handlers/workers/forwardmessage/pickrebillstobill/handler.pickrebillstobill
+    handler: handlers/handlers.workers.forwardMessage.pickrebillstobill
     events:
       - schedule:
           rate: rate(10 minutes)
@@ -201,29 +201,29 @@ functions:
 # SNS Workers
 ########################
   customeremail:
-    handler: handlers/workers/sns/customeremail/handler.customeremail
+    handler: handlers/handlers.workers.sns.customeremail
 
   analyticsevents:
-    handler: handlers/workers/sns/analyticsevents/handler.analyticsevents
+    handler: handlers/handlers.workers.sns.analyticsevents
 
   trackingevents:
-    handler: handlers/workers/sns/trackingevents/handler.trackingevents
+    handler: handlers/handlers.workers.sns.trackingevents
 
   notificationevents:
-    handler: handlers/workers/sns/notificationevents/handler.notificationevents
+    handler: handlers/handlers.workers.sns.notificationevents
 
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
   analyticseventhandler:
-    handler: handlers/workers/analyticseventhandler/handler.analyticseventhandler
+    handler: handlers/handlers.workers.analyticseventhandler
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
 
   reindex:
-    handler: handlers/workers/reindex/handler.reindex
+    handler: handlers/handlers.workers.reindex
     events:
       - schedule:
           rate: rate(60 minutes)
@@ -242,7 +242,7 @@ functions:
 ########################
 
   acquiretoken:
-    handler: handlers/endpoints/acquiretoken/handler.acquiretoken
+    handler: handlers/handlers.endpoints.acquiretoken
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -260,7 +260,7 @@ functions:
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
 
   createlead:
-    handler: handlers/endpoints/createlead/handler.createlead
+    handler: handlers/handlers.endpoints.createlead
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -273,7 +273,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   createorder:
-    handler: handlers/endpoints/createorder/handler.createorder
+    handler: handlers/handlers.endpoints.createorder
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -286,7 +286,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   confirmorder:
-    handler: handlers/endpoints/confirmorder/handler.confirmorder
+    handler: handlers/handlers.endpoints.confirmorder
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -299,7 +299,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   info:
-    handler: handlers/endpoints/info/handler.info
+    handler: handlers/handlers.endpoints.info
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -312,7 +312,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   tracking:
-    handler: handlers/endpoints/tracking/handler.tracking
+    handler: handlers/handlers.endpoints.tracking
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -325,7 +325,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   checkout:
-    handler: handlers/endpoints/checkout/handler.checkout
+    handler: handlers/handlers.endpoints.checkout
     timeout: 29
     events:
       - http:
@@ -343,4 +343,4 @@ functions:
 ########################
 
   logger:
-    handler: handlers/utilities/logger/handler.logger
+    handler: handlers/handlers.logger

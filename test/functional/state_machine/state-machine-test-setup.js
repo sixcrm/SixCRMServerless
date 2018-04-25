@@ -9,6 +9,7 @@ before(() => {
 	});
 
 	mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+		constructor() {}
 		publish() {
 			return Promise.resolve({});
 		}

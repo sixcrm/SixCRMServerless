@@ -15,6 +15,7 @@ const lambdaprovider = new LambdaProvider();
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const BBPromise = require('bluebird');
 
 describe('stateMachineDocker', () => {
 	let lambdas = [];
@@ -523,14 +524,11 @@ describe('stateMachineDocker', () => {
 
 	function flushStateMachine() {
 
-		let all_function_executions = arrayutilities.map(lambdas, (lambda) => {
-			let function_name = Object.keys(lambda); // function is the first property of the handler
-
-			return lambda[function_name](null, null, () => {
-			})
+		let all_function_executions = BBPromise.mapSeries(lambdas, (lambda) => {
+			return lambda(null, null, () => {});
 		});
 
-		return Promise.all(all_function_executions).then((results) => {
+		return all_function_executions.then((results) => {
 			return timestamp.delay(0.3 * 1000)().then(() => results);
 		});
 	}

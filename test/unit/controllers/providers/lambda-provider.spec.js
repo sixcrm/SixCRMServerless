@@ -85,15 +85,19 @@ describe('controllers/providers/lambda-provider', () => {
 				done();
 			};
 
-			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+			let path = global.SixCRM.routes.path('handlers', 'handlers');
 
 			mockery.registerMock(path, {
-				deliveredtoarchive: (payload, context, callback) => {
-					expect(payload).to.be.defined;
-					expect(context).to.be.defined;
-					expect(callback).to.be.defined;
+				workers: {
+					forwardMessage: {
+						deliveredtoarchive: (payload, context, callback) => {
+							expect(payload).to.be.defined;
+							expect(context).to.be.defined;
+							expect(callback).to.be.defined;
 
-					return callback(null, {body: {success: true}});
+							return callback(null, {body: {success: true}});
+						}
+					}
 				}
 			});
 
@@ -118,15 +122,19 @@ describe('controllers/providers/lambda-provider', () => {
 				done();
 			};
 
-			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+			let path = global.SixCRM.routes.path('handlers', 'handlers');
 
 			mockery.registerMock(path, {
-				deliveredtoarchive: (payload, context, callback) => {
-					expect(payload).to.be.defined;
-					expect(context).to.be.defined;
-					expect(callback).to.be.defined;
+				workers: {
+					forwardMessage: {
+						deliveredtoarchive: (payload, context, callback) => {
+							expect(payload).to.be.defined;
+							expect(context).to.be.defined;
+							expect(callback).to.be.defined;
 
-					return callback({StatusCode: 500}, null);
+							return callback({StatusCode: 500}, null);
+						}
+					}
 				}
 			});
 
@@ -294,22 +302,25 @@ describe('controllers/providers/lambda-provider', () => {
 			const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 			const lambdaprovider = new LambdaProvider();
 
-			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+			let path = global.SixCRM.routes.path('handlers', 'handlers');
 
 			mockery.registerMock(path, {
-				deliveredtoarchive: (payload, context, callback) => {
-					expect(payload).to.be.defined;
-					expect(context).to.be.defined;
-					expect(callback).to.be.defined;
+				workers: {
+					forwardMessage: {
+						deliveredtoarchive: (payload, context, callback) => {
+							expect(payload).to.be.defined;
+							expect(context).to.be.defined;
+							expect(callback).to.be.defined;
 
-					return callback(null, {body: {success: true}});
+							return callback(null, {body: {success: true}});
+						}
+					}
 				}
 			});
 
 			let response = lambdaprovider.getLambdaInstance(lambda);
 
-			expect(response).to.have.property(lambda);
-			expect(response.deliveredtoarchive).to.be.a('function');
+			expect(response).to.be.a('function');
 		});
 
 		it('throws error when lambda name does not exist', () => {
@@ -322,7 +333,7 @@ describe('controllers/providers/lambda-provider', () => {
 			try {
 				lambdaprovider.getLambdaInstance(lambda);
 			} catch (error) {
-				expect(error.message).to.equal("Cannot read property 'handler' of undefined");
+				expect(error).to.exist;
 			}
 		});
 	});
@@ -344,15 +355,19 @@ describe('controllers/providers/lambda-provider', () => {
 				done();
 			};
 
-			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+			let path = global.SixCRM.routes.path('handlers', 'handlers');
 
 			mockery.registerMock(path, {
-				deliveredtoarchive: (payload, context, callback) => {
-					expect(payload).to.be.defined;
-					expect(context).to.be.defined;
-					expect(callback).to.be.defined;
+				workers: {
+					forwardMessage: {
+						deliveredtoarchive: (payload, context, callback) => {
+							expect(payload).to.be.defined;
+							expect(context).to.be.defined;
+							expect(callback).to.be.defined;
 
-					return callback(null, {body: {success: true}});
+							return callback(null, {body: {success: true}});
+						}
+					}
 				}
 			});
 
@@ -376,15 +391,19 @@ describe('controllers/providers/lambda-provider', () => {
 				done();
 			};
 
-			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+			let path = global.SixCRM.routes.path('handlers', 'handlers');
 
 			mockery.registerMock(path, {
-				deliveredtoarchive: (payload, context, callback) => {
-					expect(payload).to.be.defined;
-					expect(context).to.be.defined;
-					expect(callback).to.be.defined;
+				workers: {
+					forwardMessage: {
+						deliveredtoarchive: (payload, context, callback) => {
+							expect(payload).to.be.defined;
+							expect(context).to.be.defined;
+							expect(callback).to.be.defined;
 
-					return callback({StatusCode: 500}, null);
+							return callback({StatusCode: 500}, null);
+						}
+					}
 				}
 			});
 
@@ -409,15 +428,19 @@ describe('controllers/providers/lambda-provider', () => {
 				done();
 			};
 
-			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/deliveredtoarchive/handler');
+			let path = global.SixCRM.routes.path('handlers', 'handlers');
 
 			mockery.registerMock(path, {
-				deliveredtoarchive: (payload, context, callback) => {
-					expect(payload).to.be.defined;
-					expect(context).to.be.defined;
-					expect(callback).to.be.defined;
+				workers: {
+					forwardMessage: {
+						deliveredtoarchive: (payload, context, callback) => {
+							expect(payload).to.be.defined;
+							expect(context).to.be.defined;
+							expect(callback).to.be.defined;
 
-					return callback(null, {body: {success: false}});
+							return callback(null, {body: {success: false}});
+						}
+					}
 				}
 			});
 

@@ -1,7 +1,7 @@
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 const lambdaprovider = new LambdaProvider();
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const BBPromise = require('bluebird');
 
 class StateMachineTestUtils {
 
@@ -27,15 +27,13 @@ class StateMachineTestUtils {
 			lambda_names = this.lambda_names.filter(name => filter.includes(name));
 		}
 
-		let all_function_executions = arrayutilities.map(lambda_names, (lambda_name) => {
+		let all_function_executions = BBPromise.mapSeries(lambda_names, (lambda_name) => {
 			let lambda = lambdaprovider.getLambdaInstance(lambda_name);
-			let function_name = Object.keys(lambda); // function is the first property of the handler
 
-			return lambda[function_name](null, null, () => {
-			})
+			return lambda(null, null, () => {})
 		});
 
-		return Promise.all(all_function_executions).then((results) => {
+		return all_function_executions.then((results) => {
 			return timestamp.delay(0.3 * 1000)().then(() => results);
 		});
 	}
