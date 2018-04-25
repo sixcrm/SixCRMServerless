@@ -9,11 +9,9 @@ const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utili
 
 module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
-	constructor(instantiate_csd) {
+	constructor(instantiate_csd = true) {
 
 		super();
-
-		instantiate_csd = (_.isUndefined(instantiate_csd) || _.isNull(instantiate_csd))?true:instantiate_csd;
 
 		this.cloudsearchprovider = new CloudsearchProvider(instantiate_csd);
 
@@ -21,11 +19,12 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 	deploy(){
 
-		return this.createCloudsearchDomain().then(() => {
-			return this.createCloudsearchIndexes()
-				.then(() => this.indexCloudsearchDocuments())
-				.then(() => { return 'Complete'; });
-		});
+		du.debug('Deploy');
+
+		return this.createCloudsearchDomain()
+			.then(() => this.createCloudsearchIndexes())
+			.then(() => this.indexCloudsearchDocuments())
+			.then(() => { return 'Complete'; });
 
 	}
 
@@ -167,8 +166,7 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 			if(result == false){
 
 				return this.cloudsearchprovider.createDomain()
-					.then(() => this.cloudsearchprovider.waitFor('ready'))
-					.then(() => this.cloudsearchprovider.saveDomainConfiguration())
+					.then(() => this.cloudsearchprovider.waitFor('ready'));
 
 			}else{
 

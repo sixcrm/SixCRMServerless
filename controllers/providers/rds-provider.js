@@ -27,6 +27,50 @@ module.exports = class RDSProvider extends AWSProvider {
 
 	}
 
+	createDBSubnetGroup(parameters){
+
+		du.debug('Create DB Subnet Group');
+
+		let params = objectutilities.transcribe(
+			{
+				DBSubnetGroupDescription: 'DBSubnetGroupDescription',
+				DBSubnetGroupName: 'DBSubnetGroupName',
+				SubnetIds: "SubnetIds",
+				Tags:"Tags"
+			},
+			parameters,
+			{},
+			true
+		);
+
+		return new Promise((resolve) => {
+
+			this.rds.createDBSubnetGroup(params, (error, data) => {
+
+				resolve(this.AWSCallback(error, data))
+
+			});
+
+		});
+
+	}
+
+	describeDBSubnetGroups(parameters){
+
+		du.debug('Describe DB Subnet Groups');
+
+		return new Promise((resolve) => {
+
+			this.rds.describeDBSubnetGroups(parameters, (error, data) => {
+
+				resolve(this.tolerantCallback(error, data, false));
+
+			});
+
+		});
+
+	}
+
 	createCluster(parameters){
 
 		du.debug('Create Cluster');
@@ -70,13 +114,9 @@ module.exports = class RDSProvider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			this.rds.createDBCluster(params, (error, data) => {
-				if(error){
-					du.error(error);
-					return reject(error);
-				}
-				return resolve(data);           // successful response
+				resolve(this.AWSCallback(error, data))
 			});
 		});
 

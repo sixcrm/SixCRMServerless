@@ -20,7 +20,7 @@ describe('controllers/providers/ec2-provider', () => {
 		mockery.deregisterAll();
 	});
 
-	describe('describeSecurityGroups', () => {
+	xdescribe('describeSecurityGroups', () => {
 
 		it('describe security groups', () => {
 			const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
@@ -55,7 +55,7 @@ describe('controllers/providers/ec2-provider', () => {
 
 	describe('securityGroupExists', () => {
 
-		it('returns false when security group is not found', () => {
+		xit('returns false when security group is not found', () => {
 
 			//timestamp mocked to reduce test execution time
 			mockery.registerMock(global.SixCRM.routes.path('lib', 'timestamp.js'), {
@@ -100,7 +100,7 @@ describe('controllers/providers/ec2-provider', () => {
 
 	describe('determineGroupIDFromName', () => {
 
-		it('determines group id from name', () => {
+		xit('determines group id from name', () => {
 			const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
 			const ec2provider = new EC2Provider();
 
@@ -154,7 +154,7 @@ describe('controllers/providers/ec2-provider', () => {
 		});
 	});
 
-	describe('addSecurityGroupEgressRules', () => {
+	xdescribe('addSecurityGroupEgressRules', () => {
 
 		it('throws error when group id and name are missing', () => {
 
@@ -407,7 +407,7 @@ describe('controllers/providers/ec2-provider', () => {
 		});
 	});
 
-	describe('getSecurityGroupIdentifier', () => {
+	xdescribe('getSecurityGroupIdentifier', () => {
 
 		it('returns filtered rule', () => {
 
@@ -426,7 +426,7 @@ describe('controllers/providers/ec2-provider', () => {
 		});
 	});
 
-	describe('createSecurityGroup', () => {
+	xdescribe('createSecurityGroup', () => {
 
 		it('create security groups', () => {
 			const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');

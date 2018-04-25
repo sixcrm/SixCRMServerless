@@ -78,10 +78,9 @@
           "IpProtocol": "tcp",
           "FromPort": 6379,
           "ToPort": 6379,
-          "UserIdGroupPairs":[
+          "IpRanges": [
             {
-                "GroupName":"SixCRM-Elasticache-NAT",
-                "UserId":""
+              "CidrIp": "0.0.0.0/0"
             }
           ]
         }
@@ -102,7 +101,7 @@
   },
   {
     "Description": "For Lambdas behind public NAT",
-    "GroupName": "public-lambda",
+    "GroupName": "SixCRM-Lambda-NAT",
     "Egress":{
       "IpPermissions": [
         {

@@ -18,15 +18,15 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 		this.parameter_groups = {
 			security_group: {
 				create: {
-					required:['Description', 'GroupName']
+					required:['Description', 'GroupName', 'VpcId']
 				},
 				create_ingress_rules: {
 					required:['GroupId'],
-					optional:['GroupName','CidrIp','FromPort','ToPort','IpProtocol','SourceSecurityGroupName','SourceSecurityGroupOwnerId','IpPermissions']
+					optional:['CidrIp','FromPort','ToPort','IpProtocol','SourceSecurityGroupName','SourceSecurityGroupOwnerId','IpPermissions']
 				},
 				create_egress_rules: {
 					required:['GroupId'],
-					optional:['GroupName','CidrIp','FromPort','ToPort','IpProtocol','SourceSecurityGroupName','SourceSecurityGroupOwnerId','IpPermissions']
+					optional:['CidrIp','FromPort','ToPort','IpProtocol','SourceSecurityGroupName','SourceSecurityGroupOwnerId','IpPermissions']
 				},
 				delete: {
 					required:['GroupName'],
@@ -150,7 +150,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		return this.gatewayExists(ig_definition).then(result => {
 
-			du.info(result);
 			if(_.isNull(result)){
 				du.highlight('Internet Gateway does not exist: '+ig_definition.Name);
 				return this.createInternetGateway(ig_definition);
@@ -338,8 +337,6 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 				RouteTableId: route_table.RouteTableId,
 				NatGatewayId: nat.NatGatewayId,
 			});
-
-			du.warning(argumentation);
 
 			return this.ec2provider.createRoute(argumentation).then(()=> {
 				du.highlight('Route created.');
@@ -563,7 +560,16 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		du.debug('Create EIP');
 
-		return this.ec2provider.allocateAddress().then((result) => {
+		let parameters = objectutilities.transcribe(
+			{
+				"Domain":"Domain"
+			},
+			eip_definition,
+			{},
+			false
+		);
+
+		return this.ec2provider.allocateAddress(parameters).then((result) => {
 
 			if(objectutilities.hasRecursive(result, 'AllocationId')){
 				return this.nameEC2Resource(result.AllocationId, eip_definition.Name);
@@ -781,6 +787,8 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 			]
 		};
 
+		du.info(argumentation);
+
 		return this.ec2provider.createTags(argumentation).then(() => {
 			return true;
 		});
@@ -805,13 +813,25 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		let security_groups = this.getConfigurationJSON('security_groups');
 
-		let security_group_promises = arrayutilities.map(security_groups, (security_group) => {
+		return this.setVPC('sixcrm').then(() => {
 
-			return () => this.deploySecurityGroup(security_group);
+			let security_group_promises = arrayutilities.map(security_groups, (security_group) => {
+
+				return () => this.deploySecurityGroup(security_group);
+
+			});
+
+			return arrayutilities.serial(security_group_promises).then(() => { return 'Complete'; });
 
 		});
 
-		return arrayutilities.serial(security_group_promises).then(() => { return 'Complete'; });
+	}
+
+	securityGroupExists(parameters){
+
+		du.debug('EC2Deployment.securityGroupExists()');
+
+		return this.ec2provider.securityGroupExists(parameters);
 
 	}
 
@@ -819,62 +839,61 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		du.debug('Deploy Security Group');
 
-		let ingress_parameter_group = this.createIngressParameterGroup(security_group_definition);
-		let egress_parameter_group = this.createEgressParameterGroup(security_group_definition);
+		security_group_definition.VpcId = this.vpc.VpcId;
 
-		return this.ec2provider.assureSecurityGroup(this.createParameterGroup('security_group', 'create', security_group_definition))
-			.then(() => {
-				if(!_.isNull(ingress_parameter_group)){
-					return this.ec2provider.addSecurityGroupIngressRules(ingress_parameter_group);
-				}else{
-					return Promise.resolve(null);
-				}
-			})
-			.then((aws_response) => {
-				if(!_.isNull(aws_response)){
-					du.highlight('Successfully added ingress rules');
-				}
-				return aws_response;
-			})
-			.then(() => {
-				if(!_.isNull(egress_parameter_group)){
-					return this.ec2provider.addSecurityGroupEgressRules(egress_parameter_group);
-				}else{
-					return Promise.resolve(null);
-				}
-			})
-			.then((aws_response) => {
-				if(!_.isNull(aws_response)){
-					du.highlight('Successfully added egress rules');
-				}
-				du.highlight('Security group deployed')
-				return aws_response;
-			});
+		du.info(security_group_definition);
 
-	}
+		return this.ec2provider.securityGroupExists(security_group_definition).then((result) => {
 
-	securityGroupExists(security_group_definition){
+			if(_.isNull(result)){
 
-		du.debug('Security Group Exists');
+				return this.ec2provider.createSecurityGroup(security_group_definition).then(result => {
 
-		const argumentation = {
-			GroupNames:[security_group_definition.GroupName]
-		};
-
-		return this.ec2provider.describeSecurityGroups(argumentation).then(result => {
-
-			if(_.has(result, 'SecurityGroups') && _.isArray(result.SecurityGroups)){
-				if(arrayutilities.nonEmpty(result.SecurityGroups)){
-					if(result.SecurityGroups.length == 1){
-						return result.SecurityGroups[0];
+					if(!objectutilities.hasRecursive(result, 'GroupId')){
+						throw eu.getError('server', 'Unexpected result: ', result);
 					}
-					throw eu.getError('server', 'More than one result: ', result);
-				}
-				return null;
+
+					return this.nameEC2Resource(result.GroupId, security_group_definition.GroupName).then(() => {
+						return result;
+					});
+
+				});
+
 			}
 
-			throw eu.getError('server', 'Unexpected result: ', result);
+			return result;
 
+		}).then((result) => {
+
+			security_group_definition.GroupId = result.GroupId;
+			let ingress_parameter_group = this.createIngressParameterGroup(security_group_definition);
+
+			if(!_.isNull(ingress_parameter_group)){
+				return this.ec2provider.addSecurityGroupIngressRules(ingress_parameter_group).then(() => {
+					du.highlight('Successfully created ingress rules.');
+					return result;
+				})
+			}else{
+				return result;
+			}
+
+		}).then((result) => {
+
+			security_group_definition.GroupId = result.GroupId;
+			let egress_parameter_group = this.createEgressParameterGroup(security_group_definition);
+
+			if(!_.isNull(egress_parameter_group)){
+				return this.ec2provider.addSecurityGroupEgressRules(egress_parameter_group).then(() => {
+					du.highlight('Successfully created egress rules.');
+					return result;
+				})
+			}else{
+				return result;
+			}
+
+		}).then(() => {
+			du.highlight('Security group deployed')
+			return true;
 		});
 
 	}

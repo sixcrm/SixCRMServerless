@@ -13,6 +13,13 @@ package:
 
 provider:
   name: aws
+  vpc:
+    securityGroupIds:
+      - sg-fccb87b5
+    subnetIds:
+      - subnet-feca2da2
+      - subnet-a09161c7
+      - subnet-439d7c6d
   runtime: nodejs8.10
   timeout: 90
   stage: ${opt:stage, 'development'}
@@ -26,9 +33,6 @@ provider:
     aws_region: ${opt:region, self:provider.region}
     aws_account: ${self:provider.account}
     SIX_VERBOSE: ${file(./config/${opt:stage}/site.yml):serverless.verbose}
-    vpc:
-      securityGroupIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSecurityGroup}
-      subnetIds: ${file(./config/controllers/configuration_acquisition.js):getLambdaSubnets}
     cloudsearch_domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
     aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
     elasticsearch_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElasticSearchEndpoint}

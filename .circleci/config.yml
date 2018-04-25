@@ -380,11 +380,28 @@ jobs:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
+          name: Deploy Subnet Groups
+          command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-subnetgroups.js
+      - run:
           name: Aurora Create Cluster
           command: SIX_VERBOSE=2 node ./deployment/aurora/aurora-deploy-cluster.js
       - run:
           name: Aurora Create Tables
           command: SIX_VERBOSE=2 node ./deployment/aurora/aurora-deploy.js && echo "Pausing to allow queries to complete..." && sleep 240
+  deploy_cloudsearch:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy Clousearch
+          command: export SIX_VERBOSE=2 && ./deployment/cloudsearch/deploy.js
   deploy_sns:
     <<: *job-defaults
     steps:
@@ -614,6 +631,12 @@ workflows:
       - deploy_route_tables:
           requires:
             - deploy_nats
+      - deploy_aurora:
+          requires:
+            - security_groups
+      - deploy_elasticsearch:
+          requires:
+            - deploy_route_tables
       - backup_datastore:
           requires:
             - pre_deploy
@@ -623,24 +646,25 @@ workflows:
                 - development
       - deploy_iam:
           requires:
+            - deploy_aurora
+            - deploy_elasticsearch
             - deploy_route_tables
             - lint
             - unit_tests
             - backup_datastore
       - deploy_s3:
           requires:
-            - deploy_route_tables
-            - lint
-            - unit_tests
-            - backup_datastore
-      - deploy_elasticsearch:
-          requires:
+            - deploy_aurora
+            - deploy_elasticsearch
             - deploy_route_tables
             - lint
             - unit_tests
             - backup_datastore
       - deploy_serverless:
           requires:
+            - deploy_aurora
+            - deploy_elasticsearch
+            - deploy_cloudsearch
             - deploy_route_tables
             - lint
             - unit_tests
@@ -667,9 +691,6 @@ workflows:
       #     requires:
       #       - deploy_security_groups
       #       - deploy_iam
-      - deploy_aurora:
-          requires:
-            - deploy_iam
       - post_deployment:
           requires:
             - deploy_serverless
@@ -679,7 +700,6 @@ workflows:
             - deploy_iam
             - deploy_dynamodb
             # - deploy_redshift
-            - deploy_aurora
             - deploy_sns
             - deploy_logsubscription
       - environment_test:

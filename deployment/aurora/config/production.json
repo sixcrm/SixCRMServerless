@@ -10,25 +10,23 @@
   "StorageEncrypted": true,
   "PreferredBackupWindow": "09:45-10:15",
   "PreferredMaintenanceWindow": "sat:06:57-sat:07:27",
+  "DBSubnetGroupName":"sixcrm-aurora",
   "Instances":[{
     "DBInstanceIdentifier":"sixcrm-1",
     "DBInstanceClass": "db.r4.xlarge",
     "Engine": "aurora-postgresql",
-    "DBClusterIdentifier":"sixcrm",
-    "PubliclyAccessible":true
+    "DBClusterIdentifier":"sixcrm"
   },
   {
     "DBInstanceIdentifier":"sixcrm-2",
     "DBInstanceClass": "db.r4.xlarge",
     "Engine": "aurora-postgresql",
-    "DBClusterIdentifier":"sixcrm",
-    "PubliclyAccessible":true
+    "DBClusterIdentifier":"sixcrm"
   },
   {
     "DBInstanceIdentifier":"sixcrm-3",
     "DBInstanceClass": "db.r4.xlarge",
     "Engine": "aurora-postgresql",
-    "DBClusterIdentifier":"sixcrm",
-    "PubliclyAccessible":true
+    "DBClusterIdentifier":"sixcrm"
   }]
 }
