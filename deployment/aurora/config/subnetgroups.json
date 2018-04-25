@@ -2,9 +2,9 @@
 	"DBSubnetGroupDescription": "SixCRM Aurora cluster",
 	"DBSubnetGroupName": "sixcrm-aurora",
 	"SubnetNames": [
-		"sixcrm-subnet1",
-		"sixcrm-subnet2",
-		"sixcrm-subnet3"
+		"sixcrm-private1",
+		"sixcrm-private2",
+		"sixcrm-private3"
 	],
   "Tags": [{
     "Key": "Name",

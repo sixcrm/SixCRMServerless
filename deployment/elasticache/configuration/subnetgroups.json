@@ -1,0 +1,11 @@
+[
+  {
+    "CacheSubnetGroupDescription":"SixCRM Private VPC Subnets",
+    "CacheSubnetGroupName": "SixCRM-Private-Subnets",
+    "SubnetNames": [
+      "sixcrm-private1",
+      "sixcrm-private2",
+      "sixcrm-private3"
+    ]
+  }
+]

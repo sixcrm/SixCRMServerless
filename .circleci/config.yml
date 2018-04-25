@@ -628,18 +628,27 @@ workflows:
       - deploy_nats:
           requires:
             - deploy_internet_gateways
+            - deploy_eips
       - deploy_route_tables:
           requires:
             - deploy_nats
       - deploy_aurora:
           requires:
+<<<<<<< HEAD
             - deploy_security_groups
+=======
+            - deploy_route_tables
+>>>>>>> Nearly there
       - deploy_elasticsearch:
           requires:
             - deploy_route_tables
       - deploy_cloudsearch:
           requires:
+<<<<<<< HEAD
             - deploy_route_tables
+=======
+            - deploy_cloudsearch
+>>>>>>> Nearly there
       - backup_datastore:
           requires:
             - pre_deploy

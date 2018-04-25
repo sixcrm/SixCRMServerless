@@ -27,6 +27,18 @@ module.exports = class ElasticacheProvider extends AWSProvider{
 
 	}
 
+	createCacheSubnetGroup(parameters){
+
+		du.debug('Create Cache Subnet Group');
+
+		return new Promise((resolve) => {
+
+			this.elasticache.createCacheSubnetGroup(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+
+		});
+
+	}
+
 	destroyCluster(parameters){
 
 		du.debug('Destroy Cluster');

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
@@ -193,7 +194,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		return this.ec2provider.createInternetGateway().then(result => {
 			return this.nameEC2Resource(result.InternetGateway.InternetGatewayId, ig_definition.Name).then(() => {
-				du.highlight('Internet Gateway Created: '+ig_definition.name);
+				du.highlight('Internet Gateway Created: '+ig_definition.Name);
 				return result.InternetGateway;
 			});
 		});
@@ -327,16 +328,37 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 		du.debug('Deploy Route');
 
 		//Technical Debt:  Need to enable other named properties to be hydrated here...
-		let associated_id_promises = [
-			this.NATExists({Name: route_definition.NatGatewayName})
-		]
+		let associated_id_promises = [];
 
-		return Promise.all(associated_id_promises).then(([nat]) => {
+		if(_.has(route_definition, 'NatGatewayName')){
+			associated_id_promises.push(this.NATExists({Name: route_definition.NatGatewayName}));
+		}
 
-			const argumentation = objectutilities.merge(route_definition,  {
+		if(_.has(route_definition, 'GatewayName')){
+			associated_id_promises.push(this.gatewayExists({Name: route_definition.GatewayName}));
+		}
+
+		return Promise.all(associated_id_promises).then(([associated_id]) => {
+
+			let additional_argumentation = {
 				RouteTableId: route_table.RouteTableId,
-				NatGatewayId: nat.NatGatewayId,
-			});
+			};
+
+			if(_.has(associated_id, 'NatGatewayId')){
+
+				additional_argumentation.NatGatewayId = associated_id.NatGatewayId;
+
+			}else if(_.has(associated_id, 'InternetGatewayId')){
+
+				additional_argumentation.GatewayId = associated_id.InternetGatewayId;
+
+			}else{
+
+				throw eu.getError('server', 'Unrecognized response: ', associated_id);
+
+			}
+
+			const argumentation = objectutilities.merge(route_definition,  additional_argumentation);
 
 			return this.ec2provider.createRoute(argumentation).then(()=> {
 				du.highlight('Route created.');
@@ -477,6 +499,17 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 				return this.nameEC2Resource(result.NatGateway.NatGatewayId, nat_definition.Name);
 
 			});
+
+		}).then(() => {
+
+			const argumentation = {
+				Filters:[{
+					Name:'tag:Name',
+					Values:[nat_definition.Name]
+				}]
+			};
+
+			return this.ec2provider.waitFor('natGatewayAvailable', argumentation);
 
 		});
 
@@ -771,7 +804,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	nameEC2Resource(resource_identifier, name){
+	nameEC2Resource(resource_identifier, name, count = 0){
 
 		du.debug('Name EC2 Resource');
 
@@ -791,6 +824,16 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		return this.ec2provider.createTags(argumentation).then(() => {
 			return true;
+		}).catch(error => {
+			if(error.code.includes('NotFound')){
+				if(count < 10){
+					return timestamp.delay(8000)().then(() => {
+						count = count + 1;
+						return this.nameEC2Resource(resource_identifier, name, count);
+					});
+				}
+			}
+			throw error;
 		});
 
 	}

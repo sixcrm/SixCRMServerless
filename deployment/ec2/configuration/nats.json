@@ -1,7 +1,7 @@
 [
   {
-    "Name":"sixcrm-lambda-nat",
-    "AllocationName": "sixcrm-lambda-nat",
-    "SubnetName": "sixcrm-subnet1"
+    "Name":"sixcrm-public-nat",
+    "AllocationName": "sixcrm-public-nat",
+    "SubnetName": "sixcrm-public1"
   }
 ]

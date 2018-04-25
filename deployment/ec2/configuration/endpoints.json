@@ -1,0 +1,5 @@
+[{
+  "ServiceName": "com.amazonaws.{{aws_account_region}}.dynamodb",
+  "VpcName": "sixcrm",
+  "RouteTableNames": ["sixcrm-private-subnets"]
+}]
