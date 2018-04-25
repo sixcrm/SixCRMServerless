@@ -1,16 +1,13 @@
-
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js')
 
 module.exports = class EC2Provider extends AWSProvider {
 
-	constructor(){
+	constructor() {
 
 		super();
 
@@ -27,7 +24,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	describeVpcs(parameters){
+	describeVpcs(parameters) {
 
 		du.debug('Describe VPCs');
 
@@ -43,7 +40,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	createDefaultVpc(){
+	createDefaultVpc() {
 
 		du.debug('Create Default VPC');
 
@@ -61,7 +58,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	createVPC(parameters){
+	createVPC(parameters) {
 
 		du.debug('Create VPC');
 
@@ -97,7 +94,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	describeRoutes(parameters){
+	describeRoutes(parameters) {
 
 		du.debug('Describe Routes');
 
@@ -113,7 +110,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	replaceRoute(parameters){
+	replaceRoute(parameters) {
 
 		du.debug('Replace Route');
 
@@ -155,7 +152,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	createRoute(parameters){
+	createRoute(parameters) {
 
 		du.debug('Create Route');
 
@@ -197,7 +194,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	attachInternetGateway(parameters){
+	attachInternetGateway(parameters) {
 
 		du.debug('Attach Internet Gateway');
 
@@ -213,7 +210,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	createInternetGateway(){
+	createInternetGateway() {
 
 		du.debug('Create Internet Gateway');
 
@@ -229,7 +226,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	describeInternetGateways(parameters){
+	describeInternetGateways(parameters) {
 
 		du.debug('Describe Internet Gateways');
 
@@ -245,7 +242,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	associateRouteTable(parameters){
+	associateRouteTable(parameters) {
 
 		du.debug('Associate Route Table');
 
@@ -263,7 +260,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	createRouteTable(parameters){
+	createRouteTable(parameters) {
 
 		du.debug('Create Route Table');
 
@@ -279,7 +276,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	describeRouteTables(parameters){
+	describeRouteTables(parameters) {
 
 		du.debug('Describe Route Tables');
 
@@ -295,7 +292,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	createNatGateway(parameters){
+	createNatGateway(parameters) {
 
 		du.debug('Create NAT Gateway');
 
@@ -312,7 +309,7 @@ module.exports = class EC2Provider extends AWSProvider {
 	}
 
 
-	describeNatGateways(parameters){
+	describeNatGateways(parameters) {
 
 		du.debug('Describe NAT Gateways');
 
@@ -328,7 +325,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	allocateAddress(){
+	allocateAddress() {
 
 		du.debug('Allocate Address');
 
@@ -348,7 +345,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	describeAddresses(parameters){
+	describeAddresses(parameters) {
 
 		du.debug('Describe Addresses');
 
@@ -364,7 +361,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	createTags(parameters){
+	createTags(parameters) {
 
 		du.debug('Create Tags');
 
@@ -380,7 +377,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	createSubnet(parameters){
+	createSubnet(parameters) {
 
 		du.debug('Create Subnet');
 
@@ -417,7 +414,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	describeVPCs(parameters){
+	describeVPCs(parameters) {
 
 		du.debug('Describe VPCs');
 
@@ -433,7 +430,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	describeSubnets(parameters){
+	describeSubnets(parameters) {
 
 		du.debug('Describe Subnets');
 
@@ -449,37 +446,21 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	assureSecurityGroup(parameters){
+	assureSecurityGroup(parameters) {
 
 		du.debug('Assure Security Group');
 
-		let security_group_identifier;
+		return this.securityGroupExists(parameters).then((result) => {
 
-		if(_.has(parameters, 'GroupName')){
+			if (!_.isNull(result)) {
 
-			security_group_identifier = parameters.GroupName;
-
-		}else if(_.has(parameters, 'GroupId')){
-
-			security_group_identifier = parameters.GroupId;
-
-		}else{
-
-			throw eu.getError('server', 'EC2Provider.assureSecurityGroup expects GroupName of GroupId arguments');
-
-		}
-
-		return this.securityGroupExists(security_group_identifier).then((result) => {
-
-			if(result !== false){
-
-				du.info('Security group exists ('+security_group_identifier+')...');
+				du.info('Security group exists (' + parameters.GroupName + ')...');
 
 				return result;
 
-			}else{
+			} else {
 
-				du.info('Creating security group ('+security_group_identifier+')...');
+				du.info('Creating security group (' + parameters.GroupName + ')...');
 
 				return this.createSecurityGroup(parameters);
 
@@ -489,65 +470,44 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	securityGroupExists(security_group, use_cache, retry){
+	securityGroupExists(security_group_definition) {
 
 		du.debug('Security Group Exists');
 
-		if(_.isUndefined(retry)){
-			retry = 0;
+		let argumentation = {
+			Filters: [{
+				Name: "tag:Name",
+				Values: [security_group_definition.GroupName]
+			}]
+		};
+
+		if (_.has(security_group_definition, 'GroupId')) {
+
+			argumentation = {
+				GroupIds: [security_group_definition.GroupId]
+			};
+
 		}
 
-		if(_.isUndefined(use_cache)){
-			use_cache = true;
-		}
+		return this.describeSecurityGroups(argumentation).then(result => {
 
-		if(use_cache == true && _.has(this, 'security_group_descriptions') && _.has(this.security_group_descriptions, 'SecurityGroups')){
-
-			let security_group_description = arrayutilities.find(this.security_group_descriptions.SecurityGroups, (description) => {
-				if(description.GroupName == security_group || description.GroupId == security_group){ return true; }
-				return false;
-			});
-
-			if(!_.isUndefined(security_group_description)){
-
-				return Promise.resolve(security_group_description);
-
+			if (_.has(result, 'SecurityGroups') && _.isArray(result.SecurityGroups)) {
+				if (arrayutilities.nonEmpty(result.SecurityGroups)) {
+					if (result.SecurityGroups.length == 1) {
+						return result.SecurityGroups[0];
+					}
+					throw eu.getError('server', 'More than one result: ', result);
+				}
+				return null;
 			}
 
-		}else{
+			throw eu.getError('server', 'Unexpected result: ', result);
 
-			return this.describeSecurityGroups({}).then((results) => {
-
-				this.security_group_descriptions = results;
-
-				return this.securityGroupExists(security_group, true, retry);
-
-			});
-
-		}
-
-		if(retry !== false && retry < this.max_retry_attempts){
-
-			retry += 1;
-
-			du.info('Retrying ('+numberutilities.appendOrdinalSuffix(retry)+' attempt...)');
-
-			return Promise.resolve().then(timestamp.delay(this.retry_pause)).then(() => {
-
-				return this.securityGroupExists(security_group, false, retry);
-
-			});
-
-		}else{
-
-			return Promise.resolve(false);
-
-		}
-
+		});
 
 	}
 
-	describeSecurityGroups(parameters){
+	describeSecurityGroups(parameters) {
 
 		du.debug('Describe Security Groups');
 
@@ -559,88 +519,145 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	createSecurityGroup(parameters){
+	createSecurityGroup(parameters) {
 
 		du.debug('Create Security Group');
 
+		let params = objectutilities.transcribe(
+			{
+				Description: 'Description',
+				GroupName: 'GroupName'
+			},
+			parameters,
+			{},
+			true
+		);
+
+		params = objectutilities.transcribe(
+			{
+				VpcId: 'VpcId'
+			},
+			parameters,
+			params,
+			false
+		);
+
 		return new Promise((resolve) => {
 
-			let handle = this.ec2.createSecurityGroup(parameters);
+			this.ec2.createSecurityGroup(params, (error, data) => {
 
-			handle.on('success', (response) => {
-				du.highlight('Security Group Created.');
-				return resolve(response);
-			}).on('error',(error) => {
-				throw eu.getError('server', error);
+				resolve(this.tolerantCallback(error, data, false));
+
 			});
 
-			handle.send();
-
 		});
 
 	}
 
-	determineGroupIDFromName(group_name){
-
-		du.debug('Determine Group ID From Name');
-
-		return this.securityGroupExists(group_name).then((results) => {
-
-			if(results == false){
-				throw eu.getError('server', 'Security group does not exist.');
-			}
-
-			if(!_.has(results, 'GroupId')){
-				throw eu.getError('server', 'Unexpected response group structure.');
-			}
-
-			return results.GroupId;
-
-		});
-
-	}
-
-	addSecurityGroupIngressRules(parameters){
+	addSecurityGroupIngressRules(parameters) {
 
 		du.debug('Add Security Group Ingress Rules');
 
-		if(!_.has(parameters, 'GroupId')){
-
-			if(!_.has(parameters, 'GroupName')){
-
-				throw eu.getError('server', 'Inappropriate Parameterization');
-
-			}
-
-			return this.determineGroupIDFromName(parameters.GroupName).then((group_id) => {
-
-				parameters.GroupId = group_id;
-
-				return this.addSecurityGroupIngressRules(parameters);
-
-			});
-
-		}else{
-
-			return new Promise((resolve) => {
-
-				return this.removeExistingIngressRules(parameters).then(() => {
-					return this.ec2.authorizeSecurityGroupIngress(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-				});
-
-			});
-
-		}
+		return this.removeExistingIngressRules(parameters)
+			.then(() => this.authorizeSecurityGroupIngress(parameters));
 
 	}
 
-	addSecurityGroupEgressRules(parameters){
+	authorizeSecurityGroupIngress(parameters) {
+
+		du.debug('Authorize Security Group Ingress');
+
+		if (_.has(parameters, 'GroupId') && _.has(parameters, 'GroupName')) {
+			delete parameters.GroupName;
+		}
+
+		return new Promise((resolve) => {
+
+			this.ec2.authorizeSecurityGroupIngress(parameters, (error, data) => {
+
+				resolve(this.AWSCallback(error, data))
+
+			});
+
+		});
+
+	}
+
+	/*
+	resolveIpPermissionsGroupNameReferences(parameters){
+
+		du.debug('Resolve IP Permissions Group Name References');
+
+		let ip_permission_promises = arrayutilities.map(parameters.IpPermissions, ip_permission => {
+
+			if(_.has(ip_permission, 'UserIdGroupPairs')){
+
+				let translation_promises = arrayutilities.map(ip_permission.UserIdGroupPairs, user_id_group_pair => {
+
+					if(!_.has(user_id_group_pair, 'GroupName')){
+						return Promise.resolve(user_id_group_pair);
+					}
+
+					return this.securityGroupExists(user_id_group_pair).then(result => {
+						if(_.isNull(result)){
+							eu.getError('Unable to identify security group: "'+user_id_group_pair.GroupName+'"');
+						}
+						user_id_group_pair.GroupId = result.GroupId;
+						delete user_id_group_pair.GroupName;
+						return user_id_group_pair;
+					});
+
+				});
+
+				du.warning(translation_promises);
+
+				return Promise.all(translation_promises).then(translation_promises => {
+					du.highlight(translation_promises);
+					return translation_promises;
+				});
+
+			}
+
+			return ip_permission;
+
+		});
+
+		return Promise.all(ip_permission_promises).then(ip_permsission_promises => {
+			du.highlight(ip_permission_promises);
+			parameters.IpPermissions = ip_permission_promises;
+			return parameters;
+		});
+
+	}
+	*/
+
+	authorizeSecurityGroupEgress(parameters) {
+
+		du.debug('Authorize Security Group Egress');
+
+		if (_.has(parameters, 'GroupName')) {
+			delete parameters.GroupName;
+		}
+
+		return new Promise((resolve) => {
+
+			this.ec2.authorizeSecurityGroupEgress(parameters, (error, data) => {
+
+				resolve(this.AWSCallback(error, data))
+
+			});
+
+		});
+
+	}
+
+	addSecurityGroupEgressRules(parameters) {
 
 		du.debug('Add Security Group Egress Rules');
 
-		if(!_.has(parameters, 'GroupId')){
+		if (!_.has(parameters, 'GroupId')) {
 
-			if(!_.has(parameters, 'GroupName')){
+			if (!_.has(parameters, 'GroupName')) {
 
 				throw eu.getError('server', 'Inappropriate Parameterization');
 
@@ -654,81 +671,68 @@ module.exports = class EC2Provider extends AWSProvider {
 
 			});
 
-		}else{
+		} else {
 
-			return new Promise((resolve) => {
-
-				return this.removeExistingEgressRules(parameters).then(() => {
-
-					parameters = objectutilities.subtractiveFilter(['GroupName'], parameters);
-
-					return this.ec2.authorizeSecurityGroupEgress(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-				});
-
-			});
+			return this.removeExistingEgressRules(parameters).then(() => this.authorizeSecurityGroupEgress(parameters));
 
 		}
 
 	}
 
-	removeExistingIngressRules(parameters){
+	removeExistingIngressRules(parameters) {
 
 		du.debug('Remove Existing Ingress Rules');
 
-		return new Promise((resolve) => {
+		return this.securityGroupExists(parameters)
+			.then((result) => {
 
-			return this.securityGroupExists(parameters.GroupId).then((result) => {
-
-				if(_.has(result, 'IpPermissions') && _.isArray(result.IpPermissions) && result.IpPermissions.length > 0){
+				if (_.has(result, 'IpPermissions') && _.isArray(result.IpPermissions) && result.IpPermissions.length > 0) {
 
 					let ip_permissions = arrayutilities.map(result.IpPermissions, this.filterRule);
 
 					result.IpPermissions = ip_permissions;
 
-					result = objectutilities.subtractiveFilter(['Description', 'OwnerId', 'IpPermissionsEgress','Tags','VpcId'], result);
+					result = objectutilities.subtractiveFilter(['Description', 'OwnerId', 'IpPermissionsEgress', 'Tags', 'VpcId'], result);
 
 					return this.revokeSecurityGroupIngress(result).then((result) => {
 
 						du.highlight('Successfully revoked ingress rules');
 
-						return resolve(result);
+						return result;
 
 					});
 
-				}else{
+				} else {
 
 					du.highlight('No ingress rules to revoke...');
 
-					return resolve(false);
+					return false;
 
 				}
 
 			});
 
-		});
-
 	}
 
-	filterRule(rule){
+	filterRule(rule) {
 
 		du.debug('Filter Rule');
 
 		let clean_rule;
 
-		if(_.includes(['tcp','udp'], rule.IpProtocol)){
+		if (_.includes(['tcp', 'udp'], rule.IpProtocol)) {
 
-			clean_rule = objectutilities.additiveFilter(['IpProtocol', 'IpRanges','FromPort','ToPort', 'UserIdGroupPairs'], rule);
+			clean_rule = objectutilities.additiveFilter(['IpProtocol', 'IpRanges', 'FromPort', 'ToPort', 'UserIdGroupPairs'], rule);
 
-		}else if(rule.IpProtocol == '-1'){
+		} else if (rule.IpProtocol == '-1') {
 			clean_rule = objectutilities.additiveFilter(['IpProtocol', 'IpRanges', 'UserIdGroupPairs'], rule);
 		}
 
-		if(_.has(clean_rule, 'IpRanges') && clean_rule.IpRanges.length < 1){
+		if (_.has(clean_rule, 'IpRanges') && clean_rule.IpRanges.length < 1) {
 			delete clean_rule.IpRanges;
 		}
 
-		if(_.has(clean_rule, 'UserIdGroupPairs') && clean_rule.UserIdGroupPairs.length < 1){
+		if (_.has(clean_rule, 'UserIdGroupPairs') && clean_rule.UserIdGroupPairs.length < 1) {
 			delete clean_rule.UserIdGroupPairs;
 		}
 
@@ -737,15 +741,15 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	removeExistingEgressRules(parameters){
+	removeExistingEgressRules(parameters) {
 
 		du.debug('Remove Existing Egress Rules');
 
 		return new Promise((resolve) => {
 
-			return this.securityGroupExists(parameters.GroupId).then((result) => {
+			return this.securityGroupExists(parameters).then((result) => {
 
-				if(_.has(result, 'IpPermissionsEgress') && _.isArray(result.IpPermissionsEgress) && result.IpPermissionsEgress.length > 0){
+				if (_.has(result, 'IpPermissionsEgress') && _.isArray(result.IpPermissionsEgress) && result.IpPermissionsEgress.length > 0) {
 
 					let ip_permissions_egress = arrayutilities.map(result.IpPermissionsEgress, this.filterRule);
 
@@ -761,7 +765,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 					});
 
-				}else{
+				} else {
 
 					du.highlight('No egress rules to revoke...');
 
@@ -775,15 +779,19 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	revokeSecurityGroupIngress(parameters){
+	revokeSecurityGroupIngress(parameters) {
 
 		du.debug('Revoke Security Group Ingress');
+
+		if (_.has(parameters, 'GroupId') && _.has(parameters, 'GroupName')) {
+			delete parameters.GroupName;
+		}
 
 		return new Promise((resolve) => {
 
 			this.ec2.revokeSecurityGroupIngress(parameters, (error, data) => {
 
-				resolve(this.AWSCallback(error, data))
+				resolve(this.AWSCallback(error, data));
 
 			});
 
@@ -791,58 +799,48 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	revokeSecurityGroupEgress(parameters){
+	revokeSecurityGroupEgress(parameters) {
 
 		du.debug('Revoke Security Group Egress');
 
+		if (_.has(parameters, 'GroupId') && _.has(parameters, 'GroupName')) {
+			delete parameters.GroupName;
+		}
+
 		return new Promise((resolve) => {
 
-			this.ec2.revokeSecurityGroupEgress(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.ec2.revokeSecurityGroupEgress(parameters, (error, data) => {
+
+				resolve(this.AWSCallback(error, data));
+
+			});
 
 		});
 
 	}
 
-	getSecurityGroupIdentifier(object){
-
-		du.debug('Get Security Group Identifier');
-
-		let identifier = null;
-
-		if(_.has(object, 'GroupId')){
-			identifier = object.GroupId;
-		}else if(_.has(object,'GroupName')){
-			identifier = object.GroupName;
-		}
-
-		return identifier;
-
-	}
-
-	destroySecurityGroup(parameters){
+	destroySecurityGroup(parameters) {
 
 		du.debug('Create Security Group');
 
 		return new Promise((resolve, reject) => {
 
-			let identifier = this.getSecurityGroupIdentifier(parameters);
+			return this.securityGroupExists(parameters).then((results) => {
 
-			return this.securityGroupExists(identifier).then((results) => {
-
-				if(results === false){
+				if (results === false) {
 
 					du.highlight('Security Group does not exist');
 
 					return resolve(false);
 
-				}else{
+				} else {
 
 					let handle = this.ec2.deleteSecurityGroup(parameters);
 
-					handle.on('success',(result) => {
+					handle.on('success', (result) => {
 						du.highlight('Security Group destroyed');
 						return resolve(result);
-					}).on('error',(error) => {
+					}).on('error', (error) => {
 						return reject(eu.getError('server', error));
 					});
 

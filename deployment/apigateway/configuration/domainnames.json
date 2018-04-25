@@ -1,0 +1,11 @@
+[{
+  "domainName": "sixcrm.com",
+  "certificateArn": "",
+  "endpointConfiguration": {
+    "types": ["EDGE"]
+  },
+  "mapping":{
+    "restApiId": "",
+    "basePath": "/"
+  }
+}]

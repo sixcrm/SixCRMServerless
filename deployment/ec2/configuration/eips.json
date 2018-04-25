@@ -1,5 +1,6 @@
 [
   {
-    "Name":"sixcrm-lambda-nat"
+    "Name":"sixcrm-lambda-nat",
+    "Domain":"vpc"
   }
 ]

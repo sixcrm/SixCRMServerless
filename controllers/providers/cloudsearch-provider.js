@@ -3,17 +3,17 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
 module.exports = class CloudSearchProvider extends AWSProvider {
 
-	constructor(instantiate_csd) {
+	constructor(instantiate_csd = true) {
 
 		super();
 
-		instantiate_csd = (_.isUndefined(instantiate_csd) || _.isNull(instantiate_csd)) ? true : instantiate_csd;
-
-		this.max_attempts = 200;
+		this.max_attempts = 400;
 
 		this.setDomainName();
 
@@ -67,7 +67,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 			}
 
-			return;
+			return null;
 
 		});
 
@@ -246,8 +246,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 				.on('error', (response) => {
 					du.error('Create Index Error', index_object);
 					throw eu.getError('server', response);
-				})
-				.send();
+				}).send();
 
 		});
 
@@ -431,6 +430,64 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 			}
 
+
+		});
+
+	}
+
+	waitFor(waitfor_status, domainname, count) {
+
+		du.debug('Wait For');
+
+		return new Promise((resolve) => {
+
+			if (_.isUndefined(domainname) || _.isNull(domainname)) {
+				domainname = this.domainname;
+			}
+
+			if (_.isUndefined(count)) {
+				count = 0;
+			}
+
+			if (count > this.max_attempts) {
+
+				if (process.env.TEST_MODE === 'true') {
+					du.debug('Test Mode');
+					return Promise.resolve(true);
+				}
+
+				eu.throwError('server', 'Max attempts reached.');
+			}
+
+			return this.describeDomains([domainname]).then((status) => {
+
+				if (waitfor_status == 'ready') {
+
+					if (status.DomainStatusList[0].Created == true && status.DomainStatusList[0].Processing == false) {
+
+						return resolve(true);
+
+					}
+
+				} else if (waitfor_status == 'deleted') {
+
+					if (!_.has(status, 'DomainStatusList') || !_.isArray(status.DomainStatusList) || status.DomainStatusList.length < 1) {
+
+						return resolve(true);
+
+					}
+
+				}
+
+				count = count + 1;
+
+				du.output('Pausing for completion (' + numberutilities.appendOrdinalSuffix(count) + ' attempt...)');
+
+				return timestamp.delay(8000)().then(() => {
+					return this.waitFor(waitfor_status, domainname, count);
+				});
+
+			});
 
 		});
 

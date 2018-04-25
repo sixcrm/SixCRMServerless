@@ -1,0 +1,13 @@
+[{
+	"DBSubnetGroupDescription": "SixCRM Aurora cluster",
+	"DBSubnetGroupName": "sixcrm-aurora",
+	"SubnetNames": [
+		"sixcrm-subnet1",
+		"sixcrm-subnet2",
+		"sixcrm-subnet3"
+	],
+  "Tags": [{
+    "Key": "Name",
+    "Value": "sixcrm-aurora"
+  }]
+}]
