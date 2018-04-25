@@ -148,17 +148,24 @@ module.exports = class Register extends RegisterUtilities {
 
 	pushTransactionEvents() {
 
+		if(!_.has(this, 'eventHelperController')){
+
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			this.eventHelperController = new EventHelperController();
+
+		}
+
 		const transactions = this.parameters.isSet('transactionreceipts') ? this.parameters.get('transactionreceipts') : [this.parameters.get('receipttransaction')];
 
 		return BBPromise.each(transactions, (transaction) => {
 
-			return super.pushEvent({
+			return this.eventHelperController.pushEvent({
 				event_type: 'transaction_' + transaction.result,
 				context: {
 					session: this.parameters.get('parentsession'),
 					transaction,
 					rebill: this.parameters.get('rebill'),
-					transactionSubType: this.parameters.get('transactionsubtype')}
+					transactionSubType: this.parameters.get('transactionsubtype', null, false)}
 			});
 
 		});
