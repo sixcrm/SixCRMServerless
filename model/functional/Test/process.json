@@ -14,7 +14,7 @@
 	    "token":{"$ref": "../../definitions/creditcardtoken.json"},
 	    "first_six":{"$ref": "../../definitions/creditcardfirstsix.json"},
 	    "last_four":{"$ref":"../../definitions/creditcardlastfour.json"},
-        "ccv":{"$ref":"../../definitions/creditcardccv.json"},
+        "ccv":{"$ref":"../../definitions/creditcardcvv.json"},
         "expiration":{"$ref":"../../definitions/creditcardexpirationdate.json"},
         "address":{"$ref":"../../definitions/address.json"}
       },

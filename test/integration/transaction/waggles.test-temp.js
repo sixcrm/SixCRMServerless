@@ -383,7 +383,7 @@ describe('Transaction Endpoints Round Trip Test', () => {
 			let creditcard = {
 				"number": "4737023965504065",
 				"expiration": "04/2021",
-				"ccv": "652",
+				"cvv": "652",
 				"name": "Kristopher Trujillo",
 				"address": {
 					"line1": "4120 Canal Rd.",

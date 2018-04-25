@@ -59,7 +59,7 @@ function getValidProcessRequestParametersObject(){
 		creditcard:{
 			number:"4111111111111111",
 			expiration:"1025",
-			ccv:"999",
+			cvv:"999",
 			name:"Rama Damunaste",
 			address:{
 				line1:"10 Skid Rw.",

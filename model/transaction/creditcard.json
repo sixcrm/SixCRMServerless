@@ -10,7 +10,7 @@
 			"type": "string",
 			"pattern":"^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$"
 		},
-		"CreditCardCCV":{
+		"CreditCardCVV":{
 			"type":"string",
 			"pattern":"^[0-9]{3,4}$"
 		},
@@ -54,7 +54,7 @@
 				"token":{"$ref": "../definitions/creditcardtoken.json"},
 				"first_six":{"$ref": "../definitions/creditcardfirstsix.json"},
 				"last_four":{"$ref":"../definitions/creditcardlastfour.json"},
-				"ccv":{"$ref": "#/definitions/CreditCardCCV"},
+				"cvv":{"$ref": "#/definitions/CreditCardCVV"},
 				"expiration":{"$ref": "#/definitions/CreditCardExpirationDate"},
 				"name":{
 					"type":"string",

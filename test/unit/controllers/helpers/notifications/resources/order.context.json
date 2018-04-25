@@ -97,7 +97,7 @@
       "name": "Lukas Roob",
       "number": "4111111111111111",
       "expiration": "09/2018",
-      "ccv": "595",
+      "cvv": "595",
       "address": {
         "line1": "751 Helga Streets",
         "city": "Christmouth",
@@ -189,7 +189,7 @@
   "creditcard": {
     "updated_at": "2018-03-27T18:52:21.170Z",
     "created_at": "2018-03-27T18:52:21.170Z",
-    "ccv": "595",
+    "cvv": "595",
     "number": "4111111111111111",
     "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
     "expiration": "09/2018",
@@ -641,7 +641,7 @@
     "creditcard": {
       "updated_at": "2018-03-27T18:52:21.170Z",
       "created_at": "2018-03-27T18:52:21.170Z",
-      "ccv": "595",
+      "cvv": "595",
       "number": "4111111111111111",
       "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
       "expiration": "09/2018",

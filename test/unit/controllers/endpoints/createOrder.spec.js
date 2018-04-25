@@ -798,7 +798,7 @@ describe('createOrder', function () {
 				provider: 'tokenex'
 			}
 			delete stored_creditcard.number;
-			delete stored_creditcard.ccv;
+			delete stored_creditcard.cvv;
 
 			let customer = getValidCustomer();
 			let session = getValidSession();

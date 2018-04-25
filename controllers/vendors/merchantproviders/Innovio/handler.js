@@ -157,7 +157,7 @@ class InnovioController extends MerchantProvider {
 				cust_lname:'customer.lastname',
 				cust_email:'customer.email',
 				//Technical Debt:  We don't have this any longer...
-				pmt_key:'creditcard.ccv',
+				pmt_key:'creditcard.cvv',
 				//cust_login:'',
 				//cust_password:'',
 				bill_addr:'creditcard.address.line1',

@@ -1,8 +1,0 @@
-{
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/creditcardccv.json",
-  "title": "CreditCardCCV",
-  "description": "Credit card CCV number",
-  "type":"string",
-  "pattern":"^[0-9]{3,4}$"
-}

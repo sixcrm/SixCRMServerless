@@ -51,7 +51,7 @@ function getValidRequestParametersObject() {
 		count: 3,
 		creditcard: {
 			number: '5105105105105100',
-			ccv: '123',
+			cvv: '123',
 			expiration: '12/2014',
 			address: {
 				line1: '123 Main Street Apt. 1',

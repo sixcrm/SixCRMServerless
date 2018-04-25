@@ -64,7 +64,7 @@
 		"creditcard":{
 			"number":"371296214452000",
 			"expiration":"0123",
-			"ccv":"4595",
+			"cvv":"4595",
 			"name":"Kristopher Trujillo",
 			"address":{
 				"line1":"4120 Canal Rd.",

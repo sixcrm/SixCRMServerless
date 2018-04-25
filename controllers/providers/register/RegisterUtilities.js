@@ -273,8 +273,8 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 		let raw_creditcard = this.parameters.get('rawcreditcard', null, false);
 
-		if(_.has(raw_creditcard, 'ccv')){
-			selected_creditcard.ccv = raw_creditcard.ccv;
+		if(_.has(raw_creditcard, 'cvv')){
+			selected_creditcard.cvv = raw_creditcard.cvv;
 		}
 
 	}

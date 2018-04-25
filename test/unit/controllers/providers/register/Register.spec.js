@@ -2140,7 +2140,7 @@ describe('controllers/providers/Register.js', () => {
 
 	describe('selectCustomerCreditCard', () => {
 
-		it('adds the ccv if the selected creditcard is present and the raw creditcard is present', () => {
+		it('adds the cvv if the selected creditcard is present and the raw creditcard is present', () => {
 
 			let selected_creditcard = MockEntities.getValidCreditCard();
 			selected_creditcard.number = '4111111111111111';
@@ -2158,7 +2158,7 @@ describe('controllers/providers/Register.js', () => {
 			});
 		});
 
-		it('adds the ccv if the selected creditcard is present and the raw creditcard is present', () => {
+		it('adds the cvv if the selected creditcard is present and the raw creditcard is present', () => {
 
 			let selected_creditcard = MockEntities.getValidCreditCard();
 			selected_creditcard.number = '4111111111111111';
