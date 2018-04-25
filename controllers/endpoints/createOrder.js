@@ -433,7 +433,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		let raw_creditcard = this.parameters.get('raw_creditcard', null, false);
 
 		let argumentation = {
-			rebill: rebill
+			rebill: rebill,
+			transactionsubtype: this.parameters.get('transactionsubtype')
 		};
 
 		if(!_.isNull(raw_creditcard)){

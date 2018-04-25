@@ -73,7 +73,8 @@ module.exports = class Register extends RegisterUtilities {
 			'selectedcreditcard': global.SixCRM.routes.path('model', 'entities/creditcard.json'),
 			'rawcreditcard':global.SixCRM.routes.path('model', 'general/rawcreditcard.json'),
 			'transactiontype':global.SixCRM.routes.path('model', 'functional/register/transactiontype.json'),
-			'merchantprovider':global.SixCRM.routes.path('model', 'entities/merchantprovider.json')
+			'merchantprovider':global.SixCRM.routes.path('model', 'entities/merchantprovider.json'),
+			'transactionsubtype': global.SixCRM.routes.path('model', 'definitions/transactionsubtype.json')
 		};
 
 		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definitions});
@@ -153,9 +154,11 @@ module.exports = class Register extends RegisterUtilities {
 
 			return super.pushEvent({
 				event_type: 'transaction_' + transaction.result,
-				context: Object.assign({}, this.parameters.store, {
-					transaction
-				})
+				context: {
+					session: this.parameters.get('parentsession'),
+					transaction,
+					rebill: this.parameters.get('rebill'),
+					transactionSubType: this.parameters.get('transactionsubtype')}
 			});
 
 		});
