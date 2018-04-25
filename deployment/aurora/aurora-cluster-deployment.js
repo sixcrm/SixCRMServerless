@@ -162,11 +162,13 @@ module.exports = class AuroraClusterDeployment {
 
 		}
 
-		return BBPromise.map(groupNames, (groupName) => {
+		return BBPromise.map(groupNames, async (groupName) => {
 
-			return this.ec2provider.securityGroupExists({
+			const securityGroup = await this.ec2provider.securityGroupExists({
 				GroupName: groupName
-			}).GroupId;
+			});
+
+			return securityGroup.GroupId;
 
 		});
 
