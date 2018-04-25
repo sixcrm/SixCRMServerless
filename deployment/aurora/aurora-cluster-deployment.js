@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -15,72 +16,62 @@ module.exports = class AuroraClusterDeployment {
 
 	}
 
-	deploy() {
+	async deploy() {
 
 		du.debug('Deploy Cluster');
 
-		const parameters = {
+		const describeClustersResponse = await this._rdsprovider.describeClusters({
 			DBClusterIdentifier: 'sixcrm' // Technical Debt: This should not be assumed. Read from config instead.
-		};
+		});
 
-		return this._rdsprovider.describeClusters(parameters)
-			.then((data) => {
+		if (describeClustersResponse.DBClusters.length) {
 
-				if (data.DBClusters.length) {
+			du.info('Aurora cluster already created');
 
-					du.info('Aurora cluster already created');
+			return;
 
-					return Promise.resolve();
+		}
 
-				} else {
+		du.info('Creating Aurora cluster');
 
-					du.info('Creating Aurora cluster');
+		const parametersFromFile = await this._getParameterConfigurationFromFile();
+		const parameters = await this._parseParameters(parametersFromFile);
 
-					return Promise.resolve()
-						.then(this._getParameterConfigurationFromFile.bind(this))
-						.then(this._parseParameters.bind(this))
-						.then((parameters) => {
+		parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
+		parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
 
-							parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
-							parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
+		const securityGroup = await this._getSecurityGroupIds();
+		parameters.VpcSecurityGroupIds = [securityGroup.GroupId];
 
-							return this._rdsprovider.putCluster(parameters).then(data => {
+		const putClusterResponse = await this._rdsprovider.putCluster(parameters);
 
-								du.info(data);
+		du.info(putClusterResponse);
 
-								if (data.DBClusters) {
+		if (putClusterResponse.DBClusters) {
 
-									if (!objectutilities.hasRecursive(data, 'DBClusters.0.Endpoint')) {
+			if (!objectutilities.hasRecursive(putClusterResponse, 'DBClusters.0.Endpoint')) {
 
-										throw eu.getError('server', 'Data object does not contain appropriate key: DBClusters.0.Endpoint');
+				throw eu.getError('server', 'Data object does not contain appropriate key: DBClusters.0.Endpoint');
 
-									}
+			}
 
-									//global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
+			//global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBClusters[0].Endpoint);
 
-								} else {
+		} else {
 
-									if (!objectutilities.hasRecursive(data, 'DBCluster.Endpoint')) {
+			if (!objectutilities.hasRecursive(putClusterResponse, 'DBCluster.Endpoint')) {
 
-										throw eu.getError('server', 'Data object does not contain appropriate key: DBCluster.Endpoint');
+				throw eu.getError('server', 'Data object does not contain appropriate key: DBCluster.Endpoint');
 
-									}
+			}
 
-									//global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBCluster.Endpoint);
+			//global.SixCRM.configuration.setEnvironmentConfig('aurora.host', data.DBCluster.Endpoint);
 
-								}
+		}
 
-								du.info('Aurora host resolved', global.SixCRM.configuration.site_config.aurora);
+		du.info('Aurora host resolved', global.SixCRM.configuration.site_config.aurora);
 
-								return parameters;
-
-							});
-						})
-						.then((parameters) => this._deployClusterInstances(parameters));
-
-				}
-
-			});
+		await this._deployClusterInstances(parameters)
 
 	}
 
@@ -159,6 +150,21 @@ module.exports = class AuroraClusterDeployment {
 		});
 
 		return Promise.all(instanceDeploymentPromises);
+
+	}
+
+	async _getSecurityGroupIds() {
+
+		if (!_.has(this, 'ec2provider')) {
+
+			const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
+			this.ec2provider = new EC2Provider();
+
+		}
+
+		return this.ec2provider.securityGroupExists({
+			GroupName: 'SixCRM-Aurora'
+		});
 
 	}
 
