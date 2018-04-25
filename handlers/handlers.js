@@ -1,8 +1,7 @@
 const _ = require('lodash');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
-const logger = require('./utilities/logger/handler');
-
+const LoggingHandler = require('./logging-handler');
 const AuthorizationHandler = require('./authorization-handler');
 const EndpointHandler = require('./endpoint-handler');
 const ForwardMessageHandler = require('./forward-message-handler');
@@ -44,7 +43,7 @@ const TrackingEventsController = global.SixCRM.routes.include('controllers', 'wo
 
 module.exports = {
 
-	logger: logger,
+	logger: handleLogging(),
 
 	authorizers: {
 
@@ -131,6 +130,10 @@ module.exports = {
 
 	}
 
+}
+
+function handleLogging() {
+	return (event, context, callback) => new LoggingHandler().handle(event, context, callback);
 }
 
 function handleAuthorization(delegate) {

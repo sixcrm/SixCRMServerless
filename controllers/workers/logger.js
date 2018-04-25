@@ -182,7 +182,7 @@ module.exports = class LoggerController {
 				du.error("Failed Items: " + JSON.stringify(failedItems, null, 2));
 			}
 
-			return false;
+			throw error;
 
 		} else {
 
