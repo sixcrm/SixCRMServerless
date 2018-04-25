@@ -39,7 +39,7 @@ FROM
 LEFT OUTER JOIN
 
 (
-	-- leads - sessions with no successful transaction
+	-- leads - sessions with successful transaction = partial
 	SELECT
 		leads.affiliate,
 		COALESCE(leads.leads, 0) - COALESCE(sub_success.successes, 0) AS partials

@@ -34,5 +34,9 @@ module.exports = {
 	'activity_*': {
 		transform: 'activity-transform.js',
 		handlers: ['activity-event-handler.js']
+	},
+	'chargeback': {
+		transform: 'chargeback-transform.js',
+		handlers: ['chargeback-event-handler.js']
 	}
 }

@@ -4,6 +4,7 @@ chai.use(require('chai-shallow-deep-equal'));
 const expect = chai.expect;
 const path = require('path');
 const _ = require('lodash');
+const BBPromise = require('bluebird');
 const SQSTestUtils = require('../../sqs-test-utils');
 const AnalyticsEventHandler = require('../../../../controllers/workers/analytics/analytics-event-handler');
 
@@ -85,7 +86,7 @@ function prepareTest(dir) {
 
 		if (fileutilities.fileExists(path.join(dir, 'seeds', 'aurora'))) {
 
-			test.seeds.aurora = fileutilities.getDirectoryFilesSync(path.join(dir, 'seeds', 'aurora'));
+			test.seeds.aurora = fileutilities.getDirectoryFilesSync(path.join(dir, 'seeds', 'aurora')).sort();
 
 		}
 
@@ -109,22 +110,18 @@ function seedAurora(test) {
 
 	}
 
-	const promises = _.reduce(test.seeds.aurora, (memo, seed) => {
+	return BBPromise.each(test.seeds.aurora, (seed) => {
 
 		const seedFilePath = path.join(test.directory, 'seeds', 'aurora', seed);
 		const script = fileutilities.getFileContentsSync(seedFilePath, 'utf8');
 
-		memo.push(auroraContext.withConnection((connection) => {
+		return auroraContext.withConnection((connection) => {
 
 			return connection.query(script);
 
-		}));
+		});
 
-		return memo;
-
-	}, []);
-
-	return Promise.all(promises);
+	});
 
 }
 
