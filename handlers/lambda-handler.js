@@ -13,8 +13,7 @@ module.exports = class LambdaHandler
 
 		} finally {
 
-			await ServerlessRuntime.getContext().dispose();
-			ServerlessRuntime.clearContext();
+			await ServerlessRuntime.clearContext();
 
 		}
 

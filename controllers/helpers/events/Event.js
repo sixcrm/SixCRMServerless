@@ -23,7 +23,6 @@ module.exports = class EventHelperController {
 
 		let publish_parameters = this.createPublishParameters(event);
 
-		du.highlight("SNS Provider", this.snsprovider);
 		return this.snsprovider.publish(publish_parameters);
 
 	}
