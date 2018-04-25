@@ -152,7 +152,6 @@ module.exports = class LambdaProvider extends AWSProvider{
 
 	getLambdaInstance(lambda_name) {
 		let lambda = global.SixCRM.configuration.serverless_config.functions[lambda_name];
-		du.highlight("Lambda Environment", lambda);
 
 		if (lambda.environment) {
 			for (let key in lambda.environment) {

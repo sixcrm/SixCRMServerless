@@ -98,15 +98,15 @@ module.exports = {
 
 	workers: {
 
-		analyticsevenhandler: handleAnalytics(),
+		analyticseventhandler: handleAnalytics(),
 
 		forwardMessage: {
 
 			billtohold: handleForwardMessage((event) => new BillToHoldForwardMessageController().execute(event)),
 			deliveredtoarchive: handleForwardMessage((event) => new DeliveredToArchiveForwardMessageController().execute(event)),
-			holdtoarchived: handleForwardMessage((event) => new HoldToArchivedForwardMessageController().execute(event)),
+			holdtoarchive: handleForwardMessage((event) => new HoldToArchivedForwardMessageController().execute(event)),
 			holdtopending: handleForwardMessage((event) => new HoldToPendingForwardMessageController().execute(event)),
-			indextoarchived: handleForwardMessage((event) => new IndexToArchivedForwardMessageController().execute(event)),
+			indextoarchive: handleForwardMessage((event) => new IndexToArchivedForwardMessageController().execute(event)),
 			// pendingfailedtopending: handleForwardMessage((event) => new PendingFailedToPendingForwardMessageController().execute(event)), // deprecated
 			pendingtoshipped: handleForwardMessage((event) => new PendingToShippedForwardMessageController().execute(event)),
 			pickrebillstobill: handleForwardMessage((event) => new PickRebillsToBillForwardMessageController().execute(event)),

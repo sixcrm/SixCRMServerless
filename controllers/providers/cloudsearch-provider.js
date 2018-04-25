@@ -55,21 +55,28 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	setCloudsearchDomainEndpoint() {
+	async setCloudsearchDomainEndpoint() {
 
 		du.debug('Set Cloudsearch Domain Endpoint');
 
-		return global.SixCRM.configuration.getEnvironmentConfig('cloudsearch_domainendpoint').then((endpoint) => {
+		let endpoint;
+		if (global.SixCRM.configuration.isLocal()) {
 
-			if (endpoint) {
+			endpoint = global.SixCRM.configuration.serverless_config.cloudsearch_domainendpoint;
 
-				return this.instantiateCSD(endpoint);
+		} else {
 
-			}
+			endpoint = await global.SixCRM.configuration.getEnvironmentConfig('cloudsearch_domainendpoint');
 
-			return null;
+		}
 
-		});
+		if (endpoint) {
+
+			return this.instantiateCSD(endpoint);
+
+		}
+
+		return null;
 
 	}
 

@@ -524,10 +524,7 @@ describe('stateMachineDocker', () => {
 	function flushStateMachine() {
 
 		let all_function_executions = arrayutilities.map(lambdas, (lambda) => {
-			let function_name = Object.keys(lambda); // function is the first property of the handler
-
-			return lambda[function_name](null, null, () => {
-			})
+			return lambda(null, null, () => {});
 		});
 
 		return Promise.all(all_function_executions).then((results) => {

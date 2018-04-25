@@ -1,13 +1,15 @@
+let _context;
+
 module.exports = class ServerlessRuntime {
 
 	static getContext() {
-		return ServerlessRuntime._context;
+		return _context;
 	}
 	static setContext(context) {
-		ServerlessRuntime._context = context;
+		_context = context;
 	}
 	static clearContext() {
-		ServerlessRuntime._context = null;
+		_context = null;
 	}
 
 }
