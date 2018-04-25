@@ -546,33 +546,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			));
 	}
 
-	pushEvent() {
-
-		du.debug('Push Event');
-
-		return Promise.resolve()
-			.then(() => super.pushEvent())
-			.then(() => this.pushTransactionEvents());
-
-	}
-
-	pushTransactionEvents() {
-
-		const transactions = this.parameters.get('transactions', null, false) || [];
-
-		return arrayutilities.serialPromises(arrayutilities.map(transactions, (transaction) => {
-
-			return super.pushEvent({
-				event_type: 'transaction_' + transaction.result,
-				context: Object.assign({}, this.parameters.store, {
-					transaction
-				})
-			});
-
-		}));
-
-	}
-
 	incrementMerchantProviderSummary() {
 
 		du.debug('Increment Merchant Provider Summary');

@@ -106,29 +106,18 @@ module.exports = class processBillingController extends workerController {
 
 		return au.serialPromises(au.map(transactions, (transaction) => {
 
-			return this.pushEvent({
-				event_type: 'transaction_' + transaction.result,
-				context: Object.assign({},
-					this.parameters.store, {
-						transaction
-					})
-			})
-				.then(() => {
+			if (transaction.type != 'sale' || transaction.result != 'success') {
+				return false;
+			}
 
-					if (transaction.type != 'sale' || transaction.result != 'success') {
-						return false;
-					}
+			const merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
-					const merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
-
-					return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
-						merchant_provider: transaction.merchant_provider,
-						day: transaction.created_at,
-						total: transaction.amount,
-						type: 'recurring'
-					});
-
-				});
+			return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
+				merchant_provider: transaction.merchant_provider,
+				day: transaction.created_at,
+				total: transaction.amount,
+				type: 'recurring'
+			});
 
 		}));
 
