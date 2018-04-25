@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -39,8 +40,8 @@ module.exports = class AuroraClusterDeployment {
 		parameters['MasterUsername'] = global.SixCRM.configuration.site_config.aurora.user;
 		parameters['MasterUserPassword'] = global.SixCRM.configuration.site_config.aurora.password;
 
-		const securityGroup = await this._getSecurityGroupIds(parameters.VpcSecurityGroupIds[0]);
-		parameters.VpcSecurityGroupIds = [securityGroup.GroupId];
+		const securityGroups = await this._getSecurityGroupIds(parameters.VpcSecurityGroupIds);
+		parameters.VpcSecurityGroupIds = securityGroups;
 
 		const putClusterResponse = await this._rdsprovider.putCluster(parameters);
 
@@ -152,7 +153,7 @@ module.exports = class AuroraClusterDeployment {
 
 	}
 
-	async _getSecurityGroupIds(groupName) {
+	async _getSecurityGroupIds(groupNames) {
 
 		if (!_.has(this, 'ec2provider')) {
 
@@ -161,8 +162,12 @@ module.exports = class AuroraClusterDeployment {
 
 		}
 
-		return this.ec2provider.securityGroupExists({
-			GroupName: groupName
+		return BBPromise.map(groupNames, (groupName) => {
+
+			return this.ec2provider.securityGroupExists({
+				GroupName: groupName
+			}).GroupId;
+
 		});
 
 	}
