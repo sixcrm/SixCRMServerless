@@ -550,7 +550,7 @@ function getValidUnpackedData() {
 
 describe('controllers/workers/logger', () => {
 
-  before(() => {
+	before(() => {
 		mockery.enable({
 			useCleanCache: true,
 			warnOnReplace: false,
@@ -660,137 +660,149 @@ describe('controllers/workers/logger', () => {
 
 		it('successfully transforms unpacked data', () => {
 
-      const unpacked_data = getValidUnpackedData();
+			const unpacked_data = getValidUnpackedData();
 
-      let required_fields = ['@id', '@timestamp', '@message', '@owner', '@log_group', '@log_stream'];
+			let required_fields = ['@id', '@timestamp', '@message', '@owner', '@log_group', '@log_stream'];
 
-      const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
+			const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
 			let loggerController = new LoggerController();
 
-      let transformed_data = loggerController.transformData(unpacked_data);
-      expect(transformed_data).to.be.a('string');
+			let transformed_data = loggerController.transformData(unpacked_data);
+			expect(transformed_data).to.be.a('string');
 
 		});
 
-    it('successfully throws a control message error', () => {
+		it('successfully throws a control message error', () => {
 
-      const unpacked_data = getValidUnpackedData();
-      unpacked_data.messageType = 'CONTROL_MESSAGE';
+			const unpacked_data = getValidUnpackedData();
+			unpacked_data.messageType = 'CONTROL_MESSAGE';
 
-      const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
+			const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
 			let loggerController = new LoggerController();
 
-      try{
-        loggerController.transformData(unpacked_data);
-        expect(false).to.equal(true);
-      }catch(error){
-        expect(error.message).to.equal('[520] Control Message');
-      }
+			try {
+				loggerController.transformData(unpacked_data);
+				expect(false).to.equal(true);
+			} catch (error) {
+				expect(error.message).to.equal('[520] Control Message');
+			}
 
 		});
 
 	});
 
-  describe('transformResponse', () => {
+	describe('transformResponse', () => {
 
 		it('successfully transforms result to response', () => {
 
-      let result = {
-        error: null,
-        success: {
-          attemptedItems: 100,
-          successfulItems: 100,
-          failedItems: 0
-        },
-        successCode: 200,
-        failedItems: []
-      };
-
-      const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
-			let loggerController = new LoggerController();
-
-      let transformed = loggerController.transformResponse(result);
-      expect(transformed).to.equal(true);
-
-    });
-
-    it('successfully transforms result to response when a failed item is present', () => {
-
-      let result = {
-        error: null,
-        success: {
-          attemptedItems: 100,
-          successfulItems: 99,
-          failedItems: 1
-        },
-        successCode: 200,
-        failedItems: [{}]
-      };
-
-      const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
-			let loggerController = new LoggerController();
-
-      let transformed = loggerController.transformResponse(result);
-      expect(transformed).to.equal(true);
-
-    });
-
-    it('returns false for non 200-level successCode', () => {
-
-      let result = {
-        error: {statusCode: 500, responseBody: 'Something went wrong'},
-        success: {
-          attemptedItems: 100,
-          successfulItems: 0,
-          failedItems: 100
-        },
-        successCode: 500,
-        failedItems: []
-      };
-
-      const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
-			let loggerController = new LoggerController();
-
-      let transformed = loggerController.transformResponse(result);
-      expect(transformed).to.equal(false);
-
-    });
-
-  });
-
-  describe('processLog', () => {
-
-		it('successfully processes log input', () => {
-
-      let input = getValidLogInput();
-
-      mockery.registerMock(global.SixCRM.routes.path('providers', 'aws-signedrequest-provider.js'), class {
-        constructor(){}
-        signedRequest(endpoint, body){
-          expect(endpoint).to.be.defined;
-          expect(body).to.be.defined;
-          return Promise.resolve({
-    				error: null,
-    				success: {
-              attemptedItems: 100,
-  						successfulItems: 100,
-  						failedItems: 0
-            },
-    				statusCode: 200,
-    				failedItems: []
-    			})
-        }
-      });
+			let result = {
+				error: null,
+				success: {
+					attemptedItems: 100,
+					successfulItems: 100,
+					failedItems: 0
+				},
+				successCode: 200,
+				failedItems: []
+			};
 
 			const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
 			let loggerController = new LoggerController();
 
-      return loggerController.processLog(input).then(result => {
-        du.warning(result);
-      });
+			let transformed = loggerController.transformResponse(result);
+			expect(transformed).to.equal(true);
 
-    });
+		});
 
-  });
+		it('successfully transforms result to response when a failed item is present', () => {
+
+			let result = {
+				error: null,
+				success: {
+					attemptedItems: 100,
+					successfulItems: 99,
+					failedItems: 1
+				},
+				successCode: 200,
+				failedItems: [{}]
+			};
+
+			const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
+			let loggerController = new LoggerController();
+
+			let transformed = loggerController.transformResponse(result);
+			expect(transformed).to.equal(true);
+
+		});
+
+		it('throws an error for a non 200-level successCode', (done) => {
+
+			let result = {
+				error: {
+					statusCode: 500,
+					responseBody: 'Something went wrong'
+				},
+				success: {
+					attemptedItems: 100,
+					successfulItems: 0,
+					failedItems: 100
+				},
+				successCode: 500,
+				failedItems: []
+			};
+
+			const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
+			let loggerController = new LoggerController();
+
+			try {
+
+				loggerController.transformResponse(result);
+
+				done(new Error('Should not have completed'));
+
+			} catch (ex) {
+
+				done();
+
+			}
+
+		});
+
+	});
+
+	describe('processLog', () => {
+
+		it('successfully processes log input', () => {
+
+			let input = getValidLogInput();
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'aws-signedrequest-provider.js'), class {
+				constructor() {}
+				signedRequest(endpoint, body) {
+					expect(endpoint).to.be.defined;
+					expect(body).to.be.defined;
+					return Promise.resolve({
+						error: null,
+						success: {
+							attemptedItems: 100,
+							successfulItems: 100,
+							failedItems: 0
+						},
+						statusCode: 200,
+						failedItems: []
+					})
+				}
+			});
+
+			const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
+			let loggerController = new LoggerController();
+
+			return loggerController.processLog(input).then(result => {
+				du.warning(result);
+			});
+
+		});
+
+	});
 
 });
