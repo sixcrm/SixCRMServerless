@@ -1,17 +1,35 @@
 [{
-  "Name": "lambda-nat-routing-table",
-  "AssociatedSubnets": [{
-      "Name": "sixcrm-subnet1"
-    },
-    {
-      "Name": "sixcrm-subnet2"
-    },
-    {
-      "Name": "sixcrm-subnet3"
-    }
-  ],
-  "Routes": [{
-    "DestinationCidrBlock": "0.0.0.0/0",
-    "NatGatewayName": "sixcrm-lambda-nat"
-  }]
-}]
+		"Name": "sixcrm-private-subnets",
+		"AssociatedSubnets": [{
+				"Name": "sixcrm-private1"
+			},
+			{
+				"Name": "sixcrm-private2"
+			},
+			{
+				"Name": "sixcrm-private3"
+			}
+		],
+		"Routes": [{
+			"DestinationCidrBlock": "0.0.0.0/0",
+			"NatGatewayName": "sixcrm-public-nat"
+		}]
+	},
+	{
+		"Name": "sixcrm-public-subnets",
+		"AssociatedSubnets": [{
+				"Name": "sixcrm-public1"
+			},
+			{
+				"Name": "sixcrm-public2"
+			},
+			{
+				"Name": "sixcrm-public3"
+			}
+		],
+		"Routes": [{
+			"DestinationCidrBlock": "0.0.0.0/0",
+			"GatewayName": "sixcrm"
+		}]
+	}
+]

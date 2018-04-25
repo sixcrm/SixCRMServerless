@@ -1,17 +1,32 @@
 [
   {
-    "Name":"sixcrm-subnet1",
+    "Name":"sixcrm-private1",
     "CidrBlock":"{{vpc.cidr.1}}.{{vpc.cidr.2}}.128.0/20",
     "AvailabilityZone":"us-east-1a"
   },
   {
-    "Name":"sixcrm-subnet2",
+    "Name":"sixcrm-private2",
     "CidrBlock":"{{vpc.cidr.1}}.{{vpc.cidr.2}}.144.0/20",
     "AvailabilityZone":"us-east-1b"
   },
   {
-    "Name":"sixcrm-subnet3",
+    "Name":"sixcrm-private3",
     "CidrBlock":"{{vpc.cidr.1}}.{{vpc.cidr.2}}.160.0/20",
+    "AvailabilityZone":"us-east-1c"
+  },
+  {
+    "Name":"sixcrm-public1",
+    "CidrBlock":"{{vpc.cidr.1}}.{{vpc.cidr.2}}.184.0/20",
+    "AvailabilityZone":"us-east-1a"
+  },
+  {
+    "Name":"sixcrm-public2",
+    "CidrBlock":"{{vpc.cidr.1}}.{{vpc.cidr.2}}.200.0/20",
+    "AvailabilityZone":"us-east-1b"
+  },
+  {
+    "Name":"sixcrm-public3",
+    "CidrBlock":"{{vpc.cidr.1}}.{{vpc.cidr.2}}.216.0/20",
     "AvailabilityZone":"us-east-1c"
   }
 ]

@@ -10,11 +10,11 @@ aws:
 
 lambda:
   region: 'localhost'
-  security_group: 'public-lambda'
+  security_group: 'SixCRM-PrivateSubnet'
   subnets:
-    - sixcrm-subnet1
-    - sixcrm-subnet2
-    - sixcrm-subnet3
+    - sixcrm-private1
+    - sixcrm-private2
+    - sixcrm-private3
 
 elasticsearch:
   domain_name: 'sixcrm'

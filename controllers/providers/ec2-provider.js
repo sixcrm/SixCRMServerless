@@ -24,6 +24,22 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
+	waitFor(event_name, parameters){
+
+		du.debug('Wait For');
+
+		return new Promise((resolve) => {
+
+			this.ec2.waitFor(event_name, parameters, (error, data) => {
+
+				resolve(this.AWSCallback(error, data));
+
+			});
+
+		});
+
+	}
+
 	describeVpcs(parameters) {
 
 		du.debug('Describe VPCs');
@@ -369,7 +385,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 			this.ec2.createTags(parameters, (error, data) => {
 
-				resolve(this.AWSCallback(error, data))
+				resolve(this.tolerantCallback(error, data, false))
 
 			});
 
@@ -513,7 +529,11 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		return new Promise((resolve) => {
 
-			this.ec2.describeSecurityGroups(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			this.ec2.describeSecurityGroups(parameters, (error, data) => {
+
+				resolve(this.tolerantCallback(error, data, false));
+
+			});
 
 		});
 

@@ -101,7 +101,7 @@
   },
   {
     "Description": "For Lambdas behind public NAT",
-    "GroupName": "SixCRM-Lambda-NAT",
+    "GroupName": "SixCRM-PrivateSubnet",
     "Egress":{
       "IpPermissions": [
         {

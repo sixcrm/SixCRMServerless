@@ -1,6 +1,5 @@
-{
+[{
   "CacheClusterId":"sixcrm",
-  "PreferredAvailabilityZones":["us-east-1c"],
   "AZMode": "single-az",
   "NumCacheNodes": 1,
   "CacheNodeType":"cache.t2.micro",
@@ -8,5 +7,11 @@
   "EngineVersion":"3.2.4",
   "AutoMinorVersionUpgrade": true,
   "PreferredMaintenanceWindow":"wed:04:00-wed:05:00",
-  "Port":6379
-}
+  "Port":6379,
+  "CacheSubnetGroupName":"sixcrm-elasticache",
+  "CacheSecurityGroupNames":["SixCRM-Elasticache"],
+  "Tags":[{
+    "Key":"Name",
+    "Value":"SixCRM-Elasticache"
+  }]
+}]

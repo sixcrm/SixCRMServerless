@@ -15,11 +15,11 @@ provider:
   name: aws
   vpc:
     securityGroupIds:
-      - sg-fccb87b5
+      - sg-d7fdaa9e
     subnetIds:
-      - subnet-feca2da2
-      - subnet-a09161c7
-      - subnet-439d7c6d
+      - subnet-db0ee887
+      - subnet-fdf4079a
+      - subnet-5b6c8c75
   runtime: nodejs8.10
   timeout: 90
   stage: ${opt:stage, 'development'}
