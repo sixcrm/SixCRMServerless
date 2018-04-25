@@ -8,6 +8,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 const lambdaprovider = new LambdaProvider();
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const BBPromise = require('bluebird');
 
 
 describe('stateMachine', () => {
@@ -360,11 +361,11 @@ describe('stateMachine', () => {
 	});
 
 	function flushStateMachine() {
-		let all_function_executions = arrayutilities.map(lambdas, (lambda) => {
+		let all_function_executions = BBPromise.mapSeries(lambdas, (lambda) => {
 			return lambda(null, null, () => {});
 		});
 
-		return Promise.all(all_function_executions).then((results) => {
+		return all_function_executions.then((results) => {
 			return timestamp.delay(0.3 * 1000)().then(() => results);
 		});
 	}
