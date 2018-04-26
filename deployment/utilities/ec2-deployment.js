@@ -18,25 +18,158 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		this.ec2provider = new EC2Provider();
 
-		this.parameter_groups = {
-			security_group: {
-				create: {
-					required: ['Description', 'GroupName', 'VpcId']
-				},
-				create_ingress_rules: {
-					required: ['GroupId'],
-					optional: ['CidrIp', 'FromPort', 'ToPort', 'IpProtocol', 'SourceSecurityGroupName', 'SourceSecurityGroupOwnerId', 'IpPermissions']
-				},
-				create_egress_rules: {
-					required: ['GroupId'],
-					optional: ['CidrIp', 'FromPort', 'ToPort', 'IpProtocol', 'SourceSecurityGroupName', 'SourceSecurityGroupOwnerId', 'IpPermissions']
-				},
-				delete: {
-					required: ['GroupName'],
-					optional: ['GroupId', 'DryRun']
-				}
+	}
+
+	deployEndpoints() {
+
+		du.debug('Deploy Endpoints');
+
+		const endpoints = this.getConfigurationJSON('endpoints');
+
+		let endpoint_promises = arrayutilities.map(endpoints, (endpoint_definition) => {
+
+			return () => this.deployEndpoint(endpoint_definition);
+
+		});
+
+		return arrayutilities.serial(endpoint_promises).then(() => {
+			return 'Complete';
+		});
+
+	}
+
+	deployEndpoint(endpoint_definition) {
+
+		du.debug('Deploy Endpoint');
+
+		return this.endpointExists(endpoint_definition).then(endpoint => {
+			if (_.isNull(endpoint)) {
+				du.highlight('Creating endpoint: ', endpoint_definition);
+				return this.createEndpoint(endpoint_definition);
 			}
-		}
+			du.highlight('Endpoint exists: ', endpoint_definition);
+			//Technical Debt:  Write a update method
+			return true;
+		});
+
+	}
+
+	endpointExists(endpoint_definition) {
+
+		du.debug('Endpoint Exists');
+
+		return this.setVPC(endpoint_definition.VpcName)
+			.then(() => {
+
+				let service_name = parserutilities.parse(endpoint_definition.ServiceName, {
+					aws_account_region: global.SixCRM.configuration.site_config.aws.region
+				});
+
+				let argumentation = {
+					Filters: [{
+						Name: 'service-name',
+						Values: [service_name]
+					},
+					{
+						Name: 'vpc-id',
+						Values: [this.vpc.VpcId]
+					}]
+				};
+
+				return this.ec2provider.describeVpcEndpoints(argumentation).then(results => {
+
+					if (_.has(results, 'VpcEndpoints') && _.isArray(results.VpcEndpoints)) {
+						if (arrayutilities.nonEmpty(results.VpcEndpoints)) {
+							if (results.VpcEndpoints.length == 1) {
+								return results.VpcEndpoints[0];
+							}
+							throw eu.getError('server', 'Multiple Endpoints returned:', results);
+						}
+						return null;
+					}
+
+					throw eu.getError('server', 'Unexpected response: ', results);
+
+				});
+
+			});
+
+	}
+
+	createEndpoint(endpoint_definition) {
+
+		du.debug('Create Endpoint');
+
+		return this.setVPC(endpoint_definition.VpcName)
+			.then(() => {
+				endpoint_definition.VpcId = this.vpc.VpcId;
+				return true;
+			})
+			.then(() => {
+
+				let route_table_promises = arrayutilities.map(endpoint_definition.RouteTableNames, route_table_name => {
+					return this.routeTableExists({
+						Name: route_table_name
+					});
+				});
+
+				return Promise.all(route_table_promises).then(route_tables => {
+
+					let route_table_ids = arrayutilities.map(route_tables, route_table => {
+						if (_.has(route_table, 'RouteTableId')) {
+							return route_table.RouteTableId;
+						}
+						throw eu.getError('server', 'Missing route table...');
+					});
+
+					endpoint_definition.RouteTableIds = route_table_ids;
+					return true;
+
+				});
+
+			}).then(() => {
+
+				endpoint_definition.ServiceName = parserutilities.parse(endpoint_definition.ServiceName, {
+					aws_account_region: global.SixCRM.configuration.site_config.aws.region
+				});
+
+				return true;
+
+			}).then(() => {
+
+				let parameters = objectutilities.transcribe(
+					{
+						ServiceName: "ServiceName",
+						VpcId: "VpcId",
+						VpcEndpointType: "VpcEndpointType"
+					},
+					endpoint_definition,
+					{},
+					true
+				);
+
+				parameters = objectutilities.transcribe(
+					{
+						ClientToken: "ClientToken",
+						PolicyDocument: "PolicyDocument",
+						PrivateDnsEnabled: "PrivateDnsEnabled",
+						RouteTableIds: "RouteTableIds",
+						SecurityGroupIds: "SecurityGroupIds",
+						SubnetIds: "SubnetIds"
+					},
+					endpoint_definition,
+					parameters,
+					false
+				);
+
+				if (_.has(parameters, 'PolicyDocument') && !_.isString(parameters.PolicyDocument)) {
+					parameters.PolicyDocument = JSON.stringify(parameters.PolicyDocument);
+				}
+
+				return this.ec2provider.createVpcEndpoint(parameters);
+
+			});
+
 	}
 
 	deployVPCs() {
@@ -611,11 +744,13 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		du.debug('Create EIP');
 
-		let parameters = objectutilities.transcribe({
-			"Domain": "Domain"
-		},
-		eip_definition, {},
-		false
+		let parameters = objectutilities.transcribe(
+			{
+				"Domain": "Domain"
+			},
+			eip_definition,
+			{},
+			true
 		);
 
 		return this.ec2provider.allocateAddress(parameters).then((result) => {
@@ -635,14 +770,15 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		du.debug('EIP Exists');
 
 		let argumentation = {
-			Filters: [{
-				Name: "domain",
-				Values: ["vpc"]
-			},
-			{
-				Name: 'tag:Name',
-				Values: [eip_definition.Name]
-			}
+			Filters: [
+				{
+					Name: "domain",
+					Values: ["vpc"]
+				},
+				{
+					Name: 'tag:Name',
+					Values: [eip_definition.Name]
+				}
 			]
 		};
 

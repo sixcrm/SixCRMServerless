@@ -1,5 +1,14 @@
 [{
-  "ServiceName": "com.amazonaws.{{aws_account_region}}.dynamodb",
-  "VpcName": "sixcrm",
-  "RouteTableNames": ["sixcrm-private-subnets"]
+	"ServiceName": "com.amazonaws.{{aws_account_region}}.dynamodb",
+	"VpcName": "sixcrm",
+	"RouteTableNames": ["sixcrm-private-subnets"],
+	"VpcEndpointType": "Gateway",
+	"PolicyDocument": {
+		"Statement": [{
+			"Action": "*",
+			"Effect": "Allow",
+			"Resource": "*",
+			"Principal": "*"
+		}]
+	}
 }]

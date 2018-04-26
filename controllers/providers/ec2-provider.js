@@ -24,6 +24,38 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
+	describeVpcEndpoints(parameters){
+
+		du.debug('Describe VPC Endpoints');
+
+		return new Promise((resolve) => {
+
+			this.ec2.describeVpcEndpoints(parameters, (error, data) => {
+
+				resolve(this.AWSCallback(error, data));
+
+			});
+
+		});
+
+	}
+
+	createVpcEndpoint(parameters){
+
+		du.debug('Create VPC Endpoint');
+
+		return new Promise((resolve) => {
+
+			this.ec2.createVpcEndpoint(parameters, (error, data) => {
+
+				resolve(this.AWSCallback(error, data));
+
+			});
+
+		});
+
+	}
+
 	waitFor(event_name, parameters){
 
 		du.debug('Wait For');
