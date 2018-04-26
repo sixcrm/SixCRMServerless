@@ -22,6 +22,7 @@
 					}
 				]
 			}
-		]
+		],
+		"EIP": "sixcrm-public-ssh-gateway"
 	}
 ]
