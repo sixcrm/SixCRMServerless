@@ -411,7 +411,7 @@ jobs:
           name: Set Proxy
           command: |
             SIX_VERBOSE=2 node ./deployment/aurora/resolve-cluster.js
-            ./aurora-env >> $BASH_ENV
+            cat ./aurora-env >> $BASH_ENV
       - run:
           name: Setup SSH Tunnel
           command: |
