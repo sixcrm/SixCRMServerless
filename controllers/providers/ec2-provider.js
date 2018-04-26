@@ -920,4 +920,20 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
+	importKeyPair(parameters) {
+
+		du.debug('Create keypair');
+
+		return new Promise((resolve) => {
+
+			this.ec2.importKeyPair(parameters, (error, data) => {
+
+				resolve(this.AWSCallback(error, data));
+
+			});
+
+		});
+
+	}
+
 }
