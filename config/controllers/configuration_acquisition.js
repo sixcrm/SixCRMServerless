@@ -84,7 +84,7 @@ module.exports.getAuroraClusterEndpoint = () => {
 
 	if (process.env.CIRCLE_BRANCH) {
 
-		return Promise.resolve(global.SixCRM.configuration.site_config.proxy.host);
+		return Promise.resolve('127.0.0.1');
 
 	}
 
