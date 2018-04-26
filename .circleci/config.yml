@@ -682,6 +682,9 @@ workflows:
           requires:
             - deploy_security_groups
             - deploy_route_tables
+      - deploy_elasticache:
+          requires:
+            - deploy_route_tables
       - backup_datastore:
           requires:
             - pre_deploy
@@ -691,6 +694,7 @@ workflows:
                 - development
       - deploy_iam:
           requires:
+            - deploy_elasticache
             - deploy_aurora
             - deploy_elasticsearch
             - deploy_route_tables
@@ -699,6 +703,7 @@ workflows:
             - backup_datastore
       - deploy_s3:
           requires:
+            - deploy_elasticache
             - deploy_aurora
             - deploy_elasticsearch
             - deploy_route_tables
@@ -707,6 +712,7 @@ workflows:
             - backup_datastore
       - deploy_serverless:
           requires:
+            - deploy_elasticache
             - deploy_aurora
             - deploy_elasticsearch
             - deploy_cloudsearch
@@ -726,9 +732,6 @@ workflows:
       - deploy_sqs:
           requires:
             - deploy_iam
-      - deploy_elasticache:
-          requires:
-            - deploy_iam
       - deploy_dynamodb:
           requires:
             - deploy_iam
@@ -741,7 +744,6 @@ workflows:
             - deploy_serverless
             - deploy_s3
             - deploy_sqs
-            - deploy_elasticache
             - deploy_iam
             - deploy_dynamodb
             # - deploy_redshift
