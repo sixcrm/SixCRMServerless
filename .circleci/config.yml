@@ -22,7 +22,10 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Test ssh
-          command: ssh -o StrictHostKeyChecking=no -f -N -L5440:sixcrm.cluster-cogwtwipfajk.us-east-1.rds.amazonaws.com:5440 ec2-user@34.203.210.74
+          command: |
+            echo "Host *" >> ~/.ssh/config
+            echo "   AddressFamily inet" >> ~/.ssh/config
+            ssh -o StrictHostKeyChecking=no -f -N -L5440:sixcrm.cluster-cogwtwipfajk.us-east-1.rds.amazonaws.com:5440 ec2-user@34.203.210.74
       - run:
           name: Install npm
           command: npm install
