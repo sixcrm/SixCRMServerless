@@ -612,10 +612,10 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		du.debug('Create EIP');
 
 		let parameters = objectutilities.transcribe({
-			"Domain": "Domain"
-		},
-		eip_definition, {},
-		false
+				"Domain": "Domain"
+			},
+			eip_definition, {},
+			false
 		);
 
 		return this.ec2provider.allocateAddress(parameters).then((result) => {
@@ -636,13 +636,13 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		let argumentation = {
 			Filters: [{
-				Name: "domain",
-				Values: ["vpc"]
-			},
-			{
-				Name: 'tag:Name',
-				Values: [eip_definition.Name]
-			}
+					Name: "domain",
+					Values: ["vpc"]
+				},
+				{
+					Name: 'tag:Name',
+					Values: [eip_definition.Name]
+				}
 			]
 		};
 
@@ -1086,7 +1086,27 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 			const securityGroups = await _getSecurityGroupIds(serverTemplate.SecurityGroupIds);
 			serverTemplate.SecurityGroupIds = securityGroups;
 
-			return this.ec2provider.runInstance(serverTemplate);
+			const es2Result = await this.ec2provider.runInstance(_.omit(serverTemplate, ['EIP']));
+
+			if (serverTemplate.EIP) {
+
+				await this.ec2provider.waitFor('instanceRunning', {
+					Filters: [{
+						Name: 'instance-id',
+						Values: [es2Result.Instances[0].InstanceId]
+					}]
+				});
+
+				const eip = await this.EIPExists({
+					Name: serverTemplate.EIP
+				});
+
+				return this.ec2provider.associateAddress({
+					AllocationId: eip.AllocationId,
+					InstanceId: es2Result.Instances[0].InstanceId
+				});
+
+			}
 
 		});
 

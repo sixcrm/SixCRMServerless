@@ -904,4 +904,20 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
+	associateAddress(parameters) {
+
+		du.debug('Associate EIP to EC2 Instance');
+
+		return new Promise((resolve) => {
+
+			this.ec2.associateAddress(parameters, (error, data) => {
+
+				resolve(this.AWSCallback(error, data));
+
+			});
+
+		});
+
+	}
+
 }
