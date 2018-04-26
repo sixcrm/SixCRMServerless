@@ -73,7 +73,8 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 					{
 						Name: 'vpc-id',
 						Values: [this.vpc.VpcId]
-					}]
+					}
+					]
 				};
 
 				return this.ec2provider.describeVpcEndpoints(argumentation).then(results => {
@@ -137,29 +138,26 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 			}).then(() => {
 
-				let parameters = objectutilities.transcribe(
-					{
-						ServiceName: "ServiceName",
-						VpcId: "VpcId",
-						VpcEndpointType: "VpcEndpointType"
-					},
-					endpoint_definition,
-					{},
-					true
+				let parameters = objectutilities.transcribe({
+					ServiceName: "ServiceName",
+					VpcId: "VpcId",
+					VpcEndpointType: "VpcEndpointType"
+				},
+				endpoint_definition, {},
+				true
 				);
 
-				parameters = objectutilities.transcribe(
-					{
-						ClientToken: "ClientToken",
-						PolicyDocument: "PolicyDocument",
-						PrivateDnsEnabled: "PrivateDnsEnabled",
-						RouteTableIds: "RouteTableIds",
-						SecurityGroupIds: "SecurityGroupIds",
-						SubnetIds: "SubnetIds"
-					},
-					endpoint_definition,
-					parameters,
-					false
+				parameters = objectutilities.transcribe({
+					ClientToken: "ClientToken",
+					PolicyDocument: "PolicyDocument",
+					PrivateDnsEnabled: "PrivateDnsEnabled",
+					RouteTableIds: "RouteTableIds",
+					SecurityGroupIds: "SecurityGroupIds",
+					SubnetIds: "SubnetIds"
+				},
+				endpoint_definition,
+				parameters,
+				false
 				);
 
 				if (_.has(parameters, 'PolicyDocument') && !_.isString(parameters.PolicyDocument)) {
@@ -744,13 +742,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		du.debug('Create EIP');
 
-		let parameters = objectutilities.transcribe(
-			{
-				"Domain": "Domain"
-			},
-			eip_definition,
-			{},
-			true
+		let parameters = objectutilities.transcribe({
+			"Domain": "Domain"
+		},
+		eip_definition, {},
+		true
 		);
 
 		return this.ec2provider.allocateAddress(parameters).then((result) => {
@@ -770,15 +766,14 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		du.debug('EIP Exists');
 
 		let argumentation = {
-			Filters: [
-				{
-					Name: "domain",
-					Values: ["vpc"]
-				},
-				{
-					Name: 'tag:Name',
-					Values: [eip_definition.Name]
-				}
+			Filters: [{
+				Name: "domain",
+				Values: ["vpc"]
+			},
+			{
+				Name: 'tag:Name',
+				Values: [eip_definition.Name]
+			}
 			]
 		};
 
@@ -1184,7 +1179,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 	}
 
-	async instanceExists(name) {
+	async resolveInstance(name) {
 
 		const results = await this.ec2provider.describeInstances();
 
@@ -1209,7 +1204,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		const serverTemplates = require(path.join(__dirname, '../', 'ec2', 'configuration', 'servers.json'));
 		return BBPromise.each(serverTemplates, async (serverTemplate) => {
 
-			if (this.instanceExists(serverTemplate.TagSpecifications[0].Tags[0].Value)) {
+			if (await this.resolveInstance(serverTemplate.TagSpecifications[0].Tags[0].Value)) {
 
 				du.debug('EC2 Instance exists');
 
@@ -1217,10 +1212,19 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 			}
 
-			du.debug('EC2 Key Pair deploy');
+			const keyPair = require(path.join(__dirname, '../../config', global.SixCRM.configuration.stage, 'ssh-keys', 'sixcrm.json'))
+			const keyPairs = await this.ec2provider.describeKeyPairs();
 
-			await this.ec2provider.importKeyPair(require(path.join(__dirname, '../../config', global.SixCRM.configuration.stage, 'ssh-keys', 'sixcrm.json')));
+			if (!keyPairs.KeyPairs.find((k) => {
 
+				return k.KeyName = keyPair.KeyName;
+
+			})) {
+
+				du.debug('EC2 Key Pair deploy');
+				await this.ec2provider.importKeyPair(keyPair);
+
+			}
 			du.debug('EC2 Instance deploy');
 
 			const securityGroups = await _getSecurityGroupIds(serverTemplate.SecurityGroupIds);
@@ -1236,6 +1240,8 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 						Values: [es2Result.Instances[0].InstanceId]
 					}]
 				});
+
+				await BBPromise.delay(5000);
 
 				const eip = await this.EIPExists({
 					Name: serverTemplate.EIP
