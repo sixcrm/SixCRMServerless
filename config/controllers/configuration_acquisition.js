@@ -126,3 +126,25 @@ module.exports.getElasticSearchEndpoint = () => {
 	});
 
 }
+
+module.exports.getProxyEndpoint = async () => {
+
+	require('../../SixCRM.js');
+
+	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
+
+	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
+
+		return Promise.resolve('');
+
+	}
+
+	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
+	const ec2_deployment = new EC2Deployment();
+	const proxy = await ec2_deployment.EIPExists({
+		Name: 'sixcrm-public-ssh-gateway'
+	});
+
+	return proxy.PublicIp
+
+}
