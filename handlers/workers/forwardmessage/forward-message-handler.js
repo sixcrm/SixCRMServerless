@@ -1,4 +1,4 @@
-const LambdaHandler = require('./lambda-handler');
+const LambdaHandler = require('../../lambda-handler');
 const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
 
 module.exports = class ForwardMessageHandler extends LambdaHandler {

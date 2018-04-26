@@ -85,19 +85,15 @@ describe('controllers/providers/lambda-provider', () => {
 				done();
 			};
 
-			let path = global.SixCRM.routes.path('handlers', 'handlers');
+			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/handlers');
 
 			mockery.registerMock(path, {
-				workers: {
-					forwardMessage: {
-						deliveredtoarchive: (payload, context, callback) => {
-							expect(payload).to.be.defined;
-							expect(context).to.be.defined;
-							expect(callback).to.be.defined;
+				deliveredtoarchive: (payload, context, callback) => {
+					expect(payload).to.be.defined;
+					expect(context).to.be.defined;
+					expect(callback).to.be.defined;
 
-							return callback(null, {body: {success: true}});
-						}
-					}
+					return callback(null, {body: {success: true}});
 				}
 			});
 
@@ -122,19 +118,15 @@ describe('controllers/providers/lambda-provider', () => {
 				done();
 			};
 
-			let path = global.SixCRM.routes.path('handlers', 'handlers');
+			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/handlers');
 
 			mockery.registerMock(path, {
-				workers: {
-					forwardMessage: {
-						deliveredtoarchive: (payload, context, callback) => {
-							expect(payload).to.be.defined;
-							expect(context).to.be.defined;
-							expect(callback).to.be.defined;
+				deliveredtoarchive: (payload, context, callback) => {
+					expect(payload).to.be.defined;
+					expect(context).to.be.defined;
+					expect(callback).to.be.defined;
 
-							return callback({StatusCode: 500}, null);
-						}
-					}
+					return callback({StatusCode: 500}, null);
 				}
 			});
 
@@ -355,19 +347,15 @@ describe('controllers/providers/lambda-provider', () => {
 				done();
 			};
 
-			let path = global.SixCRM.routes.path('handlers', 'handlers');
+			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/handlers');
 
 			mockery.registerMock(path, {
-				workers: {
-					forwardMessage: {
-						deliveredtoarchive: (payload, context, callback) => {
-							expect(payload).to.be.defined;
-							expect(context).to.be.defined;
-							expect(callback).to.be.defined;
+				deliveredtoarchive: (payload, context, callback) => {
+					expect(payload).to.be.defined;
+					expect(context).to.be.defined;
+					expect(callback).to.be.defined;
 
-							return callback(null, {body: {success: true}});
-						}
-					}
+					return callback(null, {body: {success: true}});
 				}
 			});
 
@@ -391,19 +379,15 @@ describe('controllers/providers/lambda-provider', () => {
 				done();
 			};
 
-			let path = global.SixCRM.routes.path('handlers', 'handlers');
+			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/handlers');
 
 			mockery.registerMock(path, {
-				workers: {
-					forwardMessage: {
-						deliveredtoarchive: (payload, context, callback) => {
-							expect(payload).to.be.defined;
-							expect(context).to.be.defined;
-							expect(callback).to.be.defined;
+				deliveredtoarchive: (payload, context, callback) => {
+					expect(payload).to.be.defined;
+					expect(context).to.be.defined;
+					expect(callback).to.be.defined;
 
-							return callback({StatusCode: 500}, null);
-						}
-					}
+					return callback({StatusCode: 500}, null);
 				}
 			});
 
@@ -428,19 +412,15 @@ describe('controllers/providers/lambda-provider', () => {
 				done();
 			};
 
-			let path = global.SixCRM.routes.path('handlers', 'handlers');
+			let path = global.SixCRM.routes.path('handlers', 'workers/forwardmessage/handlers');
 
 			mockery.registerMock(path, {
-				workers: {
-					forwardMessage: {
-						deliveredtoarchive: (payload, context, callback) => {
-							expect(payload).to.be.defined;
-							expect(context).to.be.defined;
-							expect(callback).to.be.defined;
+				deliveredtoarchive: (payload, context, callback) => {
+					expect(payload).to.be.defined;
+					expect(context).to.be.defined;
+					expect(callback).to.be.defined;
 
-							return callback(null, {body: {success: false}});
-						}
-					}
+					return callback(null, {body: {success: false}});
 				}
 			});
 
