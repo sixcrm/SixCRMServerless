@@ -70,7 +70,7 @@ module.exports.getCloudsearchSearchEndpoint = () => {
 
 }
 
-module.exports.getAuroraClusterEndpoint = () => {
+module.exports.getAuroraClusterEndpoint = (force) => {
 
 	require('../../SixCRM.js');
 
@@ -82,7 +82,8 @@ module.exports.getAuroraClusterEndpoint = () => {
 
 	}
 
-	if (process.env.CIRCLE_BRANCH) {
+	// if its running on circle and creating the SSH tunnel we need the real endpoing, otherwise it is hitting the tunnel
+	if (process.env.CIRCLE_BRANCH && !force) {
 
 		return Promise.resolve('127.0.0.1');
 
