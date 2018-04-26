@@ -1,4 +1,4 @@
-const LambdaHandler = require('./lambda-handler');
+const LambdaHandler = require('../lambda-handler');
 const policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
 
 module.exports = class AuthorizationHandler extends LambdaHandler {

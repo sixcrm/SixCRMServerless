@@ -55,10 +55,10 @@ functions:
 ########################
 
   verifysignature:
-    handler: handlers/handlers.authorizers.verifysignature
+    handler: handlers/authorizers/handlers.verifysignature
 
   verifytransactionjwt:
-    handler: handlers/handlers.authorizers.verifytransactionjwt
+    handler: handlers/authorizers/handlers.verifytransactionjwt
     environment:
       #Technical Debt:  These don't need to be defined here.
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
@@ -66,7 +66,7 @@ functions:
       jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
 
   verifysitejwt:
-    handler: handlers/handlers.authorizers.verifysitejwt
+    handler: handlers/authorizers/handlers.verifysitejwt
     environment:
       #Technical Debt:  These don't need to be defined here.
       site_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site.secret_key}
@@ -78,7 +78,7 @@ functions:
 ########################
 
   graph:
-    handler: handlers/handlers.endpoints.graph
+    handler: handlers/endpoints/handlers.graph
     events:
       - http:
           path: graph/{account}
@@ -101,42 +101,42 @@ functions:
 ########################
 
   billtohold:
-    handler: handlers/handlers.workers.forwardMessage.billtohold
+    handler: handlers/workers/forwardmessage/handlers.billtohold
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
 
   recovertohold:
-    handler: handlers/handlers.workers.forwardMessage.recovertohold
+    handler: handlers/workers/forwardmessage/handlers.recovertohold
     events:
       - schedule:
           rate: cron(0 1 ? * FRI *)
           enabled: true
 
   holdtopending:
-    handler: handlers/handlers.workers.forwardMessage.holdtopending
+    handler: handlers/workers/forwardmessage/handlers.holdtopending
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
 
   pendingtoshipped:
-    handler: handlers/handlers.workers.forwardMessage.pendingtoshipped
+    handler: handlers/workers/forwardmessage/handlers.pendingtoshipped
     events:
       - schedule:
           rate: rate(6 hours)
           enabled: true
 
   shippedtodelivered:
-    handler: handlers/handlers.workers.forwardMessage.shippedtodelivered
+    handler: handlers/workers/forwardmessage/handlers.shippedtodelivered
     events:
       - schedule:
           rate: rate(6 hours)
           enabled: true
 
   deliveredtoarchive:
-    handler: handlers/handlers.workers.forwardMessage.deliveredtoarchive
+    handler: handlers/workers/forwardmessage/handlers.deliveredtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -145,7 +145,7 @@ functions:
       archivefilter: 'all'
 
   holdtoarchive:
-    handler: handlers/handlers.workers.forwardMessage.holdtoarchive
+    handler: handlers/workers/forwardmessage/handlers.holdtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -154,7 +154,7 @@ functions:
       archivefilter: 'noship'
 
   rebilltoarchive:
-    handler: handlers/handlers.workers.forwardMessage.rebilltoarchive
+    handler: handlers/workers/forwardmessage/handlers.rebilltoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -163,7 +163,7 @@ functions:
       archivefilter: 'all'
 
   recovertoarchive:
-    handler: handlers/handlers.workers.forwardMessage.recovertoarchive
+    handler: handlers/workers/forwardmessage/handlers.recovertoarchive
     events:
       - schedule:
           rate: rate(6 hours)
@@ -172,7 +172,7 @@ functions:
       archivefilter: 'twoattempts'
 
   indextoarchive:
-    handler: handlers/handlers.workers.forwardMessage.indextoarchive
+    handler: handlers/workers/forwardmessage/handlers.indextoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -182,7 +182,7 @@ functions:
 
   #Technical Debt:  Is this deprecated?
   sendnotificationstoarchive:
-    handler: handlers/handlers.workers.forwardMessage.sendnotificationstoarchive
+    handler: handlers/workers/forwardmessage/handlers.sendnotificationstoarchive
     events:
       - schedule:
           rate: rate(1 minute)
@@ -191,7 +191,7 @@ functions:
       archivefilter: 'all'
 
   pickrebillstobill:
-    handler: handlers/handlers.workers.forwardMessage.pickrebillstobill
+    handler: handlers/workers/forwardmessage/handlers.pickrebillstobill
     events:
       - schedule:
           rate: rate(10 minutes)
@@ -201,29 +201,29 @@ functions:
 # SNS Workers
 ########################
   customeremail:
-    handler: handlers/handlers.workers.sns.customeremail
+    handler: handlers/workers/sns/handlers.customeremail
 
   analyticsevents:
-    handler: handlers/handlers.workers.sns.analyticsevents
+    handler: handlers/workers/sns/handlers.analyticsevents
 
   trackingevents:
-    handler: handlers/handlers.workers.sns.trackingevents
+    handler: handlers/workers/sns/handlers.trackingevents
 
   notificationevents:
-    handler: handlers/handlers.workers.sns.notificationevents
+    handler: handlers/workers/sns/handlers.notificationevents
 
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
   analyticseventhandler:
-    handler: handlers/handlers.workers.analyticseventhandler
+    handler: handlers/workers/handlers.analyticseventhandler
     events:
       - schedule:
           rate: rate(1 minute)
           enabled: true
 
   reindex:
-    handler: handlers/handlers.workers.reindex
+    handler: handlers/workers/handlers.reindex
     events:
       - schedule:
           rate: rate(60 minutes)
@@ -242,7 +242,7 @@ functions:
 ########################
 
   acquiretoken:
-    handler: handlers/handlers.endpoints.acquiretoken
+    handler: handlers/endpoints/handlers.acquiretoken
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -260,7 +260,7 @@ functions:
       transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
 
   createlead:
-    handler: handlers/handlers.endpoints.createlead
+    handler: handlers/endpoints/handlers.createlead
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -273,7 +273,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   createorder:
-    handler: handlers/handlers.endpoints.createorder
+    handler: handlers/endpoints/handlers.createorder
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -286,7 +286,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   confirmorder:
-    handler: handlers/handlers.endpoints.confirmorder
+    handler: handlers/endpoints/handlers.confirmorder
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -299,7 +299,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   info:
-    handler: handlers/handlers.endpoints.info
+    handler: handlers/endpoints/handlers.info
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -312,7 +312,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   tracking:
-    handler: handlers/handlers.endpoints.tracking
+    handler: handlers/endpoints/handlers.tracking
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -325,7 +325,7 @@ functions:
            identitySource: method.request.header.Authorization
 
   checkout:
-    handler: handlers/handlers.endpoints.checkout
+    handler: handlers/endpoints/handlers.checkout
     timeout: 29
     events:
       - http:

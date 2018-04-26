@@ -1,4 +1,4 @@
-const LambdaHandler = require('./lambda-handler');
+const LambdaHandler = require('../lambda-handler');
 const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
 const AnalyticsEventHandler = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-handler.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context');

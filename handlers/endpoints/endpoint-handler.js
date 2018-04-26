@@ -1,4 +1,4 @@
-const LambdaHandler = require('./lambda-handler');
+const LambdaHandler = require('../lambda-handler');
 const LambdaResponse = require('../controllers/providers/lambda-response.js');
 
 module.exports = class EndpointHandler extends LambdaHandler {
