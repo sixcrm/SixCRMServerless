@@ -682,6 +682,7 @@ workflows:
           requires:
             - deploy_security_groups
             - deploy_route_tables
+            - deploy_ec2_servers
       - deploy_elasticache:
           requires:
             - deploy_route_tables
