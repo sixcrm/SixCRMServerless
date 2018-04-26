@@ -612,10 +612,10 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		du.debug('Create EIP');
 
 		let parameters = objectutilities.transcribe({
-				"Domain": "Domain"
-			},
-			eip_definition, {},
-			false
+			"Domain": "Domain"
+		},
+		eip_definition, {},
+		false
 		);
 
 		return this.ec2provider.allocateAddress(parameters).then((result) => {
@@ -636,13 +636,13 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		let argumentation = {
 			Filters: [{
-					Name: "domain",
-					Values: ["vpc"]
-				},
-				{
-					Name: 'tag:Name',
-					Values: [eip_definition.Name]
-				}
+				Name: "domain",
+				Values: ["vpc"]
+			},
+			{
+				Name: 'tag:Name',
+				Values: [eip_definition.Name]
+			}
 			]
 		};
 
