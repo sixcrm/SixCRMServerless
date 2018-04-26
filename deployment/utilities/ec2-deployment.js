@@ -1083,7 +1083,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 			du.debug('EC2 Key Pair deploy');
 
-			await this.ec2provider.importKeyPair(require(path.join(__dirname, '../', 'ec2', 'key-pairs', 'sixcrm.json')));
+			await this.ec2provider.importKeyPair(require(path.join(__dirname, '../../config', global.SixCRM.configuration.stage, 'ssh-keys', 'sixcrm.json')));
 
 			du.debug('EC2 Instance deploy');
 
