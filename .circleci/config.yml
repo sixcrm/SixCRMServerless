@@ -21,12 +21,6 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Test ssh
-          command: |
-            echo "Host *" >> ~/.ssh/config
-            echo "   AddressFamily inet" >> ~/.ssh/config
-            ssh -o StrictHostKeyChecking=no -f -N -L5440:sixcrm.cluster-cogwtwipfajk.us-east-1.rds.amazonaws.com:5440 ec2-user@34.203.210.74
-      - run:
           name: Install npm
           command: npm install
       - save_cache:
@@ -385,6 +379,12 @@ jobs:
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Setup SSH Tunnel
+          command: |
+            echo "Host *" >> ~/.ssh/config
+            echo "   AddressFamily inet" >> ~/.ssh/config
+            ssh -o StrictHostKeyChecking=no -f -N -L5440:sixcrm.cluster-cogwtwipfajk.us-east-1.rds.amazonaws.com:5440 ec2-user@34.203.210.74
       - run:
           name: Deploy Subnet Groups
           command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-subnetgroups.js
