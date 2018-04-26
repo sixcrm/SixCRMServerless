@@ -417,6 +417,7 @@ jobs:
           command: |
             echo "Host *" >> ~/.ssh/config
             echo "   AddressFamily inet" >> ~/.ssh/config
+            chmod 600 ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem
             ssh -i ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem -o StrictHostKeyChecking=no -f -N -L5440:$AURORA_HOST:5440 ec2-user@$PROXY_HOST
       - run:
           name: Deploy Subnet Groups
