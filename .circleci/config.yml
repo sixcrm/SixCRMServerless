@@ -411,10 +411,10 @@ jobs:
           name: Set Proxy
           command: |
             SIX_VERBOSE=2 node ./deployment/aurora/resolve-cluster.js
-            cat ./aurora-env >> $BASH_ENV
       - run:
           name: Setup SSH Tunnel
           command: |
+            source ./aurora-env
             echo "Host *" >> ~/.ssh/config
             echo "   AddressFamily inet" >> ~/.ssh/config
             chmod 600 ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem
