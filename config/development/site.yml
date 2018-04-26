@@ -106,4 +106,4 @@ tokenization:
     base: https://test-api.tokenex.com
 
 proxy:
-  host: 34.203.210.74
+  host: 127.0.0.1
