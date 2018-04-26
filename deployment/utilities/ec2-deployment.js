@@ -1184,7 +1184,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 	}
 
-	async instanceExists(name) {
+	async resolveInstance(name) {
 
 		const results = await this.ec2provider.describeInstances();
 
@@ -1209,7 +1209,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		const serverTemplates = require(path.join(__dirname, '../', 'ec2', 'configuration', 'servers.json'));
 		return BBPromise.each(serverTemplates, async (serverTemplate) => {
 
-			if (this.instanceExists(serverTemplate.TagSpecifications[0].Tags[0].Value)) {
+			if (await this.resolveInstance(serverTemplate.TagSpecifications[0].Tags[0].Value)) {
 
 				du.debug('EC2 Instance exists');
 
