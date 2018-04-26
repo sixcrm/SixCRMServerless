@@ -105,5 +105,5 @@ tokenization:
     api_key: XnIOBNQVmQRyfRMiQdA5FuQBalGDDTxWlgoJBL8N
     base: https://test-api.tokenex.com
 
-haproxy:
-  host: 34.203.210.74
+proxy:
+  host: 127.0.0.1
