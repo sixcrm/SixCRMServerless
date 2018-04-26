@@ -2,5 +2,9 @@
   {
     "Name":"sixcrm-public-nat",
     "Domain":"vpc"
+  },
+	{
+    "Name":"sixcrm-public-ssh-gateway",
+    "Domain":"vpc"
   }
 ]

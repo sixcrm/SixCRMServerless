@@ -1,0 +1,27 @@
+[
+	{
+		"MaxCount": 1,
+		"MinCount": 1,
+		"ImageId": "ami-467ca739",
+		"InstanceInitiatedShutdownBehavior": "stop",
+		"InstanceType": "t2.micro",
+		"Monitoring": {
+			"Enabled": false
+		},
+		"SecurityGroupIds": [
+			"SixCRM-SSH-Gateway"
+		],
+		"SubnetId": "subnet-2a31d776",
+		"TagSpecifications": [
+			{
+				"ResourceType": "instance",
+				"Tags": [
+					{
+						"Key": "Name",
+						"Value": "SSH Gateway"
+					}
+				]
+			}
+		]
+	}
+]

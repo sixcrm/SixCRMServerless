@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const path = require('path');
+const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -8,7 +10,7 @@ const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js
 const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 
-module.exports = class EC2Deployment extends AWSDeploymentUtilities{
+module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 	constructor() {
 
@@ -19,25 +21,25 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 		this.parameter_groups = {
 			security_group: {
 				create: {
-					required:['Description', 'GroupName', 'VpcId']
+					required: ['Description', 'GroupName', 'VpcId']
 				},
 				create_ingress_rules: {
-					required:['GroupId'],
-					optional:['CidrIp','FromPort','ToPort','IpProtocol','SourceSecurityGroupName','SourceSecurityGroupOwnerId','IpPermissions']
+					required: ['GroupId'],
+					optional: ['CidrIp', 'FromPort', 'ToPort', 'IpProtocol', 'SourceSecurityGroupName', 'SourceSecurityGroupOwnerId', 'IpPermissions']
 				},
 				create_egress_rules: {
-					required:['GroupId'],
-					optional:['CidrIp','FromPort','ToPort','IpProtocol','SourceSecurityGroupName','SourceSecurityGroupOwnerId','IpPermissions']
+					required: ['GroupId'],
+					optional: ['CidrIp', 'FromPort', 'ToPort', 'IpProtocol', 'SourceSecurityGroupName', 'SourceSecurityGroupOwnerId', 'IpPermissions']
 				},
 				delete: {
-					required:['GroupName'],
-					optional:['GroupId', 'DryRun']
+					required: ['GroupName'],
+					optional: ['GroupId', 'DryRun']
 				}
 			}
 		}
 	}
 
-	deployVPCs(){
+	deployVPCs() {
 
 		du.debug('Deploy VPCs');
 
@@ -49,11 +51,13 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		});
 
-		return arrayutilities.serial(vpc_promises).then(() => { return 'Complete'; });
+		return arrayutilities.serial(vpc_promises).then(() => {
+			return 'Complete';
+		});
 
 	}
 
-	deployVPC(vpc_definition){
+	deployVPC(vpc_definition) {
 
 		du.debug('Deploy VPC');
 
@@ -64,26 +68,26 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 		//Route Tables
 
 		return this.VPCExists(vpc_definition).then(result => {
-			if(_.isNull(result)){
-				du.highlight('VPC does not exist: '+vpc_definition.Name);
+			if (_.isNull(result)) {
+				du.highlight('VPC does not exist: ' + vpc_definition.Name);
 				return this.createVPC(vpc_definition);
 			}
 
-			du.highlight('VPC exists: '+vpc_definition.Name);
+			du.highlight('VPC exists: ' + vpc_definition.Name);
 			return true;
 
 		})
 
 	}
 
-	createVPC(vpc_definition){
+	createVPC(vpc_definition) {
 
 		du.debug('Create VPC');
 
 		return Promise.resolve()
 			.then(() => {
 
-				if(_.has(vpc_definition, 'Default') && vpc_definition.Default === true){
+				if (_.has(vpc_definition, 'Default') && vpc_definition.Default === true) {
 					return this.ec2provider.createDefaultVpc();
 				}
 
@@ -92,7 +96,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 			}).then(result => {
 
 				return this.nameEC2Resource(result.Vpc.VpcId, vpc_definition.Name).then(() => {
-					du.highlight('VPC Created: '+vpc_definition.Name);
+					du.highlight('VPC Created: ' + vpc_definition.Name);
 					return result;
 				});
 
@@ -100,25 +104,25 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	VPCExists(vpc_definition){
+	VPCExists(vpc_definition) {
 
 		du.debug('VPCExists');
 
 		const argumentation = {
-			Filters:[{
+			Filters: [{
 				Name: 'tag:Name',
-				Values:[vpc_definition.Name]
+				Values: [vpc_definition.Name]
 			}]
 		};
 
 		return this.ec2provider.describeVpcs(argumentation).then(result => {
 
-			if(_.has(result, 'Vpcs') && _.isArray(result.Vpcs)){
-				if(arrayutilities.nonEmpty(result.Vpcs)){
-					if(result.Vpcs.length == 1){
+			if (_.has(result, 'Vpcs') && _.isArray(result.Vpcs)) {
+				if (arrayutilities.nonEmpty(result.Vpcs)) {
+					if (result.Vpcs.length == 1) {
 						return result.Vpcs[0];
 					}
-					throw eu.getError('server','Multiple results returned: ', result);
+					throw eu.getError('server', 'Multiple results returned: ', result);
 				}
 				return null;
 			}
@@ -129,7 +133,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	deployInternetGateways(){
+	deployInternetGateways() {
 
 		du.debug('Deploy Internet Gateways');
 
@@ -141,29 +145,31 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		});
 
-		return arrayutilities.serial(ig_promises).then(() => { return 'Complete'; });
+		return arrayutilities.serial(ig_promises).then(() => {
+			return 'Complete';
+		});
 
 	}
 
-	deployInternetGateway(ig_definition){
+	deployInternetGateway(ig_definition) {
 
 		du.debug('Deploy Internet Gateway');
 
 		return this.gatewayExists(ig_definition).then(result => {
 
-			if(_.isNull(result)){
-				du.highlight('Internet Gateway does not exist: '+ig_definition.Name);
+			if (_.isNull(result)) {
+				du.highlight('Internet Gateway does not exist: ' + ig_definition.Name);
 				return this.createInternetGateway(ig_definition);
 			}
 
-			du.highlight('Internet Gateway exists: '+ig_definition.Name);
+			du.highlight('Internet Gateway exists: ' + ig_definition.Name);
 			return result;
 
 		}).then((internet_gateway) => {
 
 			return this.setVPC('sixcrm').then(() => {
 				return this.attachInternetGateway(internet_gateway).catch(error => {
-					if(error.code == 'Resource.AlreadyAssociated'){
+					if (error.code == 'Resource.AlreadyAssociated') {
 						du.highlight('Internet Gateway already associated');
 						return true;
 					}
@@ -175,7 +181,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	attachInternetGateway(internet_gateway){
+	attachInternetGateway(internet_gateway) {
 
 		du.debug('Attach Internet Gateway');
 
@@ -188,34 +194,34 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	createInternetGateway(ig_definition){
+	createInternetGateway(ig_definition) {
 
 		du.debug('Create Internet Gateway');
 
 		return this.ec2provider.createInternetGateway().then(result => {
 			return this.nameEC2Resource(result.InternetGateway.InternetGatewayId, ig_definition.Name).then(() => {
-				du.highlight('Internet Gateway Created: '+ig_definition.Name);
+				du.highlight('Internet Gateway Created: ' + ig_definition.Name);
 				return result.InternetGateway;
 			});
 		});
 
 	}
 
-	gatewayExists(ig_definition){
+	gatewayExists(ig_definition) {
 
 		du.debug('Gateway Exists');
 
 		const argumentation = {
-			Filters:[{
+			Filters: [{
 				Name: 'tag:Name',
-				Values:[ig_definition.Name]
+				Values: [ig_definition.Name]
 			}]
 		};
 
 		return this.ec2provider.describeInternetGateways(argumentation).then(result => {
-			if(_.has(result, 'InternetGateways') && _.isArray(result.InternetGateways)){
-				if(arrayutilities.nonEmpty(result.InternetGateways)){
-					if(result.InternetGateways.length == 1){
+			if (_.has(result, 'InternetGateways') && _.isArray(result.InternetGateways)) {
+				if (arrayutilities.nonEmpty(result.InternetGateways)) {
+					if (result.InternetGateways.length == 1) {
 						return result.InternetGateways[0];
 					}
 					throw eu.getError('server', 'More than one result returned: ', result);
@@ -227,7 +233,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	deployRouteTables(){
+	deployRouteTables() {
 
 		du.debug('Deploy Route Tables');
 
@@ -241,29 +247,31 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 			});
 
-			return arrayutilities.serial(route_table_promises).then(() => { return 'Complete'; });
+			return arrayutilities.serial(route_table_promises).then(() => {
+				return 'Complete';
+			});
 
 		});
 
 	}
 
-	deployRouteTable(route_table_definition){
+	deployRouteTable(route_table_definition) {
 
 		du.debug('Deploy Route Table');
 
 		return this.routeTableExists(route_table_definition).then((result) => {
 
-			if(_.isNull(result)){
-				du.highlight('Route Table does not exist: '+route_table_definition.Name);
+			if (_.isNull(result)) {
+				du.highlight('Route Table does not exist: ' + route_table_definition.Name);
 				return this.createRouteTable(route_table_definition);
 			}
 
-			du.highlight('Route Table exists: '+route_table_definition.Name);
+			du.highlight('Route Table exists: ' + route_table_definition.Name);
 			return result;
 
 		}).then(route_table => {
 
-			if(_.has(route_table_definition, 'AssociatedSubnets')){
+			if (_.has(route_table_definition, 'AssociatedSubnets')) {
 
 				let subnet_promises = arrayutilities.map(route_table_definition.AssociatedSubnets, (subnet_association) => {
 					return this.subnetExists(subnet_association);
@@ -273,7 +281,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 					let subnet_associations = arrayutilities.map(subnets, subnet => {
 
-						if(_.has(subnet, 'SubnetId')){
+						if (_.has(subnet, 'SubnetId')) {
 
 							let argumentation = {
 								RouteTableId: route_table.RouteTableId,
@@ -302,7 +310,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		}).then(route_table => {
 
-			if(_.has(route_table_definition, 'Routes') && _.isArray(route_table_definition.Routes)){
+			if (_.has(route_table_definition, 'Routes') && _.isArray(route_table_definition.Routes)) {
 
 				let route_promises = arrayutilities.map(route_table_definition.Routes, route_definition => {
 					return () => this.deployRoute(route_table, route_definition);
@@ -316,26 +324,30 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		}).then(() => {
 
-			du.highlight('Route table deployed: '+route_table_definition.Name);
+			du.highlight('Route table deployed: ' + route_table_definition.Name);
 			return true;
 
 		});
 
 	}
 
-	deployRoute(route_table, route_definition){
+	deployRoute(route_table, route_definition) {
 
 		du.debug('Deploy Route');
 
 		//Technical Debt:  Need to enable other named properties to be hydrated here...
 		let associated_id_promises = [];
 
-		if(_.has(route_definition, 'NatGatewayName')){
-			associated_id_promises.push(this.NATExists({Name: route_definition.NatGatewayName}));
+		if (_.has(route_definition, 'NatGatewayName')) {
+			associated_id_promises.push(this.NATExists({
+				Name: route_definition.NatGatewayName
+			}));
 		}
 
-		if(_.has(route_definition, 'GatewayName')){
-			associated_id_promises.push(this.gatewayExists({Name: route_definition.GatewayName}));
+		if (_.has(route_definition, 'GatewayName')) {
+			associated_id_promises.push(this.gatewayExists({
+				Name: route_definition.GatewayName
+			}));
 		}
 
 		return Promise.all(associated_id_promises).then(([associated_id]) => {
@@ -344,28 +356,28 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 				RouteTableId: route_table.RouteTableId,
 			};
 
-			if(_.has(associated_id, 'NatGatewayId')){
+			if (_.has(associated_id, 'NatGatewayId')) {
 
 				additional_argumentation.NatGatewayId = associated_id.NatGatewayId;
 
-			}else if(_.has(associated_id, 'InternetGatewayId')){
+			} else if (_.has(associated_id, 'InternetGatewayId')) {
 
 				additional_argumentation.GatewayId = associated_id.InternetGatewayId;
 
-			}else{
+			} else {
 
 				throw eu.getError('server', 'Unrecognized response: ', associated_id);
 
 			}
 
-			const argumentation = objectutilities.merge(route_definition,  additional_argumentation);
+			const argumentation = objectutilities.merge(route_definition, additional_argumentation);
 
-			return this.ec2provider.createRoute(argumentation).then(()=> {
+			return this.ec2provider.createRoute(argumentation).then(() => {
 				du.highlight('Route created.');
 				return true;
 			}).catch((error) => {
-				if(error.code == 'RouteAlreadyExists'){
-					return this.ec2provider.replaceRoute(argumentation).then(()=> {
+				if (error.code == 'RouteAlreadyExists') {
+					return this.ec2provider.replaceRoute(argumentation).then(() => {
 						du.highlight('Route replaced.');
 						return true;
 					})
@@ -376,7 +388,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 		});
 	}
 
-	createRouteTable(route_table_definition){
+	createRouteTable(route_table_definition) {
 
 		du.debug('Create Route Table');
 
@@ -386,7 +398,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		return this.ec2provider.createRouteTable(argumentation).then(result => {
 
-			if(!objectutilities.hasRecursive(result, 'RouteTable.RouteTableId')){
+			if (!objectutilities.hasRecursive(result, 'RouteTable.RouteTableId')) {
 				throw eu.getError('server', 'Unexpected result: ', result);
 			}
 
@@ -398,12 +410,12 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	routeTableExists(route_table_definition){
+	routeTableExists(route_table_definition) {
 
 		du.debug('Route Table Exists');
 
 		const argumentation = {
-			Filters:[{
+			Filters: [{
 				Name: 'tag:Name',
 				Values: [route_table_definition.Name]
 			}]
@@ -411,11 +423,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		return this.ec2provider.describeRouteTables(argumentation).then(result => {
 
-			if(_.has(result, 'RouteTables') && _.isArray(result.RouteTables)){
+			if (_.has(result, 'RouteTables') && _.isArray(result.RouteTables)) {
 
-				if(arrayutilities.nonEmpty(result.RouteTables)){
+				if (arrayutilities.nonEmpty(result.RouteTables)) {
 
-					if(result.RouteTables.length == 1){
+					if (result.RouteTables.length == 1) {
 						return result.RouteTables[0];
 					}
 
@@ -433,7 +445,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	deployNATs(){
+	deployNATs() {
 
 		du.debug('Deploy NATs');
 
@@ -445,44 +457,50 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		});
 
-		return arrayutilities.serial(nat_promises).then(() => { return 'Complete'; });
+		return arrayutilities.serial(nat_promises).then(() => {
+			return 'Complete';
+		});
 
 	}
 
-	deployNAT(nat_definition){
+	deployNAT(nat_definition) {
 
 		du.debug('Deploy NAT');
 
 		return this.NATExists(nat_definition).then(result => {
-			if(_.isNull(result)){
-				du.highlight('NAT does not exist: '+nat_definition.Name);
+			if (_.isNull(result)) {
+				du.highlight('NAT does not exist: ' + nat_definition.Name);
 				return this.createNAT(nat_definition);
 			}
 
-			du.highlight('NAT exists: '+nat_definition.Name);
+			du.highlight('NAT exists: ' + nat_definition.Name);
 			return true;
 
 		});
 
 	}
 
-	createNAT(nat_definition){
+	createNAT(nat_definition) {
 
 		du.debug('Create NAT');
 
 		let associated_properties_promises = [
-			this.EIPExists({Name: nat_definition.AllocationName}),
-			this.subnetExists({Name: nat_definition.SubnetName})
+			this.EIPExists({
+				Name: nat_definition.AllocationName
+			}),
+			this.subnetExists({
+				Name: nat_definition.SubnetName
+			})
 		];
 
 		return Promise.all(associated_properties_promises).then(([eip, subnet]) => {
 
-			if(_.isNull(eip)){
-				throw eu.getError('server', 'EIP does not exist: '+nat_definition.AllocationName);
+			if (_.isNull(eip)) {
+				throw eu.getError('server', 'EIP does not exist: ' + nat_definition.AllocationName);
 			}
 
-			if(_.isNull(subnet)){
-				throw eu.getError('server', 'Subnet does not exist: '+nat_definition.SubnetName);
+			if (_.isNull(subnet)) {
+				throw eu.getError('server', 'Subnet does not exist: ' + nat_definition.SubnetName);
 			}
 
 			let argumentation = {
@@ -492,7 +510,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 			return this.ec2provider.createNatGateway(argumentation).then(result => {
 
-				if(!objectutilities.hasRecursive(result, 'NatGateway.NatGatewayId')){
+				if (!objectutilities.hasRecursive(result, 'NatGateway.NatGatewayId')) {
 					throw eu.getError('server', 'Unexpected result: ', result);
 				}
 
@@ -503,9 +521,9 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 		}).then(() => {
 
 			const argumentation = {
-				Filters:[{
-					Name:'tag:Name',
-					Values:[nat_definition.Name]
+				Filters: [{
+					Name: 'tag:Name',
+					Values: [nat_definition.Name]
 				}]
 			};
 
@@ -515,27 +533,25 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	NATExists(nat_definition){
+	NATExists(nat_definition) {
 
 		du.debug('NAT Exists');
 
 		let argumentation = {
-			Filter: [
-				{
-					Name: "tag:Name",
-					Values: [
-						nat_definition.Name
-					]
-				}
-			]
+			Filter: [{
+				Name: "tag:Name",
+				Values: [
+					nat_definition.Name
+				]
+			}]
 		}
 
 		return this.ec2provider.describeNatGateways(argumentation).then(result => {
 
-			if(_.has(result, 'NatGateways') && _.isArray(result.NatGateways)){
+			if (_.has(result, 'NatGateways') && _.isArray(result.NatGateways)) {
 
-				if(arrayutilities.nonEmpty(result.NatGateways)){
-					if(result.NatGateways.length == 1){
+				if (arrayutilities.nonEmpty(result.NatGateways)) {
+					if (result.NatGateways.length == 1) {
 						return result.NatGateways[0];
 					}
 
@@ -553,7 +569,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	deployEIPs(){
+	deployEIPs() {
 
 		du.debug('Deploy EIPs');
 
@@ -565,18 +581,20 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		});
 
-		return arrayutilities.serial(eip_promises).then(() => { return 'Complete'; });
+		return arrayutilities.serial(eip_promises).then(() => {
+			return 'Complete';
+		});
 
 	}
 
-	deployEIP(eip_definition){
+	deployEIP(eip_definition) {
 
 		du.debug('Deploy EIP');
 
 		return this.EIPExists(eip_definition).then(result => {
 
-			if(_.isNull(result)){
-				du.highlight('EIP does not exist: '+eip_definition.Name);
+			if (_.isNull(result)) {
+				du.highlight('EIP does not exist: ' + eip_definition.Name);
 				return this.createEIP(eip_definition).then(() => {
 					return du.highlight('EIP Allocated.');
 				});
@@ -589,22 +607,20 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	createEIP(eip_definition){
+	createEIP(eip_definition) {
 
 		du.debug('Create EIP');
 
-		let parameters = objectutilities.transcribe(
-			{
-				"Domain":"Domain"
+		let parameters = objectutilities.transcribe({
+				"Domain": "Domain"
 			},
-			eip_definition,
-			{},
+			eip_definition, {},
 			false
 		);
 
 		return this.ec2provider.allocateAddress(parameters).then((result) => {
 
-			if(objectutilities.hasRecursive(result, 'AllocationId')){
+			if (objectutilities.hasRecursive(result, 'AllocationId')) {
 				return this.nameEC2Resource(result.AllocationId, eip_definition.Name);
 			}
 
@@ -614,18 +630,17 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	EIPExists(eip_definition){
+	EIPExists(eip_definition) {
 
 		du.debug('EIP Exists');
 
 		let argumentation = {
-			Filters: [
-				{
+			Filters: [{
 					Name: "domain",
 					Values: ["vpc"]
 				},
 				{
-					Name:'tag:Name',
+					Name: 'tag:Name',
 					Values: [eip_definition.Name]
 				}
 			]
@@ -633,11 +648,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		return this.ec2provider.describeAddresses(argumentation).then(result => {
 
-			if(_.has(result, 'Addresses') && _.isArray(result.Addresses)){
+			if (_.has(result, 'Addresses') && _.isArray(result.Addresses)) {
 
-				if(arrayutilities.nonEmpty(result.Addresses)){
+				if (arrayutilities.nonEmpty(result.Addresses)) {
 
-					if(result.Addresses.length == 1){
+					if (result.Addresses.length == 1) {
 						return result.Addresses[0];
 					}
 
@@ -655,7 +670,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	deploySubnets(){
+	deploySubnets() {
 
 		du.debug('Deploy Subnets');
 
@@ -669,50 +684,48 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 			});
 
-			return arrayutilities.serial(subnet_promises).then(() => { return 'Complete'; });
+			return arrayutilities.serial(subnet_promises).then(() => {
+				return 'Complete';
+			});
 
 		});
 
 	}
 
-	setVPC(vpc_name = null){
+	setVPC(vpc_name = null) {
 
 		du.debug('Set VPC');
 
 		let argumentation = {
-			Filters:[
-				{
-					Name: 'isDefault',
-					Values:['true']
-				}
-			]
+			Filters: [{
+				Name: 'isDefault',
+				Values: ['true']
+			}]
 		};
 
-		if(!_.isNull(vpc_name)){
+		if (!_.isNull(vpc_name)) {
 
 			argumentation = {
-				Filters: [
-					{
-						Name: 'tag:Name',
-						Values: [vpc_name]
-					}
-				]
+				Filters: [{
+					Name: 'tag:Name',
+					Values: [vpc_name]
+				}]
 			};
 
 		}
 
 		return this.ec2provider.describeVPCs(argumentation).then(result => {
 
-			if(_.has(result, 'Vpcs') && _.isArray(result.Vpcs)){
+			if (_.has(result, 'Vpcs') && _.isArray(result.Vpcs)) {
 
-				if(arrayutilities.nonEmpty(result.Vpcs)){
+				if (arrayutilities.nonEmpty(result.Vpcs)) {
 
-					if(result.Vpcs.length == 1){
+					if (result.Vpcs.length == 1) {
 						this.vpc = result.Vpcs[0];
 						return this.vpc;
 					}
 
-					throw eu.getError('server', 'More than one VPC returned: '+result.Vpcs);
+					throw eu.getError('server', 'More than one VPC returned: ' + result.Vpcs);
 
 				}
 
@@ -726,18 +739,18 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	deploySubnet(subnet_definition){
+	deploySubnet(subnet_definition) {
 
 		du.debug('Deploy Subnet');
 
 		return this.subnetExists(subnet_definition).then(subnet => {
 
-			if(_.isNull(subnet)){
-				du.highlight('Subnet does not exist: '+subnet_definition.Name);
+			if (_.isNull(subnet)) {
+				du.highlight('Subnet does not exist: ' + subnet_definition.Name);
 				return this.createSubnet(subnet_definition);
 			}
 
-			du.highlight('Subnet exists: '+subnet_definition.Name);
+			du.highlight('Subnet exists: ' + subnet_definition.Name);
 
 			return this.updateSubnet(subnet, subnet_definition);
 
@@ -745,24 +758,24 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	subnetExists(subnet_definition){
+	subnetExists(subnet_definition) {
 
 		du.debug('Subnet Exists');
 
 		let argumentation = {
 			Filters: [{
 				Name: 'tag:Name',
-				Values:[subnet_definition.Name]
+				Values: [subnet_definition.Name]
 			}]
 		};
 
 		return this.ec2provider.describeSubnets(argumentation).then(result => {
 
-			if(_.has(result,'Subnets') && _.isArray(result.Subnets)){
+			if (_.has(result, 'Subnets') && _.isArray(result.Subnets)) {
 
-				if(arrayutilities.nonEmpty(result.Subnets)){
+				if (arrayutilities.nonEmpty(result.Subnets)) {
 
-					if(result.Subnets.length == 1){
+					if (result.Subnets.length == 1) {
 						return result.Subnets[0];
 					}
 
@@ -780,7 +793,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	createSubnet(subnet_definition){
+	createSubnet(subnet_definition) {
 
 		du.debug('Create Subnet');
 
@@ -794,7 +807,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		return this.ec2provider.createSubnet(subnet_definition).then((result) => {
 
-			if(objectutilities.hasRecursive(result, 'Subnet.SubnetId')){
+			if (objectutilities.hasRecursive(result, 'Subnet.SubnetId')) {
 				return this.nameEC2Resource(result.Subnet.SubnetId, subnet_definition.Name);
 			}
 
@@ -804,7 +817,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	nameEC2Resource(resource_identifier, name, count = 0){
+	nameEC2Resource(resource_identifier, name, count = 0) {
 
 		du.debug('Name EC2 Resource');
 
@@ -812,12 +825,10 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 			Resources: [
 				resource_identifier
 			],
-			Tags:[
-				{
-					Key: 'Name',
-					Value: name
-				}
-			]
+			Tags: [{
+				Key: 'Name',
+				Value: name
+			}]
 		};
 
 		du.info(argumentation);
@@ -825,8 +836,8 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 		return this.ec2provider.createTags(argumentation).then(() => {
 			return true;
 		}).catch(error => {
-			if(error.code.includes('NotFound')){
-				if(count < 10){
+			if (error.code.includes('NotFound')) {
+				if (count < 10) {
 					return timestamp.delay(8000)().then(() => {
 						count = count + 1;
 						return this.nameEC2Resource(resource_identifier, name, count);
@@ -838,7 +849,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	updateSubnet(subnet, subnet_definition){
+	updateSubnet(subnet, subnet_definition) {
 
 		du.debug('Update Subnet');
 
@@ -864,13 +875,15 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 			});
 
-			return arrayutilities.serial(security_group_promises).then(() => { return 'Complete'; });
+			return arrayutilities.serial(security_group_promises).then(() => {
+				return 'Complete';
+			});
 
 		});
 
 	}
 
-	securityGroupExists(parameters){
+	securityGroupExists(parameters) {
 
 		du.debug('EC2Deployment.securityGroupExists()');
 
@@ -878,7 +891,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	deploySecurityGroup(security_group_definition){
+	deploySecurityGroup(security_group_definition) {
 
 		du.debug('Deploy Security Group');
 
@@ -888,11 +901,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 		return this.ec2provider.securityGroupExists(security_group_definition).then((result) => {
 
-			if(_.isNull(result)){
+			if (_.isNull(result)) {
 
 				return this.ec2provider.createSecurityGroup(security_group_definition).then(result => {
 
-					if(!objectutilities.hasRecursive(result, 'GroupId')){
+					if (!objectutilities.hasRecursive(result, 'GroupId')) {
 						throw eu.getError('server', 'Unexpected result: ', result);
 					}
 
@@ -911,12 +924,12 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 			security_group_definition.GroupId = result.GroupId;
 			let ingress_parameter_group = this.createIngressParameterGroup(security_group_definition);
 
-			if(!_.isNull(ingress_parameter_group)){
+			if (!_.isNull(ingress_parameter_group)) {
 				return this.ec2provider.addSecurityGroupIngressRules(ingress_parameter_group).then(() => {
 					du.highlight('Successfully created ingress rules.');
 					return result;
 				})
-			}else{
+			} else {
 				return result;
 			}
 
@@ -925,12 +938,12 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 			security_group_definition.GroupId = result.GroupId;
 			let egress_parameter_group = this.createEgressParameterGroup(security_group_definition);
 
-			if(!_.isNull(egress_parameter_group)){
+			if (!_.isNull(egress_parameter_group)) {
 				return this.ec2provider.addSecurityGroupEgressRules(egress_parameter_group).then(() => {
 					du.highlight('Successfully created egress rules.');
 					return result;
 				})
-			}else{
+			} else {
 				return result;
 			}
 
@@ -941,11 +954,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	createIngressParameterGroup(security_group_definition){
+	createIngressParameterGroup(security_group_definition) {
 
 		du.debug('Create Ingress Parameter Group');
 
-		if(_.has(security_group_definition, 'Ingress')){
+		if (_.has(security_group_definition, 'Ingress')) {
 
 			let ingress = security_group_definition.Ingress;
 
@@ -966,11 +979,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	createEgressParameterGroup(security_group_definition){
+	createEgressParameterGroup(security_group_definition) {
 
 		du.debug('Create Egress Parameter Group');
 
-		if(_.has(security_group_definition, 'Egress')){
+		if (_.has(security_group_definition, 'Egress')) {
 
 			let egress = security_group_definition.Egress;
 
@@ -984,7 +997,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 			return this.createParameterGroup('security_group', 'create_egress_rules', copy);
 
-		}else{
+		} else {
 
 			return null;
 
@@ -992,7 +1005,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	destroySecurityGroups(){
+	destroySecurityGroups() {
 
 		du.debug('Destroy Security Groups');
 
@@ -1008,7 +1021,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	destroySecurityGroup(security_group_definition){
+	destroySecurityGroup(security_group_definition) {
 
 		du.debug('Destroy Security Group');
 
@@ -1018,7 +1031,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	createDestroyParameterGroup(security_group_definition){
+	createDestroyParameterGroup(security_group_definition) {
 
 		du.debug('Create Destroy Parameter Group');
 
@@ -1026,12 +1039,70 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities{
 
 	}
 
-	getConfigurationJSON(filename){
+	getConfigurationJSON(filename) {
 
 		du.debug('Get Configuration JSON');
 
 		//Technical Debt:  This needs to be expanded to support multiple definitions...
-		return global.SixCRM.routes.include('deployment', 'ec2/configuration/'+filename+'.json');
+		return global.SixCRM.routes.include('deployment', 'ec2/configuration/' + filename + '.json');
+
+	}
+
+	async instanceExists(name) {
+
+		const results = await this.ec2provider.describeInstances();
+
+		const found = results.Reservations.find((r) => {
+
+			return r.Instances.find((i) => {
+
+				return i.Tags.find((t) => t.Value === name);
+
+			});
+
+		});
+
+		return !!found;
+
+	}
+
+	async deployEC2Instances() {
+
+		const self = this;
+
+		const serverTemplates = require(path.join(__dirname, '../', 'ec2', 'configuration', 'servers.json'));
+		return BBPromise.each(serverTemplates, async (serverTemplate) => {
+
+			if (this.instanceExists(serverTemplate.TagSpecifications[0].Tags[0].Value)) {
+
+				du.debug('EC2 Instance exists');
+
+				return;
+
+			}
+
+			du.debug('EC2 Instance deploy');
+
+			const securityGroups = await _getSecurityGroupIds(serverTemplate.SecurityGroupIds);
+			serverTemplate.SecurityGroupIds = securityGroups;
+
+			return this.ec2provider.runInstance(serverTemplate);
+
+		});
+
+		async function _getSecurityGroupIds(groupNames) {
+
+			return BBPromise.map(groupNames, async (groupName) => {
+
+				const securityGroup = await self.ec2provider.securityGroupExists({
+					GroupName: groupName
+				});
+
+				return securityGroup.GroupId;
+
+			});
+
+		}
 
 	}
 
