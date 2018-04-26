@@ -13,6 +13,27 @@ module.exports = class AWSDeploymentUtilities {
 
 		this.stsprovider = new STSProvider();
 
+		//Deprecated:  In use for ONLY the oldest services
+		this.parameter_groups = {
+			security_group: {
+				create: {
+					required:['Description', 'GroupName', 'VpcId']
+				},
+				create_ingress_rules: {
+					required:['GroupId'],
+					optional:['CidrIp','FromPort','ToPort','IpProtocol','SourceSecurityGroupName','SourceSecurityGroupOwnerId','IpPermissions']
+				},
+				create_egress_rules: {
+					required:['GroupId'],
+					optional:['CidrIp','FromPort','ToPort','IpProtocol','SourceSecurityGroupName','SourceSecurityGroupOwnerId','IpPermissions']
+				},
+				delete: {
+					required:['GroupName'],
+					optional:['GroupId', 'DryRun']
+				}
+			}
+		}
+
 	}
 
 	getRoleCredentials(environment_key){
