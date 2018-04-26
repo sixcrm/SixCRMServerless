@@ -384,7 +384,7 @@ jobs:
           command: |
             echo "Host *" >> ~/.ssh/config
             echo "   AddressFamily inet" >> ~/.ssh/config
-            ssh -o StrictHostKeyChecking=no -f -N -L5440:$AURORA_HOST:5440 ec2-user@34.203.210.74
+            ssh -o StrictHostKeyChecking=no -f -N -L5440:$AURORA_HOST:5440 ec2-user@$PROXY_HOST
       - run:
           name: Deploy Subnet Groups
           command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-subnetgroups.js
