@@ -104,3 +104,6 @@ tokenization:
     id: 2029633460477211
     api_key: XnIOBNQVmQRyfRMiQdA5FuQBalGDDTxWlgoJBL8N
     base: https://test-api.tokenex.com
+
+haproxy:
+  host: 34.203.210.74

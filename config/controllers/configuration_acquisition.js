@@ -1,8 +1,8 @@
 module.exports.getVPCConfiguration = () => {
 
 	return {
-		securityGroupIds:['sg-fccb87b5'],
-		subnetIds:['sg-fccb87b5','sg-fccb87b5','subnet-439d7c6d']
+		securityGroupIds: ['sg-fccb87b5'],
+		subnetIds: ['sg-fccb87b5', 'sg-fccb87b5', 'subnet-439d7c6d']
 	}
 
 }
@@ -24,7 +24,7 @@ module.exports.getLambdaSubnets = () => {
 		let subnet_ids = arrayutilities.map(subnets, subnet => {
 			return subnet.SubnetId;
 		});
-		console.log('VPC Subnets: '+subnet_ids); //eslint-disable-line no-console
+		console.log('VPC Subnets: ' + subnet_ids); //eslint-disable-line no-console
 		return subnet_ids;
 	});
 
@@ -40,7 +40,7 @@ module.exports.getLambdaSecurityGroup = () => {
 	return ec2_deployment.securityGroupExists({
 		GroupName: global.SixCRM.configuration.site_config.lambda.security_group
 	}).then(result => {
-		console.log('Lambda Security Groups: '+[result.GroupId]); //eslint-disable-line no-console
+		console.log('Lambda Security Groups: ' + [result.GroupId]); //eslint-disable-line no-console
 		return [result.GroupId];
 	});
 
@@ -64,7 +64,7 @@ module.exports.getCloudsearchSearchEndpoint = () => {
 	return cloudsearchutilities.domainExists({
 		DomainName: global.SixCRM.configuration.site_config.cloudsearch.domainname
 	}).then(result => {
-		console.log('CloudSearch: '+result.DocService.Endpoint); //eslint-disable-line no-console
+		console.log('CloudSearch: ' + result.DocService.Endpoint); //eslint-disable-line no-console
 		return result.DocService.Endpoint;
 	});
 
@@ -76,9 +76,15 @@ module.exports.getAuroraClusterEndpoint = () => {
 
 	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
 
-	if((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
+	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
 
 		return Promise.resolve(global.SixCRM.configuration.site_config.dynamodb.endpoint);
+
+	}
+
+	if (process.env.CIRCLE_BRANCH) {
+
+		return Promise.resolve(global.SixCRM.configuration.site_config.haproxy.host);
 
 	}
 
@@ -88,7 +94,7 @@ module.exports.getAuroraClusterEndpoint = () => {
 	return rdsutilities.clusterExists({
 		DBClusterIdentifier: global.SixCRM.configuration.site_config.aurora.default_cluster_identifier
 	}).then((result) => {
-		console.log('Aurora: '+result.Endpoint); //eslint-disable-line no-console
+		console.log('Aurora: ' + result.Endpoint); //eslint-disable-line no-console
 		return result.Endpoint;
 	});
 
@@ -112,8 +118,10 @@ module.exports.getElasticSearchEndpoint = () => {
 	const ElasticSearchUtilities = global.SixCRM.routes.include('deployment', 'utilities/elasticsearch-deployment.js');
 	let elasticsearchutilities = new ElasticSearchUtilities();
 
-	return elasticsearchutilities.domainExists({DomainName: global.SixCRM.configuration.site_config.elasticsearch.domain_name}).then(result => {
-		console.log('ElasticSearch: '+result.DomainStatus.Endpoint); //eslint-disable-line no-console
+	return elasticsearchutilities.domainExists({
+		DomainName: global.SixCRM.configuration.site_config.elasticsearch.domain_name
+	}).then(result => {
+		console.log('ElasticSearch: ' + result.DomainStatus.Endpoint); //eslint-disable-line no-console
 		return result.DomainStatus.Endpoint;
 	});
 
