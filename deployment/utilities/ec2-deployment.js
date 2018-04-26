@@ -1198,7 +1198,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		});
 
-		return !!found;
+		return found;
 
 	}
 
