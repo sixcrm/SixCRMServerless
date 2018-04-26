@@ -144,5 +144,35 @@
         }
       ]
     }
+	},
+	{
+    "Description": "SixCRM SSH Gateway Security Group",
+    "GroupName": "SixCRM-SSH-Gateway",
+    "Ingress":{
+      "IpPermissions": [
+        {
+          "IpProtocol": "tcp",
+          "FromPort": 22,
+          "ToPort": 22,
+          "IpRanges": [
+            {
+              "CidrIp": "0.0.0.0/0"
+            }
+          ]
+        }
+      ]
+    },
+    "Egress":{
+      "IpPermissions": [
+        {
+          "IpProtocol": "-1",
+          "IpRanges": [
+            {
+              "CidrIp": "0.0.0.0/0"
+            }
+          ]
+        }
+      ]
+    }
   }
 ]

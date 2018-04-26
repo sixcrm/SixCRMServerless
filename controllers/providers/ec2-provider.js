@@ -324,7 +324,6 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-
 	describeNatGateways(parameters) {
 
 		du.debug('Describe NAT Gateways');
@@ -866,6 +865,38 @@ module.exports = class EC2Provider extends AWSProvider {
 
 					return handle.send();
 				}
+
+			});
+
+		});
+
+	}
+
+	describeInstances(params) {
+
+		du.debug('Describe EC2 instances');
+
+		return new Promise((resolve) => {
+
+			this.ec2.describeInstances(params, (error, data) => {
+
+				resolve(this.AWSCallback(error, data));
+
+			});
+
+		});
+
+	}
+
+	runInstance(params) {
+
+		du.debug('Create EC2 Instance');
+
+		return new Promise((resolve) => {
+
+			this.ec2.runInstances(params, (error, data) => {
+
+				resolve(this.AWSCallback(error, data));
 
 			});
 
