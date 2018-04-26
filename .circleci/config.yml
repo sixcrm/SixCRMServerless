@@ -216,11 +216,7 @@ jobs:
       - run:
           name: Deploy Route Tables
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_route_tables.js
-<<<<<<< HEAD
-  deploy_ec2_servers:
-=======
   deploy_vpc_endpoints:
->>>>>>> VPC Endpoint Deployment
     <<: *job-defaults
     steps:
       - checkout
@@ -232,13 +228,22 @@ jobs:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
-<<<<<<< HEAD
-          name: Deploy NATs
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_servers.js
-=======
           name: Deploy VPC Endpoints
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_endpoints.js
->>>>>>> VPC Endpoint Deployment
+  deploy_ec2_servers:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy EC2 Servers
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_servers.js
   backup_datastore:
     <<: *job-defaults
     steps:
@@ -664,15 +669,18 @@ workflows:
       - deploy_vpc_endpoints:
           requires:
             - deploy_route_tables
-      - deploy_aurora:
+      - deploy_ec2_servers:
           requires:
-            - deploy_security_groups
             - deploy_route_tables
       - deploy_elasticsearch:
           requires:
             - deploy_route_tables
       - deploy_cloudsearch:
           requires:
+            - deploy_route_tables
+      - deploy_aurora:
+          requires:
+            - deploy_security_groups
             - deploy_route_tables
       - backup_datastore:
           requires:
