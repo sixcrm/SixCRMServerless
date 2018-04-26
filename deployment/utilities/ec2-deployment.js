@@ -1225,6 +1225,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 				await this.ec2provider.importKeyPair(keyPair);
 
 			}
+
 			du.debug('EC2 Instance deploy');
 
 			const securityGroups = await _getSecurityGroupIds(serverTemplate.SecurityGroupIds);
