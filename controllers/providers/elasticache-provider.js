@@ -18,7 +18,8 @@ module.exports = class ElasticacheProvider extends AWSProvider{
 		this.instantiateAWS();
 
 		this.elasticache = new this.AWS.ElastiCache({
-			apiVersion: '2015-02-02'
+			apiVersion: '2015-02-02',
+			region: global.SixCRM.configuration.site_config.aws.region
 		});
 
 		this.clusterStati = ['cacheClusterAvailable','cacheClusterDeleted','replicationGroupAvailable','replicationGroupDeleted'];
