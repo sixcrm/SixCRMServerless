@@ -15,11 +15,11 @@ provider:
   name: aws
   vpc:
     securityGroupIds:
-      - sg-d7fdaa9e
+      - ${self:provider.environment.vpc_security_group}
     subnetIds:
-      - subnet-db0ee887
-      - subnet-fdf4079a
-      - subnet-5b6c8c75
+      - ${self:provider.environment.vpc_subnet1}
+      - ${self:provider.environment.vpc_subnet2}
+      - ${self:provider.environment.vpc_subnet3}
   runtime: nodejs8.10
   timeout: 90
   stage: ${opt:stage, 'development'}
@@ -37,6 +37,10 @@ provider:
     aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
     elasticsearch_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElasticSearchEndpoint}
     elasticache_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElastiCacheEndpoint}
+    vpc_subnet1: ${file(./config/controllers/configuration_acquisition.js):getSubnet1}
+    vpc_subnet2: ${file(./config/controllers/configuration_acquisition.js):getSubnet2}
+    vpc_subnet3: ${file(./config/controllers/configuration_acquisition.js):getSubnet3}
+    vpc_security_group: ${file(./config/controllers/configuration_acquisition.js):getSecurityGroup}
     #redshift.host: ${file(./config/controllers/configuration_acquisition.js):getRedshiftClusterEndpoint}
 
 plugins:

@@ -154,9 +154,7 @@ module.exports.getElastiCacheEndpoint = async () => {
 	require('../../SixCRM.js');
 
 	if (global.SixCRM.configuration.isLocal()) {
-
 		return Promise.resolve(global.SixCRM.configuration.site_config.elasticache.endpoint);
-
 	}
 
 	const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -175,5 +173,65 @@ module.exports.getElastiCacheEndpoint = async () => {
 
 	console.log('ElastiCache: ' + endpoint); //eslint-disable-line no-console
 	return endpoint;
+
+}
+
+module.exports.getSubnet1 = async () => {
+
+	require('../../SixCRM.js');
+
+	const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
+	let ec2_deployment = new EC2Deployment();
+
+	let subnet = await ec2_deployment.subnetExists({Name: 'sixcrm-private1'});
+
+	du.highlight('VPCSubnet1: '+subnet.SubnetId);
+	return subnet.SubnetId;
+
+}
+
+module.exports.getSubnet2 = async () => {
+
+	require('../../SixCRM.js');
+
+	const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
+	let ec2_deployment = new EC2Deployment();
+
+	let subnet = await ec2_deployment.subnetExists({Name: 'sixcrm-private2'});
+
+	du.highlight('VPCSubnet2: '+subnet.SubnetId);
+	return subnet.SubnetId;
+
+}
+
+module.exports.getSubnet3 = async () => {
+
+	require('../../SixCRM.js');
+
+	const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
+	let ec2_deployment = new EC2Deployment();
+
+	let subnet = await ec2_deployment.subnetExists({Name: 'sixcrm-private3'});
+
+	du.highlight('VPCSubnet3: '+subnet.SubnetId);
+	return subnet.SubnetId;
+
+}
+
+module.exports.getSecurityGroup = async () => {
+
+	require('../../SixCRM.js');
+
+	const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
+	let ec2_deployment = new EC2Deployment();
+
+	let security_group = await ec2_deployment.securityGroupExists({GroupName: global.SixCRM.configuration.site_config.lambda.security_group});
+
+	du.highlight('Lambda Security Group: '+security_group.GroupId);
+	return security_group.GroupId;
 
 }
