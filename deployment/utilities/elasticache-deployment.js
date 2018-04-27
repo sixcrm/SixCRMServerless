@@ -15,8 +15,6 @@ module.exports = class ElasticacheDeployment {
 
 		this.elasticacheprovider = new ElasticacheProvider();
 
-		this.redisprovider = new RedisProvider();
-
 		this.ec2provider = new EC2Provider();
 
 		this.parameterFilters = {
@@ -368,6 +366,8 @@ module.exports = class ElasticacheDeployment {
 	async purge(){
 
 		du.debug('Purge');
+
+		this.redisprovider = new RedisProvider();
 
 		await this.redisprovider.withConnection(() => this.redisprovider.flushAll());
 
