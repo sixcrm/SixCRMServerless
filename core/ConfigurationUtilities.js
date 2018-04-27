@@ -194,12 +194,20 @@ module.exports = class ConfigurationUtilities {
 	getEnvironmentConfig(field, fatal = true) {
 
 		if (_.has(process.env, field)) {
+
+			du.debug(`getEnvironmentConfig: ${field} = ${process.env[field]}`);
+
 			return Promise.resolve(process.env[field]);
+
 		}
 
 		if (fatal) {
+
 			throw eu.getError('server', 'Process.env missing key: "' + field + '".');
+
 		}
+
+		du.debug(`getEnvironmentConfig: ${field} = null`);
 
 		return null;
 
