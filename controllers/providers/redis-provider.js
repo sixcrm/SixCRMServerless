@@ -15,9 +15,20 @@ module.exports = class RedisProvider {
 
 		this.default_expiration = elasticache_config.default_expiration;
 
-		this.endpoint = process.env.elasticache_endpoint;
+		if (global.SixCRM.configuration.isLocal()) {
+
+			this.endpoint = elasticache_config.endpoint;
+
+		} else {
+
+			this.endpoint = process.env.elasticache_endpoint;
+
+		}
+
 		if (!this.endpoint) {
+
 			throw eu.getError('server', 'Redis endpoint is unset');
+
 		}
 
 		this.port = elasticache_config.port;
@@ -112,8 +123,7 @@ module.exports = class RedisProvider {
 
 			return await promised_callback();
 
-		}
-		catch(error) {
+		} catch (error) {
 
 			du.error(error);
 			throw eu.getError('server', error);
@@ -136,7 +146,7 @@ module.exports = class RedisProvider {
 
 			result = JSON.parse(result);
 
-		} catch (error) {	// Just tried to convert.
+		} catch (error) { // Just tried to convert.
 		}
 
 		return result;
@@ -148,7 +158,9 @@ module.exports = class RedisProvider {
 		value = this.prepareValue(value);
 		expiration = this.getExpiration(expiration);
 
-		return this.execute(() => this.redis_client.set(key, value, { EX: expiration }));
+		return this.execute(() => this.redis_client.set(key, value, {
+			EX: expiration
+		}));
 	}
 
 	prepareValue(value) {
@@ -223,11 +235,17 @@ module.exports = class RedisProvider {
 
 			await this.connect();
 			await this.set('test', 'test');
-			return {status: 'OK', message: 'Successfully connected to ElastiCache.'};
+			return {
+				status: 'OK',
+				message: 'Successfully connected to ElastiCache.'
+			};
 
-		} catch(error) {
+		} catch (error) {
 
-			return { status: 'ERROR', message: error.message };
+			return {
+				status: 'ERROR',
+				message: error.message
+			};
 
 		} finally {
 

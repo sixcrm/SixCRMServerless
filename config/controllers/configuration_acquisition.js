@@ -155,6 +155,14 @@ module.exports.getElastiCacheEndpoint = async () => {
 
 	require('../../SixCRM.js');
 
+	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
+
+	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
+
+		return Promise.resolve(global.SixCRM.configuration.site_config.elasticache.endpoint);
+
+	}
+
 	const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 	const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 	const ElastiCacheUtilities = global.SixCRM.routes.include('deployment', 'utilities/elasticache-deployment.js');
