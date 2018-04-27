@@ -50,9 +50,7 @@ module.exports.getCloudsearchSearchEndpoint = () => {
 
 	require('../../SixCRM.js');
 
-	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
-
-	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
+	if (global.SixCRM.configuration.isLocal()) {
 
 		return Promise.resolve(global.SixCRM.configuration.site_config.cloudsearch.domainendpoint);
 
@@ -74,9 +72,7 @@ module.exports.getAuroraClusterEndpoint = (force) => {
 
 	require('../../SixCRM.js');
 
-	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
-
-	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
+	if (global.SixCRM.configuration.isLocal()) {
 
 		console.log(`getAuroraClusterEndpoint: LOCAL ${global.SixCRM.configuration.site_config.aurora.host}`); //eslint-disable-line no-console
 
@@ -88,7 +84,7 @@ module.exports.getAuroraClusterEndpoint = (force) => {
 
 	// if its running on circle and creating the SSH tunnel we need the real endpoint,
 	// otherwise it is hitting the tunnel
-	if (process.env.CIRCLE_SHA1 && !force) {
+	if (process.env.AUOROA_PROXY && !force) {
 
 		console.log(`getAuroraClusterEndpoint: POINTED AT PROXY`); //eslint-disable-line no-console
 
@@ -113,9 +109,7 @@ module.exports.getElasticSearchEndpoint = () => {
 	require('../../SixCRM.js');
 
 	// probably need to add this to docker compose???
-	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
-
-	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
+	if (global.SixCRM.configuration.isLocal()) {
 
 		return Promise.resolve({
 			Endpoint: '????'
@@ -139,9 +133,7 @@ module.exports.getProxyEndpoint = async () => {
 
 	require('../../SixCRM.js');
 
-	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
-
-	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
+	if (global.SixCRM.configuration.isLocal()) {
 
 		return Promise.resolve('');
 
@@ -161,9 +153,7 @@ module.exports.getElastiCacheEndpoint = async () => {
 
 	require('../../SixCRM.js');
 
-	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
-
-	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
+	if (global.SixCRM.configuration.isLocal()) {
 
 		return Promise.resolve(global.SixCRM.configuration.site_config.elasticache.endpoint);
 
