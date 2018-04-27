@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const ATTRIBUTES = 20;
+const ATTRIBUTES = 21;
 
 module.exports = class WriteTransactionRecords {
 
@@ -27,6 +27,7 @@ module.exports = class WriteTransactionRecords {
 			'INSERT INTO analytics.f_transaction ( \
 				id, \
 				datetime, \
+				associated_transaction, \
 				session, \
 				customer, \
 				creditcard, \
@@ -58,6 +59,7 @@ module.exports = class WriteTransactionRecords {
 		query += ' \
 			ON CONFLICT (id) DO UPDATE SET  \
 			datetime = EXCLUDED.datetime, \
+			associated_transaction = EXCLUDED.associated_transaction, \
 			session = EXCLUDED.session, \
 			customer = EXCLUDED.customer, \
 			creditcard = EXCLUDED.creditcard, \
@@ -82,6 +84,7 @@ module.exports = class WriteTransactionRecords {
 			return [
 				r.id,
 				r.datetime,
+				r.associatedTransaction,
 				r.session.id,
 				r.customer,
 				r.creditcard,
