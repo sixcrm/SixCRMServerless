@@ -3,7 +3,7 @@ const _ = require('lodash');
 const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-//const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
 const ElasticacheProvider = global.SixCRM.routes.include('controllers', 'providers/elasticache-provider.js');
@@ -71,13 +71,28 @@ module.exports = class ElasticacheDeployment {
 
 	}
 
-	async clusterExists(cluster_definition){
+	async clusterExists(parameters){
 
 		du.debug('Cluster Exists');
 
-		const argumentation = {
-			CacheClusterId: cluster_definition.CacheClusterId
-		};
+		let argumentation = objectutilities.transcribe(
+			{
+				CacheClusterId: "CacheClusterId"
+			},
+			parameters,
+			{},
+			true
+		);
+
+		argumentation = objectutilities.transcribe(
+			{
+				ShowCacheClustersNotInReplicationGroups: "ShowCacheClustersNotInReplicationGroups",
+				ShowCacheNodeInfo: "ShowCacheNodeInfo"
+			},
+			parameters,
+			argumentation,
+			false
+		);
 
 		let results = null;
 		try {

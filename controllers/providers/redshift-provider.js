@@ -194,4 +194,3 @@ module.exports = class RedshiftProvider extends AWSProvider {
 	}
 
 }
-

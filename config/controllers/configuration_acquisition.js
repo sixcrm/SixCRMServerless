@@ -149,3 +149,23 @@ module.exports.getProxyEndpoint = async () => {
 	return proxy.PublicIp
 
 }
+
+module.exports.getElastiCacheEndpoint = async () => {
+
+	require('../../SixCRM.js');
+
+	const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+	const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+	const ElastiCacheUtilities = global.SixCRM.routes.include('deployment', 'utilities/elasticache-deployment.js');
+	let elasticacheutilities = new ElastiCacheUtilities();
+
+	const result = await elasticacheutilities.clusterExists({CacheClusterId:'sixcrm', ShowCacheNodeInfo: true});
+	let node_with_endpoint = arrayutilities.find(result.CacheNodes, cache_node => {
+		return objectutilities.hasRecursive(cache_node, 'Endpoint.Address');
+	});
+	let endpoint = node_with_endpoint.Endpoint.Address;
+
+	console.log('ElastiCache: ' + endpoint); //eslint-disable-line no-console
+	return endpoint;
+
+}

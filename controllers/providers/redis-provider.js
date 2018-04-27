@@ -15,7 +15,7 @@ module.exports = class RedisProvider {
 
 		this.default_expiration = elasticache_config.default_expiration;
 
-		this.endpoint = elasticache_config.endpoint;
+		this.endpoint = process.env.elasticache_endpoint;
 		if (!this.endpoint) {
 			throw eu.getError('server', 'Redis endpoint is unset');
 		}
