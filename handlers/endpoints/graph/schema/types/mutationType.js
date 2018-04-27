@@ -1464,7 +1464,7 @@ module.exports.graphObj = new GraphQLObjectType({
 				const returnController = new ReturnController();
 
 				return returnController.update({
-					entity: args.rebill
+					entity: args.return
 				});
 			}
 		},

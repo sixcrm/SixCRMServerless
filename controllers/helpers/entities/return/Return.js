@@ -224,7 +224,6 @@ module.exports = class ReturnHelper {
 
 		}
 
-
 		entity.history = new_history;
 
 		return entity;
