@@ -82,7 +82,8 @@ module.exports.getAuroraClusterEndpoint = (force) => {
 
 	}
 
-	// if its running on circle and creating the SSH tunnel we need the real endpoing, otherwise it is hitting the tunnel
+	// if its running on circle and creating the SSH tunnel we need the real endpoint,
+	// otherwise it is hitting the tunnel
 	if (process.env.CIRCLE_BRANCH && !force) {
 
 		return Promise.resolve('127.0.0.1');
@@ -153,6 +154,14 @@ module.exports.getProxyEndpoint = async () => {
 module.exports.getElastiCacheEndpoint = async () => {
 
 	require('../../SixCRM.js');
+
+	const ConfigurationUtilities = global.SixCRM.routes.include('core', 'ConfigurationUtilities.js');
+
+	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
+
+		return Promise.resolve(global.SixCRM.configuration.site_config.elasticache.endpoint);
+
+	}
 
 	const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 	const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
