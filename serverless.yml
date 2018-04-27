@@ -36,6 +36,7 @@ provider:
     cloudsearch_domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
     aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
     elasticsearch_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElasticSearchEndpoint}
+    elasticache_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElastiCacheEndpoint}
     #redshift.host: ${file(./config/controllers/configuration_acquisition.js):getRedshiftClusterEndpoint}
 
 plugins:

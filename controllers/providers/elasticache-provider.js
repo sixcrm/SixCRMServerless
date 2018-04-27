@@ -1,8 +1,8 @@
-
 const _ = require('lodash');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
+//const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
 
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
@@ -12,18 +12,48 @@ module.exports = class ElasticacheProvider extends AWSProvider{
 
 		super();
 
-		let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'elasticache.region'))?global.SixCRM.configuration.site_config.elasticache.region:this.getRegion();
+		//let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'elasticache.region'))?global.SixCRM.configuration.site_config.elasticache.region:this.getRegion();
 
 		//Technical Debt:  Get this out of the constructor?
 		this.instantiateAWS();
 
 		this.elasticache = new this.AWS.ElastiCache({
-			apiVersion: '2015-02-02',
-			region: region,
-			endpoint: global.SixCRM.configuration.site_config.elasticache.endpoint
+			apiVersion: '2015-02-02'
 		});
 
 		this.clusterStati = ['cacheClusterAvailable','cacheClusterDeleted','replicationGroupAvailable','replicationGroupDeleted'];
+
+	}
+
+	waitfor(event_name, parameters){
+
+		du.debug('Wait For');
+
+		return this.elasticache.waitFor(event_name, parameters).promise();
+
+	}
+
+	createCacheCluster(parameters){
+
+		du.debug('Create Cache Clusters');
+
+		return this.elasticache.createCacheCluster(parameters).promise();
+
+	}
+
+	describeCacheClusters(parameters){
+
+		du.debug('Describe Cache Clusters');
+
+		return this.elasticache.describeCacheClusters(parameters).promise();
+
+	}
+
+	describeCacheSubnetGroups(parameters){
+
+		du.debug('Describe Cache Subnet Group');
+
+		return this.elasticache.describeCacheSubnetGroups(parameters).promise();
 
 	}
 
@@ -31,11 +61,7 @@ module.exports = class ElasticacheProvider extends AWSProvider{
 
 		du.debug('Create Cache Subnet Group');
 
-		return new Promise((resolve) => {
-
-			this.elasticache.createCacheSubnetGroup(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-		});
+		return this.elasticache.createCacheSubnetGroup(parameters).promise();
 
 	}
 
