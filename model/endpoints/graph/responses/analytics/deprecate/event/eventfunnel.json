@@ -5,7 +5,7 @@
   "type": "object",
 
   "allOf": [
-    { "$ref": "../../graph" },
+    { "$ref": "../../../graph" },
     {
       "properties": {
 
@@ -21,7 +21,7 @@
                   "properties": {
 
                     "funnel": { "$ref": "funnel" },
-                    "pagination": { "$ref": "../../sql_pagination" }
+                    "pagination": { "$ref": "../../../sql_pagination" }
                   },
                   "required":["funnel"]
 
