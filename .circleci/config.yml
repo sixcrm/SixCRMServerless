@@ -343,8 +343,11 @@ jobs:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
+          name: Elasticache Subnets
+          command: node ./deployment/elasticache/deploy_subnet_groups.js
+      - run:
           name: Elasticache
-          command: ./tools/changesInDirectory.sh deployment/elasticache && node ./deployment/elasticache/deploy.js || echo "No changes, skipping."
+          command: node ./deployment/elasticache/deploy_clusters.js
   deploy_iam:
     <<: *job-defaults
     steps:
