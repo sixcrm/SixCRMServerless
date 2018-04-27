@@ -9,6 +9,7 @@
   "PreferredMaintenanceWindow":"wed:04:00-wed:05:00",
   "Port":6379,
   "CacheSubnetGroupName":"sixcrm-private-subnets",
+  "SecurityGroupNames":["SixCRM-Elasticache"],
   "Tags":[{
     "Key":"Name",
     "Value":"SixCRM-Elasticache"

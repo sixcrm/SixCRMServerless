@@ -50,7 +50,6 @@ sqs:
 
 cloudsearch:
   domainname: 'sixcrm'
-  domainendpoint: 'doc-sixcrm-ep6nfe6jetlzhhawthdojiwqtq.us-east-1.cloudsearch.amazonaws.com'
 
 #Technical Debt: This all needs to be configured elsewhere?
 #Technical Debt:  Username and Password combinations need to be encrypted...

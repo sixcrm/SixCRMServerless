@@ -1,5 +1,7 @@
 
 const _ = require('lodash');
+const BBPromise = require('bluebird');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
@@ -17,6 +19,80 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 	}
 
+	async deployDomains(){
+
+		du.debug('Deploy Domains');
+
+		const domains = this.getConfigurationJSON('domains');
+
+		return BBPromise.each(domains, (domain) => {
+			return this.deployDomain(domain);
+		}).then(() => {
+			return 'Complete';
+		});
+
+	}
+
+	async deployDomain(domain_definition){
+
+		du.debug('Deploy Domain');
+
+		let result = await this.domainExists(domain_definition);
+
+		if(_.isNull(result)){
+
+			du.highlight('Creating Domain: ', domain_definition);
+			return this.createCloudsearchDomain(domain_definition);
+
+		}
+
+		du.highlight('Domain Exists: ', domain_definition);
+		//Technical Debt:  Need a update function
+		return true;
+
+	}
+
+	async domainExists(domain_definition){
+
+		du.debug('Cloudsearch Domain Exists');
+
+		let results = await this.cloudsearchprovider.describeDomains([domain_definition.DomainName]);
+
+		if(_.has(results, 'DomainStatusList') && _.isArray(results.DomainStatusList)){
+
+			if(arrayutilities.nonEmpty(results.DomainStatusList)){
+				if(results.DomainStatusList.length == 1){
+					return results.DomainStatusList[0];
+				}
+				throw eu.getError('server', 'Multiple results returned: ', results);
+			}
+			return null;
+		}
+
+		throw eu.getError('server', 'Unexpected result: ', results);
+
+	}
+
+	async createCloudsearchDomain(domain_definition) {
+
+		du.debug('Create Cloudsearch Domain');
+
+		await this.cloudsearchprovider.createDomain(domain_definition);
+
+		return this.cloudsearchprovider.waitFor('ready', domain_definition);
+
+	}
+
+	deployIndexes(){
+
+		du.debug('Deploy Indexes');
+		return this.createCloudsearchIndexes()
+			.then(() => this.indexCloudsearchDocuments())
+			.then(() => { return 'Complete'; });
+
+	}
+
+	//Note:  This is a "do everything" method.  Avoid where possible.
 	deploy(){
 
 		du.debug('Deploy');
@@ -37,6 +113,7 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 	purge(){
 
+		//Deprectated, must provide domain name
 		return this.cloudsearchDomainExists().then((result) => {
 			if(_.isObject(result)){
 				return this.getCloudsearchPurgeDocument()
@@ -134,59 +211,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	domainExists(domain_definition){
-
-		du.debug('Domain Exists');
-
-		//Technical Debt:  Due to old provider code...
-		let parameters = [domain_definition.DomainName];
-
-		return this.cloudsearchprovider.describeDomains(parameters).then(result => {
-
-			if(_.has(result, 'DomainStatusList') && _.isArray(result.DomainStatusList)){
-				if(arrayutilities.nonEmpty(result.DomainStatusList)){
-					if(result.DomainStatusList.length == 1){
-						return result.DomainStatusList[0];
-					}
-					throw eu.getError('server', 'Multiple results returned: ', result);
-				}
-				return null;
-			}
-			throw eu.getError('server', 'Unexpected result: ', result);
-		});
-
-	}
-
-	createCloudsearchDomain() {
-
-		du.debug('Create Cloudsearch Domain');
-
-		return this.cloudsearchDomainExists().then((result) => {
-
-			if(result == false){
-
-				return this.cloudsearchprovider.createDomain()
-					.then(() => this.cloudsearchprovider.waitFor('ready'));
-
-			}else{
-
-				if(_.has(result, 'Processing')){
-
-					if(result.Processing == true){
-						du.highlight('Domain is processing...');
-						return this.cloudsearchprovider.waitFor('ready');
-					}else{
-						return result;
-					}
-
-				}
-			}
-			return false;
-
-		});
-
-	}
-
 	createCloudsearchIndexes() {
 
 		du.debug('Create Cloudsearch Indexes');
@@ -221,11 +245,11 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 		du.debug('Get Index Objects');
 
-		let files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','cloudsearch/indexes'));
+		let files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','cloudsearch/configuration/indexes'));
 
 		let index_objects = arrayutilities.map(files, (file) => {
 
-			let index_object = global.SixCRM.routes.include('deployment','cloudsearch/indexes/'+file);
+			let index_object = global.SixCRM.routes.include('deployment','cloudsearch/configuration/indexes/'+file);
 
 			index_object.DomainName = global.SixCRM.configuration.site_config.cloudsearch.domainname;
 
@@ -273,41 +297,12 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	cloudsearchDomainExists(domainname){
+	getConfigurationJSON(filename) {
 
-		du.debug('Cloudsearch Domain Exists');
+		du.debug('Get Configuration JSON');
 
-		if(_.isUndefined(domainname)){
-			domainname = global.SixCRM.configuration.site_config.cloudsearch.domainname;
-		}
-
-		return this.cloudsearchprovider.describeDomains([domainname]).then((results) => {
-
-			if(_.has(results, 'DomainStatusList') && _.isArray(results.DomainStatusList) && results.DomainStatusList.length > 0){
-
-				let found = arrayutilities.find(results.DomainStatusList, (domain) => {
-
-					if(domain.DomainName == domainname){
-						return true;
-					}
-					return false;
-
-				});
-
-				if(_.isObject(found)){
-
-					du.highlight('Domain exists');
-					return found;
-
-				}
-
-			}
-
-			du.highlight('Domain not found');
-			return false;
-
-
-		});
+		//Technical Debt:  This needs to be expanded to support multiple definitions...
+		return global.SixCRM.routes.include('deployment', 'cloudsearch/configuration/' + filename + '.json');
 
 	}
 

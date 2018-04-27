@@ -120,9 +120,49 @@ module.exports = class ElasticacheDeployment {
 
 		du.debug('Create Cluster');
 
+		let security_group_ids = await this.getSecurityGroupIds(cluster_definition);
+
+		if(!_.isNull(security_group_ids)){
+			cluster_definition.SecurityGroupIds = security_group_ids;
+			delete cluster_definition.SecurityGroupNames;
+		}
+
 		await this.elasticacheprovider.createCacheCluster(cluster_definition);
 
 		return this.waitForCluster('cacheClusterAvailable', cluster_definition);
+
+	}
+
+	async getSecurityGroupIds(cluster_definition){
+
+		du.debug('getSecurityGroupIds');
+
+		if(_.has(cluster_definition, 'SecurityGroupNames') && arrayutilities.nonEmpty(cluster_definition.SecurityGroupNames)){
+
+			let argumentation = {
+				Filters: [{
+					Name: "tag:Name",
+					Values: cluster_definition.SecurityGroupNames
+				}]
+			};
+
+			let results = await this.ec2provider.describeSecurityGroups(argumentation);
+
+			if(_.has(results, 'SecurityGroups') && _.isArray(results.SecurityGroups)){
+
+				if(results.SecurityGroups.length !== cluster_definition.SecurityGroupNames.length){
+					throw eu.getError('server', 'Security Group arrays do not concur.');
+				}
+
+				return arrayutilities.map(results.SecurityGroups, (security_group) => security_group.GroupId);
+
+			}
+
+			throw eu.getError('server', 'Unexpected Results: ', results);
+
+		}
+
+		return null;
 
 	}
 
