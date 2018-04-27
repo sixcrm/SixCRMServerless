@@ -82,7 +82,8 @@ module.exports.getAuroraClusterEndpoint = (force) => {
 
 	}
 
-	// if its running on circle and creating the SSH tunnel we need the real endpoing, otherwise it is hitting the tunnel
+	// if its running on circle and creating the SSH tunnel we need the real endpoint,
+	// otherwise it is hitting the tunnel
 	if (process.env.CIRCLE_BRANCH && !force) {
 
 		return Promise.resolve('127.0.0.1');
