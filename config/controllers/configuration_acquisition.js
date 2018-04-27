@@ -78,13 +78,19 @@ module.exports.getAuroraClusterEndpoint = (force) => {
 
 	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
 
+		console.log(`getAuroraClusterEndpoint: LOCAL ${global.SixCRM.configuration.site_config.aurora.host}`); //eslint-disable-line no-console
+
 		return Promise.resolve(global.SixCRM.configuration.site_config.aurora.host);
 
 	}
 
+	console.log(`getAuroraClusterEndpoint: CIRCLE_SHA1 = ${process.env.CIRCLE_SHA1} FORCE = ${force}`); //eslint-disable-line no-console
+
 	// if its running on circle and creating the SSH tunnel we need the real endpoint,
 	// otherwise it is hitting the tunnel
 	if (process.env.CIRCLE_SHA1 && !force) {
+
+		console.log(`getAuroraClusterEndpoint: POINTED AT PROXY`); //eslint-disable-line no-console
 
 		return Promise.resolve('127.0.0.1');
 
@@ -168,7 +174,10 @@ module.exports.getElastiCacheEndpoint = async () => {
 	const ElastiCacheUtilities = global.SixCRM.routes.include('deployment', 'utilities/elasticache-deployment.js');
 	let elasticacheutilities = new ElastiCacheUtilities();
 
-	const result = await elasticacheutilities.clusterExists({CacheClusterId:'sixcrm', ShowCacheNodeInfo: true});
+	const result = await elasticacheutilities.clusterExists({
+		CacheClusterId: 'sixcrm',
+		ShowCacheNodeInfo: true
+	});
 	let node_with_endpoint = arrayutilities.find(result.CacheNodes, cache_node => {
 		return objectutilities.hasRecursive(cache_node, 'Endpoint.Address');
 	});
