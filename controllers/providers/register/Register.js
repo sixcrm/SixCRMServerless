@@ -148,6 +148,8 @@ module.exports = class Register extends RegisterUtilities {
 
 	pushTransactionEvents() {
 
+		du.debug('Push Transaction Events');
+
 		if(!_.has(this, 'eventHelperController')){
 
 			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');

@@ -13,6 +13,7 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 			type: record.event_type,
 			id: record.context.transaction.id,
 			datetime: record.context.transaction.created_at,
+			associatedTransaction: record.context.transaction.associated_transaction,
 			merchantProvider: {
 				id: record.context.transaction.merchant_provider
 			},
