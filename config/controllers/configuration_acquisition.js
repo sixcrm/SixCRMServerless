@@ -80,11 +80,11 @@ module.exports.getAuroraClusterEndpoint = (force) => {
 
 	}
 
-	console.log(`getAuroraClusterEndpoint: CIRCLE_SHA1 = ${process.env.CIRCLE_SHA1} FORCE = ${force}`); //eslint-disable-line no-console
+	console.log(`getAuroraClusterEndpoint: AURORA_PROXY = ${process.env.AURORA_PROXY} FORCE = ${force}`); //eslint-disable-line no-console
 
 	// if its running on circle and creating the SSH tunnel we need the real endpoint,
 	// otherwise it is hitting the tunnel
-	if (process.env.AUOROA_PROXY && !force) {
+	if (process.env.AURORA_PROXY && !force) {
 
 		console.log(`getAuroraClusterEndpoint: POINTED AT PROXY`); //eslint-disable-line no-console
 
