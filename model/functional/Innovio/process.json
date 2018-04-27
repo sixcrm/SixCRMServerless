@@ -89,5 +89,5 @@
 			"type": "string"
 		}
 	},
-	"required":["request_action","request_response_format","request_api_version", "req_username","req_password","site_id","merchant_acct_id","li_prod_id_1","li_value_1","li_count_1","pmt_numb","pmt_key","pmt_expiry"]
+	"required":["request_action","request_response_format","request_api_version", "req_username","req_password","site_id","merchant_acct_id","li_prod_id_1","li_value_1","li_count_1","pmt_numb","pmt_expiry"]
 }
