@@ -82,7 +82,7 @@ notifications:
     production: false
 
 cache:
-  usecache: 1
+  usecache: 0
   cachebuster: 'somerandomthing12'
 
 elasticache:

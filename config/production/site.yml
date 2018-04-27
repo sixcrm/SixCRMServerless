@@ -89,7 +89,7 @@ notifications:
 #Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
 cache:
   #Technical Debt:  Turning this to 0 breaks everything...
-  usecache: 1
+  usecache: 0
   cachebuster: 'somerandomthing1'
 
 elasticache:
