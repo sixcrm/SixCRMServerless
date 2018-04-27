@@ -3,6 +3,7 @@
 			"id": "0a35f59b-88d9-4227-a7ef-5272da0a785d",
 			"type": "transaction_success",
 			"datetime": "2018-03-23T21:58:46.068Z",
+			"associatedTransaction": "d3fa3bf3-7824-49f4-8261-87674482bf1y",
 			"session": {
 				"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 				"affiliate": "8882b1de-e4be-485b-b887-1a41ff93677e",
@@ -52,6 +53,7 @@
 			"id": "6dd9546f-9efd-40db-80d7-c95c90570455",
 			"type": "transaction_fail",
 			"datetime": "2018-03-23T22:01:55.330Z",
+			"associatedTransaction": "d3fa3bf3-7824-49f4-8261-87674482bf1y",
 			"session": {
 				"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 				"affiliate": "8882b1de-e4be-485b-b887-1a41ff93677e",
