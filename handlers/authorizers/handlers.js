@@ -1,11 +1,11 @@
-const _ = require('lodash');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-
 const AuthorizationHandler = require('./authorization-handler');
 
 const VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
 const VerifySiteJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifySiteJWT.js');
 const VerifyTransactionJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifyTransactionJWT.js');
+
+const _ = require('lodash');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 module.exports = {
 	verifysignature: handleAuthorization(async (event) => {
