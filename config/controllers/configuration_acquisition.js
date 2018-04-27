@@ -78,13 +78,13 @@ module.exports.getAuroraClusterEndpoint = (force) => {
 
 	if ((new ConfigurationUtilities(global.SixCRM.routes)).isLocal()) {
 
-		return Promise.resolve(global.SixCRM.configuration.site_config.dynamodb.endpoint);
+		return Promise.resolve(global.SixCRM.configuration.site_config.aurora.host);
 
 	}
 
 	// if its running on circle and creating the SSH tunnel we need the real endpoint,
 	// otherwise it is hitting the tunnel
-	if (process.env.CIRCLE_BRANCH && !force) {
+	if (process.env.CIRCLE_SHA1 && !force) {
 
 		return Promise.resolve('127.0.0.1');
 
