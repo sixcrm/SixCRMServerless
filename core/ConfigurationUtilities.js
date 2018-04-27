@@ -5,11 +5,11 @@ const objectutilities = require('../lib/object-utilities');
 
 module.exports = class ConfigurationUtilities {
 
-	constructor(routes){
+	constructor(routes) {
 		this.routes = routes;
 	}
 
-	setEnvironmentVariable(key, value){
+	setEnvironmentVariable(key, value) {
 
 		du.debug('Set Environment Variable');
 
@@ -17,13 +17,13 @@ module.exports = class ConfigurationUtilities {
 
 	}
 
-	resolveStage(stage){
+	resolveStage(stage) {
 
 		du.debug('Resolve Stage');
 
-		if(_.isUndefined(stage)){
+		if (_.isUndefined(stage)) {
 
-			if(_.has(process.env, 'stage')){
+			if (_.has(process.env, 'stage')) {
 
 				stage = process.env.stage;
 
@@ -31,17 +31,17 @@ module.exports = class ConfigurationUtilities {
 
 				let stage_names = objectutilities.getKeys(stages);
 
-				if(!_.includes(stage_names, stage)){
+				if (!_.includes(stage_names, stage)) {
 
-					throw eu.getError('server', 'Configuration.resolveStage unable to validate stage name: '+stage);
+					throw eu.getError('server', 'Configuration.resolveStage unable to validate stage name: ' + stage);
 
 				}
 
-			}else{
+			} else {
 
 				stage = this.determineStageFromBranchName();
 
-				if(_.isNull(stage)){
+				if (_.isNull(stage)) {
 
 					stage = this.determineStageFromAccountIdentifier();
 
@@ -51,42 +51,42 @@ module.exports = class ConfigurationUtilities {
 
 		}
 
-		if(_.isNull(stage) || _.isUndefined(stage)){
+		if (_.isNull(stage) || _.isUndefined(stage)) {
 			stage = 'local'
 		}
 
-		du.critical('Stage: '+stage);
+		du.critical('Stage: ' + stage);
 
 		return stage;
 
 	}
 
-	determineStageFromBranchName(fatal = true){
+	determineStageFromBranchName(fatal = true) {
 
 		du.debug('Determine Stage From Branch Name');
 
 		let branch_name = this.getBranchName();
 
-		if(!_.isNull(branch_name)){
+		if (!_.isNull(branch_name)) {
 
-			let stages = this.routes.include('config','stages.yml');
+			let stages = this.routes.include('config', 'stages.yml');
 
 			let identified_stage = null;
 
 			objectutilities.map(stages, key => {
 				let stage = stages[key];
 
-				if(stage.branch_name == branch_name){
+				if (stage.branch_name == branch_name) {
 					identified_stage = key
 				}
 			});
 
-			if(!_.isNull(identified_stage)){
+			if (!_.isNull(identified_stage)) {
 				return identified_stage;
 			}
 
-			if(fatal){
-				throw eu.getError('server', 'Unrecognized branch_name in stage.yml: '+branch_name);
+			if (fatal) {
+				throw eu.getError('server', 'Unrecognized branch_name in stage.yml: ' + branch_name);
 			}
 
 		}
@@ -95,32 +95,32 @@ module.exports = class ConfigurationUtilities {
 
 	}
 
-	determineStageFromAccountIdentifier(fatal = true){
+	determineStageFromAccountIdentifier(fatal = true) {
 
 		du.debug('Determine Stage From Account Identifier');
 
 		let account_identifier = this.getAccountIdentifier();
 
-		if(!_.isNull(account_identifier)){
+		if (!_.isNull(account_identifier)) {
 
-			let stages = this.routes.include('config','stages.yml');
+			let stages = this.routes.include('config', 'stages.yml');
 
 			let identified_stage = null;
 
 			objectutilities.map(stages, key => {
 				let stage = stages[key];
 
-				if(_.has(stage, 'aws_account_id') && (stage.aws_account_id == account_identifier)){
+				if (_.has(stage, 'aws_account_id') && (stage.aws_account_id == account_identifier)) {
 					identified_stage = key
 				}
 			});
 
-			if(!_.isNull(identified_stage)){
+			if (!_.isNull(identified_stage)) {
 				return identified_stage;
 			}
 
-			if(fatal){
-				throw eu.getError('server', 'Unrecognized account identifier in stage.yml: '+account_identifier);
+			if (fatal) {
+				throw eu.getError('server', 'Unrecognized account identifier in stage.yml: ' + account_identifier);
 			}
 
 		}
@@ -129,7 +129,7 @@ module.exports = class ConfigurationUtilities {
 
 	}
 
-	getAccountIdentifier(){
+	getAccountIdentifier() {
 
 		du.debug('Get Account Identifier');
 
@@ -137,7 +137,7 @@ module.exports = class ConfigurationUtilities {
 
 	}
 
-	getBranchName(){
+	getBranchName() {
 
 		du.debug('Get Branch Name');
 
@@ -147,11 +147,11 @@ module.exports = class ConfigurationUtilities {
 
 	}
 
-	getBranchNameFromEnvironment(){
+	getBranchNameFromEnvironment() {
 
 		du.debug('Get Branch Name From Environment');
 
-		if(_.has(process.env, 'CIRCLE_BRANCH')){
+		if (_.has(process.env, 'CIRCLE_BRANCH')) {
 			return process.env.CIRCLE_BRANCH;
 		}
 
@@ -159,13 +159,13 @@ module.exports = class ConfigurationUtilities {
 
 	}
 
-	getAccountIdentifierFromEnvironment(){
+	getAccountIdentifierFromEnvironment() {
 
 		du.debug('Get Account Identifier From Environment');
 
-		if(_.has(process.env, 'AWS_ACCOUNT')){
+		if (_.has(process.env, 'AWS_ACCOUNT')) {
 			return process.env.AWS_ACCOUNT;
-		}else if(_.has(process.env, 'aws_account')){
+		} else if (_.has(process.env, 'aws_account')) {
 			return process.env.aws_account;
 		}
 
@@ -179,25 +179,25 @@ module.exports = class ConfigurationUtilities {
 
 		let stages = this.routes.include('config', 'stages.yml');
 
-		if(!_.has(stages, global.SixCRM.configuration.stage)){
-			throw eu.getError('server', 'Unrecognized stage: '+global.SixCRM.configuration.stage);
+		if (!_.has(stages, global.SixCRM.configuration.stage)) {
+			throw eu.getError('server', 'Unrecognized stage: ' + global.SixCRM.configuration.stage);
 		}
 
-		if(_.has(stages[global.SixCRM.configuration.stage], 'aws_account_id')){
-			return false;
-		}
+		const result = !_.has(stages[global.SixCRM.configuration.stage], 'aws_account_id');
 
-		return true;
+		du.debug(`Is Local: ${result}`);
+
+		return result;
 
 	}
 
-	getEnvironmentConfig(field, fatal = true){
+	getEnvironmentConfig(field, fatal = true) {
 
 		if (_.has(process.env, field)) {
 			return Promise.resolve(process.env[field]);
 		}
 
-		if(fatal){
+		if (fatal) {
 			throw eu.getError('server', 'Process.env missing key: "' + field + '".');
 		}
 
