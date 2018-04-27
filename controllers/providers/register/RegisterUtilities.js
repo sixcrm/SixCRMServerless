@@ -209,6 +209,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 					throw eu.getError('server', 'Unable to hydrate the selected creditcard');
 				}
 
+				this.appendCVV(result);
 				this.parameters.set('selectedcreditcard', result);
 
 				return true;

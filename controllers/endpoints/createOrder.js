@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
@@ -44,6 +45,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			'event': global.SixCRM.routes.path('model', 'endpoints/createOrder/event.json'),
 			'session': global.SixCRM.routes.path('model', 'entities/session.json'),
 			'creditcard': global.SixCRM.routes.path('model', 'entities/creditcard.json'),
+			'rawcreditcard': global.SixCRM.routes.path('model', 'general/rawcreditcard.json'),
 			'campaign': global.SixCRM.routes.path('model', 'entities/campaign.json'),
 			'customer': global.SixCRM.routes.path('model', 'endpoints/components/customerprocessable.json'),
 			'productschedules': global.SixCRM.routes.path('model', 'endpoints/components/productschedules.json'),
@@ -213,7 +215,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				this.creditCardHelperController = new CreditCardHelperController();
 			}
 
-			let raw_creditcard = this.creditCardHelperController.formatRawCreditCard(event.creditcard);
+			let cloned_card = objectutilities.clone(event.creditcard);
+			let raw_creditcard = this.creditCardHelperController.formatRawCreditCard(cloned_card);
 
 			this.parameters.set('rawcreditcard', raw_creditcard);
 
@@ -237,7 +240,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			}
 
 			this.creditCardController.sanitize(false);
-			return this.creditCardController.assureCreditCard(event.creditcard)
+			return this.creditCardController.assureCreditCard(event.creditcard, {hydrate_token: true})
 				.then(creditcard => {
 					this.parameters.set('creditcard', creditcard);
 					return true;
@@ -430,7 +433,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.registerController = new RegisterController();
 		}
 
-		let raw_creditcard = this.parameters.get('raw_creditcard', null, false);
+		let raw_creditcard = this.parameters.get('rawcreditcard', null, false);
 
 		let argumentation = {
 			rebill: rebill,
