@@ -427,10 +427,10 @@ jobs:
           command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-subnetgroups.js
       - run:
           name: Aurora Create Cluster
-          command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-cluster.js
+          command: SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-cluster.js
       - run:
           name: Aurora Create Tables
-          command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-schema.js
+          command: SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
   deploy_cloudsearch:
     <<: *job-defaults
     steps:
