@@ -1,3 +1,6 @@
+require('../../SixCRM');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+
 module.exports.getVPCConfiguration = () => {
 
 	return {
@@ -24,7 +27,7 @@ module.exports.getLambdaSubnets = () => {
 		let subnet_ids = arrayutilities.map(subnets, subnet => {
 			return subnet.SubnetId;
 		});
-		console.log('VPC Subnets: ' + subnet_ids); //eslint-disable-line no-console
+		du.debug('VPC Subnets: ' + subnet_ids);
 		return subnet_ids;
 	});
 
@@ -40,7 +43,7 @@ module.exports.getLambdaSecurityGroup = () => {
 	return ec2_deployment.securityGroupExists({
 		GroupName: global.SixCRM.configuration.site_config.lambda.security_group
 	}).then(result => {
-		console.log('Lambda Security Groups: ' + [result.GroupId]); //eslint-disable-line no-console
+		du.debug('Lambda Security Groups: ' + [result.GroupId]);
 		return [result.GroupId];
 	});
 
@@ -62,7 +65,7 @@ module.exports.getCloudsearchSearchEndpoint = () => {
 	return cloudsearchutilities.domainExists({
 		DomainName: global.SixCRM.configuration.site_config.cloudsearch.domainname
 	}).then(result => {
-		console.log('CloudSearch: ' + result.DocService.Endpoint); //eslint-disable-line no-console
+		du.debug('CloudSearch: ' + result.DocService.Endpoint);
 		return result.DocService.Endpoint;
 	});
 
@@ -74,19 +77,19 @@ module.exports.getAuroraClusterEndpoint = (force) => {
 
 	if (global.SixCRM.configuration.isLocal()) {
 
-		console.log(`getAuroraClusterEndpoint: LOCAL ${global.SixCRM.configuration.site_config.aurora.host}`); //eslint-disable-line no-console
+		du.debug(`getAuroraClusterEndpoint: LOCAL = ${global.SixCRM.configuration.site_config.aurora.host}`);
 
 		return Promise.resolve(global.SixCRM.configuration.site_config.aurora.host);
 
 	}
 
-	console.log(`getAuroraClusterEndpoint: AURORA_PROXY = ${process.env.AURORA_PROXY} FORCE = ${force}`); //eslint-disable-line no-console
+	du.debug(`getAuroraClusterEndpoint: AURORA_PROXY = ${process.env.AURORA_PROXY} FORCE = ${force}`);
 
 	// if its running on circle and creating the SSH tunnel we need the real endpoint,
 	// otherwise it is hitting the tunnel
 	if (process.env.AURORA_PROXY && !force) {
 
-		console.log(`getAuroraClusterEndpoint: POINTED AT PROXY`); //eslint-disable-line no-console
+		du.debug(`getAuroraClusterEndpoint: POINTED AT PROXY`);
 
 		return Promise.resolve('127.0.0.1');
 
@@ -98,7 +101,7 @@ module.exports.getAuroraClusterEndpoint = (force) => {
 	return rdsutilities.clusterExists({
 		DBClusterIdentifier: global.SixCRM.configuration.site_config.aurora.default_cluster_identifier
 	}).then((result) => {
-		console.log('Aurora: ' + result.Endpoint); //eslint-disable-line no-console
+		du.debug('Aurora: ' + result.Endpoint);
 		return result.Endpoint;
 	});
 
@@ -123,7 +126,7 @@ module.exports.getElasticSearchEndpoint = () => {
 	return elasticsearchutilities.domainExists({
 		DomainName: global.SixCRM.configuration.site_config.elasticsearch.domain_name
 	}).then(result => {
-		console.log('ElasticSearch: ' + result.DomainStatus.Endpoint); //eslint-disable-line no-console
+		du.debug('ElasticSearch: ' + result.DomainStatus.Endpoint);
 		return result.DomainStatus.Endpoint;
 	});
 
@@ -173,7 +176,7 @@ module.exports.getElastiCacheEndpoint = async () => {
 	});
 	let endpoint = node_with_endpoint.Endpoint.Address;
 
-	console.log('ElastiCache: ' + endpoint); //eslint-disable-line no-console
+	du.debug('ElastiCache: ' + endpoint);
 	return endpoint;
 
 }
