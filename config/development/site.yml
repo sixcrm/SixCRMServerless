@@ -49,7 +49,6 @@ sqs:
 
 cloudsearch:
   domainname: 'sixcrm'
-  #domainendpoint: 'doc-sixcrm-x5xewjrr254yjyrln4mlvxvfm4.us-east-1.cloudsearch.amazonaws.com'
 
 aurora:
   release: 2

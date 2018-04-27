@@ -444,7 +444,21 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Clousearch
-          command: SIX_VERBOSE=2 node ./deployment/cloudsearch/deploy.js
+          command: SIX_VERBOSE=2 node ./deployment/cloudsearch/deploy_domains.js
+  deploy_cloudsearch_indexes:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy Clousearch Indexes
+          command: SIX_VERBOSE=2 node ./deployment/cloudsearch/deploy_indexes.js
   deploy_sns:
     <<: *job-defaults
     steps:
@@ -687,6 +701,9 @@ workflows:
       - deploy_cloudsearch:
           requires:
             - deploy_route_tables
+      - deploy_cloudsearch_indexes:
+          requires:
+            - deploy_cloudsearch
       - deploy_aurora:
           requires:
             - deploy_security_groups
