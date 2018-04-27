@@ -1,3 +1,5 @@
+require('../SixCRM');
+
 const LambdaContext = require('./lambda-context');
 const ServerlessRuntime = require('../core/ServerlessRuntime');
 
