@@ -1,2 +1,2 @@
 require('../../SixCRM.js');
-process.env.elasticache_endpoint = 'localhost'
+process.env.elasticache_endpoint = 'localhost';
