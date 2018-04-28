@@ -20,36 +20,8 @@ module.exports = class PublicController extends endpointController {
 		du.debug('Preprocessing');
 
 		return this.normalizeEvent(event)
-			.then((event) => this.validateEvent(event))
-			.then((event) => this.acquirePathParameters(event))
-			.then((event) => this.parseEventQueryString(event));
-	}
+			.then((event) => this.validateEvent(event));
 
-	//Technical Debt:  Redundant?
-	parseEventQueryString(event){
-
-		du.debug('Parse Event Query String');
-
-		return super.parseEventQueryString(event).then(event => {
-
-			if(_.has(event, 'queryStringParameters')){
-				this.queryString = event.queryStringParameters;
-			}
-
-			return event;
-
-		});
-
-	}
-
-	routeRequest(){
-		du.debug('Route Request');
-		return this.parsePathParameters()
-			.then(() => this.validatePath())
-			.then(() => this.instantiateViewController())
-			.then(() => this.validateViewController())
-			.then(() => this.createArgumentationObject())
-			.then(() => this.invokeViewController());
 	}
 
 	parsePathParameters(){

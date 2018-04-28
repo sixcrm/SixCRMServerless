@@ -100,6 +100,20 @@ functions:
       usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
       cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
 
+  publicgraph:
+    handler: handlers/endpoints/handlers.publicgraph
+    events:
+      - http:
+          path: publicgraph/
+          method: post
+          cors:
+            origin: '*'
+            maxAge: 86400
+    environment:
+      #Technical Debt:  These don't need to be defined here.
+      usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
+      cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
+
 
 ########################
 # State Machine Lambdas (ForwardMessage Relays)
