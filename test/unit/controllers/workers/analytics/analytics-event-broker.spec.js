@@ -21,6 +21,10 @@ describe('controllers/workers/analytics/AnalyticsEventBroker', () => {
 
 		mockery.registerMock(global.SixCRM.routes.path('controllers','entities/MerchantProvider.js'), class {
 
+			disableACLs() {
+
+			}
+
 			async get() {
 
 				return {
