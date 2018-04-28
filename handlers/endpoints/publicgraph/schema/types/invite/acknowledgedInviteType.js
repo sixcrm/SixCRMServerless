@@ -3,8 +3,8 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
 
 module.exports.graphObj = new GraphQLObjectType({
-	name: 'Invite',
-	description: 'A invite.',
+	name: 'AcknowledgedInvite',
+	description: 'A invite acknowledgement.',
 	fields: () => ({
 		hash: {
 			type: new GraphQLNonNull(GraphQLString)
@@ -28,6 +28,9 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLNonNull(GraphQLString)
 		},
 		timestamp: {
+			type: new GraphQLNonNull(GraphQLString)
+		},
+		signature: {
 			type: new GraphQLNonNull(GraphQLString)
 		}
 	}),

@@ -1,5 +1,5 @@
 {
   "requestContext":{},
   "pathParameters":{},
-  "body":"query { acknowledgeinvite (hash: \"abc123tm\") { hash, email, acl, invitor, account, account_name, role, timestamp } }"
+  "body":"query { acknowledgeinvite (hash: \"abc123tm\") { hash, email, acl, invitor, account, account_name, role, timestamp, signature } }"
 }

@@ -338,7 +338,12 @@ module.exports = class UserController extends entityController {
 					.then((user_setting_prototype) => this.executeAssociatedEntityFunction('userSettingController', 'create', {entity: user_setting_prototype}))
 					.then(() => {
 						return user;
-					})
+					}).catch(error => {
+						if(_.includes(error.message, 'A usersetting already exists')){
+							return user;
+						}
+						throw error;
+					});
 
 			});
 

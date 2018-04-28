@@ -400,8 +400,9 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then(() => {
 
 				let query_parameters = {
-					key_condition_expression: field+' = :index_valuev',
+					key_condition_expression: '#field = :index_valuev',
 					expression_attribute_values: {':index_valuev': index_value},
+					expression_attribute_names: {'#field': field}
 				}
 
 				return this.appendAccountFilter({query_parameters: query_parameters});

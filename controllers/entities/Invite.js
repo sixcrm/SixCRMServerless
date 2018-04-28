@@ -20,7 +20,7 @@ module.exports = class InviteController extends entityController {
 
 		du.debug('Get By Hash');
 
-		return this.getBySecondaryIndex('hash', hash, 'hash-index');
+		return this.getBySecondaryIndex({field: 'hash', index_value: hash, index_name: 'hash-index'});
 
 	}
 

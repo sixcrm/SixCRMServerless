@@ -3,7 +3,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 //const GraphQLInt = require('graphql').GraphQLInt;
 
-const inviteType = require('./invite/inviteType');
+const acknowledgedInviteType = require('./invite/acknowledgedInviteType');
 
 const InviteHelperController = global.SixCRM.routes.include('helpers', 'entities/invite/Invite.js');
 
@@ -11,7 +11,7 @@ module.exports.graphObj = new GraphQLObjectType({
 	name: 'Query',
 	fields: () => Object.assign({
 		acknowledgeinvite: {
-			type: inviteType.graphObj,
+			type: acknowledgedInviteType.graphObj,
 			description: 'Acknowledge a invite',
 			args: {
 				hash: {
