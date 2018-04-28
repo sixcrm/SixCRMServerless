@@ -3,7 +3,7 @@ const path = require('path');
 
 const body = `
 query {
-    analytics (facets: {
+    analytics (
       reportType: merchantReport
       facets: [{
       facet: "start"
@@ -37,7 +37,7 @@ query {
         facet: "mid"
         values: ["6c40761d-8919-4ad6-884d-6a46a776cfb9"]
       }
-    ]}) {records { key value }}
+    ]) {records { key value }}
   }
 `;
 

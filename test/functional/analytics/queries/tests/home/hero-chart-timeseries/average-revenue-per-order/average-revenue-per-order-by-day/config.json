@@ -2,22 +2,20 @@
 	"method": "getReport",
 	"test_case": "getReport Average revenue per order per day",
 	"input": {
-		"facets": {
-			"facets": [{
-					"facet": "start",
-					"values": ["2018-01-01T00:00:00.000Z"]
-				},
-				{
-					"facet": "end",
-					"values": ["2018-02-03T00:00:00.000Z"]
-				},
-				{
-					"facet": "period",
-					"values": ["day"]
-				}
-			],
-			"reportType": "averageRevenuePerOrder"
-		}
+		"facets": [{
+				"facet": "start",
+				"values": ["2018-01-01T00:00:00.000Z"]
+			},
+			{
+				"facet": "end",
+				"values": ["2018-02-03T00:00:00.000Z"]
+			},
+			{
+				"facet": "period",
+				"values": ["day"]
+			}
+		],
+		"reportType": "averageRevenuePerOrder"
 	},
 	"result_name": "records",
 	"expect": [

@@ -299,7 +299,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		du.debug('Get report', parameters.reportType);
 
-		switch (parameters.facets.reportType) {
+		switch (parameters.reportType) {
 
 			case 'revenueVersusOrders':
 				return this.query('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams());
@@ -320,15 +320,15 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		function _resolveParams() {
 
-			const start = parameters.facets.facets.find(f => f.facet === 'start');
-			const end = parameters.facets.facets.find(f => f.facet === 'end');
-			const period = parameters.facets.facets.find(f => f.facet === 'period');
-			const campaign = parameters.facets.facets.find(f => f.facet === 'campaign');
-			const affiliate = parameters.facets.facets.find(f => f.facet === 'affiliate');
-			const subId = parameters.facets.facets.find(f => f.facet === 'subId');
-			const mid = parameters.facets.facets.find(f => f.facet === 'mid');
-			const product = parameters.facets.facets.find(f => f.facet === 'product');
-			const productSchedule = parameters.facets.facets.find(f => f.facet === 'productSchedule');
+			const start = parameters.facets.find(f => f.facet === 'start');
+			const end = parameters.facets.find(f => f.facet === 'end');
+			const period = parameters.facets.find(f => f.facet === 'period');
+			const campaign = parameters.facets.find(f => f.facet === 'campaign');
+			const affiliate = parameters.facets.find(f => f.facet === 'affiliate');
+			const subId = parameters.facets.find(f => f.facet === 'subId');
+			const mid = parameters.facets.find(f => f.facet === 'mid');
+			const product = parameters.facets.find(f => f.facet === 'product');
+			const productSchedule = parameters.facets.find(f => f.facet === 'productSchedule');
 
 			const params = {
 				start: start.values[0],

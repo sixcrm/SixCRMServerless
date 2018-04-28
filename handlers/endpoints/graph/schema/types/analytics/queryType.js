@@ -1,16 +1,24 @@
-const AnalyticsReportRequest = require('../analytics/reports/report/analytics-report-request');
 const AnalyticsReportResponse = require('../analytics/reports/report/analytics-report-response');
 const AnalyticsReportFacetsRequest = require('../analytics/reports/facets/analytics-report-facets-request');
 const AnalyticsReportFacetsResponse = require('../analytics/reports/facets/analytics-report-facets-response');
 const AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+const AnalyticsReportSelector= require('./reports/common/analytics-report-selector');
+const GraphQLNonNull = require('graphql').GraphQLNonNull;
+const GraphQLList = require('graphql').GraphQLList;
+const AnalyticsReportInputFacetType = require('./reports/report/analytics-report-request-facet');
 
 module.exports = {
 
 	analytics: {
 		type: AnalyticsReportResponse,
 		args: {
+			reportType: {
+				type: new GraphQLNonNull(AnalyticsReportSelector),
+				description: 'The type of the analytics report'
+			},
 			facets: {
-				type: AnalyticsReportRequest
+				type: new GraphQLList(AnalyticsReportInputFacetType),
+				description: 'Facets'
 			}
 		},
 		resolve: function (root, args) {
