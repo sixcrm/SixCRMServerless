@@ -18,103 +18,103 @@ module.exports = async (parameters = {}) => {
 
 }
 
-function _resolveFilterQuery(parameters, options = {}) {
+// function _resolveFilterQuery(parameters, options = {}) {
 
-	let filter = '';
+// 	let filter = '';
 
-	if (options.range) {
+// 	if (options.range) {
 
-		filter = ' %s.datetime BETWEEN %L AND %L ';
+// 		filter = ' %s.datetime BETWEEN %L AND %L ';
 
-	}
+// 	}
 
-	if (options.account) {
+// 	if (options.account) {
 
-		filter = _resolveFilterQueryValue(filter, 'account', 'account', parameters);
+// 		filter = _resolveFilterQueryValue(filter, 'account', 'account', parameters);
 
-	}
+// 	}
 
-	if (options.campaign) {
+// 	if (options.campaign) {
 
-		filter = _resolveFilterQueryValue(filter, 'campaign', 'campaign', parameters);
+// 		filter = _resolveFilterQueryValue(filter, 'campaign', 'campaign', parameters);
 
-	}
+// 	}
 
-	if (options.affiliate) {
+// 	if (options.affiliate) {
 
-		filter = _resolveFilterQueryValue(filter, 'affiliate', 'affiliate', parameters);
+// 		filter = _resolveFilterQueryValue(filter, 'affiliate', 'affiliate', parameters);
 
-	}
+// 	}
 
-	if (options.subId) {
+// 	if (options.subId) {
 
-		filter = _resolveFilterQueryValueSubId(filter, parameters);
+// 		filter = _resolveFilterQueryValueSubId(filter, parameters);
 
-	}
+// 	}
 
-	if (options.mid) {
+// 	if (options.mid) {
 
-		filter = _resolveFilterQueryValue(filter, 'mid', 'merchant_provider', parameters);
+// 		filter = _resolveFilterQueryValue(filter, 'mid', 'merchant_provider', parameters);
 
-	}
+// 	}
 
-	return filter;
-}
+// 	return filter;
+// }
 
-function _resolveFilterQueryValue(filter, identifier, map, parameters) {
+// function _resolveFilterQueryValue(filter, identifier, map, parameters) {
 
-	if (parameters[identifier]) {
+// 	if (parameters[identifier]) {
 
-		return filter += ` AND %s.${map} = %L `;
+// 		return filter += ` AND %s.${map} = %L `;
 
-	} else {
+// 	} else {
 
-		return filter;
+// 		return filter;
 
-	}
+// 	}
 
-}
+// }
 
-function _resolveFilterQueryValueSubId(filter, parameters) {
+// function _resolveFilterQueryValueSubId(filter, parameters) {
 
-	if (parameters['subId']) {
+// 	if (parameters['subId']) {
 
-		return filter += ` AND (%s.subaffiliate_1 = %L OR  %s.subaffiliate_2 = %L OR %s.subaffiliate_3 = %L OR %s.subaffiliate_4 = %L OR %s.subaffiliate_5 = %L) `;
+// 		return filter += ` AND (%s.subaffiliate_1 = %L OR  %s.subaffiliate_2 = %L OR %s.subaffiliate_3 = %L OR %s.subaffiliate_4 = %L OR %s.subaffiliate_5 = %L) `;
 
-	} else {
+// 	} else {
 
-		return filter;
+// 		return filter;
 
-	}
+// 	}
 
-}
+// }
 
-function _resolveFilterValue(local, prefix, identifier, parameters) {
+// function _resolveFilterValue(local, prefix, identifier, parameters) {
 
-	if (parameters[identifier]) {
+// 	if (parameters[identifier]) {
 
-		local.push(prefix);
-		local.push(parameters[identifier]);
+// 		local.push(prefix);
+// 		local.push(parameters[identifier]);
 
-	}
+// 	}
 
-}
+// }
 
-function _resolveFilterValueSubId(local, parameters) {
+// function _resolveFilterValueSubId(local, parameters) {
 
-	if (parameters['subId']) {
+// 	if (parameters['subId']) {
 
-		local.push('s');
-		local.push(parameters['subId']);
-		local.push('s');
-		local.push(parameters['subId']);
-		local.push('s');
-		local.push(parameters['subId']);
-		local.push('s');
-		local.push(parameters['subId']);
-		local.push('s');
-		local.push(parameters['subId']);
+// 		local.push('s');
+// 		local.push(parameters['subId']);
+// 		local.push('s');
+// 		local.push(parameters['subId']);
+// 		local.push('s');
+// 		local.push(parameters['subId']);
+// 		local.push('s');
+// 		local.push(parameters['subId']);
+// 		local.push('s');
+// 		local.push(parameters['subId']);
 
-	}
+// 	}
 
-}
+// }
