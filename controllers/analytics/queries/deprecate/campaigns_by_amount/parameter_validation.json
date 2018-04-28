@@ -109,8 +109,7 @@
 			"minItems": 1,
 			"uniqueItems": true,
 			"items": {
-				"type":"string",
-				"enum": ["new", "rebill"]
+				"type":"string"
 			}
 		},
 		"subtype":{
@@ -118,8 +117,7 @@
 			"minItems": 1,
 			"uniqueItems": true,
 			"items": {
-				"type":"string",
-				"enum": ["main", "upsell"]
+				"type":"string"
 			},
 			"limit":{
 				"type": ["integer"],

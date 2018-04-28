@@ -119,8 +119,7 @@
       "minItems": 1,
       "uniqueItems": true,
       "items": {
-        "type": "string",
-        "enum": ["new", "rebill"]
+        "type": "string"
       }
     },
     "subtype": {

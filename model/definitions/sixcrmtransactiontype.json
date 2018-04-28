@@ -2,6 +2,5 @@
   "$schema": "http://json-schema.org/draft-04/schema",
   "id": "/definitions/sixcrmtransactiontype.json",
   "title": "SixCRM Transaction Type",
-  "type":"string",
-  "enum":["new","recurring"]
+  "type":"string"
 }
