@@ -105,8 +105,7 @@
 			"minItems": 1,
 			"uniqueItems": true,
 			"items": {
-				"type":"string",
-				"enum": ["new", "rebill","refund","chargeback"]
+				"type":"string"
 			}
 		},
 		"subtype":{

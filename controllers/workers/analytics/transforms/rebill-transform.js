@@ -14,7 +14,7 @@ module.exports = class RebillTransform extends AnalyticsTransfrom {
 			previousQueuename: record.context.transformedrebill.previous_queuename,
 			account: record.context.transformedrebill.account,
 			amount: record.context.transformedrebill.amount,
-			type: record.event_type
+			eventType: record.event_type
 		};
 
 	}

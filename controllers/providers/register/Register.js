@@ -167,7 +167,8 @@ module.exports = class Register extends RegisterUtilities {
 					session: this.parameters.get('parentsession'),
 					transaction,
 					rebill: this.parameters.get('rebill'),
-					transactionSubType: this.parameters.get('transactionsubtype', null, false)}
+					transactionSubType: this.parameters.get('transactionsubtype', null, false),
+					transactionType: this.parameters.get('transactiontype', null, false)}
 			});
 
 		});

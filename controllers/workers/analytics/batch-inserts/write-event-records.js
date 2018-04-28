@@ -66,7 +66,7 @@ module.exports = class WriteEventRecords {
 			return [
 				r.id,
 				_.isObject(r.session) ? r.session.id : r.session,
-				r.type,
+				r.eventType,
 				r.datetime,
 				r.account,
 				r.campaign,

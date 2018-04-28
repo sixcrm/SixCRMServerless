@@ -1,7 +1,7 @@
 {
 	"result": {
 		"id": "0a35f59b-88d9-4227-a7ef-5272da0a785d",
-		"type": "transaction_success",
+		"eventType": "transaction_success",
 		"datetime": "2018-03-23T21:58:46.068Z",
 		"associatedTransaction": "d3fa3bf3-7824-49f4-8261-87674482bf1y",
 		"session": {
@@ -24,8 +24,9 @@
 		},
 		"processorResult": "success",
 		"amount": 34.99,
-		"transactionType": "sale",
+		"type": "new",
 		"subtype": "main",
+		"transactionType": "sale",
 		"customer": "b1cf3769-a541-43f2-b03f-2f2e468a10f5",
 		"creditcard": "",
 		"campaign": "7a2b5750-adc4-4762-8963-268aa767b803",
@@ -53,6 +54,7 @@
 		"event_type": "transaction_success",
 		"context": {
 			"transactionSubType": "main",
+			"transactionType": "sale",
 			"transaction": {
 				"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 				"rebill": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
@@ -86,7 +88,7 @@
 				"alias": "TRRJF18UTJ",
 				"merchant_provider": "a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
 				"associated_transaction": "d3fa3bf3-7824-49f4-8261-87674482bf1y",
-				"type": "sale",
+				"type": "new",
 				"result": "success",
 				"id": "0a35f59b-88d9-4227-a7ef-5272da0a785d",
 				"created_at": "2018-03-23T21:58:46.068Z",

@@ -13,7 +13,7 @@ module.exports = class LeadTransform extends AnalyticsTransfrom {
 			account: record.context.campaign.account,
 			campaign: record.context.campaign.id,
 			datetime: moment.tz('UTC').toISOString(),
-			type: record.event_type,
+			eventType: record.event_type,
 		};
 
 		if (record.context.session) {

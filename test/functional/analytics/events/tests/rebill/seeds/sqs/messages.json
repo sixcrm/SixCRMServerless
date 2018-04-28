@@ -1,6 +1,6 @@
 {
 	"messages": [{
-		"type": "rebill",
+		"eventType": "rebill",
 		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		"datetime": "2019-03-23T22:06:20.452Z",
 		"id": "16b7787a-fb6a-4392-996e-238a338b3b6d",

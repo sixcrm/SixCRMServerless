@@ -2,7 +2,7 @@
 	"messages": [{
 		"id": "1ef02cd1-1cad-46bf-9b05-2da7b437b497",
 		"datetime": "2018-04-03T23:58:42.895Z",
-		"type": "activity_created",
+		"eventType": "activity_created",
 		"user": "system@sixcrm.com",
 		"account": "*",
 		"actor": "system",
