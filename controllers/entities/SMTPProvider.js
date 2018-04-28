@@ -52,7 +52,9 @@ module.exports = class SMTPProviderController extends entityController {
 
 		du.debug('Validate SMTP Provider');
 
+		this.sanitize(false);
 		return this.get({id: smtpprovider}).then(smtpprovider => {
+			this.sanitize(true);
 
 			if(_.isNull(smtpprovider)){
 				throw eu.getError('notfound', 'The SMTP Provider specified was not found.');
@@ -62,8 +64,8 @@ module.exports = class SMTPProviderController extends entityController {
 			let smtp = new SMTPProviderProvider(smtpprovider);
 
 			let send_object = {
-				sender_email: global.SixCRM.configuration.site_config.ses.default_sender_email,
-				sender_name: global.SixCRM.configuration.site_config.ses.default_sender_name,
+				sender_email: (_.has(smtpprovider, 'from_email'))?smtpprovider.from_email:global.SixCRM.configuration.site_config.ses.default_sender_email,
+				sender_name: (_.has(smtpprovider, 'from_name'))?smtpprovider.from_name:global.SixCRM.configuration.site_config.ses.default_sender_name,
 				subject:"Testing SMTP Provider",
 				body:  "This is a test of the SMTP provider ID :"+smtpprovider.id,
 				recepient_emails:[email]
@@ -92,4 +94,3 @@ module.exports = class SMTPProviderController extends entityController {
 	}
 
 }
-
