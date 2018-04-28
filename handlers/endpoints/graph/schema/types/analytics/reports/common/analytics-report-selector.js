@@ -17,6 +17,9 @@ module.exports = new GraphQLEnumType({
 		},
 		affiliateTraffic: {
 			value: 'affiliateTraffic'
+		},
+		merchantReport: {
+			value: 'merchantReport'
 		}
 	}
 })

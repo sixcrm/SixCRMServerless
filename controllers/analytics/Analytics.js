@@ -311,6 +311,8 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 				return this.query('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams());
 			case 'affiliateTraffic':
 				return this.query('reports/affiliate-traffic', _resolveParams());
+			case 'merchantReport':
+				return this.query('reports/merchant-report', _resolveParams());
 			default:
 				throw new Error('Report not found');
 
