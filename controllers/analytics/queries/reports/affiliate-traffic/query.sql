@@ -56,7 +56,7 @@ LEFT OUTER JOIN
 			COUNT(DISTINCT s.id) as successes
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE %s AND t.processor_result = 'success' AND t.type = 'sale'
+		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale'
 		GROUP BY s.affiliate) sub_success -- i = 3
 	ON leads.affiliate = sub_success.affiliate
 
@@ -79,7 +79,7 @@ LEFT OUTER JOIN
 			DISTINCT s.id
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE %s AND t.processor_result = 'success' AND t.type = 'sale') sub_success  -- i = 4
+		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale') sub_success  -- i = 4
 	ON s.id = sub_success.id
 	LEFT OUTER JOIN
 		(
@@ -88,7 +88,7 @@ LEFT OUTER JOIN
 			DISTINCT s.id
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE %s AND t.processor_result = 'fail' AND t.type = 'sale') sub_failure  -- i = 5
+		WHERE %s AND t.processor_result = 'fail' AND t.transaction_type = 'sale') sub_failure  -- i = 5
 	ON s.id = sub_failure.id
 	WHERE %s AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL  -- i = 6
 	GROUP BY s.affiliate
@@ -122,7 +122,7 @@ LEFT OUTER JOIN
 		s.affiliate
 	FROM analytics.f_session s
 	INNER JOIN analytics.f_transaction t ON s.id = t.session
-	WHERE %s AND t.processor_result = 'success' AND t.type = 'sale' AND t.subtype NOT LIKE 'upsell%'  -- i = 8
+	WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%'  -- i = 8
 	GROUP BY s.affiliate
 ) sales
 
@@ -138,7 +138,7 @@ LEFT OUTER JOIN
 		s.affiliate
 	FROM analytics.f_session s
 	INNER JOIN analytics.f_transaction t ON s.id = t.session
-	WHERE %s AND t.processor_result = 'success' AND t.type = 'sale' AND t.subtype LIKE 'upsell%'  -- i = 9
+	WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype LIKE 'upsell%'  -- i = 9
 	GROUP BY s.affiliate
 ) upsells
 

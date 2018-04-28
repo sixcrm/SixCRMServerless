@@ -17,7 +17,7 @@ LEFT OUTER JOIN
 	( SELECT SUM ( amount ) AS revenue,
 		DATE_TRUNC(%L, datetime) as datetime
 		FROM analytics.f_transaction
-		WHERE processor_result = 'success' AND datetime BETWEEN TIMESTAMP %L::DATE + '00:00:00'::TIME AND TIMESTAMP %L::DATE + '23:59:59'::TIME %s
+		WHERE datetime BETWEEN TIMESTAMP %L::DATE + '00:00:00'::TIME AND TIMESTAMP %L::DATE + '23:59:59'::TIME AND transaction_type = 'sale' AND processor_result = 'success' %s
 		GROUP BY DATE_TRUNC(%L, datetime)
 		) tr
 ON s.generate_series = tr.datetime;
