@@ -2,6 +2,7 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const InviteUtilities = global.SixCRM.routes.include('helpers', 'invite/InviteUtilities.js');
+const InviteController = global.SixCRM.routes.include('entities', 'Invite.js');
 
 module.exports = class InviteHelperClass extends InviteUtilities {
 
@@ -26,7 +27,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 			},
 			acceptInvite:{
 				required:{
-					invite: 'invite'
+					hash: 'hash'
 				},
 				optional:{}
 			},
@@ -98,19 +99,31 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'acceptInvite'}))
-			.then(() => {
-				let invite = this.parameters.get('invite');
-				let decoded_invite_parameters = this.decodeAndValidate(invite.token, invite.parameters);
-				this.parameters.set('decodedinviteparameters', decoded_invite_parameters);
-
-				return true;
-			})
+			.then(() => this.translateHash())
 			.then(() => this.assureUser())
 			.then(() => this.updatePendingACL())
 			.then(() => this.postAccept())
 			.then(() => {
 				return this.parameters.get('user');
 			});
+
+	}
+
+	translateHash(){
+
+		du.debug('Translate Hash');
+
+		let hash = this.parameters.get('hash');
+
+		const inviteController = new InviteController();
+
+		return inviteController.getByHash(hash).then((result) => {
+			if(_.isNull(result)){
+				throw eu.getError('not_found', 'Invite not found.');
+			}
+			this.parameters.set('invite', result);
+			return true;
+		});
 
 	}
 
@@ -192,8 +205,8 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 			email: user.id,
 			acl: acl.id,
 			invitor: invitor,
-			account: account.name,
-			account_id: account.id,
+			account_name: account.name,
+			account: account.id,
 			role: role.name
 		};
 
@@ -232,11 +245,11 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Assure User');
 
-		let decoded_invite_parameters = this.parameters.get('decodedinviteparameters');
-		let user_id = decoded_invite_parameters.email;
+		let invite = this.parameters.get('invite');
+		let user_id = invite.email;
 
 		return this.userController.assureUser(user_id).then((user) => {
-			this.parameters.set('user',user);
+			this.parameters.set('user', user);
 			return true;
 		});
 
@@ -246,9 +259,9 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Update Pending ACL');
 
-		let decoded_invite_parameters = this.parameters.get('decodedinviteparameters');
+		let invite = this.parameters.get('invite');
 
-		return this.userACLController.get({id: decoded_invite_parameters.acl})
+		return this.userACLController.get({id: invite.acl})
 			.then((acl) => {
 
 				if (!_.has(acl, 'pending')){

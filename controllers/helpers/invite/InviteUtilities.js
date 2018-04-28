@@ -1,11 +1,10 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
-const signatureutilities = global.SixCRM.routes.include('lib', 'signature.js');
 const parserutilities = global.SixCRM.routes.include('lib','parser-utilities.js');
 
+const InviteController = global.SixCRM.routes.include('entities', 'Invite.js');
 const HelperController = global.SixCRM.routes.include('helpers', 'Helper.js');
 
 module.exports = class InviteUtilities extends HelperController{
@@ -13,9 +12,6 @@ module.exports = class InviteUtilities extends HelperController{
 	constructor(){
 
 		super();
-
-		//Technical Debt:  This needs to be configured.
-		this.invitesecret = 'awdawdadawt33209sfsiofjsef';
 
 	}
 
@@ -37,33 +33,15 @@ module.exports = class InviteUtilities extends HelperController{
 
 	}
 
-	decodeAndValidate(token, encoded_parameters){
-
-		du.debug('Decode And Validate');
-
-		let parameters = this._encodedParametersToObject(encoded_parameters);
-		let pre_encrypted_string = this._buildPreEncryptedString(parameters, parameters.timestamp);
-		let validation_token = this._buildInviteToken(pre_encrypted_string);
-
-		if(validation_token == token){
-			return parameters;
-		}
-
-		throw eu.getError('validation','Invalid invite.');
-
-	}
-
 	_createInviteLink(invite_object){
 
 		du.debug('Create Invite Link');
 
-		let now = timestamp.createTimestampSeconds();
-		let pre_encrypted_string = this._buildPreEncryptedString(invite_object, now);
-		let invite_token = this._buildInviteToken(pre_encrypted_string);
-		let encoded_params = this._encodeParameters(pre_encrypted_string);
-		let link = this._buildInviteLink(encoded_params, invite_token);
+		let inviteController = new InviteController();
 
-		return link;
+		return inviteController.create({entity: invite_object}).then(invite => {
+			return this._buildInviteLink(invite.hash);
+		});
 
 	}
 
@@ -108,14 +86,6 @@ module.exports = class InviteUtilities extends HelperController{
 
 	}
 
-	_buildInviteToken(pre_encrypted_string){
-
-		du.debug('Build Invite Token');
-
-		return signatureutilities.createSignature(this.invitesecret, pre_encrypted_string);
-
-	}
-
 	_encodeParameters(string){
 
 		du.debug('Encode Parameters');
@@ -132,7 +102,7 @@ module.exports = class InviteUtilities extends HelperController{
 
 	}
 
-	_buildInviteLink(encoded_parameters_string, invite_token){
+	_buildInviteLink(hash){
 
 		du.debug('Build Invite Link');
 
@@ -141,11 +111,10 @@ module.exports = class InviteUtilities extends HelperController{
 
 		let link_tokens = {
 			stage_prefix: prefix,
-			invite_token: invite_token,
-			encoded_parameters: encoded_parameters_string
+			hash: hash
 		};
 
-		let link_template = 'https://{{stage_prefix}}admin.sixcrm.com/acceptinvite?t={{invite_token}}&p={{encoded_parameters}}';
+		let link_template = 'https://{{stage_prefix}}admin.sixcrm.com/acceptinvite/{{hash}}';
 
 		return parserutilities.parse(link_template, link_tokens);
 
