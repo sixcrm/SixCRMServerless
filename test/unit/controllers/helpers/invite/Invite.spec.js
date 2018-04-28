@@ -1,8 +1,11 @@
+const _ = require('lodash')
 const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
+const eu = global.SixCRM.routes.include('lib','error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
+const random = global.SixCRM.routes.include('lib','random.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
@@ -17,6 +20,7 @@ describe('/helpers/invite/Invite.js', () => {
 	});
 
 	beforeEach(() => {
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
@@ -70,11 +74,26 @@ describe('/helpers/invite/Invite.js', () => {
   		acl.user = user.id;
   		acl.role = role.id;
 
+			let now = timestamp.getISO8601();
+
 			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Account.js'), class {
 				constructor(){}
 				get({id}){
 					expect(id).to.equal(account.id);
 					return Promise.resolve(account)
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Invite.js'), class {
+				constructor(){}
+				create({entity}){
+					expect(entity).to.be.defined;
+					if(!_.has(entity, 'hash')){
+						entity.hash = random.createRandomString(8);
+					}
+					entity.created_at = now;
+					entity.updated_at = now;
+					return Promise.resolve(entity);
 				}
 			});
 
@@ -134,6 +153,7 @@ describe('/helpers/invite/Invite.js', () => {
 			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
 				expect(result.link).to.have.string('https://');
+				expect(result.link).to.have.string('acceptinvite');
 			});
 
 		});
@@ -377,6 +397,7 @@ describe('/helpers/invite/Invite.js', () => {
 			return inviteHelperClass.inviteResend({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
 				expect(result.link).to.have.string('https://');
+				expect(result.link).to.have.string('acceptinvite');
 			});
 
 		});
@@ -397,14 +418,17 @@ describe('/helpers/invite/Invite.js', () => {
 			acl.account = account.id;
 			acl.role = role.id;
 
-			let invite_object = {
-				email: user.id,
-				acl: acl.id,
-				invitor: 'some@email.com',
-				account: account.id,
-				role: role.id,
-				timestamp: now
-			};
+			let invite = MockEntities.getValidInvite();
+			invite.email = user.id;
+			invite.acl = acl.id;
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Invite.js'), class {
+				constructor(){}
+				getByHash(hash){
+					expect(hash).to.be.defined;
+					return Promise.resolve(invite);
+				}
+			});
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
 				constructor(){}
@@ -430,16 +454,62 @@ describe('/helpers/invite/Invite.js', () => {
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
 
-			let parameters = inviteHelperClass._encodeParameters(inviteHelperClass._buildPreEncryptedString(invite_object, now));
-			let token = inviteHelperClass._buildInviteToken(inviteHelperClass._buildPreEncryptedString(invite_object, now));
-
-			let invite = {
-				token: token,
-				parameters: parameters
-			};
-
-			return inviteHelperClass.acceptInvite({invite: invite}).then((result) => {
+			return inviteHelperClass.acceptInvite({hash: invite.hash}).then((result) => {
 				expect(result).to.equal(user);
+			});
+
+		});
+
+		it('fails (no matching hash)', () => {
+
+			let now = timestamp.getISO8601();
+			let account = MockEntities.getValidAccount();
+			let role = MockEntities.getValidRole();
+			let user = MockEntities.getValidUser();
+			let acl = MockEntities.getValidUserACL();
+			acl.pending = 'Invite Sent';
+			acl.user = user.id;
+			acl.account = account.id;
+			acl.role = role.id;
+
+			let invite = MockEntities.getValidInvite();
+			invite.email = user.id;
+			invite.acl = acl.id;
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Invite.js'), class {
+				constructor(){}
+				getByHash(hash){
+					expect(hash).to.be.defined;
+					throw eu.getError('not_found', 'Invite not found.');
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
+				constructor(){}
+				assureUser(user_id){
+					expect(user_id).to.equal(acl.user);
+					return Promise.resolve(user);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+				constructor(){}
+				get({id}) {
+					expect(id).to.equal(acl.id);
+					return Promise.resolve(acl);
+				}
+				update({entity: entity}){
+					expect(entity.id).to.equal(acl.id);
+					delete entity.pending;
+					return Promise.resolve(entity);
+				}
+			});
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			return inviteHelperClass.acceptInvite({hash: invite.hash}).catch(error => {
+				expect(error.message).to.equal('[404] Invite not found.');
 			});
 
 		});
