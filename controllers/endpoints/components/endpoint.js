@@ -90,7 +90,7 @@ module.exports = class EndpointController {
 	acquireRequestProperties(event) {
 
 		du.debug('Acquire Request Properties');
-
+		du.info(event);
 		let path_parameters = this.acquirePathParameters(event);
 		let body = this.acquireBody(event);
 		let querystring_parameters = this.acquireQueryStringParameters(event);
@@ -186,8 +186,6 @@ module.exports = class EndpointController {
 	validateEvent(event) {
 
 		du.debug('Validate Event');
-
-		//mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
 
 		try {
 			mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));

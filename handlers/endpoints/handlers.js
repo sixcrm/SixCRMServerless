@@ -6,6 +6,7 @@ const ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endp
 const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 const GraphController = global.SixCRM.routes.include('controllers', 'endpoints/graph.js');
+const PublicGraphController = global.SixCRM.routes.include('controllers', 'endpoints/publicgraph.js');
 const InfoController = global.SixCRM.routes.include('controllers', 'endpoints/info.js');
 const TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');
 
@@ -18,7 +19,8 @@ module.exports = {
 	createorder: handleEndpoint((event) => new CreateOrderController().execute(event)),
 	graph: handleEndpoint((event) => new GraphController().execute(event)),
 	info: handleEndpoint((event) => new InfoController().execute(event)),
-	tracking: handleEndpoint((event) => new TrackingController().execute(event))
+	tracking: handleEndpoint((event) => new TrackingController().execute(event)),
+	publicgraph: handleEndpoint((event) => new PublicGraphController().execute(event))
 };
 
 function handleEndpoint(delegate) {
