@@ -12,7 +12,7 @@ module.exports = class ClickTransform extends AnalyticsTransfrom {
 			account: record.context.campaign.account,
 			campaign: record.context.campaign.id,
 			datetime: record.datetime,
-			type: record.event_type
+			eventType: record.event_type
 		};
 
 		if (record.context.affiliates) {

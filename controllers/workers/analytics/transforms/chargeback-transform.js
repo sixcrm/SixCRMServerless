@@ -8,7 +8,7 @@ module.exports = class ChargebackTransform extends AnalyticsTransfrom {
 		du.debug('ChargebackTransform.transform()', record.event_type);
 
 		return {
-			type: record.event_type,
+			eventType: record.event_type,
 			id: record.context.transaction.id,
 			datetime: record.context.transaction.updated_at
 		};

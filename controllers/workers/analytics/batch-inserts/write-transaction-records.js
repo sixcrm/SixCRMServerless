@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const ATTRIBUTES = 21;
+const ATTRIBUTES = 22;
 
 module.exports = class WriteTransactionRecords {
 
@@ -41,6 +41,7 @@ module.exports = class WriteTransactionRecords {
 				account, \
 				type, \
 				subtype, \
+				transaction_type, \
 				subaffiliate_1, \
 				subaffiliate_2, \
 				subaffiliate_3, \
@@ -73,6 +74,7 @@ module.exports = class WriteTransactionRecords {
 			account = EXCLUDED.account, \
 			type = EXCLUDED.type, \
 			subtype = EXCLUDED.subtype, \
+			transaction_type = EXCLUDED.transaction_type, \
 			subaffiliate_1 = EXCLUDED.subaffiliate_1, \
 			subaffiliate_2 = EXCLUDED.subaffiliate_2, \
 			subaffiliate_3 = EXCLUDED.subaffiliate_3, \
@@ -96,8 +98,9 @@ module.exports = class WriteTransactionRecords {
 				r.amount,
 				r.processorResult,
 				r.account,
-				r.transactionType,
+				r.type,
 				r.subtype || 'main',
+				r.transactionType,
 				r.subAffiliate1,
 				r.subAffiliate2,
 				r.subAffiliate3,

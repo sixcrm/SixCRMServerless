@@ -1,6 +1,6 @@
 {
 	"result": {
-		"type": "chargeback",
+		"eventType": "chargeback",
 		"id": "0a35f59b-88d9-4227-a7ef-5272da0a785d",
 		"datetime": "2018-03-23T21:58:46.068Z"
 	},

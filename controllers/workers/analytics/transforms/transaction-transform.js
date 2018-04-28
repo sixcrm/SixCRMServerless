@@ -10,7 +10,7 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 		du.debug('TransactionTransform.transform()', record.event_type);
 
 		const result = {
-			type: record.event_type,
+			eventType: record.event_type,
 			id: record.context.transaction.id,
 			datetime: record.context.transaction.created_at,
 			associatedTransaction: record.context.transaction.associated_transaction,
@@ -19,8 +19,9 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 			},
 			processorResult: record.context.transaction.result,
 			amount: record.context.transaction.amount,
-			transactionType: record.context.transaction.type,
+			type: record.context.transaction.type,
 			subtype: record.context.transactionSubType,
+			transactionType: record.context.transactionType,
 			customer: record.context.session.customer,
 			creditcard: '',
 			campaign: record.context.session.campaign,
