@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS analytics.f_transaction (
     account VARCHAR(36) NOT NULL,
     "type" VARCHAR(25) NOT NULL, -- new, rebill*
     subtype VARCHAR(25) NOT NULL, -- main, upsell*, downsell*
-		transaction_type VARCHAR(25) NOT NULL, -- sale, reverse, refund
+    transaction_type VARCHAR(25) NOT NULL, -- sale, reverse, refund
     subaffiliate_1 VARCHAR(36),
     subaffiliate_2 VARCHAR(36),
     subaffiliate_3 VARCHAR(36),
