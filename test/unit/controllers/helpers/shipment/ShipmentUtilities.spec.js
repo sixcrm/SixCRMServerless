@@ -123,6 +123,9 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 				get() {
 					return Promise.resolve(fulfillment_provider);
 				}
+				sanitize(argument){
+					expect(argument).to.be.a('boolean');
+				}
 			});
 
 			const ShipmentUtilitiesController = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
@@ -531,6 +534,9 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'FulfillmentProvider.js'), class {
 				get() {
 					return Promise.resolve(fulfillment_provider);
+				}
+				sanitize(argument){
+					expect(argument).to.be.a('boolean');
 				}
 			});
 
