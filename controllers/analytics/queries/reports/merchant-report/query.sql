@@ -61,7 +61,7 @@ FROM
 			SUM(t.amount) as renveue
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t."type" = 'sale' AND t.subtype NOT LIKE 'upsell%'
+		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%'
 		GROUP BY t.merchant_provider
 	) sales
 
@@ -82,7 +82,7 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
-			WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.type = 'sale'
+			WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.transaction_type = 'sale'
 		) sub_success
 		ON s.id = sub_success.id
 		LEFT OUTER JOIN
@@ -93,7 +93,7 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
-			WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'fail' AND t.type = 'sale'
+			WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'fail' AND t.transaction_type = 'sale'
 		) sub_failure
 		ON s.id = sub_failure.id
 		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL

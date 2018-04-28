@@ -94,10 +94,12 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 		try {
 
 			const controller = new MerchantProviderController();
+			controller.disableACLs();
 			const response = await controller.get({
 				id: record.context.transaction.merchant_provider,
 				fatal: true
 			});
+
 			result.merchantProvider.name = response.name;
 			result.merchantProvider.monthlyCap = response.processing.monthly_cap;
 
