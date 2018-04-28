@@ -1,0 +1,5 @@
+{
+  "requestContext":{},
+  "pathParameters":{},
+  "body":"mutation { acceptinvite (hash: \"abc123tm\", signature:\"13f7e214738237d8c0adaf8fe7f063f391eee8ef\") { token, account } }"
+}

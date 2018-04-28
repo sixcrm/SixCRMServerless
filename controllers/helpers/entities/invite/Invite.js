@@ -1,8 +1,10 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const signatureutilities = global.SixCRM.routes.include('lib', 'signature.js');
+const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+
 const InviteUtilities = global.SixCRM.routes.include('helpers', 'invite/InviteUtilities.js');
-const InviteController = global.SixCRM.routes.include('entities', 'Invite.js');
 
 module.exports = class InviteHelperClass extends InviteUtilities {
 
@@ -15,19 +17,12 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 			role: global.SixCRM.routes.path('model','entities/role.json'),
 			useracl: global.SixCRM.routes.path('model','entities/useracl.json'),
 			user: global.SixCRM.routes.path('model','entities/user.json'),
-
 		};
 
 		this.parameter_definition = {
 			invite:{
 				required:{
 					userinvite:'user_invite'
-				},
-				optional:{}
-			},
-			acceptInvite:{
-				required:{
-					hash: 'hash'
 				},
 				optional:{}
 			},
@@ -51,8 +46,103 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 		const UserACLController = global.SixCRM.routes.include('entities', 'UserACL.js');
 		this.userACLController = new UserACLController();
 
+		const InviteController = global.SixCRM.routes.include('entities', 'Invite.js');
+		this.inviteController = new InviteController();
+
 		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+
+		this.invite_salt = 'auiwdhp98a0fj[ani0aco]';
+	}
+
+	async acknowledge(hash){
+
+		du.debug('Acknowledge');
+
+		this.inviteController.disableACLs();
+		let invite = 	await this.inviteController.getByHash(hash);
+		this.inviteController.enableACLs();
+
+		if(_.isNull(invite)){
+			throw eu.getError('not_found', 'Invite not found.');
+		}
+
+		invite.signature = this._createInviteSignature(invite);
+
+		return invite;
+
+	}
+
+	async accept({hash, signature}){
+
+		du.debug('Accept');
+
+		this.inviteController.disableACLs();
+		let invite = 	await this.inviteController.getByHash(hash);
+		this.inviteController.enableACLs();
+
+		if(_.isNull(invite)){
+			throw eu.getError('not_found', 'Invite not found.');
+		}
+
+		if(signature !== this._createInviteSignature(invite)){
+			throw eu.getError('bad_request', 'Invalid invite signature');
+		}
+
+		const user = await this._acceptInvite(invite);
+
+		return Promise.resolve({
+			token: this._createSiteJWT(user),
+			account: invite.account
+		});
+
+	}
+
+	async _acceptInvite(invite){
+
+		du.debug('Accept Invite');
+
+		this.parameters.set('invite', invite)
+
+		await this._updatePendingACL(invite.acl);
+		const user = await this._assureUser(invite.email);
+		await this._removeInvite(invite);
+		await this._postAccept();
+
+		return user;
+
+	}
+
+	async _removeInvite(invite){
+
+		du.debug('Remove Invite');
+
+		this.inviteController.disableACLs();
+		await this.inviteController.delete({id: invite.id});
+		this.inviteController.enableACLs();
+
+		return true;
+
+	}
+
+	_createSiteJWT(user){
+
+		du.debug('Create Site JWT');
+
+		return jwtutilities.createSiteJWT(user);
+
+	}
+
+	_createInviteSignature(invite){
+
+		du.debug('Create Invite Signature');
+
+		if(_.has(invite, 'hash') && _.has(invite, 'timestamp')){
+			const prehash = invite.hash+invite.timestamp;
+			return signatureutilities.createSignature(prehash, this.invite_salt);
+		}
+
+		throw eu.getError('server', 'Invite missing required properties: ', invite);
 
 	}
 
@@ -95,29 +185,13 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	acceptInvite(){
-
-		return Promise.resolve()
-			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'acceptInvite'}))
-			.then(() => this.translateHash())
-			.then(() => this.assureUser())
-			.then(() => this.updatePendingACL())
-			.then(() => this.postAccept())
-			.then(() => {
-				return this.parameters.get('user');
-			});
-
-	}
-
 	translateHash(){
 
 		du.debug('Translate Hash');
 
 		let hash = this.parameters.get('hash');
 
-		const inviteController = new InviteController();
-
-		return inviteController.getByHash(hash).then((result) => {
+		return this.inviteController.getByHash(hash).then((result) => {
 			if(_.isNull(result)){
 				throw eu.getError('not_found', 'Invite not found.');
 			}
@@ -233,7 +307,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	postAccept(){
+	_postAccept(){
 
 		du.debug('Post Accept');
 
@@ -241,40 +315,41 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	assureUser(){
+	async _assureUser(email){
 
 		du.debug('Assure User');
 
-		let invite = this.parameters.get('invite');
-		let user_id = invite.email;
+		this.userController.disableACLs();
+		const user = await this.userController.assureUser(email);
+		this.userController.enableACLs();
 
-		return this.userController.assureUser(user_id).then((user) => {
-			this.parameters.set('user', user);
-			return true;
-		});
+		return user;
 
 	}
 
-	updatePendingACL(){
+	async _updatePendingACL(acl_id){
 
 		du.debug('Update Pending ACL');
 
-		let invite = this.parameters.get('invite');
+		this.userACLController.disableACLs();
+		let acl = await this.userACLController.get({id: acl_id});
+		this.userACLController.enableACLs();
 
-		return this.userACLController.get({id: invite.acl})
-			.then((acl) => {
+		if(_.isNull(acl)){
+			throw eu.getError('bad_request', 'Missing User ACL.');
+		}
 
-				if (!_.has(acl, 'pending')){
-					throw eu.getError('bad_request', 'User ACL is not pending.');
-				}
+		if (!_.has(acl, 'pending')){
+			throw eu.getError('bad_request', 'User ACL is not pending.');
+		}
 
-				delete acl.pending;
+		delete acl.pending;
 
-				return this.userACLController.update({entity: acl}).then(() => {
-					return true;
-				});
+		this.userACLController.disableACLs();
+		await this.userACLController.update({entity: acl});
+		this.userACLController.enableACLs();
 
-			});
+		return true;
 
 	}
 

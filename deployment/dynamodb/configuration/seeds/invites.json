@@ -1,0 +1,15 @@
+[
+    {
+        "id":"0424cff4-17cf-4917-9e80-a103252e3ce2",
+        "hash":"abc123tm",
+        "email": "invited.user@test.com",
+  			"acl": "65bcd2bc-9b2b-4f00-b15d-1fbd520ae3fb",
+  			"invitor": "owner.user@test.com",
+  			"role": "e09ac44b-6cde-4572-8162-609f6f0aeca8",
+  			"timestamp": "2017-04-06T18:40:41.405Z",
+        "account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+        "account_name":"Test Account",
+        "created_at":"2017-04-06T18:40:41.405Z",
+        "updated_at":"2017-04-06T18:40:41.405Z"
+    }
+]

@@ -12,6 +12,29 @@ const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
 class MockEntities {
 
+	static getValidInvite(){
+
+		let firstname = spoofer.createRandomName('first');
+		let lastname = spoofer.createRandomName('last');
+		let email1 = firstname + '.' + lastname + '@' + spoofer.createDomainName();
+
+		firstname = spoofer.createRandomName('first');
+		lastname = spoofer.createRandomName('last');
+		let email2 = firstname + '.' + lastname + '@' + spoofer.createDomainName();
+
+		return {
+			hash: randomutilities.createRandomString(8),
+			email: email1,
+			acl: this.getValidId(),
+			invitor: email2,
+			account: this.getTestAccountID(),
+			account_name: "Some Account Name",
+			role: this.getValidId(),
+			timestamp: timestamp.getISO8601()
+		};
+
+	}
+
 	static getValidReturn(id){
 
 		let a_iso8601 = timestamp.getISO8601();
