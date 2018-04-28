@@ -4,7 +4,7 @@ const path = require('path');
 const body = `
 query {
     analytics (
-      reportType: affiliateTraffic
+      reportType: merchantReport
       facets: [{
       facet: "start"
         values: ["2017-03-10T14:32:28Z"]
@@ -41,7 +41,7 @@ query {
   }
 `;
 
-fs.writeFileSync(path.join(__dirname, 'affiliate-traffic.json'), JSON.stringify({
+fs.writeFileSync(path.join(__dirname, 'merchant-report.json'), JSON.stringify({
 	requestContext: {
 		authorizer: {
 			user: "owner.user@test.com"
