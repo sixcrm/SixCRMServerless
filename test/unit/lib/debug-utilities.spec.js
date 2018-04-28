@@ -33,22 +33,22 @@ describe('lib/debug-utilities', () => {
 
 		it('does not emit if SIX_VERBOSE is not set', () => {
 			delete process.env.SIX_VERBOSE;
-			expect(du.emit()).to.equal(false);
+			expect(du.emit('immutable')).to.equal(false);
 		});
 
 		it('does not emit if selected level is greater than configured level', () => {
-			process.env.SIX_VERBOSE = 5;
-			expect(du.emit(6)).to.equal(false);
+			process.env.SIX_VERBOSE = 2;
+			expect(du.emit('deep')).to.equal(false);
 		});
 
 		it('emits if selected level is equal to configured level', () => {
-			process.env.SIX_VERBOSE = 5;
-			expect(du.emit(5)).to.equal(true);
+			process.env.SIX_VERBOSE = 2;
+			expect(du.emit('debug')).to.equal(true);
 		});
 
 		it('emits if selected level is less than configured level', () => {
-			process.env.SIX_VERBOSE = 5;
-			expect(du.emit(4)).to.equal(true);
+			process.env.SIX_VERBOSE = 2;
+			expect(du.emit('critical')).to.equal(true);
 		});
 
 	});
