@@ -29,45 +29,45 @@
 			"value": null
 		}, {
 			"key": "gross_orders",
-			"value": "2"
+			"value": 0
 		}, {
 			"key": "sales",
-			"value": "2"
+			"value": 0
 		}, {
 			"key": "sales_percentage",
-			"value": 1
+			"value": 0
 		}, {
 			"key": "sales_revenue",
-			"value": "201.96"
+			"value": 0
 		}, {
 			"key": "declines",
-			"value": "0"
+			"value": 0
 		}, {
-			"key": "declines_percentage",
+			"key": "decline_percentage",
 			"value": 0
 		}, {
 			"key": "chargebacks",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_expense",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_percentage",
 			"value": 0
 		}, {
-			"key": "refunds",
+			"key": "full_refunds",
 			"value": 0
 		}, {
-			"key": "refund_expenses",
+			"key": "full_refund_expense",
 			"value": 0
 		}, {
-			"key": "refund_percentage",
+			"key": "full_refund_percentage",
 			"value": 0
 		}, {
 			"key": "partial_refunds",
 			"value": 0
 		}, {
-			"key": "partial_refund_expenses",
+			"key": "partial_refund_expense",
 			"value": 0
 		}, {
 			"key": "partial_refund_percentage",
@@ -93,45 +93,45 @@
 			"value": null
 		}, {
 			"key": "gross_orders",
-			"value": "4"
+			"value": 0
 		}, {
 			"key": "sales",
-			"value": "4"
+			"value": 0
 		}, {
 			"key": "sales_percentage",
-			"value": 1
+			"value": 0
 		}, {
 			"key": "sales_revenue",
-			"value": "403.92"
+			"value": 0
 		}, {
 			"key": "declines",
-			"value": "0"
+			"value": 0
 		}, {
-			"key": "declines_percentage",
+			"key": "decline_percentage",
 			"value": 0
 		}, {
 			"key": "chargebacks",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_expense",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_percentage",
 			"value": 0
 		}, {
-			"key": "refunds",
+			"key": "full_refunds",
 			"value": 0
 		}, {
-			"key": "refund_expenses",
+			"key": "full_refund_expense",
 			"value": 0
 		}, {
-			"key": "refund_percentage",
+			"key": "full_refund_percentage",
 			"value": 0
 		}, {
 			"key": "partial_refunds",
 			"value": 0
 		}, {
-			"key": "partial_refund_expenses",
+			"key": "partial_refund_expense",
 			"value": 0
 		}, {
 			"key": "partial_refund_percentage",
@@ -157,45 +157,45 @@
 			"value": null
 		}, {
 			"key": "gross_orders",
-			"value": "12"
+			"value": 0
 		}, {
 			"key": "sales",
-			"value": "12"
+			"value": 0
 		}, {
 			"key": "sales_percentage",
-			"value": 1
+			"value": 0
 		}, {
 			"key": "sales_revenue",
-			"value": "59.88"
+			"value": 0
 		}, {
 			"key": "declines",
-			"value": "0"
+			"value": 0
 		}, {
-			"key": "declines_percentage",
+			"key": "decline_percentage",
 			"value": 0
 		}, {
 			"key": "chargebacks",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_expense",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_percentage",
 			"value": 0
 		}, {
-			"key": "refunds",
+			"key": "full_refunds",
 			"value": 0
 		}, {
-			"key": "refund_expenses",
+			"key": "full_refund_expense",
 			"value": 0
 		}, {
-			"key": "refund_percentage",
+			"key": "full_refund_percentage",
 			"value": 0
 		}, {
 			"key": "partial_refunds",
 			"value": 0
 		}, {
-			"key": "partial_refund_expenses",
+			"key": "partial_refund_expense",
 			"value": 0
 		}, {
 			"key": "partial_refund_percentage",
@@ -221,45 +221,45 @@
 			"value": null
 		}, {
 			"key": "gross_orders",
-			"value": "2"
+			"value": 0
 		}, {
 			"key": "sales",
-			"value": "2"
+			"value": 0
 		}, {
 			"key": "sales_percentage",
-			"value": 1
+			"value": 0
 		}, {
 			"key": "sales_revenue",
-			"value": "9.98"
+			"value": 0
 		}, {
 			"key": "declines",
-			"value": "0"
+			"value": 0
 		}, {
-			"key": "declines_percentage",
+			"key": "decline_percentage",
 			"value": 0
 		}, {
 			"key": "chargebacks",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_expense",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_percentage",
 			"value": 0
 		}, {
-			"key": "refunds",
+			"key": "full_refunds",
 			"value": 0
 		}, {
-			"key": "refund_expenses",
+			"key": "full_refund_expense",
 			"value": 0
 		}, {
-			"key": "refund_percentage",
+			"key": "full_refund_percentage",
 			"value": 0
 		}, {
 			"key": "partial_refunds",
 			"value": 0
 		}, {
-			"key": "partial_refund_expenses",
+			"key": "partial_refund_expense",
 			"value": 0
 		}, {
 			"key": "partial_refund_percentage",
@@ -285,45 +285,45 @@
 			"value": null
 		}, {
 			"key": "gross_orders",
-			"value": "1"
+			"value": 0
 		}, {
 			"key": "sales",
-			"value": "1"
+			"value": 0
 		}, {
 			"key": "sales_percentage",
-			"value": 1
+			"value": 0
 		}, {
 			"key": "sales_revenue",
-			"value": "19.98"
+			"value": 0
 		}, {
 			"key": "declines",
-			"value": "0"
+			"value": 0
 		}, {
-			"key": "declines_percentage",
+			"key": "decline_percentage",
 			"value": 0
 		}, {
 			"key": "chargebacks",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_expense",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_percentage",
 			"value": 0
 		}, {
-			"key": "refunds",
+			"key": "full_refunds",
 			"value": 0
 		}, {
-			"key": "refund_expenses",
+			"key": "full_refund_expense",
 			"value": 0
 		}, {
-			"key": "refund_percentage",
+			"key": "full_refund_percentage",
 			"value": 0
 		}, {
 			"key": "partial_refunds",
 			"value": 0
 		}, {
-			"key": "partial_refund_expenses",
+			"key": "partial_refund_expense",
 			"value": 0
 		}, {
 			"key": "partial_refund_percentage",
@@ -349,45 +349,45 @@
 			"value": null
 		}, {
 			"key": "gross_orders",
-			"value": "8"
+			"value": 0
 		}, {
 			"key": "sales",
-			"value": "8"
+			"value": 0
 		}, {
 			"key": "sales_percentage",
-			"value": 1
+			"value": 0
 		}, {
 			"key": "sales_revenue",
-			"value": "967.84"
+			"value": 0
 		}, {
 			"key": "declines",
-			"value": "0"
+			"value": 0
 		}, {
-			"key": "declines_percentage",
+			"key": "decline_percentage",
 			"value": 0
 		}, {
 			"key": "chargebacks",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_expense",
-			"value": "0"
+			"value": 0
 		}, {
 			"key": "chargeback_percentage",
 			"value": 0
 		}, {
-			"key": "refunds",
+			"key": "full_refunds",
 			"value": 0
 		}, {
-			"key": "refund_expenses",
+			"key": "full_refund_expense",
 			"value": 0
 		}, {
-			"key": "refund_percentage",
+			"key": "full_refund_percentage",
 			"value": 0
 		}, {
 			"key": "partial_refunds",
 			"value": 0
 		}, {
-			"key": "partial_refund_expenses",
+			"key": "partial_refund_expense",
 			"value": 0
 		}, {
 			"key": "partial_refund_percentage",

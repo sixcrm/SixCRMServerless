@@ -10,21 +10,21 @@
 
 SELECT
 	clicks.affiliate,
-	COALESCE(clicks.clicks, 0) AS clicks,
-	COALESCE(partials.partials, 0) AS partials,
+	CAST(COALESCE(clicks.clicks, 0) AS INT) AS clicks,
+	CAST(COALESCE(partials.partials, 0) AS INT) AS partials,
 	COALESCE(CAST(COALESCE(partials.partials, 0) AS DOUBLE PRECISION) / CAST(clicks.clicks AS DOUBLE PRECISION), 0) AS partials_percentage,
-	COALESCE(gross_orders.attempts, 0) AS gross_orders,
+	CAST(COALESCE(gross_orders.attempts, 0) AS INT) AS gross_orders,
 	COALESCE(CAST(COALESCE(gross_orders.attempts, 0) AS DOUBLE PRECISION) / CAST(clicks.clicks AS DOUBLE PRECISION), 0) AS gross_order_percentage,
-	COALESCE(sales.sales, 0) AS sales,
+	CAST(COALESCE(sales.sales, 0) AS INT) AS sales,
 	COALESCE(CAST(COALESCE(gross_orders.attempts, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS sales_percentage,
-	COALESCE(sales.renveue, 0) AS sales_revenue,
-	COALESCE(upsells.upsells, 0) AS upsells,
+	CAST(ROUND(COALESCE(sales.renveue, 0), 2) AS DOUBLE PRECISION) AS sales_revenue,
+	CAST(COALESCE(upsells.upsells, 0) AS INT) AS upsells,
 	COALESCE(CAST(COALESCE(upsells.upsells, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS upsells_percentage,
-	COALESCE(upsells.renveue, 0) AS upsells_revenue,
-	COALESCE(sales.sales, 0) + COALESCE(upsells.upsells, 0) AS blended_sales,
-	COALESCE(sales.renveue, 0) + COALESCE(upsells.renveue, 0) AS blended_sales_revenue,
-	COALESCE((COALESCE(sales.renveue, 0) + COALESCE(upsells.renveue, 0)) / sales.sales, 0) AS aov,
-	COALESCE(declines.declines, 0) AS declines,
+	CAST(ROUND(COALESCE(upsells.renveue, 0), 2) AS DOUBLE PRECISION) AS upsells_revenue,
+	CAST(COALESCE(sales.sales, 0) + COALESCE(upsells.upsells, 0) AS INT) AS blended_sales,
+	CAST(ROUND(COALESCE(sales.renveue, 0) + COALESCE(upsells.renveue, 0), 2) AS DOUBLE PRECISION) AS blended_sales_revenue,
+	CAST(ROUND(COALESCE((COALESCE(sales.renveue, 0) + COALESCE(upsells.renveue, 0)) / sales.sales, 0), 2) AS DOUBLE PRECISION) AS aov,
+	CAST(COALESCE(declines.declines, 0) AS INT) AS declines,
 	COALESCE(CAST(COALESCE(declines.declines, 0) AS DOUBLE PRECISION) / CAST(gross_orders.attempts AS DOUBLE PRECISION), 0) AS declines_percentage
 FROM
 (
