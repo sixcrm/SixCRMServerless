@@ -47,7 +47,7 @@ FROM
 			COUNT(DISTINCT s.id) as attempts
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' -- i = 2
+		WHERE %s -- i = 2
 		GROUP BY t.merchant_provider
 	) AS gross_orders
 

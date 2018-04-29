@@ -16,13 +16,33 @@ module.exports = async (parameters = {}) => {
 	let local = ['t', parameters.start, parameters.end];
 	_resolveFilterValue(local, 't', 'account', parameters);
 	_resolveFilterValue(local, 't', 'campaign', parameters);
-	_resolveFilterValue(local, 't', 'product', parameters);
-	_resolveFilterValue(local, 't', 'productSchedule', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
 	_resolveFilterValue(local, 't', 'affiliate', parameters);
-	_resolveFilterValue(local, 't', 'subId', parameters);
+	_resolveFilterValueSubId('t', local, parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
-	_resolveFilterValueSubId(local, parameters);
 	let filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true,
+		mid: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
+	// 2
+	local = ['s', parameters.start, parameters.end];
+	_resolveFilterValue(local, 's', 'account', parameters);
+	_resolveFilterValue(local, 's', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 's', 'affiliate', parameters);
+	_resolveFilterValueSubId('s', local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
+	filter = _resolveFilterQuery(parameters, {
 		range: true,
 		account: true,
 		campaign: true,
@@ -136,19 +156,19 @@ function _resolveFilterValue(local, prefix, identifier, parameters) {
 
 }
 
-function _resolveFilterValueSubId(local, parameters) {
+function _resolveFilterValueSubId(prefix, local, parameters) {
 
 	if (parameters['subId']) {
 
-		local.push('t');
+		local.push(prefix);
 		local.push(parameters['subId']);
-		local.push('t');
+		local.push(prefix);
 		local.push(parameters['subId']);
-		local.push('t');
+		local.push(prefix);
 		local.push(parameters['subId']);
-		local.push('t');
+		local.push(prefix);
 		local.push(parameters['subId']);
-		local.push('t');
+		local.push(prefix);
 		local.push(parameters['subId']);
 
 	}
