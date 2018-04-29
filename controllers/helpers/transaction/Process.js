@@ -34,6 +34,7 @@ module.exports = class Process extends TransactionUtilities{
 		};
 
 		this.merchantProviderController = new MerchantProviderController();
+		this.merchantProviderController.sanitize(false);
 
 		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
 
