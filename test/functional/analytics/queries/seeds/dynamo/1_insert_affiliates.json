@@ -103,6 +103,14 @@
 			"affiliate_id": "beandinner",
 			"created_at": "2017-05-06T18:40:41.405Z",
 			"updated_at": "2017-05-06T18:41:12.521Z"
+		},
+		{
+			"id": "d7435e1d-9c9e-43c0-b4de-e4d5eda14a4f",
+			"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			"name": "Seed Affiliate as Sub Id",
+			"affiliate_id": "beandinner",
+			"created_at": "2017-05-06T18:40:41.405Z",
+			"updated_at": "2017-05-06T18:41:12.521Z"
 		}
 	]
 }
