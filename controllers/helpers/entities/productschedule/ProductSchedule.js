@@ -4,6 +4,7 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class ProductScheduleHelper {
 
@@ -94,7 +95,79 @@ module.exports = class ProductScheduleHelper {
 
 		du.debug('Calculate Next Billing In Schedule');
 
+		if(!_.has(schedule_element, 'samedayofmonth') || schedule_element.samedayofmonth !== true){
+			return this.calculateNextStandardRecurringBillingInSchedule({schedule_element: schedule_element, day: day});
+		}else{
+			return this.calculateNextMonthlyBillingInSchedule({schedule_element: schedule_element, day: day});
+		}
+
+	}
+
+	calculateNextStandardRecurringBillingInSchedule({schedule_element, day}){
+
+		du.debug('Calculate Next Standard Recurring Billing In Schedule');
+
 		return day + (parseInt(schedule_element.period) - (mathutilities.signIdempotentModulus((parseInt(day) - parseInt(schedule_element.start)), parseInt(schedule_element.period))));
+
+	}
+
+	calculateNextMonthlyBillingInSchedule({schedule_element, day}){
+
+		du.debug('Calculare Next Monthly Billing In Schedule');
+
+		if(schedule_element.start > day){
+
+			//A number representing day of the month (1-31)
+			const first_billing_day = timestamp.subtractDays(day - schedule_element.start);
+			du.highlight('First billing day: '+first_billing_day);
+
+			return schedule_element.start;
+
+		}
+
+		//A number representing day of the month (1-31)
+		const first_billing_day = timestamp.subtractDays(day - schedule_element.start);
+		du.highlight('First billing day: '+first_billing_day);
+
+		const first_billing_dom = timestamp.getDayNumber(first_billing_day);
+		du.highlight('First Billing Day Of Month: '+first_billing_dom);
+
+		//A number representing day of the month (1-31)
+		const this_month_bill_dom = Math.min(timestamp.daysInMonth(), first_billing_dom);
+		du.highlight('This Month Bill Day Of Month: '+this_month_bill_dom);
+
+		//A number representing day of the month (1-31)
+		const today_dom = timestamp.getDayNumber();
+		du.highlight('Now Day Of Month: '+today_dom);
+
+		if(today_dom > this_month_bill_dom){
+
+			//1-31
+			let next_month_days_in_month = timestamp.daysInMonth(timestamp.nextMonth());
+			du.highlight('Next Month Days In Month: '+next_month_days_in_month);
+
+			//1-31
+			let next_month_bill_dom = Math.min(next_month_days_in_month, first_billing_dom);
+			du.highlight('Next Month Bill Day Of Month: '+next_month_bill_dom);
+
+
+			let next_month_bill_date = timestamp.nextMonth((next_month_bill_dom-1));
+			du.highlight('Next Month Bill Date: '+ next_month_bill_date);
+
+			let days_difference = timestamp.daysDifference(next_month_bill_date);
+			du.highlight('Days Difference: '+days_difference);
+
+			return day + days_difference;
+
+		}
+
+		let this_month_bill_date = timestamp.thisMonth((this_month_bill_dom - 1));
+		du.highlight('This month\'s bill date: '+this_month_bill_date);
+
+		let days_difference = timestamp.daysDifference(this_month_bill_date);
+		du.highlight('Days Difference: '+days_difference);
+
+		return day + days_difference;
 
 	}
 

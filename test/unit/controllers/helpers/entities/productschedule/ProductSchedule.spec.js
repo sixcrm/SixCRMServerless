@@ -63,6 +63,82 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 	});
 
 	describe('calculateNextBillingInSchedule', () => {
+		it('successfully calculates the next billing in the schedule',  () => {
+
+			let test_cases = [
+				{
+					schedule_element: {
+						start: 0,
+						samedayofmonth: true
+					},
+					day: -1
+				},
+				{
+					schedule_element: {
+						start: 0,
+						samedayofmonth: true
+					},
+					day: 14
+				},
+				{
+					schedule_element: {
+						start: 0,
+						samedayofmonth: true
+					},
+					day: 31
+				},
+				{
+					schedule_element: {
+						start: 0,
+						samedayofmonth: true
+					},
+					day: 1
+				},
+				{
+					schedule_element: {
+						start: 0,
+						samedayofmonth: true
+					},
+					day: -2
+				},
+				{
+					schedule_element: {
+						start: 14,
+						samedayofmonth: true
+					},
+					day: 5
+				},
+				{
+					schedule_element: {
+						start: 30,
+						samedayofmonth: true
+					},
+					day: -1
+				}
+			];
+
+			let productScheduleHelper = new ProductScheduleHelperController();
+
+			arrayutilities.map(test_cases, test_case => {
+
+				let next_billing_day_number = productScheduleHelper.calculateNextBillingInSchedule({schedule_element: test_case.schedule_element, day: test_case.day});
+				let first_billing_dom = timestamp.getDayNumber(timestamp.subtractDays((test_case.day - test_case.schedule_element.start)));
+				let next_billing_date = timestamp.addDays(next_billing_day_number, timestamp.subtractDays(test_case.day));
+				let next_billing_dom = timestamp.getDayNumber(next_billing_date);
+
+				if(first_billing_dom > timestamp.daysInMonth(next_billing_date)){
+					expect(next_billing_dom).to.equal(timestamp.daysInMonth(next_billing_date));
+				}else{
+					expect(next_billing_dom).to.equal(first_billing_dom);
+				}
+
+			});
+
+		});
+	});
+
+
+	describe('calculateNextBillingInSchedule', () => {
 
 		it('successfully calculates the next billing in the schedule',  () => {
 
@@ -117,7 +193,8 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 			let productScheduleHelper = new ProductScheduleHelperController();
 
 			arrayutilities.map(test_cases, test_case => {
-				expect(productScheduleHelper.calculateNextBillingInSchedule({schedule_element: test_case.schedule_element, day: test_case.day})).to.equal(test_case.expect);
+				let next_billing_day_number = productScheduleHelper.calculateNextBillingInSchedule({schedule_element: test_case.schedule_element, day: test_case.day});
+				expect(next_billing_day_number).to.equal(test_case.expect);
 			});
 
 		});
