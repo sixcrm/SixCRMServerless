@@ -233,6 +233,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 			get(){
 				return Promise.resolve(merchant_provider);
 			}
+			sanitize(argument){
+				expect(argument).to.be.a('boolean');
+			}
 		});
 
 		const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');
@@ -267,6 +270,9 @@ describe('helpers/transaction/Process.spec.js', () => {
 		mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProvider.js'), class {
 			get(){
 				return Promise.resolve(merchant_provider);
+			}
+			sanitize(argument){
+				expect(argument).to.be.a('boolean');
 			}
 		});
 

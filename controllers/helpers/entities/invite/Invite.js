@@ -4,7 +4,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const signatureutilities = global.SixCRM.routes.include('lib', 'signature.js');
 const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
 
-const InviteUtilities = global.SixCRM.routes.include('helpers', 'invite/InviteUtilities.js');
+const InviteUtilities = global.SixCRM.routes.include('helpers', 'entities/invite/InviteUtilities.js');
 
 module.exports = class InviteHelperClass extends InviteUtilities {
 
@@ -152,11 +152,11 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'invite'}))
-			.then(() => this.hydrateInviteProperties())
-			.then(() => this.validateRequest())
-			.then(() => this.createInviteACL())
-			.then(() => this.sendInviteEmail())
-			.then(() => this.postInvite())
+			.then(() => this._hydrateInviteProperties())
+			.then(() => this._validateRequest())
+			.then(() => this._createInviteACL())
+			.then(() => this._sendInviteEmail())
+			.then(() => this._postInvite())
 			.then(() => {
 
 				let link = this.parameters.get('invitelink');
@@ -172,10 +172,10 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'inviteResend'}))
-			.then(() => this.hydrateInviteACL())
-			.then(() => this.validateRequest())
-			.then(() => this.sendInviteEmail())
-			.then(() => this.postInviteResend())
+			.then(() => this._hydrateInviteACL())
+			.then(() => this._validateRequest())
+			.then(() => this._sendInviteEmail())
+			.then(() => this._postInviteResend())
 			.then(() => {
 
 				let link = this.parameters.get('invitelink');
@@ -185,23 +185,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	translateHash(){
-
-		du.debug('Translate Hash');
-
-		let hash = this.parameters.get('hash');
-
-		return this.inviteController.getByHash(hash).then((result) => {
-			if(_.isNull(result)){
-				throw eu.getError('not_found', 'Invite not found.');
-			}
-			this.parameters.set('invite', result);
-			return true;
-		});
-
-	}
-
-	hydrateInviteProperties(){
+	_hydrateInviteProperties(){
 
 		du.debug('Hydrate Invite Properties');
 
@@ -230,7 +214,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	validateRequest(){
+	_validateRequest(){
 
 		du.debug('Validate Request');
 
@@ -243,7 +227,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	createInviteACL(){
+	async _createInviteACL(){
 
 		du.debug('Create Invite ACL');
 
@@ -258,14 +242,14 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 			pending: 'Invite Sent'
 		};
 
-		return this.userACLController.create({entity: acl_object}).then(acl => {
-			this.parameters.set('useracl', acl);
-			return true;
-		});
+		const acl = await this.userACLController.create({entity: acl_object});
+
+		this.parameters.set('useracl', acl);
+		return true;
 
 	}
 
-	sendInviteEmail(){
+	async _sendInviteEmail(){
 
 		du.debug('Send Invite Email');
 
@@ -284,14 +268,14 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 			role: role.name
 		};
 
-		return this.executeSendInviteEmail(invite_parameters).then((link) => {
-			this.parameters.set('invitelink', link);
-			return true;
-		});
+		const link = await this.executeSendInviteEmail(invite_parameters);
+		this.parameters.set('invitelink', link);
+
+		return true;
 
 	}
 
-	postInvite(){
+	_postInvite(){
 
 		du.debug('Post Invite');
 
@@ -299,7 +283,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	postInviteResend(){
+	_postInviteResend(){
 
 		du.debug('Post Invite Resend');
 
@@ -353,7 +337,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	hydrateInviteACL(){
+	_hydrateInviteACL(){
 
 		du.debug('Hydrate Invite ACL');
 

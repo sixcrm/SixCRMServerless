@@ -75,8 +75,6 @@ let roleType = require('./role/roleType');
 let shippingReceiptInputType = require('./shippingreceipt/shippingReceiptInputType');
 let shippingReceiptType = require('./shippingreceipt/shippingReceiptType');
 
-let inviteInputType = require('./user/inviteInputType');
-
 let transactionChargebackInputType = require('./transaction/transactionChargebackInputType');
 let transactionType = require('./transaction/transactionType');
 
@@ -156,7 +154,7 @@ const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPPro
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
-const InviteHelperController = global.SixCRM.routes.include('helpers', 'invite/Invite.js');
+const InviteHelperController = global.SixCRM.routes.include('helpers', 'entities/invite/Invite.js');
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Mutation',
@@ -233,25 +231,6 @@ module.exports.graphObj = new GraphQLObjectType({
 				return registerController.reverseTransaction(reverse.reverse);
 			}
 		},
-		//Technical Debt:  See below??
-		//Note: Fix
-		acceptinvite: {
-			type: userType.graphObj,
-			description: 'Completes a user invite.',
-			args: {
-				invite: {
-					type: inviteInputType.graphObj
-				}
-			},
-			resolve: (value, invite) => {
-				const inviteHelperController = new InviteHelperController();
-				return inviteHelperController.acceptInvite({
-					invite: invite.invite
-				});
-			}
-		},
-		//Technical Debt:  See below??
-		//Note: Fix
 		inviteuser: {
 			type: userInviteType.graphObj,
 			description: 'Invites a new user to the site.',

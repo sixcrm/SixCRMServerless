@@ -202,6 +202,7 @@
 		},
 		"enabled":true,
 		"gateway": {
+			"type":"NMI",
 			"name":"NMI",
 			"username":"Flashlight456",
 			"password":"Hyw6qS67DT"

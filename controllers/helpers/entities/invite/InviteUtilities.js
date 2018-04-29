@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib','parser-utilities.js');
 
 const InviteController = global.SixCRM.routes.include('entities', 'Invite.js');
@@ -15,90 +14,30 @@ module.exports = class InviteUtilities extends HelperController{
 
 	}
 
-	executeSendInviteEmail(invite_object){
+	async executeSendInviteEmail(invite_object){
 
 		du.debug('Execute Send Invite Email');
 
-		let link = this._createInviteLink(invite_object);
+		const link = await this._createInviteLink(invite_object);
+		const sent = await this._sendEmailToInvitedUser(invite_object, link);
 
-		return this._sendEmailToInvitedUser(invite_object, link).then((sent) => {
+		if(sent != true){
+			throw eu.getError('server','Could not send invite email');
+		}
 
-			if(sent != true){
-				throw eu.getError('server','Could not send invite email');
-			}
-
-			return link;
-
-		});
+		return link;
 
 	}
 
-	_createInviteLink(invite_object){
+	async _createInviteLink(invite_object){
 
 		du.debug('Create Invite Link');
 
 		let inviteController = new InviteController();
 
-		return inviteController.create({entity: invite_object}).then(invite => {
-			return this._buildInviteLink(invite.hash);
-		});
+		const invite = await inviteController.create({entity: invite_object});
 
-	}
-
-	_sendEmailToInvitedUser(invite_object, link){
-
-		du.debug('Send Email to Invited User');
-
-		let email = {
-			recepient_emails: [invite_object.email],
-			recepient_name: 'Welcome to SixCRM',
-			subject: 'You\'ve been invited to join a account on Six CRM',
-			body: 'Please accept this invite using the link below: '+link
-		};
-
-		if(!_.has(this, 'systemmailer')){
-			//Technical Debt:  Move this to providers....
-			const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
-			this.systemmailer = new SystemMailer();
-		}
-
-		return this.systemmailer.sendEmail(email).then(() => {
-			return true;
-		});
-
-	}
-
-	_buildPreEncryptedString(invite_object, now){
-
-		du.debug('Build PreEncrypted String');
-
-		let pre_encrypted = {
-			email: invite_object.email,
-			acl: invite_object.acl,
-			invitor: invite_object.invitor,
-			account: invite_object.account,
-			account_id: invite_object.account_id,
-			role: invite_object.role,
-			timestamp: now
-		};
-
-		return JSON.stringify(pre_encrypted);
-
-	}
-
-	_encodeParameters(string){
-
-		du.debug('Encode Parameters');
-
-		return hashutilities.toBase64(string);
-
-	}
-
-	_decodeParameters(string){
-
-		du.debug('Decode Parameters');
-
-		return hashutilities.fromBase64(string);
+		return this._buildInviteLink(invite.hash);
 
 	}
 
@@ -120,19 +59,25 @@ module.exports = class InviteUtilities extends HelperController{
 
 	}
 
-	_encodedParametersToObject(encoded_parameters){
+	async _sendEmailToInvitedUser(invite_object, link){
 
-		du.debug('Encoded Parameters To Object');
+		du.debug('Send Email to Invited User');
 
-		let decoded_parameters = this._decodeParameters(encoded_parameters);
+		//Technical Debt:  Internationalization necessary here...
+		let email = {
+			recepient_emails: [invite_object.email],
+			recepient_name: 'Welcome to SixCRM',
+			subject: 'You\'ve been invited to join a account on Six CRM',
+			body: 'Please accept this invite using the link below: '+link
+		};
 
-		try{
-			decoded_parameters = JSON.parse(decoded_parameters);
-		}catch(error){
-			throw eu.getError('bad_request', 'Invalid invite parameters');
+		if(!_.has(this, 'systemmailer')){
+			//Technical Debt:  Move this to providers....
+			const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
+			this.systemmailer = new SystemMailer();
 		}
 
-		return decoded_parameters;
+		return this.systemmailer.sendEmail(email);
 
 	}
 
