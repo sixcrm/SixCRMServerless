@@ -54,6 +54,27 @@ module.exports = async (parameters = {}) => {
 	});
 	queryParameters.push(format.withArray(filter, local));
 
+	// 3
+	local = ['s', parameters.start, parameters.end];
+	_resolveFilterValue(local, 's', 'account', parameters);
+	_resolveFilterValue(local, 's', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 's', 'affiliate', parameters);
+	_resolveFilterValueSubId('s', local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
+	filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true,
+		mid: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
 	const finalQuery = format.withArray(query, queryParameters);
 
 	// console.log(finalQuery);
