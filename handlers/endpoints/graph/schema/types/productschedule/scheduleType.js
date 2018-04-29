@@ -1,6 +1,7 @@
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLInt = require('graphql').GraphQLInt;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
@@ -32,9 +33,12 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'The product associated with the schedule',
 			resolve: (schedule) => {
 				var productScheduleController = new ProductScheduleController();
-
 				return productScheduleController.getProduct(schedule)
 			}
+		},
+		samedayofmonth:{
+			type: GraphQLBoolean,
+			description:  "Same day of the month billing"
 		},
 		created_at: {
 			type: new GraphQLNonNull(GraphQLString),

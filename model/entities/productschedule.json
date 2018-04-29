@@ -19,7 +19,10 @@
 			    "price":{"$ref": "../definitions/currency.json"},
 			    "start":{"$ref": "../definitions/nonnegativeinteger.json"},
 			    "end":{"$ref": "../definitions/nonnegativeinteger.json"},
-			    "period":{"$ref": "../definitions/nonnegativeinteger.json"}
+			    "period":{"$ref": "../definitions/nonnegativeinteger.json"},
+					"samedayofmonth":{
+						"type":"boolean"
+					}
 			  },
 			  "required":["product", "price", "start", "period"]
 			}
