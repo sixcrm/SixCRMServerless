@@ -14,6 +14,20 @@
 			"quantity":3,
 			"product_schedule":"8d1e896f-c50d-4a6b-8c84-d5661c16a046"
 		}],
+		"creditcard":{
+			"number":"4111111111111111",
+			"expiration":"1025",
+			"cvv":"999",
+			"name":"RamaDamunaste",
+			"address":{
+				"line1":"10 Skid Rw.",
+				"line2":"Suite 100",
+				"city":"Portland",
+				"state":"OR",
+				"zip":"97213",
+				"country":"US"
+			}
+		},
 		"transaction_subtype":"upsell1"
 	}
 }
