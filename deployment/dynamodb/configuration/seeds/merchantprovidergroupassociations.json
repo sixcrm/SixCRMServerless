@@ -27,4 +27,24 @@
 	"entity_type":"campaign",
 	"created_at":"2017-04-06T18:40:41.405Z",
 	"updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+	"id":"d3435685-5fcd-4fc1-b26e-376e9af11609",
+	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"merchantprovidergroup":"90f3858e-5566-4a60-9977-292ae4f75632",
+	"campaign":"1b3c5526-c9ff-4122-8c29-6fa4c310831a",
+	"entity":"1b3c5526-c9ff-4122-8c29-6fa4c310831a",
+	"entity_type":"campaign",
+	"created_at":"2018-04-28T14:40:00.000Z",
+	"updated_at":"2018-04-28T14:40:00.000Z"
+},
+{
+	"id":"1bdaa67c-5121-49cf-82af-7fc8b73a2694",
+	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"merchantprovidergroup":"90f3858e-5566-4a60-9977-292ae4f75632",
+	"campaign":"1b3c5526-c9ff-4122-8c29-6fa4c310831a",
+	"entity":"cc2984b1-5fa3-4e7d-8bda-a5b67fcbd15f",
+	"entity_type":"product",
+	"created_at":"2018-04-28T14:40:00.000Z",
+	"updated_at":"2018-04-28T14:40:00.000Z"
 }]
