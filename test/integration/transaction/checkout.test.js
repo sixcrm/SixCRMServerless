@@ -277,8 +277,8 @@ describe('Checkout', () => {
 					expect(result.body).to.have.property('response');
 					expect(result.body.success).to.equal(true);
 					expect(result.body.code).to.equal(200);
-					expect(processor_response.message).to.equal('Failed');
-					expect(processor_response.code).to.equal('fail');
+					expect(processor_response.message).to.equal('Success');
+					expect(processor_response.code).to.equal('success');
 				});
 
 		});
