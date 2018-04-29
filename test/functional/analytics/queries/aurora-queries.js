@@ -18,7 +18,8 @@ const DynamoDBDeployment = global.SixCRM.routes.include('deployment', 'utilities
 
 const mocha = new Mocha({
 
-	reporter: 'spec'
+	reporter: 'spec',
+	timeout: 5000
 
 });
 
@@ -41,8 +42,6 @@ suites.map((suite) => {
 	tests.map((test) => {
 
 		subSuite.addTest(new Mocha.Test(test.test_case, async () => {
-
-			// PermissionTestGenerators.givenUserWithAllowed(test.method, 'analytics');
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
 
