@@ -1,21 +1,21 @@
 const body = `
-	query {
-		analytics (
-			reportType: revenueVersusOrders
-			facets: [{
-				facet: "start"
-				values: ["2018-03-10T14:32:28Z"]
-			},
-			{
-				facet: "end"
-				values: ["2018-04-09T14:32:28Z"]
-			},
-			{
-				facet: "period"
-				values: ["day"]
-			}]
-		) {records { key value }}
-	}
+  query {
+    analytics (
+      reportType: revenueVersusOrders
+      facets: [{
+        facet: "start"
+        values: ["2018-03-10T14:32:28Z"]
+      },
+      {
+        facet: "end"
+        values: ["2018-04-09T14:32:28Z"]
+      },
+      {
+        facet: "period"
+        values: ["day"]
+      }]
+    ) {records { key value }}
+  }
 `;
 
 module.exports = {
