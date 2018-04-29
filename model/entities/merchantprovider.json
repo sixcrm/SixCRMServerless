@@ -64,12 +64,27 @@
 			"required":["monthly_cap","discount_rate", "transaction_fee", "reserve_rate", "maximum_chargeback_ratio", "transaction_counts"]
 		},
 		"gateway": {
-			"type":"object",
-			"anyOf":[
-				{"$ref":"./components/merchantprovider/stripe.json"},
-				{"$ref":"./components/merchantprovider/innovio.json"},
-				{"$ref":"./components/merchantprovider/nmi.json"},
-				{"$ref":"./components/merchantprovider/test.json"}
+			"allOf":[
+				{
+					"anyOf":[
+						{"$ref":"./components/merchantprovider/stripe.json"},
+						{"$ref":"./components/merchantprovider/innovio.json"},
+						{"$ref":"./components/merchantprovider/nmi.json"},
+						{"$ref":"./components/merchantprovider/test.json"}
+					]
+				},
+				{
+					"type":"object",
+					"required":["name","type"],
+					"properties":{
+						"name":{
+							"type":"string"
+						},
+						"type":{
+							"type":"string"
+						}
+					}
+				}
 			]
 		},
 		"enabled":{

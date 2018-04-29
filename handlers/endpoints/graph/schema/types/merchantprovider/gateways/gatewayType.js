@@ -26,11 +26,11 @@ module.exports.graphObj = new GraphQLInterfaceType({
 			'Stripe': require('./StripeType'),
 		};
 
-		if (_.has(gatewaytypes, gateway.type)) {
+		if (_.has(gateway, 'type') && _.has(gatewaytypes, gateway.type)) {
 			return gatewaytypes[gateway.type].graphObj;
-		} else {
-			return null;
 		}
+
+		return null;
 
 	},
 	interfaces: []

@@ -382,6 +382,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
 			merchant_provider.gateway = {
 				name: 'Innovio',
+				type: 'Innovio',
 				username: 'timothy.dalbey@sixrm.com',
 				password: 'vIngelB92SWGNBDHTTQK',
 				site_id: '45481',

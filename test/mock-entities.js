@@ -340,6 +340,7 @@ class MockEntities {
 
 		let gateways = {
 			'NMI': {
+				type:"NMI",
 				name: "NMI",
 				username: randomutilities.createRandomString(20),
 				password: randomutilities.createRandomString(20),
@@ -347,6 +348,7 @@ class MockEntities {
 			},
 			'Innovio': {
 				name: 'Innovio',
+				type:'Innovio',
 				username: randomutilities.createRandomString(20),
 				password: randomutilities.createRandomString(20),
 				site_id: '0',
@@ -355,11 +357,13 @@ class MockEntities {
 			},
 			'Test': {
 				name: 'Test',
+				type: 'Test',
 				username: 'demo',
 				password: 'password',
 				processor_id: '0'
 			},
 			'Stripe': {
+				type: 'Stripe',
 				name: 'Stripe',
 				api_key: randomutilities.createRandomString(20)
 			}
