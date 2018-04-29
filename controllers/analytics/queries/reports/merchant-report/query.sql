@@ -34,7 +34,7 @@ FROM
 			t.merchant_provider_name,
 			MAX(t.merchant_provider_monthly_cap) as monthly_cap
 		FROM analytics.f_transaction t
-		WHERE t.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+		WHERE %s -- i = 1
 		GROUP BY t.merchant_provider, t.merchant_provider_name
 	) as gateways
 
@@ -47,7 +47,7 @@ FROM
 			COUNT(DISTINCT s.id) as attempts
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' -- i = 2
 		GROUP BY t.merchant_provider
 	) AS gross_orders
 
@@ -63,7 +63,8 @@ FROM
 			SUM(t.amount) as renveue
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%'
+		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+			AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%' -- i = 3
 		GROUP BY t.merchant_provider
 	) sales
 
@@ -85,7 +86,8 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
-			WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.transaction_type = 'sale'
+			WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+				AND t.processor_result = 'success' AND t.transaction_type = 'sale' --i = 4
 		) sub_success
 		ON s.id = sub_success.id
 		LEFT OUTER JOIN
@@ -96,10 +98,12 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
-			WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'fail' AND t.transaction_type = 'sale'
+			WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+				AND t.processor_result = 'fail' AND t.transaction_type = 'sale' -- i = 5
 		) sub_failure
 		ON s.id = sub_failure.id
-		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL
+		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+			AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL -- i = 6
 		GROUP BY sub_failure.merchant_provider
 	) declines
 
@@ -114,7 +118,7 @@ FROM
 			SUM(t.amount) AS chargeback_expense
 		FROM analytics.f_transaction t
 		INNER JOIN analytics.f_transaction_chargeback ftc ON ftc.transaction_id = t.id
-		WHERE t.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+		WHERE t.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' -- i = 7
 		GROUP BY t.merchant_provider
 	) chargebacks
 
@@ -129,7 +133,8 @@ FROM
 			SUM(t.amount) AS refunds_expense
 		FROM analytics.f_transaction t
 		INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
-		WHERE t.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount <= t.amount
+		WHERE t.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+			AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount <= t.amount -- i = 8
 		GROUP BY t.merchant_provider
 	) full_refunds
 
@@ -144,7 +149,8 @@ FROM
 			SUM(t.amount) AS refunds_expense
 		FROM analytics.f_transaction t
 		INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
-		WHERE t.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount > t.amount
+		WHERE t.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+			AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount > t.amount -- i = 9
 		GROUP BY t.merchant_provider
 	) partial_refunds
 
