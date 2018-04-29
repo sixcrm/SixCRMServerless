@@ -1,7 +1,7 @@
 const util = require('util');
 const path = require('path');
 const fs = require('fs');
-// const format = require('pg-format');
+const format = require('pg-format');
 
 
 // eslint-disable-next-line
@@ -10,111 +10,312 @@ module.exports = async (parameters = {}) => {
 	const readFile = util.promisify(fs.readFile);
 	const query = await readFile(path.join(__dirname, 'query.sql'), 'utf8');
 
-	// const queryParameters = [];
+	const queryParameters = [];
+
+	// 1
+	let local = ['t', parameters.start, parameters.end];
+	_resolveFilterValue(local, 't', 'account', parameters);
+	_resolveFilterValue(local, 't', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 't', 'affiliate', parameters);
+	_resolveFilterValueSubId('t', local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
+	let filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true,
+		mid: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
+	// 2
+	local = ['s', parameters.start, parameters.end];
+	_resolveFilterValue(local, 's', 'account', parameters);
+	_resolveFilterValue(local, 's', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 's', 'affiliate', parameters);
+	_resolveFilterValueSubId('s', local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
+	filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true,
+		mid: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
+	// 3
+	local = ['s', parameters.start, parameters.end];
+	_resolveFilterValue(local, 's', 'account', parameters);
+	_resolveFilterValue(local, 's', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 's', 'affiliate', parameters);
+	_resolveFilterValueSubId('s', local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
+	filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true,
+		mid: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
+	// 4
+	local = ['s', parameters.start, parameters.end];
+	_resolveFilterValue(local, 's', 'account', parameters);
+	_resolveFilterValue(local, 's', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 's', 'affiliate', parameters);
+	_resolveFilterValueSubId('s', local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
+	filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true,
+		mid: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
+	// 5
+	local = ['s', parameters.start, parameters.end];
+	_resolveFilterValue(local, 's', 'account', parameters);
+	_resolveFilterValue(local, 's', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 's', 'affiliate', parameters);
+	_resolveFilterValueSubId('s', local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
+	filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true,
+		mid: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
+	// 6
+	local = ['s', parameters.start, parameters.end];
+	_resolveFilterValue(local, 's', 'account', parameters);
+	_resolveFilterValue(local, 's', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 's', 'affiliate', parameters);
+	_resolveFilterValueSubId('s', local, parameters);
+	filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
+	// 7
+	local = ['t', parameters.start, parameters.end];
+	_resolveFilterValue(local, 't', 'account', parameters);
+	_resolveFilterValue(local, 't', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 't', 'affiliate', parameters);
+	_resolveFilterValueSubId('t', local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
+	filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true,
+		mid: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
+	// 8
+	local = ['t', parameters.start, parameters.end];
+	_resolveFilterValue(local, 't', 'account', parameters);
+	_resolveFilterValue(local, 't', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 't', 'affiliate', parameters);
+	_resolveFilterValueSubId('t', local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
+	filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true,
+		mid: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
+	// 9
+	local = ['t', parameters.start, parameters.end];
+	_resolveFilterValue(local, 't', 'account', parameters);
+	_resolveFilterValue(local, 't', 'campaign', parameters);
+	// _resolveFilterValue(local, 't', 'product', parameters);
+	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 't', 'affiliate', parameters);
+	_resolveFilterValueSubId('t', local, parameters);
+	_resolveFilterValue(local, 't', 'mid', parameters);
+	filter = _resolveFilterQuery(parameters, {
+		range: true,
+		account: true,
+		campaign: true,
+		product: true,
+		productSchedule: true,
+		affiliate: true,
+		subId: true,
+		mid: true
+	});
+	queryParameters.push(format.withArray(filter, local));
+
+	const finalQuery = format.withArray(query, queryParameters);
 
 	// console.log(finalQuery);
 
-	return query;
+	return finalQuery;
 
 }
 
-// function _resolveFilterQuery(parameters, options = {}) {
+function _resolveFilterQuery(parameters, options = {}) {
 
-// 	let filter = '';
+	let filter = '';
 
-// 	if (options.range) {
+	if (options.range) {
 
-// 		filter = ' %s.datetime BETWEEN %L AND %L ';
+		filter = ' %s.datetime BETWEEN %L AND %L ';
 
-// 	}
+	}
 
-// 	if (options.account) {
+	if (options.account) {
 
-// 		filter = _resolveFilterQueryValue(filter, 'account', 'account', parameters);
+		filter = _resolveFilterQueryValue(filter, 'account', 'account', parameters);
 
-// 	}
+	}
 
-// 	if (options.campaign) {
+	if (options.campaign) {
 
-// 		filter = _resolveFilterQueryValue(filter, 'campaign', 'campaign', parameters);
+		filter = _resolveFilterQueryValue(filter, 'campaign', 'campaign', parameters);
 
-// 	}
+	}
 
-// 	if (options.affiliate) {
+	// if (options.product) {
 
-// 		filter = _resolveFilterQueryValue(filter, 'affiliate', 'affiliate', parameters);
+	// 	filter = _resolveFilterQueryValue(filter, 'product', 'product', parameters);
 
-// 	}
+	// }
 
-// 	if (options.subId) {
+	// if (options.productSchedule) {
 
-// 		filter = _resolveFilterQueryValueSubId(filter, parameters);
+	// 	filter = _resolveFilterQueryValue(filter, 'productSchedule', 'productSchedule', parameters);
 
-// 	}
+	// }
 
-// 	if (options.mid) {
+	if (options.affiliate) {
 
-// 		filter = _resolveFilterQueryValue(filter, 'mid', 'merchant_provider', parameters);
+		filter = _resolveFilterQueryValue(filter, 'affiliate', 'affiliate', parameters);
 
-// 	}
+	}
 
-// 	return filter;
-// }
+	if (options.subId) {
 
-// function _resolveFilterQueryValue(filter, identifier, map, parameters) {
+		filter = _resolveFilterQueryValueSubId(filter, parameters);
 
-// 	if (parameters[identifier]) {
+	}
 
-// 		return filter += ` AND %s.${map} = %L `;
+	if (options.mid) {
 
-// 	} else {
+		filter = _resolveFilterQueryValue(filter, 'mid', 'merchant_provider', parameters);
 
-// 		return filter;
+	}
 
-// 	}
+	return filter;
+}
 
-// }
+function _resolveFilterQueryValue(filter, identifier, map, parameters) {
 
-// function _resolveFilterQueryValueSubId(filter, parameters) {
+	if (parameters[identifier]) {
 
-// 	if (parameters['subId']) {
+		return filter += ` AND %s.${map} = %L `;
 
-// 		return filter += ` AND (%s.subaffiliate_1 = %L OR  %s.subaffiliate_2 = %L OR %s.subaffiliate_3 = %L OR %s.subaffiliate_4 = %L OR %s.subaffiliate_5 = %L) `;
+	} else {
 
-// 	} else {
+		return filter;
 
-// 		return filter;
+	}
 
-// 	}
+}
 
-// }
+function _resolveFilterQueryValueSubId(filter, parameters) {
 
-// function _resolveFilterValue(local, prefix, identifier, parameters) {
+	if (parameters['subId']) {
 
-// 	if (parameters[identifier]) {
+		return filter += ` AND (%s.subaffiliate_1 = %L OR  %s.subaffiliate_2 = %L OR %s.subaffiliate_3 = %L OR %s.subaffiliate_4 = %L OR %s.subaffiliate_5 = %L) `;
 
-// 		local.push(prefix);
-// 		local.push(parameters[identifier]);
+	} else {
 
-// 	}
+		return filter;
 
-// }
+	}
 
-// function _resolveFilterValueSubId(local, parameters) {
+}
 
-// 	if (parameters['subId']) {
+function _resolveFilterValue(local, prefix, identifier, parameters) {
 
-// 		local.push('s');
-// 		local.push(parameters['subId']);
-// 		local.push('s');
-// 		local.push(parameters['subId']);
-// 		local.push('s');
-// 		local.push(parameters['subId']);
-// 		local.push('s');
-// 		local.push(parameters['subId']);
-// 		local.push('s');
-// 		local.push(parameters['subId']);
+	if (parameters[identifier]) {
 
-// 	}
+		local.push(prefix);
+		local.push(parameters[identifier]);
 
-// }
+	}
+
+}
+
+function _resolveFilterValueSubId(prefix, local, parameters) {
+
+	if (parameters['subId']) {
+
+		local.push(prefix);
+		local.push(parameters['subId']);
+		local.push(prefix);
+		local.push(parameters['subId']);
+		local.push(prefix);
+		local.push(parameters['subId']);
+		local.push(prefix);
+		local.push(parameters['subId']);
+		local.push(prefix);
+		local.push(parameters['subId']);
+
+	}
+
+}

@@ -8,23 +8,23 @@ SELECT
 	'Credit Card' AS provider_type,
 	'USD' AS currency,
 	gateways.monthly_cap AS monthly_cap,
-	COALESCE(gross_orders.attempts, 0) AS gross_orders,
-	COALESCE(sales.sales, 0) AS sales,
+	CAST(COALESCE(gross_orders.attempts, 0) AS INT) AS gross_orders,
+	CAST(COALESCE(sales.sales, 0) AS INT) AS sales,
 	COALESCE(CAST(COALESCE(gross_orders.attempts, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS sales_percentage,
-	COALESCE(sales.renveue, 0) AS sales_revenue,
-	COALESCE(declines.declines, 0) AS declines,
-	COALESCE(CAST(COALESCE(declines.declines, 0) AS DOUBLE PRECISION) / CAST(gross_orders.attempts AS DOUBLE PRECISION), 0) AS declines_percentage,
-	COALESCE(chargebacks.chargebacks, 0) AS chargebacks,
-	COALESCE(chargebacks.chargeback_expense, 0) AS chargeback_expense,
+	CAST(ROUND(COALESCE(sales.renveue, 0), 2) AS DOUBLE PRECISION) AS sales_revenue,
+	CAST(COALESCE(declines.declines, 0) AS INT) AS declines,
+	COALESCE(CAST(COALESCE(declines.declines, 0) AS DOUBLE PRECISION) / CAST(gross_orders.attempts AS DOUBLE PRECISION), 0) AS decline_percentage,
+	CAST(COALESCE(chargebacks.chargebacks, 0) AS INT) AS chargebacks,
+	CAST(ROUND(COALESCE(chargebacks.chargeback_expense, 0), 2) AS DOUBLE PRECISION) AS chargeback_expense,
 	COALESCE(CAST(COALESCE(chargebacks.chargebacks, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS chargeback_percentage,
-	0 AS refunds,
-	0 AS refund_expenses,
-	0 AS refund_percentage,
-	0 AS partial_refunds,
-	0 AS partial_refund_expenses,
-	0 AS partial_refund_percentage,
-	0 AS total_refund_expenses,
-	0 AS adjusted_sales_revenue
+	CAST(COALESCE(full_refunds.refunds, 0) AS INT) AS full_refunds,
+	CAST(ROUND(COALESCE(full_refunds.refunds_expense, 0), 2) AS DOUBLE PRECISION) AS full_refund_expense,
+	COALESCE(CAST(COALESCE(full_refunds.refunds, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS full_refund_percentage,
+	CAST(COALESCE(partial_refunds.refunds, 0) AS INT) AS partial_refunds,
+	CAST(ROUND(COALESCE(partial_refunds.refunds_expense, 0), 2) AS DOUBLE PRECISION) AS partial_refund_expense,
+	COALESCE(CAST(COALESCE(partial_refunds.refunds, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS partial_refund_percentage,
+	CAST(ROUND(COALESCE(full_refunds.refunds_expense, 0) + COALESCE(partial_refunds.refunds_expense, 0), 2) AS DOUBLE PRECISION) AS total_refund_expenses,
+	CAST(ROUND(COALESCE(sales.renveue, 0) - (COALESCE(full_refunds.refunds_expense, 0) + COALESCE(partial_refunds.refunds_expense, 0)), 2) AS DOUBLE PRECISION) AS adjusted_sales_revenue
 
 FROM
 
@@ -34,19 +34,20 @@ FROM
 			t.merchant_provider_name,
 			MAX(t.merchant_provider_monthly_cap) as monthly_cap
 		FROM analytics.f_transaction t
-		WHERE t.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+		WHERE %s -- i = 1
 		GROUP BY t.merchant_provider, t.merchant_provider_name
 	) as gateways
 
 	LEFT OUTER JOIN
 
 	(
+		-- sessions with transactions
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT s.id) as attempts
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+		WHERE %s -- i = 2
 		GROUP BY t.merchant_provider
 	) AS gross_orders
 
@@ -55,13 +56,14 @@ FROM
 	LEFT OUTER JOIN
 
 	(
+		-- sessions with a successful transactions that is not an upsell
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT s.id) as sales,
 			SUM(t.amount) as renveue
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%'
+		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%' -- i = 3
 		GROUP BY t.merchant_provider
 	) sales
 
@@ -70,6 +72,7 @@ FROM
 	LEFT OUTER JOIN
 
 	(
+		-- sessions with no successful transactions and at least one failure
 		SELECT
 			sub_failure.merchant_provider,
 			COUNT(s.id) as declines
@@ -82,7 +85,7 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
-			WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'success' AND t.transaction_type = 'sale'
+			WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' --i = 4
 		) sub_success
 		ON s.id = sub_success.id
 		LEFT OUTER JOIN
@@ -93,10 +96,10 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
-			WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND t.processor_result = 'fail' AND t.transaction_type = 'sale'
+			WHERE %s AND t.processor_result = 'fail' AND t.transaction_type = 'sale' -- i = 5
 		) sub_failure
 		ON s.id = sub_failure.id
-		WHERE s.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00' AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL
+		WHERE %s AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL -- i = 6
 		GROUP BY sub_failure.merchant_provider
 	) declines
 
@@ -107,14 +110,42 @@ FROM
 	(
 		SELECT
 			t.merchant_provider,
-			COUNT(1) AS chargebacks,
+			COUNT(DISTINCT t.session) AS chargebacks,
 			SUM(t.amount) AS chargeback_expense
 		FROM analytics.f_transaction t
 		INNER JOIN analytics.f_transaction_chargeback ftc ON ftc.transaction_id = t.id
-		WHERE t.datetime BETWEEN '2017-01-01 00:00:00' AND '2019-01-01 00:00:00'
+		WHERE %s -- i = 7
 		GROUP BY t.merchant_provider
 	) chargebacks
 
 	ON gateways.merchant_provider = chargebacks.merchant_provider
 
+	LEFT OUTER JOIN
 
+	(
+		SELECT
+			t.merchant_provider,
+			COUNT(DISTINCT t.session) AS refunds,
+			SUM(t.amount) AS refunds_expense
+		FROM analytics.f_transaction t
+		INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
+		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount <= t.amount -- i = 8
+		GROUP BY t.merchant_provider
+	) full_refunds
+
+	ON gateways.merchant_provider = full_refunds.merchant_provider
+
+	LEFT OUTER JOIN
+
+	(
+		SELECT
+			t.merchant_provider,
+			COUNT(DISTINCT t.session) AS refunds,
+			SUM(t.amount) AS refunds_expense
+		FROM analytics.f_transaction t
+		INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
+		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount > t.amount -- i = 9
+		GROUP BY t.merchant_provider
+	) partial_refunds
+
+	ON gateways.merchant_provider = partial_refunds.merchant_provider
