@@ -137,15 +137,7 @@ module.exports = class QueryParser {
 
 	static resolveValue(local, identifier, parameters) {
 
-		if (parameters[identifier].length > 1) {
-
-			local.push(parameters[identifier]);
-
-		} else {
-
-			local.push(parameters[identifier][0]);
-
-		}
+		local.push(parameters[identifier]);
 
 	}
 
