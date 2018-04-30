@@ -17,6 +17,8 @@ module.exports = class ShipmentUtilities {
 	constructor(){
 
 		this.fulfillmentProviderController = new FulfillmentProviderController();
+		this.fulfillmentProviderController.sanitize(false);
+
 		this.productController = new ProductController();
 		this.rebillController = new RebillController();
 		this.sessionController = new SessionController();

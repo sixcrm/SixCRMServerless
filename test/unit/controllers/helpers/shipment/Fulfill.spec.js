@@ -277,6 +277,9 @@ describe('helpers/shipment/Fulfill.js', () => {
 				get() {
 					return Promise.resolve(fulfillment_provider);
 				}
+				sanitize(argument){
+					expect(argument).to.be.a('boolean');
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
