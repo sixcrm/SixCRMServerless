@@ -19,23 +19,11 @@ query {
       },
       {
         facet: "affiliate"
-        values: ["8882b1de-e4be-485b-b887-1a41ff93677e"]
-      },
-      {
-        facet: "subId"
-        values: ["d7435e1d-9c9e-43c0-b4de-e4d5eda14a4f"]
+        values: ["9b0607b8-17e5-4a3f-a6f0-1f90636f37f9", "2ab1b8c5-f3b0-4275-bfb1-048a880b86a7"]
       },
       {
         facet: "product"
-        values: ["c08afc78-6305-4b7d-9c5e-ed5cd9bcfb41"]
-      },
-      {
-        facet: "productSchedule"
-        values: ["336aea70-86f3-459f-b337-94ccdbf3b614"]
-      },
-      {
-        facet: "mid"
-        values: ["6c40761d-8919-4ad6-884d-6a46a776cfb9"]
+        values: ["11111111-1111-1111-1111-111111111001"]
       }
     ]) {records { key value }}
   }
