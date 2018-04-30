@@ -1747,7 +1747,7 @@ describe('createOrder', function () {
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class {
-				reverseTransaction(transaction) {
+				reverseTransaction({transaction}) {
 					reversed_transactions.push(transaction);
 					return Promise.resolve();
 				}

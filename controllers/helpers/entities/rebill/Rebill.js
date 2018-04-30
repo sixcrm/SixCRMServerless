@@ -230,9 +230,14 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 	}
 
 	setRebillUpsell() {
+		if (!_.has(this, 'rebillController')) {
+			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+			this.rebillController = new RebillController();
+		}
+
 		const rebill = this.parameters.get('rebill');
 		const upsell = this.parameters.get('upsell');
-		rebill.upsell = upsell;
+		rebill.upsell = this.rebillController.getID(upsell);
 	}
 
 	buildUpdatedRebillPrototype() {

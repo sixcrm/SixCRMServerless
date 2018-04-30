@@ -1,5 +1,5 @@
-
-
+const querystring = require('querystring');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
@@ -62,7 +62,7 @@ class NMIController extends MerchantProvider {
 			},
 			refund: {
 				required:{
-					transactionid:'transaction.processor_response.result.transactionid'
+					transactionid:'transactionid'
 				},
 				optional:{
 					amount:'amount'
@@ -70,7 +70,7 @@ class NMIController extends MerchantProvider {
 			},
 			reverse: {
 				required:{
-					transactionid:'transaction.processor_response.result.transactionid'
+					transactionid:'transactionid'
 				}
 			},
 			validate:{
@@ -86,6 +86,11 @@ class NMIController extends MerchantProvider {
 
 		this.parameters.set('action','refund');
 		const method_parameters = {type: 'refund'};
+
+		if (objectutilities.hasRecursive(request_parameters, 'transaction.processor_response.result.response.body')) {
+			let {transactionid} = querystring.parse(request_parameters.transaction.processor_response.result.response.body);
+			request_parameters.transactionid = transactionid;
+		}
 
 		return this.postToProcessor({action: 'refund', method_parameters: method_parameters, request_parameters: request_parameters})
 			.then(result => {
@@ -108,6 +113,11 @@ class NMIController extends MerchantProvider {
 
 		this.parameters.set('action','reverse');
 		const method_parameters = {type: 'void'};
+
+		if (objectutilities.hasRecursive(request_parameters, 'transaction.processor_response.result.response.body')) {
+			let {transactionid} = querystring.parse(request_parameters.transaction.processor_response.result.response.body);
+			request_parameters.transactionid = transactionid;
+		}
 
 		return this.postToProcessor({action: 'reverse', method_parameters: method_parameters, request_parameters: request_parameters})
 			.then(result => {

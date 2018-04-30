@@ -546,7 +546,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			.then(results => this.rebillController.getResult(results, 'transactions'))
 			.then(transactions => Promise.all(
 				arrayutilities.map(transactions, transaction =>
-					this.registerController.reverseTransaction(transaction))
+					this.registerController.reverseTransaction({transaction}))
 			));
 	}
 

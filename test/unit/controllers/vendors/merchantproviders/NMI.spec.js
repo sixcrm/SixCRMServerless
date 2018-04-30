@@ -415,6 +415,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 			let request_parameters = getValidReverseRequestParametersObject();
 
 			request_parameters.transaction.processor_response = JSON.parse(request_parameters.transaction.processor_response);
+			request_parameters.transaction.processor_response.result.response = { body: 'transactionid=1' };
 
 			return nmi_controller.reverse(request_parameters).then(result => {
 
@@ -456,6 +457,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 			let request_parameters = getValidReverseRequestParametersObject();
 
 			request_parameters.transaction.processor_response = JSON.parse(request_parameters.transaction.processor_response);
+			request_parameters.transaction.processor_response.result.response = { body: 'transactionid=1' };
 
 			return nmi_controller.reverse(request_parameters).then(result => {
 
@@ -501,6 +503,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 			let request_parameters = getValidRefundRequestParametersObject();
 
 			request_parameters.transaction.processor_response = JSON.parse(request_parameters.transaction.processor_response);
+			request_parameters.transaction.processor_response.result.response = { body: 'transactionid=1' };
 
 			return nmi_controller.refund(request_parameters).then(result => {
 
@@ -542,6 +545,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 			let request_parameters = getValidRefundRequestParametersObject();
 
 			request_parameters.transaction.processor_response = JSON.parse(request_parameters.transaction.processor_response);
+			request_parameters.transaction.processor_response.result.response = { body: 'transactionid=1' };
 
 			return nmi_controller.refund(request_parameters).then(result => {
 

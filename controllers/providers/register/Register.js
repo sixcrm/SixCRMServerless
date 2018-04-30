@@ -302,7 +302,7 @@ module.exports = class Register extends RegisterUtilities {
 		//let amount = this.parameters.get('amount');
 
 		return reverseController.reverse({transaction: transaction}).then(result => {
-			this.parameters.set('processorresponse', result);
+			this.parameters.set('processorresponse', this.extractProcessorResponse(result));
 			return true;
 		});
 
