@@ -34,6 +34,8 @@ FROM
 			t.merchant_provider_name,
 			MAX(t.merchant_provider_monthly_cap) as monthly_cap
 		FROM analytics.f_transaction t
+		INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+		LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
 		WHERE %s -- i = 1
 		GROUP BY t.merchant_provider, t.merchant_provider_name
 	) as gateways
@@ -47,6 +49,8 @@ FROM
 			COUNT(DISTINCT s.id) as attempts
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
+		INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+		LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
 		WHERE %s -- i = 2
 		GROUP BY t.merchant_provider
 	) AS gross_orders

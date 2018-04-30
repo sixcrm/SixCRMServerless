@@ -16,8 +16,8 @@ module.exports = async (parameters = {}) => {
 	let local = ['t', parameters.start, parameters.end];
 	_resolveFilterValue(local, 't', 'account', parameters);
 	_resolveFilterValue(local, 't', 'campaign', parameters);
-	// _resolveFilterValue(local, 't', 'product', parameters);
-	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 'p', 'product', parameters);
+	_resolveFilterValue(local, 'ps', 'productSchedule', parameters);
 	_resolveFilterValue(local, 't', 'affiliate', parameters);
 	_resolveFilterValueSubId('t', local, parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
@@ -37,8 +37,8 @@ module.exports = async (parameters = {}) => {
 	local = ['s', parameters.start, parameters.end];
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
-	// _resolveFilterValue(local, 't', 'product', parameters);
-	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 'p', 'product', parameters);
+	_resolveFilterValue(local, 'ps', 'productSchedule', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
 	_resolveFilterValueSubId('s', local, parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
@@ -67,8 +67,8 @@ module.exports = async (parameters = {}) => {
 		range: true,
 		account: true,
 		campaign: true,
-		product: true,
-		productSchedule: true,
+		// product: true,
+		// productSchedule: true,
 		affiliate: true,
 		subId: true,
 		mid: true
@@ -88,8 +88,8 @@ module.exports = async (parameters = {}) => {
 		range: true,
 		account: true,
 		campaign: true,
-		product: true,
-		productSchedule: true,
+		// product: true,
+		// productSchedule: true,
 		affiliate: true,
 		subId: true,
 		mid: true
@@ -109,8 +109,8 @@ module.exports = async (parameters = {}) => {
 		range: true,
 		account: true,
 		campaign: true,
-		product: true,
-		productSchedule: true,
+		// product: true,
+		// productSchedule: true,
 		affiliate: true,
 		subId: true,
 		mid: true
@@ -129,8 +129,8 @@ module.exports = async (parameters = {}) => {
 		range: true,
 		account: true,
 		campaign: true,
-		product: true,
-		productSchedule: true,
+		// product: true,
+		// productSchedule: true,
 		affiliate: true,
 		subId: true
 	});
@@ -149,8 +149,8 @@ module.exports = async (parameters = {}) => {
 		range: true,
 		account: true,
 		campaign: true,
-		product: true,
-		productSchedule: true,
+		// product: true,
+		// productSchedule: true,
 		affiliate: true,
 		subId: true,
 		mid: true
@@ -170,8 +170,8 @@ module.exports = async (parameters = {}) => {
 		range: true,
 		account: true,
 		campaign: true,
-		product: true,
-		productSchedule: true,
+		// product: true,
+		// productSchedule: true,
 		affiliate: true,
 		subId: true,
 		mid: true
@@ -191,8 +191,8 @@ module.exports = async (parameters = {}) => {
 		range: true,
 		account: true,
 		campaign: true,
-		product: true,
-		productSchedule: true,
+		// product: true,
+		// productSchedule: true,
 		affiliate: true,
 		subId: true,
 		mid: true
@@ -229,17 +229,17 @@ function _resolveFilterQuery(parameters, options = {}) {
 
 	}
 
-	// if (options.product) {
+	if (options.product) {
 
-	// 	filter = _resolveFilterQueryValue(filter, 'product', 'product', parameters);
+		filter = _resolveFilterQueryValue(filter, 'product', 'product_id', parameters);
 
-	// }
+	}
 
-	// if (options.productSchedule) {
+	if (options.productSchedule) {
 
-	// 	filter = _resolveFilterQueryValue(filter, 'productSchedule', 'productSchedule', parameters);
+		filter = _resolveFilterQueryValue(filter, 'productSchedule', 'product_schedule_id', parameters);
 
-	// }
+	}
 
 	if (options.affiliate) {
 
