@@ -1,6 +1,11 @@
 [{
     "id":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
     "name": "Test Account 1",
+    "billing":{
+      "plan":"free",
+      "session":null,
+      "disabled":false
+    },
     "active":true,
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
@@ -9,6 +14,11 @@
 {
     "id":"5db7ed46-75b1-4ecd-b489-e61ef5d1107a",
     "name": "Test Account 2",
+    "billing":{
+      "plan":"free",
+      "session":null,
+      "disabled":false
+    },
     "active":true,
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
@@ -16,6 +26,11 @@
 {
     "id":"*",
     "name": "Master Account",
+    "billing":{
+      "plan":"free",
+      "session":null,
+      "disabled":false
+    },
     "active":true,
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
@@ -23,6 +38,11 @@
 {
     "id":"d3fa3bf3-7111-49f4-8261-87674482bf1c",
     "name": "E2E Test Acc",
+    "billing":{
+      "plan":"free",
+      "session":null,
+      "disabled":false
+    },
     "active":true,
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
@@ -31,6 +51,23 @@
 {
     "id":"eefdeca6-41bc-4af9-a561-159acb449b5e",
     "name": "Six Integration Account",
+    "billing":{
+      "plan":"free",
+      "session":"",
+      "disabled":false
+    },
+    "active":true,
+    "created_at":"2017-04-06T18:40:41.405Z",
+    "updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+    "id":"f43eeeb6-c08c-44aa-b11f-8ffb169c1995",
+    "name": "Six Disabled Account",
+    "billing":{
+      "plan":"premium",
+      "session":"071f14b4-9bba-4074-86ca-aeff31a61d79",
+      "disabled":true
+    },
     "active":true,
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
