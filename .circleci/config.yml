@@ -414,6 +414,12 @@ jobs:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
+          name: Deploy Subnet Groups
+          command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-subnetgroups.js
+      - run:
+          name: Aurora Create Cluster
+          command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-cluster.js
+      - run:
           name: Set Proxy
           command: |
             SIX_VERBOSE=2 node ./deployment/aurora/resolve-cluster.js
@@ -425,12 +431,6 @@ jobs:
             echo "   AddressFamily inet" >> ~/.ssh/config
             chmod 600 ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem
             ssh -i ./config/$CIRCLE_BRANCH/ssh-keys/six-crm/sixcrm.pem -o StrictHostKeyChecking=no -f -N -L5440:$AURORA_HOST:5440 ec2-user@$PROXY_HOST
-      - run:
-          name: Deploy Subnet Groups
-          command: SIX_VERBOSE=2 node ./deployment/aurora/deploy-subnetgroups.js
-      - run:
-          name: Aurora Create Cluster
-          command: SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-cluster.js
       - run:
           name: Aurora Create Tables
           command: SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
