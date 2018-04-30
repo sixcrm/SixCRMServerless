@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const smtpprovider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -86,7 +84,8 @@ module.exports = class SMTPProvider {
 
 		let options = this.getOptions();
 
-		this.connection = new smtpprovider(options);
+		const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
+		this.connection = new SMTPProvider(options);
 
 	}
 

@@ -5,6 +5,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const modelvalidatorutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
+const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 
 //Technical Debt:  Validate, write tests.
 //Technical Debt:  Integrate
@@ -75,8 +76,6 @@ module.exports = class SystemMailer{
 		if(!_.has(this, 'smtpprovider')){
 
 			let smtp_options = this.createSMTPOptions();
-
-			let SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 
 			this.smtpprovider = new SMTPProvider(smtp_options);
 
