@@ -135,7 +135,7 @@ module.exports = class AuroraClusterDeployment {
 
 	}
 
-	_deployClusterInstances(parameters) {
+	async _deployClusterInstances(parameters) {
 
 		du.debug('Deploy Cluster Instances');
 
@@ -149,7 +149,15 @@ module.exports = class AuroraClusterDeployment {
 
 		});
 
-		return Promise.all(instanceDeploymentPromises);
+		await Promise.all(instanceDeploymentPromises);
+
+		await this._rdsprovider.waitFor('dBInstanceAvailable', {
+			Filters: [{
+				Name: 'db-cluster-id',
+				Values: [parameters.DBClusterIdentifier]
+			}]
+		});
+
 
 	}
 

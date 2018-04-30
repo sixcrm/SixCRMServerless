@@ -304,4 +304,20 @@ module.exports = class RDSProvider extends AWSProvider {
 
 	}
 
+	waitFor(event_name, parameters){
+
+		du.debug('Wait For');
+
+		return new Promise((resolve) => {
+
+			this.rds.waitFor(event_name, parameters, (error, data) => {
+
+				resolve(this.AWSCallback(error, data));
+
+			});
+
+		});
+
+	}
+
 }
