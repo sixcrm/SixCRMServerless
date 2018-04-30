@@ -94,15 +94,7 @@ module.exports = class SMTPProvider {
 
 		du.debug('Send');
 
-		return this.connection.send(send_object).then((send_result) => {
-
-			return Promise.resolve(send_result);
-
-		}).catch(error => {
-
-			return Promise.reject(error);
-
-		});
+		return this.connection.send(send_object);
 
 	}
 

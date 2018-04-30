@@ -25,7 +25,12 @@ module.exports = class SystemMailer{
 
 		this.validateParameters(parameters);
 
-		return this.send(parameters);
+		return this.send(parameters).then(response => {
+			if(_.has(response, 'messageId')){
+				return true;
+			}
+			return false;
+		});
 
 	}
 
@@ -93,4 +98,3 @@ module.exports = class SystemMailer{
 	}
 
 }
-
