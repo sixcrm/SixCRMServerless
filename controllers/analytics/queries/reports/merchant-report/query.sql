@@ -1,7 +1,23 @@
--- gross_orders = sessions with a transaction
--- sale =	session with at least one successful transaction that is not an upsell
--- decline = session without a successful transaction and at least one failure
--- decline percentage = 	Declines / Gross Orders
+-- gateway
+-- provider_type: only credit cards currently
+-- monthly_cap: use the max from the gateway
+-- gross_orders	sessions with a transaction
+-- sales:	session with at least one successful transaction that is not an upsell
+-- sales_percentage:	sales / gross_orders
+-- sales_revenue: sum of sales amount
+-- declines: session without a successful transaction and at least one failure
+-- decline_percentage: declines / gross_orders
+-- chargebacks: sessions with a chargeback
+-- chargeback_expense: sum of chargebacks
+-- chargeback_percentage: chargebacks / sales
+-- full_refunds: sessions with a transaction that was fully refunded
+-- full_refund_expense: sum of transactions that were fully refunded
+-- full_refund_percentage: full_refunds / sales
+-- partial_refunds: sessions with a transaction that was partially refunded
+-- partial_refund_expense: sum of transactions that were partially refunded
+-- partial_refund_percentage: partial_refunds / sales
+-- total_refund_expenses: full_refund_expense + partial_refund_expense
+-- adjusted_sales_revenue: sales_revenue - (full_refund_expense + partial_refund_expense)
 
 SELECT
 	gateways.merchant_provider_name as gateway,
@@ -29,11 +45,14 @@ SELECT
 FROM
 
 	(
+		-- all gateways with transactions
 		SELECT
 			t.merchant_provider,
 			t.merchant_provider_name,
 			MAX(t.merchant_provider_monthly_cap) as monthly_cap
 		FROM analytics.f_transaction t
+		INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+		LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
 		WHERE %s -- i = 1
 		GROUP BY t.merchant_provider, t.merchant_provider_name
 	) as gateways
@@ -41,12 +60,14 @@ FROM
 	LEFT OUTER JOIN
 
 	(
-		-- sessions with transactions
+		-- sessions with a transaction
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT s.id) as attempts
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
+		INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+		LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
 		WHERE %s -- i = 2
 		GROUP BY t.merchant_provider
 	) AS gross_orders
@@ -63,7 +84,16 @@ FROM
 			SUM(t.amount) as renveue
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%' -- i = 3
+		-- only pull transactions with the correct products and schedules
+		INNER JOIN (
+			SELECT
+				DISTINCT t.id
+			FROM analytics.f_transaction t
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
+			WHERE t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%' %s -- i = 3
+		) sub on sub.id = t.id
+		WHERE %s -- i = 4
 		GROUP BY t.merchant_provider
 	) sales
 
@@ -85,7 +115,9 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
-			WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' --i = 4
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
+			WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' --i = 5
 		) sub_success
 		ON s.id = sub_success.id
 		LEFT OUTER JOIN
@@ -96,10 +128,12 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
-			WHERE %s AND t.processor_result = 'fail' AND t.transaction_type = 'sale' -- i = 5
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
+			WHERE %s AND t.processor_result = 'fail' AND t.transaction_type = 'sale' -- i = 6
 		) sub_failure
 		ON s.id = sub_failure.id
-		WHERE %s AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL -- i = 6
+		WHERE %s AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL -- i = 7
 		GROUP BY sub_failure.merchant_provider
 	) declines
 
@@ -108,13 +142,23 @@ FROM
 	LEFT OUTER JOIN
 
 	(
+		-- sessions with a chargeback
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT t.session) AS chargebacks,
 			SUM(t.amount) AS chargeback_expense
 		FROM analytics.f_transaction t
-		INNER JOIN analytics.f_transaction_chargeback ftc ON ftc.transaction_id = t.id
-		WHERE %s -- i = 7
+		-- only pull transactions with the correct products and schedules
+		INNER JOIN (
+			SELECT
+				DISTINCT t.id
+			FROM analytics.f_transaction t
+			INNER JOIN analytics.f_transaction_chargeback ftc ON ftc.transaction_id = t.id
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
+			WHERE 1=1 %s -- i = 8
+		) sub on sub.id = t.id
+		WHERE %s -- i = 9
 		GROUP BY t.merchant_provider
 	) chargebacks
 
@@ -123,13 +167,23 @@ FROM
 	LEFT OUTER JOIN
 
 	(
+		-- sessions with transactions that are full refunds
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT t.session) AS refunds,
 			SUM(t.amount) AS refunds_expense
 		FROM analytics.f_transaction t
-		INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
-		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount <= t.amount -- i = 8
+		-- only pull transactions with the correct products and schedules
+		INNER JOIN (
+			SELECT
+				DISTINCT t.id
+			FROM analytics.f_transaction t
+			INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
+			WHERE t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount <= t.amount %s -- i = 10
+		) sub on sub.id = t.id
+		WHERE %s -- i = 11
 		GROUP BY t.merchant_provider
 	) full_refunds
 
@@ -138,13 +192,23 @@ FROM
 	LEFT OUTER JOIN
 
 	(
+		-- sessions with transactions that are partial refunds
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT t.session) AS refunds,
 			SUM(t.amount) AS refunds_expense
 		FROM analytics.f_transaction t
-		INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
-		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount > t.amount -- i = 9
+		-- only pull transactions with the correct products and schedules
+		INNER JOIN (
+			SELECT
+				DISTINCT t.id
+			FROM analytics.f_transaction t
+			INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
+			WHERE t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount > t.amount %s -- i = 12
+		) sub on sub.id = t.id
+		WHERE %s -- i = 13
 		GROUP BY t.merchant_provider
 	) partial_refunds
 

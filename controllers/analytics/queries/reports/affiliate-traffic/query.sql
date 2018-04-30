@@ -1,12 +1,20 @@
--- Partial	leads - session with a successful transaction
--- Gross orders	Sessions with a transaction
--- Sale	Session with at least one successful transaction
--- Sale Percentage	Sales / Gross Orders
--- Decline	Session without a successful transaction and at least one failure
--- Decline Percentage	Declines / Gross Orders
--- Sales Revenue	SUM of successful transaction amounts
--- Upsell	Sessions with a successful transaction that is of type upsell
--- Average Order Value (AOV) AVERAGE((Sale * Order Price + Upsell * Order Price) / Sales) = (sale revenue + upsell revenue) / sales
+-- affiliate
+-- clicks: count of click events
+-- partials:	count of leads - session with a successful transaction
+-- partials_percentage: partials / clicks
+-- gross_orders	sessions with a transaction
+-- gross_order_percentage: gross_orders / clicks
+-- sales:	session with at least one successful transaction that is not an upsell
+-- sales_percentage:	sales / gross_orders
+-- sales_revenue: sum of sales amount
+-- upsells: sessions with a successful transaction that is an upsell
+-- upsells_percentage: upsells / sales
+-- upsells_revenue: sum of upsell transaction amounts
+-- blended_sales: sales + upsells
+-- blended_sales_revenue: sales_revenue + upsells_revenue
+-- aov: (sales_revenue + upsells_revenue) / sales
+-- declines: session without a successful transaction and at least one failure
+-- decline_percentage: declines / gross_orders
 
 SELECT
 	clicks.affiliate,
@@ -28,6 +36,7 @@ SELECT
 	COALESCE(CAST(COALESCE(declines.declines, 0) AS DOUBLE PRECISION) / CAST(gross_orders.attempts AS DOUBLE PRECISION), 0) AS declines_percentage
 FROM
 (
+	-- all affiliate clicks
 	SELECT
 		s.affiliate,
 		COUNT(1) AS clicks
@@ -39,7 +48,7 @@ FROM
 LEFT OUTER JOIN
 
 (
-	-- leads - sessions with successful transaction = partial
+	-- count of leads - sessions with successful transaction
 	SELECT
 		leads.affiliate,
 		COALESCE(leads.leads, 0) - COALESCE(sub_success.successes, 0) AS partials
