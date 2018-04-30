@@ -2,6 +2,7 @@ const util = require('util');
 const path = require('path');
 const fs = require('fs');
 const format = require('pg-format');
+const _ = require('lodash');
 
 module.exports = async (parameters = {}) => {
 
@@ -15,7 +16,7 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
-	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValueSubId(local, 's', parameters);
 	let filter = _resolveFilterQuery(parameters, {
 		range: true,
 		account: true,
@@ -30,7 +31,7 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
-	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValueSubId(local, 's', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
 		account: true,
@@ -45,7 +46,7 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
-	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValueSubId(local, 's', parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
@@ -62,7 +63,7 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
-	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValueSubId(local, 's', parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
@@ -79,7 +80,7 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
-	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValueSubId(local, 's', parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
@@ -96,7 +97,7 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
-	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValueSubId(local, 's', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
 		account: true,
@@ -111,7 +112,7 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
-	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValueSubId(local, 's', parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
@@ -128,7 +129,7 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
-	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValueSubId(local, 's', parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
@@ -145,7 +146,7 @@ module.exports = async (parameters = {}) => {
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
-	_resolveFilterValueSubId(local, parameters);
+	_resolveFilterValueSubId(local, 's', parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
 	filter = _resolveFilterQuery(parameters, {
 		range: true,
@@ -187,6 +188,18 @@ function _resolveFilterQuery(parameters, options = {}) {
 
 	}
 
+	if (options.product) {
+
+		filter = _resolveFilterQueryValue(filter, 'product', 'product_id', parameters);
+
+	}
+
+	if (options.productSchedule) {
+
+		filter = _resolveFilterQueryValue(filter, 'productSchedule', 'product_schedule_id', parameters);
+
+	}
+
 	if (options.affiliate) {
 
 		filter = _resolveFilterQueryValue(filter, 'affiliate', 'affiliate', parameters);
@@ -210,9 +223,28 @@ function _resolveFilterQuery(parameters, options = {}) {
 
 function _resolveFilterQueryValue(filter, identifier, map, parameters) {
 
+	const inClause = ` AND %s.${map} IN (%L) `;
+	const equalsClause = ` AND %s.${map} = %L `;
+
 	if (parameters[identifier]) {
 
-		return filter += ` AND %s.${map} = %L `;
+		if (_.isArray(parameters[identifier])) {
+
+			if (parameters[identifier].length > 1) {
+
+				return filter += inClause;
+
+			} else {
+
+				return filter += equalsClause;
+
+			}
+
+		} else {
+
+			return filter += equalsClause;
+
+		}
 
 	} else {
 
@@ -224,9 +256,28 @@ function _resolveFilterQueryValue(filter, identifier, map, parameters) {
 
 function _resolveFilterQueryValueSubId(filter, parameters) {
 
+	const inClause = ` AND (%s.subaffiliate_1 IN (%L) OR  %s.subaffiliate_2 IN (%L) OR %s.subaffiliate_3 IN (%L) OR %s.subaffiliate_4 IN (%L) OR %s.subaffiliate_5 IN (%L)) `;
+	const equalsClause = ` AND (%s.subaffiliate_1 = %L OR  %s.subaffiliate_2 = %L OR %s.subaffiliate_3 = %L OR %s.subaffiliate_4 = %L OR %s.subaffiliate_5 = %L) `;
+
 	if (parameters['subId']) {
 
-		return filter += ` AND (%s.subaffiliate_1 = %L OR  %s.subaffiliate_2 = %L OR %s.subaffiliate_3 = %L OR %s.subaffiliate_4 = %L OR %s.subaffiliate_5 = %L) `;
+		if (_.isArray(parameters['subId'])) {
+
+			if (parameters['subId'].length > 1) {
+
+				return filter += inClause;
+
+			} else {
+
+				return filter += equalsClause;
+
+			}
+
+		} else {
+
+			return filter += equalsClause;
+
+		}
 
 	} else {
 
@@ -241,26 +292,48 @@ function _resolveFilterValue(local, prefix, identifier, parameters) {
 	if (parameters[identifier]) {
 
 		local.push(prefix);
-		local.push(parameters[identifier]);
+		_resolveValue(local, identifier, parameters);
 
 	}
 
 }
 
-function _resolveFilterValueSubId(local, parameters) {
+function _resolveFilterValueSubId(local, prefix, parameters) {
 
 	if (parameters['subId']) {
 
-		local.push('s');
-		local.push(parameters['subId']);
-		local.push('s');
-		local.push(parameters['subId']);
-		local.push('s');
-		local.push(parameters['subId']);
-		local.push('s');
-		local.push(parameters['subId']);
-		local.push('s');
-		local.push(parameters['subId']);
+		local.push(prefix);
+		_resolveValue(local, 'subId', parameters)
+		local.push(prefix);
+		_resolveValue(local, 'subId', parameters)
+		local.push(prefix);
+		_resolveValue(local, 'subId', parameters)
+		local.push(prefix);
+		_resolveValue(local, 'subId', parameters)
+		local.push(prefix);
+		_resolveValue(local, 'subId', parameters)
+
+	}
+
+}
+
+function _resolveValue(local, identifier, parameters) {
+
+	if (_.isArray(parameters[identifier])) {
+
+		if (parameters[identifier].length > 1) {
+
+			local.push(parameters[identifier]);
+
+		} else {
+
+			local.push(parameters[identifier][0]);
+
+		}
+
+	} else {
+
+		local.push(parameters[identifier]);
 
 	}
 
