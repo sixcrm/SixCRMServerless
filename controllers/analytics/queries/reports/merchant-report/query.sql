@@ -67,7 +67,16 @@ FROM
 			SUM(t.amount) as renveue
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%' -- i = 3
+		-- only pull transactions with the correct products and schedules
+		INNER JOIN (
+			SELECT
+				DISTINCT t.id
+			FROM analytics.f_transaction t
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
+			WHERE 1=1 %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%' -- i = 3
+		) sub on sub.id = t.id
+		WHERE %s -- i = 4
 		GROUP BY t.merchant_provider
 	) sales
 
@@ -89,7 +98,7 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
-			WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' --i = 4
+			WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' --i = 5
 		) sub_success
 		ON s.id = sub_success.id
 		LEFT OUTER JOIN
@@ -100,10 +109,10 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
-			WHERE %s AND t.processor_result = 'fail' AND t.transaction_type = 'sale' -- i = 5
+			WHERE %s AND t.processor_result = 'fail' AND t.transaction_type = 'sale' -- i = 6
 		) sub_failure
 		ON s.id = sub_failure.id
-		WHERE %s AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL -- i = 6
+		WHERE %s AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL -- i = 7
 		GROUP BY sub_failure.merchant_provider
 	) declines
 
@@ -118,7 +127,7 @@ FROM
 			SUM(t.amount) AS chargeback_expense
 		FROM analytics.f_transaction t
 		INNER JOIN analytics.f_transaction_chargeback ftc ON ftc.transaction_id = t.id
-		WHERE %s -- i = 7
+		WHERE %s -- i = 8
 		GROUP BY t.merchant_provider
 	) chargebacks
 
@@ -133,7 +142,7 @@ FROM
 			SUM(t.amount) AS refunds_expense
 		FROM analytics.f_transaction t
 		INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
-		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount <= t.amount -- i = 8
+		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount <= t.amount -- i = 9
 		GROUP BY t.merchant_provider
 	) full_refunds
 
@@ -148,7 +157,7 @@ FROM
 			SUM(t.amount) AS refunds_expense
 		FROM analytics.f_transaction t
 		INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
-		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount > t.amount -- i = 9
+		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount > t.amount -- i = 10
 		GROUP BY t.merchant_provider
 	) partial_refunds
 
