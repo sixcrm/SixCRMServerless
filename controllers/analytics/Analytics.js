@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
@@ -330,27 +331,43 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			const product = parameters.facets.find(f => f.facet === 'product');
 			const productSchedule = parameters.facets.find(f => f.facet === 'productSchedule');
 
-			// start and end dates are single values
-			const params = {
-				start: start.values[0],
-				end: end.values[0]
+			if (start.length > 1) {
+
+				throw eu.getError('server', 'Start can only have one value');
+
 			}
 
-			_resolveParamValue('period', true, period);
-			_resolveParamValue('campaign', false, campaign);
-			_resolveParamValue('affiliate', false, affiliate);
-			_resolveParamValue('subId', false, subId);
-			_resolveParamValue('mid', false, mid);
-			_resolveParamValue('product', false, product);
-			_resolveParamValue('productSchedule', false, productSchedule);
+			if (end.length > 1) {
+
+				throw eu.getError('server', 'End can only have one value');
+
+			}
+
+			if (period && period.length > 1) {
+
+				throw eu.getError('server', 'Period can only have one value');
+
+			}
+
+			const params = {};
+
+			_resolveParamValue('start', start);
+			_resolveParamValue('end', end);
+			_resolveParamValue('period', period);
+			_resolveParamValue('campaign', campaign);
+			_resolveParamValue('affiliate', affiliate);
+			_resolveParamValue('subId', subId);
+			_resolveParamValue('mid', mid);
+			_resolveParamValue('product', product);
+			_resolveParamValue('productSchedule', productSchedule);
 
 			return params;
 
-			function _resolveParamValue(identifier, singular, facet) {
+			function _resolveParamValue(identifier, facet) {
 
 				if (facet) {
 
-					params[identifier] = singular ? facet.values[0] : facet.values;
+					params[identifier] = facet.values;
 
 				}
 
