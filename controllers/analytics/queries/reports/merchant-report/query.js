@@ -85,8 +85,8 @@ module.exports = async (parameters = {}) => {
 	local = ['s', parameters.start, parameters.end];
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
-	// _resolveFilterValue(local, 't', 'product', parameters);
-	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 'p', 'product', parameters);
+	_resolveFilterValue(local, 'ps', 'productSchedule', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
 	_resolveFilterValueSubId('s', local, parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
@@ -94,8 +94,8 @@ module.exports = async (parameters = {}) => {
 		range: true,
 		account: true,
 		campaign: true,
-		// product: true,
-		// productSchedule: true,
+		product: true,
+		productSchedule: true,
 		affiliate: true,
 		subId: true,
 		mid: true
@@ -106,8 +106,8 @@ module.exports = async (parameters = {}) => {
 	local = ['s', parameters.start, parameters.end];
 	_resolveFilterValue(local, 's', 'account', parameters);
 	_resolveFilterValue(local, 's', 'campaign', parameters);
-	// _resolveFilterValue(local, 't', 'product', parameters);
-	// _resolveFilterValue(local, 't', 'productSchedule', parameters);
+	_resolveFilterValue(local, 'p', 'product', parameters);
+	_resolveFilterValue(local, 'ps', 'productSchedule', parameters);
 	_resolveFilterValue(local, 's', 'affiliate', parameters);
 	_resolveFilterValueSubId('s', local, parameters);
 	_resolveFilterValue(local, 't', 'mid', parameters);
@@ -115,8 +115,8 @@ module.exports = async (parameters = {}) => {
 		range: true,
 		account: true,
 		campaign: true,
-		// product: true,
-		// productSchedule: true,
+		product: true,
+		productSchedule: true,
 		affiliate: true,
 		subId: true,
 		mid: true

@@ -98,6 +98,8 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
 			WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' --i = 5
 		) sub_success
 		ON s.id = sub_success.id
@@ -109,6 +111,8 @@ FROM
 				s.id
 			FROM analytics.f_session s
 			INNER JOIN analytics.f_transaction t ON s.id = t.session
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
 			WHERE %s AND t.processor_result = 'fail' AND t.transaction_type = 'sale' -- i = 6
 		) sub_failure
 		ON s.id = sub_failure.id
