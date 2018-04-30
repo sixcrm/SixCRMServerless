@@ -130,8 +130,17 @@ FROM
 			COUNT(DISTINCT t.session) AS chargebacks,
 			SUM(t.amount) AS chargeback_expense
 		FROM analytics.f_transaction t
-		INNER JOIN analytics.f_transaction_chargeback ftc ON ftc.transaction_id = t.id
-		WHERE %s -- i = 8
+		-- only pull transactions with the correct products and schedules
+		INNER JOIN (
+			SELECT
+				DISTINCT t.id
+			FROM analytics.f_transaction t
+			INNER JOIN analytics.f_transaction_chargeback ftc ON ftc.transaction_id = t.id
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
+			WHERE 1=1 %s -- i = 8
+		) sub on sub.id = t.id
+		WHERE %s -- i = 9
 		GROUP BY t.merchant_provider
 	) chargebacks
 
@@ -145,8 +154,17 @@ FROM
 			COUNT(DISTINCT t.session) AS refunds,
 			SUM(t.amount) AS refunds_expense
 		FROM analytics.f_transaction t
-		INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
-		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount <= t.amount -- i = 9
+		-- only pull transactions with the correct products and schedules
+		INNER JOIN (
+			SELECT
+				DISTINCT t.id
+			FROM analytics.f_transaction t
+			INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
+			WHERE t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount <= t.amount %s -- i = 10
+		) sub on sub.id = t.id
+		WHERE %s -- i = 11
 		GROUP BY t.merchant_provider
 	) full_refunds
 
@@ -160,8 +178,17 @@ FROM
 			COUNT(DISTINCT t.session) AS refunds,
 			SUM(t.amount) AS refunds_expense
 		FROM analytics.f_transaction t
-		INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
-		WHERE %s AND t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount > t.amount -- i = 10
+		-- only pull transactions with the correct products and schedules
+		INNER JOIN (
+			SELECT
+				DISTINCT t.id
+			FROM analytics.f_transaction t
+			INNER JOIN analytics.f_transaction associated ON associated.id = t.associated_transaction
+			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
+			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
+			WHERE t.processor_result = 'success' AND t.transaction_type = 'refund' AND associated.amount > t.amount %s -- i = 12
+		) sub on sub.id = t.id
+		WHERE %s -- i = 13
 		GROUP BY t.merchant_provider
 	) partial_refunds
 
