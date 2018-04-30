@@ -1217,7 +1217,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 			if (!keyPairs.KeyPairs.find((k) => {
 
-				return k.KeyName = keyPair.KeyName;
+				return k.KeyName === keyPair.KeyName;
 
 			})) {
 
