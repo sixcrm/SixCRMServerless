@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
@@ -330,11 +331,28 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			const product = parameters.facets.find(f => f.facet === 'product');
 			const productSchedule = parameters.facets.find(f => f.facet === 'productSchedule');
 
-			const params = {
-				start: start.values[0],
-				end: end.values[0]
+			if (start.length > 1) {
+
+				throw eu.getError('server', 'Start can only have one value');
+
 			}
 
+			if (end.length > 1) {
+
+				throw eu.getError('server', 'End can only have one value');
+
+			}
+
+			if (period && period.length > 1) {
+
+				throw eu.getError('server', 'Period can only have one value');
+
+			}
+
+			const params = {};
+
+			_resolveParamValue('start', start);
+			_resolveParamValue('end', end);
 			_resolveParamValue('period', period);
 			_resolveParamValue('campaign', campaign);
 			_resolveParamValue('affiliate', affiliate);
@@ -349,7 +367,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				if (facet) {
 
-					params[identifier] = facet.values[0];
+					params[identifier] = facet.values;
 
 				}
 
