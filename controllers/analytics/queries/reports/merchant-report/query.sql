@@ -1,7 +1,23 @@
--- gross_orders = sessions with a transaction
--- sale =	session with at least one successful transaction that is not an upsell
--- decline = session without a successful transaction and at least one failure
--- decline percentage = 	Declines / Gross Orders
+-- gateway
+-- provider_type: only credit cards currently
+-- monthly_cap: use the max from the gateway
+-- gross_orders	sessions with a transaction
+-- sales:	session with at least one successful transaction that is not an upsell
+-- sales_percentage:	sales / gross_orders
+-- sales_revenue: sum of sales amount
+-- declines: session without a successful transaction and at least one failure
+-- decline_percentage: declines / gross_orders
+-- chargebacks: sessions with a chargeback
+-- chargeback_expense: sum of chargebacks
+-- chargeback_percentage: chargebacks / sales
+-- full_refunds: sessions with a transaction that was fully refunded
+-- full_refund_expense: sum of transactions that were fully refunded
+-- full_refund_percentage: full_refunds / sales
+-- partial_refunds: sessions with a transaction that was partially refunded
+-- partial_refund_expense: sum of transactions that were partially refunded
+-- partial_refund_percentage: partial_refunds / sales
+-- total_refund_expenses: full_refund_expense + partial_refund_expense
+-- adjusted_sales_revenue: sales_revenue - (full_refund_expense + partial_refund_expense)
 
 SELECT
 	gateways.merchant_provider_name as gateway,
@@ -29,6 +45,7 @@ SELECT
 FROM
 
 	(
+		-- all gateways with transactions
 		SELECT
 			t.merchant_provider,
 			t.merchant_provider_name,
@@ -43,7 +60,7 @@ FROM
 	LEFT OUTER JOIN
 
 	(
-		-- sessions with transactions
+		-- sessions with a transaction
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT s.id) as attempts
@@ -74,7 +91,7 @@ FROM
 			FROM analytics.f_transaction t
 			INNER JOIN analytics.f_transaction_product p ON p.transaction_id = t.id
 			LEFT OUTER JOIN analytics.f_transaction_product_schedule ps ON ps.transaction_id = t.id
-			WHERE 1=1 %s AND t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%' -- i = 3
+			WHERE t.processor_result = 'success' AND t.transaction_type = 'sale' AND t.subtype NOT LIKE 'upsell%' %s -- i = 3
 		) sub on sub.id = t.id
 		WHERE %s -- i = 4
 		GROUP BY t.merchant_provider
@@ -125,6 +142,7 @@ FROM
 	LEFT OUTER JOIN
 
 	(
+		-- sessions with a chargeback
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT t.session) AS chargebacks,
@@ -149,6 +167,7 @@ FROM
 	LEFT OUTER JOIN
 
 	(
+		-- sessions with transactions that are full refunds
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT t.session) AS refunds,
@@ -173,6 +192,7 @@ FROM
 	LEFT OUTER JOIN
 
 	(
+		-- sessions with transactions that are partial refunds
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT t.session) AS refunds,

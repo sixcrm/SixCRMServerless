@@ -221,7 +221,7 @@ module.exports = async (parameters = {}) => {
 
 	const finalQuery = format.withArray(query, queryParameters);
 
-	console.log(finalQuery);
+	// console.log(finalQuery);
 
 	return finalQuery;
 
