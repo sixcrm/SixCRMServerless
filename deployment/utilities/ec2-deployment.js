@@ -1231,6 +1231,12 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 			const securityGroups = await _getSecurityGroupIds(serverTemplate.SecurityGroupIds);
 			serverTemplate.SecurityGroupIds = securityGroups;
 
+			const subnet = await this.subnetExists({
+				Name: serverTemplate.SubnetId
+			});
+
+			serverTemplate.SubnetId = subnet.SubnetId;
+
 			const es2Result = await this.ec2provider.runInstance(_.omit(serverTemplate, ['EIP']));
 
 			if (serverTemplate.EIP) {

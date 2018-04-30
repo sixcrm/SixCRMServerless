@@ -12,7 +12,7 @@
 		"SecurityGroupIds": [
 			"SixCRM-SSH-Gateway"
 		],
-		"SubnetId": "subnet-2a31d776",
+		"SubnetId": "sixcrm-public1",
 		"TagSpecifications": [
 			{
 				"ResourceType": "instance",
