@@ -285,7 +285,9 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 				DomainNames: domainnames
 			};
 
-			return this.cs.describeDomains(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
+			return this.cs.describeDomains(parameters, (error, data) => {
+				return resolve(this.AWSCallback(error, data))
+			});
 
 		});
 

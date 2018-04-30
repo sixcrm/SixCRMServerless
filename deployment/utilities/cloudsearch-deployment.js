@@ -77,7 +77,7 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 		du.debug('Create Cloudsearch Domain');
 
-		await this.cloudsearchprovider.createDomain(domain_definition);
+		await this.cloudsearchprovider.createDomain(domain_definition.DomainName);
 
 		return this.cloudsearchprovider.waitFor('ready', domain_definition);
 
