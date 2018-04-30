@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 module.exports = class QueryParser {
 
 	static resolveFilterQuery(parameters, options = {}) {
@@ -64,17 +62,9 @@ module.exports = class QueryParser {
 
 		if (parameters[identifier]) {
 
-			if (_.isArray(parameters[identifier])) {
+			if (parameters[identifier].length > 1) {
 
-				if (parameters[identifier].length > 1) {
-
-					return filter += inClause;
-
-				} else {
-
-					return filter += equalsClause;
-
-				}
+				return filter += inClause;
 
 			} else {
 
@@ -97,17 +87,9 @@ module.exports = class QueryParser {
 
 		if (parameters['subId']) {
 
-			if (_.isArray(parameters['subId'])) {
+			if (parameters['subId'].length > 1) {
 
-				if (parameters['subId'].length > 1) {
-
-					return filter += inClause;
-
-				} else {
-
-					return filter += equalsClause;
-
-				}
+				return filter += inClause;
 
 			} else {
 
@@ -155,23 +137,7 @@ module.exports = class QueryParser {
 
 	static resolveValue(local, identifier, parameters) {
 
-		if (_.isArray(parameters[identifier])) {
-
-			if (parameters[identifier].length > 1) {
-
-				local.push(parameters[identifier]);
-
-			} else {
-
-				local.push(parameters[identifier][0]);
-
-			}
-
-		} else {
-
-			local.push(parameters[identifier]);
-
-		}
+		local.push(parameters[identifier]);
 
 	}
 
