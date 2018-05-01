@@ -21,7 +21,7 @@ module.exports = class AnalyticsEvent {
 
 		return (new SQSProvider()).sendMessage({
 			message_body: JSON.stringify(message),
-			queue: 'analytics.fifo',
+			queue: global.SixCRM.configuration.isLocal() ? 'analytics' : 'analytics.fifo',
 			messageGroupId: 'analytics'
 		});
 
