@@ -92,7 +92,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 		const user = await this._acceptInvite(invite);
 
 		return Promise.resolve({
-			token: this._createSiteJWT(user),
+			is_new: user.is_new,
 			account: invite.account
 		});
 
@@ -303,10 +303,23 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Assure User');
 
+		let new_user = false;
+
 		this.userController.disableACLs();
-		const user = await this.userController.assureUser(email);
+		let user = await this.userController.get({id: email});
 		this.userController.enableACLs();
 
+		if(!_.isNull(user)){
+
+			new_user = true;
+
+			this.userController.disableACLs();
+			user = await this.userController.assureUser(email);
+			this.userController.enableACLs();
+
+		}
+
+		user.is_new = new_user;
 		return user;
 
 	}

@@ -13,6 +13,27 @@
 			"type":"string",
 			"minLength":3
 		},
+		"billing":{
+			"type":"object",
+			"properties":{
+				"plan":{
+					"anyOf":[
+						{"$ref":"../definitions/sixcrmbillingplanname.json"},
+						{"type":"null"}
+					]
+				},
+				"disabled":{
+					"type":"boolean"
+				},
+				"session":{
+					"anyOf":[
+						{"$ref":"../definitions/uuidv4.json"},
+						{"type":"null"}
+					]
+				}
+			},
+			"required":["disabled"]
+		},
 		"active":{
 			"type":"boolean"
 		},
