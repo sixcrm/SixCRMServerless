@@ -3,7 +3,9 @@
 		"event_type": "activity_created",
 		"context": {
 			"id": "1ef02cd1-1cad-46bf-9b05-2da7b437b497",
-			"user": "system@sixcrm.com",
+			"user": {
+				"id": "system@sixcrm.com"
+			},
 			"account": "*",
 			"actor": "system",
 			"actor_type": "system",

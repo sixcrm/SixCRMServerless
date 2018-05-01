@@ -11,7 +11,7 @@ module.exports = class WriteTransactionProductScheduleRecords {
 
 	}
 
-	async execute(transactionId, productId, records) {
+	execute(transactionId, productId, records) {
 
 		du.debug('WriteTransactionProductScheduleRecords.execute()');
 
