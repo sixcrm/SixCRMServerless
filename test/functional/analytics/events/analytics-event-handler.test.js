@@ -47,7 +47,7 @@ describe('Push events to RDS', () => {
 
 			return auroraContext.withConnection((connection) => {
 
-				const aeh = new AnalyticsEventHandler('analytics-write', auroraContext);
+				const aeh = new AnalyticsEventHandler('analytics', auroraContext);
 
 				return Promise.resolve()
 					.then(() => seedAurora(test))

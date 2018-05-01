@@ -5,9 +5,9 @@ const sqsprovider = new SQSProvider();
 
 module.exports = class AnalyticsEventHandler {
 
-	constructor(queueName, auroraContext) {
+	constructor(auroraContext) {
 
-		this._queueName = queueName;
+		this._queueName = global.SixCRM.configuration.isLocal() ? 'analytics' : 'analytics.fifo';
 		this._auroraContext = auroraContext;
 		this._eventTypeHandlerMap = null;
 
@@ -45,7 +45,7 @@ module.exports = class AnalyticsEventHandler {
 
 	}
 
-	_executeHandlers(records) {
+	async _executeHandlers(records) {
 
 		du.debug('AnalyticsEventHandler._executeHandlers()');
 
@@ -87,11 +87,13 @@ module.exports = class AnalyticsEventHandler {
 
 			}
 
-			const messageHandlerPromises = handerMap.handlers.map(h => {
+			const messageHandlerPromises = handerMap.handlers.map(async (h) => {
 
+				const Transform = require(`./transforms/${handerMap.transform}`);
+				const transformed = new Transform().execute(message);
 				const Handler = require(`./event-handlers/${h}`);
 				const handler = new Handler(this._auroraContext);
-				return handler.execute(message);
+				handler.execute(transformed);
 
 			});
 

@@ -204,13 +204,6 @@ functions:
   customeremail:
     handler: handlers/workers/sns/handlers.customeremail
 
-  analyticsevents:
-    handler: handlers/workers/sns/handlers.analyticsevents
-    events:
-      - schedule:
-          rate: rate(1 minute)``
-          enabled: true
-
   trackingevents:
     handler: handlers/workers/sns/handlers.trackingevents
 

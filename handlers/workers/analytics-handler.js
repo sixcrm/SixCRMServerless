@@ -9,8 +9,7 @@ module.exports = class AnalyticsHandler extends LambdaHandler {
 
 		try {
 
-			const queue = global.SixCRM.configuration.isLocal() ? 'analytics-write' : 'analytics-write.fifo';
-			const analyticsEventHandler = new AnalyticsEventHandler(queue, auroraContext);
+			const analyticsEventHandler = new AnalyticsEventHandler(auroraContext);
 			await analyticsEventHandler.execute();
 
 			return new LambdaResponse().issueSuccess({}, lambdaCallback, 'success');

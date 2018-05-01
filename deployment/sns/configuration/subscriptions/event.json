@@ -68,7 +68,7 @@
     {
       "Protocol": "sqs",
       "TopicArn": "arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
-      "Endpoint": "analytics-transform.fifo"
+      "Endpoint": "analytics.fifo"
     }
   ]
 }
