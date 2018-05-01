@@ -127,10 +127,16 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 
 		return httpprovider.getJSON({
 			endpoint: 'https://' + process.env.elasticsearch_endpoint
-		}).then(() => {
+		}).then(results => {
+			if (results.response.statusCode === 200) {
+				return {
+					status: 'OK',
+					message: 'Successfully connected.'
+				};
+			}
 			return {
-				status: 'OK',
-				message: 'Successfully connected.'
+				status: 'Error',
+				message: 'Unexpected response from Elasticsearch: ' + JSON.stringify(results)
 			};
 		}).catch(error => {
 			return Promise.resolve({
