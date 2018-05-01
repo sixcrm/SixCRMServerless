@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const BBPromise = require('bluebird');
+const elasticsearch = require('elasticsearch');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -126,6 +128,39 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 
 	}
 
+	async deployIndices() {
+
+		du.debug('Deploy Indices');
+
+		const configuration = this.getConfigurationJSON('indices');
+		await BBPromise.mapSeries(configuration.domains, this.deployIndicesForDomain.bind(this));
+
+		return 'Complete';
+
+	}
+
+	async deployIndicesForDomain(domain) {
+
+		const domainDescription = await this.esprovider.describeDomain(domain);
+		const esClient = new elasticsearch.Client({ host: domainDescription.DomainStatus.Endpoint });
+
+		return BBPromise.mapSeries(domain.indices, (index) => this.deployIndex(index, esClient));
+
+	}
+
+	async deployIndex(index, esClient) {
+
+		du.debug('Deploying Index', index);
+
+		if (await esClient.indices.exists({ index: index.index })) {
+
+			return du.debug('Index ' + index.index + ' exists');
+
+		}
+
+		return esClient.indices.create(index);
+
+	}
 
 	getConfigurationJSON(filename) {
 
