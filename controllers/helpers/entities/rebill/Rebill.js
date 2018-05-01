@@ -1,7 +1,6 @@
-
 const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
-
+const moment = require('moment-timezone');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -691,7 +690,9 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 		return this.eventHelperController.pushEvent({
 			event_type: 'rebill',
-			context: Object.assign({}, this.parameters.store, {
+			context: Object.assign({
+				datetime: moment.tz('UTC').toISOString()
+			}, this.parameters.store, {
 				user: global.user
 			})
 

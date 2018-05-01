@@ -118,8 +118,8 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		let session = this.parameters.get('session');
 
 		if (this.sessionHelperController.isComplete({
-				session: session
-			})) {
+			session: session
+		})) {
 			throw eu.getError('bad_request', 'The specified session is already complete.');
 		}
 
@@ -141,13 +141,13 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		return Promise.all(promises).then(promises => {
 
-				this.parameters.set('customer', promises[0]);
-				this.parameters.set('transactions', promises[1]);
-				this.parameters.set('campaign', promises[2]);
+			this.parameters.set('customer', promises[0]);
+			this.parameters.set('transactions', promises[1]);
+			this.parameters.set('campaign', promises[2]);
 
-				return true;
+			return true;
 
-			})
+		})
 			.then(() => this.setTransactionProducts());
 
 	}

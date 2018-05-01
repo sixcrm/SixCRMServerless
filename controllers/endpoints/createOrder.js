@@ -198,13 +198,13 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	setRawCreditCard(){
+	setRawCreditCard() {
 
 		du.debug('Set Raw Credit Card');
 
 		let event = this.parameters.get('event');
 
-		if(_.has(event, 'creditcard')){
+		if (_.has(event, 'creditcard')) {
 
 			if (!_.has(this, 'creditCardHelperController')) {
 				const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
@@ -435,7 +435,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			transactionsubtype: this.parameters.get('transactionsubtype', null, false)
 		};
 
-		if(!_.isNull(raw_creditcard)){
+		if (!_.isNull(raw_creditcard)) {
 			argumentation.creditcard = raw_creditcard;
 		}
 
@@ -502,10 +502,13 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		return Promise.all([
 			this.reversePreviousRebill(),
-			this.pushEvent({ event_type: 'order', context: {
-				session: this.parameters.get('session'),
-				campaign: this.parameters.get('campaign')
-			}}),
+			this.pushEvent({
+				event_type: 'order',
+				context: {
+					session: this.parameters.get('session'),
+					campaign: this.parameters.get('campaign')
+				}
+			}),
 			this.incrementMerchantProviderSummary(),
 			this.updateSessionWithWatermark(),
 			this.addRebillToStateMachine()
