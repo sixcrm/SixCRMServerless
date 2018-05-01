@@ -5,7 +5,7 @@ const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
+const AnalyticsEvent = global.SixCRM.routes.include('helper', 'analytics/analytics-event.js')
 
 module.exports = class CreateLeadController extends transactionEndpointController {
 

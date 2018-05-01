@@ -264,13 +264,6 @@ describe('controllers/workers/recoverBilling', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
-				constructor() {}
-				pushEvent() {
-					return Promise.resolve({});
-				}
-			});
-
 			let message = getValidMessages()[0];
 			const RecoverBillingController = global.SixCRM.routes.include('controllers', 'workers/recoverBilling.js');
 			let recoverBillingController = new RecoverBillingController();

@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const moment = require('moment-timezone');
 const uuid = require('uuid');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
