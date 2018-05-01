@@ -148,12 +148,16 @@ module.exports = class HTTPProvider {
 					body: body
 				};
 
-				if(_.isError(error)){
+				if(error){
+
 					du.error(error);
 					reject(response_object);
-				}
 
-				resolve(response_object);
+				} else {
+
+					resolve(response_object);
+
+				}
 
 			});
 

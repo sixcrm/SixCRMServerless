@@ -103,7 +103,9 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 
 		return this.describeDomain(domain_definition).then((result) => {
 
-			if (result.DomainStatus.Created == true && result.DomainStatus.Processing == false) {
+			// DomainStatus can be Created = true and Processing = false, but that's a lie, it's still not done yet.
+			// We need an endpoint so we can deploy indices and mappings.
+			if (result.DomainStatus.Created == true && result.DomainStatus.Processing == false && result.DomainStatus.Endpoint !== null) {
 				return true;
 			}
 
@@ -127,16 +129,10 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 
 		return httpprovider.getJSON({
 			endpoint: 'https://' + process.env.elasticsearch_endpoint
-		}).then(results => {
-			if (_.has(results, 'body') && _.has(results.body, 'status') && results.body.status == 200) {
-				return {
-					status: 'OK',
-					message: 'Successfully connected.'
-				};
-			}
+		}).then(() => {
 			return {
-				status: 'Error',
-				message: 'Unexpected response from Elasticsearch: ' + JSON.stringify(results)
+				status: 'OK',
+				message: 'Successfully connected.'
 			};
 		}).catch(error => {
 			return Promise.resolve({
