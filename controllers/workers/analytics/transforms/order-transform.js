@@ -5,7 +5,10 @@ module.exports = class OrderTransform extends AnalyticsTransfrom {
 
 	async transform(record) {
 
-		du.debug('OrderTransform.transform()');
+		du.debug('OrderTransform.transform()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		let result = {
 			id: record.context.id,

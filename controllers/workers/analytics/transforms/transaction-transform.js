@@ -7,7 +7,10 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 
 	async transform(record) {
 
-		du.debug('TransactionTransform.transform()', record.event_type);
+		du.debug('TransactionTransform.transform()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		const result = {
 			eventType: record.event_type,

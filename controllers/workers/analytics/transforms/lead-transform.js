@@ -5,7 +5,10 @@ module.exports = class LeadTransform extends AnalyticsTransfrom {
 
 	async transform(record) {
 
-		du.debug('LeadTransform.transform()');
+		du.debug('LeadTransform.transform()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		let result = {
 			id: record.context.id,

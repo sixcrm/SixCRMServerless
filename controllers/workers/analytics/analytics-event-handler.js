@@ -2,6 +2,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayUtilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 const sqsprovider = new SQSProvider();
+const BBPromise = require('bluebird');
 
 module.exports = class AnalyticsEventHandler {
 
@@ -41,7 +42,7 @@ module.exports = class AnalyticsEventHandler {
 
 	async _executeHandlers(records) {
 
-		du.debug('AnalyticsEventHandler._executeHandlers()', records);
+		du.debug('AnalyticsEventHandler._executeHandlers()');
 
 		if (!arrayUtilities.nonEmpty(records)) {
 
@@ -95,7 +96,7 @@ module.exports = class AnalyticsEventHandler {
 
 		});
 
-		return Promise.all(promises).then(() => records);
+		return this._settle(promises).then(() => records);
 
 	}
 
@@ -109,5 +110,42 @@ module.exports = class AnalyticsEventHandler {
 		});
 
 	}
+
+	async _settle(promises) {
+
+		const inspections = await BBPromise.map(promises, (promise) => {
+
+			return BBPromise.resolve(promise).reflect();
+
+		});
+
+		inspections.forEach((i) => {
+
+			if (!i.isFulfilled()) {
+
+				du.debug('Analytics event failed to write', i.reason());
+
+			}
+
+		});
+
+		const ex = inspections.find(
+			(r) => {
+
+				return !r.isFulfilled();
+
+			});
+
+		if (ex) {
+
+			// throw the first exception once all promises have resolved
+			throw ex.reason();
+
+		}
+
+		return inspections.map((i) => i.value());
+
+	}
+
 
 }

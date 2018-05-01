@@ -5,7 +5,10 @@ module.exports = class ChargebackTransform extends AnalyticsTransfrom {
 
 	async transform(record) {
 
-		du.debug('ChargebackTransform.transform()', record.event_type);
+		du.debug('ChargebackTransform.transform()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		return {
 			eventType: record.event_type,
