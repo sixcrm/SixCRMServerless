@@ -149,11 +149,15 @@ module.exports = class HTTPProvider {
 				};
 
 				if(error){
-					du.error(error);
-					reject(response_object);
-				}
 
-				resolve(response_object);
+					du.error(error);
+					return reject(response_object);
+
+				} else {
+
+					resolve(response_object);
+
+				}
 
 			});
 
