@@ -97,9 +97,9 @@ module.exports = class TransactionHelperController {
 		return this.eventHelperController.pushEvent({
 			event_type: eventType,
 			context: Object.assign({
-				id: uuid.v4()
+				id: uuid.v4(),
+				datetime: moment.tz('UTC').toISOString()
 			}, context, {
-				datetime: moment.tz('UTC').toISOString(),
 				user: global.user
 			})
 		});

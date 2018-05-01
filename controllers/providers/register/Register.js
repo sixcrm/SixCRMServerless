@@ -1,5 +1,6 @@
 
 const _ = require('lodash');
+const moment = require('moment-timezone');
 const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -164,6 +165,7 @@ module.exports = class Register extends RegisterUtilities {
 			return this.eventHelperController.pushEvent({
 				event_type: 'transaction_' + transaction.result,
 				context: {
+					datetime: moment.tz('UTC').toISOString(),
 					session: this.parameters.get('parentsession'),
 					transaction,
 					rebill: this.parameters.get('rebill'),

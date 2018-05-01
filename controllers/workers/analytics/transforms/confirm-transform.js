@@ -12,7 +12,7 @@ module.exports = class ConfirmTransform extends AnalyticsTransfrom {
 			id: record.context.id,
 			account: record.context.campaign.account,
 			campaign: record.context.campaign.id,
-			datetime: moment.tz('UTC').toISOString(),
+			datetime: record.context.datetime,
 			eventType: record.event_type
 		};
 
