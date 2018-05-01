@@ -50,7 +50,7 @@ module.exports = class AnalyticsEventHandler {
 
 		}
 
-		const promises = records.map((r) => {
+		const promises = records.map(async (r) => {
 
 			const message = JSON.parse(r.Body);
 

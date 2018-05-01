@@ -1,11 +1,10 @@
 {
 	"messages": [{
-		"user": "system@sixcrm.com",
-		"account": "*",
 		"event_type": "activity_created",
-		"datetime": "2018-04-03T23:58:42.895Z",
 		"context": {
 			"id": "1ef02cd1-1cad-46bf-9b05-2da7b437b497",
+			"user": "system@sixcrm.com",
+			"account": "*",
 			"actor": "system",
 			"actor_type": "system",
 			"action": "created",

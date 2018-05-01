@@ -58,14 +58,12 @@ module.exports = class ActivityHelper {
 			let associated_with = promises[2];
 
 			let account = this.getActivityAccount(acted_upon);
-			let now = timestamp.getISO8601();
 
 			let activity = {
 				id: uuidV4(),
 				actor: actor.id,
 				actor_type: actor.type,
-				action,
-				datetime: now
+				action
 			};
 
 			if (!_.isNull(account)) {
