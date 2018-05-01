@@ -1,6 +1,6 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const AnalyticsEvent = global.SixCRM.routes.include('helper', 'analytics/analytics-event.js')
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');

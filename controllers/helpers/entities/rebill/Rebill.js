@@ -6,7 +6,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
-const AnalyticsEvent = global.SixCRM.routes.include('helper', 'analytics/analytics-event.js')
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class RebillHelper extends RebillHelperUtilities {
 

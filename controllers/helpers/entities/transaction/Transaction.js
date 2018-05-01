@@ -4,7 +4,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
-const AnalyticsEvent = global.SixCRM.routes.include('helper', 'analytics/analytics-event.js')
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 
 module.exports = class TransactionHelperController {
