@@ -27,9 +27,6 @@ module.exports.graphObj = new GraphQLObjectType({
 		role: {
 			type: new GraphQLNonNull(GraphQLString)
 		},
-		timestamp: {
-			type: new GraphQLNonNull(GraphQLString)
-		},
 		signature: {
 			type: new GraphQLNonNull(GraphQLString)
 		}

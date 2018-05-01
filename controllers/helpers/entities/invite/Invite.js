@@ -137,8 +137,8 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Create Invite Signature');
 
-		if(_.has(invite, 'hash') && _.has(invite, 'timestamp')){
-			const prehash = invite.hash+invite.timestamp;
+		if(_.has(invite, 'hash') && _.has(invite, 'created_at')){
+			const prehash = invite.hash+invite.created_at;
 			return signatureutilities.createSignature(prehash, this.invite_salt);
 		}
 
