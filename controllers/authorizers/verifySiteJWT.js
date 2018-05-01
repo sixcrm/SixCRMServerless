@@ -2,8 +2,10 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
 const UserSigningStringController = global.SixCRM.routes.include('controllers', 'entities/UserSigningString.js');
+const UserController = global.SixCRM.routes.include('entities', 'User.js');
 
 module.exports = class verifySiteJWTController {
 
@@ -153,6 +155,25 @@ module.exports = class verifySiteJWTController {
 
 	}
 
+	updateUser(){
+
+		du.debug('Update User');
+
+		let decoded_token = this.parameters.get('decoded_authorization_token');
+
+		if(_.has(decoded_token, 'sub') && stringutilities.nonEmpty(decoded_token.sub)){
+			let userController = new UserController();
+			userController.disableACLs();
+			return userController.updateProperties({id: decoded_token.email, properties: {auth0_id: decoded_token.sub}}).then(result => {
+				userController.enableACLs();
+				return result;
+			});
+		}
+
+		return false;
+
+	}
+
 	respond() {
 
 		du.debug('Respond');
@@ -160,6 +181,8 @@ module.exports = class verifySiteJWTController {
 		let verified_token = this.parameters.get('verified_authorization_token', null, false);
 
 		if (!_.isNull(verified_token)) {
+
+			this.updateUser();
 
 			return this.parameters.get('decoded_authorization_token').email;
 

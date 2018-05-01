@@ -2,7 +2,7 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const signatureutilities = global.SixCRM.routes.include('lib', 'signature.js');
-const jwtutilities = global.SixCRM.routes.include('lib', 'jwt-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const InviteUtilities = global.SixCRM.routes.include('helpers', 'entities/invite/InviteUtilities.js');
 
@@ -105,7 +105,8 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 		this.parameters.set('invite', invite)
 
 		await this._updatePendingACL(invite.acl);
-		const user = await this._assureUser(invite.email);
+		const user = await this._assureUser(invite);
+
 		await this._removeInvite(invite);
 		await this._postAccept();
 
@@ -122,14 +123,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 		this.inviteController.enableACLs();
 
 		return true;
-
-	}
-
-	_createSiteJWT(user){
-
-		du.debug('Create Site JWT');
-
-		return jwtutilities.createSiteJWT(user);
 
 	}
 
@@ -299,28 +292,33 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	async _assureUser(email){
+	async _assureUser(invite){
 
 		du.debug('Assure User');
 
-		let new_user = false;
-
 		this.userController.disableACLs();
-		let user = await this.userController.get({id: email});
+		let user = await this.userController.get({id: invite.email});
 		this.userController.enableACLs();
 
-		if(!_.isNull(user)){
-
-			new_user = true;
-
-			this.userController.disableACLs();
-			user = await this.userController.assureUser(email);
-			this.userController.enableACLs();
-
+		if(_.isNull(user)){
+			throw eu.getError('server', 'The user associated with this invite does not exist.');
 		}
 
-		user.is_new = new_user;
+		user.is_new = await _.isNewUser(user);
+
 		return user;
+
+	}
+
+	async _isNewUser(user){
+
+		du.debug('Is New User');
+
+		if(_.has(user, 'auth0_id') && _.isString(user.auth0_id) && stringutilities.nonEmpty(user.auth0_id)){
+			return false;
+		}
+
+		return true;
 
 	}
 

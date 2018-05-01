@@ -26,7 +26,7 @@ function getDecodedToken(){
 		email_verified: true,
 		picture: '',
 		iss: 'https://sixcrm.auth0.com/',
-		sub: '',
+		sub: 'google-oauth2|115021313586107803836',
 		aud: '',
 		exp: 1509339744,
 		iat: 1509336144
@@ -291,6 +291,32 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
 			let valid_event = getValidEvent();
 
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSigningString.js'), class {
+				listByUser() {
+					return Promise.resolve({usersigningstrings: getValidUserSigningStrings()});
+				}
+				disableACLs(){}
+				enableACLs(){}
+				getResult(result, field) {
+
+					du.debug('Get Result');
+
+					return Promise.resolve(result[field]);
+
+				}
+
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+				updateProperties({id, properties}) {
+					expect(id).to.be.a('string');
+					expect(properties).to.be.a('object');
+					return Promise.resolve(true);
+				}
+				disableACLs(){}
+				enableACLs(){}
+			});
+
 			let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
 			const verifySiteJWTController = new VerifySiteJWTController();
 
@@ -348,6 +374,18 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 			let valid_token = getValidAuthorizationToken(getValidUser());
 
 			let decoded_token = getDecodedToken();
+
+			du.info(decoded_token);
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+				updateProperties({id, properties}) {
+					expect(id).to.be.a('string');
+					expect(properties).to.be.a('object');
+					return Promise.resolve(true);
+				}
+				disableACLs(){}
+				enableACLs(){}
+			});
 
 			let VerifySiteJWTController = global.SixCRM.routes.include('authorizers', 'verifySiteJWT.js');
 			const verifySiteJWTController = new VerifySiteJWTController();
