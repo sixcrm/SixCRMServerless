@@ -505,8 +505,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.pushEvent({
 				event_type: 'order',
 				context: {
-					session: this.parameters.get('session'),
-					campaign: this.parameters.get('campaign')
+					session: this.parameters.get('session', null, false),
+					campaign: this.parameters.get('campaign', null, false)
 				}
 			}),
 			this.incrementMerchantProviderSummary(),

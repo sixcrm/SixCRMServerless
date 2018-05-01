@@ -208,8 +208,8 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		return this.pushEvent({
 			event_type: 'confirm',
 			context: {
-				session: this.parameters.get('session'),
-				campaign: this.parameters.get('campaign')
+				session: this.parameters.get('session', null, false),
+				campaign: this.parameters.get('campaign', null, false)
 			}
 		});
 

@@ -216,9 +216,9 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 		return this.pushEvent({
 			event_type: 'lead',
 			context: {
-				sessions: this.parameters.get('sessions'),
-				campaign: this.parameters.get('campaign'),
-				affiliates: this.parameters.get('affiliates')
+				sessions: this.parameters.get('sessions', null, false),
+				campaign: this.parameters.get('campaign', null, false),
+				affiliates: this.parameters.get('affiliates', null, false)
 			}
 		})
 
