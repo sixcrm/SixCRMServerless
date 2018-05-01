@@ -670,9 +670,17 @@ workflows:
             - build
             - unit_tests
             - lint
+      - backup_datastore:
+          requires:
+            - pre_deploy
+          filters:
+            branches:
+              ignore:
+                - development
       - deploy_vpc:
           requires:
             - pre_deploy
+            - backup_datastore
       - deploy_security_groups:
           requires:
             - deploy_vpc
@@ -715,13 +723,6 @@ workflows:
       - deploy_elasticache:
           requires:
             - deploy_route_tables
-      - backup_datastore:
-          requires:
-            - pre_deploy
-          filters:
-            branches:
-              ignore:
-                - development
       - deploy_iam:
           requires:
             - deploy_elasticache

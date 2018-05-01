@@ -8,6 +8,7 @@ const AccountController = global.SixCRM.routes.include('controllers', 'entities/
 const accountController = new AccountController();
 
 let userACLType = require('../useracl/userACLType');
+let accountBillingType = require('./accountBillingType');
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Account',
@@ -20,6 +21,10 @@ module.exports.graphObj = new GraphQLObjectType({
 		name: {
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'The name of the account.',
+		},
+		billing: {
+			type: accountBillingType.graphObj,
+			description: "Account billing properties"
 		},
 		active: {
 			type: new GraphQLNonNull(GraphQLBoolean),
