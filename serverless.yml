@@ -27,6 +27,8 @@ provider:
   account: ${file(./config/${opt:stage}/site.yml):aws.account}
   role: arn:aws:iam::${self:provider.account}:role/sixcrm_lambda_role
   tracing: true
+  deploymentBucket:
+    serverSideEncryption: AES256
   environment:
     stage: ${opt:stage, self:provider.stage}
     #Technical Debt:  Are these necessary here?
