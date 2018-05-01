@@ -1,0 +1,53 @@
+{
+	"domains": [
+		{
+			"DomainName": "sixcrm-logs",
+			"indices": [
+				{
+					"index": "cloudwatch-logs",
+					"body": {
+						"mappings": {
+							"_doc": {
+								"properties": {
+									"id": { "type": "keyword" },
+									"owner": { "type": "text" },
+									"log_group": { "type": "text" },
+									"log_stream": { "type": "text" },
+									"message": {
+										"type": "text",
+										"store": true
+									},
+									"timestamp": {
+										"type": "date",
+										"format": "date_time",
+										"store": true
+									},
+									"level": {
+										"type": "keyword",
+										"store": true
+									},
+									"error_code": {
+										"type": "integer",
+										"store": true
+									},
+									"class": {
+										"type": "keyword",
+										"store": true
+									},
+									"method": {
+										"type": "keyword",
+										"store": true
+									},
+									"context": {
+										"type": "object",
+										"enabled": false
+									}
+								}
+							}
+						}
+					}
+				}
+			]
+		}
+	]
+}

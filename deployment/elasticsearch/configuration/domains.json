@@ -1,9 +1,10 @@
 [
   {
-    "DomainName": "sixcrm-logs",
+		"DomainName": "sixcrm-logs",
+		"ElasticsearchVersion": "6.2",
     "ElasticsearchClusterConfig": {
       "InstanceCount": 1,
-      "InstanceType": "m3.medium.elasticsearch"
+      "InstanceType": "m3.large.elasticsearch"
     },
     "AccessPolicies":{
       "Version": "2012-10-17",
@@ -21,9 +22,10 @@
   },
   {
     "DomainName": "sixcrm-dynamoaudit",
+		"ElasticsearchVersion": "6.2",
     "ElasticsearchClusterConfig": {
       "InstanceCount": 1,
-      "InstanceType": "m3.medium.elasticsearch"
+      "InstanceType": "m3.large.elasticsearch"
     },
     "AccessPolicies":{
       "Version": "2012-10-17",
