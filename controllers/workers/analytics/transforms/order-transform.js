@@ -37,20 +37,6 @@ module.exports = class OrderTransform extends AnalyticsTransfrom {
 
 		}
 
-		if (record.context.affiliates) {
-
-			result = Object.assign({}, result, {
-				cid: record.context.affiliates.cid,
-				affiliate: record.context.affiliates.affiliate,
-				subaffiliate1: record.context.affiliates.subaffiliate_1,
-				subaffiliate2: record.context.affiliates.subaffiliate_2,
-				subaffiliate3: record.context.affiliates.subaffiliate_3,
-				subaffiliate4: record.context.affiliates.subaffiliate_4,
-				subaffiliate5: record.context.affiliates.subaffiliate_5
-			})
-
-		}
-
 		return result;
 
 	}

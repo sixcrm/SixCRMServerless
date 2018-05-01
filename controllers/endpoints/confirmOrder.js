@@ -65,8 +65,6 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		this.sessionController = new SessionController();
 
-		this.event_type = 'confirm';
-
 		this.initialize();
 
 	}
@@ -205,7 +203,10 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		du.debug('Post Processing');
 
-		return this.pushEvent();
+		return this.pushEvent({ event_type: 'confirm', context: {
+			session: this.parameters.get('session'),
+			campaign: this.parameters.get('campaign')
+		}});
 
 	}
 
