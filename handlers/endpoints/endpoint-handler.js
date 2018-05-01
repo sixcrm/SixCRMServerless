@@ -5,6 +5,8 @@ module.exports = class EndpointHandler extends LambdaHandler {
 
 	async handleInternal(event, lambdaContext, lambdaCallback, handlerDelegate) {
 
+		global.SixCRM.configuration.event = event;
+
 		try {
 
 			const response = await handlerDelegate(event);

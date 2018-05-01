@@ -252,6 +252,7 @@ module.exports = class UserHelperController{
 
 		return this.setIntrospectionUser(user, fatal)
 			.then((user) => this.rectifyUserTermsAndConditions(user))
+			.then((user) => this.rectifyAuth0Id(user))
 			.then((user) => this.applyUserSettings(user))
 			.then((user) => {
 
@@ -261,6 +262,44 @@ module.exports = class UserHelperController{
 			});
 
 	}
+
+	async rectifyAuth0Id(user){
+
+		du.debug('Rectify Auth0 ID');
+
+		if(!_.has(user, 'auth0_id') || !stringutilities.nonEmpty(user.auth0_id)){
+
+			let auth0_id = this.getAuth0IdFromRequest();
+
+			if(!_.isNull(auth0_id)){
+
+				if(!_.has(this, 'userController')){
+					const UserController = global.SixCRM.routes.include('entities', 'User.js');
+					this.userController = new UserController();
+				}
+
+				this.userController.disableACLs();
+				await this.userController.updateProperties({id: user.id, properties:{auth0_id: auth0_id}});
+				this.userController.disableACLs();
+
+			}
+
+		}
+
+		return user;
+
+	}
+
+	getAuth0IdFromRequest(){
+
+		du.debug('Get Auth0 ID From Request');
+
+		du.warning('event: ', global.SixCRM.configuration.event);
+
+		return null;
+
+	}
+
 
 	setIntrospectionUser(user, fatal){
 
