@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const uuid = require('uuid');
+const moment = require('moment-timezone');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -98,6 +99,7 @@ module.exports = class TransactionHelperController {
 			context: Object.assign({
 				id: uuid.v4()
 			}, context, {
+				datetime: moment.tz('UTC').toISOString(),
 				user: global.user
 			})
 		});
