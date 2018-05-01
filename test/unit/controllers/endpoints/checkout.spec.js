@@ -650,8 +650,6 @@ describe('checkout', function () {
 
 			checkoutController.parameters.set('confirmation', confirmation);
 
-			return checkoutController.postProcessing();
-
 		});
 
 	});
