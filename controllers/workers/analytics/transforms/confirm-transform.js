@@ -5,7 +5,10 @@ module.exports = class ConfirmTransform extends AnalyticsTransfrom {
 
 	async transform(record) {
 
-		du.debug('ConfirmTransform.transform()');
+		du.debug('ConfirmTransform.transform()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		let result = {
 			id: record.context.id,

@@ -5,7 +5,10 @@ module.exports = class ClickTransform extends AnalyticsTransfrom {
 
 	async transform(record) {
 
-		du.debug('ClickTransform.transform()');
+		du.debug('ClickTransform.transform()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		let result = {
 			id: record.context.id,

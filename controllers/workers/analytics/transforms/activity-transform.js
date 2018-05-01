@@ -5,7 +5,10 @@ module.exports = class ActivityTransform extends AnalyticsTransfrom {
 
 	async transform(record) {
 
-		du.debug('ActivityTransform.transform()');
+		du.debug('ActivityTransform.transform()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		return {
 			id: record.context.id,

@@ -7,7 +7,10 @@ module.exports = class AnalyticsEvent {
 
 	static push(eventType, context) {
 
-		du.debug('AnalyticsEvent.push()', eventType);
+		du.debug('AnalyticsEvent.push()', eventType, require('util').inspect(context, {
+			showHidden: false,
+			depth: null
+		}));
 
 		const message = {
 			event_type: eventType,

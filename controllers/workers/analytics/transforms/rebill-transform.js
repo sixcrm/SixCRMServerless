@@ -5,7 +5,10 @@ module.exports = class RebillTransform extends AnalyticsTransfrom {
 
 	async transform(record) {
 
-		du.debug('RebillTransform.transform()');
+		du.debug('RebillTransform.transform()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		return {
 			id: record.context.transformedrebill.id,
