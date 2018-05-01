@@ -166,9 +166,9 @@ module.exports = class Register extends RegisterUtilities {
 				event_type: 'transaction_' + transaction.result,
 				context: {
 					datetime: moment.tz('UTC').toISOString(),
-					session: this.parameters.get('parentsession'),
+					session: this.parameters.get('parentsession', null, false),
 					transaction,
-					rebill: this.parameters.get('rebill'),
+					rebill: this.parameters.get('rebill', null, false),
 					transactionSubType: this.parameters.get('transactionsubtype', null, false),
 					transactionType: this.parameters.get('transactiontype', null, false)}
 			});
