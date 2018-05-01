@@ -1,5 +1,5 @@
 {
-	"QueueName": "analytics",
+	"QueueName": "analytics-write",
 	"Attributes": {
 		"FifoQueue": "true",
 		"ContentBasedDeduplication": "true",
