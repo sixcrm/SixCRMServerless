@@ -1,6 +1,5 @@
 const AnalyticsTransfrom = require('../analytics-transform');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const moment = require('moment-timezone');
 
 module.exports = class ConfirmTransform extends AnalyticsTransfrom {
 

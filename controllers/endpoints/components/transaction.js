@@ -180,7 +180,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 			event_type: event_type,
 			context: Object.assign({
 				id: uuid.v4(),
-				datetime: moment.tz('UTC').toISOString(),
+				datetime: moment.tz('UTC').toISOString()
 			}, context, {
 				user: global.user
 			})
