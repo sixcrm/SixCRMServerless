@@ -4,6 +4,7 @@ const jwtprovider = new JWTProvider();
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class AcquireTokenController extends transactionEndpointController {
 
@@ -99,17 +100,15 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 
 	}
 
-	postProcessing() {
+	async postProcessing() {
 
 		du.debug('Post Processing');
 
-		return this.handleAffiliateInformation().then(() => this.pushEvent({
-			event_type: 'click',
-			context: {
-				affiliates: this.parameters.get('affiliates', null, false),
-				campaign: this.parameters.get('campaign', null, false)
-			}
-		}));
+		await this.handleAffiliateInformation();
+		await AnalyticsEvent.push('click', {
+			affiliates: this.parameters.get('affiliates', null, false),
+			campaign: this.parameters.get('campaign', null, false)
+		});
 
 	}
 

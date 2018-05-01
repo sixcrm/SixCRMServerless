@@ -8,6 +8,7 @@ const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class RebillHelper extends RebillHelperUtilities {
 
@@ -651,13 +652,13 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 	}
 
-	pushRebillStateChangeEvent() {
+	async pushRebillStateChangeEvent() {
 
 		du.debug('Pushing Rebill State Change Event');
 
-		return this.transformRebill()
-			.then(() => this.pushEvent())
-			.then(() => this.parameters.get('rebill'))
+		await this.transformRebill();
+		await AnalyticsEvent.push('rebill', this.parameters.get('transformedrebill', null, false));
+		return this.parameters.get('rebill');
 
 	}
 
@@ -681,28 +682,6 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		this.parameters.set('transformedrebill', transformedRebill);
 
 		return Promise.resolve();
-	}
-
-	pushEvent() {
-
-		du.debug('Pushing Rebill State Change');
-
-		if (!this.eventHelperController) {
-
-			this.eventHelperController = new EventHelperController();
-
-		}
-
-		return this.eventHelperController.pushEvent({
-			event_type: 'rebill',
-			context: Object.assign({
-				datetime: moment.tz('UTC').toISOString()
-			}, this.parameters.get('transformedrebill', null, false), {
-				user: global.user
-			})
-
-		});
-
 	}
 
 	assureProductScheduleHelperController() {

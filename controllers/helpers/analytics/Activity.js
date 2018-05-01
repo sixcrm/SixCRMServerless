@@ -3,6 +3,7 @@ const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
 
 module.exports = class ActivityHelper {
 
@@ -82,10 +83,7 @@ module.exports = class ActivityHelper {
 				activity['associated_with_type'] = associated_with.type;
 			}
 
-			return this._eventHelperController.pushEvent({
-				event_type: `activity_${action}`,
-				context: activity
-			});
+			return AnalyticsEvent.push(`activity_${action}`, activity);
 
 		});
 
