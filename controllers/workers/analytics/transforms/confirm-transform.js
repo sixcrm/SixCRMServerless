@@ -37,20 +37,6 @@ module.exports = class ConfirmTransform extends AnalyticsTransfrom {
 
 		}
 
-		if (record.context.event.affiliates) {
-
-			result = Object.assign({}, result, {
-				cid: record.context.event.affiliates.cid,
-				affiliate: record.context.event.affiliates.affiliate,
-				subAffiliate1: record.context.event.affiliates.subaffiliate_1,
-				subAffiliate2: record.context.event.affiliates.subaffiliate_2,
-				subAffiliate3: record.context.event.affiliates.subaffiliate_3,
-				subAffiliate4: record.context.event.affiliates.subaffiliate_4,
-				subAffiliate5: record.context.event.affiliates.subaffiliate_5
-			})
-
-		}
-
 		return result;
 
 	}
