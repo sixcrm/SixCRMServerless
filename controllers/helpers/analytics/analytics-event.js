@@ -21,7 +21,8 @@ module.exports = class AnalyticsEvent {
 
 		return (new SQSProvider()).sendMessage({
 			message_body: JSON.stringify(message),
-			queue: 'analytics.fifo'
+			queue: 'analytics.fifo',
+			messageGroupId: 'analytics'
 		});
 
 	}
