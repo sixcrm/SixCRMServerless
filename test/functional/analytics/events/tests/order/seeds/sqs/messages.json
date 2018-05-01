@@ -3,6 +3,7 @@
 			"event_type": "order",
 			"context": {
 				"id": "11111111-1111-1111-1111-111111111111",
+				"datetime": "2018-03-26T13:15:22.175Z",
 				"session": {
 					"id": "e427af34-0356-4b9d-9c2e-17f7914d21ae",
 					"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
@@ -847,8 +848,7 @@
 					"affiliate_deny": ["5722e166-8fbc-4746-aa9a-afb6c4d3ac2d"],
 					"created_at": "2018-03-26T13:15:36.499Z",
 					"updated_at": "2018-03-26T13:15:36.499Z"
-				},
-				"result": "success"
+				}
 			}
 		}]
 }

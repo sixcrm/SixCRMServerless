@@ -692,7 +692,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 			event_type: 'rebill',
 			context: Object.assign({
 				datetime: moment.tz('UTC').toISOString()
-			}, this.parameters.store, {
+			}, this.parameters.get('transformedrebill'), {
 				user: global.user
 			})
 
