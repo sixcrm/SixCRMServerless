@@ -753,6 +753,7 @@ workflows:
             - deploy_iam
       - deploy_sns:
           requires:
+            - deploy_sqs
             - deploy_serverless
             - deploy_iam
       - deploy_logsubscription:
