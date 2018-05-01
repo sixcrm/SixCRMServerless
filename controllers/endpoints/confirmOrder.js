@@ -1,6 +1,6 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
@@ -205,13 +205,11 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		du.debug('Post Processing');
 
-		return this.pushEvent({
-			event_type: 'confirm',
-			context: {
+		return AnalyticsEvent.push('confirm',
+			{
 				session: this.parameters.get('session', null, false),
 				campaign: this.parameters.get('campaign', null, false)
-			}
-		});
+			});
 
 	}
 

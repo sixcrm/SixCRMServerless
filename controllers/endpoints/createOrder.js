@@ -4,6 +4,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class CreateOrderController extends transactionEndpointController {
 
@@ -505,12 +506,9 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		return Promise.all([
 			this.reversePreviousRebill(),
-			this.pushEvent({
-				event_type: 'order',
-				context: {
-					session: this.parameters.get('session', null, false),
-					campaign: this.parameters.get('campaign', null, false)
-				}
+			AnalyticsEvent.push('order', {
+				session: this.parameters.get('session', null, false),
+				campaign: this.parameters.get('campaign', null, false)
 			}),
 			this.incrementMerchantProviderSummary(),
 			this.updateSessionWithWatermark(),

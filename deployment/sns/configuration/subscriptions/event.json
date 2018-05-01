@@ -64,11 +64,6 @@
           }
         }
       ]
-    },
-    {
-      "Protocol": "sqs",
-      "TopicArn": "arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
-      "Endpoint": "analytics.fifo"
     }
   ]
 }

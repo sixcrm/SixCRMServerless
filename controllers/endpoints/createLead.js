@@ -5,6 +5,7 @@ const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class CreateLeadController extends transactionEndpointController {
 
@@ -213,14 +214,11 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 		du.debug('Post Processing');
 
-		return this.pushEvent({
-			event_type: 'lead',
-			context: {
-				sessions: this.parameters.get('sessions', null, false),
-				campaign: this.parameters.get('campaign', null, false),
-				affiliates: this.parameters.get('affiliates', null, false)
-			}
-		})
+		return AnalyticsEvent.push('lead', {
+			sessions: this.parameters.get('sessions', null, false),
+			campaign: this.parameters.get('campaign', null, false),
+			affiliates: this.parameters.get('affiliates', null, false)
+		});
 
 	}
 
