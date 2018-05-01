@@ -41,7 +41,7 @@ module.exports = class AnalyticsEventHandler {
 
 	async _executeHandlers(records) {
 
-		du.debug('AnalyticsEventHandler._executeHandlers()');
+		du.debug('AnalyticsEventHandler._executeHandlers()', records);
 
 		if (!arrayUtilities.nonEmpty(records)) {
 
