@@ -66,19 +66,9 @@ functions:
 
   verifytransactionjwt:
     handler: handlers/authorizers/handlers.verifytransactionjwt
-    environment:
-      #Technical Debt:  These don't need to be defined here.
-      transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
-      transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
-      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
 
   verifysitejwt:
     handler: handlers/authorizers/handlers.verifysitejwt
-    environment:
-      #Technical Debt:  These don't need to be defined here.
-      site_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.site.secret_key}
-      site_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.site.expiration}
-      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
 
 ########################
 # Graph Endpoint
@@ -97,10 +87,6 @@ functions:
             name: verifysitejwt
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
-    environment:
-      #Technical Debt:  These don't need to be defined here.
-      usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
-      cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
 
   publicgraph:
     handler: handlers/endpoints/handlers.publicgraph
@@ -111,10 +97,6 @@ functions:
           cors:
             origin: '*'
             maxAge: 86400
-    environment:
-      #Technical Debt:  These don't need to be defined here.
-      usecache: ${file(./config/${opt:stage}/site.yml):cache.usecache}
-      cachebuster: ${file(./config/${opt:stage}/site.yml):cache.cachebuster}
 
 
 ########################
@@ -271,11 +253,6 @@ functions:
             name: verifysignature
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
-    environment:
-      #Technical Debt:  These don't need to be defined here.
-      jwt_issuer: ${file(./config/${opt:stage}/site.yml):jwt.issuer}
-      transaction_jwt_expiration: ${file(./config/${opt:stage}/site.yml):jwt.transaction.expiration}
-      transaction_jwt_secret_key: ${file(./config/${opt:stage}/site.yml):jwt.transaction.secret_key}
 
   createlead:
     handler: handlers/endpoints/handlers.createlead

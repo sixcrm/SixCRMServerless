@@ -3,6 +3,7 @@ const crypto = require('crypto');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
 
 module.exports = class cacheController {
@@ -145,8 +146,8 @@ module.exports = class cacheController {
 
 		du.debug('Append Cachebuster');
 
-		if (_.has(process.env, 'cachebuster')) {
-			prehash = prehash + '-' + process.env.cachebuster;
+		if (objectutilities.hasRecursive(global, 'SixCRM.configuration.site_config.cache.cachebuster')){
+			prehash = prehash + '-' + global.SixCRM.configuration.site_config.cache.cachebuster;
 		}
 
 		return prehash;
@@ -171,7 +172,7 @@ module.exports = class cacheController {
 
 		du.debug('Cache Active');
 
-		if (_.has(process.env, 'usecache') && parseInt(process.env.usecache) > 0) {
+		if (objectutilities.hasRecursive(global.SixCRM, 'configuration.site_config.cache.usecache') && parseInt(global.SixCRM.configuration.site_config.cache.usecache) > 0) {
 
 			du.warning('Cache Active');
 

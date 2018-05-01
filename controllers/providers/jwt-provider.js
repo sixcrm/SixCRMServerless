@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
@@ -93,19 +94,23 @@ module.exports = class JWTProvider {
 
 	setParameters() {
 
-		let parameters = ['jwt_issuer', 'transaction_jwt_expiration', 'transaction_jwt_secret_key', 'site_jwt_expiration', 'site_jwt_secret_key'];
+		du.debug('Set Parameters');
 
-		if (_.isUndefined(this.jwt_parameters)) {
-			this.jwt_parameters = {};
-		}
+		let parameters = {
+			jwt_issuer: global.SixCRM.configuration.site_config.jwt.issuer,
+			transaction_jwt_expiration: global.SixCRM.configuration.site_config.jwt.transaction.expiration,
+			transaction_jwt_secret_key: global.SixCRM.configuration.site_config.jwt.transaction.secret_key,
+			site_jwt_expiration: global.SixCRM.configuration.site_config.jwt.site.expiration,
+			site_jwt_secret_key: global.SixCRM.configuration.site_config.jwt.site.secret_key
+		};
 
-		parameters.forEach((parameter) => {
+		this.jwt_parameters = {};
 
-			if (_.has(process.env, parameter)) {
+		objectutilities.map(parameters, (key) => {
+			const value = parameters[key];
 
-
-				this.jwt_parameters[parameter] = process.env[parameter];
-
+			if(!_.isNull(value) || _.isUndefined(value)){
+				this.jwt_parameters[key] = value;
 			}
 
 		});
