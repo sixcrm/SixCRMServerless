@@ -16,7 +16,7 @@ const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js
 const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
 const MerchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
 const TransactionsController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
-const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
+const AnalyticsEvent = global.SixCRM.routes.include('helper', 'analytics/analytics-event.js')
 
 module.exports = class Register extends RegisterUtilities {
 

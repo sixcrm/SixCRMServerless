@@ -268,13 +268,6 @@ describe('createLead', function () {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-				constructor(){}
-				pushEvent(){
-					return Promise.resolve(true);
-				}
-			});
-
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
 				assureSession() {
 					return Promise.resolve(session);
@@ -354,13 +347,6 @@ describe('createLead', function () {
 			};
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
-
-			mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-				constructor(){}
-				pushEvent(){
-					return Promise.resolve(true);
-				}
-			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
 				assureSession() {
@@ -678,13 +664,6 @@ describe('createLead', function () {
 			let session = getValidSession();
 			let event = getValidEventBody();
 
-			mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-				constructor(){}
-				pushEvent(){
-					return Promise.resolve(true);
-				}
-			});
-
 			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
@@ -742,13 +721,6 @@ describe('createLead', function () {
 			};
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
-
-			mockery.registerMock(global.SixCRM.routes.path('helpers','events/Event.js'), class {
-				constructor(){}
-				pushEvent(){
-					return Promise.resolve(true);
-				}
-			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
 				assureSession() {
