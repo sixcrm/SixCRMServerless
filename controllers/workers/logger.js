@@ -73,7 +73,7 @@ module.exports = class LoggerController {
 
 		arrayutilities.map(data.logEvents, (logEvent) => {
 
-			let indexName = ['cwl-' + timestamp.convertToFormat(logEvent.timestamp, 'YYYY.MM.DD')]
+			let indexName = global.SixCRM.configuration.elasticsearch.index_name;
 
 			let source = this.buildSource(logEvent.message, logEvent.extractedFields);
 			source['@id'] = logEvent.id;
