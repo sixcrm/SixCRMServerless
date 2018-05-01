@@ -216,5 +216,36 @@
 		},
 		"created_at":"2018-04-28T14:40:00.000Z",
 		"updated_at":"2018-04-28T14:40:00.000Z"
+	},
+	{
+	  "accepted_payment_methods": [
+	    "American Express",
+	    "Mastercard",
+	    "Visa"
+	  ],
+	  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	  "allow_prepaid": true,
+	  "created_at": "2018-05-01T20:45:19.285Z",
+	  "customer_service": {},
+	  "enabled": true,
+	  "gateway": {
+	    "api_key": "567ca7b3d16cdb0da441348d2b1927acbf5be319461dcbd63a2159c62682bf25aa69cbcbe8e94c93266b588e6cc05ed5",
+	    "name": "Stripe",
+	    "type": "Stripe"
+	  },
+	  "id": "8d8f56ef-424f-4db9-9e38-36e1ad78812d",
+	  "name": "Six Accounting Stripe",
+	  "processing": {
+	    "discount_rate": 0,
+	    "maximum_chargeback_ratio": 0,
+	    "monthly_cap": null,
+	    "reserve_rate": 0,
+	    "transaction_counts": {},
+	    "transaction_fee": 0
+	  },
+	  "processor": {
+	    "name": "NMA"
+	  },
+	  "updated_at": "2018-05-01T20:45:19.285Z"
 	}
 ]

@@ -3,7 +3,6 @@
     "name": "Test Account 1",
     "billing":{
       "plan":"free",
-      "session":null,
       "disabled":false
     },
     "active":true,
@@ -16,7 +15,6 @@
     "name": "Test Account 2",
     "billing":{
       "plan":"free",
-      "session":null,
       "disabled":false
     },
     "active":true,
@@ -28,7 +26,6 @@
     "name": "Master Account",
     "billing":{
       "plan":"free",
-      "session":null,
       "disabled":false
     },
     "active":true,
@@ -53,7 +50,6 @@
     "name": "Six Integration Account",
     "billing":{
       "plan":"free",
-      "session":"",
       "disabled":false
     },
     "active":true,
@@ -66,6 +62,17 @@
     "billing":{
       "plan":"premium",
       "session":"071f14b4-9bba-4074-86ca-aeff31a61d79",
+      "disabled":true
+    },
+    "active":true,
+    "created_at":"2017-04-06T18:40:41.405Z",
+    "updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+    "id":"3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+    "name": "Six Accounting",
+    "billing":{
+      "plan":"free",
       "disabled":true
     },
     "active":true,

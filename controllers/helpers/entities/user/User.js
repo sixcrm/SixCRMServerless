@@ -13,6 +13,8 @@ module.exports = class UserHelperController{
 
 	constructor(){
 
+		du.warning('event: ', global.SixCRM.configuration.event);
+
 	}
 
 	appendAlias(user){
@@ -293,8 +295,6 @@ module.exports = class UserHelperController{
 	getAuth0IdFromRequest(){
 
 		du.debug('Get Auth0 ID From Request');
-
-		du.warning('event: ', global.SixCRM.configuration.event);
 
 		return null;
 

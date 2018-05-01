@@ -156,5 +156,50 @@
 		"merchantprovidergroup": "90f3858e-5566-4a60-9977-292ae4f75632",
 		"created_at":"2018-04-28T14:40:00.000Z",
 		"updated_at":"2018-04-28T14:40:00.000Z"
+	},
+	{
+	  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	  "attributes": {
+	    "images": []
+	  },
+	  "created_at": "2018-05-01T20:23:13.636Z",
+	  "default_price": 150,
+	  "description": "$150 per month, $0.06 per transaction, unlimited campaigns",
+	  "id": "89c38a3b-dbee-4429-8627-cfe300f3c519",
+	  "name": "Professional",
+	  "ship": false,
+	  "shipping_delay": 0,
+	  "sku": "professional",
+	  "updated_at": "2018-05-01T20:23:13.636Z"
+	},
+	{
+	  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	  "attributes": {
+	    "images": []
+	  },
+	  "created_at": "2018-05-01T20:24:13.653Z",
+	  "default_price": 2000,
+	  "description": "$2,000.00 per month, unlimited transactions, unlimited campaigns.",
+	  "id": "96ef7ffd-0ee3-4436-9782-0d1a6f4f81f0",
+	  "name": "Premium",
+	  "ship": false,
+	  "shipping_delay": 0,
+	  "sku": "premium",
+	  "updated_at": "2018-05-01T20:24:13.653Z"
+	},
+	{
+	  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	  "attributes": {
+	    "images": []
+	  },
+	  "created_at": "2018-05-01T20:21:55.566Z",
+	  "default_price": 30,
+	  "description": "$30 per month, unlimited transactions at $0.06 per transaction, one campaign",
+	  "id": "3ac1a59a-6e41-4074-9712-3c80ef3f3e95",
+	  "name": "Basic",
+	  "ship": false,
+	  "shipping_delay": 0,
+	  "sku": "basic",
+	  "updated_at": "2018-05-01T20:21:55.566Z"
 	}
 ]
