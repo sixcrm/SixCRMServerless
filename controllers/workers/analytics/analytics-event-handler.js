@@ -13,12 +13,6 @@ module.exports = class AnalyticsEventHandler {
 
 	}
 
-	get queueName() {
-
-		return this._queueName;
-
-	}
-
 	execute() {
 
 		du.debug('AnalyticsEventHandler.execute()');

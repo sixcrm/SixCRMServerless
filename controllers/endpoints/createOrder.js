@@ -60,8 +60,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			'transactionsubtype': global.SixCRM.routes.path('model', 'definitions/transactionsubtype.json')
 		};
 
-		this.event_type = 'order';
-
 		this.initialize();
 
 	}
@@ -507,7 +505,10 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		return Promise.all([
 			this.reversePreviousRebill(),
-			this.pushEvent(),
+			this.pushEvent({ event_type: 'order', context: {
+				session: this.parameters.get('session'),
+				campaign: this.parameters.get('campaign')
+			}}),
 			this.incrementMerchantProviderSummary(),
 			this.updateSessionWithWatermark(),
 			this.addRebillToStateMachine()
