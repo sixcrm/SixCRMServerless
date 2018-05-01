@@ -260,7 +260,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Backup DynamoDB
-          command: export SIX_VERBOSE=2 printenv && node ./deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
+          command: export SIX_VERBOSE=2 && printenv && node ./deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
   deploy_serverless:
     <<: *job-defaults
     steps:
@@ -288,7 +288,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: EC2 Security Groups
-          command: export SIX_VERBOSE=2 node ./deployment/ec2/deploy_security_groups.js
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_security_groups.js
   deploy_elasticsearch:
     <<: *job-defaults
     steps:
@@ -302,7 +302,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: ElasticSearch Deployment
-          command: export SIX_VERBOSE=2 node ./deployment/elasticsearch/deploy_domains.js
+          command: export SIX_VERBOSE=2 && node ./deployment/elasticsearch/deploy_domains.js
   deploy_s3:
     <<: *job-defaults
     steps:
@@ -316,10 +316,10 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: S3 Buckets
-          command: export SIX_VERBOSE=2 node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
+          command: export SIX_VERBOSE=2 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
       - run:
           name: S3 Backups
-          command: export SIX_VERBOSE=2 node ./deployment/s3/deploy_backups.js || echo "No changes, skipping."
+          command: export SIX_VERBOSE=2 && node ./deployment/s3/deploy_backups.js || echo "No changes, skipping."
   deploy_sqs:
     <<: *job-defaults
     steps:
@@ -333,7 +333,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: SQS
-          command: export SIX_VERBOSE=2 ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js || echo "No changes, skipping."
+          command: export SIX_VERBOSE=2 && ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js || echo "No changes, skipping."
   deploy_elasticache:
     <<: *job-defaults
     steps:
@@ -347,10 +347,10 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Elasticache Subnets
-          command: export SIX_VERBOSE=2 node ./deployment/elasticache/deploy_subnet_groups.js
+          command: export SIX_VERBOSE=2 && node ./deployment/elasticache/deploy_subnet_groups.js
       - run:
           name: Elasticache
-          command: export SIX_VERBOSE=2 node ./deployment/elasticache/deploy_clusters.js
+          command: export SIX_VERBOSE=2 && node ./deployment/elasticache/deploy_clusters.js
   deploy_iam:
     <<: *job-defaults
     steps:
@@ -364,10 +364,10 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: IAM Deploy Policies
-          command: export SIX_VERBOSE=2 node ./deployment/iam/deploy_policies.js
+          command: export SIX_VERBOSE=2 && node ./deployment/iam/deploy_policies.js
       - run:
           name: IAM Deploy Roles
-          command: export SIX_VERBOSE=2 node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
+          command: export SIX_VERBOSE=2 && node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
   deploy_dynamodb:
     <<: *job-defaults
     steps:
@@ -381,10 +381,10 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: DynamoDB Deploy Tables
-          command: export SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_tables.js
+          command: export SIX_VERBOSE=2 && node ./deployment/dynamodb/deploy_tables.js
       - run:
           name: DynamoDB Autoscale Tables
-          command: export SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_autoscaling.js
+          command: export SIX_VERBOSE=2 && node ./deployment/dynamodb/deploy_autoscaling.js
   # deploy_redshift:
   #   <<: *job-defaults
   #   steps:
@@ -475,10 +475,10 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: SNS Topics
-          command: export SIX_VERBOSE=2 node ./deployment/sns/deploy_topics.js
+          command: export SIX_VERBOSE=2 && node ./deployment/sns/deploy_topics.js
       - run:
           name: SNS Subscriptions
-          command: export SIX_VERBOSE=2 node ./deployment/sns/deploy_subscriptions.js
+          command: export SIX_VERBOSE=2 && node ./deployment/sns/deploy_subscriptions.js
   deploy_logsubscription:
     <<: *job-defaults
     steps:
@@ -492,7 +492,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Cloudwatch Log Subscriptions
-          command: export SIX_VERBOSE=2 node ./deployment/cloudwatch/deploy_subscription_filters.js
+          command: export SIX_VERBOSE=2 && node ./deployment/cloudwatch/deploy_subscription_filters.js
   post_deployment:
     <<: *job-defaults
     steps:
