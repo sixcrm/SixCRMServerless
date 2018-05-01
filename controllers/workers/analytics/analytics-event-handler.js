@@ -61,7 +61,7 @@ module.exports = class AnalyticsEventHandler {
 
 			du.debug('Message recieved', message);
 
-			if (!message.eventType) {
+			if (!message.event_type) {
 
 				du.warning('Analytics event missing type');
 
@@ -73,7 +73,7 @@ module.exports = class AnalyticsEventHandler {
 			const eventKey = eventKeys.find(ek => {
 
 				const regex = new RegExp(`^${ek}`);
-				return message.eventType.match(regex);
+				return message.event_type.match(regex);
 
 			});
 
@@ -81,7 +81,7 @@ module.exports = class AnalyticsEventHandler {
 
 			if (!handerMap) {
 
-				du.warning('Analytics event type not mapped', message.eventType);
+				du.warning('Analytics event type not mapped', message.event_type);
 
 				return this._removeRecordFromSQS(r);
 
@@ -90,10 +90,10 @@ module.exports = class AnalyticsEventHandler {
 			const messageHandlerPromises = handerMap.handlers.map(async (h) => {
 
 				const Transform = require(`./transforms/${handerMap.transform}`);
-				const transformed = new Transform().execute(message);
+				const transformed = await new Transform().execute(message);
 				const Handler = require(`./event-handlers/${h}`);
 				const handler = new Handler(this._auroraContext);
-				handler.execute(transformed);
+				return handler.execute(transformed);
 
 			});
 
