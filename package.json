@@ -24,7 +24,7 @@
     "js2xmlparser2": "^0.2.0",
     "json2csv": "^3.11.5",
     "jsonwebtoken": "^7.4.3",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.10",
     "luhn": "^2.1.0",
     "mime": "^1.6.0",
     "moment": "^2.22.1",
@@ -46,7 +46,7 @@
     "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "aws-sdk": "^2.226.1",
+    "aws-sdk": "^2.230.1",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "chai-json-schema": "^1.4.0",
