@@ -1,5 +1,3 @@
-
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
@@ -8,9 +6,9 @@ const SessionHelperController = global.SixCRM.routes.include('helpers', 'entitie
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
-module.exports = class ConfirmOrderController extends transactionEndpointController{
+module.exports = class ConfirmOrderController extends transactionEndpointController {
 
-	constructor(){
+	constructor() {
 
 		super();
 
@@ -44,20 +42,20 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		this.parameter_definitions = {
 			execute: {
-				required : {
-					event:'event'
+				required: {
+					event: 'event'
 				}
 			}
 		};
 
 		this.parameter_validation = {
-			'event':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/event.json'),
-			'session':global.SixCRM.routes.path('model', 'entities/session.json'),
-			'customer':global.SixCRM.routes.path('model', 'entities/customer.json'),
+			'event': global.SixCRM.routes.path('model', 'endpoints/confirmOrder/event.json'),
+			'session': global.SixCRM.routes.path('model', 'entities/session.json'),
+			'customer': global.SixCRM.routes.path('model', 'entities/customer.json'),
 			'campaign': global.SixCRM.routes.path('model', 'entities/campaign.json'),
-			'transactionproducts':global.SixCRM.routes.path('model', 'endpoints/components/transactionproducts.json'),
-			'transactions':global.SixCRM.routes.path('model', 'endpoints/components/transactions.json'),
-			'response':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
+			'transactionproducts': global.SixCRM.routes.path('model', 'endpoints/components/transactionproducts.json'),
+			'transactions': global.SixCRM.routes.path('model', 'endpoints/components/transactions.json'),
+			'response': global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
 		};
 
 		this.transactionHelperController = new TransactionHelperController();
@@ -69,7 +67,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-	execute(event){
+	execute(event) {
 
 		du.debug('Execute');
 
@@ -78,7 +76,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-	confirmOrder(){
+	confirmOrder() {
 
 		du.debug('Confirm Order');
 
@@ -96,13 +94,15 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-	hydrateSession(){
+	hydrateSession() {
 
 		du.debug('Hydrate Session');
 
 		let event = this.parameters.get('event');
 
-		return this.sessionController.get({id: event.session}).then(session => {
+		return this.sessionController.get({
+			id: event.session
+		}).then(session => {
 
 			this.parameters.set('session', session);
 			return true;
@@ -111,13 +111,15 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-	validateSession(){
+	validateSession() {
 
 		du.debug('Validate Session');
 
 		let session = this.parameters.get('session');
 
-		if(this.sessionHelperController.isComplete({session: session})){
+		if (this.sessionHelperController.isComplete({
+			session: session
+		})) {
 			throw eu.getError('bad_request', 'The specified session is already complete.');
 		}
 
@@ -125,7 +127,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-	hydrateSessionProperties(){
+	hydrateSessionProperties() {
 
 		du.debug('Hydrate Session Properties');
 
@@ -150,7 +152,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-	setTransactionProducts(){
+	setTransactionProducts() {
 
 		du.debug('Set Transaction Products');
 
@@ -165,7 +167,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 	}
 
 
-	closeSession(){
+	closeSession() {
 
 		du.debug('Confirm Order');
 
@@ -179,7 +181,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-	buildResponse(){
+	buildResponse() {
 
 		du.debug('Build Response');
 
@@ -189,7 +191,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		let transaction_products = this.parameters.get('transactionproducts');
 
 		this.parameters.set('response', {
-			session:session,
+			session: session,
 			customer: customer,
 			transactions: transactions,
 			transaction_products: transaction_products
@@ -199,14 +201,17 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-	postProcessing(){
+	postProcessing() {
 
 		du.debug('Post Processing');
 
-		return this.pushEvent({ event_type: 'confirm', context: {
-			session: this.parameters.get('session'),
-			campaign: this.parameters.get('campaign')
-		}});
+		return this.pushEvent({
+			event_type: 'confirm',
+			context: {
+				session: this.parameters.get('session'),
+				campaign: this.parameters.get('campaign')
+			}
+		});
 
 	}
 
