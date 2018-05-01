@@ -655,7 +655,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		du.debug('Pushing Rebill State Change Event');
 
 		await this.transformRebill();
-		await AnalyticsEvent.push('rebill', this.parameters.get('transformedrebill', null, false));
+		await AnalyticsEvent.push('rebill', { transformedrebill: this.parameters.get('transformedrebill', null, false)});
 		return this.parameters.get('rebill');
 
 	}
