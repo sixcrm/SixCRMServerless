@@ -1,11 +1,10 @@
 const _ = require('lodash');
-const uuid = require('uuid');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
-
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
 
 module.exports = class TransactionHelperController {
@@ -77,30 +76,10 @@ module.exports = class TransactionHelperController {
 			.then(() => this.acquireTransaction())
 			.then(() => this.setChargebackStatus())
 			.then(() => this.updateTransaction())
-			.then(() => this.pushEvent('chargeback', this.parameters.get('transaction')))
+			.then(() => AnalyticsEvent.push('chargeback', this.parameters.get('transaction', null, false)))
 			.then(() => {
 				return this.parameters.get('transaction');
 			})
-
-	}
-
-	async pushEvent(eventType, context) {
-
-		du.debug('Push Event');
-
-		if (!_.has(this, 'eventHelperController')) {
-			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-			this.eventHelperController = new EventHelperController();
-		}
-
-		return this.eventHelperController.pushEvent({
-			event_type: eventType,
-			context: Object.assign({
-				id: uuid.v4()
-			}, context, {
-				user: global.user
-			})
-		});
 
 	}
 

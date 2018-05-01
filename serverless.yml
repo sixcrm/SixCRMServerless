@@ -222,9 +222,6 @@ functions:
   customeremail:
     handler: handlers/workers/sns/handlers.customeremail
 
-  analyticsevents:
-    handler: handlers/workers/sns/handlers.analyticsevents
-
   trackingevents:
     handler: handlers/workers/sns/handlers.trackingevents
 

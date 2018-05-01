@@ -10,6 +10,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const SNSProvider = global.SixCRM.routes.include('controllers', 'providers/sns-provider.js');
+const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 
 module.exports = class SNSDeployment extends AWSDeploymentUtilities {
@@ -18,6 +19,7 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 
 		super();
 
+		this.sqsProvider = new SQSProvider();
 		this.snsprovider = new SNSProvider();
 		this.lambdaprovider = new LambdaProvider();
 
@@ -90,7 +92,7 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 		subscription_file_contents = this.parseTokensIntoSubscriptionParameters(subscription_file_contents);
 
 		return arrayutilities.reduce(subscription_file_contents.Subscriptions, (current, subscription) => {
-			return this.snsprovider.subscribe(subscription)
+			return this.subscribe(subscription)
 				.then((result) => this.addSubscriptionAttributes(result, subscription))
 				.then(() => this.addSubscriptionPermissions(subscription))
 				.then((result) => {
@@ -98,6 +100,18 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 					return true;
 				});
 		}, Promise.resolve());
+
+	}
+
+	async subscribe(subscription) {
+
+		if (subscription.Protocol === 'sqs') {
+
+			subscription.Endpoint = await this.sqsProvider.getQueueARN(subscription.Endpoint);
+
+		}
+
+		return this.snsprovider.subscribe(subscription);
 
 	}
 

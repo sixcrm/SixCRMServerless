@@ -1,15 +1,14 @@
-
 const _ = require('lodash');
-
 const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
-const jwtprovider  = new JWTProvider();
+const jwtprovider = new JWTProvider();
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class AcquireTokenController extends transactionEndpointController {
 
-	constructor(){
+	constructor() {
 
 		super();
 
@@ -24,27 +23,25 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 
 		this.parameter_definitions = {
 			execute: {
-				required : {
-					event:'event'
+				required: {
+					event: 'event'
 				}
 			}
 		};
 
 		this.parameter_validation = {
-			'updatedevent':global.SixCRM.routes.path('model', 'endpoints/acquireToken/updatedevent.json'),
-			'event':global.SixCRM.routes.path('model', 'endpoints/acquireToken/event.json'),
-			'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
-			'transactionjwt':global.SixCRM.routes.path('model', 'definitions/jwt.json'),
-			'affiliates':global.SixCRM.routes.path('model','endpoints/components/affiliates.json')
+			'updatedevent': global.SixCRM.routes.path('model', 'endpoints/acquireToken/updatedevent.json'),
+			'event': global.SixCRM.routes.path('model', 'endpoints/acquireToken/event.json'),
+			'campaign': global.SixCRM.routes.path('model', 'entities/campaign.json'),
+			'transactionjwt': global.SixCRM.routes.path('model', 'definitions/jwt.json'),
+			'affiliates': global.SixCRM.routes.path('model', 'endpoints/components/affiliates.json')
 		};
-
-		this.event_type = 'click';
 
 		this.initialize();
 
 	}
 
-	execute(event){
+	execute(event) {
 
 		du.debug('Execute');
 
@@ -58,21 +55,23 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 
 	}
 
-	validateCampaign(){
+	validateCampaign() {
 
 		du.debug('Validate Campaign');
 
 		let event = this.parameters.get('event');
 
-		if(!_.has(this, 'campaignController')){
+		if (!_.has(this, 'campaignController')) {
 			const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 			this.campaignController = new CampaignController();
 		}
 
-		return this.campaignController.get({id: event.campaign}).then((campaign) => {
+		return this.campaignController.get({
+			id: event.campaign
+		}).then((campaign) => {
 
-			if(!_.has(campaign, 'id')){
-				throw eu.getError('bad_request','Invalid Campaign ID: '+event.campaign);
+			if (!_.has(campaign, 'id')) {
+				throw eu.getError('bad_request', 'Invalid Campaign ID: ' + event.campaign);
 			}
 
 			this.parameters.set('campaign', campaign);
@@ -83,12 +82,12 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 
 	}
 
-	acquireToken(){
+	acquireToken() {
 
 		du.debug('Acquire Token');
 
 		let jwt_prototype = {
-			user:{
+			user: {
 				user_alias: global.user.alias
 			}
 		};
@@ -101,21 +100,25 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 
 	}
 
-	postProcessing(){
+	async postProcessing() {
 
 		du.debug('Post Processing');
 
-		return this.handleAffiliateInformation().then(() => this.pushEvent());
+		await this.handleAffiliateInformation();
+		await AnalyticsEvent.push('click', {
+			affiliates: this.parameters.get('affiliates', null, false),
+			campaign: this.parameters.get('campaign', null, false)
+		});
 
 	}
 
-	handleAffiliateInformation(){
+	handleAffiliateInformation() {
 
 		du.debug('Handle Affiliate Information');
 
 		let event = this.parameters.get('event');
 
-		if(!_.has(this, 'affiliateHelperController')){
+		if (!_.has(this, 'affiliateHelperController')) {
 			const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
 
 			this.affiliateHelperController = new AffiliateHelperController();
@@ -123,7 +126,7 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 
 		return this.affiliateHelperController.handleAffiliateInformation(event).then(results => {
 
-			if(_.has(results, 'affiliates')){
+			if (_.has(results, 'affiliates')) {
 
 				this.parameters.set('affiliates', results.affiliates);
 
@@ -138,4 +141,3 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 	}
 
 }
-

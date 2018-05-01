@@ -4,6 +4,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class CreateOrderController extends transactionEndpointController {
 
@@ -59,8 +60,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			'amount': global.SixCRM.routes.path('model', 'definitions/currency.json'),
 			'transactionsubtype': global.SixCRM.routes.path('model', 'definitions/transactionsubtype.json')
 		};
-
-		this.event_type = 'order';
 
 		this.initialize();
 
@@ -202,13 +201,13 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	setRawCreditCard(){
+	setRawCreditCard() {
 
 		du.debug('Set Raw Credit Card');
 
 		let event = this.parameters.get('event');
 
-		if(_.has(event, 'creditcard')){
+		if (_.has(event, 'creditcard')) {
 
 			if (!_.has(this, 'creditCardHelperController')) {
 				const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
@@ -440,7 +439,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			transactionsubtype: this.parameters.get('transactionsubtype', null, false)
 		};
 
-		if(!_.isNull(raw_creditcard)){
+		if (!_.isNull(raw_creditcard)) {
 			argumentation.creditcard = raw_creditcard;
 		}
 
@@ -507,7 +506,10 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		return Promise.all([
 			this.reversePreviousRebill(),
-			this.pushEvent(),
+			AnalyticsEvent.push('order', {
+				session: this.parameters.get('session', null, false),
+				campaign: this.parameters.get('campaign', null, false)
+			}),
 			this.incrementMerchantProviderSummary(),
 			this.updateSessionWithWatermark(),
 			this.addRebillToStateMachine()

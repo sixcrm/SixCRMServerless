@@ -1,5 +1,6 @@
 
 const _ = require('lodash');
+const moment = require('moment-timezone');
 const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -15,6 +16,7 @@ const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js
 const RegisterUtilities = global.SixCRM.routes.include('providers', 'register/RegisterUtilities.js');
 const MerchantProviderController = global.SixCRM.routes.include('entities', 'MerchantProvider.js');
 const TransactionsController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class Register extends RegisterUtilities {
 
@@ -161,15 +163,14 @@ module.exports = class Register extends RegisterUtilities {
 
 		return BBPromise.each(transactions, (transaction) => {
 
-			return this.eventHelperController.pushEvent({
-				event_type: 'transaction_' + transaction.result,
-				context: {
-					session: this.parameters.get('parentsession'),
+			return AnalyticsEvent.push('transaction_' + transaction.result,
+				{
+					datetime: moment.tz('UTC').toISOString(),
+					session: this.parameters.get('parentsession', null, false),
 					transaction,
-					rebill: this.parameters.get('rebill'),
+					rebill: this.parameters.get('rebill', null, false),
 					transactionSubType: this.parameters.get('transactionsubtype', null, false),
-					transactionType: this.parameters.get('transactiontype', null, false)}
-			});
+					transactionType: this.parameters.get('transactiontype', null, false)});
 
 		});
 

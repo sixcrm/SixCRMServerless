@@ -283,6 +283,12 @@ describe('acquireToken', () => {
 
 			delete updated_event.affiliates
 
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				sendMessage() {
+					return Promise.resolve();
+				}
+			});
+
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
 				constructor(){
 					this.affiliate_fields = ['affiliate', 'subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
@@ -298,13 +304,6 @@ describe('acquireToken', () => {
 						affiliate_mapping_object[affiliate_field] = affiliate_field;
 					});
 					return objectutilities.transcribe(affiliate_mapping_object, source_object, destination_object, false);
-				}
-			});
-
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
-				constructor(){}
-				pushEvent(){
-					return Promise.resolve('some-sns-message-id');
 				}
 			});
 
@@ -403,6 +402,12 @@ describe('acquireToken', () => {
 				constructor(){}
 				pushEvent(){
 					return Promise.resolve('some-sns-message-id');
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				sendMessage() {
+					return Promise.resolve();
 				}
 			});
 

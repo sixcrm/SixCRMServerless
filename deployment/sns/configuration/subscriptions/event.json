@@ -64,11 +64,6 @@
           }
         }
       ]
-    },
-    {
-      "Protocol":"lambda",
-      "TopicArn":"arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
-      "Endpoint":"arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-analyticsevents"
     }
   ]
 }

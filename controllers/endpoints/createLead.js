@@ -1,4 +1,3 @@
-
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -6,10 +5,11 @@ const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
-module.exports = class CreateLeadController extends transactionEndpointController{
+module.exports = class CreateLeadController extends transactionEndpointController {
 
-	constructor(){
+	constructor() {
 		super();
 
 		this.required_permissions = [
@@ -35,38 +35,36 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 		this.notification_parameters = {
 			type: 'lead',
 			action: 'created',
-			title:  'New Lead',
+			title: 'New Lead',
 			body: 'A new lead has been created.'
 		};
 
 		this.parameter_definitions = {
 			execute: {
-				required : {
-					event:'event'
+				required: {
+					event: 'event'
 				}
 			}
 		};
 
 		this.parameter_validation = {
-			'event':global.SixCRM.routes.path('model', 'endpoints/createLead/event.json'),
+			'event': global.SixCRM.routes.path('model', 'endpoints/createLead/event.json'),
 			'customer': global.SixCRM.routes.path('model', 'entities/customer.json'),
-			'affiliates':global.SixCRM.routes.path('model', 'endpoints/components/affiliates.json'),
-			'campaign':global.SixCRM.routes.path('model', 'entities/campaign.json'),
-			'session_prototype':global.SixCRM.routes.path('model', 'endpoints/createLead/sessionprototype.json'),
-			'session':global.SixCRM.routes.path('model', 'entities/session.json'),
+			'affiliates': global.SixCRM.routes.path('model', 'endpoints/components/affiliates.json'),
+			'campaign': global.SixCRM.routes.path('model', 'entities/campaign.json'),
+			'session_prototype': global.SixCRM.routes.path('model', 'endpoints/createLead/sessionprototype.json'),
+			'session': global.SixCRM.routes.path('model', 'entities/session.json'),
 		};
 
 		this.campaignController = new CampaignController();
 		this.customerController = new CustomerController();
 		this.sessionController = new SessionController();
 
-		this.event_type = 'lead';
-
 		this.initialize();
 
 	}
 
-	execute(event){
+	execute(event) {
 
 		du.debug('Execute');
 
@@ -75,7 +73,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	}
 
-	createLead(){
+	createLead() {
 
 		du.debug('Create Lead');
 
@@ -91,7 +89,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	}
 
-	assureLeadProperties(){
+	assureLeadProperties() {
 
 		du.debug('Assure Lead Properties');
 
@@ -107,13 +105,15 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	}
 
-	setCampaign(){
+	setCampaign() {
 
 		du.debug('Set Campaign');
 
 		let event = this.parameters.get('event');
 
-		return this.campaignController.get({id: event.campaign}).then(campaign => {
+		return this.campaignController.get({
+			id: event.campaign
+		}).then(campaign => {
 
 			this.parameters.set('campaign', campaign);
 
@@ -123,13 +123,13 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	}
 
-	assureAffiliates(){
+	assureAffiliates() {
 
 		du.debug('Assure Affiliates');
 
 		let event = this.parameters.get('event');
 
-		if(!_.has(this, 'affiliateHelperController')){
+		if (!_.has(this, 'affiliateHelperController')) {
 			const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
 
 			this.affiliateHelperController = new AffiliateHelperController();
@@ -137,7 +137,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 		return this.affiliateHelperController.handleAffiliateInformation(event).then(result => {
 
-			if(_.has(result, 'affiliates')){
+			if (_.has(result, 'affiliates')) {
 				this.parameters.set('affiliates', result.affiliates);
 			}
 
@@ -147,7 +147,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	}
 
-	assureCustomer(){
+	assureCustomer() {
 
 		du.debug('Assure Customer');
 
@@ -155,12 +155,14 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 		return this.customerController.getCustomerByEmail(event.customer.email).then((customer) => {
 
-			if(_.has(customer, 'id')){
+			if (_.has(customer, 'id')) {
 				this.parameters.set('customer', customer);
 				return true;
 			}
 
-			return this.customerController.create({entity: event.customer}).then(customer => {
+			return this.customerController.create({
+				entity: event.customer
+			}).then(customer => {
 				this.parameters.set('customer', customer);
 				return true;
 			});
@@ -170,7 +172,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 	}
 
 	//Technical Debt:  Session Helper!
-	createSessionPrototype(){
+	createSessionPrototype() {
 
 		du.debug('Create Session Prototype');
 
@@ -184,7 +186,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 			completed: false
 		};
 
-		if(!_.isNull(affiliates)){
+		if (!_.isNull(affiliates)) {
 			session_prototype = objectutilities.merge(session_prototype, affiliates);
 		}
 
@@ -194,7 +196,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	}
 
-	assureSession(){
+	assureSession() {
 
 		du.debug('Assure Session');
 
@@ -208,11 +210,15 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	}
 
-	postProcessing(){
+	postProcessing() {
 
 		du.debug('Post Processing');
 
-		return this.pushEvent()
+		return AnalyticsEvent.push('lead', {
+			sessions: this.parameters.get('sessions', null, false),
+			campaign: this.parameters.get('campaign', null, false),
+			affiliates: this.parameters.get('affiliates', null, false)
+		});
 
 	}
 

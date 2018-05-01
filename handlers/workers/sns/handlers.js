@@ -1,13 +1,11 @@
 const SnsHandler = require('./sns-handler');
 
-const AnalyticsEventBroker = global.SixCRM.routes.include('controllers', 'workers/analytics/analytics-event-broker.js');
 const EventEmailsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/eventEmails.js');
 const NotificationEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/notificationEvents.js');
 const TrackingEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/trackingEvents.js');
 
 module.exports = {
 
-	analyticsevents: handleSns((event) => new AnalyticsEventBroker().execute(event)),
 	customeremail: handleSns((event) => new EventEmailsController().execute(event)),
 	notificationevents: handleSns((event) => new NotificationEventsController().execute(event)),
 	trackingevents: handleSns((event) => new TrackingEventsController().execute(event))

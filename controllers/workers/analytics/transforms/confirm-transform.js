@@ -1,6 +1,5 @@
 const AnalyticsTransfrom = require('../analytics-transform');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const moment = require('moment-timezone');
 
 module.exports = class ConfirmTransform extends AnalyticsTransfrom {
 
@@ -12,7 +11,7 @@ module.exports = class ConfirmTransform extends AnalyticsTransfrom {
 			id: record.context.id,
 			account: record.context.campaign.account,
 			campaign: record.context.campaign.id,
-			datetime: moment.tz('UTC').toISOString(),
+			datetime: record.context.datetime,
 			eventType: record.event_type
 		};
 
@@ -34,20 +33,6 @@ module.exports = class ConfirmTransform extends AnalyticsTransfrom {
 					subAffiliate5: record.context.session.subaffiliate_5
 				}
 			});
-
-		}
-
-		if (record.context.event.affiliates) {
-
-			result = Object.assign({}, result, {
-				cid: record.context.event.affiliates.cid,
-				affiliate: record.context.event.affiliates.affiliate,
-				subAffiliate1: record.context.event.affiliates.subaffiliate_1,
-				subAffiliate2: record.context.event.affiliates.subaffiliate_2,
-				subAffiliate3: record.context.event.affiliates.subaffiliate_3,
-				subAffiliate4: record.context.event.affiliates.subaffiliate_4,
-				subAffiliate5: record.context.event.affiliates.subaffiliate_5
-			})
 
 		}
 
