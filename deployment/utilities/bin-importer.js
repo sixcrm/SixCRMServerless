@@ -27,11 +27,7 @@ module.exports = class binImporter {
 				if (error.code === 'NoChanges') {
 					return 'No Changes';
 				}
-
-				return this.teardown()
-					.then(() => {
-						throw error;
-					});
+				throw error;
 			});
 	}
 
