@@ -512,7 +512,7 @@ describe('Checkout', () => {
 						schedule:[
 							{
 								product: {
-									id: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+									id: "aba9a683-85a4-45e7-9004-576c99a811ce",
 									name: "Dynamic Watermark Product"
 								},
 								start: 0,
@@ -551,7 +551,7 @@ describe('Checkout', () => {
 						schedule:[
 							{
 								product: {
-									id: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+									id: "aba9a683-85a4-45e7-9004-576c99a811ce",
 									name: "Dynamic Watermark Product"
 								},
 								start: 0,
@@ -563,7 +563,7 @@ describe('Checkout', () => {
 					quantity:1
 				}],
 				products:[{
-					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+					product: "aba9a683-85a4-45e7-9004-576c99a811ce",
 					quantity:2,
 					price: 12.99
 				}]
