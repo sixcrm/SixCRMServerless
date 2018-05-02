@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const elasticsearch = require('elasticsearch');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
@@ -7,7 +8,6 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const AWSSignedRequestProvider = global.SixCRM.routes.include('providers', 'aws-signedrequest-provider.js');
 
 module.exports = class LoggerController {
 
@@ -76,12 +76,12 @@ module.exports = class LoggerController {
 			let indexName = global.SixCRM.configuration.site_config.elasticsearch.index_name;
 
 			let source = this.buildSource(logEvent.message, logEvent.extractedFields);
-			source['@id'] = logEvent.id;
-			source['@timestamp'] = timestamp.toISO8601(logEvent.timestamp);
-			source['@message'] = logEvent.message;
-			source['@owner'] = data.owner;
-			source['@log_group'] = data.logGroup;
-			source['@log_stream'] = data.logStream;
+			source.id = logEvent.id;
+			source.timestamp = timestamp.toISO8601(logEvent.timestamp);
+			source.message = logEvent.message;
+			source.owner = data.owner;
+			source.log_group = data.logGroup;
+			source.log_stream = data.logStream;
 
 			let action = {
 				'index': {
@@ -91,12 +91,12 @@ module.exports = class LoggerController {
 				}
 			};
 
-			bulkRequestBody.push(JSON.stringify(action));
-			bulkRequestBody.push(JSON.stringify(source));
+			bulkRequestBody.push(action);
+			bulkRequestBody.push(source);
 
 		});
 
-		return bulkRequestBody.join('\n');
+		return bulkRequestBody;
 
 	}
 
@@ -155,9 +155,12 @@ module.exports = class LoggerController {
 
 		du.debug('Post Data');
 
-		let awssignedrequest_provider = new AWSSignedRequestProvider();
+		let esClient = new elasticsearch.Client({
+			host: this.elasticsearch_endpoint,
+			connectionClass: require('http-aws-es')
+		})
 
-		return awssignedrequest_provider.signedRequest(this.elasticsearch_endpoint, transformed_data);
+		return esClient.bulk({ body: transformed_data });
 
 	}
 
