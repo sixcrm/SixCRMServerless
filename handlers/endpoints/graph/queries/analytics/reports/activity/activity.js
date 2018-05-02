@@ -38,11 +38,11 @@ query {
           values: ["transaction"]
         }
       ]
-      pagination (
-        limit: 100,
-        offset: 0,
-        order: ['datetime']
-      )
+      pagination: {
+        limit: 100
+        offset: 0
+        order: ["datetime"]
+      }
     )
     {records { key value }}
   }
