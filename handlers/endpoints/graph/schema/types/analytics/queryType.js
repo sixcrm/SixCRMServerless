@@ -2,10 +2,11 @@ const AnalyticsReportResponse = require('../analytics/reports/report/analytics-r
 const AnalyticsReportFacetsRequest = require('../analytics/reports/facets/analytics-report-facets-request');
 const AnalyticsReportFacetsResponse = require('../analytics/reports/facets/analytics-report-facets-response');
 const AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-const AnalyticsReportSelector= require('./reports/common/analytics-report-selector');
+const AnalyticsReportSelector = require('./reports/common/analytics-report-selector');
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLList = require('graphql').GraphQLList;
 const AnalyticsReportInputFacetType = require('./reports/report/analytics-report-request-facet');
+const AnayticsReportRequestPagination = require('./reports/report/analytics-report-request-pagination');
 
 module.exports = {
 
@@ -19,6 +20,10 @@ module.exports = {
 			facets: {
 				type: new GraphQLList(AnalyticsReportInputFacetType),
 				description: 'Facets'
+			},
+			pagination: {
+				type: AnayticsReportRequestPagination,
+				description: 'Pagination'
 			}
 		},
 		resolve: function (root, args) {
