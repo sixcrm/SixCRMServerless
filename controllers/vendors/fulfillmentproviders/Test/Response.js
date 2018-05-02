@@ -85,7 +85,7 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 
 		fatal = _.isUndefined(fatal)?true:fatal;
 
-		let additional_parameters = this.parameters.get('additionalparameters', null, false);
+		let additional_parameters = this.parameters.get('additionalparameters', false);
 
 		if(!_.isNull(additional_parameters)){
 

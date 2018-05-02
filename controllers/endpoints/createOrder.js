@@ -387,8 +387,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		du.debug('Create Rebill');
 
 		let session = this.parameters.get('session');
-		let product_schedules = this.parameters.get('productschedules', null, false);
-		let products = this.parameters.get('products', null, false);
+		let product_schedules = this.parameters.get('productschedules', false);
+		let products = this.parameters.get('products', false);
 
 		let argumentation = {
 			session: session,
@@ -432,11 +432,11 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.registerController = new RegisterController();
 		}
 
-		let raw_creditcard = this.parameters.get('rawcreditcard', null, false);
+		let raw_creditcard = this.parameters.get('rawcreditcard', false);
 
 		let argumentation = {
 			rebill: rebill,
-			transactionsubtype: this.parameters.get('transactionsubtype', null, false)
+			transactionsubtype: this.parameters.get('transactionsubtype', false)
 		};
 
 		if (!_.isNull(raw_creditcard)) {
@@ -482,13 +482,13 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			result: this.parameters.get('result')
 		};
 
-		let product_schedules = this.parameters.get('productschedules', null, false);
+		let product_schedules = this.parameters.get('productschedules', false);
 
 		if (!_.isNull(product_schedules)) {
 			info.product_schedules = product_schedules;
 		}
 
-		let products = this.parameters.get('products', null, false);
+		let products = this.parameters.get('products', false);
 
 		if (!_.isNull(products)) {
 			info.products = products;
@@ -507,8 +507,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		return Promise.all([
 			this.reversePreviousRebill(),
 			AnalyticsEvent.push('order', {
-				session: this.parameters.get('session', null, false),
-				campaign: this.parameters.get('campaign', null, false)
+				session: this.parameters.get('session', false),
+				campaign: this.parameters.get('campaign', false)
 			}),
 			this.incrementMerchantProviderSummary(),
 			this.updateSessionWithWatermark(),
@@ -519,7 +519,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	reversePreviousRebill() {
 		const rebill = this.parameters.get('rebill');
-		const previous_rebill = this.parameters.get('previous_rebill', null, false);
+		const previous_rebill = this.parameters.get('previous_rebill', false);
 
 		if (_.isNull(previous_rebill)) {
 			return Promise.resolve();
@@ -596,8 +596,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			}
 		}
 
-		let product_schedules = this.parameters.get('productschedules', null, false);
-		let products = this.parameters.get('products', null, false);
+		let product_schedules = this.parameters.get('productschedules', false);
+		let products = this.parameters.get('products', false);
 
 		if (arrayutilities.nonEmpty(product_schedules)) {
 

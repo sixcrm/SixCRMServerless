@@ -239,7 +239,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
 		du.debug('Get List Orders Request Parameters');
 
-		let reference_number = this.parameters.get('referencenumber', null, false);
+		let reference_number = this.parameters.get('referencenumber', false);
 
 		let request_parameters = {
 			page: 1,

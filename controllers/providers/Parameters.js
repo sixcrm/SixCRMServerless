@@ -119,7 +119,7 @@ module.exports = class Parameters {
 
 	}
 
-	get(key, additional_parameters, fatal){
+	get(key, fatal){
 
 		du.debug('Get');
 
@@ -130,21 +130,6 @@ module.exports = class Parameters {
 		if(_.has(this.store, key)){
 
 			return_object = this.store[key];
-
-			if(arrayutilities.nonEmpty(additional_parameters)){
-
-				let missing_parameter = arrayutilities.find(additional_parameters, (additional_parameter) => {
-					if(objectutilities.hasRecursive(return_object, additional_parameter)){
-						return false;
-					}
-					return true;
-				});
-
-				if(stringutilities.isString(missing_parameter) && fatal){
-					throw eu.getError('server', key+' is missing "'+missing_parameter+'" property.');
-				}
-
-			}
 
 		}
 

@@ -93,7 +93,7 @@ module.exports = class verifySiteJWTController {
 
 		du.debug('Verify Encoded Token With User Signing String');
 
-		let verified_token = this.parameters.get('verified_authorization_token', null, false);
+		let verified_token = this.parameters.get('verified_authorization_token', false);
 
 		if (_.isNull(verified_token)) {
 
@@ -134,7 +134,7 @@ module.exports = class verifySiteJWTController {
 
 		du.debug('Verify Encoded Token With User Signing Strings');
 
-		let user_signing_strings = this.parameters.get('user_signing_strings', null, false);
+		let user_signing_strings = this.parameters.get('user_signing_strings', false);
 
 		if (!_.isNull(user_signing_strings)) {
 
@@ -156,7 +156,7 @@ module.exports = class verifySiteJWTController {
 
 		du.debug('Respond');
 
-		let verified_token = this.parameters.get('verified_authorization_token', null, false);
+		let verified_token = this.parameters.get('verified_authorization_token', false);
 
 		if (!_.isNull(verified_token)) {
 

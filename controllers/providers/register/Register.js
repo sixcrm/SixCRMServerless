@@ -166,11 +166,11 @@ module.exports = class Register extends RegisterUtilities {
 			return AnalyticsEvent.push('transaction_' + transaction.result,
 				{
 					datetime: moment.tz('UTC').toISOString(),
-					session: this.parameters.get('parentsession', null, false),
+					session: this.parameters.get('parentsession', false),
 					transaction,
-					rebill: this.parameters.get('rebill', null, false),
-					transactionSubType: this.parameters.get('transactionsubtype', null, false),
-					transactionType: this.parameters.get('transactiontype', null, false)});
+					rebill: this.parameters.get('rebill', false),
+					transactionSubType: this.parameters.get('transactionsubtype', false),
+					transactionType: this.parameters.get('transactiontype', false)});
 
 		});
 
@@ -198,7 +198,7 @@ module.exports = class Register extends RegisterUtilities {
 
 		du.debug('Validate Associated Transactions');
 
-		let associated_transactions = this.parameters.get('associated_transactions', null, false);
+		let associated_transactions = this.parameters.get('associated_transactions', false);
 
 		if(arrayutilities.nonEmpty(associated_transactions)){
 			throw eu.getError('forbidden', 'A transaction with pre-existing refunds or reversals can not be reversed.');
@@ -212,7 +212,7 @@ module.exports = class Register extends RegisterUtilities {
 
 		du.debug('Set Amount');
 
-		let amount  = this.parameters.get('amount', null, false);
+		let amount  = this.parameters.get('amount', false);
 
 		if(_.isNull(amount) || _.isUndefined(amount)){
 
@@ -258,7 +258,7 @@ module.exports = class Register extends RegisterUtilities {
 		let amount = this.parameters.get('amount');
 
 		//These are all of the existing transactions which are of type reverse or refund and thus have negative value.
-		let associated_transactions = this.parameters.get('associated_transactions', null, false);
+		let associated_transactions = this.parameters.get('associated_transactions', false);
 
 		//This is the total, preexisting reversed amount
 		let resolved_amount = this.calculateReversedAmount(associated_transactions);

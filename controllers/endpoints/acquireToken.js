@@ -106,8 +106,8 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 
 		await this.handleAffiliateInformation();
 		await AnalyticsEvent.push('click', {
-			affiliates: this.parameters.get('affiliates', null, false),
-			campaign: this.parameters.get('campaign', null, false)
+			affiliates: this.parameters.get('affiliates', false),
+			campaign: this.parameters.get('campaign', false)
 		});
 
 	}

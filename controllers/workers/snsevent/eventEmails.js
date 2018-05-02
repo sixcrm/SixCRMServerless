@@ -159,7 +159,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		du.debug('Acquire SMTP Provider');
 
-		let email_templates = this.parameters.get('emailtemplates', null, false);
+		let email_templates = this.parameters.get('emailtemplates', false);
 
 		if(!_.isNull(email_templates)){
 
@@ -188,7 +188,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 
 
-		let email_templates  = this.parameters.get('emailtemplates', null, false);
+		let email_templates  = this.parameters.get('emailtemplates', false);
 
 		if(_.isNull(email_templates) || !arrayutilities.nonEmpty(email_templates)){
 			du.warning('No pertinent email templates.');

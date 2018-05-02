@@ -72,7 +72,7 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
 		this.parameters.setParameters({argumentation: arguments[0], action: 'handleResponse'});
 
-		let error = this.parameters.get('error', null, false);
+		let error = this.parameters.get('error', false);
 
 		if(!_.isNull(error)){
 
@@ -117,7 +117,7 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
 		du.debug('Get Parsed Response');
 
-		return this.parameters.get('parsedresponse', null, false);
+		return this.parameters.get('parsedresponse', false);
 
 	}
 
@@ -212,7 +212,7 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
 		du.debug('Get Response');
 
-		return this.parameters.get('response', null, false);
+		return this.parameters.get('response', false);
 
 	}
 
@@ -248,7 +248,7 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 
 		du.debug('Get Code');
 
-		let code = this.parameters.get('code', null, false);
+		let code = this.parameters.get('code', false);
 
 		if(_.isNull(code)){
 			return super.getCode();
