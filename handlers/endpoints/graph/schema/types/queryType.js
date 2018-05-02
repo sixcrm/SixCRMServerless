@@ -59,8 +59,6 @@ let notificationSettingDefaultType = require('./notificationsetting/notification
 let userType = require('./user/userType');
 let userListType = require('./user/userListType');
 
-let termsAndConditionsType = require('./termsandconditions/termsAndConditionsType');
-
 let userSettingType = require('./usersetting/userSettingType');
 
 let userSigningStringListType = require('./usersigningstring/userSigningStringListType');
@@ -197,7 +195,6 @@ const TrackerController = global.SixCRM.routes.include('controllers', 'entities/
 
 // Helpers Controllers
 
-const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 const TokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
 
 // Providers Controllers
@@ -268,20 +265,6 @@ const fields = Object.assign({}, {
 			return userHelperController.introspection();
 		}
 	},
-	latesttermsandconditions: {
-		type: termsAndConditionsType.graphObj,
-		description: 'Retrieves latest terms and conditions.',
-		args: {
-			role: {
-				type: GraphQLString
-			}
-		},
-		resolve: function(root, args) {
-			const termsAndConditionsController = new TermsAndConditionsController();
-
-			return termsAndConditionsController.getLatestTermsAndConditions(args.role);
-		}
-	},
 	userlist: {
 		type: userListType.graphObj,
 		args: {
@@ -294,7 +277,6 @@ const fields = Object.assign({}, {
 		},
 		resolve: function(root, users) {
 			const userController = new UserController();
-
 			return userController.getUsersByAccount({
 				pagination: users.pagination,
 				fatal: list_fatal,
