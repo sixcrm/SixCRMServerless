@@ -311,7 +311,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 			throw eu.getError('server', 'The user associated with this invite does not exist.');
 		}
 
-		user.is_new = await _.isNewUser(user);
+		user.is_new = await this._isNewUser(user);
 
 		return user;
 

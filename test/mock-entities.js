@@ -22,7 +22,10 @@ class MockEntities {
 		lastname = spoofer.createRandomName('last');
 		let email2 = firstname + '.' + lastname + '@' + spoofer.createDomainName();
 
+		let a_iso8601 = timestamp.getISO8601();
+
 		return {
+			id: this.getValidId(),
 			hash: randomutilities.createRandomString(8),
 			email: email1,
 			acl: this.getValidId(),
@@ -30,7 +33,8 @@ class MockEntities {
 			account: this.getTestAccountID(),
 			account_name: "Some Account Name",
 			role: this.getValidId(),
-			timestamp: timestamp.getISO8601()
+			created_at: a_iso8601,
+			updated_at: a_iso8601,
 		};
 
 	}

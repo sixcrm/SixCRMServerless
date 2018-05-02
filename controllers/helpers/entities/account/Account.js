@@ -20,7 +20,7 @@ module.exports = class AccountHelperController {
 		let proto_account = {
 			id: account_id,
 			name: email+'-pending-name',
-			active: false
+			active: true
 		};
 
 		return proto_account;

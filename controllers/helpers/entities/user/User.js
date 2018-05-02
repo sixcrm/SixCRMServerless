@@ -9,7 +9,7 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
 const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 
-const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+const JWTProvider = global.SixCRM.routes.include('providers', 'jwt-provider.js')
 
 module.exports = class UserHelperController{
 

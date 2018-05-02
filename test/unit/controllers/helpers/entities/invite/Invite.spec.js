@@ -6,6 +6,7 @@ const eu = global.SixCRM.routes.include('lib','error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
 const random = global.SixCRM.routes.include('lib','random.js');
+const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
@@ -405,6 +406,171 @@ describe('/helpers/entities/invite/Invite.js', () => {
 	});
 
 	describe('accept', () => {
+
+		it('successfully accepts a invite (existing user)', () => {
+
+			let invite = MockEntities.getValidInvite();
+			let useracl = MockEntities.getValidUserACL();
+			let user = MockEntities.getValidUser();
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Invite.js'), class {
+				constructor(){}
+				disableACLs(){
+					return true;
+				}
+				enableACLs(){
+					return true;
+				}
+				getByHash(hash){
+					expect(hash).to.be.a('string');
+					return Promise.resolve(invite);
+				}
+				delete({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(true);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'UserACL.js'), class {
+				constructor(){}
+				disableACLs(){
+					return true;
+				}
+				enableACLs(){
+					return true;
+				}
+				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(useracl);
+				}
+				update({entity}){
+					expect(entity).to.be.a('object');
+					return Promise.resolve(entity);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+				constructor(){}
+				disableACLs(){
+					return true;
+				}
+				enableACLs(){
+					return true;
+				}
+				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(user);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
+				constructor(){}
+				validateAccount(account){
+					expect(account).to.be.a('string');
+					return Promise.resolve(true);
+				}
+			});
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			const signature = signatureutilities.createSignature(invite.hash+invite.created_at, inviteHelperClass.invite_salt);
+
+			const argumentation = {
+				hash: invite.hash,
+				signature:signature
+			};
+
+			return inviteHelperClass.accept(argumentation).then(result => {
+				expect(result).to.have.property('account');
+				expect(result).to.have.property('is_new');
+				expect(result.account).to.equal(invite.account);
+				expect(result.is_new).to.equal(!_.has(user, 'auth0_id'));
+			});
+		});
+
+		it('successfully accepts a invite (new user)', () => {
+
+			let invite = MockEntities.getValidInvite();
+			let useracl = MockEntities.getValidUserACL();
+			let user = MockEntities.getValidUser();
+			delete user.auth0_id;
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Invite.js'), class {
+				constructor(){}
+				disableACLs(){
+					return true;
+				}
+				enableACLs(){
+					return true;
+				}
+				getByHash(hash){
+					expect(hash).to.be.a('string');
+					return Promise.resolve(invite);
+				}
+				delete({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(true);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'UserACL.js'), class {
+				constructor(){}
+				disableACLs(){
+					return true;
+				}
+				enableACLs(){
+					return true;
+				}
+				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(useracl);
+				}
+				update({entity}){
+					expect(entity).to.be.a('object');
+					return Promise.resolve(entity);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+				constructor(){}
+				disableACLs(){
+					return true;
+				}
+				enableACLs(){
+					return true;
+				}
+				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(user);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
+				constructor(){}
+				validateAccount(account){
+					expect(account).to.be.a('string');
+					return Promise.resolve(true);
+				}
+			});
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			const signature = signatureutilities.createSignature(invite.hash+invite.created_at, inviteHelperClass.invite_salt);
+
+			const argumentation = {
+				hash: invite.hash,
+				signature:signature
+			};
+
+			return inviteHelperClass.accept(argumentation).then(result => {
+				expect(result).to.have.property('account');
+				expect(result).to.have.property('is_new');
+				expect(result.account).to.equal(invite.account);
+				expect(result.is_new).to.equal(!_.has(user, 'auth0_id'));
+			});
+		});
 
 	});
 
