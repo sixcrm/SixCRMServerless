@@ -12,7 +12,7 @@ module.exports = async (parameters = {}) => {
 
 	for (let i = 0; i < 5; i++) {
 
-		const local = [...parameters.start, ...parameters.end];
+		const local = [parameters.start, parameters.end];
 
 		if (parameters.account) {
 
@@ -27,10 +27,6 @@ module.exports = async (parameters = {}) => {
 		queryParameters.push(...local);
 
 	}
-
-	// console.log(queryParameters);
-	console.log(format.withArray(query, queryParameters));
-	// console.log(format.withArray(query, queryParameters));
 
 	return format.withArray(query, queryParameters);
 
