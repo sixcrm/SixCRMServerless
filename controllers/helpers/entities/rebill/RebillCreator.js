@@ -105,13 +105,13 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		du.debug('Hydrate Arguments');
 
 		let session = this.parameters.get('session');
-		let day = this.parameters.get('day', null, false);
-		let products = this.parameters.get('products', null, false);
-		let product_schedules = this.parameters.get('productschedules', null, false);
+		let day = this.parameters.get('day', false);
+		let products = this.parameters.get('products', false);
+		let product_schedules = this.parameters.get('productschedules', false);
 
 		if(_.isNull(day)){
 			this.calculateDayInCycle(session.created_at);
-			day = this.parameters.get('day', null, false);
+			day = this.parameters.get('day', false);
 		}
 
 		if(_.isNull(product_schedules)){
@@ -157,7 +157,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		du.debug('Normalize Product Schedules');
 
-		let product_schedules = this.parameters.get('productschedules', null, false);
+		let product_schedules = this.parameters.get('productschedules', false);
 
 		if(!_.isNull(product_schedules)){
 
@@ -196,7 +196,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		du.debug('Normalize Products');
 
-		let products = this.parameters.get('products', null, false);
+		let products = this.parameters.get('products', false);
 
 		if(!_.isNull(products)){
 
@@ -242,7 +242,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		du.debug('Validate Arguments');
 
-		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', false, null);
+		let normalized_product_schedules = this.parameters.get('normalizedproductschedules');
 
 		if(arrayutilities.nonEmpty(normalized_product_schedules)){
 			arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
@@ -256,7 +256,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 				})
 			});
 		}
-		// let normalized_products = this.parameters.get('normalizedproducts', false, null);
+		// let normalized_products = this.parameters.get('normalizedproducts');
 		// let session = this.parameters.get('session');
 		// let day = this.parameters.get('day');
 
@@ -287,7 +287,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			this.productController = new ProductController();
 		}
 
-		const product_groups = this.parameters.get('normalizedproducts', null, false);
+		const product_groups = this.parameters.get('normalizedproducts', false);
 		if (_.isNull(product_groups)) {
 			return true;
 		}
@@ -313,7 +313,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			this.productController = new ProductController();
 		}
 
-		const product_schedules = this.parameters.get('normalizedproductschedules', null, false);
+		const product_schedules = this.parameters.get('normalizedproductschedules', false);
 		if (_.isNull(product_schedules)) {
 			return true;
 		}
@@ -357,7 +357,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		du.debug('Get Next Product Schedule Schedule Element Start Day Number');
 
 		let day = this.parameters.get('day');
-		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', null, false);
+		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', false);
 
 		if(!_.isNull(normalized_product_schedules)){
 
@@ -419,7 +419,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		du.debug('Get Schedule Elements On Bill Day');
 
-		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', null, false);
+		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', false);
 		let bill_day = this.parameters.get('nextproductschedulebilldaynumber');
 
 		if(_.isNull(normalized_product_schedules)){ return Promise.resolve(true); }
@@ -463,7 +463,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		du.debug('Get Schedule Elements Products');
 
-		let schedule_elements = this.parameters.get('scheduleelementsonbillday', null, false);
+		let schedule_elements = this.parameters.get('scheduleelementsonbillday', false);
 
 		if(arrayutilities.nonEmpty(schedule_elements)){
 
@@ -491,7 +491,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		du.debug('Add Products To Transaction Products');
 
-		let normalized_products = this.parameters.get('normalizedproducts', null, false);
+		let normalized_products = this.parameters.get('normalizedproducts', false);
 
 		if(arrayutilities.nonEmpty(normalized_products)){
 
@@ -534,7 +534,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		du.debug('Build Rebill Prototype');
 
-		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', null, false);
+		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', false);
 
 		let product_schedules = null;
 

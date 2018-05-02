@@ -109,8 +109,8 @@ module.exports = class TerminalRecieptGenerator {
 
 		let account = this.parameters.get('account');
 		let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
-		let fulfillment_provider_reference = this.parameters.get('fulfillmentproviderreference', null, false);
-		let tracking_number = this.parameters.get('trackingnumber', null, false);
+		let fulfillment_provider_reference = this.parameters.get('fulfillmentproviderreference', false);
+		let tracking_number = this.parameters.get('trackingnumber', false);
 
 		let prototype = {
 			account: account,

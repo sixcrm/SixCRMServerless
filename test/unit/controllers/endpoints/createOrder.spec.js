@@ -754,7 +754,7 @@ describe('createOrder', function () {
 					return Promise.resolve(true);
 				}
 			});
-			
+
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
@@ -1714,7 +1714,7 @@ describe('createOrder', function () {
 			createOrderController.parameters.set('event', event);
 
 			return createOrderController.setPreviousRebill().then(() => {
-				const previous_rebill = createOrderController.parameters.get('previous_rebill', null, false);
+				const previous_rebill = createOrderController.parameters.get('previous_rebill', false);
 				expect(previous_rebill).to.equal(rebill);
 			});
 		});
@@ -1726,7 +1726,7 @@ describe('createOrder', function () {
 			createOrderController.parameters.set('event', getValidEventBody());
 
 			return createOrderController.setPreviousRebill().then(() => {
-				const rebill = createOrderController.parameters.get('previous_rebill', null, false)
+				const rebill = createOrderController.parameters.get('previous_rebill', false)
 				expect(rebill).to.be.null;
 			});
 		});

@@ -130,8 +130,8 @@ module.exports = class ShippingReceiptHelperController {
 		let shipping_status = this.parameters.get('shippingstatus');
 		let shipping_detail = this.parameters.get('shippingdetail');
 
-		let tracking_id = this.parameters.get('trackingid', null, false);
-		let carrier = this.parameters.get('carrier', null, false);
+		let tracking_id = this.parameters.get('trackingid', false);
+		let carrier = this.parameters.get('carrier', false);
 
 		shipping_receipt.status = shipping_status;
 

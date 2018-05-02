@@ -299,7 +299,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 		du.debug('Get FindOrders Request Parameters');
 
 		let fulfillment_provider = this.parameters.get('fulfillmentprovider');
-		let reference_number = this.parameters.get('referencenumber', null, false);
+		let reference_number = this.parameters.get('referencenumber', false);
 
 		let request_parameters = {
 			focr: {
