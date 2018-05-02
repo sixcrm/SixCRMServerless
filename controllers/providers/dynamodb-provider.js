@@ -445,8 +445,8 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 		fatal = (_.isUndefined(fatal))?true:fatal;
 
 		let valid_methods = {
-			document_client: ['get', 'scan', 'query', 'put', 'update', 'delete'],
-			raw: ['waitFor', 'deleteTable', 'describeTable', 'updateTable', 'createTable', 'createBackup','listTables', 'batchGetItem']
+			document_client: ['get', 'batchGet', 'scan', 'query', 'put', 'update', 'delete'],
+			raw: ['waitFor', 'deleteTable', 'describeTable', 'updateTable', 'createTable', 'createBackup','listTables']
 		}
 
 		if(_.includes(valid_methods.document_client, method)){
@@ -548,19 +548,14 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 				RequestItems: {}
 			};
 
-			let items = arrayutilities.map(ids, (id) => {
-				return {
-					'id': {
-						'S': id
-					}
-				}
-			});
+			let items = arrayutilities.map(ids, (id) => ({ id }));
 
 			parameters.RequestItems[table_name] = {'Keys': items};
 
 		}
 
-		return this.executeDynamoDBMethod({method: 'batchGetItem', parameters: parameters})
+		return this.executeDynamoDBMethod({method: 'batchGet', parameters: parameters})
+			.then(({Responses}) => Responses);
 
 	}
 

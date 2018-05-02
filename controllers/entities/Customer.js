@@ -165,17 +165,12 @@ module.exports = class CustomerController extends entityController {
 
 		if (_.has(customer, "creditcards") && arrayutilities.nonEmpty(customer.creditcards)) {
 
-			let creditcardids = arrayutilities.map(customer.creditcards, creditcard => {
+			let creditcard_ids = arrayutilities.map(customer.creditcards, creditcard => {
 				return this.getID(creditcard);
 			});
 
-			let query_parameters = this.createINQueryParameters({
-				field: 'id',
-				list_array: creditcardids
-			});
-
-			return this.executeAssociatedEntityFunction('CreditCardController', 'listByAccount', {
-				query_parameters: query_parameters
+			return this.executeAssociatedEntityFunction('CreditCardController', 'batchGet', {
+				ids: creditcard_ids
 			})
 				.then(creditcards => this.getResult(creditcards, 'creditcards'));
 
