@@ -9,11 +9,11 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
 const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 
+const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
+
 module.exports = class UserHelperController{
 
 	constructor(){
-
-		du.warning('event: ', global.SixCRM.configuration.event);
 
 	}
 
@@ -296,6 +296,15 @@ module.exports = class UserHelperController{
 
 		du.debug('Get Auth0 ID From Request');
 
+		if(objectutilities.hasRecursive(global.SixCRM.configuration, 'event.Headers.Authorization') && stringutilities.nonEmpty(global.SixCRM.configuration.event.Headers.Authorization)){
+
+			let jwtprovider = new JWTProvider().setJWTType('site');
+			let decoded_token = jwtprovider.decodeJWT(global.SixCRM.configuration.event.Headers.Authorization);
+			if(_.has(decoded_token, 'sub') && stringutilities.nonEmpty(decoded_token.sub)){
+				return decoded_token.sub;
+			}
+
+		}
 		return null;
 
 	}

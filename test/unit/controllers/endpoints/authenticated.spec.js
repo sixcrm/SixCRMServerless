@@ -82,35 +82,6 @@ describe('controllers/endpoints/authenticated', () => {
 		mockery.deregisterAll();
 	});
 
-	describe('isAcceptInvite', () => {
-
-		it('returns true when event body has valid accept invite structure', () => {
-
-			let event = getValidGETEvent();
-
-			//example body parameter with valid structure
-			event.body = "mutation {acceptinvite (invite: {token: \"any_token\", parameters:\"any_params\"})}";
-
-			const AuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
-			let authenticatedController = new AuthenticatedController();
-
-			expect(authenticatedController.isAcceptInvite(event)).to.be.true;
-		});
-
-		it('returns false when event body does not have a valid accept invite structure', () => {
-
-			let event = getValidGETEvent();
-
-			event.body = "";
-
-			const AuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
-			let authenticatedController = new AuthenticatedController();
-
-			expect(authenticatedController.isAcceptInvite(event)).to.be.false;
-		});
-
-	});
-
 	describe('isUserIntrospection', () => {
 
 		it('returns true when event body has valid user introspection structure', () => {

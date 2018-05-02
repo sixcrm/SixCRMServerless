@@ -226,6 +226,13 @@ describe('acquireToken', () => {
 				}
 			});
 
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
+				constructor(){}
+				validateAccount(){
+					return Promise.resolve(true);
+				}
+			})
+
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
@@ -411,7 +418,14 @@ describe('acquireToken', () => {
 				}
 			});
 
-			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
+				constructor(){}
+				validateAccount(){
+					return Promise.resolve(true);
+				}
+			})
+
+			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');
 			const acquireTokenController = new AcquireTokenController();

@@ -4,6 +4,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const signatureutilities = global.SixCRM.routes.include('lib', 'signature.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
+const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
 const InviteUtilities = global.SixCRM.routes.include('helpers', 'entities/invite/InviteUtilities.js');
 
 module.exports = class InviteHelperClass extends InviteUtilities {
@@ -67,6 +68,9 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 			throw eu.getError('not_found', 'Invite not found.');
 		}
 
+		const accountHelperController = new AccountHelperController();
+		await accountHelperController.validateAccount(invite.account);
+
 		invite.signature = this._createInviteSignature(invite);
 
 		return invite;
@@ -88,6 +92,9 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 		if(signature !== this._createInviteSignature(invite)){
 			throw eu.getError('bad_request', 'Invalid invite signature');
 		}
+
+		const accountHelperController = new AccountHelperController();
+		await accountHelperController.validateAccount(invite.account);
 
 		const user = await this._acceptInvite(invite);
 

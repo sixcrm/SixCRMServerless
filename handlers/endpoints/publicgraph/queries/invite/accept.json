@@ -1,5 +1,5 @@
 {
   "requestContext":{},
   "pathParameters":{},
-  "body":"mutation { acceptinvite (hash: \"abc123tm\", signature:\"13f7e214738237d8c0adaf8fe7f063f391eee8ef\") { is_new, account } }"
+  "body":"mutation { acceptinvite (hash: \"abc123tm\", signature:\"eed2be7a21375aa9d2d495c1d201899d7d0e8eb5\") { is_new, account } }"
 }

@@ -8,6 +8,7 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
+const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
 const endpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/endpoint.js');
 
 module.exports = class AuthenticatedController extends endpointController {
@@ -23,22 +24,22 @@ module.exports = class AuthenticatedController extends endpointController {
 		du.debug('Preprocessing');
 
 		return this.normalizeEvent(event)
+			.then((event) => this.acquireAccount(event))
+			.then((event) => this.validateAccount(event))
 			.then((event) => this.validateEvent(event))
 			.then((event) => this.acquireSubProperties(event))
 			.then((event) => this.validateRequiredPermissions(event));
 
 	}
 
-	acquireSubProperties(event){
+	async validateAccount(event){
 
-		du.debug('Acquire Sub Properties');
+		du.debug('Validate Account');
 
-		return Promise.all([
-			this.acquireAccount(event),
-			this.acquireUser(event)
-		]).then(() => {
-			return event;
-		});
+		let accountHelperController = new AccountHelperController();
+		await accountHelperController.validateAccount();
+
+		return event;
 
 	}
 
@@ -57,6 +58,18 @@ module.exports = class AuthenticatedController extends endpointController {
 		}
 
 		throw eu.getError('bad_request', 'Account missing in path parameter.');
+
+	}
+
+	acquireSubProperties(event){
+
+		du.debug('Acquire Sub Properties');
+
+		return Promise.all([
+			this.acquireUser(event)
+		]).then(() => {
+			return event;
+		});
 
 	}
 
@@ -184,18 +197,6 @@ module.exports = class AuthenticatedController extends endpointController {
 		du.debug('Is User Introspection');
 
 		if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(query)?[\s\n\r]*{[\s\n\r]*userintrospection[\s\n\r]*{/)) {
-			return true;
-		}
-
-		return false;
-
-	}
-
-	isAcceptInvite(event) {
-
-		du.debug('Is Accept Invite', event.body);
-
-		if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(mutation)?[\s\n\r]*{[\s\n\r]*acceptinvite[\s\n\r]/)) {
 			return true;
 		}
 
