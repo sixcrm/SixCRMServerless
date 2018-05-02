@@ -175,7 +175,7 @@ module.exports = class archiveController extends workerController {
 
 		du.debug('Archive');
 
-		let archive_filter = this.parameters.get('archivefilter', false);
+		let archive_filter = this.parameters.get('archivefilter', {fatal: false});
 
 		if(_.isNull(archive_filter)){
 

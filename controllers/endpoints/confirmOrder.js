@@ -207,8 +207,8 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		return AnalyticsEvent.push('confirm',
 			{
-				session: this.parameters.get('session', false),
-				campaign: this.parameters.get('campaign', false)
+				session: this.parameters.get('session', {fatal: false}),
+				campaign: this.parameters.get('campaign', {fatal: false})
 			});
 
 	}

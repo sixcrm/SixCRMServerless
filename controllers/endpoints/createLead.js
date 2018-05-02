@@ -178,7 +178,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 		let customer = this.parameters.get('customer');
 		let campaign = this.parameters.get('campaign');
-		let affiliates = this.parameters.get('affiliates', false);
+		let affiliates = this.parameters.get('affiliates', {fatal: false});
 
 		let session_prototype = {
 			customer: customer.id,
@@ -215,9 +215,9 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 		du.debug('Post Processing');
 
 		return AnalyticsEvent.push('lead', {
-			sessions: this.parameters.get('sessions', false),
-			campaign: this.parameters.get('campaign', false),
-			affiliates: this.parameters.get('affiliates', false)
+			sessions: this.parameters.get('sessions', {fatal: false}),
+			campaign: this.parameters.get('campaign', {fatal: false}),
+			affiliates: this.parameters.get('affiliates', {fatal: false})
 		});
 
 	}

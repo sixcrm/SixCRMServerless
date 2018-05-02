@@ -155,7 +155,7 @@ module.exports = class confirmShippedController extends workerController {
 
 		du.debug('Get Tracking Information');
 
-		let untracked_shipping_receipts = this.parameters.get('untrackedshippingreceipts', false);
+		let untracked_shipping_receipts = this.parameters.get('untrackedshippingreceipts', {fatal: false});
 
 		if (!_.isNull(untracked_shipping_receipts)) {
 
@@ -198,7 +198,7 @@ module.exports = class confirmShippedController extends workerController {
 
 		du.debug('Update Shipping Receipts');
 
-		let compound_shipping_objects = this.parameters.get('compoundshippingobjects', false);
+		let compound_shipping_objects = this.parameters.get('compoundshippingobjects', {fatal: false});
 
 		if (!_.isNull(compound_shipping_objects)) {
 
@@ -271,7 +271,7 @@ module.exports = class confirmShippedController extends workerController {
 
 		du.debug('Confirm All Shipped');
 
-		let untracked_shipping_receipts = this.parameters.get('untrackedshippingreceipts', false);
+		let untracked_shipping_receipts = this.parameters.get('untrackedshippingreceipts', {fatal: false});
 
 		if (!_.isNull(untracked_shipping_receipts)) {
 

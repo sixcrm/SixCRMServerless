@@ -210,7 +210,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 			return this.ThreePLFacilityID;
 		}
 
-		let fulfillment_provider = this.parameters.get('fulfillmentprovider', 'provider.threepl_facility_id', false);
+		let fulfillment_provider = this.parameters.get('fulfillmentprovider', 'provider.threepl_facility_id', {fatal: false});
 
 		if(!_.isNull(fulfillment_provider)){
 			return fulfillment_provider.provider.threepl_facility_id;
@@ -254,7 +254,8 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 			return this.ThreePLID;
 		}
 
-		let fulfillment_provider = this.parameters.get('fulfillmentprovider', 'provider.threepl_id', false);
+		// let fulfillment_provider = this.parameters.get('fulfillmentprovider', 'provider.threepl_id', false);
+		let fulfillment_provider = this.parameters.get('fulfillmentprovider', {fatal: false});
 
 		if(!_.isNull(fulfillment_provider)){
 			return fulfillment_provider.provider.threepl_id;
@@ -299,7 +300,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 		du.debug('Get FindOrders Request Parameters');
 
 		let fulfillment_provider = this.parameters.get('fulfillmentprovider');
-		let reference_number = this.parameters.get('referencenumber', false);
+		let reference_number = this.parameters.get('referencenumber', {fatal: false});
 
 		let request_parameters = {
 			focr: {

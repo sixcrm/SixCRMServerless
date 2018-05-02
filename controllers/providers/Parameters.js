@@ -119,11 +119,9 @@ module.exports = class Parameters {
 
 	}
 
-	get(key, fatal){
+	get(key, { fatal = true } = {}){
 
 		du.debug('Get');
-
-		fatal = (_.isUndefined(fatal))?true:fatal;
 
 		let return_object = null;
 

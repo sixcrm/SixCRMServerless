@@ -169,7 +169,7 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
 			return verifySiteJWTController.decodeToken().then(() => {
 
-				let decoded_token = verifySiteJWTController.parameters.get('decoded_authorization_token', false);
+				let decoded_token = verifySiteJWTController.parameters.get('decoded_authorization_token', {fatal: false});
 
 				du.warning(decoded_token);
 
@@ -236,7 +236,7 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
 			return verifySiteJWTController.verifyEncodedTokenWithSiteSecretKey().then(() => {
 
-				let verified_token = verifySiteJWTController.parameters.get('verified_authorization_token', false);
+				let verified_token = verifySiteJWTController.parameters.get('verified_authorization_token', {fatal: false});
 
 				expect(verified_token).to.equal(null);
 
@@ -275,7 +275,7 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 
 			return verifySiteJWTController.getUserSigningStrings().then(() => {
 
-				let signingstrings = verifySiteJWTController.parameters.get('user_signing_strings', false);
+				let signingstrings = verifySiteJWTController.parameters.get('user_signing_strings', {fatal: false});
 
 				expect(arrayutilities.nonEmpty(signingstrings)).to.equal(true);
 

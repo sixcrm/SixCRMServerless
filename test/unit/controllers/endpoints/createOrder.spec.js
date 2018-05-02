@@ -1714,7 +1714,7 @@ describe('createOrder', function () {
 			createOrderController.parameters.set('event', event);
 
 			return createOrderController.setPreviousRebill().then(() => {
-				const previous_rebill = createOrderController.parameters.get('previous_rebill', false);
+				const previous_rebill = createOrderController.parameters.get('previous_rebill', {fatal: false});
 				expect(previous_rebill).to.equal(rebill);
 			});
 		});
@@ -1726,7 +1726,7 @@ describe('createOrder', function () {
 			createOrderController.parameters.set('event', getValidEventBody());
 
 			return createOrderController.setPreviousRebill().then(() => {
-				const rebill = createOrderController.parameters.get('previous_rebill', false)
+				const rebill = createOrderController.parameters.get('previous_rebill', {fatal: false})
 				expect(rebill).to.be.null;
 			});
 		});
