@@ -234,42 +234,48 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				if (_.includes(facets, 'affiliate')) {
 
-					const facet = await this.query('reports/facets/affiliates', _resolveParams());
+					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/affiliates', 'params'));
+					const facet = await this.query('reports/facets/affiliates', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
 				}
 
 				if (_.includes(facets, 'campaign')) {
 
-					const facet = await this.query('reports/facets/campaigns', _resolveParams());
+					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/campaigns', 'params'));
+					const facet = await this.query('reports/facets/campaigns', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
 				}
 
 				if (_.includes(facets, 'product')) {
 
-					const facet = await this.query('reports/facets/products', _resolveParams());
+					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/products', 'params'));
+					const facet = await this.query('reports/facets/products', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
 				}
 
 				if (_.includes(facets, 'productSchedule')) {
 
-					const facet = await this.query('reports/facets/product-schedules', _resolveParams());
+					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/product-schedules', 'params'));
+					const facet = await this.query('reports/facets/product-schedules', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
 				}
 
 				if (_.includes(facets, 'mid')) {
 
-					const facet = await this.query('reports/facets/mids', _resolveParams());
+					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/mids', 'params'));
+					const facet = await this.query('reports/facets/mids', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
 				}
 
 				if (_.includes(facets, 'subId')) {
 
-					const facet = await this.query('reports/facets/sub-ids', _resolveParams());
+					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/sub-ids', 'params'));
+					const facet = await this.query('reports/facets/sub-ids', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
 				}
@@ -279,20 +285,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		}
 
 		return facetResponse;
-
-		function _resolveParams() {
-
-			const start = parameters.filter.filters.find(f => f.facet === 'start');
-			const end = parameters.filter.filters.find(f => f.facet === 'end');
-
-			const params = {
-				start: start.values[0],
-				end: end.values[0]
-			}
-
-			return params;
-
-		}
 
 	}
 
