@@ -507,10 +507,9 @@ jobs:
       - run:
           name: Git LFS (Large File Storage)
           command: |
-            curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
-            apt-get update
-            apt-get install -y git-lfs
-            git lfs install
+            curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+            sudo apt-get install -y git-lfs
+            cd project
             git lfs pull
       - run:
           name: Deploy DMS Tasks
