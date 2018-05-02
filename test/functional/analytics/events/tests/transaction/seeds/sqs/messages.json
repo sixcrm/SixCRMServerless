@@ -1839,6 +1839,152 @@
 					"cid": "2f05f316-405c-4293-bac0-f7845f765580"
 				}
 			}
+		},
+		{
+			"event_type": "transaction_success",
+			"context": {
+				"id": "37f4a46f-c1b7-4634-8aee-6776a4b69c37",
+				"datetime": "2018-05-02T04:13:52.699Z",
+				"session": {
+					"completed": false,
+					"subaffiliate_5": "9435c09f-5b5a-41b6-9a89-0d9e85997649",
+					"created_at": "2018-05-02T04:13:37.758Z",
+					"subaffiliate_2": "29f8026c-6b27-4151-83e5-3c067287d57b",
+					"subaffiliate_1": "9a780fc6-3226-4190-bf3d-6c79b2fc3fcd",
+					"subaffiliate_4": "1906d81d-f886-4211-925e-a6be4ad92626",
+					"updated_at": "2018-05-02T04:13:37.758Z",
+					"alias": "SCC1ZQ76DZ",
+					"affiliate": "f72745f4-0230-4162-8478-2678e097d392",
+					"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+					"customer": "9f26661f-0a6f-4116-bae2-3b83641b5e3f",
+					"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+					"id": "76c2df6a-510a-4099-8768-8d395359ee93",
+					"cid": "c0a88cf1-34fb-426a-a746-845b973eb62a"
+				},
+				"transaction": {
+					"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+					"rebill": "d57ea6b1-1708-4998-9939-aded7508b7dd",
+					"processor_response": "{\"code\":\"success\",\"message\":\"Success\",\"result\":{\"code\":\"success\",\"response\":{\"statusCode\":200,\"body\":\"response=1&responsetext=SUCCESS&authcode=123456&transactionid=4094748362&avsresponse=N&cvvresponse=&orderid=&type=sale&response_code=100\",\"headers\":{\"date\":\"Wed, 02 May 2018 04:13:49 GMT\",\"server\":\"Apache\",\"content-length\":\"136\",\"connection\":\"close\",\"content-type\":\"text/html; charset=UTF-8\"},\"request\":{\"uri\":{\"protocol\":\"https:\",\"slashes\":true,\"auth\":null,\"host\":\"secure.networkmerchants.com\",\"port\":443,\"hostname\":\"secure.networkmerchants.com\",\"hash\":null,\"search\":null,\"query\":null,\"pathname\":\"/api/transact.php\",\"path\":\"/api/transact.php\",\"href\":\"https://secure.networkmerchants.com/api/transact.php\"},\"method\":\"post\",\"headers\":{\"content-type\":\"application/x-www-form-urlencoded\",\"content-length\":444}}},\"message\":\"Success\"},\"merchant_provider\":\"6c40761d-8919-4ad6-884d-6a46a776cfb9\",\"creditcard\":\"6fa33a30-9081-47ed-a94a-72c5ef511998\"}",
+					"amount": 9.98,
+					"products": [{
+						"product": {
+							"updated_at": "2018-05-02T02:49:05.375Z",
+							"created_at": "2018-04-12T19:28:16.709Z",
+							"shipping_delay": 3600,
+							"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+							"fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+							"id": "616cc994-9480-4640-b26c-03810a679fe3",
+							"name": "Trial Product 1",
+							"ship": true,
+							"sku": "asd"
+						},
+						"amount": 4.99,
+						"quantity": 2,
+						"merchantprovidergroupassociation": {
+							"updated_at": "2018-05-02T02:49:03.746Z",
+							"entity": "616cc994-9480-4640-b26c-03810a679fe3",
+							"entity_type": "product",
+							"created_at": "2018-04-12T19:28:07.864Z",
+							"merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+							"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+							"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+							"id": "1bdaa67c-5121-49cf-82af-7fc8b73a2694"
+						}
+					}],
+					"alias": "TQMK5L5SZD",
+					"merchant_provider": "6c40761d-8919-4ad6-884d-6a46a776cfb9",
+					"type": "sale",
+					"result": "success",
+					"id": "9070a192-a80d-48b9-ae4e-09481e7bf6e7",
+					"created_at": "2018-05-02T04:13:51.959Z",
+					"updated_at": "2018-05-02T04:13:51.959Z",
+					"entity_type": "transaction",
+					"index_action": "add"
+				},
+				"rebill": {
+					"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+					"parentsession": "76c2df6a-510a-4099-8768-8d395359ee93",
+					"products": [{
+						"product": {
+							"updated_at": "2018-05-02T02:49:05.375Z",
+							"created_at": "2018-04-12T19:28:16.709Z",
+							"shipping_delay": 3600,
+							"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+							"fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+							"id": "616cc994-9480-4640-b26c-03810a679fe3",
+							"name": "Trial Product 1",
+							"ship": true,
+							"sku": "asd"
+						},
+						"amount": 4.99,
+						"quantity": 2,
+						"merchantprovidergroupassociation": {
+							"updated_at": "2018-05-02T02:49:03.746Z",
+							"entity": "616cc994-9480-4640-b26c-03810a679fe3",
+							"entity_type": "product",
+							"created_at": "2018-04-12T19:28:07.864Z",
+							"merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+							"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+							"campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+							"id": "1bdaa67c-5121-49cf-82af-7fc8b73a2694"
+						}
+					}],
+					"bill_at": "2018-05-02T04:13:37.000Z",
+					"amount": 9.98,
+					"product_schedules": ["12529a17-ac32-4e46-b05b-83862843055d"],
+					"processing": true,
+					"id": "d57ea6b1-1708-4998-9939-aded7508b7dd",
+					"created_at": "2018-05-02T04:13:44.683Z",
+					"updated_at": "2018-05-02T04:13:44.683Z",
+					"entity_type": "rebill",
+					"index_action": "add"
+				},
+				"transactionSubType": null,
+				"transactionType": "sale",
+				"user": {
+					"updated_at": "2018-05-02T02:49:10.581Z",
+					"access_key_id": "4b6b3ddc-a7b7-40e0-bc9b-02b425370448",
+					"alias": "4ee23a8f5c8661612075a89e72a56a3c6d00df90",
+					"auth0_id": "google-oauth2|115021313586107803846",
+					"active": true,
+					"created_at": "2018-04-12T19:28:35.464Z",
+					"last_name": "Test User",
+					"first_name": "Super",
+					"termsandconditions": "0.1",
+					"id": "super.user@test.com",
+					"name": "Super Test User",
+					"acl": [{
+						"updated_at": "2018-05-02T02:49:09.391Z",
+						"created_at": "2018-04-12T19:28:32.296Z",
+						"role": {
+							"updated_at": "2018-05-02T02:49:07.206Z",
+							"active": true,
+							"created_at": "2018-04-12T19:28:21.647Z",
+							"permissions": {
+								"allow": ["*"]
+							},
+							"account": "*",
+							"id": "cae614de-ce8a-40b9-8137-3d3bdff78039",
+							"name": "Owner"
+						},
+						"account": {
+							"updated_at": "2018-05-02T02:49:00.991Z",
+							"active": true,
+							"created_at": "2018-04-13T14:49:22.474Z",
+							"id": "*",
+							"name": "Master Account",
+							"name_lowercase": "master account",
+							"billing": {
+								"plan": "free",
+								"disabled": false
+							}
+						},
+						"user": "super.user@test.com",
+						"termsandconditions": "0.1",
+						"id": "ba10bdfb-e1c9-4e78-815a-837812ee46da"
+					}]
+				}
+			}
 		}
 	]
 }
