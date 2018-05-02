@@ -183,6 +183,10 @@ module.exports.getSubnet1 = async () => {
 
 	require('../../SixCRM.js');
 
+	if (global.SixCRM.configuration.isLocal()) {
+		return '';
+	}
+
 	const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
@@ -197,6 +201,10 @@ module.exports.getSubnet1 = async () => {
 module.exports.getSubnet2 = async () => {
 
 	require('../../SixCRM.js');
+
+	if (global.SixCRM.configuration.isLocal()) {
+		return '';
+	}
 
 	const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
@@ -213,6 +221,10 @@ module.exports.getSubnet3 = async () => {
 
 	require('../../SixCRM.js');
 
+	if (global.SixCRM.configuration.isLocal()) {
+		return '';
+	}
+
 	const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
@@ -227,6 +239,10 @@ module.exports.getSubnet3 = async () => {
 module.exports.getSecurityGroup = async () => {
 
 	require('../../SixCRM.js');
+
+	if (global.SixCRM.configuration.isLocal()) {
+		return '';
+	}
 
 	const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');

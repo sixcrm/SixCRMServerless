@@ -1,0 +1,50 @@
+{
+	"method": "getReport",
+	"test_case": "getReport activities",
+	"input": {
+		"reportType": "activities",
+		"facets": [{
+				"facet": "start",
+				"values": ["2017-03-10T14:32:28Z"]
+			},
+			{
+				"facet": "end",
+				"values": ["2019-04-09T14:32:28Z"]
+			},
+			{
+				"facet": "actor",
+				"values": "24f7c851-29d4-4af9-87c5-0298fa74c689"
+			},
+			{
+				"facet": "actorType",
+				"values": "customer"
+			},
+			{
+				"facet": "actedUpon",
+				"values": "24f7c851-29d4-4af9-87c5-0298fa74c689"
+			},
+			{
+				"facet": "actedUponType",
+				"values": "customer"
+			},
+			{
+				"facet": "associatedWith",
+				"values": "24f7c851-29d4-4af9-87c5-0298fa74c689"
+			},
+			{
+				"facet": "associatedWithType",
+				"values": "customer"
+			}
+		],
+		"pagination": {
+			"offset": 0,
+			"limit": 0,
+			"order": [
+				"datetime",
+				"actor"
+			]
+		}
+	},
+	"result_name": "records",
+	"expect": []
+}

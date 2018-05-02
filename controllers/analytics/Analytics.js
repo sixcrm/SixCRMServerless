@@ -314,6 +314,10 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 				return this.query('reports/affiliate-traffic', _resolveParams());
 			case 'merchantReport':
 				return this.query('reports/merchant-report', _resolveParams());
+			case 'activities': {
+				const resolveParams = require(path.join(__dirname, 'queries', 'reports/activities', 'params'));
+				return this.query('reports/activities', await resolveParams(parameters, parameters.pagination));
+			}
 			default:
 				throw new Error('Report not found');
 
