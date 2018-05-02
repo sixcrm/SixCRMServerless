@@ -1,0 +1,22 @@
+[
+	{
+		"AssumeRolePolicyDocument": {
+			"Version": "2012-10-17",
+			"Statement": [
+				{
+					"Effect": "Allow",
+					"Principal": {
+						"Service": "dms.amazonaws.com"
+					},
+					"Action": "sts:AssumeRole"
+				}
+			]
+		},
+		"RoleName": "dms_bins_task_access",
+		"Description": "Allows Database Migration Service to call AWS services on your behalf.",
+		"ManagedPolicies": [
+			"arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+			"arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+		]
+	}
+]

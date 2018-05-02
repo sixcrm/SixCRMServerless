@@ -1,0 +1,6 @@
+{
+	"TargetMetadata": {
+		"ParallelLoadThreads": 10,
+		"ParallelLoadBufferSize": 1000
+	}
+}

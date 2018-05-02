@@ -1,0 +1,13 @@
+{
+	"ReplicationInstanceIdentifier": "sixcrm-replication-server",
+	"ReplicationInstanceClass": "dms.t2.medium",
+	"ReplicationSubnetGroupIdentifier": "sixcrm-replication-subnet",
+	"AllocatedStorage": 50,
+	"AutoMinorVersionUpgrade": true,
+	"EngineVersion": "2.4.2",
+	"MultiAZ": false,
+	"PubliclyAccessible": false,
+	"VpcSecurityGroupIds": [
+		"{{vpc_security_group}}"
+	]
+}

@@ -3,7 +3,7 @@
 	"Tables": [
 		{
 			"TableName": "bins",
-			"TablePath": "analytics/bin/",
+			"TablePath": "analytics/bins/",
 			"TableOwner": "analytics",
 			"TableColumns": [
 				{

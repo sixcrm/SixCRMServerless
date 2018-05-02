@@ -1,0 +1,4 @@
+{
+	"ReplicationSubnetGroupIdentifier": "sixcrm-replication-subnet",
+  "ReplicationSubnetGroupDescription": "SixCRM Replication Subnet"
+}
