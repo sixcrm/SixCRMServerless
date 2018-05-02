@@ -242,7 +242,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		du.debug('Validate Arguments');
 
-		let normalized_product_schedules = this.parameters.get('normalizedproductschedules');
+		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', false);
 
 		if(arrayutilities.nonEmpty(normalized_product_schedules)){
 			arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
@@ -256,7 +256,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 				})
 			});
 		}
-		// let normalized_products = this.parameters.get('normalizedproducts');
+		// let normalized_products = this.parameters.get('normalizedproducts', false);
 		// let session = this.parameters.get('session');
 		// let day = this.parameters.get('day');
 

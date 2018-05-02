@@ -219,7 +219,7 @@ class StripeController extends MerchantProvider {
 		du.debug('Get Refunds Create Request Parameters');
 
 		let transaction = this.parameters.get('transaction');
-		let amount = this.parameters.get('amount');
+		let amount = this.parameters.get('amount', false);
 		let action = this.parameters.get('action');
 
 		let parameters_object = {
