@@ -169,7 +169,7 @@ module.exports = class MerchantProviderSummaryHelperController {
 		du.debug('Format Response');
 
 		let merchant_providers = this.parameters.get('merchantproviders');
-		let merchant_provider_summaries = this.parameters.get('merchantprovidersummaries', null, false);
+		let merchant_provider_summaries = this.parameters.get('merchantprovidersummaries', {fatal: false});
 
 		let return_object = {};
 

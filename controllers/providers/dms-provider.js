@@ -5,7 +5,10 @@ module.exports = class DMSProvider extends AWSProvider {
 	constructor(){
 		super();
 		this.instantiateAWS();
-		this.dms = new this.AWS.DMS({apiVersion: '2016-01-01'});
+		this.dms = new this.AWS.DMS({
+			apiVersion: '2016-01-01',
+			region: this.getRegion()
+		});
 	}
 
 	describeReplicationSubnetGroups(parameters) {

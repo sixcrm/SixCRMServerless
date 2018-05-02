@@ -98,7 +98,7 @@ module.exports = class processBillingController extends workerController {
 		du.debug('Post Processing');
 
 		const registerResponse = this.parameters.get('registerresponse');
-		const transactions = registerResponse.parameters.get('transactions', null, false);
+		const transactions = registerResponse.parameters.get('transactions', {fatal: false});
 
 		if (_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)) {
 			return false;

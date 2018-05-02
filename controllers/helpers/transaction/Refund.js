@@ -115,7 +115,7 @@ module.exports = class Refund extends TransactionUtilities{
 			transaction: transaction
 		};
 
-		let amount = this.parameters.get('amount', null, false);
+		let amount = this.parameters.get('amount', {fatal: false});
 
 		if(!_.isNull(amount)){
 			parameters.amount = amount;

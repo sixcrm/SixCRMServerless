@@ -112,6 +112,8 @@ module.exports = class WriteTransactionRecords {
 
 		return this._auroraContext.withConnection((connection) => {
 
+			du.debug('WriteTransactionRecords: query', query, queryArgs);
+
 			return connection.queryWithArgs(query, queryArgs);
 
 		});

@@ -78,7 +78,7 @@ module.exports = class createRebillsController extends workerController {
 
 		du.debug('Respond');
 
-		let rebill = this.parameters.get('rebill', null, false);
+		let rebill = this.parameters.get('rebill', {fatal: false});
 
 		let response_code = 'fail';
 

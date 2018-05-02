@@ -53,6 +53,8 @@ module.exports = class WriteTransactionProductScheduleRecords {
 
 		return this._auroraContext.withConnection((connection) => {
 
+			du.debug('WriteTransactionProductScheduleRecords: query', query, queryArgs);
+
 			return connection.queryWithArgs(query, queryArgs);
 
 		});

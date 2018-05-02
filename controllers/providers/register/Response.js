@@ -41,7 +41,7 @@ module.exports = class RegisterResponse extends Response {
 
 	getCreditCard(){
 
-		return this.parameters.get('creditcard', null, false);
+		return this.parameters.get('creditcard', {fatal: false});
 
 	}
 
@@ -53,7 +53,7 @@ module.exports = class RegisterResponse extends Response {
 
 	getTransactions(){
 
-		return this.parameters.get('transactions', null, false);
+		return this.parameters.get('transactions', {fatal: false});
 
 	}
 
@@ -65,7 +65,7 @@ module.exports = class RegisterResponse extends Response {
 
 	getProcessorResponses(){
 
-		return this.parameters.get('processorresponses', null, false);
+		return this.parameters.get('processorresponses', {fatal: false});
 
 	}
 

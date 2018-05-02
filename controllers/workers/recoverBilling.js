@@ -94,7 +94,7 @@ module.exports = class recoverBillingController extends workerController {
 
 		du.debug('Post Processing');
 
-		const transactions = this.parameters.get('transactions', null, false);
+		const transactions = this.parameters.get('transactions', {fatal: false});
 
 		if (_.isNull(transactions) || !au.nonEmpty(transactions)) {
 			return false;

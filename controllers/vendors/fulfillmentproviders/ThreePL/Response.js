@@ -123,7 +123,7 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 
 		fatal = _.isUndefined(fatal)?true:fatal;
 
-		let additional_parameters = this.parameters.get('additionalparameters', null, false);
+		let additional_parameters = this.parameters.get('additionalparameters', {fatal: false});
 
 		if(!_.isNull(additional_parameters)){
 

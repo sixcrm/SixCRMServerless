@@ -15,7 +15,10 @@ module.exports = class TransactionEventHandler {
 
 	async execute(record) {
 
-		du.debug('TransactionEventHandler.execute()', record);
+		du.debug('TransactionEventHandler.execute()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		await new WriteSessionRecords(this._auroraContext).execute([record.session]);
 		await new WriteTransactionRecords(this._auroraContext).execute([record]);

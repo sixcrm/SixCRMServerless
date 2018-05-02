@@ -77,7 +77,7 @@ module.exports = class Response {
 
 	getCode(){
 
-		let response_type = this.parameters.get('response_type', null, false);
+		let response_type = this.parameters.get('response_type', {fatal: false});
 
 		if(objectutilities.hasRecursive(this, 'merged_response_types.'+response_type+'.code')){
 			return this.merged_response_types[response_type].code;

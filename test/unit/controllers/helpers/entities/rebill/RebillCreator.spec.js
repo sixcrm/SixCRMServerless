@@ -839,7 +839,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 				return rebillCreatorHelper.getScheduleElementsOnBillDay().then(() => {
 
-					let elements = rebillCreatorHelper.parameters.get('scheduleelementsonbillday', null, false);
+					let elements = rebillCreatorHelper.parameters.get('scheduleelementsonbillday', {fatal: false});
 
 					expect(elements).to.equal(test_case.expect);
 
@@ -1019,7 +1019,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 				return rebillCreatorHelper.calculateBillAt().then(result => {
 					expect(result).to.equal(true);
-					expect(rebillCreatorHelper.parameters.get('billdate', null, false)).to.equal(test_case.expect);
+					expect(rebillCreatorHelper.parameters.get('billdate', {fatal: false})).to.equal(test_case.expect);
 				});
 
 			}));

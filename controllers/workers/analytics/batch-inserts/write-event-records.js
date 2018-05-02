@@ -82,6 +82,8 @@ module.exports = class WriteEventRecords {
 
 		return this._auroraContext.withConnection((connection) => {
 
+			du.debug('WriteEventRecords: query', query, queryArgs);
+
 			return connection.queryWithArgs(query, queryArgs);
 
 		});

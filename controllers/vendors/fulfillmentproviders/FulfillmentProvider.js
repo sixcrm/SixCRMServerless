@@ -73,7 +73,7 @@ module.exports = class fulfillmentProviderController {
 
 		du.debug('Set Reference Number');
 
-		let shipping_receipt = this.parameters.get('shippingreceipt', null, false);
+		let shipping_receipt = this.parameters.get('shippingreceipt', {fatal: false});
 
 		if(!_.isNull(shipping_receipt)){
 

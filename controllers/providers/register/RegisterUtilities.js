@@ -226,7 +226,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 		du.debug('Select Customer Credit Card');
 
-		let selected_creditcard = this.parameters.get('selectedcreditcard', null, false);
+		let selected_creditcard = this.parameters.get('selectedcreditcard', {fatal: false});
 
 		if(_.isNull(selected_creditcard)){
 
@@ -272,7 +272,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 		du.debug('selected_creditcard');
 
-		let raw_creditcard = this.parameters.get('rawcreditcard', null, false);
+		let raw_creditcard = this.parameters.get('rawcreditcard', {fatal: false});
 
 		if(_.has(raw_creditcard, 'cvv')){
 			selected_creditcard.cvv = raw_creditcard.cvv;
@@ -298,7 +298,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 
 		du.debug('Acquire Customer Creditcard');
 
-		let selected_creditcard = this.parameters.get('selectedcreditcard', null, false);
+		let selected_creditcard = this.parameters.get('selectedcreditcard', {fatal: false});
 
 		if(!_.isNull(selected_creditcard) && _.has(selected_creditcard, 'id')){
 			return Promise.resolve(true);

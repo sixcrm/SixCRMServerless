@@ -12,7 +12,10 @@ module.exports = class LeadEventHandler {
 
 	async execute(record) {
 
-		du.debug('LeadEventHandler.execute()', record);
+		du.debug('LeadEventHandler.execute()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		if (record.session) {
 

@@ -129,7 +129,7 @@ module.exports = class IndexEntitiesController extends workerController {
 
 		du.debug('Set Response Code');
 
-		let cloudsearch_response = this.parameters.get('cloudsearchresponse', null, false);
+		let cloudsearch_response = this.parameters.get('cloudsearchresponse', {fatal: false});
 
 		if(cloudsearch_response.status == 'success'){
 			this.parameters.set('responsecode', 'success');

@@ -52,20 +52,33 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 
 				const productSchedules = [];
 
+				// we need the product schedules off the rebill, but they do not include the product schedule name
+
 				if (record.context.rebill && record.context.rebill.product_schedules) {
 
 					productSchedules.push(..._.reduce(record.context.rebill.product_schedules, (memo, psRebill) => {
 
-						// check to see if this product matches the schedules listed in the session
-						memo.push(..._.filter(record.context.session.watermark.product_schedules, psWatermark => {
+						// check to see if this product matches the schedules listed in the session so we can resolve the product schedule name
 
-							return psRebill === psWatermark.product_schedule.id && _.find(psWatermark.product_schedule.schedule, s => {
+						if (!record.context.session.watermark || !record.context.session.watermark.product_schedules) {
 
-								return s.product.id === p.product.id;
+							// there is no watermark on the session... this is bad, we cannot resolve the product to a schedule
+							du.warning('TransactionTransform.transform(): cannot resolve product schedules, watermark does not exist on session');
 
-							});
+						} else {
 
-						}));
+							// there is a watermark on the session, return it's schedule
+							memo.push(..._.filter(record.context.session.watermark.product_schedules, psWatermark => {
+
+								return psRebill === psWatermark.product_schedule.id && _.find(psWatermark.product_schedule.schedule, s => {
+
+									return s.product.id === p.product.id;
+
+								});
+
+							}));
+
+						}
 
 						return memo;
 

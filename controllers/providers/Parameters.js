@@ -3,9 +3,7 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 module.exports = class Parameters {
 
@@ -119,32 +117,15 @@ module.exports = class Parameters {
 
 	}
 
-	get(key, additional_parameters, fatal){
+	get(key, { fatal = true } = {}){
 
 		du.debug('Get');
-
-		fatal = (_.isUndefined(fatal))?true:fatal;
 
 		let return_object = null;
 
 		if(_.has(this.store, key)){
 
 			return_object = this.store[key];
-
-			if(arrayutilities.nonEmpty(additional_parameters)){
-
-				let missing_parameter = arrayutilities.find(additional_parameters, (additional_parameter) => {
-					if(objectutilities.hasRecursive(return_object, additional_parameter)){
-						return false;
-					}
-					return true;
-				});
-
-				if(stringutilities.isString(missing_parameter) && fatal){
-					throw eu.getError('server', key+' is missing "'+missing_parameter+'" property.');
-				}
-
-			}
 
 		}
 

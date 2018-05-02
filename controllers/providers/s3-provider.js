@@ -393,7 +393,7 @@ module.exports = class S3Provider extends AWSProvider {
 
 	upload(parameters) {
 		du.debug('Upload');
-		this.s3.upload(parameters).promise();
+		return this.s3.upload(parameters).promise();
 	}
 
 	putObject(parameters) {

@@ -97,7 +97,7 @@ module.exports = class ShippingCarrierResponse extends ResponseController {
 
 		du.debug('Get Parsed Response');
 
-		return this.parameters.get('parsedresponse', null, false);
+		return this.parameters.get('parsedresponse', {fatal: false});
 
 	}
 
