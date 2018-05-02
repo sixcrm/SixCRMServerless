@@ -509,7 +509,6 @@ jobs:
           command: |
             curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
             sudo apt-get install -y git-lfs
-            cd project
             git lfs pull
       - run:
           name: Deploy DMS Tasks
