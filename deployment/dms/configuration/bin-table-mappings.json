@@ -1,0 +1,14 @@
+{
+	"rules": [
+		{
+			"rule-type": "selection",
+			"rule-id": "1",
+			"rule-name": "Import CSV from S3",
+			"rule-action": "include",
+			"object-locator": {
+				"schema-name": "analytics",
+				"table-name": "bins"
+			}
+		}
+	]
+}

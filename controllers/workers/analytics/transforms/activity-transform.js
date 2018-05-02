@@ -12,10 +12,10 @@ module.exports = class ActivityTransform extends AnalyticsTransfrom {
 
 		return {
 			id: record.context.id,
-			datetime: record.datetime,
+			datetime: record.context.datetime,
 			eventType: record.event_type,
-			user: record.user,
-			account: record.account,
+			user: record.context.user ? record.context.user.id: undefined,
+			account: record.context.account,
 			actor: record.context.actor,
 			actorType: record.context.actor_type,
 			action: record.context.action,

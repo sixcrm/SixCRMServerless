@@ -11,7 +11,7 @@ module.exports = class WriteChargebackRecords {
 
 	}
 
-	async execute(records) {
+	execute(records) {
 
 		du.debug('WriteChargebackRecords.execute()');
 

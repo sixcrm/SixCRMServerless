@@ -1,0 +1,10 @@
+{
+	"EndpointIdentifier": "sixcrm-s3-bins",
+	"EndpointType": "source",
+	"EngineName": "s3",
+	"S3Settings": {
+		"BucketName": "sixcrm-{{stage}}-dms",
+		"ServiceAccessRoleArn": "arn:aws:iam::{{account}}:role/dms-bins-task-access",
+		"ExternalTableDefinition": "{{bin_csv_schema}}"
+	}
+}

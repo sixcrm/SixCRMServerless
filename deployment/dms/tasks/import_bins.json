@@ -1,0 +1,9 @@
+{
+	"ReplicationTaskIdentifier": "import-bins",
+  "MigrationType": "full-load",
+  "ReplicationInstanceArn": "{{sixcrm_replication_server}}",
+  "SourceEndpointArn": "{{sixcrm_s3_bins}}",
+  "TargetEndpointArn": "{{sixcrm_dynamodb}}",
+	"TableMappings": "{{bin_table_mappings}}",
+	"ReplicationTaskSettings": "{{import_bins_settings}}"
+}

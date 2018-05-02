@@ -493,6 +493,23 @@ jobs:
       - run:
           name: Cloudwatch Log Subscriptions
           command: export SIX_VERBOSE=2 && node ./deployment/cloudwatch/deploy_subscription_filters.js
+  deploy_dms:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy DMS Tasks
+          command: node ./deployment/dms/deploy_tasks.js
+      - run:
+          name: Import BINs
+          command: node ./deployment/dms/import_bins.js
   post_deployment:
     <<: *job-defaults
     steps:
@@ -767,6 +784,12 @@ workflows:
       - deploy_dynamodb:
           requires:
             - deploy_iam
+      - deploy_dms:
+          requires:
+            - deploy_ec2_servers
+            - deploy_iam
+            - deploy_s3
+            - deploy_dynamodb
       # - deploy_redshift:
       #     requires:
       #       - deploy_security_groups

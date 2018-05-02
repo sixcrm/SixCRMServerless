@@ -11,7 +11,7 @@ module.exports = class WriteEventRecords {
 
 	}
 
-	async execute(records) {
+	execute(records) {
 
 		du.debug('WriteEventRecords.execute()');
 

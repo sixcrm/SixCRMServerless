@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
 
@@ -58,14 +57,12 @@ module.exports = class ActivityHelper {
 			let associated_with = promises[2];
 
 			let account = this.getActivityAccount(acted_upon);
-			let now = timestamp.getISO8601();
 
 			let activity = {
 				id: uuidV4(),
 				actor: actor.id,
 				actor_type: actor.type,
-				action,
-				datetime: now
+				action
 			};
 
 			if (!_.isNull(account)) {

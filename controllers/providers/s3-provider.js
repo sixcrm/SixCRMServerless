@@ -343,6 +343,11 @@ module.exports = class S3Provider extends AWSProvider {
 
 	}
 
+	headObject(parameters) {
+		du.debug('Head Object');
+		return this.s3.headObject(parameters).promise();
+	}
+
 	headBucket(bucket_name) {
 
 		du.debug('Head Bucket');
@@ -384,6 +389,11 @@ module.exports = class S3Provider extends AWSProvider {
 
 		});
 
+	}
+
+	upload(parameters) {
+		du.debug('Upload');
+		this.s3.upload(parameters).promise();
 	}
 
 	putObject(parameters) {
@@ -673,4 +683,3 @@ module.exports = class S3Provider extends AWSProvider {
 
 
 }
-

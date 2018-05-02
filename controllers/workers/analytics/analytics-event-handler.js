@@ -50,7 +50,7 @@ module.exports = class AnalyticsEventHandler {
 
 		}
 
-		const promises = records.map((r) => {
+		const promises = records.map(async (r) => {
 
 			const message = JSON.parse(r.Body);
 
@@ -113,37 +113,37 @@ module.exports = class AnalyticsEventHandler {
 
 	async _settle(promises) {
 
-		const inspections = await BBPromise.map(promises, (promise) => {
+		const inspections = promises.map((promise) => {
 
 			return BBPromise.resolve(promise).reflect();
 
 		});
 
+		await BBPromise.each(inspections, i => i);
+
 		inspections.forEach((i) => {
 
-			if (!i.isFulfilled()) {
+			if (i.value().isRejected()) {
 
-				du.debug('Analytics event failed to write', i.reason());
+				du.debug('Analytics event failed to write', i.value().reason());
 
 			}
 
 		});
 
 		const ex = inspections.find(
-			(r) => {
+			(i) => {
 
-				return !r.isFulfilled();
+				return i.value().isRejected();
 
 			});
 
 		if (ex) {
 
 			// throw the first exception once all promises have resolved
-			throw ex.reason();
+			throw ex.value().reason();
 
 		}
-
-		return inspections.map((i) => i.value());
 
 	}
 

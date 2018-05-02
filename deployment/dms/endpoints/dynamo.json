@@ -1,0 +1,8 @@
+{
+  "EndpointIdentifier": "sixcrm-dynamodb",
+  "EndpointType": "target",
+  "EngineName": "dynamodb",
+  "DynamoDbSettings": {
+    "ServiceAccessRoleArn": "arn:aws:iam::{{account}}:role/dms-bins-task-access"
+  }
+}
