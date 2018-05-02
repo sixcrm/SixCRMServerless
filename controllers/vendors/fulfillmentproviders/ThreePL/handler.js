@@ -254,7 +254,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 			return this.ThreePLID;
 		}
 
-		// let fulfillment_provider = this.parameters.get('fulfillmentprovider', 'provider.threepl_id', false);
 		let fulfillment_provider = this.parameters.get('fulfillmentprovider', {fatal: false});
 
 		if(!_.isNull(fulfillment_provider)){
