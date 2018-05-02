@@ -38,15 +38,22 @@ module.exports = class binImporter {
 					Bucket: s3_bucket,
 					Key: s3_key
 				})
+					.catch(error => {
+						if (error.code === 'NotFound') {
+							return;
+						}
+
+						throw error;
+					})
 					.then(response => {
-						if (response.Metadata.checksum === checksum) {
+						if (response && response.Metadata.checksum === checksum) {
 							const error = new Error('No Changes');
 							error.code = "NoChanges";
 							throw error;
 						}
 
-						return this.upload();
-					})
+						return this.upload(checksum);
+					});
 			});
 	}
 
@@ -118,7 +125,7 @@ module.exports = class binImporter {
 		});
 	}
 
-	upload() {
+	upload(checksum) {
 		const passthrough = new stream.PassThrough();
 
 		fs.createReadStream(csvFilename)
