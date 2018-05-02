@@ -76,7 +76,7 @@ module.exports = class TransactionHelperController {
 			.then(() => this.acquireTransaction())
 			.then(() => this.setChargebackStatus())
 			.then(() => this.updateTransaction())
-			.then(() => AnalyticsEvent.push('chargeback', { transaction: this.parameters.get('transaction', false)}))
+			.then(() => AnalyticsEvent.push('chargeback', { transaction: this.parameters.get('transaction', {fatal: false})}))
 			.then(() => {
 				return this.parameters.get('transaction');
 			})

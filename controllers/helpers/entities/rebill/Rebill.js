@@ -350,8 +350,8 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 		state = (!_.isUndefined(state) && !_.isNull(state)) ? state : this.parameters.get('newstate');
 		entered_at = (!_.isUndefined(entered_at) && !_.isNull(entered_at)) ? entered_at : this.parameters.get('statechangedat');
-		exited_at = (!_.isUndefined(exited_at) && !_.isNull(exited_at)) ? exited_at : this.parameters.get('exitedat', false);
-		error_message = (!_.isUndefined(error_message)) ? error_message : this.parameters.get('errormessage', false);
+		exited_at = (!_.isUndefined(exited_at) && !_.isNull(exited_at)) ? exited_at : this.parameters.get('exitedat', {fatal: false});
+		error_message = (!_.isUndefined(error_message)) ? error_message : this.parameters.get('errormessage', {fatal: false});
 
 		let history_element = {
 			entered_at: entered_at,
@@ -545,7 +545,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 			.then(() => this.acquireShippingReceipts())
 			.then(() => {
 
-				let shipping_receipts = this.parameters.get('shippingreceipts', false);
+				let shipping_receipts = this.parameters.get('shippingreceipts', {fatal: false});
 
 				if (_.isNull(shipping_receipts)) {
 					shipping_receipts = [];
@@ -584,7 +584,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 		du.debug('Get Shipping Receipt IDs');
 
-		let transactions = this.parameters.get('transactions', false);
+		let transactions = this.parameters.get('transactions', {fatal: false});
 
 		if (_.isNull(transactions)) {
 			return true;
@@ -623,7 +623,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 		du.debug('Acquire Shipping Receipts');
 
-		let shipping_receipt_ids = this.parameters.get('shippingreceiptids', false);
+		let shipping_receipt_ids = this.parameters.get('shippingreceiptids', {fatal: false});
 
 		if (_.isNull(shipping_receipt_ids)) {
 			return true;
@@ -655,7 +655,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		du.debug('Pushing Rebill State Change Event');
 
 		await this.transformRebill();
-		await AnalyticsEvent.push('rebill', { transformedrebill: this.parameters.get('transformedrebill', false)});
+		await AnalyticsEvent.push('rebill', { transformedrebill: this.parameters.get('transformedrebill', {fatal: false})});
 		return this.parameters.get('rebill');
 
 	}

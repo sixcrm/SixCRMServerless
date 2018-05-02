@@ -21,7 +21,7 @@ module.exports = class RebillHelperUtilities {
 
 			created_at = null;
 
-			let session = this.parameters.get('session', false);
+			let session = this.parameters.get('session', {fatal: false});
 
 			if(!_.isNull(session)){
 
@@ -49,7 +49,7 @@ module.exports = class RebillHelperUtilities {
 
 		du.debug('Calculate Amount');
 
-		let products = this.parameters.get('transactionproducts', false);
+		let products = this.parameters.get('transactionproducts', {fatal: false});
 
 		let amount = 0.0;
 

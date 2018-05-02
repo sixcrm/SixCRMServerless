@@ -121,7 +121,7 @@ module.exports = class InfoController extends transactionEndpointController{
 
 		if(_.has(event, 'products')){
 
-			let products = this.parameters.get('products', false);
+			let products = this.parameters.get('products', {fatal: false});
 
 			response_object.products = products;
 
@@ -129,7 +129,7 @@ module.exports = class InfoController extends transactionEndpointController{
 
 		if(_.has(event, 'productschedules')){
 
-			let product_schedules = this.parameters.get('productschedules', false);
+			let product_schedules = this.parameters.get('productschedules', {fatal: false});
 
 			response_object.productschedules = product_schedules;
 

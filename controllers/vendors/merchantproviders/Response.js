@@ -61,7 +61,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
 		this.parameters.setParameters({argumentation: arguments[0], action: 'handleResponse'});
 
-		let error = this.parameters.get('error', false);
+		let error = this.parameters.get('error', {fatal: false});
 
 		if(!_.isNull(error)){
 
@@ -108,7 +108,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
 		du.debug('Get Parsed Response');
 
-		return this.parameters.get('parsedresponse', false);
+		return this.parameters.get('parsedresponse', {fatal: false});
 
 	}
 
@@ -203,7 +203,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
 		du.debug('Get Response');
 
-		return this.parameters.get('response', false);
+		return this.parameters.get('response', {fatal: false});
 
 	}
 
@@ -239,7 +239,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
 		du.debug('Get Code');
 
-		let code = this.parameters.get('code', false);
+		let code = this.parameters.get('code', {fatal: false});
 
 		if(_.isNull(code)){
 			return super.getCode();

@@ -50,7 +50,7 @@ module.exports = class TerminalResponse extends Response {
 
 		du.debug('Get Vendor Response');
 
-		let vendor_response = this.parameters.get('vendorresponse', false);
+		let vendor_response = this.parameters.get('vendorresponse', {fatal: false});
 
 		if(_.isNull(vendor_response) || _.isUndefined(vendor_response)){
 			return null;
@@ -68,7 +68,7 @@ module.exports = class TerminalResponse extends Response {
 
   getProviderResponse(){
 
-    return this.parameters.get('providerresponse', false);
+    return this.parameters.get('providerresponse', {fatal: false});
 
   }
   */

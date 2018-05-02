@@ -56,7 +56,7 @@ module.exports = class TrackerUtilitiesController extends PermissionedController
 			response_type: this.parameters.get('responsecode')
 		};
 
-		let vendor_response_class = this.parameters.get('vendorresponseclass', false);
+		let vendor_response_class = this.parameters.get('vendorresponseclass', {fatal: false});
 
 		if(!_.isNull(vendor_response_class) && _.isFunction(vendor_response_class.getParsedResponse)){
 			response_prototype.vendor_response = vendor_response_class.getParsedResponse();
