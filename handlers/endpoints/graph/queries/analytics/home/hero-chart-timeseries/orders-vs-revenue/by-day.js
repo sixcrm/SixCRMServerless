@@ -13,7 +13,7 @@ const body = `
         facet: "end"
         values: ["2018-04-09T14:32:28Z"]
       },
-      
+      {
         facet: "period"
         values: ["day"]
       }]
