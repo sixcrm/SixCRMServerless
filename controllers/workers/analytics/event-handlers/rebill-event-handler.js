@@ -11,7 +11,10 @@ module.exports = class RebillEventHandler {
 
 	async execute(record) {
 
-		du.debug('RebillEventHandler.execute()', record);
+		du.debug('RebillEventHandler.execute()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		await new WriteRebillRecords(this._auroraContext).execute([record]);
 

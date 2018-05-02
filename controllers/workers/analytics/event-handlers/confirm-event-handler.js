@@ -12,7 +12,10 @@ module.exports = class ConfirmEventHandler {
 
 	async execute(record) {
 
-		du.debug('ConfirmEventHandler.execute()', record);
+		du.debug('ConfirmEventHandler.execute()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		if (record.session) {
 

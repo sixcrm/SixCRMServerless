@@ -11,7 +11,10 @@ module.exports = class ChargebackEventHandler {
 
 	async execute(record) {
 
-		du.debug('ChargebackEventHandler.execute()', record);
+		du.debug('ChargebackEventHandler.execute()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		await new WriteChargebackRecords(this._auroraContext).execute([record]);
 
