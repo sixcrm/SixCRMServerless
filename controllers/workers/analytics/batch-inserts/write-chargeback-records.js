@@ -52,6 +52,8 @@ module.exports = class WriteChargebackRecords {
 
 		return this._auroraContext.withConnection((connection) => {
 
+			du.debug('WriteChargebackRecords: query', query, queryArgs);
+
 			return connection.queryWithArgs(query, queryArgs);
 
 		});

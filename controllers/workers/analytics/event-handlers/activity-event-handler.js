@@ -11,7 +11,10 @@ module.exports = class ActivityEventHandler {
 
 	async execute(record) {
 
-		du.debug('ActivityEventHandler.execute()', record);
+		du.debug('ActivityEventHandler.execute()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		await new WriteActivityRecords(this._auroraContext).execute([record]);
 

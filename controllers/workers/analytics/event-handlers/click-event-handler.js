@@ -11,7 +11,10 @@ module.exports = class ClickEventHandler {
 
 	async execute(record) {
 
-		du.debug('ClickEventHandler.execute()', record);
+		du.debug('ClickEventHandler.execute()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		await new WriteEventRecords(this._auroraContext).execute([record]);
 

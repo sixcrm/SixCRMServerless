@@ -62,6 +62,8 @@ module.exports = class WriteRebillRecords {
 
 		return this._auroraContext.withConnection((connection) => {
 
+			du.debug('WriteRebillRecords: query', query, queryArgs);
+
 			return connection.queryWithArgs(query, queryArgs);
 
 		});

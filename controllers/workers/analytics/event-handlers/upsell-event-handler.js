@@ -12,7 +12,10 @@ module.exports = class UpsellEventHandler {
 
 	async execute(record) {
 
-		du.debug('UpsellEventHandler.execute()', record);
+		du.debug('UpsellEventHandler.execute()', require('util').inspect(record, {
+			showHidden: false,
+			depth: null
+		}));
 
 		if (record.session) {
 
