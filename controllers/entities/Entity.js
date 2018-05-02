@@ -496,7 +496,6 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then(() => {
 
 				return this.dynamodbprovider.batchGet({table_name: this.table_name, ids: ids, parameters: parameters})
-					.then((data) => this.transformBatchIntoResponse(data))
 					.then((data) => this.buildResponse(data))
 					.catch((error) => {
 						return this.handleErrors(error)

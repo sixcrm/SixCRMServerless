@@ -212,7 +212,7 @@ describe('controllers/entities/Customer.js', () => {
 			let mock_credit_card = class {
 				constructor(){}
 
-				listByAccount () {
+				batchGet () {
 					return Promise.resolve({creditcards: credit_cards});
 				}
 			};
@@ -281,7 +281,7 @@ describe('controllers/entities/Customer.js', () => {
 			let mock_credit_card = class {
 				constructor(){}
 
-				listByAccount () {
+				batchGet () {
 					return Promise.resolve({creditcards: credit_cards});
 				}
 			};
@@ -333,7 +333,7 @@ describe('controllers/entities/Customer.js', () => {
 			let mock_credit_card = class {
 				constructor(){}
 
-				listByAccount () {
+				batchGet () {
 					return Promise.resolve({creditcards: credit_cards});
 				}
 			};
