@@ -69,7 +69,7 @@ module.exports = class binImporter {
 
 				return this.dms.startReplicationTask({
 					ReplicationTaskArn,
-					StartReplicationTaskType: 'start-replication'
+					StartReplicationTaskType: 'reload-target'
 				});
 			});
 	}
