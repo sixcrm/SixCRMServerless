@@ -1,0 +1,35 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema",
+	"id": "/analytics-facets",
+	"title": "Analytics facets",
+	"type": "object",
+	"required": ["facets"],
+	"properties": {
+		"facets": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"items": {
+					"required": ["facet", "values"],
+					"properties": {
+						"facet": {
+							"type": "string"
+						},
+						"values": {
+							"type": "array",
+							"items": {
+								"required": ["key", "value"],
+								"properties": {
+									"key": {
+										"type": "string"
+									},
+									"value": {}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
