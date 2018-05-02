@@ -86,7 +86,7 @@ module.exports = class LoggerController {
 			let action = {
 				'index': {
 					'_index': indexName,
-					'_type': data.logGroup,
+					'_type': '_doc',
 					'_id': logEvent.id
 				}
 			};
@@ -164,32 +164,23 @@ module.exports = class LoggerController {
 
 	}
 
-	transformResponse({
-		error,
-		success,
-		statusCode,
-		failedItems
-	}) {
+	transformResponse(response) {
 
 		du.debug('Transform Response');
 
-		du.debug('Response: ' + JSON.stringify({
-			"statusCode": statusCode
-		}));
+		if (response.errors) {
 
-		if (!_.isNull(error)) {
+			const failedItems = _.filter(response.items, (item) => _.has(item, 'error'));
 
-			du.error(JSON.stringify(error, null, 2));
+			if (failedItems.length > 0) {
 
-			if (failedItems && failedItems.length > 0) {
-				du.error("Failed Items: " + JSON.stringify(failedItems, null, 2));
+				du.error("Failed Items", failedItems);
+
 			}
 
-			throw error;
+			throw eu.getError('server', "Failed to index logs", failedItems);
 
 		} else {
-
-			du.debug('Success: ' + JSON.stringify(success));
 
 			return true;
 
