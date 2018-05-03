@@ -1,4 +1,4 @@
-
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -9,7 +9,7 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 //Technical Debt: Override the list method
 class AccountController extends entityController {
 
-	constructor(){
+	constructor() {
 
 		super('account');
 
@@ -17,38 +17,73 @@ class AccountController extends entityController {
 
 	}
 
-	create({entity}) {
+	create({
+		entity
+	}) {
 
 		du.debug('Account.create()');
 
-		this.supplyLowercaseName({entity: entity});
+		this.supplyLowercaseName({
+			entity: entity
+		});
 
-		return this.verifyAccountName({entity: entity}).then(() => super.create({entity: entity}));
+		return this.verifyAccountName({
+			entity: entity
+		}).then(() => super.create({
+			entity: entity
+		}));
 
 	}
 
-	update({entity, ignore_updated_at}) {
+	update({
+		entity,
+		ignore_updated_at,
+		allow_billing_overwrite = false
+	}) {
 
 		du.debug('Account.update()');
 
-		this.supplyLowercaseName({entity: entity});
-
-		return this.verifyAccountName({entity: entity}).then(() => super.update({entity: entity, ignore_updated_at: ignore_updated_at}));
+		return this.exists({
+			id: entity.id,
+			return_entity: true
+		})
+			.then((result) => {
+				this.supplyLowercaseName({
+					entity: entity
+				});
+				if (allow_billing_overwrite !== true) {
+					delete entity.billing;
+					if (_.has(result, 'billing')) {
+						entity.billing = result.billing
+					}
+				}
+				return entity;
+			})
+			.then((entity) => {
+				this.verifyAccountName({
+					entity: entity
+				})
+				return entity;
+			})
+			.then((entity) => super.update({
+				entity: entity,
+				ignore_updated_at: ignore_updated_at
+			}));
 
 	}
 
 	//Technical Debt: finish!
-	associatedEntitiesCheck(){
+	associatedEntitiesCheck() {
 		return Promise.resolve([]);
 	}
 
 	//Technical Debt:  Shouldn't this be configured?
-	getMasterAccount(){
+	getMasterAccount() {
 
 		du.debug('Get Master Account');
 
 		return Promise.resolve({
-			"id":"*",
+			"id": "*",
 			"name": "Master Account",
 			"active": true
 		});
@@ -56,22 +91,27 @@ class AccountController extends entityController {
 	}
 
 	//Technical Debt:  Name seems ubiquitous
-	getACL(account){
+	getACL(account) {
 
 		du.debug('Get ACL');
 
-		return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {account: account});
+		return this.executeAssociatedEntityFunction('userACLController', 'getACLByAccount', {
+			account: account
+		});
 
 	}
 
 	//Technical Debt:  This needs to be adjusted.  Master users should see all accounts but non-master users should see all accounts that they have ACLs on.
-	list({pagination, fatal}){
+	list({
+		pagination,
+		fatal
+	}) {
 
 		du.debug("List");
 
 		let query_parameters = {};
 
-		if(global.account !== '*'){
+		if (global.account !== '*') {
 
 			query_parameters = this.appendFilterExpression(query_parameters, 'id = :accountv');
 			query_parameters = this.appendExpressionAttributeValues(query_parameters, ':accountv', global.account);
@@ -79,24 +119,37 @@ class AccountController extends entityController {
 
 		}
 
-		return super.list({query_parameters: query_parameters, pagination: pagination, fatal: fatal});
+		return super.list({
+			query_parameters: query_parameters,
+			pagination: pagination,
+			fatal: fatal
+		});
 
 	}
 
-	supplyLowercaseName({entity}) {
+	supplyLowercaseName({
+		entity
+	}) {
 
 		du.deep('Supply Lowercase Name');
 
 		entity.name_lowercase = entity.name.toLowerCase();
 	}
 
-	verifyAccountName({entity}) {
+	verifyAccountName({
+		entity
+	}) {
 
 		du.debug('Verify Account Name');
 
-		let query_parameters = this.createINQueryParameters({field: 'name_lowercase', list_array: [entity.name_lowercase]});
+		let query_parameters = this.createINQueryParameters({
+			field: 'name_lowercase',
+			list_array: [entity.name_lowercase]
+		});
 
-		return super.list({query_parameters: query_parameters})
+		return super.list({
+			query_parameters: query_parameters
+		})
 			.then(response => {
 				if (
 					objectutilities.hasRecursive(response, 'accounts') &&
