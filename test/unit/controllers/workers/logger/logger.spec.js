@@ -677,8 +677,7 @@ describe('controllers/workers/logger', () => {
 			const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
 			let loggerController = new LoggerController();
 
-			let transformed = loggerController.transformResponse(result);
-			expect(transformed).to.equal(true);
+			loggerController.transformResponse(result);
 
 		});
 
