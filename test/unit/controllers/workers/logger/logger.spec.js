@@ -574,58 +574,6 @@ describe('controllers/workers/logger', () => {
 		});
 	});
 
-	describe('validateData', () => {
-
-		it('successfully validates', () => {
-
-			let input = getValidLogInput();
-
-			const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
-			let loggerController = new LoggerController();
-
-			expect(loggerController.validateData(input)).to.equal(true);
-
-		});
-
-		it('fails validation', () => {
-
-			let input = getValidLogInput();
-			delete input.awslogs;
-
-			const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
-			let loggerController = new LoggerController();
-
-			try {
-				loggerController.validateData(input)
-				expect(false).to.equal(true);
-			} catch (error) {
-				expect(error.message).to.equal('[500] Invalid data.');
-			}
-
-			input = getValidLogInput();
-			delete input.awslogs.data;
-
-			try {
-				loggerController.validateData(input)
-				expect(false).to.equal(true);
-			} catch (error) {
-				expect(error.message).to.equal('[500] Invalid data.');
-			}
-
-			input = getValidLogInput();
-			input.awslogs.data = {};
-
-			try {
-				loggerController.validateData(input)
-				expect(false).to.equal(true);
-			} catch (error) {
-				expect(error.message).to.equal('[500] StringUtilities.isString thing argument is not an string.');
-			}
-
-		});
-
-	});
-
 	describe('unpackData', () => {
 
 		it('successfully unpacks data', () => {

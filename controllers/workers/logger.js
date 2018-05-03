@@ -1,11 +1,8 @@
 const _ = require('lodash');
 const elasticsearch = require('elasticsearch');
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const compressionutilities = global.SixCRM.routes.include('lib', 'compression-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 module.exports = class LoggerController {
@@ -21,7 +18,6 @@ module.exports = class LoggerController {
 		du.debug('Process Log');
 
 		return Promise.resolve()
-			.then(() => this.validateData(input))
 			.then(() => this.unpackData(input))
 			.then((unpacked_data) => this.transformData(unpacked_data))
 			.then((transformed_data) => this.postData(transformed_data))
@@ -30,23 +26,10 @@ module.exports = class LoggerController {
 				if (error.name == 'Control Error') {
 					return Promise.resolve(true);
 				} else {
+					du.error('server', error);
 					return Promise.reject(error);
 				}
 			});
-
-	}
-
-	validateData(input) {
-
-		du.debug('Validate Data');
-
-		if (!objectutilities.hasRecursive(input, 'awslogs.data')) {
-			throw eu.getError('server', 'Invalid data.');
-		}
-
-		stringutilities.isString(input.awslogs.data, true);
-
-		return true;
 
 	}
 
@@ -56,7 +39,7 @@ module.exports = class LoggerController {
 
 		let zipped_data = new Buffer(input.awslogs.data, 'base64');
 
-		return compressionutilities.gunzip(zipped_data).then((unzipped_data) => stringutilities.parseJSONString(unzipped_data));
+		return compressionutilities.gunzip(zipped_data).then((unzipped_data) => JSON.parse(unzipped_data));
 
 	}
 
@@ -74,78 +57,34 @@ module.exports = class LoggerController {
 
 			let indexName = global.SixCRM.configuration.site_config.elasticsearch.index_name;
 
-			const source = this.buildSource(logEvent.message, logEvent.extractedFields);
-			let event = source.event;
-			event.id = logEvent.id;
-			event.owner = data.owner;
-			event.log_group = data.logGroup;
-			event.log_stream = data.logStream;
+			try {
 
-			let action = {
-				'index': {
-					'_index': indexName,
-					'_type': '_doc',
-					'_id': logEvent.id
-				}
-			};
+				let event = JSON.parse(logEvent.extractedFields.event);
+				event.id = logEvent.id;
+				event.owner = data.owner;
+				event.log_group = data.logGroup;
+				event.log_stream = data.logStream;
 
-			bulkRequestBody.push(action);
-			bulkRequestBody.push(event);
+				let action = {
+					'index': {
+						'_index': indexName,
+						'_type': '_doc',
+						'_id': logEvent.id
+					}
+				};
 
-		});
+				bulkRequestBody.push(action);
+				bulkRequestBody.push(event);
 
-		return bulkRequestBody;
+			} catch (ex) {
 
-	}
-
-	buildSource(message, extracted_fields) {
-
-		du.debug('Build Source');
-
-		if (!_.isUndefined(extracted_fields) && !_.isNull(extracted_fields)) {
-			return this.processExtractedFields(extracted_fields);
-		}
-
-		let json_substring = stringutilities.extractJSON(message);
-		if (json_substring !== null) {
-			return stringutilities.parseJSONString(json_substring);
-		}
-
-		return {};
-
-	}
-
-	processExtractedFields(extracted_fields) {
-
-		du.debug('Process Extracted Fields');
-
-		let return_object = {};
-
-		objectutilities.map(extracted_fields, (key) => {
-
-			let value = extracted_fields[key];
-
-			if (stringutilities.isNumeric(value)) {
-
-				return_object[key] = stringutilities.toNumeric(value);
-
-			} else {
-
-				value = value.trim();
-
-				let json_substring = stringutilities.extractJSON(value);
-
-				if (json_substring !== null) {
-					return_object['$' + key] = stringutilities.parseJSONString(json_substring);
-				}
-
-				return_object[key] = value;
+				du.warning('Could not parse log', logEvent.extractedFields.event);
 
 			}
 
 		});
 
-		return return_object;
+		return bulkRequestBody;
 
 	}
 
@@ -158,7 +97,9 @@ module.exports = class LoggerController {
 			connectionClass: require('http-aws-es')
 		})
 
-		return esClient.bulk({ body: transformed_data });
+		return esClient.bulk({
+			body: transformed_data
+		});
 
 	}
 
@@ -177,10 +118,6 @@ module.exports = class LoggerController {
 			}
 
 			throw eu.getError('server', "Failed to index logs", failedItems);
-
-		} else {
-
-			return true;
 
 		}
 
