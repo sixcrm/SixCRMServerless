@@ -128,12 +128,8 @@ let affiliateReportSummaryType = require('./analytics/affiliate_report/affiliate
 let affiliateReportSubaffiliatesType = require('./analytics/affiliate_report/affiliateReportSubaffiliatesType');
 /* End Reports */
 
-let listActivityType = require('./analytics/listActivityType');
-
 let analyticsFilterInputType = require('./analytics/filterInputType');
 let analyticsPaginationInputType = require('./analytics/paginationInputType');
-let analyticsActivityFilterInputType = require('./analytics/activityFilterInputType');
-
 let entitySearchInputType = require('./entity/searchInputType');
 let paginationInputType = require('./pagination/paginationInputType');
 let cacheInputType = require('./cache/cacheInputType');
