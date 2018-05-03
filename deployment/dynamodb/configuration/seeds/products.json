@@ -201,5 +201,20 @@
 	  "shipping_delay": 0,
 	  "sku": "basic",
 	  "updated_at": "2018-05-01T20:21:55.566Z"
+	},
+	{
+	  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	  "attributes": {
+	    "images": []
+	  },
+	  "created_at": "2018-05-01T20:21:55.566Z",
+	  "default_price": 30,
+	  "description": "$30 per month, unlimited transactions at $0.06 per transaction, one campaign",
+	  "id": "aba9a683-85a4-45e7-9004-576c99a811ce",
+	  "name": "Dynamic Watermark Product",
+	  "ship": false,
+	  "shipping_delay": 0,
+	  "sku": "basic",
+	  "updated_at": "2018-05-01T20:21:55.566Z"
 	}
 ]
