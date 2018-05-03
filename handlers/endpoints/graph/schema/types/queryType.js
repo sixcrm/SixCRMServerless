@@ -880,25 +880,6 @@ const fields = Object.assign({}, {
 			return analyticsController.executeAnalyticsFunction(args, 'getCampaignsByAmount');
 		}
 	},
-	listactivitybyidentifier: {
-		type: listActivityType.graphObj,
-		args: {
-			activityfilter: {
-				type: analyticsActivityFilterInputType.graphObj
-			},
-			pagination: {
-				type: analyticsPaginationInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getActivityByIdentifier');
-		}
-	},
 
 	/*
    * Normal list and get calls

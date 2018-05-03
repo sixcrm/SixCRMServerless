@@ -193,31 +193,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	}
 
-	getActivityByIdentifier(args) {
-
-		du.debug('Get Activity By Identifier');
-
-		let parameters = paginationutilities.mergePagination(args.activityfilter, paginationutilities.createSQLPaginationInput(args.pagination));
-
-		let this_query_filter = [
-			'action',
-			'actor',
-			'actor_type',
-			'acted_upon',
-			'acted_upon_type',
-			'associated_with',
-			'associated_with_type',
-			'account'
-		];
-
-		['actor', 'actor_type', 'acted_upon', 'acted_upon_type', 'associated_with', 'associated_with_type'].forEach((argument) => {
-			this_query_filter = arrayutilities.removeElement(this_query_filter, argument);
-		});
-
-		return this.getResults('deprecate/activity_by_identifier', parameters, this_query_filter);
-
-	}
-
 	/* new methods */
 
 	async getReportFacets(parameters) {
