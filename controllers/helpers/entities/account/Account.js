@@ -1,12 +1,16 @@
 const _ = require('lodash');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const AccountController = global.SixCRM.routes.include('entities', 'Account.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+const UserACLController = global.SixCRM.routes.include('entities', 'UserACL.js');
 
 module.exports = class AccountHelperController {
 
@@ -145,6 +149,7 @@ module.exports = class AccountHelperController {
 
 	}
 
+	//Technical Debt:  This belongs in the Session Helper
 	_getSessionSubscriptionProducts({session}){
 
 		du.debug('Get Session Subscription Products');
@@ -193,14 +198,67 @@ module.exports = class AccountHelperController {
 
 	}
 
-	async _validateSessionPaymentHistory(){
+	//move this to the Session Helper
+	async _validateSessionPaymentHistory({session}){
 
 		du.debug('Validate Session Payment History');
 
-		//session has no bills with unpaid rebills
-		//matches appropriate amount
+		if(!_.has(this, 'rebillController')){
+			this.rebillController = new RebillController();
+		}
+
+		if(!_.has(this, 'sessionController')){
+			this.sessionController = new SessionController();
+		}
+
+		this.sessionController.disableACLs();
+		let rebills = await this.sessionController.listRebills(session);
+		this.sessionController.enableACLs();
+
+		let unpaid_promises = arrayutilities.map(rebills, async (rebill) => {
+
+			this.rebillController.disableACLs();
+			let transactions = await this.rebillController.listTransactions(rebill);
+			this.rebillController.enableACLs();
+
+			if(!arrayutilities.nonEmpty(transactions)){
+				throw eu.getError('bad_request', 'The provided session does not have associated transactions.');
+			}
+
+			let rebill_sum = this._sumRebillTransactions(transactions);
+
+			if(rebill_sum < rebill.amount){
+				return rebill;
+			}
+			return null;
+		});
+
+		let unpaid_rebills = await Promise.all(unpaid_promises);
+
+		unpaid_rebills = arrayutilities.filter(unpaid_rebills, unpaid_rebill => {
+			return (_.has(unpaid_rebill, 'id'));
+		});
+
+		if(arrayutilities.nonEmpty(unpaid_rebills)){
+			throw eu.getError('bad_request', 'Session has unpaid rebills.');
+		}
 
 		return true;
+
+	}
+
+	_sumRebillTransactions(transactions){
+
+		du.debug('Sum Rebill Transactions');
+
+		let sum = 0.00;
+		arrayutilities.map(transactions, transaction => {
+			if(transaction.result == 'success' && transaction.type == 'sale'){
+				sum += numberutilities.toNumber(transaction.amount);
+			}
+		});
+
+		return sum;
 
 	}
 
@@ -216,18 +274,69 @@ module.exports = class AccountHelperController {
 
 		du.debug('Validate Session Customer For Account Activation');
 
-		du.info(session, account);
-		//get account owner role
-		//get sessioncustomer
-		//make sure it matches the session customer email
+		if(!_.has(this, 'sessionController')){
+			this.sessionController = new SessionController();
+		}
+
+		this.sessionController.disableACLs();
+		let customer = await this.sessionController.getCustomer(session);
+		this.sessionController.enableACLs();
+
+		this.accountController.disableACLs();
+		let account_owner = await this._getAccountOwner({account: account});
+		this.accountController.enableACLs();
+
+		if(account_owner !== customer.email){
+			throw eu.getError('bad_request', 'The session customer does not match the account owner.');
+		}
+
 		return true;
 
 	}
 
-	async _validateSessionWatermarkForAccountActivation({session, account}){
-		//matches appropriate product schedule ids
-		//matches appropriate product ids
-		du.info(session, account);
+	async _getAccountOwner({account}){
+
+		du.debug('Get Account Owner');
+
+		if(!_.has(this, 'userACLController')){
+			this.userACLController = new UserACLController();
+		}
+
+		this.userACLController.disableACLs();
+		let acls = await this.userACLController.getACLByAccount({account: account});
+		this.userACLController.enableACLs();
+
+		let owner = arrayutilities.find(acls, acl => {
+			return (acl.role == this._getOwnerRoleId());
+		});
+
+		if(!_.has(owner, 'user')){
+			throw eu.getError('server', 'Unable to identify account owner');
+		}
+
+		return owner.user;
+
+	}
+
+	//This should exist in the Role Helper
+	_getOwnerRoleId(){
+
+		du.debug('Get Owner Role ID');
+
+		return 'cae614de-ce8a-40b9-8137-3d3bdff78039';
+
+	}
+
+	async _validateSessionWatermarkForAccountActivation({session}){
+
+		du.debug('Validate Session Watermark For Account Activation');
+
+		let subscription_products = this._getSessionSubscriptionProducts({session});
+
+		if(!arrayutilities.nonEmpty(subscription_products)){
+			throw eu.getError('bad_request', 'The session does not contain appropriate subscription products.');
+		}
+
 		return true;
 
 	}

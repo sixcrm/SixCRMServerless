@@ -38,6 +38,18 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
 
       let account  = MockEntities.getValidAccount();
       let session = MockEntities.getValidSession();
+      let customer = MockEntities.getValidCustomer();
+      let owner_acl = MockEntities.getValidUserACL();
+      let rebill = MockEntities.getValidRebill();
+      let rebills = [rebill];
+      let transaction = MockEntities.getValidTransaction();
+      rebill.amount = transaction.amount;
+      let transactions = [transaction];
+
+      owner_acl.role = 'cae614de-ce8a-40b9-8137-3d3bdff78039'
+      owner_acl.user = customer.email;
+      let user_acls = [owner_acl];
+
       session.account = '3f4abaf6-52ac-40c6-b155-d04caeb0391f';
       session.watermark = {
         product_schedules: [
@@ -62,6 +74,14 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
           expect(id).to.be.a('string');
           return Promise.resolve(session);
         }
+        getCustomer(session){
+          expect(session).to.be.a('object');
+          return Promise.resolve(customer);
+        }
+        listRebills(session){
+          expect(session).to.be.a('object');
+          return Promise.resolve(rebills);
+        }
       });
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'Account.js'), class {
@@ -76,6 +96,27 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
         get({id}){
           expect(id).to.be.a('string');
           return Promise.resolve(account);
+        }
+
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'UserACL.js'), class {
+        constructor(){}
+        disableACLs(){}
+        enableACLs(){}
+        getACLByAccount({account}){
+          expect(account).to.be.a('object');
+          return Promise.resolve(user_acls);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        constructor(){}
+        disableACLs(){}
+        enableACLs(){}
+        listTransactions(rebill){
+          expect(rebill).to.be.a('object');
+          return Promise.resolve(transactions);
         }
       });
 
