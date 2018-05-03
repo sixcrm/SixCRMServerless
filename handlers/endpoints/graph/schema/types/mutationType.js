@@ -6,6 +6,7 @@ let accessKeyType = require('./accesskey/accessKeyType');
 
 let accountInputType = require('./account/accountInputType');
 let accountType = require('./account/accountType');
+let accountActivationType = require('./account/accountActivationType');
 
 let affiliateInputType = require('./affiliate/affiliateInputType');
 let affiliateType = require('./affiliate/affiliateType');
@@ -155,6 +156,7 @@ const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
 
 const InviteHelperController = global.SixCRM.routes.include('helpers', 'entities/invite/Invite.js');
+const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Mutation',
@@ -603,6 +605,24 @@ module.exports.graphObj = new GraphQLObjectType({
 				return accountController.update({
 					entity: account.account
 				});
+			}
+		},
+		activateaccount:{
+			type: accountActivationType.graphObj,
+			description:  'Activates a account',
+			args:{
+				account: {
+					type: new GraphQLNonNull(GraphQLString),
+					description:  'The account to activate'
+				},
+				session:{
+					type: new GraphQLNonNull(GraphQLString),
+					description: 'The session containing subscription for activation'
+				}
+			},
+			resolve:(value, args) => {
+				const accountHelperController = new AccountHelperController();
+				return accountHelperController.activateAccount({account: args.account, session: args.session});
 			}
 		},
 		deleteaccount: {

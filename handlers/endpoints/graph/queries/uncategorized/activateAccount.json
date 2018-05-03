@@ -1,0 +1,7 @@
+{
+
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"mutation { activateaccount ( session: \"f473a389-cae8-46cb-96fd-e6e2240f2141\", account:\"d3fa3bf3-7824-49f4-8261-87674482bf1c\") { message, activated } }"
+
+}
