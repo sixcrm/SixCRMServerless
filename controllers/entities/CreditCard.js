@@ -329,12 +329,11 @@ module.exports = class CreditCardController extends entityController {
 
 		if (_.has(creditcard, "customers") && arrayutilities.nonEmpty(creditcard.customers)) {
 
-			//Nick:  Use a list query here, not parallel get queries
-			return Promise.all(arrayutilities.map(creditcard.customers, customer => {
-				return this.executeAssociatedEntityFunction('CustomerController', 'get', {
-					id: customer
-				});
-			})).then(customers => arrayutilities.filter(customers, customer => !_.isNull(customer)));
+			return this.executeAssociatedEntityFunction('CustomerController', 'batchGet', {
+				ids: creditcard.customers
+			})
+				.then(response => this.getResult(response, 'customers'))
+				.then(customers => arrayutilities.filter(customers, customer => !_.isNull(customer)));
 
 		}
 

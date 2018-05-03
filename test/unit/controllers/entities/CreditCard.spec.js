@@ -742,8 +742,8 @@ describe('controllers/entities/CreditCard.js', () => {
 			PermissionTestGenerators.givenUserWithAllowed('read', 'customer');
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), class {
-				get() {
-					return Promise.resolve(customer);
+				batchGet() {
+					return Promise.resolve({customers: [customer]});
 				}
 			});
 
