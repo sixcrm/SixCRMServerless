@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -123,6 +124,50 @@ module.exports = class AccountHelperController {
 			message: 'Successfully activated account'
 		};
 
+	}
+
+	async deactivateAccount({account}){
+
+		du.debug('Deactivate Account');
+
+		if(!_.has(this, 'accountController')){
+			this.accountController = new AccountController();
+		}
+
+		this.accountController.disableACLs();
+		account = await this.accountController.get({id: account});
+		this.accountController.enableACLs();
+
+		if(_.isNull(account)){
+			throw eu.getError('bad_request', 'Account not found.');
+		}
+
+		//validate that the account is not already deactivated
+
+		account.billing.deactivate = timestamp.getISO8601();
+
+		this.accountController.disableACLs();
+		account = await this.accountController.update({entity:account, allow_billing_overwrite: true});
+		this.accountController.enableACLs();
+
+		let upcoming_rebill = await this._getUpcomingRebill(account.billing.session);
+
+		return {
+			deactivation_date: upcoming_rebill.bill_at,
+			deactivate: account.billing.deactivate,
+			message: "Successfully scheduled account deactivation"
+		};
+
+	}
+
+	async _getUpcomingRebill(session){
+
+		du.debug('Get Upcoming Rebill');
+
+		const search = {
+			
+		}
+		return this.rebillHelperController.getPendingRebills()
 	}
 
 	async _getPlanName({session}){

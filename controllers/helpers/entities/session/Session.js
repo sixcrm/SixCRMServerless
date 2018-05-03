@@ -104,4 +104,15 @@ module.exports = class SessionHelperController {
 
 	}
 
+	async getPendingRebills(session){
+
+		du.debug('Get Pending Rebills');
+
+		const search = {
+			
+		}
+		let rebills = await this.rebillController.getPendingRebills();
+
+	}
+
 }
