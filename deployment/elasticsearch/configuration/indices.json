@@ -11,7 +11,7 @@
 								"properties": {
 									"id": { "type": "keyword" },
 									"owner": { "type": "text" },
-									"log_group": { "type": "text" },
+									"log_group": { "type": "keyword", "store": true },
 									"log_stream": { "type": "text" },
 									"message": {
 										"type": "text",
