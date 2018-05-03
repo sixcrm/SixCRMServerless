@@ -7,7 +7,6 @@ const compressionutilities = global.SixCRM.routes.include('lib', 'compression-ut
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class LoggerController {
 
