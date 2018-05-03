@@ -44,12 +44,13 @@ describe('controllers/ActivityToEnglishUtilities.js', async () => {
 			const result = aceuController._buildObject(aceuController._englishTemplate([{
 				type: 'actor_only',
 			}]), ['an_actor', 'an_acted_upon_data', 'an_associated_with']);
-			expect(result).to.equal('{' +
-				'"actor":"an_actor",' +
-				'"acted_upon":"an_acted_upon_data",' +
-				'"associated_with":"an_associated_with",' +
-				'"english_template":"{actor} {action}."' +
-				'}');
+
+			expect(result).to.eql({
+				actor: 'an_actor',
+				acted_upon: 'an_acted_upon_data',
+				associated_with: 'an_associated_with',
+				english_template: '{actor} {action}.'
+			});
 
 		});
 
@@ -252,18 +253,18 @@ describe('controllers/ActivityToEnglishUtilities.js', async () => {
 
 		const dummy_id = 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa';
 
-		const english_string = '{' +
-			'"actor":{' +
-			'"id":"' + dummy_id + '"' +
-			'},' +
-			'"acted_upon":{' +
-			'"id":"' + dummy_id + '"' +
-			'},' +
-			'"associated_with":{' +
-			'"id":"' + dummy_id + '"' +
-			'},' +
-			'"english_template":"{actor} {action} {acted_upon} associated with {associated_with}."' +
-			'}';
+		const statement = {
+			"actor": {
+				"id": dummy_id,
+			},
+			"acted_upon": {
+				"id": dummy_id,
+			},
+			"associated_with": {
+				"id": dummy_id,
+			},
+			"english_template": "{actor} {action} {acted_upon} associated with {associated_with}."
+		};
 
 		beforeEach(() => {
 
@@ -299,7 +300,7 @@ describe('controllers/ActivityToEnglishUtilities.js', async () => {
 				associated_with_type: 'entity'
 			});
 
-			expect(result).to.equal(english_string);
+			expect(result).to.eql(statement);
 
 		});
 

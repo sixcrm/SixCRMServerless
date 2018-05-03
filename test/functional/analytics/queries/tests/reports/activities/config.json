@@ -74,6 +74,23 @@
 		}, {
 			"key": "associated_with_type",
 			"value": "transaction"
+		}, {
+			"key": "activityStatement",
+			"value": {
+				"actor": {
+					"id": "rama@damunaste.org",
+					"type": "customer"
+				},
+				"acted_upon": {
+					"id": "rama@damunaste.org",
+					"type": "role"
+				},
+				"associated_with": {
+					"id": "rama@damunaste.org",
+					"type": "transaction"
+				},
+				"english_template": "{actor} {action} {acted_upon} associated with {associated_with}."
+			}
 		}],
 		[{
 			"key": "id",
@@ -102,6 +119,23 @@
 		}, {
 			"key": "associated_with_type",
 			"value": "customernote"
+		}, {
+			"key": "activityStatement",
+			"value": {
+				"actor": {
+					"id": "rama@damunaste.org",
+					"type": "customer"
+				},
+				"acted_upon": {
+					"id": "rama@damunaste.org",
+					"type": "productschedule"
+				},
+				"associated_with": {
+					"id": "rama@damunaste.org",
+					"type": "customernote"
+				},
+				"english_template": "{actor} {action} {acted_upon} associated with {associated_with}."
+			}
 		}],
 		[{
 			"key": "id",
@@ -130,6 +164,23 @@
 		}, {
 			"key": "associated_with_type",
 			"value": "transaction"
+		}, {
+			"key": "activityStatement",
+			"value": {
+				"actor": {
+					"id": "rama@damunaste.org",
+					"type": "customer"
+				},
+				"acted_upon": {
+					"id": "rama@damunaste.org",
+					"type": "userdevicetoken"
+				},
+				"associated_with": {
+					"id": "rama@damunaste.org",
+					"type": "transaction"
+				},
+				"english_template": "{actor} {action} {acted_upon} associated with {associated_with}."
+			}
 		}],
 		[{
 			"key": "id",
@@ -158,6 +209,23 @@
 		}, {
 			"key": "associated_with_type",
 			"value": "userdevicetoken"
+		}, {
+			"key": "activityStatement",
+			"value": {
+				"actor": {
+					"id": "rama@damunaste.org",
+					"type": "customer"
+				},
+				"acted_upon": {
+					"id": "rama@damunaste.org",
+					"type": "merchantprovider"
+				},
+				"associated_with": {
+					"id": "rama@damunaste.org",
+					"type": "userdevicetoken"
+				},
+				"english_template": "{actor} {action} {acted_upon} associated with {associated_with}."
+			}
 		}],
 		[{
 			"key": "id",
@@ -186,6 +254,20 @@
 		}, {
 			"key": "associated_with_type",
 			"value": ""
+		}, {
+			"key": "activityStatement",
+			"value": {
+				"actor": {
+					"id": "rama@damunaste.org",
+					"type": "customer"
+				},
+				"acted_upon": {
+					"id": "rama@damunaste.org",
+					"type": "notificationread"
+				},
+				"associated_with": null,
+				"english_template": "{actor} {action} {acted_upon}."
+			}
 		}]
 	]
 }

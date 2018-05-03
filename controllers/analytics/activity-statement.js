@@ -62,12 +62,12 @@ module.exports = class ActivityStatement {
 
 		du.debug('Build Object');
 
-		return JSON.stringify({
+		return {
 			actor: resources[0],
 			acted_upon: resources[1],
 			associated_with: resources[2],
 			english_template: template
-		});
+		};
 
 	}
 
