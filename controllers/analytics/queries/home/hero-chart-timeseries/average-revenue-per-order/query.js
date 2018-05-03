@@ -34,7 +34,7 @@ module.exports = async (parameters = {}) => {
 
 	if (parameters.campaign) {
 
-		filter += format(' AND campaign = %L', parameters.account);
+		filter += format(' AND campaign = %L', parameters.campaign);
 
 	}
 
