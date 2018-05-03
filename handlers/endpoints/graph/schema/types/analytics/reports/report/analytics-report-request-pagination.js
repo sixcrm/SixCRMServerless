@@ -15,6 +15,9 @@ module.exports = new GraphQLInputObjectType({
 		},
 		order: {
 			type: new GraphQLList(GraphQLString)
+		},
+		direction: {
+			type: GraphQLString,
 		}
 	})
 });

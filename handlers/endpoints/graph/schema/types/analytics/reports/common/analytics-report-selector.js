@@ -26,6 +26,9 @@ module.exports = new GraphQLEnumType({
 		},
 		eventFunnel: {
 			value: 'eventFunnel'
+		},
+		campaignsByAmount: {
+			value: 'campaignsByAmount'
 		}
 	}
 })
