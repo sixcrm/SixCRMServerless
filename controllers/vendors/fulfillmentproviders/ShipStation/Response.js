@@ -122,7 +122,10 @@ module.exports = class ShipStationResponse extends FulfillmentProviderVendorResp
 
 		du.debug('Translate Test');
 
-		if(objectutilities.hasRecursive(response.body, 'fulfillments', false)){
+		if(
+			objectutilities.hasRecursive(response.body, 'fulfillments', false) ||
+			objectutilities.hasRecursive(response.body, 'orders', false)
+		){
 
 			return {
 				success: true,
