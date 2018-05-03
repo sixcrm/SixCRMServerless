@@ -73,19 +73,14 @@ module.exports = class LoggerController {
 
 		arrayutilities.map(data.logEvents, (logEvent) => {
 
-			du.debug("Event", logEvent);
-
 			let indexName = global.SixCRM.configuration.site_config.elasticsearch.index_name;
 
-			let source = this.buildSource(logEvent.message, logEvent.extractedFields);
-			source.id = logEvent.id;
-			source.timestamp = timestamp.toISO8601(logEvent.timestamp);
-			source.message = logEvent.message;
-			source.owner = data.owner;
-			source.log_group = data.logGroup;
-			source.log_stream = data.logStream;
-
-			du.debug("source", source);
+			const source = this.buildSource(logEvent.message, logEvent.extractedFields);
+			let event = source.event;
+			event.id = logEvent.id;
+			event.owner = data.owner;
+			event.log_group = data.logGroup;
+			event.log_stream = data.logStream;
 
 			let action = {
 				'index': {
@@ -96,7 +91,7 @@ module.exports = class LoggerController {
 			};
 
 			bulkRequestBody.push(action);
-			bulkRequestBody.push(source);
+			bulkRequestBody.push(event);
 
 		});
 
