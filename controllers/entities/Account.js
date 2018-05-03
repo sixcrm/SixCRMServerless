@@ -44,7 +44,7 @@ class AccountController extends entityController {
 		du.debug('Account.update()');
 
 		return this.exists({
-			id: entity.id,
+			entity: entity,
 			return_entity: true
 		})
 			.then((result) => {
