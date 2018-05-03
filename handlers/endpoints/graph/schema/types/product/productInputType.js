@@ -15,7 +15,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		id:						{ type: GraphQLString },
 		name:					{ type: new GraphQLNonNull(GraphQLString) },
 		description:	{ type: GraphQLString },
-		sku:					{ type: new GraphQLNonNull(GraphQLString) },
+		sku:					{ type: GraphQLString },
 		ship:					{ type: GraphQLBoolean },
 		shipping_delay: 		{ type: GraphQLInt },
 		fulfillment_provider: 	{ type: GraphQLString },
