@@ -46,6 +46,7 @@ module.exports = class SMTPProvider {
 
 		let connection_object = {
 			host: options.hostname,
+			port: options.port,
 			auth: {
 				user: options.username,
 				pass: options.password
