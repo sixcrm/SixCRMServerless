@@ -1,6 +1,0 @@
-{
-  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":
-    "query {listactivitybyidentifier (activityfilter:{start:\"2017-03-01T17:23:43.043Z\" end:\"2017-06-09T20:12:29Z\", actor:\"24f7c851-29d4-4af9-87c5-0298fa74c689\", actor_type:\"customer\", acted_upon:\"24f7c851-29d4-4af9-87c5-0298fa74c689\", acted_upon_type:\"customer\", associated_with:\"24f7c851-29d4-4af9-87c5-0298fa74c689\", associated_with_type:\"customer\"}, pagination: { limit:8, offset:8 }) {activity { id datetime actor actor_type action acted_upon acted_upon_type associated_with associated_with_type english }pagination { order limit offset count }}}"
-}
