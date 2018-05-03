@@ -234,7 +234,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				if (_.includes(facets, 'affiliate')) {
 
-					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/affiliates', 'params'));
+					const resolveParams = require('./queries/reports/facets/affiliates/params');
 					const facet = await this.query('reports/facets/affiliates', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
@@ -242,7 +242,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				if (_.includes(facets, 'campaign')) {
 
-					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/campaigns', 'params'));
+					const resolveParams = require('./queries/reports/facets/campaigns/params');
 					const facet = await this.query('reports/facets/campaigns', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
@@ -250,7 +250,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				if (_.includes(facets, 'product')) {
 
-					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/products', 'params'));
+					const resolveParams = require('./queries/reports/facets/products/params');
 					const facet = await this.query('reports/facets/products', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
@@ -258,7 +258,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				if (_.includes(facets, 'productSchedule')) {
 
-					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/product-schedules', 'params'));
+					const resolveParams = require('./queries/reports/facets/product-schedules/params');
 					const facet = await this.query('reports/facets/product-schedules', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
@@ -266,7 +266,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				if (_.includes(facets, 'mid')) {
 
-					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/mids', 'params'));
+					const resolveParams = require('./queries/reports/facets/mids/params');
 					const facet = await this.query('reports/facets/mids', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
@@ -274,7 +274,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 				if (_.includes(facets, 'subId')) {
 
-					const resolveParams = require(path.join(__dirname, 'queries/reports/facets/sub-ids', 'params'));
+					const resolveParams = require('./queries/reports/facets/sub-ids/params');
 					const facet = await this.query('reports/facets/sub-ids', await resolveParams(parameters));
 					facetResponse.facets.push(facet)
 
@@ -295,19 +295,19 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 		switch (parameters.reportType) {
 
 			case 'revenueVersusOrders': {
-				const resolveParams = require(path.join(__dirname, 'queries', 'home/hero-chart-timeseries/revenue-vs-orders', 'params'));
+				const resolveParams = require('./queries/home/hero-chart-timeseries/revenue-vs-orders/params');
 				return this.query('home/hero-chart-timeseries/revenue-vs-orders', await resolveParams(parameters));
 			}
 			case 'ordersVersusUpsells': {
-				const resolveParams = require(path.join(__dirname, 'queries', 'home/hero-chart-timeseries/orders-vs-upsells', 'params'));
+				const resolveParams = require('./queries/home/hero-chart-timeseries/orders-vs-upsells/params');
 				return this.query('home/hero-chart-timeseries/orders-vs-upsells', await resolveParams(parameters));
 			}
 			case 'directVersusRebill': {
-				const resolveParams = require(path.join(__dirname, 'queries', 'home/hero-chart-timeseries/direct-vs-rebill', 'params'));
+				const resolveParams = require('./queries/home/hero-chart-timeseries/direct-vs-rebill/params');
 				return this.query('home/hero-chart-timeseries/direct-vs-rebill', await resolveParams(parameters));
 			}
 			case 'averageRevenuePerOrder': {
-				const resolveParams = require(path.join(__dirname, 'queries', 'home/hero-chart-timeseries/average-revenue-per-order', 'params'));
+				const resolveParams = require('./queries/home/hero-chart-timeseries/average-revenue-per-order/params');
 				return this.query('home/hero-chart-timeseries/average-revenue-per-order', await resolveParams(parameters));
 			}
 			case 'affiliateTraffic':
@@ -315,7 +315,7 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			case 'merchantReport':
 				return this.query('reports/merchant-report', _resolveParams());
 			case 'activities': {
-				const resolveParams = require(path.join(__dirname, 'queries', 'reports/activities', 'params'));
+				const resolveParams = require('./queries/reports/activities/params');
 				return this.query('reports/activities', await resolveParams(parameters, parameters.pagination));
 			}
 			default:
