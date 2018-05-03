@@ -20,7 +20,7 @@
 									"timestamp": {
 										"type": "date",
 										"format": "date_time",
-										"store": true
+										"store": false
 									},
 									"level": {
 										"type": "keyword",
