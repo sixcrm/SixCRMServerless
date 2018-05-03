@@ -121,13 +121,6 @@ let eventFunnelType = require('./analytics/eventFunnelType');
 let campaignsByAmountType = require('./analytics/campaignsByAmountType');
 let binType = require('./bin/BINType');
 
-/* Reports */
-let merchantReportType = require('./analytics/merchant_report/merchantReportType');
-let affiliateReportType = require('./analytics/affiliate_report/affiliateReportType');
-let affiliateReportSummaryType = require('./analytics/affiliate_report/affiliateReportSummaryType');
-let affiliateReportSubaffiliatesType = require('./analytics/affiliate_report/affiliateReportSubaffiliatesType');
-/* End Reports */
-
 let analyticsFilterInputType = require('./analytics/filterInputType');
 let analyticsPaginationInputType = require('./analytics/paginationInputType');
 let entitySearchInputType = require('./entity/searchInputType');
@@ -682,79 +675,6 @@ const fields = Object.assign({}, {
 	/*
    * Analytics Endpoints
    */
-	affiliatereportsubaffiliates: {
-		type: affiliateReportSubaffiliatesType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			},
-			pagination: {
-				type: analyticsPaginationInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReportSubaffiliates');
-		}
-	},
-	affiliatereportsummary: {
-		type: affiliateReportSummaryType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReportSummary');
-		}
-	},
-	affiliatereport: {
-		type: affiliateReportType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			},
-			pagination: {
-				type: analyticsPaginationInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getAffiliateReport');
-		}
-	},
-	merchantreport: {
-		type: merchantReportType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			},
-			pagination: {
-				type: analyticsPaginationInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getMerchantReport');
-		}
-	},
 	rebillsummary: {
 		type: queueSummaryType.graphObj,
 		args: {
