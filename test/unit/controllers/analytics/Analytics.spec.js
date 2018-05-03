@@ -1,7 +1,6 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 describe('controllers/Analytics.js', () => {
 

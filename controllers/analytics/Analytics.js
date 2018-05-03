@@ -223,6 +223,10 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 				const resolveParams = require('./queries/reports/activities/params');
 				return this.query('reports/activities', await resolveParams(parameters, parameters.pagination));
 			}
+			case 'eventFunnel': {
+				const resolveParams = require('./queries/reports/event-funnel/params');
+				return this.query('reports/event-funnel', await resolveParams(parameters));
+			}
 			default:
 				throw new Error('Report not found');
 

@@ -1,0 +1,67 @@
+{
+	"records": [
+		[{
+			"key": "name",
+			"value": "click"
+		}, {
+			"key": "count",
+			"value": "0"
+		}, {
+			"key": "percentage",
+			"value": "0.00"
+		}, {
+			"key": "relative_percentage",
+			"value": "0.00"
+		}],
+		[{
+			"key": "name",
+			"value": "lead"
+		}, {
+			"key": "count",
+			"value": "92"
+		}, {
+			"key": "percentage",
+			"value": "0.00"
+		}, {
+			"key": "relative_percentage",
+			"value": "0.00"
+		}],
+		[{
+			"key": "name",
+			"value": "main"
+		}, {
+			"key": "count",
+			"value": "29"
+		}, {
+			"key": "percentage",
+			"value": "0.00"
+		}, {
+			"key": "relative_percentage",
+			"value": "31.52"
+		}, {
+			"key": "name",
+			"value": "upsell"
+		}, {
+			"key": "count",
+			"value": "0"
+		}, {
+			"key": "percentage",
+			"value": "0.00"
+		}, {
+			"key": "relative_percentage",
+			"value": "0.00"
+		}, {
+			"key": "name",
+			"value": "confirm"
+		}, {
+			"key": "count",
+			"value": "23"
+		}, {
+			"key": "percentage",
+			"value": "0.00"
+		}, {
+			"key": "relative_percentage",
+			"value": "79.31"
+		}]
+	]
+}
