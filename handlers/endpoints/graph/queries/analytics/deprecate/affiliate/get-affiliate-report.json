@@ -1,6 +1,0 @@
-{
-  "requestContext":{"authorizer":{"user":"admin.user@test.com"}},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":
-    "query {affiliatereport (analyticsfilter:{start:\"2017-08-01T17:23:43.043Z\", end:\"2017-10-28T17:23:43.043Z\"}, pagination:{order:\"asc\", limit:2, offset:0}) {affiliates {affiliate {id},count_click, count_partials, partials_percent, fail_count, fail_percent,count_sales, sales_percent, count_upsell, upsell_percent, sum_upsell,sum_amount}, pagination {order, limit, offset, count}}}"
-}
