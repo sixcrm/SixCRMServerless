@@ -13,7 +13,7 @@
         "AttributeType":"S"
       },
       {
-        "AttributeName":"last_four",
+        "AttributeName":"checksum",
         "AttributeType":"S"
       },
       {
