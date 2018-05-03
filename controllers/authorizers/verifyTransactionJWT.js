@@ -4,6 +4,7 @@ const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-p
 const jwtprovider = new JWTProvider();
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 module.exports = class verifyTransactionJWTController {
 
@@ -29,7 +30,7 @@ module.exports = class verifyTransactionJWTController {
 
 		du.debug('Assure Resources');
 
-		if (!_.has(process.env, 'transaction_jwt_secret_key')) {
+		if(!objectutilities.hasRecursive(global, 'SixCRM.configuration.site_config.jwt.transaction.secret_key')) {
 
 			throw eu.getError('server', 'Missing JWT secret key.');
 
