@@ -204,6 +204,14 @@ module.exports = class CreditCardController extends entityController {
 				false
 				);
 
+				if(_.has(update_entity, 'number')){
+					delete update_entity.number;
+				}
+
+				if(_.has(update_entity, 'cvv')){
+					delete update_entity.cvv;
+				}
+
 				return update_entity;
 
 			}).then((update_entity) => {
@@ -294,6 +302,14 @@ module.exports = class CreditCardController extends entityController {
 				existing_creditcard,
 				false
 				);
+
+				if(_.has(update_entity, 'number')){
+					delete update_entity.number;
+				}
+
+				if(_.has(update_entity, 'cvv')){
+					delete update_entity.cvv;
+				}
 
 				return update_entity;
 
