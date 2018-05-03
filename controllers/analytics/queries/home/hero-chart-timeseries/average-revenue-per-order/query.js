@@ -24,15 +24,21 @@ module.exports = async (parameters = {}) => {
 		parameters.period
 	];
 
+	let filter = '';
+
 	if (parameters.account) {
 
-		queryParameters.push(format(' AND account = $1', parameters.account));
-
-	} else {
-
-		queryParameters.push('');
+		filter += format(' AND account = %L', parameters.account);
 
 	}
+
+	if (parameters.campaign) {
+
+		filter += format(' AND campaign = %L', parameters.campaign);
+
+	}
+
+	queryParameters.push(filter);
 
 	return format.withArray(query, queryParameters);
 

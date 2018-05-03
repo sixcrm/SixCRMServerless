@@ -294,14 +294,22 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		switch (parameters.reportType) {
 
-			case 'revenueVersusOrders':
-				return this.query('home/hero-chart-timeseries/revenue-vs-orders', _resolveParams());
-			case 'ordersVersusUpsells':
-				return this.query('home/hero-chart-timeseries/orders-vs-upsells', _resolveParams());
-			case 'directVersusRebill':
-				return this.query('home/hero-chart-timeseries/direct-vs-rebill', _resolveParams());
-			case 'averageRevenuePerOrder':
-				return this.query('home/hero-chart-timeseries/average-revenue-per-order', _resolveParams());
+			case 'revenueVersusOrders': {
+				const resolveParams = require(path.join(__dirname, 'queries', 'home/hero-chart-timeseries/revenue-vs-orders', 'params'));
+				return this.query('home/hero-chart-timeseries/revenue-vs-orders', await resolveParams(parameters));
+			}
+			case 'ordersVersusUpsells': {
+				const resolveParams = require(path.join(__dirname, 'queries', 'home/hero-chart-timeseries/orders-vs-upsells', 'params'));
+				return this.query('home/hero-chart-timeseries/orders-vs-upsells', await resolveParams(parameters));
+			}
+			case 'directVersusRebill': {
+				const resolveParams = require(path.join(__dirname, 'queries', 'home/hero-chart-timeseries/direct-vs-rebill', 'params'));
+				return this.query('home/hero-chart-timeseries/direct-vs-rebill', await resolveParams(parameters));
+			}
+			case 'averageRevenuePerOrder': {
+				const resolveParams = require(path.join(__dirname, 'queries', 'home/hero-chart-timeseries/average-revenue-per-order', 'params'));
+				return this.query('home/hero-chart-timeseries/average-revenue-per-order', await resolveParams(parameters));
+			}
 			case 'affiliateTraffic':
 				return this.query('reports/affiliate-traffic', _resolveParams());
 			case 'merchantReport':
