@@ -27,10 +27,10 @@
     ],
     "GlobalSecondaryIndexes":[
       {
-        "IndexName":"last_four-index",
+        "IndexName":"checksum-index",
         "KeySchema":[
           {
-            "AttributeName":"last_four",
+            "AttributeName":"checksum",
             "KeyType":"HASH"
           }
         ],

@@ -2,6 +2,7 @@
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
+const checksum = require('checksum');
 const expect = chai.expect;
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -808,6 +809,8 @@ describe('createOrder', function () {
 			let stored_creditcard = objectutilities.clone(creditcard);
 			stored_creditcard.first_six = creditcard.number.substring(0,6);
 			stored_creditcard.last_four = creditcard.number.slice(-4);
+			const normalized_expiration = `${stored_creditcard.expiration.slice(0, 2)}/${stored_creditcard.expiration.slice(-2)}`;
+			stored_creditcard.checksum = checksum(`${stored_creditcard.first_six}.${stored_creditcard.last_four}.${normalized_expiration}`);
 			stored_creditcard.id = MockEntities.getValidId();
 			stored_creditcard.created_at = timestamp.getISO8601();
 			stored_creditcard.updated_at = stored_creditcard.created_at;

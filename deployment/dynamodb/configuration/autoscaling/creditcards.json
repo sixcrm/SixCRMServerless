@@ -90,7 +90,7 @@
     ]
   },
   {
-    "ResourceId":"table/{tablename}/index/last_four-index",
+    "ResourceId":"table/{tablename}/index/checksum-index",
     "scalable_targets":[
       {
         "MaxCapacity": 4000,

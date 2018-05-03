@@ -1,5 +1,5 @@
 const _ = require('lodash');
-
+const checksum = require('checksum');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities');
@@ -104,6 +104,7 @@ module.exports = class CreditCardController extends entityController {
 				this.assignPrimaryKey(entity);
 				this.setLastFour(entity);
 				this.setFirstSix(entity);
+				this.setChecksum(entity);
 
 				return entity;
 
@@ -349,15 +350,14 @@ module.exports = class CreditCardController extends entityController {
 			throw eu.getError('server', 'Cannot Assure Credit Card while sanitizing results');
 		}
 
-		if (!_.has(creditcard, 'last_four')) {
-			this.setLastFour(creditcard);
-		}
+		this.setLastFour(creditcard);
+		this.setFirstSix(creditcard);
+		this.setChecksum(creditcard);
 
-		//Technical Debt:  It might be better to query by the first_six
 		return this.queryBySecondaryIndex({
-			field: 'last_four',
-			index_value: creditcard.last_four,
-			index_name: 'last_four-index'
+			field: 'checksum',
+			index_value: creditcard.checksum,
+			index_name: 'checksum-index'
 		})
 			.then((result) => {
 
@@ -381,7 +381,6 @@ module.exports = class CreditCardController extends entityController {
 				return this.create({
 					entity: creditcard
 				});
-
 			});
 
 	}
@@ -408,6 +407,20 @@ module.exports = class CreditCardController extends entityController {
 			}
 		}
 
+	}
+
+	setChecksum(attributes) {
+		du.debug('Set Checksum');
+		if (
+			_.has(attributes, 'first_six') &&
+			_.has(attributes, 'last_four') &&
+			_.has(attributes, 'expiration')
+		) {
+			const {first_six, last_four, expiration} = attributes;
+
+			const normalized_expiration = `${expiration.slice(0, 2)}/${expiration.slice(-2)}`;
+			attributes.checksum = checksum(`${first_six}.${last_four}.${normalized_expiration}`);
+		}
 	}
 
 }
