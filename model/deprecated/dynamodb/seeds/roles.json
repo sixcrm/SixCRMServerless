@@ -77,7 +77,6 @@
 			"usersetting/*",
 			"usersigningstring/*",
 			"userdevicetoken/*",
-			"analytics/getActivityByIdentifier",
 			"register/*"
 		],
 		"deny":["*"]

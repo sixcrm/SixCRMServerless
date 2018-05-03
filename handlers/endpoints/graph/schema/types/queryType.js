@@ -128,12 +128,8 @@ let affiliateReportSummaryType = require('./analytics/affiliate_report/affiliate
 let affiliateReportSubaffiliatesType = require('./analytics/affiliate_report/affiliateReportSubaffiliatesType');
 /* End Reports */
 
-let listActivityType = require('./analytics/listActivityType');
-
 let analyticsFilterInputType = require('./analytics/filterInputType');
 let analyticsPaginationInputType = require('./analytics/paginationInputType');
-let analyticsActivityFilterInputType = require('./analytics/activityFilterInputType');
-
 let entitySearchInputType = require('./entity/searchInputType');
 let paginationInputType = require('./pagination/paginationInputType');
 let cacheInputType = require('./cache/cacheInputType');
@@ -878,25 +874,6 @@ const fields = Object.assign({}, {
 			const analyticsController = new AnalyticsController();
 
 			return analyticsController.executeAnalyticsFunction(args, 'getCampaignsByAmount');
-		}
-	},
-	listactivitybyidentifier: {
-		type: listActivityType.graphObj,
-		args: {
-			activityfilter: {
-				type: analyticsActivityFilterInputType.graphObj
-			},
-			pagination: {
-				type: analyticsPaginationInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getActivityByIdentifier');
 		}
 	},
 

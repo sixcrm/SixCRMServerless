@@ -38,8 +38,7 @@ function getValidRoleConfigForSomeOtherRole() {
 				"account/read",
 				"usersetting/*",
 				"usersigningstring/*",
-				"userdevicetoken/*",
-				"analytics/getActivityByIdentifier"
+				"userdevicetoken/*"
 			],
 			"deny":["*"]
 		}

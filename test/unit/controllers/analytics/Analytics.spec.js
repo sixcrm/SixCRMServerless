@@ -18,47 +18,6 @@ describe('controllers/Analytics.js', () => {
 		mockery.deregisterAll();
 	});
 
-	describe('getActivityByIdentifier', () => {
-
-		it('successfully returns activity by identifier', () => {
-
-			let params = {
-				activityfilter: {
-					an_activity_filter: 'an_activity_filter'
-				},
-				pagination: {
-					order: 'sample data'
-				}
-			};
-
-			let mock_analytics_utilities = class {
-				constructor() {
-				}
-
-				getResults(query_name, parameters, query_filters) {
-					expect(query_name).to.equal('deprecate/activity_by_identifier');
-					expect(parameters).to.deep.equal({
-						an_activity_filter: params.activityfilter.an_activity_filter,
-						order: params.pagination.order,
-						offset: 0,
-						limit: 50
-					});
-					expect(query_filters).to.deep.equal(['action', 'account']);
-					return Promise.resolve('any_results')
-				}
-			};
-
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'analytics/AnalyticsUtilities.js'), mock_analytics_utilities);
-
-			let AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.getActivityByIdentifier(params).then((result) => {
-				expect(result).to.equal('any_results');
-			});
-		});
-	});
-
 	describe('getCampaignsByAmount', () => {
 
 		it('successfully returns campaigns by amount', () => {
