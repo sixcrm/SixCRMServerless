@@ -668,7 +668,7 @@ describe('controllers/workers/logger', () => {
 			let loggerController = new LoggerController();
 
 			let transformed_data = loggerController.transformData(unpacked_data);
-			expect(transformed_data).to.be.a('string');
+			expect(transformed_data).to.be.an('array');
 
 		});
 
@@ -738,7 +738,7 @@ describe('controllers/workers/logger', () => {
 		it('throws an error for a non 200-level successCode', (done) => {
 
 			let result = {
-				error: {
+				errors: {
 					statusCode: 500,
 					responseBody: 'Something went wrong'
 				},
@@ -774,13 +774,8 @@ describe('controllers/workers/logger', () => {
 
 		it('successfully processes log input', () => {
 
-			let input = getValidLogInput();
-
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'aws-signedrequest-provider.js'), class {
-				constructor() {}
-				signedRequest(endpoint, body) {
-					expect(endpoint).to.be.defined;
-					expect(body).to.be.defined;
+			const Client = class {
+				bulk()  {
 					return Promise.resolve({
 						error: null,
 						success: {
@@ -790,9 +785,20 @@ describe('controllers/workers/logger', () => {
 						},
 						statusCode: 200,
 						failedItems: []
-					})
+
+					});
 				}
-			});
+			}
+
+			const Elasticsearch = class {
+					static get Client() {
+						return Client;
+					}
+			}
+
+			mockery.registerMock('elasticsearch', Elasticsearch);
+
+			let input = getValidLogInput();
 
 			const LoggerController = global.SixCRM.routes.include('controllers', 'workers/logger.js');
 			let loggerController = new LoggerController();
