@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const ATTRIBUTES = 22;
+const ATTRIBUTES = 23;
 
 module.exports = class WriteTransactionRecords {
 
