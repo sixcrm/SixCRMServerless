@@ -1104,8 +1104,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 		du.debug('Execute Associated Entity Function');
 
-		du.info(controller_name, function_name);
-		du.highlight(this[controller_name]);
 		if(_.has(this, controller_name) && _.isFunction(this[controller_name][function_name])){
 
 			this[controller_name].sanitization = this.sanitization;
