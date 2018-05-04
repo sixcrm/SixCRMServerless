@@ -229,7 +229,7 @@
 	  "customer_service": {},
 	  "enabled": true,
 	  "gateway": {
-	    "api_key": "567ca7b3d16cdb0da441348d2b1927acbf5be319461dcbd63a2159c62682bf25aa69cbcbe8e94c93266b588e6cc05ed5",
+	    "api_key": "sk_test_BQokikJOvBiI2HlWgH4olfQ2",
 	    "name": "Stripe",
 	    "type": "Stripe"
 	  },
@@ -244,7 +244,7 @@
 	    "transaction_fee": 0
 	  },
 	  "processor": {
-	    "name": "NMA"
+	    "name": "Stripe"
 	  },
 	  "updated_at": "2018-05-01T20:45:19.285Z"
 	}
