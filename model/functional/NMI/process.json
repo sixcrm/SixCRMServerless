@@ -56,5 +56,5 @@
 		"shipping_zip":{"$ref": "../../definitions/zipcode.json"},
 		"shipping_country":{"$ref": "../../definitions/countrycode.json"}
 	},
-	"required":["type", "username", "password", "endpoint", "amount", "ccnumber","ccexp","firstname","lastname","zip"]
+	"required":["type", "username", "password", "endpoint", "amount", "ccnumber","ccexp","firstname","lastname"]
 }

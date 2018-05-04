@@ -63,7 +63,7 @@
 				"created_at":{"$ref": "#/definitions/ISO8601"},
 				"updated_at":{"$ref": "#/definitions/ISO8601"}
 			},
-			"required":["account", "address", "first_six", "token", "last_four", "expiration", "name", "created_at", "updated_at"]
+			"required":["account", "first_six", "token", "last_four", "expiration", "name", "created_at", "updated_at"]
 		},
 		{"$ref": "#/definitions/UUIDv4"}
 	]

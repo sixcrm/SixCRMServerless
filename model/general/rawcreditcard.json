@@ -11,5 +11,5 @@
 		"expiration":{"$ref": "../definitions/creditcardexpirationdate.json"},
 		"name":{"$ref": "../definitions/creditcardname.json"}
 	},
-	"required":["address","number","expiration","name"]
+	"required":["number","expiration","name"]
 }
