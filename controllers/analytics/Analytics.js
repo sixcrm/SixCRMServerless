@@ -206,6 +206,10 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 				const resolveParams = require('./queries/reports/event-funnel/params');
 				return this.query('reports/event-funnel', await resolveParams(parameters));
 			}
+			case 'eventFunnelTimeseries': {
+				const resolveParams = require('./queries/reports/event-funnel-timeseries/params');
+				return this.query('reports/event-funnel-timeseries', await resolveParams(parameters));
+			}
 			case 'campaignsByAmount': {
 				const resolveParams = require('./queries/reports/campaigns-by-amount/params');
 				return this.query('reports/campaigns-by-amount', await resolveParams(parameters, parameters.pagination));
