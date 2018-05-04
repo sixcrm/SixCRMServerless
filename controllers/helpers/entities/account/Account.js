@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -52,23 +53,13 @@ module.exports = class AccountHelperController {
 			account = global.account;
 		}
 
-		if(!_.has(this, 'accountController')){
-			this.accountController = new AccountController();
-		}
+		account = await this._getAccount(account, true);
 
-		this.accountController.disableACLs();
-		let result = await this.accountController.get({id: account});
-		this.accountController.enableACLs();
-
-		if(_.isNull(result)){
-			throw eu.getError('not_found', 'Account not found: '+account);
-		}
-
-		if(result.active !== true && fatal == true){
+		if(account.active !== true && fatal == true){
 			throw eu.getError('forbidden', 'This account is not available for API requests at this time.');
 		}
 
-		return result.active;
+		return account.active;
 
 	}
 
@@ -76,29 +67,8 @@ module.exports = class AccountHelperController {
 
 		du.debug('Activate Account');
 
-		if(!_.has(this, 'sessionController')){
-			this.sessionController = new SessionController();
-		}
-
-		this.sessionController.disableACLs();
-		session = await this.sessionController.get({id: session});
-		this.sessionController.enableACLs();
-
-		if(_.isNull(session)){
-			throw eu.getError('bad_request', 'Session not found.');
-		}
-
-		if(!_.has(this, 'accountController')){
-			this.accountController = new AccountController();
-		}
-
-		this.accountController.disableACLs();
-		account = await this.accountController.get({id: account});
-		this.accountController.enableACLs();
-
-		if(_.isNull(account)){
-			throw eu.getError('bad_request', 'Account not found.');
-		}
+		session = await this._getSession(session);
+		account = await this._getAccount(account, true);
 
 		await this._validateSessionForAccountActivation({session: session, account: account});
 
@@ -106,8 +76,7 @@ module.exports = class AccountHelperController {
 
 		account['billing'] = {
 			session: session,
-			plan: plan,
-			disabled: false
+			plan: plan
 		};
 
 		if(!_.has(this, 'accountController')){
@@ -122,6 +91,181 @@ module.exports = class AccountHelperController {
 			activated: true,
 			message: 'Successfully activated account'
 		};
+
+	}
+
+	async deactivateAccount({account}){
+
+		du.debug('Deactivate Account');
+
+		account = await this._getAccount(account);
+
+		if(!_.has(account, 'billing')){
+			throw eu.getError('server', 'Account does not have a billing property.');
+		}
+
+		if(_.has(account.billing, 'deactivate')){
+			throw eu.getError('bad_request', 'Account is already scheduled for deactivation.');
+		}
+
+		if(_.has(account.billing, 'deactivated') && account.billing.deactivated == true){
+			throw eu.getError('bad_request', 'Account is already deactivated.');
+		}
+
+		let deactivate_time = timestamp.getISO8601();
+		account.billing.deactivate = deactivate_time
+
+		if(!_.has(this, 'accountController')){
+			this.accountController = new AccountController();
+		}
+
+		this.accountController.disableACLs();
+		account = await this.accountController.update({entity:account, allow_billing_overwrite: true});
+		this.accountController.enableACLs();
+
+		return {
+			deactivate: deactivate_time,
+			message: "Successfully scheduled account deactivation"
+		};
+
+	}
+
+	async cancelDeactivation({account}){
+
+		du.debug('Deactivate Account');
+
+		account = await this._getAccount(account);
+
+		if(!_.has(account, 'billing')){
+			throw eu.getError('server', 'Account does not have a billing property.');
+		}
+
+		if(!_.has(account.billing, 'deactivate')){
+			throw eu.getError('bad_request', 'Account is not scheduled for deactivation');
+		}
+
+		if(_.has(account.billing, 'deactivated') && account.billing.deactivated == true){
+			throw eu.getError('bad_request', 'Account is already deactivated.');
+		}
+
+		delete account.billing.deactivate;
+
+		if(!_.has(this, 'accountController')){
+			this.accountController = new AccountController();
+		}
+
+		this.accountController.disableACLs();
+		account = await this.accountController.update({entity:account, allow_billing_overwrite: true});
+		this.accountController.enableACLs();
+
+		return {
+			message: "Deactivation Cancelled"
+		};
+
+	}
+
+	async upgradeAccount({account, plan}){
+
+		du.debug('Upgrade Account');
+
+		account = await this._getAccount(account);
+
+		if(!_.has(account, 'billing')){
+			throw eu.getError('server', 'Account does not have a billing property.');
+		}
+
+		if(!this._isUpgrade({plan: plan, account: account})){
+			throw eu.getError('bad_request', 'Plan is not an upgrade from current plan.');
+		}
+
+		let new_session = await this._billNewPlan({account: account, plan: plan});
+
+		await this._validateSessionForAccountActivation({session: new_session, account: account});
+
+		account.billing.plan = plan;
+
+		if(!_.has(account.billing, 'previous_sessions')){
+			account.billing.previous_sessions = [];
+		}
+		account.billing.previous_sessions.push(account.billing.session);
+		account.billing.session = new_session.id;
+
+		return {
+			upgraded: true,
+			message: 'Successfully activated account'
+		};
+
+	}
+
+	async _billNewPlan({account, plan}){
+
+		du.debug('Bill New Plan');
+		du.info(account, plan);
+		//Technical Debt:  Complete me.
+		return null;
+
+	}
+
+	_isUpgrade({plan, account}){
+
+		du.debug('Is Upgrade');
+
+		if(plan == 'basic'){
+			return false;
+		}
+
+		du.info(account);
+
+		if(plan == account.billing.plan){
+			return false;
+		}
+
+		if(account.billing.plan == 'premium'){
+			return false;
+		}
+
+		return true;
+
+	}
+
+	async _getAccount(account_id, disable_acls = false){
+
+		du.debug('Get Account');
+
+		if(!_.has(this, 'accountController')){
+			this.accountController = new AccountController();
+		}
+
+		if(disable_acls){ this.accountController.disableACLs(); }
+		let account = await this.accountController.get({id: account_id});
+		if(disable_acls){ this.accountController.enableACLs(); }
+
+		if(_.isNull(account)){
+			throw eu.getError('bad_request', 'Account not found.');
+		}
+
+		return account;
+
+	}
+
+	async _getSession(session_id){
+
+		du.debug('Get Account');
+
+		if(!_.has(this, 'sessionController')){
+			this.sessionController = new SessionController();
+		}
+
+		//Note this is always disabled because the sessions belong to the Accounting account
+		this.sessionController.disableACLs();
+		let session = await this.sessionController.get({id: session_id});
+		this.sessionController.enableACLs();
+
+		if(_.isNull(session)){
+			throw eu.getError('bad_request', 'Session not found.');
+		}
+
+		return session;
 
 	}
 
