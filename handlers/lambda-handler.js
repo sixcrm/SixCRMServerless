@@ -1,4 +1,5 @@
 require('../SixCRM');
+const du = require('../lib/debug-utilities');
 
 const LambdaContext = require('./lambda-context');
 const ServerlessRuntime = require('../core/ServerlessRuntime');
@@ -13,7 +14,13 @@ module.exports = class LambdaHandler
 
 			await this.handleInternal(event, lambdaContext, lambdaCallback, handlerDelegate);
 
-		} finally {
+		}
+		catch (error) {
+
+			du.error("Unhandled error in lambda", error);
+
+		}
+		finally {
 
 			await ServerlessRuntime.clearContext();
 
