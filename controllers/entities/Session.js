@@ -586,4 +586,3 @@ module.exports = class SessionController extends entityController {
 	}
 
 }
-

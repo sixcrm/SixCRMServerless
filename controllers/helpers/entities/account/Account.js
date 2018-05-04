@@ -214,8 +214,6 @@ module.exports = class AccountHelperController {
 			return false;
 		}
 
-		du.info(account);
-
 		if(plan == account.billing.plan){
 			return false;
 		}
@@ -359,11 +357,17 @@ module.exports = class AccountHelperController {
 		let rebills = await this.sessionController.listRebills(session);
 		this.sessionController.enableACLs();
 
+		if(_.isNull(rebills) || !arrayutilities.nonEmpty(rebills)){
+			throw eu.getError('server', 'Session missing rebills.');
+		}
+
 		let unpaid_promises = arrayutilities.map(rebills, async (rebill) => {
 
 			this.rebillController.disableACLs();
 			let transactions = await this.rebillController.listTransactions(rebill);
 			this.rebillController.enableACLs();
+
+			transactions = transactions.transactions;
 
 			if(!arrayutilities.nonEmpty(transactions)){
 				throw eu.getError('bad_request', 'The provided session does not have associated transactions.');

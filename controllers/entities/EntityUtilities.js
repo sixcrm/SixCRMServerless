@@ -1100,12 +1100,12 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	}
 
-	executeAssociatedEntityFunction(controller_name, function_name, function_arguments, retry){
+	executeAssociatedEntityFunction(controller_name, function_name, function_arguments, retry = false){
 
 		du.debug('Execute Associated Entity Function');
 
-		retry = (_.isUndefined(retry))?false:retry;
-
+		du.info(controller_name, function_name);
+		du.highlight(this[controller_name]);
 		if(_.has(this, controller_name) && _.isFunction(this[controller_name][function_name])){
 
 			this[controller_name].sanitization = this.sanitization;
@@ -1114,9 +1114,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 		}else{
 
 			if(retry){
-
 				throw eu.getError('server', 'Unable to execute controller function: '+controller_name+'.'+function_name+'('+JSON.stringify(function_arguments)+')');
-
 			}
 
 			let controller_file_name = this.translateControllerNameToFilename(controller_name);
