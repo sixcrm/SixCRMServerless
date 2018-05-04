@@ -75,7 +75,7 @@ module.exports = class AccountHelperController {
 		const plan = await this._getPlanName({session: session});
 
 		account['billing'] = {
-			session: session,
+			session: (_.has(session, 'id'))?session.id:session,
 			plan: plan
 		};
 
