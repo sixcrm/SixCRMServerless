@@ -1,6 +1,0 @@
-{
-  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":
-    "query {eventfunnel (analyticsfilter:{start:\"2017-03-01T17:23:43.043Z\", end:\"2017-03-02T17:23:45.043Z\"}) {funnel {name, count, percentage, relative_percentage} } }"
-}

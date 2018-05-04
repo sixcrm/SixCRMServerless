@@ -52,8 +52,8 @@ module.exports = async (results) => {
 			}, {
 				key: 'relative_percentage',
 				value: math.safePercentage(main, lead)
-			},
-			{
+			}],
+			[{
 				key: 'name',
 				value: 'upsell'
 			}, {
@@ -65,8 +65,8 @@ module.exports = async (results) => {
 			}, {
 				key: 'relative_percentage',
 				value: math.safePercentage(upsell, main)
-			},
-			{
+			}],
+			[{
 				key: 'name',
 				value: 'confirm'
 			}, {

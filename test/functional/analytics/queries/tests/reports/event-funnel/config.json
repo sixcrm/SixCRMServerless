@@ -53,7 +53,8 @@
 		}, {
 			"key": "relative_percentage",
 			"value": "31.52"
-		}, {
+		}],
+		[{
 			"key": "name",
 			"value": "upsell"
 		}, {
@@ -65,7 +66,8 @@
 		}, {
 			"key": "relative_percentage",
 			"value": "0.00"
-		}, {
+		}],
+		[{
 			"key": "name",
 			"value": "confirm"
 		}, {

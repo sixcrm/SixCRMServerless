@@ -117,8 +117,6 @@ let searchInputType = require('./search/searchInputType');
 let searchResultsType = require('./search/searchResultsType');
 
 let transactionSummaryType = require('./analytics/transactionSummaryType');
-let eventFunnelType = require('./analytics/eventFunnelType');
-let campaignsByAmountType = require('./analytics/campaignsByAmountType');
 let binType = require('./bin/BINType');
 
 let analyticsFilterInputType = require('./analytics/filterInputType');
@@ -761,39 +759,6 @@ const fields = Object.assign({}, {
 			const analyticsController = new AnalyticsController();
 
 			return analyticsController.executeAnalyticsFunction(args, 'getTransactionSummary');
-		}
-	},
-	eventfunnel: {
-		type: eventFunnelType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			}
-
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getEventFunnel');
-		}
-	},
-	campaignsbyamount: {
-		type: campaignsByAmountType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getCampaignsByAmount');
 		}
 	},
 
