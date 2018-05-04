@@ -133,7 +133,7 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 			const campaignController = new CampaignController();
 			campaignController.disableACLs();
 			const response = await campaignController.get({
-				id: record.context.transaction.campaign,
+				id: record.context.session.campaign,
 				fatal: true
 			});
 
