@@ -16,8 +16,8 @@ query {
       {
         facet: "period"
         values: ["MONTH"]
-			},
-			{
+      },
+      {
         facet: "eventType"
         values: ["lead"]
       }
