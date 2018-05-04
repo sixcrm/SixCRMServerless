@@ -30,27 +30,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	/* deprecate */
 
-	getCampaignsByAmount(parameters) {
-
-		du.debug('Get Campaigns By Amount');
-
-		parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput({
-			limit: 10,
-			order: 'desc'
-		}));
-
-		return this.getResults('deprecate/campaigns_by_amount', parameters, this.default_query_filters);
-
-	}
-
-	getEventFunnel(parameters) {
-
-		du.debug('Get Event Funnel');
-
-		return this.getResults('deprecate/event_funnel', parameters.analyticsfilter, this.default_query_filters);
-
-	}
-
 	getTransactionSummary(parameters) {
 
 		du.debug('Get Transaction Summary');
