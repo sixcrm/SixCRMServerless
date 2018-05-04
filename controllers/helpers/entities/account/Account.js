@@ -300,7 +300,7 @@ module.exports = class AccountHelperController {
 
 		let products = [];
 
-		if(objectutilities.hasRecursive(session, 'watermark.product_schedules') && true/*arrayutilities.nonEmpty(session.watermark.product_schedules)*/){
+		if(objectutilities.hasRecursive(session, 'watermark.product_schedules') && arrayutilities.nonEmpty(session.watermark.product_schedules)){
 
 			arrayutilities.map(session.watermark.product_schedules, product_schedule_group => {
 
@@ -308,11 +308,11 @@ module.exports = class AccountHelperController {
 					return false;
 				}
 
-				if(!_.has(product_schedule_group, 'schedule') || !arrayutilities.nonEmpty(product_schedule_group.schedule)){
+				if(!objectutilities.hasRecursive(product_schedule_group, 'product_schedule.schedule') || !arrayutilities.nonEmpty(product_schedule_group.product_schedule.schedule)){
 					return false;
 				}
 
-				arrayutilities.map(product_schedule_group.schedule, (schedule_element) => {
+				arrayutilities.map(product_schedule_group.product_schedule.schedule, (schedule_element) => {
 					if(objectutilities.hasRecursive(schedule_element, 'product.id') && _.has(this.subscription_products, schedule_element.product.id)){
 						products.push(schedule_element.product);
 					}

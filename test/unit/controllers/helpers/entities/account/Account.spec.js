@@ -177,14 +177,17 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
       session.watermark = {
         product_schedules: [
           {
-            schedule: [
-              {
-                quantity: 1,
-                product: {
-                  id: '3ac1a59a-6e41-4074-9712-3c80ef3f3e95'
+            product_schedule: {
+              schedule: [
+                {
+                  quantity: 1,
+                  product: {
+                    id: '3ac1a59a-6e41-4074-9712-3c80ef3f3e95'
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            quantity: 1
           }
         ]
       };
