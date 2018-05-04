@@ -19,12 +19,18 @@
 			"key": "campaign",
 			"value": "5c593d31-5001-4faf-8ea2-e8c1a1f85f04"
 		}, {
+			"key": "campaign_name",
+			"value": "An example campaign"
+		}, {
 			"key": "amount",
 			"value": "19.98"
 		}],
 		[{
 			"key": "campaign",
 			"value": "70a6689a-5814-438b-b9fd-dd484d0812f9"
+		}, {
+			"key": "campaign_name",
+			"value": "Example Campaign"
 		}, {
 			"key": "amount",
 			"value": "69.86"
@@ -33,12 +39,18 @@
 			"key": "campaign",
 			"value": "47c7599c-9800-4d83-8a9f-841da04dd420"
 		}, {
+			"key": "campaign_name",
+			"value": "An example campaign 3"
+		}, {
 			"key": "amount",
 			"value": "605.88"
 		}],
 		[{
 			"key": "campaign",
 			"value": "dc3f9f68-3689-40f3-a34a-f1b1cd1d73d0"
+		}, {
+			"key": "campaign_name",
+			"value": "An example campaign 2"
 		}, {
 			"key": "amount",
 			"value": "1088.82"

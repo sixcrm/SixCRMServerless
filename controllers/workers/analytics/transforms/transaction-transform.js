@@ -2,6 +2,7 @@ const _ = require('lodash');
 const AnalyticsTransfrom = require('../analytics-transform');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
+const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 
 module.exports = class TransactionTransform extends AnalyticsTransfrom {
 
@@ -27,7 +28,9 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 			transactionType: record.context.transactionType,
 			customer: record.context.session.customer,
 			creditcard: '',
-			campaign: record.context.session.campaign,
+			campaign: {
+				id: record.context.session.campaign
+			},
 			account: record.context.session.account,
 			affiliate: record.context.session.affiliate,
 			subAffiliate1: record.context.session.subaffiliate_1,
@@ -124,6 +127,24 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 			du.warning('TransactionTransform.transform(): could not resolve merchant provider', ex);
 
 		}
+
+		try {
+
+			const campaignController = new CampaignController();
+			campaignController.disableACLs();
+			const response = await campaignController.get({
+				id: record.context.transaction.campaign,
+				fatal: true
+			});
+
+			result.campaign.name = response.name;
+
+		} catch (ex) {
+
+			du.warning('TransactionTransform.transform(): could not resolve campaign', ex);
+
+		}
+
 
 		return result;
 

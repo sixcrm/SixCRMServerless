@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS analytics.f_transaction (
     merchant_provider_name VARCHAR(255) NULL,
     merchant_provider_monthly_cap NUMERIC(12, 2) NULL,
     campaign VARCHAR(36) NOT NULL,
+    campaign_name VARCHAR(36) NULL,
     affiliate VARCHAR(36),
     amount NUMERIC(12, 2) NOT NULL,
     processor_result VARCHAR(50) NOT NULL,
