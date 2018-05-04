@@ -11,8 +11,14 @@
 								"properties": {
 									"id": { "type": "keyword" },
 									"owner": { "type": "text" },
-									"log_group": { "type": "keyword", "store": true },
-									"log_stream": { "type": "text" },
+									"log_group": {
+										"type": "text",
+										"store": true
+									},
+									"log_stream": {
+										"type": "text",
+										"store": true
+									},
 									"message": {
 										"type": "text",
 										"store": true
@@ -28,6 +34,10 @@
 									},
 									"error_code": {
 										"type": "integer",
+										"store": true
+									},
+									"stack": {
+										"type": "text",
 										"store": true
 									},
 									"class": {
