@@ -22,8 +22,8 @@
 						{"type":"null"}
 					]
 				},
-				"disabled":{
-					"type":"boolean"
+				"disable":{
+					"type":"string"
 				},
 				"session":{
 					"anyOf":[
@@ -31,8 +31,7 @@
 						{"type":"null"}
 					]
 				}
-			},
-			"required":["disabled"]
+			}
 		},
 		"active":{
 			"type":"boolean"

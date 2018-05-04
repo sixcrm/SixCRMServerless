@@ -1975,8 +1975,7 @@
 							"name": "Master Account",
 							"name_lowercase": "master account",
 							"billing": {
-								"plan": "free",
-								"disabled": false
+								"plan": "free"
 							}
 						},
 						"user": "super.user@test.com",

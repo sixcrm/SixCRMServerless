@@ -2,6 +2,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 const expect = chai.expect;
 
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 //const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
@@ -31,6 +32,128 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
       expect(objectutilities.getClassName(accountHelperController)).to.equal('AccountHelperController');
 
     });
+  });
+
+  xdescribe('upgradeAccount', () => {
+
+    it('successfully upgrades a account', () => {
+
+      let account = MockEntities.getValidAccount();
+      let session = MockEntities.getValidSession();
+
+      account.billing = {
+        session: session.id,
+        plan: 'basic'
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Account.js'), class {
+        constructor(){}
+        disableACLs(){}
+        enableACLs(){}
+        update({entity, allow_billing_overwrite}){
+          expect(entity).to.be.a('object');
+          expect(allow_billing_overwrite).to.be.a('boolean');
+          return Promise.resolve(entity);
+        }
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(account);
+        }
+
+      });
+
+      const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
+      let accountHelperController = new AccountHelperController();
+
+      return accountHelperController.upgradeAccount({account: account.id, plan: 'premium'}).then(result => {
+        expect(result).to.have.property('message');
+      });
+
+    });
+
+  });
+
+  describe('cancelDeactivation', () => {
+
+    it('successfully cancels a scheduled deactivation', () => {
+
+      let account = MockEntities.getValidAccount();
+      let session = MockEntities.getValidSession();
+
+      account.billing = {
+        deactivate: timestamp.getISO8601(),
+        session: session.id,
+        plan: 'basic'
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Account.js'), class {
+        constructor(){}
+        disableACLs(){}
+        enableACLs(){}
+        update({entity, allow_billing_overwrite}){
+          expect(entity).to.be.a('object');
+          expect(allow_billing_overwrite).to.be.a('boolean');
+          return Promise.resolve(entity);
+        }
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(account);
+        }
+
+      });
+
+      const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
+      let accountHelperController = new AccountHelperController();
+
+      return accountHelperController.cancelDeactivation({account: account.id}).then(result => {
+        expect(result).to.have.property('message');
+        expect(result.message).to.equal('Deactivation Cancelled');
+      });
+
+    });
+
+  });
+
+
+
+  describe('deactivateAccount', () => {
+    it('successfully schedules a account for deactivation', () => {
+
+      let account = MockEntities.getValidAccount();
+      let session = MockEntities.getValidSession();
+
+      account.billing = {
+        session: session.id,
+        plan: 'basic'
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Account.js'), class {
+        constructor(){}
+        disableACLs(){}
+        enableACLs(){}
+        update({entity, allow_billing_overwrite}){
+          expect(entity).to.be.a('object');
+          expect(allow_billing_overwrite).to.be.a('boolean');
+          return Promise.resolve(entity);
+        }
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(account);
+        }
+
+      });
+
+      const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
+      let accountHelperController = new AccountHelperController();
+
+      return accountHelperController.deactivateAccount({account: account.id}).then(result => {
+        expect(result).to.have.property('message');
+        expect(result).to.have.property('deactivate');
+        expect(result.deactivate).to.be.a('string');
+      });
+
+    });
+
   });
 
   describe('activateAccount', () => {

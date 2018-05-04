@@ -7,6 +7,8 @@ let accessKeyType = require('./accesskey/accessKeyType');
 let accountInputType = require('./account/accountInputType');
 let accountType = require('./account/accountType');
 let accountActivationType = require('./account/accountActivationType');
+let accountDeactivationType = require('./account/accountDeactivationType');
+let accountCancelDeactivationType = require('./account/accountCancelDeactivationType');
 
 let affiliateInputType = require('./affiliate/affiliateInputType');
 let affiliateType = require('./affiliate/affiliateType');
@@ -623,6 +625,34 @@ module.exports.graphObj = new GraphQLObjectType({
 			resolve:(value, args) => {
 				const accountHelperController = new AccountHelperController();
 				return accountHelperController.activateAccount({account: args.account, session: args.session});
+			}
+		},
+		deactivateaccount:{
+			type: accountDeactivationType.graphObj,
+			description:  'Schedules a account for deactivation',
+			args:{
+				account: {
+					type: new GraphQLNonNull(GraphQLString),
+					description:  'The account to deactivate'
+				}
+			},
+			resolve:(value, args) => {
+				const accountHelperController = new AccountHelperController();
+				return accountHelperController.deactivateAccount({account: args.account});
+			}
+		},
+		cancelaccountdeactivation:{
+			type: accountCancelDeactivationType.graphObj,
+			description:  'Cancels account for deactivation',
+			args:{
+				account: {
+					type: new GraphQLNonNull(GraphQLString),
+					description:  'The account to cancel deactivation'
+				}
+			},
+			resolve:(value, args) => {
+				const accountHelperController = new AccountHelperController();
+				return accountHelperController.cancelDeactivation({account: args.account});
 			}
 		},
 		deleteaccount: {
