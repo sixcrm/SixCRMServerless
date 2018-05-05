@@ -225,14 +225,14 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 		const clone = _.clone(parameters);
 
-		if (this.permissionutilities.areACLsDisabled() !== true && global.account !== '*') {
+		if (!this.permissionutilities.areACLsDisabled() && global.account !== '*') {
 
 			clone.account = global.account;
 
 		}
 
 		const queryTransform = require(path.join(__dirname, 'queries', queryRoot, 'query'));
-		const query = await queryTransform(parameters);
+		const query = await queryTransform(clone);
 		const auroraContext = global.SixCRM.getResource('auroraContext');
 
 		// return this.cacheController.useCache(query, async () => {
