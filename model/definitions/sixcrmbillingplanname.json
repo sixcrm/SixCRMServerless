@@ -3,5 +3,5 @@
   "id": "/definitions/sixcrmbillingplanname.json",
   "title": "SixCRM Account Billing Plan Name",
   "type":"string",
-  "enum":["basic","pro","premium","free"]
+  "enum":["basic","professional","premium","free"]
 }
