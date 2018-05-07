@@ -147,12 +147,14 @@ class AccountController extends entityController {
 			list_array: [entity.name_lowercase]
 		});
 
+		du.debug('Query parameters', query_parameters);
+
 		return super.list({
 			query_parameters: query_parameters
 		})
 			.then(response => {
 
-				du.debug('Accounts with name ' + entity.name, response.accounts);
+				du.debug('Accounts with name ' + entity.name, response ? response.accounts : []);
 
 				if (
 					objectutilities.hasRecursive(response, 'accounts') &&
