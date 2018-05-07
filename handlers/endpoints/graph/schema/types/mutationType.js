@@ -605,7 +605,8 @@ module.exports.graphObj = new GraphQLObjectType({
 				const accountController = new AccountController();
 
 				return accountController.update({
-					entity: account.account
+					entity: account.account,
+					ignore_updated_at: true
 				});
 			}
 		},

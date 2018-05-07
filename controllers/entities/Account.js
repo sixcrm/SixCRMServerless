@@ -60,10 +60,9 @@ class AccountController extends entityController {
 				return entity;
 			})
 			.then((entity) => {
-				this.verifyAccountName({
+				return this.verifyAccountName({
 					entity: entity
 				})
-				return entity;
 			})
 			.then((entity) => super.update({
 				entity: entity,
@@ -147,19 +146,26 @@ class AccountController extends entityController {
 			list_array: [entity.name_lowercase]
 		});
 
+		du.debug('Query parameters', query_parameters);
+
 		return super.list({
 			query_parameters: query_parameters
 		})
 			.then(response => {
+
+				du.debug('Accounts with name ' + entity.name, response ? response.accounts : []);
+
 				if (
 					objectutilities.hasRecursive(response, 'accounts') &&
 					arrayutilities.isArray(response.accounts) &&
 					arrayutilities.filter(response.accounts, (account) => account.id !== entity.id).length > 0
 				) {
+
+					du.error('An account already exists with name: "' + entity.name + '"');
 					throw eu.getError('bad_request', 'An account already exists with name: "' + entity.name + '"')
 				}
 
-				return;
+				return entity;
 
 			});
 
