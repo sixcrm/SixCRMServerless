@@ -32,6 +32,12 @@ module.exports = new GraphQLEnumType({
 		},
 		campaignsByAmount: {
 			value: 'campaignsByAmount'
+		},
+		transactionSummary: {
+			value: 'transactionSummary'
+		},
+		rebillSummary: {
+			value: 'rebillSummary'
 		}
 	}
 })

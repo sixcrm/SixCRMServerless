@@ -44,30 +44,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	}
 
-	getRebillSummary(parameters) {
-
-		du.debug('Get Rebill Summary');
-
-		const queue_name = parameters.queuename;
-		const period = parameters.period;
-
-		du.debug(parameters);
-		parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-		if (!_.isUndefined(queue_name)) {
-			parameters = this.appendQueueName(parameters, queue_name);
-		}
-
-		parameters = this.appendPeriod(parameters, {
-			name: period
-		});
-		du.debug(parameters);
-		return this.getResults('deprecate/order_engine/rebill_pagination', parameters, [
-			'account'
-		]);
-
-	}
-
 	getRebillsInQueue(parameters) {
 
 		const queue_name = parameters.queuename;
@@ -203,6 +179,10 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			case 'transactionSummary': {
 				const resolveParams = require('./queries/reports/transaction-summary/params');
 				return this.query('reports/transaction-summary', await resolveParams(parameters));
+			}
+			case 'rebillSummary': {
+				const resolveParams = require('./queries/reports/rebill-summary/params');
+				return this.query('reports/rebill-summary', await resolveParams(parameters, parameters.pagination));
 			}
 			default:
 				throw new Error('Report not found');
