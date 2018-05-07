@@ -24,7 +24,7 @@ query {
       pagination: {
         limit: 100
         offset: 0
-        direction: ["ASC"]
+        direction: "ASC"
       }
    ) {records { key value }}
   }
