@@ -135,4 +135,34 @@
     }
   ],
   "updated_at": "2018-05-01T20:26:30.594Z"
+},
+{
+	"id":"02891338-dc57-4ae1-9748-ed1a641ddb7d",
+	"name":"Live NMI Test Product Schedule",
+	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"schedule":[
+		{
+			"product":"cc2984b1-5fa3-4e7d-8bda-a5b67fcbd15f",
+			"price":1.00,
+			"start":0,
+			"period":30
+		}
+	],
+	"created_at":"2018-04-28T14:40:00.000Z",
+	"updated_at":"2018-04-28T14:40:00.000Z"
+},
+{
+	"id":"27ac0145-b46c-4eb2-bc2e-3456ff1fb3d6",
+	"name":"Live Stripe Test Product Schedule",
+	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"schedule":[
+		{
+			"product":"dc57f5e3-ce95-4318-9127-9f14f123a690",
+			"price":1.00,
+			"start":0,
+			"period":30
+		}
+	],
+	"created_at":"2018-04-28T14:40:00.000Z",
+	"updated_at":"2018-04-28T14:40:00.000Z"
 }]

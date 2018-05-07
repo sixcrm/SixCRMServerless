@@ -218,6 +218,41 @@
 		"updated_at":"2018-04-28T14:40:00.000Z"
 	},
 	{
+		"id":"8a15d551-71c2-4ab1-aa78-119e5377f783",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name":"Stripe Live Account",
+		"processor":{
+			"name":"Stripe"
+		},
+		"processing":{
+			"monthly_cap": null,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17,
+			"transaction_counts":{
+				"daily":null,
+				"monthly":null,
+				"weekly":null
+			}
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"Stripe",
+			"name":"Stripe",
+			"api_key":"sk_live_AMHO6C6kwJFGV3GisP6u3yoD"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express", "LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2018-04-28T14:40:00.000Z",
+		"updated_at":"2018-04-28T14:40:00.000Z"
+	},
+	{
 	  "accepted_payment_methods": [
 	    "American Express",
 	    "Mastercard",

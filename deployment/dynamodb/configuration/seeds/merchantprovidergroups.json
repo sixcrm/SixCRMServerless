@@ -30,11 +30,24 @@
 },
 {
 	"id":"90f3858e-5566-4a60-9977-292ae4f75632",
-	"name": "Live Merchant Provider Group",
+	"name": "Live NMI Provider Group",
 	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 	"merchantproviders": [
 		{
 			"id":"1b4771b0-1d4d-4ae8-8c12-2bbcfdff308f",
+			"distribution":1.0
+		}
+	],
+	"created_at":"2018-04-28T14:40:00.000Z",
+	"updated_at":"2018-04-28T14:40:00.000Z"
+},
+{
+	"id":"e46a403c-eefe-402f-bcf1-f8e65c887b85",
+	"name": "Live Stripe Provider Group",
+	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"merchantproviders": [
+		{
+			"id":"8a15d551-71c2-4ab1-aa78-119e5377f783",
 			"distribution":1.0
 		}
 	],

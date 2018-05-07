@@ -149,11 +149,30 @@
 	{
 		"id": "cc2984b1-5fa3-4e7d-8bda-a5b67fcbd15f",
 		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
-		"name": "Live Test Product",
-		"description":"This is a test product for the purpose of testing live transactions",
+		"name": "Live NMI Test Product",
+		"description":"This is a test product for the purpose of testing live transactions with NMI",
 		"default_price":1.00,
+		"dynamic_pricing": {
+			"min": 1.00,
+			"max": 2.00
+		},
 		"ship":false,
 		"merchantprovidergroup": "90f3858e-5566-4a60-9977-292ae4f75632",
+		"created_at":"2018-04-28T14:40:00.000Z",
+		"updated_at":"2018-04-28T14:40:00.000Z"
+	},
+	{
+		"id": "dc57f5e3-ce95-4318-9127-9f14f123a690",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name": "Live Stripe Test Product",
+		"description":"This is a test product for the purpose of testing live transactions with Stripe",
+		"default_price":1.00,
+		"dynamic_pricing": {
+			"min": 1.00,
+			"max": 2.00
+		},
+		"ship":false,
+		"merchantprovidergroup": "e46a403c-eefe-402f-bcf1-f8e65c887b85",
 		"created_at":"2018-04-28T14:40:00.000Z",
 		"updated_at":"2018-04-28T14:40:00.000Z"
 	},

@@ -1,0 +1,5 @@
+endpoint: 'https://staging-api.sixcrm.com/'
+account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'
+email: 'super.user@test.com'
+access_key: 'KB8FH7EWEWDK9EYRHXTZV6NS4DGD6RLZX8Z2UY1B'
+secret_key: 'fbedd93890bca2948e4c08b0ac809e90d74016ee'
