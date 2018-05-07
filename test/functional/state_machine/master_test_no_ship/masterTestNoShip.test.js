@@ -16,7 +16,7 @@ const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const tab = '      ';
 
-describe('masterTestNoShip', () => {
+xdescribe('masterTestNoShip', () => {
 
 	let tests = [];
 	let test_dirs = fileutilities.getDirectoryList(__dirname);

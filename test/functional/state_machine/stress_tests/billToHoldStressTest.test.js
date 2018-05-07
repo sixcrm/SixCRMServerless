@@ -52,7 +52,7 @@ describe('billToHoldStressTest', () => {
 
 	});
 
-	it(`${max_test_cases} rebills are sent to hold`, () => {
+	xit(`${max_test_cases} rebills are sent to hold`, () => {
 		return beforeTest()
 			.then(() => waitForNumberOfMessages('bill', max_test_cases))
 			.then(() => du.output(tab + 'Waiting for flush to finish'))
