@@ -16,7 +16,7 @@ module.exports = async (parameters = {}) => {
 
 		if (parameters.account) {
 
-			local.push(format(' AND account = $1', parameters.account));
+			local.push(format(' AND account = %L', parameters.account));
 
 		} else {
 
