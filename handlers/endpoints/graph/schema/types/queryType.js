@@ -118,7 +118,6 @@ let searchResultsType = require('./search/searchResultsType');
 
 let binType = require('./bin/BINType');
 
-let analyticsFilterInputType = require('./analytics/filterInputType');
 let analyticsPaginationInputType = require('./analytics/paginationInputType');
 let entitySearchInputType = require('./entity/searchInputType');
 let paginationInputType = require('./pagination/paginationInputType');
@@ -126,7 +125,6 @@ let cacheInputType = require('./cache/cacheInputType');
 
 /* Start state machine */
 
-let queueSummaryType = require('./analytics/order_engine/queuesummary/queueSummaryType');
 let currentQueueSummary = require('./analytics/order_engine/queuesummary/currentQueueSummaryType');
 
 let rebillsInQueueType = require('./analytics/order_engine/queuesummary/rebillsInQueueType');
@@ -672,30 +670,6 @@ const fields = Object.assign({}, {
 	/*
    * Analytics Endpoints
    */
-	rebillsummary: {
-		type: queueSummaryType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			pagination: {
-				type: analyticsPaginationInputType.graphObj
-			},
-			queuename: {
-				description: 'Name of a queue',
-				type: new GraphQLNonNull(GraphQLString)
-			},
-			period: {
-				description: 'Period of granularity',
-				type: new GraphQLNonNull(GraphQLString)
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getRebillSummary');
-		}
-	},
 	rebillsinqueue: {
 		type: rebillsInQueueType.graphObj,
 		args: {

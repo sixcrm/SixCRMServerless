@@ -2,7 +2,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = async (results) => {
 
-	du.debug('Rebills report');
+	du.debug('Rebill summary report');
 
 	return {
 		meta: {

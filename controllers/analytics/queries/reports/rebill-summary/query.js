@@ -25,11 +25,14 @@ module.exports = async (parameters = {}) => {
 
 	const queryParams = [
 		parameters.period,
+		parameters.queueName,
+		parameters.queueName,
+		parameters.queueName,
 		parameters.start,
 		parameters.end,
-		parameters.period,
-		parameters.period,
 		filterQuery,
+		parameters.period,
+		parameters.period,
 		parameters.direction || 'ASC',
 		parameters.limit || 100,
 		parameters.offset || 0

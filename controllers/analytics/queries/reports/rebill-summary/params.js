@@ -5,6 +5,7 @@ module.exports = async (parameters, pagination) => {
 	const start = parameters.facets.find(f => f.facet === 'start');
 	const end = parameters.facets.find(f => f.facet === 'end');
 	const period = parameters.facets.find(f => f.facet === 'period');
+	const queueName = parameters.facets.find(f => f.facet === 'queueName');
 
 	if (start.length > 1) {
 
@@ -24,11 +25,18 @@ module.exports = async (parameters, pagination) => {
 
 	}
 
+	if (queueName.length > 1) {
+
+		throw eu.getError('server', 'Queue name can only have one value');
+
+	}
+
 	const params = {};
 
 	_resolveParamValue('start', start);
 	_resolveParamValue('end', end);
 	_resolveParamValue('period', period);
+	_resolveParamValue('queueName', queueName);
 
 	if (pagination) {
 

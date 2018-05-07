@@ -5,7 +5,7 @@ FROM
 (
   SELECT
     fr.datetime,
-    CASE WHEN fr.current_queuename = queuename THEN
+    CASE WHEN fr.current_queuename = %L THEN
       1
     ELSE
       0
@@ -20,12 +20,12 @@ FROM
       0
   END queue_moved_on
   FROM analytics.f_rebill fr
-    WHERE (fr.current_queuename = queuename OR fr.previous_queuename = queuename)
+    WHERE (fr.current_queuename = %L OR fr.previous_queuename = %L)
       AND datetime BETWEEN TIMESTAMP %L AND TIMESTAMP %L %s
 ) ft
 WHERE queue = 1 AND queue_moved_on <> 1
-GROUP BY DATE_TRUNC(%L, DATETIME)
-ORDER BY DATE_TRUNC(%L, DATETIME) %L
+GROUP BY DATE_TRUNC(%L, datetime)
+ORDER BY DATE_TRUNC(%L, datetime) %s
 LIMIT %L
 OFFSET %L;
 
