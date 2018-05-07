@@ -4,14 +4,7 @@ module.exports = async (parameters, pagination) => {
 
 	const start = parameters.facets.find(f => f.facet === 'start');
 	const end = parameters.facets.find(f => f.facet === 'end');
-	const campaign = parameters.facets.find(f => f.facet === 'campaign');
-	const affiliate = parameters.facets.find(f => f.facet === 'affiliate');
-	const subId = parameters.facets.find(f => f.facet === 'subId');
-
-	// merchant provider
-	// processor_result
-	// type
-	// subtype
+	const period = parameters.facets.find(f => f.facet === 'period');
 
 	if (start.length > 1) {
 
@@ -25,18 +18,23 @@ module.exports = async (parameters, pagination) => {
 
 	}
 
+	if (period.length > 1) {
+
+		throw eu.getError('server', 'Period can only have one value');
+
+	}
+
 	const params = {};
 
 	_resolveParamValue('start', start);
 	_resolveParamValue('end', end);
-	_resolveParamValue('campaign', campaign);
-	_resolveParamValue('affiliate', affiliate);
-	_resolveParamValue('subId', subId);
+	_resolveParamValue('period', period);
 
 	if (pagination) {
 
 		params.limit = pagination.limit;
 		params.direction = pagination.direction;
+		params.offset = pagination.offset;
 
 	}
 
