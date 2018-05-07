@@ -15,5 +15,5 @@ if(_.isUndefined(count)){
 }
 
 for(var i = 0; i < count; i++){
-	du.output(uuidV4());
+	du.info(uuidV4());
 }

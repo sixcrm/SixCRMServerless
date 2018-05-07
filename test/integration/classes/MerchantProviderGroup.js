@@ -15,7 +15,7 @@ module.exports = class MerchantProviderGroupTest extends IntegrationTest {
 
 	executeProductScheduleBlockTest(){
 
-		du.output('Execute Product Schedule Block Test');
+		du.info('Execute Product Schedule Block Test');
 
 		let merchantprovidergroup_id = uuidV4();
 		let productschedule_id = uuidV4();
@@ -36,7 +36,7 @@ module.exports = class MerchantProviderGroupTest extends IntegrationTest {
 
 	createMerchantProviderGroup(merchantprovidergroup_id){
 
-		du.output('Create Merchant Provider Group');
+		du.info('Create Merchant Provider Group');
 
 		let merchantprovidergroup_create_query = `mutation { createmerchantprovidergroup ( merchantprovidergroup: {id: "`+merchantprovidergroup_id+`", name: "Simple merchant provider group", merchantproviders: [{id:"6c40761d-8919-4ad6-884d-6a46a776cfb9", distribution:1.0 } ] } ) { id } }`;
 
@@ -46,7 +46,7 @@ module.exports = class MerchantProviderGroupTest extends IntegrationTest {
 
 	createProductSchedule(productschedule_id, merchantprovidergroup_id){
 
-		du.output('Create Product Schedule');
+		du.info('Create Product Schedule');
 
 		let emailtemplate_create_query = `mutation { createproductschedule ( productschedule: { id: "`+productschedule_id+`", name:"Testing Name", merchantprovidergroup:"`+merchantprovidergroup_id+`", schedule: [{ product:"668ad918-0d09-4116-a6fe-0e7a9eda36f8", start:0, end:30, price:49.00, period:30 }]}) { id } }`;
 
@@ -56,7 +56,7 @@ module.exports = class MerchantProviderGroupTest extends IntegrationTest {
 
 	deleteMerchantProviderGroup(id, code){
 
-		du.output('Delete Merchant Provider Group');
+		du.info('Delete Merchant Provider Group');
 
 		let delete_query = `mutation { deletemerchantprovidergroup (id: "`+id+`") { id } }`;
 
@@ -66,7 +66,7 @@ module.exports = class MerchantProviderGroupTest extends IntegrationTest {
 
 	deleteProductSchedule(id, code){
 
-		du.output('Delete Product Schedule');
+		du.info('Delete Product Schedule');
 
 		let delete_query = `mutation { deleteproductschedule (id: "`+id+`" ) { id } }`;
 

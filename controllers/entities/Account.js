@@ -130,7 +130,7 @@ class AccountController extends entityController {
 		entity
 	}) {
 
-		du.deep('Supply Lowercase Name');
+		du.debug('Supply Lowercase Name');
 
 		entity.name_lowercase = entity.name.toLowerCase();
 	}

@@ -39,15 +39,15 @@ describe('pickRebillsToBillStressTest', () => {
 	it(`${max_test_cases} rebills are picked from dynamo`, () => {
 		return beforeTest()
 			.then(() => waitForNumberOfMessages('bill', 0))
-			.then(() => du.output(tab + 'Waiting for flush to finish'))
+			.then(() => du.info(tab + 'Waiting for flush to finish'))
 			.then(() => timer.set())
 			.then(() => StateMachine.flush())
 			.then(() => waitForNumberOfMessages('bill', max_test_cases - number_of_ignored))
 			.then(() => {
 				let total = timer.get();
 
-				du.output(tab + 'Total processing time: ' + total + ' ms');
-				du.output(tab + numberUtilities.formatFloat(total/max_test_cases, 2) + 'ms per message');
+				du.info(tab + 'Total processing time: ' + total + ' ms');
+				du.info(tab + numberUtilities.formatFloat(total/max_test_cases, 2) + 'ms per message');
 			});
 	});
 
@@ -99,11 +99,11 @@ describe('pickRebillsToBillStressTest', () => {
 
 		return SqSTestUtils.messageCountInQueue(queue_name)
 			.then((count) => {
-				du.output(tab + 'Waiting for ' + number + ' messages to be in ' + queue_name + '. Got ' + count);
+				du.info(tab + 'Waiting for ' + number + ' messages to be in ' + queue_name + '. Got ' + count);
 				if ((number === 0 && count > 0) || (number > 0 && count < number)) {
 					return timestamp.delay(1 * 1000)().then(() => waitForNumberOfMessages(queue_name, number, ++retries))
 				} else if (number > 0 && count > number) {
-					du.output('Too many messages in queue ' + queue_name);
+					du.info('Too many messages in queue ' + queue_name);
 					return Promise.reject('Too many messages in queue ' + queue_name);
 				} else {
 					return Promise.resolve();

@@ -72,9 +72,9 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 					return this.createQueue(queue_definition).then((result) => {
 
 						if (result == false) {
-							du.highlight('Queue Exists');
+							du.info('Queue Exists');
 						} else {
-							du.highlight('Queue Created');
+							du.info('Queue Created');
 							number_of_created_queues++;
 						}
 
@@ -88,7 +88,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 
 			return arrayutilities.serial(create_queue_promises).then(() => {
 
-				du.highlight('Pausing to allow AWS to catch up...');
+				du.info('Pausing to allow AWS to catch up...');
 
 				if (number_of_created_queues > 0) {
 					return timestamp.delay(60000)().then(() => {
@@ -134,7 +134,7 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 			return arrayutilities.serial(delete_queue_promises)
 				.then(() => {
 
-					du.highlight('Pausing to allow AWS to catch up...');
+					du.info('Pausing to allow AWS to catch up...');
 
 					return timestamp.delay(60000)().then(() => {
 						return 'Complete';

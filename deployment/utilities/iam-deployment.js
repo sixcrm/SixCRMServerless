@@ -329,14 +329,14 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
 				return Promise.all(remove_role_policy_promises).then(() => {
 
-					du.highlight('Role policies removed.');
+					du.info('Role policies removed.');
 					return true;
 
 				});
 
 			}
 
-			du.highlight('Role doesn\'t have attached policies');
+			du.info('Role doesn\'t have attached policies');
 			return false;
 
 		});
@@ -363,7 +363,7 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 			});
 
 			return Promise.all(policy_promises).then(() => {
-				du.highlight('Managed policies associated.');
+				du.info('Managed policies associated.');
 				return true;
 			});
 
@@ -421,13 +421,13 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 		return this.roleExists(role_definition).then((role) => {
 
 			if(role == false){
-				du.highlight('Role doesn\'t exist, continuing');
+				du.info('Role doesn\'t exist, continuing');
 				return true;
 			}else{
 				return this.removePoliciesAndPermissions(role_definition)
 					.then(() => this.deleteRole(role_definition))
 					.then((result) => {
-						du.highlight('Role deleted');
+						du.info('Role deleted');
 						return result;
 					});
 			}

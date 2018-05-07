@@ -76,7 +76,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
 			} else {
 
-				du.output('Cluster exists, destroying.');
+				du.info('Cluster exists, destroying.');
 
 				return this.deleteClusterAndWait().then(() => {
 
@@ -104,7 +104,7 @@ module.exports = class RedshiftClusterDeployment extends RedshiftDeployment {
 
 			} else {
 
-				du.output('Cluster does not exist, creating.');
+				du.info('Cluster does not exist, creating.');
 
 				return this.createClusterAndWait().then(() => {
 

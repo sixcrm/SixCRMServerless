@@ -13,7 +13,7 @@ ec2Deployment.deployVPCs()
 	.then(() => ec2Deployment.deployInternetGateways())
 	.then(() => ec2Deployment.deployRouteTables())
 	.then(() => {
-		du.highlight('Environment Deployed');
+		du.info('Environment Deployed');
 		return true;
 	}).catch(error => {
 		du.error(error);

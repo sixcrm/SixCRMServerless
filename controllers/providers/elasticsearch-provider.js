@@ -110,7 +110,7 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 
 			count = count + 1;
 
-			du.output('Pausing for completion (' + numberutilities.appendOrdinalSuffix(count) + ' attempt...)');
+			du.info('Pausing for completion (' + numberutilities.appendOrdinalSuffix(count) + ' attempt...)');
 
 			return timestamp.delay(8000)().then(() => {
 				return this.waitFor(domain_definition, waitfor_status, count);

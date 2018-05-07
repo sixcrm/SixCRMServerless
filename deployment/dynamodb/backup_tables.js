@@ -33,7 +33,7 @@ objectutilities.map(cli_parameters, key => {
 });
 
 dynamoDBDeployment.backupTables(configuration).then((result) => {
-	return du.highlight(result);
+	return du.info(result);
 }).catch(error => {
 	du.error(error);
 	du.warning(error.message);

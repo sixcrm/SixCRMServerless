@@ -50,7 +50,7 @@ describe('/helpers/notifications/notification_types/'+notification_name+'.js', (
 				});
 			}
 
-			du.highlight(transformed_context);
+			du.info(transformed_context);
 
 		});
 

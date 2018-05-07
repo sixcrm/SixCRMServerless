@@ -55,7 +55,7 @@ module.exports = class ConfigurationUtilities {
 			stage = 'local'
 		}
 
-		du.critical('Stage: ' + stage);
+		du.warning('Stage: ' + stage);
 
 		return stage;
 

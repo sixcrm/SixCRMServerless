@@ -239,7 +239,7 @@ module.exports = class SessionController extends entityController {
 			})
 			.then(rebills => {
 
-				du.highlight(rebills);
+				du.info(rebills);
 
 				if(!_.isNull(rebills) && arrayutilities.nonEmpty(rebills)){
 
@@ -523,7 +523,7 @@ module.exports = class SessionController extends entityController {
 
 		}).then((session_rebill_transaction_products) => {
 
-			//du.highlight('Session Rebill Transaction Products', session_rebill_transaction_products);
+			//du.info('Session Rebill Transaction Products', session_rebill_transaction_products);
 
 			let return_array = [];
 

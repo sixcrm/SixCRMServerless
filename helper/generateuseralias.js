@@ -7,4 +7,4 @@ const mungeutilities = global.SixCRM.routes.include('lib','munge-utilities.js');
 let email = process.argv[2];
 
 process.env.SIX_VERBOSE = 2;
-du.output(mungeutilities.munge(email));
+du.info(mungeutilities.munge(email));

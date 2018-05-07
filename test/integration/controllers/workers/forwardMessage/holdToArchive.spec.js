@@ -53,15 +53,15 @@ describe('controllers/workers/forwardmessage/holdToArchivedForwardMessage.js', (
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 				receiveMessages({queue}) {
-					du.highlight('Message read from queue (mock): '+queue);
+					du.info('Message read from queue (mock): '+queue);
 					return Promise.resolve([message]);
 				}
 				sendMessage({queue: queue}) {
-					du.highlight('Message sent to queue (mock): '+queue);
+					du.info('Message sent to queue (mock): '+queue);
 					return Promise.resolve(true);
 				}
 				deleteMessage({queue}) {
-					du.highlight('Deleting message from queue: '+queue);
+					du.info('Deleting message from queue: '+queue);
 					return Promise.resolve(true);
 				}
 			});
@@ -95,15 +95,15 @@ describe('controllers/workers/forwardmessage/holdToArchivedForwardMessage.js', (
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 				receiveMessages({queue}) {
-					du.highlight('Message read from queue (mock): '+queue);
+					du.info('Message read from queue (mock): '+queue);
 					return Promise.resolve([message]);
 				}
 				sendMessage({queue: queue}) {
-					du.highlight('Message sent to queue (mock): '+queue);
+					du.info('Message sent to queue (mock): '+queue);
 					return Promise.resolve(true);
 				}
 				deleteMessage({queue}) {
-					du.highlight('Deleting message from queue: '+queue);
+					du.info('Deleting message from queue: '+queue);
 					return Promise.resolve(true);
 				}
 			});
@@ -137,15 +137,15 @@ describe('controllers/workers/forwardmessage/holdToArchivedForwardMessage.js', (
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 				receiveMessages({queue}) {
-					du.highlight('Message read from queue (mock): '+queue);
+					du.info('Message read from queue (mock): '+queue);
 					return Promise.resolve([message]);
 				}
 				sendMessage({queue: queue}) {
-					du.highlight('Message sent to queue (mock): '+queue);
+					du.info('Message sent to queue (mock): '+queue);
 					return Promise.resolve(true);
 				}
 				deleteMessage({queue}) {
-					du.highlight('Deleting message from queue: '+queue);
+					du.info('Deleting message from queue: '+queue);
 					return Promise.resolve(true);
 				}
 			});
@@ -289,15 +289,15 @@ describe('controllers/workers/forwardmessage/holdToArchivedForwardMessage.js', (
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 				receiveMessages({queue}) {
-					du.highlight('Message read from queue (mock): '+queue);
+					du.info('Message read from queue (mock): '+queue);
 					return Promise.resolve([message]);
 				}
 				sendMessage({queue: queue}) {
-					du.highlight('Message sent to queue (mock): '+queue);
+					du.info('Message sent to queue (mock): '+queue);
 					return Promise.resolve(true);
 				}
 				deleteMessage({queue}) {
-					du.highlight('Deleting message from queue: '+queue);
+					du.info('Deleting message from queue: '+queue);
 					return Promise.resolve(true);
 				}
 			});
@@ -322,15 +322,15 @@ describe('controllers/workers/forwardmessage/holdToArchivedForwardMessage.js', (
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 				receiveMessages({queue}) {
-					du.highlight('Message read from queue (mock): '+queue);
+					du.info('Message read from queue (mock): '+queue);
 					return Promise.resolve([message]);
 				}
 				sendMessage({queue: queue}) {
-					du.highlight('Message sent to queue (mock): '+queue);
+					du.info('Message sent to queue (mock): '+queue);
 					return Promise.resolve(true);
 				}
 				deleteMessage({queue}) {
-					du.highlight('Deleting message from queue: '+queue);
+					du.info('Deleting message from queue: '+queue);
 					return Promise.resolve(true);
 				}
 			});

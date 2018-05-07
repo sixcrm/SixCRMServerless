@@ -6,7 +6,7 @@ const auroraClusterDeployment = new AuroraClusterDeployment();
 
 auroraClusterDeployment.deploySubnetGroups().then((result) => {
 
-	return du.highlight(result);
+	return du.info(result);
 
 }).catch(error => {
 

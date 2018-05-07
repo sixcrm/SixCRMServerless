@@ -19,4 +19,4 @@ var rebill_object = {
 	]
 }
 
-du.output(JSON.stringify(rebill_object));
+du.info(JSON.stringify(rebill_object));

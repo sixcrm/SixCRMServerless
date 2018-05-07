@@ -41,12 +41,12 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 		if(_.isNull(result)){
 
-			du.highlight('Creating Domain: ', domain_definition);
+			du.info('Creating Domain: ', domain_definition);
 			return this.createCloudsearchDomain(domain_definition);
 
 		}
 
-		du.highlight('Domain Exists: ', domain_definition);
+		du.info('Domain Exists: ', domain_definition);
 		//Technical Debt:  Need a update function
 		return true;
 
@@ -145,7 +145,7 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 				if(_.has(results.hits, 'found')){
 
-					du.highlight('Removing '+results.hits.found+' documents');
+					du.info('Removing '+results.hits.found+' documents');
 
 				}else{
 
@@ -193,7 +193,7 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 		if(purge_document == false){
 
-			du.highlight('No documents to purge.');
+			du.info('No documents to purge.');
 
 			return Promise.resolve(null);
 
@@ -201,7 +201,7 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 			return this.cloudsearchprovider.uploadDocuments(purge_document).then((response) => {
 
-				du.highlight('Purge Response: ', response);
+				du.info('Purge Response: ', response);
 
 				return response;
 

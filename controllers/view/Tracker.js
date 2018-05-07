@@ -18,7 +18,7 @@ module.exports = class TrackerViewController{
 
 		du.debug('View');
 
-		du.highlight(argumentation_object);
+		du.info(argumentation_object);
 
 		if(!_.has(argumentation_object, 'pathParameters')){ return Promise.reject(eu.getError('bad_request','Argumentation object missing pathParameters.')); }
 

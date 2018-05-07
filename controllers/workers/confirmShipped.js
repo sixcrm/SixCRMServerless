@@ -186,7 +186,7 @@ module.exports = class confirmShippedController extends workerController {
 
 		} else {
 
-			du.highlight('No untracked shipping receipts.');
+			du.info('No untracked shipping receipts.');
 
 		}
 
@@ -233,7 +233,7 @@ module.exports = class confirmShippedController extends workerController {
 
 		}
 
-		du.highlight('No untracked shipping receipts to update.');
+		du.info('No untracked shipping receipts to update.');
 
 		return true;
 
@@ -294,7 +294,7 @@ module.exports = class confirmShippedController extends workerController {
 
 		}
 
-		du.highlight('No untracked shipping receipts to confirm.');
+		du.info('No untracked shipping receipts to confirm.');
 
 		this.parameters.set('rebillshippedstatus', true);
 

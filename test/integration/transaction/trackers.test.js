@@ -54,8 +54,8 @@ describe('Tracking Test', () => {
 
 		let authorization_string = getValidAuthorizationString();
 
-		//du.highlight('Authorization String: ', authorization_string);
-		du.output(appropriate_spacing+'Acquiring Token');
+		//du.info('Authorization String: ', authorization_string);
+		du.info(appropriate_spacing+'Acquiring Token');
 
 		let post_body = getValidAcquireTokenPostBody();
 		//du.debug('Post data', post_body);
@@ -79,7 +79,7 @@ describe('Tracking Test', () => {
 
 				du.debug('Acquired JWT:', jwt);
 
-				du.output(appropriate_spacing+'Acquiring Trackers');
+				du.info(appropriate_spacing+'Acquiring Trackers');
 				post_body = getValidTrackerPostBody();
 
 				request(endpoint).post('tracking/'+account)

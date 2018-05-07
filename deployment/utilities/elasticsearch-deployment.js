@@ -44,11 +44,11 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 		return this.domainExists(domain_definition).then(result => {
 
 			if (_.isNull(result)) {
-				du.highlight('Creating domain: '+domain_definition.DomainName);
+				du.info('Creating domain: '+domain_definition.DomainName);
 				return this.createDomain(domain_definition);
 			}
 
-			du.highlight('Domain Exists: '+domain_definition.DomainName);
+			du.info('Domain Exists: '+domain_definition.DomainName);
 			return this.esprovider.waitFor(domain_definition, 'ready');
 
 		});
@@ -89,7 +89,7 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 
 		return this.esprovider.createDomain(parameters).then(result => {
 
-			du.highlight('Domain created: ' + domain_definition.DomainName);
+			du.info('Domain created: ' + domain_definition.DomainName);
 			return result;
 
 		})
@@ -107,7 +107,7 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 
 		return this.esprovider.updateDomain(parameters).then(result => {
 
-			du.highlight('Domain updated: ' + domain_definition.DomainName);
+			du.info('Domain updated: ' + domain_definition.DomainName);
 			return result;
 
 		})

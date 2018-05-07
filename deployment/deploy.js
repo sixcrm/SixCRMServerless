@@ -4,10 +4,10 @@ const fs = require('fs');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-du.highlight('Deploying stage \'' + process.env.stage + '\'.');
+du.info('Deploying stage \'' + process.env.stage + '\'.');
 
 getJobGroups().forEach((group) => {
-	du.highlight('Executing group \'' + group + '\'.');
+	du.info('Executing group \'' + group + '\'.');
 
 	let job_promises = [];
 
@@ -22,7 +22,7 @@ getJobGroups().forEach((group) => {
 	job_promises.reduce((p, fn) => p.then(fn), Promise.resolve())
 
 });
-du.highlight('Finished');
+du.info('Finished');
 
 function getJobGroups() {
 	let base_directory = global.SixCRM.routes.path('deployment', 'jobs');

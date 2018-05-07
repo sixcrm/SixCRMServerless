@@ -124,7 +124,7 @@ describe('controllers/workers/eventEmails', () => {
         constructor(){
         }
         sendEmail(options){
-          du.highlight(options);
+          du.info(options);
           return true;
         }
       });
@@ -223,7 +223,7 @@ describe('controllers/workers/eventEmails', () => {
 				constructor(){
 				}
 				sendEmail(options){
-					du.highlight(options);
+					du.info(options);
 					return true;
 				}
 			});

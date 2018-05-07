@@ -48,7 +48,7 @@ describe('/helpers/notifications/notification_types/'+notification_name+'.js', (
 				expect(transformed_context.user).to.not.equal(null);
 			}
 
-			du.highlight(transformed_context);
+			du.info(transformed_context);
 
 		});
 

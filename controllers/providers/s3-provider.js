@@ -26,7 +26,7 @@ module.exports = class S3Provider extends AWSProvider {
 	assureDelete(bucket_name) {
 
 		du.debug('Assure Delete');
-		du.deep(bucket_name);
+		du.debug(bucket_name);
 
 		return new Promise((resolve, reject) => {
 
@@ -63,7 +63,7 @@ module.exports = class S3Provider extends AWSProvider {
 	objectExists(parameters) {
 		/* Test if object exists */
 		du.debug('Object Exists');
-		du.deep(parameters);
+		du.debug(parameters);
 
 		if (!_.has(parameters, 'Bucket')) {
 			throw eu.getError('server', 'This operation requires a "Bucket" parameter.');
@@ -97,7 +97,7 @@ module.exports = class S3Provider extends AWSProvider {
 	deleteBucketObjects(bucket_name) {
 
 		du.debug('Delete Bucket Objects');
-		du.deep(bucket_name);
+		du.debug(bucket_name);
 
 		return this.listObjects(bucket_name, null, {
 			Prefix: bucket_name + '/'
@@ -112,7 +112,7 @@ module.exports = class S3Provider extends AWSProvider {
 	listObjects(bucket_name, continuation_token, additional_properties) {
 
 		du.debug('List Objects');
-		du.deep(bucket_name);
+		du.debug(bucket_name);
 
 		return new Promise((resolve) => {
 
@@ -175,7 +175,7 @@ module.exports = class S3Provider extends AWSProvider {
 	batchDeleteObjects(bucket_name, bucket_objects) {
 
 		du.debug('Batch Delete Objects');
-		du.deep(bucket_name);
+		du.debug(bucket_name);
 
 		return new Promise((resolve) => {
 
@@ -226,7 +226,7 @@ module.exports = class S3Provider extends AWSProvider {
 	deleteObjects(bucket_name, bucket_objects) {
 
 		du.debug("Delete Objects");
-		du.deep(bucket_name);
+		du.debug(bucket_name);
 
 		return new Promise((resolve) => {
 
@@ -267,7 +267,7 @@ module.exports = class S3Provider extends AWSProvider {
 	deleteBucket(bucket_name) {
 
 		du.debug('Delete Bucket');
-		du.deep(bucket_name);
+		du.debug(bucket_name);
 
 		return new Promise((resolve, reject) => {
 
@@ -299,7 +299,7 @@ module.exports = class S3Provider extends AWSProvider {
 	assureBucket(parameters) {
 
 		du.debug('Assure Bucket');
-		du.deep(parameters.bucket_name);
+		du.debug(parameters.bucket_name);
 
 		return new Promise((resolve, reject) => {
 
@@ -309,11 +309,11 @@ module.exports = class S3Provider extends AWSProvider {
 
 				if (result !== true) {
 
-					du.output(bucket_name + ' bucket not found, creating');
+					du.info(bucket_name + ' bucket not found, creating');
 
 					return this.createBucket(parameters).then(() => {
 
-						du.output(bucket_name + ' bucket created');
+						du.info(bucket_name + ' bucket created');
 
 						return resolve(true);
 
@@ -327,7 +327,7 @@ module.exports = class S3Provider extends AWSProvider {
 
 				} else {
 
-					du.output(bucket_name + ' bucket found, skipping');
+					du.info(bucket_name + ' bucket found, skipping');
 
 					return resolve(true);
 
@@ -351,7 +351,7 @@ module.exports = class S3Provider extends AWSProvider {
 	headBucket(bucket_name) {
 
 		du.debug('Head Bucket');
-		du.deep(bucket_name);
+		du.debug(bucket_name);
 
 		return new Promise((resolve, reject) => {
 
@@ -399,7 +399,7 @@ module.exports = class S3Provider extends AWSProvider {
 	putObject(parameters) {
 
 		du.debug('Put Object');
-		du.deep(parameters);
+		du.debug(parameters);
 
 		if (process.env.TEST_MODE === 'true') {
 			du.debug('Test Mode');
@@ -441,7 +441,7 @@ module.exports = class S3Provider extends AWSProvider {
 	createBucket(parameters) {
 
 		du.debug('Create Bucket');
-		du.deep(parameters.bucket_name);
+		du.debug(parameters.bucket_name);
 
 		if (process.env.TEST_MODE === 'true') {
 			du.debug('Test Mode');
@@ -530,7 +530,7 @@ module.exports = class S3Provider extends AWSProvider {
 	bucketExists(bucket_name) {
 
 		du.debug('Bucket Exists');
-		du.deep(bucket_name);
+		du.debug(bucket_name);
 
 		return this.getBucketList().then((bucket_list) => {
 
@@ -543,7 +543,7 @@ module.exports = class S3Provider extends AWSProvider {
 	getObject(bucket, path) {
 
 		du.debug('Get Object');
-		du.deep(bucket, path);
+		du.debug(bucket, path);
 
 		return new Promise((resolve) => {
 

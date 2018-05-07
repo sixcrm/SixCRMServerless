@@ -15,7 +15,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
 	executeCustomerNoteBlockTest(){
 
-		du.output('Execute Customer Note Block Test');
+		du.info('Execute Customer Note Block Test');
 
 		let customer_id = uuidV4();
 		let customernote_id = uuidV4();
@@ -36,7 +36,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
 	executeSessionBlockTest(){
 
-		du.output('Execute Session Block Test');
+		du.info('Execute Session Block Test');
 
 		let customer_id = uuidV4();
 		let session_id = uuidV4();
@@ -57,7 +57,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
 	createCustomer(customer_id){
 
-		du.output('Create Customer');
+		du.info('Create Customer');
 
 		let customer_create_query = `mutation { createcustomer ( customer: {id: "`+customer_id+`", email: "test@test.com", firstname: "Test_b5803b28-c584-4bb3-8fac-3315b91686b3", lastname: "Test", phone: "1234567890", address: { line1: "123 Test St.", line2: "Apartment 3", city: "Portland", state: "OR", zip: "97213", country: "US" }, creditcards:[] } ) { id } }`;
 
@@ -67,7 +67,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
 	createCustomerNote(customernote_id, customer_id){
 
-		du.output('Create Customer Note');
+		du.info('Create Customer Note');
 
 		let customernote_create_query = `mutation { createcustomernote ( customernote: {id: "`+customernote_id+`", customer: "`+customer_id+`", user: "super.user@test.com", body: "This is a really fun test of a really fun create query that is so much fun!"} ) { id } }`;
 
@@ -77,7 +77,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
 	createSession(session_id, customer_id){
 
-		du.output('Create Session');
+		du.info('Create Session');
 
 		let session_create_query = `mutation { createsession ( session: { id: "`+session_id+`", customer: "`+customer_id+`", campaign:"70a6689a-5814-438b-b9fd-dd484d0812f9", product_schedules:["12529a17-ac32-4e46-b05b-83862843055d"], completed: false } ) { id } }`;
 
@@ -87,7 +87,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
 	deleteCustomer(id, code){
 
-		du.output('Delete Customer');
+		du.info('Delete Customer');
 
 		let customer_delete_query = `mutation { deletecustomer ( id: "`+id+`" ) { id } }`;
 
@@ -97,7 +97,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
 	deleteCustomerNote(id, code){
 
-		du.output('Delete Customer Note');
+		du.info('Delete Customer Note');
 
 		let customernote_delete_query = `mutation { deletecustomernote (id: "`+id+`" ) { id } }`;
 
@@ -107,7 +107,7 @@ module.exports = class CustomerTest extends IntegrationTest {
 
 	deleteSession(id, code){
 
-		du.output('Delete Session');
+		du.info('Delete Session');
 
 		let session_delete_query = 'mutation { deletesession (id: "'+id+'") { id } }';
 

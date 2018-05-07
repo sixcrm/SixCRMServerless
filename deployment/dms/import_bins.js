@@ -5,7 +5,7 @@ const BinImporter = global.SixCRM.routes.include('deployment', 'utilities/bin-im
 const binImporter = new BinImporter();
 
 binImporter.import().then((result) => {
-	return du.highlight(result);
+	return du.info(result);
 }).catch(error => {
 	du.error(error);
 	du.warning(error.message);

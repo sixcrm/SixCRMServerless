@@ -22,22 +22,22 @@ let user = process.argv[4];
 let phone_number = process.argv[5];
 
 if (!body) {
-	du.output('Body is required');
+	du.info('Body is required');
 	printHelp();
 }
 
 if (!account) {
-	du.output('Account is required');
+	du.info('Account is required');
 	printHelp();
 }
 
 if (!user) {
-	du.output('User is required');
+	du.info('User is required');
 	printHelp();
 }
 
 if (!phone_number) {
-	du.output('Phone number is required');
+	du.info('Phone number is required');
 	printHelp();
 }
 
@@ -56,9 +56,9 @@ let notification_object = {
 
 SmsNotificationProvider.sendNotificationViaSms(notification_object, phone_number);
 
-du.output('Attempted to send a notification', notification_object);
+du.info('Attempted to send a notification', notification_object);
 
 function printHelp() {
-	du.output('Helper for inserting notification for the given account and user. Notification is sent via SMS.');
-	du.output('Parameters: body account user phone_number');
+	du.info('Helper for inserting notification for the given account and user. Notification is sent via SMS.');
+	du.info('Parameters: body account user phone_number');
 }

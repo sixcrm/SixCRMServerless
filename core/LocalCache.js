@@ -17,11 +17,11 @@ module.exports = class LocalCache {
 
 		let answer = this.get(question);
 
-		du.deep('Asking: ' + question);
+		du.debug('Asking: ' + question);
 
 		if (_.isNull(answer)) {
 
-			du.deep('Executing Answer Function');
+			du.debug('Executing Answer Function');
 
 			if (!_.isFunction(answer_function)) {
 				throw eu.getError('server', 'Answer function must be a function');
@@ -39,7 +39,7 @@ module.exports = class LocalCache {
 
 		} else {
 
-			du.deep('Returning existing answer.');
+			du.debug('Returning existing answer.');
 
 			return Promise.resolve(answer);
 

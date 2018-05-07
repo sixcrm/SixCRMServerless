@@ -27,7 +27,7 @@ let test_users = [
 	}
 ];
 
-du.output(endpoint);
+du.info(endpoint);
 
 let this_request = request(endpoint);
 let account = '*';
@@ -40,7 +40,7 @@ describe('Graph '+entity+' Test', function() {
 
 			var test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-			du.output(test_jwt);
+			du.info(test_jwt);
 
 			tests.forEach((test) => {
 
@@ -48,7 +48,7 @@ describe('Graph '+entity+' Test', function() {
 
 					var query = tu.getQuery(test.query);
 
-					du.output(query);
+					du.info(query);
 
 					this_request.post('graph/'+account)
 						.set('Authorization', test_jwt)
@@ -59,7 +59,7 @@ describe('Graph '+entity+' Test', function() {
 						.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
 						.expect('Access-Control-Allow-Headers','Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 						.end(function(err, response){
-							du.output(response.body);
+							du.info(response.body);
 							assert.isTrue(tu.validateGraphResponse(response.body, 'graph'));
 							done();
 						});

@@ -15,7 +15,7 @@ module.exports = class CampaignTest extends IntegrationTest {
 
 	executeTrackerBlockTest(){
 
-		du.output('Execute Tracker Block Test');
+		du.info('Execute Tracker Block Test');
 
 		let campaign_id = uuidV4();
 		let tracker_id = uuidV4();
@@ -36,7 +36,7 @@ module.exports = class CampaignTest extends IntegrationTest {
 
 	createCampaign(campaign_id){
 
-		du.output('Create Campaign');
+		du.info('Create Campaign');
 
 		let campaign_create_query = `mutation { createcampaign ( campaign: { id: "`+campaign_id+`", name: "Testing Campaign", allow_prepaid: false, show_prepaid: false, productschedules:[], emailtemplates:[], affiliate_allow:[], affiliate_deny:[] } ) { id  } }`;
 
@@ -46,7 +46,7 @@ module.exports = class CampaignTest extends IntegrationTest {
 
 	createTracker(tracker_id, campaign_id){
 
-		du.output('Create Tracker');
+		du.info('Create Tracker');
 
 		let tracker_create_query = `mutation { createtracker ( tracker: { id: "`+tracker_id+`", event_type:["main"], affiliates: [], campaigns: ["`+campaign_id+`"] type: "postback", name:"Testing Tracker 3", body:"http://sofun.com"}) { id } }`;
 
@@ -56,7 +56,7 @@ module.exports = class CampaignTest extends IntegrationTest {
 
 	deleteTracker(id, code){
 
-		du.output('Delete Tracker');
+		du.info('Delete Tracker');
 
 		let tracker_delete_query = 'mutation { deletetracker (id: "'+id+'") { id } }';
 
@@ -66,7 +66,7 @@ module.exports = class CampaignTest extends IntegrationTest {
 
 	deleteCampaign(id, code){
 
-		du.output('Delete Campaign');
+		du.info('Delete Campaign');
 
 		let campaign_delete_query = 'mutation { deletecampaign (id: "'+id+'") { id } }';
 

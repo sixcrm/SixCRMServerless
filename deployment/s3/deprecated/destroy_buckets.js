@@ -7,7 +7,7 @@ const S3Deployment = global.SixCRM.routes.include('deployment', 'utilities/s3-de
 
 let environment = process.argv[2] || 'development';
 
-du.highlight('Creating S3 Bucket');
+du.info('Creating S3 Bucket');
 
 let s3Deployment = new S3Deployment(environment);
 
@@ -23,11 +23,11 @@ bucket_list.map(bucket => {
 				if (exists) {
 					du.warning('Bucket exists, destroying');
 					return s3Deployment.deleteBucketAndWait(bucket_parameters).then(response => {
-						return du.output(response);
+						return du.info(response);
 					});
 				} else {
-					return du.output('Bucket does not exist, Aborting.');
+					return du.info('Bucket does not exist, Aborting.');
 				}
-			}).then(() => { return du.highlight('Complete')} )
+			}).then(() => { return du.info('Complete')} )
 	});
 });

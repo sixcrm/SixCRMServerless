@@ -41,11 +41,11 @@ module.exports = class RDSDeployment extends AWSDeploymentUtilities {
 		return this.subnetGroupExists(cluster_definition).then(result => {
 
 			if(_.isNull(result)){
-				du.highlight('Creating DB Subnet Group: '+cluster_definition.DBSubnetGroupName);
+				du.info('Creating DB Subnet Group: '+cluster_definition.DBSubnetGroupName);
 				return this.createDBSubnetGroup(cluster_definition);
 			}
 
-			du.highlight('DB Subnet Group Exists: '+cluster_definition.DBSubnetGroupName);
+			du.info('DB Subnet Group Exists: '+cluster_definition.DBSubnetGroupName);
 			return result;
 
 		});

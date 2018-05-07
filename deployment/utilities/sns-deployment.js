@@ -42,7 +42,7 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 		return arrayutilities.reduce(topic_promises, (current, topic_promise) => {
 			return topic_promise();
 		}).then(() => {
-			return du.output('Complete');
+			return du.info('Complete');
 		});
 
 	}
@@ -78,7 +78,7 @@ module.exports = class SNSDeployment extends AWSDeploymentUtilities {
 				return result;
 			});
 		}).then(() => {
-			return du.output('Complete');
+			return du.info('Complete');
 		});
 
 	}

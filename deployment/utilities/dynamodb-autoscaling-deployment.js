@@ -126,7 +126,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 
 		du.debug('Autoscale Table');
 
-		du.highlight('#####','','Setting Autoscaling for table: '+table_name,'','#####');
+		du.info('#####','','Setting Autoscaling for table: '+table_name,'','#####');
 
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'autoscaleTable'}))
@@ -142,7 +142,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 				du.error(error);
 				let table_name = this.parameters.get('tablename');
 
-				du.highlight('Skipping table: '+table_name);
+				du.info('Skipping table: '+table_name);
 			})
 			.then(() => this.cleanup());
 
@@ -265,7 +265,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 		});
 
 		return Promise.all(scalable_target_configuration_promises).then(() => {
-			du.highlight('Successfully set scalable targets for table');
+			du.info('Successfully set scalable targets for table');
 			return true;
 		});
 
@@ -305,7 +305,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 		});
 
 		return Promise.all(scaling_policy_configuration_promises).then(() => {
-			du.highlight('Successfully put scaling policies for table');
+			du.info('Successfully put scaling policies for table');
 			return true;
 		});
 
@@ -354,7 +354,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 		return this.autoscalingprovider.describeScalableTargets(parameters)
 			.then(result => {
 
-				du.highlight(table_name+' scaling targets');
+				du.info(table_name+' scaling targets');
 				du.info(result);
 				return true;
 
@@ -371,7 +371,7 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 					return () => this.autoscalingprovider.describeScalingPolicies(parameters)
 						.then(result => {
 
-							du.highlight(resource_id+' Scaling Policies:');
+							du.info(resource_id+' Scaling Policies:');
 							du.info(result);
 							return true;
 
@@ -391,12 +391,12 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 
 		return this.dynamodbprovider.describeTable(table_name, false).then((results) => {
 
-			du.highlight('Table found: '+table_name);
+			du.info('Table found: '+table_name);
 			return results;
 
 		}).catch(() => {
 
-			du.highlight('Unable to find table '+table_name);
+			du.info('Unable to find table '+table_name);
 			return false;
 
 		});

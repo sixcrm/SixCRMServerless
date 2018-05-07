@@ -12,7 +12,7 @@ module.exports = class AWSProvider {
 
 	instantiateAWS(){
 
-		du.deep('Instantiate AWS');
+		du.debug('Instantiate AWS');
 
 		if(!_.has(this, 'AWS')){
 			this.AWS = require('aws-sdk');
@@ -22,7 +22,7 @@ module.exports = class AWSProvider {
 
 	getRegion(){
 
-		du.deep('Get Region');
+		du.debug('Get Region');
 
 		return global.SixCRM.configuration.site_config.aws.region;
 
@@ -30,7 +30,7 @@ module.exports = class AWSProvider {
 
 	AWSCallback(error, data){
 
-		du.deep('AWS Callback');
+		du.debug('AWS Callback');
 
 		if(error){
 
@@ -44,7 +44,7 @@ module.exports = class AWSProvider {
 
 	tolerantCallback(error, data, fatal){
 
-		du.deep('Tolerant Callback');
+		du.debug('Tolerant Callback');
 
 		fatal = (_.isUndefined(fatal))?true:fatal;
 
@@ -63,7 +63,7 @@ module.exports = class AWSProvider {
 
 	hasCredentials(fatal){
 
-		du.deep('Has Credentials');
+		du.debug('Has Credentials');
 
 		fatal = (_.isUndefined(fatal))?true:fatal;
 

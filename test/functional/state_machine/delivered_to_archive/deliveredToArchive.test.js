@@ -51,7 +51,7 @@ describe('deliveredToArchive', () => {
 
 			tests.push(test);
 		} else {
-			du.output('Ignoring ' + test_path);
+			du.info('Ignoring ' + test_path);
 		}
 
 	});

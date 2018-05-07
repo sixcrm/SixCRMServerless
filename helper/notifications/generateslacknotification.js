@@ -22,22 +22,22 @@ let user = process.argv[4];
 let webhook = process.argv[5];
 
 if (!body) {
-	du.output('Body is required');
+	du.info('Body is required');
 	printHelp();
 }
 
 if (!account) {
-	du.output('Account is required');
+	du.info('Account is required');
 	printHelp();
 }
 
 if (!user) {
-	du.output('User is required');
+	du.info('User is required');
 	printHelp();
 }
 
 if (!webhook) {
-	du.output('Webhook is required');
+	du.info('Webhook is required');
 	printHelp();
 }
 
@@ -56,9 +56,9 @@ let notification_object = {
 
 SlackNotificationProvider.sendNotificationViaSlack(notification_object, webhook);
 
-du.output('Attempted to send a notification', notification_object);
+du.info('Attempted to send a notification', notification_object);
 
 function printHelp() {
-	du.output('Helper for inserting notification for the given account and user. Notification is sent via Slack Webhook.');
-	du.output('Parameters: body account user webhook');
+	du.info('Helper for inserting notification for the given account and user. Notification is sent via Slack Webhook.');
+	du.info('Parameters: body account user webhook');
 }

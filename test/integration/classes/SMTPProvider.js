@@ -15,7 +15,7 @@ module.exports = class SMTPProviderTest extends IntegrationTest {
 
 	executeEmailTemplateBlockTest(){
 
-		du.output('Execute Email Template Block Test');
+		du.info('Execute Email Template Block Test');
 
 		let smtpprovider_id = uuidV4();
 		let emailtemplate_id = uuidV4();
@@ -36,7 +36,7 @@ module.exports = class SMTPProviderTest extends IntegrationTest {
 
 	createSMTPProvider(smtpprovider_id){
 
-		du.output('Create SMTP Provider');
+		du.info('Create SMTP Provider');
 
 		let smtpprovider_create_query = `mutation { createsmtpprovider (smtpprovider: { id: "`+smtpprovider_id+`", name: "test", hostname: "123.123.123.123", username: "test", password: "test", from_email:"test@test.com", from_name:"Test", port: 25}) { id } }`;
 
@@ -46,7 +46,7 @@ module.exports = class SMTPProviderTest extends IntegrationTest {
 
 	createEmailTemplate(emailtemplate_id, smtpprovider_id){
 
-		du.output('Create Email Template');
+		du.info('Create Email Template');
 
 		let emailtemplate_create_query = `mutation { createemailtemplate (emailtemplate: { id: "`+emailtemplate_id+`", name: "test", subject: "test", body: "test", type: "initialfulfillment", smtp_provider:"`+smtpprovider_id+`"}) { id } }`;
 
@@ -56,7 +56,7 @@ module.exports = class SMTPProviderTest extends IntegrationTest {
 
 	deleteSMTPProvider(id, code){
 
-		du.output('Delete SMTP Provider');
+		du.info('Delete SMTP Provider');
 
 		let delete_query = `mutation { deletesmtpprovider (id: "`+id+`") { id } }`;
 
@@ -66,7 +66,7 @@ module.exports = class SMTPProviderTest extends IntegrationTest {
 
 	deleteEmailTemplate(id, code){
 
-		du.output('Delete Email Template');
+		du.info('Delete Email Template');
 
 		let delete_query = `mutation { deleteemailtemplate (id: "`+id+`" ) { id } }`;
 

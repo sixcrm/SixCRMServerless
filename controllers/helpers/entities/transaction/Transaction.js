@@ -138,7 +138,7 @@ module.exports = class TransactionHelperController {
 
 		du.debug('Update Transaction Product');
 
-		du.output(arguments[0]);
+		du.info(arguments[0]);
 
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({

@@ -59,12 +59,12 @@ module.exports = class ElasticacheDeployment {
 
 		if(_.isNull(result)){
 
-			du.highlight('Creating Cluster: ', cluster_definition);
+			du.info('Creating Cluster: ', cluster_definition);
 			return this.createCluster(cluster_definition);
 
 		}
 
-		du.highlight('Cluster Exists: ', cluster_definition);
+		du.info('Cluster Exists: ', cluster_definition);
 		return this.updateCluster(cluster_definition);
 
 	}
@@ -181,7 +181,7 @@ module.exports = class ElasticacheDeployment {
 	async updateCluster(cluster_definition){
 
 		du.debug('Update Cluster');
-		du.highlight(cluster_definition);
+		du.info(cluster_definition);
 		//Technical Debt:  Finish this.
 		return true;
 
@@ -209,12 +209,12 @@ module.exports = class ElasticacheDeployment {
 
 		if(_.isNull(result)){
 
-			du.highlight('Creating Subnet Group: '+subnet_group_definition.CacheSubnetGroupName)
+			du.info('Creating Subnet Group: '+subnet_group_definition.CacheSubnetGroupName)
 			return this.createSubnetGroup(subnet_group_definition);
 
 		}
 
-		du.highlight('Updating Subnet Group: '+subnet_group_definition.CacheSubnetGroupName);
+		du.info('Updating Subnet Group: '+subnet_group_definition.CacheSubnetGroupName);
 		//Techical Debt:  Add a update method
 		return true;
 
@@ -353,7 +353,7 @@ module.exports = class ElasticacheDeployment {
 
 				if(objectutilities.isObject(found)){
 
-					du.highlight('Cluster exists');
+					du.info('Cluster exists');
 
 					return found;
 
@@ -361,7 +361,7 @@ module.exports = class ElasticacheDeployment {
 
 			}
 
-			du.highlight('Unable to identify cluster');
+			du.info('Unable to identify cluster');
 
 			return false;
 
