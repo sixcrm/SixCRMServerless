@@ -2,6 +2,7 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 module.exports = class RoleHelperController {
 
@@ -42,6 +43,9 @@ module.exports = class RoleHelperController {
 
 		du.debug('Roles Intersection');
 
+		role1 = this.normalizeRole(role1);
+		role2 = this.normalizeRole(role2);
+
 		let intersectional_allows = this.mergePermissionArrays(role1.permissions.allow, role2.permissions.allow);
 		let intersectional_denies = this.mergePermissionArrays(role1.permissions.deny, role2.permissions.deny);
 
@@ -58,17 +62,49 @@ module.exports = class RoleHelperController {
 
 	}
 
+	normalizeRole(role){
+
+		du.debug('Normalize Role');
+
+		if(!objectutilities.hasRecursive(role, 'permissions.allow') || !_.isArray(role.permissions.allow)){
+			role.permissions.allow = [];
+		}
+
+		if(!objectutilities.hasRecursive(role, 'permissions.deny') || !_.isArray(role.permissions.deny)){
+			role.permissions.deny = [];
+		}
+
+		return role;
+
+	}
+
 	mergePermissionArrays(permission_array_1, permission_array_2) {
 
 		du.debug('Merge Permission Arrays');
 
 		let merged_array = [];
 
+		if(!_.isArray(permission_array_1)){
+			throw eu.getError('server', 'Permission Array 1 is not an array.');
+		}
+
+		if(!_.isArray(permission_array_2)){
+			throw eu.getError('server', 'Permission Array 2 is not an array.');
+		}
+
 		arrayutilities.map(permission_array_1, p1_permission => {
+
+			if(!_.isString(p1_permission)){
+				throw eu.getError('server', 'Unrecognized permission structure: '+p1_permission);
+			}
 
 			let p1_permission_split = p1_permission.split('/');
 
 			arrayutilities.map(permission_array_2, (p2_permission) => {
+
+				if(!_.isString(p2_permission)){
+					throw eu.getError('server', 'Unrecognized permission structure: '+p2_permission);
+				}
 
 				let p2_permission_split = p2_permission.split('/');
 
