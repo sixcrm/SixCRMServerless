@@ -1,8 +1,10 @@
 
 const _ = require('lodash');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 class EntityPermissionsHelper {
 	static isShared(action, acl) {
+		du.debug('Is Shared');
 		const {allow, deny} = acl;
 		const account = global.account;
 		const user = global.user.id;
@@ -15,6 +17,7 @@ class EntityPermissionsHelper {
 	}
 
 	static match(permission_str, {account, user, action}) {
+		du.debug('Match');
 		const [
 			source_account = '*',
 			source_user = '*',

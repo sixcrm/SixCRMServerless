@@ -11,23 +11,22 @@ class UserACLController extends entityController {
 		super('useracl');
 	}
 
-	getPartiallyHydratedACLObject(useracl){
+	async getPartiallyHydratedACLObject(useracl){
 
 		du.debug('Get Partially Hydrated ACL Object');
 
-		let promises = [];
+		const UserACLHelperController = global.SixCRM.routes.include('helpers', 'entities/useracl/UserACL.js');
+		let userACLHelperController = new UserACLHelperController();
 
-		promises.push(this.getAccount(useracl));
-		promises.push(this.getRole(useracl));
+		const account = await this.getAccount(useracl);
+		const role = await this.getRole(useracl);
 
-		return Promise.all(promises).then(promises => {
+		useracl.account = account;
+		useracl.role = await userACLHelperController.setAccountPermissions({role: role, account: account});
 
-			useracl.account = promises[0];
-			useracl.role = promises[1];
+		du.info(useracl.role);
 
-			return Promise.resolve(useracl);
-
-		});
+		return useracl;
 
 	}
 
