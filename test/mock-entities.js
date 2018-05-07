@@ -1123,6 +1123,9 @@ class MockEntities {
 		return {
 			id: this.getValidId(id),
 			name: spoofer.createRandomName('full'),
+			billing:{
+				plan: 'free'
+			},
 			active: randomutilities.randomBoolean(),
 			created_at: timestamp.getISO8601(),
 			updated_at: timestamp.getISO8601()
@@ -1146,6 +1149,34 @@ class MockEntities {
 			created_at: timestamp.getISO8601(),
 			updated_at: timestamp.getISO8601()
 		}
+	}
+
+	static getDisabledRole() {
+
+		return {
+			"id":"78e507dd-93fc-413b-b21a-819480209740",
+			"account": "*",
+			"name": "Disabled Role",
+			"active":true,
+			"permissions":{
+				"allow":[
+					"account/*",
+					"bill/*",
+					"customer/*",
+					"session/*",
+					"creditcard/*",
+					"customernote/*",
+					"rebill/*",
+					"return/*",
+					"shippingreceipt/*",
+					"transaction/*"
+				],
+				"deny":["*"]
+			},
+			"created_at":"2017-04-06T18:40:41.405Z",
+			"updated_at":"2017-04-06T18:41:12.521Z"
+		};
+
 	}
 
 	static getValidBill(id) {

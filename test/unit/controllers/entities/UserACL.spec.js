@@ -2,6 +2,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
+let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
@@ -89,6 +90,7 @@ describe('controllers/entities/UserACL.js', () => {
 	describe('getPartiallyHydratedACLObject', () => {
 
 		it('hydrates acl object by adding account and role data', () => {
+
 			let userACL = getValidUserACL();
 
 			let role = getValidRole();
@@ -104,7 +106,9 @@ describe('controllers/entities/UserACL.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Role.js'), class {
 				getUnsharedOrShared(a_role) {
-					expect(a_role.id).to.equal(userACL.role);
+					if(a_role.id == '78e507dd-93fc-413b-b21a-819480209740'){
+						return Promise.resolve(disabled_role);
+					}
 					return Promise.resolve(role);
 				}
 			});
@@ -117,6 +121,42 @@ describe('controllers/entities/UserACL.js', () => {
 				expect(result.account).to.deep.equal(account);
 				expect(result.role).to.be.defined;
 				expect(result.role).to.deep.equal(role);
+			});
+		});
+
+		it('hydrates acl object by adding account and role data (disabled account)', () => {
+
+			let userACL = getValidUserACL();
+
+			let role = getValidRole();
+			let disabled_role = MockEntities.getDisabledRole();
+
+			let account = getValidAccount();
+			account.billing.disable = timestamp.getPreviousMonthStart();
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Account.js'), class {
+				get(an_account) {
+					expect(an_account.id).to.equal(userACL.account);
+					return Promise.resolve(account);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Role.js'), class {
+				getUnsharedOrShared(a_role) {
+					if(a_role.id == '78e507dd-93fc-413b-b21a-819480209740'){
+						return Promise.resolve(disabled_role);
+					}
+					return Promise.resolve(role);
+				}
+			});
+
+			const UserACLController = global.SixCRM.routes.include('controllers','entities/UserACL.js');
+			const userACLController = new UserACLController();
+
+			return userACLController.getPartiallyHydratedACLObject(userACL).then((result) => {
+				expect(result.account).to.be.defined;
+				expect(result.account).to.deep.equal(account);
+				expect(result.role).to.be.defined;
 			});
 		});
 	});

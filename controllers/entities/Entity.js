@@ -83,7 +83,7 @@ module.exports = class entityController extends entityUtilitiesController {
 				if(_.isNull(acl) || !EntityPermissionsHelper.isShared('read', acl)){
 					throw eu.getError('forbidden');
 				}
-				
+
 				//Nick: Isn't this already defined?
 				let query_parameters = {
 					key_condition_expression: this.primary_key+' = :primary_keyv',

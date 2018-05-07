@@ -26,6 +26,24 @@ module.exports = class AccountHelperController {
 
 	}
 
+	isAccountDisabled(account){
+
+		du.debug('Is Account Disabled');
+
+		if(!_.has(account, 'billing')){
+			du.warning('Account not active:  Missing billing properties.');
+			return true;
+		}
+
+		if(objectutilities.hasRecursive(account, 'billing.disable') && account.billing.disable < timestamp.getISO8601()){
+			du.warning('Account not active:  Disable date has passed.');
+			return true;
+		}
+
+		return false;
+
+	}
+
 	getPrototypeAccount(email){
 
 		du.debug('Create Prototype Account');
