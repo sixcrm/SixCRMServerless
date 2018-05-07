@@ -243,7 +243,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				endpoint: 'https://secure.networkmerchants.com/api/transact.php',
 				amount: 100,
 				ccnumber: '5105105105105100',
-				ccv: '123',
+				//ccv: '123',
 				ccexp: '12/2014',
 				firstname: 'John',
 				lastname: 'Doe',

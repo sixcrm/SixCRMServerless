@@ -48,16 +48,20 @@ class AccountController extends entityController {
 			return_entity: true
 		})
 			.then((result) => {
+
 				this.supplyLowercaseName({
 					entity: entity
 				});
-				if (allow_billing_overwrite !== true) {
+
+				if (!this.isMasterAccount() && allow_billing_overwrite !== true) {
 					delete entity.billing;
 					if (_.has(result, 'billing')) {
 						entity.billing = result.billing
 					}
 				}
+
 				return entity;
+
 			})
 			.then((entity) => {
 				return this.verifyAccountName({
