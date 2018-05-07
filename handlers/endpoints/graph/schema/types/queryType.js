@@ -116,7 +116,6 @@ let suggestResultsType = require('./search/suggestResultsType');
 let searchInputType = require('./search/searchInputType');
 let searchResultsType = require('./search/searchResultsType');
 
-let transactionSummaryType = require('./analytics/transactionSummaryType');
 let binType = require('./bin/BINType');
 
 let analyticsFilterInputType = require('./analytics/filterInputType');
@@ -743,22 +742,6 @@ const fields = Object.assign({}, {
 			return binController.getCreditCardProperties({
 				binnumber: args.binnumber
 			});
-		}
-	},
-	transactionsummary: {
-		type: transactionSummaryType.graphObj,
-		args: {
-			analyticsfilter: {
-				type: analyticsFilterInputType.graphObj
-			},
-			cache: {
-				type: cacheInputType.graphObj
-			}
-		},
-		resolve: function(root, args) {
-			const analyticsController = new AnalyticsController();
-
-			return analyticsController.executeAnalyticsFunction(args, 'getTransactionSummary');
 		}
 	},
 

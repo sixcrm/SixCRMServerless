@@ -49,8 +49,8 @@ suites.map((suite) => {
 
 			const result = await analyticsController.executeAnalyticsFunction(test.input, test.method);
 
-			// const fs = require('fs');
-			// await fs.writeFileSync(test.test_case + '.json', JSON.stringify(result));
+			const fs = require('fs');
+			await fs.writeFileSync(test.test_case + '.json', JSON.stringify(result));
 
 			const result_name = test.result_name;
 			const result_value = (result_name === "undefined") ? result : result[result_name];

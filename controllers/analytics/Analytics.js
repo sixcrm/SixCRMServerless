@@ -214,6 +214,10 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 				const resolveParams = require('./queries/reports/campaigns-by-amount/params');
 				return this.query('reports/campaigns-by-amount', await resolveParams(parameters, parameters.pagination));
 			}
+			case 'transactionSummary': {
+				const resolveParams = require('./queries/reports/transaction-summary/params');
+				return this.query('reports/transaction-summary', await resolveParams(parameters));
+			}
 			default:
 				throw new Error('Report not found');
 
