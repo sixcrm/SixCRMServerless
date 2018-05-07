@@ -60,10 +60,9 @@ class AccountController extends entityController {
 				return entity;
 			})
 			.then((entity) => {
-				this.verifyAccountName({
+				return this.verifyAccountName({
 					entity: entity
 				})
-				return entity;
 			})
 			.then((entity) => super.update({
 				entity: entity,
@@ -166,7 +165,7 @@ class AccountController extends entityController {
 					throw eu.getError('bad_request', 'An account already exists with name: "' + entity.name + '"')
 				}
 
-				return;
+				return entity;
 
 			});
 
