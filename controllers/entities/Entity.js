@@ -79,9 +79,11 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then(data => this.getItems(data))
 			.then(items => this.assureSingular(items))
 			.then(acl => {
+
 				if(_.isNull(acl) || !EntityPermissionsHelper.isShared('read', acl)){
 					throw eu.getError('forbidden');
 				}
+				
 				//Nick: Isn't this already defined?
 				let query_parameters = {
 					key_condition_expression: this.primary_key+' = :primary_keyv',
@@ -91,6 +93,10 @@ module.exports = class entityController extends entityUtilitiesController {
 				query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
 				return this.dynamodbprovider.queryRecords(this.table_name, query_parameters, null);
 
+			})
+			.then(data => {
+				du.info(data);
+				return data;
 			})
 			.then(data => this.getItems(data))
 			.then(items => this.assureSingular(items));

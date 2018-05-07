@@ -107,7 +107,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
 				}
 
-				if(!this.isUserIntrospection(event) && !this.isAcceptInvite(event)) {
+				if(!this.isUserIntrospection(event)) {
 					throw eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.');
 				}
 
