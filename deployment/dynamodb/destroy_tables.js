@@ -6,7 +6,7 @@ const DynamoDBDeployment = global.SixCRM.routes.include('deployment', 'utilities
 const dynamoDBDeployment = new DynamoDBDeployment();
 
 dynamoDBDeployment.destroyTables().then((result) => {
-	return du.highlight(result);
+	return du.info(result);
 }).catch(error => {
 	du.error(error);
 	du.warning(error.message);

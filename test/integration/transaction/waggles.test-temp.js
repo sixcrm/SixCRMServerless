@@ -61,7 +61,7 @@ function getValidAcquireTokenPostBody(campaign) {
 
 function confirmOrder(token, session) {
 
-	du.output('Confirm Order');
+	du.info('Confirm Order');
 
 	let account = config.account;
 
@@ -99,7 +99,7 @@ function confirmOrder(token, session) {
 
 function createUpsell(token, session, upsell_object) {
 
-	du.output('Create Upsell');
+	du.info('Create Upsell');
 
 	let account = config.account;
 	let post_body = createOrderBody(session, upsell_object);
@@ -140,7 +140,7 @@ function createUpsell(token, session, upsell_object) {
 
 function createOrder(token, session, sale_object, creditcard) {
 
-	du.output('Create Order');
+	du.info('Create Order');
 
 	let account = config.account;
 	let post_body = createOrderBody(session, sale_object, creditcard);
@@ -177,7 +177,7 @@ function createOrder(token, session, sale_object, creditcard) {
 
 function createLead(token, campaign, customer) {
 
-	du.output('Create Lead');
+	du.info('Create Lead');
 	let account = config.account;
 	let post_body = createLeadBody(campaign, customer);
 
@@ -209,7 +209,7 @@ function createLead(token, campaign, customer) {
 
 function acquireToken(campaign) {
 
-	du.output('Acquire Token');
+	du.info('Acquire Token');
 
 	let account = config.account;
 	let authorization_string = createSignature();

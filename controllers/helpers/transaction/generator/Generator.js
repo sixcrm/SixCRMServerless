@@ -56,11 +56,11 @@ module.exports = class TransactionGeneratorHelperController {
 			.then(() => this.createOrder())
 			.then(() => this.confirmOrder())
 			.then(() => {
-				du.output('Transaction Complete');
+				du.info('Transaction Complete');
 				return true;
 			}).catch(result => {
 				du.error(result.body);
-				du.output('Transaction Failed');
+				du.info('Transaction Failed');
 				return false;
 			});
 

@@ -8,7 +8,7 @@ const S3Deployment = global.SixCRM.routes.include('deployment', 'utilities/s3-de
 
 let environment = process.argv[2] || 'development';
 
-du.highlight('Creating S3 Bucket');
+du.info('Creating S3 Bucket');
 
 let s3Deployment = new S3Deployment(environment);
 
@@ -37,7 +37,7 @@ bucket_list.map(bucket => {
 								};
 
 								return s3Deployment.deleteFolderAndWait(folder_parameters).then(response => {
-									return du.output(response);
+									return du.info(response);
 								});
 							});
 						});
@@ -48,7 +48,7 @@ bucket_list.map(bucket => {
 						return false;
 					}
 				}).then(() => {
-					return du.highlight('Complete')
+					return du.info('Complete')
 				});
 			})
 	});

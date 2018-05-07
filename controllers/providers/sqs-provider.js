@@ -382,7 +382,7 @@ module.exports = class SQSProvider extends AWSProvider {
 
 					return this.sqs.purgeQueue(params, (error, data) => {
 
-						du.highlight(queue_name + ' queue purged');
+						du.info(queue_name + ' queue purged');
 
 						return resolve(this.AWSCallback(error, data))
 
@@ -430,13 +430,13 @@ module.exports = class SQSProvider extends AWSProvider {
 
 				if (queue_exists) {
 
-					du.highlight('Queue exists, skipping');
+					du.info('Queue exists, skipping');
 
 					return resolve(false);
 
 				} else {
 
-					du.highlight('Queue not found, creating', params);
+					du.info('Queue not found, creating', params);
 
 					this.assureSQS();
 

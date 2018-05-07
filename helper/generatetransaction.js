@@ -54,8 +54,8 @@ for(let i = 0; i < configuration.transaction_count; i++){
 }
 
 Promise.all(promises).then(() => {
-	//du.output(promises);
-	du.highlight('Complete');
+	//du.info(promises);
+	du.info('Complete');
 	return true;
 }).catch((ex) => {
 

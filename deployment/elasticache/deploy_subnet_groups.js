@@ -6,7 +6,7 @@ const ElasticacheDeployment = global.SixCRM.routes.include('deployment', 'utilit
 let elasticacheDeployment = new ElasticacheDeployment();
 
 elasticacheDeployment.deploySubnetGroups().then((result) => {
-	return du.highlight(result);
+	return du.info(result);
 }).catch(error => {
 	du.error(error);
 	du.warning(error.message);

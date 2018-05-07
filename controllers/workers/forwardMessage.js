@@ -163,7 +163,7 @@ module.exports = class forwardMessageController extends RelayController {
 			return Promise.resolve(compound_worker_response_object);
 		}
 
-		du.highlight('Is fail.');
+		du.info('Is fail.');
 
 		if(!_.has(params, 'failure_queue')){
 
@@ -192,7 +192,7 @@ module.exports = class forwardMessageController extends RelayController {
 			return Promise.resolve(compound_worker_response_object);
 		}
 
-		du.highlight('Is error.');
+		du.info('Is error.');
 
 		if(!_.has(params, 'error_queue')) {
 

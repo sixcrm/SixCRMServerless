@@ -73,7 +73,7 @@ module.exports = class Parameters {
 
 		}else{
 
-			du.highlight('Exists');
+			du.info('Exists');
 
 			this.store[key] = [value];
 

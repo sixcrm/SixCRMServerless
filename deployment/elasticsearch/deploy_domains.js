@@ -6,9 +6,9 @@ const ElasticSearchDeployment = global.SixCRM.routes.include('deployment', 'util
 let elasticsearch_deployment = new ElasticSearchDeployment();
 
 elasticsearch_deployment.deployDomains().then((result) => {
-	du.highlight(result);
+	du.info(result);
 	return elasticsearch_deployment.deployIndices().then((result) => {
-		return du.highlight(result);
+		return du.info(result);
 	});
 }).catch(error => {
 	du.error(error);

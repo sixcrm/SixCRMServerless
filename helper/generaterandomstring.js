@@ -13,4 +13,4 @@ if(!_.isUndefined(process.argv[2])){
 	string_length = process.argv[2];
 }
 
-du.output(random.createRandomString(string_length));
+du.info(random.createRandomString(string_length));

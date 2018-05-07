@@ -40,7 +40,7 @@ describe('IP Check Test', function() {
 
 				if (err) return done(err);
 
-				du.output(response.body);
+				du.info(response.body);
 				const ipAddress = response.body.response.data.ipcheck.ip_address;
 				assert.isString(ipAddress);
 
@@ -53,7 +53,7 @@ describe('IP Check Test', function() {
 					]
 				}, function(err, result) {
 
-					du.output(result);
+					du.info(result);
 					if (err) return done(err);
 
 					//assert.equal(result.NatGateways.length, 1, "Zero or multiple NAT Gateways found for public-lambda");

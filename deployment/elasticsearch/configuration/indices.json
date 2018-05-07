@@ -12,7 +12,7 @@
 									"id": { "type": "keyword" },
 									"owner": { "type": "text" },
 									"log_group": {
-										"type": "text",
+										"type": "keyword",
 										"store": true
 									},
 									"log_stream": {

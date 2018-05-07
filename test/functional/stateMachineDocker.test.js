@@ -140,7 +140,7 @@ describe('stateMachineDocker', () => {
 			]).then(() => done());
 		});
 
-		du.output('REBILL ID ' + rebill.id);
+		du.info('REBILL ID ' + rebill.id);
 
 		it('15 rebills should be picked from dynamo and moved to bill', () => {
 

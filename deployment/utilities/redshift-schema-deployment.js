@@ -61,7 +61,7 @@ module.exports = class RedshiftSchemaDeployment extends RedshiftDeployment {
 
 	getDirectorySQLFilepaths(directory) {
 
-		du.highlight('Get Directory SQL Filepaths');
+		du.info('Get Directory SQL Filepaths');
 
 		let directory_filepath = global.SixCRM.routes.path('model', 'redshift/' + directory);
 
@@ -280,7 +280,7 @@ module.exports = class RedshiftSchemaDeployment extends RedshiftDeployment {
 
 		if (queries.length < 1) {
 
-			du.highlight('No purge queries to execute');
+			du.info('No purge queries to execute');
 			return Promise.resolve(false);
 
 		}
@@ -324,7 +324,7 @@ module.exports = class RedshiftSchemaDeployment extends RedshiftDeployment {
 
 	getPurgeQueries(table_filenames) {
 
-		du.highlight('Get Purge Queries');
+		du.info('Get Purge Queries');
 
 		return arrayutilities.map(table_filenames, (table_filename) => {
 

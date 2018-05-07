@@ -38,13 +38,13 @@ module.exports = class cacheController {
 
 					du.warning('Redis Hit: ' + cache_key);
 					result = this.parseResult(result);
-					du.deep('Cached Result', result);
+					du.debug('Cached Result', result);
 
 				} else {
 
 					du.warning('Redis Miss: ' + cache_key);
 					result = await data_promise();
-					du.deep('Data Promise Result:', result);
+					du.debug('Data Promise Result:', result);
 
 					const reply = await this.setCache(cache_key, JSON.stringify(result), expiration);
 					du.warning('Redis Set for key "' + cache_key + '": ' + reply);

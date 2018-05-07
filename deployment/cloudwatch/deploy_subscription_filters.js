@@ -8,7 +8,7 @@ let cloudwatch_deployment = new CloudwatchDeployment();
 cloudwatch_deployment.deployLoggerPermissions()
 	.then(() => cloudwatch_deployment.deploySubscriptionFilters())
 	.then((result) => {
-		return du.highlight(result);
+		return du.info(result);
 	}).catch(error => {
 		du.error(error);
 		du.warning(error.message);

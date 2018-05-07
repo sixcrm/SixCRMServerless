@@ -15,7 +15,7 @@ module.exports = class FulfillmentProviderTest extends IntegrationTest {
 
 	executeProductBlockTest(){
 
-		du.output('Execute Product Block Test');
+		du.info('Execute Product Block Test');
 
 		let fulfillment_provider_id = uuidV4();
 		let product_id = uuidV4();
@@ -36,7 +36,7 @@ module.exports = class FulfillmentProviderTest extends IntegrationTest {
 
 	createFulfillmentProvider(fulfillment_provider_id){
 
-		du.output('Create Fulfillment Provider');
+		du.info('Create Fulfillment Provider');
 
 		let fulfillmentprovider_create_query = `mutation { createfulfillmentprovider ( fulfillmentprovider: { id: "`+fulfillment_provider_id+`", name: "test", provider: {name: "Hashtag", username:"abc123", password:"abc123", threepl_key:"{`+uuidV4()+`}", threepl_customer_id: 123}}) { id } }`;
 
@@ -46,7 +46,7 @@ module.exports = class FulfillmentProviderTest extends IntegrationTest {
 
 	createProduct(product_id, fulfillment_provider_id){
 
-		du.output('Create Product');
+		du.info('Create Product');
 
 		let product_create_query = `mutation { createproduct (product: { id: "`+product_id+`", name: "Testing Entity Indexing", sku: "abc1234", ship: true, shipping_delay:3600,  fulfillment_provider:"`+fulfillment_provider_id+`", default_price:4.99}) { id } }`;
 
@@ -56,7 +56,7 @@ module.exports = class FulfillmentProviderTest extends IntegrationTest {
 
 	deleteFulfillmentProvider(id, code){
 
-		du.output('Delete Fulfillment Provider');
+		du.info('Delete Fulfillment Provider');
 
 		let delete_query = `mutation { deletefulfillmentprovider (id: "`+id+`") { id } }`;
 
@@ -66,7 +66,7 @@ module.exports = class FulfillmentProviderTest extends IntegrationTest {
 
 	deleteProduct(id, code){
 
-		du.output('Delete Product');
+		du.info('Delete Product');
 
 		let delete_query = `mutation { deleteproduct (id: "`+id+`" ) { id } }`;
 

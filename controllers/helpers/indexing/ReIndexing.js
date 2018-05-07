@@ -36,7 +36,7 @@ module.exports = class ReIndexingHelperController {
 			.then(() => this.printStatistics())
 			.then(() => this.fixIndex(fix))
 			.then(() => {
-				return du.output('Finished');
+				return du.info('Finished');
 			});
 	}
 
@@ -77,7 +77,7 @@ module.exports = class ReIndexingHelperController {
 
 		let indexing_entities = preIndexingHelperController.indexing_entities;
 
-		du.output('Indexing entities: ' + indexing_entities);
+		du.info('Indexing entities: ' + indexing_entities);
 
 		indexing_entities.map(entity => {
 			promises.push(() => dynamodbprovider.scanRecords(entity + 's').then(r => {
@@ -126,11 +126,11 @@ module.exports = class ReIndexingHelperController {
 
 	printStatistics() {
 
-		du.output('Total in dynamodb: ' + entities_dynamodb.length);
-		du.output('Total in index: ' + entities_index.length);
-		du.output('Missing in index: ' + missing_in_index.length);
+		du.info('Total in dynamodb: ' + entities_dynamodb.length);
+		du.info('Total in index: ' + entities_index.length);
+		du.info('Missing in index: ' + missing_in_index.length);
 		du.debug(index_details);
-		du.output('Missing in dynamodb: ' + missing_in_dynamo.length);
+		du.info('Missing in dynamodb: ' + missing_in_dynamo.length);
 		du.debug(db_details);
 
 	}

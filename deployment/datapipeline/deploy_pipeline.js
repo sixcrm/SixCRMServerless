@@ -7,7 +7,7 @@ const DataPipelineDeployment = global.SixCRM.routes.include('deployment', 'utili
 const dataPipelineDeployment = new DataPipelineDeployment();
 
 dataPipelineDeployment.execute().then(result => {
-	return du.highlight(result);
+	return du.info(result);
 }).catch((error) => {
 	du.error(error);
 	du.warning(error.message);

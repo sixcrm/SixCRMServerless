@@ -34,7 +34,7 @@ let awsdu = new AWSDeploymentUtilities();
 
 awsdu.setRole(configuration.branch).then(() => {
 
-	du.highlight('Role Updated.');
+	du.info('Role Updated.');
 	du.info(process.env);
 
 	return true;

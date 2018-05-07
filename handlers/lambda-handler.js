@@ -17,7 +17,7 @@ module.exports = class LambdaHandler
 		}
 		catch (error) {
 
-			du.error("Unhandled error in lambda", error);
+			du.fatal("Unhandled error in lambda", error);
 
 		}
 		finally {

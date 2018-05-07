@@ -14,7 +14,7 @@ let object = {
 let encoded_string = encode.objectToBase64(object)
 let decoded_object = encode.base64ToObject(encoded_string);
 
-du.output(
+du.info(
 	'Object: ', object,
 	'Encoded String: '+encoded_string,
 	'Decoded Object: ', decoded_object

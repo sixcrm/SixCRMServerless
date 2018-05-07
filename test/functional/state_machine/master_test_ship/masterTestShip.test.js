@@ -60,7 +60,7 @@ xdescribe('masterTestShip', () => {
 			test.description = stringutilities.replaceAll(test.description,', ', '\n' + tab);
 
 		} else {
-			du.output('Ignoring ' + test_path);
+			du.info('Ignoring ' + test_path);
 		}
 
 	});
@@ -86,19 +86,19 @@ xdescribe('masterTestShip', () => {
 		it(test.description, () => {
 			return beforeTest(test)
 				.then(() => StateMachine.flush(test.lambda_filter)) //bill
-				.then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+				.then(() => du.info(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
 				.then(() => timestamp.delay(32 * 1000)())
 				.then(() => StateMachine.flush(test.lambda_filter)) //hold
-				.then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+				.then(() => du.info(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
 				.then(() => timestamp.delay(32 * 1000)())
 				.then(() => StateMachine.flush(test.lambda_filter)) //pending
-				.then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+				.then(() => du.info(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
 				.then(() => timestamp.delay(32 * 1000)())
 				.then(() => StateMachine.flush(test.lambda_filter)) //shipped
-				.then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+				.then(() => du.info(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
 				.then(() => timestamp.delay(32 * 1000)())
 				.then(() => StateMachine.flush(test.lambda_filter)) //delivered
-				.then(() => du.output(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
+				.then(() => du.info(tab+'(Waiting 30s for messages to propagate between state machine flushes)'))
 				.then(() => timestamp.delay(32 * 1000)())
 				.then(() => StateMachine.flush(test.lambda_filter)) //archived
 				.then(() => verifyRebills(test))

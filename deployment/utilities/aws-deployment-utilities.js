@@ -107,7 +107,7 @@ module.exports = class AWSDeploymentUtilities {
 
 	createParameterGroup(action, subaction, object){
 
-		du.deep('Create Parameter Group');
+		du.debug('Create Parameter Group');
 
 		if(!_.has(this.parameter_groups, action)){
 			throw eu.getError('server', 'AWSDeploymentUtilities.createParameterGroup assumes parameter group has action property.');

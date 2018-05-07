@@ -663,7 +663,7 @@ module.exports = class EC2Provider extends AWSProvider {
 				du.warning(translation_promises);
 
 				return Promise.all(translation_promises).then(translation_promises => {
-					du.highlight(translation_promises);
+					du.info(translation_promises);
 					return translation_promises;
 				});
 
@@ -674,7 +674,7 @@ module.exports = class EC2Provider extends AWSProvider {
 		});
 
 		return Promise.all(ip_permission_promises).then(ip_permsission_promises => {
-			du.highlight(ip_permission_promises);
+			du.info(ip_permission_promises);
 			parameters.IpPermissions = ip_permission_promises;
 			return parameters;
 		});
@@ -747,7 +747,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 					return this.revokeSecurityGroupIngress(result).then((result) => {
 
-						du.highlight('Successfully revoked ingress rules');
+						du.info('Successfully revoked ingress rules');
 
 						return result;
 
@@ -755,7 +755,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 				} else {
 
-					du.highlight('No ingress rules to revoke...');
+					du.info('No ingress rules to revoke...');
 
 					return false;
 
@@ -810,7 +810,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 					return this.revokeSecurityGroupEgress(result).then((result) => {
 
-						du.highlight('Successfully revoked egress rules');
+						du.info('Successfully revoked egress rules');
 
 						return resolve(result);
 
@@ -818,7 +818,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 				} else {
 
-					du.highlight('No egress rules to revoke...');
+					du.info('No egress rules to revoke...');
 
 					return resolve(false);
 
@@ -880,7 +880,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 				if (results === false) {
 
-					du.highlight('Security Group does not exist');
+					du.info('Security Group does not exist');
 
 					return resolve(false);
 
@@ -889,7 +889,7 @@ module.exports = class EC2Provider extends AWSProvider {
 					let handle = this.ec2.deleteSecurityGroup(parameters);
 
 					handle.on('success', (result) => {
-						du.highlight('Security Group destroyed');
+						du.info('Security Group destroyed');
 						return resolve(result);
 					}).on('error', (error) => {
 						return reject(eu.getError('server', error));

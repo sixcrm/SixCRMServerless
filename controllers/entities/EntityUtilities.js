@@ -944,7 +944,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	getDescriptiveName(){
 
-		du.deep('Get Descriptive Name');
+		du.debug('Get Descriptive Name');
 
 		if(_.has(this, 'descriptive_name')){
 			return this.descriptive_name;
@@ -956,7 +956,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	setNames(name){
 
-		du.deep('Set Names');
+		du.debug('Set Names');
 
 		this.descriptive_name = name;
 
@@ -968,7 +968,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	setPrimaryKey(){
 
-		du.deep('Set Primary Key');
+		du.debug('Set Primary Key');
 
 		if(!_.has(this, 'primary_key')){
 
@@ -980,7 +980,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	setEnvironmentTableName(name){
 
-		du.deep('Set Environment Table Name');
+		du.debug('Set Environment Table Name');
 
 		let key = this.buildTableKey(name);
 		let value = this.buildTableName(name);
@@ -993,7 +993,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	setTableName(name){
 
-		du.deep('Set Table Name');
+		du.debug('Set Table Name');
 
 		let key = this.buildTableKey(name);
 
@@ -1003,7 +1003,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	buildTableKey(name){
 
-		du.deep('Build Table Key');
+		du.debug('Build Table Key');
 
 		name = stringutilities.pluralize(name);
 
@@ -1014,7 +1014,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	buildTableName(name){
 
-		du.deep('Build Table Name');
+		du.debug('Build Table Name');
 
 		return stringutilities.pluralize(name);
 

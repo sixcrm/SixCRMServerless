@@ -48,7 +48,7 @@ describe('Site JWT Acquisition Integration Test', function() {
 
 					if(err){ du.warning(err); }
 
-					du.output(response.body);
+					du.info(response.body);
 
 					assert.isObject(response.body);
 					assert.property(response.body, "message");

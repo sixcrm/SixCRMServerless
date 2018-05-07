@@ -20,17 +20,17 @@ let account = process.argv[3];
 let user = process.argv[4];
 
 if (!body) {
-	du.output('Body is required');
+	du.info('Body is required');
 	printHelp();
 }
 
 if (!account) {
-	du.output('Account is required');
+	du.info('Account is required');
 	printHelp();
 }
 
 if (!user) {
-	du.output('User is required');
+	du.info('User is required');
 	printHelp();
 }
 
@@ -49,9 +49,9 @@ let notification_object = {
 
 EmailNotificationProvider.sendNotificationViaEmail(notification_object, user);
 
-du.output('Attempted to send a notification via email.', notification_object);
+du.info('Attempted to send a notification via email.', notification_object);
 
 function printHelp() {
-	du.output('Helper for inserting notification for the given account and user. User is optional.');
-	du.output('Parameters: body account [user]');
+	du.info('Helper for inserting notification for the given account and user. User is optional.');
+	du.info('Parameters: body account [user]');
 }

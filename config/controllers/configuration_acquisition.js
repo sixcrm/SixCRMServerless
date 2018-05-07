@@ -193,7 +193,7 @@ module.exports.getSubnet1 = async () => {
 
 	let subnet = await ec2_deployment.subnetExists({Name: 'sixcrm-private1'});
 
-	du.highlight('VPCSubnet1: '+subnet.SubnetId);
+	du.info('VPCSubnet1: '+subnet.SubnetId);
 	return subnet.SubnetId;
 
 }
@@ -212,7 +212,7 @@ module.exports.getSubnet2 = async () => {
 
 	let subnet = await ec2_deployment.subnetExists({Name: 'sixcrm-private2'});
 
-	du.highlight('VPCSubnet2: '+subnet.SubnetId);
+	du.info('VPCSubnet2: '+subnet.SubnetId);
 	return subnet.SubnetId;
 
 }
@@ -231,7 +231,7 @@ module.exports.getSubnet3 = async () => {
 
 	let subnet = await ec2_deployment.subnetExists({Name: 'sixcrm-private3'});
 
-	du.highlight('VPCSubnet3: '+subnet.SubnetId);
+	du.info('VPCSubnet3: '+subnet.SubnetId);
 	return subnet.SubnetId;
 
 }
@@ -250,7 +250,7 @@ module.exports.getSecurityGroup = async () => {
 
 	let security_group = await ec2_deployment.securityGroupExists({GroupName: global.SixCRM.configuration.site_config.lambda.security_group});
 
-	du.highlight('Lambda Security Group: '+security_group.GroupId);
+	du.info('Lambda Security Group: '+security_group.GroupId);
 	return security_group.GroupId;
 
 }

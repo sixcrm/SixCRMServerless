@@ -254,12 +254,12 @@ module.exports = class RDSProvider extends AWSProvider {
 		return this.describeDBInstances(parameters).then(result => {
 
 			if(_.isObject(result) && objectutilities.hasRecursive(result, 'DBInstances.0.DBInstanceArn')){
-				du.highlight('Instance Already Exists');
+				du.info('Instance Already Exists');
 				return result.DBInstances[0];
 			}
 
 			return this.createDBInstance(parameters).then(result => {
-				du.highlight('Database instance created.');
+				du.info('Database instance created.');
 				du.info(result);
 				return result;
 			});

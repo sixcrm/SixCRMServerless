@@ -29,6 +29,6 @@ if(_.isUndefined(request_time) || _.isNull(request_time)){
 
 let signature = signatureutilities.createSignature(secret_key, request_time);
 
-du.output('Signature: ', signature);
-du.output('Validated: ', signatureutilities.validateSignature(secret_key, request_time, signature));
-du.output([access_key, request_time, signature].join(':'));
+du.info('Signature: ', signature);
+du.info('Validated: ', signatureutilities.validateSignature(secret_key, request_time, signature));
+du.info([access_key, request_time, signature].join(':'));

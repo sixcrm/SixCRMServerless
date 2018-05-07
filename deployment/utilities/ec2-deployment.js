@@ -44,10 +44,10 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		return this.endpointExists(endpoint_definition).then(endpoint => {
 			if (_.isNull(endpoint)) {
-				du.highlight('Creating endpoint: ', endpoint_definition);
+				du.info('Creating endpoint: ', endpoint_definition);
 				return this.createEndpoint(endpoint_definition);
 			}
-			du.highlight('Endpoint exists: ', endpoint_definition);
+			du.info('Endpoint exists: ', endpoint_definition);
 			//Technical Debt:  Write a update method
 			return true;
 		});
@@ -200,11 +200,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		return this.VPCExists(vpc_definition).then(result => {
 			if (_.isNull(result)) {
-				du.highlight('VPC does not exist: ' + vpc_definition.Name);
+				du.info('VPC does not exist: ' + vpc_definition.Name);
 				return this.createVPC(vpc_definition);
 			}
 
-			du.highlight('VPC exists: ' + vpc_definition.Name);
+			du.info('VPC exists: ' + vpc_definition.Name);
 			return true;
 
 		})
@@ -227,7 +227,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 			}).then(result => {
 
 				return this.nameEC2Resource(result.Vpc.VpcId, vpc_definition.Name).then(() => {
-					du.highlight('VPC Created: ' + vpc_definition.Name);
+					du.info('VPC Created: ' + vpc_definition.Name);
 					return result;
 				});
 
@@ -289,11 +289,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		return this.gatewayExists(ig_definition).then(result => {
 
 			if (_.isNull(result)) {
-				du.highlight('Internet Gateway does not exist: ' + ig_definition.Name);
+				du.info('Internet Gateway does not exist: ' + ig_definition.Name);
 				return this.createInternetGateway(ig_definition);
 			}
 
-			du.highlight('Internet Gateway exists: ' + ig_definition.Name);
+			du.info('Internet Gateway exists: ' + ig_definition.Name);
 			return result;
 
 		}).then((internet_gateway) => {
@@ -301,7 +301,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 			return this.setVPC('sixcrm').then(() => {
 				return this.attachInternetGateway(internet_gateway).catch(error => {
 					if (error.code == 'Resource.AlreadyAssociated') {
-						du.highlight('Internet Gateway already associated');
+						du.info('Internet Gateway already associated');
 						return true;
 					}
 					throw error;
@@ -331,7 +331,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		return this.ec2provider.createInternetGateway().then(result => {
 			return this.nameEC2Resource(result.InternetGateway.InternetGatewayId, ig_definition.Name).then(() => {
-				du.highlight('Internet Gateway Created: ' + ig_definition.Name);
+				du.info('Internet Gateway Created: ' + ig_definition.Name);
 				return result.InternetGateway;
 			});
 		});
@@ -393,11 +393,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		return this.routeTableExists(route_table_definition).then((result) => {
 
 			if (_.isNull(result)) {
-				du.highlight('Route Table does not exist: ' + route_table_definition.Name);
+				du.info('Route Table does not exist: ' + route_table_definition.Name);
 				return this.createRouteTable(route_table_definition);
 			}
 
-			du.highlight('Route Table exists: ' + route_table_definition.Name);
+			du.info('Route Table exists: ' + route_table_definition.Name);
 			return result;
 
 		}).then(route_table => {
@@ -455,7 +455,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		}).then(() => {
 
-			du.highlight('Route table deployed: ' + route_table_definition.Name);
+			du.info('Route table deployed: ' + route_table_definition.Name);
 			return true;
 
 		});
@@ -504,12 +504,12 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 			const argumentation = objectutilities.merge(route_definition, additional_argumentation);
 
 			return this.ec2provider.createRoute(argumentation).then(() => {
-				du.highlight('Route created.');
+				du.info('Route created.');
 				return true;
 			}).catch((error) => {
 				if (error.code == 'RouteAlreadyExists') {
 					return this.ec2provider.replaceRoute(argumentation).then(() => {
-						du.highlight('Route replaced.');
+						du.info('Route replaced.');
 						return true;
 					})
 				}
@@ -600,11 +600,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 		return this.NATExists(nat_definition).then(result => {
 			if (_.isNull(result)) {
-				du.highlight('NAT does not exist: ' + nat_definition.Name);
+				du.info('NAT does not exist: ' + nat_definition.Name);
 				return this.createNAT(nat_definition);
 			}
 
-			du.highlight('NAT exists: ' + nat_definition.Name);
+			du.info('NAT exists: ' + nat_definition.Name);
 			return true;
 
 		});
@@ -725,13 +725,13 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		return this.EIPExists(eip_definition).then(result => {
 
 			if (_.isNull(result)) {
-				du.highlight('EIP does not exist: ' + eip_definition.Name);
+				du.info('EIP does not exist: ' + eip_definition.Name);
 				return this.createEIP(eip_definition).then(() => {
-					return du.highlight('EIP Allocated.');
+					return du.info('EIP Allocated.');
 				});
 			}
 
-			du.highlight('EIP exists');
+			du.info('EIP exists');
 			return true;
 
 		});
@@ -877,11 +877,11 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		return this.subnetExists(subnet_definition).then(subnet => {
 
 			if (_.isNull(subnet)) {
-				du.highlight('Subnet does not exist: ' + subnet_definition.Name);
+				du.info('Subnet does not exist: ' + subnet_definition.Name);
 				return this.createSubnet(subnet_definition);
 			}
 
-			du.highlight('Subnet exists: ' + subnet_definition.Name);
+			du.info('Subnet exists: ' + subnet_definition.Name);
 
 			return this.updateSubnet(subnet, subnet_definition);
 
@@ -1057,7 +1057,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 			if (!_.isNull(ingress_parameter_group)) {
 				return this.ec2provider.addSecurityGroupIngressRules(ingress_parameter_group).then(() => {
-					du.highlight('Successfully created ingress rules.');
+					du.info('Successfully created ingress rules.');
 					return result;
 				})
 			} else {
@@ -1071,7 +1071,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 
 			if (!_.isNull(egress_parameter_group)) {
 				return this.ec2provider.addSecurityGroupEgressRules(egress_parameter_group).then(() => {
-					du.highlight('Successfully created egress rules.');
+					du.info('Successfully created egress rules.');
 					return result;
 				})
 			} else {
@@ -1079,7 +1079,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 			}
 
 		}).then(() => {
-			du.highlight('Security group deployed')
+			du.info('Security group deployed')
 			return true;
 		});
 

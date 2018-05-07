@@ -55,7 +55,7 @@ function getValidAcquireTokenPostBody(campaign){
 
 function checkout(token, post_body){
 
-	du.output('Checkout');
+	du.info('Checkout');
 	let account = config.account;
 
 	let argument_object = {
@@ -83,7 +83,7 @@ function checkout(token, post_body){
 
 function refund(transaction, amount) {
 
-	du.output('Refund');
+	du.info('Refund');
 
 	let account = config.account;
 	let test_jwt = tu.createTestAuth0JWT(config.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
@@ -104,7 +104,7 @@ function refund(transaction, amount) {
 
 function acquireToken(campaign){
 
-	du.output('Acquire Token');
+	du.info('Acquire Token');
 
 	let account = config.account;
 	let authorization_string = createSignature();

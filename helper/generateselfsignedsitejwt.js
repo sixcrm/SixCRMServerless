@@ -31,5 +31,5 @@ jwtprovider.setParameters();
 let jwt = jwtprovider.getJWT({user:{email: email}}, 'site');
 let decoded = jwtprovider.verifyJWT(jwt, 'site');
 
-du.output('Decoded JWT: ', decoded);
-du.output('JWT: ', jwt);
+du.info('Decoded JWT: ', decoded);
+du.info('JWT: ', jwt);

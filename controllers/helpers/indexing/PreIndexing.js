@@ -122,7 +122,7 @@ module.exports = class PreIndexingHelperController {
 		let preindexing_entity = this.parameters.get('preindexingentity');
 
 		if(!_.includes(this.indexing_entities, preindexing_entity.entity_type)){
-			du.highlight('Not a indexed entity type: '+preindexing_entity.entity_type);
+			du.info('Not a indexed entity type: '+preindexing_entity.entity_type);
 			return Promise.reject(true);
 		}
 

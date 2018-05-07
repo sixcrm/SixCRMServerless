@@ -15,7 +15,7 @@ module.exports = class CreditCardTest extends IntegrationTest {
 
 	executeCustomerBlockTest(){
 
-		du.output('Execute Customer Block Test');
+		du.info('Execute Customer Block Test');
 
 		let creditcard_id = uuidV4();
 		let customer_id = uuidV4();
@@ -36,7 +36,7 @@ module.exports = class CreditCardTest extends IntegrationTest {
 
 	createCreditCard(creditcard_id, customer_id){
 
-		du.output('Create Credit Card');
+		du.info('Create Credit Card');
 
 		let creditcard_create_query = `mutation { createcreditcard (creditcard: { number: "3111111111111111", expiration: "1025", name: "Rama2 Damunaste", address: { line1: "102 Skid Rw.", line2: "Suite 100", city: "Portland", state: "OR", zip: "97213", country: "US" }, id: "`+creditcard_id+`", customers:["`+customer_id+`"] }) { id } }`;
 
@@ -46,7 +46,7 @@ module.exports = class CreditCardTest extends IntegrationTest {
 
 	createCustomer(customer_id, creditcard_id){
 
-		du.output('Create Customer');
+		du.info('Create Customer');
 
 		let customer_create_query = `mutation { createcustomer ( customer: {id: "`+customer_id+`", email: "test@test.com", firstname: "Test_b5803b28-c584-4bb3-8fac-3315b91686b3", lastname: "Test", phone: "1234567890", address: { line1: "123 Test St.", line2: "Apartment 3", city: "Portland", state: "OR", zip: "97213", country: "US" }, creditcards:["`+creditcard_id+`"]} ) { id } }`;
 
@@ -56,7 +56,7 @@ module.exports = class CreditCardTest extends IntegrationTest {
 
 	deleteCreditCard(id, code){
 
-		du.output('Delete Credit Card');
+		du.info('Delete Credit Card');
 
 		let creditcard_delete_query = 'mutation { deletecreditcard (id: "'+id+'") { id } }';
 
@@ -66,7 +66,7 @@ module.exports = class CreditCardTest extends IntegrationTest {
 
 	deleteCustomer(id, code){
 
-		du.output('Delete Customer');
+		du.info('Delete Customer');
 
 		let customer_delete_query = 'mutation { deletecustomer (id: "'+id+'") { id } }';
 

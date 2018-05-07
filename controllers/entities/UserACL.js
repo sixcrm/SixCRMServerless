@@ -165,12 +165,12 @@ class UserACLController extends entityController {
 				}
 
 				if(_.has(identified_acl, 'id')){
-					du.highlight('Identified ACL:', identified_acl);
+					du.info('Identified ACL:', identified_acl);
 					return resolve(identified_acl);
 				}else{
-					du.highlight('Unable to identify ACL');
+					du.info('Unable to identify ACL');
 					return this.create({entity: useracl}).then((acl) => {
-						du.highlight('ACL created: ', acl);
+						du.info('ACL created: ', acl);
 						return resolve(acl);
 					}).catch((error) => {
 						return reject(error);

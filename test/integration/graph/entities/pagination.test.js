@@ -68,7 +68,7 @@ entities.forEach((entity) => {
 						du.debug(response.body);
 						tu.assertResultSet(response, global.test_users[0].role);
 
-						du.output(response.body.response);
+						du.info(response.body.response);
 
 						tu.validateGraphResponse(response.body, `entities/operations/index_mandatory_pagination`);
 

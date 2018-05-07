@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const du = require('./lib/debug-utilities');
 const Routes = require('./routes.js');
 const Configuration = require('./core/Configuration');
 const LocalCache = require('./core/LocalCache');
@@ -32,3 +33,8 @@ class SixCRM {
 if (!_.has(global, 'SixCRM')) {
 	global.SixCRM = new SixCRM();
 }
+
+process.on('unhandledRejection', (error, promise) => {
+	du.fatal("Unhandled promise rejection", error, promise);
+	throw error;
+});

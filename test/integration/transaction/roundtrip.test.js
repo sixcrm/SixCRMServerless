@@ -63,7 +63,7 @@ function getValidAcquireTokenPostBody(campaign){
 
 function confirmOrder(token, session){
 
-	du.output('Confirm Order');
+	du.info('Confirm Order');
 
 	let account = config.account;
 
@@ -99,7 +99,7 @@ function confirmOrder(token, session){
 
 function createUpsell(token, session, sale_object, previous_order){
 
-	du.output('Create Upsell');
+	du.info('Create Upsell');
 
 	const account = config.account;
 	const post_body = createOrderBody(session, sale_object);
@@ -143,7 +143,7 @@ function createUpsell(token, session, sale_object, previous_order){
 
 function createOrder(token, session, sale_object, customer){
 
-	du.output('Create Order');
+	du.info('Create Order');
 
 	let account = config.account;
 	let post_body = createOrderBody(session, sale_object, customer);
@@ -178,7 +178,7 @@ function createOrder(token, session, sale_object, customer){
 
 function createLead(token, campaign, customer){
 
-	du.output('Create Lead');
+	du.info('Create Lead');
 	let account = config.account;
 	let post_body = createLeadBody(campaign, customer);
 
@@ -210,7 +210,7 @@ function createLead(token, campaign, customer){
 
 function acquireToken(campaign){
 
-	du.output('Acquire Token');
+	du.info('Acquire Token');
 
 	let account = config.account;
 	let authorization_string = createSignature();
@@ -300,7 +300,7 @@ function createOrderBody(session, sale_object, customer){
 
 function refund(transaction, amount) {
 
-	du.output('Refund');
+	du.info('Refund');
 
 	let account = config.account;
 	let test_jwt = tu.createTestAuth0JWT(config.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);

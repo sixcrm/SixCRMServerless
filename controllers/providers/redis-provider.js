@@ -74,22 +74,22 @@ module.exports = class RedisProvider {
 			this.redis_client = new Redis.Client(options);
 			this.redis_client.client
 				.on('ready', () => {
-					du.deep('Redis ready.');
+					du.debug('Redis ready.');
 					this.redis_client.client.removeAllListeners('error');
 					return resolve();
 				})
 				.on('error', (error) => {
-					du.deep(error);
+					du.debug(error);
 					return reject();
 				})
 				.on('connect', () => {
-					du.deep('Redis connected.')
+					du.debug('Redis connected.')
 				})
 				.on('end', () => {
-					du.deep('Redis connection closed.')
+					du.debug('Redis connection closed.')
 				})
 				.on('reconnecting', () => {
-					du.deep('Redis reconnecting...')
+					du.debug('Redis reconnecting...')
 				})
 				.on('warning', (warning) => {
 					du.warning('Redis Warning: ', warning)
@@ -117,7 +117,7 @@ module.exports = class RedisProvider {
 
 	async execute(promised_callback) {
 
-		du.deep('redis-utils: querying');
+		du.debug('redis-utils: querying');
 
 		try {
 

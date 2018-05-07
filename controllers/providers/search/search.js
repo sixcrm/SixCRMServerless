@@ -150,13 +150,13 @@ module.exports = class SearchController {
 
 				return cloudsearchprovider.search(search_input).then((results) => {
 
-					du.highlight(results);
+					du.info(results);
 
 					results = this.serializeFacets(results);
 
 					//results = this.flattenResults(results);
 
-					du.highlight('Flattened Results', results);
+					du.info('Flattened Results', results);
 
 					return resolve(results);
 

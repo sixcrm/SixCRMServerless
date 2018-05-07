@@ -115,7 +115,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 					query = this.parseQueryParameters(query, parameters);
 
-					du.highlight('Query:', query, parameters);
+					du.info('Query:', query, parameters);
 
 					let transformation_function = this.getTransformationFunction(query_name);
 
@@ -210,7 +210,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 			if (_.has(parameters, filter)) {
 
-				du.highlight(filter, parameters[filter]);
+				du.info(filter, parameters[filter]);
 
 				if (_.isArray(parameters[filter]) && parameters[filter].length > 1) {
 
@@ -333,7 +333,7 @@ module.exports = class AnalyticsUtilities extends PermissionedController {
 
 				}
 
-				du.highlight('Input parameters validate.');
+				du.info('Input parameters validate.');
 
 				return resolve(true);
 

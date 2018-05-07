@@ -30,7 +30,7 @@ acquireToken(campaign)
 	}))
 	.then(response => {
 		du.info(response);
-		return du.highlight('Complete');
+		return du.info('Complete');
 	})
 	.catch(error => du.warning(error));
 

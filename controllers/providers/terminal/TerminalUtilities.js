@@ -214,7 +214,7 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
 		let shipable_transaction_product_group = arrayutilities.filter(augmented_transaction_products, augmented_transaction_product => {
 
-			du.highlight(augmented_transaction_product);
+			du.info(augmented_transaction_product);
 
 			if(_.has(augmented_transaction_product, 'shipping_receipt')){
 				return false;
