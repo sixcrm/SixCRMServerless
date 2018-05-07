@@ -151,11 +151,16 @@ class AccountController extends entityController {
 			query_parameters: query_parameters
 		})
 			.then(response => {
+
+				du.debug('Accounts with name ' + entity.name, response.accounts);
+
 				if (
 					objectutilities.hasRecursive(response, 'accounts') &&
 					arrayutilities.isArray(response.accounts) &&
 					arrayutilities.filter(response.accounts, (account) => account.id !== entity.id).length > 0
 				) {
+
+					du.error('An account already exists with name: "' + entity.name + '"');
 					throw eu.getError('bad_request', 'An account already exists with name: "' + entity.name + '"')
 				}
 
