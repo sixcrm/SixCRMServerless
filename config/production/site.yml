@@ -108,6 +108,6 @@ slack:
 
 tokenization:
   tokenex:
-    id: 2029633460477211
-    api_key: XnIOBNQVmQRyfRMiQdA5FuQBalGDDTxWlgoJBL8N
-    base: https://test-api.tokenex.com
+    id: 9615102903256758
+    api_key: UAESYJ8HeIfmmGeg2qNS7l4dPFTYNlLA6t7zX4hF
+    base: https://api.tokenex.com
