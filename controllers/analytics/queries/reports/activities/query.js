@@ -13,7 +13,7 @@ module.exports = async (parameters = {}) => {
 
 	if (parameters.account) {
 
-		filter += ' AND account = $1';
+		filter += ' AND account = %L';
 		filterValues.push(parameters.account);
 
 	}

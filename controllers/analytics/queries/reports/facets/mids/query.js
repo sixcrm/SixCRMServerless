@@ -12,7 +12,7 @@ module.exports = async (parameters = {}) => {
 
 	if (parameters.account) {
 
-		queryParameters.push(format(' AND account = $1', parameters.account));
+		queryParameters.push(format(' AND account = %L', parameters.account));
 
 	} else {
 
