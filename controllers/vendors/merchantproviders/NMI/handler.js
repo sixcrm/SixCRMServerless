@@ -43,7 +43,7 @@ class NMIController extends MerchantProvider {
 					ccexp:'creditcard.expiration'
 				},
 				optional:{
-					ccv:'creditcard.cvv',
+					cvv:'creditcard.cvv',
 					firstname:'customer.firstname',
 					lastname:'customer.lastname',
 					address1:'creditcard.address.line1',
