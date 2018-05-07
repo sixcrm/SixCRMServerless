@@ -30,20 +30,6 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 
 	/* deprecate */
 
-	getTransactionSummary(parameters) {
-
-		du.debug('Get Transaction Summary');
-
-		let target_period_count = this.getTargetPeriodCount(parameters.analyticsfilter);
-
-		let period_selection = this.periodSelection(parameters.analyticsfilter.start, parameters.analyticsfilter.end, target_period_count);
-
-		parameters = this.appendPeriod(parameters.analyticsfilter, period_selection);
-
-		return this.getResults('deprecate/aggregation_processor_amount', parameters, this.default_query_filters);
-
-	}
-
 	getCurrentQueueSummary(parameters) {
 
 		du.debug('Get Rebills current queue summary');
@@ -213,6 +199,10 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			case 'campaignsByAmount': {
 				const resolveParams = require('./queries/reports/campaigns-by-amount/params');
 				return this.query('reports/campaigns-by-amount', await resolveParams(parameters, parameters.pagination));
+			}
+			case 'transactionSummary': {
+				const resolveParams = require('./queries/reports/transaction-summary/params');
+				return this.query('reports/transaction-summary', await resolveParams(parameters));
 			}
 			default:
 				throw new Error('Report not found');

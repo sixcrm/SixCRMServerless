@@ -1,0 +1,73 @@
+{
+	"method": "getReport",
+	"test_case": "getReport transaction summary",
+	"input": {
+		"reportType": "transactionSummary",
+		"facets": [{
+				"facet": "start",
+				"values": ["2018-01-22T00:00:00Z"]
+			},
+			{
+				"facet": "end",
+				"values": ["2018-01-23T23:59:59"]
+			},
+			{
+				"facet": "period",
+				"values": "DAY"
+			}
+		]
+	},
+	"result_name": "records",
+	"expect": [
+		[{
+			"key": "datetime",
+			"value": "2018-01-22T00:00:00.000Z"
+		}, {
+			"key": "processorResults",
+			"value": [{
+				"key": "error",
+				"value": {
+					"count": 0,
+					"total": 0
+				}
+			}, {
+				"key": "fail",
+				"value": {
+					"count": 0,
+					"total": 0
+				}
+			}, {
+				"key": "success",
+				"value": {
+					"count": 30,
+					"total": 1784.54
+				}
+			}]
+		}],
+		[{
+			"key": "datetime",
+			"value": "2018-01-23T00:00:00.000Z"
+		}, {
+			"key": "processorResults",
+			"value": [{
+				"key": "error",
+				"value": {
+					"count": 0,
+					"total": 0
+				}
+			}, {
+				"key": "fail",
+				"value": {
+					"count": 0,
+					"total": 0
+				}
+			}, {
+				"key": "success",
+				"value": {
+					"count": 0,
+					"total": 0
+				}
+			}]
+		}]
+	]
+}

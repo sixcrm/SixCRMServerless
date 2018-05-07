@@ -1,6 +1,6 @@
 SELECT
 	 i.generate_series as datetime,
-	 e.eventCount
+	 COALESCE(e.eventCount, 0) AS eventCount
 FROM (SELECT * FROM generate_series( %L::DATE + '00:00:00'::TIME, %L::DATE + '00:00:00'::TIME, %L::interval )) i
 LEFT OUTER JOIN (
 		SELECT COUNT ( 1 ) AS eventCount,
