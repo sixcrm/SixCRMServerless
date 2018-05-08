@@ -184,6 +184,10 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 				const resolveParams = require('./queries/reports/rebill-summary/params');
 				return this.query('reports/rebill-summary', await resolveParams(parameters, parameters.pagination));
 			}
+			case 'rebillsInQueue': {
+				const resolveParams = require('./queries/reports/rebills-in-queue/params');
+				return this.query('reports/rebills-in-queue', await resolveParams(parameters, parameters.pagination));
+			}
 			default:
 				throw new Error('Report not found');
 

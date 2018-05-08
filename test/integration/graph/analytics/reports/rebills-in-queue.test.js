@@ -7,7 +7,7 @@ chai.use(require('chai-json-schema'));
 
 let test_name = 'Get report facets';
 
-let test_query = global.SixCRM.routes.include('handlers', 'endpoints/graph/queries/analytics/reports/rebill-summary/rebill-summary.json');
+let test_query = global.SixCRM.routes.include('handlers', 'endpoints/graph/queries/analytics/reports/rebills-in-queue/rebills-in-queue.json');
 
 //set the test user
 let test_user = {
