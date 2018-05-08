@@ -157,7 +157,8 @@
 			"return/*",
 			"shippingreceipt/*",
 			"transaction/*",
-			"user/*"
+			"user/*",
+			"useracl/*"
 		],
 		"deny":["*"]
 	},
