@@ -691,7 +691,7 @@ describe('createLead', function () {
 
 	describe('createLead',  () => {
 
-		it('successfully creates a lead', () => {
+		it.only('successfully creates a lead', () => {
 
 			let event = getValidEventBody();
 			let customer = getValidCustomer();
