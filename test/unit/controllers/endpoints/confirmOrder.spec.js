@@ -1,4 +1,3 @@
-
 const mockery = require('mockery');
 let chai = require('chai');
 const expect = chai.expect;
@@ -7,8 +6,6 @@ const uuidV4 = require('uuid/v4');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
-
-const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 function getValidCampaign(){
 	return MockEntities.getValidCampaign();
@@ -153,11 +150,8 @@ describe('confirmOrder', function () {
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();
 
-			confirmOrderController.parameters.set('event', event);
-
-			return confirmOrderController.hydrateSession().then(result => {
-				expect(result).to.equal(true);
-				expect(confirmOrderController.parameters.store['session']).to.deep.equal(session);
+			return confirmOrderController.hydrateSession(event).then(result => {
+				expect(result).to.deep.equal(session);
 			});
 
 		});
@@ -175,11 +169,7 @@ describe('confirmOrder', function () {
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();
 
-			confirmOrderController.parameters.set('session', session);
-
-			return confirmOrderController.validateSession().then(result => {
-				expect(result).to.equal(true);
-			});
+			expect(confirmOrderController.validateSession(session)).to.not.throw;
 
 		});
 
@@ -192,11 +182,10 @@ describe('confirmOrder', function () {
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();
 
-			confirmOrderController.parameters.set('session', session);
-
-			try{
-				confirmOrderController.validateSession();
-			}catch(error){
+			try {
+				confirmOrderController.validateSession(session);
+			}
+			catch(error) {
 				expect(error.message).to.equal('[400] The specified session is already complete.');
 			}
 
@@ -205,7 +194,7 @@ describe('confirmOrder', function () {
 
 	describe('hydrateSessionProperties', () => {
 
-		it('successfully hydrates session properties', () => {
+		it('successfully hydrates session properties', async () => {
 
 			let session = getValidSession();
 			let customer = getValidCustomer();
@@ -237,14 +226,12 @@ describe('confirmOrder', function () {
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();
 
-			confirmOrderController.parameters.set('session', session);
+			let [customerResult, transactionsResult] = await confirmOrderController.hydrateSessionProperties(session);
+			expect(customerResult).to.deep.equal(customer);
+			expect(transactionsResult).to.deep.equal(transactions);
 
-			return confirmOrderController.hydrateSessionProperties().then(result => {
-				expect(result).to.equal(true);
-				expect(confirmOrderController.parameters.store['customer']).to.deep.equal(customer);
-				expect(confirmOrderController.parameters.store['transactions']).to.deep.equal(transactions);
-				expect(confirmOrderController.parameters.store['transactionproducts']).to.deep.equal(products);
-			});
+			let productsResult = await confirmOrderController.getTransactionProducts(transactionsResult);
+			expect(productsResult).to.deep.equal(products);
 
 		});
 
@@ -269,35 +256,6 @@ describe('confirmOrder', function () {
 
 			return confirmOrderController.closeSession().then(result => {
 				expect(result).to.equal(true);
-			});
-
-		});
-
-	});
-
-	describe('buildResponse', () => {
-
-		it('successfully builds a response', () => {
-
-			let session = getValidSession();
-			let transactions = getValidTransactions();
-			let products = getValidTransactionProducts(null, true);
-			let customer = getValidCustomer();
-
-			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
-			const confirmOrderController = new ConfirmOrderController();
-
-			confirmOrderController.parameters.set('session', session);
-			confirmOrderController.parameters.set('transactions', transactions);
-			confirmOrderController.parameters.set('transactionproducts', products);
-			confirmOrderController.parameters.set('customer', customer);
-
-			return confirmOrderController.buildResponse().then(result => {
-				expect(result).to.equal(true);
-				expect(confirmOrderController.parameters.store['response'].session).to.deep.equal(session);
-				expect(confirmOrderController.parameters.store['response'].transactions).to.deep.equal(transactions);
-				expect(confirmOrderController.parameters.store['response'].transaction_products).to.deep.equal(products);
-				expect(confirmOrderController.parameters.store['response'].customer).to.deep.equal(customer);
 			});
 
 		});
