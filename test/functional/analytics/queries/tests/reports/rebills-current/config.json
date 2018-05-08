@@ -1,0 +1,13 @@
+{
+	"method": "getReport",
+	"test_case": "getReport rebills current",
+	"input": {
+		"reportType": "rebillsCurrent",
+		"facets": [{
+			"facet": "queueName",
+			"values": "hold_failed"
+		}]
+	},
+	"result_name": "records",
+	"expect": []
+}
