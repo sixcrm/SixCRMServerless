@@ -555,7 +555,7 @@ module.exports = class SessionController extends entityController {
 
 		du.debug('Get User');
 
-		return this.executeAssociatedEntityFunction('userController', 'get', {id: session.canceled_by}).then(data => {
+		return this.executeAssociatedEntityFunction('userController', 'get', {id: session.cancelled_by}).then(data => {
 			du.error('cancelled_by', data)
 			return data;
 		})
@@ -575,8 +575,8 @@ module.exports = class SessionController extends entityController {
 			}
 
 			delete entity.id;
-			entity.canceled_at = timestamp.getISO8601();
-			session.canceled = entity;
+			entity.cancelled_at = timestamp.getISO8601();
+			session.cancelled = entity;
 
 			return this.update({entity: session});
 

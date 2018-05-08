@@ -106,9 +106,9 @@ module.exports.graphObj = new GraphQLObjectType({
 				return sessionController.getAffiliate(session, 'cid');
 			}
 		},
-		canceled: {
+		cancelled: {
 			type: sessionCancelType.graphObj,
-			description: 'A an object with information about the sessions canceled state, who canceled and when.',
+			description: 'A an object with information about the sessions cancelled state, who cancelled and when.',
 		},
 		completed: {
 			type: new GraphQLNonNull(GraphQLBoolean),

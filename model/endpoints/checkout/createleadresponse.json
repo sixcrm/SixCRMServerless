@@ -67,5 +67,5 @@
 			"type":"boolean"
 		}
 	},
-	"required":["id", "customer", "campaign", "account", "created_at", "updated_at"]
+	"required":["id", "customer", "campaign"]
 }

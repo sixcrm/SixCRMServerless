@@ -1,8 +1,7 @@
-
-
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class SessionHelperController {
@@ -101,6 +100,36 @@ module.exports = class SessionHelperController {
 				});
 
 		});
+
+	}
+
+	getPublicFields(session){
+
+		du.debug('Get Public Fields');
+
+		return objectutilities.transcribe(
+			{
+				"id":"id",
+				"alias":"alias",
+				"customer":"customer",
+				"campaign":"campaign",
+				"watermark":"watermark",
+				"affiliate":"affiliate",
+				"subaffiliate_1":"subaffiliate_1",
+				"subaffiliate_2":"subaffiliate_2",
+				"subaffiliate_3":"subaffiliate_3",
+				"subaffiliate_4":"subaffiliate_4",
+				"subaffiliate_5":"subaffiliate_5",
+				"cid":"cid",
+				"created_at":"created_at",
+				"updated_at":"updated_at",
+				"cancelled":"cancelled",
+				"completed":"completed"
+			},
+			session,
+			{},
+			false
+		);
 
 	}
 	/*

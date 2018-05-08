@@ -845,6 +845,7 @@ workflows:
             branches:
               only:
                 - production
+                - staging
       - merge:
           requires:
             - hold

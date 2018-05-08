@@ -13,13 +13,13 @@ module.exports.graphObj = new GraphQLObjectType({
 	name: 'SessionCancel',
 	description: 'A record denoting a customer, a group of products and corresponding transactions.',
 	fields: () => ({
-		canceled: {
+		cancelled: {
 			type: new GraphQLNonNull(GraphQLBoolean),
-			description: 'A boolean denoting the canceled state of the session'
+			description: 'A boolean denoting the cancelled state of the session'
 		},
-		canceled_by: {
+		cancelled_by: {
 			type: userType.graphObj,
-			description: 'The user that canceled the session.',
+			description: 'The user that cancelled the session.',
 			resolve: (session) => {
 
 				du.error('get user');
@@ -29,9 +29,9 @@ module.exports.graphObj = new GraphQLObjectType({
 				return sessionController.getUser(session);
 			}
 		},
-		canceled_at: {
+		cancelled_at: {
 			type: new GraphQLNonNull(GraphQLString),
-			description: 'ISO8601 datetime when the session was canceled.',
+			description: 'ISO8601 datetime when the session was cancelled.',
 
 		}
 	})

@@ -2,5 +2,69 @@
 	"$schema": "http://json-schema.org/draft-04/schema",
 	"id":"/endpoints/createLead/response.json",
 	"title": "Create Lead Response",
-	"$ref":"../../entities/session.json"
+	"type":"object",
+	"properties": {
+		"id":{"$ref": "../../definitions/uuidv4.json"},
+    "account":{"$ref": "../../definitions/sixcrmaccountidentifier.json"},
+    "alias":{"$ref":"../../definitions/sessionalias.json"},
+		"customer":{
+			"anyOf":[
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/customer.json"}
+			]
+    },
+		"campaign":{
+			"anyOf":[
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/campaign.json"}
+			]
+    },
+    "watermark":{"$ref":"../../entities/components/watermark/watermark.json"},
+		"product_schedules":{
+			"type": "array",
+			"items":{
+				"anyOf":[
+					{"$ref": "../../definitions/uuidv4.json"},
+					{"$ref": "../../entities/productschedule.json"}
+				]}
+		},
+		"affiliate":{
+			"anyOf":[
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
+		]},
+		"subaffiliate_1":{
+			"anyOf":[
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
+			]},
+		"subaffiliate_2":{
+			"anyOf":[
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
+			]},
+		"subaffiliate_3":{
+			"anyOf":[
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
+			]},
+		"subaffiliate_4":{
+			"anyOf":[
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
+			]},
+		"subaffiliate_5":{
+			"anyOf":[
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
+			]},
+		"cid":{"$ref": "../../definitions/uuidv4.json"},
+		"created_at":{"$ref": "../../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../../definitions/iso8601.json"},
+		"cancelled":{"$ref":"../../entities/components/cancelsession.json"},
+		"completed":{
+			"type":"boolean"
+		}
+	},
+	"required":["id", "customer", "campaign"]
 }

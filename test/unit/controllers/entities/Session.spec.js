@@ -645,8 +645,8 @@ describe('controllers/Session.js', () => {
 
 			let mock_cancel = {
 				id: 'mock id',
-				canceled: true,
-				canceled_by: 'test@user.com'
+				cancelled: true,
+				cancelled_by: 'test@user.com'
 			}
 
 			let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');

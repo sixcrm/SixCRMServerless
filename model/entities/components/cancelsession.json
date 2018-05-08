@@ -4,17 +4,17 @@
 	"title": "A Cancel Session Object",
 	"type": "object",
 	"properties": {
-		"canceled": {
+		"cancelled": {
 			"type": "boolean"
 		},
-		"canceled_by": {
+		"cancelled_by": {
 			"$ref": "../../definitions/useridentifier.json"
 		},
-		"canceled_at": {
+		"cancelled_at": {
 			"$ref": "../../definitions/iso8601.json"
 		}
 	},
 	"required": [
-		"canceled", "canceled_by", "canceled_at"
+		"cancelled", "cancelled_by", "cancelled_at"
 	]
 }

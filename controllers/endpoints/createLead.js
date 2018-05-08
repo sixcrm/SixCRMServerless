@@ -6,6 +6,7 @@ const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
+const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
 
 module.exports = class CreateLeadController extends transactionEndpointController {
 
@@ -81,11 +82,16 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 			.then(() => this.createSessionPrototype())
 			.then(() => this.assureSession())
 			.then(() => this.postProcessing())
-			.then(() => {
+			.then(() => this.respond());
 
-				return this.parameters.get('session');
+	}
 
-			});
+	respond(){
+
+		du.debug('Respond');
+
+		const sessionHelperController = new SessionHelperController();
+		return sessionHelperController.getPublicFields(this.parameters.get('session'));
 
 	}
 

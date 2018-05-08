@@ -44,7 +44,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 
 		this.parameter_validation = {
 			'event':global.SixCRM.routes.path('model', 'endpoints/checkout/event.json'),
-			'session':global.SixCRM.routes.path('model', 'entities/session.json'),
+			'session':global.SixCRM.routes.path('model', 'endpoints/checkout/createleadresponse.json'),
 			'createorderresponse':global.SixCRM.routes.path('model', 'endpoints/checkout/createorderresponse.json'),
 			'confirmation':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
 		};

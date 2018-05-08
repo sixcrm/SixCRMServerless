@@ -1668,7 +1668,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		cancelsession: {
 			type: sessionType.graphObj,
-			description: 'Sets session to canceled',
+			description: 'Sets session to cancelled',
 			args: {
 				session: {
 					type: sessionCancelInputType.graphObj

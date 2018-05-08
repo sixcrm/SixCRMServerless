@@ -691,7 +691,7 @@ describe('createLead', function () {
 
 	describe('createLead',  () => {
 
-		it('successfully creates a lead', () => {
+		it.only('successfully creates a lead', () => {
 
 			let event = getValidEventBody();
 			let customer = getValidCustomer();
@@ -701,7 +701,6 @@ describe('createLead', function () {
 
 			let mock_customer = class {
 				constructor(){}
-
 				getCustomerByEmail() {
 					return Promise.resolve(null);
 				}
@@ -749,7 +748,7 @@ describe('createLead', function () {
 			createLeadController.parameters.set('event', event);
 
 			return createLeadController.createLead().then(result => {
-				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'entities/session.json'))).to.equal(true);
+				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
 			});
 
 		});
