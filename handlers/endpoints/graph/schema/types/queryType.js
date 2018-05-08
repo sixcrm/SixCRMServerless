@@ -178,10 +178,6 @@ const TokenHelperController = global.SixCRM.routes.include('helpers', 'token/Tok
 
 const SearchController = global.SixCRM.routes.include('controllers', 'providers/search/search.js');
 const SuggestController = global.SixCRM.routes.include('controllers', 'providers/search/suggest.js');
-
-//Analytics Controllers
-
-const AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
 const IPCheckController = global.SixCRM.routes.include('providers', 'ipcheck/IPCheck.js');
 const fields = Object.assign({}, {
 	/*
