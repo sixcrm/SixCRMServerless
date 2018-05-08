@@ -287,7 +287,7 @@ describe('createLead', function () {
 			const createLeadController = new CreateLeadController();
 
 			return createLeadController.execute(event).then(result => {
-				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'entities/session.json'))).to.equal(true);
+				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
 			});
 
 		});
@@ -373,7 +373,7 @@ describe('createLead', function () {
 			const createLeadController = new CreateLeadController();
 
 			return createLeadController.execute(event).then(result => {
-				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'entities/session.json'))).to.equal(true);
+				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
 			});
 
 		});
@@ -691,7 +691,7 @@ describe('createLead', function () {
 
 	describe('createLead',  () => {
 
-		it.only('successfully creates a lead', () => {
+		it('successfully creates a lead', () => {
 
 			let event = getValidEventBody();
 			let customer = getValidCustomer();

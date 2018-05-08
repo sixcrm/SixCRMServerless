@@ -1,68 +1,68 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/session.json",
-	"title": "Session",
+	"id":"/endpoints/checkout/createleadresponse.json",
+	"title": "Create Lead Response",
 	"type": "object",
-	"description": "A session",
+	"description": "A session response",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-    "account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-    "alias":{"$ref":"../definitions/sessionalias.json"},
+		"id":{"$ref": "../../definitions/uuidv4.json"},
+    "account":{"$ref": "../../definitions/sixcrmaccountidentifier.json"},
+    "alias":{"$ref":"../../definitions/sessionalias.json"},
 		"customer":{
 			"anyOf":[
-				{"$ref": "../definitions/uuidv4.json"},
-				{"$ref": "./customer.json"}
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/customer.json"}
 			]
     },
 		"campaign":{
 			"anyOf":[
-				{"$ref": "../definitions/uuidv4.json"},
-				{"$ref": "./campaign.json"}
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/campaign.json"}
 			]
     },
-    "watermark":{"$ref":"./components/watermark/watermark.json"},
+    "watermark":{"$ref":"../../entities/components/watermark/watermark.json"},
 		"product_schedules":{
 			"type": "array",
 			"items":{
 				"anyOf":[
-					{"$ref": "../definitions/uuidv4.json"},
-					{"$ref": "./productschedule.json"}
+					{"$ref": "../../definitions/uuidv4.json"},
+					{"$ref": "../../entities/productschedule.json"}
 				]}
 		},
 		"affiliate":{
 			"anyOf":[
-				{"$ref": "../definitions/uuidv4.json"},
-				{"$ref": "./affiliate.json"}
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
 		]},
 		"subaffiliate_1":{
 			"anyOf":[
-				{"$ref": "../definitions/uuidv4.json"},
-				{"$ref": "./affiliate.json"}
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
 			]},
 		"subaffiliate_2":{
 			"anyOf":[
-				{"$ref": "../definitions/uuidv4.json"},
-				{"$ref": "./affiliate.json"}
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
 			]},
 		"subaffiliate_3":{
 			"anyOf":[
-				{"$ref": "../definitions/uuidv4.json"},
-				{"$ref": "./affiliate.json"}
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
 			]},
 		"subaffiliate_4":{
 			"anyOf":[
-				{"$ref": "../definitions/uuidv4.json"},
-				{"$ref": "./affiliate.json"}
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
 			]},
 		"subaffiliate_5":{
 			"anyOf":[
-				{"$ref": "../definitions/uuidv4.json"},
-				{"$ref": "./affiliate.json"}
+				{"$ref": "../../definitions/uuidv4.json"},
+				{"$ref": "../../entities/affiliate.json"}
 			]},
-		"cid":{"$ref": "../definitions/uuidv4.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"},
-		"cancelled":{"$ref":"./components/cancelsession.json"},
+		"cid":{"$ref": "../../definitions/uuidv4.json"},
+		"created_at":{"$ref": "../../definitions/iso8601.json"},
+		"updated_at":{"$ref": "../../definitions/iso8601.json"},
+		"cancelled":{"$ref":"../../entities/components/cancelsession.json"},
 		"completed":{
 			"type":"boolean"
 		}

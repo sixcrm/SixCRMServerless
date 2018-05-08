@@ -340,6 +340,8 @@ describe('checkout', function () {
 
 			return checkoutController.createLead().then(result => {
 				expect(result).to.equal(true);
+				delete session.account;
+				delete session.product_schedules;
 				expect(checkoutController.parameters.store['session']).to.deep.equal(session);
 			});
 
