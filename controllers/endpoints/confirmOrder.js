@@ -72,144 +72,88 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		du.debug('Execute');
 
 		return this.preamble(event)
-			.then(() => this.confirmOrder());
+			.then(() => this.confirmOrder(this.parameters.get('event')));
 
 	}
 
-	confirmOrder() {
+	async confirmOrder(event) {
 
 		du.debug('Confirm Order');
 
-		return this.hydrateSession()
-			.then(() => this.validateSession())
-			.then(() => this.hydrateSessionProperties())
-			.then(() => this.closeSession())
-			.then(() => this.buildResponse())
-			.then(() => this.postProcessing())
-			.then(() => {
+		let session = await this.hydrateSession(event);
+		this.validateSession(session);
 
-				return this.parameters.get('response');
+		let [customer, transactions, campaign] = await this.hydrateSessionProperties(session);
+		let transaction_products = await this.getTransactionProducts(transactions);
 
-			});
+		await this.closeSession();
+
+		await this.postProcessing(session, campaign);
+
+		return {
+			session,
+			customer,
+			transactions,
+			transaction_products
+		};
 
 	}
 
-	hydrateSession() {
+	hydrateSession(event) { // returns session
 
 		du.debug('Hydrate Session');
 
-		let event = this.parameters.get('event');
-
-		return this.sessionController.get({
-			id: event.session
-		}).then(session => {
-
-			this.parameters.set('session', session);
-			return true;
-
-		});
+		return this.sessionController.get({ id: event.session });
 
 	}
 
-	validateSession() {
+	validateSession(session) {
 
 		du.debug('Validate Session');
 
-		let session = this.parameters.get('session');
-
-		if (this.sessionHelperController.isComplete({
-			session: session
-		})) {
+		if (this.sessionHelperController.isComplete({	session: session })) {
 			throw eu.getError('bad_request', 'The specified session is already complete.');
 		}
 
-		return Promise.resolve(true);
-
 	}
 
-	hydrateSessionProperties() {
+	hydrateSessionProperties(session) {
 
 		du.debug('Hydrate Session Properties');
 
-		let session = this.parameters.get('session');
-
-		let promises = [
+		return Promise.all([
 			this.sessionController.getCustomer(session),
 			this.sessionController.listTransactions(session),
 			this.sessionController.getCampaign(session)
-		];
-
-		return Promise.all(promises).then(promises => {
-
-			this.parameters.set('customer', promises[0]);
-			this.parameters.set('transactions', promises[1]);
-			this.parameters.set('campaign', promises[2]);
-
-			return true;
-
-		})
-			.then(() => this.setTransactionProducts());
+		]);
 
 	}
 
-	setTransactionProducts() {
+	getTransactionProducts(transactions) {
 
-		du.debug('Set Transaction Products');
+		du.debug('Get Transaction Products');
 
-		let transactions = this.parameters.get('transactions');
-
-		let transaction_products = this.transactionHelperController.getTransactionProducts(transactions);
-
-		this.parameters.set('transactionproducts', transaction_products);
-
-		return Promise.resolve(true);
+		return this.transactionHelperController.getTransactionProducts(transactions);
 
 	}
 
 
-	closeSession() {
+	closeSession(session) {
 
 		du.debug('Confirm Order');
 
-		let session = this.parameters.get('session');
-
-		return this.sessionController.closeSession(session).then(() => {
-
-			return true;
-
-		});
+		return this.sessionController.closeSession(session);
 
 	}
 
-	buildResponse() {
-
-		du.debug('Build Response');
-
-		let session = this.parameters.get('session');
-		let customer = this.parameters.get('customer');
-		let transactions = this.parameters.get('transactions');
-		let transaction_products = this.parameters.get('transactionproducts');
-
-		this.parameters.set('response', {
-			session: session,
-			customer: customer,
-			transactions: transactions,
-			transaction_products: transaction_products
-		});
-
-		return Promise.resolve(true);
-
-	}
-
-	postProcessing() {
+	postProcessing(session, campaign) {
 
 		du.debug('Post Processing');
 
-		return AnalyticsEvent.push('confirm',
-			{
-				session: this.parameters.get('session', {fatal: false}),
-				campaign: this.parameters.get('campaign', {fatal: false})
-			});
+		return AnalyticsEvent.push('confirm', {
+			session,
+			campaign
+		});
 
 	}
 
