@@ -45,7 +45,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		this.parameter_validation = {
 			'event':global.SixCRM.routes.path('model', 'endpoints/checkout/event.json'),
 			'session':global.SixCRM.routes.path('model', 'entities/session.json'),
-			'order':global.SixCRM.routes.path('model', 'endpoints/checkout/order.json'),
+			'createorderresponse':global.SixCRM.routes.path('model', 'endpoints/checkout/createorderresponse.json'),
 			'confirmation':global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
 		};
 
@@ -116,7 +116,8 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		this.createOrderController.parameters.set('event', event);
 
 		return this.createOrderController.createOrder().then(result => {
-			this.parameters.set('order', result);
+			//du.info(result); process.exit();
+			this.parameters.set('createorderresponse', result);
 			return Promise.resolve(true);
 		});
 

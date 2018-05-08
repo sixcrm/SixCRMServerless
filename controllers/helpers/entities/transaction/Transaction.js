@@ -224,4 +224,5 @@ module.exports = class TransactionHelperController {
 		}, 0.0);
 
 	}
+
 }

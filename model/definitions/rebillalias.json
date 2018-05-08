@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "/definitions/rebillalias.json",
+  "title": "Rebill Alias",
+  "description": "Alias of a rebill",
+  "type":"string",
+  "anyOf":[
+    {"type":"string","pattern":"^R[0-9A-Z]{9}$"}
+  ]
+}

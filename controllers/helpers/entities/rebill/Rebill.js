@@ -2,6 +2,7 @@ const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const random = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
@@ -705,6 +706,14 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		let bill_at_timestamp = timestamp.dateToTimestamp(rebill.bill_at);
 
 		return !(timestamp.getTimeDifference(bill_at_timestamp) < 0);
+
+	}
+
+	createAlias(){
+
+		du.debug('Create Alias');
+
+		return 'R'+random.createRandomString(9);
 
 	}
 

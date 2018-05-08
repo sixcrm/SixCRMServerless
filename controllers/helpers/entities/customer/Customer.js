@@ -1,6 +1,7 @@
 
 const _ = require('lodash');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class CustomerHelperController {
@@ -81,6 +82,25 @@ module.exports = class CustomerHelperController {
 		}
 
 		return '';
+
+	}
+
+	getPublicFields(customer){
+
+		du.debug('Get Public Fields');
+
+		return objectutilities.transcribe(
+			{
+				"email":"email",
+				"firstname":"firstname",
+				"lastname":"lastname",
+				"phone":"phone",
+				"address":"address"
+			},
+			customer,
+			{},
+			false
+		);
 
 	}
 

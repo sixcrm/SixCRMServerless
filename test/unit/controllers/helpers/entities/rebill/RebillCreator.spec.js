@@ -1418,6 +1418,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 			return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
 
+				delete result.alias;
 				delete result.created_at;
 				delete result.updated_at;
 				delete result.id;
@@ -1458,6 +1459,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 			return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
 
+				delete result.alias;
 				delete result.created_at;
 				delete result.updated_at;
 				delete result.id;
@@ -1498,6 +1500,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 			return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
 
+				delete result.alias;
 				delete result.created_at;
 				delete result.updated_at;
 				delete result.id;
@@ -1538,6 +1541,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 			return rebillCreatorHelper.createRebill({session: session, day: day}).then(result => {
 
+				delete result.alias;
 				delete result.created_at;
 				delete result.updated_at;
 				delete result.id;
@@ -1706,6 +1710,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 				du.info(result);
 
+				delete result.alias;
 				delete result.created_at;
 				delete result.updated_at;
 				delete result.id;
@@ -1826,6 +1831,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 			return rebillCreatorHelper.createRebill({session: session, day: day, product_schedules: session.watermark.product_schedules}).then(result => {
 
+				delete result.alias;
 				delete result.created_at;
 				delete result.updated_at;
 				delete result.id;
@@ -2027,6 +2033,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 			return rebillCreatorHelper.createRebill({session: session, day: day, product_schedules: session.watermark.product_schedules, products: session.watermark.products}).then(result => {
 
+				delete result.alias;
 				delete result.created_at;
 				delete result.updated_at;
 				delete result.id;

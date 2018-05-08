@@ -707,6 +707,7 @@ class MockEntities {
 		return {
 			bill_at: timestamp.getISO8601(),
 			id: this.getValidId(id),
+			alias: 'R'+randomutilities.createRandomString(9),
 			account: this.getTestAccountID(),
 			parentsession: uuidV4(),
 			product_schedules: [uuidV4()],

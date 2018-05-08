@@ -33,4 +33,26 @@ module.exports = class ProductHelperController {
 
 	}
 
+	getPublicFields(product){
+
+		du.debug('Get Public Fields');
+
+		du.info(product);
+
+		return objectutilities.transcribe(
+			{
+				'id':'id',
+				'name':'name',
+				'description':'description',
+				'sku':'sku',
+				'ship':'ship',
+				'attributes':'attributes'
+			},
+			product,
+			{},
+			false
+		);
+
+	}
+
 }

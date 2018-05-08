@@ -88,12 +88,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			.then(() => this.processRebill())
 			.then(() => this.buildInfoObject())
 			.then(() => this.postProcessing())
-			.then(() => {
-
-				//Technical Debt:  We're going to want to prune this a bit...
-				return this.parameters.get('info');
-
-			});
+			.then(() => this.respond());
 
 	}
 
@@ -705,6 +700,37 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		}).then(() => {
 			return true;
 		});
+
+	}
+
+	buildOrderObject(){
+
+		du.debug('Build Order Object');
+
+		const OrderHelperController = global.SixCRM.routes.include('helpers', 'order/Order.js');
+		let orderHelperController = new OrderHelperController();
+
+		let session = this.parameters.get('session');
+		let transactions = this.parameters.get('transactions');
+		let customer = this.parameters.get('customer');
+		let rebill = this.parameters.get('rebill');
+
+		let order = orderHelperController.createOrder({rebill: rebill, transactions: transactions, session: session, customer: customer});
+
+		return order;
+
+	}
+
+	respond(){
+
+		du.debug('Respond');
+
+		let result = this.parameters.get('result');
+
+		return {
+			result: result,
+			order: this.buildOrderObject()
+		}
 
 	}
 

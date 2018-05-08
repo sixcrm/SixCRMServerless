@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+	"id":"/entities/meta/order.json",
+	"title": "Order",
+	"type": "object",
+	"description": "A order",
+	"properties": {
+		"id":{"$ref": "../../definitions/rebillalias.json"},
+		"customer":{
+			"anyOf":[
+				{"$ref": "./customer.json"}
+			]
+    },
+    "products":{
+			"type": "array",
+			"items":{"$ref": "./productgroup.json"}
+		},
+		"amount": {"$ref": "../../definitions/currency.json"},
+		"date":{"$ref": "../../definitions/iso8601.json"}
+	},
+	"required":["id", "amount", "date", "products"]
+}

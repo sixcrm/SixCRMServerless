@@ -21,6 +21,18 @@ module.exports = class RebillController extends entityController {
 
 	}
 
+	create({entity}){
+
+		du.debug('Rebill.create()');
+
+		if(!_.has(entity, 'alias')){
+			entity.alias = this.rebillHelperController.createAlias();
+		}
+
+		return super.create({entity: entity});
+
+	}
+
 	//Technical Debt: finish!
 	associatedEntitiesCheck() {
 		return Promise.resolve([]);
