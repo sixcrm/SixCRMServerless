@@ -703,7 +703,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	buildOrderObject(){
+	async buildOrderObject(){
 
 		du.debug('Build Order Object');
 
@@ -715,22 +715,23 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		let customer = this.parameters.get('customer');
 		let rebill = this.parameters.get('rebill');
 
-		let order = orderHelperController.createOrder({rebill: rebill, transactions: transactions, session: session, customer: customer});
+		let order = await orderHelperController.createOrder({rebill: rebill, transactions: transactions, session: session, customer: customer});
 
 		return order;
 
 	}
 
-	respond(){
+	async respond(){
 
 		du.debug('Respond');
 
 		let result = this.parameters.get('result');
+		let order = await this.buildOrderObject();
 
 		return {
 			result: result,
-			order: this.buildOrderObject()
-		}
+			order: order
+		};
 
 	}
 

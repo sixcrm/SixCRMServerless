@@ -1,10 +1,14 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
-const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
-const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
+
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+
+const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
+const CustomerHelperController = global.SixCRM.routes.include('helpers', 'entities/customer/Customer.js');
+const OrderHelperController = global.SixCRM.routes.include('helpers', 'order/Order.js');
 
 module.exports = class ConfirmOrderController extends transactionEndpointController {
 
@@ -53,14 +57,10 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 			'session': global.SixCRM.routes.path('model', 'entities/session.json'),
 			'customer': global.SixCRM.routes.path('model', 'entities/customer.json'),
 			'campaign': global.SixCRM.routes.path('model', 'entities/campaign.json'),
-			'transactionproducts': global.SixCRM.routes.path('model', 'endpoints/components/transactionproducts.json'),
-			'transactions': global.SixCRM.routes.path('model', 'endpoints/components/transactions.json'),
 			'response': global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json')
 		};
 
-		this.transactionHelperController = new TransactionHelperController();
 		this.sessionHelperController = new SessionHelperController();
-
 		this.sessionController = new SessionController();
 
 		this.initialize();
@@ -82,19 +82,13 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		let session = await this.hydrateSession(event);
 		this.validateSession(session);
 
-		let [customer, transactions, campaign] = await this.hydrateSessionProperties(session);
-		let transaction_products = await this.getTransactionProducts(transactions);
+		let [customer, campaign, rebills] = await this.hydrateSessionProperties(session);
 
 		await this.closeSession(session);
-
+		const response = this.buildResponse(session, customer, rebills);
 		await this.postProcessing(session, campaign);
 
-		return {
-			session,
-			customer,
-			transactions,
-			transaction_products
-		};
+		return response;
 
 	}
 
@@ -122,8 +116,8 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		return Promise.all([
 			this.sessionController.getCustomer(session),
-			this.sessionController.listTransactions(session),
-			this.sessionController.getCampaign(session)
+			this.sessionController.getCampaign(session),
+			this.sessionController.listRebills(session)
 		]);
 
 	}
@@ -136,12 +130,33 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-
 	closeSession(session) {
 
 		du.debug('Confirm Order');
 
 		return this.sessionController.closeSession(session);
+
+	}
+
+	async buildResponse(session, customer, rebills) {
+
+		du.debug('Build Response');
+
+		let customerHelper = new CustomerHelperController();
+		let sessionHelper = new SessionHelperController();
+		let orderHelper = new OrderHelperController();
+
+		let orders = arrayutilities.map(rebills, (rebill) => {
+			return orderHelper.createOrder({rebill: rebill, session: session, customer: customer});
+		});
+
+		orders = await Promise.all(orders);
+
+		return {
+			session: sessionHelper.getPublicFields(session),
+			customer: customerHelper.getPublicFields(customer),
+			orders: orders
+		};
 
 	}
 

@@ -13,6 +13,39 @@ const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
 class MockEntities {
 
+	static getValidOrder(){
+
+		let customer = this.getValidCustomer();
+		delete customer.account;
+		delete customer.credit_cards;
+
+		let session = this.getValidSession();
+		delete session.account;
+		session.customer = customer.id;
+
+		let rebill = this.getValidRebill();
+		rebill.parentsession =  session.id
+
+		let product = this.getValidProduct();
+		delete product.id;
+		delete product.default_price;
+
+		let product_group = {
+			product: product,
+			quantity: randomutilities.randomInt(1,10),
+			amount: randomutilities.randomDouble(1.00, 100.00)
+		}
+
+		return {
+			id: rebill.alias,
+			session: session,
+			customer: customer,
+			products: [product_group],
+			amount: rebill.amount,
+			date: rebill.created_at
+		};
+
+	}
 	static getValidInvite(){
 
 		let firstname = spoofer.createRandomName('first');

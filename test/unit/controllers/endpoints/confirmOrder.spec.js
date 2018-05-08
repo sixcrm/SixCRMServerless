@@ -201,6 +201,9 @@ describe('confirmOrder', function () {
 			let transactions = getValidTransactions();
 			let products = getValidTransactionProducts(null, true);
 			let campaign = getValidCampaign();
+			let rebill = MockEntities.getValidRebill();
+			rebill.parentsession = session.id;
+			let rebills = [rebill];
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
 				getCustomer() {
@@ -211,6 +214,10 @@ describe('confirmOrder', function () {
 				}
 				getCampaign() {
 					return Promise.resolve(campaign);
+				}
+				listRebills(session){
+					expect(session).to.be.defined;
+					return Promise.resolve(rebills);
 				}
 			});
 
@@ -226,13 +233,10 @@ describe('confirmOrder', function () {
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();
 
-			let [customerResult, transactionsResult] = await confirmOrderController.hydrateSessionProperties(session);
+			let [customerResult, campaignResult, rebillsResult] = await confirmOrderController.hydrateSessionProperties(session);
 			expect(customerResult).to.deep.equal(customer);
-			expect(transactionsResult).to.deep.equal(transactions);
-
-			let productsResult = await confirmOrderController.getTransactionProducts(transactionsResult);
-			expect(productsResult).to.deep.equal(products);
-
+			expect(campaignResult).to.deep.equal(campaign);
+			expect(rebillsResult).to.deep.equal(rebills);
 		});
 
 	});
@@ -257,6 +261,46 @@ describe('confirmOrder', function () {
 			return confirmOrderController.closeSession().then(result => {
 				expect(result).to.equal(true);
 			});
+
+		});
+
+	});
+
+	describe('buildResponse', () => {
+
+		it('successfully builds a response', async () => {
+
+			let session = getValidSession();
+			delete session.product_schedules;
+
+			let rebill = MockEntities.getValidRebill();
+			rebill.parentsession = session.id;
+			let transaction = MockEntities.getValidTransaction();
+			let transactions = [transaction];
+
+			let customer = getValidCustomer();
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				listTransactions(rebill) {
+					expect(rebill).to.be.defined;
+					return Promise.resolve(transactions);
+				}
+			});
+
+			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
+			const confirmOrderController = new ConfirmOrderController();
+
+			const response = await confirmOrderController.buildResponse(session, customer, [rebill]);
+
+			delete session.account;
+			delete customer.creditcards;
+			delete customer.account;
+			delete customer.id;
+			delete customer.updated_at;
+			delete customer.created_at;
+
+			expect(response.session).to.deep.equal(session);
+			expect(response.customer).to.deep.equal(customer);
 
 		});
 
@@ -309,6 +353,10 @@ describe('confirmOrder', function () {
 			let campaign = getValidCampaign();
 			let user = MockEntities.getValidUser();
 
+			let rebill = MockEntities.getValidRebill();
+			rebill.parentsession = session.id;
+			let rebills = [rebill];
+
 			session.completed = false;
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
@@ -345,12 +393,9 @@ describe('confirmOrder', function () {
 				getCampaign() {
 					return Promise.resolve(campaign);
 				}
-			});
-
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), class {
-				constructor(){}
-				getTransactionProducts(){
-					return products;
+				listRebills(session){
+					expect(session).to.be.defined;
+					return Promise.resolve(rebills);
 				}
 			});
 
@@ -360,6 +405,13 @@ describe('confirmOrder', function () {
 				}
 				getRegion() {
 					return 'localhost'
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				listTransactions(rebill){
+					expect(rebill).to.be.defined;
+					return Promise.resolve(transactions);
 				}
 			});
 
@@ -376,14 +428,15 @@ describe('confirmOrder', function () {
 			const confirmOrderController = new ConfirmOrderController();
 
 			return confirmOrderController.execute(event).then(result => {
-				expect(result).to.have.property('transactions');
+				//expect(result).to.have.property('transactions');
 				expect(result).to.have.property('customer');
 				expect(result).to.have.property('session');
-				expect(result).to.have.property('transaction_products');
-				expect(result.transactions).to.deep.equal(transactions);
-				expect(result.customer).to.deep.equal(customer);
-				expect(result.session).to.deep.equal(session);
-				expect(result.transaction_products).to.deep.equal(products);
+				expect(result).to.have.property('orders');
+				//expect(result).to.have.property('transaction_products');
+				//expect(result.transactions).to.deep.equal(transactions);
+				//expect(result.customer).to.deep.equal(customer);
+				//expect(result.session).to.deep.equal(session);
+				//expect(result.transaction_products).to.deep.equal(products);
 			});
 
 		});
@@ -396,7 +449,10 @@ describe('confirmOrder', function () {
 
 			let event = getValidEventBody();
 			let session = getValidSession();
-			let transactions = getValidTransactions();
+			let rebill = MockEntities.getValidRebill();
+			rebill.parentsession = session.id;
+			let rebills = [rebill];
+			//let transactions = getValidTransactions();
 			let products = getValidTransactionProducts(null, true);
 			let customer = getValidCustomer();
 			let campaign = getValidCampaign();
@@ -422,15 +478,17 @@ describe('confirmOrder', function () {
 				getCustomer() {
 					return Promise.resolve(customer);
 				}
-				listTransactions() {
-					return Promise.resolve(transactions);
-				}
 				closeSession() {
 					return Promise.resolve(true);
 				}
 				getCampaign() {
 					return Promise.resolve(campaign);
 				}
+				listRebills(session){
+					expect(session).to.be.defined;
+					return Promise.resolve(rebills);
+				}
+
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/transaction/Transaction.js'), class {
@@ -457,14 +515,15 @@ describe('confirmOrder', function () {
 			confirmOrderController.parameters.set('event', event);
 
 			return confirmOrderController.confirmOrder(event).then(result => {
-				expect(result).to.have.property('transactions');
+				//expect(result).to.have.property('transactions');
 				expect(result).to.have.property('customer');
 				expect(result).to.have.property('session');
-				expect(result).to.have.property('transaction_products');
-				expect(result.transactions).to.deep.equal(transactions);
-				expect(result.customer).to.deep.equal(customer);
-				expect(result.session).to.deep.equal(session);
-				expect(result.transaction_products).to.deep.equal(products);
+				expect(result).to.have.property('orders');
+				//expect(result).to.have.property('transaction_products');
+				//expect(result.transactions).to.deep.equal(transactions);
+				//expect(result.customer).to.deep.equal(customer);
+				//expect(result.session).to.deep.equal(session);
+				//expect(result.transaction_products).to.deep.equal(products);
 			});
 
 		});

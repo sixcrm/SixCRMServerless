@@ -196,11 +196,19 @@ function getValidProcessorResponse(){
 
 function getValidConfirmation(){
 
+	let session = getValidSession();
+	delete session.account;
+
+	let customer = getValidCustomer();
+	delete customer.account;
+	delete customer.credit_cards;
+
 	return {
-		transactions: MockEntities.getValidTransactions(),
+		orders: [
+			MockEntities.getValidOrder()
+		],
 		session: getValidSession(),
-		customer: getValidCustomer(),
-		transaction_products: MockEntities.getValidTransactionProducts(null, true)
+		customer: getValidCustomer()
 	};
 
 }
@@ -540,6 +548,9 @@ describe('checkout', function () {
 			let transactions = getValidTransactions();
 			let products = getValidTransactionProducts(null, true);
 			let customer = getValidCustomer();
+			let rebill = MockEntities.getValidRebill();
+			rebill.parentsession = session.id;
+			let rebills = [rebill];
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
 				get() {
@@ -568,6 +579,10 @@ describe('checkout', function () {
 				}
 				getCampaign() {
 					return Promise.resolve(campaign);
+				}
+				listRebills(session) {
+					expect(session).to.be.defined;
+					return Promise.resolve(rebills);
 				}
 			});
 
@@ -677,6 +692,12 @@ describe('checkout', function () {
 			let campaign = getValidCampaign();
 			let session = getValidSession();
 
+
+			let rebill = MockEntities.getValidRebill();
+			rebill.parentsession = session.id;
+			let rebills = [rebill];
+
+
 			//event.body = JSON.stringify(getValidEventBody(null, true));
 			session.completed = false;
 			let customer = getValidCustomer();
@@ -684,7 +705,6 @@ describe('checkout', function () {
 			customer.creditcards = [];
 
 			let stored_creditcard = getValidCreditCard();
-			let rebill = getValidRebill();
 			let transactions = getValidTransactions();
 			let processor_response = getValidProcessorResponse();
 			let response_type = 'success';
@@ -730,7 +750,7 @@ describe('checkout', function () {
 				}
 			});
 
-			let mock_customer = class {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), class {
 				constructor(){}
 				sanitize(){}
 				addCreditCard() {
@@ -750,9 +770,7 @@ describe('checkout', function () {
 				update({entity}) {
 					return Promise.resolve(entity);
 				}
-			};
-
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
+			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
 				constructor(){}
@@ -767,15 +785,12 @@ describe('checkout', function () {
 				}
 			});
 
-			let mock_campaign = class {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), class {
 				constructor(){}
-
 				get () {
 					return Promise.resolve(campaign);
 				}
-			};
-
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
+			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/tracker/Tracker.js'), class {
 				constructor(){ }
@@ -819,11 +834,19 @@ describe('checkout', function () {
 				getCampaign() {
 					return Promise.resolve(campaign);
 				}
+				listRebills(session){
+					expect(session).to.be.defined;
+					return Promise.resolve(rebills);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
 				update({entity}) {
 					return Promise.resolve(entity);
+				}
+				listTransactions(rebill){
+					expect(rebill).to.be.defined;
+					return Promise.resolve(transactions);
 				}
 			});
 
