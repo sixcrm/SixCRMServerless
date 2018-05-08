@@ -9,5 +9,19 @@
 		}]
 	},
 	"result_name": "records",
-	"expect": []
+	"expect": [
+		[{
+			"key": "queueName",
+			"value": "hold_failed"
+		}, {
+			"key": "averageTime",
+			"value": 0
+		}, {
+			"key": "numberOfRebills",
+			"value": "36"
+		}, {
+			"key": "failureRate",
+			"value": "0"
+		}]
+	]
 }

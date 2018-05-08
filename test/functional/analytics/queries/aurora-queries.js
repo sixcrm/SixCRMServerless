@@ -47,7 +47,7 @@ suites.map((suite) => {
 
 			await prepareDatabase();
 
-			const result = await analyticsController.getReport(test.input);
+			const result = await analyticsController[test.method](test.input);
 
 			// const fs = require('fs');
 			// await fs.writeFileSync(test.test_case + '.json', JSON.stringify(result));
