@@ -1,66 +1,16 @@
 const _ = require('lodash');
 const path = require('path');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const paginationutilities = global.SixCRM.routes.include('lib', 'pagination-utilities.js');
-const AnalyticsUtilities = global.SixCRM.routes.include('controllers', 'analytics/AnalyticsUtilities.js');
 const CacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
-module.exports = class AnalyticsController extends AnalyticsUtilities {
+module.exports = class AnalyticsController {
 
 	constructor() {
-
-		super();
-
-		this.default_query_filters = [
-			'campaign',
-			'merchant_provider',
-			'affiliate',
-			's1',
-			's2',
-			's3',
-			's4',
-			's5',
-			'account'
-		];
 
 		this.cacheController = new CacheController();
 		this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
 
 	}
-
-	/* deprecate */
-
-	getCurrentQueueSummary(parameters) {
-
-		du.debug('Get Rebills current queue summary');
-
-		const queuename = parameters.queuename;
-
-		parameters = this.appendQueueName(parameters, queuename);
-
-		return this.getResults('deprecate/order_engine/rebills_current_summary', parameters, [
-			'account'
-		]);
-
-	}
-
-	getRebillsInQueue(parameters) {
-
-		const queue_name = parameters.queuename;
-
-		du.debug('Get Rebills In Queue', queue_name);
-
-		parameters = paginationutilities.mergePagination(parameters.analyticsfilter, paginationutilities.createSQLPaginationInput(parameters.pagination));
-
-		if (!_.isUndefined(queue_name)) {
-			parameters = this.appendQueueName(parameters, queue_name);
-		}
-
-		return this.getResults('deprecate/order_engine/rebills_in_queue', parameters, this.default_query_filters);
-
-	}
-
-	/* new methods */
 
 	async getReportFacets(parameters) {
 
@@ -187,6 +137,10 @@ module.exports = class AnalyticsController extends AnalyticsUtilities {
 			case 'rebillsInQueue': {
 				const resolveParams = require('./queries/reports/rebills-in-queue/params');
 				return this.query('reports/rebills-in-queue', await resolveParams(parameters, parameters.pagination));
+			}
+			case 'rebillsCurrent': {
+				const resolveParams = require('./queries/reports/rebills-current/params');
+				return this.query('reports/rebills-current', await resolveParams(parameters));
 			}
 			default:
 				throw new Error('Report not found');
