@@ -120,16 +120,18 @@ describe('controllers/providers/ec2-provider', () => {
 
 	describe('addSecurityGroupIngressRules', () => {
 
-		it('throws error when group id and name are missing', () => {
+		it('throws error when group id and name are missing', async () => {
 
 			const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
 			const ec2provider = new EC2Provider();
 
 			try {
-				ec2provider.addSecurityGroupIngressRules('a_security_group_name')
-			}catch(error){
-				expect(error.message).to.equal('[500] Inappropriate Parameterization');
+				await ec2provider.addSecurityGroupIngressRules('a_security_group_name');
 			}
+			catch (error) {
+				expect(error.code).to.equal(500);
+			}
+
 		});
 
 		it('adds security group ingress rules', () => {
@@ -192,14 +194,14 @@ describe('controllers/providers/ec2-provider', () => {
 
 	describe('assureSecurityGroup', () => {
 
-		it('throws error when group id and name are undefined', () => {
+		it('throws error when group id and name are undefined', async () => {
 			const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
 			const ec2provider = new EC2Provider();
 
 			try {
-				ec2provider.assureSecurityGroup('any_params')
+				await ec2provider.assureSecurityGroup('any_params');
 			}catch(error){
-				expect(error.message).to.equal('[500] EC2Provider.assureSecurityGroup expects GroupName of GroupId arguments');
+				expect(error.code).to.equal(500);
 			}
 		});
 
