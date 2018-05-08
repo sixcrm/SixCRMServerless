@@ -29,7 +29,7 @@ module.exports = {
 		resolve: function (root, args) {
 
 			const analyticsController = new AnalyticsController();
-			return analyticsController.executeAnalyticsFunction(args, 'getReport');
+			return analyticsController.getReport(args);
 
 		}
 	},
@@ -44,7 +44,7 @@ module.exports = {
 		resolve: function (root, args) {
 
 			const analyticsController = new AnalyticsController();
-			return analyticsController.executeAnalyticsFunction(args, 'getReportFacets');
+			return analyticsController.getReportFacets(args);
 
 		}
 	}
