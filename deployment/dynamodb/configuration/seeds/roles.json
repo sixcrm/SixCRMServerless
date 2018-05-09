@@ -158,7 +158,8 @@
 			"shippingreceipt/*",
 			"transaction/*",
 			"user/*",
-			"useracl/*"
+			"useracl/*",
+			"usersetting/*"
 		],
 		"deny":["*"]
 	},
