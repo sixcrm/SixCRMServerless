@@ -85,7 +85,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		let [customer, transactions, campaign] = await this.hydrateSessionProperties(session);
 		let transaction_products = await this.getTransactionProducts(transactions);
 
-		await this.closeSession();
+		await this.closeSession(session);
 
 		await this.postProcessing(session, campaign);
 
