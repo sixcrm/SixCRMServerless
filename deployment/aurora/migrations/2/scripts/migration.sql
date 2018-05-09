@@ -1,0 +1,1 @@
+ALTER TABLE analytics.f_transaction_product_schedule ADD COLUMN product_schedule_name VARCHAR(150)
