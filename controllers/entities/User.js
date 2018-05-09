@@ -14,6 +14,7 @@ const entityController = global.SixCRM.routes.include('controllers', 'entities/E
 module.exports = class UserController extends entityController {
 
 	constructor(){
+
 		super('user');
 
 		this.search_fields = ['name', 'firstname', 'lastname'];
