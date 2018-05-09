@@ -30,11 +30,11 @@ module.exports.graphObj = new GraphQLObjectType({
 			resolve: role => roleController.getPermissions(role)
 		},
 		created_at: {
-			type: new GraphQLNonNull(GraphQLString),
+			type: GraphQLString,
 			description: 'ISO8601 datetime when the entity was created.',
 		},
 		updated_at: {
-			type: new GraphQLNonNull(GraphQLString),
+			type: GraphQLString,
 			description: 'ISO8601 datetime when the entity was updated.',
 		}
 	}),
