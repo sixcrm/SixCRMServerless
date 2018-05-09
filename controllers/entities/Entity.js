@@ -515,7 +515,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 		} catch (ex) {
 
-			return this.handleErrors(error);
+			return this.handleErrors(ex);
 
 		}
 
