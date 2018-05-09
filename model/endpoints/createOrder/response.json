@@ -4,7 +4,7 @@
 	"title": "Create Order Response",
 	"type":"object",
 	"properties": {
-		"order":{"$ref":"../../entities/order.json"}
+		"order":{"$ref":"../../entities/meta/order.json"}
 	},
 	"required":["order"]
 }
