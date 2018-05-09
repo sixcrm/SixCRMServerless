@@ -107,7 +107,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
 				}
 
-				if(!this.isUserIntrospection(event)) {
+				if(!this.isUserIntrospection(event) && !this.isCreateAccount(event)) {
 					throw eu.getError('forbidden', 'Unknown user.  Please contact the system administrator.');
 				}
 
@@ -197,6 +197,18 @@ module.exports = class AuthenticatedController extends endpointController {
 		du.debug('Is User Introspection');
 
 		if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(query)?[\s\n\r]*{[\s\n\r]*userintrospection[\s\n\r]*{/)) {
+			return true;
+		}
+
+		return false;
+
+	}
+
+	isCreateAccount(event) {
+
+		du.debug('Is User Introspection');
+
+		if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(query)?[\s\n\r]*{[\s\n\r]*createaccount[\s\n\r]*{/)) {
 			return true;
 		}
 

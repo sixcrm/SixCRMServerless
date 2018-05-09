@@ -17,21 +17,19 @@ class AccountController extends entityController {
 
 	}
 
-	create({
-		entity
-	}) {
+	async create({entity}){
 
 		du.debug('Account.create()');
 
-		this.supplyLowercaseName({
-			entity: entity
-		});
+		this.supplyLowercaseName({entity: entity});
 
-		return this.verifyAccountName({
-			entity: entity
-		}).then(() => super.create({
-			entity: entity
-		}));
+		await this.verifyAccountName({entity: entity})
+
+		this.disableACLs();
+		let result = await super.create({entity: entity});
+		this.enableACLs();
+
+		return result;
 
 	}
 
@@ -139,9 +137,7 @@ class AccountController extends entityController {
 		entity.name_lowercase = entity.name.toLowerCase();
 	}
 
-	verifyAccountName({
-		entity
-	}) {
+	async verifyAccountName({entity}){
 
 		du.debug('Verify Account Name');
 
@@ -152,26 +148,24 @@ class AccountController extends entityController {
 
 		du.debug('Query parameters', query_parameters);
 
-		return super.list({
-			query_parameters: query_parameters
-		})
-			.then(response => {
+		this.disableACLs();
+		let response = await super.list({query_parameters: query_parameters});
+		this.enableACLs();
 
-				du.debug('Accounts with name ' + entity.name, response ? response.accounts : []);
+		du.debug('Accounts with name ' + entity.name, response ? response.accounts : []);
 
-				if (
-					objectutilities.hasRecursive(response, 'accounts') &&
-					arrayutilities.isArray(response.accounts) &&
-					arrayutilities.filter(response.accounts, (account) => account.id !== entity.id).length > 0
-				) {
+		if(
+			objectutilities.hasRecursive(response, 'accounts') &&
+			arrayutilities.isArray(response.accounts) &&
+			arrayutilities.filter(response.accounts, (account) => account.id !== entity.id).length > 0
+		){
 
-					du.error('An account already exists with name: "' + entity.name + '"');
-					throw eu.getError('bad_request', 'An account already exists with name: "' + entity.name + '"')
-				}
+			du.error('An account already exists with name: "' + entity.name + '"');
+			throw eu.getError('bad_request', 'An account already exists with name: "' + entity.name + '"')
 
-				return entity;
+		}
 
-			});
+		return entity;
 
 	}
 
