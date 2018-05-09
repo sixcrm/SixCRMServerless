@@ -1,5 +1,3 @@
-
-
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
@@ -186,7 +184,7 @@ describe('createLead', function () {
 
 	describe('constructor', () => {
 		it('successfully constructs', () => {
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
 			expect(objectutilities.getClassName(createLeadController)).to.equal('CreateLeadController');
@@ -283,7 +281,7 @@ describe('createLead', function () {
 
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
 			return createLeadController.execute(event).then(result => {
@@ -369,7 +367,7 @@ describe('createLead', function () {
 			});
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
 			return createLeadController.execute(event).then(result => {
@@ -380,9 +378,9 @@ describe('createLead', function () {
 
 	});
 
-	describe('assureCustomer', () => {
+	describe('getCustomer', () => {
 
-		it('successfully sets a new customer', () => {
+		it('successfully gets a new customer', () => {
 
 			let event = getValidEventBody();
 			let customer = getValidCustomer();
@@ -399,13 +397,11 @@ describe('createLead', function () {
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('event', event);
-			return createLeadController.assureCustomer().then(result => {
-				expect(result).to.equal(true);
-				expect(createLeadController.parameters.store['customer']).to.deep.equal(customer);
+			return createLeadController.getCustomer(event).then(result => {
+				expect(result).to.deep.equal(customer);
 			});
 
 		});
@@ -430,21 +426,19 @@ describe('createLead', function () {
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('event', event);
-			return createLeadController.assureCustomer().then(result => {
-				expect(result).to.equal(true);
-				expect(createLeadController.parameters.store['customer']).to.deep.equal(customer);
+			return createLeadController.getCustomer(event).then(result => {
+				expect(result).to.deep.equal(customer);
 			});
 
 		})
 	});
 
-	describe('assureAffiliates', () => {
+	describe('getAffiliates', () => {
 
-		it('successfully assures affiliates', () => {
+		it('successfully gets affiliates', () => {
 
 			let event = getValidEventBody();
 			let affiliates = getValidAffiliates();
@@ -461,13 +455,11 @@ describe('createLead', function () {
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('event', event);
-			return createLeadController.assureAffiliates().then(result => {
-				expect(result).to.equal(true);
-				expect(createLeadController.parameters.store['affiliates']).to.deep.equal(affiliates);
+			return createLeadController.getAffiliates(event).then(result => {
+				expect(result).to.deep.equal(affiliates);
 			});
 
 		});
@@ -488,20 +480,19 @@ describe('createLead', function () {
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('event', event);
-			return createLeadController.assureAffiliates().then(() => {
-				expect(createLeadController.parameters.affiliates).to.equal(undefined);
+			return createLeadController.getAffiliates(event).then((result) => {
+				expect(result).to.equal(undefined);
 			});
 
 		})
 	});
 
-	describe('setCampaign', () => {
+	describe('getCampaign', () => {
 
-		it('successfully sets the campaign', () => {
+		it('successfully gets the campaign', () => {
 
 			let event = getValidEventBody();
 			let campaign = getValidCampaign();
@@ -520,22 +511,20 @@ describe('createLead', function () {
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('event', event);
-			return createLeadController.setCampaign().then(result => {
-				expect(result).to.equal(true);
-				expect(createLeadController.parameters.store['campaign']).to.deep.equal(campaign);
+			return createLeadController.getCampaign(event).then(result => {
+				expect(result).to.deep.equal(campaign);
 			});
 
 		});
 
 	});
 
-	describe('assureLeadProperties', () => {
+	describe('getLeadProperties', () => {
 
-		it('successfully assures lead properties', () => {
+		it('successfully gets lead properties', () => {
 
 			let event = getValidEventBody();
 			let customer = getValidCustomer();
@@ -577,16 +566,13 @@ describe('createLead', function () {
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('event', event);
-
-			return createLeadController.assureLeadProperties().then(result => {
-				expect(result).to.equal(true);
-				expect(createLeadController.parameters.store['campaign']).to.deep.equal(campaign);
-				expect(createLeadController.parameters.store['affiliates']).to.deep.equal(affiliates);
-				expect(createLeadController.parameters.store['customer']).to.deep.equal(customer);
+			return createLeadController.getLeadProperties(event).then(([customerResult, campaignResult, affiliatesResult]) => {
+				expect(customerResult).to.deep.equal(customer);
+				expect(campaignResult).to.deep.equal(campaign);
+				expect(affiliatesResult).to.deep.equal(affiliates);
 			});
 
 		});
@@ -605,18 +591,11 @@ describe('createLead', function () {
 				completed: false
 			}, affiliates);
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('customer', customer);
-			createLeadController.parameters.set('campaign', campaign);
-			createLeadController.parameters.set('affiliates', affiliates);
-
-			return createLeadController.createSessionPrototype().then(result => {
-				expect(result).to.equal(true);
-				expect(createLeadController.parameters.store['session_prototype']).to.deep.equal(session_prototype);
-
-			});
+			let result = createLeadController.createSessionPrototype(customer, campaign, affiliates);
+			expect(result).to.deep.equal(session_prototype);
 		});
 
 		it('creates a session prototype even without affiliate parameter', () => {
@@ -629,16 +608,11 @@ describe('createLead', function () {
 				completed: false
 			};
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('customer', customer);
-			createLeadController.parameters.set('campaign', campaign);
-
-			return createLeadController.createSessionPrototype().then(result => {
-				expect(result).to.equal(true);
-				expect(createLeadController.parameters.store['session_prototype']).to.deep.equal(session_prototype);
-			});
+			let result = createLeadController.createSessionPrototype(customer, campaign, undefined);
+			expect(result).to.deep.equal(session_prototype);
 		});
 
 	});
@@ -658,13 +632,11 @@ describe('createLead', function () {
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('session_prototype', session_prototype);
-			return createLeadController.assureSession().then(result => {
-				expect(result).to.equal(true);
-				expect(createLeadController.parameters.store['session']).to.deep.equal(session);
+			return createLeadController.assureSession(session_prototype).then(result => {
+				expect(result).to.deep.equal(session);
 			});
 
 		});
@@ -675,15 +647,13 @@ describe('createLead', function () {
 		it('successfully triggers all post processing', () => {
 
 			let session = getValidSession();
-			let event = getValidEventBody();
+			let campaign = getValidCampaign();
+			let affiliates = getValidAffiliates();
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('session', session);
-			createLeadController.parameters.set('event', event);
-
-			return createLeadController.postProcessing();
+			return createLeadController.postProcessing(session, campaign, affiliates);
 
 		});
 
@@ -742,12 +712,10 @@ describe('createLead', function () {
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
-			let CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 			const createLeadController = new CreateLeadController();
 
-			createLeadController.parameters.set('event', event);
-
-			return createLeadController.createLead().then(result => {
+			return createLeadController.createLead(event).then(result => {
 				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
 			});
 
