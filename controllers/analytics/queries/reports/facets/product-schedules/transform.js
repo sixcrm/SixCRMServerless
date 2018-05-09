@@ -20,7 +20,7 @@ module.exports = async (results) => {
 
 	}
 
-	const productSchedules = _.sortBy(response.productschedules, 'name') || [];
+	const productSchedules = _.sortBy(response, 'name') || [];
 
 	return {
 		facet: 'productSchedule',

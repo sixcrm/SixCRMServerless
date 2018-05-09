@@ -20,7 +20,7 @@ module.exports = async (results) => {
 
 	}
 
-	const campaigns = _.sortBy(response.campaigns, 'name') || [];
+	const campaigns = _.sortBy(response, 'name') || [];
 
 	return {
 		facet: 'campaign',

@@ -1,6 +1,7 @@
 
 const _ = require('lodash');
-
+const chunk = require('chunk');
+const BBPromise = require('bluebird');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -493,21 +494,30 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 
-	batchGet({ids, parameters}) {
+	async batchGet({ids, parameters}) {
 
 		du.debug('Batch Get');
 
-		return this.can({action: 'read', object: this.descriptive_name})
-			.then((permission) => this.catchPermissions(permission, 'read'))
-			.then(() => {
+		const permission = await this.can({action: 'read', object: this.descriptive_name});
+		this.catchPermissions(permission, 'read');
 
-				return this.dynamodbprovider.batchGet({table_name: this.table_name, ids: ids, parameters: parameters})
-					.then((data) => this.buildResponse(data))
-					.catch((error) => {
-						return this.handleErrors(error)
-					})
+		try {
 
-			});
+			const chunks = chunk(ids, 100);
+
+			return BBPromise.reduce(chunks, async (memo, ids) => {
+
+				const data = await this.dynamodbprovider.batchGet({table_name: this.table_name, ids: ids, parameters: parameters});
+				memo.push(...data[this.table_name]);
+				return memo;
+
+			}, []);
+
+		} catch (ex) {
+
+			return this.handleErrors(error);
+
+		}
 
 	}
 

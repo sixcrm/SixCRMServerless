@@ -20,7 +20,7 @@ module.exports = async (results) => {
 
 	}
 
-	const mids = _.sortBy(response.merchantproviders, 'name') || [];
+	const mids = _.sortBy(response, 'name') || [];
 
 	return {
 		facet: 'mid',

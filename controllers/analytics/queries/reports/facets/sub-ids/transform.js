@@ -20,7 +20,7 @@ module.exports = async (results) => {
 
 	}
 
-	const affiliates = _.sortBy(response.affiliates, 'name') || [];
+	const affiliates = _.sortBy(response, 'name') || [];
 
 	return {
 		facet: 'subId',
