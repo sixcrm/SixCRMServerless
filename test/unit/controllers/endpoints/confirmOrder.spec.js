@@ -256,9 +256,7 @@ describe('confirmOrder', function () {
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();
 
-			confirmOrderController.parameters.set('session', session);
-
-			return confirmOrderController.closeSession().then(result => {
+			return confirmOrderController.closeSession(session).then(result => {
 				expect(result).to.equal(true);
 			});
 
@@ -320,13 +318,12 @@ describe('confirmOrder', function () {
 			});
 
 			let session = getValidSession();
+			let campaign = getValidCampaign();
 
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();
 
-			confirmOrderController.parameters.set('session', session);
-
-			return confirmOrderController.postProcessing();
+			return confirmOrderController.postProcessing(session, campaign);
 
 		});
 	});
@@ -511,8 +508,6 @@ describe('confirmOrder', function () {
 
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();
-
-			confirmOrderController.parameters.set('event', event);
 
 			return confirmOrderController.confirmOrder(event).then(result => {
 				//expect(result).to.have.property('transactions');

@@ -3,10 +3,11 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
-const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
+const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 
 module.exports = class CreateLeadController extends transactionEndpointController {
 
@@ -60,6 +61,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 		this.campaignController = new CampaignController();
 		this.customerController = new CustomerController();
 		this.sessionController = new SessionController();
+		this.affiliateHelperController = new AffiliateHelperController();
 
 		this.initialize();
 
@@ -70,121 +72,77 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 		du.debug('Execute');
 
 		return this.preamble(event)
-			.then(() => this.createLead());
+			.then(() => this.createLead(this.parameters.get('event')));
 
 	}
 
-	createLead() {
+	async createLead(event) {
 
 		du.debug('Create Lead');
 
-		return this.assureLeadProperties()
-			.then(() => this.createSessionPrototype())
-			.then(() => this.assureSession())
-			.then(() => this.postProcessing())
-			.then(() => this.respond());
+		let [customer, campaign, affiliates] = await this.getLeadProperties(event);
+		let session_prototype = this.createSessionPrototype(customer, campaign, affiliates);
+		let session = await this.assureSession(session_prototype);
+
+		await this.postProcessing();
+
+		return session;
 
 	}
 
-	respond(){
-
-		du.debug('Respond');
-
-		const sessionHelperController = new SessionHelperController();
-		return sessionHelperController.getPublicFields(this.parameters.get('session'));
-
-	}
-
-	assureLeadProperties() {
+	getLeadProperties(event) {
 
 		du.debug('Assure Lead Properties');
 
-		let promises = [
-			this.assureCustomer(),
-			this.assureAffiliates(),
-			this.setCampaign()
-		];
-
-		return Promise.all(promises).then(() => {
-			return true;
-		});
+		return Promise.all([
+			this.getCustomer(event),
+			this.getCampaign(event),
+			this.getAffiliates(event)
+		]);
 
 	}
 
-	setCampaign() {
+	getCampaign(event) {
 
-		du.debug('Set Campaign');
+		du.debug('Get Campaign');
 
-		let event = this.parameters.get('event');
-
-		return this.campaignController.get({
-			id: event.campaign
-		}).then(campaign => {
-
-			this.parameters.set('campaign', campaign);
-
-			return true;
-
-		});
+		return this.campaignController.get({ id: event.campaign });
 
 	}
 
-	assureAffiliates() {
+	getAffiliates(event) {
 
 		du.debug('Assure Affiliates');
 
-		let event = this.parameters.get('event');
-
-		if (!_.has(this, 'affiliateHelperController')) {
-			const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
-
-			this.affiliateHelperController = new AffiliateHelperController();
-		}
-
 		return this.affiliateHelperController.handleAffiliateInformation(event).then(result => {
 
-			if (_.has(result, 'affiliates')) {
-				this.parameters.set('affiliates', result.affiliates);
-			}
-
-			return true;
+			return result.affiliates;
 
 		});
 
 	}
 
-	assureCustomer() {
+	getCustomer(event) {
 
 		du.debug('Assure Customer');
-
-		let event = this.parameters.get('event');
 
 		return this.customerController.getCustomerByEmail(event.customer.email).then((customer) => {
 
 			if (_.has(customer, 'id')) {
-				this.parameters.set('customer', customer);
-				return true;
+				return customer;
 			}
-
-			return this.customerController.create({
-				entity: event.customer
-			}).then(customer => {
-				this.parameters.set('customer', customer);
-				return true;
-			});
+			else {
+				return this.customerController.create({ entity: event.customer });
+			}
 
 		});
 
 	}
 
 	//Technical Debt:  Session Helper!
-	createSessionPrototype() {
+	createSessionPrototype(customer, campaign, affiliates) {
 
 		du.debug('Create Session Prototype');
-
-		let customer = this.parameters.get('customer');
-		let campaign = this.parameters.get('campaign');
-		let affiliates = this.parameters.get('affiliates', {fatal: false});
 
 		let session_prototype = {
 			customer: customer.id,
@@ -192,38 +150,31 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 			completed: false
 		};
 
-		if (!_.isNull(affiliates)) {
+		if (affiliates) {
 			session_prototype = objectutilities.merge(session_prototype, affiliates);
 		}
 
-		this.parameters.set('session_prototype', session_prototype);
-
-		return Promise.resolve(true);
+		return session_prototype;
 
 	}
 
-	assureSession() {
+	assureSession(session_prototype) {
 
 		du.debug('Assure Session');
 
-		let session_prototype = this.parameters.get('session_prototype');
-
 		//Technical Debt: test this 100%
-		return this.sessionController.assureSession(session_prototype).then(session => {
-			this.parameters.set('session', session);
-			return true;
-		});
+		return this.sessionController.assureSession(session_prototype);
 
 	}
 
-	postProcessing() {
+	postProcessing(session, campaign, affiliates) {
 
 		du.debug('Post Processing');
 
 		return AnalyticsEvent.push('lead', {
-			sessions: this.parameters.get('sessions', {fatal: false}),
-			campaign: this.parameters.get('campaign', {fatal: false}),
-			affiliates: this.parameters.get('affiliates', {fatal: false})
+			session,
+			campaign,
+			affiliates
 		});
 
 	}
