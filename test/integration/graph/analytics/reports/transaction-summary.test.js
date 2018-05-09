@@ -5,7 +5,7 @@ const tu = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
-let test_name = 'Get event funnel timeseries';
+let test_name = 'Transaction summary';
 
 let test_query = global.SixCRM.routes.include('handlers', 'endpoints/graph/queries/analytics/reports/transaction-summary/transaction-summary.json');
 

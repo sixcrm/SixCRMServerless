@@ -5,7 +5,7 @@ const tu = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
-let test_name = 'Get report facets';
+let test_name = 'Rebills current';
 
 let test_query = global.SixCRM.routes.include('handlers', 'endpoints/graph/queries/analytics/reports/rebills-current/rebills-current.json');
 

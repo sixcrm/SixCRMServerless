@@ -38,6 +38,12 @@ module.exports = new GraphQLEnumType({
 		},
 		rebillSummary: {
 			value: 'rebillSummary'
+		},
+		rebillsInQueue: {
+			value: 'rebillsInQueue'
+		},
+		rebillsCurrent: {
+			value: 'rebillsCurrent'
 		}
 	}
 })
