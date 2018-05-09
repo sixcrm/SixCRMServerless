@@ -80,10 +80,6 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		du.debug('Confirm Order');
 
-		if(_.isUndefined(event) || _.isNull(event)){
-			event = this.parameters.get('event');
-		}
-
 		let session = await this.hydrateSession(event);
 		this.validateSession(session);
 
