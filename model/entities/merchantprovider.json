@@ -26,7 +26,8 @@
 						"GMA",
 						"Group ISO",
 						"Test",
-						"Stripe"
+						"Stripe",
+						"AuthorizeNet"
 					]
 				},
 				"id": {
@@ -119,6 +120,9 @@
 						},
 						{
 							"$ref": "./components/merchantprovider/nmi.json"
+						},
+						{
+							"$ref": "./components/merchantprovider/authorizenet.json"
 						},
 						{
 							"$ref": "./components/merchantprovider/test.json"

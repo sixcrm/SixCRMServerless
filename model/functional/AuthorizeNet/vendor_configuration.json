@@ -1,0 +1,15 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/AuthorizeNet/vendor_configuration.json",
+	"title": "AuthorizeNet Configuration",
+	"type": "object",
+	"properties": {
+		"endpoint": {
+			"type": "string",
+			"format": "uri"
+		}
+	},
+	"required": [
+		"endpoint"
+	]
+}

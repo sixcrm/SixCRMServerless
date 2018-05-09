@@ -47,6 +47,16 @@
 	"updated_at":"2018-04-28T14:40:00.000Z"
 },
 {
+	"id":"611bb3fe-b93d-44c7-82ff-42935bd8c317",
+	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"name":"AuthorizeNet Sandbox Campaign",
+	"description": "Campaign for transaction testing with AuthorizeNet",
+	"allow_prepaid": false,
+	"show_prepaid": false,
+	"created_at":"2018-04-28T14:40:00.000Z",
+	"updated_at":"2018-04-28T14:40:00.000Z"
+},
+{
   "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
   "affiliate_allow": [],
   "affiliate_deny": [],

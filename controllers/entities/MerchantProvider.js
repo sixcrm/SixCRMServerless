@@ -16,7 +16,8 @@ module.exports = class MerchantProviderController extends entityController {
 		this.encrypted_attribute_paths = [
 			'gateway.username',
 			'gateway.password',
-			'gateway.api_key'
+			'gateway.api_key',
+			'gateway.transaction_key'
 		];
 
 	}
@@ -64,4 +65,3 @@ module.exports = class MerchantProviderController extends entityController {
 	}
 
 }
-

@@ -12,6 +12,7 @@ let NMIType = require('./types/merchantprovider/gateways/NMIType');
 let TestMerchantProviderType = require('./types/merchantprovider/gateways/TestMerchantProviderType');
 let InnovioType = require('./types/merchantprovider/gateways/InnovioType');
 let StripeType = require('./types/merchantprovider/gateways/StripeType');
+let AuthorizeNetType = require('./types/merchantprovider/gateways/AuthorizeNetType');
 let GatewayType = require('./types/merchantprovider/gateways/gatewayType');
 
 //Technical Debt: Hack!
@@ -29,6 +30,7 @@ module.exports = new GraphQLSchema({
 		TestMerchantProviderType.graphObj,
 		InnovioType.graphObj,
 		StripeType.graphObj,
+		AuthorizeNetType.graphObj,
 		GatewayType.graphObj,
 		HashtagType.graphObj,
 		ThreePLType.graphObj,

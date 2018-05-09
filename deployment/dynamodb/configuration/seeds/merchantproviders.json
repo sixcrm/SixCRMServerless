@@ -111,6 +111,42 @@
 		"updated_at":"2017-04-06T18:41:12.521Z"
 	},
 	{
+		"id":"c42cbd57-a0f2-4eb7-9a06-3766017c8216",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name":"AuthorizeNet Account",
+		"processor":{
+			"name":"AuthorizeNet"
+		},
+		"processing":{
+			"monthly_cap": 1000000000.00,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17,
+			"transaction_counts":{
+				"daily":1000000,
+				"monthly":1000000,
+				"weekly":1000000
+			}
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"AuthorizeNet",
+			"name":"AuthorizeNet",
+			"api_key": "7zPJg88Hg2LX",
+			"transaction_key": "2J6hsH3b45R8Ps8w"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
 		"id":"a32a3f71-1234-4d9e-a9a1-98ecedb88f24",
 		"account":"eefdeca6-41bc-4af9-a561-159acb449b5e",
 		"name":"Test MID 1",

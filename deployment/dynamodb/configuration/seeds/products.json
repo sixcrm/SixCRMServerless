@@ -177,6 +177,21 @@
 		"updated_at":"2018-04-28T14:40:00.000Z"
 	},
 	{
+		"id": "57c77c6c-ba4f-4513-a91b-eba32dc988bc",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name": "AuthorizeNet Sandbox Test Product",
+		"description":"This is a test product for the purpose of testing live transactions with AuthorizeNet",
+		"default_price":1.00,
+		"dynamic_pricing": {
+			"min": 1.00,
+			"max": 2.00
+		},
+		"ship":false,
+		"merchantprovidergroup": "245f8937-140f-49cd-bd4e-79510c723ee3",
+		"created_at":"2018-04-28T14:40:00.000Z",
+		"updated_at":"2018-04-28T14:40:00.000Z"
+	},
+	{
 	  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
 	  "attributes": {
 	    "images": []

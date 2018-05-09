@@ -55,6 +55,19 @@
 	"updated_at":"2018-04-28T14:40:00.000Z"
 },
 {
+	"id":"245f8937-140f-49cd-bd4e-79510c723ee3",
+	"name": "AuthorizeNet Sandbox Provider Group",
+	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"merchantproviders": [
+		{
+			"id":"c42cbd57-a0f2-4eb7-9a06-3766017c8216",
+			"distribution":1.0
+		}
+	],
+	"created_at":"2018-04-28T14:40:00.000Z",
+	"updated_at":"2018-04-28T14:40:00.000Z"
+},
+{
   "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
   "created_at": "2018-05-01T20:48:08.035Z",
   "id": "8a9b88d3-a2e5-49cf-a38f-63468312ceae",
