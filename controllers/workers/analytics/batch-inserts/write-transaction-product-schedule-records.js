@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
-const ATTRIBUTES = 3;
+const ATTRIBUTES = 4;
 
 module.exports = class WriteTransactionProductScheduleRecords {
 
@@ -27,7 +27,8 @@ module.exports = class WriteTransactionProductScheduleRecords {
 			'INSERT INTO analytics.f_transaction_product_schedule ( \
 				transaction_id, \
 				product_schedule_id, \
-				product_id ) \
+				product_id, \
+				product_schedule_name) \
 				VALUES ';
 
 		const values = records.map((r, i) => {
@@ -46,7 +47,8 @@ module.exports = class WriteTransactionProductScheduleRecords {
 			return [
 				transactionId,
 				r.id,
-				productId
+				productId,
+				r.name
 			];
 
 		}));
