@@ -97,7 +97,7 @@ module.exports = class AuroraSchemaDeployment {
 
 	async _executeQuery(connection, query, args) {
 
-		du.debug('AuroraSchemaDeployment._executeQuery()');
+		du.debug('AuroraSchemaDeployment._executeQuery()', query);
 
 		if (!query) {
 

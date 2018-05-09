@@ -120,7 +120,18 @@ module.exports = class AnalyticsController {
 			}
 			case 'eventFunnelTimeseries': {
 				const resolveParams = require('./queries/reports/event-funnel-timeseries/params');
-				return this.query('reports/event-funnel-timeseries', await resolveParams(parameters));
+				const resolved =  await resolveParams(parameters);
+
+				if (_.includes(['main', 'upsell'], resolved.eventType)) {
+
+					return this.query('reports/event-funnel-timeseries-transactional', resolved);
+
+				} else {
+
+					return this.query('reports/event-funnel-timeseries', resolved);
+
+				}
+
 			}
 			case 'campaignsByAmount': {
 				const resolveParams = require('./queries/reports/campaigns-by-amount/params');
