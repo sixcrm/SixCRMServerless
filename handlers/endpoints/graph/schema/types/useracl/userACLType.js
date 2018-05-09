@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLString = require('graphql').GraphQLString;
@@ -35,6 +37,10 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLNonNull(roleType.graphObj),
 			description: 'The role related to user ACL object',
 			resolve: (user_acl) => {
+				if (_.isObject(user_acl.role)) {
+					return user_acl.role;
+				}
+
 				return userACLController.getRole(user_acl);
 			}
 		},
