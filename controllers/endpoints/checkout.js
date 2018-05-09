@@ -100,9 +100,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 
 		let event = this.parameters.get('event');
 
-		this.confirmOrderController.parameters.set('event', event);
-
-		return this.confirmOrderController.confirmOrder().then(result => {
+		return this.confirmOrderController.confirmOrder(event).then(result => {
 			this.parameters.set('confirmation', result);
 			return Promise.resolve(true);
 		});
