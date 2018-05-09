@@ -193,7 +193,7 @@ module.exports = class CampaignController extends entityController {
 
 	getByIds(ids) {
 
-		return this.listBy({list_array: ids, field: 'id'});
+		return this.batchGet({ids});
 
 	}
 
