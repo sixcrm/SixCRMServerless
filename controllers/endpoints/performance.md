@@ -236,3 +236,28 @@ After:
     confirmOrder
       ✓ successfully executes (43ms)
 
+  createLead
+    constructor
+      ✓ successfully constructs (61ms)
+    execute
+      ✓ successfully executes (185ms)
+      ✓ successfully executes with local event (123ms)
+    getCustomer
+      ✓ successfully gets a new customer
+      ✓ successfully retrieves a existing customer
+    getAffiliates
+      ✓ successfully gets affiliates
+      ✓ does not update parameter affiliates if not needed
+    getCampaign
+      ✓ successfully gets the campaign (40ms)
+    getLeadProperties
+      ✓ successfully gets lead properties
+    createSessionPrototype
+      ✓ successfully creates a session prototype
+      ✓ creates a session prototype even without affiliate parameter (39ms)
+    assureSession
+      ✓ successfully assures the session
+    postProcessing
+      ✓ successfully triggers all post processing
+    createLead
+      ✓ successfully creates a lead (77ms)

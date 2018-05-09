@@ -62,6 +62,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 		this.customerController = new CustomerController();
 		this.sessionController = new SessionController();
 		this.affiliateHelperController = new AffiliateHelperController();
+		this.sessionHelperController = new SessionHelperController();
 
 		this.initialize();
 
@@ -86,7 +87,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 		await this.postProcessing();
 
-		return session;
+		return this.sessionHelperController.getPublicFields(session);
 
 	}
 
