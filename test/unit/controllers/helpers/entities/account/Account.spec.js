@@ -114,8 +114,6 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
 
   });
 
-
-
   describe('deactivateAccount', () => {
     it('successfully schedules a account for deactivation', () => {
 
@@ -304,6 +302,89 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
       });
 
     });
+
+    it('successfully validates payment history when has previous declines', () => {
+
+      let session = MockEntities.getValidSession();
+      session.id = '3f4abaf6-52ac-40c6-b155-d04caeb0391f';
+
+      let rebill1 = MockEntities.getValidRebill();
+      rebill1.amount = 30;
+
+      let rebill2 = MockEntities.getValidRebill();
+      rebill2.amount = 30;
+
+      let rebills = [rebill1, rebill2];
+
+      let product_group = {
+        quantity:1,
+        amount: 30.00,
+        product: {
+      	  "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+      	  "attributes": {
+      	    "images": []
+      	  },
+      	  "created_at": "2018-05-01T20:21:55.566Z",
+      	  "default_price": 30,
+      	  "description": "$30 per month, unlimited transactions at $0.06 per transaction, one campaign",
+      	  "id": "aba9a683-85a4-45e7-9004-576c99a811ce",
+      	  "name": "Dynamic Watermark Product",
+      	  "ship": false,
+      	  "shipping_delay": 0,
+      	  "sku": "basic",
+      	  "updated_at": "2018-05-01T20:21:55.566Z"
+      	}
+      };
+
+      let good_transaction = MockEntities.getValidTransaction();
+      good_transaction.amount = 30.00;
+      good_transaction.products = [product_group];
+
+      let bad_transaction = MockEntities.getValidTransaction();
+      bad_transaction.result = 'fail';
+      bad_transaction.amount = 30.00;
+      bad_transaction.products = [product_group];
+
+      let transactions = {transactions:[bad_transaction, good_transaction]};
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        constructor(){}
+        disableACLs(){}
+        enableACLs(){}
+        listRebills(session){
+          expect(session).to.be.a('object');
+          return Promise.resolve(rebills);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        constructor(){}
+        disableACLs(){}
+        enableACLs(){}
+        listBySession({session}){
+          expect(session).to.be.a('string');
+          return Promise.resolve({rebills: rebills});
+        }
+        listTransactions(rebill){
+          expect(rebill).to.be.a('object');
+          if(rebill.id == rebill1.id){
+            return Promise.resolve({transactions:[bad_transaction]});
+          }else if(rebill.id == rebill2.id){
+            return Promise.resolve({transactions:[good_transaction]});
+          }
+          expect(false).to.equal(true);
+        }
+      });
+
+      const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
+      let accountHelperController = new AccountHelperController();
+
+      return accountHelperController._validateSessionPaymentHistory({session: session}).then(result => {
+        expect(result).to.equal(true);
+      });
+
+    });
+
   });
 
 });

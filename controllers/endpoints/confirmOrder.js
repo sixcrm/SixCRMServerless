@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
@@ -71,14 +72,17 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		du.debug('Execute');
 
-		return this.preamble(event)
-			.then(() => this.confirmOrder(this.parameters.get('event')));
+		return this.preamble(event).then(() => this.confirmOrder(this.parameters.get('event')));
 
 	}
 
 	async confirmOrder(event) {
 
 		du.debug('Confirm Order');
+
+		if(_.isUndefined(event) || _.isNull(event)){
+			event = this.parameters.get('event');
+		}
 
 		let session = await this.hydrateSession(event);
 		this.validateSession(session);

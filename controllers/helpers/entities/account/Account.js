@@ -358,7 +358,6 @@ module.exports = class AccountHelperController {
 
 	}
 
-	//move this to the Session Helper
 	async _validateSessionPaymentHistory({session}){
 
 		du.debug('Validate Session Payment History');
@@ -379,7 +378,12 @@ module.exports = class AccountHelperController {
 			throw eu.getError('server', 'Session missing rebills.');
 		}
 
-		let unpaid_promises = arrayutilities.map(rebills, async (rebill) => {
+		//Note:  Note that this is actually a bit complicated.
+		//When a user has one or more declines before paying for a aubscription, there are more than 1 rebill associated with the session, not all of which have corresponding paid rebills.
+		//So instead of looking for unpaid rebills, we look for a paid rebill
+		//Technical Debt:  Revisit, fix.
+
+		let paid_promises = arrayutilities.map(rebills, async (rebill) => {
 
 			this.rebillController.disableACLs();
 			let transactions = await this.rebillController.listTransactions(rebill);
@@ -393,23 +397,23 @@ module.exports = class AccountHelperController {
 
 			let rebill_sum = this._sumRebillTransactions(transactions);
 
-			if(rebill_sum < rebill.amount){
+			if(rebill_sum == rebill.amount){
 				return rebill;
 			}
 			return null;
 		});
 
-		let unpaid_rebills = await Promise.all(unpaid_promises);
+		let paid_rebills = await Promise.all(paid_promises);
 
-		unpaid_rebills = arrayutilities.filter(unpaid_rebills, unpaid_rebill => {
-			return (_.has(unpaid_rebill, 'id'));
+		paid_rebills = arrayutilities.filter(paid_rebills, paid_rebill => {
+			return (_.has(paid_rebill, 'id'));
 		});
 
-		if(arrayutilities.nonEmpty(unpaid_rebills)){
-			throw eu.getError('bad_request', 'Session has unpaid rebills.');
+		if(paid_rebills.length > 0){
+			return true;
 		}
 
-		return true;
+		throw eu.getError('bad_request', 'Session does not have a appropriate, paid rebill.');
 
 	}
 

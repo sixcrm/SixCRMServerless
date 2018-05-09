@@ -96,7 +96,6 @@ module.exports = class CheckoutController extends transactionEndpointController{
 
 	confirmOrder(){
 
-
 		du.debug('Confirm Order');
 
 		let event = this.parameters.get('event');
@@ -141,4 +140,3 @@ module.exports = class CheckoutController extends transactionEndpointController{
 	}
 
 }
-

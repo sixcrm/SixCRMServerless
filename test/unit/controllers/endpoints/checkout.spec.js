@@ -894,7 +894,7 @@ describe('checkout', function () {
 					return Promise.resolve(true);
 				}
 			});
-			
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
