@@ -36,9 +36,6 @@ describe('Get ' + test_name + ' Test', function () {
 			.send(test_query.body)
 			.expect(200)
 			.expect('Content-Type', 'application/json')
-			.expect('Access-Control-Allow-Origin', '*')
-			.expect('Access-Control-Allow-Methods', 'OPTIONS,POST')
-			.expect('Access-Control-Allow-Headers', 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token')
 			.end(function (err, response) {
 
 				if (err) {

@@ -5,9 +5,9 @@ const tu = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
-let test_name = 'Activities';
+let test_name = 'Product schedules by amount';
 
-let test_query = global.SixCRM.routes.include('handlers', 'endpoints/graph/queries/analytics/reports/activity/activity.json');
+let test_query = global.SixCRM.routes.include('handlers', 'endpoints/graph/queries/analytics/reports/product-schedules-by-amount/product-schedules-by-amount.json');
 
 //set the test user
 let test_user = {
