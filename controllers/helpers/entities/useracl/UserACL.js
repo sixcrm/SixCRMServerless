@@ -3,7 +3,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 //const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const RoleHelperController = global.SixCRM.routes.include('helpers', 'entities/role/Role.js');
-const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
 
 module.exports = class UserACLHelperController {
 
@@ -56,7 +55,9 @@ module.exports = class UserACLHelperController {
 
 		du.debug('Set Account Permissions');
 
+		const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
 		let accountHelperController = new AccountHelperController();
+
 		if(accountHelperController.isAccountDisabled(account)){
 
 			let roleHelperController = new RoleHelperController();

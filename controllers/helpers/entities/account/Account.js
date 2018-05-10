@@ -47,9 +47,15 @@ module.exports = class AccountHelperController {
 
 	}
 
-	async createNewAccount({account, user}){
+	async createNewAccount({account}){
 
 		du.debug('New Account');
+
+		if(!_.has(global, 'user')){
+			throw eu.getError('server', 'User not set.');
+		}
+
+		let user = global.user;
 
 		account = this.getAccountPrototype({account: account});
 
