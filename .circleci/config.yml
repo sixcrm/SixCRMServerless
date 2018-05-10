@@ -606,7 +606,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Analytics Integration Tests
-          command: npm run test-integration-analytics
+          command: SIX_VERBOSE=3 npm run test-integration-analytics
   transactional_integration_tests:
     <<: *job-defaults
     steps:
