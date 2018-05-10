@@ -171,8 +171,7 @@ module.exports = class CustomerController extends entityController {
 
 			return this.executeAssociatedEntityFunction('CreditCardController', 'batchGet', {
 				ids: creditcard_ids
-			})
-				.then(creditcards => this.getResult(creditcards, 'creditcards'));
+			});
 
 		}
 

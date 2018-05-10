@@ -213,7 +213,7 @@ describe('controllers/entities/Customer.js', () => {
 				constructor(){}
 
 				batchGet () {
-					return Promise.resolve({creditcards: credit_cards});
+					return Promise.resolve(credit_cards);
 				}
 			};
 
@@ -282,7 +282,7 @@ describe('controllers/entities/Customer.js', () => {
 				constructor(){}
 
 				batchGet () {
-					return Promise.resolve({creditcards: credit_cards});
+					return Promise.resolve(credit_cards);
 				}
 			};
 
@@ -334,7 +334,7 @@ describe('controllers/entities/Customer.js', () => {
 				constructor(){}
 
 				batchGet () {
-					return Promise.resolve({creditcards: credit_cards});
+					return Promise.resolve(credit_cards);
 				}
 			};
 
