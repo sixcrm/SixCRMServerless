@@ -594,6 +594,9 @@ describe('checkout', function () {
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				getResult(obj, key) {
+					return obj[key];
+				}
 				listTransactions() {
 					return Promise.resolve(transactions);
 				}
@@ -855,12 +858,15 @@ describe('checkout', function () {
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				getResult(obj, key) {
+					return obj[key];
+				}
 				update({entity}) {
 					return Promise.resolve(entity);
 				}
 				listTransactions(rebill){
 					expect(rebill).to.be.defined;
-					return Promise.resolve(transactions);
+					return Promise.resolve({transactions});
 				}
 			});
 

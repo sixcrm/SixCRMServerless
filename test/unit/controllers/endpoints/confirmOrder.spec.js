@@ -281,9 +281,12 @@ describe('confirmOrder', function () {
 			let customer = getValidCustomer();
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				getResult(obj, key) {
+					return obj[key];
+				}
 				listTransactions(rebill) {
 					expect(rebill).to.be.defined;
-					return Promise.resolve(transactions);
+					return Promise.resolve({transactions});
 				}
 			});
 
@@ -408,9 +411,12 @@ describe('confirmOrder', function () {
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				getResult(obj, key) {
+					return obj[key];
+				}
 				listTransactions(rebill){
 					expect(rebill).to.be.defined;
-					return Promise.resolve(transactions);
+					return Promise.resolve({transactions});
 				}
 			});
 
@@ -507,8 +513,11 @@ describe('confirmOrder', function () {
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				getResult(obj, key) {
+					return obj[key];
+				}
 				listTransactions() {
-					return Promise.resolve(transactions);
+					return Promise.resolve({transactions});
 				}
 				getParentSession() {
 					return Promise.resolve(session);
