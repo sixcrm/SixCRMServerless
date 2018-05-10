@@ -47,7 +47,7 @@ describe('Get ' + test_name + ' Test', function () {
 
 				assert.isObject(response.body.response, JSON.stringify(response.body));
 
-				assert.isTrue(tu.validateGraphResponse(response.body.response.data.analyticsfacets, 'analytics/reports/analytics-reports'));
+				assert.isTrue(tu.validateGraphResponse(response.body.response.data.analytics, 'analytics/reports/analytics-reports'));
 
 				done();
 
