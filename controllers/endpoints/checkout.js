@@ -131,7 +131,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 
 		this.createLeadController.parameters.set('event', event);
 
-		return this.createLeadController.createLead().then(result => {
+		return this.createLeadController.createLead(event).then(result => {
 			this.parameters.set('session', result);
 			return Promise.resolve(true);
 		});
