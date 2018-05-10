@@ -153,6 +153,10 @@ module.exports = class AnalyticsController {
 				const resolveParams = require('./queries/reports/rebills-current/params');
 				return this.query('reports/rebills-current', await resolveParams(parameters));
 			}
+			case 'productSchedulesByAmount': {
+				const resolveParams = require('./queries/reports/product-schedules-by-amount/params');
+				return this.query('reports/product-schedules-by-amount', await resolveParams(parameters, parameters.pagination));
+			}
 			default:
 				throw new Error('Report not found');
 
