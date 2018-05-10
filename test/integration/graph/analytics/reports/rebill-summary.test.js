@@ -1,6 +1,7 @@
 const request = require('supertest');
 const chai = require('chai');
 const assert = require('chai').assert;
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const tu = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
 chai.use(require('chai-json-schema'));
@@ -22,15 +23,15 @@ let account = {
 	id: '*'
 };
 
-let this_request = request(global.integration_test_config.endpoint);
+let req = request(global.integration_test_config.endpoint);
 
-describe('Get ' + test_name + ' Test', function () {
+describe('Get ' + test_name + ' Test', () => {
 
 	let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-	it('Should return return a 200 HTTP response code and a correctly formatted response', function (done) {
+	it('Should return return a 200 HTTP response code and a correctly formatted response', (done) => {
 
-		this_request.post('graph/' + account.id, {
+		req.post('graph/' + account.id, {
 			timeout: 5000
 		})
 			.set('Authorization', test_jwt)
@@ -44,15 +45,19 @@ describe('Get ' + test_name + ' Test', function () {
 
 				if (err) {
 
-					// du.warning(err);
+					du.error(err);
+
+					done(err);
+
+				} else {
+
+					assert.isObject(response.body.response, JSON.stringify(response.body));
+
+					assert.isTrue(tu.validateGraphResponse(response.body.response.data.analyticsfacets, 'analytics/reports/analytics-reports'));
+
+					done();
 
 				}
-
-				assert.isObject(response.body.response, JSON.stringify(response.body));
-
-				assert.isTrue(tu.validateGraphResponse(response.body.response.data.analyticsfacets, 'analytics/reports/analytics-reports'));
-
-				done();
 
 			});
 
