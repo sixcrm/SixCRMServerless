@@ -10,7 +10,7 @@ module.exports = async (parameters = {}) => {
 	const query = await readFile(path.join(__dirname, 'query.sql'), 'utf8');
 
 	const local = [];
-	QueryParser.resolveFilterValue(local, 'fr', 'account', parameters);
+	QueryParser.resolveFilterValue(local, 'r', 'account', parameters);
 	const filter = QueryParser.resolveFilterQuery(parameters, {
 		account: true
 	});
