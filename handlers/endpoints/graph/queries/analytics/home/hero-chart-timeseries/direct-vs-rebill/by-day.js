@@ -32,3 +32,4 @@ fs.writeFileSync(path.join(__dirname, 'by-day.json'), JSON.stringify({
 	},
 	body
 }, null, 4), 'utf8');
+
