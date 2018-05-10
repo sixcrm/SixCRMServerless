@@ -577,6 +577,22 @@ module.exports.graphObj = new GraphQLObjectType({
 				});
 			}
 		},
+		createnewaccount: {
+			type: accountType.graphObj,
+			description: 'Adds a new account.',
+			args: {
+				account: {
+					type: accountInputType.graphObj
+				},
+				user: {
+					type: userInputType.graphObj
+				}
+			},
+			resolve: (value, args) => {
+				const accountHelperController = new AccountHelperController();
+				return accountHelperController.createNewAccount({account: args.account, user: args.user});
+			}
+		},
 		createaccount: {
 			type: accountType.graphObj,
 			description: 'Adds a new account.',

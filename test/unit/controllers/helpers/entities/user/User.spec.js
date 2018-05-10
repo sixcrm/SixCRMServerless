@@ -222,6 +222,7 @@ describe('controllers/helpers/entities/user/User.js', () => {
 					return Promise.resolve(true);
 				}
 				disableACLs(){}
+				enableACLs(){}
 			})
 
 			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
@@ -263,6 +264,8 @@ describe('controllers/helpers/entities/user/User.js', () => {
 				create(){
 					return Promise.resolve(user_setting);
 				}
+				disableACLs(){}
+				enableACLs(){}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
@@ -274,6 +277,7 @@ describe('controllers/helpers/entities/user/User.js', () => {
 					return Promise.resolve(user);
 				}
 				disableACLs(){}
+				enableACLs(){}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'UserACL.js'), class {
@@ -309,7 +313,6 @@ describe('controllers/helpers/entities/user/User.js', () => {
 
 			let prototypes = userHelperController.buildCreateProfilePrototypes(email);
 			expect(prototypes).to.have.property('prototype_user');
-			expect(prototypes).to.have.property('prototype_account');
 			expect(prototypes).to.have.property('prototype_user_setting');
 			objectutilities.map(prototypes, (key) => {
 				expect(typeof prototypes[key]).to.equal('object');
@@ -340,6 +343,8 @@ describe('controllers/helpers/entities/user/User.js', () => {
 				create(){
 					return Promise.resolve(user);
 				}
+				enableACLs(){}
+				disableACLs(){}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Role.js'), class {
@@ -354,6 +359,8 @@ describe('controllers/helpers/entities/user/User.js', () => {
 				create(){
 					return Promise.resolve(user_setting);
 				}
+				enableACLs(){}
+				disableACLs(){}
 			});
 
 			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
@@ -364,12 +371,8 @@ describe('controllers/helpers/entities/user/User.js', () => {
 			return userHelperController.saveCreateProfilePrototypes(prototypes).then(entities => {
 
 				expect(entities).to.have.property('user');
-				expect(entities).to.have.property('account');
-				expect(entities).to.have.property('role');
 				expect(entities).to.have.property('user_setting');
 				expect(entities.user.id).to.equal(user.id);
-				expect(entities.account).to.have.property('id');
-				expect(entities.role).to.have.property('id');
 				expect(entities.user_setting.id).to.equal(user.id);
 
 			});
@@ -590,7 +593,7 @@ describe('controllers/helpers/entities/user/User.js', () => {
 
 	});
 
-	describe('setIntrospectionUser',  () => {
+	describe('setIntrospectionUser',  async () => {
 
 		let global_user;
 
@@ -602,7 +605,7 @@ describe('controllers/helpers/entities/user/User.js', () => {
 			global.user = global_user;
 		});
 
-		it('returns the user when a user is provided', () => {
+		it('returns the user when a user is provided', async () => {
 
 			const user = MockEntities.getValidUser();
 
@@ -615,7 +618,7 @@ describe('controllers/helpers/entities/user/User.js', () => {
 
 		});
 
-		it('returns the user when a email is provided', () => {
+		it('returns the user when a email is provided', async () => {
 
 			const user = MockEntities.getValidUser();
 
@@ -632,20 +635,20 @@ describe('controllers/helpers/entities/user/User.js', () => {
 
 		});
 
-		it('returns a error when no user is provided and fatal is true', () => {
+		it('returns a error when no user is provided and fatal is true', async () => {
 
 			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
 			const userHelperController = new UserHelperController();
 
 			try{
-				userHelperController.setIntrospectionUser(null, true);
+				await userHelperController.setIntrospectionUser(null, true);
 			}catch(error){
 				expect(error.message).to.equal('[400] Introspection method requires a user argument in fatal mode.');
 			}
 
 		});
 
-		it('returns a user from global (user is object)', () => {
+		it('returns a user from global (user is object)', async () => {
 
 			const user = MockEntities.getValidUser();
 			global.user = user;
@@ -653,13 +656,12 @@ describe('controllers/helpers/entities/user/User.js', () => {
 			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
 			const userHelperController = new UserHelperController();
 
-			return userHelperController.setIntrospectionUser(null).then(result => {
-				expect(result).to.deep.equal(user);
-			});
+			let result = await userHelperController.setIntrospectionUser(null, false);
+			expect(result).to.deep.equal(user);
 
 		});
 
-		it('returns a user from global (user is email)', () => {
+		it('returns a user from global (user is email)', async () => {
 
 			const user = MockEntities.getValidUser();
 			global.user = user.id;
@@ -671,13 +673,12 @@ describe('controllers/helpers/entities/user/User.js', () => {
 				return Promise.resolve(user);
 			}
 
-			return userHelperController.setIntrospectionUser(null).then(result => {
-				expect(result).to.deep.equal(user);
-			});
+			let result = await userHelperController.setIntrospectionUser(null, false);
+			expect(result).to.deep.equal(user);
 
 		});
 
-		it('returns error when neither user or global is set', () => {
+		it('returns error when neither user or global is set', async () => {
 
 			delete global.user;
 
@@ -685,7 +686,7 @@ describe('controllers/helpers/entities/user/User.js', () => {
 			const userHelperController = new UserHelperController();
 
 			try{
-				userHelperController.setIntrospectionUser(null);
+				await userHelperController.setIntrospectionUser(null, false);
 			}catch(error){
 				expect(error.message).to.equal('[400] Introspection method requires a global user or a user argument.');
 			}

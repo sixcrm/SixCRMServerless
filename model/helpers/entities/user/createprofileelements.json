@@ -4,11 +4,8 @@
   "title":"Create Profile Elements",
   "type":"object",
   "properties":{
-    "account":{"$ref":"../../../entities/account.json"},
     "user":{"$ref":"../../../entities/user.json"},
-    "role":{"$ref":"../../../entities/role.json"},
-    "user_setting":{"$ref":"../../../entities/usersetting.json"},
-    "user_acl":{"$ref":"../../../entities/useracl.json"}
+    "user_setting":{"$ref":"../../../entities/usersetting.json"}
   },
-  "required":["account", "user", "role", "user_setting"]
+  "required":["user", "user_setting"]
 }

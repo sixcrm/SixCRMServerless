@@ -1,7 +1,8 @@
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 //const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const RoleHelperController = global.SixCRM.routes.include('helpers', 'entities/role/Role.js');
-const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
 
 module.exports = class UserACLHelperController {
 
@@ -21,11 +22,42 @@ module.exports = class UserACLHelperController {
 
 	}
 
+	async createNewUserACL({account, user, role}){
+
+		du.debug('Create New User ACL');
+
+		if(!_.has(account, 'id')){
+			throw eu.getError('server', 'Expected account to have id property.');
+		}
+
+		if(!_.has(user, 'id')){
+			throw eu.getError('server', 'Expected user to have id property.');
+		}
+
+		if(!_.has(role, 'id')){
+			throw eu.getError('server', 'Expected role to have id property.');
+		}
+
+		let user_acl_prototype = await this.getPrototypeUserACL({user: user.id, account: account.id, role: role.id});
+
+		const UserACLController = global.SixCRM.routes.include('entities', 'UserACL.js');
+		const userACLController = new UserACLController();
+
+		userACLController.disableACLs();
+		let user_acl = await userACLController.create({entity: user_acl_prototype});
+		userACLController.enableACLs();
+
+		return user_acl;
+
+	}
+
 	async setAccountPermissions({role, account}){
 
 		du.debug('Set Account Permissions');
 
+		const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
 		let accountHelperController = new AccountHelperController();
+
 		if(accountHelperController.isAccountDisabled(account)){
 
 			let roleHelperController = new RoleHelperController();
