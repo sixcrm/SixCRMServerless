@@ -27,6 +27,8 @@ describe('controllers/entities/CreditCard.js', () => {
 	});
 
 	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
 			publish() {
 				return Promise.resolve({});

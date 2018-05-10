@@ -155,6 +155,7 @@ describe('tracking', () => {
 	});
 
 	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {
 				return Promise.resolve(true);
@@ -254,7 +255,7 @@ describe('tracking', () => {
 					return Promise.resolve(true);
 				}
 			});
-			
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let TrackingController = global.SixCRM.routes.include('controllers', 'endpoints/tracking.js');

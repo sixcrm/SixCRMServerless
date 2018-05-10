@@ -1,7 +1,6 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 
 describe('controllers/Role.js', () => {
 
@@ -14,6 +13,8 @@ describe('controllers/Role.js', () => {
 	});
 
 	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {
 				return Promise.resolve(true);
@@ -34,6 +35,7 @@ describe('controllers/Role.js', () => {
 				permissions: 'a_permission'
 			};
 
+			const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 			const roleController = new RoleController();
 
 			expect(roleController.getPermissions(role)).to.equal('a_permission');
@@ -43,6 +45,7 @@ describe('controllers/Role.js', () => {
 
 			let role = {};
 
+			const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 			const roleController = new RoleController();
 
 			expect(roleController.getPermissions(role)).to.equal(null);

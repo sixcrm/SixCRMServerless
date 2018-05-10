@@ -5,6 +5,7 @@ const uuidV4 = require('uuid/v4');
 
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 
 function getValidCampaign(){
@@ -113,6 +114,7 @@ describe('confirmOrder', function () {
 	});
 
 	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {
 				return Promise.resolve(true);
@@ -449,7 +451,7 @@ describe('confirmOrder', function () {
 			let rebill = MockEntities.getValidRebill();
 			rebill.parentsession = session.id;
 			let rebills = [rebill];
-			//let transactions = getValidTransactions();
+			let transactions = getValidTransactions();
 			let products = getValidTransactionProducts(null, true);
 			let customer = getValidCustomer();
 			let campaign = getValidCampaign();
@@ -504,7 +506,19 @@ describe('confirmOrder', function () {
 				}
 			});
 
-			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve(transactions);
+				}
+				getParentSession() {
+					return Promise.resolve(session);
+				}
+				getCustomer() {
+					return Promise.resolve(customer);
+				}
+			});
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 			const confirmOrderController = new ConfirmOrderController();

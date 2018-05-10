@@ -32,6 +32,8 @@ describe('controllers/Session.js', () => {
 	});
 
 	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {
 				return Promise.resolve(true);
@@ -347,6 +349,11 @@ describe('controllers/Session.js', () => {
 
 		it('returns null when session does not have a product schedule', () => {
 			let session = getValidSession();
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
+				createINQueryParameters() {
+				}
+			});
 
 			let SessionController = global.SixCRM.routes.include('controllers','entities/Session.js');
 			const sessionController = new SessionController();

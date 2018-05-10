@@ -5,8 +5,9 @@ const tu = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
-let test_name = 'Hero chart timeseries revenue versus orders';
-let test_query = global.SixCRM.routes.include('handlers', '/endpoints/graph/queries/analytics/home/hero-chart-timeseries/revenue-vs-orders/by-day.json');
+let test_name = 'Event funnel timeseries transactional';
+
+let test_query = global.SixCRM.routes.include('handlers', 'endpoints/graph/queries/analytics/reports/event-funnel-timeseries-transactional/event-funnel-timeseries-transactional.json');
 
 //set the test user
 let test_user = {

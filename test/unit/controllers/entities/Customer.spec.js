@@ -35,6 +35,8 @@ describe('controllers/entities/Customer.js', () => {
 	});
 
 	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {
 				return Promise.resolve(true);
@@ -213,7 +215,7 @@ describe('controllers/entities/Customer.js', () => {
 				constructor(){}
 
 				batchGet () {
-					return Promise.resolve({creditcards: credit_cards});
+					return Promise.resolve(credit_cards);
 				}
 			};
 
@@ -282,7 +284,7 @@ describe('controllers/entities/Customer.js', () => {
 				constructor(){}
 
 				batchGet () {
-					return Promise.resolve({creditcards: credit_cards});
+					return Promise.resolve(credit_cards);
 				}
 			};
 
@@ -334,7 +336,7 @@ describe('controllers/entities/Customer.js', () => {
 				constructor(){}
 
 				batchGet () {
-					return Promise.resolve({creditcards: credit_cards});
+					return Promise.resolve(credit_cards);
 				}
 			};
 

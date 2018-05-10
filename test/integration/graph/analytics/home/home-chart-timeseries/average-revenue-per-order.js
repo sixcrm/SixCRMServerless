@@ -5,8 +5,8 @@ const tu = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
-let test_name = 'Hero chart timeseries revenue versus orders';
-let test_query = global.SixCRM.routes.include('handlers', '/endpoints/graph/queries/analytics/home/hero-chart-timeseries/revenue-vs-orders/by-day.json');
+let test_name = 'Hero chart timeseries direct vs rebill';
+let test_query = global.SixCRM.routes.include('handlers', '/endpoints/graph/queries/analytics/home/hero-chart-timeseries/average-revenue-per-order/by-day.json');
 
 //set the test user
 let test_user = {

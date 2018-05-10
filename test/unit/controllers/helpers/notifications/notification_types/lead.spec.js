@@ -1,6 +1,6 @@
 
 const _ = require('lodash');
-//const mockery = require('mockery');
+const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
@@ -11,6 +11,22 @@ let notification_name = 'lead';
 let notification_readable_name = 'Lead';
 
 describe('/helpers/notifications/notification_types/'+notification_name+'.js', () => {
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
+
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+	});
+
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
 	describe('constructor', () => {
 		it('successfully constructs', () => {

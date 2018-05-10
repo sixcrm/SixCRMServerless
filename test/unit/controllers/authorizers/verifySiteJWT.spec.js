@@ -95,6 +95,10 @@ describe('controllers/authorizers/veryfySiteJWT.js', () => {
 		});
 	});
 
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+	});
+
 	afterEach(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();
