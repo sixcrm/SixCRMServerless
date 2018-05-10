@@ -1,14 +1,12 @@
 const request = require('supertest');
 const chai = require('chai');
 const assert = require('chai').assert;
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const tu = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
 chai.use(require('chai-json-schema'));
 
-let test_name = 'Rebills in queue';
-
-let test_query = global.SixCRM.routes.include('handlers', 'endpoints/graph/queries/analytics/reports/rebills-in-queue/rebills-in-queue.json');
+let test_name = 'Hero chart timeseries direct vs rebill';
+let test_query = global.SixCRM.routes.include('handlers', '/endpoints/graph/queries/analytics/home/hero-chart-timeseries/average-revenue-per-order/by-day.json');
 
 //set the test user
 let test_user = {
@@ -25,11 +23,11 @@ let account = {
 
 let this_request = request(global.integration_test_config.endpoint);
 
-describe('Get ' + test_name + ' Test', () => {
+describe('Get ' + test_name + ' Test', function () {
 
 	let test_jwt = tu.createTestAuth0JWT(test_user.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
 
-	it('Should return return a 200 HTTP response code and a correctly formatted response', (done) => {
+	it('Should return return a 200 HTTP response code and a correctly formatted response', function (done) {
 
 		this_request.post('graph/' + account.id, {
 			timeout: 5000
@@ -42,19 +40,15 @@ describe('Get ' + test_name + ' Test', () => {
 
 				if (err) {
 
-					du.error(err);
-
-					done(err);
-
-				} else {
-
-					assert.isObject(response.body.response, JSON.stringify(response.body));
-
-					assert.isTrue(tu.validateGraphResponse(response.body.response.data.analytics, 'analytics/reports/analytics-reports'));
-
-					done();
+					// du.warning(err);
 
 				}
+
+				assert.isObject(response.body.response, JSON.stringify(response.body));
+
+				assert.isTrue(tu.validateGraphResponse(response.body.response.data.analytics, 'analytics/reports/analytics-reports'));
+
+				done();
 
 			});
 
