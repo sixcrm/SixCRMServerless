@@ -21,6 +21,8 @@ describe('controllers/Entity.js', () => {
 	});
 
 	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
 			publish() {
 				return Promise.resolve({});
@@ -2164,6 +2166,20 @@ describe('controllers/Entity.js', () => {
 				array: ['an_item'],
 				query_parameters: {}
 			};
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
+				appendDisjunctionQueryParameters() {
+					return {
+						expression_attribute_names: {
+							"#a_field": "a_field"
+						},
+						expression_attribute_values: {
+							":a_fieldv0": "an_item"
+						},
+						filter_expression: "(#a_field = :a_fieldv0)"
+					};
+				}
+			});
 
 			const EC = global.SixCRM.routes.include('controllers','entities/Entity.js');
 			let entityController = new EC('entity');

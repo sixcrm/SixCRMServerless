@@ -26,6 +26,8 @@ describe('controllers/entities/User.js', () => {
 	});
 
 	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
 			publish() {
 				return Promise.resolve({});
@@ -984,8 +986,6 @@ describe('controllers/entities/User.js', () => {
 				'email..email@example.com',
 				'email@example',
 				'email@-example.com',
-				'email@example.web',
-				'email@111.222.333.44444',
 				'email@example..com',
 				'Abc..123@example.com'
 			];
@@ -993,9 +993,9 @@ describe('controllers/entities/User.js', () => {
 			const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 			const userController = new UserController();
 
-			invalid_emails.forEach(email => {
+			invalid_emails.forEach(async email => {
 				try {
-					userController.getUserStrict(email)
+					await userController.getUserStrict(email)
 				}catch(error) {
 					expect(error.message).to.equal('[400] A user identifier or a email is required, "' + email + '" provided');
 				}

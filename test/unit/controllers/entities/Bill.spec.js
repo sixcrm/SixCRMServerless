@@ -25,6 +25,8 @@ describe('controllers/entities/Bill.js', () => {
 		//global.SixCRM.localcache.clear('all');
 		account_copy = global.account;
 
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
 		let mock_preindexing_helper = class {
 			constructor(){
 

@@ -13,6 +13,10 @@ describe('/helpers/notifications/notificationtypes/components/BaseNotification.j
 		});
 	});
 
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+	});
+
 	afterEach(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();

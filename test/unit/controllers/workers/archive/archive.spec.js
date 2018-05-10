@@ -50,6 +50,10 @@ describe('controllers/workers/archive', function () {
 		});
 	});
 
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+	});
+
 	afterEach(() => {
 		mockery.resetCache();
 	});

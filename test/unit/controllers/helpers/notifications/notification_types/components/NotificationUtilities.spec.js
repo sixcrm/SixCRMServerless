@@ -1,8 +1,25 @@
 
 const chai = require('chai');
 const expect = chai.expect;
+const mockery = require('mockery');
 
 describe('/helpers/notifications/notificationtypes/components/NotificationUtilities.js', () => {
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
+
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+	});
+
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
 
 	describe('getName', () => {
 

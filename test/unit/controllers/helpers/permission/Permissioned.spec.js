@@ -21,21 +21,6 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
 	beforeEach(() => {
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
-
-		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-			sendMessage() {
-				return Promise.resolve(true);
-			}
-		});
-
-		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
-			publish() {
-				return Promise.resolve({});
-			}
-			getRegion() {
-				return 'localhost';
-			}
-		});
 	});
 
 	afterEach(() => {
@@ -49,7 +34,7 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 			delete global.user;
 		});
 
-		it('fails when user is not defined', () => {
+		it('fails when user is not defined', async () => {
 
 			let some_action = 'action_x';
 			let some_object = 'object_y'
@@ -58,7 +43,7 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
 			try{
 
-				permissionedController.can({action: some_action, object: some_object});
+				await permissionedController.can({action: some_action, object: some_object});
 
 			}catch(error){
 
@@ -69,7 +54,7 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
 		});
 
-		it('fails when user is denied for action', () => {
+		it('fails when user is denied for action', async () => {
 
 			let some_action = 'action_x';
 			let some_object = 'object_y'
@@ -80,7 +65,7 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
 			try {
 
-				permissionedController.can({action: some_action, object: some_object});
+				await permissionedController.can({action: some_action, object: some_object});
 
 			}catch(error){
 
@@ -90,7 +75,7 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 
 		});
 
-		it('fails when user is not allowed for action', () => {
+		it('fails when user is not allowed for action', async () => {
 
 			let some_action = 'action_x';
 			let some_object = 'object_y';
@@ -100,7 +85,7 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 			let permissionedController = new PermissionedController('entity');
 
 			try {
-				permissionedController.can({action: some_action, object: some_object});
+				await permissionedController.can({action: some_action, object: some_object});
 			}catch(error){
 				expect(error.message).to.equal('[500] Unexpected ACL object structure:  Empty role.permission.allow object.');
 			}

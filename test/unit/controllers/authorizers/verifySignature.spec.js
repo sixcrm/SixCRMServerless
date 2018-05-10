@@ -17,6 +17,10 @@ describe('controllers/authorizers/verifySignature.js', () => {
 		});
 	});
 
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+	});
+
 	afterEach(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();

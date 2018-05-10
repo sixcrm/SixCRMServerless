@@ -1407,14 +1407,15 @@ describe('/helpers/entities/Rebill.js', () => {
 		it('gets matching state when there is only one corresponding previous state', () => {
 
 			let rebill = getValidRebill();
+			const now = timestamp.getISO8601();
 
 			rebill.history = [{
 				state: 'hold',
-				entered_at: timestamp.getISO8601()
+				entered_at: now
 			},
 			{
 				state: 'pending',
-				entered_at: timestamp.getISO8601()
+				entered_at: now
 			}
 			];
 
@@ -1423,7 +1424,7 @@ describe('/helpers/entities/Rebill.js', () => {
 
 			rebillHelperController.parameters.set('rebill', rebill);
 			rebillHelperController.parameters.set('previousstate', 'pending');
-			rebillHelperController.parameters.set('statechangedat', timestamp.getISO8601());
+			rebillHelperController.parameters.set('statechangedat', now);
 
 			expect(rebillHelperController.getLastMatchingStatePrototype()).to.deep.equal(rebill.history[1]);
 		});

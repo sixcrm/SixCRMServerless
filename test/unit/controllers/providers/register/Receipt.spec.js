@@ -59,6 +59,8 @@ describe('controllers/providers/register/Receipt.js', () => {
 	});
 
 	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {
 				return Promise.resolve(true);
