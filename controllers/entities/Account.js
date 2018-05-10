@@ -23,13 +23,9 @@ class AccountController extends entityController {
 
 		this.supplyLowercaseName({entity: entity});
 
-		await this.verifyAccountName({entity: entity})
+		await this.verifyAccountName({entity: entity});
 
-		this.disableACLs();
-		let result = await super.create({entity: entity});
-		this.enableACLs();
-
-		return result;
+		return super.create({entity: entity});
 
 	}
 

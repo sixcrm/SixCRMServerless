@@ -13,6 +13,8 @@ const SessionController = global.SixCRM.routes.include('entities', 'Session.js')
 const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const UserACLController = global.SixCRM.routes.include('entities', 'UserACL.js');
 
+const UserACLHelperController = global.SixCRM.routes.include('helpers', 'entities/useracl/UserACL.js');
+
 module.exports = class AccountHelperController {
 
 	constructor(){
@@ -23,6 +25,48 @@ module.exports = class AccountHelperController {
 			'89c38a3b-dbee-4429-8627-cfe300f3c519':{name: 'professional'},
 			'96ef7ffd-0ee3-4436-9782-0d1a6f4f81f0':{name: 'premium'}
 		};
+
+	}
+
+	getAccountPrototype({account}){
+
+		du.debug('getAccountPrototype');
+
+		const prototype = {
+			active: true
+		};
+
+		return objectutilities.transcribe(
+			{
+				'name':'name'
+			},
+			account,
+			prototype,
+			true
+		);
+
+	}
+
+	async createNewAccount({account, user}){
+
+		du.debug('New Account');
+
+		account = this.getAccountPrototype({account: account});
+
+		if(!_.has(this, 'accountController')){
+			this.accountController = new AccountController();
+		}
+
+		this.accountController.disableACLs();
+		account = await this.accountController.create({entity:account});
+		this.accountController.enableACLs();
+
+		let role = {id: this._getOwnerRoleId()};
+
+		const userACLHelperController = new UserACLHelperController();
+		await userACLHelperController.createNewUserACL({account: account, user: user, role: role});
+
+		return account;
 
 	}
 

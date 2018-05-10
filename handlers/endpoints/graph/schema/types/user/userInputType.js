@@ -17,7 +17,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		last_name:	{ type: GraphQLString },
 		alias:  	{ type: GraphQLString },
 		auth0_id:	{ type: new GraphQLNonNull(GraphQLString) },
-		active: 	{ type: new GraphQLNonNull(GraphQLBoolean) },
+		active: 	{ type: GraphQLBoolean },
 		termsandconditions: 	{ type: GraphQLString },
 		address:	{ type: addressInputType.graphObj },
 		acl:		{ type: new GraphQLList(userACLInputType.graphObj) },
