@@ -83,86 +83,36 @@ module.exports = class UserHelperController{
 
 	}
 
-	createProfile(email){
+	async createProfile(email){
 
 		du.debug('Create Profile');
-		return Promise.resolve()
-			.then(() => {
 
-				if(!stringutilities.isEmail(email)){
-					throw eu.getError('server', 'Email is not a email: "'+email+'".');
-				}
-				return;
+		if(!stringutilities.isEmail(email)){
+			throw eu.getError('server', 'Email is not a email: "'+email+'".');
+		}
 
-			}).then(() => {
+		if(!_.has(this, 'userController')){
+			const UserController = global.SixCRM.routes.include('entities','User.js');
+			this.userController = new UserController();
+		}
 
-				if(!_.has(this, 'userController')){
-					const UserController = global.SixCRM.routes.include('entities','User.js');
-					this.userController = new UserController();
-				}
+		this.userController.disableACLs();
+		const exists = await this.userController.exists({entity: {id: email}});
+		this.userController.enableACLs();
 
-				this.userController.disableACLs();
+		if(exists == true){
+			throw eu.getError('bad_request', 'A user account associated with the email "'+email+'" already exists.');
+		}
 
-				return this.userController.exists({entity: {id: email}}).then((exists) => {
+		let prototypes = this.buildCreateProfilePrototypes(email);
+		let profile_elements = await this.saveCreateProfilePrototypes(prototypes);
+		let {user} = await this.validateSaveCreateProfilePrototypes(profile_elements);
 
-					if(exists == true){
-						throw eu.getError('bad_request', 'A user account associated with the email "'+email+'" already exists.');
-					}
-					return;
+		user.acl = [];
 
-				});
+		mvu.validateModel(user, global.SixCRM.routes.path('model', 'entities/user.json'));
 
-			})
-			.then(() => this.buildCreateProfilePrototypes(email))
-			.then((prototypes) => this.saveCreateProfilePrototypes(prototypes))
-			.then((profile_elements) => this.validateSaveCreateProfilePrototypes(profile_elements))
-			.then(({account, user, role, user_setting}) => {
-
-				if(!_.has(this, 'userACLHelperController')){
-					const UserACLHelperController = global.SixCRM.routes.include('helpers', 'entities/useracl/UserACL.js');
-					this.userACLHelperController = new UserACLHelperController();
-				}
-
-				let prototype_user_acl_object = this.userACLHelperController.getPrototypeUserACL({user: user.id, account: account.id, role: role.id});
-
-				if(!_.has(this, 'userACLController')){
-					const UserACLController = global.SixCRM.routes.include('entities', 'UserACL.js');
-					this.userACLController = new UserACLController();
-				}
-
-				return this.userACLController.create({entity: prototype_user_acl_object}).then((user_acl) => {
-
-					return {user_acl: user_acl, account: account, role: role, user: user, user_setting: user_setting};
-
-				});
-
-			}).then(({user, user_acl, account, role}) => {
-
-				//Note:  Phony hydration!
-				user_acl.account = account;
-				user_acl.role = role;
-				user.acl = [user_acl];
-
-				return user;
-
-			}).then((user) => {
-
-				mvu.validateModel(user, global.SixCRM.routes.path('model', 'entities/user.json'));
-
-				return user;
-
-			}).then(user => {
-
-				if(!_.has(this, 'userACLController')){
-					const UserACLController = global.SixCRM.routes.include('entities', 'UserACL.js');
-					this.userACLController = new UserACLController();
-				}
-
-				this.userACLController.enableACLs();
-
-				return user;
-
-			});
+		return user;
 
 	}
 
@@ -170,41 +120,24 @@ module.exports = class UserHelperController{
 
 		du.debug('Build Create Profile Prototypes');
 
-		if(!_.has(this, 'accountHelperController')){
-			const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
-			this.accountHelperController = new AccountHelperController();
-		}
-
 		if(!_.has(this, 'userSettingHelperController')){
 			const UserSettingHelperController = global.SixCRM.routes.include('helpers', 'entities/usersetting/UserSetting.js');
 			this.userSettingHelperController = new UserSettingHelperController();
 		}
 
 		let prototype_user = this.getPrototypeUser(email);
-		let prototype_account = this.accountHelperController.getPrototypeAccount(email)
 		let prototype_user_setting = this.userSettingHelperController.getPrototypeUserSetting(email);
 
 		return {
 			prototype_user: prototype_user,
-			prototype_account: prototype_account,
 			prototype_user_setting: prototype_user_setting
 		};
 
 	}
 
-	saveCreateProfilePrototypes({prototype_user, prototype_account, prototype_user_setting}){
+	async saveCreateProfilePrototypes({prototype_user, prototype_user_setting}){
 
 		du.debug('Save Create Profile Prototypes');
-
-		if(!_.has(this, 'accountController')){
-			const AccountController = global.SixCRM.routes.include('entities', 'Account.js');
-			this.accountController = new AccountController();
-		}
-
-		if(!_.has(this, 'roleController')){
-			const RoleController = global.SixCRM.routes.include('entities', 'Role.js');
-			this.roleController = new RoleController();
-		}
 
 		if(!_.has(this, 'userSettingController')){
 			const UserSettingController = global.SixCRM.routes.include('entities', 'UserSetting.js');
@@ -216,23 +149,18 @@ module.exports = class UserHelperController{
 			this.userController = new UserController();
 		}
 
-		let promises = [];
+		this.userController.disableACLs();
+		let user = await this.userController.create({entity: prototype_user});
+		this.userController.enableACLs();
 
-		promises.push(this.accountController.create({entity: prototype_account}));
-		promises.push(this.userController.create({entity: prototype_user}));
-		//Technical Debt:  This should be a lookup, not a hardcoded string
-		//Technical Debt:  This should use a immutable object query...
-		promises.push(this.roleController.get({id: 'cae614de-ce8a-40b9-8137-3d3bdff78039'}));
-		promises.push(this.userSettingController.create({entity: prototype_user_setting}));
+		this.userSettingController.disableACLs();
+		let user_setting = await this.userSettingController.create({entity: prototype_user_setting});
+		this.userSettingController.enableACLs();
 
-		return Promise.all(promises).then(([account, user, role, user_setting]) => {
-			return {
-				account: account,
-				user: user,
-				role: role,
-				user_setting: user_setting
-			};
-		});
+		return {
+			user: user,
+			user_setting: user_setting
+		};
 
 	}
 
@@ -246,22 +174,18 @@ module.exports = class UserHelperController{
 
 	}
 
-	introspection(user, fatal){
+	async introspection(user, fatal = false){
 
 		du.debug('Introspection');
 
-		fatal = (_.isUndefined(fatal) || _.isNull(fatal))?false:fatal;
+		user = await this.setIntrospectionUser(user, fatal);
+		user = await this.rectifyUserTermsAndConditions(user);
+		user = await this.rectifyAuth0Id(user);
+		user = await this.applyUserSettings(user);
 
-		return this.setIntrospectionUser(user, fatal)
-			.then((user) => this.rectifyUserTermsAndConditions(user))
-			.then((user) => this.rectifyAuth0Id(user))
-			.then((user) => this.applyUserSettings(user))
-			.then((user) => {
+		this.setGlobalUser(user);
 
-				this.setGlobalUser(user);
-				return user;
-
-			});
+		return user;
 
 	}
 
@@ -310,7 +234,7 @@ module.exports = class UserHelperController{
 	}
 
 
-	setIntrospectionUser(user, fatal){
+	async setIntrospectionUser(user, fatal = true){
 
 		du.debug('Set Introspection User');
 
@@ -332,37 +256,38 @@ module.exports = class UserHelperController{
 			return this.createProfile(user);
 		}
 
-		return Promise.resolve(user);
+		if(!_.has(user, 'id')){
+			throw eu.getError('server', 'Unrecognized argument: '+user);
+		}
+
+		return user;
 
 	}
 
-	rectifyUserTermsAndConditions(user){
+	async rectifyUserTermsAndConditions(user){
 
 		du.debug('Rectify User Terms and Conditions');
 
-		return this.getMostRecentTermsAndConditionsDocuments()
-			.then(({user_tncs, owner_tncs}) => {
+		let {user_tncs, owner_tncs} = await this.getMostRecentTermsAndConditionsDocuments();
 
-				if (user_tncs.version !== user.termsandconditions) {
-					user.termsandconditions_outdated = true;
+		if (user_tncs.version !== user.termsandconditions) {
+			user.termsandconditions_outdated = true;
+		}
+
+		let acls = [];
+
+		if(objectutilities.hasRecursive(user, 'acl') && arrayutilities.isArray(user.acl) && arrayutilities.nonEmpty(user.acl)){
+			acls = arrayutilities.map(user.acl, (acl) => {
+				if (acl.role.name === 'Owner' && acl.termsandconditions !== owner_tncs.version) {
+					acl.termsandconditions_outdated = true;
 				}
-
-				let acls = [];
-
-				if(objectutilities.hasRecursive(user, 'acl') && arrayutilities.isArray(user.acl) && arrayutilities.nonEmpty(user.acl)){
-					acls = arrayutilities.map(user.acl, (acl) => {
-						if (acl.role.name === 'Owner' && acl.termsandconditions !== owner_tncs.version) {
-							acl.termsandconditions_outdated = true;
-						}
-						return acl;
-					});
-				}
-
-				user.acl = acls;
-
-				return user;
-
+				return acl;
 			});
+		}
+
+		user.acl = acls;
+
+		return user;
 
 	}
 
@@ -397,7 +322,7 @@ module.exports = class UserHelperController{
 
 	}
 
-	applyUserSettings(user){
+	async applyUserSettings(user){
 
 		du.debug('Apply User Settings');
 
@@ -407,16 +332,14 @@ module.exports = class UserHelperController{
 		}
 
 		this.userSettingController.disableACLs();
-		return this.userSettingController.get({id: user.id}).then(result => {
-			this.userSettingController.enableACLs();
+		let result = await this.userSettingController.get({id: user.id});
+		this.userSettingController.enableACLs();
 
-			if(!_.isNull(result)){
-				user.usersetting = result;
-			}//else?
+		if(!_.isNull(result)){
+			user.usersetting = result;
+		}
 
-			return user;
-
-		});
+		return user;
 
 	}
 
