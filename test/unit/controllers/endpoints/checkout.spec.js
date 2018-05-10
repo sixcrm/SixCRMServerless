@@ -537,7 +537,6 @@ describe('checkout', function () {
 	describe('confirmOrder', () => {
 
 		it('successfully confirms a order', () => {
-
 			let event = getValidEventBody();
 			let session = getValidSession();
 			let campaign = getValidCampaign();
@@ -593,6 +592,18 @@ describe('checkout', function () {
 				}
 			});
 
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				listTransactions() {
+					return Promise.resolve(transactions);
+				}
+				getParentSession() {
+					return Promise.resolve(session);
+				}
+				getCustomer() {
+					return Promise.resolve(customer);
+				}
+			});
+
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
 				publish() {
 					return Promise.resolve({});
@@ -601,6 +612,8 @@ describe('checkout', function () {
 					return 'localhost';
 				}
 			});
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let CheckoutController = global.SixCRM.routes.include('controllers', 'endpoints/checkout.js');
 			const checkoutController = new CheckoutController();
