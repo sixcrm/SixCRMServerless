@@ -312,8 +312,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.rebillController = new RebillController();
 		}
 
-		return this.rebillController.get({
-			id: event.reverse_on_complete
+		return this.rebillController.getByAlias({
+			alias: event.reverse_on_complete
 		}).then(rebill => {
 			this.parameters.set('previous_rebill', rebill);
 			return true;

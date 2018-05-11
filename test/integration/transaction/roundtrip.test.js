@@ -108,8 +108,8 @@ function createUpsell(token, session, sale_object, previous_order){
 	post_body.transaction_subtype = 'upsell1';
 
 	if (previous_order) {
-		const previous_rebill_id = previous_order.response.rebill.id;
-		post_body.reverse_on_complete = previous_rebill_id;
+		const previous_rebill_alias = previous_order.response.order.id;
+		post_body.reverse_on_complete = previous_rebill_alias;
 	}
 
 	let argument_object = {

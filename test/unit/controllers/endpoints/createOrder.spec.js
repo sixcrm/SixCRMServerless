@@ -1703,11 +1703,11 @@ describe('createOrder', function () {
 			const event = getValidEventBody();
 			const rebill = getValidRebill();
 
-			event.reverse_on_complete = rebill.id;
+			event.reverse_on_complete = rebill.alias;
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
-				get({id}) {
-					expect(id).to.equal(rebill.id);
+				getByAlias({alias}) {
+					expect(alias).to.equal(rebill.alias);
 					return Promise.resolve(rebill);
 				}
 			});

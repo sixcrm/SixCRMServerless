@@ -10,7 +10,7 @@
 		"product_schedules":{"$ref":"../components/productschedules.json"},
 		"products":{"$ref":"../components/products.json"},
 		"customer":{"$ref":"../components/customerprototype.json"},
-		"reverse_on_complete":{"$ref":"../../definitions/uuidv4.json"}
+		"reverse_on_complete":{"$ref":"../../definitions/rebillalias.json"}
 	},
 	"anyOf":[
 		{"required":["session", "product_schedules"]},

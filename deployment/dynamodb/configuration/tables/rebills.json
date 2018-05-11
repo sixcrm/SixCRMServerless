@@ -13,6 +13,10 @@
         "AttributeType":"S"
       },
       {
+        "AttributeName":"alias",
+        "AttributeType":"S"
+      },
+      {
         "AttributeName":"parentsession",
         "AttributeType":"S"
       },
@@ -26,6 +30,22 @@
       }
     ],
     "GlobalSecondaryIndexes":[
+      {
+        "IndexName":"alias-index",
+        "KeySchema":[
+          {
+            "AttributeName":"alias",
+            "KeyType":"HASH"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":3,
+          "WriteCapacityUnits":3
+        }
+      },
       {
         "IndexName":"parentsession-index",
         "KeySchema":[

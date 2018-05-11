@@ -38,6 +38,15 @@ module.exports = class RebillController extends entityController {
 		return Promise.resolve([]);
 	}
 
+	getByAlias({alias}) {
+		du.debug('Get Rebill By Alias');
+		return this.getBySecondaryIndex({
+			field: 'alias',
+			index_value: alias,
+			index_name: 'alias-index'
+		});
+	}
+
 	listBySession({
 		session
 	}) {
