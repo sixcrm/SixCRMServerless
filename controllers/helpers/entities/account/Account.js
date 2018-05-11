@@ -64,7 +64,7 @@ module.exports = class AccountHelperController {
 		}
 
 		this.accountController.disableACLs();
-		account = await this.accountController.create({entity:account});
+		account = await this.accountController.create({entity:account, disable_permissions: true});
 		this.accountController.enableACLs();
 
 		let role = {id: this._getOwnerRoleId()};
