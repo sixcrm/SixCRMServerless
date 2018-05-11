@@ -643,6 +643,8 @@ jobs:
               ./deployment/utilities/merge_branches.sh development staging
             elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
               ./deployment/utilities/merge_branches.sh staging production
+            elif [ "${CIRCLE_BRANCH}" == "production" ]; then
+              ./deployment/utilities/merge_branches.sh production priority
             fi
 
 workflows:
@@ -656,6 +658,7 @@ workflows:
                 - development
                 - staging
                 - production
+                - priority
       - lint:
           requires:
             - build
@@ -856,4 +859,4 @@ workflows:
           filters:
             branches:
               ignore:
-                - production
+                - priority
