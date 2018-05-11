@@ -28,6 +28,7 @@
 			"customer/*",
 			"customernote/*",
 			"emailtemplate/*",
+			"invite/*",
 			"merchantprovidergroup/*",
 			"merchantprovidergroupassociation/*",
 			"merchantprovider/*",
