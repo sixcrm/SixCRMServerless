@@ -1,0 +1,248 @@
+{
+	"pipelineObjects": [
+		{
+			"fields": [
+				{
+					"key": "output",
+					"refValue": "DDBDestinationTable"
+				},
+				{
+					"key": "input",
+					"refValue": "S3InputDataNode"
+				},
+				{
+					"key": "maximumRetries",
+					"stringValue": "2"
+				},
+				{
+					"key": "step",
+					"stringValue": "s3://dynamodb-emr-#{myDDBRegion}/emr-ddb-storage-handler/2.1.0/emr-ddb-2.1.0.jar,org.apache.hadoop.dynamodb.tools.DynamoDbImport,#{input.directoryPath},#{output.tableName},#{output.writeThroughputPercent}"
+				},
+				{
+					"key": "runsOn",
+					"refValue": "EmrClusterForLoad"
+				},
+				{
+					"key": "type",
+					"stringValue": "EmrActivity"
+				},
+				{
+					"key": "resizeClusterBeforeRunning",
+					"stringValue": "true"
+				}
+			],
+			"id": "TableLoadActivity",
+			"name": "TableLoadActivity"
+		},
+		{
+			"fields": [
+				{
+					"key": "period",
+					"stringValue": "1 days"
+				},
+				{
+					"key": "type",
+					"stringValue": "Schedule"
+				},
+				{
+					"key": "startAt",
+					"stringValue": "FIRST_ACTIVATION_DATE_TIME"
+				}
+			],
+			"id": "DefaultSchedule",
+			"name": "Every 1 day"
+		},
+		{
+			"fields": [
+				{
+					"key": "bootstrapAction",
+					"stringValue": "s3://#{myDDBRegion}.elasticmapreduce/bootstrap-actions/configure-hadoop, --mapred-key-value,mapreduce.map.speculative=false"
+				},
+				{
+					"key": "coreInstanceCount",
+					"stringValue": "1"
+				},
+				{
+					"key": "coreInstanceType",
+					"stringValue": "m3.xlarge"
+				},
+				{
+					"key": "amiVersion",
+					"stringValue": "3.9.0"
+				},
+				{
+					"key": "masterInstanceType",
+					"stringValue": "m3.xlarge"
+				},
+				{
+					"key": "region",
+					"stringValue": "#{myDDBRegion}"
+				},
+				{
+					"key": "type",
+					"stringValue": "EmrCluster"
+				},
+				{
+					"key": "terminateAfter",
+					"stringValue": "4 Hours"
+				}
+
+			],
+			"id": "EmrClusterForLoad",
+			"name": "EmrClusterForLoad"
+		},
+		{
+			"fields": [
+				{
+					"key": "writeThroughputPercent",
+					"stringValue": "#{myDDBWriteThroughputRatio}"
+				},
+				{
+					"key": "type",
+					"stringValue": "DynamoDBDataNode"
+				},
+
+				{
+					"key": "tableName",
+					"stringValue": "#{myDDBTableName}"
+				}
+			],
+			"id": "DDBDestinationTable",
+			"name": "DDBDestinationTable"
+		},
+
+		{
+			"fields": [
+				{
+					"key": "failureAndRerunMode",
+					"stringValue": "CASCADE"
+				},
+				{
+					"key": "schedule",
+					"refValue": "DefaultSchedule"
+				},
+				{
+					"key": "resourceRole",
+					"stringValue": "DataPipelineDefaultResourceRole"
+				},
+				{
+					"key": "role",
+					"stringValue": "DataPipelineDefaultRole"
+				},
+				{
+					"key": "pipelineLogUri",
+					"stringValue": "s3://sixcrm-priority-data-pipeline/"
+				},
+
+				{
+					"key": "scheduleType",
+					"stringValue": "cron"
+				}
+			],
+			"id": "Default",
+			"name": "Default"
+		},
+		{
+			"fields": [
+				{
+					"key": "directoryPath",
+					"stringValue": "#{myInputS3Loc}"
+				},
+				{
+					"key": "type",
+					"stringValue": "S3DataNode"
+				}
+			],
+			"id": "S3InputDataNode",
+			"name": "S3InputDataNode"
+		}
+	],
+	"parameterObjects": [
+		{
+			"attributes": [
+				{
+					"key": "description",
+					"stringValue": "Input S3 folder"
+				},
+				{
+					"key": "type",
+					"stringValue": "AWS::S3::ObjectKey"
+				}
+			],
+			"id": "myInputS3Loc"
+		},
+		{
+			"attributes": [
+				{
+					"key": "description",
+					"stringValue": "Target DynamoDB table name"
+				},
+				{
+					"key": "type",
+					"stringValue": "string"
+				}
+			],
+			"id": "myDDBTableName"
+		},
+		{
+			"attributes": [
+				{
+					"key": "default",
+					"stringValue": "0.25"
+				},
+				{
+					"key": "watermark",
+					"stringValue": "us-east-1"
+				},
+				{
+					"key": "description",
+					"stringValue": "DynamoDB write throughput ratio"
+				},
+				{
+					"key": "type",
+					"stringValue": "double"
+				}
+			],
+			"id": "myDDBWriteThroughputRatio"
+		},
+		{
+			"attributes": [
+				{
+					"key": "default",
+					"stringValue": "us-east-1"
+				},
+				{
+					"key": "watermark",
+					"stringValue": "us-east-1"
+				},
+				{
+					"key": "description",
+					"stringValue": "Region of the DynamoDB table"
+				},
+				{
+					"key": "type",
+					"stringValue": "string"
+				}
+			],
+			"id": "myDDBRegion"
+		}
+	],
+	"parameterValues": [
+		{
+			"id": "myDDBRegion",
+			"stringValue": "us-east-1"
+		},
+		{
+			"id": "myDDBTableName",
+			"stringValue": "bins"
+		},
+		{
+			"id": "myDDBWriteThroughputRatio",
+			"stringValue": "0.25"
+		},
+		{
+			"id": "myInputS3Loc",
+			"stringValue": "s3://sixcrm-priority-data-pipeline/seeds/"
+		}
+	]
+}
