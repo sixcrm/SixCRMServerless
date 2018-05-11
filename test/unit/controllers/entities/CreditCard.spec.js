@@ -745,7 +745,7 @@ describe('controllers/entities/CreditCard.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Customer.js'), class {
 				batchGet() {
-					return Promise.resolve({customers: [customer]});
+					return Promise.resolve([customer]);
 				}
 			});
 

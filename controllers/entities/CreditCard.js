@@ -333,7 +333,6 @@ module.exports = class CreditCardController extends entityController {
 			return this.executeAssociatedEntityFunction('CustomerController', 'batchGet', {
 				ids: creditcard.customers
 			})
-				.then(response => this.getResult(response, 'customers'))
 				.then(customers => arrayutilities.filter(customers, customer => !_.isNull(customer)));
 
 		}

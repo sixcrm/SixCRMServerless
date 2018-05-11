@@ -1,9 +1,0 @@
-{
-	"requestContext":"{\"authorizer\":{\"user\":\"4ee23a8f5c8661612075a89e72a56a3c6d00df90\"}}",
-	"pathParameters": "{ \"account\": \"d3fa3bf3-7824-49f4-8261-87674482bf1c\" }",
-	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0ODM4MzkyMjR9.jW6hbpILFKRJq1bRN_7XaH1ZrqCT_QK8t4udTrLAgts",
-	"body":{
-		"session": "668ad918-0d09-4116-a6fe-0e8a9eda36f7",
-		"product_schedules": [ "8d1e896f-c50d-4a6b-8c84-d5661c16a046" ]
-	}
-}

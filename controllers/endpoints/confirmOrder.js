@@ -132,7 +132,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	closeSession(session) {
 
-		du.debug('Confirm Order');
+		du.debug('Close Session');
 
 		return this.sessionController.closeSession(session);
 

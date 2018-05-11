@@ -32,7 +32,11 @@ module.exports = class OrderHelperController {
 
 		if(_.isNull(transactions)){
 			const rebillController = new RebillController();
-			transactions = await rebillController.listTransactions(rebill);
+			const result = await rebillController.listTransactions(rebill);
+			transactions = await rebillController.getResult(result, 'transactions');
+			if (_.isNull(transactions)) {
+				transactions = [];
+			}
 		}
 
 		if(_.isNull(session)){
