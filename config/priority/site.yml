@@ -1,0 +1,115 @@
+serverless:
+  verbose: 0
+
+data_encryption:
+  secret_key: '0ca75fc5b11c6ea70f57b6581c67e15c26dac751c5b6b1f94ab7ef4252d60dd3'
+
+aws:
+  region: 'us-east-1'
+  account: '500031165490'
+
+lambda:
+  security_group: 'SixCRM-PrivateSubnet'
+  subnets:
+    - sixcrm-private1
+    - sixcrm-private2
+    - sixcrm-private3
+
+elasticsearch:
+  domain_name: 'sixcrm-logs'
+  index_name: 'cloudwatch-logs'
+
+s3:
+  account_resources_bucket: 'account-resources'
+
+sts:
+  deployment_role_name: 'SixCRMDeployment'
+
+#Technical Debt:  Update this...
+ses:
+  hostname: email-smtp.us-east-1.amazonaws.com
+  port: 465
+  username: 'ses-smtp-user.20170828-131229'
+  smtp_username: 'AKIAJRAITRA47FQLFTOA'
+  smtp_password: 'Al7bmGAKGupiC8d+aXTqINwbEmLP9nsDgPGLw1GZLl7V'
+  default_sender_email: 'info@sixcrm.com'
+  default_sender_name: 'SixCRM'
+
+#Technical Debt:  This sort of thing should be encrypted...
+jwt:
+  issuer: 'https://api.sixcrm.com'
+  site: #This is the key for all graph requests (AKA Six users)
+    secret_key: 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV'
+    domain: ''
+    expiration: 3600
+  transaction: #This is the key for the transactional endpoint requests (AKA non-Six users...)
+    secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
+    expiration: 3600
+
+sqs:
+  deadletter_postfix: '_deadletter'
+  max_receive_count: 5
+
+cloudsearch:
+  domainname: 'sixcrm'
+
+#Technical Debt:  Username and Password combinations need to be encrypted...
+aurora:
+  release: 2
+  default_cluster_identifier: 'sixcrm'
+  user: 'root'
+  database: 'postgres'
+  password: 'Jagodica9'
+  port: 5440
+  max: 10
+  idle_timeout: 30000
+  #Technical Debt:  Remove
+  randomdata:
+    interval: 300
+
+#Technical Debt:  Username and Password combinations need to be encrypted...
+redshift:
+  default_cluster_identifier: 'sixcrm'
+  user: 'admin'
+  database: 'analytics'
+  password: 'Jagodica9'
+  port: 5439
+  max: 10
+  idle_timeout: 30000
+  #Technical Debt:  Remove
+  randomdata:
+    interval: 300
+
+notifications:
+  apn:
+    token_key: ''
+    token_key_id: ''
+    token_team_id: ''
+    production: false
+
+#Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
+cache:
+  #Technical Debt:  Turning this to 0 breaks everything...
+  usecache: 0
+  cachebuster: 'somerandomthing1'
+
+#note:  does the endpoint still need to be in here?
+elasticache:
+  max_attempts: 3
+  retry_time: 1800000
+  endpoint: '34.231.222.227'
+  port: 6379
+  default_expiration: 300
+
+slack:
+  channels:
+    - channel: '#lambdas'
+      kms_encrypted_hook_url: 'AQECAHj80T7Kli3v5wZmKcPbVFGj7MRHdpLvshzuP2ZIJ3vvjgAAAKcwgaQGCSqGSIb3DQEHBqCBljCBkwIBADCBjQYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyN9XeW0Dk18ZFGQkYCARCAYL6U9hWmdM7Nz+yL0I78O5CU2FPHpzj3/o9yQmpsVaBuSztYipLnam5mlwbfx7mn5cKn8xNyTOD3WGfondnCsVsGyeIVIJJMZs1RWYW3ix18FukLP54LZXctfadN2CcvPQ=='
+    - channel: '#servererrors'
+      webhook_url: https://hooks.slack.com/services/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
+
+tokenization:
+  tokenex:
+    id: 9615102903256758
+    api_key: UAESYJ8HeIfmmGeg2qNS7l4dPFTYNlLA6t7zX4hF
+    base: https://api.tokenex.com

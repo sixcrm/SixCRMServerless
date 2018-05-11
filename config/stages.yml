@@ -7,6 +7,9 @@ staging:
 production:
   aws_account_id: '181111172466'
   branch_name: 'production'
+priority:
+  aws_account_id: '500031165490'
+  branch_name: 'priority'
 local:
   local: true
 local-docker:

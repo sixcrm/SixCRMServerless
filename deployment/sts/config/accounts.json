@@ -12,6 +12,10 @@
     "production":{
       "external_id":"db4d2ce6-b564-4099-a7f6-3c601fe7c926",
       "account_id":"181111172466"
+    },
+    "priority":{
+      "external_id":"dc012086-1340-452a-9e7e-71de8bf224cd",
+      "account_id":"500031165490"
     }
   }
 }
