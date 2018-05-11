@@ -17,7 +17,7 @@ class AccountController extends entityController {
 
 	}
 
-	async create({entity}){
+	async create({entity, disable_permissions = false}){
 
 		du.debug('Account.create()');
 
@@ -25,7 +25,16 @@ class AccountController extends entityController {
 
 		await this.verifyAccountName({entity: entity});
 
-		return super.create({entity: entity});
+		let result = null;
+		if(disable_permissions == true){
+			this.disableACLs();
+			result = await super.create({entity: entity});
+			this.enableACLs();
+		}else{
+			result = await super.create({entity: entity});
+		}
+
+		return result;
 
 	}
 

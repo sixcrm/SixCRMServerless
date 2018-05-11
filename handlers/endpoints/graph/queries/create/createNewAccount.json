@@ -1,5 +1,5 @@
 {
-  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":"mutation {createnewaccount (account: { name: \"testingaccountblerg\"}) {id, name, active, billing { plan, session, disable }, created_at, updated_at}}"
+  "requestContext":{"authorizer":{ "user": "nikola.bosic+11@toptal.com" }},
+  "pathParameters": { "account": "*" },
+  "body":"mutation {createnewaccount (account: {name: \"asdbxcbzxrsddsere\"}) {id name active created_at updated_at acl{ id updated_at, created_at, pending account {id, name} role {id, name} user {id, name}}}}"
 }

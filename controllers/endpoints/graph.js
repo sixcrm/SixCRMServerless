@@ -25,9 +25,8 @@ module.exports = class graphController extends authenticatedController {
 
 		du.debug('GraphController.preamble()');
 
-		du.info(global.SixCRM.configuration);
-
 		global.SixCRM.setResource('auroraContext', auroraContext);
+
 		return auroraContext.init();
 
 	}

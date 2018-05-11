@@ -206,7 +206,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
 	isCreateAccount(event) {
 
-		du.debug('Is User Introspection');
+		du.debug('Is Create Account');
 
 		if(_.has(event, 'body') && event.body.match(/^[\s\n\r]*(mutation)?[\s\n\r]*{[\s\n\r]*createnewaccount[\s\n\r]*{/)) {
 			return true;
