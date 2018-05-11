@@ -1,0 +1,10 @@
+endpoint: 'https://api.recursix.com/'
+account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'
+email: 'super.user@test.com'
+access_keys:
+  customerservice_user:
+    access_key: 'XTP3YD8Z66KXJTNS2KKHQXYJWT2SQT6XZ9P34ARQ'
+    secret_key: '85b1083dc24baea07ed931a677335c11d65176cf'
+  super_user:
+    access_key: 'KB8FH7EWEWDK9EYRHXTZV6NS4DGD6RLZX8Z2UY1B'
+    secret_key: 'fbedd93890bca2948e4c08b0ac809e90d74016ee'
