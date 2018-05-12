@@ -1,0 +1,34 @@
+{
+	"DBClusterIdentifier": "sixcrm",
+	"Engine": "aurora-postgresql",
+	"AvailabilityZones": ["{{region}}a"],
+	"BackupRetentionPeriod": 7,
+	"DatabaseName": "postgres",
+	"EnableIAMDatabaseAuthentication": false,
+	"EngineVersion": "9.6.3",
+	"Port": 5440,
+	"StorageEncrypted": true,
+	"PreferredBackupWindow": "09:45-10:15",
+	"PreferredMaintenanceWindow": "sat:06:57-sat:07:27",
+	"DBSubnetGroupName": "sixcrm-aurora",
+	"VpcSecurityGroupIds": ["SixCRM-Aurora"],
+	"Instances": [{
+			"DBInstanceIdentifier": "sixcrm-1",
+			"DBInstanceClass": "db.r4.xlarge",
+			"Engine": "aurora-postgresql",
+			"DBClusterIdentifier": "sixcrm"
+		},
+		{
+			"DBInstanceIdentifier": "sixcrm-2",
+			"DBInstanceClass": "db.r4.xlarge",
+			"Engine": "aurora-postgresql",
+			"DBClusterIdentifier": "sixcrm"
+		},
+		{
+			"DBInstanceIdentifier": "sixcrm-3",
+			"DBInstanceClass": "db.r4.xlarge",
+			"Engine": "aurora-postgresql",
+			"DBClusterIdentifier": "sixcrm"
+		}
+	]
+}
