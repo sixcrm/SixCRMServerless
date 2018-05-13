@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 
-module.exports = class Tag {
+module.exports = class TagHelper {
 
   constructor(){
 
@@ -40,8 +40,8 @@ module.exports = class Tag {
       return this.tagController.update({entity: existing_tag});
     }
 
-    return Promise.resolve(true);
-
+    return existing_tag;
+    
   }
 
 }

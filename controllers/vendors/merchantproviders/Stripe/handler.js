@@ -372,8 +372,6 @@ class StripeController extends MerchantProvider {
 		if(!_.isNull(stripe_token)){
 			let stripe_creditcard = await this._retrieveCreditCard(stripe_token);
 
-			//assure that the fields are correct between the creditcard and the raw card
-
 			if(!_.isNull(stripe_creditcard) && this._validateCreditCardProperties({creditcard: creditcard, stripe_creditcard: stripe_creditcard})){
 				return stripe_creditcard;
 			}
