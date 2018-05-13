@@ -8,6 +8,8 @@ let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+
 function getValidTransaction(){
 	return MockEntities.getValidTransaction();
 }
@@ -280,39 +282,85 @@ function getValidListChargesResponse(response_type){
 
 }
 
-function getValidCreditCardTokenResponse(){
+function getValidCustomerTokenResponse({no_shipping = false}){
+
+	let shipping = {
+		address:{
+			city: 'North Hortensehaven',
+      country: 'IE',
+      line1: '624 Verla Grove',
+      line2: 'Apt. 567',
+      postal_code: '57342',
+      state: 'OH' },
+     name: 'Elyssa Monahan',
+     phone: null
+	 };
 
 	return {
-		id: 'tok_1C1HFO2eZvKYlo2CFjOABvIr',
-		object: 'token',
-		card:
-     { id: 'card_1C1HFO2eZvKYlo2CNa4aHEwG',
-     	object: 'card',
-     	address_city: null,
-     	address_country: null,
-     	address_line1: null,
-     	address_line1_check: null,
-     	address_line2: null,
-     	address_state: null,
-     	address_zip: null,
-     	address_zip_check: null,
-     	brand: 'Visa',
-     	country: 'US',
-     	cvc_check: 'unchecked',
-     	dynamic_last4: null,
-     	exp_month: 7,
-     	exp_year: 2018,
-     	fingerprint: 'Xt5EWLLDS7FJjR1c',
-     	funding: 'credit',
-     	last4: '4242',
-     	metadata: {},
-     	name: null,
-     	tokenization_method: null },
-		client_ip: '71.193.160.163',
-		created: 1520010042,
-		livemode: false,
-		type: 'card',
-		used: false
+		id: 'cus_CqlTb4SdvwWQVe',
+	  object: 'customer',
+	  account_balance: 0,
+	  created: 1526155438,
+	  currency: null,
+	  default_source: 'card_1CR3wg2eZvKYlo2CD6ynE4P5',
+	  delinquent: false,
+	  description: null,
+	  discount: null,
+	  email: 'Travon.Hamill@carroll.net',
+	  invoice_prefix: '7C178DF',
+	  livemode: false,
+	  metadata: {},
+	  shipping: (no_shipping == true)?null:shipping,
+	  sources:
+	   { object: 'list',
+	     data: [],
+	     has_more: false,
+	     total_count: 1,
+	     url: '/v1/customers/cus_CqlTb4SdvwWQVe/sources' },
+	  subscriptions:
+	   { object: 'list',
+	     data: [],
+	     has_more: false,
+	     total_count: 0,
+	     url: '/v1/customers/cus_CqlTb4SdvwWQVe/subscriptions' }
+		};
+
+}
+
+function getValidCreditCardTokenResponse({no_address = false, no_name = false}){
+
+	return {
+		id: 'tok_1CR3Cv2eZvKYlo2CQuBxo5jG',
+	  object: 'token',
+	  card:
+	   { id: 'card_1CR3Cv2eZvKYlo2C45Uj1SD2',
+	     object: 'card',
+	     address_city: (no_address == false)?'North Evieville':null,
+	     address_country: (no_address == false)?'US':null,
+	     address_line1: (no_address == false)?'9882 Lucious Course':null,
+	     address_line1_check: (no_address == false)?'unchecked':null,
+	     address_line2: (no_address == false)?'Apt. 770':null,
+	     address_state: (no_address == false)?'WA':null,
+	     address_zip: (no_address == false)?'96712-2135':null,
+	     address_zip_check: (no_address == false)?'unchecked':null,
+	     brand: 'Visa',
+	     country: 'US',
+	     currency: 'usd',
+	     cvc_check: null,
+	     dynamic_last4: null,
+	     exp_month: 11,
+	     exp_year: 2018,
+	     fingerprint: 'Xt5EWLLDS7FJjR1c',
+	     funding: 'credit',
+	     last4: '4242',
+	     metadata: {},
+	     name: (no_name == false)?'Althea Hudson':null,
+	     tokenization_method: null },
+	  client_ip: '24.21.201.140',
+	  created: 1526152601,
+	  livemode: false,
+	  type: 'card',
+	  used: false
 	};
 
 }
@@ -356,16 +404,24 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 			let merchant_provider = getValidMerchantProvider();
 			let response = getValidListChargesResponse('fail');
 
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				listCharges(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve({
+						error: null,
+						response: {
+							statusCode: 200,
+							statusMessage:'OK',
+							body: response
+						},
+						body: response
+					});
+				}
+			});
+
 			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
 			let stripeController = new StripeController({merchant_provider: merchant_provider});
-
-			stripeController.stripe = {
-				charges: {
-					list: (input, callback) => {
-						callback(response, null);
-					}
-				}
-			}
 
 			return stripeController.test().then(result => {
 				expect(result.getResult()).to.have.property('code');
@@ -386,16 +442,24 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let response = getValidListChargesResponse('success');
 
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				listCharges(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve({
+						error: null,
+						response: {
+							statusCode: 200,
+							statusMessage:'OK',
+							body: response
+						},
+						body: response
+					});
+				}
+			});
+
 			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
 			let stripeController = new StripeController({merchant_provider: merchant_provider});
-
-			stripeController.stripe = {
-				charges: {
-					list: (input, callback) => {
-						callback(null, response);
-					}
-				}
-			}
 
 			return stripeController.test().then(result => {
 				expect(result.getResult()).to.have.property('code');
@@ -415,85 +479,166 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 		it('successfully processes a transaction', () => {
 
 			let merchant_provider = getValidMerchantProvider();
-
 			merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
 
 			let customer = getValidCustomer();
-			let creditcard = getValidCreditCard();
 
+			let creditcard = getValidCreditCard();
 			creditcard.number = '4242424242424242'
 
 			let amount = 2.00;
 
 			let charge_response = getValidCreateChargeResponse('success');
-			let token_response = getValidCreditCardTokenResponse();
+			let token_response = getValidCreditCardTokenResponse({});
+			let customer_response = getValidCustomerTokenResponse({});
+
+			let customer_tag = MockEntities.getValidTag();
+			customer_tag.key = 'stripe_token';
+			customer_tag.value = 'cus_CqlTb4SdvwWQVe';
+			let creditcard_tag = MockEntities.getValidTag();
+			creditcard_tag.key = 'stripe_token';
+			creditcard_tag.value = 'card_1CR3Cv2eZvKYlo2C45Uj1SD2';
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Tag.js'), class {
+				constructor(){}
+				listByEntityAndKey({id, key}){
+					expect(id).to.be.defined;
+					expect(key).to.be.a('string');
+					if(id == customer.id){
+						return Promise.resolve(customer_tag);
+					}
+					return Promise.resolve(creditcard_tag);
+
+				}
+				update({entity}){
+					expect(entity).to.be.a('object');
+					return Promise.resolve(entity);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createCharge(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve({
+						error: null,
+						response: {
+							statusCode: 200,
+							statusMessage:'OK',
+							body: charge_response
+						},
+						body: charge_response
+					});
+				}
+				getCreditCard(token){
+					expect(token).to.be.a('string');
+					return Promise.resolve(token_response);
+				}
+				getToken(token){
+					expect(token).to.be.a('string');
+					return Promise.resolve(token_response);
+				}
+				createToken(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve(token_response);
+				}
+				getCustomer(token){
+					expect(token).to.be.a('string');
+					return Promise.resolve(customer_response);
+				}
+			});
 
 			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
 			let stripeController = new StripeController({merchant_provider: merchant_provider});
-
-			stripeController.stripe = {
-				charges: {
-					create: (input, callback) => {
-						callback(null, charge_response);
-					}
-				},
-				tokens:{
-					create: (input, callback) => {
-						callback(null, token_response)
-					}
-				}
-			}
 
 			return stripeController.process({customer: customer, creditcard: creditcard, amount: amount}).then(result => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				du.info(result.getResult());
 				expect(result.getResult().code).to.equal('success');
 				expect(result.getResult().message).to.equal('Success');
 			});
 
 		});
 
-	});
+		it('successfully declines a transaction', () => {
 
-	it('successfully declines a transaction', () => {
+			let merchant_provider = getValidMerchantProvider();
 
-		let merchant_provider = getValidMerchantProvider();
+			merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
 
-		merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
+			let customer = getValidCustomer();
+			let creditcard = getValidCreditCard();
 
-		let customer = getValidCustomer();
-		let creditcard = getValidCreditCard();
+			creditcard.number = '4000000000000002';
+			let amount = 30.00;
 
-		creditcard.number = '4000000000000002';
-		let amount = 30.00;
+			let charge_response = getValidCreateChargeResponse('decline');
+			let token_response = getValidCreditCardTokenResponse({});
+			let customer_response = getValidCustomerTokenResponse({});
 
-		let charge_response = getValidCreateChargeResponse('decline');
-		let token_response = getValidCreditCardTokenResponse();
+			let customer_tag = MockEntities.getValidTag();
+			customer_tag.key = 'stripe_token';
+			customer_tag.value = 'cus_CqlTb4SdvwWQVe';
+			let creditcard_tag = MockEntities.getValidTag();
+			creditcard_tag.key = 'stripe_token';
+			creditcard_tag.value = 'card_1CR3Cv2eZvKYlo2C45Uj1SD2';
 
-		const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
-		let stripeController = new StripeController({merchant_provider: merchant_provider});
-
-		stripeController.stripe = {
-			charges: {
-				create: (input, callback) => {
-					callback(null, charge_response);
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Tag.js'), class {
+				constructor(){}
+				listByEntityAndKey({id, key}){
+					expect(id).to.be.defined;
+					expect(key).to.be.a('string');
+					if(id == customer.id){
+						return Promise.resolve(customer_tag);
+					}
+					return Promise.resolve(creditcard_tag);
 				}
-			},
-			tokens:{
-				create: (input, callback) => {
-					callback(null, token_response)
+				update({entity}){
+					expect(entity).to.be.a('object');
+					return Promise.resolve(entity);
 				}
-			}
-		}
+			});
 
-		return stripeController.process({customer: customer, creditcard: creditcard, amount: amount}).then(result => {
-			expect(result.getResult()).to.have.property('code');
-			expect(result.getResult()).to.have.property('message');
-			expect(result.getResult()).to.have.property('response');
-			expect(result.getResult().code).to.equal('fail');
-			expect(result.getResult().message).to.equal('Failed');
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createCharge(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve({
+						error: null,
+						response: {
+							statusCode: 200,
+							statusMessage:'OK',
+							body: charge_response
+						},
+						body: charge_response
+					});
+				}
+				getCreditCard(token){
+					expect(token).to.be.a('string');
+					return Promise.resolve(token_response);
+				}
+				createToken(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve(token_response);
+				}
+				getCustomer(token){
+					expect(token).to.be.a('string');
+					return Promise.resolve(customer_response);
+				}
+			});
+
+			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
+			let stripeController = new StripeController({merchant_provider: merchant_provider});
+
+			return stripeController.process({customer: customer, creditcard: creditcard, amount: amount}).then(result => {
+				expect(result.getResult()).to.have.property('code');
+				expect(result.getResult()).to.have.property('message');
+				expect(result.getResult()).to.have.property('response');
+				expect(result.getResult().code).to.equal('fail');
+				expect(result.getResult().message).to.equal('Failed');
+			});
+
 		});
 
 	});
@@ -509,18 +654,26 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			transaction.processor_response = {result: getValidCreateChargeResponse('success')};
 
-			let response = getValidCreateRefundsResponse('fail');
+			let refund_response = getValidCreateRefundsResponse('fail');
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createRefund(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve({
+						error: null,
+						response: {
+							statusCode: 200,
+							statusMessage:'OK',
+							body: refund_response
+						},
+						body: refund_response
+					});
+				}
+			});
 
 			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
 			let stripeController = new StripeController({merchant_provider: merchant_provider});
-
-			stripeController.stripe = {
-				refunds: {
-					create: (input, callback) => {
-						callback(response, null);
-					}
-				}
-			};
 
 			return stripeController.refund({transaction: transaction}).then(result => {
 				expect(result.getResult()).to.have.property('code');
@@ -541,18 +694,26 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			transaction.processor_response = {result: getValidCreateChargeResponse('success')};
 
-			let response = getValidCreateRefundsResponse('success');
+			let refund_response = getValidCreateRefundsResponse('success');
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createRefund(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve({
+						error: null,
+						response: {
+							statusCode: 200,
+							statusMessage:'OK',
+							body: refund_response
+						},
+						body: refund_response
+					});
+				}
+			});
 
 			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
 			let stripeController = new StripeController({merchant_provider: merchant_provider});
-
-			stripeController.stripe = {
-				refunds: {
-					create: (input, callback) => {
-						callback(null, response);
-					}
-				}
-			};
 
 			return stripeController.refund({transaction: transaction}).then(result => {
 				expect(result.getResult()).to.have.property('code');
@@ -577,18 +738,26 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			transaction.processor_response = {result: getValidCreateChargeResponse('success')};
 
-			let response = getValidCreateRefundsResponse('fail', 'reverse');
+			let reverse_response = getValidCreateRefundsResponse('fail', 'reverse');
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createRefund(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve({
+						error: null,
+						response: {
+							statusCode: 200,
+							statusMessage:'OK',
+							body: reverse_response
+						},
+						body: reverse_response
+					});
+				}
+			});
 
 			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
 			let stripeController = new StripeController({merchant_provider: merchant_provider});
-
-			stripeController.stripe = {
-				refunds: {
-					create: (input, callback) => {
-						callback(response, null);
-					}
-				}
-			};
 
 			return stripeController.refund({transaction: transaction}).then(result => {
 				expect(result.getResult()).to.have.property('code');
@@ -609,18 +778,26 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			transaction.processor_response = {result: getValidCreateChargeResponse('success')};
 
-			let response = getValidCreateRefundsResponse('success','reverse');
+			let refund_response = getValidCreateRefundsResponse('success','reverse');
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createRefund(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve({
+						error: null,
+						response: {
+							statusCode: 200,
+							statusMessage:'OK',
+							body: refund_response
+						},
+						body: refund_response
+					});
+				}
+			});
 
 			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
 			let stripeController = new StripeController({merchant_provider: merchant_provider});
-
-			stripeController.stripe = {
-				refunds: {
-					create: (input, callback) => {
-						callback(null, response);
-					}
-				}
-			};
 
 			return stripeController.refund({transaction: transaction}).then(result => {
 				expect(result.getResult()).to.have.property('code');
@@ -629,6 +806,275 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				expect(result.getResult().code).to.equal('success');
 				expect(result.getResult().message).to.equal('Success');
 			});
+
+		});
+
+	});
+
+	describe('_createCardToken', async () => {
+
+		it('successfully creates a card token when shipping information is present', async () => {
+
+			let merchant_provider = getValidMerchantProvider();
+			merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
+
+			let creditcard = getValidCreditCard();
+			creditcard.number = '4242424242424242'
+
+			let token_response = getValidCreditCardTokenResponse({});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createCreditCard(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve(token_response);
+				}
+			});
+
+			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
+			let stripeController = new StripeController({merchant_provider: merchant_provider});
+
+			let creditcard_token = await stripeController._createCardToken(creditcard);
+			expect(creditcard_token).to.have.property('id');
+			expect(creditcard_token.id).to.have.string('tok_');
+			expect(creditcard_token).to.have.property('object');
+			expect(creditcard_token.object).to.equal('token');
+			expect(creditcard_token).to.have.property('card');
+			expect(creditcard_token.card).to.have.property('name');
+			expect(creditcard_token.card.name).is.a('string');
+			expect(creditcard_token.card.address_line1).is.a('string');
+			expect(creditcard_token.card.address_city).is.a('string');
+			expect(creditcard_token.card.address_state).is.a('string');
+			expect(creditcard_token.card.address_country).is.a('string');
+			expect(creditcard_token.card.address_state).is.a('string');
+
+
+		});
+
+		it('successfully creates a card token when shipping address information is not present', async () => {
+
+			let merchant_provider = getValidMerchantProvider();
+			merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
+
+			let creditcard = getValidCreditCard();
+			creditcard.number = '4242424242424242'
+			delete creditcard.address;
+
+			let token_response = getValidCreditCardTokenResponse({no_address: true});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createCreditCard(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve(token_response);
+				}
+			});
+
+			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
+			let stripeController = new StripeController({merchant_provider: merchant_provider});
+
+			let creditcard_token = await stripeController._createCardToken(creditcard);
+			//console.log(creditcard_token);  process.exit();
+			expect(creditcard_token).to.have.property('id');
+			expect(creditcard_token.id).to.have.string('tok_');
+			expect(creditcard_token).to.have.property('object');
+			expect(creditcard_token.object).to.equal('token');
+			expect(creditcard_token).to.have.property('card');
+			expect(creditcard_token.card).to.have.property('name');
+			expect(creditcard_token.card.name).is.a('string');
+			expect(creditcard_token.card.address_line1).is.a('null');
+			expect(creditcard_token.card.address_city).is.a('null');
+			expect(creditcard_token.card.address_state).is.a('null');
+			expect(creditcard_token.card.address_country).is.a('null');
+			expect(creditcard_token.card.address_state).is.a('null');
+
+		});
+
+		it('successfully creates a card token when shipping address information is not present and name is not present', async () => {
+
+			let merchant_provider = getValidMerchantProvider();
+			merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
+
+			let creditcard = getValidCreditCard();
+			creditcard.number = '4242424242424242'
+			delete creditcard.address;
+			delete creditcard.name;
+
+			let token_response = getValidCreditCardTokenResponse({no_address: true, no_name: true});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createCreditCard(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve(token_response);
+				}
+			});
+
+			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
+			let stripeController = new StripeController({merchant_provider: merchant_provider});
+
+			let creditcard_token = await stripeController._createCardToken(creditcard);
+			expect(creditcard_token).to.have.property('id');
+			expect(creditcard_token.id).to.have.string('tok_');
+			expect(creditcard_token).to.have.property('object');
+			expect(creditcard_token.object).to.equal('token');
+			expect(creditcard_token).to.have.property('card');
+			expect(creditcard_token.card).to.have.property('name');
+			expect(creditcard_token.card.name).is.a('null');
+			expect(creditcard_token.card.address_line1).is.a('null');
+			expect(creditcard_token.card.address_city).is.a('null');
+			expect(creditcard_token.card.address_state).is.a('null');
+			expect(creditcard_token.card.address_country).is.a('null');
+			expect(creditcard_token.card.address_state).is.a('null');
+
+		});
+
+		it('successfully creates a card token when name is not present', async () => {
+
+			let merchant_provider = getValidMerchantProvider();
+			merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
+
+			let creditcard = getValidCreditCard();
+			creditcard.number = '4242424242424242'
+			delete creditcard.name;
+
+			let token_response = getValidCreditCardTokenResponse({no_name: true});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createCreditCard(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve(token_response);
+				}
+			});
+
+			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
+			let stripeController = new StripeController({merchant_provider: merchant_provider});
+
+			let creditcard_token = await stripeController._createCardToken(creditcard);
+			expect(creditcard_token).to.have.property('id');
+			expect(creditcard_token.id).to.have.string('tok_');
+			expect(creditcard_token).to.have.property('object');
+			expect(creditcard_token.object).to.equal('token');
+			expect(creditcard_token).to.have.property('card');
+			expect(creditcard_token.card).to.have.property('name');
+			expect(creditcard_token.card.name).is.a('null');
+			expect(creditcard_token.card.address_line1).is.a('string');
+			expect(creditcard_token.card.address_city).is.a('string');
+			expect(creditcard_token.card.address_state).is.a('string');
+			expect(creditcard_token.card.address_country).is.a('string');
+			expect(creditcard_token.card.address_state).is.a('string');
+
+		});
+
+	});
+
+	describe('_createCustomer', async () => {
+
+		it('successfully creates a customer', async () => {
+
+			let merchant_provider = getValidMerchantProvider();
+			merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
+
+			let customer = getValidCustomer();
+
+			let token_response = getValidCreditCardTokenResponse({no_name: true});
+			token_response.id = 'tok_mastercard';
+
+			let customer_response = getValidCustomerTokenResponse({});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Tag.js'), class {
+				constructor(){}
+				listByEntityAndKey({id, key}){
+					expect(id).to.be.defined;
+					expect(key).to.be.a('string');
+					return Promise.resolve(null);
+				}
+				create({entity}){
+					expect(entity).to.be.a('object');
+					return Promise.resolve(entity);
+				}
+				getID(entity){
+					expect(entity).to.be.defined;
+					if(_.has(entity, 'id')){
+						return entity.id;
+					}
+					return entity;
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createCustomer(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve(customer_response);
+				}
+			});
+
+			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
+			let stripeController = new StripeController({merchant_provider: merchant_provider});
+
+			let customer_token = await stripeController._createCustomer({customer: customer, stripe_creditcard: token_response});
+			expect(customer_token).to.have.property('id');
+			expect(customer_token).to.have.property('object');
+			expect(customer_token.id).to.have.string('cus_');
+			expect(customer_token.object).to.equal('customer');
+			expect(customer_token).to.have.property('shipping');
+			expect(customer_token.shipping).to.be.a('object');
+
+		});
+
+		it('successfully creates a customer when shipping information is absent', async () => {
+
+			let merchant_provider = getValidMerchantProvider();
+			merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
+
+			let customer = getValidCustomer();
+			delete customer.address;
+
+			let token_response = getValidCreditCardTokenResponse({no_name: true});
+			token_response.id = 'tok_mastercard';
+
+			let customer_response = getValidCustomerTokenResponse({no_shipping: true});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Tag.js'), class {
+				constructor(){}
+				listByEntityAndKey({id, key}){
+					expect(id).to.be.defined;
+					expect(key).to.be.a('string');
+					return Promise.resolve(null);
+				}
+				create({entity}){
+					expect(entity).to.be.a('object');
+					return Promise.resolve(entity);
+				}
+				getID(entity){
+					expect(entity).to.be.defined;
+					if(_.has(entity, 'id')){
+						return entity.id;
+					}
+					return entity;
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+				constructor(){}
+				createCustomer(parameters){
+					expect(parameters).to.be.a('object');
+					return Promise.resolve(customer_response);
+				}
+			});
+
+			const StripeController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/handler.js');
+			let stripeController = new StripeController({merchant_provider: merchant_provider});
+
+			let customer_token = await stripeController._createCustomer({customer: customer, stripe_creditcard: token_response});
+			expect(customer_token).to.have.property('id');
+			expect(customer_token).to.have.property('object');
+			expect(customer_token.id).to.have.string('cus_');
+			expect(customer_token.object).to.equal('customer');
+			expect(customer_token).to.have.property('shipping');
+			expect(customer_token.shipping).to.be.a('null');
 
 		});
 

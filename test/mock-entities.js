@@ -13,6 +13,22 @@ const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
 class MockEntities {
 
+	static getValidTag(id){
+
+		let a_iso8601 = timestamp.getISO8601();
+		
+		return {
+			id: this.getValidId(id),
+			entity:this.getValidId(),
+			account:this.getTestAccountID(),
+			key: randomutilities.createRandomString(8),
+			value: randomutilities.createRandomString(8),
+			created_at: a_iso8601,
+			updated_at: a_iso8601,
+		};
+
+	}
+
 	static getValidOrder(){
 
 		let customer = this.getValidCustomer();
