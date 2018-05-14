@@ -1,6 +1,9 @@
+const _ = require('lodash');
 const querystring = require('querystring');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+
+const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
 
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
 
@@ -52,12 +55,18 @@ class NMIController extends MerchantProvider {
 					state:'creditcard.address.state',
 					zip:'creditcard.address.zip',
 					country:'creditcard.address.country',
+					phone: 'customer.phone',
+					email: 'customer.email',
+					shipping_firstname: 'customer.firstname',
+					shipping_lastname: 'customer.lastname',
 					shipping_address1: 'customer.address.line1',
 					shipping_address2: 'customer.address.line2',
 					shipping_city: 'customer.address.city',
 					shipping_state: 'customer.address.state',
 					shipping_zip: 'customer.address.zip',
 					shipping_country: 'customer.address.country'
+					//orderdescription
+					//order_id
 				}
 			},
 			refund: {
@@ -142,6 +151,12 @@ class NMIController extends MerchantProvider {
 
 		this.parameters.set('action', 'process');
 		const method_parameters = {type: 'sale'};
+
+		if(_.has(request_parameters, 'creditcard')){
+			let creditCardHelperController = new CreditCardHelperController();
+			request_parameters.creditcard.firstname = creditCardHelperController.getFirstName(request_parameters.creditcard);
+			request_parameters.creditcard.lastname = creditCardHelperController.getLastName(request_parameters.creditcard);
+		}
 
 		return this.postToProcessor({action: 'process', method_parameters: method_parameters, request_parameters: request_parameters})
 			.then(result => {

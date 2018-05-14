@@ -295,6 +295,94 @@ describe('controllers/helpers/entities/creditcard/CreditCard.js', () => {
 		});
 	});
 
+	describe('getFirstName', () => {
 
+		it('retrieves the firstname of a creditcard', () => {
+
+			let creditcard = MockEntities.getValidCreditCard();
+
+			let names = [
+				' John Jacob Jingle-Heimer-Schmidtt',
+				' John Jacob Jingle-Heimer-Schmidtt ',
+				'    John       Jacob Jingle-Heimer-Schmidtt    '
+			];
+
+			let CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+			const creditCardHelperController = new CreditCardHelperController();
+
+			arrayutilities.map(names, name => {
+				creditcard.name = name;
+				expect(creditCardHelperController.getFirstName(creditcard)).to.equal('John Jacob');
+			});
+
+		});
+
+		it('returns null', () => {
+
+			let creditcard = MockEntities.getValidCreditCard();
+
+			let names = [
+				{},
+				[],
+				123,
+				null
+			];
+
+			let CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+			const creditCardHelperController = new CreditCardHelperController();
+
+			arrayutilities.map(names, name => {
+				creditcard.name = name;
+				expect(creditCardHelperController.getFirstName(creditcard)).to.equal(null);
+			});
+
+		});
+
+	});
+
+	describe('getLastName', () => {
+
+		it('returns null', () => {
+
+			let creditcard = MockEntities.getValidCreditCard();
+
+			let names = [
+				{},
+				[],
+				123,
+				null
+			];
+
+			let CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+			const creditCardHelperController = new CreditCardHelperController();
+
+			arrayutilities.map(names, name => {
+				creditcard.name = name;
+				expect(creditCardHelperController.getLastName(creditcard)).to.equal(null);
+			});
+
+		});
+
+		it('retrieves the lastname of a creditcard', () => {
+
+			let creditcard = MockEntities.getValidCreditCard();
+
+			let names = [
+				' John Jacob Jingle-Heimer-Schmidtt',
+				' John Jacob Jingle-Heimer-Schmidtt ',
+				'    John       Jacob Jingle-Heimer-Schmidtt    '
+			];
+
+			let CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+			const creditCardHelperController = new CreditCardHelperController();
+
+			arrayutilities.map(names, name => {
+				creditcard.name = name;
+				expect(creditCardHelperController.getLastName(creditcard)).to.equal('Jingle-Heimer-Schmidtt');
+			});
+
+		});
+
+	});
 
 });

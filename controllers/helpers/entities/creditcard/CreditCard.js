@@ -2,6 +2,7 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
@@ -16,6 +17,39 @@ module.exports = class CreditCardHelper {
 		du.debug('Format Raw Credit Card');
 
 		return creditcard;
+
+	}
+
+	getFirstName(creditcard){
+
+		du.debug('Get First Name');
+
+		du.debug('Get Last Name');
+
+		if(_.has(creditcard, 'name') && stringutilities.nonEmpty(creditcard.name)){
+
+			let ccnamesplit = _.trim(creditcard.name).replace(/\s+/g,' ').split(' ');
+			ccnamesplit.pop();
+			return arrayutilities.compress(ccnamesplit, ' ', '');
+
+		}
+
+		return null;
+
+	}
+
+	getLastName(creditcard){
+
+		du.debug('Get Last Name');
+
+		if(_.has(creditcard, 'name') && stringutilities.nonEmpty(creditcard.name)){
+
+			let ccnamesplit = _.trim(creditcard.name).replace(/\s+/g,' ').split(' ');
+			return ccnamesplit.pop();
+
+		}
+
+		return null;
 
 	}
 
