@@ -26,7 +26,7 @@ module.exports = class Register extends RegisterUtilities {
 
 		this.processor_response_map = {
 			success:'success',
-			fail:'fail',
+			decline:'decline',
 			error:'error'
 		};
 
@@ -387,15 +387,15 @@ module.exports = class Register extends RegisterUtilities {
 			return this.processor_response_map.success;
 		}
 
-		let error = arrayutilities.find(processor_responses, processor_response => {
-			return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.error);
+		let declined = arrayutilities.find(processor_responses, processor_response => {
+			return (_.has(processor_response, 'code') && processor_response.code == this.processor_response_map.decline);
 		});
 
-		if(error){
-			return this.processor_response_map.error;
+		if(declined){
+			return this.processor_response_map.decline;
 		}
 
-		return this.processor_response_map.fail;
+		return this.processor_response_map.error;
 
 	}
 
@@ -504,7 +504,6 @@ module.exports = class Register extends RegisterUtilities {
 		let processController = new ProcessController();
 
 		return processController.process(arguments[0]).then((result) => {
-
 			return {
 				code: result.getCode(),
 				message: result.getMessage(),

@@ -634,7 +634,7 @@ describe('workers/forwardMessage', () => {
 				}
 			});
 
-			const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', getValidMessage());
+			const compoundWorkerResponse = getValidCompoundWorkerResponse('decline', getValidMessage());
 
 			const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 			const forwardMessageController = new ForwardMessageController();
@@ -663,7 +663,7 @@ describe('workers/forwardMessage', () => {
 			});
 
 			const validMessage = getValidMessage();
-			const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', validMessage);
+			const compoundWorkerResponse = getValidCompoundWorkerResponse('decline', validMessage);
 
 			const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 			let forwardMessageController = new ForwardMessageController();
@@ -688,7 +688,7 @@ describe('workers/forwardMessage', () => {
 				}
 			});
 
-			const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', getValidMessage());
+			const compoundWorkerResponse = getValidCompoundWorkerResponse('decline', getValidMessage());
 
 			const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 			const forwardMessageController = new ForwardMessageController();
@@ -899,7 +899,7 @@ describe('workers/forwardMessage', () => {
 			});
 
 			const validMessage = getValidMessage();
-			const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', validMessage);
+			const compoundWorkerResponse = getValidCompoundWorkerResponse('decline', validMessage);
 
 			const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 			const forwardMessageController = new ForwardMessageController();
@@ -997,7 +997,7 @@ describe('workers/forwardMessage', () => {
 			});
 
 			const validMessage = getValidMessage();
-			const compoundWorkerResponse = getValidCompoundWorkerResponse('fail', validMessage);
+			const compoundWorkerResponse = getValidCompoundWorkerResponse('decline', validMessage);
 			const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 			const forwardMessageController = new ForwardMessageController();
 
@@ -1208,7 +1208,7 @@ describe('workers/forwardMessage', () => {
 
 		it('fails to validates a worker response', () => {
 
-			let compound_worker_response_object = getValidCompoundWorkerResponse('fail', getValidMessage());
+			let compound_worker_response_object = getValidCompoundWorkerResponse('decline', getValidMessage());
 
 			const ForwardMessageController = global.SixCRM.routes.include('controllers', 'workers/forwardMessage.js');
 			const forwardMessageController = new ForwardMessageController();

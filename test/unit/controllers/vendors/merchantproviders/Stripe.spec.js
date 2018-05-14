@@ -77,12 +77,12 @@ function getValidSourceResponse({no_address = false, no_name = false} = {}){
 
 function getValidCreateRefundsResponse(response_type, action){
 
-	response_type = (_.includes(['success','fail'], response_type))?response_type:'success';
+	response_type = (_.includes(['success','error'], response_type))?response_type:'success';
 	action = (_.includes(['refund','reverse'], response_type))?response_type:'refund';
 
 	let responses = {
 		refund: {
-			fail: {
+			error: {
 				Error: new Error('Charge ch_1BplY42eZvKYlo2CUbB0cWgc has already been refunded.'),
 				type: 'StripeInvalidRequestError',
 				rawType: 'invalid_request_error',
@@ -109,7 +109,7 @@ function getValidCreateRefundsResponse(response_type, action){
 			}
 		},
 		reverse:{
-			fail:{
+			error:{
 				Error: new Error('Charge ch_1Bpmvj2eZvKYlo2CThhjTf1Z has already been refunded.'),
 				type: 'StripeInvalidRequestError',
 				rawType: 'invalid_request_error',
@@ -271,7 +271,7 @@ function getValidCreateChargeResponse(response_type){
 
 function getValidListChargesResponse(response_type){
 
-	response_type = (_.includes(['success','fail'], response_type))?response_type:'success';
+	response_type = (_.includes(['success','error'], response_type))?response_type:'success';
 
 	let responses = {
 		success: {
@@ -351,7 +351,7 @@ function getValidListChargesResponse(response_type){
 			has_more: true,
 			url: '/v1/charges'
 		},
-		fail:{
+		error:{
 			Error: new Error('Invalid API Key provided: ****************NYHT'),
 			type: 'StripeAuthenticationError',
 			rawType: 'invalid_request_error',
@@ -499,7 +499,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 		it('successfully returns a failure', () => {
 
 			let merchant_provider = getValidMerchantProvider();
-			let response = getValidListChargesResponse('fail');
+			let response = getValidListChargesResponse('error');
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
 				constructor(){}
@@ -524,8 +524,8 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('error');
+				expect(result.getResult().message).to.equal('Error');
 
 			});
 
@@ -796,7 +796,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 		});
 
-		it('successfully processes a transaction (existing customer, new card)', () => {
+		it('successfully declines a transaction (existing customer, new card)', () => {
 
 			let merchant_provider = getValidMerchantProvider();
 			merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
@@ -852,13 +852,13 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				createCharge(parameters){
 					expect(parameters).to.be.a('object');
 					return Promise.resolve({
-						error: null,
+						error: charge_response,
 						response: {
-							statusCode: 200,
-							statusMessage:'OK',
+							statusCode: 402,
+							statusMessage:'Request Failed',
 							body: charge_response
 						},
-						body: charge_response
+						body: null
 					});
 				}
 				getSource(token){
@@ -896,8 +896,8 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('decline');
+				expect(result.getResult().message).to.equal('Declined');
 			});
 
 		});
@@ -1062,13 +1062,13 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				createCharge(parameters){
 					expect(parameters).to.be.a('object');
 					return Promise.resolve({
-						error: null,
+						error: charge_response,
 						response: {
-							statusCode: 200,
-							statusMessage:'OK',
+							statusCode: 402,
+							statusMessage:'Request Failed',
 							body: charge_response
 						},
-						body: charge_response
+						body: null
 					});
 				}
 				getSource(token){
@@ -1098,8 +1098,8 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('decline');
+				expect(result.getResult().message).to.equal('Declined');
 			});
 
 		});
@@ -1117,7 +1117,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			transaction.processor_response = {result: getValidCreateChargeResponse('success')};
 
-			let refund_response = getValidCreateRefundsResponse('fail');
+			let refund_response = getValidCreateRefundsResponse('error');
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
 				constructor(){}
@@ -1142,8 +1142,8 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('error');
+				expect(result.getResult().message).to.equal('Error');
 			});
 
 		});
@@ -1201,7 +1201,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			transaction.processor_response = {result: getValidCreateChargeResponse('success')};
 
-			let reverse_response = getValidCreateRefundsResponse('fail', 'reverse');
+			let reverse_response = getValidCreateRefundsResponse('error', 'reverse');
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
 				constructor(){}
@@ -1226,8 +1226,8 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('error');
+				expect(result.getResult().message).to.equal('Error');
 			});
 
 		});

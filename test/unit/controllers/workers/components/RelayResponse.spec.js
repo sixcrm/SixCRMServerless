@@ -27,7 +27,7 @@ describe('controllers/workers/components/RelayResponse.js', function () {
 
 		it('successfully sets response', () => {
 
-			let response_types = ['success', 'fail', 'error', 'noaction']; //valid response types
+			let response_types = ['success', 'decline', 'error', 'noaction']; //valid response types
 
 			const RelayResponseController = global.SixCRM.routes.include('workers', 'components/RelayResponse.js');
 			let relayResponseController = new RelayResponseController();

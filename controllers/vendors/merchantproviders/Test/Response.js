@@ -45,7 +45,7 @@ module.exports = class TestResponse extends Response {
 		if(parsed_response.success == true){
 			return 'success';
 		}else if(parsed_response.response == '2'){
-			return 'fail';
+			return 'decline';
 		}
 
 		return 'error';

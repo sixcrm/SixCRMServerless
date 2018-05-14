@@ -6,11 +6,7 @@
 	"description": "A order",
 	"properties": {
 		"id":{"$ref": "../../definitions/rebillalias.json"},
-		"customer":{
-			"anyOf":[
-				{"$ref": "./customer.json"}
-			]
-    },
+		"customer": {"$ref": "./customer.json"},
     "products":{
 			"type": "array",
 			"items":{"$ref": "./productgroup.json"}

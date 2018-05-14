@@ -9,10 +9,13 @@
 		"response":{
 			"type":"object",
 			"properties":{
+				"result":{"$ref":"../../general/response/responsetype.json"},
 				"session":{"$ref":"../../entities/session.json"},
 				"customer":{"$ref": "../../entities/customer.json"},
-				"transasctions":{"$ref": "../../entities/components/transactions.json"},
-				"transasction_products":{"$ref": "../../entities/components/transactionproducts.json"}
+				"orders": {
+					"type": "array",
+					"items": {"$ref": "../../entities/meta/order.json"}
+				}
 			},
 			"required":["session","customer","transactions","transaction_products"]
 		}

@@ -14,9 +14,9 @@ module.exports = class RelayResponse{
 				//forward the messages where available
 				code: 'success'
 			},
-			fail:{
-				//forward tot the fail queue where avialable
-				code: 'fail'
+			decline:{
+				//forward to the decline queue where available
+				code: 'decline'
 			},
 			error: {
 				//forward to the DLQ where available

@@ -68,13 +68,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 			.then(() => this.setSession())
 			.then(() => this.createOrder())
 			.then(() => this.confirmOrder())
-			.then(() => {
-
-				let info = this.parameters.get('confirmation');
-
-				return info;
-
-			});
+			.then(() => this.respond());
 
 	}
 
@@ -116,7 +110,6 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		this.createOrderController.parameters.set('event', event);
 
 		return this.createOrderController.createOrder().then(result => {
-			//du.info(result); process.exit();
 			this.parameters.set('createorderresponse', result);
 			return Promise.resolve(true);
 		});
@@ -136,6 +129,18 @@ module.exports = class CheckoutController extends transactionEndpointController{
 			return Promise.resolve(true);
 		});
 
+	}
+
+	respond() {
+		let {session, customer, orders} = this.parameters.get('confirmation');
+		let {result} = this.parameters.get('createorderresponse');
+
+		return {
+			result,
+			session,
+			customer,
+			orders
+		};
 	}
 
 }

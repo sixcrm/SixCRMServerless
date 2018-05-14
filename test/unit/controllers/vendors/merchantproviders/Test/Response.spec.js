@@ -88,7 +88,7 @@ describe('vendors/merchantproviders/Test/Response.js', () => {
 			}})).to.equal('success');
 		});
 
-		it('returns fail when response contains "2"', () => {
+		it('returns decline when response contains "2"', () => {
 
 			const ResponseController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/Response.js');
 			const responseController = new ResponseController({vendor_response: getValidVendorResponse(), action: 'test'});
@@ -96,7 +96,7 @@ describe('vendors/merchantproviders/Test/Response.js', () => {
 			expect(responseController.mapResponseCode({parsed_response: {
 				success: false,
 				response: 2
-			}})).to.equal('fail');
+			}})).to.equal('decline');
 		});
 
 		it('returns error when response does not contain success nor fail confirmation', () => {

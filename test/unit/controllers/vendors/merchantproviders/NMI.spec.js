@@ -341,7 +341,7 @@ describe('vendors/merchantproviders/NMI.js', () => {
 
 		});
 
-		it('Should fail to process a transaction', () => {
+		it('handles declined transaction', () => {
 
 			let merchant_provider = getValidMerchantProvider();
 
@@ -376,8 +376,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('decline');
+				expect(result.getResult().message).to.equal('Declined');
 
 			});
 
@@ -422,8 +422,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('error');
+				expect(result.getResult().message).to.equal('Error');
 
 			});
 
@@ -510,8 +510,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('error');
+				expect(result.getResult().message).to.equal('Error');
 
 			});
 
@@ -632,8 +632,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('error');
+				expect(result.getResult().message).to.equal('Error');
 
 			});
 

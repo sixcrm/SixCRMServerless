@@ -1383,7 +1383,7 @@ describe('createOrder', function () {
 			createOrderController.parameters.set('products', product_groups);
 			createOrderController.parameters.set('info', info);
 			createOrderController.parameters.set('transactions', transactions);
-			createOrderController.parameters.set('result', 'fail');
+			createOrderController.parameters.set('result', 'decline');
 
 			return createOrderController.postProcessing().then(() => {
 				expect(rebill.no_process).to.be.true;

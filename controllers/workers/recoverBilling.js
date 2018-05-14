@@ -126,7 +126,7 @@ module.exports = class recoverBillingController extends workerController {
 		const rebill = this.parameters.get('rebill');
 		const registerResponseCode = this.parameters.get('registerresponse').getCode();
 
-		if (registerResponseCode == 'fail') {
+		if (registerResponseCode == 'decline') {
 
 			rebill.second_attempt = true;
 

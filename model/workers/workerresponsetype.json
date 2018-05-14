@@ -4,5 +4,5 @@
 	"id":"/workerresponsetype.json",
 	"type": "string",
 	"description": "The worker response type",
-	"enum":["success","fail","error","noaction"]
+	"enum":["success","decline","error","noaction"]
 }

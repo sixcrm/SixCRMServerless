@@ -13,9 +13,14 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 
 	}
 
-	determineResultCode({response, body, action}){
+	determineResultCode({vendor_response, action}){
 
 		du.debug('Determine Result Code');
+		const {
+			response,
+			body,
+			error
+		} = vendor_response
 
 		if(action == 'process'){
 
@@ -23,7 +28,9 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 				return 'success';
 			}
 
-			return 'fail';
+			if (!_.isNull(error) && error.code === 'card_declined') {
+				return 'decline';
+			}
 
 		}else if(action == 'test'){
 
@@ -33,8 +40,6 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 
 			}
 
-			return 'fail';
-
 		}else if(action == 'refund'){
 
 			if(_.has(body, 'id') && _.has(body, 'status') && body.status == 'succeeded'){
@@ -43,8 +48,6 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 
 			}
 
-			return 'fail';
-
 		}else if(action == 'reverse'){
 
 			if(_.has(body, 'id') && _.has(body, 'status') && body.status == 'succeeded'){
@@ -52,8 +55,6 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 				return 'success';
 
 			}
-
-			return 'fail';
 
 		}
 

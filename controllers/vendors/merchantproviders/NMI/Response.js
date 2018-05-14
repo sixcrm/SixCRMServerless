@@ -16,41 +16,28 @@ module.exports = class NMIResponse extends Response {
 
 	}
 
-	determineResultCode({response, body, action}){
+	determineResultCode({vendor_response, action}){
 
 		du.debug('Determine Result Code');
+		let {response, body} = vendor_response;
 
 		body = this.parseBody(body);
 
 		if(action == 'process'){
 
-			if(response.statusCode !== 200){
-				return 'error';
-			}
-
-			if(response.statusMessage !== 'OK'){
-				return 'error';
-			}
-
-			if(!_.has(body, 'response')){
-
-				return 'error';
-
-			}
-
-			if(body.response == '1'){
+			if(response.statusCode === 200 && response.statusMessage === 'OK' && _.has(body, 'response') && body.response == '1'){
 				return 'success';
 			}
 
-			return 'fail';
+			if(_.has(body, 'response') && body.response === '2') {
+				return 'decline';
+			}
 
 		}else if(_.includes(['reverse','refund'], action)){
 
 			if(response.statusCode == 200 && response.statusMessage == 'OK' && body.response == '1'){
 				return 'success';
 			}
-
-			return 'fail';
 
 		}else if(action == 'test'){
 
@@ -61,8 +48,6 @@ module.exports = class NMIResponse extends Response {
 				}
 
 			}
-
-			return 'fail';
 
 		}
 

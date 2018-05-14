@@ -49,8 +49,8 @@ module.exports = class Response {
 			success:{
 				code: 'success'
 			},
-			fail:{
-				code: 'fail'
+			decline:{
+				code: 'decline'
 			},
 			noaction:{
 				code: 'noaction'

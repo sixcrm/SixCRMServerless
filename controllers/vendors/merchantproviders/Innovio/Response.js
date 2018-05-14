@@ -13,59 +13,37 @@ module.exports = class InnovioResponse extends Response {
 
 	}
 
-	determineResultCode({response, body, action}){
+	determineResultCode({vendor_response, action}){
 
 		du.debug('Determine Result Code');
+		let {response, body} = vendor_response;
+		body = this.parseBody(body);
 
 		if(action == 'process'){
 
-			if(response.statusCode !== 200){
-				return 'error';
-			}
-
-			if(response.statusMessage !== 'OK'){
-				return 'error';
-			}
-
-			body = this.parseBody(body);
-
-			if(!_.has(body, 'TRANS_STATUS_NAME')){
-
-				return 'error';
-
-			}
-
-			if(body.TRANS_STATUS_NAME == 'APPROVED'){
+			if(response.statusCode === 200 && response.statusMessage === 'OK' && _.has(body, 'TRANS_STATUS_NAME') && body.TRANS_STATUS_NAME === 'APPROVED'){
 				return 'success';
 			}
 
-			return 'fail';
+			if(_.has(body, 'TRANS_STATUS_NAME') && body.TRANS_STATUS_NAME === 'DECLINED'){
+				return 'decline';
+			}
 
 		}else if(_.includes(['reverse','refund'], action)){
 
-			body = this.parseBody(body);
-
-			if(!_.has(body, 'TRANS_STATUS_NAME')){
-
-				return 'error';
-
-			}
-
-			if(response.statusCode == 200 && response.statusMessage == 'OK' && body.TRANS_STATUS_NAME == 'APPROVED'){
+			if(_.has(body, 'TRANS_STATUS_NAME') && response.statusCode == 200 && response.statusMessage == 'OK' && body.TRANS_STATUS_NAME == 'APPROVED'){
 				return 'success';
 			}
 
-			return 'fail';
+			if(_.has(body, 'TRANS_STATUS_NAME') && body.TRANS_STATUS_NAME == 'DECLINED'){
+				return 'decline';
+			}
 
 		}else if( action == 'test'){
-
-			body = this.parseBody(body);
 
 			if(response.statusCode == 200 && response.statusMessage == 'OK' && body.SERVICE_ADVICE == 'User Authorized'){
 				return 'success';
 			}
-
-			return 'fail';
 
 		}
 

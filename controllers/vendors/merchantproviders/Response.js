@@ -37,7 +37,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
 		this.result_messages = {
 			'success':'Success',
-			'fail': 'Failed',
+			'decline': 'Declined',
 			'error': 'Error'
 		};
 
@@ -82,7 +82,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
 				this.validateVendorResponse();
 
-				let result_code = this.determineResultCode({response: response, body: body, action: action});
+				let result_code = this.determineResultCode({vendor_response, action});
 				let result_message = this.determineResultMessage(result_code);
 
 				if(_.isFunction(this.translateResponse)){
@@ -132,9 +132,10 @@ module.exports = class MerchantProviderResponse extends Response{
 
 	}
 
-	determineResultCode({response: response}){
+	determineResultCode({vendor_response}){
 
 		du.debug('Determine Result');
+		const {response} = vendor_response;
 
 		if(_.has(response, 'statusCode')){
 
@@ -143,8 +144,6 @@ module.exports = class MerchantProviderResponse extends Response{
 				return 'success';
 
 			}
-
-			return 'fail';
 
 		}
 

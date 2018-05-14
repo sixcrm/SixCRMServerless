@@ -159,7 +159,7 @@ module.exports = class forwardMessageController extends RelayController {
 
 		let params = this.parameters.get('params');
 
-		if(compound_worker_response_object.worker_response_object.getCode() !== 'fail'){
+		if(compound_worker_response_object.worker_response_object.getCode() !== 'decline'){
 			return Promise.resolve(compound_worker_response_object);
 		}
 
@@ -240,7 +240,7 @@ module.exports = class forwardMessageController extends RelayController {
 
 		du.debug('Handle Delete');
 
-		if(_.includes(['success', 'fail', 'error'], compound_worker_response_object.worker_response_object.getCode())){
+		if(_.includes(['success', 'decline', 'error'], compound_worker_response_object.worker_response_object.getCode())){
 
 			let messages = this.getCompoundWorkerResponseMessages(compound_worker_response_object);
 

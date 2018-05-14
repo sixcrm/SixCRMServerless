@@ -116,7 +116,7 @@ describe('controllers/workers/recoverBilling', () => {
 		it('successfully marks and updates a rebill.', () => {
 
 			let rebill = getValidRebill();
-			let registerresponse = getValidRegisterResponse('fail');
+			let registerresponse = getValidRegisterResponse('decline');
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
 				get() {

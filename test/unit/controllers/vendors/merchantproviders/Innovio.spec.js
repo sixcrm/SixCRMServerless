@@ -146,7 +146,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
 		});
 
-		it('successfully returns fail for a test', () => {
+		it('returns error', () => {
 
 			let merchant_provider = getValidMerchantProvider(null, 'Innovio');
 
@@ -176,8 +176,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('error');
+				expect(result.getResult().message).to.equal('Error');
 
 			});
 
@@ -241,7 +241,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
 		});
 
-		it('Should fail to process a transaction', () => {
+		it('handles a declined transaction', () => {
 
 			let customer = getValidCustomer();
 			let creditcard = getValidCreditCard();
@@ -277,8 +277,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('decline');
+				expect(result.getResult().message).to.equal('Declined');
 
 			});
 
@@ -347,7 +347,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
 		});
 
-		it('Should fail to reverse a transaction', () => {
+		it('handles declined reverse', () => {
 
 			let transaction = getValidTransaction();
 
@@ -360,7 +360,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
 			let body = {
 				API_RESPONSE: 600,
-				TRANS_STATUS_NAME: 'Declined'
+				TRANS_STATUS_NAME: 'DECLINED'
 			};
 
 			let response = {
@@ -398,8 +398,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('decline');
+				expect(result.getResult().message).to.equal('Declined');
 
 			});
 
@@ -409,7 +409,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
 	describe('refund', () => {
 
-		it('Should fail to refund a transaction', () => {
+		it('handles declined refund', () => {
 
 			let transaction = getValidTransaction();
 
@@ -424,7 +424,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
 			let body = {
 				API_RESPONSE: 600,
-				TRANS_STATUS_NAME: 'Declined'
+				TRANS_STATUS_NAME: 'DECLINED'
 			};
 
 			let response = {
@@ -452,8 +452,8 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('fail');
-				expect(result.getResult().message).to.equal('Failed');
+				expect(result.getResult().code).to.equal('decline');
+				expect(result.getResult().message).to.equal('Declined');
 
 			});
 

@@ -13,7 +13,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 
 function getValidWorkerResponseTypes(){
 
-	return ['success','fail','error','noaction'];
+	return ['success','decline','error','noaction'];
 
 }
 
@@ -208,7 +208,7 @@ describe('controllers/workers/indexEntities', () => {
 					if(cloudsearch_response.status == 'success'){
 						expect(indexEntitiesController.parameters.store['responsecode']).to.equal('success');
 					}else{
-						expect(indexEntitiesController.parameters.store['responsecode']).to.equal('fail');
+						expect(indexEntitiesController.parameters.store['responsecode']).to.equal('error');
 					}
 				});
 			})
