@@ -1,5 +1,7 @@
 const LambdaHandler = require('../lambda-handler');
 const policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 module.exports = class AuthorizationHandler extends LambdaHandler {
 
@@ -21,7 +23,9 @@ module.exports = class AuthorizationHandler extends LambdaHandler {
 
 		} catch (error) {
 
-		  return lambdaCallback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+			du.error('server', error);
+
+			throw eu.getError('server', 'Authorization handler exception');
 
 		}
 
