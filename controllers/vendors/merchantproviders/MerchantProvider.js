@@ -34,6 +34,8 @@ module.exports = class MerchantProvider {
 			validation: this.parameter_validation
 		});
 
+		this.parameters.store = {};
+
 		this.parameters.setParameters({
 			argumentation: arguments[0],
 			action: 'construct'
@@ -361,12 +363,14 @@ module.exports = class MerchantProvider {
 	}
 
 	/* New Shit */
-	setMethod() {
+	setMethod(method) {
 
 		du.debug('Set Method');
 
-		let action = this.parameters.get('action');
-		let method = this.methods[action];
+		if(_.isUndefined(method) || _.isNull(method)){
+			let action = this.parameters.get('action');
+			method = this.methods[action];
+		}
 
 		this.parameters.set('method', method);
 
@@ -385,8 +389,7 @@ module.exports = class MerchantProvider {
 		parameters_object = objectutilities.merge(parameters_object, this.getRequestParameters());
 
 		this.parameters.set('parametersobject', parameters_object);
-
-		return true;
+		return parameters_object;
 
 	}
 

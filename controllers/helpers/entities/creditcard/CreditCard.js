@@ -157,4 +157,21 @@ module.exports = class CreditCardHelper {
 
 	}
 
+	async getTag(entity, name){
+
+		du.debug('Get Tag');
+
+		const TagController = global.SixCRM.routes.include('entities', 'Tag.js');
+		let tagController = new TagController();
+
+		let tag = await tagController.listByEntityAndKey({id: entity, key: name});
+
+		if(!_.isNull(tag)){
+			return tag.value;
+		}
+
+		return null;
+
+	}
+
 };

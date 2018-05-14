@@ -1,7 +1,11 @@
+const _ = require('lodash');
+const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class TagController extends entityController {
+
 	constructor() {
 		super('tag');
 	}
@@ -37,5 +41,24 @@ module.exports = class TagController extends entityController {
 	listByEntity({id, pagination, fatal}) {
 		return this.queryBySecondaryIndex({field: 'entity', index_value: id, index_name: 'entity-index', pagination: pagination, fatal: fatal});
 	}
-}
 
+	listByEntityAndKey({id, key, pagination, fatal}) {
+
+		du.debug('List By Entity and Key');
+
+		//Technical Debt:  Convert this into a query
+		return this.queryBySecondaryIndex({field: 'entity', index_value: this.getID(id), index_name: 'entity-index', pagination: pagination, fatal: fatal}).then(results => {
+			if(_.has(results, 'tags') && arrayutilities.nonEmpty(results.tags)){
+				let found = arrayutilities.find(results.tags, tag => {
+					return tag.key == key;
+				});
+				if(!_.isUndefined(found) && !_.isNull(found)){
+					return found;
+				}
+			}
+			return null;
+		});
+
+	}
+
+}
