@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const stripe = require('stripe');
-
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
 
 const CustomerHelperController =  global.SixCRM.routes.include('helpers', 'entities/customer/Customer.js');
 const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
@@ -13,12 +13,10 @@ const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantprovid
 
 /*
 Notes:
-	-  Make sure that the assure/validate methods work
-	-  Write more test cases to validate
-		- No cc tag
-		- tag present
-
-	-  Create a recurring transaction method
+	- Make sure that the assure/validate methods work
+	- Validate Charge Description
+	- Charge Meta?
+	- Create a recurring transaction method
 */
 
 class StripeController extends MerchantProvider {
@@ -37,7 +35,7 @@ class StripeController extends MerchantProvider {
 		};
 
 		this.parameter_validation = {
-			'creditcardtoken':global.SixCRM.routes.path('model', 'vendors/merchantproviders/Stripe/creditcardtokenresponse.json')
+			//'creditcardtoken':global.SixCRM.routes.path('model', 'vendors/merchantproviders/Stripe/creditcardtokenresponse.json')
 		};
 
 		this.parameter_definition = {
@@ -74,20 +72,8 @@ class StripeController extends MerchantProvider {
 
 		this.augmentParameters();
 
-		this.instantiateStripe();
-
 		const StripeProvider = global.SixCRM.routes.include('providers', 'stripe-provider.js');
 		this.stripeprovider = new StripeProvider(merchant_provider.gateway.api_key);
-
-	}
-
-	instantiateStripe(){
-
-		du.debug('Instantiate Stripe');
-
-		let api_key = this.parameters.get('merchantprovider').gateway.api_key;
-
-		this.stripe = stripe(api_key);
 
 	}
 
@@ -96,28 +82,32 @@ class StripeController extends MerchantProvider {
 		du.debug('Process');
 
 		this.setMethod(this.methods['process']);
-
-		let charge_description = this._createChargeDescription();
-
-		let stripe_creditcard = await this._getCardToken(creditcard);
-		let stripe_customer = await this._getCustomer({customer: customer, stripe_creditcard: stripe_creditcard});
-
-		await this._assureCustomerProperties({customer: customer, stripe_customer: stripe_customer, stripe_creditcard: stripe_creditcard});
-
-		//Note: Eliminate this...
 		this.parameters.set('action','process');
+
+		//let charge_description = this._createChargeDescription();
+		let stripe_source = await this._getCardToken({creditcard: creditcard, customer: customer});
+		let stripe_customer = await this._getCustomer({customer: customer, stripe_source: stripe_source});
+
 		this.parameters.set('amount', amount);
-		this.parameters.set('creditcardtoken', stripe_creditcard);
+		this.parameters.set('sourcetoken', stripe_source);
 		this.parameters.set('customertoken', stripe_customer);
 
-		let parameters = this.createParametersObject();
+		if(!this._assureCustomerProperties({customer: customer, stripe_customer: stripe_customer, stripe_source: stripe_source})){
+			return this.respond({});
+		}
+
+		//Note: Eliminate this...
+		this.createParametersObject();
+
 		let stripe_response = await this.issueRequest();
+
+		du.info(stripe_response);
 
 		return this.respond({});
 
 	}
 
-	refund(){
+	async refund(){
 
 		du.debug('Refund');
 
@@ -134,7 +124,7 @@ class StripeController extends MerchantProvider {
 
 	}
 
-	reverse(){
+	async reverse(){
 
 		du.debug('Reverse');
 
@@ -151,7 +141,7 @@ class StripeController extends MerchantProvider {
 
 	}
 
-	test(){
+	async test(){
 
 		du.debug('Test');
 		let argumentation = {
@@ -167,51 +157,44 @@ class StripeController extends MerchantProvider {
 
 	}
 
-	getListChargesRequestParameters(){
-
-		du.debug('Get List Charges Request Parameters');
-
-		if(this.parameters.get('action') == 'test'){
-			return {limit: 1};
-		}
-
-	}
-
-	_createChargeDescription(){
-
-		du.debug('Create Charge Description');
-
-		let charge_description = 'SixCRM.com';
-
-		this.parameters.set('chargedescription', charge_description);
-
-		return charge_description;
-
-	}
-
-	async _validateCreditCardProperties({creditcard, stripe_creditcard}){
+	_validateCreditCardProperties({creditcard, stripe_source}){
 
 		du.debug('Assure CreditCard Properties');
 
-		//same address,
-		//same name
+		du.debug(creditcard);
+
+		if(_.has(stripe_source, 'status') && stripe_source.status == 'consumed'){
+			return false;
+		}
+
+		//same owner.address,
+		//same owner.name
 		//same lastFour
 		//same expiration month
 		//same expiration year
-			//if it doesn't match, create a new creditcard token
+		////if it doesn't match, create a new creditcard token
 
-		true;
+		return true;
 
 	}
 
-	async _assureCustomerProperties({customer, stripe_creditcard}){
+	_assureCustomerProperties({customer, stripe_source, stripe_customer}){
 
 		du.debug('Assure Customer CreditCard Parity');
+
+		du.debug(customer, stripe_source);
+
+		if(_.has(stripe_customer, 'error')){
+			this.parameters.set('vendorresponse', stripe_customer);
+			return false;
+		}
+
+		//if the source isnt in the customer, update the customer
 
 		//check that the customer address matches
 		//check that the customer name matches
 		//check that the customer has the source
-			//update the customer if any property is not true
+		////update the customer if any property is not true
 
 		return true;
 
@@ -229,7 +212,7 @@ class StripeController extends MerchantProvider {
 		}
 
 		if(_.has(stripe_customer_record, 'error')){
-			if(stripe_customer_record.error.statusCode != '404'){
+			if(stripe_customer_record.error.statusCode != 404){
 				throw stripe_customer_record.error;
 			}
 		}
@@ -238,11 +221,11 @@ class StripeController extends MerchantProvider {
 
 	}
 
-	async _createCustomer({customer, stripe_creditcard}){
+	async _createCustomer({customer, stripe_source}){
 
 		du.debug('Create Customer');
 
-		let customer_parameters_object = this._createCustomerParameters({customer: customer, stripe_creditcard: stripe_creditcard});
+		let customer_parameters_object = this._createCustomerParameters({customer: customer, stripe_source: stripe_source});
 		let stripe_customer = await this.stripeprovider.createCustomer(customer_parameters_object);
 
 		if(_.has(stripe_customer, 'id')){
@@ -253,13 +236,23 @@ class StripeController extends MerchantProvider {
 
 	}
 
-	async _storeStripeTokenInTags({entity, key, value}){
+	_createCustomerParameters({customer, stripe_source}){
 
-		du.debug('Store Stripe Token In Tags');
+		du.debug('Create Customer Parameters');
 
-		let tagHelperController = new TagHelperController();
+		let customer_parameters = {
+			source: stripe_source.id,
+			//default_source: stripe_source.id, (Note: throws a API error when present in test mode...)
+			email: customer.email
+		};
 
-		return tagHelperController.putTag({entity: entity, key: key, value: value});
+		let shipping_object = this._createCustomerShippingObject(customer);
+
+		if(!_.isNull(shipping_object)){
+			customer_parameters.shipping = shipping_object;
+		}
+
+		return customer_parameters;
 
 	}
 
@@ -277,10 +270,10 @@ class StripeController extends MerchantProvider {
 				let shipping_address = objectutilities.transcribe(
 					{
 						'city': 'city',
-		    		'country': 'country',
-		    		'line1': 'line1',
-		    		'state': 'state',
-		    		'postal_code': 'zip'
+						'country': 'country',
+						'line1': 'line1',
+						'state': 'state',
+						'postal_code': 'zip'
 					},
 					customer.address,
 					{},
@@ -289,7 +282,7 @@ class StripeController extends MerchantProvider {
 
 				shipping_address = objectutilities.transcribe(
 					{
-		    		'line2': 'line2'
+						'line2': 'line2'
 					},
 					customer.address,
 					shipping_address,
@@ -321,27 +314,17 @@ class StripeController extends MerchantProvider {
 
 	}
 
-	_createCustomerParameters({customer, stripe_creditcard}){
+	async _storeStripeTokenInTags({entity, key, value}){
 
-		du.debug('Create Customer Parameters');
+		du.debug('Store Stripe Token In Tags');
 
-		let customer_parameters = {
-			source: stripe_creditcard.id,
-			//default_source: stripe_creditcard.id, (Note: throws a API error when present in test mode...)
-			email: customer.email
-		};
+		let tagHelperController = new TagHelperController();
 
-		let shipping_object = this._createCustomerShippingObject(customer);
-
-		if(!_.isNull(shipping_object)){
-			customer_parameters.shipping = shipping_object;
-		}
-
-		return customer_parameters;
+		return tagHelperController.putTag({entity: entity, key: key, value: value});
 
 	}
 
-	async _getCustomer({customer, stripe_creditcard}){
+	async _getCustomer({customer, stripe_source}){
 
 		du.debug('getStripeCustomerRecord');
 
@@ -355,36 +338,53 @@ class StripeController extends MerchantProvider {
 		}
 
 		if(_.isNull(stripe_customer_record)){
-			stripe_customer_record = await this._createCustomer({customer, stripe_creditcard});
+			stripe_customer_record = await this._createCustomer({customer, stripe_source});
+		}else{
+
+			let found_source = arrayutilities.find(stripe_customer_record.sources.data, source => {
+				return source.id == stripe_source.id;
+			});
+
+			if(_.isUndefined(found_source) || _.isNull(found_source)){
+
+				let updated_customer = await this.stripeprovider.updateCustomer({customer_token: stripe_customer_record.id, parameters: {source: stripe_source.id}});
+
+				stripe_customer_record = updated_customer;
+
+			}
+
 		}
 
 		return stripe_customer_record;
 
 	}
 
-	async _getCardToken(creditcard){
+	async _getCardToken({creditcard, customer}){
 
 		du.debug('Get Card Token');
 
 		let creditCardHelperController = new CreditCardHelperController();
-		let stripe_token = await creditCardHelperController.getTag(creditcard, 'stripe_token');
+		let cc_tag_key = parserutilities.parse('customer_{{id}}_stripe_source_token', customer);
+		let stripe_token = await creditCardHelperController.getTag(creditcard, cc_tag_key);
 
 		if(!_.isNull(stripe_token)){
-			let stripe_creditcard = await this._retrieveCreditCard(stripe_token);
+			let stripe_source = await this._retrieveCreditCard(stripe_token);
 
-			if(!_.isNull(stripe_creditcard) && this._validateCreditCardProperties({creditcard: creditcard, stripe_creditcard: stripe_creditcard})){
-				return stripe_creditcard;
+			if(!_.isNull(stripe_source) && this._validateCreditCardProperties({creditcard: creditcard, stripe_source: stripe_source})){
+				return stripe_source;
 			}
 
 		}
 
-		let stripe_creditcard = await this._createCardToken(creditcard);
+		let stripe_source = await this._createCardToken(creditcard);
 
-		if(_.has(stripe_creditcard, 'id')){
-			this._storeStripeTokenInTags({entity: creditcard, key: 'stripe_token', value: stripe_creditcard.id});
+		if(_.has(stripe_source, 'id')){
+
+			this._storeStripeTokenInTags({entity: creditcard, key: cc_tag_key, value: stripe_source.id});
+
 		}
 
-		return stripe_creditcard;
+		return stripe_source;
 
 	}
 
@@ -392,15 +392,15 @@ class StripeController extends MerchantProvider {
 
 		du.debug('Retrieve Credit Card');
 
-		let stripe_creditcard_record = await this.stripeprovider.getCreditCard(stripe_token);
+		let stripe_source_record = await this.stripeprovider.getSource(stripe_token);
 
-		if(_.has(stripe_creditcard_record, 'id')){
-			return stripe_creditcard_record;
+		if(_.has(stripe_source_record, 'id')){
+			return stripe_source_record;
 		}
 
-		if(_.has(stripe_creditcard_record, 'error')){
-			if(stripe_creditcard_record.error.statusCode != 400){
-				throw stripe_creditcard_record.error;
+		if(_.has(stripe_source_record, 'error')){
+			if(stripe_source_record.error.statusCode != 400){
+				throw stripe_source_record.error;
 			}
 		}
 
@@ -408,13 +408,15 @@ class StripeController extends MerchantProvider {
 
 	}
 
-	_createCardToken(creditcard){
+	async _createCardToken(creditcard){
 
 		du.debug('Create Card Token');
 
 		let parameters_object = this._createCreditCardTokenParameters(creditcard);
 
-		return this.stripeprovider.createCreditCard(parameters_object);
+		let result = await this.stripeprovider.createSource(parameters_object);
+
+		return result;
 
 	}
 
@@ -422,48 +424,77 @@ class StripeController extends MerchantProvider {
 
 		du.debug('Create Credit Card Token Parameters');
 
-		let token_request_object = objectutilities.transcribe(
+		let card_object = objectutilities.transcribe(
 			{
-				number: 'number',
-				cvc: 'cvv'
+				number: 'number'
 			},
 			creditcard,
 			{},
+			true
+		);
+
+		card_object = objectutilities.transcribe(
+			{
+				cvc: 'vv'
+			},
+			creditcard,
+			card_object,
 			false
 		);
 
+		let creditCardHelperController = new CreditCardHelperController();
+
+		card_object.exp_month = creditCardHelperController.getExpirationMonth(creditcard);
+		card_object.exp_year = creditCardHelperController.getExpirationYear(creditcard);
+
+		let source_parameters = {
+			type: 'card',
+			currency: 'usd',
+			usage: 'reusable',
+			card: card_object
+		}
+
+		this._addOwnerFieldsToSource({creditcard: creditcard}, source_parameters);
+
+		return source_parameters;
+
+	}
+
+	_addOwnerFieldsToSource({creditcard}, source_parameters){
+
+		du.debug('Add Owner Fields To Source');
+
+		let owner = {};
+
 		if(_.has(creditcard,  'address')){
 
-			token_request_object = objectutilities.transcribe(
+			let owner_address = objectutilities.transcribe(
 				{
-					'address_city': 'city',
-	    		'address_country': 'country',
-	    		'address_line1': 'line1',
-	    		'address_line2': 'line2',
-	    		'address_state': 'state',
-	    		'address_zip': 'zip'
+					'city': 'city',
+					'country': 'country',
+					'line1': 'line1',
+					'line2': 'line2',
+					'state': 'state',
+					'postal_code': 'zip'
 				},
 				creditcard.address,
-				token_request_object,
+				{},
 				false
 			);
+
+			if(Object.keys(owner_address).length > 0){
+				owner.address = owner_address;
+			}
 
 		}
 
 		if(_.has(creditcard,  'name')){
-			token_request_object.name = creditcard.name;
-		};
+			owner.name = creditcard.name;
+		}
 
-		token_request_object.currency = 'usd';
-
-		let creditCardHelperController = new CreditCardHelperController();
-
-		token_request_object.exp_month = creditCardHelperController.getExpirationMonth(creditcard);
-		token_request_object.exp_year = creditCardHelperController.getExpirationYear(creditcard);
-
-		return {
-			card: token_request_object
-		};
+		if(Object.keys(owner).length > 0){
+			source_parameters.owner = owner;
+		}
 
 	}
 
@@ -495,13 +526,12 @@ class StripeController extends MerchantProvider {
 
 	}
 
-
 	getCreateChargeRequestParameters(){
 
-		du.debug('Get List Charges Request Parameters');
+		du.debug('Get Create Charge Request Parameters');
 
 		let amount = this.parameters.get('amount');
-		let credit_card_token = this.parameters.get('creditcardtoken').id;
+		let source_token = this.parameters.get('sourcetoken');
 		let customer_token = this.parameters.get('customertoken', {fatal: false});
 		let charge_description = this.parameters.get('chargedescription', {fatal: false});
 		let shipping_object = this.parameters.get('shippingobject', {fatal: false});
@@ -511,12 +541,13 @@ class StripeController extends MerchantProvider {
 		let parameters = {
 			amount: amount,
 			currency: 'usd',
-			source: credit_card_token
 		};
 
 		if(!_.isNull(customer_token)){
 			parameters.customer = customer_token.id
 		}
+
+		parameters.source = source_token.id;
 
 		if(!_.isNull(charge_description)){
 			parameters.description = charge_description;
@@ -572,6 +603,28 @@ class StripeController extends MerchantProvider {
 		this.parameters.set('vendorresponse', response);
 
 		return true;
+
+	}
+
+	getListChargesRequestParameters(){
+
+		du.debug('Get List Charges Request Parameters');
+
+		if(this.parameters.get('action') == 'test'){
+			return {limit: 1};
+		}
+
+	}
+
+	_createChargeDescription(){
+
+		du.debug('Create Charge Description');
+
+		let charge_description = 'SixCRM.com';
+
+		this.parameters.set('chargedescription', charge_description);
+
+		return charge_description;
 
 	}
 

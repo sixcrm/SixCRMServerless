@@ -16,7 +16,7 @@ class MockEntities {
 	static getValidTag(id){
 
 		let a_iso8601 = timestamp.getISO8601();
-		
+
 		return {
 			id: this.getValidId(id),
 			entity:this.getValidId(),
@@ -983,7 +983,7 @@ class MockEntities {
 			expiration_month = '0' + expiration_month;
 		}
 
-		let current_year = parseInt(timestamp.getYear());
+		let current_year = parseInt(timestamp.getYear())+1;
 
 		let expiration_year = randomutilities.randomInt(current_year, (current_year + randomutilities.randomInt(1, 5))).toString();
 
