@@ -112,19 +112,22 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		let transactionsubtype = event.transaction_subtype || 'main';
 		let rawcreditcard = event.creditcard ? this.creditCardHelperController.formatRawCreditCard(event.creditcard) : undefined;
 
-		// Remove this eslint when we add validation again.
-		// eslint-disable-next-line no-unused-vars
-		let [creditcard, campaign, previous_rebill] = await this.hydrateEventAssociatedParameters(event, session, customer);
+		let [creditcard, campaign, previous_rebill] = await Promise.all([
+			this.getCreditCard(event, customer),
+			this.getCampaign(session),
+			this.getPreviousRebill(event)
+		]);
+
+		this.customerController.sanitize(false);
+		[customer, creditcard] = await this.customerController.addCreditCard(customer.id, creditcard);
 
 		this.validateSession(session);
 
 		let rebill = await this.createRebill(session, productschedules, products);
 		let processed_rebill = await this.processRebill(rebill, rawcreditcard, transactionsubtype);
 
-		// I think this is just for validation purposes.
-		// Remove this eslint when we add validation again.
-		// eslint-disable-next-line no-unused-vars
-		let info = {
+		// We'll leave this one in for now to not break too many tests.
+		this.parameters.set('info', {
 			amount: processed_rebill.amount,
 			transactions: processed_rebill.transactions,
 			customer,
@@ -135,17 +138,17 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			result: processed_rebill.result,
 			product_schedules: productschedules,
 			products
-		};
+		});
 
 		await Promise.all([
 			this.reversePreviousRebill(rebill, previous_rebill),
+			this.incrementMerchantProviderSummary(processed_rebill.transactions),
+			this.updateSessionWithWatermark(session, productschedules, products),
+			this.addRebillToStateMachine(processed_rebill.result, rebill),
 			AnalyticsEvent.push('order', {
 				session,
 				campaign
-			}),
-			this.incrementMerchantProviderSummary(processed_rebill.transactions),
-			this.updateSessionWithWatermark(session, productschedules, products),
-			this.addRebillToStateMachine(processed_rebill.result, rebill)
+			})
 		]);
 
 		return {
@@ -181,18 +184,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		else {
 			return customer;
 		}
-
-	}
-
-	hydrateEventAssociatedParameters(event, session, customer) {
-
-		du.debug('Hydrate Event Associated Parameters');
-
-		return Promise.all([
-			this.getCreditCard(event, customer),
-			this.getCampaign(session),
-			this.getPreviousRebill(event)
-		]);
 
 	}
 
