@@ -97,7 +97,7 @@ LEFT OUTER JOIN
 			DISTINCT s.id
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
-		WHERE %s AND t.processor_result = 'fail' AND t.transaction_type = 'sale') sub_failure  -- i = 5
+		WHERE %s AND (t.processor_result = 'decline' OR t.processor_result = 'error') AND t.transaction_type = 'sale') sub_failure  -- i = 5
 	ON s.id = sub_failure.id
 	WHERE %s AND sub_success.id IS NULL AND sub_failure.id IS NOT NULL  -- i = 6
 	GROUP BY s.affiliate

@@ -12,7 +12,7 @@ INSERT INTO analytics.d_processor_result (id) (
     'success'
   UNION ALL
   SELECT
-    'fail'
+    'decline'
   UNION ALL
   SELECT
     'error')
