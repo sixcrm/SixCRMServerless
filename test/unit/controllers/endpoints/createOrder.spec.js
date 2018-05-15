@@ -1,8 +1,6 @@
-
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
-const checksum = require('checksum');
 const expect = chai.expect;
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -35,22 +33,6 @@ function getValidProcessorResponse(){
 			}
 		},
 		message: 'Some message'
-	};
-
-}
-
-function getValidInfo(){
-
-	return {
-		amount: 12.99,
-		transactions: getValidTransactions(),
-		product_schedules: getValidProductScheduleGroups(),
-		customer: getValidCustomer(),
-		rebill: getValidRebill(),
-		session: getValidSession(),
-		campaign: getValidCampaign(),
-		creditcard: getValidCreditCard(),
-		result:'success'
 	};
 
 }
@@ -474,6 +456,12 @@ describe('createOrder', function () {
 				update({entity}) {
 					return Promise.resolve(entity);
 				}
+				listTransactions() {
+					return Promise.resolve({transactions});
+				}
+				getResult() {
+					return Promise.resolve(transactions);
+				}
 			});
 
 			const CreditCard = global.SixCRM.routes.include('entities','CreditCard.js');
@@ -531,6 +519,9 @@ describe('createOrder', function () {
 				updateRebillState(){
 					return Promise.resolve(true);
 				}
+				updateRebillUpsell(){
+					return Promise.resolve(true);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class {
@@ -545,6 +536,9 @@ describe('createOrder', function () {
 					});
 
 					return Promise.resolve(register_response);
+				}
+				reverseTransaction(){
+					return Promise.resolve();
 				}
 			});
 
@@ -649,6 +643,12 @@ describe('createOrder', function () {
 				update({entity}) {
 					return Promise.resolve(entity);
 				}
+				listTransactions() {
+					return Promise.resolve({transactions});
+				}
+				getResult() {
+					return Promise.resolve(transactions);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
@@ -703,6 +703,9 @@ describe('createOrder', function () {
 				updateRebillState(){
 					return Promise.resolve(true);
 				}
+				updateRebillUpsell(){
+					return Promise.resolve(true);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class {
@@ -717,6 +720,9 @@ describe('createOrder', function () {
 					});
 
 					return Promise.resolve(register_response);
+				}
+				reverseTransaction(){
+					return Promise.resolve();
 				}
 			});
 
@@ -810,9 +816,7 @@ describe('createOrder', function () {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			return createOrderController.validateSession(session).then(result => {
-				expect(result).to.equal(true);
-			});
+			return createOrderController.validateSession(session);
 
 		});
 
@@ -826,7 +830,7 @@ describe('createOrder', function () {
 			session.completed = true;
 
 			try {
-				createOrderController.validateSession(session)
+				createOrderController.validateSession(session);
 			}catch(error){
 				expect(error.message).to.equal('[400] The session is already complete.');
 			}
@@ -971,6 +975,9 @@ describe('createOrder', function () {
 				updateRebillState(){
 					return Promise.resolve(true);
 				}
+				updateRebillUpsell(){
+					return Promise.resolve(true);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
@@ -1037,6 +1044,9 @@ describe('createOrder', function () {
 				updateRebillState(){
 					return Promise.resolve(true);
 				}
+				updateRebillUpsell(){
+					return Promise.resolve(true);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
@@ -1101,6 +1111,9 @@ describe('createOrder', function () {
 					return Promise.resolve(true);
 				}
 				updateRebillState(){
+					return Promise.resolve(true);
+				}
+				updateRebillUpsell(){
 					return Promise.resolve(true);
 				}
 			});
@@ -1309,6 +1322,10 @@ describe('createOrder', function () {
 				assureCreditCard () {
 					throw new Error()
 				}
+				sanitize(sanitization) {
+					expect(sanitization).to.be.false;
+					return this;
+				}
 			};
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
@@ -1345,8 +1362,7 @@ describe('createOrder', function () {
 			const createOrderController = new CreateOrderController();
 
 			return createOrderController.getCampaign(getValidSession()).then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['campaign']).to.deep.equal(campaign);
+				expect(result).to.deep.equal(campaign);
 			});
 
 		});
@@ -1376,8 +1392,7 @@ describe('createOrder', function () {
 			createOrderController.parameters.set('event', event);
 
 			return createOrderController.getCustomer(event, getValidSession()).then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['customer']).to.deep.equal(customer);
+				expect(result).to.deep.equal(customer);
 			});
 
 		});
@@ -1426,7 +1441,7 @@ describe('createOrder', function () {
 
 			createOrderController.parameters.set('event', event);
 
-			return createOrderController.setCustomer(event, getValidSession())
+			return createOrderController.getCustomer(event, getValidSession())
 				.catch(error => {
 					expect(error.name).to.equal('Server Error');
 				});
@@ -1465,8 +1480,8 @@ describe('createOrder', function () {
 			const event = getValidEventBody();
 			createOrderController.parameters.set('event', event);
 
-			return createOrderController.setPreviousRebill(event).then((result) => {
-				expect(result).to.be.null;
+			return createOrderController.getPreviousRebill(event).then((result) => {
+				expect(result).to.be.undefined;
 			});
 		});
 	});
@@ -1639,6 +1654,9 @@ describe('createOrder', function () {
 					});
 
 					return Promise.resolve(register_response);
+				}
+				reverseTransaction(){
+					return Promise.resolve();
 				}
 			});
 
