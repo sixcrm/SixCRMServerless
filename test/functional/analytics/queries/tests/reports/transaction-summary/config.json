@@ -25,13 +25,13 @@
 		}, {
 			"key": "processorResults",
 			"value": [{
-				"key": "error",
+				"key": "decline",
 				"value": {
 					"count": 0,
 					"total": 0
 				}
 			}, {
-				"key": "fail",
+				"key": "error",
 				"value": {
 					"count": 0,
 					"total": 0
@@ -50,13 +50,13 @@
 		}, {
 			"key": "processorResults",
 			"value": [{
-				"key": "error",
+				"key": "decline",
 				"value": {
 					"count": 0,
 					"total": 0
 				}
 			}, {
-				"key": "fail",
+				"key": "error",
 				"value": {
 					"count": 0,
 					"total": 0
