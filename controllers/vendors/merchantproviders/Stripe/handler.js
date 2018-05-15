@@ -86,7 +86,17 @@ class StripeController extends MerchantProvider {
 
 		//let charge_description = this._createChargeDescription();
 		let stripe_source = await this._getCardToken({creditcard: creditcard, customer: customer});
+
+		if(this._isError(stripe_source)){
+			this.parameters.set('vendorresponse', stripe_source);
+			return this.respond({});
+		}
+
 		let stripe_customer = await this._getCustomer({customer: customer, stripe_source: stripe_source});
+		if(this._isError(stripe_customer)){
+			this.parameters.set('vendorresponse', stripe_customer);
+			return this.respond({});
+		}
 
 		this.parameters.set('amount', amount);
 		this.parameters.set('sourcetoken', stripe_source);
@@ -96,14 +106,23 @@ class StripeController extends MerchantProvider {
 			return this.respond({});
 		}
 
-		//Note: Eliminate this...
 		this.createParametersObject();
 
-		let stripe_response = await this.issueRequest();
-
-		du.info(stripe_response);
+		await this.issueRequest();
 
 		return this.respond({});
+
+	}
+
+	_isError(object){
+
+		du.debug('Is Error');
+
+		if(_.has(object, 'error')){
+			return true;
+		}
+
+		return false;
 
 	}
 
@@ -379,9 +398,11 @@ class StripeController extends MerchantProvider {
 		let stripe_source = await this._createCardToken(creditcard);
 
 		if(_.has(stripe_source, 'id')){
-
 			this._storeStripeTokenInTags({entity: creditcard, key: cc_tag_key, value: stripe_source.id});
+		}
 
+		if(_.has(stripe_source, 'error')){
+			//this is a error, return a decline now...
 		}
 
 		return stripe_source;
