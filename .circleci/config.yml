@@ -580,6 +580,20 @@ jobs:
       - run:
           name: Entity Seed
           command: SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_seeds.js
+  live_seed:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Entity Live Seed
+          command: SIX_VERBOSE=2 node ./deployment/dynamodb/deploy_live_seeds.js
   deleteblock_integration_tests:
     <<: *job-defaults
     steps:
@@ -819,18 +833,29 @@ workflows:
       - seed:
           requires:
             - environment_test
+      - live_seed:
+          requires:
+            - seed
+          branches:
+            only:
+              - production
+              - priority
       - entity_integration_tests:
           requires:
             - seed
+            - live_seed
       - deleteblock_integration_tests:
           requires:
             - seed
+            - live_seed
       - analytics_integration_tests:
           requires:
             - seed
+            - live_seed
       - transactional_integration_tests:
           requires:
             - seed
+            - live_seed
       - synchronize_index:
           requires:
             - transactional_integration_tests

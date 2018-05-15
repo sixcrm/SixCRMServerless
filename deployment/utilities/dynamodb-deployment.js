@@ -280,7 +280,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	seedTables() {
+	seedTables(live = false) {
 
 		du.debug('Seed Tables');
 
@@ -289,10 +289,10 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
 		return this.initializeControllers().then(() => {
 
-			return this.getTableSeedFilenames().then((table_seed_definition_filenames) => {
+			return this.getTableSeedFilenames(live).then((table_seed_definition_filenames) => {
 
 				let table_seed_promises = arrayutilities.map(table_seed_definition_filenames, (table_seed_definition_filename) => {
-					return () => this.seedTable(table_seed_definition_filename);
+					return () => this.seedTable(table_seed_definition_filename, live);
 				});
 
 				return arrayutilities.serial(
@@ -333,8 +333,9 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
 		du.debug('Get Table Name From Filename');
 
-		return table_seed_definition_filename.replace(/\.json/,'');
+		let filename_array = table_seed_definition_filename.split('/');
 
+		return filename_array.pop().replace(/\.json/,'');
 
 	}
 
@@ -457,13 +458,39 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	getTableSeedFilenames(){
+	async getTableSeedFilenames(live = false){
 
 		du.debug('Get Table Seed Filenames');
 
-		let directory_path = global.SixCRM.routes.path('seeds');
+		let directory_path = null;
 
-		return fileutilities.getDirectoryFiles(directory_path);
+		if(live == true){
+
+			let environment = global.SixCRM.configuration.stage;
+
+			if(stringutilities.nonEmpty(environment)){
+
+				directory_path = global.SixCRM.routes.path('seeds', environment);
+
+				let files = await fileutilities.getDirectoryFiles(directory_path)
+
+				return arrayutilities.map(files, file => {
+					return environment+'/'+file;
+				});
+
+			}
+
+			return [];
+
+		}else{
+
+			directory_path = global.SixCRM.routes.path('seeds');
+
+			return fileutilities.getDirectoryFiles(directory_path)
+
+		}
+
+		//throw eu.throwError('server', 'Unexpected seed directory.');
 
 	}
 
