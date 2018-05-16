@@ -6,7 +6,7 @@
 	"description": "A order",
 	"properties": {
 		"id":{"$ref": "../../definitions/rebillalias.json"},
-		"customer": {"$ref": "./customer.json"},
+		"customer": {"$ref": "../meta/customer.json"},
     "products":{
 			"type": "array",
 			"items":{"$ref": "./productgroup.json"}
