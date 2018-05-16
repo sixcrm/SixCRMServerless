@@ -3,7 +3,6 @@
 # In progress:
 21.  Encrypted personal data
 15.  Developer Site
-13.  All reports complete
 
 # Todo:
 1.  Rewrite the ReadMe
@@ -115,7 +114,7 @@ Scripts:
  - Create a cluster:
  `node ./deployment/redshift/create_cluster.js {stage}`
  - Create tables:
-  `node ./deployment/redshift/deploy_redshift_tables.js {stage}` 
+  `node ./deployment/redshift/deploy_redshift_tables.js {stage}`
  - Truncate all tables:
   `node ./deployment/redshift/purge_redshift.js {stage}`
  - Seed static data:
@@ -178,4 +177,4 @@ Currently deployment is (mostly) handled via CircleCI. There are a few issues:
 
 ## Data Spoofing
 
-The Six deployment has random data "spoofers" -  that is scripts which attempts to emulate data in the absence of real usage or customer data.  
+The Six deployment has random data "spoofers" -  that is scripts which attempts to emulate data in the absence of real usage or customer data.
