@@ -298,42 +298,6 @@ function createOrderBody(session, sale_object, customer){
 
 }
 
-function refund(transaction, amount) {
-
-	du.info('Refund');
-
-	let account = config.account;
-	let test_jwt = tu.createTestAuth0JWT(config.email, global.SixCRM.configuration.site_config.jwt.site.secret_key);
-
-	let argument_object = {
-		url: config.endpoint+'graph/'+account,
-		body: 'mutation { refund (refund: { amount:"' + amount + '", transaction:"' + transaction + '" } ) { transaction { id }, processor_response } }',
-		headers:{
-			Authorization: test_jwt
-		}
-	};
-
-	du.debug(argument_object);
-
-	return httpprovider.post(argument_object)
-		.then((result) => {
-			du.debug(result.body);
-
-			if (stringutilities.isString(result.body)) {
-				result.body = JSON.parse(result.body);
-			}
-
-			expect(result.response.statusCode).to.equal(200);
-			expect(result.response.statusMessage).to.equal('OK');
-			expect(result.body).to.have.property('success');
-			expect(result.body).to.have.property('code');
-			expect(result.body).to.have.property('response');
-			expect(result.body.success).to.equal(true);
-			expect(result.body.code).to.equal(200);
-			return result.body;
-		});
-}
-
 let config = global.SixCRM.routes.include('test', 'integration/config/'+process.env.stage+'.yml');
 let campaign = '70a6689a-5814-438b-b9fd-dd484d0812f9';
 
@@ -409,40 +373,6 @@ describe('Transaction Endpoints Round Trip Test',() => {
 							return createOrder(token, session, sale_object)
 								.then(response => createUpsell(token, session, upsale_sale_object, response))
 								.then(() => confirmOrder(token, session));
-						});
-
-				});
-
-		});
-
-		it('refunds multiple transactions', () => {
-
-			let sale_object = {
-				products:[{
-					product: "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
-					quantity:2
-				}]
-			};
-
-			let upsale_sale_object = {
-				products:[{
-					product: "4d3419f6-526b-4a68-9050-fc3ffcb552b4",
-					quantity:1
-				}]
-			};
-
-			return acquireToken(campaign)
-				.then((token) => {
-
-					return createLead(token, campaign)
-						.then((session) => {
-							return createOrder(token, session, sale_object)
-								.then(() => createUpsell(token, session, upsale_sale_object))
-								.then(() => confirmOrder(token, session))
-								.then((result) => {
-									result.response.transactions.forEach(transaction => {
-										return refund(transaction.id, transaction.amount)});
-								})
 						});
 
 				});
