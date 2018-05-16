@@ -311,21 +311,38 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
 		du.debug('Seed Table');
 
-		let seed_definitions = global.SixCRM.routes.include('seeds', table_seed_definition_filename);
+		let seed_definitions = null;
 
-		let table_name = this.getTableNameFromFilename(table_seed_definition_filename);
+		try {
 
-		return this.tableExists(table_name).then((result) => {
+			seed_definitions = global.SixCRM.routes.include('seeds', table_seed_definition_filename);
 
-			if(objectutilities.isObject(result)){
+		}catch(error){
 
-				return this.executeSeedViaController(result, seed_definitions);
+			du.warning(error);
 
-			}
+		}
 
-			return true;
+		if(!_.isNull(seed_definitions)){
 
-		});
+			let table_name = this.getTableNameFromFilename(table_seed_definition_filename);
+
+			return this.tableExists(table_name).then((result) => {
+
+				if(objectutilities.isObject(result)){
+
+					return this.executeSeedViaController(result, seed_definitions);
+
+				}
+
+				return true;
+
+			});
+
+		}
+
+		return true;
+
 
 	}
 
@@ -486,7 +503,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
 			directory_path = global.SixCRM.routes.path('seeds');
 
-			return fileutilities.getDirectoryFiles(directory_path)
+			return fileutilities.getDirectoryFiles(directory_path);
 
 		}
 

@@ -836,10 +836,11 @@ workflows:
       - live_seed:
           requires:
             - seed
-          branches:
-            only:
-              - production
-              - priority
+          filters:
+            branches:
+              only:
+                - production
+                - priority
       - entity_integration_tests:
           requires:
             - seed
