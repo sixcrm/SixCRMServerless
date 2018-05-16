@@ -67,6 +67,7 @@
 		"allow":[
 			"customer/*",
 			"customernote/*",
+			"campaign/*",
 			"productschedule/*",
 			"product/*",
 			"role/read",
