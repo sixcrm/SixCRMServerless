@@ -10,8 +10,8 @@
 			"type":"object",
 			"properties":{
 				"result":{"$ref":"../../general/response/responsetype.json"},
-				"session":{"$ref":"../../entities/session.json"},
-				"customer":{"$ref": "../../entities/customer.json"},
+				"session":{"$ref":"../../entities/meta/session.json"},
+				"customer":{"$ref": "../../entities/meta/customer.json"},
 				"orders": {
 					"type": "array",
 					"items": {"$ref": "../../entities/meta/order.json"}
