@@ -25,15 +25,14 @@ s3:
 sts:
   deployment_role_name: 'SixCRMDeployment'
 
-#Technical Debt:  Update this...
 ses:
   hostname: email-smtp.us-east-1.amazonaws.com
   port: 465
-  username: 'ses-smtp-user.20170828-131229'
-  smtp_username: 'AKIAJRAITRA47FQLFTOA'
-  smtp_password: 'Al7bmGAKGupiC8d+aXTqINwbEmLP9nsDgPGLw1GZLl7V'
-  default_sender_email: 'info@sixcrm.com'
-  default_sender_name: 'SixCRM'
+  username: 'ses-smtp-user.20180515-201240'
+  smtp_username: AKIAJZTJ2IREWIAH7NDQ
+  smtp_password: AvDRyLRWbVih3E+J6zoRrQBVuB7PMjPYrkqEeFC7dr0V
+  default_sender_email: 'info@recursix.com'
+  default_sender_name: 'Recursix'
 
 #Technical Debt:  This sort of thing should be encrypted...
 jwt:

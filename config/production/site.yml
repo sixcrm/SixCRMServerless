@@ -29,8 +29,8 @@ ses:
   hostname: email-smtp.us-east-1.amazonaws.com
   port: 465
   username: 'ses-smtp-user.20170828-131229'
-  smtp_username: 'AKIAJRAITRA47FQLFTOA'
-  smtp_password: 'Al7bmGAKGupiC8d+aXTqINwbEmLP9nsDgPGLw1GZLl7V'
+  smtp_username: 'AKIAJXFEUFCIXZ2XOQ4Q'
+  smtp_password: 'AvEwvGduBYvd6E/t1P8E9fjam76kN0cTwYO7CtwKuWMa'
   default_sender_email: 'info@sixcrm.com'
   default_sender_name: 'SixCRM'
 

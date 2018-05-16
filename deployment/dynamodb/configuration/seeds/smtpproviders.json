@@ -19,10 +19,10 @@
 	  "from_name": "SixCRM",
 	  "hostname": "email-smtp.us-east-1.amazonaws.com",
 	  "id": "f3ba1ee9-0d03-464d-ad6e-e2faafe660ce",
-	  "name": "Six Billing",
-	  "password": "9061b165bb2fa9f378c5c65f4aced66b1e1e3a7b7f1d8f53adf1464b9b8d83dfd49eec961f008aa89aca321239f0f172",
+	  "name": "Six Accounting",
+	  "password": "AvEwvGduBYvd6E/t1P8E9fjam76kN0cTwYO7CtwKuWMa",
 	  "port": 465,
 	  "updated_at": "2018-05-01T20:55:11.188Z",
-	  "username": "b9567353c61fe931ead9d942247a5f0ddc479e6c8c7bc367142c1f97edda658a"
+	  "username": "AKIAJXFEUFCIXZ2XOQ4Q"
 	}
 ]
