@@ -42,6 +42,14 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
 	}
 
+	getStageDomain(){
+
+		du.debug('Get Stage Domain');
+
+		return this.site_config.site.domain;
+
+	}
+
 	getSiteConfig() {
 
 		du.debug('Get Site Config');
