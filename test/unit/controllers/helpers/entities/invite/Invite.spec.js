@@ -574,6 +574,111 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 	});
 
+	describe('_sendEmailToInvitedUser', async () => {
+
+		it('correctly parses', async () => {
+
+			let invite = MockEntities.getValidInvite();
+			let link = 'https://blerf.com'
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), class {
+
+				constructor(){}
+
+				sendEmail(email){
+					
+					expect(email).to.be.a('object');
+					expect(email).to.have.property('recepient_emails');
+					expect(email).to.have.property('recepient_name');
+					expect(email).to.have.property('subject');
+					expect(email).to.have.property('body');
+					expect(email.recepient_emails).to.be.a('array');
+					expect(email.recepient_emails[0]).to.equal(invite.email);
+					expect(email.recepient_name).to.be.a('string');
+					expect(email.recepient_name).to.have.string('Welcome to ');
+					expect(email.recepient_name).not.to.have.string('{{');
+					expect(email.recepient_name).not.to.have.string('}}');
+					expect(email.subject).to.be.a('string');
+					expect(email.subject).not.to.have.string('}}');
+					expect(email.subject).not.to.have.string('{{');
+					expect(email.subject).to.have.string('You\'ve been invited to join a account on ');
+					expect(email.body).to.be.a('string');
+					expect(email.body).not.to.have.string('}}');
+					expect(email.body).not.to.have.string('{{');
+					expect(email.body).to.have.string('Please accept this invite using the link below: https://blerf.com');
+
+					return Promise.resolve(true);
+				}
+
+			});
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			let result = await inviteHelperClass._sendEmailToInvitedUser(invite, link);
+			expect(result).to.equal(true);
+
+		});
+
+	});
+
+	describe('_getAPIDomain', () => {
+
+		let configuration;
+
+		beforeEach(() => {
+
+			configuration = global.SixCRM.configuration;
+
+		});
+
+		afterEach(() => {
+
+			global.SixCRM.configuration = configuration;
+
+		});
+
+		it('correctly establishes the domain', () => {
+
+			global.SixCRM.configuration.site_config.site.domain = 'blergoff.jerp';
+			global.SixCRM.configuration.stage = 'parmesean';
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			let domain = inviteHelperClass._getAPIDomain('admin');
+			expect(domain).to.equal('parmesean-admin.blergoff.jerp');
+
+		});
+
+		it('correctly establishes the domain', () => {
+
+			global.SixCRM.configuration.site_config.site.domain = 'blergoff.jerp';
+			global.SixCRM.configuration.stage = 'production';
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			let domain = inviteHelperClass._getAPIDomain('admin');
+			expect(domain).to.equal('admin.blergoff.jerp');
+
+		});
+
+		it('correctly establishes the domain', () => {
+
+			global.SixCRM.configuration.site_config.site.domain = 'blergoff.jerp';
+			global.SixCRM.configuration.stage = 'production';
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			let domain = inviteHelperClass._getAPIDomain();
+			expect(domain).to.equal('blergoff.jerp');
+
+		});
+
+	});
+
 	describe('acknowledge', () => {
 
 	});

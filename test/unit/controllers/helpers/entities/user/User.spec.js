@@ -395,6 +395,8 @@ describe('controllers/helpers/entities/user/User.js', () => {
 
 		it('returns a user model for a email argument', () => {
 
+			let account = MockEntities.getValidAccount();
+			
 			const user = MockEntities.getValidUser();
 			user.acl = [MockEntities.getValidUserACL(),MockEntities.getValidUserACL()];
 			user.acl[0].role = MockEntities.getValidRole();
@@ -416,6 +418,16 @@ describe('controllers/helpers/entities/user/User.js', () => {
 				}
 				disableACLs(){}
 				enableACLs(){}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities','Account.js'), class {
+				constructor(){}
+				disableACLs(){}
+				enableACLs(){}
+				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(account);
+				}
 			});
 
 			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
@@ -434,6 +446,8 @@ describe('controllers/helpers/entities/user/User.js', () => {
 
 		it('returns a user model for a user argument', () => {
 
+			let account = MockEntities.getValidAccount();
+
 			const user = MockEntities.getValidUser();
 			user.acl = [MockEntities.getValidUserACL(),MockEntities.getValidUserACL()];
 			user.acl[0].role = MockEntities.getValidRole();
@@ -455,6 +469,16 @@ describe('controllers/helpers/entities/user/User.js', () => {
 				}
 				disableACLs(){}
 				enableACLs(){}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities','Account.js'), class {
+				constructor(){}
+				disableACLs(){}
+				enableACLs(){}
+				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(account);
+				}
 			});
 
 			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
@@ -476,6 +500,18 @@ describe('controllers/helpers/entities/user/User.js', () => {
 	describe('getMostRecentTermsAndConditionsDocuments', () => {
 
 		it('gets recent T&C documents for Owner and User', () => {
+
+			let account = MockEntities.getValidAccount();
+
+			mockery.registerMock(global.SixCRM.routes.path('entities','Account.js'), class {
+				constructor(){}
+				disableACLs(){}
+				enableACLs(){}
+				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(account);
+				}
+			});
 
 			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
 			const userHelperController = new UserHelperController();
@@ -549,9 +585,21 @@ describe('controllers/helpers/entities/user/User.js', () => {
 		it('updates the user', () => {
 
 			let user = MockEntities.getValidUser();
+			let account = MockEntities.getValidAccount();
+
 			let expected_user = objectutilities.clone(user);
 			expected_user.termsandconditions_outdated = true;
 			expected_user.acl = [];
+
+			mockery.registerMock(global.SixCRM.routes.path('entities','Account.js'), class {
+				constructor(){}
+				disableACLs(){}
+				enableACLs(){}
+				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(account);
+				}
+			});
 
 			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
 			const userHelperController = new UserHelperController();
@@ -567,9 +615,11 @@ describe('controllers/helpers/entities/user/User.js', () => {
 			let user = MockEntities.getValidUser();
 			let acl = MockEntities.getValidUserACL();
 			let role = MockEntities.getValidRole();
+			let account = MockEntities.getValidAccount();
 			role.name = 'Owner';
 			acl.role = role;
 			user.acl = [acl];
+			account.id = acl.account;
 
 			let other_acl = MockEntities.getValidUserACL();
 			let other_role = MockEntities.getValidRole();
@@ -581,6 +631,16 @@ describe('controllers/helpers/entities/user/User.js', () => {
 			expected_user.termsandconditions_outdated = true;
 			expected_user.acl = [objectutilities.clone(acl), other_acl];
 			expected_user.acl[0].termsandconditions_outdated = true;
+
+			mockery.registerMock(global.SixCRM.routes.path('entities','Account.js'), class {
+				constructor(){}
+				disableACLs(){}
+				enableACLs(){}
+				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(account);
+				}
+			});
 
 			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
 			const userHelperController = new UserHelperController();
