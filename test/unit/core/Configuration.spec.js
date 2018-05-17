@@ -1,36 +1,36 @@
 const chai = require('chai');
 const expect = chai.expect;
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js')
 
+const Routes = global.SixCRM.routes.include('root', 'routes.js');
+
 describe('core/Configuration.js', () => {
-
-  let configuration;
-
-  beforeEach(() => {
-    configuration = global.SixCRM.configuration;
-  });
-  afterEach(() => {
-    global.SixCRM.configuration = configuration;
-  });
 
   describe('getStageDomain', () => {
 
     it('retrieves site domain', () => {
 
-      global.SixCRM.configuration.site_config.site.domain = 'furbolg.zoo';
-      global.SixCRM.configuration.stage = 'fuzzy';
+      const Configuration = global.SixCRM.routes.include('core', 'Configuration.js');
+      let configuration = new Configuration(new Routes());
 
-      let domain = global.SixCRM.configuration.getStageDomain();
+      configuration.site_config.site.domain = 'furbolg.zoo';
+      configuration.stage = 'fuzzy';
+
+      let domain = configuration.getStageDomain();
       expect(domain).to.equal('furbolg.zoo');
 
     });
 
-    it('retrieves site domain', () => {
+    it('returns null', () => {
 
-      delete global.SixCRM.configuration.site_config.site.domain;
+      const Configuration = global.SixCRM.routes.include('core', 'Configuration.js');
+      let configuration = new Configuration(new Routes());
 
-      let domain = global.SixCRM.configuration.getStageDomain();
+      delete configuration.site_config.site.domain;
+
+      let domain = configuration.getStageDomain();
       expect(domain).to.equal(null);
 
     });
@@ -41,38 +41,51 @@ describe('core/Configuration.js', () => {
 
     it('retrieves the correct domain', () => {
 
-      global.SixCRM.configuration.site_config.site.domain = 'furbolg.zoo';
-      global.SixCRM.configuration.stage = 'fuzzy';
-      let domain_path = global.SixCRM.configuration.getSubdomainPath('critters');
+      const Configuration = global.SixCRM.routes.include('core', 'Configuration.js');
+      let configuration = new Configuration(new Routes());
+
+      configuration.site_config.site.domain = 'furbolg.zoo';
+      configuration.stage = 'fuzzy';
+      let domain_path = configuration.getSubdomainPath('critters');
       expect(domain_path).to.equal('fuzzy-critters.furbolg.zoo');
 
     });
 
     it('retrieves the correct domain (no stage)', () => {
 
-      global.SixCRM.configuration.site_config.site.domain = 'furbolg.zoo';
-      global.SixCRM.configuration.site_config.site.include_stage = false
-      global.SixCRM.configuration.stage = 'fuzzy';
-      let domain_path = global.SixCRM.configuration.getSubdomainPath('critters');
+      const Configuration = global.SixCRM.routes.include('core', 'Configuration.js');
+      let configuration = new Configuration(new Routes());
+
+      configuration.site_config.site.domain = 'furbolg.zoo';
+      configuration.stage = 'fuzzy';
+      configuration.site_config.site.include_stage = false
+
+      let domain_path = configuration.getSubdomainPath('critters');
       expect(domain_path).to.equal('critters.furbolg.zoo');
 
     });
 
     it('retrieves the correct domain (undefined stage)', () => {
 
-      global.SixCRM.configuration.site_config.site.domain = 'furbolg.zoo';
-      delete global.SixCRM.configuration.site_config.site.include_stage;
-      global.SixCRM.configuration.stage = 'fuzzy';
-      let domain_path = global.SixCRM.configuration.getSubdomainPath('critters');
+      const Configuration = global.SixCRM.routes.include('core', 'Configuration.js');
+      let configuration = new Configuration(new Routes());
+
+      configuration.site_config.site.domain = 'furbolg.zoo';
+      delete configuration.site_config.site.include_stage;
+      configuration.stage = 'fuzzy';
+      let domain_path = configuration.getSubdomainPath('critters');
       expect(domain_path).to.equal('critters.furbolg.zoo');
 
     });
 
     it('retrieves the correct domain (undefined subdomain)', () => {
 
-      global.SixCRM.configuration.site_config.site.domain = 'furbolg.zoo';
-      global.SixCRM.configuration.stage = 'fuzzy';
-      let domain_path = global.SixCRM.configuration.getSubdomainPath();
+      const Configuration = global.SixCRM.routes.include('core', 'Configuration.js');
+      let configuration = new Configuration(new Routes());
+
+      configuration.site_config.site.domain = 'furbolg.zoo';
+      configuration.stage = 'fuzzy';
+      let domain_path = configuration.getSubdomainPath();
       expect(domain_path).to.equal('furbolg.zoo');
 
     });
@@ -80,18 +93,3 @@ describe('core/Configuration.js', () => {
   });
 
 });
-
-/*
-
-getStageDomain(){
-
-  du.debug('Get Stage Domain');
-
-  if(_.has(this, 'site_config') && _.has(this.site_config, 'site') && _.has(this.site_config.site, 'domain')){
-    return this.site_config.site.domain;
-  }
-
-  return null;
-
-}
-*/
