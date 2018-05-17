@@ -14,6 +14,7 @@ module.exports = class AuroraSchemaDeployment {
 		return auroraContext.withConnection(async (connection) => {
 
 			const migrations = await this._getVersionDirectories(connection, options);
+			du.debug('AuroraSchemaDeployment.deploy(): migrations', migrations);
 			await BBPromise.each(migrations, m => this._deployMigration(m, connection));
 			return 'Aurora deploy complete';
 
@@ -45,6 +46,8 @@ module.exports = class AuroraSchemaDeployment {
 
 		const results = await fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'aurora/migrations'));
 
+		du.debug('AuroraSchemaDeployment._getVersionDirectories(): getDirectoryFiles', results);
+
 		const migrations = results.map((r) => {
 			return {
 				version: Number(r),
@@ -66,6 +69,8 @@ module.exports = class AuroraSchemaDeployment {
 			currentRevision = 0;
 
 		}
+
+		du.debug('AuroraSchemaDeployment._getVersionDirectories(): current revision', currentRevision);
 
 		return _.sortBy(_.filter(migrations, (f) => {
 
