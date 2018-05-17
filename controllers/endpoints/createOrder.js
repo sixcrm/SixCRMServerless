@@ -107,11 +107,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		let session = await this.hydrateSession(event);
 		let customer = await this.getCustomer(event, session);
 
-		let productschedules = event.product_schedules;
-		let products = event.products;
-		let transactionsubtype = event.transaction_subtype || 'main';
-		let rawcreditcard = event.creditcard ? this.creditCardHelperController.formatRawCreditCard(event.creditcard) : undefined;
-
 		let [creditcard, campaign, previous_rebill] = await Promise.all([
 			this.getCreditCard(event, customer),
 			this.getCampaign(session),
@@ -123,8 +118,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		this.validateSession(session);
 
-		let rebill = await this.createRebill(session, productschedules, products);
-		let processed_rebill = await this.processRebill(rebill, rawcreditcard, transactionsubtype);
+		let rebill = await this.createRebill(session, event.product_schedules, event.products);
+		let processed_rebill = await this.processRebill(rebill, event);
 
 		// We'll leave this one in for now to not break too many tests.
 		this.parameters.set('info', {
@@ -136,14 +131,14 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			campaign,
 			creditcard: processed_rebill.creditcard,
 			result: processed_rebill.result,
-			product_schedules: productschedules,
-			products
+			product_schedules: event.product_schedules,
+			products: event.products
 		});
 
 		await Promise.all([
 			this.reversePreviousRebill(rebill, previous_rebill),
 			this.incrementMerchantProviderSummary(processed_rebill.transactions),
-			this.updateSessionWithWatermark(session, productschedules, products),
+			this.updateSessionWithWatermark(session, event.product_schedules, event.products),
 			this.addRebillToStateMachine(processed_rebill.result, rebill),
 			AnalyticsEvent.push('order', {
 				session,
@@ -266,7 +261,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		du.debug('Create Rebill');
 
-		if (_.isNull(productschedules) && _.isNull(products)) {
+		if (!productschedules && !products) {
 			throw eu.getError('server', 'Nothing to add to the rebill.');
 		}
 
@@ -279,14 +274,14 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	async processRebill(rebill, rawcreditcard, transactionsubtype) {
+	async processRebill(rebill, event) {
 
 		du.debug('Process Rebill');
 
 		let argumentation = {
 			rebill,
-			transactionsubtype,
-			creditcard: rawcreditcard
+			transactionsubtype: event.transaction_subtype || 'main',
+			creditcard: event.creditcard ? this.creditCardHelperController.formatRawCreditCard(event.creditcard) : undefined
 		};
 
 		let register_response = await this.registerController.processTransaction(argumentation);
@@ -294,7 +289,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		let amount = this.transactionHelperController.getTransactionsAmount(register_response.parameters.get('transactions'));
 
 		return {
-			register_response,
 			creditcard: register_response.getCreditCard(),
 			transactions: register_response.parameters.get('transactions'),
 			result: register_response.parameters.get('response_type'),
@@ -305,7 +299,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	async reversePreviousRebill(rebill, previous_rebill) {
 
-		if (_.isNull(previous_rebill)) {
+		if (!previous_rebill) {
 			return Promise.resolve();
 		}
 

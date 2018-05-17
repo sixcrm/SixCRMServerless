@@ -942,11 +942,19 @@ describe('createOrder', function () {
 				}
 			});
 
+			let TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+			const transactionHelperController = new TransactionHelperController();
+
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			return createOrderController.processRebill(rebill).then(result => {
-				expect(result).to.deep.equal(register_response.parameters.store['transaction']);
+			return createOrderController.processRebill(rebill, {}).then(result => {
+				expect(result).to.deep.equal({
+					creditcard: plaintext_creditcard,
+					transactions: transactions,
+					result: response_type,
+					amount: transactionHelperController.getTransactionsAmount(transactions)
+				});
 
 
 			});
@@ -1164,7 +1172,7 @@ describe('createOrder', function () {
 
 		});
 
-		it('marks rebill as no_process if register result unsuccessful', () => {
+		it('marks rebill as no_process if register result unsuccessful', async () => {
 
 			let rebill = getValidRebill();
 			let session = getValidSession();
@@ -1217,14 +1225,15 @@ describe('createOrder', function () {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			return Promise.all([
+			await Promise.all([
 				createOrderController.reversePreviousRebill(rebill),
 				createOrderController.incrementMerchantProviderSummary(transactions),
 				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups),
-				createOrderController.addRebillToStateMachine('success', rebill)
-			]).then(() => {
-				expect(rebill.no_process).to.be.true;
-			});
+				createOrderController.addRebillToStateMachine('decline', rebill)
+			]);
+
+			expect(rebill.no_process).to.be.true;
+
 		});
 
 	});
