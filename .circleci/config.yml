@@ -101,13 +101,13 @@ jobs:
             command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node npm run test-functional-connectivity --prefix=/sixcrmserverless
         - run:
             name: Deploy Local Dynamo
-            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=2 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node node /sixcrmserverless/deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless
+            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=3 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node node /sixcrmserverless/deployment/dynamodb/deploy_tables.js --prefix=/sixcrmserverless
         - run:
             name: Execute Functional Analytics Query Tests in Docker
-            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=2 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node npm run test-functional-analytics-queries --prefix=/sixcrmserverless
+            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=3 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node npm run test-functional-analytics-queries --prefix=/sixcrmserverless
         - run:
             name: Execute Functional Analytics Event Tests in Docker
-            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=2 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node npm run test-functional-analytics-events --prefix=/sixcrmserverless
+            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=3 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless node npm run test-functional-analytics-events --prefix=/sixcrmserverless
   pre_deploy:
     <<: *job-defaults
     steps:
