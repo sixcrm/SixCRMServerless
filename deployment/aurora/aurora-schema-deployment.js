@@ -46,6 +46,8 @@ module.exports = class AuroraSchemaDeployment {
 
 		const results = await fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'aurora/migrations'));
 
+		du.debug('AuroraSchemaDeployment._getVersionDirectories(): getDirectoryFiles', results);
+
 		const migrations = results.map((r) => {
 			return {
 				version: Number(r),
@@ -67,6 +69,8 @@ module.exports = class AuroraSchemaDeployment {
 			currentRevision = 0;
 
 		}
+
+		du.debug('AuroraSchemaDeployment._getVersionDirectories(): current revision', currentRevision);
 
 		return _.sortBy(_.filter(migrations, (f) => {
 
