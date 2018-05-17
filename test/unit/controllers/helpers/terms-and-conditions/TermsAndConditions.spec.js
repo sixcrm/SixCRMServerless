@@ -72,7 +72,6 @@ describe('controllers/helpers/terms-and-conditions/TermsAndConditions.js', () =>
 		it('successfully returns the Terms and Conditions document (owner)', () => {
 
 			let account = MockEntities.getValidAccount();
-			global.account = account.id;
 
 			mockery.registerMock(global.SixCRM.routes.path('entities','Account.js'), class {
 				constructor(){}
@@ -87,12 +86,13 @@ describe('controllers/helpers/terms-and-conditions/TermsAndConditions.js', () =>
 			const TermsAndConditionsHelperController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 			const termsAndConditionsHelperController = new TermsAndConditionsHelperController();
 
-			return termsAndConditionsHelperController.getLatestTermsAndConditions('owner').then(result => {
+			return termsAndConditionsHelperController.getLatestTermsAndConditions('owner', account.id).then(result => {
 				expect(result).to.have.property('title');
 				expect(result).to.have.property('body');
 				expect(result).to.have.property('version');
 				expect(result.body).not.to.have.string('{{');
 				expect(result.body).not.to.have.string('}}');
+				expect(result.body).to.have.string(account.name);
 			});
 
 		});

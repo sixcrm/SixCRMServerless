@@ -1,6 +1,7 @@
 site:
   name: 'Local SixCRM'
   domain: 'sixcrm.com'
+  include_stage: true
 
 serverless:
   verbose: 2

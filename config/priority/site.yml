@@ -1,6 +1,7 @@
 site:
   name: 'Recursix'
   domain: 'recursix.com'
+  include_stage: false
 
 serverless:
   verbose: 0
