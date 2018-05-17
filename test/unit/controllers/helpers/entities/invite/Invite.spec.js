@@ -586,6 +586,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 				constructor(){}
 
 				sendEmail(email){
+					
 					expect(email).to.be.a('object');
 					expect(email).to.have.property('recepient_emails');
 					expect(email).to.have.property('recepient_name');
