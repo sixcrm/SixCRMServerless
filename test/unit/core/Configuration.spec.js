@@ -5,16 +5,16 @@ const randomutilities = global.SixCRM.routes.include('lib', 'random.js')
 
 describe('core/Configuration.js', () => {
 
+  let configuration;
+
+  beforeEach(() => {
+    configuration = global.SixCRM.configuration;
+  });
+  afterEach(() => {
+    global.SixCRM.configuration = configuration;
+  });
+
   describe('getStageDomain', () => {
-
-    let configuration;
-
-    beforeEach(() => {
-      configuration = global.SixCRM.configuration;
-    });
-    afterEach(() => {
-      global.SixCRM.configuration = configuration;
-    });
 
     it('retrieves site domain', () => {
 
@@ -38,15 +38,6 @@ describe('core/Configuration.js', () => {
   });
 
   describe('getSubdomainPath', () => {
-
-    let configuration;
-
-    beforeEach(() => {
-      configuration = global.SixCRM.configuration;
-    });
-    afterEach(() => {
-      global.SixCRM.configuration = configuration;
-    });
 
     it('retrieves the correct domain', () => {
 
