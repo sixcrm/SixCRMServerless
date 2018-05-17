@@ -2,6 +2,7 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib','parser-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
 
 const InviteController = global.SixCRM.routes.include('entities', 'Invite.js');
 const HelperController = global.SixCRM.routes.include('helpers', 'Helper.js');
@@ -41,19 +42,44 @@ module.exports = class InviteUtilities extends HelperController{
 
 	}
 
+	_getAPIDomain(subdomain = null){
+
+		du.debug('Get API Domain');
+
+		let stage = global.SixCRM.configuration.stage;
+		let seperator = '-';
+		let domain = global.SixCRM.configuration.site_config.site.domain;
+		let path_seperator = '.';
+
+		if(_.includes(['priority','production'], stage)){
+			seperator = '';
+			stage = '';
+		}
+
+		if(_.isNull(subdomain)){
+			path_seperator = ''
+		}
+
+		return [
+			stage,
+			seperator,
+			subdomain,
+			path_seperator,
+			domain
+		].join('');
+
+	}
+
 	_buildInviteLink(hash){
 
 		du.debug('Build Invite Link');
 
-		const stage = global.SixCRM.configuration.stage;
-		const prefix = (stage === 'development' || stage === 'staging') ? (stage + '-') : '';
-
 		let link_tokens = {
-			stage_prefix: prefix,
+			api_domain: this._getAPIDomain(),
 			hash: hash
 		};
 
-		let link_template = 'https://{{stage_prefix}}admin.sixcrm.com/acceptinvite/{{hash}}';
+		let link_template = 'https://{{api_domian}}/acceptinvite/{{hash}}';
 
 		return parserutilities.parse(link_template, link_tokens);
 
@@ -63,13 +89,24 @@ module.exports = class InviteUtilities extends HelperController{
 
 		du.debug('Send Email to Invited User');
 
-		//Technical Debt:  Internationalization necessary here...
 		let email = {
 			recepient_emails: [invite_object.email],
-			recepient_name: 'Welcome to SixCRM',
-			subject: 'You\'ve been invited to join a account on Six CRM',
-			body: 'Please accept this invite using the link below: '+link
+			recepient_name: 'Welcome to {{site.name}}',
+			subject: 'You\'ve been invited to join a account on {{site.name}}',
+			body: 'Please accept this invite using the link below: {{link}}'
 		};
+
+		let data = {
+			site: global.SixCRM.configuration.site_config.site,
+			invite_object: invite_object,
+			link: link
+		};
+
+		objectutilities.map(email, key => {
+			if(_.isString(email[key])){
+				email[key] = parserutilities.parse(email[key], data);
+			}
+		});
 
 		if(!_.has(this, 'systemmailer')){
 			//Technical Debt:  Move this to providers....

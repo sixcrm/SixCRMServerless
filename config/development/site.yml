@@ -1,3 +1,7 @@
+site:
+  name: 'Development SixCRM'
+  domain: 'sixcrm.com'
+
 serverless:
   verbose: 2
 

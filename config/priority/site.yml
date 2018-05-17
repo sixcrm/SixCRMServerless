@@ -1,3 +1,7 @@
+site:
+  name: 'Recursix'
+  domain: 'recursix.com'
+
 serverless:
   verbose: 0
 

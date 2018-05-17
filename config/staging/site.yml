@@ -1,3 +1,7 @@
+site:
+  name: 'Staging SixCRM'
+  domain: 'sixcrm.com'
+
 serverless:
   verbose: 0
 
