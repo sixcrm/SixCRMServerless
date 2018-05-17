@@ -1,40 +1,54 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/deployment/dynamodb/autoscaling/role.json",
-  "title":"DynamoDB Autoscaling Role",
-  "type":"object",
-  "properties":{
-    "ResponseMetadata": {
-      "type":"object",
-      "properties":{
-        "RequestId": {
-          "type":"string"
-        }
-      },
-      "required":["RequestId"]
-    },
-    "Role":{
-      "type":"object",
-      "properties":{
-        "Path": {
-          "type":"string"
-        },
-        "RoleName":{
-          "type":"string"
-        },
-        "RoleId":{
-          "Type":"string"
-        },
-        "Arn":{"$ref":"../../../definitions/arn.json"},
-        "AssumeRolePolicyDocument":{
-          "type":"string"
-        },
-        "Description": {
-          "type":"string"
-        }
-      },
-      "required":["Path","RoleName","RoleId","Arn","AssumeRolePolicyDocument","Description"]
-    }
-  },
-  "required":["ResponseMetadata","Role"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/deployment/dynamodb/autoscaling/role.json",
+	"title": "DynamoDB Autoscaling Role",
+	"type": "object",
+	"properties": {
+		"ResponseMetadata": {
+			"type": "object",
+			"properties": {
+				"RequestId": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"RequestId"
+			]
+		},
+		"Role": {
+			"type": "object",
+			"properties": {
+				"Path": {
+					"type": "string"
+				},
+				"RoleName": {
+					"type": "string"
+				},
+				"RoleId": {
+					"Type": "string"
+				},
+				"Arn": {
+					"$ref": "../../../definitions/arn.json"
+				},
+				"AssumeRolePolicyDocument": {
+					"type": "string"
+				},
+				"Description": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"Path",
+				"RoleName",
+				"RoleId",
+				"Arn",
+				"AssumeRolePolicyDocument",
+				"Description"
+			]
+		}
+	},
+	"required": [
+		"ResponseMetadata",
+		"Role"
+	]
 }

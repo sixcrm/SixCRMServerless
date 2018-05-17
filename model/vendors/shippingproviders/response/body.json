@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/body.json",
-  "title":"Shipping Provider Response Body",
-  "type":"string"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingproviders/response/body.json",
+	"title": "Shipping Provider Response Body",
+	"type": "string"
 }

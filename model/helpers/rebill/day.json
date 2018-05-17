@@ -1,8 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/day.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/rebill/day.json",
 	"title": "Day",
-  "type":"integer",
-  "minimum": -1,
-  "exclusiveMinimum": false
+	"type": "integer",
+	"minimum": -1
 }

@@ -1,7 +1,9 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/providers/shipping/terminal/augmentedtransactionproducts.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/shipping/terminal/augmentedtransactionproducts.json",
 	"title": "Augmented Transaction Products",
-	"type":"array",
-	"items": {"$ref": "./augmentedtransactionproduct.json"}
+	"type": "array",
+	"items": {
+		"$ref": "./augmentedtransactionproduct.json"
+	}
 }

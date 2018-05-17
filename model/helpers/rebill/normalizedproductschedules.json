@@ -1,12 +1,16 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/helpers/rebill/normalizedproductschedules.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/rebill/normalizedproductschedules.json",
 	"title": "Normalized Product Schedules",
-  "type":"array",
-  "items":{
-    "properties":{
-      "quantity":{"$ref":"../../definitions/nonnegativeinteger.json"},
-      "product_schedule":{"$ref":"../../entities/components/watermark/watermarkproductschedule.json"}
-    }
-  }
+	"type": "array",
+	"items": {
+		"properties": {
+			"quantity": {
+				"$ref": "../../definitions/nonnegativeinteger.json"
+			},
+			"product_schedule": {
+				"$ref": "../../entities/components/watermark/watermarkproductschedule.json"
+			}
+		}
+	}
 }

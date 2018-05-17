@@ -1,31 +1,50 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/user.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/user.json",
 	"title": "User",
 	"type": "object",
 	"description": "A user",
 	"properties": {
-		"id":{"$ref": "../definitions/useridentifier.json"},
-		"name":{
-			"type":"string",
-			"minLength":3
+		"id": {
+			"$ref": "../definitions/useridentifier.json"
 		},
-		"first_name":{
-			"type":"string",
-			"minLength":1
+		"name": {
+			"type": "string",
+			"minLength": 3
 		},
-		"last_name":{
-			"type":"string",
-			"minLength":1
+		"first_name": {
+			"type": "string",
+			"minLength": 1
 		},
-		"auth0_id":{"$ref": "../definitions/auth0identifier.json"},
-		"active":{
-			"type":"boolean"
+		"last_name": {
+			"type": "string",
+			"minLength": 1
 		},
-		"termsandconditions":{"$ref": "../definitions/tocidentifier.json"},
-		"alias":{"$ref": "../definitions/useralias.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"auth0_id": {
+			"$ref": "../definitions/auth0identifier.json"
+		},
+		"active": {
+			"type": "boolean"
+		},
+		"termsandconditions": {
+			"$ref": "../definitions/tocidentifier.json"
+		},
+		"alias": {
+			"$ref": "../definitions/useralias.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["id", "name", "active", "alias", "created_at", "updated_at"]
+	"required": [
+		"id",
+		"name",
+		"active",
+		"alias",
+		"created_at",
+		"updated_at"
+	]
 }

@@ -1,7 +1,11 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/helpers/notifications/notificationtype.json",
-  "title":"Notification Type",
-  "type":"string",
-  "enum":["notification", "alert", "persistent"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/notifications/notificationtype.json",
+	"title": "Notification Type",
+	"type": "string",
+	"enum": [
+		"notification",
+		"alert",
+		"persistent"
+	]
 }

@@ -1,8 +1,8 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/accesskey.json",
-  "title": "Access Key",
-  "description": "A transactional endpoint access key",
-  "type":"string",
-  "pattern":"^[a-zA-Z0-9]{40}$"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/accesskey.json",
+	"title": "Access Key",
+	"description": "A transactional endpoint access key",
+	"type": "string",
+	"pattern": "^[a-zA-Z0-9]{40}$"
 }

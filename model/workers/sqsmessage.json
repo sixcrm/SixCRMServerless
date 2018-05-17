@@ -1,19 +1,26 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/sqsmessage.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/sqsmessage.json",
 	"title": "SQS Message",
 	"type": "object",
-  "properties":{
-    "MessageId":{
-      "type":"string"
-    },
-    "ReceiptHandle":{
-      "type":"string"
-    },
-    "Body":{"$ref": "./sqsmessagebody.json"},
-    "MD5OfBody":{
-      "type":"string"
-    }
-  },
-  "required":["MessageId", "ReceiptHandle", "Body", "MD5OfBody"]
+	"properties": {
+		"MessageId": {
+			"type": "string"
+		},
+		"ReceiptHandle": {
+			"type": "string"
+		},
+		"Body": {
+			"$ref": "./sqsmessagebody.json"
+		},
+		"MD5OfBody": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"MessageId",
+		"ReceiptHandle",
+		"Body",
+		"MD5OfBody"
+	]
 }

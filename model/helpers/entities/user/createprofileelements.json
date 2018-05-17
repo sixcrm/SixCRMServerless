@@ -1,11 +1,18 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/helpers/entities/user/createprofileelements.json",
-  "title":"Create Profile Elements",
-  "type":"object",
-  "properties":{
-    "user":{"$ref":"../../../entities/user.json"},
-    "user_setting":{"$ref":"../../../entities/usersetting.json"}
-  },
-  "required":["user", "user_setting"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/entities/user/createprofileelements.json",
+	"title": "Create Profile Elements",
+	"type": "object",
+	"properties": {
+		"user": {
+			"$ref": "../../../entities/user.json"
+		},
+		"user_setting": {
+			"$ref": "../../../entities/usersetting.json"
+		}
+	},
+	"required": [
+		"user",
+		"user_setting"
+	]
 }

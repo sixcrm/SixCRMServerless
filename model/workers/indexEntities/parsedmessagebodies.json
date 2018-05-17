@@ -1,7 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/indexelements.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/indexEntities/parsedmessagebodies.json",
 	"title": "Index Elements",
 	"type": "array",
-  "items":{"$ref":"../../helpers/indexing/indexelement.json"}
+	"items": {
+		"$ref": "../../helpers/indexing/indexelement.json"
+	}
 }

@@ -1,25 +1,46 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/return.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/return.json",
 	"title": "Return",
 	"type": "object",
 	"description": "A return",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"alias":{"$ref": "../definitions/returnalias.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"},
-		"transactions":{
-			"type":"array",
-			"items":{"$ref":"./components/returntransaction.json"},
-			"minimum":1
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"history":{
-			"type":"array",
-			"items":{"$ref": "./components/returnstatehistoryelement.json"},
-			"minimum":1
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"alias": {
+			"$ref": "../definitions/returnalias.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"transactions": {
+			"type": "array",
+			"items": {
+				"$ref": "./components/returntransaction.json"
+			},
+			"minimum": 1
+		},
+		"history": {
+			"type": "array",
+			"items": {
+				"$ref": "./components/returnstatehistoryelement.json"
+			},
+			"minimum": 1
 		}
 	},
-	"required":["account", "alias", "transactions", "history", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"alias",
+		"transactions",
+		"history",
+		"created_at",
+		"updated_at"
+	]
 }

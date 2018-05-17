@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/base64string.json",
-  "title": "Base64 String",
-  "type": "string"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/base64string.json",
+	"title": "Base64 String",
+	"type": "string"
 }

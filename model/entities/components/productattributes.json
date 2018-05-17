@@ -1,15 +1,21 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/productattributes.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/productattributes.json",
 	"title": "Product Attributes",
 	"description": "Product Attribution",
-	"type":"object",
-	"properties":{
-		"images":{
-			"type":"array",
-			"items":{"$ref":"../../definitions/sixcrmimage.json"}
+	"type": "object",
+	"properties": {
+		"images": {
+			"type": "array",
+			"items": {
+				"$ref": "../../definitions/sixcrmimage.json"
+			}
 		},
-		"dimensions":{"$ref":"../../definitions/3ddimensions.json"},
-		"weight":{"$ref":"../../definitions/weight.json"}
+		"dimensions": {
+			"$ref": "../../definitions/3ddimensions.json"
+		},
+		"weight": {
+			"$ref": "../../definitions/weight.json"
+		}
 	}
 }

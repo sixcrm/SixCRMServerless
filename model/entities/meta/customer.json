@@ -1,24 +1,32 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/meta/customer.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/meta/customer.json",
 	"title": "Customer",
 	"type": "object",
 	"description": "A customer",
 	"properties": {
-		"email":{
-			"type":"string",
-			"format":"email"
+		"email": {
+			"type": "string",
+			"format": "email"
 		},
-		"firstname":{
-			"type":"string",
+		"firstname": {
+			"type": "string",
 			"minLength": 1
 		},
-		"lastname":{
-			"type":"string",
+		"lastname": {
+			"type": "string",
 			"minLength": 1
 		},
-		"phone":{"$ref": "../../definitions/phone.json", "description": "Customer phone number"},
-		"address":{"$ref": "../../definitions/address.json", "description": "Customer address"}
+		"phone": {
+			"$ref": "../../definitions/phone.json",
+			"description": "Customer phone number"
+		},
+		"address": {
+			"$ref": "../../definitions/address.json",
+			"description": "Customer address"
+		}
 	},
-	"required":["email"]
+	"required": [
+		"email"
+	]
 }

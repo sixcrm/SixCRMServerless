@@ -1,13 +1,25 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/sixcrmidentifier.json",
-  "title": "SixCrmIdentifier",
-  "type":"string",
-  "anyOf":[
-    {"$ref": "uuidv4.json"},
-    {"type": "string","enum":["*","system"]},
-    {"type": "string","format":"email"},
-    {"$ref": "devicetoken.json"}
-  ]
-
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/sixcrmidentifier.json",
+	"title": "SixCrmIdentifier",
+	"type": "string",
+	"anyOf": [
+		{
+			"$ref": "./uuidv4.json"
+		},
+		{
+			"type": "string",
+			"enum": [
+				"*",
+				"system"
+			]
+		},
+		{
+			"type": "string",
+			"format": "email"
+		},
+		{
+			"$ref": "./devicetoken.json"
+		}
+	]
 }

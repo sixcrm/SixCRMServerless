@@ -1,7 +1,11 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/transactiontype.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/register/transactiontype.json",
 	"title": "Transaction Type",
-	"type":"string",
-  "enum":["sale","refund","reverse"]
+	"type": "string",
+	"enum": [
+		"sale",
+		"refund",
+		"reverse"
+	]
 }

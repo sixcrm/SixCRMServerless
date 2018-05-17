@@ -1,8 +1,10 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/uuidv4list.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/general/uuidv4list.json",
 	"title": "UUIDv4 list",
 	"description": "A list of uuidV4s",
 	"type": "array",
-	"items":{"$ref": "../definitions/uuidv4.json"}
+	"items": {
+		"$ref": "../definitions/uuidv4.json"
+	}
 }

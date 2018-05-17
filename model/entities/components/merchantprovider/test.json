@@ -1,22 +1,26 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/merchantprovider/test.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/merchantprovider/test.json",
 	"title": "A Test Merchant Provider",
-	"type":"object",
-  "properties":{
-    "name":{
-      "type":"string",
-      "enum":["Test"]
-    },
-    "username":{
-      "type":"string"
-    },
-    "password":{
-      "type":"string"
-    },
-    "processor_id": {
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string",
+			"enum": [
+				"Test"
+			]
+		},
+		"username": {
+			"type": "string"
+		},
+		"password": {
+			"type": "string"
+		},
+		"processor_id": {
 			"type": "string"
 		}
-  },
-  "required":["name"]
+	},
+	"required": [
+		"name"
+	]
 }

@@ -1,12 +1,22 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/indexedelements.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/indexing/preindexingentity.json",
 	"title": "Indexed Element",
 	"type": "object",
-  "properties":{
-    "index_action":{"$ref":"./indexaction.json"},
-    "entity_type":{"type":"string", "minLength":1},
-    "id":{"$ref":"../../definitions/sixcrmidentifier.json"}
-  },
-  "required":["index_action","entity_type"]
+	"properties": {
+		"index_action": {
+			"$ref": "./indexaction.json"
+		},
+		"entity_type": {
+			"type": "string",
+			"minLength": 1
+		},
+		"id": {
+			"$ref": "../../definitions/sixcrmidentifier.json"
+		}
+	},
+	"required": [
+		"index_action",
+		"entity_type"
+	]
 }

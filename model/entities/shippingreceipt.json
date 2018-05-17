@@ -1,33 +1,58 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/shippingreceipt",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/shippingreceipt.json",
 	"title": "Shipping Receipt",
 	"type": "object",
 	"description": "A shipping receipt",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"history":{
-			"type":"array",
-			"items":{"$ref":"./components/shippingreceipt/historyelement.json"}
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"fulfillment_provider":{"$ref": "../definitions/uuidv4.json"},
-		"fulfillment_provider_reference":{
-			"type":"string"
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
 		},
-		"tracking":{
-			"type":"object",
-			"properties":{
-				"id":{"$ref":"../vendors/shippingcarriers/trackingid.json"},
-				"carrier":{"$ref":"../vendors/shippingcarriers/carrier.json"}
+		"history": {
+			"type": "array",
+			"items": {
+				"$ref": "./components/shippingreceipt/historyelement.json"
+			}
+		},
+		"fulfillment_provider": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"fulfillment_provider_reference": {
+			"type": "string"
+		},
+		"tracking": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"$ref": "../vendors/shippingcarriers/trackingid.json"
+				},
+				"carrier": {
+					"$ref": "../vendors/shippingcarriers/carrier.json"
+				}
 			},
-			"required":["id","carrier"]
+			"required": [
+				"id",
+				"carrier"
+			]
 		},
-		"status":{
-			"type":"string"
+		"status": {
+			"type": "string"
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "fulfillment_provider", "status", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"fulfillment_provider",
+		"status",
+		"created_at",
+		"updated_at"
+	]
 }

@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/fulfillmentresponse.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/shipping/terminal/fulfillmentresponse.json",
 	"title": "Fulfillment Response",
-	"type":"object"
+	"type": "object"
 }

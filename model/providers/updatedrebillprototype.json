@@ -1,12 +1,18 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/updatedrebillprototype.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/updatedrebillprototype.json",
 	"title": "Updated Rebill Prototype",
-  "allOf":[
-    {"$ref":"../../entities/rebill.json"},
-    {
-      "type":"object",
-      "required":["state", "state_changed_at", "history"]
-    }
-  ]
+	"allOf": [
+		{
+			"$ref": "../entities/rebill.json"
+		},
+		{
+			"type": "object",
+			"required": [
+				"state",
+				"state_changed_at",
+				"history"
+			]
+		}
+	]
 }

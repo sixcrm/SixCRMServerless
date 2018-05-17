@@ -1,93 +1,113 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/Innovio/process.json",
 	"title": "Innovio Merchant Provider Process Object",
 	"type": "object",
 	"properties": {
-		"req_username":{
+		"req_username": {
 			"type": "string"
 		},
-		"req_password":{
+		"req_password": {
 			"type": "string"
 		},
-		"request_action":{
+		"request_action": {
 			"type": "string",
-			"enum":["CCAUTHCAP"]
+			"enum": [
+				"CCAUTHCAP"
+			]
 		},
-		"site_id":{
+		"site_id": {
 			"type": "string"
 		},
-		"merchant_acct_id":{
+		"merchant_acct_id": {
 			"type": "string"
 		},
-		"cust_fnam":{
+		"cust_fnam": {
 			"type": "string"
 		},
-		"cust_lname":{
+		"cust_lname": {
 			"type": "string"
 		},
-		"cust_email":{
+		"cust_email": {
 			"type": "string",
-			"format":"email"
+			"format": "email"
 		},
-		"cust_login":{
-			"anyOf":[
+		"cust_login": {
+			"anyOf": [
 				{
 					"type": "string",
-					"format":"ipv4"
+					"format": "ipv4"
 				},
 				{
 					"type": "string",
-					"format":"ipv6"
+					"format": "ipv6"
 				}
 			]
 		},
-		"cust_password":{
+		"cust_password": {
 			"type": "string"
 		},
-		"xtl_cust_id":{
+		"xtl_cust_id": {
 			"type": "string"
 		},
-		"xtl_order_id":{
+		"xtl_order_id": {
 			"type": "string"
 		},
-		"li_prod_id_1":{
+		"li_prod_id_1": {
 			"type": "string"
 		},
-		"li_value_1":{"$ref": "../../definitions/currency.json"},
-		"li_count_1":{"$ref": "../../definitions/nonnegativeinteger.json"},
-		"bill_addr":{
+		"li_value_1": {
+			"$ref": "../../definitions/currency.json"
+		},
+		"li_count_1": {
+			"$ref": "../../definitions/nonnegativeinteger.json"
+		},
+		"bill_addr": {
 			"type": "string"
 		},
-		"bill_addr_city":{
+		"bill_addr_city": {
 			"type": "string"
 		},
-		"bill_addr_state":{
+		"bill_addr_state": {
 			"type": "string"
 		},
-		"bill_addr_zip":{
+		"bill_addr_zip": {
 			"type": "string"
 		},
-		"bill_addr_country":{
+		"bill_addr_country": {
 			"type": "string"
 		},
-		"pmt_numb":{
+		"pmt_numb": {
 			"type": "string"
 		},
-		"pmt_key":{
+		"pmt_key": {
 			"type": "string"
 		},
-		"pmt_expiry":{
+		"pmt_expiry": {
 			"type": "string"
 		},
-		"request_response_format":{
+		"request_response_format": {
 			"type": "string"
 		},
-		"xtl_ip":{
+		"xtl_ip": {
 			"type": "string"
 		},
-		"request_api_version":{
+		"request_api_version": {
 			"type": "string"
 		}
 	},
-	"required":["request_action","request_response_format","request_api_version", "req_username","req_password","site_id","merchant_acct_id","li_prod_id_1","li_value_1","li_count_1","pmt_numb","pmt_expiry"]
+	"required": [
+		"request_action",
+		"request_response_format",
+		"request_api_version",
+		"req_username",
+		"req_password",
+		"site_id",
+		"merchant_acct_id",
+		"li_prod_id_1",
+		"li_value_1",
+		"li_count_1",
+		"pmt_numb",
+		"pmt_expiry"
+	]
 }

@@ -1,16 +1,27 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/deployment/sts/assumerolerequest.json",
-  "title":"Assume Role Request",
-  "type":"object",
-  "properties":{
-    "RoleArn":{"$ref":"../../definitions/arn.json"},
-    "RoleSessionName":{
-      "type":"string"
-    },
-    "DurationSeconds": {"$ref":"../../definitions/nonnegativeinteger.json"},
-    "Policy": {"$ref":"../../definitions/stringifiedjson.json"},
-    "ExternalId":{"$ref":"../../definitions/uuidv4.json"}
-  },
-  "required":["RoleArn", "RoleSessionName"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/deployment/sts/assumerolerequest.json",
+	"title": "Assume Role Request",
+	"type": "object",
+	"properties": {
+		"RoleArn": {
+			"$ref": "../../definitions/arn.json"
+		},
+		"RoleSessionName": {
+			"type": "string"
+		},
+		"DurationSeconds": {
+			"$ref": "../../definitions/nonnegativeinteger.json"
+		},
+		"Policy": {
+			"$ref": "../../definitions/stringifiedjson.json"
+		},
+		"ExternalId": {
+			"$ref": "../../definitions/uuidv4.json"
+		}
+	},
+	"required": [
+		"RoleArn",
+		"RoleSessionName"
+	]
 }

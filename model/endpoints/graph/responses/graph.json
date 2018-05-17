@@ -1,38 +1,42 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/graph",
-  "title": "Graph Response",
-  "type": "object",
-
-  "properties": {
-    "success": {
-      "type": "boolean"
-    },
-    "code": {
-      "type": "number",
-      "minimum": 200,
-      "maximum": 599
-    },
-    "error_type": {
-      "type": "string"
-    },
-    "response" :{
-      "anyOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "object"
-            }
-          }
-        },
-        {
-          "type": "null"
-        },
-        { "$ref": "definitions/jwt" }
-      ]
-
-    }
-  },
-  "required":["success", "code", "response"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/graph/responses/graph.json",
+	"title": "Graph Response",
+	"type": "object",
+	"properties": {
+		"success": {
+			"type": "boolean"
+		},
+		"code": {
+			"type": "number",
+			"minimum": 200,
+			"maximum": 599
+		},
+		"error_type": {
+			"type": "string"
+		},
+		"response": {
+			"anyOf": [
+				{
+					"type": "object",
+					"properties": {
+						"data": {
+							"type": "object"
+						}
+					}
+				},
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "./definitions/jwt.json"
+				}
+			]
+		}
+	},
+	"required": [
+		"success",
+		"code",
+		"response"
+	]
 }

@@ -1,13 +1,29 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/checkout.json",
 	"title": "Checkout",
 	"type": "object",
 	"properties": {
-		"campaign":{"$ref": "../definitions/uuidv4.json"},
-		"affiliates":{"$ref": "components/affiliates"},
-		"product_schedules":{"$ref": "components/product_schedules"},
-		"customer":{"$ref": "components/customer"},
-		"creditcard":{"$ref": "components/creditcard"}
+		"campaign": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"affiliates": {
+			"$ref": "./components/affiliates.json"
+		},
+		"product_schedules": {
+			"$ref": "./components/productschedules.json"
+		},
+		"customer": {
+			"$ref": "./components/customer.json"
+		},
+		"creditcard": {
+			"$ref": "./components/creditcard.json"
+		}
 	},
-	"required":["campaign", "product_schedules", "customer", "creditcard"]
+	"required": [
+		"campaign",
+		"product_schedules",
+		"customer",
+		"creditcard"
+	]
 }

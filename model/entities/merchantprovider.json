@@ -1,125 +1,201 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/merchantprovider.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/merchantprovider.json",
 	"title": "Merchant Provider",
 	"type": "object",
 	"description": "A merchant provider",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"name":{
-			"type":"string",
-			"minLength":2
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"processor":{
-			"type":"object",
-			"properties":{
-				"name":{
-					"type":"string",
-					"enum":["NMA","Humbolt","GMA","Group ISO","Test", "Stripe"]
-				},
-				"id":{
-					"type":"string"
-				}
-			},
-			"required":["name"]
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
 		},
-		"processing":{
-			"type":"object",
-			"properties":{
-				"monthly_cap": {
-					"anyOf":[
-						{"$ref": "../definitions/currency.json"},
-						{"type":"null"}
+		"name": {
+			"type": "string",
+			"minLength": 2
+		},
+		"processor": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"enum": [
+						"NMA",
+						"Humbolt",
+						"GMA",
+						"Group ISO",
+						"Test",
+						"Stripe"
 					]
 				},
-				"discount_rate":{"$ref": "../definitions/percentage.json"},
-				"transaction_fee":{"$ref": "../definitions/currency.json"},
-				"reserve_rate": {"$ref": "../definitions/percentage.json"},
-				"maximum_chargeback_ratio":{"$ref": "../definitions/percentage.json"},
-				"transaction_counts":{
-					"type":"object",
-					"properties":{
-						"daily":{
-							"anyOf":[
-								{"$ref": "../definitions/nonnegativeinteger.json"},
-								{"type":"null"}
+				"id": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name"
+			]
+		},
+		"processing": {
+			"type": "object",
+			"properties": {
+				"monthly_cap": {
+					"anyOf": [
+						{
+							"$ref": "../definitions/currency.json"
+						},
+						{
+							"type": "null"
+						}
+					]
+				},
+				"discount_rate": {
+					"$ref": "../definitions/percentage.json"
+				},
+				"transaction_fee": {
+					"$ref": "../definitions/currency.json"
+				},
+				"reserve_rate": {
+					"$ref": "../definitions/percentage.json"
+				},
+				"maximum_chargeback_ratio": {
+					"$ref": "../definitions/percentage.json"
+				},
+				"transaction_counts": {
+					"type": "object",
+					"properties": {
+						"daily": {
+							"anyOf": [
+								{
+									"$ref": "../definitions/nonnegativeinteger.json"
+								},
+								{
+									"type": "null"
+								}
 							]
 						},
-						"weekly":{
-							"anyOf":[
-								{"$ref": "../definitions/nonnegativeinteger.json"},
-								{"type":"null"}
+						"weekly": {
+							"anyOf": [
+								{
+									"$ref": "../definitions/nonnegativeinteger.json"
+								},
+								{
+									"type": "null"
+								}
 							]
 						},
-						"monthly":{
-							"anyOf":[
-								{"$ref": "../definitions/nonnegativeinteger.json"},
-								{"type":"null"}
+						"monthly": {
+							"anyOf": [
+								{
+									"$ref": "../definitions/nonnegativeinteger.json"
+								},
+								{
+									"type": "null"
+								}
 							]
 						}
 					}
 				}
 			},
-			"required":["monthly_cap","discount_rate", "transaction_fee", "reserve_rate", "maximum_chargeback_ratio", "transaction_counts"]
+			"required": [
+				"monthly_cap",
+				"discount_rate",
+				"transaction_fee",
+				"reserve_rate",
+				"maximum_chargeback_ratio",
+				"transaction_counts"
+			]
 		},
 		"gateway": {
-			"allOf":[
+			"allOf": [
 				{
-					"anyOf":[
-						{"$ref":"./components/merchantprovider/stripe.json"},
-						{"$ref":"./components/merchantprovider/innovio.json"},
-						{"$ref":"./components/merchantprovider/nmi.json"},
-						{"$ref":"./components/merchantprovider/test.json"}
+					"anyOf": [
+						{
+							"$ref": "./components/merchantprovider/stripe.json"
+						},
+						{
+							"$ref": "./components/merchantprovider/innovio.json"
+						},
+						{
+							"$ref": "./components/merchantprovider/nmi.json"
+						},
+						{
+							"$ref": "./components/merchantprovider/test.json"
+						}
 					]
 				},
 				{
-					"type":"object",
-					"required":["name","type"],
-					"properties":{
-						"name":{
-							"type":"string"
+					"type": "object",
+					"required": [
+						"name",
+						"type"
+					],
+					"properties": {
+						"name": {
+							"type": "string"
 						},
-						"type":{
-							"type":"string"
+						"type": {
+							"type": "string"
 						}
 					}
 				}
 			]
 		},
-		"enabled":{
-			"type":"boolean"
+		"enabled": {
+			"type": "boolean"
 		},
-		"allow_prepaid":{
-			"type":"boolean"
+		"allow_prepaid": {
+			"type": "boolean"
 		},
-		"accepted_payment_methods":{
-			"type":"array",
-			"items":{
-				"type":"string",
-				"enum":["Visa", "Mastercard", "American Express", "LOCAL CARD"]
+		"accepted_payment_methods": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": [
+					"Visa",
+					"Mastercard",
+					"American Express",
+					"LOCAL CARD"
+				]
 			},
-			"minItems":1,
-			"uniqueItems":true
+			"minItems": 1,
+			"uniqueItems": true
 		},
-		"customer_service":{
-			"type":"object",
-			"properties":{
-				"email":{
-					"type":"string",
-					"format":"email"
+		"customer_service": {
+			"type": "object",
+			"properties": {
+				"email": {
+					"type": "string",
+					"format": "email"
 				},
-				"url":{
-					"type":"string",
-					"format":"uri"
+				"url": {
+					"type": "string",
+					"format": "uri"
 				},
-				"description":{
-					"type":"string"
+				"description": {
+					"type": "string"
 				}
 			}
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["id", "account", "name", "processor", "processing", "gateway", "enabled", "allow_prepaid", "accepted_payment_methods", "created_at", "updated_at"]
+	"required": [
+		"id",
+		"account",
+		"name",
+		"processor",
+		"processing",
+		"gateway",
+		"enabled",
+		"allow_prepaid",
+		"accepted_payment_methods",
+		"created_at",
+		"updated_at"
+	]
 }

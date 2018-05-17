@@ -1,8 +1,13 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/general/transaction/subtype.json",
 	"title": "Transaction Sub-Type",
-	"id":"/transactionsubtype.json",
 	"type": "string",
 	"description": "The transaction sub-type",
-	"enum":["main","upsell", "upsell1", "upsell2"]
+	"enum": [
+		"main",
+		"upsell",
+		"upsell1",
+		"upsell2"
+	]
 }

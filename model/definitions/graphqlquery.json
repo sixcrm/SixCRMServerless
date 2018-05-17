@@ -1,7 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/graphqlquery.json",
-  "title": "GraphQL Query",
-  "description": "A GraphQL Query Complete this...",
-  "type":"string"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/graphqlquery.json",
+	"title": "GraphQL Query",
+	"description": "A GraphQL Query Complete this...",
+	"type": "string"
 }

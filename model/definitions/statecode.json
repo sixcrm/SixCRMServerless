@@ -1,8 +1,8 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/statecode.json",
-  "title": "State Code",
-  "description": "A state code",
-  "type":"string",
-  "pattern":"^[A-Z]{2}$"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/statecode.json",
+	"title": "State Code",
+	"description": "A state code",
+	"type": "string",
+	"pattern": "^[A-Z]{2}$"
 }

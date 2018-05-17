@@ -1,10 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/sql_pagination",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "test/unit/lib/model/sql_pagination.json",
   "title": "Pagination",
   "type": "object",
   "properties": {
-
     "order": {
       "type": "string",
       "pattern": "asc|desc"
@@ -21,9 +20,12 @@
       "type": "number",
       "minimum": 0
     }
-
-
   },
   "additionalProperties": false,
-  "required":["order", "limit", "offset", "count"]
+  "required": [
+    "order",
+    "limit",
+    "offset",
+    "count"
+  ]
 }

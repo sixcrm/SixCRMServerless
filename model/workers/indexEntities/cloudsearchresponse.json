@@ -1,14 +1,22 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/indexelements.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/indexEntities/cloudsearchresponse.json",
 	"title": "Cloudsearch Response",
 	"type": "object",
-  "properties":{
-    "status":{
-      "type":"string"
-    },
-    "adds":{"$ref":"../../definitions/nonnegativeinteger.json"},
-    "deletes":{"$ref":"../../definitions/nonnegativeinteger.json"}
-  },
-  "required":["status","adds","deletes"]
+	"properties": {
+		"status": {
+			"type": "string"
+		},
+		"adds": {
+			"$ref": "../../definitions/nonnegativeinteger.json"
+		},
+		"deletes": {
+			"$ref": "../../definitions/nonnegativeinteger.json"
+		}
+	},
+	"required": [
+		"status",
+		"adds",
+		"deletes"
+	]
 }

@@ -1,25 +1,28 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/dynamo_pagination",
-  "title": "DynamoDB Pagination",
-  "type": "object",
-  "properties": {
-
-    "count": {
-      "type": "string",
-      "pattern": "[0-9]+"
-    },
-    "end_cursor": {
-      "type": "string"
-    },
-    "has_next_page": {
-      "type": "string",
-      "pattern": "true|false"
-    },
-    "last_evaluated": {
-      "type": "string"
-    }
-  },
-  "additionalProperties": false,
-  "required":["count", "end_cursor", "has_next_page"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/graph/responses/dynamo_pagination.json",
+	"title": "DynamoDB Pagination",
+	"type": "object",
+	"properties": {
+		"count": {
+			"type": "string",
+			"pattern": "[0-9]+"
+		},
+		"end_cursor": {
+			"type": "string"
+		},
+		"has_next_page": {
+			"type": "string",
+			"pattern": "true|false"
+		},
+		"last_evaluated": {
+			"type": "string"
+		}
+	},
+	"additionalProperties": false,
+	"required": [
+		"count",
+		"end_cursor",
+		"has_next_page"
+	]
 }

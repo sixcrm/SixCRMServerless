@@ -1,38 +1,59 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/usersetting.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/usersetting.json",
 	"title": "User Setting",
 	"description": "Settings related to a user",
 	"type": "object",
 	"properties": {
-		"id":{"$ref": "../definitions/useridentifier.json"},
-		"work_phone":{"$ref": "../definitions/phone.json"},
-		"cell_phone":{"$ref": "../definitions/phone.json"},
-		"timezone":{"$ref": "../definitions/timezone.json"},
-		"language":{"$ref": "../definitions/language.json"},
-		"column_preferences":{
-			"type":"array",
-			"items":{ "type":"string" }
+		"id": {
+			"$ref": "../definitions/useridentifier.json"
 		},
-		"notifications":{
-			"type":"array",
-			"items":{
-				"type":"object",
-				"properties":{
-					"name":{
-						"type":"string"
+		"work_phone": {
+			"$ref": "../definitions/phone.json"
+		},
+		"cell_phone": {
+			"$ref": "../definitions/phone.json"
+		},
+		"timezone": {
+			"$ref": "../definitions/timezone.json"
+		},
+		"language": {
+			"$ref": "../definitions/language.json"
+		},
+		"column_preferences": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"notifications": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string"
 					},
-					"receive":{
-						"type":"boolean"
+					"receive": {
+						"type": "boolean"
 					},
-					"data":{
-						"type":"string"
+					"data": {
+						"type": "string"
 					}
 				}
 			}
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["id", "notifications","created_at", "updated_at"]
+	"required": [
+		"id",
+		"notifications",
+		"created_at",
+		"updated_at"
+	]
 }

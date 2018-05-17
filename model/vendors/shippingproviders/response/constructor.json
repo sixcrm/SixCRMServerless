@@ -1,12 +1,22 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/constructor.json",
-  "title":"Shipping Provider Response Constructor",
-  "type":"object",
-  "properties":{
-    "result":{"$ref":"./result.json"},
-    "shortname":{"$ref":"./shortname.json"},
-    "parameters":{"$ref":"./parameters.json"}
-  },
-  "required":["result","shortname","parameters"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingproviders/response/constructor.json",
+	"title": "Shipping Provider Response Constructor",
+	"type": "object",
+	"properties": {
+		"result": {
+			"$ref": "./result.json"
+		},
+		"shortname": {
+			"$ref": "./shortname.json"
+		},
+		"parameters": {
+			"$ref": "./parameters.json"
+		}
+	},
+	"required": [
+		"result",
+		"shortname",
+		"parameters"
+	]
 }

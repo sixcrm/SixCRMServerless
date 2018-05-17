@@ -1,11 +1,21 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/lead.json",
 	"title": "Lead",
 	"type": "object",
 	"properties": {
-		"campaign":{"$ref": "../definitions/uuidv4.json"},
-		"affiliates":{"$ref": "components/affiliates"},
-		"customer":{"$ref": "components/customer"}
+		"campaign": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"affiliates": {
+			"$ref": "./components/affiliates.json"
+		},
+		"customer": {
+			"$ref": "./components/customer.json"
+		}
 	},
-	"required":["campaign", "customer"]
+	"required": [
+		"campaign",
+		"customer"
+	]
 }

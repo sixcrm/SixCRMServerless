@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/active.json",
-  "title": "active",
-  "type":"boolean"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/active.json",
+	"title": "active",
+	"type": "boolean"
 }

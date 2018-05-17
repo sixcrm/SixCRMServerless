@@ -1,12 +1,22 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/3ddimensions.json",
-  "title": "SixCRM 3D Dimensions",
-  "type":"object",
-  "properties":{
-    "height":{"$ref":"./linearmeasurement.json"},
-    "width":{"$ref":"./linearmeasurement.json"},
-    "length":{"$ref":"./linearmeasurement.json"}
-  },
-  "required":["width","height","length"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/3ddimensions.json",
+	"title": "SixCRM 3D Dimensions",
+	"type": "object",
+	"properties": {
+		"height": {
+			"$ref": "./linearmeasurement.json"
+		},
+		"width": {
+			"$ref": "./linearmeasurement.json"
+		},
+		"length": {
+			"$ref": "./linearmeasurement.json"
+		}
+	},
+	"required": [
+		"width",
+		"height",
+		"length"
+	]
 }

@@ -1,31 +1,34 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/decodedauthorizationtoken",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/authorization/decodedauthorizationtoken.json",
 	"title": "Decoded Authorization Token",
 	"type": "object",
-	"properties":{
+	"properties": {
 		"email": {
-			"type":"string",
-			"format":"email"
+			"type": "string",
+			"format": "email"
 		},
-	  "email_verified":{
-			"type":"boolean"
+		"email_verified": {
+			"type": "boolean"
 		},
-		"picture":{
-			"type":"string"
+		"picture": {
+			"type": "string"
 		},
-		"iss":{
-			"type":"string",
-			"format":"uri"
+		"iss": {
+			"type": "string",
+			"format": "uri"
 		},
-		"sub":{
-			"type":"string"
+		"sub": {
+			"type": "string"
 		},
-		"aud":{
-			"type":"string"
+		"aud": {
+			"type": "string"
 		},
-		"exp":{"$ref": "../definitions/nonnegativeinteger.json"},
-	  "iat":{"$ref": "../definitions/nonnegativeinteger.json"}
+		"exp": {
+			"$ref": "../definitions/nonnegativeinteger.json"
+		},
+		"iat": {
+			"$ref": "../definitions/nonnegativeinteger.json"
+		}
 	}
-
 }

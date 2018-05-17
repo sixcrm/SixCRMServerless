@@ -1,22 +1,25 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/providers/shipping/terminal/responses/test.json",
-  "title":"Info response object",
-  "type":"object",
-  "properties":{
-    "success":{
-      "type":"boolean"
-    },
-    "message":{
-			"oneOf":[
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/shipping/terminal/responses/test.json",
+	"title": "Info response object",
+	"type": "object",
+	"properties": {
+		"success": {
+			"type": "boolean"
+		},
+		"message": {
+			"oneOf": [
 				{
-					"type":"string"
+					"type": "string"
 				},
 				{
-					"type":"array"
+					"type": "array"
 				}
 			]
-    }
-  },
-  "required":["success", "message"]
+		}
+	},
+	"required": [
+		"success",
+		"message"
+	]
 }

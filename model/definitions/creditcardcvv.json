@@ -1,8 +1,8 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/creditcardcvv.json",
-  "title": "CreditCardCVV",
-  "description": "Credit card CVV number",
-  "type":"string",
-  "pattern":"^[0-9]{3,4}$"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/creditcardcvv.json",
+	"title": "CreditCardCVV",
+	"description": "Credit card CVV number",
+	"type": "string",
+	"pattern": "^[0-9]{3,4}$"
 }

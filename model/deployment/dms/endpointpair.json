@@ -1,12 +1,18 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id": "/deployment/dms/endpointpair.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/deployment/dms/endpointpair.json",
 	"title": "DMS endpoint pair",
 	"type": "object",
 	"properties": {
-		"target": {"$ref":"../../definitions/dmsendpoint.json"},
-		"source": {"$ref":"../../definitions/dmsendpoint.json"}
-
+		"target": {
+			"$ref": "../../definitions/dmsendpoint.json"
+		},
+		"source": {
+			"$ref": "../../definitions/dmsendpoint.json"
+		}
 	},
-	"required": ["source","target"]
+	"required": [
+		"source",
+		"target"
+	]
 }

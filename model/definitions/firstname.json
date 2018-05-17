@@ -1,7 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/firstname.json",
-  "title": "First Name",
-  "type":"string",
-  "minLength":1
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/firstname.json",
+	"title": "First Name",
+	"type": "string",
+	"minLength": 1
 }

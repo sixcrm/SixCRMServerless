@@ -1,15 +1,29 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/providers/notifications/components/accountnotificationprototype.json",
-  "title": "Account Notification Prototype",
-  "type": "object",
-  "properties": {
-    "name":{"type":"string"},
-    "user":{"$ref":"../../../definitions/useridentifier.json"},
-    "account": {"$ref":"../../../definitions/sixcrmaccountidentifier.json"},
-    "type":{"$ref":"../../../definitions/notificationtype.json"},
-    "context":{"type":"object"},
-    "category":{"type":"string"}
-  },
-  "required":["account"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/notifications/components/accountnotificationprototype.json",
+	"title": "Account Notification Prototype",
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string"
+		},
+		"user": {
+			"$ref": "../../../definitions/useridentifier.json"
+		},
+		"account": {
+			"$ref": "../../../definitions/sixcrmaccountidentifier.json"
+		},
+		"type": {
+			"$ref": "../../../definitions/notificationtype.json"
+		},
+		"context": {
+			"type": "object"
+		},
+		"category": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"account"
+	]
 }

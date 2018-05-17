@@ -1,14 +1,30 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/notificationread",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/notificationread.json",
 	"title": "Notification Read",
 	"type": "object",
 	"properties": {
-		"id": {"$ref": "../definitions/uuidv4.json"},
-		"user": {"$ref": "../definitions/useridentifier.json"},
-		"account": {"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"created_at": {"$ref": "../definitions/iso8601.json"},
-		"updated_at": {"$ref": "../definitions/iso8601.json"}
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"user": {
+			"$ref": "../definitions/useridentifier.json"
+		},
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["id", "account", "user", "created_at", "updated_at"]
+	"required": [
+		"id",
+		"account",
+		"user",
+		"created_at",
+		"updated_at"
+	]
 }

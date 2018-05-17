@@ -1,10 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/httpcode.json",
-  "title": "HTTP Code",
-  "type":"integer",
-  "description": "A HTTP code",
-  "minimum": 100,
-  "maximum": 999,
-  "exclusiveMinimum": false
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/httpcode.json",
+	"title": "HTTP Code",
+	"type": "integer",
+	"description": "A HTTP code",
+	"minimum": 100,
+	"maximum": 999
 }

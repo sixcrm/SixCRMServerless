@@ -1,11 +1,18 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/createOrder/Response.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/createOrder/response.json",
 	"title": "Create Order Response",
-	"type":"object",
+	"type": "object",
 	"properties": {
-		"result":{"$ref":"../../general/response/responsetype.json"},
-		"order":{"$ref":"../../entities/meta/order.json"}
+		"result": {
+			"$ref": "../../general/response/responsetype.json"
+		},
+		"order": {
+			"$ref": "../../entities/meta/order.json"
+		}
 	},
-	"required":["result", "order"]
+	"required": [
+		"result",
+		"order"
+	]
 }

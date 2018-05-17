@@ -1,26 +1,36 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/fulfillmentproviders/hashtag.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/fulfillmentproviders/hashtag.json",
 	"title": "A Hashtag fulfillment provider",
-	"type":"object",
-  "properties":{
-    "name": {
-      "type":"string",
-      "enum":["Hashtag"]
-    },
-    "username": {
-      "type":"string",
-      "minLength":1
-    },
-    "password": {
-      "type":"string",
-      "minLength": 1
-    },
-    "threepl_customer_id": {"ref":"../../../definitions/nonnegativeinteger.json"},
-    "threepl_key": {
-      "type":"string",
-      "pattern":"{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}}"
-    }
-  },
-  "required":["name", "username", "password", "threepl_customer_id", "threepl_key"]
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string",
+			"enum": [
+				"Hashtag"
+			]
+		},
+		"username": {
+			"type": "string",
+			"minLength": 1
+		},
+		"password": {
+			"type": "string",
+			"minLength": 1
+		},
+		"threepl_customer_id": {
+			"ref": "../../../definitions/nonnegativeinteger.json"
+		},
+		"threepl_key": {
+			"type": "string",
+			"pattern": "{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}}"
+		}
+	},
+	"required": [
+		"name",
+		"username",
+		"password",
+		"threepl_customer_id",
+		"threepl_key"
+	]
 }

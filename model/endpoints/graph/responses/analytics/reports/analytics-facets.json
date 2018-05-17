@@ -1,16 +1,21 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id": "/analytics-facets",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/graph/responses/analytics/reports/analytics-facets.json",
 	"title": "Analytics facets",
 	"type": "object",
-	"required": ["facets"],
+	"required": [
+		"facets"
+	],
 	"properties": {
 		"facets": {
 			"type": "array",
 			"items": {
 				"type": "object",
 				"items": {
-					"required": ["facet", "values"],
+					"required": [
+						"facet",
+						"values"
+					],
 					"properties": {
 						"facet": {
 							"type": "string"
@@ -18,7 +23,10 @@
 						"values": {
 							"type": "array",
 							"items": {
-								"required": ["key", "value"],
+								"required": [
+									"key",
+									"value"
+								],
 								"properties": {
 									"key": {
 										"type": "string"

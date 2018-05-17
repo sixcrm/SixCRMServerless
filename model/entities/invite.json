@@ -1,15 +1,30 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/invite.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/invite.json",
 	"title": "Invite",
 	"type": "object",
 	"description": "A invite",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"hash":{"$ref": "../definitions/sixcrminvitehash.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"hash": {
+			"$ref": "../definitions/sixcrminvitehash.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "hash", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"hash",
+		"created_at",
+		"updated_at"
+	]
 }

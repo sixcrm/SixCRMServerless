@@ -1,32 +1,53 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/entities/components/watermark/watermarkproduct.json",
-  "title":"A session watermark product",
-  "type":"object",
-  "properties":{
-    "id":{"$ref": "../../../definitions/uuidv4.json"},
-		"name":{
-			"type":"string",
-			"minLength":3
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/watermark/watermarkproduct.json",
+	"title": "A session watermark product",
+	"type": "object",
+	"properties": {
+		"id": {
+			"$ref": "../../../definitions/uuidv4.json"
 		},
-		"description":{
-			"type":"string"
+		"name": {
+			"type": "string",
+			"minLength": 3
 		},
-		"sku":{
-			"type":"string",
-			"minLength":3
+		"description": {
+			"type": "string"
 		},
-		"ship":{
-			"type":"boolean"
+		"sku": {
+			"type": "string",
+			"minLength": 3
 		},
-		"shipping_delay":{"$ref": "../../../definitions/nonnegativeinteger.json"},
-    "merchantprovidergroup":{"$ref": "../../../definitions/uuidv4.json"},
-		"fulfillment_provider":{"$ref": "../../../definitions/uuidv4.json"},
-		"default_price":{"$ref": "../../../definitions/currency.json"},
-		"attributes":{"$ref": "../productattributes.json"},
-    "account":{"$ref": "../../../definitions/sixcrmaccountidentifier.json"},
-		"created_at":{"$ref": "../../../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../../../definitions/iso8601.json"}
-  },
-  "required":["id","name"]
+		"ship": {
+			"type": "boolean"
+		},
+		"shipping_delay": {
+			"$ref": "../../../definitions/nonnegativeinteger.json"
+		},
+		"merchantprovidergroup": {
+			"$ref": "../../../definitions/uuidv4.json"
+		},
+		"fulfillment_provider": {
+			"$ref": "../../../definitions/uuidv4.json"
+		},
+		"default_price": {
+			"$ref": "../../../definitions/currency.json"
+		},
+		"attributes": {
+			"$ref": "../productattributes.json"
+		},
+		"account": {
+			"$ref": "../../../definitions/sixcrmaccountidentifier.json"
+		},
+		"created_at": {
+			"$ref": "../../../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../../../definitions/iso8601.json"
+		}
+	},
+	"required": [
+		"id",
+		"name"
+	]
 }

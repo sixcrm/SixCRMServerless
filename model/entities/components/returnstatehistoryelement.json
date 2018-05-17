@@ -1,13 +1,18 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/entities/components/returnstatehistoryelement.json",
-  "title": "Return State History Element",
-  "type":"object",
-  "properties": {
-    "state":{
-      "type":"string"
-    },
-    "created_at":{"$ref": "../../definitions/iso8601.json"}
-  },
-  "required":["state", "created_at"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/returnstatehistoryelement.json",
+	"title": "Return State History Element",
+	"type": "object",
+	"properties": {
+		"state": {
+			"type": "string"
+		},
+		"created_at": {
+			"$ref": "../../definitions/iso8601.json"
+		}
+	},
+	"required": [
+		"state",
+		"created_at"
+	]
 }

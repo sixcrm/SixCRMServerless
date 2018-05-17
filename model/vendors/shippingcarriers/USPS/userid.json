@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/userid.json",
-  "title":"User Identifier",
-  "type":"string"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingcarriers/USPS/userid.json",
+	"title": "User Identifier",
+	"type": "string"
 }

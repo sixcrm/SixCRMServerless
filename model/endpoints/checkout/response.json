@@ -1,24 +1,43 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/checkout/response.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/checkout/response.json",
 	"title": "Checkout Response",
-	"type":"object",
+	"type": "object",
 	"properties": {
-		"success":{"type":"boolean"},
-		"code":{"$ref":"../../definitions/httpcode.json"},
-		"response":{
-			"type":"object",
-			"properties":{
-				"result":{"$ref":"../../general/response/responsetype.json"},
-				"session":{"$ref":"../../entities/meta/session.json"},
-				"customer":{"$ref": "../../entities/meta/customer.json"},
+		"success": {
+			"type": "boolean"
+		},
+		"code": {
+			"$ref": "../../definitions/httpcode.json"
+		},
+		"response": {
+			"type": "object",
+			"properties": {
+				"result": {
+					"$ref": "../../general/response/responsetype.json"
+				},
+				"session": {
+					"$ref": "../../entities/meta/session.json"
+				},
+				"customer": {
+					"$ref": "../../entities/meta/customer.json"
+				},
 				"orders": {
 					"type": "array",
-					"items": {"$ref": "../../entities/meta/order.json"}
+					"items": {
+						"$ref": "../../entities/meta/order.json"
+					}
 				}
 			},
-			"required":["session","customer"]
+			"required": [
+				"session",
+				"customer"
+			]
 		}
 	},
-	"required":["success","code","response"]
+	"required": [
+		"success",
+		"code",
+		"response"
+	]
 }

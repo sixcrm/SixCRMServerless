@@ -1,16 +1,25 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/response",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/register/response.json",
 	"title": "Response",
-	"type":"object",
-	"properties":{
-		"transaction":{
-			"anyOf":[
-				{"type":"null"},
-				{"$ref": "../../entities/transaction.json"}
+	"type": "object",
+	"properties": {
+		"transaction": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "../../entities/transaction.json"
+				}
 			]
 		},
-		"processor_response":{"$ref": "./processorresponse.json"}
+		"processor_response": {
+			"$ref": "./processorresponse.json"
+		}
 	},
-	"required":["transaction","processor_response"]
+	"required": [
+		"transaction",
+		"processor_response"
+	]
 }

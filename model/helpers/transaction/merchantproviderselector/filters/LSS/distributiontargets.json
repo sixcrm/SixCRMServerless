@@ -1,8 +1,10 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/helpers/transaction/merchantproviderselector/filters/LSS/distributiontargets.json",
-  "title": "Distribution Targets",
-  "type":"array",
-  "items": {"$ref":"../../../../../definitions/float.json"},
-  "minItems":1
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/transaction/merchantproviderselector/filters/LSS/distributiontargets.json",
+	"title": "Distribution Targets",
+	"type": "array",
+	"items": {
+		"$ref": "../../../../../definitions/float.json"
+	},
+	"minItems": 1
 }

@@ -1,12 +1,16 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/providers/tracker/trackableshippingreceipt.json",
-  "title":"Trackable Shipping Receipt",
-  "allOf":[
-    {"$ref":"../../entities/shippingreceipt.json"},
-    {
-      "type":"object",
-      "required":["tracking"]
-    }
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/tracker/trackableshippingreceipt.json",
+	"title": "Trackable Shipping Receipt",
+	"allOf": [
+		{
+			"$ref": "../../entities/shippingreceipt.json"
+		},
+		{
+			"type": "object",
+			"required": [
+				"tracking"
+			]
+		}
+	]
 }

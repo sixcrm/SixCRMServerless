@@ -1,22 +1,35 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/helpers/transaction/merchantproviderselector/sortedmarriedproductgroups.json",
-  "title":"Sorted Married Product Groups",
-  "type":"object",
-  "patternProperties": {
-    "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$": {
-      "type":"array",
-      "items":{
-        "type":"object",
-        "properties":{
-          "product":{"$ref":"../../../entities/components/watermark/watermarkproduct.json"},
-          "amount":{"$ref":"../../../definitions/currency.json"},
-          "quantity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
-          "merchantprovidergroupassociation":{"$ref":"../../../entities/merchantprovidergroupassociation.json"}
-        },
-        "required":["product", "amount", "quantity","merchantprovidergroupassociation"]
-      },
-      "minItems":1
-    }
-  }
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/transaction/merchantproviderselector/sortedmarriedproductgroups.json",
+	"title": "Sorted Married Product Groups",
+	"type": "object",
+	"patternProperties": {
+		"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"product": {
+						"$ref": "../../../entities/components/watermark/watermarkproduct.json"
+					},
+					"amount": {
+						"$ref": "../../../definitions/currency.json"
+					},
+					"quantity": {
+						"$ref": "../../../definitions/nonnegativeinteger.json"
+					},
+					"merchantprovidergroupassociation": {
+						"$ref": "../../../entities/merchantprovidergroupassociation.json"
+					}
+				},
+				"required": [
+					"product",
+					"amount",
+					"quantity",
+					"merchantprovidergroupassociation"
+				]
+			},
+			"minItems": 1
+		}
+	}
 }

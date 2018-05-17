@@ -1,19 +1,27 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/Innovio/vendor_configuration.json",
 	"title": "Innovio Configuration",
 	"type": "object",
 	"properties": {
-		"api_version":{
-      "type":"string"
-    },
-		"request_response_format":{
-      "type":"string",
-			"enum":["JSON","XML"]
-    },
-		"endpoint":{
-			"type":"string",
-			"format":"uri"
+		"api_version": {
+			"type": "string"
+		},
+		"request_response_format": {
+			"type": "string",
+			"enum": [
+				"JSON",
+				"XML"
+			]
+		},
+		"endpoint": {
+			"type": "string",
+			"format": "uri"
 		}
 	},
-	"required":["api_version", "request_response_format", "endpoint"]
+	"required": [
+		"api_version",
+		"request_response_format",
+		"endpoint"
+	]
 }

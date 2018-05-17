@@ -1,40 +1,49 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/notificationmessage",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/sendnotification/notificationmessage.json",
 	"title": "Notification Message",
 	"type": "object",
-  "properties": {
-    "user":{
-      "type": "string",
-      "format": "email"
-    },
-    "account": {
-      "type":"string"
-    },
-    "scope":{
-      "type":"object",
-      "properties":{
-        "user":{
-          "type":"boolean"
-        },
-        "account":{
-          "type": "boolean"
-        }
-      },
-      "required":["user", "account"]
-    },
-    "type":{
-      "type":"string"
-    },
-    "action":{
-      "type":"string"
-    },
-    "title":{
-      "type":"string"
-    },
-    "body":{
-      "type":"string"
-    }
-  },
-  "required":["account", "scope", "type", "action", "title"]
+	"properties": {
+		"user": {
+			"type": "string",
+			"format": "email"
+		},
+		"account": {
+			"type": "string"
+		},
+		"scope": {
+			"type": "object",
+			"properties": {
+				"user": {
+					"type": "boolean"
+				},
+				"account": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"user",
+				"account"
+			]
+		},
+		"type": {
+			"type": "string"
+		},
+		"action": {
+			"type": "string"
+		},
+		"title": {
+			"type": "string"
+		},
+		"body": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"account",
+		"scope",
+		"type",
+		"action",
+		"title"
+	]
 }

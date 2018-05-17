@@ -1,7 +1,11 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/fulfillmentproviders/actions.json",
-  "title":"Fulfillment Provider Vendor Actions",
-  "type":"string",
-  "enum":["test", "info", "fulfill"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/fulfillmentproviders/action.json",
+	"title": "Fulfillment Provider Vendor Actions",
+	"type": "string",
+	"enum": [
+		"test",
+		"info",
+		"fulfill"
+	]
 }

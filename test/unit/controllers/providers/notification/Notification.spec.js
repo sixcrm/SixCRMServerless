@@ -454,7 +454,7 @@ function getValidUserSetting(){
 
 function getValidDefaultNotificationSettings(){
 
-	return global.SixCRM.routes.include('model', 'general/default_notification_settings.json');
+	return global.SixCRM.routes.include('resources', 'notifications/default_notification_settings.json');
 
 }
 

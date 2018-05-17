@@ -1,7 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/shortname.json",
-  "title":"Shipping Provider Response Shortname",
-  "type":"string",
-  "enum":["usps"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingproviders/response/shortname.json",
+	"title": "Shipping Provider Response Shortname",
+	"type": "string",
+	"enum": [
+		"usps"
+	]
 }

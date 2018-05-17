@@ -1,30 +1,33 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/Innovio/response.json",
 	"title": "Innovio Merchant Provider Response Object",
 	"type": "object",
 	"properties": {
-		"API_RESPONSE":{
-			"anyOf":[
+		"API_RESPONSE": {
+			"anyOf": [
 				{
-					"type":"number"
+					"type": "number"
 				},
 				{
-					"type":"string"
+					"type": "string"
 				}
 			]
 		},
-		"SERVICE_RESPONSE":{
-			"type":"number"
+		"SERVICE_RESPONSE": {
+			"type": "number"
 		},
-		"SERVICE_ADVICE":{
-			"type":"string"
+		"SERVICE_ADVICE": {
+			"type": "string"
 		},
-		"TRANS_STATUS_NAME":{
-			"type":"string"
+		"TRANS_STATUS_NAME": {
+			"type": "string"
 		},
-		"REQUEST_ACTION":{
-			"type":"string"
+		"REQUEST_ACTION": {
+			"type": "string"
 		}
 	},
-	"required":["TRANS_STATUS_NAME"]
+	"required": [
+		"TRANS_STATUS_NAME"
+	]
 }

@@ -1,7 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/shippingprovider.json",
-  "title":"Shipping Provider",
-  "type":"string",
-  "enum":["usps"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingproviders/shippingprovider.json",
+	"title": "Shipping Provider",
+	"type": "string",
+	"enum": [
+		"usps"
+	]
 }

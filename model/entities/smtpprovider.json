@@ -1,35 +1,65 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/smtpprovider.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/smtpprovider.json",
 	"title": "SMTP Provider",
 	"type": "object",
 	"description": "An SMTP provider",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"name":{
-			"type":"string"
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"hostname":{
-			"anyOf":[
-				{"type":"string", "format":"hostname"},
-				{"type":"string", "format":"ipv4"},
-				{"type":"string", "format":"ipv6"}
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"name": {
+			"type": "string"
+		},
+		"hostname": {
+			"anyOf": [
+				{
+					"type": "string",
+					"format": "hostname"
+				},
+				{
+					"type": "string",
+					"format": "ipv4"
+				},
+				{
+					"type": "string",
+					"format": "ipv6"
+				}
 			]
 		},
-		"username":{
-			"type":"string",
-			"minLength":1
+		"username": {
+			"type": "string",
+			"minLength": 1
 		},
-		"password":{
-			"type":"string",
-			"minLength":3
+		"password": {
+			"type": "string",
+			"minLength": 3
 		},
-		"port":{"$ref": "../definitions/nonnegativeinteger.json"},
-		"from_email":{"$ref":"../definitions/email.json"},
-		"from_name":{"$ref":"../definitions/name.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"port": {
+			"$ref": "../definitions/nonnegativeinteger.json"
+		},
+		"from_email": {
+			"$ref": "../definitions/email.json"
+		},
+		"from_name": {
+			"$ref": "../definitions/name.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "hostname", "username", "password", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"hostname",
+		"username",
+		"password",
+		"created_at",
+		"updated_at"
+	]
 }

@@ -1,24 +1,35 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/affiliate.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/affiliate.json",
 	"title": "Affiliate",
 	"description": "An affiliate.",
 	"type": "object",
 	"properties": {
-		"id":{
+		"id": {
 			"$ref": "../definitions/uuidv4.json",
 			"description": "ID of affiliate"
 		},
-		"account":{
+		"account": {
 			"$ref": "../definitions/sixcrmaccountidentifier.json",
 			"description": "Account of owner"
 		},
-		"name":{
+		"name": {
 			"type": "string"
 		},
-		"affiliate_id":{"$ref": "../definitions/sixcrmaffiliate_id.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"affiliate_id": {
+			"$ref": "../definitions/sixcrmaffiliate_id.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "affiliate_id", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"affiliate_id",
+		"created_at",
+		"updated_at"
+	]
 }

@@ -1,16 +1,20 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/hydratedsqsmessagebody.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/parsedmessagebody.json",
 	"title": "Hydrated SQS Message Body",
 	"type": "object",
-  "properties":{
-    "id":{"$ref": "../definitions/uuidv4.json"},
-    "referring_workerfunction":{
-      "type":"string"
-    },
-    "additional_information":{
-      "type":"string"
-    }
-  },
-  "required":["id"]
+	"properties": {
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"referring_workerfunction": {
+			"type": "string"
+		},
+		"additional_information": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"id"
+	]
 }

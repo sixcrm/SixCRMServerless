@@ -1,15 +1,34 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/createLead/info.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/createLead/info.json",
 	"title": "Info",
-	"type":"object",
+	"type": "object",
 	"properties": {
-		"session":{"$ref":"../../entities/session.json"},
-		"product_schedules":{"$ref": "../components/productschedules.json"},
-		"customer":{"$ref": "../../entities/customer.json"},
-		"transaction":{"$ref":"../../entities/transaction.json"},
-		"rebill":{"$ref":"../../entities/rebill.json"},
-		"campaign":{"$ref":"../../entities/campaign.json"}
+		"session": {
+			"$ref": "../../entities/session.json"
+		},
+		"product_schedules": {
+			"$ref": "../components/productschedules.json"
+		},
+		"customer": {
+			"$ref": "../../entities/customer.json"
+		},
+		"transaction": {
+			"$ref": "../../entities/transaction.json"
+		},
+		"rebill": {
+			"$ref": "../../entities/rebill.json"
+		},
+		"campaign": {
+			"$ref": "../../entities/campaign.json"
+		}
 	},
-	"required":["customer", "session", "product_schedules", "transaction", "rebill", "campaign"]
+	"required": [
+		"customer",
+		"session",
+		"product_schedules",
+		"transaction",
+		"rebill",
+		"campaign"
+	]
 }

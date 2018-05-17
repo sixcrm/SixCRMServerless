@@ -1,7 +1,9 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/functional/register/processorresponses.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/register/processorresponses.json",
 	"title": "Processor Response",
-	"type":"array",
-	"items":{"$ref":"./processorresponse.json"}
+	"type": "array",
+	"items": {
+		"$ref": "./processorresponse.json"
+	}
 }

@@ -1,36 +1,66 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/product.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/product.json",
 	"title": "Product",
 	"type": "object",
 	"description": "A product",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"name":{
-			"type":"string",
-			"minLength":3
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"description":{
-			"type":"string"
+		"name": {
+			"type": "string",
+			"minLength": 3
+		},
+		"description": {
+			"type": "string"
 		},
 		"sku": {
-			"anyOf":[
-				{"type":"null"},
-				{"type":"string", "minLength":3}
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "string",
+					"minLength": 3
+				}
 			]
-		}		,
-		"ship":{
-			"type":"boolean"
 		},
-		"shipping_delay":{"$ref": "../definitions/nonnegativeinteger.json"},
-		"merchantprovidergroup":{"$ref": "../definitions/uuidv4.json"},
-		"fulfillment_provider":{"$ref": "../definitions/uuidv4.json"},
-		"default_price":{"$ref": "../definitions/currency.json"},
-		"dynamic_pricing":{"$ref": "./components/productdynamicpricing.json"},
-		"attributes":{"$ref": "./components/productattributes.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"ship": {
+			"type": "boolean"
+		},
+		"shipping_delay": {
+			"$ref": "../definitions/nonnegativeinteger.json"
+		},
+		"merchantprovidergroup": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"fulfillment_provider": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"default_price": {
+			"$ref": "../definitions/currency.json"
+		},
+		"dynamic_pricing": {
+			"$ref": "./components/productdynamicpricing.json"
+		},
+		"attributes": {
+			"$ref": "./components/productattributes.json"
+		},
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["name", "account", "created_at", "updated_at"]
+	"required": [
+		"name",
+		"account",
+		"created_at",
+		"updated_at"
+	]
 }

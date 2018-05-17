@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/requestxml.json",
-  "title":"Request XML",
-  "type":"string"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingcarriers/USPS/requestxml.json",
+	"title": "Request XML",
+	"type": "string"
 }

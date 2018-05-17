@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/responsecode.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/shipping/terminal/responsecode.json",
 	"title": "Response Code",
-	"type":"string"
+	"type": "string"
 }

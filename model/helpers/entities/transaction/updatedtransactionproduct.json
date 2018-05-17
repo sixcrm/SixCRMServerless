@@ -1,12 +1,21 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/helpers/entities/transaction/updatedtransactionproduct.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/entities/transaction/updatedtransactionproduct.json",
 	"title": "Updated Transaction Product",
-  "type":"object",
-  "properties":{
-    "amount":{"$ref":"../../../definitions/currency.json"},
-    "product":{"$ref":"../../../definitions/uuidv4.json"},
-    "shipping_receipt":{"$ref":"../../../definitions/uuidv4.json"}
-  },
-  "required":["amount", "product"]
+	"type": "object",
+	"properties": {
+		"amount": {
+			"$ref": "../../../definitions/currency.json"
+		},
+		"product": {
+			"$ref": "../../../definitions/uuidv4.json"
+		},
+		"shipping_receipt": {
+			"$ref": "../../../definitions/uuidv4.json"
+		}
+	},
+	"required": [
+		"amount",
+		"product"
+	]
 }

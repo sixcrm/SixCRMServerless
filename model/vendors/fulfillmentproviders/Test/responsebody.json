@@ -1,8 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/fulfillmentproviders/Test/responsebody.json",
-  "title":"Test Response Body",
-  "type":"object",
-  "properties":{
-  }
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/fulfillmentproviders/Test/responsebody.json",
+	"title": "Test Response Body",
+	"type": "object",
+	"properties": {}
 }

@@ -1,7 +1,10 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/fulfillmentproviders/Test/action.json",
-  "title":"ThreePL Method",
-  "type":"string",
-  "enum":["getinfo","fulfill"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/fulfillmentproviders/Test/method.json",
+	"title": "ThreePL Method",
+	"type": "string",
+	"enum": [
+		"getinfo",
+		"fulfill"
+	]
 }

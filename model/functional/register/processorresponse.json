@@ -1,24 +1,36 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/functional/register/processorresponse.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/register/processorresponse.json",
 	"title": "Processor Response",
-	"type":"object",
-	"properties":{
-		"code":{
-			"type":"string"
+	"type": "object",
+	"properties": {
+		"code": {
+			"type": "string"
 		},
-		"result":{
-			"type":"object"
+		"result": {
+			"type": "object"
 		},
-		"response":{
-			"type":"object"
+		"response": {
+			"type": "object"
 		},
-		"message":{
-			"type":"string"
+		"message": {
+			"type": "string"
 		}
 	},
 	"oneOf": [
-		{ "required": ["code", "message", "result"] },
-		{ "required": ["code", "message", "response"] }
+		{
+			"required": [
+				"code",
+				"message",
+				"result"
+			]
+		},
+		{
+			"required": [
+				"code",
+				"message",
+				"response"
+			]
+		}
 	]
 }

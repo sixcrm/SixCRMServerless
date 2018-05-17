@@ -1,148 +1,216 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/fulfillmentproviders/ThreePL/createordersparametersobject.json",
-  "title":"ThreePL Create Orders Parameters Object",
-  "type":"object",
-  "properties":{
-    "orders":{
-      "type":"object",
-      "properties":{
-        "@":{
-          "type":"object",
-          "properties":{
-            "xmlns":{
-              "type":"string",
-              "enum":["http://www.JOI.com/schemas/ViaSub.WMS/"]
-            }
-          }
-        },
-        "Order":{
-          "type":"object",
-          "properties":{
-            "TransInfo":{
-              "type":"object",
-              "properties":{
-                "ReferenceNum":{"$ref":"../../../definitions/uuidv4.json"}
-              },
-              "required":["ReferenceNum"]
-            },
-            "ShippingInstructions":{
-              "type":"object",
-              "properties":{
-                "Carrier":{
-                  "type":"string",
-                  "enum":["USPS"]
-                },
-                "Mode":{
-                  "type":"string",
-                  "enum":["First Class Mail"]
-                },
-                "BillingCode":{
-                  "type":"string",
-                  "enum":["Prepaid"]
-                }
-              },
-              "required":["Carrier","Mode","BillingCode"]
-            },
-            "Notes":{
-              "type":"string",
-              "enum":["none"]
-            },
-            "OrderLineItems":{
-              "type":"array",
-              "items":{
-                "type":"object",
-                "properties":{
-                  "SKU": {
-                    "type":"string",
-                    "minLength":1
-                  },
-                  "Qty": {"$ref":"../../../definitions/nonnegativeinteger.json"}
-                },
-                "required":["SKU", "Qty"]
-              }
-            },
-            "ShipTo":{
-              "type":"object",
-              "properties":{
-                "Name": {
-                  "type":"string",
-                  "minLength": 1
-                },
-                "CompanyName":{
-                  "type":"string",
-                  "minLength": 1
-                },
-                "Address":{
-                  "type":"object",
-                  "properties":{
-                    "Address1": {
-                      "type":"string",
-                      "minLength": 1
-                    },
-                    "Address2":{
-                      "type":"string"
-                    },
-                    "City": {
-                      "type":"string",
-                      "minLength": 1
-                    },
-                    "State":{"$ref":"../../../definitions/statecode.json"},
-                    "Country":{"$ref":"../../../definitions/countrycode.json"},
-                    "Zip":{"$ref":"../../../definitions/zipcode.json"}
-                  },
-                  "required":["Address1","City","State","Country","Zip"]
-                },
-                "PhoneNumber1":{
-                  "type":"string"
-                },
-                "EmailAddress1":{
-                  "type":"string",
-                  "format":"email"
-                }
-              },
-              "required":["Name","CompanyName","Address"]
-            }
-          },
-          "required":["TransInfo","ShippingInstructions","Notes","OrderLineItems","ShipTo"]
-        }
-      },
-      "required":["@", "Order"]
-    },
-    "warnings":{
-      "type":"object",
-      "properties":{
-        "@":{
-          "type":"object",
-          "properties":{
-            "xmlns":{
-              "type":"string",
-              "enum":["http://www.JOI.com/schemas/ViaSub.WMS/"]
-            }
-          }
-        },
-        "#":{
-          "type":"string",
-          "enum":["none"]
-        }
-      },
-      "required":["@", "#"]
-    },
-    "extLoginData":{
-      "properties":{
-        "ThreePLKey": {"$ref":"./threeplkey.json"},
-        "Login":{
-          "type":"string",
-          "minLength":1
-        },
-        "Password":{
-          "type":"string",
-          "minLength":1
-        },
-        "FacilityID":{"$ref":"../../../definitions/nonnegativeinteger.json"}
-      },
-      "required":["ThreePLKey","Login","Password","FacilityID"]
-    }
-  },
-  "required":["orders","warnings","extLoginData"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/fulfillmentproviders/ThreePL/createordersparametersobject.json",
+	"title": "ThreePL Create Orders Parameters Object",
+	"type": "object",
+	"properties": {
+		"orders": {
+			"type": "object",
+			"properties": {
+				"@": {
+					"type": "object",
+					"properties": {
+						"xmlns": {
+							"type": "string",
+							"enum": [
+								"http://www.JOI.com/schemas/ViaSub.WMS/"
+							]
+						}
+					}
+				},
+				"Order": {
+					"type": "object",
+					"properties": {
+						"TransInfo": {
+							"type": "object",
+							"properties": {
+								"ReferenceNum": {
+									"$ref": "../../../definitions/uuidv4.json"
+								}
+							},
+							"required": [
+								"ReferenceNum"
+							]
+						},
+						"ShippingInstructions": {
+							"type": "object",
+							"properties": {
+								"Carrier": {
+									"type": "string",
+									"enum": [
+										"USPS"
+									]
+								},
+								"Mode": {
+									"type": "string",
+									"enum": [
+										"First Class Mail"
+									]
+								},
+								"BillingCode": {
+									"type": "string",
+									"enum": [
+										"Prepaid"
+									]
+								}
+							},
+							"required": [
+								"Carrier",
+								"Mode",
+								"BillingCode"
+							]
+						},
+						"Notes": {
+							"type": "string",
+							"enum": [
+								"none"
+							]
+						},
+						"OrderLineItems": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"SKU": {
+										"type": "string",
+										"minLength": 1
+									},
+									"Qty": {
+										"$ref": "../../../definitions/nonnegativeinteger.json"
+									}
+								},
+								"required": [
+									"SKU",
+									"Qty"
+								]
+							}
+						},
+						"ShipTo": {
+							"type": "object",
+							"properties": {
+								"Name": {
+									"type": "string",
+									"minLength": 1
+								},
+								"CompanyName": {
+									"type": "string",
+									"minLength": 1
+								},
+								"Address": {
+									"type": "object",
+									"properties": {
+										"Address1": {
+											"type": "string",
+											"minLength": 1
+										},
+										"Address2": {
+											"type": "string"
+										},
+										"City": {
+											"type": "string",
+											"minLength": 1
+										},
+										"State": {
+											"$ref": "../../../definitions/statecode.json"
+										},
+										"Country": {
+											"$ref": "../../../definitions/countrycode.json"
+										},
+										"Zip": {
+											"$ref": "../../../definitions/zipcode.json"
+										}
+									},
+									"required": [
+										"Address1",
+										"City",
+										"State",
+										"Country",
+										"Zip"
+									]
+								},
+								"PhoneNumber1": {
+									"type": "string"
+								},
+								"EmailAddress1": {
+									"type": "string",
+									"format": "email"
+								}
+							},
+							"required": [
+								"Name",
+								"CompanyName",
+								"Address"
+							]
+						}
+					},
+					"required": [
+						"TransInfo",
+						"ShippingInstructions",
+						"Notes",
+						"OrderLineItems",
+						"ShipTo"
+					]
+				}
+			},
+			"required": [
+				"@",
+				"Order"
+			]
+		},
+		"warnings": {
+			"type": "object",
+			"properties": {
+				"@": {
+					"type": "object",
+					"properties": {
+						"xmlns": {
+							"type": "string",
+							"enum": [
+								"http://www.JOI.com/schemas/ViaSub.WMS/"
+							]
+						}
+					}
+				},
+				"#": {
+					"type": "string",
+					"enum": [
+						"none"
+					]
+				}
+			},
+			"required": [
+				"@",
+				"#"
+			]
+		},
+		"extLoginData": {
+			"properties": {
+				"ThreePLKey": {
+					"$ref": "./threeplkey.json"
+				},
+				"Login": {
+					"type": "string",
+					"minLength": 1
+				},
+				"Password": {
+					"type": "string",
+					"minLength": 1
+				},
+				"FacilityID": {
+					"$ref": "../../../definitions/nonnegativeinteger.json"
+				}
+			},
+			"required": [
+				"ThreePLKey",
+				"Login",
+				"Password",
+				"FacilityID"
+			]
+		}
+	},
+	"required": [
+		"orders",
+		"warnings",
+		"extLoginData"
+	]
 }

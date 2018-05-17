@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/productdeliveredstatus",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/confirmDelivered/productdeliveredstatus.json",
 	"title": "Product Delivery Status",
 	"type": "boolean"
 }

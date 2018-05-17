@@ -1,67 +1,99 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/customer.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/transaction/customer.json",
 	"title": "Customer",
 	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"OptionalUUIDv4":{"$ref": "../definitions/optionaluuidv4.json"},
-		"SixAccountIdentifier":{"$ref": "../definitions/sixcrmidentifier.json"}
+		"UUIDv4": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"ISO8601": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"OptionalUUIDv4": {
+			"$ref": "../definitions/optionaluuidv4.json"
+		},
+		"SixAccountIdentifier": {
+			"$ref": "../definitions/sixcrmidentifier.json"
+		}
 	},
-	"anyOf":[
+	"anyOf": [
 		{
 			"type": "object",
 			"properties": {
-				"id":{"$ref": "#/definitions/UUIDv4"},
-				"account":{"$ref": "#/definitions/SixAccountIdentifier"},
-				"email":{
-					"type":"string",
-					"format":"email"
+				"id": {
+					"$ref": "#/definitions/UUIDv4"
 				},
-				"firstname":{
-					"type":"string",
+				"account": {
+					"$ref": "#/definitions/SixAccountIdentifier"
+				},
+				"email": {
+					"type": "string",
+					"format": "email"
+				},
+				"firstname": {
+					"type": "string",
 					"minLength": 1
 				},
-				"lastname":{
-					"type":"string",
+				"lastname": {
+					"type": "string",
 					"minLength": 1
 				},
-				"phone":{
-					"type":"string"
+				"phone": {
+					"type": "string"
 				},
-				"address":{
-					"type":"object",
+				"address": {
+					"type": "object",
 					"properties": {
-						"line1":{
-							"type":"string"
+						"line1": {
+							"type": "string"
 						},
-						"line2":{
-							"type":"string"
+						"line2": {
+							"type": "string"
 						},
-						"city":{
-							"type":"string"
+						"city": {
+							"type": "string"
 						},
-						"state":{
-							"type":"string"
+						"state": {
+							"type": "string"
 						},
-						"zip":{
-							"type":"string"
+						"zip": {
+							"type": "string"
 						},
-						"country":{
-							"type":"string"
+						"country": {
+							"type": "string"
 						}
 					},
-					"required":["line1","city","state","zip","country"]
+					"required": [
+						"line1",
+						"city",
+						"state",
+						"zip",
+						"country"
+					]
 				},
-				"creditcards":{
-					"type":"array",
-					"items":{"$ref":"/creditcard.json"},
-		      "minItems":1
+				"creditcards": {
+					"type": "array",
+					"items": {
+						"$ref": "./creditcard.json"
+					},
+					"minItems": 1
 				},
-				"created_at":{"$ref": "#/definitions/ISO8601"},
-				"updated_at":{"$ref": "#/definitions/ISO8601"}
+				"created_at": {
+					"$ref": "#/definitions/ISO8601"
+				},
+				"updated_at": {
+					"$ref": "#/definitions/ISO8601"
+				}
 			},
-			"required":["account", "firstname", "lastname", "address", "email", "created_at", "updated_at"]
+			"required": [
+				"account",
+				"firstname",
+				"lastname",
+				"address",
+				"email",
+				"created_at",
+				"updated_at"
+			]
 		},
 		{
 			"$ref": "#/definitions/UUIDv4"

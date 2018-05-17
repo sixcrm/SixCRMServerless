@@ -1,66 +1,81 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/entities/notificationsetting.json",
-  "title": "Notification Setting",
-  "type": "object",
-  "required": ["id", "settings", "created_at", "updated_at"],
-  "properties": {
-    "id": {
-      "$ref": "../definitions/email.json"
-    },
-    "created_at": {
-      "$ref": "../definitions/iso8601.json"
-    },
-    "updated_at": {
-      "$ref": "../definitions/iso8601.json"
-    },
-    "settings": {
-      "type": "object",
-      "required": ["notification_groups"],
-      "properties": {
-        "notification_groups": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["key", "display", "default", "notifications"],
-            "properties": {
-              "key": {
-                "type": "string"
-              },
-              "display": {
-                "type": "boolean"
-              },
-              "default": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "notifications": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": ["key", "active"],
-                  "properties": {
-                    "key": {
-                      "type": "string"
-                    },
-                    "active":{
-                      "type":"boolean"
-                    },
-                    "channels": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/notificationsetting.json",
+	"title": "Notification Setting",
+	"type": "object",
+	"required": [
+		"id",
+		"settings",
+		"created_at",
+		"updated_at"
+	],
+	"properties": {
+		"id": {
+			"$ref": "../definitions/email.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"settings": {
+			"type": "object",
+			"required": [
+				"notification_groups"
+			],
+			"properties": {
+				"notification_groups": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": [
+							"key",
+							"display",
+							"default",
+							"notifications"
+						],
+						"properties": {
+							"key": {
+								"type": "string"
+							},
+							"display": {
+								"type": "boolean"
+							},
+							"default": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							},
+							"notifications": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"required": [
+										"key",
+										"active"
+									],
+									"properties": {
+										"key": {
+											"type": "string"
+										},
+										"active": {
+											"type": "boolean"
+										},
+										"channels": {
+											"type": "array",
+											"items": {
+												"type": "string"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

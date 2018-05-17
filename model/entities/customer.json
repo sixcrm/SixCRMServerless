@@ -1,32 +1,54 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/customer.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/customer.json",
 	"title": "Customer",
 	"type": "object",
 	"description": "A customer",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json", "description": "ID of customer"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"email":{
-			"type":"string",
-			"format":"email"
+		"id": {
+			"$ref": "../definitions/uuidv4.json",
+			"description": "ID of customer"
 		},
-		"firstname":{
-			"type":"string",
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"email": {
+			"type": "string",
+			"format": "email"
+		},
+		"firstname": {
+			"type": "string",
 			"minLength": 1
 		},
-		"lastname":{
-			"type":"string",
+		"lastname": {
+			"type": "string",
 			"minLength": 1
 		},
-		"phone":{"$ref": "../definitions/phone.json", "description": "Customer phone number"},
-		"address":{"$ref": "../definitions/address.json", "description": "Customer address"},
-		"creditcards":{
-			"type":"array",
-			"items":{"$ref": "../definitions/uuidv4.json"}
+		"phone": {
+			"$ref": "../definitions/phone.json",
+			"description": "Customer phone number"
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"address": {
+			"$ref": "../definitions/address.json",
+			"description": "Customer address"
+		},
+		"creditcards": {
+			"type": "array",
+			"items": {
+				"$ref": "../definitions/uuidv4.json"
+			}
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "email", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"email",
+		"created_at",
+		"updated_at"
+	]
 }

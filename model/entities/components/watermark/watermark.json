@@ -1,31 +1,47 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/entities/components/watermark/watermark.json",
-  "title":"A session watermark",
-  "type":"object",
-  "properties":{
-    "product_schedules":{
-      "type":"array",
-      "items":{
-        "type":"object",
-        "properties":{
-          "quantity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
-          "product_schedule":{"$ref":"./watermarkproductschedule.json"}
-        },
-        "required":["quantity","product_schedule"]
-      }
-    },
-    "products":{
-      "type":"array",
-      "items":{
-        "type":"object",
-        "properties":{
-          "quantity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
-          "price":{"$ref":"../../../definitions/currency.json"},
-          "product":{"$ref":"./watermarkproduct.json"}
-        },
-        "required":["quantity", "product"]
-      }
-    }
-  }
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/watermark/watermark.json",
+	"title": "A session watermark",
+	"type": "object",
+	"properties": {
+		"product_schedules": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"quantity": {
+						"$ref": "../../../definitions/nonnegativeinteger.json"
+					},
+					"product_schedule": {
+						"$ref": "./watermarkproductschedule.json"
+					}
+				},
+				"required": [
+					"quantity",
+					"product_schedule"
+				]
+			}
+		},
+		"products": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"quantity": {
+						"$ref": "../../../definitions/nonnegativeinteger.json"
+					},
+					"price": {
+						"$ref": "../../../definitions/currency.json"
+					},
+					"product": {
+						"$ref": "./watermarkproduct.json"
+					}
+				},
+				"required": [
+					"quantity",
+					"product"
+				]
+			}
+		}
+	}
 }

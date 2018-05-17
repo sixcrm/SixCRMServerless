@@ -175,7 +175,7 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 
 		it('returns an error', () => {
 
-			let day = timestamp.yesterday();
+			let day = timestamp.castToISO8601(timestamp.yesterday());
 
 			const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 			let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();

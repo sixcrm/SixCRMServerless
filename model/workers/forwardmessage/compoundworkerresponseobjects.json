@@ -1,7 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/compoundworkerresponseobjects.json",
-  "title": "Compound Worker Response Objects",
-  "type": "array",
-  "items":{"$ref": "./compoundworkerresponseobject.json"}
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/forwardmessage/compoundworkerresponseobjects.json",
+	"title": "Compound Worker Response Objects",
+	"type": "array",
+	"items": {
+		"$ref": "./compoundworkerresponseobject.json"
+	}
 }

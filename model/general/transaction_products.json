@@ -1,7 +1,10 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/general/transaction_products.json",
 	"title": "Transaction Products",
 	"type": "array",
 	"description": "List of products in a transaction",
-	"items":{"$ref": "../entities/product.json"}
+	"items": {
+		"$ref": "../entities/product.json"
+	}
 }

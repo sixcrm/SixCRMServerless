@@ -1,27 +1,46 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/merchantprovidergroup.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/merchantprovidergroup.json",
 	"title": "Merchant Provider Group",
 	"type": "object",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"name":{ "type":"string" },
-		"merchantproviders":{
-			"type":"array",
-			"items":{
-				"type":"object",
-				"properties":{
-					"id":{"$ref": "../definitions/uuidv4.json"},
-					"distribution":{
-						"type":"number"
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"name": {
+			"type": "string"
+		},
+		"merchantproviders": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"$ref": "../definitions/uuidv4.json"
+					},
+					"distribution": {
+						"type": "number"
 					}
 				},
-				"required":["id", "distribution"]
+				"required": [
+					"id",
+					"distribution"
+				]
 			}
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"created_at",
+		"updated_at"
+	]
 }

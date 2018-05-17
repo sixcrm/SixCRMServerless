@@ -1,18 +1,44 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/checkout/event.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/checkout/event.json",
 	"title": "Event",
-	"type":"object",
+	"type": "object",
 	"properties": {
-		"campaign": {"$ref":"../../definitions/uuidv4.json"},
-		"affiliates": {"$ref":"../components/affiliatesprototype.json"},
-		"customer":{"$ref":"../components/customerprototype.json"},
-		"product_schedules":{"$ref": "../components/productschedules.json"},
-		"products":{"$ref":"../components/products.json"},
-		"creditcard":{"$ref": "../components/creditcard.json"}
+		"campaign": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"affiliates": {
+			"$ref": "../components/affiliatesprototype.json"
+		},
+		"customer": {
+			"$ref": "../components/customerprototype.json"
+		},
+		"product_schedules": {
+			"$ref": "../components/productschedules.json"
+		},
+		"products": {
+			"$ref": "../components/products.json"
+		},
+		"creditcard": {
+			"$ref": "../components/creditcard.json"
+		}
 	},
-	"anyOf":[
-		{"required":["campaign", "customer", "creditcard", "products"]},
-		{"required":["campaign", "customer", "creditcard", "product_schedules"]}
+	"anyOf": [
+		{
+			"required": [
+				"campaign",
+				"customer",
+				"creditcard",
+				"products"
+			]
+		},
+		{
+			"required": [
+				"campaign",
+				"customer",
+				"creditcard",
+				"product_schedules"
+			]
+		}
 	]
 }

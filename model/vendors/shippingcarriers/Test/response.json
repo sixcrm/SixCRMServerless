@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/shippingcarriers/Test/response.json",
-  "title":"Test Shipping Carrier Response",
-  "type":"object"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingcarriers/Test/response.json",
+	"title": "Test Shipping Carrier Response",
+	"type": "object"
 }

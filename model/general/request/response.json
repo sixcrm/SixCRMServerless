@@ -1,13 +1,18 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/general/request/response.json",
 	"title": "Request response",
-  "id":"/general/request/response.json",
 	"type": "object",
-  "properties":{
-    "statusCode":{"$ref":"../../definitions/nonnegativeinteger.json"},
-    "body":{
-      "type":"string"
-    }
-  },
-  "required":["statusCode","body"]
+	"properties": {
+		"statusCode": {
+			"$ref": "../../definitions/nonnegativeinteger.json"
+		},
+		"body": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"statusCode",
+		"body"
+	]
 }

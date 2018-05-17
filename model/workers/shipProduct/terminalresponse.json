@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/terminalresponse.json",
-  "title": "Terminal Response",
-  "type":"object"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/shipProduct/terminalresponse.json",
+	"title": "Terminal Response",
+	"type": "object"
 }

@@ -1,7 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/tocidentifier.json",
-  "title": "Terms and Conditions Identifier",
-  "type":"string",
-  "minLength":2
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/tocidentifier.json",
+	"title": "Terms and Conditions Identifier",
+	"type": "string",
+	"minLength": 2
 }

@@ -1,35 +1,64 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/productschedule.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/productschedule.json",
 	"title": "Product Schedule",
 	"type": "object",
 	"description": "A product schedule",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"name":{
-			"type":"string",
-			"minLength":3
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"schedule":{
-			"type":"array",
-			"items":{
-				"type":"object",
-			  "properties":{
-			    "product":{"$ref": "../definitions/uuidv4.json"},
-			    "price":{"$ref": "../definitions/currency.json"},
-			    "start":{"$ref": "../definitions/nonnegativeinteger.json"},
-			    "end":{"$ref": "../definitions/nonnegativeinteger.json"},
-			    "period":{"$ref": "../definitions/nonnegativeinteger.json"},
-					"samedayofmonth":{
-						"type":"boolean"
+		"name": {
+			"type": "string",
+			"minLength": 3
+		},
+		"schedule": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"product": {
+						"$ref": "../definitions/uuidv4.json"
+					},
+					"price": {
+						"$ref": "../definitions/currency.json"
+					},
+					"start": {
+						"$ref": "../definitions/nonnegativeinteger.json"
+					},
+					"end": {
+						"$ref": "../definitions/nonnegativeinteger.json"
+					},
+					"period": {
+						"$ref": "../definitions/nonnegativeinteger.json"
+					},
+					"samedayofmonth": {
+						"type": "boolean"
 					}
-			  },
-			  "required":["product", "price", "start", "period"]
+				},
+				"required": [
+					"product",
+					"price",
+					"start",
+					"period"
+				]
 			}
 		},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["name", "schedule", "account", "created_at", "updated_at"]
+	"required": [
+		"name",
+		"schedule",
+		"account",
+		"created_at",
+		"updated_at"
+	]
 }

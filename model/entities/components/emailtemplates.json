@@ -1,8 +1,10 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/emailtemplates.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/emailtemplates.json",
 	"title": "Email Templates",
 	"description": "A array of Email Templates",
-	"type":"array",
-	"items":{"$ref":"../emailtemplate.json"}
+	"type": "array",
+	"items": {
+		"$ref": "../emailtemplate.json"
+	}
 }

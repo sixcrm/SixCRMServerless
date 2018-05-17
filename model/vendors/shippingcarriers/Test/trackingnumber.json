@@ -1,8 +1,8 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/shippingcarriers/Test/trackingnumber.json",
-  "title":"Test Shipping Carrier Tracking Number",
-  "type":"string",
-  "minLength":20,
-  "maxLength":20
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingcarriers/Test/trackingnumber.json",
+	"title": "Test Shipping Carrier Tracking Number",
+	"type": "string",
+	"minLength": 20,
+	"maxLength": 20
 }

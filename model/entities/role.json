@@ -1,31 +1,46 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/role.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/role.json",
 	"title": "Role",
 	"type": "object",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"name":{
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"name": {
 			"type": "string"
 		},
-		"active":{
-			"type":"boolean"
+		"active": {
+			"type": "boolean"
 		},
-		"permissions":{
-			"type":"object",
-			"properties":{
-				"allow":{
-					"type":"array",
-					"items":{"$ref": "../definitions/resourceidentifier.json"}
+		"permissions": {
+			"type": "object",
+			"properties": {
+				"allow": {
+					"type": "array",
+					"items": {
+						"$ref": "../definitions/resourceidentifier.json"
+					}
 				},
-				"deny":{
-					"type":"array",
-					"items":{"$ref": "../definitions/resourceidentifier.json"}
+				"deny": {
+					"type": "array",
+					"items": {
+						"$ref": "../definitions/resourceidentifier.json"
+					}
 				}
 			}
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["name", "active", "created_at", "updated_at"]
+	"required": [
+		"name",
+		"active",
+		"created_at",
+		"updated_at"
+	]
 }

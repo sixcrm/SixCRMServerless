@@ -1,27 +1,38 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/components/customer.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/components/customer.json",
 	"title": "Customer",
 	"type": "object",
 	"properties": {
-		"email":{
-			"type":"string",
-			"format":"email"
+		"email": {
+			"type": "string",
+			"format": "email"
 		},
-		"firstname":{
-			"type":"string",
+		"firstname": {
+			"type": "string",
 			"minLength": 1
 		},
-		"lastname":{
-			"type":"string",
+		"lastname": {
+			"type": "string",
 			"minLength": 1
 		},
-		"phone":{"$ref":"../../definitions/phone.json"},
-		"address":{"$ref": "../../definitions/address.json"},
-		"creditcards":{
-			"type":"array",
-			"items":{"$ref": "./creditcard.json"}
+		"phone": {
+			"$ref": "../../definitions/phone.json"
+		},
+		"address": {
+			"$ref": "../../definitions/address.json"
+		},
+		"creditcards": {
+			"type": "array",
+			"items": {
+				"$ref": "./creditcard.json"
+			}
 		}
 	},
-	"required":["email", "firstname", "lastname", "address"]
+	"required": [
+		"email",
+		"firstname",
+		"lastname",
+		"address"
+	]
 }

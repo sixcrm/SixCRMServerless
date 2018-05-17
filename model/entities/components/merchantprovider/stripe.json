@@ -1,16 +1,21 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/merchantprovider/stripe.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/merchantprovider/stripe.json",
 	"title": "A Stripe Merchant Provider",
-	"type":"object",
-  "properties":{
-    "name":{
-      "type":"string",
-      "enum":["Stripe"]
-    },
-    "api_key":{
-      "type":"string"
-    }
-  },
-  "required":["name","api_key"]
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string",
+			"enum": [
+				"Stripe"
+			]
+		},
+		"api_key": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"name",
+		"api_key"
+	]
 }

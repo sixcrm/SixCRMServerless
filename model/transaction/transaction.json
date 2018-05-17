@@ -1,31 +1,60 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/transaction.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/transaction/transaction.json",
 	"title": "Transaction",
 	"type": "object",
 	"description": "A transaction",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"rebill":{"$ref": "../definitions/uuidv4.json"},
-		"alias":{"$ref": "../definitions/transactionalias.json"},
-		"products":{
-			"type":"array",
-			"items":{
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"rebill": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"alias": {
+			"$ref": "../definitions/transactionalias.json"
+		},
+		"products": {
+			"type": "array",
+			"items": {
 				"type": "object",
 				"properties": {
-					"amount":{"$ref": "../definitions/currency.json"}
+					"amount": {
+						"$ref": "../definitions/currency.json"
+					}
 				},
-				"required":["product", "amount"]
+				"required": [
+					"product",
+					"amount"
+				]
 			},
 			"minItems": 1
 		},
-		"processor_response":{
-			"type":"string"
+		"processor_response": {
+			"type": "string"
 		},
-		"merchant_provider":{"$ref": "../definitions/uuidv4.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"merchant_provider": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["id", "alias", "account", "rebill", "products", "processor_response", "merchant_provider", "created_at", "updated_at"]
+	"required": [
+		"id",
+		"alias",
+		"account",
+		"rebill",
+		"products",
+		"processor_response",
+		"merchant_provider",
+		"created_at",
+		"updated_at"
+	]
 }

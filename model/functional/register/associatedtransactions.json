@@ -1,7 +1,9 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/associatedtransactions.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/register/associatedtransactions.json",
 	"title": "Associated Transactions",
-	"type":"array",
-	"items": {"$ref": "../../entities/transaction.json"}
+	"type": "array",
+	"items": {
+		"$ref": "../../entities/transaction.json"
+	}
 }

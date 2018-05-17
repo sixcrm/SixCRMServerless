@@ -1,8 +1,8 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/countrycode.json",
-  "title": "Country Code",
-  "description": "A country code",
-  "type":"string",
-  "pattern":"^[A-Z]{2}$"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/countrycode.json",
+	"title": "Country Code",
+	"description": "A country code",
+	"type": "string",
+	"pattern": "^[A-Z]{2}$"
 }

@@ -1,27 +1,30 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/processenv.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/forwardmessage/processenv.json",
 	"title": "Process Env",
 	"type": "object",
-  "properties":{
-    "origin_queue":{
-      "type":"string"
-    },
-    "name":{
-      "type":"string"
-    },
-    "workerfunction":{
-      "type":"string"
-    },
-    "destination_queue":{
-      "type":"string"
-    },
-    "failure_queue":{
-      "type":"string"
-    },
-    "bulk":{
-      "type":"boolean"
-    }
-  },
-  "required":["name", "workerfunction"]
+	"properties": {
+		"origin_queue": {
+			"type": "string"
+		},
+		"name": {
+			"type": "string"
+		},
+		"workerfunction": {
+			"type": "string"
+		},
+		"destination_queue": {
+			"type": "string"
+		},
+		"failure_queue": {
+			"type": "string"
+		},
+		"bulk": {
+			"type": "boolean"
+		}
+	},
+	"required": [
+		"name",
+		"workerfunction"
+	]
 }

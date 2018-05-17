@@ -1,15 +1,29 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/components/affiliates.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/components/affiliates.json",
 	"title": "Affiliates",
 	"type": "object",
 	"properties": {
-		"affiliate":{"$ref":"../../definitions/uuidv4.json"},
-		"subaffiliate_1":{"$ref":"../../definitions/uuidv4.json"},
-		"subaffiliate_2":{"$ref":"../../definitions/uuidv4.json"},
-		"subaffiliate_3":{"$ref":"../../definitions/uuidv4.json"},
-		"subaffiliate_4":{"$ref":"../../definitions/uuidv4.json"},
-		"subaffiliate_5":{"$ref":"../../definitions/uuidv4.json"},
-		"cid":{"$ref":"../../definitions/uuidv4.json"}
+		"affiliate": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"subaffiliate_1": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"subaffiliate_2": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"subaffiliate_3": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"subaffiliate_4": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"subaffiliate_5": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"cid": {
+			"$ref": "../../definitions/uuidv4.json"
+		}
 	}
 }

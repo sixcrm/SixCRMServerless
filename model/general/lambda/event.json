@@ -1,35 +1,53 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/general/lambda/event.json",
 	"title": "Lambda Event",
-  "id":"/general/lambda/event.json",
 	"type": "object",
-	"properties":{
-		"requestContext":{
-			"type":"object"
+	"properties": {
+		"requestContext": {
+			"type": "object"
 		},
-		"pathParameters":{
-			"anyOf":[
-				{"type":"object"},
-				{"type":"null"}
+		"pathParameters": {
+			"anyOf": [
+				{
+					"type": "object"
+				},
+				{
+					"type": "null"
+				}
 			]
 		},
-		"Authorization":{
-			"type":"string"
+		"Authorization": {
+			"type": "string"
 		},
-		"body":{
-			"anyOf":[
-				{"$ref":"../../definitions/stringifiedjson.json"},
-				{"$ref":"../../definitions/graphqlquery.json"},
-				{"type":"object"},
-				{"type":"null"}
+		"body": {
+			"anyOf": [
+				{
+					"$ref": "../../definitions/stringifiedjson.json"
+				},
+				{
+					"$ref": "../../definitions/graphqlquery.json"
+				},
+				{
+					"type": "object"
+				},
+				{
+					"type": "null"
+				}
 			]
 		},
-		"queryStringParameters":{
-			"anyOf":[
-				{"type":"object"},
-				{"type":"null"}
+		"queryStringParameters": {
+			"anyOf": [
+				{
+					"type": "object"
+				},
+				{
+					"type": "null"
+				}
 			]
 		}
 	},
-	"required":["requestContext"]
+	"required": [
+		"requestContext"
+	]
 }

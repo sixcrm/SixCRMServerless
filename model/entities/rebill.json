@@ -1,43 +1,83 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/rebill.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/rebill.json",
 	"title": "Rebill",
 	"type": "object",
 	"description": "A rebill",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"amount":{"$ref": "../definitions/currency.json"},
-		"bill_at":{"$ref": "../definitions/iso8601.json"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"},
-		"parentsession":{"$ref": "../definitions/uuidv4.json"},
-		"merchant_provider":{"$ref": "../definitions/uuidv4.json"},
-		"processing":{
-			"type":["string", "boolean"]
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"product_schedules":{
-			"type":"array",
-			"items":{"$ref": "../definitions/uuidv4.json"}
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
 		},
-		"products":{
-			"type":"array",
-			"items":{"$ref":"./components/transactionproduct.json"}
+		"amount": {
+			"$ref": "../definitions/currency.json"
 		},
-		"state":{"type":"string"},
-		"previous_state":{"type":"string"},
-		"state_changed_at":{"$ref": "../definitions/iso8601.json"},
-		"history":{
-			"type":"array",
-			"items":{"$ref": "./components/rebillstatehistoryelement.json"}
+		"bill_at": {
+			"$ref": "../definitions/iso8601.json"
 		},
-		"second_attempt":{
-			"type":"boolean"
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
 		},
-		"no_process":{
-			"type":"boolean"
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
 		},
-		"upsell": {"$ref": "../definitions/uuidv4.json"}
+		"parentsession": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"merchant_provider": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"processing": {
+			"type": [
+				"string",
+				"boolean"
+			]
+		},
+		"product_schedules": {
+			"type": "array",
+			"items": {
+				"$ref": "../definitions/uuidv4.json"
+			}
+		},
+		"products": {
+			"type": "array",
+			"items": {
+				"$ref": "./components/transactionproduct.json"
+			}
+		},
+		"state": {
+			"type": "string"
+		},
+		"previous_state": {
+			"type": "string"
+		},
+		"state_changed_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"history": {
+			"type": "array",
+			"items": {
+				"$ref": "./components/rebillstatehistoryelement.json"
+			}
+		},
+		"second_attempt": {
+			"type": "boolean"
+		},
+		"no_process": {
+			"type": "boolean"
+		},
+		"upsell": {
+			"$ref": "../definitions/uuidv4.json"
+		}
 	},
-	"required":["account", "amount", "bill_at", "created_at", "updated_at", "parentsession"]
+	"required": [
+		"account",
+		"amount",
+		"bill_at",
+		"created_at",
+		"updated_at",
+		"parentsession"
+	]
 }

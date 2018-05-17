@@ -1,17 +1,41 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/transactionprototype",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/register/transactionprototype.json",
 	"title": "Transformed Transaction Prototype",
-	"type":"object",
-	"properties":{
-		"rebill":{"$ref":"../../entities/rebill.json"},
-    "amount":{"$ref":"../../definitions/currency.json"},
-		"type":{"$ref":"./transactiontype.json"},
-		"result":{"$ref":"./transactionresult.json"},
-    "processor_response":{"$ref":"./processorresponse.json"},
-   	"merchant_provider":{"$ref":"../../definitions/uuidv4.json"},
-		"products":{"$ref":"./transactionproducts.json"},
-		"associated_transaction":{"$ref":"../../definitions/uuidv4.json"}
+	"type": "object",
+	"properties": {
+		"rebill": {
+			"$ref": "../../entities/rebill.json"
+		},
+		"amount": {
+			"$ref": "../../definitions/currency.json"
+		},
+		"type": {
+			"$ref": "./transactiontype.json"
+		},
+		"result": {
+			"$ref": "./transactionresult.json"
+		},
+		"processor_response": {
+			"$ref": "./processorresponse.json"
+		},
+		"merchant_provider": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"products": {
+			"$ref": "./transactionproducts.json"
+		},
+		"associated_transaction": {
+			"$ref": "../../definitions/uuidv4.json"
+		}
 	},
-	"required":["rebill", "amount", "type", "result", "processor_response", "merchant_provider", "products"]
+	"required": [
+		"rebill",
+		"amount",
+		"type",
+		"result",
+		"processor_response",
+		"merchant_provider",
+		"products"
+	]
 }

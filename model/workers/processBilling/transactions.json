@@ -1,7 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/transactions.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/processBilling/transactions.json",
 	"title": "Transactions",
-  "type":"array",
-  "items":{"$ref": "../../entities/transaction.json"}
+	"type": "array",
+	"items": {
+		"$ref": "../../entities/transaction.json"
+	}
 }

@@ -1,18 +1,40 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/useracl.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/useracl.json",
 	"title": "User ACL",
 	"type": "object",
 	"description": "User's access control list",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"user":{"$ref": "../definitions/useridentifier.json"},
-		"role":{"$ref": "../definitions/uuidv4.json"},
-		"pending":{"type": "string"},
-		"termsandconditions":{"type": "string"},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"user": {
+			"$ref": "../definitions/useridentifier.json"
+		},
+		"role": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"pending": {
+			"type": "string"
+		},
+		"termsandconditions": {
+			"type": "string"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "user", "role", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"user",
+		"role",
+		"created_at",
+		"updated_at"
+	]
 }

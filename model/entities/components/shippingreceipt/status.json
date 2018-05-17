@@ -1,8 +1,12 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/shippingreceipt/status.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/shippingreceipt/status.json",
 	"title": "Shipping Receipt Status",
 	"description": "Known shipping receipt stati",
-	"type":"string",
-	"enum":["pending","intransit","delivered"]
+	"type": "string",
+	"enum": [
+		"pending",
+		"intransit",
+		"delivered"
+	]
 }

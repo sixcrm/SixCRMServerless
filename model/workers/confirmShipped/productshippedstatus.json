@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/productshippedstatus",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/confirmShipped/productshippedstatus.json",
 	"title": "Product Shipped Status",
 	"type": "boolean"
 }

@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/rebilldeliveredstatus",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/confirmDelivered/rebilldeliveredstatus.json",
 	"title": "Rebill Delivery Status",
 	"type": "boolean"
 }

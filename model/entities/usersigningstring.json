@@ -1,23 +1,43 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/usersigningstring.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/usersigningstring.json",
 	"title": "User Signing String",
 	"type": "object",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"user":{"$ref": "../definitions/useridentifier.json"},
-		"name":{
-			"type":"string"
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"signing_string":{"$ref": "../definitions/signingstring.json"},
-		"used_at":{
-			"anyOf":[
-				{"$ref": "../definitions/iso8601.json"},
-				{"type":"null"}
+		"user": {
+			"$ref": "../definitions/useridentifier.json"
+		},
+		"name": {
+			"type": "string"
+		},
+		"signing_string": {
+			"$ref": "../definitions/signingstring.json"
+		},
+		"used_at": {
+			"anyOf": [
+				{
+					"$ref": "../definitions/iso8601.json"
+				},
+				{
+					"type": "null"
+				}
 			]
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["user", "name", "signing_string", "created_at", "updated_at"]
+	"required": [
+		"user",
+		"name",
+		"signing_string",
+		"created_at",
+		"updated_at"
+	]
 }

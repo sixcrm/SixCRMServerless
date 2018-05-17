@@ -1,7 +1,9 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/transactionproducts.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/rebill/transactionproducts.json",
 	"title": "Transaction Products",
-	"type":"array",
-	"items":{"$ref":"../../entities/components/transactionproduct.json"}
+	"type": "array",
+	"items": {
+		"$ref": "../../entities/components/transactionproduct.json"
+	}
 }

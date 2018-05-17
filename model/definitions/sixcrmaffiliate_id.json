@@ -1,7 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/sixcrmaffiliate_id.json",
-  "title": "SixCRM Affiliate ID",
-  "type":"string",
-  "minLength":2
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/sixcrmaffiliate_id.json",
+	"title": "SixCRM Affiliate ID",
+	"type": "string",
+	"minLength": 2
 }

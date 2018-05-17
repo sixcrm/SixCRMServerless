@@ -1,8 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/jwt",
-  "title": "jwt",
-
-  "type": "string",
-  "pattern": "[a-zA-Z0-9\\-_]+?\\.[a-zA-Z0-9\\-_]+?\\.([a-zA-Z0-9\\-_]+)?"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/graph/responses/definitions/jwt.json",
+	"title": "jwt",
+	"type": "string",
+	"pattern": "[a-zA-Z0-9\\-_]+?\\.[a-zA-Z0-9\\-_]+?\\.([a-zA-Z0-9\\-_]+)?"
 }

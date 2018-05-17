@@ -1,18 +1,22 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/helpers/termsandconditions/termsandconditions.json",
-  "title":"Terms and Conditions",
-  "type":"object",
-  "properties":{
-    "title":{
-      "type":"string"
-    },
-    "body":{
-      "type":"string"
-    },
-    "version":{
-      "type":"string"
-    }
-  },
-  "required":["title","body","version"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/termsandconditions/termsandconditions.json",
+	"title": "Terms and Conditions",
+	"type": "object",
+	"properties": {
+		"title": {
+			"type": "string"
+		},
+		"body": {
+			"type": "string"
+		},
+		"version": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"title",
+		"body",
+		"version"
+	]
 }

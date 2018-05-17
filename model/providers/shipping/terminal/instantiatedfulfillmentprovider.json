@@ -1,6 +1,6 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/instantiatedfulfillmentprovider.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/shipping/terminal/instantiatedfulfillmentprovider.json",
 	"title": "Instantiated Fulfillment Provider",
-	"type":"object"
+	"type": "object"
 }

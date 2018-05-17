@@ -1,19 +1,21 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/error.json",
-  "title":"Shipping Provider Response Error",
-  "oneOf":[
-    {
-      "type":"null"
-    },
-    {
-      "type":"object",
-      "properties":{
-        "message":{
-          "type":"string"
-        }
-      },
-      "required":["message"]
-    }
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingproviders/response/error.json",
+	"title": "Shipping Provider Response Error",
+	"oneOf": [
+		{
+			"type": "null"
+		},
+		{
+			"type": "object",
+			"properties": {
+				"message": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"message"
+			]
+		}
+	]
 }

@@ -1,25 +1,43 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/fulfillmentproviders/threepl.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/fulfillmentproviders/threepl.json",
 	"title": "A ThreePL fulfillment provider",
-	"type":"object",
-  "properties":{
-    "name": {
-      "type":"string",
-      "enum":["ThreePL"]
-    },
-    "username": {
-      "type":"string",
-      "minLength":1
-    },
-    "password": {
-      "type":"string",
-      "minLength": 1
-    },
-    "threepl_customer_id": {"ref":"../../../definitions/nonnegativeinteger.json"},
-    "threepl_id": {"ref":"../../../definitions/nonnegativeinteger.json"},
-    "threepl_facility_id": {"ref":"../../../definitions/nonnegativeinteger.json"},
-    "threepl_key": {"$ref":"../../../vendors/fulfillmentproviders/ThreePL/threeplkey.json"}
-  },
-  "required":["name", "username", "password", "threepl_customer_id", "threepl_id", "threepl_facility_id", "threepl_key"]
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string",
+			"enum": [
+				"ThreePL"
+			]
+		},
+		"username": {
+			"type": "string",
+			"minLength": 1
+		},
+		"password": {
+			"type": "string",
+			"minLength": 1
+		},
+		"threepl_customer_id": {
+			"ref": "../../../definitions/nonnegativeinteger.json"
+		},
+		"threepl_id": {
+			"ref": "../../../definitions/nonnegativeinteger.json"
+		},
+		"threepl_facility_id": {
+			"ref": "../../../definitions/nonnegativeinteger.json"
+		},
+		"threepl_key": {
+			"$ref": "../../../vendors/fulfillmentproviders/ThreePL/threeplkey.json"
+		}
+	},
+	"required": [
+		"name",
+		"username",
+		"password",
+		"threepl_customer_id",
+		"threepl_id",
+		"threepl_facility_id",
+		"threepl_key"
+	]
 }

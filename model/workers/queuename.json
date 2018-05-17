@@ -1,7 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/workers/queuename.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/queuename.json",
 	"title": "Queue Name",
-  "type":"string",
-  "pattern":"^(bill|recover|hold|pending|shipped|delivered|search_indexing)(_error|_failed|_deadletter)*$"
+	"type": "string",
+	"pattern": "^(bill|recover|hold|pending|shipped|delivered|search_indexing)(_error|_failed|_deadletter)*$"
 }

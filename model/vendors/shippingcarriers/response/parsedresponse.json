@@ -1,17 +1,29 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/shippingcarriers/response/parsedresponse.json",
-  "title":"Parsed Vendor Response",
-  "type":"object",
-  "properties":{
-    "status":{"$ref":"status.json"},
-    "detail":{"$ref":"detail.json"},
-    "tracking_number":{
-      "anyOf":[
-        {"$ref":"../Test/trackingnumber.json"},
-        {"$ref":"../USPS/trackingnumber.json"}
-      ]
-    }
-  },
-  "required":["status","detail","tracking_number"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingcarriers/response/parsedresponse.json",
+	"title": "Parsed Vendor Response",
+	"type": "object",
+	"properties": {
+		"status": {
+			"$ref": "./status.json"
+		},
+		"detail": {
+			"$ref": "./detail.json"
+		},
+		"tracking_number": {
+			"anyOf": [
+				{
+					"$ref": "../Test/trackingnumber.json"
+				},
+				{
+					"$ref": "../USPS/trackingnumber.json"
+				}
+			]
+		}
+	},
+	"required": [
+		"status",
+		"detail",
+		"tracking_number"
+	]
 }

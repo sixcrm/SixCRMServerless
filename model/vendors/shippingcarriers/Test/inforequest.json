@@ -1,10 +1,14 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/shippingcarriers/Test/inforequest.json",
-  "title":"Test Shipping Carrier Info Request",
-  "type":"object",
-  "properties":{
-    "tracking_number":{"$ref":"./trackingnumber.json"}
-  },
-  "required":["tracking_number"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingcarriers/Test/inforequest.json",
+	"title": "Test Shipping Carrier Info Request",
+	"type": "object",
+	"properties": {
+		"tracking_number": {
+			"$ref": "./trackingnumber.json"
+		}
+	},
+	"required": [
+		"tracking_number"
+	]
 }

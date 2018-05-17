@@ -1,46 +1,78 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/transaction/merchantprovidersummary.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/transaction/merchantprovidersummary.json",
 	"title": "Merchant Provider Summary",
 	"type": "object",
 	"properties": {
-		"merchantprovider":{
-			"type":"object",
-			"properties":{
-				"id":{"$ref": "../definitions/uuidv4.json"}
-			},
-			"required":["id"]
-		},
-		"summary":{
-			"type":"object",
-			"properties":{
-				"today":{
-					"type":"object",
-					"properties":{
-						"amount":{"$ref": "../definitions/currency.json"},
-						"count":{"$ref": "../definitions/nonnegativeinteger.json"}
-					},
-					"required":["amount","count"]
-				},
-				"thisweek":{
-					"type":"object",
-					"properties":{
-						"amount":{"$ref": "../definitions/currency.json"},
-						"count":{"$ref": "../definitions/nonnegativeinteger.json"}
-					},
-					"required":["amount","count"]
-				},
-				"thismonth":{
-					"type":"object",
-					"properties":{
-						"amount":{"$ref": "../definitions/currency.json"},
-						"count":{"$ref": "../definitions/nonnegativeinteger.json"}
-					},
-					"required":["amount","count"]
+		"merchantprovider": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"$ref": "../definitions/uuidv4.json"
 				}
 			},
-			"required":["today","thisweek","thismonth"]
+			"required": [
+				"id"
+			]
+		},
+		"summary": {
+			"type": "object",
+			"properties": {
+				"today": {
+					"type": "object",
+					"properties": {
+						"amount": {
+							"$ref": "../definitions/currency.json"
+						},
+						"count": {
+							"$ref": "../definitions/nonnegativeinteger.json"
+						}
+					},
+					"required": [
+						"amount",
+						"count"
+					]
+				},
+				"thisweek": {
+					"type": "object",
+					"properties": {
+						"amount": {
+							"$ref": "../definitions/currency.json"
+						},
+						"count": {
+							"$ref": "../definitions/nonnegativeinteger.json"
+						}
+					},
+					"required": [
+						"amount",
+						"count"
+					]
+				},
+				"thismonth": {
+					"type": "object",
+					"properties": {
+						"amount": {
+							"$ref": "../definitions/currency.json"
+						},
+						"count": {
+							"$ref": "../definitions/nonnegativeinteger.json"
+						}
+					},
+					"required": [
+						"amount",
+						"count"
+					]
+				}
+			},
+			"required": [
+				"today",
+				"thisweek",
+				"thismonth"
+			]
 		}
 	},
-	"required":["merchantprovider", "summary"]
+	"required": [
+		"merchantprovider",
+		"summary"
+	]
 }

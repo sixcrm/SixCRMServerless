@@ -1,7 +1,11 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/status.json",
-  "title":"Shipping Provider Response Status",
-  "type":"string",
-  "enum":["delivered", "in-transit", "unknown"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingproviders/response/status.json",
+	"title": "Shipping Provider Response Status",
+	"type": "string",
+	"enum": [
+		"delivered",
+		"in-transit",
+		"unknown"
+	]
 }

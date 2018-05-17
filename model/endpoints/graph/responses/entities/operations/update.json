@@ -1,37 +1,33 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/updateentity",
-  "type": "object",
-
-  "allOf": [
-    { "$ref": "../../graph" },
-    {
-      "properties": {
-
-        "response" :{
-
-          "properties": {
-
-            "data": {
-
-              "patternProperties": {
-
-                "update.+": { "$ref": "../entity" }
-
-              },
-              "maxProperties": 1,
-              "minProperties": 1
-
-            }
-
-          },
-          "required":["data"]
-
-        }
-
-      },
-      "required":["response"]
-    }
-  ]
-
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/graph/responses/entities/operations/update.json",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "../../graph.json"
+		},
+		{
+			"properties": {
+				"response": {
+					"properties": {
+						"data": {
+							"patternProperties": {
+								"update.+": {
+									"$ref": "../entity.json"
+								}
+							},
+							"maxProperties": 1,
+							"minProperties": 1
+						}
+					},
+					"required": [
+						"data"
+					]
+				}
+			},
+			"required": [
+				"response"
+			]
+		}
+	]
 }

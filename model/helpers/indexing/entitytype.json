@@ -1,7 +1,19 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entitytype.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/indexing/entitytype.json",
 	"title": "Entity Type",
 	"type": "string",
-  "enum":["campaign","creditcard","merchantprovider","productschedule","product","shippingreceipt","customer","transaction","affiliate","session","return"]
+	"enum": [
+		"campaign",
+		"creditcard",
+		"merchantprovider",
+		"productschedule",
+		"product",
+		"shippingreceipt",
+		"customer",
+		"transaction",
+		"affiliate",
+		"session",
+		"return"
+	]
 }

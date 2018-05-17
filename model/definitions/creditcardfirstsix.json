@@ -1,17 +1,17 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/creditcardfirstsix.json",
-  "title": "Credit Card First Six",
-  "description": "The first six digits of a credit card number",
-  "anyOf":[
-    {
-      "type":"string",
-      "pattern":"^[0-9]{6}$"
-    },
-    {
-      "type":"integer",
-      "minimum":100000,
-      "maximum":999999
-    }
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/creditcardfirstsix.json",
+	"title": "Credit Card First Six",
+	"description": "The first six digits of a credit card number",
+	"anyOf": [
+		{
+			"type": "string",
+			"pattern": "^[0-9]{6}$"
+		},
+		{
+			"type": "integer",
+			"minimum": 100000,
+			"maximum": 999999
+		}
+	]
 }

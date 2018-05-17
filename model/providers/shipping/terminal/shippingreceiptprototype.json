@@ -1,31 +1,47 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/providers/shipping/terminal/shippingreceiptprototype.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/shipping/terminal/shippingreceiptprototype.json",
 	"title": "Shipping Receipt Prototype",
-	"type":"object",
-	"properties":{
-    "account": {"$ref":"../../../definitions/sixcrmaccountidentifier.json"},
-    "fulfillment_provider": {"$ref":"../../../definitions/uuidv4.json"},
-    "status": {"$ref":"../../../entities/components/shippingreceipt/status.json"},
-    "history": {
-      "type":"array",
-      "items":{"$ref":"../../../entities/components/shippingreceipt/historyelement.json"}
-    },
-    "fulfillment_provider_reference":{
-      "type":"string"
-    },
-    "tracking":{
-      "type":"object",
-      "properties":{
-        "id":{
-          "type":"string"
-        },
-        "carrier":{
-          "type":"string"
-        }
-      },
-      "required":["id","carrier"]
-    }
-  },
-  "required":["account","fulfillment_provider","status","history"]
+	"type": "object",
+	"properties": {
+		"account": {
+			"$ref": "../../../definitions/sixcrmaccountidentifier.json"
+		},
+		"fulfillment_provider": {
+			"$ref": "../../../definitions/uuidv4.json"
+		},
+		"status": {
+			"$ref": "../../../entities/components/shippingreceipt/status.json"
+		},
+		"history": {
+			"type": "array",
+			"items": {
+				"$ref": "../../../entities/components/shippingreceipt/historyelement.json"
+			}
+		},
+		"fulfillment_provider_reference": {
+			"type": "string"
+		},
+		"tracking": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"carrier": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id",
+				"carrier"
+			]
+		}
+	},
+	"required": [
+		"account",
+		"fulfillment_provider",
+		"status",
+		"history"
+	]
 }

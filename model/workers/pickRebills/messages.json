@@ -1,7 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/messages.json",
-  "title": "Messages",
-  "type": "array",
-  "items":{"$ref": "../spoofedsqsmessage.json"}
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/pickRebills/messages.json",
+	"title": "Messages",
+	"type": "array",
+	"items": {
+		"$ref": "../spoofedsqsmessage.json"
+	}
 }

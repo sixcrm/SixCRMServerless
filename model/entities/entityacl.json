@@ -1,30 +1,51 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entityacl",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/entityacl.json",
 	"title": "Entity ACL",
 	"type": "object",
 	"description": "Entity's access control list",
 	"properties": {
-		"entity":{"$ref": "../definitions/uuidv4.json"},
-		"type":{"$ref": "../definitions/sixcrmentitytypes.json"},
-		"allow":{
-			"type":"array",
-			"items":{"$ref": "../definitions/resourceidentifier.json"}
+		"entity": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"deny":{
-			"type":"array",
-			"items":{"$ref": "../definitions/resourceidentifier.json"}
+		"type": {
+			"$ref": "../definitions/sixcrmentitytypes.json"
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"allow": {
+			"type": "array",
+			"items": {
+				"$ref": "../definitions/resourceidentifier.json"
+			}
+		},
+		"deny": {
+			"type": "array",
+			"items": {
+				"$ref": "../definitions/resourceidentifier.json"
+			}
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["entity", "type", "created_at", "updated_at"],
+	"required": [
+		"entity",
+		"type",
+		"created_at",
+		"updated_at"
+	],
 	"anyOf": [
 		{
-			"required": ["allow"]
+			"required": [
+				"allow"
+			]
 		},
 		{
-			"required": ["deny"]
+			"required": [
+				"deny"
+			]
 		}
 	]
 }

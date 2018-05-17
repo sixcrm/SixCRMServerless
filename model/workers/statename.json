@@ -1,7 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/workers/statename.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/statename.json",
 	"title": "State Name",
-  "type":"string",
-  "pattern":"^(bill|recover|hold|pending|shipped|delivered|archived)(_error|_failed|_deadletter)*$"
+	"type": "string",
+	"pattern": "^(bill|recover|hold|pending|shipped|delivered|archived)(_error|_failed|_deadletter)*$"
 }

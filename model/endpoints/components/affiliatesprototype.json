@@ -1,29 +1,29 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/components/affiliatesprototype.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/components/affiliatesprototype.json",
 	"title": "Affiliates",
 	"type": "object",
 	"properties": {
-		"affiliate":{
-			"type":"string"
+		"affiliate": {
+			"type": "string"
 		},
-		"subaffiliate_1":{
-			"type":"string"
+		"subaffiliate_1": {
+			"type": "string"
 		},
-		"subaffiliate_2":{
-			"type":"string"
+		"subaffiliate_2": {
+			"type": "string"
 		},
-		"subaffiliate_3":{
-			"type":"string"
+		"subaffiliate_3": {
+			"type": "string"
 		},
-		"subaffiliate_4":{
-			"type":"string"
+		"subaffiliate_4": {
+			"type": "string"
 		},
-		"subaffiliate_5":{
-			"type":"string"
+		"subaffiliate_5": {
+			"type": "string"
 		},
-		"cid":{
-			"type":"string"
+		"cid": {
+			"type": "string"
 		}
 	}
 }

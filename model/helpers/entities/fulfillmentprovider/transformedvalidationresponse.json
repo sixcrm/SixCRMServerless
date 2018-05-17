@@ -1,16 +1,23 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"helpers/entities/fulfillmentprovider/transformedvalidationresponse.json",
-  "title":"Transformed Validation Response",
-  "type":"object",
-  "properties":{
-    "code":{
-      "type":"string",
-      "enum":["success", "fail", "error"]
-    },
-    "vendor_response":{
-      "type":"object"
-    }
-  },
-  "required":["code", "vendor_response"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/entities/fulfillmentprovider/transformedvalidationresponse.json",
+	"title": "Transformed Validation Response",
+	"type": "object",
+	"properties": {
+		"code": {
+			"type": "string",
+			"enum": [
+				"success",
+				"fail",
+				"error"
+			]
+		},
+		"vendor_response": {
+			"type": "object"
+		}
+	},
+	"required": [
+		"code",
+		"vendor_response"
+	]
 }

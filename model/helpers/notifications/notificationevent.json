@@ -1,37 +1,52 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/helpers/notifications/notificationevent.json",
-  "title":"Notification Event",
-  "description":"Events that are of subtype notification events",
-  "note":"break into subschemas",
-  "anyOf":[
-    {
-      "type":"string",
-      "enum": ["test", "testalert"]
-    },
-    {
-      "type":"string",
-      "enum": ["click", "lead", "order", "confirm"]
-    },
-    {
-      "type":"string",
-      "enum": ["user_invited", "user_invite_resent", "user_invite_accepted"]
-    },
-    {
-      "type":"string",
-      "pattern":"^transaction_(success|fail|error)$"
-    },
-    {
-      "type":"string",
-      "pattern":"^transaction_recovery_(success|fail|error)$"
-    },
-    {
-      "type":"string",
-      "pattern":"^fulfillment_triggered_(success|fail|error)$"
-    },
-    {
-      "type":"string",
-      "enum":["shipping_confirmation","delivery_confirmation"]
-    }
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/notifications/notificationevent.json",
+	"title": "Notification Event",
+	"description": "Events that are of subtype notification events",
+	"note": "break into subschemas",
+	"anyOf": [
+		{
+			"type": "string",
+			"enum": [
+				"test",
+				"testalert"
+			]
+		},
+		{
+			"type": "string",
+			"enum": [
+				"click",
+				"lead",
+				"order",
+				"confirm"
+			]
+		},
+		{
+			"type": "string",
+			"enum": [
+				"user_invited",
+				"user_invite_resent",
+				"user_invite_accepted"
+			]
+		},
+		{
+			"type": "string",
+			"pattern": "^transaction_(success|fail|error)$"
+		},
+		{
+			"type": "string",
+			"pattern": "^transaction_recovery_(success|fail|error)$"
+		},
+		{
+			"type": "string",
+			"pattern": "^fulfillment_triggered_(success|fail|error)$"
+		},
+		{
+			"type": "string",
+			"enum": [
+				"shipping_confirmation",
+				"delivery_confirmation"
+			]
+		}
+	]
 }

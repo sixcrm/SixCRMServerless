@@ -1,9 +1,13 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/transactioninput",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/processBilling/debug-transactioninput.json",
 	"title": "Transaction Input",
-	"anyOf":[
-    {"$ref": "../../definitions/uuidv4.json"},
-    {"$ref": "../../entities/transaction.json"}
-  ]
+	"anyOf": [
+		{
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		{
+			"$ref": "../../entities/transaction.json"
+		}
+	]
 }

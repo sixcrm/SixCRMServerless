@@ -1,12 +1,22 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/hydratedaugmentedtransactionproduct.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/shipping/terminal/hydratedaugmentedtransactionproduct.json",
 	"title": "Hydrated Augmented Transaction Product",
-	"type":"object",
-	"properties":{
-		"product":{"$ref":"../../../entities/product.json"},
-		"amount":{"$ref":"../../../definitions/currency.json"},
-		"transaction":{"$ref":"../../../entities/transaction.json"}
+	"type": "object",
+	"properties": {
+		"product": {
+			"$ref": "../../../entities/product.json"
+		},
+		"amount": {
+			"$ref": "../../../definitions/currency.json"
+		},
+		"transaction": {
+			"$ref": "../../../entities/transaction.json"
+		}
 	},
-	"required":["product","amount","transaction"]
+	"required": [
+		"product",
+		"amount",
+		"transaction"
+	]
 }

@@ -1,15 +1,21 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/providers/shipping/terminal/augmentedtransactionproduct.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/shipping/terminal/augmentedtransactionproduct.json",
 	"title": "Augmented Transaction Product",
-	"allOf":[
-		{"$ref": "../../../entities/components/transactionproduct.json"},
+	"allOf": [
 		{
-			"type":"object",
-			"properties":{
-				"transaction":{"$ref":"../../../entities/transaction.json"}
+			"$ref": "../../../entities/components/transactionproduct.json"
+		},
+		{
+			"type": "object",
+			"properties": {
+				"transaction": {
+					"$ref": "../../../entities/transaction.json"
+				}
 			},
-			"required":["transaction"]
+			"required": [
+				"transaction"
+			]
 		}
 	]
 }

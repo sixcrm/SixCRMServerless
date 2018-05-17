@@ -1,27 +1,56 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/notification.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/notification.json",
 	"title": "Notification",
 	"type": "object",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"user":{"$ref": "../definitions/useridentifier.json"},
-		"context":{"type":"object"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"type": {"$ref":"../definitions/notificationtype.json"},
-		"name":{"type":"string"},
-		"category": {
-			"type":"string"
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"expires_at":{"$ref": "../definitions/iso8601.json"},
-		"read_at":{
-			"anyOf":[
-				{"type":"null"},
-				{"$ref": "../definitions/iso8601.json"}
+		"user": {
+			"$ref": "../definitions/useridentifier.json"
+		},
+		"context": {
+			"type": "object"
+		},
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"type": {
+			"$ref": "../definitions/notificationtype.json"
+		},
+		"name": {
+			"type": "string"
+		},
+		"category": {
+			"type": "string"
+		},
+		"expires_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"read_at": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "../definitions/iso8601.json"
+				}
 			]
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "user", "type", "name", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"user",
+		"type",
+		"name",
+		"created_at",
+		"updated_at"
+	]
 }

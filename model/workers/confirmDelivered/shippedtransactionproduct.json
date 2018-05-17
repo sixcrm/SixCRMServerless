@@ -1,16 +1,22 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/shippedtransactionproduct",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/confirmDelivered/shippedtransactionproduct.json",
 	"title": "Transaction Product",
 	"type": "object",
 	"description": "A shipped transaction product",
-  "allOf":[
-    {"$ref":"../../entities/components/transactionproduct.json"},
-    {
-      "properties":{
-        "shipping_receipt":{"$ref":"../../definitions/uuidv4.json"}
-      },
-      "required":["shipping_receipt"]
-    }
-  ]
+	"allOf": [
+		{
+			"$ref": "../../entities/components/transactionproduct.json"
+		},
+		{
+			"properties": {
+				"shipping_receipt": {
+					"$ref": "../../definitions/uuidv4.json"
+				}
+			},
+			"required": [
+				"shipping_receipt"
+			]
+		}
+	]
 }

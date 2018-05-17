@@ -1,11 +1,11 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/percentage.json",
-  "title": "Percentage",
-  "description": "Floating-point number from 0 to 1",
-  "type":"number",
-  "minimum":0,
-  "maximum":1,
-  "exculsiveMinimum":false,
-  "exculsiveMaximum":false
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/percentage.json",
+	"title": "Percentage",
+	"description": "Floating-point number from 0 to 1",
+	"type": "number",
+	"minimum": 0,
+	"maximum": 1,
+	"exculsiveMinimum": false,
+	"exculsiveMaximum": false
 }

@@ -1,9 +1,8 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/nonnegativeinteger.json",
-  "title": "Non-Negative Integer",
-  "type":"integer",
-  "description": "Integer number greater than -1",
-  "minimum": 0,
-  "exclusiveMinimum": false
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/nonnegativeinteger.json",
+	"title": "Non-Negative Integer",
+	"type": "integer",
+	"description": "Integer number greater than -1",
+	"minimum": 0
 }

@@ -1,8 +1,10 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/sqsmessagebody.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/sqsmessagebody.json",
 	"title": "SQS Message Body",
-  "anyOf": [
-    {"type":"string"}
-  ]
+	"anyOf": [
+		{
+			"type": "string"
+		}
+	]
 }

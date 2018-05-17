@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/chargeback.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/transaction/chargeback.json",
 	"title": "Chargeback",
-  "type":"boolean"
+	"type": "boolean"
 }

@@ -1,16 +1,16 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/currency.json",
-  "title": "Currency",
-  "description": "Amount of money.",
-  "anyOf":[
-    {
-      "type":"string",
-      "pattern":"^\\$*[0-9]+\\.[0-9]{2}$"
-    },
-    {
-      "type": "number",
-      "minimum":0.00
-    }
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/currency.json",
+	"title": "Currency",
+	"description": "Amount of money.",
+	"anyOf": [
+		{
+			"type": "string",
+			"pattern": "^\\$*[0-9]+\\.[0-9]{2}$"
+		},
+		{
+			"type": "number",
+			"minimum": 0
+		}
+	]
 }

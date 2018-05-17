@@ -1,14 +1,21 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/entity",
-  "title": "Entity",
-  "type": "object",
-  "properties": {
-
-    "id": { "$ref": "../definitions/sixcrmidentifier" },
-    "created_at": { "$ref": "../definitions/iso8601" },
-    "updated_at": { "$ref": "../definitions/iso8601" }
-
-  },
-  "required":["created_at", "updated_at"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/graph/responses/entities/entity.json",
+	"title": "Entity",
+	"type": "object",
+	"properties": {
+		"id": {
+			"$ref": "../definitions/sixcrmidentifier.json"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
+	},
+	"required": [
+		"created_at",
+		"updated_at"
+	]
 }

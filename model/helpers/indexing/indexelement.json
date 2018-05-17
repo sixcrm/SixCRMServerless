@@ -1,48 +1,102 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/indexedelements.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/indexing/indexelement.json",
 	"title": "Indexed Element",
 	"type": "object",
-  "properties":{
-    "index_action":{"$ref":"/indexaction.json"},
-    "entity_type":{"$ref":"/entitytype.json"},
-    "id":{"$ref":"../../definitions/sixcrmidentifier.json"},
-    "active":{"$ref":"../../definitions/active.json"},
-    "email":{"$ref":"../../definitions/email.json"},
-    "firstname":{"$ref":"../../definitions/firstname.json"},
-    "lastname":{"$ref":"../../definitions/firstname.json"},
-    "name":{"$ref":"../../definitions/name.json"},
-    "phone":{"$ref":"../../definitions/phone.json"},
-    "sku": {"$ref":"../../definitions/sku.json"},
-    "tracking_number": {"$ref":"../../definitions/trackingnumber.json"},
-    "address":{"$ref":"../../definitions/address.json"},
-    "amount":{"$ref":"../../definitions/currency.json"},
-    "alias": {"anyOf":[
-      {"$ref":"../../definitions/transactionalias.json"},
-      {"$ref":"../../definitions/sessionalias.json"},
-      {"$ref":"../../definitions/returnalias.json"}
-    ]},
-    "first_six":{"$ref":"../../definitions/creditcardfirstsix.json"},
-    "last_four":{"$ref":"../../definitions/creditcardlastfour.json"},
-    "account":{"$ref":"../../definitions/sixcrmaccountidentifier.json"},
-    "created_at":{"$ref":"../../definitions/iso8601.json"},
-    "updated_at":{"$ref":"../../definitions/iso8601.json"},
-    "address_line_1":{
-      "type":"string"
-    },
-    "address_line_2":{
-      "type":"string"
-    },
-    "city":{
-      "type":"string"
-    },
-    "state":{"$ref": "../../definitions/statecode.json"},
-    "zip":{"$ref": "../../definitions/zipcode.json"},
-    "country":{"$ref": "../../definitions/countrycode.json"},
-    "affiliate_id":{
-      "type":"string"
-    }
-  },
-  "required":["id","index_action","entity_type"],
-  "additionalProperties": false
+	"properties": {
+		"index_action": {
+			"$ref": "./indexaction.json"
+		},
+		"entity_type": {
+			"$ref": "./entitytype.json"
+		},
+		"id": {
+			"$ref": "../../definitions/sixcrmidentifier.json"
+		},
+		"active": {
+			"$ref": "../../definitions/active.json"
+		},
+		"email": {
+			"$ref": "../../definitions/email.json"
+		},
+		"firstname": {
+			"$ref": "../../definitions/firstname.json"
+		},
+		"lastname": {
+			"$ref": "../../definitions/firstname.json"
+		},
+		"name": {
+			"$ref": "../../definitions/name.json"
+		},
+		"phone": {
+			"$ref": "../../definitions/phone.json"
+		},
+		"sku": {
+			"$ref": "../../definitions/sku.json"
+		},
+		"tracking_number": {
+			"$ref": "../../definitions/trackingnumber.json"
+		},
+		"address": {
+			"$ref": "../../definitions/address.json"
+		},
+		"amount": {
+			"$ref": "../../definitions/currency.json"
+		},
+		"alias": {
+			"anyOf": [
+				{
+					"$ref": "../../definitions/transactionalias.json"
+				},
+				{
+					"$ref": "../../definitions/sessionalias.json"
+				},
+				{
+					"$ref": "../../definitions/returnalias.json"
+				}
+			]
+		},
+		"first_six": {
+			"$ref": "../../definitions/creditcardfirstsix.json"
+		},
+		"last_four": {
+			"$ref": "../../definitions/creditcardlastfour.json"
+		},
+		"account": {
+			"$ref": "../../definitions/sixcrmaccountidentifier.json"
+		},
+		"created_at": {
+			"$ref": "../../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../../definitions/iso8601.json"
+		},
+		"address_line_1": {
+			"type": "string"
+		},
+		"address_line_2": {
+			"type": "string"
+		},
+		"city": {
+			"type": "string"
+		},
+		"state": {
+			"$ref": "../../definitions/statecode.json"
+		},
+		"zip": {
+			"$ref": "../../definitions/zipcode.json"
+		},
+		"country": {
+			"$ref": "../../definitions/countrycode.json"
+		},
+		"affiliate_id": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"id",
+		"index_action",
+		"entity_type"
+	],
+	"additionalProperties": false
 }

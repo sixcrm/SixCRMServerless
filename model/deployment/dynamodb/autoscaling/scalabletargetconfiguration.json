@@ -1,32 +1,52 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/deployment/dynamodb/autoscaling/scalabletargetconfiguration.json",
-  "title":"DynamoDB Table Autoscaling Scalable Target Configuration",
-  "type":"object",
-  "properties":{
-    "RoleARN": {"$ref":"../../../definitions/arn.json"},
-    "ResourceId":{
-      "anyOf":[
-        {
-          "type":"string",
-          "pattern":"^table/[a-zA-Z]+$"
-        },
-        {
-          "type":"string",
-          "pattern":"^table/[a-zA-Z]+/index/.*$"
-        }
-      ]
-    },
-    "MaxCapacity":{"$ref":"../../../definitions/nonnegativeinteger.json"},
-    "MinCapacity": {"$ref":"../../../definitions/nonnegativeinteger.json"},
-    "ScalableDimension":{
-      "type":"string",
-      "enum":["dynamodb:table:ReadCapacityUnits","dynamodb:table:WriteCapacityUnits","dynamodb:index:ReadCapacityUnits","dynamodb:index:WriteCapacityUnits"]
-    },
-    "ServiceNamespace": {
-      "type":"string",
-      "enum":["dynamodb"]
-    }
-  },
-  "required":["RoleARN","ResourceId","MaxCapacity","MinCapacity","ScalableDimension","ServiceNamespace"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/deployment/dynamodb/autoscaling/scalabletargetconfiguration.json",
+	"title": "DynamoDB Table Autoscaling Scalable Target Configuration",
+	"type": "object",
+	"properties": {
+		"RoleARN": {
+			"$ref": "../../../definitions/arn.json"
+		},
+		"ResourceId": {
+			"anyOf": [
+				{
+					"type": "string",
+					"pattern": "^table/[a-zA-Z]+$"
+				},
+				{
+					"type": "string",
+					"pattern": "^table/[a-zA-Z]+/index/.*$"
+				}
+			]
+		},
+		"MaxCapacity": {
+			"$ref": "../../../definitions/nonnegativeinteger.json"
+		},
+		"MinCapacity": {
+			"$ref": "../../../definitions/nonnegativeinteger.json"
+		},
+		"ScalableDimension": {
+			"type": "string",
+			"enum": [
+				"dynamodb:table:ReadCapacityUnits",
+				"dynamodb:table:WriteCapacityUnits",
+				"dynamodb:index:ReadCapacityUnits",
+				"dynamodb:index:WriteCapacityUnits"
+			]
+		},
+		"ServiceNamespace": {
+			"type": "string",
+			"enum": [
+				"dynamodb"
+			]
+		}
+	},
+	"required": [
+		"RoleARN",
+		"ResourceId",
+		"MaxCapacity",
+		"MinCapacity",
+		"ScalableDimension",
+		"ServiceNamespace"
+	]
 }

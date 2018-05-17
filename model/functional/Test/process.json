@@ -1,29 +1,56 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id": "/functional/Test/process.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/Test/process.json",
 	"title": "Test Merchant Provider Process Object",
 	"type": "object",
 	"properties": {
-		"processor_id":{
-			"type":"string"
+		"processor_id": {
+			"type": "string"
 		},
-		"amount":{"$ref": "../../definitions/currency.json"},
-		"creditcard":{
-      "type":"object",
-      "properties":{
-	    "token":{"$ref": "../../definitions/creditcardtoken.json"},
-	    "first_six":{"$ref": "../../definitions/creditcardfirstsix.json"},
-	    "last_four":{"$ref":"../../definitions/creditcardlastfour.json"},
-        "ccv":{"$ref":"../../definitions/creditcardcvv.json"},
-        "expiration":{"$ref":"../../definitions/creditcardexpirationdate.json"},
-        "address":{"$ref":"../../definitions/address.json"}
-      },
-      "required":["first_six", "token", "last_four", "expiration"]
-    },
-		"customer":{
-      "firstname":{"$ref":"../../definitions/firstname.json"},
-      "lastname":{"$ref":"../../definitions/lastname.json"}
-    }
+		"amount": {
+			"$ref": "../../definitions/currency.json"
+		},
+		"creditcard": {
+			"type": "object",
+			"properties": {
+				"token": {
+					"$ref": "../../definitions/creditcardtoken.json"
+				},
+				"first_six": {
+					"$ref": "../../definitions/creditcardfirstsix.json"
+				},
+				"last_four": {
+					"$ref": "../../definitions/creditcardlastfour.json"
+				},
+				"ccv": {
+					"$ref": "../../definitions/creditcardcvv.json"
+				},
+				"expiration": {
+					"$ref": "../../definitions/creditcardexpirationdate.json"
+				},
+				"address": {
+					"$ref": "../../definitions/address.json"
+				}
+			},
+			"required": [
+				"first_six",
+				"token",
+				"last_four",
+				"expiration"
+			]
+		},
+		"customer": {
+			"firstname": {
+				"$ref": "../../definitions/firstname.json"
+			},
+			"lastname": {
+				"$ref": "../../definitions/lastname.json"
+			}
+		}
 	},
-	"required":["amount", "creditcard","customer"]
+	"required": [
+		"amount",
+		"creditcard",
+		"customer"
+	]
 }

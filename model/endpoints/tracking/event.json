@@ -1,11 +1,18 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/event.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/tracking/event.json",
 	"title": "Tracking Event",
 	"type": "object",
 	"properties": {
-		"campaign":{"$ref": "../../definitions/uuidv4.json"},
-		"affiliate_id":{"$ref": "../../definitions/sixcrmaffiliate_id.json"}
+		"campaign": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"affiliate_id": {
+			"$ref": "../../definitions/sixcrmaffiliate_id.json"
+		}
 	},
-	"required":["campaign", "affiliate_id"]
+	"required": [
+		"campaign",
+		"affiliate_id"
+	]
 }

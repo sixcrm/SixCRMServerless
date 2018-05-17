@@ -1,21 +1,27 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/fulfillmentproviders/shipstation.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/fulfillmentproviders/shipstation.json",
 	"title": "A ShipStation fulfillment provider",
-	"type":"object",
-  "properties":{
-    "name": {
-      "type":"string",
-      "enum":["ShipStation"]
-    },
-    "api_key": {
-      "type":"string",
-      "minLength":1
-    },
-    "api_secret": {
-      "type":"string",
-      "minLength": 1
-    }
-  },
-  "required":["name", "api_key", "api_secret"]
+	"type": "object",
+	"properties": {
+		"name": {
+			"type": "string",
+			"enum": [
+				"ShipStation"
+			]
+		},
+		"api_key": {
+			"type": "string",
+			"minLength": 1
+		},
+		"api_secret": {
+			"type": "string",
+			"minLength": 1
+		}
+	},
+	"required": [
+		"name",
+		"api_key",
+		"api_secret"
+	]
 }

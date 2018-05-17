@@ -1,42 +1,40 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/viewentity",
-  "type": "object",
-
-  "allOf": [
-    { "$ref": "../../graph" },
-    {
-      "properties": {
-
-        "response" :{
-
-          "properties": {
-
-            "data": {
-
-              "patternProperties": {
-
-                ".+": {
-                  "anyOf": [
-                    { "$ref": "../entity" },
-                    { "type": "null" }
-                  ]
-                }
-
-              },
-              "maxProperties": 1,
-              "minProperties": 1
-
-            }
-
-          },
-          "required":["data"]
-
-        }
-
-      },
-      "required":["response"]
-    }
-  ]
-
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/graph/responses/entities/operations/view.json",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "../../graph.json"
+		},
+		{
+			"properties": {
+				"response": {
+					"properties": {
+						"data": {
+							"patternProperties": {
+								".+": {
+									"anyOf": [
+										{
+											"$ref": "../entity.json"
+										},
+										{
+											"type": "null"
+										}
+									]
+								}
+							},
+							"maxProperties": 1,
+							"minProperties": 1
+						}
+					},
+					"required": [
+						"data"
+					]
+				}
+			},
+			"required": [
+				"response"
+			]
+		}
+	]
 }

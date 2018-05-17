@@ -1,7 +1,10 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/general/rebills.json",
 	"title": "Rebills",
 	"type": "array",
 	"description": "A list of rebills",
-	"items":{"$ref": "../entities/rebill.json"}
+	"items": {
+		"$ref": "../entities/rebill.json"
+	}
 }

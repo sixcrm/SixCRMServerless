@@ -1,58 +1,53 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/listentity",
-  "title": "List of entities",
-  "type": "object",
-
-  "allOf": [
-    { "$ref": "../../graph" },
-    {
-      "properties": {
-
-        "response" :{
-
-          "properties": {
-
-            "data": {
-
-              "patternProperties": {
-
-                ".+list": {
-
-                  "patternProperties": {
-                    ".+s": {
-                      "anyOf":[
-                        {
-                          "type": "array",
-                          "items": { "$ref": "../entity" }
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
-
-                    }
-                  },
-                  "properties": {
-                    "pagination": { "$ref": "../../dynamo_pagination" }
-                  },
-                  "maxProperties": 2,
-                  "minProperties": 1
-
-                }
-
-              }
-
-            }
-
-          },
-          "required":["data"]
-
-        }
-
-      },
-      "required":["response"]
-    }
-  ]
-
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/graph/responses/entities/operations/index.json",
+	"title": "List of entities",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "../../graph.json"
+		},
+		{
+			"properties": {
+				"response": {
+					"properties": {
+						"data": {
+							"patternProperties": {
+								".+list": {
+									"patternProperties": {
+										".+s": {
+											"anyOf": [
+												{
+													"type": "array",
+													"items": {
+														"$ref": "../entity.json"
+													}
+												},
+												{
+													"type": "null"
+												}
+											]
+										}
+									},
+									"properties": {
+										"pagination": {
+											"$ref": "../../dynamo_pagination.json"
+										}
+									},
+									"maxProperties": 2,
+									"minProperties": 1
+								}
+							}
+						}
+					},
+					"required": [
+						"data"
+					]
+				}
+			},
+			"required": [
+				"response"
+			]
+		}
+	]
 }

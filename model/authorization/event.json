@@ -1,12 +1,14 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/event",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/authorization/event.json",
 	"title": "Event",
 	"type": "object",
 	"properties": {
-		"authorizationToken":{
-			"type":"string"
+		"authorizationToken": {
+			"type": "string"
 		}
 	},
-	"required":["authorizationToken"]
+	"required": [
+		"authorizationToken"
+	]
 }

@@ -1,52 +1,81 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/campaign.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/campaign.json",
 	"title": "Campaign",
 	"type": "object",
 	"description": "A single campaign",
 	"properties": {
-		"id":{
+		"id": {
 			"$ref": "../definitions/uuidv4.json",
 			"description": "ID of campaign"
 		},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"allow_prepaid":{
-			"type":"boolean"
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
 		},
-		"show_prepaid":{
-			"type":"boolean"
+		"allow_prepaid": {
+			"type": "boolean"
 		},
-		"name":{
-			"type":"string",
-			"minLength":3
+		"show_prepaid": {
+			"type": "boolean"
 		},
-		"description":{
-			"type":"string"
+		"name": {
+			"type": "string",
+			"minLength": 3
 		},
-		"emailtemplates":{
-			"type":"array",
-			"items":{"$ref": "../definitions/uuidv4.json"}
+		"description": {
+			"type": "string"
 		},
-		"affiliate_allow":{
-			"type":"array",
-			"items":{
-				"anyOf":[
-					{"$ref": "../definitions/uuidv4.json"},
-					{"type": "string", "enum":["*"]}
+		"emailtemplates": {
+			"type": "array",
+			"items": {
+				"$ref": "../definitions/uuidv4.json"
+			}
+		},
+		"affiliate_allow": {
+			"type": "array",
+			"items": {
+				"anyOf": [
+					{
+						"$ref": "../definitions/uuidv4.json"
+					},
+					{
+						"type": "string",
+						"enum": [
+							"*"
+						]
+					}
 				]
 			}
 		},
-		"affiliate_deny":{
-			"type":"array",
-			"items":{
-				"anyOf":[
-					{"$ref": "../definitions/uuidv4.json"},
-					{"type": "string", "enum":["*"]}
+		"affiliate_deny": {
+			"type": "array",
+			"items": {
+				"anyOf": [
+					{
+						"$ref": "../definitions/uuidv4.json"
+					},
+					{
+						"type": "string",
+						"enum": [
+							"*"
+						]
+					}
 				]
 			}
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "name", "show_prepaid", "allow_prepaid", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"name",
+		"show_prepaid",
+		"allow_prepaid",
+		"created_at",
+		"updated_at"
+	]
 }

@@ -1,8 +1,13 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/workerresponsetype.json",
 	"title": "Worker Response Type",
-	"id":"/workerresponsetype.json",
 	"type": "string",
 	"description": "The worker response type",
-	"enum":["success","decline","error","noaction"]
+	"enum": [
+		"success",
+		"decline",
+		"error",
+		"noaction"
+	]
 }

@@ -1,12 +1,12 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/useridentifier.json",
-  "title": "UserIdentifier",
-  "description": "A user identifier",
-  "anyOf":[
-    {
-      "type":"string",
-      "format":"email"
-    }
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/useridentifier.json",
+	"title": "UserIdentifier",
+	"description": "A user identifier",
+	"anyOf": [
+		{
+			"type": "string",
+			"format": "email"
+		}
+	]
 }

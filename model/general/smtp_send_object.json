@@ -1,24 +1,37 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/general/smtp_send_object.json",
-  "title": "SMTP Send Object",
-  "type": "object",
-  "properties": {
-    "sender_email": {"$ref":"../definitions/email.json"},
-    "sender_name": {"$ref":"../definitions/name.json"},
-    "subject": {
-      "type":"string",
-      "minLength":2
-    },
-    "body": {
-      "type":"string",
-      "minLength":2
-    },
-    "recepient_emails":{
-      "type":"array",
-      "items": {"$ref":"../definitions/email.json"}
-    },
-    "recepient_name": {"$ref":"../definitions/name.json"}
-  },
-  "required":["sender_email", "subject", "body","recepient_emails"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/general/smtp_send_object.json",
+	"title": "SMTP Send Object",
+	"type": "object",
+	"properties": {
+		"sender_email": {
+			"$ref": "../definitions/email.json"
+		},
+		"sender_name": {
+			"$ref": "../definitions/name.json"
+		},
+		"subject": {
+			"type": "string",
+			"minLength": 2
+		},
+		"body": {
+			"type": "string",
+			"minLength": 2
+		},
+		"recepient_emails": {
+			"type": "array",
+			"items": {
+				"$ref": "../definitions/email.json"
+			}
+		},
+		"recepient_name": {
+			"$ref": "../definitions/name.json"
+		}
+	},
+	"required": [
+		"sender_email",
+		"subject",
+		"body",
+		"recepient_emails"
+	]
 }

@@ -1,11 +1,15 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/productdynamicpricing.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/productdynamicpricing.json",
 	"title": "Product Dynamic Pricing",
 	"description": "Product Dynamic Pricing Range",
-	"type":"object",
-	"properties":{
-		"min":{"$ref":"../../definitions/currency.json"},
-		"max":{"$ref":"../../definitions/currency.json"}
+	"type": "object",
+	"properties": {
+		"min": {
+			"$ref": "../../definitions/currency.json"
+		},
+		"max": {
+			"$ref": "../../definitions/currency.json"
+		}
 	}
 }

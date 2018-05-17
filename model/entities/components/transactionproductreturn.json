@@ -1,12 +1,19 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/transactionproductreturn.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/transactionproductreturn.json",
 	"title": "Transaction Product Return",
 	"type": "object",
 	"description": "A return record for a transaction product",
-	"properties":{
-		"id":{"$ref": "../../definitions/uuidv4.json"},
-		"quantity":{"$ref":"../../definitions/nonnegativenonzerointeger.json"}
+	"properties": {
+		"id": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"quantity": {
+			"$ref": "../../definitions/nonnegativenonzerointeger.json"
+		}
 	},
-	"required":["id", "quantity"]
+	"required": [
+		"id",
+		"quantity"
+	]
 }

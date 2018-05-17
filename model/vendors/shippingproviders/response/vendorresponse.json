@@ -1,11 +1,17 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendorresponse.json",
-  "title":"Shipping Provider Response Response",
-  "type":"object",
-  "properties":{
-    "error":{"ref":"./error.json"},
-    "body":{"$ref":"./body.json"},
-    "response":{"$ref":"./response.json"}
-  }
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingproviders/response/vendorresponse.json",
+	"title": "Shipping Provider Response Response",
+	"type": "object",
+	"properties": {
+		"error": {
+			"ref": "./error.json"
+		},
+		"body": {
+			"$ref": "./body.json"
+		},
+		"response": {
+			"$ref": "./response.json"
+		}
+	}
 }

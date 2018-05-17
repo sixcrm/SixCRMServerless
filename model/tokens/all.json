@@ -1,53 +1,92 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "properties":[
-    {
-      "name":"events",
-      "properties":[
-        {
-          "name":"click",
-          "properties":[
-            {"$ref": "../entities/campaign.json"}
-          ]
-        },
-        {
-          "name":"lead",
-          "properties":[
-            {"$ref": "../entities/session.json"}
-          ]
-        },
-        {
-          "name":"order",
-          "properties":[
-            {"$ref": "../entities/session.json"},
-            {"$ref": "../entities/campaign.json"},
-            {"$ref": "../entities/customer.json"},
-            {"$ref": "../general/rebills.json"},
-            {"$ref": "../general/schedules_to_purchase.json"},
-            {"$ref": "../general/amount.json"},
-            {"$ref": "../entities/merchantprovider.json"},
-            {"$ref": "../general/transaction_products.json"},
-            {"$ref": "../entities/transaction.json"}
-          ]
-        },
-        {
-          "name":"upsell",
-          "properties":[
-            {"$ref": "../entities/session.json"},
-            {"$ref": "../entities/campaign.json"},
-            {"$ref": "../entities/customer.json"},
-            {"$ref": "../general/rebills.json"},
-            {"$ref": "../general/schedules_to_purchase.json"},
-            {"$ref": "../general/amount.json"},
-            {"$ref": "../entities/merchantprovider.json"},
-            {"$ref": "../general/transaction_products.json"},
-            {"$ref": "../entities/transaction.json"}
-          ]
-        },
-        {
-          "name":"confirm"
-        }
-      ]
-    }
-  ]
+	"properties": [
+		{
+			"name": "events",
+			"properties": [
+				{
+					"name": "click",
+					"properties": [
+						{
+							"$ref": "../entities/campaign.json"
+						}
+					]
+				},
+				{
+					"name": "lead",
+					"properties": [
+						{
+							"$ref": "../entities/session.json"
+						}
+					]
+				},
+				{
+					"name": "order",
+					"properties": [
+						{
+							"$ref": "../entities/session.json"
+						},
+						{
+							"$ref": "../entities/campaign.json"
+						},
+						{
+							"$ref": "../entities/customer.json"
+						},
+						{
+							"$ref": "../general/rebills.json"
+						},
+						{
+							"$ref": "../general/schedules_to_purchase.json"
+						},
+						{
+							"$ref": "../general/amount.json"
+						},
+						{
+							"$ref": "../entities/merchantprovider.json"
+						},
+						{
+							"$ref": "../general/transaction_products.json"
+						},
+						{
+							"$ref": "../entities/transaction.json"
+						}
+					]
+				},
+				{
+					"name": "upsell",
+					"properties": [
+						{
+							"$ref": "../entities/session.json"
+						},
+						{
+							"$ref": "../entities/campaign.json"
+						},
+						{
+							"$ref": "../entities/customer.json"
+						},
+						{
+							"$ref": "../general/rebills.json"
+						},
+						{
+							"$ref": "../general/schedules_to_purchase.json"
+						},
+						{
+							"$ref": "../general/amount.json"
+						},
+						{
+							"$ref": "../entities/merchantprovider.json"
+						},
+						{
+							"$ref": "../general/transaction_products.json"
+						},
+						{
+							"$ref": "../entities/transaction.json"
+						}
+					]
+				},
+				{
+					"name": "confirm"
+				}
+			]
+		}
+	]
 }

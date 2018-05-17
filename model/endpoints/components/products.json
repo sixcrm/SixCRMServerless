@@ -1,21 +1,32 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/components/products.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/components/products.json",
 	"title": "Products",
-	"type":"array",
-	"items":{
-		"type":"object",
-		"properties":{
-			"quantity":{"$ref":"../../definitions/nonnegativeinteger.json"},
-			"price":{"$ref":"../../definitions/currency.json"},
-			"product":{
-				"anyOf":[
-					{"$ref":"../../definitions/uuidv4.json"},
-					{"$ref":"../../entities/components/watermark/watermarkproduct.json"}
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"quantity": {
+				"$ref": "../../definitions/nonnegativeinteger.json"
+			},
+			"price": {
+				"$ref": "../../definitions/currency.json"
+			},
+			"product": {
+				"anyOf": [
+					{
+						"$ref": "../../definitions/uuidv4.json"
+					},
+					{
+						"$ref": "../../entities/components/watermark/watermarkproduct.json"
+					}
 				]
 			}
 		},
-		"required":["quantity", "product"]
+		"required": [
+			"quantity",
+			"product"
+		]
 	},
-	"minItems":1
+	"minItems": 1
 }

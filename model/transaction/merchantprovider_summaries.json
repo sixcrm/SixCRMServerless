@@ -1,9 +1,9 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/merchantprovider_summaries.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/transaction/merchantprovider_summaries.json",
 	"title": "Merchant Provider Summaries",
-	"type":"array",
-	"items":{
-		"$ref": "/merchantprovidersummary.json"
+	"type": "array",
+	"items": {
+		"$ref": "./merchantprovidersummary.json"
 	}
 }

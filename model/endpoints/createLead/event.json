@@ -1,12 +1,21 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/createLead/event.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/createLead/event.json",
 	"title": "Event",
-	"type":"object",
+	"type": "object",
 	"properties": {
-		"campaign": {"$ref":"../../definitions/uuidv4.json"},
-		"affiliates": {"$ref":"../components/affiliatesprototype.json"},
-		"customer":{"$ref":"../components/customerprototype.json"}
+		"campaign": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"affiliates": {
+			"$ref": "../components/affiliatesprototype.json"
+		},
+		"customer": {
+			"$ref": "../components/customerprototype.json"
+		}
 	},
-	"required":["campaign", "customer"]
+	"required": [
+		"campaign",
+		"customer"
+	]
 }

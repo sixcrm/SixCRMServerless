@@ -1,13 +1,23 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/meta/productgroup.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/meta/productgroup.json",
 	"title": "Product Group",
 	"type": "object",
 	"description": "A product group",
 	"properties": {
-		"product":{"$ref": "./product.json"},
-		"quantity":{"$ref": "../../definitions/nonnegativeinteger.json"},
-		"amount":{"$ref": "../../definitions/currency.json"}
+		"product": {
+			"$ref": "./product.json"
+		},
+		"quantity": {
+			"$ref": "../../definitions/nonnegativeinteger.json"
+		},
+		"amount": {
+			"$ref": "../../definitions/currency.json"
+		}
 	},
-	"required":["product","quantity","amount"]
+	"required": [
+		"product",
+		"quantity",
+		"amount"
+	]
 }

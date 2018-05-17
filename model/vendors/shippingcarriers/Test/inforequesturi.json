@@ -1,7 +1,7 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/shippingcarriers/Test/inforequesturi.json",
-  "title":"Test Shipping Carrier Info Request URI",
-  "type":"string",
-  "format":"uri"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingcarriers/Test/inforequesturi.json",
+	"title": "Test Shipping Carrier Info Request URI",
+	"type": "string",
+	"format": "uri"
 }

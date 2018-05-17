@@ -1,16 +1,19 @@
 {
-  "$schema": "http://json-schema.org/schema#",
-  "id": "/definitions/creditcardtoken.json",
-  "title": "Credit Card Token",
-  "description": "The creditcard token object",
-  "type":"object",
-  "properties":{
-    "token":{
-      "type":"string"
-    },
-    "provider":{
-      "type":"string"
-    }
-  },
-  "required":["token","provider"]
+	"$schema": "http://json-schema.org/schema#",
+	"$id": "model/definitions/creditcardtoken.json",
+	"title": "Credit Card Token",
+	"description": "The creditcard token object",
+	"type": "object",
+	"properties": {
+		"token": {
+			"type": "string"
+		},
+		"provider": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"token",
+		"provider"
+	]
 }

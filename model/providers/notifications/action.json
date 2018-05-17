@@ -1,7 +1,10 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"providers/notifications/action.json",
-  "title":"Notification Provider Actions",
-  "type":"string",
-  "enum":["createNotificationForAccountAndUser", "createNotificationsForAccount"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/notifications/action.json",
+	"title": "Notification Provider Actions",
+	"type": "string",
+	"enum": [
+		"createNotificationForAccountAndUser",
+		"createNotificationsForAccount"
+	]
 }

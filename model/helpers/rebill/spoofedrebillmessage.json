@@ -1,14 +1,21 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/spoofedrebillmessage.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/rebill/spoofedrebillmessage.json",
 	"title": "Spoofed Rebill Message",
-  "type":"object",
-  "properties":{
-    "Body":{"$ref":"../../definitions/stringifiedjson.json"},
-    "spoofed":{
-      "type":"boolean",
-      "enum":[true]
-    }
-  },
-  "required":["Body", "spoofed"]
+	"type": "object",
+	"properties": {
+		"Body": {
+			"$ref": "../../definitions/stringifiedjson.json"
+		},
+		"spoofed": {
+			"type": "boolean",
+			"enum": [
+				true
+			]
+		}
+	},
+	"required": [
+		"Body",
+		"spoofed"
+	]
 }

@@ -1,9 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/useralias.json",
-  "title": "User Alias Identifier",
-  "description": "Alias of a user",
-  "type":"string",
-  "minLength":40,
-  "pattern":"[a-z0-9]*"
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/useralias.json",
+	"title": "User Alias Identifier",
+	"description": "Alias of a user",
+	"type": "string",
+	"minLength": 40,
+	"pattern": "[a-z0-9]*"
 }

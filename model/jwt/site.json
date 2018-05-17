@@ -1,38 +1,50 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/site",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/jwt/site.json",
 	"title": "Site",
 	"type": "object",
 	"properties": {
-		"email":{
-			"type":"string",
-			"format":"email"
+		"email": {
+			"type": "string",
+			"format": "email"
 		},
-		"email_verified":{
-			"type":"boolean"
+		"email_verified": {
+			"type": "boolean"
 		},
-		"picture":{
-			"anyOf":[
-				{"type":"string", "format":"uri"},
-				{"type":"string", "enum":[""]}
+		"picture": {
+			"anyOf": [
+				{
+					"type": "string",
+					"format": "uri"
+				},
+				{
+					"type": "string",
+					"enum": [
+						""
+					]
+				}
 			]
 		},
-		"iss":{
-			"type":"string",
-			"format":"uri"
+		"iss": {
+			"type": "string",
+			"format": "uri"
 		},
-		"sub":{
-			"type":"string"
+		"sub": {
+			"type": "string"
 		},
-		"aud":{
-			"type":"string"
+		"aud": {
+			"type": "string"
 		},
-		"exp":{
-			"type":"integer"
+		"exp": {
+			"type": "integer"
 		},
-		"iat":{
-			"type":"integer"
+		"iat": {
+			"type": "integer"
 		}
 	},
-	"required":["email", "exp", "iat"]
+	"required": [
+		"email",
+		"exp",
+		"iat"
+	]
 }

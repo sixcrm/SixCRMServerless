@@ -1,14 +1,29 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/scheduledproduct",
-  "title":"Scheduled Product",
-  "type":"object",
-  "properties":{
-    "product":{"$ref": "../../definitions/uuidv4.json"},
-    "price":{"$ref": "../../definitions/currency.json"},
-    "start":{"$ref": "../../definitions/nonnegativeinteger.json"},
-    "end":{"$ref": "../../definitions/nonnegativeinteger.json"},
-    "period":{"$ref": "../../definitions/nonnegativeinteger.json"}
-  },
-  "required":["product", "price", "start", "period"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/scheduledproduct.json",
+	"title": "Scheduled Product",
+	"type": "object",
+	"properties": {
+		"product": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"price": {
+			"$ref": "../../definitions/currency.json"
+		},
+		"start": {
+			"$ref": "../../definitions/nonnegativeinteger.json"
+		},
+		"end": {
+			"$ref": "../../definitions/nonnegativeinteger.json"
+		},
+		"period": {
+			"$ref": "../../definitions/nonnegativeinteger.json"
+		}
+	},
+	"required": [
+		"product",
+		"price",
+		"start",
+		"period"
+	]
 }

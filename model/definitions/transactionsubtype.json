@@ -1,16 +1,18 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/transactionsubtype.json",
-  "title": "Transaction Subtype",
-  "description": "A transaction subtype",
-  "anyOf":[
-    {
-      "type":"string",
-      "enum":["main"]
-    },
-    {
-      "type":"string",
-      "pattern":"^upsell[0-9]*$"
-    }
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/transactionsubtype.json",
+	"title": "Transaction Subtype",
+	"description": "A transaction subtype",
+	"anyOf": [
+		{
+			"type": "string",
+			"enum": [
+				"main"
+			]
+		},
+		{
+			"type": "string",
+			"pattern": "^upsell[0-9]*$"
+		}
+	]
 }

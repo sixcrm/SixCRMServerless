@@ -1,15 +1,22 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/components/returntransaction.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/components/returntransaction.json",
 	"title": "Return Transaction",
 	"type": "object",
 	"description": "A return transaction",
 	"properties": {
-		"transaction":{"$ref": "../../definitions/uuidv4.json"},
-		"products":{
-			"type":"array",
-			"items":{"$ref":"./returnproduct.json"}
+		"transaction": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"products": {
+			"type": "array",
+			"items": {
+				"$ref": "./returnproduct.json"
+			}
 		}
 	},
-	"required":["transaction", "products"]
+	"required": [
+		"transaction",
+		"products"
+	]
 }

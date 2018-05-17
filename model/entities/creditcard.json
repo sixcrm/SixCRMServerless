@@ -1,28 +1,60 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/creditcard.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/creditcard.json",
 	"title": "Credit Card",
 	"type": "object",
 	"description": "A credit card object",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"customers":{
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"customers": {
 			"type": "array",
-			"items": {"$ref": "../definitions/uuidv4.json"}
+			"items": {
+				"$ref": "../definitions/uuidv4.json"
+			}
 		},
-		"address":{"$ref": "../definitions/address.json"},
-		"token":{"$ref": "../definitions/creditcardtoken.json"},
-		"first_six":{"$ref": "../definitions/creditcardfirstsix.json"},
-		"last_four":{"$ref":"../definitions/creditcardlastfour.json"},
-		"expiration":{"$ref": "../definitions/creditcardexpirationdate.json"},
-		"checksum":{"$ref":"../definitions/sha1.json"},
-		"name":{
-			"type":"string",
-			"minLength":2
+		"address": {
+			"$ref": "../definitions/address.json"
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"token": {
+			"$ref": "../definitions/creditcardtoken.json"
+		},
+		"first_six": {
+			"$ref": "../definitions/creditcardfirstsix.json"
+		},
+		"last_four": {
+			"$ref": "../definitions/creditcardlastfour.json"
+		},
+		"expiration": {
+			"$ref": "../definitions/creditcardexpirationdate.json"
+		},
+		"checksum": {
+			"$ref": "../definitions/sha1.json"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 2
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "first_six", "token", "last_four", "expiration", "checksum", "name", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"first_six",
+		"token",
+		"last_four",
+		"expiration",
+		"checksum",
+		"name",
+		"created_at",
+		"updated_at"
+	]
 }

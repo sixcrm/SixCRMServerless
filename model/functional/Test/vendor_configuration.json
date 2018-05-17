@@ -1,12 +1,15 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/Test/vendor_configuration.json",
 	"title": "Test Configuration",
 	"type": "object",
 	"properties": {
-		"endpoint":{
-      "type":"string",
-      "format":"uri"
-    }
+		"endpoint": {
+			"type": "string",
+			"format": "uri"
+		}
 	},
-	"required":["endpoint"]
+	"required": [
+		"endpoint"
+	]
 }

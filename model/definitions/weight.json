@@ -1,14 +1,22 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/weight.json",
-  "title": "Weight",
-  "type":"object",
-  "properties":{
-    "unitofmeasururement":{
-      "type":"string",
-      "enum":["pounds","kilos"]
-    },
-    "units":{"$ref":"./nonnegativefloat.json"}
-  },
-  "required":["unitofmeasurement","units"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/weight.json",
+	"title": "Weight",
+	"type": "object",
+	"properties": {
+		"unitofmeasururement": {
+			"type": "string",
+			"enum": [
+				"pounds",
+				"kilos"
+			]
+		},
+		"units": {
+			"$ref": "./nonnegativefloat.json"
+		}
+	},
+	"required": [
+		"unitofmeasurement",
+		"units"
+	]
 }

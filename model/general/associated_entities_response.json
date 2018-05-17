@@ -1,23 +1,30 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/general/associated_entities_response.json",
-  "title": "Associated Entities Response",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/general/associated_entities_response.json",
+	"title": "Associated Entities Response",
 	"type": "array",
-	"items":{
-    "title": "Associated Entity",
-  	"type": "object",
-    "properties":{
-      "name":{
-        "type": "string"
-      },
-      "entity":{
-        "type": "object",
-        "properties": {
-          "id": {"$ref": "../definitions/sixcrmidentifier.json"}
-        },
-        "required":["id"]
-      }
-    },
-    "required":["name", "entity"]
-  }
+	"items": {
+		"title": "Associated Entity",
+		"type": "object",
+		"properties": {
+			"name": {
+				"type": "string"
+			},
+			"entity": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"$ref": "../definitions/sixcrmidentifier.json"
+					}
+				},
+				"required": [
+					"id"
+				]
+			}
+		},
+		"required": [
+			"name",
+			"entity"
+		]
+	}
 }

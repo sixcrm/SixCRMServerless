@@ -1,7 +1,11 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/result.json",
-  "title":"Shipping Provider Response Result",
-  "type":"string",
-  "enum":["success", "fail", "error"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/shippingproviders/response/result.json",
+	"title": "Shipping Provider Response Result",
+	"type": "string",
+	"enum": [
+		"success",
+		"fail",
+		"error"
+	]
 }

@@ -1,22 +1,26 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/helpers/rebill/billablerebills.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/rebill/billablerebills.json",
 	"title": "Billable Rebills",
-  "allOf":[
-    {"$ref":"../../entities/components/rebills.json"},
-    {
-      "type":"array",
-      "items":[
-        {
-          "type":"object",
-          "properties":{
-            "processing":{
-              "type":"boolean",
-              "enum":[false]
-            }
-          }
-        }
-      ]
-    }
-  ]
+	"allOf": [
+		{
+			"$ref": "../../entities/components/rebills.json"
+		},
+		{
+			"type": "array",
+			"items": [
+				{
+					"type": "object",
+					"properties": {
+						"processing": {
+							"type": "boolean",
+							"enum": [
+								false
+							]
+						}
+					}
+				}
+			]
+		}
+	]
 }

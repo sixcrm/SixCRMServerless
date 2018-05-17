@@ -1,33 +1,70 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/bill.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/bill.json",
 	"title": "Bill",
 	"type": "object",
 	"description": "A bill",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"paid":{"type":"boolean"},
-		"paid_result":{"$ref":"../definitions/stripetoken.json"},
-		"outstanding":{"type":"boolean"},
-		"period_start_at":{"$ref": "../definitions/iso8601.json"},
-		"period_end_at":{"$ref": "../definitions/iso8601.json"},
-		"available_at":{"$ref": "../definitions/iso8601.json"},
-		"detail":{
-			"type":"array",
-			"items":{
-				"properties":{
-					"created_at":{"$ref": "../definitions/iso8601.json"},
-					"description":{
-						"type":"string"
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"paid": {
+			"type": "boolean"
+		},
+		"paid_result": {
+			"$ref": "../definitions/stripetoken.json"
+		},
+		"outstanding": {
+			"type": "boolean"
+		},
+		"period_start_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"period_end_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"available_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"detail": {
+			"type": "array",
+			"items": {
+				"properties": {
+					"created_at": {
+						"$ref": "../definitions/iso8601.json"
 					},
-					"amount":{"$ref":"../definitions/currency.json"}
+					"description": {
+						"type": "string"
+					},
+					"amount": {
+						"$ref": "../definitions/currency.json"
+					}
 				},
-				"required":["created_at", "description", "amount"]
+				"required": [
+					"created_at",
+					"description",
+					"amount"
+				]
 			}
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "paid", "period_start_at", "period_end_at", "available_at", "detail", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"paid",
+		"period_start_at",
+		"period_end_at",
+		"available_at",
+		"detail",
+		"created_at",
+		"updated_at"
+	]
 }

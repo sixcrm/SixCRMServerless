@@ -1,11 +1,18 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/providers/notifications/translatednotification.json",
-  "title": "Translated Notification",
-  "type": "object",
-  "properties": {
-    "title":{"type":"string"},
-    "body":{"type":"string"}
-  },
-  "required":["title","body"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/notifications/translatednotification.json",
+	"title": "Translated Notification",
+	"type": "object",
+	"properties": {
+		"title": {
+			"type": "string"
+		},
+		"body": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"title",
+		"body"
+	]
 }

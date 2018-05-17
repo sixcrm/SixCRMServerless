@@ -1,13 +1,18 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/spoofedsqsmessage.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/workers/spoofedsqsmessage.json",
 	"title": "Spoofed SQS Message",
 	"type": "object",
-  "properties":{
-    "Body":{"$ref": "./sqsmessagebody.json"},
-    "spoofed":{
-      "type":"boolean"
-    }
-  },
-  "required":["Body", "spoofed"]
+	"properties": {
+		"Body": {
+			"$ref": "./sqsmessagebody.json"
+		},
+		"spoofed": {
+			"type": "boolean"
+		}
+	},
+	"required": [
+		"Body",
+		"spoofed"
+	]
 }

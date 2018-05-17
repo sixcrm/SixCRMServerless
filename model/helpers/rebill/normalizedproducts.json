@@ -1,13 +1,19 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/helpers/rebill/normalizedproducts.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/helpers/rebill/normalizedproducts.json",
 	"title": "Normalized Products",
-  "type":"array",
-  "items":{
-    "properties":{
-      "quantity":{"$ref":"../../definitions/nonnegativeinteger.json"},
-      "price":{"$ref":"../../definitions/currency.json"},
-      "product":{"$ref":"../../entities/components/watermark/watermarkproduct.json"}
-    }
-  }
+	"type": "array",
+	"items": {
+		"properties": {
+			"quantity": {
+				"$ref": "../../definitions/nonnegativeinteger.json"
+			},
+			"price": {
+				"$ref": "../../definitions/currency.json"
+			},
+			"product": {
+				"$ref": "../../entities/components/watermark/watermarkproduct.json"
+			}
+		}
+	}
 }

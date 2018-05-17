@@ -1,70 +1,118 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/creditcard.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/transaction/creditcard.json",
 	"title": "Credit Card",
 	"definitions": {
-		"UUIDv4": {"$ref": "../definitions/uuidv4.json"},
-		"ISO8601": {"$ref": "../definitions/iso8601.json"},
-		"OptionalUUIDv4":{"$ref": "../definitions/optionaluuidv4.json"},
+		"UUIDv4": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"ISO8601": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"OptionalUUIDv4": {
+			"$ref": "../definitions/optionaluuidv4.json"
+		},
 		"CreditCardExpirationDate": {
 			"type": "string",
-			"pattern":"^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$"
+			"pattern": "^(0[1-9]|1[0-2])/?([0-9]{4}|[0-9]{2})$"
 		},
-		"CreditCardCVV":{
-			"type":"string",
-			"pattern":"^[0-9]{3,4}$"
+		"CreditCardCVV": {
+			"type": "string",
+			"pattern": "^[0-9]{3,4}$"
 		},
-		"SixAccountIdentifier":{
-			"anyOf":[
-				{"$ref": "#/definitions/UUIDv4"},
-				{"type":"string", "enum":["*"]}
+		"SixAccountIdentifier": {
+			"anyOf": [
+				{
+					"$ref": "#/definitions/UUIDv4"
+				},
+				{
+					"type": "string",
+					"enum": [
+						"*"
+					]
+				}
 			]
 		}
 	},
-	"anyOf":[
+	"anyOf": [
 		{
 			"type": "object",
 			"properties": {
-				"id":{"$ref": "#/definitions/UUIDv4"},
-				"account":{"$ref": "#/definitions/SixAccountIdentifier"},
-				"address":{
-					"type":"object",
+				"id": {
+					"$ref": "#/definitions/UUIDv4"
+				},
+				"account": {
+					"$ref": "#/definitions/SixAccountIdentifier"
+				},
+				"address": {
+					"type": "object",
 					"properties": {
-						"line1":{
-							"type":"string"
+						"line1": {
+							"type": "string"
 						},
-						"line2":{
-							"type":"string"
+						"line2": {
+							"type": "string"
 						},
-						"city":{
-							"type":"string"
+						"city": {
+							"type": "string"
 						},
-						"state":{
-							"type":"string"
+						"state": {
+							"type": "string"
 						},
-						"zip":{
-							"type":"string"
+						"zip": {
+							"type": "string"
 						},
-						"country":{
-							"type":"string"
+						"country": {
+							"type": "string"
 						}
 					},
-					"required":["line1","city","state","zip","country"]
+					"required": [
+						"line1",
+						"city",
+						"state",
+						"zip",
+						"country"
+					]
 				},
-				"token":{"$ref": "../definitions/creditcardtoken.json"},
-				"first_six":{"$ref": "../definitions/creditcardfirstsix.json"},
-				"last_four":{"$ref":"../definitions/creditcardlastfour.json"},
-				"cvv":{"$ref": "#/definitions/CreditCardCVV"},
-				"expiration":{"$ref": "#/definitions/CreditCardExpirationDate"},
-				"name":{
-					"type":"string",
-					"minLength":2
+				"token": {
+					"$ref": "../definitions/creditcardtoken.json"
 				},
-				"created_at":{"$ref": "#/definitions/ISO8601"},
-				"updated_at":{"$ref": "#/definitions/ISO8601"}
+				"first_six": {
+					"$ref": "../definitions/creditcardfirstsix.json"
+				},
+				"last_four": {
+					"$ref": "../definitions/creditcardlastfour.json"
+				},
+				"cvv": {
+					"$ref": "#/definitions/CreditCardCVV"
+				},
+				"expiration": {
+					"$ref": "#/definitions/CreditCardExpirationDate"
+				},
+				"name": {
+					"type": "string",
+					"minLength": 2
+				},
+				"created_at": {
+					"$ref": "#/definitions/ISO8601"
+				},
+				"updated_at": {
+					"$ref": "#/definitions/ISO8601"
+				}
 			},
-			"required":["account", "first_six", "token", "last_four", "expiration", "name", "created_at", "updated_at"]
+			"required": [
+				"account",
+				"first_six",
+				"token",
+				"last_four",
+				"expiration",
+				"name",
+				"created_at",
+				"updated_at"
+			]
 		},
-		{"$ref": "#/definitions/UUIDv4"}
+		{
+			"$ref": "#/definitions/UUIDv4"
+		}
 	]
 }

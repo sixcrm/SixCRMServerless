@@ -1,16 +1,27 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id": "/definitions/eventtype.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/eventtype.json",
 	"title": "Event Type",
 	"description": "A event type",
 	"note": "break this schema into subschema:  Transactions, StateMachine, Graph Events etc...",
-	"anyOf": [{
+	"anyOf": [
+		{
 			"type": "string",
-			"enum": ["test", "testalert"]
+			"enum": [
+				"test",
+				"testalert"
+			]
 		},
 		{
 			"type": "string",
-			"enum": ["click", "lead", "order", "confirm", "rebill", "transaction"]
+			"enum": [
+				"click",
+				"lead",
+				"order",
+				"confirm",
+				"rebill",
+				"transaction"
+			]
 		},
 		{
 			"type": "string",
@@ -34,7 +45,10 @@
 		},
 		{
 			"type": "string",
-			"enum": ["shipping_confirmation", "delivery_confirmation"]
+			"enum": [
+				"shipping_confirmation",
+				"delivery_confirmation"
+			]
 		}
 	]
 }

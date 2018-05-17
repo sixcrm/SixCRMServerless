@@ -1,9 +1,13 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/providers/notifications/notificationprototype.json",
-  "title": "Notification Prototype",
-  "anyOf": [
-    {"$ref":"./components/accountnotificationprototype.json"},
-    {"$ref":"./components/usernotificationprototype.json"}
-  ]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/notifications/notificationprototype.json",
+	"title": "Notification Prototype",
+	"anyOf": [
+		{
+			"$ref": "./components/accountnotificationprototype.json"
+		},
+		{
+			"$ref": "./components/usernotificationprototype.json"
+		}
+	]
 }

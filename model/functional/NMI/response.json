@@ -1,5 +1,6 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/NMI/response.json",
 	"title": "NMI Merchant Provider Response Object",
 	"type": "object",
 	"properties": {}

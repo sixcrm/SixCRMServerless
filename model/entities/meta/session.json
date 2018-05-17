@@ -1,71 +1,134 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/meta/session.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/meta/session.json",
 	"title": "Session",
 	"type": "object",
 	"description": "A session",
 	"properties": {
-		"id":{"$ref": "../../definitions/uuidv4.json"},
-    "account":{"$ref": "../../definitions/sixcrmaccountidentifier.json"},
-    "alias":{"$ref":"../../definitions/sessionalias.json"},
-		"customer":{
-			"anyOf":[
-				{"$ref": "../../definitions/uuidv4.json"},
-				{"$ref": "./../customer.json"}
-			]
-    },
-		"campaign":{
-			"anyOf":[
-				{"$ref": "../../definitions/uuidv4.json"},
-				{"$ref": "../campaign.json"}
-			]
-    },
-    "watermark":{"$ref":"../components/watermark/watermark.json"},
-		"product_schedules":{
-			"type": "array",
-			"items":{
-				"anyOf":[
-					{"$ref": "../../definitions/uuidv4.json"},
-					{"$ref": "../productschedule.json"}
-				]}
+		"id": {
+			"$ref": "../../definitions/uuidv4.json"
 		},
-		"affiliate":{
-			"anyOf":[
-				{"$ref": "../../definitions/uuidv4.json"},
-				{"$ref": "../affiliate.json"}
-		]},
-		"subaffiliate_1":{
-			"anyOf":[
-				{"$ref": "../../definitions/uuidv4.json"},
-				{"$ref": "../affiliate.json"}
-			]},
-		"subaffiliate_2":{
-			"anyOf":[
-				{"$ref": "../../definitions/uuidv4.json"},
-				{"$ref": "../affiliate.json"}
-			]},
-		"subaffiliate_3":{
-			"anyOf":[
-				{"$ref": "../../definitions/uuidv4.json"},
-				{"$ref": "../affiliate.json"}
-			]},
-		"subaffiliate_4":{
-			"anyOf":[
-				{"$ref": "../../definitions/uuidv4.json"},
-				{"$ref": "../affiliate.json"}
-			]},
-		"subaffiliate_5":{
-			"anyOf":[
-				{"$ref": "../../definitions/uuidv4.json"},
-				{"$ref": "../affiliate.json"}
-			]},
-		"cid":{"$ref": "../../definitions/uuidv4.json"},
-		"created_at":{"$ref": "../../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../../definitions/iso8601.json"},
-		"cancelled":{"$ref":"../components/cancelsession.json"},
-		"completed":{
-			"type":"boolean"
+		"account": {
+			"$ref": "../../definitions/sixcrmaccountidentifier.json"
+		},
+		"alias": {
+			"$ref": "../../definitions/sessionalias.json"
+		},
+		"customer": {
+			"anyOf": [
+				{
+					"$ref": "../../definitions/uuidv4.json"
+				},
+				{
+					"$ref": "./../customer.json"
+				}
+			]
+		},
+		"campaign": {
+			"anyOf": [
+				{
+					"$ref": "../../definitions/uuidv4.json"
+				},
+				{
+					"$ref": "../campaign.json"
+				}
+			]
+		},
+		"watermark": {
+			"$ref": "../components/watermark/watermark.json"
+		},
+		"product_schedules": {
+			"type": "array",
+			"items": {
+				"anyOf": [
+					{
+						"$ref": "../../definitions/uuidv4.json"
+					},
+					{
+						"$ref": "../productschedule.json"
+					}
+				]
+			}
+		},
+		"affiliate": {
+			"anyOf": [
+				{
+					"$ref": "../../definitions/uuidv4.json"
+				},
+				{
+					"$ref": "../affiliate.json"
+				}
+			]
+		},
+		"subaffiliate_1": {
+			"anyOf": [
+				{
+					"$ref": "../../definitions/uuidv4.json"
+				},
+				{
+					"$ref": "../affiliate.json"
+				}
+			]
+		},
+		"subaffiliate_2": {
+			"anyOf": [
+				{
+					"$ref": "../../definitions/uuidv4.json"
+				},
+				{
+					"$ref": "../affiliate.json"
+				}
+			]
+		},
+		"subaffiliate_3": {
+			"anyOf": [
+				{
+					"$ref": "../../definitions/uuidv4.json"
+				},
+				{
+					"$ref": "../affiliate.json"
+				}
+			]
+		},
+		"subaffiliate_4": {
+			"anyOf": [
+				{
+					"$ref": "../../definitions/uuidv4.json"
+				},
+				{
+					"$ref": "../affiliate.json"
+				}
+			]
+		},
+		"subaffiliate_5": {
+			"anyOf": [
+				{
+					"$ref": "../../definitions/uuidv4.json"
+				},
+				{
+					"$ref": "../affiliate.json"
+				}
+			]
+		},
+		"cid": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"created_at": {
+			"$ref": "../../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../../definitions/iso8601.json"
+		},
+		"cancelled": {
+			"$ref": "../components/cancelsession.json"
+		},
+		"completed": {
+			"type": "boolean"
 		}
 	},
-	"required":["id", "customer", "campaign"]
+	"required": [
+		"id",
+		"customer",
+		"campaign"
+	]
 }

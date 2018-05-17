@@ -1,13 +1,20 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/components/customerprocessable.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/components/customerprocessable.json",
 	"title": "Processable Customer",
 	"description": "Customer with all fields required to process an order",
 	"type": "object",
 	"allOf": [
-		{ "$ref": "../../entities/customer.json" },
 		{
-			"required":["email", "firstname", "lastname", "address"]
+			"$ref": "../../entities/customer.json"
+		},
+		{
+			"required": [
+				"email",
+				"firstname",
+				"lastname",
+				"address"
+			]
 		}
 	]
 }

@@ -1,12 +1,22 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/process.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/transaction/process.json",
 	"title": "Process",
-	"type":"object",
-	"properties":{
-		"customer":{"$ref": "./customer.json"},
-		"creditcard":{"$ref": "./creditcard.json"},
-		"amount":{"$ref": "./amount.json"}
+	"type": "object",
+	"properties": {
+		"customer": {
+			"$ref": "./customer.json"
+		},
+		"creditcard": {
+			"$ref": "./creditcard.json"
+		},
+		"amount": {
+			"$ref": "./amount.json"
+		}
 	},
-	"required":["customer","creditcard","amount"]
+	"required": [
+		"customer",
+		"creditcard",
+		"amount"
+	]
 }

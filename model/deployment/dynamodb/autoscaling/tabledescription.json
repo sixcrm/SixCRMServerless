@@ -1,19 +1,26 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/deployment/dynamodb/autoscaling/tablenames.json",
-  "title":"DynamoDB Table Names",
-  "type":"object",
-  "properties":{
-    "Table":{
-      "type":"object",
-      "properties":{
-        "TableArn":{"$ref":"../../../definitions/arn.json"},
-        "TableName":{
-          "type":"string"
-        }
-      },
-      "required":["TableArn","TableName"]
-    }
-  },
-  "required":["Table"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/deployment/dynamodb/autoscaling/tabledescription.json",
+	"title": "DynamoDB Table Names",
+	"type": "object",
+	"properties": {
+		"Table": {
+			"type": "object",
+			"properties": {
+				"TableArn": {
+					"$ref": "../../../definitions/arn.json"
+				},
+				"TableName": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"TableArn",
+				"TableName"
+			]
+		}
+	},
+	"required": [
+		"Table"
+	]
 }

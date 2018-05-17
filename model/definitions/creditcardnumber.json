@@ -1,9 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/creditcardnumber.json",
-  "title": "CreditCardNumber",
-  "description": "Credit Card Number",
-  "type":"string",
-  "pattern":"^[0-9\\s]{12,20}$",
-  "minLength":12
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/creditcardnumber.json",
+	"title": "CreditCardNumber",
+	"description": "Credit Card Number",
+	"type": "string",
+	"pattern": "^[0-9\\s]{12,20}$",
+	"minLength": 12
 }

@@ -37,15 +37,15 @@ describe('lib/model-builder-utilities', () => {
 		it('works recursively', () => {
 			// given
 			const path_to_model_under_test = 'entities/account.json';
-			const path_to_reference = 'definitions/sixcrmaccountidentifier.json';
-			const path_to_subreference = 'definitions/uuidv4.json';
+			const path_to_reference = 'model/definitions/sixcrmaccountidentifier.json';
+			const path_to_subreference = 'model/definitions/uuidv4.json';
 
 			// when
 			let hydrated_model = mbu.build(path_to_model_under_test);
 
 			// then
-			expect(hydrated_model.properties.id.id).to.equal('/' + path_to_reference);
-			expect(hydrated_model.properties.id.anyOf[0].id).to.equal('/' + path_to_subreference);
+			expect(hydrated_model.properties.id.$id).to.equal(path_to_reference);
+			expect(hydrated_model.properties.id.anyOf[0].$id).to.equal(path_to_subreference);
 		});
 
 		it('returns empty object when maximum depth reached', () => {
@@ -73,8 +73,8 @@ describe('lib/model-builder-utilities', () => {
 
 			// given
 			let model = {
-				"$schema": "http://json-schema.org/draft-04/schema",
-				"id": "/definitions/optionaluuidv4.json",
+				"$schema": "http://json-schema.org/draft-07/schema",
+				"$id": "/definitions/optionaluuidv4.json",
 				"title": "SixCrmIdentifier",
 
 				"type":"string",
@@ -113,7 +113,7 @@ describe('lib/model-builder-utilities', () => {
 			let submodel = global.SixCRM.routes.include('model', 'definitions/uuidv4.json');
 
 			// when
-			let replacedModel = mbu.replaceInstancesOfSubmodel(model, 'uuidv4.json', submodel);
+			let replacedModel = mbu.replaceInstancesOfSubmodel(model, './uuidv4.json', submodel);
 
 			// then
 			expect(replacedModel.anyOf[0]).to.deep.equal(submodel);

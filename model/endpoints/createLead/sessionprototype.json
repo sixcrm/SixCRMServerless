@@ -1,21 +1,43 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/createLead/sessionprototype.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/createLead/sessionprototype.json",
 	"title": "Session Prototype",
-	"type":"object",
+	"type": "object",
 	"properties": {
-		"campaign": {"$ref":"../../definitions/uuidv4.json"},
-		"customer": {"$ref":"../../definitions/uuidv4.json"},
-		"affiliate":{"$ref":"../../definitions/uuidv4.json"},
-		"subaffiliate_1":{"$ref":"../../definitions/uuidv4.json"},
-		"subaffiliate_2":{"$ref":"../../definitions/uuidv4.json"},
-		"subaffiliate_3":{"$ref":"../../definitions/uuidv4.json"},
-		"subaffiliate_4":{"$ref":"../../definitions/uuidv4.json"},
-		"subaffiliate_5":{"$ref":"../../definitions/uuidv4.json"},
-		"cid":{"$ref":"../../definitions/uuidv4.json"},
-		"completed":{
-			"type":"boolean"
+		"campaign": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"customer": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"affiliate": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"subaffiliate_1": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"subaffiliate_2": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"subaffiliate_3": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"subaffiliate_4": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"subaffiliate_5": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"cid": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
+		"completed": {
+			"type": "boolean"
 		}
 	},
-	"required":["campaign", "customer", "completed"]
+	"required": [
+		"campaign",
+		"customer",
+		"completed"
+	]
 }

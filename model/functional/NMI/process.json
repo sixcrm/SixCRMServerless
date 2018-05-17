@@ -1,60 +1,92 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id": "/functional/NMI/process.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/NMI/process.json",
 	"title": "NMI Merchant Provider Process Object",
 	"type": "object",
 	"properties": {
-		"type":{
-			"type":"string",
-			"enum":["sale"]
+		"type": {
+			"type": "string",
+			"enum": [
+				"sale"
+			]
 		},
-		"username":{
-			"type":"string"
+		"username": {
+			"type": "string"
 		},
-		"password":{
-			"type":"string"
+		"password": {
+			"type": "string"
 		},
-		"processor_id":{
-			"type":"string"
+		"processor_id": {
+			"type": "string"
 		},
-		"endpoint":{
-			"type":"string",
-			"format":"uri"
+		"endpoint": {
+			"type": "string",
+			"format": "uri"
 		},
-		"amount":{"$ref": "../../definitions/currency.json"},
-		"ccnumber":{"$ref": "../../definitions/creditcardnumber.json"},
-		"ccv":{"$ref": "../../definitions/creditcardcvv.json"},
-		"ccexp":{"$ref": "../../definitions/creditcardexpirationdate.json"},
-		"firstname":{
-			"type":"string"
+		"amount": {
+			"$ref": "../../definitions/currency.json"
 		},
-		"lastname":{
-			"type":"string"
+		"ccnumber": {
+			"$ref": "../../definitions/creditcardnumber.json"
 		},
-		"address1":{
-			"type":"string"
+		"ccv": {
+			"$ref": "../../definitions/creditcardcvv.json"
 		},
-		"address2":{
-			"type":"string"
+		"ccexp": {
+			"$ref": "../../definitions/creditcardexpirationdate.json"
 		},
-		"city":{
-			"type":"string"
+		"firstname": {
+			"type": "string"
 		},
-		"state":{"$ref": "../../definitions/statecode.json"},
-		"zip":{"$ref": "../../definitions/zipcode.json"},
-		"country":{"$ref": "../../definitions/countrycode.json"},
-		"shipping_address1":{
-			"type":"string"
+		"lastname": {
+			"type": "string"
 		},
-		"shipping_address2":{
-			"type":"string"
+		"address1": {
+			"type": "string"
 		},
-		"shipping_city":{
-			"type":"string"
+		"address2": {
+			"type": "string"
 		},
-		"shipping_state":{"$ref": "../../definitions/statecode.json"},
-		"shipping_zip":{"$ref": "../../definitions/zipcode.json"},
-		"shipping_country":{"$ref": "../../definitions/countrycode.json"}
+		"city": {
+			"type": "string"
+		},
+		"state": {
+			"$ref": "../../definitions/statecode.json"
+		},
+		"zip": {
+			"$ref": "../../definitions/zipcode.json"
+		},
+		"country": {
+			"$ref": "../../definitions/countrycode.json"
+		},
+		"shipping_address1": {
+			"type": "string"
+		},
+		"shipping_address2": {
+			"type": "string"
+		},
+		"shipping_city": {
+			"type": "string"
+		},
+		"shipping_state": {
+			"$ref": "../../definitions/statecode.json"
+		},
+		"shipping_zip": {
+			"$ref": "../../definitions/zipcode.json"
+		},
+		"shipping_country": {
+			"$ref": "../../definitions/countrycode.json"
+		}
 	},
-	"required":["type", "username", "password", "endpoint", "amount", "ccnumber","ccexp","firstname","lastname"]
+	"required": [
+		"type",
+		"username",
+		"password",
+		"endpoint",
+		"amount",
+		"ccnumber",
+		"ccexp",
+		"firstname",
+		"lastname"
+	]
 }

@@ -1,51 +1,73 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/productschedule.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/transaction/productschedule.json",
 	"title": "Product Schedule",
-	"anyOf":[
+	"anyOf": [
 		{
 			"type": "object",
 			"properties": {
-				"id":{"$ref": "../definitions/uuidv4.json"},
-				"name":{
-					"type":"string",
-					"minLength":3
+				"id": {
+					"$ref": "../definitions/uuidv4.json"
 				},
-				"merchantprovidergroups":{
-					"type":"array",
-					"items":{"$ref": "../definitions/uuidv4.json"}
+				"name": {
+					"type": "string",
+					"minLength": 3
 				},
-				"schedule":{
-					"type":"array",
-					"items":{
-						"type":"object",
-						"properties":{
-							"product":{"$ref": "../definitions/uuidv4.json"},
-							"price":{"$ref": "../definitions/currency.json"},
-							"start":{
-								"type":"integer",
-								"minimum": 0,
-								"exclusiveMinimum": false
-							},
-							"end":{
-								"type":"integer",
-								"minimum": 0,
-								"exclusiveMinimum": false
-							},
-							"period":{
-								"type":"integer",
-								"minimum": 0,
-								"exclusiveMinimum": false
-							}
-						},
-						"required":["product", "price", "start", "period"]
+				"merchantprovidergroups": {
+					"type": "array",
+					"items": {
+						"$ref": "../definitions/uuidv4.json"
 					}
 				},
-				"account":{"$ref": "../definitions/sixcrmidentifier.json"},
-				"created_at":{"$ref": "../definitions/iso8601.json"},
-				"updated_at":{"$ref": "../definitions/iso8601.json"}
+				"schedule": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"product": {
+								"$ref": "../definitions/uuidv4.json"
+							},
+							"price": {
+								"$ref": "../definitions/currency.json"
+							},
+							"start": {
+								"type": "integer",
+								"minimum": 0
+							},
+							"end": {
+								"type": "integer",
+								"minimum": 0
+							},
+							"period": {
+								"type": "integer",
+								"minimum": 0
+							}
+						},
+						"required": [
+							"product",
+							"price",
+							"start",
+							"period"
+						]
+					}
+				},
+				"account": {
+					"$ref": "../definitions/sixcrmidentifier.json"
+				},
+				"created_at": {
+					"$ref": "../definitions/iso8601.json"
+				},
+				"updated_at": {
+					"$ref": "../definitions/iso8601.json"
+				}
 			},
-			"required":["name", "schedule", "account", "created_at", "updated_at"]
+			"required": [
+				"name",
+				"schedule",
+				"account",
+				"created_at",
+				"updated_at"
+			]
 		},
 		{
 			"$ref": "../definitions/uuidv4.json"

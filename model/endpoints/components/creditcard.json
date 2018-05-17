@@ -1,14 +1,28 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/components/creditcard.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/components/creditcard.json",
 	"title": "Credit Card",
 	"type": "object",
 	"properties": {
-		"address":{"$ref": "../../definitions/address.json"},
-		"number":{"$ref": "../../definitions/creditcardnumber.json"},
-		"cvv":{"$ref": "../../definitions/creditcardcvv.json"},
-		"expiration":{"$ref": "../../definitions/creditcardexpirationdate.json"},
-		"name":{"$ref": "../../definitions/creditcardname.json"}
+		"address": {
+			"$ref": "../../definitions/address.json"
+		},
+		"number": {
+			"$ref": "../../definitions/creditcardnumber.json"
+		},
+		"cvv": {
+			"$ref": "../../definitions/creditcardcvv.json"
+		},
+		"expiration": {
+			"$ref": "../../definitions/creditcardexpirationdate.json"
+		},
+		"name": {
+			"$ref": "../../definitions/creditcardname.json"
+		}
 	},
-	"required":["number", "expiration", "name"]
+	"required": [
+		"number",
+		"expiration",
+		"name"
+	]
 }

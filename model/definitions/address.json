@@ -1,21 +1,35 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id": "/definitions/address.json",
-  "title": "Address",
-  "description": "An address",
-  "type":"object",
-  "properties": {
-    "line1":{"$ref":"./addressline1.json"},
-    "line2":{
-      "type":"string"
-    },
-    "city":{
-      "type":"string",
-      "minLength":1
-    },
-    "state":{"$ref":"./statecode.json"},
-    "zip":{"$ref":"./zipcode.json"},
-    "country":{"$ref":"./countrycode.json"}
-  },
-  "required":["line1","city","state","zip","country"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/definitions/address.json",
+	"title": "Address",
+	"description": "An address",
+	"type": "object",
+	"properties": {
+		"line1": {
+			"$ref": "./addressline1.json"
+		},
+		"line2": {
+			"type": "string"
+		},
+		"city": {
+			"type": "string",
+			"minLength": 1
+		},
+		"state": {
+			"$ref": "./statecode.json"
+		},
+		"zip": {
+			"$ref": "./zipcode.json"
+		},
+		"country": {
+			"$ref": "./countrycode.json"
+		}
+	},
+	"required": [
+		"line1",
+		"city",
+		"state",
+		"zip",
+		"country"
+	]
 }

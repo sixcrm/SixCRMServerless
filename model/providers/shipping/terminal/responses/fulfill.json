@@ -1,18 +1,22 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/providers/shipping/terminal/responses/fulfill.json",
-  "title":"Fulfill response object",
-  "type":"object",
-  "properties":{
-    "success":{
-      "type":"boolean"
-    },
-    "message":{
-      "type":"string"
-    },
-    "reference_number":{
-      "type":"string"
-    }
-  },
-  "required":["reference_number", "success", "message"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/providers/shipping/terminal/responses/fulfill.json",
+	"title": "Fulfill response object",
+	"type": "object",
+	"properties": {
+		"success": {
+			"type": "boolean"
+		},
+		"message": {
+			"type": "string"
+		},
+		"reference_number": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"reference_number",
+		"success",
+		"message"
+	]
 }

@@ -1,7 +1,10 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/fulfillmentproviders/ThreePL/action.json",
-  "title":"ThreePL Method",
-  "type":"string",
-  "enum":["FindOrders","CreateOrders"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/fulfillmentproviders/ThreePL/method.json",
+	"title": "ThreePL Method",
+	"type": "string",
+	"enum": [
+		"FindOrders",
+		"CreateOrders"
+	]
 }

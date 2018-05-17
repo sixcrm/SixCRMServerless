@@ -255,13 +255,10 @@ module.exports = class JWTProvider {
 		let transaction_jwt_schema = global.SixCRM.routes.include('model', 'jwt/transaction');
 
 		const ajv = new Ajv({
-			schemaId: 'auto',
 			format: 'full',
 			allErrors: true,
 			verbose: true
 		});
-
-		ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
 
 		const valid = ajv.validate(transaction_jwt_schema, contents);
 
@@ -277,13 +274,10 @@ module.exports = class JWTProvider {
 		let site_jwt_schema = global.SixCRM.routes.include('model', 'jwt/site');
 
 		const ajv = new Ajv({
-			schemaId: 'auto',
 			format: 'full',
 			allErrors: true,
 			verbose: true
 		});
-
-		ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
 
 		const valid = ajv.validate(site_jwt_schema, contents);
 

@@ -1,7 +1,11 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/transactionresult.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/register/transactionresult.json",
 	"title": "Transaction Result",
-	"type":"string",
-  "enum":["success","decline","error"]
+	"type": "string",
+	"enum": [
+		"success",
+		"decline",
+		"error"
+	]
 }

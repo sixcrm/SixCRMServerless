@@ -1,75 +1,120 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/fulfillmentproviders/ThreePL/findordersparametersobject.json",
-  "title":"ThreePL Find OrdersParameters Object",
-  "type":"object",
-  "properties":{
-    "userLoginData":{
-      "type":"object",
-      "properties":{
-        "Login":{
-          "type":"string",
-          "minLength":1
-        },
-        "Password":{
-          "type":"string",
-          "minLength":1
-        },
-        "ThreePLID":{"$ref":"../../../definitions/nonnegativeinteger.json"}
-      },
-      "required":["Login", "Password", "ThreePLID"]
-    },
-    "focr": {
-      "properties":{
-        "@":{
-          "type":"object",
-          "properties":{
-            "xmlns": {
-              "type":"string",
-              "enum":["http://www.JOI.com/schemas/ViaSub.WMS/"]
-            }
-          },
-          "required":["xmlns"]
-        },
-        "CustomerID": {"$ref":"../../../definitions/nonnegativeinteger.json"},
-        "FacilityID": {"$ref":"../../../definitions/nonnegativeinteger.json"},
-        "OverAlloc":{
-          "type":"string",
-          "enum":["Any"]
-        },
-        "Closed": {
-          "type":"string",
-          "enum":["Any"]
-        },
-        "ASNSent": {
-          "type":"string",
-          "enum":["Any"]
-        },
-        "RouteSent": {
-          "type":"string",
-          "enum":["Any"]
-        },
-        "ReferenceNum": {"$ref":"../../../definitions/uuidv4.json"}
-      },
-      "required":["@", "CustomerID", "FacilityID", "OverAlloc", "Closed", "ASNSent", "RouteSent"]
-    },
-    "limitCount": {
-      "type":"object",
-      "properties":{
-        "@":{
-          "type":"object",
-          "properties":{
-            "xmlns": {
-              "type":"string",
-              "enum":["http://www.JOI.com/schemas/ViaSub.WMS/"]
-            }
-          },
-          "required":["xmlns"]
-        },
-        "#":{"$ref":"../../../definitions/nonnegativeinteger.json"}
-      },
-      "required":["@","#"]
-    }
-  },
-  "required":["userLoginData","focr","limitCount"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/fulfillmentproviders/ThreePL/findordersparametersobject.json",
+	"title": "ThreePL Find OrdersParameters Object",
+	"type": "object",
+	"properties": {
+		"userLoginData": {
+			"type": "object",
+			"properties": {
+				"Login": {
+					"type": "string",
+					"minLength": 1
+				},
+				"Password": {
+					"type": "string",
+					"minLength": 1
+				},
+				"ThreePLID": {
+					"$ref": "../../../definitions/nonnegativeinteger.json"
+				}
+			},
+			"required": [
+				"Login",
+				"Password",
+				"ThreePLID"
+			]
+		},
+		"focr": {
+			"properties": {
+				"@": {
+					"type": "object",
+					"properties": {
+						"xmlns": {
+							"type": "string",
+							"enum": [
+								"http://www.JOI.com/schemas/ViaSub.WMS/"
+							]
+						}
+					},
+					"required": [
+						"xmlns"
+					]
+				},
+				"CustomerID": {
+					"$ref": "../../../definitions/nonnegativeinteger.json"
+				},
+				"FacilityID": {
+					"$ref": "../../../definitions/nonnegativeinteger.json"
+				},
+				"OverAlloc": {
+					"type": "string",
+					"enum": [
+						"Any"
+					]
+				},
+				"Closed": {
+					"type": "string",
+					"enum": [
+						"Any"
+					]
+				},
+				"ASNSent": {
+					"type": "string",
+					"enum": [
+						"Any"
+					]
+				},
+				"RouteSent": {
+					"type": "string",
+					"enum": [
+						"Any"
+					]
+				},
+				"ReferenceNum": {
+					"$ref": "../../../definitions/uuidv4.json"
+				}
+			},
+			"required": [
+				"@",
+				"CustomerID",
+				"FacilityID",
+				"OverAlloc",
+				"Closed",
+				"ASNSent",
+				"RouteSent"
+			]
+		},
+		"limitCount": {
+			"type": "object",
+			"properties": {
+				"@": {
+					"type": "object",
+					"properties": {
+						"xmlns": {
+							"type": "string",
+							"enum": [
+								"http://www.JOI.com/schemas/ViaSub.WMS/"
+							]
+						}
+					},
+					"required": [
+						"xmlns"
+					]
+				},
+				"#": {
+					"$ref": "../../../definitions/nonnegativeinteger.json"
+				}
+			},
+			"required": [
+				"@",
+				"#"
+			]
+		}
+	},
+	"required": [
+		"userLoginData",
+		"focr",
+		"limitCount"
+	]
 }

@@ -1,18 +1,37 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/entities/customernote.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/customernote.json",
 	"title": "Customer Note",
 	"type": "object",
 	"properties": {
-		"id":{"$ref": "../definitions/uuidv4.json"},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"customer":{"$ref": "../definitions/uuidv4.json"},
-		"user":{"$ref": "../definitions/useridentifier.json"},
-		"body": {
-			"type":"string"
+		"id": {
+			"$ref": "../definitions/uuidv4.json"
 		},
-		"created_at":{"$ref": "../definitions/iso8601.json"},
-		"updated_at":{"$ref": "../definitions/iso8601.json"}
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"customer": {
+			"$ref": "../definitions/uuidv4.json"
+		},
+		"user": {
+			"$ref": "../definitions/useridentifier.json"
+		},
+		"body": {
+			"type": "string"
+		},
+		"created_at": {
+			"$ref": "../definitions/iso8601.json"
+		},
+		"updated_at": {
+			"$ref": "../definitions/iso8601.json"
+		}
 	},
-	"required":["account", "customer", "user", "body", "created_at", "updated_at"]
+	"required": [
+		"account",
+		"customer",
+		"user",
+		"body",
+		"created_at",
+		"updated_at"
+	]
 }

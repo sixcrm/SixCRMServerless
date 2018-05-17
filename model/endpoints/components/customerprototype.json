@@ -1,23 +1,29 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
-	"id":"/endpoints/components/customerprototype.json",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/components/customerprototype.json",
 	"title": "Customer Prototype",
 	"type": "object",
 	"properties": {
-		"email":{
-			"type":"string",
-			"format":"email"
+		"email": {
+			"type": "string",
+			"format": "email"
 		},
-		"firstname":{
-			"type":"string",
+		"firstname": {
+			"type": "string",
 			"minLength": 1
 		},
-		"lastname":{
-			"type":"string",
+		"lastname": {
+			"type": "string",
 			"minLength": 1
 		},
-		"phone":{"$ref":"../../definitions/phone.json"},
-		"address":{"$ref": "../../definitions/address.json"}
+		"phone": {
+			"$ref": "../../definitions/phone.json"
+		},
+		"address": {
+			"$ref": "../../definitions/address.json"
+		}
 	},
-	"required":["email"]
+	"required": [
+		"email"
+	]
 }

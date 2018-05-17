@@ -1,15 +1,23 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema",
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/userinvite.json",
 	"title": "UserInvite",
-	"id":"/entities/userinvite.json",
 	"type": "object",
 	"properties": {
-		"email":{
-			"type":"string",
-			"format":"email"
+		"email": {
+			"type": "string",
+			"format": "email"
 		},
-		"account":{"$ref": "../definitions/sixcrmaccountidentifier.json"},
-		"role":{"$ref": "../definitions/uuidv4.json"}
+		"account": {
+			"$ref": "../definitions/sixcrmaccountidentifier.json"
+		},
+		"role": {
+			"$ref": "../definitions/uuidv4.json"
+		}
 	},
-	"required":["email", "account", "role"]
+	"required": [
+		"email",
+		"account",
+		"role"
+	]
 }

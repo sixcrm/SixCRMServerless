@@ -1,36 +1,55 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema",
-  "id":"/vendors/fulfillmentproviders/Test/vendorresponse.json",
-  "title":"Vendor Response",
-  "type":"object",
-  "properties":{
-    "error":{
-      "anyOf":[
-        {"type":"null"},
-        {"type":"object"}
-      ]
-    },
-    "body":{
-      "anyOf":[
-        {"type":"object"},
-        {"type":"null"}
-      ]
-    },
-    "response":{
-      "anyOf":[
-        {"type":"null"},
-        {
-          "type":"object",
-          "properties":{
-            "body":{
-              "type":"object"
-            },
-            "statusCode":{"$ref":"../../../definitions/httpcode.json"}
-          },
-          "required":["body","statusCode"]
-        }
-      ]
-    }
-  },
-  "required":["body","error","response"]
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/vendors/fulfillmentproviders/Test/vendorresponse.json",
+	"title": "Vendor Response",
+	"type": "object",
+	"properties": {
+		"error": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "object"
+				}
+			]
+		},
+		"body": {
+			"anyOf": [
+				{
+					"type": "object"
+				},
+				{
+					"type": "null"
+				}
+			]
+		},
+		"response": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "object",
+					"properties": {
+						"body": {
+							"type": "object"
+						},
+						"statusCode": {
+							"$ref": "../../../definitions/httpcode.json"
+						}
+					},
+					"required": [
+						"body",
+						"statusCode"
+					]
+				}
+			]
+		}
+	},
+	"required": [
+		"body",
+		"error",
+		"response"
+	]
 }
