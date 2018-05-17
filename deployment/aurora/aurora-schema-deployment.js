@@ -14,6 +14,7 @@ module.exports = class AuroraSchemaDeployment {
 		return auroraContext.withConnection(async (connection) => {
 
 			const migrations = await this._getVersionDirectories(connection, options);
+			du.debug('AuroraSchemaDeployment.deploy(): migrations', migrations);
 			await BBPromise.each(migrations, m => this._deployMigration(m, connection));
 			return 'Aurora deploy complete';
 
