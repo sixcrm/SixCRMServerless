@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
@@ -82,7 +83,12 @@ module.exports.graphObj = new GraphQLObjectType({
 					entities: [campaign.id],
 					campaign: campaign
 				})
-					.then((result) => result.merchantprovidergroupassociations);
+					.then((result) => {
+						if(_.has(result, 'merchantprovidergroupassociations')){
+							return result.merchantprovidergroupassociations;
+						}
+						return null;
+					});
 			}
 		},
 		created_at: {
