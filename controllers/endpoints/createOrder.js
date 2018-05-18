@@ -1,9 +1,21 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
+const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
+const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
+const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
+const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
+const OrderHelperController = global.SixCRM.routes.include('helpers', 'order/Order.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class CreateOrderController extends transactionEndpointController {
@@ -61,6 +73,21 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			'transactionsubtype': global.SixCRM.routes.path('model', 'definitions/transactionsubtype.json')
 		};
 
+		this.sessionController = new SessionController();
+		this.sessionHelperController = new SessionHelperController();
+		this.customerController = new CustomerController();
+		this.customerController.sanitize(false);
+		this.creditCardHelperController = new CreditCardHelperController();
+		this.creditCardController = new CreditCardController();
+		this.campaignController = new CampaignController();
+		this.rebillController = new RebillController();
+		this.rebillHelperController = new RebillHelperController();
+		this.rebillCreatorHelperController = new RebillCreatorHelperController();
+		this.registerController = new RegisterController();
+		this.transactionHelperController = new TransactionHelperController();
+		this.merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
+		this.orderHelperController = new OrderHelperController();
+
 		this.initialize();
 
 	}
@@ -69,495 +96,233 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		du.debug('Execute');
 
-		this.parameters.store = {};
-
-		return this.preamble(event)
-			.then(() => this.createOrder());
+		return this.preamble(event).then(() => this.createOrder(this.parameters.get('event')));
 
 	}
 
-	createOrder() {
+	async createOrder(event) {
 
 		du.debug('Create Order');
 
-		return this.hydrateSession()
-			.then(() => this.setCustomer())
-			.then(() => this.hydrateEventAssociatedParameters())
-			.then(() => this.validateEventProperties())
-			.then(() => this.createRebill())
-			.then(() => this.processRebill())
-			.then(() => this.buildInfoObject())
-			.then(() => this.postProcessing())
-			.then(() => this.respond());
+		let session = await this.hydrateSession(event);
+		let customer = await this.getCustomer(event, session);
 
-	}
+		let [creditcard, campaign, previous_rebill] = await Promise.all([
+			this.getCreditCard(event, customer),
+			this.getCampaign(session),
+			this.getPreviousRebill(event)
+		]);
 
-	hydrateSession() {
+		this.customerController.sanitize(false);
+		[customer, creditcard] = await this.customerController.addCreditCard(customer.id, creditcard);
 
-		du.debug('Set Session');
+		this.validateSession(session);
 
-		let event = this.parameters.get('event');
+		let rebill = await this.createRebill(session, event.product_schedules, event.products);
+		let processed_rebill = await this.processRebill(rebill, event);
 
-		if (!_.has(this.sessionController)) {
-			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-			this.sessionController = new SessionController();
-		}
-
-		return this.sessionController.get({
-			id: event.session
-		}).then(session => {
-			this.parameters.set('session', session);
-			return true;
+		// We'll leave this one in for now to not break too many tests.
+		this.parameters.set('info', {
+			amount: processed_rebill.amount,
+			transactions: processed_rebill.transactions,
+			customer,
+			rebill,
+			session,
+			campaign,
+			creditcard: processed_rebill.creditcard,
+			result: processed_rebill.result,
+			product_schedules: event.product_schedules,
+			products: event.products
 		});
 
+		await Promise.all([
+			this.reversePreviousRebill(rebill, previous_rebill),
+			this.incrementMerchantProviderSummary(processed_rebill.transactions),
+			this.updateSessionWithWatermark(session, event.product_schedules, event.products),
+			this.addRebillToStateMachine(processed_rebill.result, rebill),
+			AnalyticsEvent.push('order', {
+				session,
+				campaign
+			})
+		]);
+
+		return {
+			result: processed_rebill.result,
+			order: await this.orderHelperController.createOrder({
+				rebill,
+				transactions: processed_rebill.transactions,
+				session,
+				customer
+			})
+		};
+
 	}
 
-	hydrateEventAssociatedParameters() {
+	hydrateSession(event) {
 
-		du.debug('Hydrate Event Associated Parameters');
+		du.debug('Hydrate Session');
 
-		let promises = [
-			this.setProductSchedules(),
-			this.setProducts(),
-			this.setTransactionSubType(),
-			this.setRawCreditCard(),
-			this.setCreditCard(),
-			this.setCampaign(),
-			this.setPreviousRebill()
-		];
-
-		return Promise.all(promises).then(() => {
-			return true;
-		});
+		return this.sessionController.get({ id: event.session });
 
 	}
 
-	setProductSchedules() {
+	async getCustomer(event, session) {
 
-		du.debug('Set Product Schedules');
+		du.debug('Get Customer');
 
-		let event = this.parameters.get('event');
+		let customer = await this.customerController.get({ id: session.customer });
 
-		if (_.has(event, 'product_schedules')) {
-			this.parameters.set('productschedules', event.product_schedules);
+		if (_.has(event, 'customer')) {
+			Object.assign(customer, event.customer);
+			return this.customerController.update({ entity: customer });
+		}
+		else {
+			return customer;
 		}
 
-		return Promise.resolve(true);
-
 	}
 
-	setProducts() {
-
-		du.debug('Set Products');
-
-		let event = this.parameters.get('event');
-
-		if (_.has(event, 'products')) {
-			this.parameters.set('products', event.products);
-		}
-
-		return Promise.resolve(true);
-
-	}
-
-	setTransactionSubType() {
-
-		du.debug('Set Transaction Subtype');
-
-		let event = this.parameters.get('event');
-
-		if (_.has(event, 'transaction_subtype')) {
-			this.parameters.set('transactionsubtype', event.transaction_subtype);
-		} else {
-			this.parameters.set('transactionsubtype', 'main');
-		}
-
-		return Promise.resolve(true);
-
-	}
-
-	setCampaign() {
-
-		du.debug('Set Campaign');
-
-		let session = this.parameters.get('session');
-
-		if (!_.has(this, 'campaignController')) {
-			const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
-			this.campaignController = new CampaignController();
-		}
-
-		return this.campaignController.get({
-			id: session.campaign
-		}).then(campaign => {
-			this.parameters.set('campaign', campaign);
-			return true;
-		});
-
-	}
-
-	setRawCreditCard() {
-
-		du.debug('Set Raw Credit Card');
-
-		let event = this.parameters.get('event');
-
-		if (_.has(event, 'creditcard')) {
-
-			if (!_.has(this, 'creditCardHelperController')) {
-				const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
-				this.creditCardHelperController = new CreditCardHelperController();
-			}
-
-			let cloned_card = objectutilities.clone(event.creditcard);
-			let raw_creditcard = this.creditCardHelperController.formatRawCreditCard(cloned_card);
-
-			this.parameters.set('rawcreditcard', raw_creditcard);
-
-		}
-
-		return
-
-	}
-
-	setCreditCard() {
+	async getCreditCard(event, customer) {
 
 		du.debug('Set Credit Card');
 
-		let event = this.parameters.get('event');
-
+		let creditcard;
 		if (_.has(event, 'creditcard')) {
 
-			if (!_.has(this, 'creditCardController')) {
-				const CreditCardController = global.SixCRM.routes.include('entities', 'CreditCard.js');
-				this.creditCardController = new CreditCardController();
-			}
-
 			this.creditCardController.sanitize(false);
-			return this.creditCardController.assureCreditCard(event.creditcard, {hydrate_token: true})
-				.then(creditcard => {
-					this.parameters.set('creditcard', creditcard);
-					return true;
-				})
-				.then(() => this.addCreditCardToCustomer());
+			creditcard = await this.creditCardController.assureCreditCard(event.creditcard, {hydrate_token: true});
+
+			await this.addCreditCardToCustomer(creditcard, customer);
 
 		}
 
-		return Promise.resolve(true);
+		return creditcard;
 
 	}
 
-	addCreditCardToCustomer() {
+	addCreditCardToCustomer(creditcard, customer) {
 
 		du.debug('Add Credit Card to Customer');
 
-		let creditcard = this.parameters.get('creditcard');
-		let customer = this.parameters.get('customer');
-
-		if (!_.has(this, 'customerController')) {
-			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
-			this.customerController = new CustomerController();
-
-		}
-
 		this.customerController.sanitize(false);
-		return this.customerController.addCreditCard(customer.id, creditcard).then(([customer, creditcard]) => {
-			this.parameters.set('creditcard', creditcard);
-			this.parameters.set('customer', customer);
-			return true;
-		});
+		return this.customerController.addCreditCard(customer.id, creditcard);
 
 	}
 
-	setCustomer() {
+	getCampaign(session) {
 
-		du.debug('Set Customer');
+		du.debug('Set Campaign');
 
-		let session = this.parameters.get('session');
-		let event = this.parameters.get('event');
+		return this.campaignController.get({ id: session.campaign });
 
-		if (!_.has(this, 'customerController')) {
-			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
-			this.customerController = new CustomerController();
-			this.customerController.sanitize(false);
-		}
-
-		return this.customerController.get({
-			id: session.customer
-		}).then(customer => {
-			if (_.has(event, 'customer')) {
-				Object.assign(customer, event.customer);
-				return this.customerController.update({
-					entity: customer
-				});
-			}
-			return customer;
-		})
-			.then(customer => {
-				this.parameters.set('customer', customer);
-				return true;
-			});
 	}
 
-	setPreviousRebill() {
-
-		const event = this.parameters.get('event');
+	getPreviousRebill(event) {
 
 		if (!_.has(event, 'reverse_on_complete')) {
 			return Promise.resolve();
 		}
 
-		if (!_.has(this, 'rebillController')) {
-			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-			this.rebillController = new RebillController();
-		}
-
-		return this.rebillController.getByAlias({
-			alias: event.reverse_on_complete
-		}).then(rebill => {
-			this.parameters.set('previous_rebill', rebill);
-			return true;
-		});
+		return this.rebillController.getByAlias({ alias: event.reverse_on_complete });
 	}
 
-	validateEventProperties() {
+	validateSession(session) {
 
-		du.debug('Validate Event Properties');
+		du.debug('Validate Session');
 
-		this.isCurrentSession();
-		this.isCompleteSession();
-
-		return Promise.resolve(true);
+		this.isCurrentSession(session);
+		this.isCompleteSession(session);
 
 	}
 
-	isCompleteSession() {
-
-		du.debug('Is Complete Session');
-
-		let session = this.parameters.get('session');
-
-		if (!_.has(this, 'sessionHelperController')) {
-			const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
-
-			this.sessionHelperController = new SessionHelperController();
-		}
-
-		if (this.sessionHelperController.isComplete({
-			session: session
-		})) {
-			throw eu.getError('bad_request', 'The session is already complete.');
-		}
-
-		return true;
-
-	}
-
-	isCurrentSession() {
+	isCurrentSession(session) {
 
 		du.debug('Is Current Session');
 
-		let session = this.parameters.get('session');
-
-		if (!_.has(this, 'sessionHelperController')) {
-			const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
-
-			this.sessionHelperController = new SessionHelperController();
-		}
-
-		if (!this.sessionHelperController.isCurrent({
-			session: session
-		})) {
+		if (!this.sessionHelperController.isCurrent({ session: session })) {
 			if (!_.includes(['*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c'], global.account)) {
 				throw eu.getError('bad_request', 'Session has expired.');
 			}
 		}
 
-		return true;
+	}
+
+	isCompleteSession(session) {
+
+		du.debug('Is Complete Session');
+
+		if (this.sessionHelperController.isComplete({ session: session })) {
+			throw eu.getError('bad_request', 'The session is already complete.');
+		}
 
 	}
 
-	createRebill() {
+	createRebill(session, productschedules, products) {
 
 		du.debug('Create Rebill');
 
-		let session = this.parameters.get('session');
-		let product_schedules = this.parameters.get('productschedules', {fatal: false});
-		let products = this.parameters.get('products', {fatal: false});
-
-		let argumentation = {
-			session: session,
-			day: -1
-		};
-
-		if (!_.isNull(product_schedules)) {
-			argumentation.product_schedules = product_schedules;
-		}
-
-		if (!_.isNull(products)) {
-			argumentation.products = products;
-		}
-
-		if (_.isNull(product_schedules) && _.isNull(products)) {
+		if (!productschedules && !products) {
 			throw eu.getError('server', 'Nothing to add to the rebill.');
 		}
 
-		if (!_.has(this, 'rebillCreatorHelperController')) {
-			const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
-
-			this.rebillCreatorHelperController = new RebillCreatorHelperController();
-		}
-
-		return this.rebillCreatorHelperController.createRebill(argumentation)
-			.then(rebill => {
-				this.parameters.set('rebill', rebill);
-				return true;
-			});
+		return this.rebillCreatorHelperController.createRebill({
+			session,
+			productschedules,
+			products,
+			day: -1
+		});
 
 	}
 
-	processRebill() {
+	async processRebill(rebill, event) {
 
 		du.debug('Process Rebill');
 
-		let rebill = this.parameters.get('rebill');
-
-		if (!_.has(this, 'registerController')) {
-			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
-			this.registerController = new RegisterController();
-		}
-
-		let raw_creditcard = this.parameters.get('rawcreditcard', {fatal: false});
-
 		let argumentation = {
-			rebill: rebill,
-			transactionsubtype: this.parameters.get('transactionsubtype', {fatal: false})
+			rebill,
+			transactionsubtype: event.transaction_subtype || 'main',
+			creditcard: event.creditcard ? this.creditCardHelperController.formatRawCreditCard(event.creditcard) : undefined
 		};
 
-		if (!_.isNull(raw_creditcard)) {
-			argumentation.creditcard = raw_creditcard;
-		}
+		let register_response = await this.registerController.processTransaction(argumentation);
 
-		return this.registerController.processTransaction(argumentation)
-			.then((register_response) => {
+		let amount = this.transactionHelperController.getTransactionsAmount(register_response.parameters.get('transactions'));
 
-				if (!_.has(this, 'transactionHelperController')) {
-					const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
-
-					this.transactionHelperController = new TransactionHelperController();
-				}
-
-				this.parameters.set('registerresponse', register_response);
-
-				let amount = this.transactionHelperController.getTransactionsAmount(register_response.parameters.get('transactions'));
-
-				this.parameters.set('creditcard', register_response.getCreditCard());
-				this.parameters.set('transactions', register_response.parameters.get('transactions'));
-				this.parameters.set('result', register_response.parameters.get('response_type'));
-				this.parameters.set('amount', amount);
-
-				return true;
-
-			});
-
-	}
-
-	buildInfoObject() {
-
-		du.debug('Build Info Object');
-
-		let info = {
-			amount: this.parameters.get('amount'),
-			transactions: this.parameters.get('transactions'),
-			customer: this.parameters.get('customer'),
-			rebill: this.parameters.get('rebill'),
-			session: this.parameters.get('session'),
-			campaign: this.parameters.get('campaign'),
-			creditcard: this.parameters.get('creditcard'),
-			result: this.parameters.get('result')
+		return {
+			creditcard: register_response.getCreditCard(),
+			transactions: register_response.parameters.get('transactions'),
+			result: register_response.parameters.get('response_type'),
+			amount
 		};
 
-		let product_schedules = this.parameters.get('productschedules', {fatal: false});
-
-		if (!_.isNull(product_schedules)) {
-			info.product_schedules = product_schedules;
-		}
-
-		let products = this.parameters.get('products', {fatal: false});
-
-		if (!_.isNull(products)) {
-			info.products = products;
-		}
-
-		this.parameters.set('info', info);
-
-		return Promise.resolve(true);
-
 	}
 
-	postProcessing() {
+	async reversePreviousRebill(rebill, previous_rebill) {
 
-		du.debug('Post Processing');
-
-		return Promise.all([
-			this.reversePreviousRebill(),
-			AnalyticsEvent.push('order', {
-				session: this.parameters.get('session', {fatal: false}),
-				campaign: this.parameters.get('campaign', {fatal: false})
-			}),
-			this.incrementMerchantProviderSummary(),
-			this.updateSessionWithWatermark(),
-			this.addRebillToStateMachine()
-		]);
-
-	}
-
-	reversePreviousRebill() {
-		const rebill = this.parameters.get('rebill');
-		const previous_rebill = this.parameters.get('previous_rebill', {fatal: false});
-
-		if (_.isNull(previous_rebill)) {
+		if (!previous_rebill) {
 			return Promise.resolve();
 		}
 
-		if (!_.has(this, 'rebillController')) {
-			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-			this.rebillController = new RebillController();
-		}
-
-		if (!_.has(this, 'rebillHelperController')) {
-			const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-			this.rebillHelperController = new RebillHelperController();
-		}
-
-		if (!_.has(this, 'registerController')) {
-			const RegisterController = global.SixCRM.routes.include('providers', 'register/Register.js');
-			this.registerController = new RegisterController();
-		}
-
-		return this.rebillHelperController.updateRebillUpsell({
+		await this.rebillHelperController.updateRebillUpsell({
 			rebill: previous_rebill,
 			upsell: rebill
-		})
-			.then(() => this.rebillController.listTransactions(previous_rebill))
-			.then(results => this.rebillController.getResult(results, 'transactions'))
-			.then(transactions => Promise.all(
-				arrayutilities.map(transactions, transaction =>
-					this.registerController.reverseTransaction({transaction}))
-			));
+		});
+
+		const results = await this.rebillController.listTransactions(previous_rebill);
+		const transactions = await this.rebillController.getResult(results, 'transactions');
+
+		await Promise.all(arrayutilities.map(transactions, transaction =>
+			this.registerController.reverseTransaction({transaction})));
+
 	}
 
-	incrementMerchantProviderSummary() {
+	incrementMerchantProviderSummary(transactions) {
 
 		du.debug('Increment Merchant Provider Summary');
-
-		let transactions = this.parameters.get('transactions');
 
 		if (_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)) {
 			return false;
 		}
-
-		const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 
 		return arrayutilities.serial(transactions, (current, transaction) => {
 
@@ -565,9 +330,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				return false;
 			}
 
-			let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
-
-			return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
+			return this.merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
 				merchant_provider: transaction.merchant_provider,
 				day: transaction.created_at,
 				total: transaction.amount,
@@ -578,11 +341,9 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	updateSessionWithWatermark() {
+	updateSessionWithWatermark(session, product_schedules, products) {
 
 		du.debug('Update Session With Watermark');
-
-		let session = this.parameters.get('session');
 
 		if (!_.has(session, 'watermark')) {
 			session.watermark = {
@@ -590,9 +351,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				product_schedules: []
 			}
 		}
-
-		let product_schedules = this.parameters.get('productschedules', {fatal: false});
-		let products = this.parameters.get('products', {fatal: false});
 
 		if (arrayutilities.nonEmpty(product_schedules)) {
 
@@ -617,121 +375,48 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		}
 
-		if (!_.has(this, 'sessionController')) {
-			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-			this.sessionController = new SessionController();
-		}
-
-		return this.sessionController.update({
-			entity: session
-		}).then(result => {
-			this.parameters.set('session', result);
-			return true;
-		});
+		return this.sessionController.update({ entity: session });
 
 	}
 
-	addRebillToStateMachine() {
+	addRebillToStateMachine(result, rebill) {
 
 		du.debug('Add Rebill To State Machine');
 
-		if (this.parameters.get('result') == 'success') {
+		if (result == 'success') {
 
 			return this.updateRebillState()
-				.then(() => this.addRebillToQueue())
+				.then(() => this.addRebillToQueue(rebill))
 
 		} else {
 
-			let rebill = this.parameters.get('rebill');
-
 			rebill.no_process = true;
 
-			if (!_.has(this, 'rebillController')) {
-				const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-				this.rebillController = new RebillController();
-			}
-
-			return this.rebillController.update({
-				entity: rebill
-			}).then(() => {
-				return true;
-			});
+			return this.rebillController.update({ entity: rebill });
 
 		}
 
 	}
 
-	addRebillToQueue() {
-
-		du.debug('Add Rebill To Queue');
-
-		let rebill = this.parameters.get('rebill');
-
-		if (!_.has(this, 'rebillHelperController')) {
-			const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-
-			this.rebillHelperController = new RebillHelperController();
-		}
-
-		return this.rebillHelperController.addRebillToQueue({
-			rebill: rebill,
-			queue_name: 'hold'
-		}).then(() => {
-			return true;
-		});
-
-	}
-
-	updateRebillState() {
+	updateRebillState(rebill) {
 
 		du.debug('Update Rebill State');
 
-		let rebill = this.parameters.get('rebill');
-
-		if (!_.has(this, 'rebillHelperController')) {
-			const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
-
-			this.rebillHelperController = new RebillHelperController();
-		}
-
 		return this.rebillHelperController.updateRebillState({
-			rebill: rebill,
+			rebill,
 			new_state: 'hold'
-		}).then(() => {
-			return true;
 		});
 
 	}
 
-	async buildOrderObject(){
+	addRebillToQueue(rebill) {
 
-		du.debug('Build Order Object');
+		du.debug('Add Rebill To Queue');
 
-		const OrderHelperController = global.SixCRM.routes.include('helpers', 'order/Order.js');
-		let orderHelperController = new OrderHelperController();
-
-		let session = this.parameters.get('session');
-		let transactions = this.parameters.get('transactions');
-		let customer = this.parameters.get('customer');
-		let rebill = this.parameters.get('rebill');
-
-		let order = await orderHelperController.createOrder({rebill: rebill, transactions: transactions, session: session, customer: customer});
-
-		return order;
-
-	}
-
-	async respond(){
-
-		du.debug('Respond');
-
-		let result = this.parameters.get('result');
-		let order = await this.buildOrderObject();
-
-		return {
-			result: result,
-			order: order
-		};
+		return this.rebillHelperController.addRebillToQueue({
+			rebill,
+			queue_name: 'hold'
+		});
 
 	}
 

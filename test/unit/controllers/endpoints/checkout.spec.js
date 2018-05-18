@@ -624,7 +624,7 @@ describe('checkout', function () {
 
 			checkoutController.parameters.set('event', event);
 
-			return checkoutController.confirmOrder(event).then(result => {
+			return checkoutController.confirmOrder().then(result => {
 				expect(result).to.equal(true);
 				expect(checkoutController.parameters.store['confirmation']).to.be.defined;
 			});

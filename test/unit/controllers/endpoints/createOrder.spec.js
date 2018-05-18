@@ -1,8 +1,6 @@
-
 const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
-const checksum = require('checksum');
 const expect = chai.expect;
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -35,22 +33,6 @@ function getValidProcessorResponse(){
 			}
 		},
 		message: 'Some message'
-	};
-
-}
-
-function getValidInfo(){
-
-	return {
-		amount: 12.99,
-		transactions: getValidTransactions(),
-		product_schedules: getValidProductScheduleGroups(),
-		customer: getValidCustomer(),
-		rebill: getValidRebill(),
-		session: getValidSession(),
-		campaign: getValidCampaign(),
-		creditcard: getValidCreditCard(),
-		result:'success'
 	};
 
 }
@@ -474,6 +456,12 @@ describe('createOrder', function () {
 				update({entity}) {
 					return Promise.resolve(entity);
 				}
+				listTransactions() {
+					return Promise.resolve({transactions});
+				}
+				getResult() {
+					return Promise.resolve(transactions);
+				}
 			});
 
 			const CreditCard = global.SixCRM.routes.include('entities','CreditCard.js');
@@ -531,6 +519,9 @@ describe('createOrder', function () {
 				updateRebillState(){
 					return Promise.resolve(true);
 				}
+				updateRebillUpsell(){
+					return Promise.resolve(true);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class {
@@ -545,6 +536,9 @@ describe('createOrder', function () {
 					});
 
 					return Promise.resolve(register_response);
+				}
+				reverseTransaction(){
+					return Promise.resolve();
 				}
 			});
 
@@ -649,6 +643,12 @@ describe('createOrder', function () {
 				update({entity}) {
 					return Promise.resolve(entity);
 				}
+				listTransactions() {
+					return Promise.resolve({transactions});
+				}
+				getResult() {
+					return Promise.resolve(transactions);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
@@ -703,6 +703,9 @@ describe('createOrder', function () {
 				updateRebillState(){
 					return Promise.resolve(true);
 				}
+				updateRebillUpsell(){
+					return Promise.resolve(true);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Register.js'), class {
@@ -717,6 +720,9 @@ describe('createOrder', function () {
 					});
 
 					return Promise.resolve(register_response);
+				}
+				reverseTransaction(){
+					return Promise.resolve();
 				}
 			});
 
@@ -791,98 +797,17 @@ describe('createOrder', function () {
 
 			createOrderController.parameters.set('event', event);
 
-			return createOrderController.hydrateSession().then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['session']).to.deep.equal(session);
+			return createOrderController.hydrateSession(event).then(result => {
+				expect(result).to.deep.equal(session);
 			});
 
 		});
 
 	});
 
-	describe('hydrateEventAssociatedParameters', () => {
+	describe('validateSession', () => {
 
-		it('successfully gets associated event properties', () => {
-
-			let campaign = getValidCampaign();
-			let event = getValidEventBody();
-			let creditcard = MockEntities.getValidTransactionCreditCard();
-			let stored_creditcard = objectutilities.clone(creditcard);
-			stored_creditcard.first_six = creditcard.number.substring(0,6);
-			stored_creditcard.last_four = creditcard.number.slice(-4);
-			const normalized_expiration = `${stored_creditcard.expiration.slice(0, 2)}/${stored_creditcard.expiration.slice(-2)}`;
-			stored_creditcard.checksum = checksum(`${stored_creditcard.first_six}.${stored_creditcard.last_four}.${normalized_expiration}`);
-			stored_creditcard.id = MockEntities.getValidId();
-			stored_creditcard.created_at = timestamp.getISO8601();
-			stored_creditcard.updated_at = stored_creditcard.created_at;
-			stored_creditcard.account = MockEntities.getValidId();
-			stored_creditcard.token = {
-				token:'sometokenstring',
-				provider: 'tokenex'
-			}
-			delete stored_creditcard.number;
-			delete stored_creditcard.cvv;
-
-			let customer = getValidCustomer();
-			let session = getValidSession();
-
-  	  event.creditcard = Object.assign({}, creditcard);
-  	  delete event.creditcard.customers;
-
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'),class {
-				constructor(){}
-				get () {
-					return Promise.resolve(campaign);
-				}
-			});
-
-			const CreditCard = global.SixCRM.routes.include('entities','CreditCard.js');
-			CreditCard.prototype.queryBySecondaryIndex = () => { return Promise.resolve({creditcards: []}); };
-			CreditCard.prototype.create = ({entity}) => {
-				expect(entity).to.be.defined;
-				return Promise.resolve(stored_creditcard);
-			};
-
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), CreditCard);
-
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), class {
-				constructor(){}
-				sanitize(){}
-				addCreditCard() {
-					customer.creditcards.push(stored_creditcard.id);
-					stored_creditcard.customers = [customer.id];
-					return Promise.resolve([customer, stored_creditcard]);
-				}
-			});
-
-			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-			const createOrderController = new CreateOrderController();
-
-			createOrderController.parameters.set('event', event);
-			createOrderController.parameters.set('session', session);
-			createOrderController.parameters.set('customer', customer);
-
-			return createOrderController.hydrateEventAssociatedParameters().then((result) => {
-
-				expect(result).to.equal(true);
-
-				let campaign_in_memory = createOrderController.parameters.store['campaign'];
-				let creditcard_in_memory = createOrderController.parameters.store['creditcard'];
-
-				expect(creditcard_in_memory).to.deep.equal(stored_creditcard);
-				expect(campaign_in_memory).to.deep.equal(campaign);
-				expect(createOrderController.parameters.store['productschedules']).to.deep.equal(event.product_schedules);
-				expect(createOrderController.parameters.store['transactionsubtype']).to.deep.equal(event.transaction_subtype);
-
-			});
-
-		});
-
-	});
-
-	describe('validateEventProperties', () => {
-
-		it('successfully validates event properties', () => {
+		it('successfully validates a session', () => {
 
 			let session = getValidSession();
 
@@ -891,12 +816,7 @@ describe('createOrder', function () {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('session', session);
-			createOrderController.parameters.set('sessionlength', 3600);
-
-			return createOrderController.validateEventProperties().then(result => {
-				expect(result).to.equal(true);
-			});
+			return createOrderController.validateSession(session);
 
 		});
 
@@ -909,10 +829,8 @@ describe('createOrder', function () {
 
 			session.completed = true;
 
-			createOrderController.parameters.set('session', session);
-
 			try {
-				createOrderController.validateEventProperties()
+				createOrderController.validateSession(session);
 			}catch(error){
 				expect(error.message).to.equal('[400] The session is already complete.');
 			}
@@ -929,51 +847,14 @@ describe('createOrder', function () {
 			session.completed = false;
 			session.created_at = timestamp.toISO8601((timestamp.createTimestampSeconds() - 3610));
 
-			createOrderController.parameters.set('session', session);
-
 			try {
-				createOrderController.validateEventProperties();
+				createOrderController.validateSession(session);
 			} catch (error) {
 				expect(error.message).to.equal('[400] Session has expired.');
 			}
 
 		});
 
-	});
-
-	describe('addCreditCardToCustomer', () => {
-
-		it('successfully adds the credit card to the customer', () => {
-
-			let customer = getValidCustomer();
-			let plaintext_creditcard = getValidCreditCard();
-
-			let mock_customer = class {
-				constructor(){}
-				sanitize(){}
-				addCreditCard() {
-					customer.creditcards.push(plaintext_creditcard.id);
-					plaintext_creditcard.customers.push(customer.id);
-					return Promise.resolve([customer, plaintext_creditcard]);
-				}
-			};
-
-			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
-
-			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-			const createOrderController = new CreateOrderController();
-
-			createOrderController.parameters.set('creditcard', plaintext_creditcard);
-			createOrderController.parameters.set('customer', customer);
-
-			return createOrderController.addCreditCardToCustomer().then(result => {
-				expect(result).to.equal(true);
-				let updated_customer = createOrderController.parameters.store['customer'];
-
-				expect(updated_customer).to.deep.equal(customer);
-			});
-
-		});
 	});
 
 	describe('createRebill', () => {
@@ -999,13 +880,8 @@ describe('createOrder', function () {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('session', session);
-			createOrderController.parameters.set('productschedules', product_schedules);
-			createOrderController.parameters.set('products', transaction_products);
-
-			return createOrderController.createRebill().then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['rebill']).to.deep.equal(rebill);
+			return createOrderController.createRebill(session, product_schedules, transaction_products).then(result => {
+				expect(result).to.deep.equal(rebill);
 			});
 		});
 
@@ -1013,10 +889,9 @@ describe('createOrder', function () {
 			let session = getValidSession();
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
-			createOrderController.parameters.set('session', session);
 
 			expect(() => {
-				createOrderController.createRebill();
+				createOrderController.createRebill(session);
 			}).to.throw('[500] Nothing to add to the rebill.');
 
 		});
@@ -1067,44 +942,21 @@ describe('createOrder', function () {
 				}
 			});
 
-			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-			const createOrderController = new CreateOrderController();
-
-			createOrderController.parameters.set('rebill', rebill);
-
-			return createOrderController.processRebill().then(result => {
-				expect(result).to.equal(true);
-				let transaction = createOrderController.parameters.store['transaction'];
-
-				expect(transaction).to.deep.equal(register_response.parameters.store['transaction']);
-
-
-			});
-
-		});
-
-	});
-
-	describe('buildInfoObject', () => {
-
-		it('successfully builds and sets the info object', () => {
+			let TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
+			const transactionHelperController = new TransactionHelperController();
 
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('amount', 12.99);
-			createOrderController.parameters.set('rebill', getValidRebill());
-			createOrderController.parameters.set('transactions', getValidTransactions());
-			createOrderController.parameters.set('session', getValidSession());
-			createOrderController.parameters.set('productschedules', getValidProductScheduleGroups());
-			createOrderController.parameters.set('customer', getValidCustomer());
-			createOrderController.parameters.set('rebill', getValidRebill());
-			createOrderController.parameters.set('campaign', getValidCampaign());
-			createOrderController.parameters.set('creditcard', getValidCreditCard());
-			createOrderController.parameters.set('result', 'success');
+			return createOrderController.processRebill(rebill, {}).then(result => {
+				expect(result).to.deep.equal({
+					creditcard: plaintext_creditcard,
+					transactions: transactions,
+					result: response_type,
+					amount: transactionHelperController.getTransactionsAmount(transactions)
+				});
 
-			return createOrderController.buildInfoObject().then(result => {
-				expect(result).to.equal(true);
+
 			});
 
 		});
@@ -1119,7 +971,6 @@ describe('createOrder', function () {
 			let session = getValidSession();
 			let product_schedules = getValidProductScheduleGroups(null, true);
 			let product_groups = getValidTransactionProducts(null, true);
-			let info = getValidInfo();
 			let transactions = getValidTransactions();
 
 			PermissionTestGenerators.givenAnyUser();
@@ -1130,6 +981,9 @@ describe('createOrder', function () {
 					return Promise.resolve(true);
 				}
 				updateRebillState(){
+					return Promise.resolve(true);
+				}
+				updateRebillUpsell(){
 					return Promise.resolve(true);
 				}
 			});
@@ -1171,15 +1025,12 @@ describe('createOrder', function () {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('rebill', rebill);
-			createOrderController.parameters.set('session', session);
-			createOrderController.parameters.set('productschedules', product_schedules);
-			createOrderController.parameters.set('products', product_groups);
-			createOrderController.parameters.set('info', info);
-			createOrderController.parameters.set('transactions', transactions);
-			createOrderController.parameters.set('result', 'success');
-
-			return createOrderController.postProcessing()
+			return Promise.all([
+				createOrderController.reversePreviousRebill(rebill),
+				createOrderController.incrementMerchantProviderSummary(transactions),
+				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups),
+				createOrderController.addRebillToStateMachine('success', rebill)
+			]);
 		});
 
 		it('handles no watermark products', () => {
@@ -1189,7 +1040,6 @@ describe('createOrder', function () {
 			delete session.watermark;
 			let product_schedules = getValidProductScheduleGroups(null, true);
 			let product_groups = getValidTransactionProducts(null, true);
-			let info = getValidInfo();
 			let transactions = getValidTransactions();
 
 			PermissionTestGenerators.givenAnyUser();
@@ -1200,6 +1050,9 @@ describe('createOrder', function () {
 					return Promise.resolve(true);
 				}
 				updateRebillState(){
+					return Promise.resolve(true);
+				}
+				updateRebillUpsell(){
 					return Promise.resolve(true);
 				}
 			});
@@ -1241,15 +1094,12 @@ describe('createOrder', function () {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('rebill', rebill);
-			createOrderController.parameters.set('session', session);
-			createOrderController.parameters.set('productschedules', product_schedules);
-			createOrderController.parameters.set('products', product_groups);
-			createOrderController.parameters.set('info', info);
-			createOrderController.parameters.set('transactions', transactions);
-			createOrderController.parameters.set('result', 'success');
-
-			return createOrderController.postProcessing();
+			return Promise.all([
+				createOrderController.reversePreviousRebill(rebill),
+				createOrderController.incrementMerchantProviderSummary(transactions),
+				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups),
+				createOrderController.addRebillToStateMachine('success', rebill)
+			]);
 		});
 
 		it('handles no watermark product schedules', () => {
@@ -1259,7 +1109,6 @@ describe('createOrder', function () {
 			delete session.watermark.product_schedules;
 			let product_schedules = getValidProductScheduleGroups(null, true);
 			let product_groups = getValidTransactionProducts(null, true);
-			let info = getValidInfo();
 			let transactions = getValidTransactions();
 
 			PermissionTestGenerators.givenAnyUser();
@@ -1270,6 +1119,9 @@ describe('createOrder', function () {
 					return Promise.resolve(true);
 				}
 				updateRebillState(){
+					return Promise.resolve(true);
+				}
+				updateRebillUpsell(){
 					return Promise.resolve(true);
 				}
 			});
@@ -1311,25 +1163,21 @@ describe('createOrder', function () {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('rebill', rebill);
-			createOrderController.parameters.set('session', session);
-			createOrderController.parameters.set('productschedules', product_schedules);
-			createOrderController.parameters.set('products', product_groups);
-			createOrderController.parameters.set('info', info);
-			createOrderController.parameters.set('transactions', transactions);
-			createOrderController.parameters.set('result', 'success');
-
-			return createOrderController.postProcessing()
+			return Promise.all([
+				createOrderController.reversePreviousRebill(rebill),
+				createOrderController.incrementMerchantProviderSummary(transactions),
+				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups),
+				createOrderController.addRebillToStateMachine('success', rebill)
+			]);
 
 		});
 
-		it('marks rebill as no_process if register result unsuccessful', () => {
+		it('marks rebill as no_process if register result unsuccessful', async () => {
 
 			let rebill = getValidRebill();
 			let session = getValidSession();
 			let product_schedules = getValidProductScheduleGroups(null, true);
 			let product_groups = getValidTransactionProducts(null, true);
-			let info = getValidInfo();
 			let transactions = getValidTransactions();
 
 			PermissionTestGenerators.givenAnyUser();
@@ -1377,17 +1225,15 @@ describe('createOrder', function () {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('rebill', rebill);
-			createOrderController.parameters.set('session', session);
-			createOrderController.parameters.set('productschedules', product_schedules);
-			createOrderController.parameters.set('products', product_groups);
-			createOrderController.parameters.set('info', info);
-			createOrderController.parameters.set('transactions', transactions);
-			createOrderController.parameters.set('result', 'decline');
+			await Promise.all([
+				createOrderController.reversePreviousRebill(rebill),
+				createOrderController.incrementMerchantProviderSummary(transactions),
+				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups),
+				createOrderController.addRebillToStateMachine('decline', rebill)
+			]);
 
-			return createOrderController.postProcessing().then(() => {
-				expect(rebill.no_process).to.be.true;
-			});
+			expect(rebill.no_process).to.be.true;
+
 		});
 
 	});
@@ -1413,9 +1259,7 @@ describe('createOrder', function () {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('rebill', rebill);
-
-			return createOrderController.addRebillToQueue().then(result => {
+			return createOrderController.addRebillToQueue(rebill).then(result => {
 				expect(result).to.equal(true);
 			});
 
@@ -1423,85 +1267,9 @@ describe('createOrder', function () {
 
 	});
 
-	describe('setProductSchedules', () => {
+	describe('getCreditCard', () => {
 
-		it('successfully sets product schedules', () => {
-
-			let event = getValidEventBody();
-
-			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-			const createOrderController = new CreateOrderController();
-
-			createOrderController.parameters.set('event', event);
-
-			return createOrderController.setProductSchedules().then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['productschedules']).to.equal(event.product_schedules);
-			});
-
-		});
-
-	});
-
-	describe('setProducts', () => {
-
-		it('successfully sets product schedules', () => {
-
-			let event = getValidEventBody();
-
-			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-			const createOrderController = new CreateOrderController();
-
-			createOrderController.parameters.set('event', event);
-
-			return createOrderController.setProducts().then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['products']).to.equal(event.products);
-			});
-
-		});
-
-	});
-
-	describe('setTransactionSubType', () => {
-
-		it('successfully sets the transaction subtype', () => {
-
-			let event = getValidEventBody();
-
-			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-			const createOrderController = new CreateOrderController();
-
-			createOrderController.parameters.set('event', event);
-
-			return createOrderController.setTransactionSubType().then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['transactionsubtype']).to.equal(event.transaction_subtype);
-			});
-
-		});
-
-		it('returns "main" when event doesn\'t have a transaction subtype', () => {
-
-			let event = getValidEventBody();
-
-			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-			const createOrderController = new CreateOrderController();
-
-			delete event.transaction_subtype;
-			createOrderController.parameters.set('event', event);
-
-			return createOrderController.setTransactionSubType().then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['transactionsubtype']).to.equal('main');
-			});
-
-		});
-	});
-
-	describe('setCreditCard', () => {
-
-		it('successfully sets a creditcard', () => {
+		it('successfully gets a creditcard', () => {
 
 			let event = getValidEventBody();
 			let customer = getValidCustomer();
@@ -1539,18 +1307,14 @@ describe('createOrder', function () {
 			const createOrderController = new CreateOrderController();
 
 			createOrderController.parameters.set('event', event);
-			createOrderController.parameters.set('customer', customer);
 
-			return createOrderController.setCreditCard().then(result => {
-				expect(result).to.equal(true);
-				let set_creditcard = createOrderController.parameters.store['creditcard'];
-
-				delete set_creditcard.id;
-				delete set_creditcard.created_at;
-				delete set_creditcard.updated_at;
-				delete set_creditcard.account;
-				delete set_creditcard.customers;
-				expect(set_creditcard).to.deep.equal(event.creditcard);
+			return createOrderController.getCreditCard(event, customer).then(result => {
+				delete result.id;
+				delete result.created_at;
+				delete result.updated_at;
+				delete result.account;
+				delete result.customers;
+				expect(result).to.deep.equal(event.creditcard);
 			})
 
 		});
@@ -1567,6 +1331,10 @@ describe('createOrder', function () {
 				assureCreditCard () {
 					throw new Error()
 				}
+				sanitize(sanitization) {
+					expect(sanitization).to.be.false;
+					return this;
+				}
 			};
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
@@ -1576,17 +1344,16 @@ describe('createOrder', function () {
 
 			createOrderController.parameters.set('event', event);
 
-			return createOrderController.setCreditCard().then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['creditcard']).to.be.undefined;
+			return createOrderController.getCreditCard(event).then(result => {
+				expect(result).to.be.undefined;
 			});
 
 		});
 	});
 
-	describe('setCampaign', () => {
+	describe('getCampaign', () => {
 
-		it('successfully sets the campaign', () => {
+		it('successfully gets the campaign', () => {
 
 			let campaign = getValidCampaign();
 
@@ -1603,20 +1370,17 @@ describe('createOrder', function () {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('session', getValidSession());
-
-			return createOrderController.setCampaign().then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['campaign']).to.deep.equal(campaign);
+			return createOrderController.getCampaign(getValidSession()).then(result => {
+				expect(result).to.deep.equal(campaign);
 			});
 
 		});
 
 	});
 
-	describe('setCustomer', () => {
+	describe('getCustomer', () => {
 
-		it('successfully sets a customer', () => {
+		it('successfully gets a customer', () => {
 
 			let event = getValidEventBody();
 			let customer = getValidCustomer();
@@ -1635,11 +1399,9 @@ describe('createOrder', function () {
 			const createOrderController = new CreateOrderController();
 
 			createOrderController.parameters.set('event', event);
-			createOrderController.parameters.set('session', getValidSession());
 
-			return createOrderController.setCustomer().then(result => {
-				expect(result).to.equal(true);
-				expect(createOrderController.parameters.store['customer']).to.deep.equal(customer);
+			return createOrderController.getCustomer(event, getValidSession()).then(result => {
+				expect(result).to.deep.equal(customer);
 			});
 
 		});
@@ -1662,9 +1424,8 @@ describe('createOrder', function () {
 			const createOrderController = new CreateOrderController();
 
 			createOrderController.parameters.set('event', event);
-			createOrderController.parameters.set('session', getValidSession());
 
-			return createOrderController.setCustomer()
+			return createOrderController.getCustomer(event, getValidSession())
 				.catch(error => {
 					expect(error.name).to.equal('Server Error');
 				});
@@ -1688,16 +1449,15 @@ describe('createOrder', function () {
 			const createOrderController = new CreateOrderController();
 
 			createOrderController.parameters.set('event', event);
-			createOrderController.parameters.set('session', getValidSession());
 
-			return createOrderController.setCustomer()
+			return createOrderController.getCustomer(event, getValidSession())
 				.catch(error => {
 					expect(error.name).to.equal('Server Error');
 				});
 		});
 	});
 
-	describe('setPreviousRebill', () => {
+	describe('getPreviousRebill', () => {
 
 		it('retrieves rebill', () => {
 			const event = getValidEventBody();
@@ -1717,9 +1477,8 @@ describe('createOrder', function () {
 
 			createOrderController.parameters.set('event', event);
 
-			return createOrderController.setPreviousRebill().then(() => {
-				const previous_rebill = createOrderController.parameters.get('previous_rebill', {fatal: false});
-				expect(previous_rebill).to.equal(rebill);
+			return createOrderController.getPreviousRebill(event).then((result) => {
+				expect(result).to.equal(rebill);
 			});
 		});
 
@@ -1727,11 +1486,11 @@ describe('createOrder', function () {
 			const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('event', getValidEventBody());
+			const event = getValidEventBody();
+			createOrderController.parameters.set('event', event);
 
-			return createOrderController.setPreviousRebill().then(() => {
-				const rebill = createOrderController.parameters.get('previous_rebill', {fatal: false})
-				expect(rebill).to.be.null;
+			return createOrderController.getPreviousRebill(event).then((result) => {
+				expect(result).to.be.undefined;
 			});
 		});
 	});
@@ -1779,10 +1538,7 @@ describe('createOrder', function () {
 			const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
 
-			createOrderController.parameters.set('rebill', rebill);
-			createOrderController.parameters.set('previous_rebill', previous_rebill);
-
-			return createOrderController.reversePreviousRebill()
+			return createOrderController.reversePreviousRebill(rebill, previous_rebill)
 				.then(() => {
 					expect(reversed_transactions).to.deep.equal(transactions);
 				});
@@ -1908,6 +1664,9 @@ describe('createOrder', function () {
 
 					return Promise.resolve(register_response);
 				}
+				reverseTransaction(){
+					return Promise.resolve();
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'MerchantProviderSummary.js'), class {
@@ -1945,7 +1704,7 @@ describe('createOrder', function () {
 
 			createOrderController.parameters.set('event', event);
 
-			return createOrderController.createOrder().then(() => {
+			return createOrderController.createOrder(event).then(() => {
 				let info = createOrderController.parameters.get('info');
 				expect(mvu.validateModel(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
 			});

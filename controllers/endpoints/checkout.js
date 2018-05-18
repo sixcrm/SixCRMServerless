@@ -109,7 +109,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 
 		this.createOrderController.parameters.set('event', event);
 
-		return this.createOrderController.createOrder().then(result => {
+		return this.createOrderController.createOrder(event).then(result => {
 			this.parameters.set('createorderresponse', result);
 			return Promise.resolve(true);
 		});
