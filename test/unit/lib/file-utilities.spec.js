@@ -79,7 +79,7 @@ describe('lib/file-utilities', () => {
 			});
 		});
 
-		it('throws error from fs readdir', () => {
+		xit('throws error from fs readdir', () => {
 
 			mockery.registerMock('fs', {
 				readdir: (directory_path, callback) => {
