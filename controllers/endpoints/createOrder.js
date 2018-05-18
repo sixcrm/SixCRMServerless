@@ -410,7 +410,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		if (result == 'success') {
 
-			return this.updateRebillState()
+			return this.updateRebillState(rebill)
 				.then(() => this.addRebillToQueue(rebill))
 
 		} else {
