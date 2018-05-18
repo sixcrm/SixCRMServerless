@@ -1,20 +1,20 @@
 const chai = require('chai');
 const expect = chai.expect;
 const _ = require('lodash');
+const stringutilities = global.SixCRM.routes.include('lib','string-utilities.js');
 
 describe('controllers/providers/sqs-provider', () => {
 
-	let copy_stage = process.env.stage;
+	let copy_stage = stringutilities.clone(process.env.stage);
 
 	beforeEach(() => {
 		// cleanup
 		delete require.cache[require.resolve(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'))];
 	});
 
-	after(() => {
-		process.env.stage = copy_stage;
+	afterEach(() => {
+		global.SixCRM.configuration.handleStage(copy_stage);
 	});
-
 
 	describe('getQueueARN', () => {
 
