@@ -257,20 +257,27 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	createRebill(session, productschedules, products) {
+	createRebill(session, product_schedules, products) {
 
 		du.debug('Create Rebill');
 
-		if (!productschedules && !products) {
+		if (!product_schedules && !products) {
 			throw eu.getError('server', 'Nothing to add to the rebill.');
 		}
 
-		return this.rebillCreatorHelperController.createRebill({
+		let argumentation = {
 			session,
-			productschedules,
-			products,
 			day: -1
-		});
+		};
+
+		if (product_schedules) {
+			argumentation.product_schedules = product_schedules;
+		}
+		if (products) {
+			argumentation.products = products;
+		}
+
+		return this.rebillCreatorHelperController.createRebill(argumentation);
 
 	}
 
