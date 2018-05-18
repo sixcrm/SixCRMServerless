@@ -8,7 +8,7 @@ const AccountController = global.SixCRM.routes.include('entities', 'Account.js')
 
 module.exports = class TermsAndConditions {
 
-	async getLatestTermsAndConditions(role) {
+	async getLatestTermsAndConditions(role, account = null) {
 
 		du.debug('Get Latest Terms And Conditions');
 
@@ -16,7 +16,7 @@ module.exports = class TermsAndConditions {
 		let directory = (role == 'user')?role:'user_acl/'+role;
 
 		const terms_and_conditions_meta = global.SixCRM.routes.include('resources', 'terms-and-conditions/'+directory+'/terms-and-conditions.json');
-		const terms_and_conditions_document = await this.acquireDocument(directory);
+		const terms_and_conditions_document = await this.acquireDocument(directory, account);
 
 		const terms_and_conditions = {
 			title: terms_and_conditions_meta.title,
@@ -30,33 +30,33 @@ module.exports = class TermsAndConditions {
 
 	}
 
-	async acquireDocument(directory){
+	async acquireDocument(directory, account){
 
 		du.debug('Acquire Document');
 
 		let tokenized_document = await fileutilities.getFileContents(global.SixCRM.routes.path('resources', 'terms-and-conditions/'+directory+'/terms-and-conditions.md'));
 
-		let tokens = await this.getTokenValues();
+		let tokens = await this.getTokenValues(account);
 
 		return parserutilities.parse(tokenized_document, tokens);
 
 	}
 
-	async getTokenValues(){
+	async getTokenValues(account = null){
 
 		du.debug('Get Token Values');
 
 		let tokens = {};
 
-		if(_.has(global, 'account')){
+		if(!_.isNull(account)){
 
 			let accountController = new AccountController();
 
 			accountController.disableACLs();
-			let account = await accountController.get({id: global.account});
+			account = await accountController.get({id: account});
 			accountController.enableACLs();
 
-			if(!_.isNull(account)){
+			if(!_.isNull(account) && _.has(account, 'id')){
 
 				tokens.account = account;
 

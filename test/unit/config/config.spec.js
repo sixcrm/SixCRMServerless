@@ -6,14 +6,10 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 
 describe('config', () => {
 
-	let stage;
-
-	beforeEach(() => {
-		stage = global.SixCRM.configuration.stage;
-	});
+	let stage = global.SixCRM.configuration.stage;
 
 	afterEach(() => {
-		global.SixCRM.configuration.stage = stage;
+		global.SixCRM.configuration.handleStage(stage);
 	});
 
 	describe('serverless', () => {
@@ -43,20 +39,25 @@ describe('config', () => {
 
 	describe('site config', () => {
 
-		let stages = [];
+		it('validates all site configs', () => {
 
-		for (let stage in global.SixCRM.configuration.stages) {
-			stages.push(global.SixCRM.configuration.stages[stage]);
-		}
+			let stages = [];
 
-		arrayutilities.map(stages, (stage) => {
-			it('should be valid for ' + stage, () => {
+			for (let stage in global.SixCRM.configuration.stages) {
+				stages.push(global.SixCRM.configuration.stages[stage]);
+			}
 
-				global.SixCRM.configuration.stage = stage;
-				let site_config = global.SixCRM.configuration.getSiteConfig();
+			arrayutilities.map(stages, (stage) => {
+				it('should be valid for ' + stage, () => {
 
-				mvu.validateModel(site_config, global.SixCRM.routes.path('test', 'unit/config/site_config.json'))
+					global.SixCRM.configuration.stage = stage;
+					let site_config = global.SixCRM.configuration.getSiteConfig();
+
+					mvu.validateModel(site_config, global.SixCRM.routes.path('test', 'unit/config/site_config.json'));
+
+				});
 			});
+
 		});
 
 

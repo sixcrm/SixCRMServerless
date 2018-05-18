@@ -412,7 +412,7 @@ module.exports = class SQSProvider extends AWSProvider {
 
 			// Locally SQS does not support FIFO
 			// This is really ugly, but at least its isolated to one place
-			if (global.SixCRM.configuration.isLocal() && params.Attributes.FifoQueue === 'true') {
+			if (global.SixCRM.configuration.isLocal() && objectutilities.hasRecursive(params, 'Attributes.Attributes.FifoQueue') && params.Attributes.FifoQueue === 'true') {
 
 				delete params.Attributes.FifoQueue;
 				delete params.Attributes.ContentBasedDeduplication;

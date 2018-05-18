@@ -42,40 +42,12 @@ module.exports = class InviteUtilities extends HelperController{
 
 	}
 
-	_getAPIDomain(subdomain = null){
-
-		du.debug('Get API Domain');
-
-		let stage = global.SixCRM.configuration.stage;
-		let seperator = '-';
-		let domain = global.SixCRM.configuration.site_config.site.domain;
-		let path_seperator = '.';
-
-		if(_.includes(['priority','production'], stage)){
-			seperator = '';
-			stage = '';
-		}
-
-		if(_.isNull(subdomain)){
-			path_seperator = ''
-		}
-
-		return [
-			stage,
-			seperator,
-			subdomain,
-			path_seperator,
-			domain
-		].join('');
-
-	}
-
 	_buildInviteLink(hash){
 
 		du.debug('Build Invite Link');
 
 		let link_tokens = {
-			api_domain: this._getAPIDomain(),
+			api_domain: global.SixCRM.configuration.getSubdomainPath('admin'),
 			hash: hash
 		};
 

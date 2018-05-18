@@ -586,7 +586,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 				constructor(){}
 
 				sendEmail(email){
-					
+
 					expect(email).to.be.a('object');
 					expect(email).to.have.property('recepient_emails');
 					expect(email).to.have.property('recepient_name');
@@ -617,63 +617,6 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			let result = await inviteHelperClass._sendEmailToInvitedUser(invite, link);
 			expect(result).to.equal(true);
-
-		});
-
-	});
-
-	describe('_getAPIDomain', () => {
-
-		let configuration;
-
-		beforeEach(() => {
-
-			configuration = global.SixCRM.configuration;
-
-		});
-
-		afterEach(() => {
-
-			global.SixCRM.configuration = configuration;
-
-		});
-
-		it('correctly establishes the domain', () => {
-
-			global.SixCRM.configuration.site_config.site.domain = 'blergoff.jerp';
-			global.SixCRM.configuration.stage = 'parmesean';
-
-			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
-			let inviteHelperClass = new InviteHelperClass();
-
-			let domain = inviteHelperClass._getAPIDomain('admin');
-			expect(domain).to.equal('parmesean-admin.blergoff.jerp');
-
-		});
-
-		it('correctly establishes the domain', () => {
-
-			global.SixCRM.configuration.site_config.site.domain = 'blergoff.jerp';
-			global.SixCRM.configuration.stage = 'production';
-
-			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
-			let inviteHelperClass = new InviteHelperClass();
-
-			let domain = inviteHelperClass._getAPIDomain('admin');
-			expect(domain).to.equal('admin.blergoff.jerp');
-
-		});
-
-		it('correctly establishes the domain', () => {
-
-			global.SixCRM.configuration.site_config.site.domain = 'blergoff.jerp';
-			global.SixCRM.configuration.stage = 'production';
-
-			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
-			let inviteHelperClass = new InviteHelperClass();
-
-			let domain = inviteHelperClass._getAPIDomain();
-			expect(domain).to.equal('blergoff.jerp');
 
 		});
 

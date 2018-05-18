@@ -31,11 +31,14 @@ module.exports.graphObj = new GraphQLObjectType({
 			args: {
 				role: {
 					type: GraphQLString
+				},
+				account: {
+					type: GraphQLString
 				}
 			},
 			resolve: function(root, args) {
 				const termsAndConditionsController = new TermsAndConditionsController();
-				return termsAndConditionsController.getLatestTermsAndConditions(args.role);
+				return termsAndConditionsController.getLatestTermsAndConditions(args.role, args.account);
 			}
 		},
 	})
