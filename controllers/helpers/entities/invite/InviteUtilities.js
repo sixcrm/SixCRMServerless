@@ -51,7 +51,7 @@ module.exports = class InviteUtilities extends HelperController{
 			hash: hash
 		};
 
-		let link_template = 'https://{{api_domian}}/acceptinvite/{{hash}}';
+		let link_template = 'https://{{api_domain}}/acceptinvite/{{hash}}';
 
 		return parserutilities.parse(link_template, link_tokens);
 

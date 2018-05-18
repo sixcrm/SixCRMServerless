@@ -622,6 +622,41 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 	});
 
+	describe('_buildInviteLink', () => {
+
+		it('successfully builds a invite link', () => {
+
+			let hash = random.createRandomString(10);
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			let link = inviteHelperClass._buildInviteLink(hash);
+			expect(link).to.have.string('.com');
+			expect(link).to.have.string('https://');
+			expect(link).to.have.string('acceptinvite/'+hash);
+
+		});
+
+	});
+
+	/*
+	_buildInviteLink(hash){
+
+		du.debug('Build Invite Link');
+
+		let link_tokens = {
+			api_domain: global.SixCRM.configuration.getSubdomainPath('admin'),
+			hash: hash
+		};
+
+		let link_template = 'https://{{api_domain}}/acceptinvite/{{hash}}';
+
+		return parserutilities.parse(link_template, link_tokens);
+
+	}
+	*/
+
 	describe('acknowledge', () => {
 
 	});
