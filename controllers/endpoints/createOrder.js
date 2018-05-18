@@ -2,6 +2,7 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
@@ -107,7 +108,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		let session = await this.hydrateSession(event);
 		let customer = await this.getCustomer(event, session);
 
-		let [creditcard, campaign, previous_rebill] = await Promise.all([
+		let [rawcreditcard, creditcard, campaign, previous_rebill] = await Promise.all([
+			this.getRawCreditCard(event),
 			this.getCreditCard(event, customer),
 			this.getCampaign(session),
 			this.getPreviousRebill(event)
@@ -119,7 +121,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		this.validateSession(session);
 
 		let rebill = await this.createRebill(session, event.product_schedules, event.products);
-		let processed_rebill = await this.processRebill(rebill, event);
+		let processed_rebill = await this.processRebill(rebill, event, rawcreditcard);
 
 		// We'll leave this one in for now to not break too many tests.
 		this.parameters.set('info', {
@@ -182,9 +184,25 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
+	async getRawCreditCard(event) {
+
+		du.debug('Get Raw Credit Card');
+
+		let rawcreditcard;
+		if (_.has(event, 'creditcard')) {
+
+			let cloned_card = objectutilities.clone(event.creditcard);
+			rawcreditcard = this.creditCardHelperController.formatRawCreditCard(cloned_card);
+
+		}
+
+		return rawcreditcard;
+
+	}
+
 	async getCreditCard(event, customer) {
 
-		du.debug('Set Credit Card');
+		du.debug('Get Credit Card');
 
 		let creditcard;
 		if (_.has(event, 'creditcard')) {
@@ -281,14 +299,14 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	async processRebill(rebill, event) {
+	async processRebill(rebill, event, rawcreditcard) {
 
 		du.debug('Process Rebill');
 
 		let argumentation = {
 			rebill,
 			transactionsubtype: event.transaction_subtype || 'main',
-			creditcard: event.creditcard ? this.creditCardHelperController.formatRawCreditCard(event.creditcard) : undefined
+			creditcard: rawcreditcard
 		};
 
 		let register_response = await this.registerController.processTransaction(argumentation);
