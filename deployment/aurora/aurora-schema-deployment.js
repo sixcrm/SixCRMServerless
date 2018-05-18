@@ -44,7 +44,7 @@ module.exports = class AuroraSchemaDeployment {
 
 		const release = global.SixCRM.configuration.site_config.aurora.release;
 
-		const results = await fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'aurora/migrations'));
+		const results = await fileutilities.getDirectories(global.SixCRM.routes.path('deployment', 'aurora/migrations'));
 
 		du.debug('AuroraSchemaDeployment._getVersionDirectories(): getDirectoryFiles', results);
 
