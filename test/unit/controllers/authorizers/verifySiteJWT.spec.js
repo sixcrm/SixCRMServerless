@@ -85,7 +85,7 @@ function setEnvironmentVariables(){
 
 setEnvironmentVariables();
 
-describe('controllers/authorizers/veryfySiteJWT.js', () => {
+describe('controllers/authorizers/verifySiteJWT.js', () => {
 
 	before(() => {
 		mockery.enable({
