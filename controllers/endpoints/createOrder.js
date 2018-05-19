@@ -115,8 +115,9 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.getPreviousRebill(event)
 		]);
 
-		this.customerController.sanitize(false);
-		[customer, creditcard] = await this.customerController.addCreditCard(customer.id, creditcard);
+		if (!_.isUndefined(creditcard)) {
+			[customer, creditcard] = await this.customerController.addCreditCard(customer.id, creditcard);
+		}
 
 		this.validateSession(session);
 
@@ -305,9 +306,12 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		let argumentation = {
 			rebill,
-			transactionsubtype: event.transaction_subtype || 'main',
-			creditcard: rawcreditcard
+			transactionsubtype: event.transaction_subtype || 'main'
 		};
+
+		if (!_.isUndefined(rawcreditcard)) {
+			argumentation.creditcard = rawcreditcard;
+		}
 
 		let register_response = await this.registerController.processTransaction(argumentation);
 
