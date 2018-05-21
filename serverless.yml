@@ -108,42 +108,42 @@ functions:
     events:
       - schedule:
           rate: rate(1 minute)
-          enabled: true
+          enabled: false
 
   recovertohold:
     handler: handlers/workers/forwardmessage/handlers.recovertohold
     events:
       - schedule:
           rate: cron(0 1 ? * FRI *)
-          enabled: true
+          enabled: false
 
   holdtopending:
     handler: handlers/workers/forwardmessage/handlers.holdtopending
     events:
       - schedule:
           rate: rate(1 minute)
-          enabled: true
+          enabled: false
 
   pendingtoshipped:
     handler: handlers/workers/forwardmessage/handlers.pendingtoshipped
     events:
       - schedule:
           rate: rate(6 hours)
-          enabled: true
+          enabled: false
 
   shippedtodelivered:
     handler: handlers/workers/forwardmessage/handlers.shippedtodelivered
     events:
       - schedule:
           rate: rate(6 hours)
-          enabled: true
+          enabled: false
 
   deliveredtoarchive:
     handler: handlers/workers/forwardmessage/handlers.deliveredtoarchive
     events:
       - schedule:
           rate: rate(1 minute)
-          enabled: true
+          enabled: false
     environment:
       archivefilter: 'all'
 
@@ -152,7 +152,7 @@ functions:
     events:
       - schedule:
           rate: rate(1 minute)
-          enabled: true
+          enabled: false
     environment:
       archivefilter: 'noship'
 
@@ -161,7 +161,7 @@ functions:
     events:
       - schedule:
           rate: rate(1 minute)
-          enabled: true
+          enabled: false
     environment:
       archivefilter: 'all'
 
@@ -170,7 +170,7 @@ functions:
     events:
       - schedule:
           rate: rate(6 hours)
-          enabled: true
+          enabled: false
     environment:
       archivefilter: 'twoattempts'
 
@@ -179,7 +179,7 @@ functions:
     events:
       - schedule:
           rate: rate(1 minute)
-          enabled: true
+          enabled: false
     environment:
       archivefilter: 'all'
 
@@ -198,7 +198,7 @@ functions:
     events:
       - schedule:
           rate: rate(10 minutes)
-          enabled: true
+          enabled: false
 
 ########################
 # SNS Workers
