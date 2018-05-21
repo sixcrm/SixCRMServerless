@@ -4,13 +4,15 @@ const fs = require('fs');
 const glob = require('glob');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const ajv = global.SixCRM.routes.include('controllers', 'providers/ajv-provider.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const schemaWithNoReferences = `${__dirname}/model/sql_pagination.json`;
 const schemaWithReferences = `${__dirname}/model/sixcrmidentifier.json`;
 const schemaWithNestedReferences = `${__dirname}/model/entity.json`;
 
-glob.sync(`${__dirname}/model/*.json`).map(file => ajv.addSchema(require(file)));
+arrayutilities.map(glob.sync(`${__dirname}/model/*.json`), file => {
+	global.SixCRM.validation.addSchema(require(file))
+});
 
 describe('lib/model-validator-utilities', () => {
 

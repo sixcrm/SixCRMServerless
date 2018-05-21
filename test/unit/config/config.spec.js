@@ -1,10 +1,9 @@
 const chai = require('chai');
 const expect = chai.expect;
-const ajv = global.SixCRM.routes.include('controllers', 'providers/ajv-provider.js');
 const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-ajv.addSchema(require(global.SixCRM.routes.path('test', 'unit/config/serverless.json')));
+global.SixCRM.validation.addSchema(require(global.SixCRM.routes.path('test', 'unit/config/serverless.json')));
 
 describe('config', () => {
 

@@ -3,6 +3,7 @@ const du = require('./lib/debug-utilities');
 const Routes = require('./routes.js');
 const Configuration = require('./core/Configuration');
 const LocalCache = require('./core/LocalCache');
+const ajv = require('./controllers/providers/ajv-provider');
 
 class SixCRM {
 
@@ -13,7 +14,7 @@ class SixCRM {
 
 		this.configuration = new Configuration(this.routes);
 		this.localcache = new LocalCache();
-
+		this.validation = ajv;
 	}
 
 	setResource(identifer, resource) {
