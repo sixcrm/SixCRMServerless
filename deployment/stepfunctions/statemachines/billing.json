@@ -1,0 +1,108 @@
+{
+  "Comment": "The Billing State Machine",
+  "StartAt": "Bill",
+  "States": {
+    "Bill": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:GetTrackingNumber",
+      "Next": "Trigger Fulfillment",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Catch": [
+        {
+          "ErrorEquals": ["Declined"],
+          "Next": "Get Recover Date"
+        }
+      ]
+    },
+    "Trigger Fulfillment": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:GetTrackingNumber",
+      "End": true,
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "Get Recover Date": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:GetTrackingNumber",
+      "Next": "Is Recover Date?",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "Is Recover Date?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.status",
+          "StringEquals": "YES",
+          "Next": "Recover"
+        }
+      ],
+      "Default": "Wait X Seconds"
+    },
+    "Wait X Seconds": {
+      "Type": "Wait",
+      "SecondsPath": "$.wait_time",
+      "Next": "Get Recover Date"
+    },
+    "Recover": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:GetTrackingNumber",
+      "Next": "Trigger Fulfillment",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Catch": [
+        {
+          "ErrorEquals": ["Declined"],
+          "Next": "Recover Declined"
+        }
+      ],
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "Recover Declined": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:GetTrackingNumber",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    }
+  }
+}

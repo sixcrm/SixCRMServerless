@@ -1,0 +1,96 @@
+{
+  "Comment": "The Fulfillment State Machine",
+  "StartAt": "Hold",
+  "States": {
+    "Hold": {
+      "Type": "Wait",
+      "SecondsPath": "$.wait_time",
+      "Next": "Trigger Fulfillment",
+      "ResultPath": "$.guid"
+    },
+    "Trigger Fulfillment": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:GetTrackingNumber",
+      "Next": "Get Tracking Number",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 5,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "Get Tracking Number": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:GetTrackingNumber",
+      "Next": "Has Tracking Number?",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "Has Tracking Number?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.status",
+          "StringEquals": "FAILED",
+          "Next": "Acquire Tracking Failure"
+        },
+        {
+          "Variable": "$.status",
+          "StringEquals": "SUCCEEDED",
+          "Next": "Trigger Tracking"
+        }
+      ],
+      "Default": "Wait X Seconds"
+    },
+    "Wait X Seconds": {
+      "Type": "Wait",
+      "SecondsPath": "$.wait_time",
+      "Next": "Get Tracking Number"
+    },
+    "Acquire Tracking Failure": {
+      "Type": "Fail",
+      "Cause": "AWS Batch Job Failed",
+      "Error": "Trigger Fulfillment returned FAILED"
+    },
+    "Trigger Tracking": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:CheckJob",
+      "InputPath": "$.guid",
+      "End": true,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    }
+  }
+}

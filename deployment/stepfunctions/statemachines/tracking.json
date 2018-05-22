@@ -1,0 +1,63 @@
+{
+  "Comment": "The Fulfillment State Machine",
+  "StartAt": "Get Tracking Information",
+  "States": {
+    "Get Tracking Information": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:GetTrackingNumber",
+      "Next": "Is Delivered?",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 5,
+          "MaxAttempts": 5,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "Is Delivered?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.status",
+          "StringEquals": "DELIVERED",
+          "Next": "Archive"
+        }
+      ],
+      "Default": "Wait X Seconds"
+    },
+    "Wait X Seconds": {
+      "Type": "Wait",
+      "SecondsPath": "$.wait_time",
+      "Next": "Get Tracking Information"
+    },
+    "Archive": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:CheckJob",
+      "InputPath": "$.guid",
+      "End": true,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    }
+  }
+}
