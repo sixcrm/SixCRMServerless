@@ -91,6 +91,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		this.initialize();
 
+		this.event_type = 'order';
+
 	}
 
 	execute(event) {
@@ -125,6 +127,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		let processed_rebill = await this.processRebill(rebill, event, rawcreditcard);
 
 		// We'll leave this one in for now to not break too many tests.
+		//Technical Debt:  Eliminate
 		this.parameters.set('info', {
 			amount: processed_rebill.amount,
 			transactions: processed_rebill.transactions,
@@ -149,14 +152,20 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			})
 		]);
 
+		let order = await this.orderHelperController.createOrder({
+			rebill,
+			transactions: processed_rebill.transactions,
+			session,
+			customer
+		});
+
+		this.parameters.set('order', order);
+
+		await this.pushEvent();
+
 		return {
 			result: processed_rebill.result,
-			order: await this.orderHelperController.createOrder({
-				rebill,
-				transactions: processed_rebill.transactions,
-				session,
-				customer
-			})
+			order: order
 		};
 
 	}

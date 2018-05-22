@@ -37,13 +37,6 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 			'tracker/read'
 		];
 
-		this.notification_parameters = {
-			type: 'session',
-			action: 'closed',
-			title: 'Completed Session',
-			body: 'A customer has completed a session.'
-		};
-
 		this.parameter_definitions = {
 			execute: {
 				required: {
@@ -64,6 +57,8 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		this.sessionController = new SessionController();
 
 		this.initialize();
+
+		this.event_type = 'confirm';
 
 	}
 
@@ -164,10 +159,13 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		du.debug('Post Processing');
 
-		return AnalyticsEvent.push('confirm', {
-			session,
-			campaign
-		});
+		return Promise.all([
+			this.pushEvent(),
+			AnalyticsEvent.push('confirm', {
+				session,
+				campaign
+			})
+		]);
 
 	}
 

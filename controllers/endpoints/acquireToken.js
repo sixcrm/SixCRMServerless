@@ -39,6 +39,8 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 
 		this.initialize();
 
+		this.event_type = 'click';
+
 	}
 
 	execute(event) {
@@ -105,10 +107,15 @@ module.exports = class AcquireTokenController extends transactionEndpointControl
 		du.debug('Post Processing');
 
 		await this.handleAffiliateInformation();
-		await AnalyticsEvent.push('click', {
-			affiliates: this.parameters.get('affiliates', {fatal: false}),
-			campaign: this.parameters.get('campaign', {fatal: false})
-		});
+
+
+		await Promise.all([
+			this.pushEvent(),
+			AnalyticsEvent.push('click', {
+				affiliates: this.parameters.get('affiliates', {fatal: false}),
+				campaign: this.parameters.get('campaign', {fatal: false})
+			})
+		]);
 
 	}
 

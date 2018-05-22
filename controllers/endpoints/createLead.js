@@ -34,13 +34,6 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 			'smtpprovider/read'
 		];
 
-		this.notification_parameters = {
-			type: 'lead',
-			action: 'created',
-			title: 'New Lead',
-			body: 'A new lead has been created.'
-		};
-
 		this.parameter_definitions = {
 			execute: {
 				required: {
@@ -65,6 +58,8 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 		this.sessionHelperController = new SessionHelperController();
 
 		this.initialize();
+
+		this.event_type = 'lead';
 
 	}
 
@@ -172,11 +167,16 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 		du.debug('Post Processing');
 
-		return AnalyticsEvent.push('lead', {
-			session,
-			campaign,
-			affiliates
-		});
+		return Promise.all(
+			[
+				this.pushEvent(),
+				AnalyticsEvent.push('lead', {
+					session,
+					campaign,
+					affiliates
+				})
+			]
+		);
 
 	}
 
