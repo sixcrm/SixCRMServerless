@@ -7,6 +7,7 @@
   "description": "Backend Processing Lambda Endpoints",
   "main": "index.js",
   "dependencies": {
+    "@adexchange/aeg-limelight-api": "0.0.199",
     "@adexchange/aeg-redis": "0.0.196",
     "@adexchange/aeg-redshift": "0.0.84",
     "ajv": "^6.5.0",
@@ -48,6 +49,7 @@
     "uuid": "^3.2.1",
     "xlsx": "^0.10.5",
     "xml2js": "^0.4.19",
+    "yargs": "^11.0.0",
     "zlib": "^1.0.5"
   },
   "devDependencies": {
