@@ -51,7 +51,7 @@
     "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "@adexchange/aeg-limelight-api": "0.0.202",
+    "@adexchange/aeg-limelight-api": "0.0.205",
     "aws-sdk": "^2.244.1",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
