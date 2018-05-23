@@ -101,7 +101,8 @@
     "lint-eslint": "eslint --ignore-pattern 'coverage/**' --ignore-pattern '**/*test.js' --ignore-pattern '**/*spec.js' '{**/*.js,**/*.json}'",
     "lint-yml": "node_modules/yaml-lint/cli.js **/*.yml",
     "lint": "npm run lint-eslint && npm run lint-yml",
-    "lint-commit": "./tools/lintCommitEslint.sh && ./tools/lintCommitYml.sh"
+    "lint-commit": "./tools/lintCommitEslint.sh && ./tools/lintCommitYml.sh",
+    "test-cli-extract": "SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js extract --crm limelight --client www.globalvoffers.com --user=test --password=test"
   },
   "pre-commit": [
     "lint",

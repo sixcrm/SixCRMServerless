@@ -10,8 +10,8 @@ module.exports.builder = {
 		demand: true,
 		description: 'CRM to process \'l\' for Limelight',
 		nargs: 1,
-		choices: ['l'],
-		default: 'l'
+		choices: ['limelight'],
+		default: 'limelight'
 	},
 	client: {
 		demand: true,
@@ -60,7 +60,7 @@ module.exports.handler = (argv) => {
 
 async function _handler(argv) {
 
-	const crm = argv.crm === 'l' ? 'limelight' : '';
+	const crm = argv.crm;
 	const client = argv.client;
 	const user =  argv.user;
 	const password = argv.password;
@@ -89,6 +89,8 @@ async function _handler(argv) {
 
 	// }
 
-	// do something!
+	const ExtractHandler = require(`../handlers/${crm}-extract-handler`);
+	const handler = new ExtractHandler(args.client, args.user, args.password);
+	await handler.extract();
 
 }
