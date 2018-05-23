@@ -75,13 +75,7 @@ async function _handler(argv) {
 		artifactsDirectory
 	};
 
-	du.info('extract#handler: environment', {
-		crm: args.crm === 'l' ? 'limelight' : '',
-		client: args.client,
-		user: args.user,
-		artifactsDirectory,
-		version: 1
-	});
+	du.info('extract#handler: environment', args);
 
 	// if (argv.startDate) {
 

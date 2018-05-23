@@ -45,11 +45,7 @@ async function _handler(argv) {
 		account
 	};
 
-	du.info('ingest#handler: environment', {
-		account,
-		extractDirectory,
-		version: 1
-	});
+	du.info('ingest#handler: environment', args);
 
 	// if (argv.startDate) {
 
