@@ -7,7 +7,6 @@
   "description": "Backend Processing Lambda Endpoints",
   "main": "index.js",
   "dependencies": {
-    "@adexchange/aeg-limelight-api": "0.0.199",
     "@adexchange/aeg-redis": "0.0.196",
     "@adexchange/aeg-redshift": "0.0.84",
     "ajv": "^6.5.0",
@@ -49,10 +48,10 @@
     "uuid": "^3.2.1",
     "xlsx": "^0.10.5",
     "xml2js": "^0.4.19",
-    "yargs": "^11.0.0",
     "zlib": "^1.0.5"
   },
   "devDependencies": {
+    "@adexchange/aeg-limelight-api": "0.0.199",
     "aws-sdk": "^2.244.1",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
@@ -73,7 +72,8 @@
     "serverless-mocha-plugin": "^1.8.3",
     "serverless-prune-plugin": "^1.3.0",
     "supertest": "^2.0.1",
-    "yaml-lint": "0.0.4"
+    "yaml-lint": "0.0.4",
+    "yargs": "^11.0.0"
   },
   "scripts": {
     "test-environment": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/environment/*.test.js",
