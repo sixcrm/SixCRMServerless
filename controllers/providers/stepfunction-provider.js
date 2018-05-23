@@ -88,6 +88,64 @@ module.exports = class StepFunctionProvider extends AWSProvider{
 
 	}
 
+	async startExecution(parameters){
+
+		du.debug('Start Execution');
+
+		let params = objectutilities.transcribe(
+			{
+				stateMachineArn: 'stateMachineArn'
+			},
+			parameters,
+			{},
+			true
+		);
+
+		params = objectutilities.transcribe(
+			{
+				name: 'name',
+				input: 'input'
+			},
+			parameters,
+			params,
+			false
+		);
+
+		let result = await this.stepfunction.startExecution(params).promise();
+
+		return result;
+
+	}
+
+	async stopExecution(parameters){
+
+		du.debug('Stop Execution');
+
+		let params = objectutilities.transcribe(
+			{
+				executionArn: 'executionArn'
+			},
+			parameters,
+			{},
+			true
+		);
+
+		params = objectutilities.transcribe(
+			{
+				cause: 'cause',
+				error: 'error'
+			},
+			parameters,
+			params,
+			false
+		);
+
+		let result = await this.stepfunction.stopExecution(params).promise();
+
+		return result;
+
+	}
+
 	createStateMachineARN(name){
 
 		du.debug('Create State Machine ARN');
