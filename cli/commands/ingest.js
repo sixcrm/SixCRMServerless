@@ -1,4 +1,5 @@
 const du = require('../../lib/debug-utilities');
+const IngestHandler = require('../handlers/ingest-handler');
 
 module.exports.command = 'ingest';
 
@@ -59,6 +60,7 @@ async function _handler(argv) {
 
 	// }
 
-	// do something!
+	const ingestHandler = new IngestHandler(account, extractDirectory);
+	await ingestHandler.ingest();
 
 }
