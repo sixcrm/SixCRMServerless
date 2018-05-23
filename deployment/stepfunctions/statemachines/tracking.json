@@ -4,18 +4,10 @@
   "States": {
     "Get Tracking Information": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:GetTrackingNumber",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-getTrackingInformation",
       "Next": "Is Delivered?",
       "InputPath": "$.guid",
       "ResultPath": "$.status",
-      "Catch": [
-        {
-          "ErrorEquals": ["States.ALL"],
-          "IntervalSeconds": 5,
-          "MaxAttempts": 5,
-          "BackoffRate": 2.0
-        }
-      ],
       "Retry": [
         {
           "ErrorEquals": [
@@ -36,16 +28,16 @@
           "Next": "Archive"
         }
       ],
-      "Default": "Wait X Seconds"
+      "Default": "Wait 6 Hours"
     },
-    "Wait X Seconds": {
+    "Wait 6 Hours": {
       "Type": "Wait",
-      "SecondsPath": "$.wait_time",
+      "Seconds": 21600,
       "Next": "Get Tracking Information"
     },
     "Archive": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:CheckJob",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-archive",
       "InputPath": "$.guid",
       "End": true,
       "Retry": [
