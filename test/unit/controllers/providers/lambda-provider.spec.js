@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const mockery = require('mockery');
 
-describe('controllers/providers/lambda-provider', () => {
+xdescribe('controllers/providers/lambda-provider', () => {
 
 	let require_local_copy;
 
@@ -46,7 +46,7 @@ describe('controllers/providers/lambda-provider', () => {
 		});
 	});
 
-	describe('invokeFunction', () => {
+	xdescribe('invokeFunction', () => {
 
 		it('invokes function', () => {
 			const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
@@ -68,7 +68,7 @@ describe('controllers/providers/lambda-provider', () => {
 			});
 		});
 
-		it('invokes function when require local is set to true', (done) => {
+		xit('invokes function when require local is set to true', (done) => {
 
 			const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 			const lambdaprovider = new LambdaProvider();
@@ -101,7 +101,7 @@ describe('controllers/providers/lambda-provider', () => {
 
 		});
 
-		it('throws error when invoke local failed', (done) => {
+		xit('throws error when invoke local failed', (done) => {
 
 			const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 			const lambdaprovider = new LambdaProvider();
@@ -135,7 +135,7 @@ describe('controllers/providers/lambda-provider', () => {
 			});
 		});
 
-		it('throws error from lambda invoke', () => {
+		xit('throws error from lambda invoke', () => {
 			const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 			const lambdaprovider = new LambdaProvider();
 
@@ -285,7 +285,7 @@ describe('controllers/providers/lambda-provider', () => {
 		});
 	});
 
-	describe('getLambdaInstance', () => {
+	xdescribe('getLambdaInstance', () => {
 
 		it('successfully retrieves lambda instance', () => {
 
@@ -332,7 +332,7 @@ describe('controllers/providers/lambda-provider', () => {
 
 	describe('invokeLocal', () => {
 
-		it('successfully executes lambda locally', (done) => {
+		xit('successfully executes lambda locally', (done) => {
 
 			const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 			const lambdaprovider = new LambdaProvider();
