@@ -1,0 +1,55 @@
+{
+  "Comment": "The Carrier Tracking state machine accepts a Shipping Receipt UUID and repeatedly polls the carrier for shipping status until the status is listed in a terminal state (DELIVERED or RETURNED, for example).",
+  "StartAt": "Get Tracking Information",
+  "States": {
+    "Get Tracking Information": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-gettrackinginformation",
+      "Next": "Is Delivered?",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "Is Delivered?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.status",
+          "StringEquals": "DELIVERED",
+          "Next": "Archive"
+        }
+      ],
+      "Default": "Wait 6 Hours"
+    },
+    "Wait 6 Hours": {
+      "Type": "Wait",
+      "Seconds": 21600,
+      "Next": "Get Tracking Information"
+    },
+    "Archive": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-archive",
+      "InputPath": "$.guid",
+      "End": true,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    }
+  }
+}
