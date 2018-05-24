@@ -1,10 +1,10 @@
 {
-  "Comment": "The Fulfillment State Machine",
+  "Comment": "The Carrier Tracking state machine accepts a Shipping Receipt UUID and repeatedly polls the carrier for shipping status until the status is listed in a terminal state (DELIVERED or RETURNED, for example).",
   "StartAt": "Get Tracking Information",
   "States": {
     "Get Tracking Information": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-getTrackingInformation",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-gettrackinginformation",
       "Next": "Is Delivered?",
       "InputPath": "$.guid",
       "ResultPath": "$.status",
@@ -37,7 +37,7 @@
     },
     "Archive": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-archive",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-archive",
       "InputPath": "$.guid",
       "End": true,
       "Retry": [
