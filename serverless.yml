@@ -54,6 +54,8 @@ custom:
   prune:
     automatic: true
     number: 3
+  warmup:
+    prewarm: true
 
 
 functions:
