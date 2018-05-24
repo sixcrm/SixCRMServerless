@@ -100,105 +100,11 @@ functions:
 
 
 ########################
-# State Machine Lambdas (ForwardMessage Relays)
+# State Machine Lambdas
 ########################
 
-  billtohold:
-    handler: handlers/workers/forwardmessage/handlers.billtohold
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: false
-
-  recovertohold:
-    handler: handlers/workers/forwardmessage/handlers.recovertohold
-    events:
-      - schedule:
-          rate: cron(0 1 ? * FRI *)
-          enabled: false
-
-  holdtopending:
-    handler: handlers/workers/forwardmessage/handlers.holdtopending
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: false
-
-  pendingtoshipped:
-    handler: handlers/workers/forwardmessage/handlers.pendingtoshipped
-    events:
-      - schedule:
-          rate: rate(6 hours)
-          enabled: false
-
-  shippedtodelivered:
-    handler: handlers/workers/forwardmessage/handlers.shippedtodelivered
-    events:
-      - schedule:
-          rate: rate(6 hours)
-          enabled: false
-
-  deliveredtoarchive:
-    handler: handlers/workers/forwardmessage/handlers.deliveredtoarchive
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: false
-    environment:
-      archivefilter: 'all'
-
-  holdtoarchive:
-    handler: handlers/workers/forwardmessage/handlers.holdtoarchive
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: false
-    environment:
-      archivefilter: 'noship'
-
-  rebilltoarchive:
-    handler: handlers/workers/forwardmessage/handlers.rebilltoarchive
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: false
-    environment:
-      archivefilter: 'all'
-
-  recovertoarchive:
-    handler: handlers/workers/forwardmessage/handlers.recovertoarchive
-    events:
-      - schedule:
-          rate: rate(6 hours)
-          enabled: false
-    environment:
-      archivefilter: 'twoattempts'
-
-  indextoarchive:
-    handler: handlers/workers/forwardmessage/handlers.indextoarchive
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: false
-    environment:
-      archivefilter: 'all'
-
-  #Technical Debt:  Is this deprecated?
-  sendnotificationstoarchive:
-    handler: handlers/workers/forwardmessage/handlers.sendnotificationstoarchive
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: false
-    environment:
-      archivefilter: 'all'
-
-  pickrebillstobill:
-    handler: handlers/workers/forwardmessage/handlers.pickrebillstobill
-    events:
-      - schedule:
-          rate: rate(10 minutes)
-          enabled: false
+  gettrackinginformation:
+    handler: handlers/statemachine/handlers.gettrackinginformation
 
 ########################
 # SNS Workers
