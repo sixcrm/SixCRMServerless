@@ -8,6 +8,13 @@ module.exports = class LambdaHandler
 {
 	async handle(event, lambdaContext, lambdaCallback, handlerDelegate) {
 
+		if (event.source === 'serverless-plugin-warmup') {
+
+			du.info('Lambda kept warm', event);
+			return lambdaCallback(null, 'Lambda kept warm');
+
+		}
+
 		ServerlessRuntime.setContext(new LambdaContext(lambdaContext));
 
 		try {
