@@ -103,8 +103,15 @@ functions:
 # State Machine Lambdas
 ########################
 
+# Carrier
   gettrackinginformation:
     handler: handlers/statemachine/handlers.gettrackinginformation
+
+  archive:
+    handler: handlers/statemachine/handlers.archive
+
+# Fulfillment
+# Billing
 
 ########################
 # SNS Workers
