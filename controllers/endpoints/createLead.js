@@ -80,7 +80,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 		let session_prototype = this.createSessionPrototype(customer, campaign, affiliates);
 		let session = await this.assureSession(session_prototype);
 
-		await this.postProcessing();
+		await this.postProcessing(session, campaign, affiliates);
 
 		return this.sessionHelperController.getPublicFields(session);
 
