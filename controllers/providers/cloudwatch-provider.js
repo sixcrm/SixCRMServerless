@@ -11,7 +11,10 @@ module.exports = class CloudwatchProvider extends AWSProvider{
 
 		this.instantiateAWS();
 
-		this.cloudwatchlogs = new this.AWS.CloudWatchLogs({apiVersion: '2014-03-28'});
+		this.cloudwatchlogs = new this.AWS.CloudWatchLogs({
+			apiVersion: '2014-03-28',
+			region: this.getRegion()
+		});
 
 	}
 
