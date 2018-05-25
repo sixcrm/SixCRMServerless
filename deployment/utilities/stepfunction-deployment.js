@@ -54,7 +54,7 @@ module.exports = class StepFunctionDeployment extends AWSDeploymentUtilities{
 
 		let parameters = {
 			name: name,
-			roleArn: parserutilities.parse('arn:aws:iam::{{aws_account_id}}:role/sixcrm_lambda_role', account_constants),
+			roleArn: parserutilities.parse('arn:aws:iam::{{aws_account_id}}:role/sixcrm_statemachine_role', account_constants),
 			definition: parserutilities.parse(JSON.stringify(statemachine_definition), account_constants)
 		};
 
