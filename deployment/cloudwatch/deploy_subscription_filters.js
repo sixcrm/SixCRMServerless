@@ -1,6 +1,8 @@
 require('../../SixCRM.js');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+du.info("Environment", process.env);
+
 const CloudwatchDeployment = global.SixCRM.routes.include('deployment', 'utilities/cloudwatch-deployment.js');
 
 let cloudwatch_deployment = new CloudwatchDeployment();
