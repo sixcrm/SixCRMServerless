@@ -1,0 +1,20 @@
+[{
+  "AssumeRolePolicyDocument":{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "lambda.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "RoleName":"sixcrm_statemachine_role",
+  "Description": "The role used by SixCRM State Machines.",
+  "ManagedPolicies":[
+    "arn:aws:iam::{{account}}:policy/SixCRMStateMachineExecutionPolicy"
+  ]
+}]
