@@ -90,7 +90,7 @@ async function _handler(argv) {
 	// }
 
 	const ExtractHandler = require(`../handlers/${crm}-extract-handler`);
-	const handler = new ExtractHandler(args.client, args.user, args.password);
+	const handler = new ExtractHandler(args.client, args.user, args.password, args.artifactsDirectory);
 	await handler.extract();
 
 }
