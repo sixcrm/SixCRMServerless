@@ -4,8 +4,6 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
 
-const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
-
 module.exports = class GetTrackingInformationController extends stepFunctionWorkerController {
 
 	constructor() {
