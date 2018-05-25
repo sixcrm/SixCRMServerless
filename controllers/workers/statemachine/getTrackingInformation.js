@@ -4,7 +4,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
 
-//const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
+const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
 
 module.exports = class GetTrackingInformationController extends stepFunctionWorkerController {
 
@@ -44,11 +44,26 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 			throw eu.getError('bad_request', 'Expected property "guid" to be a UUIDV4');
 		}
 
+		return event;
+
 	}
 
 	async getShippingReceipt(id){
 
 		du.debug('Get Shipping Receipt');
+
+		if(!_.has(this, 'shippingReceiptController')){
+			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+			this.shippingReceiptController = new ShippingReceiptController();
+		}
+
+		let shipping_receipt = await this.shippingReceiptController.get({id: id});
+
+		if(_.isNull(shipping_receipt)){
+			throw eu.getError('server', 'Unable to acquire a shipping receipt that matches '+id);
+		}
+
+		return shipping_receipt;
 
 	}
 
@@ -56,11 +71,29 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		du.debug('Get Tracking Information');
 
+		const TrackerController = global.SixCRM.routes.include('providers', 'tracker/Tracker.js');
+		let trackerController = new TrackerController();
+
+		let result = await trackerController.info({
+			shipping_receipt: shipping_receipt
+		});
+
+		return result.getVendorResponse();
+
 	}
 
 	async updateShippingReceiptWithTrackingInformation({shipping_receipt, tracking}){
 
 		du.debug('updateShippingReceiptWithTrackingInformation');
+
+		if(!_.has(this, 'shippingReceiptHelperController')){
+			const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
+			this.shippingReceiptHelperController = new ShippingReceiptHelperController();
+		}
+
+		await this.shippingReceiptHelperController.updateShippingReceipt({shipping_receipt: shipping_receipt, detail: tracking.detail, status: tracking.status});
+
+		return true;
 
 	}
 
@@ -68,7 +101,7 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		du.debug('Codify Tracking Information');
 
-		return 'DELIVERED';
+		return tracking.status.toUpperCase();
 
 	}
 
