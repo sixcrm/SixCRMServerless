@@ -13,5 +13,5 @@ cloudwatch_deployment.deployLoggerPermissions()
 		return du.info(result);
 	}).catch(error => {
 		du.error(error);
-		process.exit(-1);
+		//process.exit(-1);
 	});
