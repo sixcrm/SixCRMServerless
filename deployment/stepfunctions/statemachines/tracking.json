@@ -6,7 +6,7 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-gettrackinginformation",
       "Next": "Is Delivered?",
-      "InputPath": "$.guid",
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry": [
         {
@@ -25,7 +25,7 @@
         {
           "Variable": "$.status",
           "StringEquals": "DELIVERED",
-          "Next": "Archive"
+          "Next": "Send Delivery Notification"
         }
       ],
       "Default": "Wait 6 Hours"
@@ -35,10 +35,10 @@
       "Seconds": 21600,
       "Next": "Get Tracking Information"
     },
-    "Archive": {
+    "Send Delivery Notification": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-archive",
-      "InputPath": "$.guid",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-senddeliverynotification",
+      "InputPath": "$",
       "End": true,
       "Retry": [
         {

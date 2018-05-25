@@ -11,7 +11,24 @@ module.exports = class workerController {
 	constructor(){
 
 		this.setPermissions();
-		this.initialize();
+
+	}
+
+	validateEvent(event){
+
+		du.debug('Validate Event');
+
+		du.info(event);
+
+		if(!_.has(event, 'guid')){
+			throw eu.getError('bad_request', 'Expected property "guid" in the event object');
+		}
+
+		if(!stringutilities.isUUID(event.guid)){
+			throw eu.getError('bad_request', 'Expected property "guid" to be a UUIDV4');
+		}
+
+		return event;
 
 	}
 
@@ -19,174 +36,34 @@ module.exports = class workerController {
 
 		du.debug('Set Permissions');
 
+		//Technical Debt:  Let's change this to be the system@sixcrm.com user
+
 		this.permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
 		this.permissionutilities.setPermissions('*',['*/*'],[])
 
 	}
 
-	initialize(){
+	async getShippingReceipt(id, fatal = true){
 
-		du.debug('Initialize');
+		du.debug('Get Shipping Receipt');
 
-		let parameter_validation = {
-			'message': global.SixCRM.routes.path('model', 'workers/sqsmessage.json'),
-			'messages':global.SixCRM.routes.path('model', 'workers/sqsmessages.json'),
-			'parsedmessagebody': global.SixCRM.routes.path('model', 'workers/parsedmessagebody.json'),
-			'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json'),
-			'session': global.SixCRM.routes.path('model', 'entities/session.json'),
-			'responsecode': global.SixCRM.routes.path('model', 'workers/workerresponsetype.json')
+		if(!_.has(this, 'shippingReceiptController')){
+			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+			this.shippingReceiptController = new ShippingReceiptController();
 		}
 
-		let parameter_definition = {};
+		let shipping_receipt = await this.shippingReceiptController.get({id: id});
 
-		const ParametersController = global.SixCRM.routes.include('providers', 'Parameters.js');
+		if(_.isNull(shipping_receipt)){
+			if(fatal){
+				throw eu.getError('server', 'Unable to acquire a shipping receipt that matches '+id);
+			}
 
-		this.parameters = new ParametersController({
-			validation: parameter_validation,
-			definition: parameter_definition
-		});
+			du.warning('Unable to acquire a shipping receipt that matches '+id);
 
-	}
-
-	augmentParameters(){
-
-		du.debug('Augment Parameters');
-
-		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
-		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
-
-		return true;
-
-	}
-
-	preamble(message){
-
-		du.debug('Preamble');
-
-		return this.setParameters({argumentation: {message: message}, action: 'execute'})
-			.then(() => this.parseMessageBody())
-			.then(() => this.acquireRebill());
-
-	}
-
-	setParameters(parameters_object){
-
-		du.debug('Set Parameters');
-
-		this.parameters.setParameters(parameters_object);
-
-		return Promise.resolve(true);
-
-	}
-
-	//Technical Debt: This is kind of gross...
-	parseMessageBody(message, response_field){
-
-		du.debug('Parse Message Body');
-
-		response_field = this.setResponseField(response_field);
-		message = this.setMessage();
-
-		let message_body;
-
-		try{
-			message_body = JSON.parse(message.Body);
-		}catch(error){
-			du.error(error);
-			throw eu.getError('server', 'Unable to parse message body: '+message);
 		}
 
-		objectutilities.hasRecursive(message_body, response_field, true);
-
-		this.parameters.set('parsedmessagebody', message_body);
-
-		return Promise.resolve(true);
-
-	}
-
-	setMessage(message){
-
-		du.debug('Set Message');
-
-		if(!_.isUndefined(message) && !_.isNull(message) && objectutilities.isObject(message, false)){
-			return message;
-		}
-
-		return this.parameters.get('message');
-
-	}
-
-	setResponseField(response_field){
-
-		du.debug('Set Response Field');
-
-		if(!_.isUndefined(response_field) && !_.isNull(response_field) && stringutilities.isString(response_field, false)){
-			return response_field;
-		}
-
-		if(_.has(this, 'response_field')){
-			return this.response_field;
-		}
-
-		return 'id';
-
-	}
-
-	acquireRebill(){
-
-		du.debug('Acquire Rebill');
-
-		let parsed_message_body = this.parameters.get('parsedmessagebody');
-
-		if(!_.has(this, 'rebillController')){
-			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-			this.rebillController = new RebillController();
-		}
-
-		return this.rebillController.get({id: parsed_message_body.id}).then((rebill) => {
-
-			this.parameters.set('rebill', rebill);
-
-			return true;
-
-		});
-
-	}
-
-	acquireSession(){
-
-		du.debug('Acquire Session');
-
-		let parsed_message_body = this.parameters.get('parsedmessagebody');
-
-		if(!_.has(this, 'sessionController')){
-			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-			this.sessionController = new SessionController();
-		}
-
-		return this.sessionController.get({id: parsed_message_body.id}).then((session) => {
-
-			this.parameters.set('session', session);
-
-			return true;
-
-		});
-
-	}
-
-	respond(response, additional_information){
-
-		du.debug('Respond');
-
-		const WorkerResponse = global.SixCRM.routes.include('controllers','workers/components/WorkerResponse.js');
-
-		response = new WorkerResponse(response);
-
-		if(!_.isUndefined(additional_information)){
-			response.setAdditionalInformation(additional_information);
-		}
-
-		return response;
+		return shipping_receipt;
 
 	}
 
