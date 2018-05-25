@@ -117,3 +117,9 @@ tokenization:
     id: 9615102903256758
     api_key: UAESYJ8HeIfmmGeg2qNS7l4dPFTYNlLA6t7zX4hF
     base: https://api.tokenex.com
+
+aeg-limelight-api:
+  throttleInSeconds: 2
+  timeout: 30000
+  membershipApiUrl: "https://{0}/admin/membership.php"
+  transactionApiUrl: "https://{0}/admin/transaction.php"
