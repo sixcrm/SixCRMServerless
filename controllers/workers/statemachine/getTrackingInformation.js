@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
 
 module.exports = class GetTrackingInformationController extends stepFunctionWorkerController {
@@ -24,44 +23,51 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		await this.updateShippingReceiptWithTrackingInformation({shipping_receipt: shipping_receipt, tracking: tracking});
 
+		await this.sendShipmentConfirmedNotification(shipping_receipt);
+
 		return this.codifyTrackingInformation(tracking);
 
 	}
 
-	validateEvent(event){
+	async sendShipmentConfirmedNotification({shipping_receipt, tracking}){
 
-		du.debug('Validate Event');
+		du.debug('Send Shipment Confirmed Notification');
 
-		du.info(event);
+		if(_.includes(['delivered','intransit'], tracking.status)){
 
-		if(!_.has(event, 'guid')){
-			throw eu.getError('bad_request', 'Expected property "guid" in the event object');
+			if(!_.has(shipping_receipt, 'history') || !arrayutilities.nonEmpty(shipping_receipt.history)){
+
+				await this.pushEvent({
+					event_type: 'shipping_confirmation',
+					context: {
+						shipping_receipt: shipping_receipt
+					}
+				});
+
+				return true;
+
+			}
+
+			let previous_shipment_record = arrayutilities.find(shipping_receipt.history, history_element => {
+				return(_.includes(['delivered','intransit'], history_element.status));
+			});
+
+			if(_.isNull(previous_shipment_record) || _.isUndefined(previous_shipment_record)){
+
+				await this.pushEvent({
+					event_type: 'shipping_confirmation',
+					context: {
+						shipping_receipt: shipping_receipt
+					}
+				});
+
+				return true;
+
+			}
+
+
+
 		}
-
-		if(!stringutilities.isUUID(event.guid)){
-			throw eu.getError('bad_request', 'Expected property "guid" to be a UUIDV4');
-		}
-
-		return event;
-
-	}
-
-	async getShippingReceipt(id){
-
-		du.debug('Get Shipping Receipt');
-
-		if(!_.has(this, 'shippingReceiptController')){
-			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
-			this.shippingReceiptController = new ShippingReceiptController();
-		}
-
-		let shipping_receipt = await this.shippingReceiptController.get({id: id});
-
-		if(_.isNull(shipping_receipt)){
-			throw eu.getError('server', 'Unable to acquire a shipping receipt that matches '+id);
-		}
-
-		return shipping_receipt;
 
 	}
 

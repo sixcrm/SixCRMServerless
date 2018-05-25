@@ -115,8 +115,8 @@ functions:
   gettrackinginformation:
     handler: handlers/statemachine/handlers.gettrackinginformation
 
-  archive:
-    handler: handlers/statemachine/handlers.archive
+  senddeliverynotification:
+    handler: handlers/statemachine/handlers.senddeliverynotification
 
 # Fulfillment
 # Billing

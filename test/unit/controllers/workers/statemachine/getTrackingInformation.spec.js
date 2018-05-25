@@ -72,6 +72,16 @@ describe('controllers/workers/statemachine/getTrackingInformation.js', () => {
         guid: shipping_receipt.id
       };
 
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class{
+        constructor(){}
+        pushEvent({event_type, context, message_attributes}){
+          expect(event_type).to.be.a('string');
+          expect(context).to.be.a('object');
+          expect(message_attributes).to.be.a('object');
+          return Promise.resolve(true);
+        }
+      });
+      
       mockery.registerMock(global.SixCRM.routes.path('providers', 'tracker/Tracker.js'), class {
         constructor(){}
         info({shipping_receipt}){

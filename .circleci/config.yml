@@ -368,6 +368,20 @@ jobs:
       - run:
           name: IAM Deploy Roles
           command: export SIX_VERBOSE=2 && node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
+  deploy_stepfunctions:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy Step Function State Machines
+          command: export SIX_VERBOSE=2 && node ./deployment/stepfunctions/deploy_state_machines.js
   deploy_dynamodb:
     <<: *job-defaults
     steps:
@@ -792,6 +806,10 @@ workflows:
             - unit_tests
             - backup_datastore
             - deploy_iam
+      - deploy_stepfunctions:
+          requires:
+            - deploy_serverless
+            - deploy_iam
       - deploy_sns:
           requires:
             - deploy_sqs
@@ -826,6 +844,7 @@ workflows:
             - deploy_dynamodb
             # - deploy_redshift
             - deploy_sns
+            - deploy_stepfunctions
             - deploy_logsubscription
       - environment_test:
           requires:
