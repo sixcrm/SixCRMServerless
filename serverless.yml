@@ -48,11 +48,14 @@ provider:
 plugins:
   - serverless-dynamodb-local
   - serverless-prune-plugin
+  - serverless-plugin-warmup
 
 custom:
   prune:
     automatic: true
     number: 3
+  warmup:
+    prewarm: true
 
 
 functions:
@@ -63,12 +66,15 @@ functions:
 
   verifysignature:
     handler: handlers/authorizers/handlers.verifysignature
+    warmup: true
 
   verifytransactionjwt:
     handler: handlers/authorizers/handlers.verifytransactionjwt
+    warmup: true
 
   verifysitejwt:
     handler: handlers/authorizers/handlers.verifysitejwt
+    warmup: true
 
 ########################
 # Graph Endpoint
@@ -76,6 +82,7 @@ functions:
 
   graph:
     handler: handlers/endpoints/handlers.graph
+    warmup: true
     events:
       - http:
           path: graph/{account}
@@ -90,6 +97,7 @@ functions:
 
   publicgraph:
     handler: handlers/endpoints/handlers.publicgraph
+    warmup: true
     events:
       - http:
           path: publicgraph/
@@ -156,6 +164,7 @@ functions:
 
   acquiretoken:
     handler: handlers/endpoints/handlers.acquiretoken
+    warmup: true
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -169,6 +178,7 @@ functions:
 
   createlead:
     handler: handlers/endpoints/handlers.createlead
+    warmup: true
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -182,6 +192,7 @@ functions:
 
   createorder:
     handler: handlers/endpoints/handlers.createorder
+    warmup: true
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -195,6 +206,7 @@ functions:
 
   confirmorder:
     handler: handlers/endpoints/handlers.confirmorder
+    warmup: true
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -208,6 +220,7 @@ functions:
 
   info:
     handler: handlers/endpoints/handlers.info
+    warmup: true
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -221,6 +234,7 @@ functions:
 
   tracking:
     handler: handlers/endpoints/handlers.tracking
+    warmup: true
     events:
       - http:
          #note:  Account shouldn't be necessary here...
@@ -234,6 +248,7 @@ functions:
 
   checkout:
     handler: handlers/endpoints/handlers.checkout
+    warmup: true
     timeout: 29
     events:
       - http:
