@@ -175,6 +175,6 @@ Currently deployment is (mostly) handled via CircleCI. There are a few issues:
 * API Gateway requires some manual configuration - certificates, custom domain names for example.
  - Specifically:  On the first deployment, you must configure the custom domain name in API Gateway and map it to the new API Gateway deployment.  In doing so, you must first add the SixCRM wildcard cert to ACM.
 
-## Data Spoofing
+## Data Spoofing 
 
 The Six deployment has random data "spoofers" -  that is scripts which attempts to emulate data in the absence of real usage or customer data.
