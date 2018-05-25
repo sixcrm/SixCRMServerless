@@ -1,3 +1,4 @@
+require('../../SixCRM.js');
 //const LambdaHandler = global.SixCRM.routes.include('handlers', 'workers/lambda-handler.');
 //const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
 
