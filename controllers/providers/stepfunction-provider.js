@@ -14,7 +14,10 @@ module.exports = class StepFunctionProvider extends AWSProvider{
 		//Technical Debt:  Get this out of the constructor?
 		this.instantiateAWS();
 
-		this.stepfunction = new this.AWS.StepFunctions({apiVersion: '2016-11-23'});
+		this.stepfunction = new this.AWS.StepFunctions({
+			apiVersion: '2016-11-23',
+			region: this.getRegion()
+		});
 
 	}
 
