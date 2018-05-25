@@ -6,7 +6,7 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-gettrackinginformation",
       "Next": "Is Delivered?",
-      "InputPath": "$.guid",
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry": [
         {
@@ -38,7 +38,7 @@
     "Archive": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-archive",
-      "InputPath": "$.guid",
+      "InputPath": "$",
       "End": true,
       "Retry": [
         {

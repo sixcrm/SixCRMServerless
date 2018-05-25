@@ -18,6 +18,24 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 		du.debug('Execute');
 
+		this.validateEvent(event);
+
+		let shipping_receipt = await this.getShippingReceipt(event.guid);
+
+		let tracking = await this.getTrackingInformation(shipping_receipt);
+
+		await this.updateShippingReceiptWithTrackingInformation({shipping_receipt: shipping_receipt, tracking: tracking});
+
+		return this.codifyTrackingInformation(tracking);
+
+	}
+
+	validateEvent(event){
+
+		du.debug('Validate Event');
+
+		du.info(event);
+
 		if(!_.has(event, 'guid')){
 			throw eu.getError('bad_request', 'Expected property "guid" in the event object');
 		}
@@ -25,6 +43,30 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 		if(!stringutilities.isUUID(event.guid)){
 			throw eu.getError('bad_request', 'Expected property "guid" to be a UUIDV4');
 		}
+
+	}
+
+	async getShippingReceipt(id){
+
+		du.debug('Get Shipping Receipt');
+
+	}
+
+	async getTrackingInformation(shipping_receipt){
+
+		du.debug('Get Tracking Information');
+
+	}
+
+	async updateShippingReceiptWithTrackingInformation({shipping_receipt, tracking}){
+
+		du.debug('updateShippingReceiptWithTrackingInformation');
+
+	}
+
+	codifyTrackingInformation(tracking){
+
+		du.debug('Codify Tracking Information');
 
 		return 'DELIVERED';
 
