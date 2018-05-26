@@ -1,0 +1,55 @@
+{
+  "Comment": "The Post Fulfillment State Machine.  Note that this state machine operates against a shipping receipt.",
+  "StartAt": "Get Tracking Number",
+  "States": {
+    "Get Tracking Number": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-gettrackingnumber",
+      "Next": "Has Tracking Number?",
+      "InputPath": "$",
+      "ResultPath": "$.status",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 60,
+          "MaxAttempts": 5,
+          "BackoffRate": 5
+        }
+      ]
+    },
+    "Has Tracking Number?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.status",
+          "StringEquals": "NOTRACKING",
+          "Next": "Wait 6 Hours"
+        }
+      ],
+      "Default": "Trigger Tracking"
+    },
+    "Wait 6 Hours": {
+      "Type": "Wait",
+      "Seconds": 21600,
+      "Next": "Get Tracking Number"
+    },
+    "Trigger Tracking": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggertracking",
+      "InputPath": "$",
+      "End": true,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    }
+  }
+}

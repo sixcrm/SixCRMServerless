@@ -2,8 +2,8 @@ require('../../SixCRM.js')
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
 
-module.exports.command = 'triggercarriertracking';
-module.exports.describe = 'Trigger carrier tracking of a Shipping Receipt by UUID in the SixCRM State Machine.';
+module.exports.command = 'triggerpostfulfillment';
+module.exports.describe = 'Trigger post-fulfillment of a Shipping Receipt by UUID in the SixCRM State Machine.';
 
 module.exports.builder = {
 	shippingReceiptUUID: {
@@ -23,7 +23,7 @@ module.exports.handler = (argv) => {
 		})
 		.catch((ex) => {
 
-			du.error('triggercarriertracking#handler', ex);
+			du.error('triggerpostfulfillment#handler', ex);
 
 			process.exit(1);
 
@@ -38,7 +38,7 @@ async function _handler(argv) {
 	const stateMachineHelperController = new StateMachineHelperController();
 
 	const parameters = {
-		stateMachineName: 'Tracking',
+		stateMachineName: 'Postfulfillment',
 		input:JSON.stringify({guid: shipping_receipt_uuid})
 	};
 
