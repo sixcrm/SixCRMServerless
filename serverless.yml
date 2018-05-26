@@ -118,6 +118,12 @@ functions:
   senddeliverynotification:
     handler: handlers/statemachine/handlers.senddeliverynotification
 
+# Post fulfillment
+  gettrackingnumber:
+    handler: handlers/statemachine/handlers.gettrackingnumber
+
+  triggertracking:
+    handler: handlers/statemachine/handlers.triggertracking
 # Fulfillment
 # Billing
 

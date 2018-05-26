@@ -1,17 +1,12 @@
 {
-  "Comment": "The Fulfillment State Machine",
-  "StartAt": "Hold",
+  "Comment": "The Fulfillment State Machine.  Note that this State Machine operates against a Rebill.",
+  "StartAt": "Notify Fulfillment Providers",
   "States": {
-    "Hold": {
-      "Type": "Wait",
-      "Seconds": 21600,
-      "Next": "Trigger Fulfillment"
-    },
-    "Trigger Fulfillment": {
+    "Notify Fulfillment Providers": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-triggerFulfillment",
-      "Next": "Get Tracking Number",
-      "InputPath": "$.guid",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-notifyfulfillmentproviders",
+      "Next": "Trigger Post-Fulfillment",
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry": [
         {
@@ -24,16 +19,11 @@
         }
       ]
     },
-    "Wait 6 Hours": {
-      "Type": "Wait",
-      "Seconds": 21600,
-      "Next": "Get Tracking Number"
-    },
-    "Get Tracking Number": {
+    "Trigger Post-Fulfillment": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-getTrackingNumber",
-      "Next": "Has Tracking Number?",
-      "InputPath": "$.guid",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerpostfulfillment",
+      "End":true,
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry": [
         {
@@ -43,43 +33,6 @@
           "IntervalSeconds": 60,
           "MaxAttempts": 5,
           "BackoffRate": 5
-        }
-      ]
-    },
-    "Has Tracking Number?": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Variable": "$.status",
-          "StringEquals": "",
-          "Next": "Wait 6 Hours"
-        },
-        {
-          "Variable": "$.status",
-          "StringGreaterThan": "",
-          "Next": "Trigger Tracking"
-        }
-      ],
-      "Default": "Acquire Tracking Number Failure"
-    },
-    "Acquire Tracking Number Failure": {
-      "Type": "Fail",
-      "Cause": "Unable to acquire the tracking number from the fulfillment provider.",
-      "Error": "Acquire Tracking Number Error"
-    },
-    "Trigger Tracking": {
-      "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-triggerTracking",
-      "InputPath": "$.guid",
-      "End": true,
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "IntervalSeconds": 1,
-          "MaxAttempts": 3,
-          "BackoffRate": 2
         }
       ]
     }
