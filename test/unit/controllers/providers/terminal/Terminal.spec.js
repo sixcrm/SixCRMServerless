@@ -949,6 +949,8 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
 				expect(objectutilities.getClassName(result)).to.equal('TerminalResponse');
 				expect(result.getCode()).to.equal('success');
+				let vendor_response = result.getVendorResponse();
+				console.log(vendor_response);
 
 			});
 
