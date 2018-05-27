@@ -43,7 +43,7 @@ module.exports = class NotifyFulfillmentProvidersController extends stepFunction
 		if(response_code == 'error'){
 			throw eu.getError('server', 'Terminal Controller returned an error: '+JSON.stringify(terminal_response));
 		}
-		
+
 		return response_code;
 
 	}
