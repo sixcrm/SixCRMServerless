@@ -3,6 +3,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
 
 module.exports = class GetTrackingNumberController extends stepFunctionWorkerController {
@@ -37,7 +38,15 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 
 		let tracking = await this.getTrackingInformationFromFulfillmentProvider(shipping_receipt);
 
-		if(!_.isNull(tracking) && _.has(tracking, 'id') && _.has(tracking, 'carrier')){
+		if(!_.isNull(tracking) && _.has(tracking, 'id')){
+
+			const ShippingCarrierHelperController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingCarrier.js');
+			let shippingCarrierHelperController = new ShippingCarrierHelperController();
+
+			let carriers = shippingCarrierHelperController.determineCarrierFromTrackingNumber(tracking.id);
+
+			//Note:  This kicks the can down the road somewhat.  When we move to get tracking information from the carriers, we'll need the ability to check all possibilities, select one and update the carrier information.
+			tracking.carrier = arrayutilities.compress(carriers,',','');
 
 			await this.updateShippingReceiptWithTrackingNumberAndCarrier({shipping_receipt: shipping_receipt, tracking: tracking});
 
@@ -62,6 +71,7 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 			throw eu.getError('server', 'Terminal returned a non-success code: '+tracking_information.getCode())
 		}
 
+		//Note:  Confirm Format
 		return tracking_information.getVendorResponse();
 
 	}
