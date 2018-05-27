@@ -124,7 +124,13 @@ functions:
 
   triggertracking:
     handler: handlers/statemachine/handlers.triggertracking
+
 # Fulfillment
+  notifyfulfillmentproviders:
+    handler: handlers/statemachine/handlers.notifyfulfillmentproviders
+
+  triggerpostfulfillment:
+    handler: handlers/statemachine/handlers.triggerpostfulfillment
 # Billing
 
 ########################
