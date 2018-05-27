@@ -67,6 +67,30 @@ module.exports = class workerController {
 
 	}
 
+	async getRebill(id, fatal = true){
+
+		du.debug('Get Rebill');
+
+		if(!_.has(this, 'rebillController')){
+			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
+		}
+
+		let rebill = await this.rebillController.get({id: id});
+
+		if(_.isNull(rebill)){
+			if(fatal){
+				throw eu.getError('server', 'Unable to acquire a rebill that matches '+id);
+			}
+
+			du.warning('Unable to acquire a rebill that matches '+id);
+
+		}
+
+		return rebill;
+
+	}
+
 	pushEvent({event_type, context, message_attributes}){
 
 		du.debug('Push Event');
