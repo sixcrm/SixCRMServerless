@@ -29,7 +29,9 @@ class AuthorizeNetController extends MerchantProvider {
 				required:{
 					transaction: 'transaction'
 				},
-				optional:{}
+				optional:{
+					amount: 'amount'
+				}
 			},
 			test:{
 				required:{},
@@ -56,16 +58,17 @@ class AuthorizeNetController extends MerchantProvider {
 		return new AuthorizeNetResponse({action, vendor_response});
 	}
 
-	async refund({transaction}) {
+	async refund({transaction, amount}) {
 		du.debug('Refund');
 		const action = 'refund';
 		this.parameters.setParameters({
-			argumentation: {transaction},
+			argumentation: {transaction, amount},
 			action
 		});
 
 		const transaction_id = transaction.processor_response.transactionResponse.transId;
-		const vendor_response = await this.authorizenet.refundCreditCard({transaction_id});
+		const last_four = transaction.processor_response.transactionResponse.accountNumber.slice(-4);
+		const vendor_response = await this.authorizenet.refundCreditCard({amount, transaction_id, last_four});
 		return new AuthorizeNetResponse({action, vendor_response});
 	}
 

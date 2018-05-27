@@ -63,11 +63,16 @@ module.exports = class AuthorizeNet {
 		return this.createTransaction(transaction);
 	}
 
-	refundCreditCard({amount, creditcard}) {
+	refundCreditCard({amount, transaction_id, last_four}) {
+		const creditcard = {
+			number: last_four,
+			expiration: 'XXXX'
+		};
 		const transaction = new APIContracts.TransactionRequestType();
 		transaction.setTransactionType(APIContracts.TransactionTypeEnum.REFUNDTRANSACTION);
 		transaction.setPayment(this.buildCreditCardPaymentType(creditcard));
 		transaction.setAmount(amount);
+		transaction.setRefTransId(transaction_id);
 
 		return this.createTransaction(transaction);
 	}
