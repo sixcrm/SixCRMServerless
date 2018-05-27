@@ -399,60 +399,6 @@ describe('controllers/workers/statemachine/getTrackingNumber.js', async () => {
 
     });
 
-    it('successfully returns "NOTRACKING"', async () => {
-
-      let shipping_receipt = MockEntities.getValidShippingReceipt();
-
-      let tracking = {
-        id: shipping_receipt.tracking.id
-      };
-
-      delete shipping_receipt.tracking;
-      shipping_receipt.history = [];
-
-      const event = {
-        guid: shipping_receipt.id
-      }
-
-      mockery.registerMock(global.SixCRM.routes.path('providers','terminal/Terminal.js'), class {
-        constructor(){}
-        info({shipping_receipt}){
-          expect(shipping_receipt).to.be.a('object');
-          expect(shipping_receipt).to.have.property('id');
-          return new class {
-            constructor(){}
-            getCode(){
-              return 'success';
-            }
-            getVendorResponse(){
-              return tracking;
-            }
-          }
-        }
-      });
-
-      mockery.registerMock(global.SixCRM.routes.path('entities','ShippingReceipt.js'), class {
-        constructor(){}
-        get({id: id}){
-          expect(id).to.be.a('string');
-          return Promise.resolve(shipping_receipt);
-        }
-        update({entity}){
-          expect(entity).to.be.a('object');
-          expect(entity).to.have.property('id');
-          entity.updated_at = timestamp.getISO8601();
-          return Promise.resolve(entity);
-        }
-      });
-
-      const GetTrackingNumberController = global.SixCRM.routes.include('workers', 'statemachine/getTrackingNumber.js');
-      let getTrackingNumberController = new GetTrackingNumberController();
-
-      let result = await getTrackingNumberController.execute(event);
-      expect(result).to.equal('NOTRACKING');
-
-    });
-
   });
 
 });
