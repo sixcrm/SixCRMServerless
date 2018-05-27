@@ -18,7 +18,7 @@ module.exports = class workerController {
 
 		du.debug('Validate Event');
 
-		du.info(event);
+		du.info('Input event: '+JSON.stringify(event));
 
 		if(!_.has(event, 'guid')){
 			throw eu.getError('bad_request', 'Expected property "guid" in the event object');

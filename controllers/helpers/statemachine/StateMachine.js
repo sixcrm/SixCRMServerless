@@ -35,7 +35,7 @@ module.exports = class StateMachineHelperController {
 			}
 
 			du.warning('Execution already exists, restart configured off.');
-			du.info(description);
+
 			return null;
 
 		}
@@ -80,7 +80,7 @@ module.exports = class StateMachineHelperController {
 		}
 
 		if (!_.isNull(input)) {
-			du.info(input);
+
 			if (_.has(input, 'guid')) {
 				identifier = input.guid;
 			} else {
