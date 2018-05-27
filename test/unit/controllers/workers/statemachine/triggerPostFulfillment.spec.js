@@ -134,7 +134,7 @@ describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () 
 
   describe('execute', async () => {
 
-    it.only('successfully triggers the postfulfillment state machine', async () => {
+    it('successfully triggers the postfulfillment state machine', async () => {
 
       let rebill = MockEntities.getValidRebill();
       const event = {
