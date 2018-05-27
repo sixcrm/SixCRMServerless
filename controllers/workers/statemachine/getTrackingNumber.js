@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
@@ -38,7 +39,7 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 
 		if(!_.isNull(tracking) && _.has(tracking, 'id') && _.has(tracking, 'carrier')){
 
-			await this.updateShippingReceiptWithTrackingNumber({shipping_receipt: shipping_receipt, tracking: tracking});
+			await this.updateShippingReceiptWithTrackingNumberAndCarrier({shipping_receipt: shipping_receipt, tracking: tracking});
 
 			return tracking.id;
 
@@ -57,11 +58,15 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 
 		let tracking_information = await terminalController.info({shipping_receipt: shipping_receipt});
 
+		if(tracking_information.getCode() !== 'success'){
+			throw eu.getError('server', 'Terminal returned a non-success code: '+tracking_information.getCode())
+		}
+
 		return tracking_information.getVendorResponse();
 
 	}
 
-	async updateShippingReceiptWithTrackingNumber({shipping_receipt, tracking}){
+	async updateShippingReceiptWithTrackingNumberAndCarrier({shipping_receipt, tracking}){
 
 		du.debug('updateShippingReceiptWithTrackingNumber');
 
