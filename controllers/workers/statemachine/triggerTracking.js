@@ -1,7 +1,7 @@
-//const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-//const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-//const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+
+const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
+
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
 
 module.exports = class TriggerTrackingController extends stepFunctionWorkerController {
@@ -16,7 +16,17 @@ module.exports = class TriggerTrackingController extends stepFunctionWorkerContr
 
 		du.debug('Execute');
 
-		du.info(event);
+		this.validateEvent(event);
+
+		const parameters = {
+			stateMachineName: 'Tracking',
+			input:JSON.stringify({guid: event.guid})
+		};
+
+		let stateMachineHelperController = new StateMachineHelperController();
+		let result = await stateMachineHelperController.startExecution(parameters);
+
+		return result;
 
 	}
 

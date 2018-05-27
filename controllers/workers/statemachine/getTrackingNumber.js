@@ -36,7 +36,7 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 
 		let tracking = await this.getTrackingInformationFromFulfillmentProvider(shipping_receipt);
 
-		if(!_.isNull(tracking)){
+		if(!_.isNull(tracking) && _.has(tracking, 'id') && _.has(tracking, 'carrier')){
 
 			await this.updateShippingReceiptWithTrackingNumber({shipping_receipt: shipping_receipt, tracking: tracking});
 
@@ -57,9 +57,7 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 
 		let tracking_information = await terminalController.info({shipping_receipt: shipping_receipt});
 
-		du.info(tracking_information); process.exit();
-
-		return tracking_information;
+		return tracking_information.getVendorResponse();
 
 	}
 
@@ -73,7 +71,7 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 		};
 
 		if(!_.has(this, 'shippingReceiptHelperController')){
-			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'entities/ShippingReceipt.js');
+			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 			this.shippingReceiptController = new ShippingReceiptController();
 		}
 
