@@ -18,7 +18,7 @@ module.exports = class workerController {
 
 		du.debug('Validate Event');
 
-		du.info(event);
+		du.info('Input event: '+JSON.stringify(event));
 
 		if(!_.has(event, 'guid')){
 			throw eu.getError('bad_request', 'Expected property "guid" in the event object');
@@ -64,6 +64,30 @@ module.exports = class workerController {
 		}
 
 		return shipping_receipt;
+
+	}
+
+	async getRebill(id, fatal = true){
+
+		du.debug('Get Rebill');
+
+		if(!_.has(this, 'rebillController')){
+			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
+		}
+
+		let rebill = await this.rebillController.get({id: id});
+
+		if(_.isNull(rebill)){
+			if(fatal){
+				throw eu.getError('server', 'Unable to acquire a rebill that matches '+id);
+			}
+
+			du.warning('Unable to acquire a rebill that matches '+id);
+
+		}
+
+		return rebill;
 
 	}
 
