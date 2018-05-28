@@ -15,6 +15,7 @@ module.exports = class PublicGraphController extends publicController {
 
 		super();
 
+		//Technical Debt:  Instead of using a new schema, combine the schemas and prune here.
 		this.sixSchema = global.SixCRM.routes.include('handlers', 'endpoints/publicgraph/schema');
 
 		this.resolveController = new resolveController();

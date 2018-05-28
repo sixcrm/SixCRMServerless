@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"mutation {fulfillmentprovidervalidation( id: \"1bd805d0-0062-499b-ae28-00c5d1b827ba\") { code, vendor_response } }"
+}

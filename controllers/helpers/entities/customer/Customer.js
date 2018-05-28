@@ -3,6 +3,7 @@ const _ = require('lodash');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 module.exports = class CustomerHelperController {
 
@@ -26,6 +27,30 @@ module.exports = class CustomerHelperController {
 		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+
+	}
+
+	async getCustomerJWT({customer}){
+
+		du.debug('Get Customer JWT');
+
+		if(!_.has(this, 'customerController')){
+			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+			this.customerController = new CustomerController();
+		}
+
+		customer = await this.customerController.get({id: customer});
+
+		if(_.isNull(customer)){
+			throw eu.getError('not_found', 'Customer not found.');
+		}
+
+		const TokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
+		let tokenHelperController = new TokenHelperController();
+
+		let customer_jwt = tokenHelperController.getCustomerJWT(customer);
+
+		return {token: customer_jwt};
 
 	}
 

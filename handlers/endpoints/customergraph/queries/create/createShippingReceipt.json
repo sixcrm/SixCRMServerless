@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+  "body":"mutation {createshippingreceipt (shippingreceipt: { id: \"dd6f3955-ba78-4092-a41d-28e1e726a1e4\", fulfillment_provider:\"1bd805d0-0062-499b-ae28-00c5d1b827ba\", tracking:{ carrier: \"USPS\", id:\"AIHWYUHOS1AIHWYUHOS1\" }, status:\"intransit\"}) {id, status, tracking { carrier, id }, created_at, updated_at}}"
+}

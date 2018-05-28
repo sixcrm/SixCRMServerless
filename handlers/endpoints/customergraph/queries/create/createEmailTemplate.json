@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+  "body":"mutation {createemailtemplate (emailtemplate: { id: \"5480e718-af9b-45e7-8cd4-f0eaf5feccd1\", name: \"test\", subject: \"test\", body: \"test\", type: \"initialfulfillment\", smtp_provider:\"18213d0b-cd6d-4cea-91b9-993d7443468b\"}) {id, name, subject, body, type, smtp_provider {id, name, hostname, username, password, port},created_at, updated_at}}"
+}

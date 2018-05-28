@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"{notification (id: \"d0f5633d-4ceb-4ffa-a28e-dd7b373fa708\") { id, type, category, context, name, expires_at, created_at, read_at, updated_at } }"
+}

@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"{search (search: {query: \"pro*\", queryOptions:\"{fields:['suggestion_field_1']}\", return:\"suggestion_field_1\", sort:\"_score desc\", size:\"10\"}) { hits { found, start, hit { fields } } } }"
+}

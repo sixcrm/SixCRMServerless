@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{ "user": "super.user@test.com" }},
+  "pathParameters": { "account": "*" },
+  "body":"mutation {  createentityacl (entityacl: { entity: \"fa0e3021-db75-4d1a-8646-5169fed2e20b\" type: \"emailtemplate\", allow: [], deny: [\"*\"] }) {entity, type, allow, deny, created_at, updated_at}}"
+}

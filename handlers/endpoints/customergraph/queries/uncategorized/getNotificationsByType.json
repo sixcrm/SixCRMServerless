@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "nikola.bosic@toptal.com" }},
+	"pathParameters": { "account": "*" },
+	"body":"{notificationlistbytype (type:\"notification\") { notifications { id, type, category, context, name, expires_at, created_at, read_at, updated_at }, pagination { count, end_cursor, has_next_page, last_evaluated } } }"
+}

@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"{role (id: \"8df25fe5-e4cd-495f-ae7f-eb806e5a987c\") { id, name, active, permissions { allow, deny }, created_at, updated_at } }"
+}

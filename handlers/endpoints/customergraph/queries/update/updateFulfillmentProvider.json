@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"mutation {updatefulfillmentprovider ( fulfillmentprovider: { id: \"2cd22324-4619-4f98-8319-f6f3cabc62d8\", name: \"test update\", provider: { name: \"Hashtag\", username:\"testupdate\", password:\"test\", threepl_key: \"{b2e7e741-3dd2-4d2e-bfe2-0649fa35a7ab}\", threepl_customer_id: 123}}) {id, name, provider { ... on Hashtag { name, username, password, threepl_customer_id, threepl_key } ... on ThreePL { name, username, password, threepl_customer_id, threepl_key, threepl_id, threepl_facility_id } ... on TestFulfillmentProvider { name } ... on ShipStation { name, api_key, api_secret } }, created_at, updated_at}}"
+}

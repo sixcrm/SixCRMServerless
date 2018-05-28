@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+  "body":"mutation {createnotificationsetting (notificationsetting: { id: \"super.user@test.com\", settings:{ notification_groups:[] }}) {id, settings { notification_groups { key, default, display, notifications { key, active, channels }}}, created_at, updated_at}}"
+}

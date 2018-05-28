@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":" query { shippingreceiptlist (pagination:{limit: \"10\"}){ shippingreceipts { id, status, tracking { carrier, id }, fulfillment_provider { id, name, provider { ... on Hashtag { name, username, password, threepl_customer_id, threepl_key } ... on ThreePL { name, username, password, threepl_customer_id, threepl_key, threepl_id, threepl_facility_id } ... on TestFulfillmentProvider { name } ... on ShipStation { name, api_key, api_secret } }, created_at, updated_at }, fulfillment_provider_reference, history {created_at, status, detail}, created_at, updated_at }, pagination { count, end_cursor, has_next_page } }, }"
+}

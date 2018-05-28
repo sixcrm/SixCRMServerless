@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":" query { productlist (pagination:{limit: \"10\"}){ products { id, name, sku, ship, shipping_delay, default_price, dynamic_pricing { min, max }, fulfillment_provider { id, name, provider { name } }, created_at, updated_at }, pagination { count, end_cursor, has_next_page } } }"
+}

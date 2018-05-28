@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"{usersetting (id: \"super.user@test.com\") { id, work_phone, cell_phone, timezone, language, column_preferences, notifications { name, receive, data }, created_at, updated_at } }"
+}

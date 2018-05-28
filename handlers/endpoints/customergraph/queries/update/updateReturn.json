@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+  "body":"mutation { updatereturn ( return: { id: \"016e6326-f6a5-4780-a49a-331e49b79cc6\", transactions:[{transaction: \"e624af6a-21dc-4c64-b310-3b0523f8ca42\", products:[{alias: \"jeffjeffjeff\", product:\"be992cea-e4be-4d3e-9afa-8e020340ed16\", quantity: 1}]}]}){ id, created_at, updated_at, alias, history {state, created_at}, transactions { transaction { id }, products { product {id, name}, quantity, history { state, created_at } } } } }"
+}

@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+  "body":"mutation {createrebill ( rebill: { id: \"016e6326-f6a5-4780-a49a-331e49b79cc6\", bill_at:\"2017-04-10T19:26:58.026Z\", parentsession: \"668ad918-0d09-4116-a6fe-0e8a9eda36f7\", amount:\"30000.00\", product_schedules:[\"12529a17-ac32-4e46-b05b-83862843055d\"] } ) {id, bill_at, amount, created_at, updated_at, parentsession {id, customer {id, firstname, lastname, address {line1, line2, city, state, zip}}, product_schedules {id, schedule {price, start, end, period, product {id, name, sku, ship, shipping_delay, fulfillment_provider {id, name, provider { name }}}}},}, product_schedules {id, schedule {price, start, end, period, product {id, name, sku, ship, shipping_delay, fulfillment_provider {id, name, provider { name } }}}}, transactions {id, processor_response, amount}}}"
+}

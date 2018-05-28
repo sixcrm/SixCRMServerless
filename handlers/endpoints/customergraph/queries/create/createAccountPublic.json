@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+  "pathParameters": { "account": "*" },
+  "body":"mutation {createaccount (account: {name: \"somerandonameforanaccount\", active: true}) {id, name, active, created_at, updated_at}}"
+}

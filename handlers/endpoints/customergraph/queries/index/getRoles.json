@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "super.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"query {rolelist (pagination:{limit: \"10\"}){roles {id, name, active, created_at, updated_at},pagination {count, end_cursor, has_next_page}},}"
+}

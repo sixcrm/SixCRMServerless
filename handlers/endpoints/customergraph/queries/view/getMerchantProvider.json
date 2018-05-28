@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"{merchantprovider (id: \"6c40761d-8919-4ad6-884d-6a46a776cfb9\") { id, name, processor { name }, processing { monthly_cap, discount_rate, transaction_fee, reserve_rate, maximum_chargeback_ratio, transaction_counts { daily, weekly, monthly } }, enabled, gateway { ... on NMI { name, username, password, processor_id } ... on Innovio { name, username, password, product_id } ... on TestMerchantProvider { name } ... on Stripe {name, api_key} }, allow_prepaid, accepted_payment_methods, customer_service { email, url, description, phone }, created_at, updated_at, merchantprovidergroups {id, name} } }"
+}

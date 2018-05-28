@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"query {rebilllistbycustomer (customer:\"24f7c851-29d4-4af9-87c5-0298fa74c689\"){ rebills { id, bill_at, amount, created_at, updated_at, parentsession { id, customer { id, firstname, lastname, address { line1, line2, city, state, zip } }, product_schedules { id, schedule { price, start, end, period, product { id, name, sku, ship, shipping_delay, fulfillment_provider { id, name, provider { name } } } } }, }, product_schedules { id, schedule { price, start, end, period, product { id, name, sku, ship, shipping_delay, fulfillment_provider { id, name, provider { name } } } } }, transactions { id, processor_response, amount } }, pagination { count, end_cursor, has_next_page } }, }"
+}

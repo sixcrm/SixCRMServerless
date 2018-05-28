@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+  "body":"mutation {  createuser (user: { id: \"testing.user@test.com\", auth0_id: \"test\", name: \"testingname\", first_name: \"testingfirstname\", last_name: \"testinglastname\", alias: \"736b4ca7cdc245d74cd1ed18763eef4b4ab12577\", active:true, termsandconditions:\"2.1\", address:{line1: \"123 Heckamecca\", line2:\"Room 666\", city:\"Portland\", state:\"OR\", zip:\"97203\", country:\"US\"}}) {id,auth0_id,name,first_name,last_name,active,address {line1,line2,city,state,zip,country},acl {account {id,name,active},role {id,name,active}},termsandconditions,created_at,updated_at}}"
+}

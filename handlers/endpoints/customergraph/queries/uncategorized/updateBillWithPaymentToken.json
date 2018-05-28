@@ -1,0 +1,11 @@
+{
+	"requestContext":{
+		"authorizer": {
+			"user":"super.user@test.com"
+		}
+	},
+	"pathParameters": {
+		"account": "*"
+	},
+	"body":" mutation { updatebillwithpaymenttoken ( id: \"75274431-7de3-4836-82eb-568fc368f88d\", token:\"some-stripe-token-here\" ) { id, detail { amount, description, created_at }, paid, paid_result, outstanding, period_start_at, period_end_at, available_at, created_at, updated_at } }"
+}

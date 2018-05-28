@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{"user":"super.user@test.com"}},
+	"pathParameters": { "account": "*" },
+	"body":"query {notificationlist (pagination:{limit: \"10\"}){ notifications { id, type, category, context, name, expires_at, created_at, read_at, updated_at } } }"
+}

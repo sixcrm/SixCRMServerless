@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "timothy.dalbey@sixcrm.com" }},
+	"pathParameters": { "account": "*" },
+	"body":"query {alerttest {result}}"
+}

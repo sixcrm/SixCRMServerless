@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"mutation {updatecustomernote (customernote: {id: \"21d1863b-abd5-430d-9498-72a822c39bf4\", customer: \"24f7c851-29d4-4af9-87c5-0298fa74c689\", user: \"super.user@test.com\", body: \"This is NOT a really fun test of a really fun create query (NOT) that is NOT so much fun!\"} ) { id, customer { id, email, firstname, lastname, phone, address { line1, city, state, zip, country } }, user { id, name, auth0_id, active }, account, body, created_at, updated_at } }"
+}

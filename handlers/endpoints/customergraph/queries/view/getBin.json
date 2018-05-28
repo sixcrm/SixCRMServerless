@@ -1,0 +1,6 @@
+{
+  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+  "body":
+    "query{bin(binnumber:411111){binnumber, brand, bank, type, level, country, info, country_iso, country2_iso, country3_iso, webpage, phone}}"
+}

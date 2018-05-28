@@ -1,0 +1,5 @@
+{
+  "requestContext":{"authorizer":{ "user": "nikola.bosic+11@toptal.com" }},
+  "pathParameters": { "account": "*" },
+  "body":"mutation {createnewaccount (account: {name: \"asdbxcbzxrsddsere\"}) {id name active created_at updated_at acl{ id updated_at, created_at, pending account {id, name} role {id, name} user {id, name}}}}"
+}
