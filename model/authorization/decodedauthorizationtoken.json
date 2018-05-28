@@ -4,6 +4,7 @@
 	"title": "Decoded Authorization Token",
 	"type": "object",
 	"properties": {
+		"customer":{"$ref": "../definitions/uuidv4.json"},
 		"email": {
 			"type": "string",
 			"format": "email"
