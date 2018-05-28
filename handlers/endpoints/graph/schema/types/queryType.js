@@ -805,16 +805,18 @@ const fields = Object.assign({}, {
 		args: {
 			customer: {
 				description: 'id of the customer',
-				type: new GraphQLNonNull(GraphQLString)
+				type: GraphQLString
+			},
+			session: {
+				description: 'id of the session',
+				type: GraphQLString
 			}
 		},
 		resolve: function(root, args) {
 
 			const customerHelperController = new CustomerHelperController();
 
-			return customerHelperController.getCustomerJWT({
-				customer: args.customer
-			});
+			return customerHelperController.getCustomerJWT(args);
 
 		}
 	},

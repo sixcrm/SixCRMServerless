@@ -30,19 +30,42 @@ module.exports = class CustomerHelperController {
 
 	}
 
-	async getCustomerJWT({customer}){
+	async getCustomerJWT({customer = null, session = null}){
 
 		du.debug('Get Customer JWT');
 
-		if(!_.has(this, 'customerController')){
-			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
-			this.customerController = new CustomerController();
-		}
-
-		customer = await this.customerController.get({id: customer});
-
 		if(_.isNull(customer)){
-			throw eu.getError('not_found', 'Customer not found.');
+
+			if(_.isNull(session)){
+				throw eu.getError('bad_request', 'The session or the customer must be defined in order to acquire a customer JWT.');
+			}
+
+			if(!_.has(this, 'sessionController')){
+				const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+				this.sessionController = new SessionController();
+			}
+
+			session = await this.sessionController.get({id: session});
+
+			if(_.isNull(session)){
+				throw eu.getError('not_found', 'Session not found.');
+			}
+
+			customer = session.customer;
+
+		}else{
+
+			if(!_.has(this, 'customerController')){
+				const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+				this.customerController = new CustomerController();
+			}
+
+			customer = await this.customerController.get({id: customer});
+
+			if(_.isNull(customer)){
+				throw eu.getError('not_found', 'Customer not found.');
+			}
+
 		}
 
 		const TokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
