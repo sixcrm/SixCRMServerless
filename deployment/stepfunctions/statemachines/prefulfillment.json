@@ -1,0 +1,50 @@
+{
+  "Comment": "The Pre-Fulfillment State Machine",
+  "StartAt": "Get Fulfillment Required",
+  "States": {
+    "Get Fulfillment Required":{
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-getFulfillmentRequired",
+      "Next": "Is Fulfillment Required?",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Retry" : [
+          {
+            "ErrorEquals": [ "State.ALL" ],
+            "IntervalSeconds": 3,
+            "MaxAttempts": 5,
+            "BackoffRate": 5
+          }
+      ]
+    },
+    "Is Fulfillment Required?":{
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.status",
+          "StringEquals": "NO SHIP",
+          "Next": "No Fulfillment Required"
+        }
+      ],
+      "Default": "Trigger Fulfillment"
+    },
+    "Trigger Fulfillment": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-triggerFullfillment",
+      "End": true,
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Retry" : [
+          {
+            "ErrorEquals": [ "State.ALL" ],
+            "IntervalSeconds": 3,
+            "MaxAttempts": 5,
+            "BackoffRate": 5
+          }
+      ]
+    },
+    "No Fulfillment Required":{
+      "Type":"Succeed"
+    }
+  }
+}
