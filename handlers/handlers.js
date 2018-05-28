@@ -1,9 +1,7 @@
 const LoggingHandler = require('./logging-handler');
 
 module.exports = {
-
-	logger: handleLogging(),
-
+	logger: handleLogging()
 }
 
 function handleLogging() {

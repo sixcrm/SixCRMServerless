@@ -76,6 +76,10 @@ functions:
     handler: handlers/authorizers/handlers.verifysitejwt
     warmup: true
 
+  verifycustomerjwt:
+    handler: handlers/authorizers/handlers.verifycustomerjwt
+    warmup: true
+
 ########################
 # Graph Endpoint
 ########################

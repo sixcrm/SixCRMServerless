@@ -2,6 +2,7 @@ const AuthorizationHandler = require('./authorization-handler');
 
 const VerifySignatureController = global.SixCRM.routes.include('controllers', 'authorizers/verifySignature.js');
 const VerifySiteJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifySiteJWT.js');
+const VerifyCustomerJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifyCustomerJWT.js');
 const VerifyTransactionJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifyTransactionJWT.js');
 
 const _ = require('lodash');
@@ -27,6 +28,18 @@ module.exports = {
 			return { allow: true, response: null };
 		}
 		else {
+			return { allow: false }
+		}
+	}),
+
+	verifycustomerjwt: handleAuthorization(async (event) => {
+		let controller = new VerifyCustomerJWTController();
+		let response = await controller.execute(event);
+		if(stringutilities.isUUID(response)){
+			return { allow: true, response };
+		}else if (response == controller.messages.bypass) {
+			return { allow: true, response: null };
+		}else {
 			return { allow: false }
 		}
 	}),
