@@ -1,13 +1,13 @@
 {
-  "Comment": "The Billing State Machine",
-  "StartAt": "Bill",
+  "Comment": "The Recovery State Machine",
+  "StartAt": "Get Recover Date",
   "States": {
-    "Bill": {
+    "Get Recover Date": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-bill",
-      "Next": "Trigger Pre-Fulfillment",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-getRecoverDate",
+      "Next": "Wait For Recovery Date",
       "InputPath": "$.guid",
-      "ResultPath": "$.status",
+      "ResultPath": "$.recoverydate",
       "Retry" : [
           {
             "ErrorEquals": [ "State.ALL" ],
@@ -15,16 +15,36 @@
             "MaxAttempts": 5,
             "BackoffRate": 5
           }
-      ],
+      ]
+    },
+    "Wait For Recovery Date": {
+      "Type": "Wait",
+      "TimestampPath": "$.recoverydate",
+      "Next": "Recover"
+    },
+    "Recover": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-bill",
+      "Next": "Trigger Pre-Fulfillment",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
       "Catch": [
         {
           "ErrorEquals": ["Declined"],
-          "Next": "Trigger Recovery"
+          "Next": "Recover Declined"
         },
         {
           "ErrorEquals": ["Hard Decline"],
           "Next": "Hard Declined"
         }
+      ],
+      "Retry" : [
+          {
+            "ErrorEquals": [ "State.ALL" ],
+            "IntervalSeconds": 3,
+            "MaxAttempts": 5,
+            "BackoffRate": 5
+          }
       ]
     },
     "Trigger Pre-Fulfillment": {
@@ -42,24 +62,6 @@
           }
       ]
     },
-    "Trigger Recovery": {
-      "Type": "Task",
-      "Next": "Recovery Triggered",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-triggerFullfillment",
-      "InputPath": "$.guid",
-      "ResultPath": "$.status",
-      "Retry" : [
-          {
-            "ErrorEquals": [ "State.ALL" ],
-            "IntervalSeconds": 3,
-            "MaxAttempts": 5,
-            "BackoffRate": 5
-          }
-      ]
-    },
-    "Recovery Triggered": {
-      "Type":"Succeed"
-    },
     "Hard Declined": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-cleanupDecline",
@@ -75,10 +77,30 @@
           }
       ]
     },
+    "Recover Declined": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-cleanupDecline",
+      "InputPath": "$.guid",
+      "ResultPath": "$.status",
+      "Next":"Decline Failure",
+      "Retry" : [
+          {
+            "ErrorEquals": [ "State.ALL" ],
+            "IntervalSeconds": 3,
+            "MaxAttempts": 5,
+            "BackoffRate": 5
+          }
+      ]
+    },
     "Hard Decline Failure": {
       "Type": "Fail",
       "Cause": "Hard decline issued by the recover task",
       "Error": "Recovery returned Hard Decline"
+    },
+    "Decline Failure": {
+      "Type": "Fail",
+      "Cause": "AWS Batch Job Failed",
+      "Error": "Trigger Fulfillment returned FAILED"
     }
   }
 }
