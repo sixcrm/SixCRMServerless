@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation {updatemerchantprovidergroup (merchantprovidergroup: {id: \"b7d15779-88e5-485c-b372-6dc9c9c7c58c\", name: \"Edited merchant provider group\", merchantproviders: [{id:\"6c40761d-8919-4ad6-884d-6a46a776cfb9\", distribution:0.7 }, {id:\"79189a4a-ed89-4742-aa96-afcd7f6c08fb\", distribution:0.7 } ] } ) { id, name, merchantproviderconfigurations { merchantprovider { id, name, processor { name }, processing { monthly_cap, discount_rate, transaction_fee, reserve_rate, maximum_chargeback_ratio, transaction_counts { daily, weekly, monthly } }, enabled, gateway { ... on NMI { name, username, password, processor_id } ... on Innovio { name, username, password, product_id } ... on Stripe {name, api_key} }, allow_prepaid, accepted_payment_methods, customer_service { email, url, description }, created_at, updated_at }, distribution }, created_at, updated_at } }"
-}

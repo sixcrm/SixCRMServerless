@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body": "query { sharedemailtemplatelist (pagination:{limit: \"10\"}){ emailtemplates { id, name, subject, body, type, smtp_provider{ id, name, hostname, username, password, port }, created_at, updated_at }, pagination { count, end_cursor, has_next_page } }, }"
-}

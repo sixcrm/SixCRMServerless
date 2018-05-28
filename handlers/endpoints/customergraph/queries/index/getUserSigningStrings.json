@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{"user":"customerservice.user@test.com"}},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"query {usersigningstringlist (pagination:{limit: \"10\"}){ usersigningstrings { id, user, name, signing_string, updated_at, created_at, updated_at } } }"
-}

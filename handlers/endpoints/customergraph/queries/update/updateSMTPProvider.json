@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation {updatesmtpprovider (smtpprovider: {id: \"8363bc50-a409-4503-93f8-1f50965ff87a\", name: \"test\", hostname: \"123.0.0.123\", username: \"test\", password: \"test\", from_email:\"test2@test.com\", from_name:\"Test Name\", port: 25}) { id, name, hostname, username, password, from_email, from_name, port, created_at, updated_at } }"
-}

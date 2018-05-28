@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":" query { eventhookshared (id: \"dc377b80-7c5b-44ad-9473-401f9b35922f\"){ id, name, event_type, hook, active, created_at, updated_at } }"
-}

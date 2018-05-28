@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":" query { fulfillmentprovider (id: \"1bd805d0-0062-499b-ae28-00c5d1b827ba\"){ id, name, provider { ... on Hashtag { name, username, password, threepl_customer_id, threepl_key } ... on ThreePL { name, username, password, threepl_customer_id, threepl_key, threepl_id, threepl_facility_id } ... on TestFulfillmentProvider { name } ... on ShipStation { name, api_key, api_secret } }, created_at, updated_at } }"
-}

@@ -1,5 +1,0 @@
-{
-  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":"mutation { updatemerchantprovidergroupassociation ( merchantprovidergroupassociation: {id: \"b9c12589-16a1-4106-ac71-97e9f4b59140\", campaign:\"70a6689a-5814-438b-b9fd-dd484d0812f9\", merchantprovidergroup:\"927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3\", entity:\"70a6689a-5814-438b-b9fd-dd484d0812f9\", entity_type:\"campaign\"}) {id, campaign { id, name }, merchantprovidergroup {id, name}, entity, entity_type, created_at, updated_at } }"
-}

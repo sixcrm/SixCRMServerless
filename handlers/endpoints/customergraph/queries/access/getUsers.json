@@ -1,6 +1,0 @@
-{
-  "requestContext":{"authorizer":{"user":"customerservice.user@test.com"}},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":
-    "query {userlist {users {id, auth0_id, name, active, termsandconditions, acl {account {id, name, active},role {id, name, active}},address {line1, line2, city, state,zip, country}, created_at, updated_at}, pagination {count, end_cursor, has_next_page,last_evaluated}}}"
-}

@@ -1,8 +1,0 @@
-{
-
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation {cancelsession ( session: { id: \"e27f4edf-721a-4c57-b677-53feffc4278a\", cancelled: true, cancelled_by: \"super.user@test.com\"}) { id, cancelled { cancelled, cancelled_by {id, name }, cancelled_at } } }"
-
-}
-

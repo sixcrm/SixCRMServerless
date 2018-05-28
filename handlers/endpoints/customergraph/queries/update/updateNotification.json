@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation {updatenotification (notification: { id: \"63263dc0-acc6-4c6f-8949-bc97eeafc58c\", user: \"super.user@test.com\", account: \"d3fa3bf3-7824-49f4-8261-87674482bf1c\", type: \"notification\", category: \"message\", read_at: \"2017-04-06T18:40:41.405Z\", expires_at: \"2017-12-12T18:40:41.405Z\"}) { id, type, category, context, name, expires_at, created_at, read_at, updated_at } }"
-}

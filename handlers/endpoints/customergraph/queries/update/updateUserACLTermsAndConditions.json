@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "super.user@test.com" }},
-	"pathParameters": { "account": "*" },
-	"body":"mutation {updateuseracltermsandconditions (useracltermsandconditions: { useracl: \"2e947415-f6eb-46e9-af8a-17c57bd01998\", version: \"0.1\"}) { id } }"
-}

@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{"user":"super.user@test.com"}},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation { createcreditcard (creditcard: { number: \"3111111111111111\", expiration: \"1025\", name: \"Rama2 Damunaste\", address: { line1: \"102 Skid Rw.\", line2: \"Suite 100\", city: \"Portland\", state: \"OR\", zip: \"97213\", country: \"US\" }, id: \"93c42d1b-811f-4376-ab13-ea13743c1af4\", customers:[\"b0782e51-d60e-42c6-b4a6-754f505f611e\"] }) { id } }"
-}

@@ -1,5 +1,0 @@
-{
-  "requestContext":{"authorizer":{ "user": "super.user@test.com" }},
-  "pathParameters": { "account": "*" },
-  "body":"mutation {  createuseracl (useracl: { id: \"a9cfa0d1-ea58-45d9-8ae7-3a0d0e4ab463\", user:\"customerservice.user@test.com\", account:\"5db7ed46-75b1-4ecd-b489-e61ef5d1107a\", role:\"e09ac44b-6cde-4572-8162-609f6f0aeca8\"}) {id,user{id,name},role{id,name},account{id,name},pending,created_at,updated_at}}"
-}

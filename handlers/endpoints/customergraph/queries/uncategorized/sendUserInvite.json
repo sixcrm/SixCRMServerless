@@ -1,4 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation {inviteuser (userinvite: {email: \"tmdalbey@gmail.com\", account:\"d3fa3bf3-7824-49f4-8261-87674482bf1c\", role:\"e09ac44b-6cde-4572-8162-609f6f0aeca8\"}) { link } }"}

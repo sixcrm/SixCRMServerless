@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"query { return (id: \"ce0a6458-1696-452d-9c49-b9925c8a3500\") { id, created_at, updated_at, alias, history {state, created_at}, transactions { transaction { id }, products { product {id, name}, quantity, history { state, created_at } } } } }"
-}

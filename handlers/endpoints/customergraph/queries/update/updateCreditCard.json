@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation {updatecreditcard (creditcard: {number: \"3111111111111111\", expiration: \"1025\", name: \"Rama3 Damunaste\", address: { line1: \"102 Skid Rw.\", line2: \"Suite 100\", city: \"Portland\", state: \"OR\", zip: \"97213\", country: \"US\" }, id: \"105207a0-928d-4dd4-a0d6-889965a621fa\" }) { id, last_four, first_six, token { token, provider }, expiration, name, address { line1, line2, city, state, zip, country }, created_at, updated_at } }"
-}

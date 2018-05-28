@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"mutation {updaterole (role: {id: \"995e1a67-6bb5-48a8-9d7a-2fe9bb391401\", name: \"testingrole-updated\", permissions: {allow:[\"*\"] deny:[]},active: false}) { id, name, active, created_at, updated_at } }"
-}

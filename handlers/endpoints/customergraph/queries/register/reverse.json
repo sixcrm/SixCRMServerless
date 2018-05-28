@@ -1,5 +1,0 @@
-{
-  "requestContext":{"authorizer":{"user":"owner.user@test.com"}},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":"mutation {reverse ( reverse: { transaction: \"07110153-41c5-4a7f-ae49-8204d7ba7ff0\"} ) {transaction {id}processor_response}}"
-}

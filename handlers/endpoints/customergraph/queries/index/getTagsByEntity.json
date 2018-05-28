@@ -1,5 +1,0 @@
-{
-  "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-  "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":"query { taglistbyentity (id: \"668ad918-0d09-4116-a6fe-0e7a9eda36f8\", pagination: { limit: \"10\" }) { tags { id, entity, key, value, created_at, updated_at }, pagination { count, end_cursor, has_next_page } } }"
-}

@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"query {userlist ({argumentation}) { users { id, auth0_id, name, active, created_at, updated_at, termsandconditions, address { line1, line2, city, state, zip, country } }, pagination { count, end_cursor, has_next_page, last_evaluated } }, }"
-}

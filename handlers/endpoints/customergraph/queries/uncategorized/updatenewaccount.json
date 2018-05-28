@@ -1,6 +1,0 @@
-{
-
-	"requestContext":{"authorizer":{ "user": "test@pooptarts.com" }},
-	"pathParameters": { "account": "6b3b52bf-c9d9-49b0-8db4-af7768e18c34" },
-	"body":"mutation {updateuser ( user: { id: \"e2e1525730575322@sixcrm.com\", auth0_id: \"e2e1525730575322@sixcrm.com\", name: \"e2e First e2e Last\", first_name: \"e2e First\", last_name: \"e2e Last\",alias: \"eea79d2fe047c4a7ea42efd46fa1dc30d2fe5838\", active:true, termsandconditions:\"0.1\",updated_at:\"2018-05-07T22:03:14.765Z\"}) { id name alias first_name last_name auth0_id active termsandconditions created_at updated_at, acl { id, created_at, updated_at account { id name active } user {id name } role { id name active, permissions {allow deny} } pending } address { line1 line2 city state zip country } } }"
-}

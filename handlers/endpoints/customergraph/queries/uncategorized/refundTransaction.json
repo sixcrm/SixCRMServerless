@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "nikola.bosic@toptal.com" }},
-	"pathParameters": { "account": "*" },
-	"body":"mutation { refund (refund: {amount:\"194.80\", transaction:\"85e8b0ab-fd30-465d-9354-95e8a5ca2a50\"}) { transaction { id}}}"
-}

@@ -1,5 +1,0 @@
-{
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"{customernote (id: \"135295f3-b1b2-4724-8911-8cc6ab54a4a9\") { id, customer { id, email, firstname, lastname, phone, address { line1, city, state, zip, country } }, user { id, name, auth0_id, active }, account, body, created_at, updated_at } }"
-}
