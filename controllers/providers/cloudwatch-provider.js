@@ -33,7 +33,7 @@ module.exports = class CloudwatchProvider extends AWSProvider{
 		return this.cloudwatchlogs.describeSubscriptionFilters({
 			logGroupName,
 			filterNamePrefix
-		});
+		}).promise();
 
 	}
 
