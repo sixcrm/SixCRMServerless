@@ -76,9 +76,28 @@ functions:
     handler: handlers/authorizers/handlers.verifysitejwt
     warmup: true
 
+  verifycustomerjwt:
+    handler: handlers/authorizers/handlers.verifycustomerjwt
+    warmup: true
+
 ########################
 # Graph Endpoint
 ########################
+
+  customergraph:
+    handler: handlers/endpoints/handlers.customergraph
+    warmup: true
+    events:
+      - http:
+          path: customergraph/{account}
+          method: post
+          cors:
+            origin: '*'
+            maxAge: 86400
+          authorizer:
+            name: verifysitejwt
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
 
   graph:
     handler: handlers/endpoints/handlers.graph

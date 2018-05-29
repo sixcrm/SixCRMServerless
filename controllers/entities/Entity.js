@@ -96,7 +96,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 			})
 			.then(data => {
-				du.info(data);
+				//du.info(data);
 				return data;
 			})
 			.then(data => this.getItems(data))
@@ -467,8 +467,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 		du.debug('Get');
 
-		du.warning(this.descriptive_name);
-
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
@@ -478,7 +476,7 @@ module.exports = class entityController extends entityUtilitiesController {
 					expression_attribute_values: {':primary_keyv': this.getID(id)}
 				};
 
-				du.warning(query_parameters);
+				//du.warning(query_parameters);
 
 				query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 

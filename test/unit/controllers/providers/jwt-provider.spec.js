@@ -123,7 +123,7 @@ describe('controllers/providers/jwt-provider', () => {
 			}
 		});
 
-		it('throws error when site JST secret key is not defined', () => {
+		it('throws error when site JWT secret key is not defined', () => {
 
 			const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
 			const jwtprovider = new JWTProvider();
@@ -134,7 +134,7 @@ describe('controllers/providers/jwt-provider', () => {
 			try {
 				jwtprovider.getSigningKey()
 			} catch (error) {
-				expect(error.message).to.equal('[500] Site JST secret key is not defined.');
+				expect(error.message).to.equal('[500] Site JWT secret key is not defined.');
 			}
 		});
 

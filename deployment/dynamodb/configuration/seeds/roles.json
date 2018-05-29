@@ -167,4 +167,34 @@
 	},
 	"created_at":"2017-04-06T18:40:41.405Z",
 	"updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+	"id":"3f4b642d-1eb7-4924-91d2-85db155ce943",
+	"account": "*",
+	"name": "Customer",
+	"active":true,
+	"permissions":{
+		"allow":[
+			"session/read",
+			"session/update",
+			"customer/read",
+			"customer/update",
+			"creditcard/read",
+			"creditcard/create",
+			"creditcard/update",
+			"rebill/read",
+			"rebill/update",
+			"transaction/read",
+			"shippingreceipt/read",
+			"campaign/read",
+			"fulfillmentprovider/read",
+			"merchantprovider/read",
+			"product/read",
+			"productschedule/read",
+			"return/read"
+		],
+		"deny":["*"]
+	},
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
 }]

@@ -3,6 +3,7 @@ const _ = require('lodash');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 module.exports = class CustomerHelperController {
 
@@ -26,6 +27,66 @@ module.exports = class CustomerHelperController {
 		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
+
+	}
+
+	setGlobalCustomer(customer){
+
+		du.debug('Set Global Customer');
+
+		if(!_.has(this, 'customerController')){
+			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+			this.customerController = new CustomerController();
+		}
+
+		return this.customerController.setGlobalCustomer(customer);
+
+	}
+
+	async getCustomerJWT({customer = null, session = null}){
+
+		du.debug('Get Customer JWT');
+
+		if(_.isNull(customer)){
+
+			if(_.isNull(session)){
+				throw eu.getError('bad_request', 'The session or the customer must be defined in order to acquire a customer JWT.');
+			}
+
+			if(!_.has(this, 'sessionController')){
+				const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+				this.sessionController = new SessionController();
+			}
+
+			session = await this.sessionController.get({id: session});
+
+			if(_.isNull(session)){
+				throw eu.getError('not_found', 'Session not found.');
+			}
+
+			customer = session.customer;
+
+		}else{
+
+			if(!_.has(this, 'customerController')){
+				const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+				this.customerController = new CustomerController();
+			}
+
+			customer = await this.customerController.get({id: customer});
+
+			if(_.isNull(customer)){
+				throw eu.getError('not_found', 'Customer not found.');
+			}
+
+		}
+
+		const TokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
+		let tokenHelperController = new TokenHelperController();
+
+		let customer_jwt = tokenHelperController.getCustomerJWT(customer);
+
+		return {token: customer_jwt};
 
 	}
 

@@ -1,0 +1,32 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/customerjwt.json",
+	"title": "Customer JWT",
+	"type": "object",
+	"properties": {
+		"customer": {
+			"type":"string"
+		},
+		"iss": {
+			"type": "string",
+			"format": "uri"
+		},
+		"sub": {
+			"type": "string"
+		},
+		"aud": {
+			"type": "string"
+		},
+		"exp": {
+			"type": "integer"
+		},
+		"iat": {
+			"type": "integer"
+		}
+	},
+	"required": [
+		"customer",
+		"exp",
+		"iat"
+	]
+}

@@ -43,6 +43,18 @@ module.exports = class Configuration extends ConfigurationUtilities {
 
 	}
 
+	getBase(subdomain = null){
+
+		du.debug('Get Base');
+
+		return [
+			'https://',
+			this.getSubdomainPath(subdomain),
+			'/'
+		].join('');
+
+	}
+
 	getSubdomainPath(subdomain = null){
 
 		du.debug('Get Subdomain Path');

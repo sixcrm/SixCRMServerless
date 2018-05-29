@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"query { getcustomerjwt (customer: \"24f7c851-29d4-4af9-87c5-0298fa74c689\") { token } }"
+}

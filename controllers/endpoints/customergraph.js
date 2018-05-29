@@ -5,18 +5,18 @@ const graphql = require('graphql').graphql;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const publicController = global.SixCRM.routes.include('controllers', 'endpoints/components/public.js');
+const customerAuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/customerauthenticated.js');
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
 
-module.exports = class PublicGraphController extends publicController {
+module.exports = class customerGraphController extends customerAuthenticatedController {
 
 	constructor() {
 
 		super();
 
-		//Technical Debt:  Instead of using a new schema, combine the schemas and prune here.
-		this.sixSchema = global.SixCRM.routes.include('handlers', 'endpoints/publicgraph/schema');
+		//Technical Debt:  Prune this for customers
+		this.sixSchema = global.SixCRM.routes.include('handlers', 'endpoints/graph/schema');
 
 		this.resolveController = new resolveController();
 
@@ -27,13 +27,14 @@ module.exports = class PublicGraphController extends publicController {
 		du.debug('GraphController.preamble()');
 
 		global.SixCRM.setResource('auroraContext', auroraContext);
+
 		return auroraContext.init();
 
 	}
 
 	body(event) {
 
-		du.debug('GraphController.body()');
+		du.debug('CustomerGraphController.body()');
 
 		return this.preprocessing(event)
 			.then((event) => this.parseEventQueryString(event))
@@ -47,7 +48,7 @@ module.exports = class PublicGraphController extends publicController {
 
 	epilogue() {
 
-		du.debug('GraphController.epilogue()');
+		du.debug('CustomerGraphController.epilogue()');
 
 		global.SixCRM.getResource('auroraContext');
 		return auroraContext.dispose();
@@ -128,7 +129,9 @@ module.exports = class PublicGraphController extends publicController {
 
 		};
 
-		return this.resolveController.resolve(graph_resolver);
+		let result =  this.resolveController.resolve(graph_resolver);
+
+		return result;
 
 	}
 

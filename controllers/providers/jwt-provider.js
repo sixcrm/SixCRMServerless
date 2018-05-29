@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const Ajv = require('ajv');
+const Ajv = require('ajv'); //Techical Debt:  Isn't this a part of the global now? (Nick)
 const jwt = require('jsonwebtoken');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -16,7 +16,10 @@ module.exports = class JWTProvider {
 
 		this.setParameters();
 
-		this.jwt_types = ['transaction', 'site'];
+		this.jwt_types = [
+			'transaction',
+			'site', // Technical Debt: this should probably be renamed to 'user'
+			'customer'];
 
 	}
 
@@ -44,6 +47,8 @@ module.exports = class JWTProvider {
 	}
 
 	decodeAndValidateJWT(jwt_string, jwt_signing_string) {
+
+		du.debug('Decode and Validate JWT');
 
 		let decoded_and_validated_jwt;
 
@@ -84,6 +89,8 @@ module.exports = class JWTProvider {
 	 */
 	verifyJWT(submitted_jwt, jwt_type) {
 
+		du.debug('Verify JWT');
+
 		this.setJWTType(jwt_type);
 
 		let signing_key = this.getSigningKey();
@@ -101,7 +108,9 @@ module.exports = class JWTProvider {
 			transaction_jwt_expiration: global.SixCRM.configuration.site_config.jwt.transaction.expiration,
 			transaction_jwt_secret_key: global.SixCRM.configuration.site_config.jwt.transaction.secret_key,
 			site_jwt_expiration: global.SixCRM.configuration.site_config.jwt.site.expiration,
-			site_jwt_secret_key: global.SixCRM.configuration.site_config.jwt.site.secret_key
+			site_jwt_secret_key: global.SixCRM.configuration.site_config.jwt.site.secret_key,
+			customer_jwt_expiration: global.SixCRM.configuration.site_config.jwt.customer.expiration,
+			customer_jwt_secret_key: global.SixCRM.configuration.site_config.jwt.customer.secret_key
 		};
 
 		this.jwt_parameters = {};
@@ -133,7 +142,9 @@ module.exports = class JWTProvider {
 	}
 
 	getJWTType() {
+
 		du.debug('Get JWT Type');
+
 		if (_.has(this, 'jwt_type')) {
 
 			return this.jwt_type;
@@ -176,6 +187,12 @@ module.exports = class JWTProvider {
 
 				break;
 
+			case 'customer':
+
+				jwt_contents = this.createCustomerJWTContents(parameters);
+
+				break;
+
 			default:
 
 				this.unrecognzedJWTType();
@@ -205,6 +222,12 @@ module.exports = class JWTProvider {
 			case 'site':
 
 				validation_function = this.validateSiteJWTContents
+
+				break;
+
+			case 'customer':
+
+				validation_function = this.validateCustomerJWTContents
 
 				break;
 
@@ -288,6 +311,34 @@ module.exports = class JWTProvider {
 
 	}
 
+	validateCustomerJWTContents(contents) {
+
+		du.debug('Validate Customer JWT Contents');
+
+		//Technical Debt:  This should be using the global object
+		let customer_jwt_schema = global.SixCRM.routes.include('model', 'jwt/customerjwt.json');
+
+		const ajv = new Ajv({
+			format: 'full',
+			allErrors: true,
+			verbose: true
+		});
+
+		let valid = false;
+
+		try{
+			 valid = ajv.validate(customer_jwt_schema, contents);
+		}catch(error){
+			du.info(error);
+		}
+
+		return {
+			valid,
+			errors: ajv.errors
+		};
+
+	}
+
 	getUserAlias(user) {
 
 		du.debug('Get User Alias');
@@ -320,6 +371,8 @@ module.exports = class JWTProvider {
 
 	getSigningKey() {
 
+		du.debug('Get Signing Key');
+
 		switch (this.getJWTType()) {
 
 			case 'transaction':
@@ -335,20 +388,32 @@ module.exports = class JWTProvider {
 			case 'site':
 
 				if (!_.has(this.jwt_parameters, 'site_jwt_secret_key')) {
-					throw eu.getError('validation', 'Site JST secret key is not defined.');
+					throw eu.getError('validation', 'Site JWT secret key is not defined.');
 				}
 
 				return this.jwt_parameters.site_jwt_secret_key;
 
+			case 'customer':
+
+				if (!_.has(this.jwt_parameters, 'customer_jwt_secret_key')) {
+					throw eu.getError('validation', 'Customer JWT secret key is not defined.');
+				}
+
+				return this.jwt_parameters.customer_jwt_secret_key;
+
 			default:
 
-				this.unrecognzedJWTType();
+				du.warning('Unrecognized JWT Type');
 
 		}
+
+		this.unrecognzedJWTType();
 
 	}
 
 	unrecognzedJWTType() {
+
+		du.debug('Unrecognzed JWT Type');
 
 		throw eu.getError('validation', 'Unrecognized JWT Type.');
 
@@ -394,10 +459,25 @@ module.exports = class JWTProvider {
 
 	}
 
+	createCustomerJWTContents(parameters) {
+
+		let now = timestamp.createTimestampSeconds();
+
+		return {
+			"customer": parameters.customer,
+			"iss": this.jwt_parameters.jwt_issuer,
+			"sub": "",
+			"aud": "",
+			"exp": now + parseInt(this.jwt_parameters.customer_jwt_expiration),
+			"iat": now
+		};
+
+	}
+
 	//Technical Debt:  Seems deprecated...
 	getUserEmail(parameters) {
 		du.debug('Get User Email');
-		if (_.has(parameters, 'user') && _.has(parameters.user, 'email')) {
+		if(_.has(parameters, 'user') && _.has(parameters.user, 'email')) {
 			return parameters.user.email;
 		}
 		throw eu.getError('validation', 'Unable to get user email.');

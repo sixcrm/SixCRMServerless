@@ -39,6 +39,7 @@ ses:
   default_sender_email: 'info@development.sixcrm.com'
   default_sender_name: 'Development SixCRM'
 
+#Technical Debt:  This sort of thing needs to be strongly protected
 jwt:
   issuer: 'https://development-api.sixcrm.com'
   site:
@@ -47,6 +48,10 @@ jwt:
     expiration: 3600
   transaction:
     secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
+    expiration: 3600
+  customer:
+    secret_key: 'a0d0wa9du8hucioj==12jr0cuvcamcq9ij1k3nfnkjIh(UH(8hjnciqihuyBGDn-LJn_80XdV'
+    domain: ''
     expiration: 3600
 
 sqs:

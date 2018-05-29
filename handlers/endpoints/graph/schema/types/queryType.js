@@ -29,6 +29,8 @@ let customerType = require('./customer/customerType');
 let customerNoteListType = require('./customernote/customerNoteListType');
 let customerNoteType = require('./customernote/customerNoteType');
 
+let customerJWTType = require('./customer/customerJWTType');
+
 let emailTemplateListType = require('./emailtemplate/emailTemplateListType');
 let emailTemplateType = require('./emailtemplate/emailTemplateType');
 
@@ -140,6 +142,7 @@ const BillController = global.SixCRM.routes.include('controllers', 'entities/Bil
 const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
+const CustomerHelperController = global.SixCRM.routes.include('helpers', 'entities/customer/Customer.js');
 const AccountController = global.SixCRM.routes.include('controllers', 'entities/Account.js');
 const AccessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 const CustomerNoteController = global.SixCRM.routes.include('controllers', 'entities/CustomerNote.js');
@@ -795,6 +798,26 @@ const fields = Object.assign({}, {
 				id: customernote.id,
 				fatal: get_fatal
 			});
+		}
+	},
+	getcustomerjwt: {
+		type: customerJWTType.graphObj,
+		args: {
+			customer: {
+				description: 'id of the customer',
+				type: GraphQLString
+			},
+			session: {
+				description: 'id of the session',
+				type: GraphQLString
+			}
+		},
+		resolve: function(root, args) {
+
+			const customerHelperController = new CustomerHelperController();
+
+			return customerHelperController.getCustomerJWT(args);
+
 		}
 	},
 	product: {
