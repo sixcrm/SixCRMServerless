@@ -52,7 +52,7 @@
     "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "@adexchange/aeg-limelight-api": "0.0.215",
+    "@adexchange/aeg-limelight-api": "0.0.220",
     "aws-sdk": "^2.244.1",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
@@ -105,7 +105,7 @@
     "lint-yml": "node_modules/yaml-lint/cli.js **/*.yml",
     "lint": "npm run lint-eslint && npm run lint-yml",
     "lint-commit": "./tools/lintCommitEslint.sh && ./tools/lintCommitYml.sh",
-    "test-cli-extract": "NODE_CONFIG_DIR=config/local NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js extract --crm limelight --client crm-ordercenter.limelightcrm.com"
+    "test-cli-extract": "NODE_CONFIG_DIR=config/local NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js extract --crm limelight --client ahmoffers.limelightcrm.com"
   },
   "pre-commit": [
     "lint",
