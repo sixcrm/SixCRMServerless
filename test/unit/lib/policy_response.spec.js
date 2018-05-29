@@ -2,7 +2,7 @@ let PolicyResponse = global.SixCRM.routes.include('lib', 'policy_response.js');
 let chai = require('chai');
 let expect = chai.expect;
 
-const anyPrincipalId = 1;
+const anyPrincipalId = 'user';
 const anyEffect = 'effect';
 const anyResource = 'resource';
 const anyUser = 'user';

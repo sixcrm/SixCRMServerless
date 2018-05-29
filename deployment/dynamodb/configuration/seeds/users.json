@@ -218,6 +218,18 @@
 	  "updated_at":"2017-10-19T12:31:12.521Z"
 	},
 	{
+	  "name":"accounting.sixcrm.com/customers",
+	  "first_name": "Customer Self-Service",
+	  "last_name": "customer.selfservice@sixcrm.com",
+	  "auth0_id":"abc123",
+	  "id":"accounting.customer.selfservice@sixcrm.com",
+	  "active":true,
+	  "termsandconditions":"0.1",
+	  "alias":"7fa64d11c6a853ddc3618806f756c90db9cd8d75",
+	  "created_at":"2017-10-19T12:30:41.405Z",
+	  "updated_at":"2017-10-19T12:31:12.521Z"
+	},
+	{
 	  "name":"EvanOxfeld",
 	  "first_name": "Evan",
 	  "last_name": "Oxfeld",

@@ -5,7 +5,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 module.exports = class AuthorizationHandler extends LambdaHandler {
 
-	async handleInternal(event, lambdaContext, lambdaCallback, handlerDelegate) {
+	async handleInternal(event, lambdaContext, lambdaCallback, handlerDelegate, handlerFieldName = 'user') {
 
 		try {
 
@@ -13,11 +13,11 @@ module.exports = class AuthorizationHandler extends LambdaHandler {
 
 			if (result.allow) {
 
-				return lambdaCallback(null, policy_response.generatePolicy('user', 'Allow', event.methodArn, result.response));
+				return lambdaCallback(null, policy_response.generatePolicy(handlerFieldName, 'Allow', event.methodArn, result.response));
 
 			} else {
 
-				return lambdaCallback(null, policy_response.generatePolicy('user', 'Deny', event.methodArn, null));
+				return lambdaCallback(null, policy_response.generatePolicy(handlerFieldName, 'Deny', event.methodArn, null));
 
 			}
 

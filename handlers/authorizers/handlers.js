@@ -8,6 +8,10 @@ const VerifyTransactionJWTController = global.SixCRM.routes.include('controllers
 const _ = require('lodash');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
+function handleAuthorization(delegate, field_name = 'user'){
+	return (event, context, callback) => new AuthorizationHandler().handle(event, context, callback, delegate, field_name);
+}
+
 module.exports = {
 	verifysignature: handleAuthorization(async (event) => {
 		let authority_user = await new VerifySignatureController().execute(event);
@@ -17,7 +21,6 @@ module.exports = {
 			return { allow: false }
 		}
 	}),
-
 	verifysitejwt: handleAuthorization(async (event) => {
 		let controller = new VerifySiteJWTController();
 		let response = await controller.execute(event);
@@ -31,7 +34,6 @@ module.exports = {
 			return { allow: false }
 		}
 	}),
-
 	verifycustomerjwt: handleAuthorization(async (event) => {
 		let controller = new VerifyCustomerJWTController();
 		let response = await controller.execute(event);
@@ -42,8 +44,7 @@ module.exports = {
 		}else {
 			return { allow: false }
 		}
-	}),
-
+	}, 'customer'),
 	verifytransactionjwt: handleAuthorization(async (event) => {
 		let response = await new VerifyTransactionJWTController().execute(event);
 		if (_.isString(response)) {
@@ -53,7 +54,3 @@ module.exports = {
 		}
 	})
 };
-
-function handleAuthorization(delegate) {
-	return (event, context, callback) => new AuthorizationHandler().handle(event, context, callback, delegate);
-}

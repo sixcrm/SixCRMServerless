@@ -197,4 +197,19 @@
 	},
 	"created_at":"2017-04-06T18:40:41.405Z",
 	"updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+	"id":"161dbc59-4e2a-4fb6-a360-a687ffc61c17",
+	"account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	"name": "Customer Self-Service",
+	"active":true,
+	"permissions":{
+		"allow":[
+			"session/read",
+			"customer/read"
+		],
+		"deny":["*"]
+	},
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
 }]
