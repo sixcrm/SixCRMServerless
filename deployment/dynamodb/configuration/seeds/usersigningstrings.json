@@ -25,5 +25,14 @@
     "used_at": null,
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
+  },
+  {
+    "id": "c548afbb-d66f-4310-8195-85ff7f485daa",
+    "user": "accounting.customer.selfservice@sixcrm.com",
+    "name": "accounting.customer.selfservice@sixcrm.com/selfserviceportal",
+    "signing_string": "4K2VAY6MLHW6JAJHJQ9L",
+    "used_at": null,
+    "created_at":"2017-04-06T18:40:41.405Z",
+    "updated_at":"2017-04-06T18:41:12.521Z"
   }
 ]
