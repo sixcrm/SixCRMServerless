@@ -7,7 +7,11 @@ class EntityPermissionsHelper {
 		du.debug('Is Shared');
 		const {allow, deny} = acl;
 		const account = global.account;
-		const user = global.user.id;
+
+		let user;
+		if(_.has(global, 'user') && _.has(global.user, 'id')){
+			user = global.user.id;
+		}
 
 		const target = { account, user, action };
 

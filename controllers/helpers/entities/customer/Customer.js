@@ -30,6 +30,19 @@ module.exports = class CustomerHelperController {
 
 	}
 
+	setGlobalCustomer(customer){
+
+		du.debug('Set Global Customer');
+
+		if(!_.has(this, 'customerController')){
+			const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+			this.customerController = new CustomerController();
+		}
+
+		return this.customerController.setGlobalCustomer(customer);
+
+	}
+
 	async getCustomerJWT({customer = null, session = null}){
 
 		du.debug('Get Customer JWT');

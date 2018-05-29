@@ -76,6 +76,20 @@ module.exports = class PermissionedController {
 
 	}
 
+	setGlobalCustomer(customer){
+
+		du.debug('Set Global Customer');
+
+		if(_.has(customer, 'id')){
+
+			this.permissionutilities.setGlobalCustomer(customer);
+
+		}
+
+		return;
+
+	}
+
 	unsetGlobalUser(){
 
 		du.debug('Unset Global User');

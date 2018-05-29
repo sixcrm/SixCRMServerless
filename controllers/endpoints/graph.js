@@ -5,11 +5,11 @@ const graphql = require('graphql').graphql;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
+const userAuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/userauthenticated.js');
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
 const auroraContext = global.SixCRM.routes.include('lib', 'analytics/aurora-context.js');
 
-module.exports = class graphController extends authenticatedController {
+module.exports = class graphController extends userAuthenticatedController {
 
 	constructor() {
 
