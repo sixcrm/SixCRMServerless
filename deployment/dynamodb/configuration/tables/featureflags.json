@@ -1,0 +1,29 @@
+{
+  "Table":{
+    "TableName":"featureflags",
+    "KeySchema":[
+      {
+        "AttributeName":"environment",
+        "KeyType":"HASH"
+      },
+      {
+        "AttributeName":"account",
+        "KeyType":"RANGE"
+      }
+    ],
+    "AttributeDefinitions":[
+      {
+        "AttributeName":"environment",
+        "AttributeType":"S"
+      },
+      {
+        "AttributeName":"account",
+        "AttributeType":"S"
+      }
+    ],
+    "ProvisionedThroughput":{
+      "ReadCapacityUnits":3,
+      "WriteCapacityUnits":3
+    }
+  }
+}

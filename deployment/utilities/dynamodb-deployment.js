@@ -280,30 +280,34 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	seedTables(live = false) {
+	async seedTables(live = false, table = null) {
 
 		du.debug('Seed Tables');
 
 		permissionutilities.disableACLs();
 		permissionutilities.setPermissions('*',['*/*'],[]);
 
-		return this.initializeControllers().then(() => {
+		await this.initializeControllers();
 
-			return this.getTableSeedFilenames(live).then((table_seed_definition_filenames) => {
+		if(!_.isNull(table)){
 
-				let table_seed_promises = arrayutilities.map(table_seed_definition_filenames, (table_seed_definition_filename) => {
-					return () => this.seedTable(table_seed_definition_filename, live);
-				});
+			await this.seedTable(table, live);
 
-				return arrayutilities.serial(
-					table_seed_promises
-				).then(() => {
-					return 'Complete';
-				});
+		}else{
 
+			let table_seed_definition_filenames = await this.getTableSeedFilenames(live);
+
+			let table_seed_promises = arrayutilities.map(table_seed_definition_filenames, (table_seed_definition_filename) => {
+				return () => this.seedTable(table_seed_definition_filename, live);
 			});
 
-		});
+			await arrayutilities.serial(
+				table_seed_promises
+			);
+
+		}
+
+		return 'Complete';
 
 	}
 

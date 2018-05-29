@@ -1,13 +1,12 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-//const GraphQLInt = require('graphql').GraphQLInt;
 
 const termsAndConditionsType = require('./termsandconditions/termsAndConditionsType');
 const acknowledgedInviteType = require('./invite/acknowledgedInviteType');
 
 const InviteHelperController = global.SixCRM.routes.include('helpers', 'entities/invite/Invite.js');
-const TermsAndConditionsController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
+const TermsAndConditionsHelperController = global.SixCRM.routes.include('helpers', 'terms-and-conditions/TermsAndConditions.js');
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Query',
@@ -37,8 +36,8 @@ module.exports.graphObj = new GraphQLObjectType({
 				}
 			},
 			resolve: function(root, args) {
-				const termsAndConditionsController = new TermsAndConditionsController();
-				return termsAndConditionsController.getLatestTermsAndConditions(args.role, args.account);
+				const termsAndConditionsHelperController = new TermsAndConditionsHelperController();
+				return termsAndConditionsHelperController.getLatestTermsAndConditions(args.role, args.account);
 			}
 		},
 	})

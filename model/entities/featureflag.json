@@ -1,0 +1,27 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/entities/featureflag.json",
+	"title": "Feature Flag",
+	"type": "object",
+	"description": "A feature flag",
+	"properties": {
+		"environment": {
+			"type":"string"
+		},
+		"account": {
+			"oneOf":[
+				{"$ref": "../definitions/sixcrmaccountidentifier.json"},
+				{
+					"type":"string",
+					"enum":["default"]
+				}
+			]
+		},
+		"features":{
+			"type":"object"
+		}
+	},
+	"required": [
+		"environment"
+	]
+}
