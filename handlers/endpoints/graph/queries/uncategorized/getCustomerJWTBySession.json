@@ -1,5 +1,5 @@
 {
-	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
-	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"query { getcustomerjwt (session: \"668ad918-0d09-4116-a6fe-0e8a9eda36f7\") { token } }"
+	"requestContext":{"authorizer":{ "user": "accounting.customer.selfservice@sixcrm.com" }},
+	"pathParameters": { "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f" },
+	"body":"query { getcustomerjwt (session: \"95cffd8b-40cc-4e6a-9cdd-393a8f5bff7d\") { token } }"
 }

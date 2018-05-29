@@ -6,7 +6,7 @@ const ServerlessRuntime = require('../core/ServerlessRuntime');
 
 module.exports = class LambdaHandler
 {
-	async handle(event, lambdaContext, lambdaCallback, handlerDelegate) {
+	async handle(event, lambdaContext, lambdaCallback, handlerDelegate, handlerFieldName = 'user') {
 
 		if (event.source === 'serverless-plugin-warmup') {
 
@@ -19,7 +19,7 @@ module.exports = class LambdaHandler
 
 		try {
 
-			await this.handleInternal(event, lambdaContext, lambdaCallback, handlerDelegate);
+			await this.handleInternal(event, lambdaContext, lambdaCallback, handlerDelegate, handlerFieldName);
 
 		}
 		catch (error) {
@@ -36,7 +36,7 @@ module.exports = class LambdaHandler
 	}
 
 	// eslint-disable-next-line no-unused-vars
-	async handleInternal(event, lambdaContext, lambdaCallback, handlerDelegate) {
+	async handleInternal(event, lambdaContext, lambdaCallback, handlerDelegate, handlerFieldName) {
 		// override
 	}
 

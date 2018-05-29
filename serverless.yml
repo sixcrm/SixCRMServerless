@@ -95,7 +95,7 @@ functions:
             origin: '*'
             maxAge: 86400
           authorizer:
-            name: verifysitejwt
+            name: verifycustomerjwt
             resultTtlInSeconds: 0
             identitySource: method.request.header.Authorization
 
