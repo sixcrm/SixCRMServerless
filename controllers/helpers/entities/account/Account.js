@@ -80,6 +80,8 @@ module.exports = class AccountHelperController {
 
 		du.debug('Is Account Disabled');
 
+		du.info(account);
+
 		if(!_.has(account, 'billing')){
 			du.warning('Account not active:  Missing billing properties.');
 			return true;

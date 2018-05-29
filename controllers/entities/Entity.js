@@ -42,7 +42,8 @@ module.exports = class entityController extends entityUtilitiesController {
 			'usersigningstring', //userbound
 			'account', //self-referntial, implicit
 			'bin', //not a cruddy endpoint
-			'entityacl'
+			'entityacl',
+			'featureflag' //not related to the account model particularly
 		];
 
 		this.dynamodbprovider = new DynamoDBProvider();
@@ -66,7 +67,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	}
 
-	getShared({id}) {
+	getShared({id, range_key = null}) {
 
 		//Nick:  Please put this in most functions so that the debug methods have robust output
 		du.debug('Get Shared');
@@ -75,6 +76,11 @@ module.exports = class entityController extends entityUtilitiesController {
 			key_condition_expression: 'entity = :primary_keyv',
 			expression_attribute_values: {':primary_keyv': this.getID(id)}
 		};
+
+		if(_.has(this, 'range_key') && !_.isNull(range_key)){
+			query_parameters.key_condition_expression += ' and '+this.range_key+' = :range_keyv';
+			query_parameters.expression_attribute_values[':range_keyv'] = range_key;
+		}
 
 		return this.dynamodbprovider.queryRecords('entityacls', query_parameters, null)
 			.then(data => this.getItems(data))
@@ -90,6 +96,11 @@ module.exports = class entityController extends entityUtilitiesController {
 					key_condition_expression: this.primary_key+' = :primary_keyv',
 					expression_attribute_values: {':primary_keyv': this.getID(id)}
 				};
+
+				if(_.has(this, 'range_key') && !_.isNull(range_key)){
+					query_parameters.key_condition_expression += ' and '+this.range_key+' = :range_keyv';
+					query_parameters.expression_attribute_values[':range_keyv'] = range_key;
+				}
 
 				query_parameters = this.appendAccountFilter({query_parameters, account: '*'});
 				return this.dynamodbprovider.queryRecords(this.table_name, query_parameters, null);
@@ -463,7 +474,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	}
 
-	get({id, fatal}){
+	get({id, fatal, range_key = null}){
 
 		du.debug('Get');
 
@@ -476,7 +487,10 @@ module.exports = class entityController extends entityUtilitiesController {
 					expression_attribute_values: {':primary_keyv': this.getID(id)}
 				};
 
-				//du.warning(query_parameters);
+				if(_.has(this, 'range_key') && !_.isNull(range_key)){
+					query_parameters.key_condition_expression += ' and '+this.range_key+' = :range_keyv';
+					query_parameters.expression_attribute_values[':range_keyv'] = range_key;
+				}
 
 				query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
@@ -632,7 +646,17 @@ module.exports = class entityController extends entityUtilitiesController {
 			throw eu.getError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
 		}
 
-		return this.can({action: 'update', object: this.descriptive_name, id: entity[this.primary_key], fatal: true})
+		if(_.has(this, 'range_key') && !_.has(entity, this.range_key)){
+			throw eu.getError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+this.range_key+'"');
+		}
+
+		let can_arguments = {action: 'update', object: this.descriptive_name, id: entity[this.primary_key], fatal: true}
+
+		if(_.has(this, 'range_key')){
+			can_arguments.range_key = entity[this.range_key];
+		}
+
+		return this.can(can_arguments)
 			.then(() => this.exists({entity: entity, return_entity: true}))
 			.then((existing_entity) => {
 
@@ -657,8 +681,11 @@ module.exports = class entityController extends entityUtilitiesController {
 
 			})
 			.then((existing_entity) => {
+
 				if (existing_entity.account) {
-					entity.account = existing_entity.account;
+					if(!_.includes(this.nonaccounts, this.descriptive_name)){
+						entity.account = existing_entity.account;
+					}
 				}
 				entity = this.assignAccount(entity);
 				entity = this.persistCreatedUpdated(entity, existing_entity);
@@ -746,13 +773,16 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	//NOT ACL enabled
-	delete({id}){
+	delete({id, range_key = null}){
 
 		du.debug('Delete');
 
 		let delete_parameters = {};
 
 		delete_parameters[this.primary_key] = id;
+		if(_.has(this, 'range_key')){
+			delete_parameters[this.range_key] = range_key;
+		}
 
 
 		return this.can({action: 'delete', object: this.descriptive_name, fatal: true})
@@ -797,6 +827,14 @@ module.exports = class entityController extends entityUtilitiesController {
 			key_condition_expression: this.primary_key+' = :primary_keyv',
 			expression_attribute_values: {':primary_keyv': primary_key}
 		};
+
+		if(_.has(this, 'range_key')){
+			if(!_.has(entity, this.range_key)){
+				throw eu.getError('server', 'Unable to create '+this.descriptive_name+'. Missing property "'+this.range_key+'"');
+			}
+			query_parameters.key_condition_expression += ' and '+this.range_key+' = :range_keyv';
+			query_parameters.expression_attribute_values[':range_keyv'] = entity[this.range_key];
+		}
 
 		query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
