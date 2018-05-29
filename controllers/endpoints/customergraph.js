@@ -36,6 +36,8 @@ module.exports = class customerGraphController extends customerAuthenticatedCont
 
 		du.debug('CustomerGraphController.body()');
 
+		//du.warning(event);
+
 		return this.preprocessing(event)
 			.then((event) => this.parseEventQueryString(event))
 			.then((event) => this.acquireQuery(event))
