@@ -4,7 +4,6 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const FulfillmentProviderVendorResponse = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/Response.js');
@@ -37,7 +36,7 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 
 		du.debug('Translate Info');
 
-		mvu.validateModel(response.body, global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/Test/responsebody.json'));
+		global.SixCRM.validate(response.body, global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/Test/responsebody.json'));
 
 		return {
 			orders: [

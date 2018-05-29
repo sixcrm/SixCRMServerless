@@ -4,7 +4,6 @@ const nodemailer = require('nodemailer');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
@@ -85,7 +84,7 @@ module.exports = class SMTPProvider {
 
 		du.debug('Validate Connection Options');
 
-		mvu.validateModel(options, global.SixCRM.routes.path('model','general/smtp_connection_options.json'));
+		global.SixCRM.validate(options, global.SixCRM.routes.path('model','general/smtp_connection_options.json'));
 
 	}
 
@@ -111,7 +110,7 @@ module.exports = class SMTPProvider {
 
 		du.debug('Validate Send Object');
 
-		mvu.validateModel(send_object, global.SixCRM.routes.path('model','general/smtp_send_object.json'));
+		global.SixCRM.validate(send_object, global.SixCRM.routes.path('model','general/smtp_send_object.json'));
 
 	}
 

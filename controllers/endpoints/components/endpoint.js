@@ -4,7 +4,6 @@ const querystring = require('querystring');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
@@ -187,8 +186,9 @@ module.exports = class EndpointController {
 
 		du.debug('Validate Event');
 
+
 		try {
-			mvu.validateModel(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
+			global.SixCRM.validate(event, global.SixCRM.routes.path('model', 'general/lambda/event.json'));
 		} catch (error) {
 			du.error(error);
 			this.throwUnexpectedEventStructureError(event);

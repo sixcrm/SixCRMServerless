@@ -5,7 +5,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const FulfillmentProviderController = global.SixCRM.routes.include('entities', 'FulfillmentProvider.js');
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -288,7 +287,7 @@ module.exports = class ShipmentUtilities {
 
 			let parsed_response = vendor_response.getParsedResponse();
 
-			mvu.validateModel(parsed_response, this.response_validation);
+			global.SixCRM.validate(parsed_response, this.response_validation);
 
 			return true;
 

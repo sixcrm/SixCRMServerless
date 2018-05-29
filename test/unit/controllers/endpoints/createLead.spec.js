@@ -3,7 +3,6 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
@@ -286,7 +285,7 @@ describe('createLead', function () {
 			const createLeadController = new CreateLeadController();
 
 			return createLeadController.execute(event).then(result => {
-				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
+				expect(global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
 			});
 
 		});
@@ -372,7 +371,7 @@ describe('createLead', function () {
 			const createLeadController = new CreateLeadController();
 
 			return createLeadController.execute(event).then(result => {
-				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
+				expect(global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
 			});
 
 		});
@@ -717,7 +716,7 @@ describe('createLead', function () {
 			const createLeadController = new CreateLeadController();
 
 			return createLeadController.createLead(event).then(result => {
-				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
+				expect(global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
 			});
 
 		});

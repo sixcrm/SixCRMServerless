@@ -1,9 +1,8 @@
 const chai = require('chai');
 const expect = chai.expect;
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-global.SixCRM.validation.addSchema(require(global.SixCRM.routes.path('test', 'unit/config/serverless.json')));
+global.SixCRM.validator.addSchema(require(global.SixCRM.routes.path('test', 'unit/config/serverless.json')));
 
 describe('config', () => {
 
@@ -19,7 +18,7 @@ describe('config', () => {
 
 			let serverless_file = global.SixCRM.configuration.serverless_config;
 
-			mvu.validateModel(serverless_file, global.SixCRM.routes.path('test', 'unit/config/serverless.json'))
+			global.SixCRM.validate(serverless_file, global.SixCRM.routes.path('test', 'unit/config/serverless.json'))
 		});
 
 		it('names of lambda handlers should be correct', () => {
@@ -54,7 +53,7 @@ describe('config', () => {
 					global.SixCRM.configuration.stage = stage;
 					let site_config = global.SixCRM.configuration.getSiteConfig();
 
-					mvu.validateModel(site_config, global.SixCRM.routes.path('test', 'unit/config/site_config.json'));
+					global.SixCRM.validate(site_config, global.SixCRM.routes.path('test', 'unit/config/site_config.json'));
 
 				});
 			});

@@ -1,6 +1,5 @@
 
 const _ = require('lodash');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
@@ -74,7 +73,7 @@ module.exports = class SMTPProvider {
 
 		du.debug('Validate Options');
 
-		mvu.validateModel(options_object, global.SixCRM.routes.path('model', 'general/smtp_options.json'));
+		global.SixCRM.validate(options_object, global.SixCRM.routes.path('model', 'general/smtp_options.json'));
 
 	}
 

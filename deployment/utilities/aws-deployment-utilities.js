@@ -4,7 +4,6 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const STSProvider = global.SixCRM.routes.include('controllers', 'providers/sts-provider.js');
 
 module.exports = class AWSDeploymentUtilities {
@@ -48,7 +47,7 @@ module.exports = class AWSDeploymentUtilities {
 
 		return this.stsprovider.assumeRole(assume_role_parameters).then(result => {
 
-			mvu.validateModel(result, global.SixCRM.routes.path('model', 'deployment/sts/assumedroleresponse.json'));
+			global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'deployment/sts/assumedroleresponse.json'));
 
 			return result;
 
@@ -76,7 +75,7 @@ module.exports = class AWSDeploymentUtilities {
 
 		du.debug('Set Assumed Role Properties');
 
-		mvu.validateModel(assumed_role_json, global.SixCRM.routes.path('model', 'deployment/sts/assumedroleresponse.json'));
+		global.SixCRM.validate(assumed_role_json, global.SixCRM.routes.path('model', 'deployment/sts/assumedroleresponse.json'));
 
 		process.env.AWS_ACCESS_KEY_ID = assumed_role_json.Credentials.AccessKeyId;
 		process.env.AWS_SECRET_ACCESS_KEY = assumed_role_json.Credentials.SecretAccessKey;

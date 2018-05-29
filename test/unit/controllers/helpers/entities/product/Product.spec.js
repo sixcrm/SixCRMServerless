@@ -8,7 +8,6 @@ const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const mathutilities = global.SixCRM.routes.include('lib', 'math-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');

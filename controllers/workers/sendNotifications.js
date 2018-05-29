@@ -2,7 +2,6 @@
 var _ = require('lodash');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const NotificationProvider = global.SixCRM.routes.include('controllers', 'providers/notification/Notification.js');
 const notificationProvider =  new NotificationProvider();
@@ -49,7 +48,7 @@ module.exports = class sendNotificationsController extends workerController {
 
 		du.debug('Filter Invalid Messages');
 
-		mvu.validateModel(message, global.SixCRM.routes.path('model', 'workers/sendnotification/notificationmessage.json'));
+		global.SixCRM.validate(message, global.SixCRM.routes.path('model', 'workers/sendnotification/notificationmessage.json'));
 
 		if(message.scope.user == true && !_.has(message, 'user')){
 			throw eu.getError('server', 'The user email must be inclided if the scope.user setting is true.');

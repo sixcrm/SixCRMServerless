@@ -2,7 +2,6 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
@@ -126,7 +125,7 @@ module.exports = class forwardMessageController extends RelayController {
 
 		du.debug('Validate Worker Response Object');
 
-		mvu.validateModel(compound_worker_response_object, global.SixCRM.routes.path('model', 'workers/forwardmessage/compoundworkerresponseobject.json'));
+		global.SixCRM.validate(compound_worker_response_object, global.SixCRM.routes.path('model', 'workers/forwardmessage/compoundworkerresponseobject.json'));
 
 		if(objectutilities.getClassName(compound_worker_response_object.worker_response_object) !== 'WorkerResponse'){
 			du.error('Unrecognized worker response:', compound_worker_response_object.worker_response_object);
@@ -269,7 +268,7 @@ module.exports = class forwardMessageController extends RelayController {
 			return Promise.resolve(true);
 		}
 
-		mvu.validateModel(messages, global.SixCRM.routes.path('model','workers/sqsmessages.json'));
+		global.SixCRM.validate(messages, global.SixCRM.routes.path('model','workers/sqsmessages.json'));
 
 		let message_delete_promises = arrayutilities.map(messages, message => {
 			du.info(message);

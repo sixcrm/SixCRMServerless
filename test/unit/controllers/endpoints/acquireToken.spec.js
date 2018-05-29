@@ -6,7 +6,6 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -433,7 +432,7 @@ describe('acquireToken', () => {
 			acquireTokenController.createEventObject = () => { return getValidEventPrototype(); }
 
 			return acquireTokenController.execute(event).then(result => {
-				expect(mvu.validateModel(result, global.SixCRM.routes.path('model', 'definitions/jwt.json'))).to.equal(true);
+				expect(global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'definitions/jwt.json'))).to.equal(true);
 			});
 
 		});

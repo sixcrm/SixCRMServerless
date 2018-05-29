@@ -6,7 +6,6 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const EntityPermissionsHelper = global.SixCRM.routes.include('helpers', 'entityacl/EntityPermissions.js');
 const entityUtilitiesController = global.SixCRM.routes.include('controllers','entities/EntityUtilities');
@@ -883,7 +882,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 			return this.associatedEntitiesCheck({id: id}).then(associated_entities => {
 
-				mvu.validateModel(associated_entities, global.SixCRM.routes.path('model','general/associated_entities_response.json'));
+				global.SixCRM.validate(associated_entities, global.SixCRM.routes.path('model', 'general/associated_entities_response.json'));
 
 				if(arrayutilities.nonEmpty(associated_entities)){
 

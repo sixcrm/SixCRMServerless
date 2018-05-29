@@ -2,7 +2,6 @@ const _  = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 module.exports = class AWSProvider {
 
@@ -67,7 +66,7 @@ module.exports = class AWSProvider {
 
 		fatal = (_.isUndefined(fatal))?true:fatal;
 
-		let validation = mvu.validateModel(process.env, global.SixCRM.routes.path('model','general/process_env/hasawscredentials.json'), null, false)
+		let validation = global.SixCRM.validate(process.env, global.SixCRM.routes.path('model','general/process_env/hasawscredentials.json'), false)
 
 		if(!validation){
 

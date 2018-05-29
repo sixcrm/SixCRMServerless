@@ -1,5 +1,4 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 module.exports = class ChannelNotification {
 
@@ -7,7 +6,7 @@ module.exports = class ChannelNotification {
 
 		du.debug('Is Valid Notification');
 
-		mvu.validateModel(notification_object, global.SixCRM.routes.path('model', 'providers/notifications/translatednotification.json'));
+		global.SixCRM.validate(notification_object, global.SixCRM.routes.path('model', 'providers/notifications/translatednotification.json'));
 
 		return true;
 

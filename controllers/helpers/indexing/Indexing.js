@@ -2,7 +2,6 @@
 const _ =  require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
@@ -73,7 +72,7 @@ module.exports = class IndexingHelperController {
 
 		du.debug('Validate Parsed Document');
 
-		mvu.validateModel(parsed_document, global.SixCRM.routes.path('model','workers/indexEntities/rawdocument.json'));
+		global.SixCRM.validate(parsed_document, global.SixCRM.routes.path('model','workers/indexEntities/rawdocument.json'));
 
 		return parsed_document;
 
@@ -103,7 +102,7 @@ module.exports = class IndexingHelperController {
 
 		du.debug('Validate Index Element');
 
-		mvu.validateModel(index_element, global.SixCRM.routes.path('model', 'helpers/indexing/indexelement.json'));
+		global.SixCRM.validate(index_element, global.SixCRM.routes.path('model', 'helpers/indexing/indexelement.json'));
 
 		return index_element;
 
@@ -113,7 +112,7 @@ module.exports = class IndexingHelperController {
 
 		du.debug('Validate Index Elements');
 
-		mvu.validateModel(index_elements, global.SixCRM.routes.path('model', 'helpers/indexing/indexelements.json'));
+		global.SixCRM.validate(index_elements, global.SixCRM.routes.path('model', 'helpers/indexing/indexelements.json'));
 
 		return index_elements;
 

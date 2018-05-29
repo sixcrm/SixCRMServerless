@@ -2,7 +2,6 @@ const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
@@ -399,7 +398,7 @@ describe('createOrder', function () {
 			return createOrderController.execute(event).then(() => {
 				expect(createOrderController.parameters.store).to.have.property('info');
 				let info = createOrderController.parameters.get('info');
-				expect(mvu.validateModel(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
+				expect(global.SixCRM.validate(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
 			});
 
 		});
@@ -584,7 +583,7 @@ describe('createOrder', function () {
 			return createOrderController.execute(event).then(() => {
 				expect(createOrderController.parameters.store).to.have.property('info');
 				let info = createOrderController.parameters.get('info');
-				expect(mvu.validateModel(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
+				expect(global.SixCRM.validate(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
 			});
 
 		});
@@ -769,7 +768,7 @@ describe('createOrder', function () {
 			return createOrderController.execute(event).then(() => {
 				expect(createOrderController.parameters.store).to.have.property('info');
 				let info = createOrderController.parameters.get('info');
-				expect(mvu.validateModel(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
+				expect(global.SixCRM.validate(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
 			});
 		});
 
@@ -1706,7 +1705,7 @@ describe('createOrder', function () {
 
 			return createOrderController.createOrder(event).then(() => {
 				let info = createOrderController.parameters.get('info');
-				expect(mvu.validateModel(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
+				expect(global.SixCRM.validate(info, global.SixCRM.routes.path('model', 'endpoints/createOrder/info.json'))).to.equal(true);
 			});
 
 		});

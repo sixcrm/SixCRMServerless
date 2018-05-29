@@ -7,7 +7,6 @@ const creditcardgenerator = require('creditcard-generator');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
@@ -1412,7 +1411,7 @@ class MockEntities {
 
 		if (!_.isUndefined(event_type)) {
 
-			let validates = mvu.validateModel(event_type, global.SixCRM.routes.path('model', 'definitions/eventtype.json'), null, false);
+			let validates = global.SixCRM.validate(event_type, global.SixCRM.routes.path('model', 'definitions/eventtype.json'), false);
 
 			if (validates) {
 				return event_type;

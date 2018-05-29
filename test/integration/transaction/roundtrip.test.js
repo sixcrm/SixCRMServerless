@@ -4,7 +4,6 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
@@ -89,7 +88,7 @@ function confirmOrder(token, session){
 			expect(result.body.code).to.equal(200);
 
 
-			let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json'));
+			let validated = global.SixCRM.validate(result.body.response, global.SixCRM.routes.path('model', 'endpoints/confirmOrder/response.json'));
 
 			expect(validated).to.equal(true);
 			return result.body;
@@ -131,7 +130,7 @@ function createUpsell(token, session, sale_object, previous_order){
 			expect(result.body.success).to.equal(true);
 			expect(result.body.code).to.equal(200);
 
-			let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createOrder/response.json'))
+			let validated = global.SixCRM.validate(result.body.response, global.SixCRM.routes.path('model','endpoints/createOrder/response.json'))
 
 			expect(validated).to.equal(true);
 
@@ -167,7 +166,7 @@ function createOrder(token, session, sale_object, customer){
 			expect(result.body.success).to.equal(true);
 			expect(result.body.code).to.equal(200);
 
-			let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createOrder/response.json'))
+			let validated = global.SixCRM.validate(result.body.response, global.SixCRM.routes.path('model','endpoints/createOrder/response.json'))
 
 			expect(validated).to.equal(true);
 
@@ -200,7 +199,7 @@ function createLead(token, campaign, customer){
 			expect(result.body).to.have.property('response');
 			expect(result.body.success).to.equal(true);
 			expect(result.body.code).to.equal(200);
-			let validated = mvu.validateModel(result.body.response, global.SixCRM.routes.path('model','endpoints/createLead/response.json'))
+			let validated = global.SixCRM.validate(result.body.response, global.SixCRM.routes.path('model','endpoints/createLead/response.json'))
 
 			expect(validated).to.equal(true);
 			return result.body.response.id;

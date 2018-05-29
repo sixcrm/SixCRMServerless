@@ -79,6 +79,7 @@ module.exports = class verifySiteJWTController {
 
 		let encoded_token = this.parameters.get('encoded_authorization_token');
 
+		du.info(encoded_token);
 		if (this.jwtprovider.verifyJWT(encoded_token)) {
 
 			this.parameters.set('verified_authorization_token', encoded_token);

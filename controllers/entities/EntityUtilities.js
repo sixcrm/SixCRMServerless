@@ -7,7 +7,6 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const EncryptionHelper = global.SixCRM.routes.include('helpers', 'encryption/Encryption.js');
@@ -121,7 +120,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 			path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
 		}
 
-		let valid = mvu.validateModel(object, path_to_model);
+		let valid = global.SixCRM.validate(object, path_to_model);
 
 		if(_.isError(valid)){
 			return Promise.reject(valid);

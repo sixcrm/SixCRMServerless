@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib','parser-utilities.js');
 
 const AccountController = global.SixCRM.routes.include('entities', 'Account.js');
@@ -24,7 +23,7 @@ module.exports = class TermsAndConditions {
 			version: terms_and_conditions_meta.version
 		};
 
-		mvu.validateModel(terms_and_conditions, global.SixCRM.routes.path('model','helpers/termsandconditions/termsandconditions.json'));
+		global.SixCRM.validate(terms_and_conditions, global.SixCRM.routes.path('model','helpers/termsandconditions/termsandconditions.json'));
 
 		return terms_and_conditions;
 
