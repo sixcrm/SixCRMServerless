@@ -20,7 +20,7 @@ function getValidMessages(){
 	];
 }
 
-describe('workers/forwardMessage/pickRebillsToBillController', () => {
+xdescribe('workers/forwardMessage/pickRebillsToBillController', () => {
 
 	describe('constructor', () => {
 

@@ -57,7 +57,7 @@ function getValidTransactions() {
 
 }
 
-describe('controllers/workers/confirmDelivered', () => {
+xdescribe('controllers/workers/confirmDelivered', () => {
 
 	before(() => {
 		mockery.enable({

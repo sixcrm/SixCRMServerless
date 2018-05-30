@@ -24,7 +24,7 @@ function getValidMessage(id){
 
 }
 
-describe('controllers/workers/getRebills', () => {
+xdescribe('controllers/workers/getRebills', () => {
 
 	before(() => {
 		mockery.enable({

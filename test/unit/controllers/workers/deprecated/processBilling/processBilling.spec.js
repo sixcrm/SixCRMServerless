@@ -69,7 +69,7 @@ function getValidRebill() {
 	return MockEntities.getValidRebill();
 }
 
-describe('controllers/workers/processBilling', () => {
+xdescribe('controllers/workers/processBilling', () => {
 
 	before(() => {
 		mockery.enable({

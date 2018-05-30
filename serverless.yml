@@ -154,7 +154,7 @@ functions:
 # Billing
 
 ########################
-# SQS handler
+# SQS handlers
 ########################
 
   indextoarchive:
@@ -169,6 +169,7 @@ functions:
 ########################
 # SNS Workers
 ########################
+
   customeremail:
     handler: handlers/workers/sns/handlers.customeremail
 
@@ -194,14 +195,6 @@ functions:
       - schedule:
           rate: rate(60 minutes)
           enabled: true
-
-  #sesnotifications:
-  #  handler: handlers/workers/sesnotifications/handler.sesnotifications
-  #  events:
-  #    - sns:
-  #        topicName: SESNotifications
-  #        displayName: SES Notifications
-
 
 ########################
 # Transaction Endpoints  (initial customer entrypoint)

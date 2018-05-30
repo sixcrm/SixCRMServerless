@@ -30,7 +30,7 @@ function getValidRebill(){
 
 }
 
-describe('controllers/workers/pickRebills.js', function () {
+xdescribe('controllers/workers/pickRebills.js', function () {
 
 	before(() => {
 		mockery.enable({

@@ -83,7 +83,7 @@ function getValidRebill() {
 
 }
 
-describe('controllers/workers/recoverBilling', () => {
+xdescribe('controllers/workers/recoverBilling', () => {
 
 	before(() => {
 		mockery.enable({

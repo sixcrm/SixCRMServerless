@@ -39,7 +39,7 @@ function getValidProviderResponse(){
 	};
 }
 
-describe('controllers/workers/shipProduct', function () {
+xdescribe('controllers/workers/shipProduct', function () {
 
 	before(() => {
 		mockery.enable({
