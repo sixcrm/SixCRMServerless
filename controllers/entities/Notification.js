@@ -2,7 +2,6 @@
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -60,7 +59,7 @@ module.exports = class NotificationController extends entityController {
 
 		du.debug('Is Valid Notification');
 
-		return Promise.resolve(mvu.validateModel(notification_object, global.SixCRM.routes.path('model', 'entities/notification.json')));
+		return Promise.resolve(global.SixCRM.validate(notification_object, global.SixCRM.routes.path('model', 'entities/notification.json')));
 
 	}
 

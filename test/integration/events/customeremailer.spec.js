@@ -5,7 +5,6 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');

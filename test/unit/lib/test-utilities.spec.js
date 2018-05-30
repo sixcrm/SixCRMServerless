@@ -284,16 +284,13 @@ describe('lib/test-utilities', () => {
 	describe('validateGraphResponse', () => {
 
 		it('validates graph response', () => {
-
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'model-validator-utilities.js'), {
-				validateModel: () => {
-					return true;
-				}
-			});
+			const validate = global.SixCRM.validate;
+			global.SixCRM.validate = () => true;
 
 			const testutilities = global.SixCRM.routes.include('lib', 'test-utilities.js');
 
 			expect(testutilities.validateGraphResponse('a_response', 'a_graph_model_name')).to.be.true;
+			global.SixCRM.validate = validate;
 		});
 	});
 

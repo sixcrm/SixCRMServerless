@@ -3,7 +3,6 @@ const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 
 const random = global.SixCRM.routes.include('lib', 'random.js');
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js')
@@ -47,7 +46,7 @@ module.exports = class STSProvider extends AWSProvider {
 			new_parameters.RoleSessionName = random.createRandomString(20);
 		}
 
-		mvu.validateModel(new_parameters, global.SixCRM.routes.path('model', 'deployment/sts/assumerolerequest.json'))
+		global.SixCRM.validate(new_parameters, global.SixCRM.routes.path('model', 'deployment/sts/assumerolerequest.json'))
 
 		return new Promise((resolve) => {
 
@@ -58,4 +57,3 @@ module.exports = class STSProvider extends AWSProvider {
 	}
 
 }
-

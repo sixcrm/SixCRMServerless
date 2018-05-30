@@ -3,7 +3,6 @@ const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const Response = global.SixCRM.routes.include('providers', 'Response.js');
 
 module.exports = class FulfillmentProviderVendorResponse extends Response {
@@ -176,7 +175,7 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 		let fulfillment_provider_name = this.getFulfillmentProviderName();
 		let response = this.parameters.get('response');
 
-		mvu.validateModel(response, global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/'+fulfillment_provider_name+'/response.json'));
+		global.SixCRM.validate(response, global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/'+fulfillment_provider_name+'/response.json'));
 
 		return true;
 

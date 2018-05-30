@@ -2,7 +2,6 @@
 const _ = require('lodash');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');
 
@@ -58,7 +57,7 @@ module.exports = class ShippingCarrierUtilities {
 
 			let parsed_response = vendor_response.getParsedResponse();
 
-			mvu.validateModel(parsed_response, this.response_validation);
+			global.SixCRM.validate(parsed_response, this.response_validation);
 
 			return true;
 

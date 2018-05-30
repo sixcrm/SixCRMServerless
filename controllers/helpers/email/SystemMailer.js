@@ -4,7 +4,6 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const modelvalidatorutilities = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 
 //Technical Debt:  Validate, write tests.
@@ -39,7 +38,7 @@ module.exports = class SystemMailer{
 
 		du.debug('Validate Parameters');
 
-		return modelvalidatorutilities.validateModel(parameters, global.SixCRM.routes.path('model', 'general/smtp_send_object.json'));
+		return global.SixCRM.validate(parameters, global.SixCRM.routes.path('model', 'general/smtp_send_object.json'));
 
 	}
 

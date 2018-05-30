@@ -126,11 +126,10 @@ let cacheInputType = require('./cache/cacheInputType');
 
 /* End State machine */
 
-let secondaryIdentifierInputType = require('./general/secondaryIdentifierInputType');
-
-let ipCheckType = require('./ipcheck/ipCheckType');
-
+const  secondaryIdentifierInputType = require('./general/secondaryIdentifierInputType');
+const ipCheckType = require('./ipcheck/ipCheckType');
 const connectionTestType = require('./test/connectionTestType.js');
+const featureFlagsType = require('./featureflags/featureFlagsType');
 
 let list_fatal = true;
 let get_fatal = true;
@@ -182,10 +181,23 @@ const TokenHelperController = global.SixCRM.routes.include('helpers', 'token/Tok
 const SearchController = global.SixCRM.routes.include('controllers', 'providers/search/search.js');
 const SuggestController = global.SixCRM.routes.include('controllers', 'providers/search/suggest.js');
 const IPCheckController = global.SixCRM.routes.include('providers', 'ipcheck/IPCheck.js');
+
+const FeatureFlagsHelperController = global.SixCRM.routes.include('helpers', 'entities/featureflag/FeatureFlag.js');
+
 const fields = Object.assign({}, {
-	/*
-   * Esoteric requests
-   */
+	featureflag: {
+		type: featureFlagsType.graphObj,
+		description: 'Site Feature Flags',
+		args: {
+			environment: {
+				type: new GraphQLNonNull(GraphQLString)
+			}
+		},
+		resolve: function(root, args) {
+			const featureFlagsHelperController = new FeatureFlagsHelperController();
+			return featureFlagsHelperController.getFeatureFlag(args).then((result) => { return {configuration: result} });
+		}
+	},
 	search: {
 		type: searchResultsType.graphObj,
 		description: 'Executes a search query.',

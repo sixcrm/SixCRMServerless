@@ -22,15 +22,18 @@ module.exports = class CloudwatchProvider extends AWSProvider{
 
 		du.debug('Put Subscription Filter');
 
-		return new Promise((resolve) => {
+		return this.cloudwatchlogs.putSubscriptionFilter(parameters).promise();
 
-			this.cloudwatchlogs.putSubscriptionFilter(parameters, (error, data) => {
+	}
 
-				resolve(this.AWSCallback(error, data));
+	getSubscriptionFilters(logGroupName, filterNamePrefix) {
 
-			});
+		du.debug('Get Subscription Filters');
 
-		});
+		return this.cloudwatchlogs.describeSubscriptionFilters({
+			logGroupName,
+			filterNamePrefix
+		}).promise();
 
 	}
 

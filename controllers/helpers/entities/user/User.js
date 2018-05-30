@@ -7,7 +7,6 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
-const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 
 const JWTProvider = global.SixCRM.routes.include('providers', 'jwt-provider.js')
 
@@ -110,7 +109,7 @@ module.exports = class UserHelperController{
 
 		user.acl = [];
 
-		mvu.validateModel(user, global.SixCRM.routes.path('model', 'entities/user.json'));
+		global.SixCRM.validate(user, global.SixCRM.routes.path('model', 'entities/user.json'));
 
 		return user;
 
@@ -168,7 +167,7 @@ module.exports = class UserHelperController{
 
 		du.debug('Validate Save Create Profile Prototypes');
 
-		mvu.validateModel(argumentation, global.SixCRM.routes.path('model','helpers/entities/user/createprofileelements.json'));
+		global.SixCRM.validate(argumentation, global.SixCRM.routes.path('model','helpers/entities/user/createprofileelements.json'));
 
 		return argumentation;
 

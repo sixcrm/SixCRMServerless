@@ -24,8 +24,6 @@ class UserACLController extends entityController {
 		useracl.account = account;
 		useracl.role = await userACLHelperController.setAccountPermissions({role: role, account: account});
 
-		du.info(useracl.role);
-
 		return useracl;
 
 	}

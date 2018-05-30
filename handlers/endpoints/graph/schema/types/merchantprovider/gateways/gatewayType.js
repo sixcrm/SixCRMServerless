@@ -24,7 +24,7 @@ module.exports.graphObj = new GraphQLInterfaceType({
 			'Innovio': require('./InnovioType'),
 			'Test': require('./TestMerchantProviderType'),
 			'Stripe': require('./StripeType'),
-			'AuthorizeNet': require('./AuthorizeNet'),
+			'AuthorizeNet': require('./AuthorizeNetType'),
 		};
 
 		if (_.has(gateway, 'type') && _.has(gatewaytypes, gateway.type)) {

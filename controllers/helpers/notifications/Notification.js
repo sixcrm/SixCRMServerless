@@ -2,7 +2,6 @@
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
@@ -58,7 +57,7 @@ module.exports = class NotificationHelperClass {
 		let event_type = this.parameters.get('eventtype');
 
 		//Note:  These are a subset of event types which are notification events
-		let valid_event_type = mvu.validateModel(event_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationevent.json'), null, false);
+		let valid_event_type = global.SixCRM.validate(event_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationevent.json'), false);
 
 		if(valid_event_type == true){
 			return true;

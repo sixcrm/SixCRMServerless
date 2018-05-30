@@ -2,7 +2,6 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 
 module.exports = class Parameters {
@@ -145,7 +144,7 @@ module.exports = class Parameters {
 
 		if(_.has(this.parameter_validation, key)){
 
-			return mvu.validateModel(value, this.parameter_validation[key], null, fatal);
+			return global.SixCRM.validate(value, this.parameter_validation[key], fatal);
 
 		}else{
 

@@ -3,7 +3,6 @@ const _ = require('lodash');
 const chai = require('chai');
 const expect = chai.expect;
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const mvu = global.SixCRM.routes.include('lib','model-validator-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
@@ -179,7 +178,7 @@ describe('Checkout', () => {
 					return checkout(token, checkout_body);
 				})
 				.then(result => {
-					let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+					let validated = global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
 
 					expect(validated).to.equal(true);
 				})
@@ -205,7 +204,7 @@ describe('Checkout', () => {
 					return checkout(token, checkout_body);
 				})
 				.then(result => {
-					let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+					let validated = global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
 
 					expect(validated).to.equal(true);
 				});
@@ -232,7 +231,7 @@ describe('Checkout', () => {
 					return checkout(token, checkout_body);
 				})
 				.then(result => {
-					let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+					let validated = global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
 
 					expect(validated).to.equal(true);
 				});
@@ -263,7 +262,7 @@ describe('Checkout', () => {
 					return checkout(token, checkout_body);
 				})
 				.then(result => {
-					let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+					let validated = global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
 
 					expect(validated).to.equal(true);
 				});
@@ -302,7 +301,7 @@ describe('Checkout', () => {
 					return checkout(token, checkout_body);
 				})
 				.then(result => {
-					let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+					let validated = global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
 
 					expect(validated).to.equal(true);
 				});
@@ -346,7 +345,7 @@ describe('Checkout', () => {
 					return checkout(token, checkout_body);
 				})
 				.then(result => {
-					let validated = mvu.validateModel(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
+					let validated = global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/checkout/response.json'));
 
 					expect(validated).to.equal(true);
 				});

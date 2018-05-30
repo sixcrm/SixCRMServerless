@@ -5,7 +5,6 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 module.exports = class ContextHelperController {
@@ -255,7 +254,7 @@ module.exports = class ContextHelperController {
 
 				if(type == 'id'){
 					if(_.isString(identified_value)){
-						if(mvu.validateModel(identified_value, global.SixCRM.routes.path('model','definitions/sixcrmidentifier.json'), null, false)){
+						if(global.SixCRM.validate(identified_value, global.SixCRM.routes.path('model','definitions/sixcrmidentifier.json'), false)){
 							return true;
 						}
 					}

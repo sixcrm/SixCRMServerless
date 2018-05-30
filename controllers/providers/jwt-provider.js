@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const Ajv = require('ajv'); //Techical Debt:  Isn't this a part of the global now? (Nick)
 const jwt = require('jsonwebtoken');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
@@ -75,7 +74,6 @@ module.exports = class JWTProvider {
 			this.validateJWTContents(decoded_and_validated_jwt);
 
 		} catch (error) {
-
 			return false;
 
 		}
@@ -256,87 +254,22 @@ module.exports = class JWTProvider {
 		//Technical Debt:  Why is this necessary?
 		var params = JSON.parse(JSON.stringify(object || {}));
 
-		let validation = validation_function(params);
-
-		if (_.has(validation, "errors") && _.isArray(validation.errors) && validation.errors.length > 0) {
-
-			du.warning(validation);
-
-			throw eu.getError(
-				'validation',
-				'One or more validation errors occurred.', {
-					issues: validation.errors.map(e => e.message)
-				}
-			);
-
-		}
-
+		validation_function(params);
 	}
 
 	validateTransactionJWTContents(contents) {
-
-		let transaction_jwt_schema = global.SixCRM.routes.include('model', 'jwt/transaction');
-
-		const ajv = new Ajv({
-			format: 'full',
-			allErrors: true,
-			verbose: true
-		});
-
-		const valid = ajv.validate(transaction_jwt_schema, contents);
-
-		return {
-			valid,
-			errors: ajv.errors
-		};
-
+		const transaction_jwt_schema = global.SixCRM.routes.path('model', 'jwt/transaction.json');
+		return global.SixCRM.validate(contents, transaction_jwt_schema);
 	}
 
 	validateSiteJWTContents(contents) {
-
-		let site_jwt_schema = global.SixCRM.routes.include('model', 'jwt/site');
-
-		const ajv = new Ajv({
-			format: 'full',
-			allErrors: true,
-			verbose: true
-		});
-
-		const valid = ajv.validate(site_jwt_schema, contents);
-
-		return {
-			valid,
-			errors: ajv.errors
-		};
-
+		const site_jwt_schema = global.SixCRM.routes.path('model', 'jwt/site.json');
+		return global.SixCRM.validate(contents, site_jwt_schema);
 	}
 
 	validateCustomerJWTContents(contents) {
-
-		du.debug('Validate Customer JWT Contents');
-
-		//Technical Debt:  This should be using the global object
-		let customer_jwt_schema = global.SixCRM.routes.include('model', 'jwt/customerjwt.json');
-
-		const ajv = new Ajv({
-			format: 'full',
-			allErrors: true,
-			verbose: true
-		});
-
-		let valid = false;
-
-		try{
-			 valid = ajv.validate(customer_jwt_schema, contents);
-		}catch(error){
-			du.info(error);
-		}
-
-		return {
-			valid,
-			errors: ajv.errors
-		};
-
+		const customer_jwt_schema = global.SixCRM.routes.path('model', 'jwt/customerjwt.json');
+		return global.SixCRM.validate(contents, customer_jwt_schema);
 	}
 
 	getUserAlias(user) {

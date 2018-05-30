@@ -4,7 +4,6 @@ const querystring = require('querystring');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
 const httpprovider = new HttpProvider();
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -215,7 +214,7 @@ module.exports = class MerchantProvider {
 
 		du.debug('Validate Parameters');
 
-		mvu.validateModel(parameters_object, this.getRequestParametersValidationModelPath(request));
+		global.SixCRM.validate(parameters_object, this.getRequestParametersValidationModelPath(request));
 
 	}
 
@@ -241,7 +240,7 @@ module.exports = class MerchantProvider {
 
 				this.set('VendorConfiguration', global.SixCRM.routes.include('config', this.get('VendorConfigurationPath')));
 
-				mvu.validateModel(this.get('VendorConfiguration'), this.getVendorConfigurationValidationModelPath());
+				global.SixCRM.validate(this.get('VendorConfiguration'), this.getVendorConfigurationValidationModelPath());
 
 			}
 
@@ -255,7 +254,7 @@ module.exports = class MerchantProvider {
 
 		this.set('MerchantProviderParameters', merchant_provider);
 
-		mvu.validateModel(this.get('MerchantProviderParameters'), this.getMerchantProviderConfigurationValidationModelPath());
+		global.SixCRM.validate(this.get('MerchantProviderParameters'), this.getMerchantProviderConfigurationValidationModelPath());
 
 	}
 

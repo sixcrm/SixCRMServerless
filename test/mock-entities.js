@@ -7,11 +7,74 @@ const creditcardgenerator = require('creditcard-generator');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const mvu = global.SixCRM.routes.include('lib', 'model-validator-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
 class MockEntities {
+
+	static getValidFeatureFlag() {
+
+		return {
+			environment: 'default',
+			updated_at: '2018-05-29T21:39:57.496Z',
+			account: 'default',
+			created_at: '2018-05-29T21:39:57.495Z',
+			features: {
+				'cycle-reports': {
+					name: 'Cycle Reports',
+					description: 'Cycle Reports',
+					features: {
+						cycle: {
+							name: 'Cycle Report',
+							description: 'The Cycle Report',
+							default: false
+						},
+						'day-to-day': {
+							name: 'Day to Day report',
+							description: 'The Day-To-Day report',
+							default: false
+						}
+					},
+					default: false
+				},
+				orders: {
+					name: 'Orders',
+					description: 'The Orders Side-Nav Submenu',
+					features: {
+						'pending-rebills': {
+							name: 'Pending Rebills',
+							description: 'A list of pending rebills for the account',
+							default: false
+						}
+					},
+					default: true
+				},
+				'state-machine': {
+					name: 'Order Engine',
+					description: 'Order Engine Dashboard',
+					default: false
+				},
+				'crm-setup': {
+					name: 'CRM Setup',
+					description: 'The CRM Setup Side-Nav Submenu',
+					features: {
+						'event-hooks': {
+							name: 'Event Hooks',
+							description: 'The event hooks views',
+							default: false
+						}
+					},
+					default: true
+				},
+				'account-management': {
+					name: 'Account Management',
+					description: 'The Account Management Side-Nav Submenu',
+					default: false
+				}
+			}
+		};
+
+	}
 
 	static getValidTag(id){
 
@@ -1348,7 +1411,7 @@ class MockEntities {
 
 		if (!_.isUndefined(event_type)) {
 
-			let validates = mvu.validateModel(event_type, global.SixCRM.routes.path('model', 'definitions/eventtype.json'), null, false);
+			let validates = global.SixCRM.validate(event_type, global.SixCRM.routes.path('model', 'definitions/eventtype.json'), false);
 
 			if (validates) {
 				return event_type;
