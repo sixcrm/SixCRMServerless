@@ -32,8 +32,12 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 	async _extract() {
 
-		du.debug('LimelightExtractHandler#_extract()');
+		du.debug('LimelightExtractHandler#_extract(): campaigns');
+
 		const campaigns = await this._extractCampaigns();
+
+		du.debug('LimelightExtractHandler#_extract(): gateways');
+
 		const gatewaysIds = await BBPromise.reduce(campaigns, async (memo, campaign) => {
 
 			memo.push(...campaign.gatewayId.split(','));
@@ -44,6 +48,19 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 		const distinctGatewayIds = _.uniq(gatewaysIds);
 
 		await this._extractGateways(distinctGatewayIds);
+
+		du.debug('LimelightExtractHandler#_extract(): products');
+
+		const productIds = await BBPromise.reduce(campaigns, async (memo, campaign) => {
+
+			memo.push(..._.map(campaign.products, 'id'));
+			return memo;
+
+		}, []);
+
+		const distinctProductIds = _.uniq(productIds);
+
+		await this._extractProducts(distinctProductIds);
 
 	}
 
@@ -65,6 +82,19 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 		const gateways = await this._api.getGateways(gatewayIds);
 		await fs.writeJson(path.join(this._artifactsDirectory, 'gateways.json'), gateways);
+
+	}
+
+	async _extractProducts(productIds) {
+
+		if (productIds.length === 0) {
+
+			return;
+
+		}
+
+		const gateways = await this._api.getProducts(productIds);
+		await fs.writeJson(path.join(this._artifactsDirectory, 'products.json'), gateways);
 
 	}
 
