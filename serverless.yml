@@ -150,7 +150,21 @@ functions:
 
   triggerpostfulfillment:
     handler: handlers/statemachine/handlers.triggerpostfulfillment
+
 # Billing
+
+########################
+# SQS handler
+########################
+
+  indextoarchive:
+    handler: handlers/workers/forwardmessage/handlers.indextoarchive
+    events:
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
+    environment:
+      archivefilter: 'all'
 
 ########################
 # SNS Workers
