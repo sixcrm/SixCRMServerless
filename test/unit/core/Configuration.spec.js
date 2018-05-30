@@ -41,6 +41,7 @@ describe('core/Configuration.js', () => {
 
     it('retrieves the correct domain', () => {
 
+      //Technical Debt:  This fails when production credentials are used (get stage references...)
       const Configuration = global.SixCRM.routes.include('core', 'Configuration.js');
       let configuration = new Configuration(new Routes());
 
