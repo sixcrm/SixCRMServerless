@@ -7,6 +7,8 @@ module.exports.graphObj = new GraphQLInputObjectType({
 	name: 'UserInviteInput',
 	fields: () => ({
 		email:		{ type: new GraphQLNonNull(GraphQLString) },
+		firstname: { type: GraphQLString },
+		lastname: { type: GraphQLString },
 		account:	{ type: new GraphQLNonNull(GraphQLString) },
 		role:		{ type: new GraphQLNonNull(GraphQLString) }
 	})

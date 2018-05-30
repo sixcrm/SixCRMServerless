@@ -2,6 +2,7 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const parserutilities = global.SixCRM.routes.include('lib','parser-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib','string-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
 
 const InviteController = global.SixCRM.routes.include('entities', 'Invite.js');
@@ -67,6 +68,11 @@ module.exports = class InviteUtilities extends HelperController{
 			subject: 'You\'ve been invited to join a account on {{site.name}}',
 			body: 'Please accept this invite using the link below: {{link}}'
 		};
+
+		if(_.has(invite_object, 'fullname') && stringutilities.nonEmpty(invite_object.fullname)){
+			email.recepient_name = invite_object.fullname;
+			email.body = 'Hello {{invite_object.fullname}}, \n\n You\'ve been invited to a account on {{site.name}}. Please accept this invite using the link below: {{link}}'
+		}
 
 		let data = {
 			site: global.SixCRM.configuration.site_config.site,

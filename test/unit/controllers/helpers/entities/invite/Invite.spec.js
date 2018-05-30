@@ -63,11 +63,16 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 	describe('invite', () => {
 
-		it('successfully invites user to account', () => {
+		it('successfully invites user to account (with first and last name, new user)', () => {
 
+			//Note:  Required because of references to the global object
 			PermissionTestGenerators.givenUserWithAllowed('*','*');
 
 			let user =  MockEntities.getValidUser();
+			delete user.auth0_id;
+			delete user.first_name;
+			delete user.last_name;
+
 			let role = MockEntities.getValidRole();
 			let account = MockEntities.getValidAccount();
 			let acl = MockEntities.getValidUserACL();
@@ -76,6 +81,14 @@ describe('/helpers/entities/invite/Invite.js', () => {
   		acl.role = role.id;
 
 			let now = timestamp.getISO8601();
+
+			let user_invite = {
+				firstname: 'TestFirst',
+				lastname: 'TestLast',
+				email: user.id,
+				account: account.id,
+				role: role.id
+			};
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Account.js'), class {
 				constructor(){}
@@ -116,6 +129,15 @@ describe('/helpers/entities/invite/Invite.js', () => {
 					expect(id).to.equal(user.id);
 					return Promise.resolve(user);
 				}
+				update({entity}){
+					expect(entity).to.be.a('object');
+					entity.updated_at = timestamp.getISO8601();
+					expect(entity).to.have.property('first_name');
+					expect(entity).to.have.property('last_name');
+					expect(entity.first_name).to.equal(user_invite.firstname);
+					expect(entity.last_name).to.equal(user_invite.lastname);
+					return Promise.resolve(entity);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
@@ -145,11 +167,314 @@ describe('/helpers/entities/invite/Invite.js', () => {
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
 
+			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
+				expect(result).to.have.property('link');
+				expect(result.link).to.have.string('https://');
+				expect(result.link).to.have.string('acceptinvite');
+			});
+
+		});
+
+		it('successfully invites user to account (no first or last name, new user)', () => {
+
+			//Note:  Required because of references to the global object
+			PermissionTestGenerators.givenUserWithAllowed('*','*');
+
+			let user =  MockEntities.getValidUser();
+			delete user.auth0_id;
+			delete user.first_name;
+			delete user.last_name;
+
+			let role = MockEntities.getValidRole();
+			let account = MockEntities.getValidAccount();
+			let acl = MockEntities.getValidUserACL();
+			acl.account = account.id;
+  		acl.user = user.id;
+  		acl.role = role.id;
+
+			let now = timestamp.getISO8601();
+
 			let user_invite = {
 				email: user.id,
 				account: account.id,
 				role: role.id
 			};
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Account.js'), class {
+				constructor(){}
+				get({id}){
+					expect(id).to.equal(account.id);
+					return Promise.resolve(account)
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Invite.js'), class {
+				constructor(){}
+				create({entity}){
+					expect(entity).to.be.defined;
+					if(!_.has(entity, 'hash')){
+						entity.hash = random.createRandomString(8);
+					}
+					entity.created_at = now;
+					entity.updated_at = now;
+					return Promise.resolve(entity);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+				constructor(){}
+				get({id}){
+					expect(id).to.equal(role.id);
+					return Promise.resolve(role)
+				}
+				getShared({id}){
+					expect(id).to.equal(role.id);
+					return Promise.resolve(role)
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
+				constructor(){}
+				assureUser(id) {
+					expect(id).to.equal(user.id);
+					return Promise.resolve(user);
+				}
+				update({entity}){
+					expect(false).to.equal(true, 'Method should not have executed.');
+					return Promise.resolve(entity);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+				create({entity}) {
+					expect(entity.user).to.equal(user.id);
+					expect(entity.account).to.equal(account.id);
+					expect(entity.role).to.equal(role.id);
+					expect(entity.pending).to.equal('Invite Sent');
+					return Promise.resolve(acl);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), class {
+				constructor(){}
+				sendEmail(){
+					return Promise.resolve(true);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				pushEvent({event_type}) {
+					expect(event_type).to.be.defined;
+					return Promise.resolve(true);
+				}
+			});
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
+				expect(result).to.have.property('link');
+				expect(result.link).to.have.string('https://');
+				expect(result.link).to.have.string('acceptinvite');
+			});
+
+		});
+
+		it('successfully invites user to account (no first or last name, existing user)', () => {
+
+			//Note:  Required because of references to the global object
+			PermissionTestGenerators.givenUserWithAllowed('*','*');
+
+			let user =  MockEntities.getValidUser();
+			let role = MockEntities.getValidRole();
+			let account = MockEntities.getValidAccount();
+			let acl = MockEntities.getValidUserACL();
+			acl.account = account.id;
+  		acl.user = user.id;
+  		acl.role = role.id;
+
+			let now = timestamp.getISO8601();
+
+			let user_invite = {
+				email: user.id,
+				account: account.id,
+				role: role.id
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Account.js'), class {
+				constructor(){}
+				get({id}){
+					expect(id).to.equal(account.id);
+					return Promise.resolve(account)
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Invite.js'), class {
+				constructor(){}
+				create({entity}){
+					expect(entity).to.be.defined;
+					if(!_.has(entity, 'hash')){
+						entity.hash = random.createRandomString(8);
+					}
+					entity.created_at = now;
+					entity.updated_at = now;
+					return Promise.resolve(entity);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+				constructor(){}
+				get({id}){
+					expect(id).to.equal(role.id);
+					return Promise.resolve(role)
+				}
+				getShared({id}){
+					expect(id).to.equal(role.id);
+					return Promise.resolve(role)
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
+				constructor(){}
+				assureUser(id) {
+					expect(id).to.equal(user.id);
+					return Promise.resolve(user);
+				}
+				update({entity}){
+					expect(false).to.equal(true, 'Method should not have executed.');
+					return Promise.resolve(entity);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+				create({entity}) {
+					expect(entity.user).to.equal(user.id);
+					expect(entity.account).to.equal(account.id);
+					expect(entity.role).to.equal(role.id);
+					expect(entity.pending).to.equal('Invite Sent');
+					return Promise.resolve(acl);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), class {
+				constructor(){}
+				sendEmail(){
+					return Promise.resolve(true);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				pushEvent({event_type}) {
+					expect(event_type).to.be.defined;
+					return Promise.resolve(true);
+				}
+			});
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
+				expect(result).to.have.property('link');
+				expect(result.link).to.have.string('https://');
+				expect(result.link).to.have.string('acceptinvite');
+			});
+
+		});
+
+		it('successfully invites user to account (with first and last name, existing user)', () => {
+
+			//Note:  Required because of references to the global object
+			PermissionTestGenerators.givenUserWithAllowed('*','*');
+
+			let user =  MockEntities.getValidUser();
+
+			let role = MockEntities.getValidRole();
+			let account = MockEntities.getValidAccount();
+			let acl = MockEntities.getValidUserACL();
+			acl.account = account.id;
+  		acl.user = user.id;
+  		acl.role = role.id;
+
+			let now = timestamp.getISO8601();
+
+			let user_invite = {
+				firstname: 'TestFirst',
+				lastname: 'TestLast',
+				email: user.id,
+				account: account.id,
+				role: role.id
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Account.js'), class {
+				constructor(){}
+				get({id}){
+					expect(id).to.equal(account.id);
+					return Promise.resolve(account)
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Invite.js'), class {
+				constructor(){}
+				create({entity}){
+					expect(entity).to.be.defined;
+					if(!_.has(entity, 'hash')){
+						entity.hash = random.createRandomString(8);
+					}
+					entity.created_at = now;
+					entity.updated_at = now;
+					return Promise.resolve(entity);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
+				constructor(){}
+				get({id}){
+					expect(id).to.equal(role.id);
+					return Promise.resolve(role)
+				}
+				getShared({id}){
+					expect(id).to.equal(role.id);
+					return Promise.resolve(role)
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/User.js'), class {
+				constructor(){}
+				assureUser(id) {
+					expect(id).to.equal(user.id);
+					return Promise.resolve(user);
+				}
+				update({entity}){
+					expect(false).to.equal(true, 'Method should not have executed.');
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
+				create({entity}) {
+					expect(entity.user).to.equal(user.id);
+					expect(entity.account).to.equal(account.id);
+					expect(entity.role).to.equal(role.id);
+					expect(entity.pending).to.equal('Invite Sent');
+					return Promise.resolve(acl);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), class {
+				constructor(){}
+				sendEmail(){
+					return Promise.resolve(true);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				pushEvent({event_type}) {
+					expect(event_type).to.be.defined;
+					return Promise.resolve(true);
+				}
+			});
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
 
 			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
@@ -160,8 +485,6 @@ describe('/helpers/entities/invite/Invite.js', () => {
 		});
 
 		it('throws error when role retrieving failed', () => {
-
-			PermissionTestGenerators.givenUserWithAllowed('*','*');
 
 			let user =  MockEntities.getValidUser();
 			let role = MockEntities.getValidRole();
@@ -241,8 +564,6 @@ describe('/helpers/entities/invite/Invite.js', () => {
 		});
 
 		it('throws error when account retrieving failed', () => {
-
-			PermissionTestGenerators.givenUserWithAllowed('*','*');
 
 			let user =  MockEntities.getValidUser();
 			let role = MockEntities.getValidRole();
@@ -335,8 +656,6 @@ describe('/helpers/entities/invite/Invite.js', () => {
 			acl.account = account.id;
 			acl.user = user.id;
 			acl.role = role.id;
-
-			PermissionTestGenerators.givenUserWithAllowed('read', 'user');
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Account.js'), class {
 				constructor(){}
@@ -576,7 +895,53 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 	describe('_sendEmailToInvitedUser', async () => {
 
-		it('correctly parses', async () => {
+		it('Sends a parsed email to the user (name present)', async () => {
+
+			let invite = MockEntities.getValidInvite();
+			invite.fullname = 'Testing Names';
+			let link = 'https://blerf.com'
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'email/SystemMailer.js'), class {
+
+				constructor(){}
+
+				sendEmail(email){
+
+					expect(email).to.be.a('object');
+					expect(email).to.have.property('recepient_emails');
+					expect(email).to.have.property('recepient_name');
+					expect(email).to.have.property('subject');
+					expect(email).to.have.property('body');
+					expect(email.recepient_emails).to.be.a('array');
+					expect(email.recepient_emails[0]).to.equal(invite.email);
+					expect(email.recepient_name).to.be.a('string');
+					expect(email.recepient_name).to.equal('Testing Names');
+					expect(email.recepient_name).not.to.have.string('{{');
+					expect(email.recepient_name).not.to.have.string('}}');
+					expect(email.subject).to.be.a('string');
+					expect(email.subject).not.to.have.string('}}');
+					expect(email.subject).not.to.have.string('{{');
+					expect(email.subject).to.have.string('You\'ve been invited to join a account on ');
+					expect(email.body).to.be.a('string');
+					expect(email.body).not.to.have.string('}}');
+					expect(email.body).not.to.have.string('{{');
+					expect(email.body).to.have.string('Hello Testing Names');
+					expect(email.body).to.have.string('Please accept this invite using the link below: https://blerf.com');
+
+					return Promise.resolve(true);
+				}
+
+			});
+
+			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
+			let inviteHelperClass = new InviteHelperClass();
+
+			let result = await inviteHelperClass._sendEmailToInvitedUser(invite, link);
+			expect(result).to.equal(true);
+
+		});
+
+		it('Sends a parsed email to the user (no name present)', async () => {
 
 			let invite = MockEntities.getValidInvite();
 			let link = 'https://blerf.com'
@@ -595,7 +960,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 					expect(email.recepient_emails).to.be.a('array');
 					expect(email.recepient_emails[0]).to.equal(invite.email);
 					expect(email.recepient_name).to.be.a('string');
-					expect(email.recepient_name).to.have.string('Welcome to ');
+					expect(email.recepient_name).to.have.string('Welcome to');
 					expect(email.recepient_name).not.to.have.string('{{');
 					expect(email.recepient_name).not.to.have.string('}}');
 					expect(email.subject).to.be.a('string');

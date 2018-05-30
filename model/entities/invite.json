@@ -11,6 +11,12 @@
 		"account": {
 			"$ref": "../definitions/sixcrmaccountidentifier.json"
 		},
+		"firstname":{
+			"$ref": "../definitions/firstname.json"
+		},
+		"lastname":{
+			"$ref": "../definitions/lastname.json"
+		},
 		"hash": {
 			"$ref": "../definitions/sixcrminvitehash.json"
 		},

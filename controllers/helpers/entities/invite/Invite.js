@@ -153,6 +153,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'invite'}))
 			.then(() => this._hydrateInviteProperties())
+			.then(() => this._updateUserName())
 			.then(() => this._validateRequest())
 			.then(() => this._createInviteACL())
 			.then(() => this._sendInviteEmail())
@@ -214,6 +215,44 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
+	async _updateUserName({user = null, invite = null} = {}){
+
+		du.debug('Conditionally Update User');
+
+		if(_.isNull(invite)){
+			invite = this.parameters.get('userinvite');
+		}
+
+		if(_.isNull(user)){
+			user = this.parameters.get('user');
+		}
+
+		let is_new = await this._isNewUser(user);
+
+		du.warning('Is new: '+is_new);
+
+		if(is_new == true){
+
+			if(_.intersection(Object.keys(invite), ['firstname', 'lastname']).length > 0){
+
+				if(_.has(invite, 'firstname')){
+					user.first_name = invite.firstname;
+				}
+
+				if(_.has(invite, 'lastname')){
+					user.last_name = invite.lastname;
+				}
+
+				return this.userController.update({entity: user});
+
+			}
+
+		}
+
+		return true;
+
+	}
+
 	_validateRequest(){
 
 		du.debug('Validate Request');
@@ -259,8 +298,16 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 		let role = this.parameters.get('role');
 		let user = this.parameters.get('user');
 
+		if(!_.has(this, 'userHelperController')){
+			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
+			this.userHelperController = new UserHelperController();
+		}
+
+		let fullname = this.userHelperController.getFullName(user);
+
 		const invite_parameters = {
 			email: user.id,
+			name: fullname,
 			acl: acl.id,
 			invitor: invitor,
 			account_name: account.name,
