@@ -24,9 +24,14 @@ module.exports = class ReIndexingHelperController {
 	}
 
 	//Entrypoint
-	execute(fix){
+	execute(fix = false){
 
 		du.debug('Reindexing');
+
+		if(fix == 'true' || fix === true){
+			fix = true;
+			du.warning('Fix: On');
+		}
 
 		return this.getCloudsearchItemsRecursive()
 			.then(() => this.getDynamoItems())
@@ -137,20 +142,22 @@ module.exports = class ReIndexingHelperController {
 
 		let operations = [];
 
-		missing_in_index.map(m => {
-			if (fix === true) {
+		if (fix === true) {
+
+			missing_in_index.map(m => {
 				operations.push(() => preIndexingHelperController.addToSearchIndex(m));
-			}
-		});
+			});
 
-		missing_in_dynamo.map(m => {
-			if (fix === true) {
+			missing_in_dynamo.map(m => {
 				operations.push(() => preIndexingHelperController.removeFromSearchIndex(m));
-			}
-		});
+			});
 
+			return arrayutilities.serial(operations);
 
-		return arrayutilities.serial(operations);
+		}
+
+		return Promise.resolve(true);
+
 	}
 
 };

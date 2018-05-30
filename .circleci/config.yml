@@ -657,7 +657,7 @@ jobs:
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Synchronize Search Index With DynamoDB
-          command: node helper/searchindexfix.js --fix=true
+          command: node cli/index.js syncronizeindexes --fix=true
   merge:
     <<: *job-defaults
     steps:
