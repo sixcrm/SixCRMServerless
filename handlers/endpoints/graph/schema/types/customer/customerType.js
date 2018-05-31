@@ -39,6 +39,10 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'The customer\'s shipping address.',
 			resolve: customer => customerController.getAddress(customer),
 		},
+		default_creditcard:{
+			type: GraphQLString,
+			description:  'The default creditcard for the customer.'
+		},
 		creditcards: {
 			type: new GraphQLList(creditCardType.graphObj),
 			description: 'The creditcards associated with the customer',

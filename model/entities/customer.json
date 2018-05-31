@@ -32,6 +32,10 @@
 			"$ref": "../definitions/address.json",
 			"description": "Customer address"
 		},
+		"default_creditcard":{
+			"$ref": "../definitions/uuidv4.json",
+			"description":"The customer's default creditcard"
+		},
 		"creditcards": {
 			"type": "array",
 			"items": {

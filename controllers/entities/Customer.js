@@ -15,6 +15,35 @@ module.exports = class CustomerController extends entityController {
 
 	}
 
+	create({entity}){
+
+		du.debug('Customer.create()');
+
+		if(!_.has(entity, 'default_creditcard')){
+			if(_.has(entity, 'creditcards') && arrayutilities.nonEmpty(entity.creditcards)){
+				entity.default_creditcard = entity.creditcards[0];
+			}
+		}
+
+		return super.create({entity: entity});
+
+	}
+
+	//Technical Debt:  If a default creditcard exists, you shouldn't be able to remove it, only update it
+	update({entity, ignore_updated_at}){
+
+		du.debug('Customer.update()');
+
+		if(!_.has(entity, 'default_creditcard')){
+			if(_.has(entity, 'creditcards') && arrayutilities.nonEmpty(entity.creditcards)){
+				entity.default_creditcard = entity.creditcards[0];
+			}
+		}
+
+		return super.update({entity: entity, ignore_updated_at: ignore_updated_at});
+
+	}
+
 	associatedEntitiesCheck({
 		id
 	}) {
