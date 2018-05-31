@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const checksum = require('checksum');
+const creditCardType = require('credit-card-type');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities');
@@ -65,6 +66,7 @@ module.exports = class CreditCardController extends entityController {
 		})
 			.then((result) => {
 
+				this.setType(result);
 
 				if (hydrate_token === true) {
 
@@ -105,6 +107,7 @@ module.exports = class CreditCardController extends entityController {
 				this.setLastFour(entity);
 				this.setFirstSix(entity);
 				this.setChecksum(entity);
+				this.setType(entity);
 
 				return entity;
 
@@ -165,6 +168,8 @@ module.exports = class CreditCardController extends entityController {
 					entity: entity,
 					return_entity: true
 				}).then((existing_creditcard) => {
+
+					this.setType(existing_creditcard);
 
 					return {
 						existing_creditcard: existing_creditcard,
@@ -352,6 +357,7 @@ module.exports = class CreditCardController extends entityController {
 		this.setLastFour(creditcard);
 		this.setFirstSix(creditcard);
 		this.setChecksum(creditcard);
+		this.setType(creditcard);
 
 		return this.queryBySecondaryIndex({
 			field: 'checksum',
@@ -420,6 +426,48 @@ module.exports = class CreditCardController extends entityController {
 			const normalized_expiration = `${expiration.slice(0, 2)}/${expiration.slice(-2)}`;
 			attributes.checksum = checksum(`${first_six}.${last_four}.${normalized_expiration}`);
 		}
+	}
+
+	setType(attributes, fatal = false){
+
+		du.debug('Set Type');
+
+		if(!_.has(attributes, 'type')){
+
+			let bin = null;
+
+			if(_.has(attributes, 'first_six')){
+				bin = attributes.first_six;
+			}else if(_.has(attributes, 'number') && stringutilities.isString(attributes.number)) {
+				bin = attributes.number.substring(0, 6);
+			}
+
+			if(!_.isNull(bin)){
+
+				let creditcard_types = creditCardType(bin);
+
+				if(creditcard_types.length > 0){
+
+					if(creditcard_types.length > 1){
+						du.warning('Non specific creditcard type: '+JSON.stringify(creditcard_types));
+					}
+
+					attributes.type = creditcard_types[0].niceType;
+
+				}else{
+
+					if(fatal == true){
+						throw eu.getError('server', 'Could not determine credit card type.');
+					}
+
+					du.warning('Could not determine credit card type.');
+
+				}
+
+			}
+
+		}
+
 	}
 
 }

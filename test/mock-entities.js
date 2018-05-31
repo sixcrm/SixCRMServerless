@@ -3,6 +3,7 @@ const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
 const checksum = require('checksum');
 const creditcardgenerator = require('creditcard-generator');
+const creditCardType = require('credit-card-type');
 
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
@@ -1084,6 +1085,7 @@ class MockEntities {
 		const number = this.getValidCreditCardNumber();
 		const last_four = number.slice(-4);
 		const first_six = number.slice(0, 6);
+		const type = (creditCardType(first_six))[0].niceType;
 		const expiration = this.getValidCreditCardExpiration();
 		const normalized_expiration = `${expiration.slice(0,2)}/${expiration.slice(-2)}`;
 		const card_checksum = checksum(`${first_six}.${last_four}.${normalized_expiration}`);
@@ -1096,6 +1098,7 @@ class MockEntities {
 			token: this.getValidCreditCardToken(),
 			first_six: first_six,
 			last_four: last_four,
+			type: type,
 			expiration,
 			checksum: card_checksum,
 			name: spoofer.createRandomName('full'),

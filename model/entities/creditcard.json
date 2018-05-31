@@ -29,6 +29,9 @@
 		"last_four": {
 			"$ref": "../definitions/creditcardlastfour.json"
 		},
+		"type":{
+			"type":"string"
+		},
 		"expiration": {
 			"$ref": "../definitions/creditcardexpirationdate.json"
 		},

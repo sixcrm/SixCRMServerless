@@ -29,6 +29,10 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'The last four digits of the creditcard number'
 		},
+		type:{
+			type: GraphQLString,
+			description: 'The credit card type'
+		},
 		token:{
 			type: tokenType.graphObj,
 			description: 'The credit card token object.'
