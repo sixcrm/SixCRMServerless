@@ -49,6 +49,10 @@ jwt:
   transaction: #This is the key for the transactional endpoint requests (AKA non-Six users...)
     secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
     expiration: 3600
+  customer:
+    secret_key: 'a0d0wa9du8hucioj==12jr0cuvcamcq9ij1k3nfnkjIh(UH(8hjnciqihuyBGDn-LJn_80XdV'
+    domain: ''
+    expiration: 3600
 
 dynamodb:
   region: 'localhost'
