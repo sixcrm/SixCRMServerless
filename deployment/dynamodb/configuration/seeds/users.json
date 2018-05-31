@@ -12,6 +12,18 @@
 		"updated_at":"2017-04-06T18:41:12.521Z"
 	},
 	{
+		"name":"JustinDurham",
+		"first_name": "Justin",
+		"last_name": "Durham",
+		"auth0_id":"abc123",
+		"id":"justin@adexchangegrp.com",
+		"active":true,
+		"termsandconditions":"0.1",
+		"alias":"f491d1ee55539671ae73be6ef17ac20e2158e1f4",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
 		"name":"TimothyDalbey",
 		"first_name": "Timothy",
 		"last_name": "Dalbey",

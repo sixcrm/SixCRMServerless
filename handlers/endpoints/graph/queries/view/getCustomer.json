@@ -1,5 +1,5 @@
 {
 	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
 	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"{customer (id: \"24f7c851-29d4-4af9-87c5-0298fa74c689\") { id, email, firstname, lastname, phone, address { line1, city, state, zip, country }, creditcards { id, type, last_four, first_six, token { token, provider }, expiration, name, address { line1, city, state, zip, country } }, created_at, updated_at } }"
+	"body":"{customer (id: \"24f7c851-29d4-4af9-87c5-0298fa74c689\") { id, email, firstname, lastname, phone, address { line1, city, state, zip, country }, default_creditcard, creditcards { id, type, last_four, first_six, token { token, provider }, expiration, name, address { line1, city, state, zip, country } }, created_at, updated_at } }"
 }
