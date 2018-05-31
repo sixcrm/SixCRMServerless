@@ -144,6 +144,13 @@ describe('acquireToken', () => {
 		});
 	});
 
+	beforeEach(() => {
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+			getRegion() {}
+			publish() {}
+		});
+	});
+
 	afterEach(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();
