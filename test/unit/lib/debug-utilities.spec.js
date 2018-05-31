@@ -4,6 +4,14 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 /* eslint-disable no-console */
 describe('lib/debug-utilities', () => {
+	let verbose_setting;
+	before(() => {
+		verbose_setting = process.env.SIX_VERBOSE;
+	});
+
+	after(() => {
+		process.env.SIX_VERBOSE = verbose_setting;
+	});
 
 	describe('emit', () => {
 
