@@ -423,8 +423,9 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		if (result == 'success') {
 
-			return this.updateRebillState(rebill)
-				.then(() => this.addRebillToQueue(rebill))
+
+			return this.updateRebillState(rebill);
+			//.then(() => this.addRebillToQueue(rebill))
 
 		} else {
 
@@ -450,11 +451,16 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 	addRebillToQueue(rebill) {
 
 		du.debug('Add Rebill To Queue');
+		du.debug(rebill);
 
+		//Technical Debt:  Eliminate
+		return Promise.resolve(true);
+		/*
 		return this.rebillHelperController.addRebillToQueue({
 			rebill,
 			queue_name: 'hold'
 		});
+		*/
 
 	}
 
