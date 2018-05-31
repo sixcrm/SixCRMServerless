@@ -52,6 +52,48 @@ module.exports = class CreditCardController extends entityController {
 
 	}
 
+	listByAccount(){
+
+		du.debug('CreditCard.listByAccount()');
+
+		return super.listByAccount(arguments[0]).then(result => {
+
+			if(_.has(result, 'creditcards') && arrayutilities.nonEmpty(result.creditcards)){
+
+				result.creditcards = result.creditcards.map(creditcard => {
+					this.setType(creditcard);
+					return creditcard;
+				});
+
+			}
+
+			return result;
+
+		});
+
+	}
+
+	batchGet(){
+
+		du.debug('CreditCard.batchGet()');
+
+		return super.batchGet(arguments[0]).then(result => {
+
+			if(_.has(result, 'creditcards') && arrayutilities.nonEmpty(result.creditcards)){
+
+				result.creditcards = result.creditcards.map(creditcard => {
+					this.setType(creditcard);
+					return creditcard;
+				});
+
+			}
+
+			return result;
+
+		});
+
+	}
+
 	get({
 		id,
 		hydrate_token
