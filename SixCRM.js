@@ -39,7 +39,7 @@ class SixCRM {
 		const schema = require(path_to_model);
 		const valid = this.validator.validate(schema.$id, data);
 
-		du.info(`Model is ${valid ? 'valid' : 'not valid'}.`);
+		du.debug(`Model is ${valid ? 'valid' : 'not valid'}.`);
 
 		if (fatal && !valid) {
 			const errors = this.validator.errors;

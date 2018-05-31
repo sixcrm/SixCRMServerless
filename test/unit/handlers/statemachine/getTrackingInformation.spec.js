@@ -20,7 +20,7 @@ describe('handlers/statemachine/handlers.gettrackinginformation', async () => {
     let handlers = global.SixCRM.routes.include('root', 'handlers/statemachine/handlers.js');
     let controller_function = handlers.gettrackinginformation;
 
-    controller_function(event, {}, (error, message) => {
+    return controller_function(event, {}, (error, message) => {
       expect(message).to.equal('DELIVERED');
     }, null);
 
