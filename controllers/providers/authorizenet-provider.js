@@ -3,45 +3,25 @@ const {
 	APIControllers,
 	Constants
 } = require('authorizenet');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 module.exports = class AuthorizeNet {
 	constructor({api_key, transaction_key}) {
-		this.endpoint = Constants.endpoint.sandbox;
+		this.endpoint = Constants.endpoint.production;
 		this.api_key = api_key;
 		this.transaction_key = transaction_key;
 	}
 
 	testAuthentication() {
-		const merchant_auth = this.buildAuthenticationType();
 		const request = new APIContracts.AuthenticateTestRequest();
-		request.setMerchantAuthentication(merchant_auth);
-
-		return new Promise((resolve, reject) => {
-			const ctrl = new APIControllers.AuthenticateTestController(request.getJSON());
-			ctrl.setEnvironment(this.endpoint);
-			ctrl.execute(() => {
-				const raw_response = ctrl.getResponse();
-				const response = new APIContracts.AuthenticateTestResponse(raw_response);
-
-				if (response === undefined || response === null) {
-					return reject(new Error('No response.'));
-				}
-
-				if (response.getMessages().getResultCode() === APIContracts.MessageTypeEnum.ERROR) {
-					const message = response.getMessages().getMessage()[0];
-					return reject(new Error(message.getText()));
-				}
-
-				return resolve(raw_response);
-			});
-		})
-			.then(response => ({
+		return this.makeRequest(APIControllers.AuthenticateTestController, request)
+			.then(api_response => ({
 				error: null,
-				body: response,
+				body: api_response,
 				response: {
 					statusCode: 200,
-					body: response
+					body: api_response
 				}
 			}))
 			.catch(error => ({
@@ -54,10 +34,70 @@ module.exports = class AuthorizeNet {
 			}));
 	}
 
+	getCustomerProfile({email}) {
+		const request = new APIContracts.GetCustomerProfileRequest();
+		request.setEmail(email);
+		request.setUnmaskExpirationDate(true);
+		request.setIncludeIssuerInfo(true);
+
+		return this.makeRequest(APIControllers.GetCustomerProfileController, request)
+			.then(api_response => {
+				const response = new APIContracts.GetCustomerProfileResponse(api_response);
+				return response.getProfile();
+			});
+	}
+
+	createCustomerProfile(customer, creditcards) {
+		const customer_profile = new APIContracts.CustomerProfileType();
+		customer_profile.setEmail(customer.email);
+
+		const request = new APIContracts.CreateCustomerProfileRequest();
+		request.setProfile(customer_profile);
+
+		if (creditcards) {
+			const payment_profiles = arrayutilities.map(creditcards, creditcard => this.buildPaymentProfileType(customer, creditcard));
+			customer_profile.setPaymentProfiles(payment_profiles);
+			request.setValidationMode(APIContracts.ValidationModeEnum.TESTMODE);
+		}
+
+		return this.makeRequest(APIControllers.CreateCustomerProfileController, request);
+	}
+
+	createPaymentProfile(customer_profile_id, customer, creditcard) {
+		const payment_profile = this.buildPaymentProfileType(customer, creditcard);
+
+		const request = new APIContracts.CreateCustomerPaymentProfileRequest();
+		request.setCustomerProfileId(customer_profile_id);
+		request.setPaymentProfile(payment_profile);
+		request.setValidationMode(APIContracts.ValidationModeEnum.TESTMODE);
+
+		return this.makeRequest(APIControllers.CreateCustomerPaymentProfileController, request)
+			.then(api_response => {
+				const response = new APIContracts.CreateCustomerPaymentProfileResponse(api_response);
+				return response.getCustomerPaymentProfileId();
+			});
+	}
+
 	chargeCreditCard({amount, creditcard}) {
 		const transaction = new APIContracts.TransactionRequestType();
 		transaction.setTransactionType(APIContracts.TransactionTypeEnum.AUTHCAPTURETRANSACTION);
 		transaction.setPayment(this.buildCreditCardPaymentType(creditcard));
+		transaction.setAmount(amount);
+
+		return this.createTransaction(transaction);
+	}
+
+	chargePaymentProfile({customer_profile_id, payment_profile_id, amount}) {
+		const payment_profile = new APIContracts.PaymentProfile();
+		payment_profile.setPaymentProfileId(payment_profile_id);
+
+		const profile_to_charge = new APIContracts.CustomerProfilePaymentType();
+		profile_to_charge.setCustomerProfileId(customer_profile_id);
+		profile_to_charge.setPaymentProfile(payment_profile);
+
+		const transaction = new APIContracts.TransactionRequestType();
+		transaction.setTransactionType(APIContracts.TransactionTypeEnum.AUTHCAPTURETRANSACTION);
+		transaction.setProfile(profile_to_charge);
 		transaction.setAmount(amount);
 
 		return this.createTransaction(transaction);
@@ -86,67 +126,45 @@ module.exports = class AuthorizeNet {
 	}
 
 	createTransaction(transaction) {
-		return new Promise(resolve => {
-			const merchant_auth = this.buildAuthenticationType();
+		const request = new APIContracts.CreateTransactionRequest();
+		request.setTransactionRequest(transaction);
 
-			const request = new APIContracts.CreateTransactionRequest();
-			request.setMerchantAuthentication(merchant_auth);
-			request.setTransactionRequest(transaction);
-
-			const ctrl = new APIControllers.CreateTransactionController(request.getJSON());
-			ctrl.setEnvironment(this.endpoint);
-
-			ctrl.execute(() => {
-				const raw_response = ctrl.getResponse();
-				const response = new APIContracts.CreateTransactionResponse(raw_response);
-				du.debug(raw_response);
+		return this.makeRequest(APIControllers.CreateTransactionController, request)
+			.then(api_response => {
+				const response = new APIContracts.CreateTransactionResponse(api_response);
 
 				const result = {
 					error: null,
-					body: raw_response,
+					body: api_response,
 					response: {
 						statusCode: 200,
-						body: raw_response
+						body: api_response
 					}
 				};
-
-				if (response === undefined || response === null) {
-					result.response.statusCode = 400;
-					result.error = new Error('No response.');
-					return resolve(result);
-				}
-
-				if (response.getMessages().getResultCode() === APIContracts.MessageTypeEnum.ERROR) {
-					const message = response.getMessages().getMessage()[0];
-					result.response.statusCode = 400;
-					result.error = new Error(message.getText());
-					return resolve(result);
-				}
-
 
 				if (response.getTransactionResponse().getMessages() === undefined) {
 					result.response.statusCode = 400;
 					result.error = new Error('Transaction Failed for Unknown Reason.');
-					return resolve(result);
 				}
 
 				if (response.getTransactionResponse().getErrors() !== undefined) {
 					const error_obj = response.getTransactionResponse().getErrors().getError()[0];
 					result.response.statusCode = 400;
-					result.error = new Error(error_obj.getErrorText());
-					return resolve(result);
+					const error = new Error(error_obj.getErrorText());
+					error.code = error_obj.getErrorCode();
+					result.error = error;
 				}
 
-				return resolve(result);
-			});
-		});
-	}
-
-	buildAuthenticationType() {
-		const merchant_auth = new APIContracts.MerchantAuthenticationType();
-		merchant_auth.setName(this.api_key);
-		merchant_auth.setTransactionKey(this.transaction_key);
-		return merchant_auth;
+				return result;
+			})
+			.catch(error => ({
+				error,
+				body: error.message,
+				response: {
+					statusCode: 400,
+					body: error.message
+				}
+			}));
 	}
 
 	buildCreditCardPaymentType({number, expiration, cvv}) {
@@ -157,7 +175,61 @@ module.exports = class AuthorizeNet {
 
 		const payment_type = new APIContracts.PaymentType();
 		payment_type.setCreditCard(creditcard);
-
 		return payment_type;
+	}
+
+	buildPaymentProfileType(customer, creditcard) {
+		const payment_type = this.buildCreditCardPaymentType(creditcard);
+
+		const address_type = new APIContracts.CustomerAddressType();
+		address_type.setFirstName(customer.firstname);
+		address_type.setLastName(customer.lastname);
+		address_type.setPhoneNumber(customer.phone);
+
+		if (creditcard.address) {
+			address_type.setAddress(creditcard.address.line1);
+			address_type.setCity(creditcard.address.city);
+			address_type.setState(creditcard.address.state);
+			address_type.setZip(creditcard.address.zip);
+			address_type.setCountry(creditcard.address.country);
+		}
+
+		const payment_profile = new APIContracts.CustomerPaymentProfileType();
+		payment_profile.setCustomerType(APIContracts.CustomerTypeEnum.INDIVIDUAL);
+		payment_profile.setPayment(payment_type);
+		payment_profile.setBillTo(address_type);
+		return payment_profile;
+	}
+
+	makeRequest(controller, request) {
+		return new Promise((resolve, reject) => {
+			const merchant_auth = new APIContracts.MerchantAuthenticationType();
+			merchant_auth.setName(this.api_key);
+			merchant_auth.setTransactionKey(this.transaction_key);
+
+			request.setMerchantAuthentication(merchant_auth);
+
+			const ctrl = new controller(request.getJSON());
+			ctrl.setEnvironment(this.endpoint);
+
+			ctrl.execute(() => {
+				const api_response = ctrl.getResponse();
+				du.info(api_response);
+				const response = new APIContracts.ANetApiResponse(api_response);
+
+				if (response === undefined || response === null) {
+					return reject(new Error('No response.'));
+				}
+
+				if (response.getMessages().getResultCode() === APIContracts.MessageTypeEnum.ERROR) {
+					const message = response.getMessages().getMessage()[0];
+					const error = new Error(message.getText());
+					error.code = message.getCode();
+					return reject(error);
+				}
+
+				return resolve(api_response);
+			});
+		});
 	}
 }
