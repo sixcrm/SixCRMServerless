@@ -699,15 +699,15 @@ workflows:
             branches:
               only:
                 - development
-      - functional_tests:
-          requires:
-            - build
-            - unit_tests
-            - lint
-          filters:
-            branches:
-              only:
-                - development
+      # - functional_tests:
+      #     requires:
+      #       - build
+      #       - unit_tests
+      #       - lint
+      #     filters:
+      #       branches:
+      #         only:
+      #           - development
       - query_tests:
           requires:
             - build
