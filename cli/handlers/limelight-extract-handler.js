@@ -5,14 +5,17 @@ const fs = require('fs-extra');
 const path = require('path');
 const BBPromise = require('bluebird');
 const _ = require('lodash');
+const LimelightScraping = require('../scraping/limelight-scraper');
 
 module.exports = class LimelightExtractHandler extends ExtractHandler {
 
-	constructor(client, user, password, artifactsDirectory) {
+	constructor(client, apiUser, apiPassword, webUser, webPassword, artifactsDirectory) {
 
-		super('limelight', client, user, password, artifactsDirectory);
+		super('limelight', client, apiUser, apiPassword, artifactsDirectory);
 
-		this._api = new LimelightApi(user, password, client)
+		this._scraper = new LimelightScraping(client, webUser, webPassword);
+
+		this._api = new LimelightApi(apiUser, apiPassword, client)
 			.on('info', (data) => {
 
 				du.info(data);
@@ -31,6 +34,19 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 	}
 
 	async _extract() {
+
+		await this._apiExtract();
+		await this._webExtract();
+
+	}
+
+	async _webExtract() {
+
+		// const cookie = await this._scraper.signOn();
+
+	}
+
+	async _apiExtract() {
 
 		du.debug('LimelightExtractHandler#_extract(): campaigns');
 
