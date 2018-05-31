@@ -31,7 +31,7 @@ module.exports = class LocalCache {
 
 				global.SixCRM.localcache.set(question, answer);
 
-				du.warning('Caching Question: ' + question, answer)
+				du.debug('Caching Question: ' + question, answer)
 
 				return answer;
 

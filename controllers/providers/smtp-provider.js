@@ -161,7 +161,7 @@ module.exports = class SMTPProvider {
 
 				if (error) { return reject(error); }
 
-				du.warning('Message '+info.messageId+' sent: '+info.response);
+				du.debug('Message '+info.messageId+' sent: '+info.response);
 
 				return resolve(info);
 

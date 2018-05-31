@@ -98,7 +98,7 @@ module.exports = class SearchController {
 				}
 			}
 
-			du.warning(action_filters);
+			du.debug(action_filters);
 
 			if(action_filters.length > 0){
 

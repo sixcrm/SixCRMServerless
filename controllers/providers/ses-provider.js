@@ -40,8 +40,8 @@ module.exports = class SESProvider extends AWSProvider{
 			if(error){
 				du.warning(error);
 			}
-			du.warning(data);
-			du.warning('verification email sent');
+			du.debug(data);
+			du.debug('verification email sent');
 		});
 	}
 

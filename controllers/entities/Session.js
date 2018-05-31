@@ -352,7 +352,7 @@ module.exports = class SessionController extends entityController {
 	//Note: Called by the campaign controller only...
 	listByCampaign({campaign, pagination}) {
 
-		du.warning('List By Campaign');
+		du.debug('List By Campaign');
 
 		let query_parameters = {
 			filter_expression: '#field = :field_value',

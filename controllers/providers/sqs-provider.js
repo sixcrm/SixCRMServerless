@@ -408,7 +408,7 @@ module.exports = class SQSProvider extends AWSProvider {
 
 		return new Promise((resolve) => {
 
-			du.warning(params.QueueName);
+			du.info(params.QueueName);
 
 			// Locally SQS does not support FIFO
 			// This is really ugly, but at least its isolated to one place

@@ -28,7 +28,6 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: customerType.graphObj,
 			description: 'The customer that the note pertains to.',
 			resolve: (customernote) => {
-				//du.warning('customernote: '+customernote);
 				return customerNoteController.getCustomer(customernote);
 			}
 		},

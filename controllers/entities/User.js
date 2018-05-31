@@ -377,7 +377,7 @@ module.exports = class UserController extends entityController {
 
 					//Technical Debt:  Refactor, must return all users with correct pagination
 					return this.list({pagination: pagination, query_parameters: in_parameters}).then(result => {
-						du.warning(result);
+						du.debug(result);
 						return result;
 					});
 

@@ -47,7 +47,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 		du.debug('Catch Permissions');
 
-		du.warning('Permissions', permissions, 'Action', action);
+		du.debug('Permissions', permissions, 'Action', action);
 
 		action = (_.isUndefined(action))?'read':action;
 
@@ -936,7 +936,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 		}
 
-		//du.warning('here');
 		throw eu.getError('bad_request','Could not determine identifier.');
 
 	}

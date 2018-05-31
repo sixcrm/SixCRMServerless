@@ -20,7 +20,7 @@ module.exports = class DataPipelineProvider extends AWSProvider {
 
 		du.debug('Create Pipeline');
 
-		du.warning(parameters);
+		du.debug(parameters);
 
 		return new Promise((resolve, reject) => {
 
