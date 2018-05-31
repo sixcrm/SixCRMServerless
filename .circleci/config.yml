@@ -1,7 +1,5 @@
 #Todo:
 # Eliminate writes to S3 for the last successful build.  Use cache instead
-# Increase the level of parallelism
-# Add Blue/Green for Production
 
 functional_tests_default: &functional-tests-default
   machine: true
