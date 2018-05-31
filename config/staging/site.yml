@@ -4,7 +4,7 @@ site:
   include_stage: true
 
 serverless:
-  verbose: 0
+  verbose: 1
 
 data_encryption:
   secret_key: '36eb6db6ab734c38ae311e8238d689c024112094c102b50e52a74cf4194baf91'

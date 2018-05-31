@@ -294,7 +294,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Associate Route Table');
 
-		du.warning(parameters);
+		du.debug(parameters);
 
 		return new Promise((resolve) => {
 
@@ -660,7 +660,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 				});
 
-				du.warning(translation_promises);
+				du.debug(translation_promises);
 
 				return Promise.all(translation_promises).then(translation_promises => {
 					du.info(translation_promises);

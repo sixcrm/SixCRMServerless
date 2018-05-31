@@ -162,7 +162,7 @@ module.exports = class TerminalRecieptGenerator {
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 
-		du.warning(shipping_receipt, augmented_transaction_products);
+		du.debug(shipping_receipt, augmented_transaction_products);
 
 		let grouped_augmented_transaction_products = this.groupAugmentedTransactionProducts(augmented_transaction_products);
 

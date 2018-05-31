@@ -229,7 +229,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		let is_new = await this._isNewUser(user);
 
-		du.warning('Is new: '+is_new);
+		du.debug('Is new: '+is_new);
 
 		if(is_new == true){
 

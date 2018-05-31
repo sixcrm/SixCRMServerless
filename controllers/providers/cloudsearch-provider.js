@@ -197,7 +197,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 		return new Promise((resolve, reject) => {
 
-			du.warning(suggest_parameters);
+			du.debug(suggest_parameters);
 
 			let params = {};
 

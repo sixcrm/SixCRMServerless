@@ -36,18 +36,18 @@ module.exports = class cacheController {
 				result = await this.getCache(cache_key);
 				if (!_.isNull(result)) {
 
-					du.warning('Redis Hit: ' + cache_key);
+					du.debug('Redis Hit: ' + cache_key);
 					result = this.parseResult(result);
 					du.debug('Cached Result', result);
 
 				} else {
 
-					du.warning('Redis Miss: ' + cache_key);
+					du.debug('Redis Miss: ' + cache_key);
 					result = await data_promise();
 					du.debug('Data Promise Result:', result);
 
 					const reply = await this.setCache(cache_key, JSON.stringify(result), expiration);
-					du.warning('Redis Set for key "' + cache_key + '": ' + reply);
+					du.debug('Redis Set for key "' + cache_key + '": ' + reply);
 
 				}
 

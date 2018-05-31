@@ -19,7 +19,7 @@ module.exports = class BinController extends entityController {
 		return this.get({ id: binnumber })
 			.then(data => {
 
-				du.warning(data);
+				du.debug(data);
 				return data;
 			});
 

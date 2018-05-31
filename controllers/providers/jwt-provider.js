@@ -314,7 +314,7 @@ module.exports = class JWTProvider {
 					throw eu.getError('validation', 'Transaction JWT secret key is not defined.');
 				}
 
-				du.warning(this.jwt_parameters.transaction_jwt_secret_key);
+				du.debug(this.jwt_parameters.transaction_jwt_secret_key);
 
 				return this.jwt_parameters.transaction_jwt_secret_key;
 

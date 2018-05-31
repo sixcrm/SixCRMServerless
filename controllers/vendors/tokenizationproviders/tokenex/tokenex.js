@@ -53,8 +53,6 @@ module.exports = class TokenEx {
 			body: post_body
 		};
 
-		//du.warning(argument_object); process.exit();
-
 		return this._performRequest(argument_object).then((result) => this._parseResponse('setToken', result));
 
 	}

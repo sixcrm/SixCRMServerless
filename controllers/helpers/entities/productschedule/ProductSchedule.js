@@ -194,12 +194,9 @@ module.exports = class ProductScheduleHelper {
 		});
 
 		if(_.isNull(next_schedule_element) || _.isUndefined(next_schedule_element)){
-			du.warning(day, product_schedule.schedule);
+			du.debug(day, product_schedule.schedule);
 		}
 
-		//du.warning(product_schedule.schedule, day);
-		//du.info(next_schedule_element);
-		//du.info(next_schedule_element);
 		return next_schedule_element;
 
 	}
