@@ -18,14 +18,24 @@ module.exports.builder = {
 		description: 'Client to extract',
 		nargs: 1
 	},
-	user: {
+	'api-user': {
 		demand: true,
-		description: 'Username',
+		description: 'API username',
 		nargs: 1
 	},
-	password: {
+	'api-password': {
 		demand: true,
-		description: 'Password',
+		description: 'API password',
+		nargs: 1
+	},
+	'web-user': {
+		demand: true,
+		description: 'Web username',
+		nargs: 1
+	},
+	'web-password': {
+		demand: true,
+		description: 'Web password',
 		nargs: 1
 	},
 	// startDate: {
@@ -62,16 +72,20 @@ async function _handler(argv) {
 
 	const crm = argv.crm;
 	const client = argv.client;
-	const user =  argv.user;
-	const password = argv.password;
+	const apiUser = argv['api-user'];
+	const apiPassword = argv['api-password'];
+	const webUser = argv['web-user'];
+	const webPassword = argv['web-password'];
 
 	const artifactsDirectory = path.resolve(process.cwd(), 'extract', crm, client);
 
 	const args = {
 		crm,
 		client,
-		user,
-		password,
+		apiUser,
+		apiPassword,
+		webUser,
+		webPassword,
 		artifactsDirectory
 	};
 
@@ -90,7 +104,7 @@ async function _handler(argv) {
 	// }
 
 	const ExtractHandler = require(`../handlers/${crm}-extract-handler`);
-	const handler = new ExtractHandler(args.client, args.user, args.password, args.artifactsDirectory);
+	const handler = new ExtractHandler(args.client, args.apiUser, args.apiPassword, args.webUser, args.webPassword, args.artifactsDirectory);
 	await handler.extract();
 
 }
