@@ -143,30 +143,16 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 			detail_string = 'delivered';
 		}
 
-		return this.conformStati(detail_string);
+		return detail_string;
 
 	}
 
-	conformStati(status_string){
-
-		if(_.includes(['intransit', 'delivered','returned','unknown'], status_string)){
-			return status_string;
-		}
-
-		du.warning('Unrecognized status: '+status_string);
-
-		return 'intransit';
-
-	}
-
-
+	//Technical Debt: Refine
 	setDetail(){
 
 		du.debug('Set Detail');
 
 		let parsed_vendor_response = this.parameters.get('parsedvendorresponse');
-
-		du.info(parsed_vendor_response);
 
 		if(objectutilities.hasRecursive(parsed_vendor_response, 'TrackResponse.TrackInfo.0.TrackSummary.0')){
 
@@ -185,6 +171,7 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 
 	}
 
+	//Technical Debt:  Refine
 	determineDetail(detail){
 
 		du.debug('Determine Detail');
