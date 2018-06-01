@@ -105,6 +105,7 @@ describe('controllers/Transaction.js', () => {
 				id: {
 					id: 'dummy_id'
 				},
+				rebill: 'rebill_id',
 				types: [
 					'a_type',
 					'another_type'
@@ -115,12 +116,13 @@ describe('controllers/Transaction.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
 				queryRecords(table, parameters, index) {
-					expect(index).to.equal('account-index');
+					expect(index).to.equal('rebill-index');
 					expect(table).to.equal('transactions');
 					expect(parameters).to.have.property('key_condition_expression');
 					expect(parameters).to.have.property('expression_attribute_names');
 					expect(parameters).to.have.property('expression_attribute_values');
 					expect(parameters.expression_attribute_values[':associated_transaction_id']).to.equal(params.id.id);
+					expect(parameters.expression_attribute_values[':index_valuev']).to.equal(params.rebill);
 					expect(parameters.expression_attribute_values[':typea_type']).to.equal(params.types[0]);
 					expect(parameters.expression_attribute_values[':typeanother_type']).to.equal(params.types[1]);
 					return Promise.resolve({

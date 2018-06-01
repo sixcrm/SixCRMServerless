@@ -195,11 +195,12 @@ class TransactionController extends entityController {
 
 	}
 
-	listByAssociatedTransaction({id, types, results}){
+	listByAssociatedTransaction({id, rebill, types, results}){
 
 		du.debug('List By Parent Transaction');
 
 		id = this.getID(id);
+		rebill = this.getID(rebill);
 
 		let query_parameters = {
 			filter_expression: '#associatedtransaction = :associated_transaction_id',
@@ -239,7 +240,7 @@ class TransactionController extends entityController {
 
 		}
 
-		return this.listByAccount({query_parameters: query_parameters});
+		return this.queryBySecondaryIndex({query_parameters, index_name: 'rebill-index', field: 'rebill', index_value: rebill});
 
 	}
 

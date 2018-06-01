@@ -175,7 +175,7 @@ module.exports = class Register extends RegisterUtilities {
 
 		let associated_transaction = this.parameters.get('associatedtransaction');
 
-		return this.transactionController.listByAssociatedTransaction({id: associated_transaction, types:['reverse','refund'], results: ['success']})
+		return this.transactionController.listByAssociatedTransaction({id: associated_transaction, rebill: associated_transaction.rebill, types:['reverse','refund'], results: ['success']})
 			.then(associated_transactions => this.transactionController.getResult(associated_transactions, 'transactions'))
 			.then(associated_transactions => {
 

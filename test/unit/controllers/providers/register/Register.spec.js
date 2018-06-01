@@ -808,8 +808,9 @@ describe('controllers/providers/Register.js', () => {
 					expect(id).to.equal(transaction.id);
 					return Promise.resolve(transaction);
 				}
-				listByAssociatedTransaction({id, types, results}) {
+				listByAssociatedTransaction({id, rebill: _rebill, types, results}) {
 					expect(id).to.equal(transaction);
+					expect(_rebill).to.equal(transaction.rebill);
 					expect(types).to.deep.equal(['reverse', 'refund']);
 					expect(results).to.deep.equal(['success']);
 					return Promise.resolve({});
@@ -917,8 +918,9 @@ describe('controllers/providers/Register.js', () => {
 					expect(id).to.equal(transaction.id);
 					return Promise.resolve(transaction);
 				}
-				listByAssociatedTransaction({id, types, results}) {
+				listByAssociatedTransaction({id, rebill: _rebill, types, results}) {
 					expect(id).to.equal(transaction);
+					expect(_rebill).to.equal(transaction.rebill);
 					expect(types).to.deep.equal(['reverse', 'refund']);
 					expect(results).to.deep.equal(['success']);
 					return Promise.resolve({});
@@ -1027,8 +1029,9 @@ describe('controllers/providers/Register.js', () => {
 					expect(id).to.equal(transaction.id);
 					return Promise.resolve(transaction);
 				}
-				listByAssociatedTransaction({id, types, results}) {
+				listByAssociatedTransaction({id, rebill: _rebill, types, results}) {
 					expect(id).to.equal(transaction);
+					expect(_rebill).to.equal(transaction.rebill);
 					expect(types).to.deep.equal(['reverse', 'refund']);
 					expect(results).to.deep.equal(['success']);
 					return Promise.resolve({});
