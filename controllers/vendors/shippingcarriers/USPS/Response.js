@@ -134,16 +134,52 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 		}
 
 		if(_.isNull(detail_string) && _.isObject(detail) && _.has(detail, 'Event')){
+
 			detail_string = (_.isArray(detail.Event))?detail.Event.pop():detail.Event;
+
 		}else if(_.isNull(detail_string) && _.isString(detail)){
+
 			detail_string = detail;
+
 		}
 
 		if(stringutilities.isMatch(detail_string, /^.*delivered.*$/)){
+
 			detail_string = 'delivered';
+
 		}
 
-		return detail_string;
+		return this.normalizeStatus(detail_string);
+
+	}
+
+	normalizeStatus(status_string){
+
+		du.debug('Normalize Status');
+
+		if(_.isString(status_string)){
+
+			if(stringutilities.isMatch(status_string, /^.*delivered.*$/)){
+
+				return 'delivered';
+
+			}
+
+			if(stringutilities.isMatch(status_string, /^.*returned.*$/)){
+
+				return 'returned';
+
+			}
+
+			if(stringutilities.nonEmpty(status_string)){
+
+				return 'intransit';
+
+			}
+
+		}
+
+		return 'unknown';
 
 	}
 
@@ -154,20 +190,45 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 
 		let parsed_vendor_response = this.parameters.get('parsedvendorresponse');
 
+		let detail = null;
+
 		if(objectutilities.hasRecursive(parsed_vendor_response, 'TrackResponse.TrackInfo.0.TrackSummary.0')){
 
-			let detail = this.determineDetail(parsed_vendor_response.TrackResponse.TrackInfo[0].TrackSummary[0]);
+			let raw_detail = this.determineDetail(parsed_vendor_response.TrackResponse.TrackInfo[0].TrackSummary[0]);
 
-			this.parameters.set('detail', detail);
+			if(_.isString(raw_detail) && stringutilities.nonEmpty(raw_detail)){
+				detail = raw_detail
+			}
 
-			return true;
-
-		}else if(objectutilities.hasRecursive(parsed_vendor_response, 'TrackResponse.TrackInfo.0.Error.0.Description')){
-			this.parameters.set('detail', parsed_vendor_response.TrackResponse.TrackInfo[0].Error[0].Description[0]);
-			return true;
 		}
 
-		return false;
+		if(_.isNull(detail) && objectutilities.hasRecursive(parsed_vendor_response, 'TrackResponse.TrackInfo.0.TrackDetail.0')){
+
+			let raw_detail = this.determineDetail(parsed_vendor_response.TrackResponse.TrackInfo[0].TrackDetail[0]);
+
+			if(_.isString(raw_detail) && stringutilities.nonEmpty(raw_detail)){
+				detail = raw_detail
+			}
+
+		}
+
+		if(_.isNull(detail) && objectutilities.hasRecursive(parsed_vendor_response, 'TrackResponse.TrackInfo.0.Error.0.Description')){
+
+			let raw_detail = this.determineDetail(parsed_vendor_response.TrackResponse.TrackInfo[0].Error[0].Description[0]);
+
+			if(_.isString(raw_detail) && stringutilities.nonEmpty(raw_detail)){
+				detail = raw_detail
+			}
+
+		}
+
+		if(_.isNull(detail)){
+			detail = 'Unknown';
+		}
+
+		this.parameters.set('detail', detail);
+
+		return true;
 
 	}
 
@@ -176,17 +237,12 @@ module.exports = class USPSResponse extends ShippingCarrierVendorResponse {
 
 		du.debug('Determine Detail');
 
-		let detail_string;
+		let detail_string = null;
 
 		if(_.isObject(detail) && _.has(detail, 'Event')){
 			detail_string = (_.isArray(detail.Event))?detail.Event.pop():detail.Event;
 		}else if(_.isString(detail)){
 			detail_string = detail;
-		}
-
-		if(!_.isString(detail_string) || !stringutilities.nonEmpty(detail_string)){
-			du.warning('Unrecognized shipping detail string.');
-			detail_string = 'Unknown';
 		}
 
 		return detail_string;
