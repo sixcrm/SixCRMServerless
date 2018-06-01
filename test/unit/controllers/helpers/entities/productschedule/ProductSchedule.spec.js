@@ -127,7 +127,7 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 				let next_billing_dom = timestamp.getDayNumber(next_billing_date);
 
 				if(first_billing_dom > timestamp.daysInMonth(next_billing_date)){
-					expect(next_billing_dom).to.equal(timestamp.daysInMonth(next_billing_date));
+					expect(next_billing_dom).to.equal(timestamp.daysInMonth(next_billing_date)+'');
 				}else{
 					expect(next_billing_dom).to.equal(first_billing_dom);
 				}

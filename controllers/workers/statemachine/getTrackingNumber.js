@@ -4,7 +4,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
+const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class GetTrackingNumberController extends stepFunctionWorkerController {
 

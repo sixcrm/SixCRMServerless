@@ -1,7 +1,10 @@
 const _ = require('lodash');
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
+
+const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class GetTrackingInformationController extends stepFunctionWorkerController {
 
@@ -65,8 +68,6 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 
 			}
 
-
-
 		}
 
 	}
@@ -82,7 +83,17 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 			shipping_receipt: shipping_receipt
 		});
 
-		return result.getVendorResponse();
+		let vendor_response = result.getVendorResponse();
+
+		if(!_.has(vendor_response, 'detail')){
+			throw eu.getError('server', 'Expected tracker response to have property "detail".');
+		}
+
+		if(!_.has(vendor_response, 'status')){
+			throw eu.getError('server', 'Expected tracker response to have property "status".');
+		}
+
+		return vendor_response;
 
 	}
 
@@ -95,6 +106,7 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 			this.shippingReceiptHelperController = new ShippingReceiptHelperController();
 		}
 
+		du.info(tracking);
 		await this.shippingReceiptHelperController.updateShippingReceipt({shipping_receipt: shipping_receipt, detail: tracking.detail, status: tracking.status});
 
 		return true;

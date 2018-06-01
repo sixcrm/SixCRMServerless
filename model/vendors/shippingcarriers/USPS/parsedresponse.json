@@ -27,13 +27,23 @@
 								"TrackSummary": {
 									"type": "array",
 									"items": {
-										"type": "string"
+										"oneOf":[
+											{"type": "string"},
+											{
+												"type":"object"
+											}
+										]
 									}
 								},
 								"TrackDetail": {
 									"type": "array",
 									"items": {
-										"type": "string"
+										"oneOf":[
+											{"type": "string"},
+											{
+												"type":"object"
+											}
+										]
 									}
 								},
 								"Error": {

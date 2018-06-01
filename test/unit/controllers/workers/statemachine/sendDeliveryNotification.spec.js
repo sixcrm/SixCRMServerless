@@ -75,6 +75,41 @@ describe('controllers/workers/statemachine/sendDeliveryNotification.js', () => {
 
     });
 
+    it('throws an error when the shipping receipt is not found', async () => {
+
+      let shipping_receipt = MockEntities.getValidShippingReceipt();
+
+      let event = {
+        guid: shipping_receipt.id
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class{
+        constructor(){}
+        get({id: id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(null);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class{
+        constructor(){}
+        pushEvent({event_type, context, message_attributes}){
+          expect(false).to.equal(true, 'Method should not have executed.');
+        }
+      });
+
+      const SendDeliveryNotificationController = global.SixCRM.routes.include('workers', 'statemachine/sendDeliveryNotification.js');
+      let sendDeliveryNotificationController = new SendDeliveryNotificationController();
+
+      try{
+        await sendDeliveryNotificationController.execute(event);
+        expect(false).to.equal(true, 'Method should not have executed.');
+      }catch(error){
+        expect(error.message).to.have.string('[500] Unable to acquire a shipping receipt that matches');
+      }
+
+    });
+
   });
 
 });

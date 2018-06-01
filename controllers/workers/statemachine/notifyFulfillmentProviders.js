@@ -3,7 +3,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
-const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
+const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class NotifyFulfillmentProvidersController extends stepFunctionWorkerController {
 

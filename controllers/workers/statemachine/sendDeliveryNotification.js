@@ -1,5 +1,8 @@
+//const _ = require('lodash')
+
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
+
+const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class SendDeliveryNotificationController extends stepFunctionWorkerController {
 
@@ -17,7 +20,7 @@ module.exports = class SendDeliveryNotificationController extends stepFunctionWo
 
 		let shipping_receipt = await this.getShippingReceipt(event.guid);
 
-		this.pushEvent({
+		await this.pushEvent({
 			event_type:'delivery_confirmation',
 			context:{
 				shipping_receipt: shipping_receipt

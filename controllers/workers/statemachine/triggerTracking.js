@@ -2,7 +2,7 @@ const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 
 const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
 
-const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/components/stepfunctionworker.js');
+const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class TriggerTrackingController extends stepFunctionWorkerController {
 
