@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
+const workerController = global.SixCRM.routes.include('controllers', 'workers/sqs/worker.js');
 
 module.exports = class createRebillsController extends workerController {
 

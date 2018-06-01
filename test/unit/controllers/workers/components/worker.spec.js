@@ -27,11 +27,13 @@ describe('controllers/workers/components/worker.js', function () {
 
 		it('successfully constructs', () => {
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			expect(objectutilities.getClassName(workerController)).to.equal('workerController');
+
 		});
+
 	});
 
 	describe('setMessage', () => {
@@ -40,17 +42,18 @@ describe('controllers/workers/components/worker.js', function () {
 
 			let message = getValidMessage();
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			expect(workerController.setMessage(message)).to.equal(message);
+
 		});
 
 		it('retrieves message when message is not specified', () => {
 
 			let message = getValidMessage();
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			workerController.parameters.set('message', message);
@@ -63,7 +66,7 @@ describe('controllers/workers/components/worker.js', function () {
 
 		it('returns response field unchanged when response field is specified', () => {
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			expect(workerController.setResponseField('a_response_field')).to.equal('a_response_field');
@@ -71,7 +74,7 @@ describe('controllers/workers/components/worker.js', function () {
 
 		it('returns previously set response field when response field is not specified', () => {
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			workerController.response_field = 'a_response_field';
@@ -81,7 +84,7 @@ describe('controllers/workers/components/worker.js', function () {
 
 		it('returns default response field when response field is not specified nor previously set', () => {
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			delete workerController.response_field;
@@ -105,7 +108,7 @@ describe('controllers/workers/components/worker.js', function () {
 				}
 			});
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			return workerController.pushEvent({
@@ -123,7 +126,7 @@ describe('controllers/workers/components/worker.js', function () {
 				}
 			});
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			return workerController.pushEvent({
@@ -141,7 +144,7 @@ describe('controllers/workers/components/worker.js', function () {
 				}
 			});
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			try {
@@ -165,7 +168,7 @@ describe('controllers/workers/components/worker.js', function () {
 				}
 			});
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			delete workerController.parameters.store;
@@ -205,7 +208,7 @@ describe('controllers/workers/components/worker.js', function () {
 				}
 			});
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			return workerController.pushEvent({
@@ -242,7 +245,7 @@ describe('controllers/workers/components/worker.js', function () {
 				}
 			});
 
-			const WorkerController = global.SixCRM.routes.include('workers', 'components/worker.js');
+			const WorkerController = global.SixCRM.routes.include('workers', 'sqs/worker.js');
 			let workerController = new WorkerController();
 
 			return workerController.pushEvent({

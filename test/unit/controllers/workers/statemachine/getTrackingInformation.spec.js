@@ -35,27 +35,134 @@ describe('controllers/workers/statemachine/getTrackingInformation.js', () => {
 
   });
 
-  describe('validateEvent', () => {
+  /*
+  async getTrackingInformation(shipping_receipt){
 
-    it('successfully validates a valid event', () => {
+		du.debug('Get Tracking Information');
 
-      const shipping_receipt = MockEntities.getValidShippingReceipt();
-      const event = {guid: shipping_receipt.id};
+		const TrackerController = global.SixCRM.routes.include('providers', 'tracker/Tracker.js');
+		let trackerController = new TrackerController();
+
+		let result = await trackerController.info({
+			shipping_receipt: shipping_receipt
+		});
+
+		return result.getVendorResponse();
+
+	}
+  */
+
+  describe('getTrackingInformation', async () => {
+    it('returns tracking information', async () => {
+
+      let shipping_receipt = MockEntities.getValidShippingReceipt();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class{
+        constructor(){}
+        get({id: id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(shipping_receipt);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'tracker/Tracker.js'), class{
+        constructor(){}
+        info({shipping_receipt}){
+          expect(shipping_receipt).to.be.a('object');
+          expect(shipping_receipt).to.have.property('id');
+          return Promise.resolve(new class {
+            getVendorResponse(){
+              return {
+                status: 'unknown',
+                detail: 'A status update is not yet available for your package. It will be available when the shipper provides an update or the package is delivered to USPS. Check back soon. Sign up for Informed Delivery<SUP>&reg;</SUP> to receive notifications for packages addressed to you.',
+                tracking_number: shipping_receipt.tracking.id
+              }
+            }
+          })
+        }
+      });
 
       const GetTrackingInformationController = global.SixCRM.routes.include('workers', 'statemachine/getTrackingInformation.js');
       let getTrackingInformationController = new GetTrackingInformationController();
 
-      let result = getTrackingInformationController.validateEvent(event);
-      expect(result).to.deep.equal(event);
+      let result = await getTrackingInformationController.getTrackingInformation(shipping_receipt);
+
+      expect(result).to.have.property('status');
+      expect(result).to.have.property('detail');
+
+    });
+
+    it('throws an error for unexpected response (missing status)', async () => {
+
+      let shipping_receipt = MockEntities.getValidShippingReceipt();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class{
+        constructor(){}
+        get({id: id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(shipping_receipt);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('providers', 'tracker/Tracker.js'), class{
+        constructor(){}
+        info({shipping_receipt}){
+          expect(shipping_receipt).to.be.a('object');
+          expect(shipping_receipt).to.have.property('id');
+          return Promise.resolve(new class {
+            getVendorResponse(){
+              return {}
+            }
+          })
+        }
+      });
+
+      const GetTrackingInformationController = global.SixCRM.routes.include('workers', 'statemachine/getTrackingInformation.js');
+      let getTrackingInformationController = new GetTrackingInformationController();
+
+      try{
+        await getTrackingInformationController.getTrackingInformation(shipping_receipt);
+        expect(false).to.equal(true,'Method should not have executed');
+      }catch(error){
+        expect(error.message).to.have.string('[500] Expected tracker response to have property');
+      }
 
     });
 
   });
 
-  xdescribe('', async () => {
-    it('', async () => {
+  describe('updateShippingReceiptWithTrackingInformation', async () => {
+
+    it('successfully updates the shipping receipt', async () => {
+
+      let shipping_receipt = MockEntities.getValidShippingReceipt();
+      let tracking = {
+        status: 'unknown',
+        detail: 'Some detail...',
+        tracking_number: shipping_receipt.tracking.id
+      }
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class{
+        constructor(){}
+        get({id: id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(shipping_receipt);
+        }
+        update({entity: entity}){
+          expect(entity).to.be.a('object');
+          entity.updated_at = timestamp.getISO8601();
+          return Promise.resolve(entity);
+        }
+      });
+
+      const GetTrackingInformationController = global.SixCRM.routes.include('workers', 'statemachine/getTrackingInformation.js');
+      let getTrackingInformationController = new GetTrackingInformationController();
+
+      let result = await getTrackingInformationController.updateShippingReceiptWithTrackingInformation({shipping_receipt: shipping_receipt, tracking: tracking});
+      expect(result).to.equal(true);
 
     });
+
   });
 
   describe('execute', async () => {
@@ -81,7 +188,7 @@ describe('controllers/workers/statemachine/getTrackingInformation.js', () => {
           return Promise.resolve(true);
         }
       });
-      
+
       mockery.registerMock(global.SixCRM.routes.path('providers', 'tracker/Tracker.js'), class {
         constructor(){}
         info({shipping_receipt}){
@@ -90,7 +197,8 @@ describe('controllers/workers/statemachine/getTrackingInformation.js', () => {
             getVendorResponse(){
               return {
                 status: 'delivered',
-                detail: 'The package was delivered'
+                detail: 'The package was delivered',
+                tracking_number: shipping_receipt.tracking.id
               }
             }
           }

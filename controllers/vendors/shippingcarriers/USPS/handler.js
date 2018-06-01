@@ -132,7 +132,6 @@ module.exports = class USPSController extends ShippingCarrierController {
 					eu.throw(error);
 				}
 
-				du.info(response);
 				this.parameters.set('vendorresponse', response);
 
 				return resolve(true);
