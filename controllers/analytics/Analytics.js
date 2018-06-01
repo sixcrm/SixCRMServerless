@@ -179,6 +179,8 @@ module.exports = class AnalyticsController {
 		const auroraContext = global.SixCRM.getResource('auroraContext');
 
 		// return this.cacheController.useCache(query, async () => {
+
+		du.debug('Analytics.query()', query);
 		const results = await auroraContext.connection.query(query);
 		const resultTransform = require(path.join(__dirname, 'queries', queryRoot, 'transform'));
 		return resultTransform(results.rows);
