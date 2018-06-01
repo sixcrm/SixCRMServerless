@@ -79,9 +79,9 @@ module.exports = class CreditCardController extends entityController {
 
 		return super.batchGet(arguments[0]).then(result => {
 
-			if(_.has(result, 'creditcards') && arrayutilities.nonEmpty(result.creditcards)){
+			if(_.isArray(result) && arrayutilities.nonEmpty(result)){
 
-				result.creditcards = result.creditcards.map(creditcard => {
+				result = result.map(creditcard => {
 					this.setType(creditcard);
 					return creditcard;
 				});
