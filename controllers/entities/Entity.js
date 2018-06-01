@@ -377,21 +377,16 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	//Technical Debt:  You can only paginate against the index...
-	queryBySecondaryIndex({field, index_value, index_name, pagination, reverse_order, fatal}){
+	queryBySecondaryIndex({query_parameters = {}, field, index_value, index_name, pagination, reverse_order, fatal}){
 
 		du.debug('Query By Secondary Index');
 
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
-
-				let query_parameters = {
-					key_condition_expression: '#'+field+' = :index_valuev',
-					expression_attribute_values: {':index_valuev': index_value},
-					expression_attribute_names: {}
-				}
-
+				query_parameters = this.appendKeyConditionExpression(query_parameters, '#'+field+' = :index_valuev');
 				query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
+				query_parameters = this.appendExpressionAttributeValues(query_parameters, ':index_valuev', index_value);
 				query_parameters = this.appendPagination({query_parameters: query_parameters, pagination: pagination});
 				query_parameters = this.appendAccountFilter({query_parameters: query_parameters});
 
@@ -400,7 +395,6 @@ module.exports = class entityController extends entityUtilitiesController {
 				}
 
 				return query_parameters;
-
 			})
 			.then((query_parameters) => this.dynamodbprovider.queryRecords(this.table_name, query_parameters, index_name))
 			.then((data) => this.buildResponse(data))
