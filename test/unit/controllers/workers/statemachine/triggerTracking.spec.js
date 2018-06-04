@@ -76,9 +76,8 @@ describe('controllers/workers/statemachine/triggerTracking.js', async () => {
       try{
         let response = await triggerTrackingController.execute(event);
       }catch(error){
-        expect(error.message).to.equal('[400] Expected property "guid" in the event object');
+        expect(error.message).to.have.string('[500] Bad input');
       }
-
 
     });
 
