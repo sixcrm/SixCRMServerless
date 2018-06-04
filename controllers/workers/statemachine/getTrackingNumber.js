@@ -40,13 +40,15 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 
 		if(!_.isNull(tracking) && _.has(tracking, 'id')){
 
-			const ShippingCarrierHelperController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingCarrier.js');
-			let shippingCarrierHelperController = new ShippingCarrierHelperController();
+			if(!_.has(tracking, 'carrier') || _.isNull(tracking.carrier)){
 
-			let carriers = shippingCarrierHelperController.determineCarrierFromTrackingNumber(tracking.id);
+				const ShippingCarrierHelperController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingCarrier.js');
+				let shippingCarrierHelperController = new ShippingCarrierHelperController();
 
-			//Note:  This kicks the can down the road somewhat.  When we move to get tracking information from the carriers, we'll need the ability to check all possibilities, select one and update the carrier information.
-			tracking.carrier = arrayutilities.compress(carriers,',','');
+				let carriers = shippingCarrierHelperController.determineCarrierFromTrackingNumber(tracking.id);
+				tracking.carrier = arrayutilities.compress(carriers,',','');
+
+			}
 
 			await this.updateShippingReceiptWithTrackingNumberAndCarrier({shipping_receipt: shipping_receipt, tracking: tracking});
 
@@ -71,8 +73,21 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 			throw eu.getError('server', 'Terminal returned a non-success code: '+tracking_information.getCode())
 		}
 
-		//Note:  Confirm Format
-		return tracking_information.getVendorResponse();
+		let vendor_response = tracking_information.getVendorResponse();
+
+		//Technical Debt:  Tracking can respond with several orders, and this logic only attains the first record
+		if(objectutilities.hasRecursive(vendor_response, 'orders.0.shipping.tracking_number')){
+			let return_object = {};
+			return_object.id = vendor_response.orders[0].shipping.tracking_number;
+			if(objectutilities.hasRecursive(vendor_response, 'orders.0.shipping.carrier') && !_.isNull(vendor_response.orders[0].shipping.carrier)){
+				return_object.carrier = vendor_response.orders[0].shipping.carrier;
+			}
+
+			return return_object;
+
+		}
+
+		return null;
 
 	}
 

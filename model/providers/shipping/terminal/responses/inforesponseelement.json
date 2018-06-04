@@ -14,8 +14,15 @@
 					"type": "string"
 				},
 				"email": {
-					"type": "string",
-					"format": "email"
+					"oneOf":[
+						{
+							"type": "string",
+							"format": "email"
+						},
+						{
+							"type":"null"
+						}
+					]
 				}
 			},
 			"required": [

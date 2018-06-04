@@ -32,7 +32,7 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 			'method': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/method.json'),
 			'soapaction': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/soapaction.json'),
 			'wsdl': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/wsdl.json'),
-			'parametersobject': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/parametersobject.json'),
+			//'parametersobject': global.SixCRM.routes.path('model', 'vendors/fulfillmentproviders/ThreePL/parametersobject.json'),
 			'customer':global.SixCRM.routes.path('model','entities/customer.json'),
 			//Technical Debt:  Resolve
 			//'products':global.SixCRM.routes.path('model','entities/components/products.json')
@@ -143,6 +143,8 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 
 		parameters_object = objectutilities.merge(parameters_object, this.getMethodParameters());
 		parameters_object = objectutilities.merge(parameters_object, this.getRequestParameters());
+
+		du.warning(parameters_object);  //process.exit();
 
 		this.parameters.set('parametersobject', parameters_object);
 

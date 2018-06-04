@@ -4,13 +4,15 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
-const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
+const StepFunctionTriggerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionTrigger.js');
 
-module.exports = class TriggerPostFulfillmentController extends stepFunctionWorkerController {
+module.exports = class TriggerPostFulfillmentController extends StepFunctionTriggerController {
 
 	constructor() {
 
 		super();
+
+		this.next_state = 'Postfulfillment';
 
 	}
 
@@ -67,17 +69,7 @@ module.exports = class TriggerPostFulfillmentController extends stepFunctionWork
 			throw eu.getError('server', 'Expected Shipping Receipt ID to be a UUID.');
 		}
 
-		const parameters = {
-			stateMachineName: 'Postfulfillment',
-			input:JSON.stringify({guid: shipping_receipt.id})
-		};
-
-		if(!_.has(this, 'stateMachineHelperController')){
-			const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
-			this.stateMachineHelperController = new StateMachineHelperController();
-		}
-
-		return this.stateMachineHelperController.startExecution(parameters);
+		return super.execute({guid: shipping_receipt.id});
 
 	}
 
