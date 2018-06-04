@@ -122,6 +122,8 @@ module.exports = class AnalyticsController {
 				const resolveParams = require('./queries/reports/event-funnel-timeseries/params');
 				const resolved =  await resolveParams(parameters);
 
+				du.debug('Get report: eventFunnelTimeseries parameters', resolved);
+
 				if (_.includes(['main', 'upsell'], resolved.eventType)) {
 
 					return this.query('reports/event-funnel-timeseries-transactional', resolved);
