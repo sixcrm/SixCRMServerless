@@ -124,7 +124,7 @@ module.exports = class AnalyticsController {
 
 				du.debug('Get report: eventFunnelTimeseries parameters', resolved);
 
-				if (_.includes(['main', 'upsell'], resolved.eventType)) {
+				if (_.intersection(['main', 'upsell'], resolved.eventType).length > 0) {
 
 					return this.query('reports/event-funnel-timeseries-transactional', resolved);
 
