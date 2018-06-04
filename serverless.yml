@@ -151,6 +151,13 @@ functions:
   triggerpostfulfillment:
     handler: handlers/statemachine/handlers.triggerpostfulfillment
 
+  # Pre-Fulfillment
+  getfulfillmentrequired:
+    handler: handlers/statemachine/handlers.getfulfillmentrequired
+
+  triggerfulfillment:
+    handler: handlers/statemachine/handlers.triggerfulfillment
+
 # Billing
 
 ########################

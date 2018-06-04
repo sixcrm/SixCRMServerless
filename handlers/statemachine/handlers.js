@@ -6,7 +6,8 @@ const GetTrackingNumberController = global.SixCRM.routes.include('controllers', 
 const TriggerTrackingController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerTracking.js');
 const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('controllers', 'workers/statemachine/notifyFulfillmentProviders.js');
 const TriggerPostFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerPostFulfillment.js');
-
+const TriggerFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerFulfillment.js');
+const GetFulfillmentRequiredController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getFulfillmentRequired.js');
 
 module.exports = {
 	gettrackinginformation: handleStepFunction((event) => new GetTrackingInformationController().execute(event)),
@@ -14,7 +15,9 @@ module.exports = {
 	gettrackingnumber: handleStepFunction((event) => new GetTrackingNumberController().execute(event)),
 	triggertracking: handleStepFunction((event) => new TriggerTrackingController().execute(event)),
 	notifyfulfillmentproviders: handleStepFunction((event) => new NotifyFulfillmentProvidersController().execute(event)),
-	triggerpostfulfillment: handleStepFunction((event) => new TriggerPostFulfillmentController().execute(event))
+	triggerpostfulfillment: handleStepFunction((event) => new TriggerPostFulfillmentController().execute(event)),
+	triggerfulfillment: handleStepFunction((event) => new TriggerFulfillmentController().execute(event)),
+	getfulfillmentrequired: handleStepFunction((event) => new GetFulfillmentRequiredController().execute(event))
 };
 
 function handleStepFunction(delegate) {
