@@ -1,10 +1,10 @@
 {
   "Comment": "The Fulfillment State Machine.  Note that this State Machine operates against a Rebill.",
-  "StartAt": "Notify Fulfillment Providers",
+  "StartAt": "Notify Fulfillment Provider",
   "States": {
     "Notify Fulfillment Providers": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-notifyfulfillmentproviders",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-notifyfulfillmentprovider",
       "Next": "Successfully Triggered?",
       "InputPath": "$",
       "ResultPath": "$.status",
