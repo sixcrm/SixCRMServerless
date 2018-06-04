@@ -4,7 +4,7 @@
   "States": {
     "Notify Fulfillment Providers": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-notifyfulfillmentprovider",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-notifyfulfillmentproviders",
       "Next": "Successfully Triggered?",
       "InputPath": "$",
       "ResultPath": "$.status",
