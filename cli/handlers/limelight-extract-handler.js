@@ -42,7 +42,8 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 	async _webExtract() {
 
-		// const cookie = await this._scraper.signOn();
+		const cookie = await this._scraper.signOn();
+		await this._scraper.getGateways(cookie);
 
 	}
 

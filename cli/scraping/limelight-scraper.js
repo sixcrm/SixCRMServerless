@@ -1,4 +1,5 @@
 const request = require('request-promise');
+// const cheerio = require('cheerio');
 
 module.exports = class LimelightScraper {
 
@@ -58,5 +59,30 @@ module.exports = class LimelightScraper {
 		return cookie;
 
 	}
+
+	async getGateways(cookie) {
+
+		const url = `${this._url}/my_providers/index.php?filter[type]=payment`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': '*/*',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			}
+		});
+
+		return res;
+
+	}
+
+	// async getGatewayDetails(cookie) {
+
+	// }
 
 }

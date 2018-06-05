@@ -1,17 +1,17 @@
 {
   "Comment": "The Recovery State Machine",
-  "StartAt": "Get Recover Date",
+  "StartAt": "Get Recovery Date",
   "States": {
-    "Get Recover Date": {
+    "Get Recovery Date": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-getRecoverDate",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getrecoverdate",
       "Next": "Wait For Recovery Date",
-      "InputPath": "$.guid",
-      "ResultPath": "$.recoverydate",
+      "InputPath": "$",
+      "ResultPath": "$.recoverdate",
       "Retry" : [
           {
             "ErrorEquals": [ "State.ALL" ],
-            "IntervalSeconds": 3,
+            "IntervalSeconds": 2,
             "MaxAttempts": 5,
             "BackoffRate": 5
           }
@@ -19,25 +19,15 @@
     },
     "Wait For Recovery Date": {
       "Type": "Wait",
-      "TimestampPath": "$.recoverydate",
+      "TimestampPath": "$.recoverdate",
       "Next": "Recover"
     },
     "Recover": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-bill",
-      "Next": "Trigger Pre-Fulfillment",
-      "InputPath": "$.guid",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-bill",
+      "Next": "Is Success?",
+      "InputPath": "$",
       "ResultPath": "$.status",
-      "Catch": [
-        {
-          "ErrorEquals": ["Declined"],
-          "Next": "Recover Declined"
-        },
-        {
-          "ErrorEquals": ["Hard Decline"],
-          "Next": "Hard Declined"
-        }
-      ],
       "Retry" : [
           {
             "ErrorEquals": [ "State.ALL" ],
@@ -47,11 +37,27 @@
           }
       ]
     },
+    "Is Success?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.status",
+          "StringEquals": "DECLINE",
+          "Next": "Recover Declined"
+        },
+        {
+          "Variable": "$.status",
+          "StringEquals": "HARDDECLINE",
+          "Next": "Hard Declined"
+        }
+      ],
+      "Default":"Trigger Pre-Fulfillment"
+    },
     "Trigger Pre-Fulfillment": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-triggerFullfillment",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerprefullfillment",
       "End": true,
-      "InputPath": "$.guid",
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry" : [
           {
@@ -64,8 +70,8 @@
     },
     "Hard Declined": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-cleanupDecline",
-      "InputPath": "$.guid",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Next":"Hard Decline Failure",
       "Retry" : [
@@ -79,8 +85,8 @@
     },
     "Recover Declined": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-cleanupDecline",
-      "InputPath": "$.guid",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Next":"Decline Failure",
       "Retry" : [
