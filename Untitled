@@ -4,11 +4,4 @@ Fulfillment:
   - notifyfulfillmentproviders (TEST)
 
 Bill:
-  - bill
-
-Recover:
-  - bill
-
-Close Session:
-
-Pick Rebills??
+  - bill (TEST)
