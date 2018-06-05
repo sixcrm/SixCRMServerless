@@ -53,6 +53,7 @@ module.exports = class Register extends RegisterUtilities {
 					rebill: 'rebill'
 				},
 				optional:{
+					transactionsubtype: 'transactionsubtype',
 					rawcreditcard: 'creditcard'
 				}
 			}
