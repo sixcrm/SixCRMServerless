@@ -407,7 +407,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 			}
 
 			if (_.isNull(associated_merchant_provider_group) || _.isUndefined(associated_merchant_provider_group)) {
-				throw eu.getError('server', 'Unable to establish a merchantprovidergroup association with product: ' + product_group.product.id);
+				throw eu.getError('server', `Unable to establish a merchantprovidergroup association between product ${product_group.product.id} and campaign ${campaign_id}`);
 			}
 
 			product_group.merchantprovidergroupassociation = associated_merchant_provider_group;
