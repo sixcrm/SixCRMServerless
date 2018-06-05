@@ -58,6 +58,7 @@
     "chai-as-promised": "^6.0.0",
     "chai-json-schema": "^1.4.0",
     "chai-shallow-deep-equal": "^1.4.6",
+    "cheerio": "^1.0.0-rc.2",
     "child-process-promise": "^2.2.1",
     "creditcard-generator": "0.0.7",
     "eslint": "^4.19.1",
