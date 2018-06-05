@@ -44,6 +44,8 @@ module.exports = class StepFunctionDeployment extends AWSDeploymentUtilities{
 
 		du.debug('Deploy State Machine');
 
+		du.info('Deploying "'+name+'"');
+
 		let exists = await this.stepFunctionProvider.stepFunctionExists(name);
 
 		const account_constants = {
