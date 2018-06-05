@@ -38,6 +38,10 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		api_key: {
 			type: GraphQLString,
 			description: 'The merchant provider api_key.',
+		},
+		transaction_key: {
+			type: GraphQLString,
+			description: 'The merchant provider transaction_key.',
 		}
 	})
 });
