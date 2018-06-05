@@ -7,17 +7,27 @@ const TriggerTrackingController = global.SixCRM.routes.include('controllers', 'w
 const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('controllers', 'workers/statemachine/notifyFulfillmentProviders.js');
 const TriggerPostFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerPostFulfillment.js');
 const TriggerFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerFulfillment.js');
+const TriggerPreFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerPreFulfillment.js');
+const TriggerRecoveryController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerRecovery.js');
 const GetFulfillmentRequiredController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getFulfillmentRequired.js');
+const CleanupDeclineController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupDecline.js');
+const GetRecoverDateController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getRecoverDate.js');
+const BillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/bill.js');
 
 module.exports = {
 	gettrackinginformation: handleStepFunction((event) => new GetTrackingInformationController().execute(event)),
 	senddeliverynotification: handleStepFunction((event) => new SendDeliveryNotificationController().execute(event)),
 	gettrackingnumber: handleStepFunction((event) => new GetTrackingNumberController().execute(event)),
-	triggertracking: handleStepFunction((event) => new TriggerTrackingController().execute(event)),
 	notifyfulfillmentproviders: handleStepFunction((event) => new NotifyFulfillmentProvidersController().execute(event)),
+	getfulfillmentrequired: handleStepFunction((event) => new GetFulfillmentRequiredController().execute(event)),
 	triggerpostfulfillment: handleStepFunction((event) => new TriggerPostFulfillmentController().execute(event)),
 	triggerfulfillment: handleStepFunction((event) => new TriggerFulfillmentController().execute(event)),
-	getfulfillmentrequired: handleStepFunction((event) => new GetFulfillmentRequiredController().execute(event))
+	triggerprefulfillment: handleStepFunction((event) => new TriggerPreFulfillmentController().execute(event)),
+	triggertracking: handleStepFunction((event) => new TriggerTrackingController().execute(event)),
+	triggerrecovery: handleStepFunction((event) => new TriggerRecoveryController().execute(event)),
+	cleanupdecline: handleStepFunction((event) => new CleanupDeclineController().execute(event)),
+	getrecoverdate: handleStepFunction((event) => new GetRecoverDateController().execute(event)),
+	bill: handleStepFunction((event) => new BillController().execute(event)),
 };
 
 function handleStepFunction(delegate) {

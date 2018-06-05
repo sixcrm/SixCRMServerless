@@ -66,4 +66,28 @@ describe('lib/currency-utilities.js', () => {
 
 	});
 
+	describe('isCurrency', () => {
+
+		it('returns true', () => {
+
+			let good_currency = [1.23, '1.23', 30, 4000.00, '4,001.00'];
+
+			good_currency.map(currency => {
+				expect(currencyutilities.isCurrency(currency)).to.equal(true);
+			});
+
+		});
+
+		it('returns false', () => {
+
+			let bad_currency = [[], {}, null, 'adjawiudaoiwjdoa'];
+
+			bad_currency.map(currency => {
+				expect(currencyutilities.isCurrency(currency)).to.equal(false);
+			});
+
+		});
+
+	})
+
 });

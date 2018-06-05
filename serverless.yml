@@ -158,7 +158,21 @@ functions:
   triggerfulfillment:
     handler: handlers/statemachine/handlers.triggerfulfillment
 
-# Billing
+  #Bill #Recover
+  triggerprefulfillment:
+    handler: handlers/statemachine/handlers.triggerprefulfillment
+  cleanupdecline:
+    handler: handlers/statemachine/handlers.cleanupdecline
+  bill:
+    handler: handlers/statemachine/handlers.bill
+
+  #Bill
+  triggerrecovery:
+    handler: handlers/statemachine/handlers.triggerrecovery
+
+  #Recover
+  getrecoverdate:
+    handler: handlers/statemachine/handlers.getrecoverdate
 
 ########################
 # SQS handlers
