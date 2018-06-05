@@ -1,7 +1,0 @@
-Finish:
-
-Fulfillment:
-  - notifyfulfillmentproviders (TEST)
-
-Bill:
-  - bill (TEST)
