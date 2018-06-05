@@ -5,6 +5,7 @@ const expect = chai.expect;
 const moment = require('moment');
 
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const frozenNow = 1487768599196;  // '2017-02-22T13:03:19.196Z';
 const frozenNowAsISO8601 = '2017-02-22T13:03:19.196Z';
@@ -266,4 +267,33 @@ describe('lib/timestamp', () => {
 			return timestamp.createTimestampMilliseconds();
 		}
 	});
+
+	describe('upcoming', () => {
+
+		it('gets upcoming Friday', () => {
+
+			let upcoming_friday = timestamp.upcoming('Friday');
+			expect(upcoming_friday).to.be.a('string');
+			expect(stringutilities.isISO8601(upcoming_friday)).to.equal(true);
+
+		});
+
+		it('gets next Friday', () => {
+
+			let next_friday = timestamp.upcoming('Friday', 1);
+			expect(next_friday).to.be.a('string');
+			expect(stringutilities.isISO8601(next_friday)).to.equal(true);
+
+		});
+
+		it('gets next Friday at 3PM', () => {
+
+			let next_friday = timestamp.upcoming('Friday', 1, '3:21 PM');
+			expect(next_friday).to.be.a('string');
+			expect(stringutilities.isISO8601(next_friday)).to.equal(true);
+
+		});
+
+	});
+
 });

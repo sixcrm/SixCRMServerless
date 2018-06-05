@@ -4,9 +4,9 @@
   "States": {
     "Bill": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-bill",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-bill",
       "Next": "Trigger Pre-Fulfillment",
-      "InputPath": "$.guid",
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry" : [
           {
@@ -29,9 +29,9 @@
     },
     "Trigger Pre-Fulfillment": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-triggerFullfillment",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerprefulfillment",
       "End": true,
-      "InputPath": "$.guid",
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry" : [
           {
@@ -45,8 +45,8 @@
     "Trigger Recovery": {
       "Type": "Task",
       "Next": "Recovery Triggered",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-triggerFullfillment",
-      "InputPath": "$.guid",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerrecovery",
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry" : [
           {
@@ -62,8 +62,8 @@
     },
     "Hard Declined": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sm-cleanupDecline",
-      "InputPath": "$.guid",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
+      "InputPath": "$",
       "ResultPath": "$.status",
       "Next":"Hard Decline Failure",
       "Retry" : [
