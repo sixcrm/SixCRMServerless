@@ -54,6 +54,11 @@
 			"name": "Account Management",
 			"description": "The Account Management Side-Nav Submenu",
 			"default": true
+		},
+		"advanced-session-model": {
+			"name": "Advanced Session Model",
+			"description": "Advanced UI For Session and Customer",
+			"default": false
 		}
 	}
 },
@@ -113,6 +118,11 @@
 			"name": "Account Management",
 			"description": "The Account Management Side-Nav Submenu",
 			"default": true
+		},
+		"advanced-session-model": {
+			"name": "Advanced Session Model",
+			"description": "Advanced UI For Session and Customer",
+			"default": false
 		}
 	}
 },
@@ -172,6 +182,11 @@
 			"name": "Account Management",
 			"description": "The Account Management Side-Nav Submenu",
 			"default": true
+		},
+		"advanced-session-model": {
+			"name": "Advanced Session Model",
+			"description": "Advanced UI For Session and Customer",
+			"default": false
 		}
 	}
 },
@@ -231,6 +246,11 @@
 			"name": "Account Management",
 			"description": "The Account Management Side-Nav Submenu",
 			"default": true
+		},
+		"advanced-session-model": {
+			"name": "Advanced Session Model",
+			"description": "Advanced UI For Session and Customer",
+			"default": false
 		}
 	}
 },
@@ -290,6 +310,11 @@
 			"name": "Account Management",
 			"description": "The Account Management Side-Nav Submenu",
 			"default": true
+		},
+		"advanced-session-model": {
+			"name": "Advanced Session Model",
+			"description": "Advanced UI For Session and Customer",
+			"default": false
 		}
 	}
 }]
