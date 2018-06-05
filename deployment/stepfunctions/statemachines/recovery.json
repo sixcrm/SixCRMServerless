@@ -11,7 +11,7 @@
       "Retry" : [
           {
             "ErrorEquals": [ "State.ALL" ],
-            "IntervalSeconds": 3,
+            "IntervalSeconds": 2,
             "MaxAttempts": 5,
             "BackoffRate": 5
           }
@@ -25,19 +25,9 @@
     "Recover": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-bill",
-      "Next": "Trigger Pre-Fulfillment",
+      "Next": "Is Success?",
       "InputPath": "$",
       "ResultPath": "$.status",
-      "Catch": [
-        {
-          "ErrorEquals": ["Declined"],
-          "Next": "Recover Declined"
-        },
-        {
-          "ErrorEquals": ["Hard Decline"],
-          "Next": "Hard Declined"
-        }
-      ],
       "Retry" : [
           {
             "ErrorEquals": [ "State.ALL" ],
@@ -46,6 +36,22 @@
             "BackoffRate": 5
           }
       ]
+    },
+    "Is Success?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.status",
+          "StringEquals": "DECLINE",
+          "Next": "Recover Declined"
+        },
+        {
+          "Variable": "$.status",
+          "StringEquals": "HARDDECLINE",
+          "Next": "Hard Declined"
+        }
+      ],
+      "Default":"Trigger Pre-Fulfillment"
     },
     "Trigger Pre-Fulfillment": {
       "Type": "Task",
