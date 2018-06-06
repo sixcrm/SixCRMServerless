@@ -219,4 +219,72 @@ describe('controllers/workers/statemachine/components/stepFunctionWorker.js', ()
 
   });
 
+  describe('getSession', async () => {
+
+    it('successfully returns a session', async () => {
+
+      let session = MockEntities.getValidSession();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class{
+        constructor(){}
+        get({id: id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(session);
+        }
+      });
+
+      const StepFunctionWorkerController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionWorker.js');
+      let stepFunctionWorkerController = new StepFunctionWorkerController();
+
+      const result = await stepFunctionWorkerController.getSession(session.id);
+      expect(result).to.deep.equal(session);
+
+    });
+
+    it('throws an error when the session is not found', async () => {
+
+      let session = MockEntities.getValidSession();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class{
+        constructor(){}
+        get({id: id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(null);
+        }
+      });
+
+      const StepFunctionWorkerController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionWorker.js');
+      let stepFunctionWorkerController = new StepFunctionWorkerController();
+
+      try{
+        await stepFunctionWorkerController.getSession(session.id);
+        expect(false).to.equal(true, 'Method should not have executed.');
+      }catch(error){
+        expect(error.message).to.have.string('[500] Unable to acquire a session that matches');
+      }
+
+    });
+
+    it('returns null when the session is not found and fatal is false', async () => {
+
+      let session = MockEntities.getValidSession();
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class{
+        constructor(){}
+        get({id: id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(null);
+        }
+      });
+
+      const StepFunctionWorkerController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionWorker.js');
+      let stepFunctionWorkerController = new StepFunctionWorkerController();
+
+      let result = await stepFunctionWorkerController.getSession(session.id, false);
+      expect(result).to.equal(null);
+
+    });
+
+  });
+
 });
