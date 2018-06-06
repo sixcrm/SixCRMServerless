@@ -130,6 +130,16 @@ functions:
 # State Machine Lambdas
 ########################
 
+#Close Session
+  getsessionclosed:
+    handler: handlers/statemachine/handlers.getsessionclosed
+
+  closesession:
+    handler: handlers/statemachine/handlers.closesession
+
+  cleanupsession:
+    handler: handlers/statemachine/handlers.cleanupsession
+
 # Carrier
   gettrackinginformation:
     handler: handlers/statemachine/handlers.gettrackinginformation
@@ -202,6 +212,17 @@ functions:
 
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
+
+########################
+# Event Workers
+########################
+
+  selectrebills:
+    handler: handlers/workers/handlers.selectrebills
+    events:
+      - schedule:
+          rate: rate(10 minutes)
+          enabled: true
 
   analyticseventhandler:
     handler: handlers/workers/handlers.analyticseventhandler

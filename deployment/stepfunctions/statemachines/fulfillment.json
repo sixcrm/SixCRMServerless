@@ -1,6 +1,6 @@
 {
   "Comment": "The Fulfillment State Machine.  Note that this State Machine operates against a Rebill.",
-  "StartAt": "Notify Fulfillment Provider",
+  "StartAt": "Notify Fulfillment Providers",
   "States": {
     "Notify Fulfillment Providers": {
       "Type": "Task",
