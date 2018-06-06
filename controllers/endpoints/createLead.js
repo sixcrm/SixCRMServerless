@@ -1,13 +1,18 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
+const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
+
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+
 
 module.exports = class CreateLeadController extends transactionEndpointController {
 
@@ -79,10 +84,31 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 		let [customer, campaign, affiliates] = await this.getLeadProperties(event);
 		let session_prototype = this.createSessionPrototype(customer, campaign, affiliates);
 		let session = await this.assureSession(session_prototype);
-
+		await this.triggerSessionCloseStateMachine(session);
 		await this.postProcessing(session, campaign, affiliates);
 
 		return this.sessionHelperController.getPublicFields(session);
+
+	}
+
+	async triggerSessionCloseStateMachine(session){
+
+		du.debug('Trigger Session Close State Machine')
+
+		if(_.isNull(session) || !_.has(session, 'id') || !stringutilities.isUUID(session.id)){
+			throw eu.getError('server', 'Inappropriate Session ID presented to State Machine Helper');
+		}
+
+		const parameters = {
+			stateMachineName: 'Closesession',
+			input:JSON.stringify({guid: session.id})
+		}
+
+		let stateMachineHelperController = new StateMachineHelperController();
+
+		let result = await stateMachineHelperController.startExecution(parameters);
+
+		return result;
 
 	}
 
