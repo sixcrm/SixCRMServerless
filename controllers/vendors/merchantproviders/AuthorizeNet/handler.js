@@ -1,7 +1,7 @@
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
-const AuthorizeNetProvider = global.SixCRM.routes.include('controllers', 'providers/authorizenet-provider.js');
+const AuthorizeNetAPI = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/AuthorizeNet/api.js');
 const AuthorizeNetResponse = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/AuthorizeNet/Response.js');
 const CreditCardHelper = global.SixCRM.routes.include('controllers', 'helpers/entities/creditcard/CreditCard.js');
 
@@ -14,6 +14,7 @@ class AuthorizeNetController extends MerchantProvider {
 		this.parameter_definition = {
 			process:{
 				required:{
+					customer: 'customer',
 					creditcard: 'creditcard',
 					amount: 'amount'
 				},
@@ -22,7 +23,6 @@ class AuthorizeNetController extends MerchantProvider {
 			refund:{
 				required:{
 					transaction: 'transaction',
-					creditcard: 'creditcard',
 					amount: 'amount'
 				},
 				optional:{}
@@ -31,9 +31,7 @@ class AuthorizeNetController extends MerchantProvider {
 				required:{
 					transaction: 'transaction'
 				},
-				optional:{
-					amount: 'amount'
-				}
+				optional:{}
 			},
 			test:{
 				required:{},
@@ -46,7 +44,7 @@ class AuthorizeNetController extends MerchantProvider {
 		this.augmentParameters();
 
 		this.creditcardHelper = new CreditCardHelper();
-		this.authorizenet = new AuthorizeNetProvider(merchant_provider.gateway);
+		this.authorizenet = new AuthorizeNetAPI(merchant_provider.gateway);
 	}
 
 	async process({customer, creditcard, amount}) {

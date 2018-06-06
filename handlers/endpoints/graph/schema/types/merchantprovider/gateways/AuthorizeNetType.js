@@ -24,7 +24,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		transaction_key: {
 			type: new GraphQLNonNull(GraphQLString),
-			description: 'The AuthorizeNet API Key.',
+			description: 'The AuthorizeNet Transaction Key.',
 		},
 		processor: {
 			type: GraphQLString,
