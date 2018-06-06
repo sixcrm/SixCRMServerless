@@ -33,7 +33,7 @@
     "Create Rebill": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-createrebill",
-      "Next": "Rebill Created?",
+      "Next": "Was Rebill Created?",
       "InputPath": "$",
       "ResultPath": "$.status",
       "Retry": [
@@ -47,7 +47,7 @@
         }
       ]
     },
-    "Rebill Created?": {
+    "Was Rebill Created?": {
       "Type": "Choice",
       "Choices": [
         {
@@ -59,8 +59,7 @@
       "Default": "Rebill Created"
     },
     "Rebill Created":{
-      "Type":"Succeed",
-      "End": true
+      "Type":"Succeed"
     },
     "Complete Session": {
       "Type": "Task",
