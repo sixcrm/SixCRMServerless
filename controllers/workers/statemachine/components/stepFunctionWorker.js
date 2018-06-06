@@ -82,4 +82,28 @@ module.exports = class StepFunctionWorkerController extends WorkerController {
 
 	}
 
+	async getSession(id, fatal = true){
+
+		du.debug('Get Session');
+
+		if(!_.has(this, 'sessionController')){
+			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
+		}
+
+		let session = await this.sessionController.get({id: id});
+
+		if(_.isNull(session)){
+			if(fatal){
+				throw eu.getError('server', 'Unable to acquire a session that matches '+id);
+			}
+
+			du.warning('Unable to acquire a session that matches '+id);
+
+		}
+
+		return session;
+
+	}
+
 }
