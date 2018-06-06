@@ -1,0 +1,71 @@
+{
+  "Comment": "The Close Session state machine waits 8 hours to close a session and triggers any necessary cleanup and consolidation of the session by the session UUID.",
+  "StartAt": "Get Session Closed",
+  "States": {
+    "Get Session Closed": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getsessionclosed",
+      "Next": "Is Closed?",
+      "InputPath": "$",
+      "ResultPath": "$.status",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 10,
+          "MaxAttempts": 5,
+          "BackoffRate": 5
+        }
+      ]
+    },
+    "Is Closed?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.status",
+          "StringEquals": "CLOSED",
+          "Next": "Clean-up Session"
+        }
+      ],
+      "Default": "Wait 8 Hours"
+    },
+    "Wait 8 Hours": {
+      "Type": "Wait",
+      "Seconds": 28800,
+      "Next": "Close Session"
+    },
+    "Close Session": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-closesession",
+      "Next": "Get Session Closed",
+      "InputPath": "$",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "Clean-up Session": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupsession",
+      "End": true,
+      "InputPath": "$",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    }
+  }
+}

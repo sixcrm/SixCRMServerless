@@ -1,0 +1,96 @@
+[{
+	"environment": "priority",
+	"account": "default",
+  "created_at":"2017-04-06T18:40:41.405Z",
+  "updated_at":"2017-04-06T18:41:12.521Z",
+	"features": {
+		"cycle-reports": {
+			"name": "Cycle Reports",
+			"description": "Cycle Reports",
+			"default": false,
+			"features": {
+				"day-to-day": {
+					"name": "Day to Day report",
+					"description": "The Day-To-Day report",
+					"default": false
+				},
+				"cycle": {
+					"name": "Cycle Report",
+					"description": "The Cycle Report",
+					"default": false
+				}
+			}
+		},
+		"state-machine": {
+			"name": "Order Engine",
+			"description": "Order Engine Dashboard",
+			"default": false
+		},
+		"orders": {
+			"name": "Orders",
+			"description": "The Orders Side-Nav Submenu",
+			"default": true,
+			"features": {
+				"pending-rebills": {
+					"name": "Pending Rebills",
+					"description": "A list of pending rebills for the account",
+					"default": false
+				}
+			}
+		},
+		"crm-setup": {
+			"name": "CRM Setup",
+			"description": "The CRM Setup Side-Nav Submenu",
+			"default": true,
+			"features": {
+				"event-hooks": {
+					"name": "Event Hooks",
+					"description": "The event hooks views",
+					"default": false
+				}
+			}
+		},
+		"account-management": {
+			"name": "Account Management",
+			"description": "The Account Management Side-Nav Submenu",
+			"default": true
+		},
+		"advanced-session-model": {
+			"name": "Advanced Session Model",
+			"description": "Advanced UI For Session and Customer",
+			"default": false
+		}
+	},
+  "user-settings-languages":{
+    "name": "User Settings Languages",
+    "description": "Language setting for users on the user settings page",
+    "default": true,
+    "features": {
+      "english": {
+        "name": "English setting",
+        "description": "The English language setting",
+        "default": true
+      },
+      "chinese": {
+        "name": "Chinese setting",
+        "description": "The Chinese language setting",
+        "default": false
+      },
+      "armenian": {
+        "name": "Armenian setting",
+        "description": "The Armenian language setting",
+        "default": false
+      },
+      "german": {
+        "name": "German setting",
+        "description": "The German language setting",
+        "default": false
+      },
+      "hindi": {
+        "name": "Hindi setting",
+        "description": "The Hindi language setting",
+        "default": false
+      }
+    }
+  }
+}]
