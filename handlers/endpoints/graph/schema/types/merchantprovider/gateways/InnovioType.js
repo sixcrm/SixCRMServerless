@@ -29,6 +29,18 @@ module.exports.graphObj = new GraphQLObjectType({
 		product_id: {
 			type: GraphQLString,
 			description: 'The name of the merchant provider gateway password.',
+		},
+		processor: {
+			type: GraphQLString,
+			description: 'The merchant provider processor.',
+		},
+		midnumber: {
+			type: GraphQLString,
+			description: 'The merchant provider midnumber.',
+		},
+		descriptor: {
+			type: GraphQLString,
+			description: 'The merchant provider descriptor.',
 		}
 	})
 });
