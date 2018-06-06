@@ -30,13 +30,21 @@ module.exports = class StateMachineHelperController {
 
 		if (_.has(description, 'status')) {
 
-			if (restart == true) {
-				//add restart logic
+			if (restart === true || restart == 'true') {
+
+				await this.stepfunctionprovider.stopExecution({
+					executionArn: executionArn
+				});
+
+				du.warning('Execution stopped: '+executionArn);
+
+			}else{
+
+				du.warning('Execution already exists, restart configured off.');
+
+				return null;
+
 			}
-
-			du.warning('Execution already exists, restart configured off.');
-
-			return null;
 
 		}
 

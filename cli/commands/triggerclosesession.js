@@ -10,6 +10,12 @@ module.exports.builder = {
 		demand: true,
 		description: 'The UUID of the Session',
 		nargs: 1
+	},
+	restart: {
+		demand: false,
+		description: 'Cancels any existing execution and restarts',
+		nargs: 1,
+		default: false
 	}
 };
 
@@ -35,6 +41,8 @@ async function _handler(argv) {
 
 	const session_uuid =  argv.sessionUUID;
 
+	const restart = argv.restart;
+
 	const stateMachineHelperController = new StateMachineHelperController();
 
 	const parameters = {
@@ -42,7 +50,7 @@ async function _handler(argv) {
 		input:JSON.stringify({guid: session_uuid})
 	};
 
-	let result  = await stateMachineHelperController.startExecution(parameters);
+	let result  = await stateMachineHelperController.startExecution(parameters, restart);
 
 	du.info(result);
 
