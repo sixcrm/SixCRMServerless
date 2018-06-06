@@ -42,6 +42,18 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		transaction_key: {
 			type: GraphQLString,
 			description: 'The merchant provider transaction_key.',
+		},
+		processor: {
+			type: GraphQLString,
+			description: 'The merchant provider processor.',
+		},
+		midnumber: {
+			type: GraphQLString,
+			description: 'The merchant provider midnumber.',
+		},
+		descriptor: {
+			type: GraphQLString,
+			description: 'The merchant provider descriptor.',
 		}
 	})
 });
