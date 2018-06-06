@@ -130,6 +130,16 @@ functions:
 # State Machine Lambdas
 ########################
 
+#Close Session
+  getsessionclosed:
+    handler: handlers/statemachine/handlers.getsessionclosed
+
+  closesession:
+    handler: handlers/statemachine/handlers.closesession
+
+  cleanupsession:
+    handler: handlers/statemachine/handlers.cleanupsession
+
 # Carrier
   gettrackinginformation:
     handler: handlers/statemachine/handlers.gettrackinginformation
