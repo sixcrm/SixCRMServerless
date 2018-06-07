@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
@@ -51,7 +52,7 @@ class AuthorizeNetController extends MerchantProvider {
 		du.debug('Process');
 		const action = 'process';
 		this.parameters.setParameters({
-			argumentation: {creditcard, amount},
+			argumentation: {customer, creditcard, amount},
 			action
 		});
 
@@ -64,12 +65,16 @@ class AuthorizeNetController extends MerchantProvider {
 			customer_profile_id = customer_profile.customerProfileId;
 
 			const payment_profiles = customer_profile.paymentProfiles;
-			const payment_profile = arrayutilities.find(payment_profiles, payment_profile => {
+			let payment_profile = arrayutilities.find(payment_profiles, payment_profile => {
 				const profile_creditcard = payment_profile.payment.creditCard;
 				return creditcard.last_four === profile_creditcard.cardNumber.slice(-4) &&
 					creditcard.first_six === profile_creditcard.issuerNumber &&
 					normalized_expiration === profile_creditcard.expirationDate;
 			});
+
+			if (_.isUndefined(payment_profile)) {
+				payment_profile = await this.authorizenet.createPaymentProfile(customer_profile_id, customer, creditcard);
+			}
 
 			payment_profile_id = payment_profile.customerPaymentProfileId;
 		} catch(error) {
