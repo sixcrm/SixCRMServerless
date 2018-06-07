@@ -97,8 +97,7 @@
       "Next": "Get Execution State"
     },
     "Monitoring Complete": {
-      "Type": "Succeed",
-      "End":true
+      "Type": "Succeed"
     }
   }
 }
