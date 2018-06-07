@@ -250,7 +250,7 @@ describe('vendors/merchantproviders/PaymentXP/handler.js', () => {
 	});
 
 	describe('reverse', () => {
-		it('successfully reverses a transaction', async () => {
+		it.only('successfully reverses a transaction', async () => {
 			const merchant_provider = MockEntities.getValidMerchantProvider(null, 'PaymentXP');
 			const transaction = MockEntities.getValidTransaction();
 			const transaction_id = '123';
@@ -258,7 +258,7 @@ describe('vendors/merchantproviders/PaymentXP/handler.js', () => {
 			const response_body = getSuccessResponse();
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/PaymentXP/api.js'), class {
-				creditcardCredit({transaction_id: _transaction_id}) {
+				creditcardVoid({transaction_id: _transaction_id}) {
 					expect(_transaction_id).to.equal(transaction_id);
 					return Promise.resolve({
 						error: null,
@@ -274,7 +274,7 @@ describe('vendors/merchantproviders/PaymentXP/handler.js', () => {
 			const PaymentXPController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/PaymentXP/handler.js');
 			const paymentXPController = new PaymentXPController({merchant_provider});
 
-			const result = await paymentXPController.refund({transaction});
+			const result = await paymentXPController.reverse({transaction});
 			expect(result.getResult().code).to.equal('success');
 			expect(result.getResult().message).to.equal('Success');
 		});
