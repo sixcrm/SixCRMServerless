@@ -209,66 +209,78 @@ module.exports = class LimelightScraper {
 
 		return {
 			credentials: {
-				user: usernameElement.val(),
-				password: passwordElement.val(),
-				status: statusElement.val(),
-				alias: aliasElement.val(),
-				currency,
-				postProcessorId,
-				captureOnShipment,
-				preAuthFilter,
-				postProductDesc,
-				mdf1: mdf1.val(),
-				mdf2: mdf2.val(),
-				mdf3: mdf3.val(),
-				mdf4: mdf4.val(),
-				mdf5: mdf5.val(),
-				mdf6: mdf6.val(),
-				mdf7: mdf7.val(),
-				mdf8: mdf8.val(),
-				mdf9: mdf9.val(),
-				mdf10: mdf10.val(),
-				mdf11: mdf11.val(),
-				mdf12: mdf12.val(),
-				mdf13: mdf13.val(),
-				mdf14: mdf14.val(),
-				mdf15: mdf15.val(),
-				mdf16: mdf16.val(),
-				mdf17: mdf17.val(),
-				mdf18: mdf18.val(),
-				mdf19: mdf19.val(),
-				mdf20: mdf20.val(),
-				test,
-				postPhone,
-				requiredSSN,
-				useDeclineSalvage
+				user: this._cleanseOutput(usernameElement.val()),
+				password: this._cleanseOutput(passwordElement.val()),
+				status: this._cleanseOutput(statusElement.val()),
+				alias: this._cleanseOutput(aliasElement.val()),
+				currency: this._cleanseOutput(currency),
+				postProcessorId: this._cleanseOutput(postProcessorId),
+				captureOnShipment: this._cleanseOutput(captureOnShipment),
+				preAuthFilter: this._cleanseOutput(preAuthFilter),
+				postProductDesc: this._cleanseOutput(postProductDesc),
+				mdf1: this._cleanseOutput(mdf1.val()),
+				mdf2: this._cleanseOutput(mdf2.val()),
+				mdf3: this._cleanseOutput(mdf3.val()),
+				mdf4: this._cleanseOutput(mdf4.val()),
+				mdf5: this._cleanseOutput(mdf5.val()),
+				mdf6: this._cleanseOutput(mdf6.val()),
+				mdf7: this._cleanseOutput(mdf7.val()),
+				mdf8: this._cleanseOutput(mdf8.val()),
+				mdf9: this._cleanseOutput(mdf9.val()),
+				mdf10: this._cleanseOutput(mdf10.val()),
+				mdf11: this._cleanseOutput(mdf11.val()),
+				mdf12: this._cleanseOutput(mdf12.val()),
+				mdf13: this._cleanseOutput(mdf13.val()),
+				mdf14: this._cleanseOutput(mdf14.val()),
+				mdf15: this._cleanseOutput(mdf15.val()),
+				mdf16: this._cleanseOutput(mdf16.val()),
+				mdf17: this._cleanseOutput(mdf17.val()),
+				mdf18: this._cleanseOutput(mdf18.val()),
+				mdf19: this._cleanseOutput(mdf19.val()),
+				mdf20: this._cleanseOutput(mdf20.val()),
+				test: this._cleanseOutput(test),
+				postPhone: this._cleanseOutput(postPhone),
+				requiredSSN: this._cleanseOutput(requiredSSN),
+				useDeclineSalvage: this._cleanseOutput(useDeclineSalvage)
 			},
 			merchantAccountDetails: {
-				merchantDesc: merchantDesc.val(),
-				merchantId: merchantId.val(),
-				customerServiceNumber: customerServiceNumber.val(),
-				midGroup: midGroup.val(),
-				processor,
-				vertical
+				merchantDesc: this._cleanseOutput(merchantDesc.val()),
+				merchantId: this._cleanseOutput(merchantId.val()),
+				customerServiceNumber: this._cleanseOutput(customerServiceNumber.val()),
+				midGroup: this._cleanseOutput(midGroup.val()),
+				processor: this._cleanseOutput(processor),
+				vertical: this._cleanseOutput(vertical)
 			},
 			limitsAndFees: {
-				visa: visa.val(),
-				mastercard: mastercard.val(),
-				discover: discover.val(),
-				americanExpress: americanExpress.val(),
-				other: other.val(),
-				cvv,
-				globalMonthlyCap: globalMonthlyCap.val(),
-				monthlyFee: monthlyFee.val(),
-				batchFee: batchFee.val(),
-				transactionFee: transactionFee.val(),
-				chargebackFee: chargebackFee.val(),
-				reservePercent: reservePercent.val(),
-				reserveTerm,
-				reserveTermDays: reserveTermDays.val(),
-				reserveCap: reserveCap.val()
+				visa: this._cleanseOutput(visa.val()),
+				mastercard: this._cleanseOutput(mastercard.val()),
+				discover: this._cleanseOutput(discover.val()),
+				americanExpress: this._cleanseOutput(americanExpress.val()),
+				other: this._cleanseOutput(other.val()),
+				cvv: this._cleanseOutput(cvv),
+				globalMonthlyCap: this._cleanseOutput(globalMonthlyCap.val()),
+				monthlyFee: this._cleanseOutput(monthlyFee.val()),
+				batchFee: this._cleanseOutput(batchFee.val()),
+				transactionFee: this._cleanseOutput(transactionFee.val()),
+				chargebackFee: this._cleanseOutput(chargebackFee.val()),
+				reservePercent: this._cleanseOutput(reservePercent.val()),
+				reserveTerm: this._cleanseOutput(reserveTerm),
+				reserveTermDays: this._cleanseOutput(reserveTermDays.val()),
+				reserveCap: this._cleanseOutput(reserveCap.val())
 			}
 		}
+
+	}
+
+	_cleanseOutput(val) {
+
+		if (_.isUndefined(val)) {
+
+			return val;
+
+		}
+
+		return _.trim(val.replace(/\n/g, ''));
 
 	}
 
