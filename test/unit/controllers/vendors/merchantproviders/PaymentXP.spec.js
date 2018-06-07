@@ -250,7 +250,7 @@ describe('vendors/merchantproviders/PaymentXP/handler.js', () => {
 	});
 
 	describe('reverse', () => {
-		it.only('successfully reverses a transaction', async () => {
+		it('successfully reverses a transaction', async () => {
 			const merchant_provider = MockEntities.getValidMerchantProvider(null, 'PaymentXP');
 			const transaction = MockEntities.getValidTransaction();
 			const transaction_id = '123';

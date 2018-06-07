@@ -11,7 +11,7 @@ module.exports.graphObj = new GraphQLObjectType({
 	fields: () => ({
 		name: {
 			type: new GraphQLNonNull(GraphQLString),
-			description: 'The name of the merchant provider gateway name.',
+			description: 'The name of the merchant provider gateway name.'
 		},
 		type: {
 			type: new GraphQLNonNull(GraphQLString),
@@ -20,11 +20,19 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		username: {
 			type: new GraphQLNonNull(GraphQLString),
-			description: 'The PaymentXP username.',
+			description: 'The PaymentXP username.'
 		},
 		password: {
 			type: new GraphQLNonNull(GraphQLString),
-			description: 'The PaymentXP password.',
+			description: 'The PaymentXP password.'
+		},
+		merchant_id: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'The PaymentXP merchant id.'
+		},
+		merchant_key: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'The PaymentXP merchant key.'
 		}
 	})
 });

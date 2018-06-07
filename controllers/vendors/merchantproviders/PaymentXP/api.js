@@ -3,9 +3,11 @@ const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http
 const httpprovider = new HttpProvider();
 
 module.exports = class PaymentXPAPI {
-	constructor({username, password}) {
+	constructor({username, password, merchant_id, merchant_key}) {
 		this.username = username;
 		this.password = password;
+		this.merchant_id = merchant_id;
+		this.merchant_key = merchant_key;
 		this.endpoint = 'https://webservice.paymentxp.com/wh/WebHost.aspx';
 	}
 
@@ -46,8 +48,8 @@ module.exports = class PaymentXPAPI {
 	}
 
 	makeRequest(parameters) {
-		parameters.MerchantID = '10012';
-		parameters.MerchantKey = 'c22a63ee-2e7a-4ace-96ac-0958dc8d953f';
+		parameters.MerchantID = this.merchant_id;
+		parameters.MerchantKey = this.merchant_key;
 
 		const request_options = {
 			headers: {

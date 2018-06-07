@@ -12,6 +12,12 @@
 				},
 				"password": {
 					"type": "string"
+				},
+				"merchant_id": {
+					"type": "string"
+				},
+				"merchant_key": {
+					"type": "string"
 				}
 			},
 			"required": [

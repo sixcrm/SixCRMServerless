@@ -4,7 +4,7 @@ const mockery = require('mockery');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-describe.only('vendors/merchantproviders/AuthorizeNet/handler.js', () => {
+describe('vendors/merchantproviders/AuthorizeNet/handler.js', () => {
 	beforeEach(() => {
 		mockery.enable({
 			useCleanCache: true,

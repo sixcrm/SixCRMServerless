@@ -170,7 +170,9 @@
 			"type":"PaymentXP",
 			"name":"PaymentXP",
 			"username": "10012",
-			"password": "Password@3"
+			"password": "Password@3",
+			"merchant_id": "10012",
+			"merchant_key": "c22a63ee-2e7a-4ace-96ac-0958dc8d953f"
 		},
 		"allow_prepaid":true,
 		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
