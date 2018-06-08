@@ -143,6 +143,16 @@
             "Resource": [
                 "*"
             ]
+        },
+        {
+            "Sid": "stmnt{{random}}16",
+            "Effect": "Allow",
+            "Action": [
+                "states:*"
+            ],
+            "Resource": [
+                "*"
+            ]
         }
     ]
   }
