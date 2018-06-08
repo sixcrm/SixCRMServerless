@@ -33,6 +33,18 @@ module.exports.graphObj = new GraphQLObjectType({
 		merchant_key: {
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'The PaymentXP merchant key.'
+		},
+		processor: {
+			type: GraphQLString,
+			description: 'The merchant provider processor.',
+		},
+		midnumber: {
+			type: GraphQLString,
+			description: 'The merchant provider midnumber.',
+		},
+		descriptor: {
+			type: GraphQLString,
+			description: 'The merchant provider descriptor.',
 		}
 	})
 });
