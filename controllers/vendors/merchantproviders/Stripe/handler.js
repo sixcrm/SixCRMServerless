@@ -72,8 +72,8 @@ class StripeController extends MerchantProvider {
 
 		this.augmentParameters();
 
-		const StripeProvider = global.SixCRM.routes.include('providers', 'stripe-provider.js');
-		this.stripeprovider = new StripeProvider(merchant_provider.gateway.api_key);
+		const StripeAPI = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/Stripe/api.js');
+		this.stripe = new StripeAPI(merchant_provider.gateway.api_key);
 
 	}
 
@@ -224,7 +224,7 @@ class StripeController extends MerchantProvider {
 
 		du.debug('Retrieve Token');
 
-		let stripe_customer_record = await this.stripeprovider.getCustomer(stripe_token);
+		let stripe_customer_record = await this.stripe.getCustomer(stripe_token);
 
 		if(_.has(stripe_customer_record, 'id')){
 			return stripe_customer_record;
@@ -245,7 +245,7 @@ class StripeController extends MerchantProvider {
 		du.debug('Create Customer');
 
 		let customer_parameters_object = this._createCustomerParameters({customer: customer, stripe_source: stripe_source});
-		let stripe_customer = await this.stripeprovider.createCustomer(customer_parameters_object);
+		let stripe_customer = await this.stripe.createCustomer(customer_parameters_object);
 
 		if(_.has(stripe_customer, 'id')){
 			this._storeStripeTokenInTags({entity: customer, key: 'stripe_token', value: stripe_customer.id});
@@ -366,7 +366,7 @@ class StripeController extends MerchantProvider {
 
 			if(_.isUndefined(found_source) || _.isNull(found_source)){
 
-				let updated_customer = await this.stripeprovider.updateCustomer({customer_token: stripe_customer_record.id, parameters: {source: stripe_source.id}});
+				let updated_customer = await this.stripe.updateCustomer({customer_token: stripe_customer_record.id, parameters: {source: stripe_source.id}});
 
 				stripe_customer_record = updated_customer;
 
@@ -413,7 +413,7 @@ class StripeController extends MerchantProvider {
 
 		du.debug('Retrieve Credit Card');
 
-		let stripe_source_record = await this.stripeprovider.getSource(stripe_token);
+		let stripe_source_record = await this.stripe.getSource(stripe_token);
 
 		if(_.has(stripe_source_record, 'id')){
 			return stripe_source_record;
@@ -435,7 +435,7 @@ class StripeController extends MerchantProvider {
 
 		let parameters_object = this._createCreditCardTokenParameters(creditcard);
 
-		let result = await this.stripeprovider.createSource(parameters_object);
+		let result = await this.stripe.createSource(parameters_object);
 
 		return result;
 
@@ -591,7 +591,7 @@ class StripeController extends MerchantProvider {
 
 		let parameters_object = this.parameters.get('parametersobject');
 
-		let response = await this.stripeprovider.createRefund(parameters_object);
+		let response = await this.stripe.createRefund(parameters_object);
 
 		this.parameters.set('vendorresponse', response);
 
@@ -605,7 +605,7 @@ class StripeController extends MerchantProvider {
 
 		let parameters_object = this.parameters.get('parametersobject');
 
-		let response = await this.stripeprovider.createCharge(parameters_object);
+		let response = await this.stripe.createCharge(parameters_object);
 
 		this.parameters.set('vendorresponse', response);
 
@@ -619,7 +619,7 @@ class StripeController extends MerchantProvider {
 
 		let parameters_object = this.parameters.get('parametersobject');
 
-		let response = await this.stripeprovider.listCharges(parameters_object);
+		let response = await this.stripe.listCharges(parameters_object);
 
 		this.parameters.set('vendorresponse', response);
 

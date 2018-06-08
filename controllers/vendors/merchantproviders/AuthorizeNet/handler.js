@@ -1,7 +1,8 @@
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
-const AuthorizeNetProvider = global.SixCRM.routes.include('controllers', 'providers/authorizenet-provider.js');
+const AuthorizeNetAPI = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/AuthorizeNet/api.js');
 const AuthorizeNetResponse = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/AuthorizeNet/Response.js');
 const CreditCardHelper = global.SixCRM.routes.include('controllers', 'helpers/entities/creditcard/CreditCard.js');
 
@@ -14,6 +15,7 @@ class AuthorizeNetController extends MerchantProvider {
 		this.parameter_definition = {
 			process:{
 				required:{
+					customer: 'customer',
 					creditcard: 'creditcard',
 					amount: 'amount'
 				},
@@ -22,7 +24,6 @@ class AuthorizeNetController extends MerchantProvider {
 			refund:{
 				required:{
 					transaction: 'transaction',
-					creditcard: 'creditcard',
 					amount: 'amount'
 				},
 				optional:{}
@@ -31,9 +32,7 @@ class AuthorizeNetController extends MerchantProvider {
 				required:{
 					transaction: 'transaction'
 				},
-				optional:{
-					amount: 'amount'
-				}
+				optional:{}
 			},
 			test:{
 				required:{},
@@ -46,14 +45,14 @@ class AuthorizeNetController extends MerchantProvider {
 		this.augmentParameters();
 
 		this.creditcardHelper = new CreditCardHelper();
-		this.authorizenet = new AuthorizeNetProvider(merchant_provider.gateway);
+		this.authorizenet = new AuthorizeNetAPI(merchant_provider.gateway);
 	}
 
 	async process({customer, creditcard, amount}) {
 		du.debug('Process');
 		const action = 'process';
 		this.parameters.setParameters({
-			argumentation: {creditcard, amount},
+			argumentation: {customer, creditcard, amount},
 			action
 		});
 
@@ -66,12 +65,16 @@ class AuthorizeNetController extends MerchantProvider {
 			customer_profile_id = customer_profile.customerProfileId;
 
 			const payment_profiles = customer_profile.paymentProfiles;
-			const payment_profile = arrayutilities.find(payment_profiles, payment_profile => {
+			let payment_profile = arrayutilities.find(payment_profiles, payment_profile => {
 				const profile_creditcard = payment_profile.payment.creditCard;
 				return creditcard.last_four === profile_creditcard.cardNumber.slice(-4) &&
 					creditcard.first_six === profile_creditcard.issuerNumber &&
 					normalized_expiration === profile_creditcard.expirationDate;
 			});
+
+			if (_.isUndefined(payment_profile)) {
+				payment_profile = await this.authorizenet.createPaymentProfile(customer_profile_id, customer, creditcard);
+			}
 
 			payment_profile_id = payment_profile.customerPaymentProfileId;
 		} catch(error) {

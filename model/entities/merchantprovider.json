@@ -27,7 +27,8 @@
 						"Group ISO",
 						"Test",
 						"Stripe",
-						"AuthorizeNet"
+						"AuthorizeNet",
+						"PaymentXP"
 					]
 				},
 				"id": {
@@ -123,6 +124,9 @@
 						},
 						{
 							"$ref": "./components/merchantprovider/authorizenet.json"
+						},
+						{
+							"$ref": "./components/merchantprovider/paymentxp.json"
 						},
 						{
 							"$ref": "./components/merchantprovider/test.json"

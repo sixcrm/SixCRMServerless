@@ -79,6 +79,26 @@
 	"updated_at":"2018-04-28T14:40:00.000Z"
 },
 {
+	"id":"76f0c3c2-921d-4a23-aca8-bea975f5b1d8",
+	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"merchantprovidergroup":"f888af80-48fe-481c-8dd3-67d6e82bec2a",
+	"campaign":"4285e4bc-0122-44f3-b99e-d7146266f331",
+	"entity":"4285e4bc-0122-44f3-b99e-d7146266f331",
+	"entity_type":"campaign",
+	"created_at":"2018-04-28T14:40:00.000Z",
+	"updated_at":"2018-04-28T14:40:00.000Z"
+},
+{
+	"id":"e4a144de-6897-4e1b-9d02-7651041c4a0a",
+	"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+	"merchantprovidergroup":"f888af80-48fe-481c-8dd3-67d6e82bec2a",
+	"campaign":"4285e4bc-0122-44f3-b99e-d7146266f331",
+	"entity":"b461bba6-6732-4d10-9124-5d06993a8dca",
+	"entity_type":"product",
+	"created_at":"2018-04-28T14:40:00.000Z",
+	"updated_at":"2018-04-28T14:40:00.000Z"
+},
+{
   "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
   "campaign": "8b60000e-6a6b-4807-94d1-f737da089ee5",
   "created_at": "2018-05-01T20:49:41.208Z",

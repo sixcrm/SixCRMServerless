@@ -1,0 +1,32 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/functional/PaymentXP/merchant_provider_configuration.json",
+	"title": "PaymentXP Merchant Provider Configuration",
+	"type": "object",
+	"properties": {
+		"gateway": {
+			"type": "object",
+			"properties": {
+				"username": {
+					"type": "string"
+				},
+				"password": {
+					"type": "string"
+				},
+				"merchant_id": {
+					"type": "string"
+				},
+				"merchant_key": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"username",
+				"password"
+			]
+		}
+	},
+	"required": [
+		"gateway"
+	]
+}

@@ -71,11 +71,7 @@ module.exports = class AuthorizeNet {
 		request.setPaymentProfile(payment_profile);
 		request.setValidationMode(APIContracts.ValidationModeEnum.TESTMODE);
 
-		return this.makeRequest(APIControllers.CreateCustomerPaymentProfileController, request)
-			.then(api_response => {
-				const response = new APIContracts.CreateCustomerPaymentProfileResponse(api_response);
-				return response.getCustomerPaymentProfileId();
-			});
+		return this.makeRequest(APIControllers.CreateCustomerPaymentProfileController, request);
 	}
 
 	chargeCreditCard({amount, creditcard}) {

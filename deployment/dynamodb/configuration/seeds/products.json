@@ -192,6 +192,21 @@
 		"updated_at":"2018-04-28T14:40:00.000Z"
 	},
 	{
+		"id": "b461bba6-6732-4d10-9124-5d06993a8dca",
+		"account":"d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		"name": "PaymentXP Test Product",
+		"description":"This is a test product for the purpose of testing live transactions with PaymentXP",
+		"default_price":1.00,
+		"dynamic_pricing": {
+			"min": 1.00,
+			"max": 2.00
+		},
+		"ship":false,
+		"merchantprovidergroup": "f888af80-48fe-481c-8dd3-67d6e82bec2a",
+		"created_at":"2018-04-28T14:40:00.000Z",
+		"updated_at":"2018-04-28T14:40:00.000Z"
+	},
+	{
 	  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
 	  "attributes": {
 	    "images": []

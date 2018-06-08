@@ -484,6 +484,18 @@ class MockEntities {
 				type: 'Stripe',
 				name: 'Stripe',
 				api_key: randomutilities.createRandomString(20)
+			},
+			'AuthorizeNet': {
+				type: 'AuthorizeNet',
+				name: 'AuthorizeNet',
+				api_key: randomutilities.createRandomString(20),
+				transaction_key: randomutilities.createRandomString(20)
+			},
+			'PaymentXP': {
+				type: 'PaymentXP',
+				name: 'PaymentXP',
+				username: randomutilities.createRandomString(20),
+				password: randomutilities.createRandomString(20)
 			}
 		};
 
@@ -511,6 +523,12 @@ class MockEntities {
 			'Stripe': {
 				name: 'Stripe',
 				id: 'deprecated?'
+			},
+			'AuthorizeNet': {
+				name: 'AuthorizeNet'
+			},
+			'PaymentXP': {
+				name: 'PaymentXP'
 			}
 		};
 

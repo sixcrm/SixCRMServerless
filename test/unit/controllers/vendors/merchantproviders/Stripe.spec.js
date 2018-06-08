@@ -501,7 +501,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 			let merchant_provider = getValidMerchantProvider();
 			let response = getValidListChargesResponse('error');
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				listCharges(parameters){
 					expect(parameters).to.be.a('object');
@@ -539,7 +539,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let response = getValidListChargesResponse('success');
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				listCharges(parameters){
 					expect(parameters).to.be.a('object');
@@ -628,7 +628,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createCharge(parameters){
 					expect(parameters).to.be.a('object');
@@ -741,7 +741,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createCharge(parameters){
 					expect(parameters).to.be.a('object');
@@ -847,7 +847,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createCharge(parameters){
 					expect(parameters).to.be.a('object');
@@ -951,7 +951,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createCharge(parameters){
 					expect(parameters).to.be.a('object');
@@ -1057,7 +1057,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createCharge(parameters){
 					expect(parameters).to.be.a('object');
@@ -1119,7 +1119,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let refund_response = getValidCreateRefundsResponse('error');
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createRefund(parameters){
 					expect(parameters).to.be.a('object');
@@ -1159,7 +1159,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let refund_response = getValidCreateRefundsResponse('success');
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createRefund(parameters){
 					expect(parameters).to.be.a('object');
@@ -1203,7 +1203,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let reverse_response = getValidCreateRefundsResponse('error', 'reverse');
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createRefund(parameters){
 					expect(parameters).to.be.a('object');
@@ -1243,7 +1243,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let refund_response = getValidCreateRefundsResponse('success','reverse');
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createRefund(parameters){
 					expect(parameters).to.be.a('object');
@@ -1286,7 +1286,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let source_response = getValidSourceResponse({});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createSource(parameters){
 					expect(parameters).to.be.a('object');
@@ -1329,7 +1329,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let source_response = getValidSourceResponse({no_address: true});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createCreditCard(parameters){
 					expect(parameters).to.be.a('object');
@@ -1371,7 +1371,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let source_response = getValidSourceResponse({no_address: true, no_name: true});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createSource(parameters){
 					expect(parameters).to.be.a('object');
@@ -1407,7 +1407,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let source_response = getValidSourceResponse({no_name: true});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createSource(parameters){
 					expect(parameters).to.be.a('object');
@@ -1473,7 +1473,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createCustomer(parameters){
 					expect(parameters).to.be.a('object');
@@ -1526,7 +1526,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createCustomer(parameters){
 					expect(parameters).to.be.a('object');
@@ -1558,7 +1558,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let customer_response = getValidCustomerTokenResponse({});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				getCustomer(token){
 					expect(token).to.be.a('string');
@@ -1584,7 +1584,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let customer_response = getValidCustomerTokenResponse({});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				getCustomer(token){
 					expect(token).to.be.a('string');
@@ -1618,7 +1618,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 			let customer_response = getValidCustomerTokenResponse({});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				getCustomer(token){
 					expect(token).to.be.a('string');
@@ -1815,7 +1815,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 			let merchant_provider = getValidMerchantProvider();
 			merchant_provider.gateway.api_key = 'sk_test_BQokikJOvBiI2HlWgH4olfQ2';
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createCustomer(parameters){
 					expect(parameters).to.be.a('object');
@@ -1879,7 +1879,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createSource(parameters){
 					expect(parameters).to.be.a('object');
@@ -1936,7 +1936,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				getSource(token){
 					expect(token).to.be.a('string');
@@ -1993,7 +1993,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				getCustomer(token){
 					expect(token).to.be.a('string');
@@ -2044,7 +2044,7 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				}
 			});
 
-			mockery.registerMock(global.SixCRM.routes.path('providers', 'stripe-provider.js'), class {
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'vendors/merchantproviders/Stripe/api.js'), class {
 				constructor(){}
 				createCustomer(parameters){
 					expect(parameters).to.be.a('object');
