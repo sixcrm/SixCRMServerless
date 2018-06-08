@@ -78,8 +78,8 @@ describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () 
           expect(parameters).to.have.property('stateMachineName');
           expect(parameters).to.have.property('input');
           expect(parameters.stateMachineName).to.equal('Postfulfillment');
-          expect(JSON.parse(parameters.input)).to.have.property('guid');
-          expect(JSON.parse(parameters.input).guid).to.equal(shipping_receipt.id);
+          expect(parameters.input).to.have.property('guid');
+          expect(parameters.input.guid).to.equal(shipping_receipt.id);
           return Promise.resolve({
             executionArn:'SomeArn',
             startDate:timestamp.getISO8601()
@@ -170,7 +170,7 @@ describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () 
           expect(parameters).to.have.property('stateMachineName');
           expect(parameters).to.have.property('input');
           expect(parameters.stateMachineName).to.equal('Postfulfillment');
-          expect(JSON.parse(parameters.input)).to.have.property('guid');
+          expect(parameters.input).to.have.property('guid');
           return Promise.resolve({
             executionArn:'SomeArn',
             startDate:timestamp.getISO8601()

@@ -119,7 +119,7 @@ describe('controllers/workers/statemachine/components/stepFunctionReporter.js', 
 
   describe('getAccount', async () => {
 
-    it.only('successfully acquires a shipping_receipt account', async () => {
+    it('successfully acquires a shipping_receipt account', async () => {
 
       const shipping_receipt = MockEntities.getValidShippingReceipt();
 
