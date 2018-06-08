@@ -5,6 +5,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
 let transactionType = require('../transaction/transactionType');
+let transactionProductType = require('../transactionproduct/transactionProductType');
 let productScheduleType = require('../productschedule/productScheduleType');
 let sessionType = require('../session/sessionType');
 let rebillStateHistoryItem = require('./rebillStateHistoryItemType');
@@ -39,6 +40,10 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLList(productScheduleType.graphObj),
 			description:'The product schedules associated with the rebill',
 			resolve: rebill => rebillController.listProductSchedules(rebill),
+		},
+		products: {
+			type: new GraphQLList(transactionProductType.graphObj),
+			description:'The products associated with the rebill'
 		},
 		transactions: {
 			type: new GraphQLList(transactionType.graphObj),

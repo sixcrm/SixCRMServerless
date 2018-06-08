@@ -1,5 +1,5 @@
 {
 	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
 	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"query {rebill (id: \"55c103b4-670a-439e-98d4-5a2834bb5fc3\") { id, amount, bill_at, parentsession { id, customer { id, firstname, lastname, address { line1, line2, city, state, zip } } }, product_schedules { id, schedule { price, start, end, period, product { id } } }, transactions { id, amount, processor_response }, shippingreceipts { id, status, tracking { carrier, id }, created_at, updated_at }, created_at, updated_at, state, previous_state, state_changed_at, history { state, entered_at, exited_at, error_message } } }"
+	"body":"query {rebill (id: \"55c103b4-670a-439e-98d4-5a2834bb5fc3\") { id, amount, bill_at, parentsession { id, customer { id, firstname, lastname, address { line1, line2, city, state, zip } } }, products { amount, quantity, product { id } }, product_schedules { id, schedule { price, start, end, period, product { id } } }, transactions { id, amount, processor_response }, shippingreceipts { id, status, tracking { carrier, id }, created_at, updated_at }, created_at, updated_at, state, previous_state, state_changed_at, history { state, entered_at, exited_at, error_message } } }"
 }
