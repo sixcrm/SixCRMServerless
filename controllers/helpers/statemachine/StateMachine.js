@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+//const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
+const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const StepFunctionProvider = global.SixCRM.routes.include('providers', 'stepfunction-provider.js');
 
@@ -13,14 +14,21 @@ module.exports = class StateMachineHelperController {
 
 	}
 
-	async startExecution(parameters, restart = false) {
+	async startExecution(parameters, /*restart = false*/) {
 
 		du.debug('Start Execution');
 
-		const identifier = this.getIdentifier(parameters);
-		if (!_.has(parameters, 'name')) {
-			parameters.name = this.createExecutionName(identifier);
-		}
+		let identifier = this.getIdentifier();
+
+		parameters.name = identifier;
+
+		this.addExecutionID(parameters, identifier);
+
+		this.normalizeInput(parameters);
+
+		//du.info('Restart: '+restart);
+		/*
+		Note:  Refactor to use Dynamo Table
 
 		const executionArn = this.stepfunctionprovider.createExecutionARN(parameters.stateMachineName, parameters.name);
 
@@ -39,6 +47,7 @@ module.exports = class StateMachineHelperController {
 			return null;
 
 		}
+		*/
 
 		parameters.stateMachineArn = this.stepfunctionprovider.createStateMachineARN(parameters.stateMachineName);
 
@@ -47,48 +56,33 @@ module.exports = class StateMachineHelperController {
 
 	}
 
-	createExecutionName(identifier = random.createRandomString(20)) {
+	addExecutionID(parameters, identifier){
 
-		du.debug('Create Execution Name');
+		du.debug('Add Execution ID');
 
-		return [
-			identifier,
-			timestamp.now()
-		].join('@');
+		if(_.has(parameters, 'input')){
+			parameters.input.executionid = identifier;
+		}else{
+			parameters.input = {executionid: identifier};
+		}
 
 	}
 
-	getIdentifier(parameters) {
+	normalizeInput(parameters){
+
+		du.debug('Normalize Input');
+
+		if(_.has(parameters, 'input') && !_.isString(parameters.input)){
+			parameters.input = JSON.stringify(parameters.input);
+		}
+
+	}
+
+	getIdentifier() {
 
 		du.debug('Get Identifier');
 
-		let input = null;
-		let identifier = null;
-
-		if (_.has(parameters, 'input')) {
-			if (_.isString(parameters.input)) {
-				try {
-					input = JSON.parse(parameters.input);
-				} catch (error) {
-					input = parameters.input;
-				}
-			} else if (_.isObject(parameters.input)) {
-				input = parameters.input;
-			} else {
-				throw eu.getError('server', 'parameters.input is assumed to be a string or a object');
-			}
-		}
-
-		if (!_.isNull(input)) {
-
-			if (_.has(input, 'guid')) {
-				identifier = input.guid;
-			} else {
-				identifier = input;
-			}
-		}
-
-		return identifier;
+		return hashutilities.toSHA1(random.getRandomString(20)+timestamp.now());
 
 	}
 

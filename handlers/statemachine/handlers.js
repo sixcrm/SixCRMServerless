@@ -13,6 +13,7 @@ const GetFulfillmentRequiredController = global.SixCRM.routes.include('controlle
 const CleanupDeclineController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupDecline.js');
 const GetRecoverDateController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getRecoverDate.js');
 const BillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/bill.js');
+const ReportController = global.SixCRM.routes.include('controllers', 'workers/statemachine/report.js');
 const GetSessionClosedController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionClosed.js');
 const CloseSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/closeSession.js');
 const CleanupSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupSession.js');
@@ -34,6 +35,7 @@ module.exports = {
 	getsessionclosed: handleStepFunction((event) => new GetSessionClosedController().execute(event)),
 	closesession: handleStepFunction((event) => new CloseSessionController().execute(event)),
 	cleanupsession: handleStepFunction((event) => new CleanupSessionController().execute(event)),
+	report: handleStepFunction((event) => new ReportController().execute(event)),
 };
 
 function handleStepFunction(delegate) {

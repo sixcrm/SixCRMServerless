@@ -22,7 +22,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 		const parameters = {
 			stateMachineName: this.next_state,
-			input:JSON.stringify(input)
+			input: input
 		};
 
 		let stateMachineHelperController = new StateMachineHelperController();
