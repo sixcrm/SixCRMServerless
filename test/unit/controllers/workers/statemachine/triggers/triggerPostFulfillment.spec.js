@@ -6,7 +6,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () => {
+describe('controllers/workers/statemachine/triggers/triggerPostFulfillment.js', async () => {
 
   before(() => {
 		mockery.enable({
@@ -25,7 +25,7 @@ describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () 
 
     it('successfully constructs', () => {
 
-      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggerPostFulfillment.js');
+      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPostFulfillment.js');
       let triggerPostFulfillmentController = new TriggerPostFulfillmentController();
 
       expect(objectutilities.getClassName(triggerPostFulfillmentController)).to.equal('TriggerPostFulfillmentController');
@@ -54,7 +54,7 @@ describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () 
         }
       });
 
-      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggerPostFulfillment.js');
+      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPostFulfillment.js');
       let triggerPostFulfillmentController = new TriggerPostFulfillmentController();
 
       let result = await triggerPostFulfillmentController.getShippingReceipts(rebill);
@@ -87,7 +87,7 @@ describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () 
         }
       });
 
-      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggerPostFulfillment.js');
+      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPostFulfillment.js');
       let triggerPostFulfillmentController = new TriggerPostFulfillmentController();
 
       let result = await triggerPostFulfillmentController.triggerPostFulfillment(shipping_receipt);
@@ -101,7 +101,7 @@ describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () 
       let shipping_receipt = MockEntities.getValidShippingReceipt();
       delete shipping_receipt.id;
 
-      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggerPostFulfillment.js');
+      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPostFulfillment.js');
       let triggerPostFulfillmentController = new TriggerPostFulfillmentController();
 
       try{
@@ -118,7 +118,7 @@ describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () 
       let shipping_receipt = MockEntities.getValidShippingReceipt();
       shipping_receipt.id = 'non-uuid';
 
-      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggerPostFulfillment.js');
+      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPostFulfillment.js');
       let triggerPostFulfillmentController = new TriggerPostFulfillmentController();
 
       try{
@@ -178,7 +178,7 @@ describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () 
         }
       });
 
-      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggerPostFulfillment.js');
+      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPostFulfillment.js');
       let triggerPostFulfillmentController = new TriggerPostFulfillmentController();
 
       let response = await triggerPostFulfillmentController.execute(event);
@@ -217,7 +217,7 @@ describe('controllers/workers/statemachine/triggerPostFulfillment.js', async () 
         }
       });
 
-      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggerPostFulfillment.js');
+      const TriggerPostFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPostFulfillment.js');
       let triggerPostFulfillmentController = new TriggerPostFulfillmentController();
 
       try{

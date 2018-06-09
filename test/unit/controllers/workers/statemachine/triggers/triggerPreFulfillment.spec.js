@@ -6,7 +6,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-describe('controllers/workers/statemachine/triggerPreFulfillment.js', () => {
+describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', () => {
 
   before(() => {
 		mockery.enable({
@@ -25,7 +25,7 @@ describe('controllers/workers/statemachine/triggerPreFulfillment.js', () => {
 
     it('successfully constructs', () => {
 
-      const TriggerPreFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggerPreFulfillment.js');
+      const TriggerPreFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPreFulfillment.js');
       let triggerPreFulfillmentController = new TriggerPreFulfillmentController();
 
       expect(objectutilities.getClassName(triggerPreFulfillmentController)).to.equal('TriggerPreFulfillmentController');
@@ -62,7 +62,7 @@ describe('controllers/workers/statemachine/triggerPreFulfillment.js', () => {
         }
       });
 
-      const TriggerPreFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggerPreFulfillment.js');
+      const TriggerPreFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPreFulfillment.js');
       let triggerPreFulfillmentController = new TriggerPreFulfillmentController();
 
       let result = await triggerPreFulfillmentController.execute(parameters);

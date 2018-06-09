@@ -6,7 +6,7 @@ const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
-describe('controllers/workers/statemachine/triggerTracking.js', () => {
+describe('controllers/workers/statemachine/triggers/triggerTracking.js', () => {
 
   before(() => {
 		mockery.enable({
@@ -25,7 +25,7 @@ describe('controllers/workers/statemachine/triggerTracking.js', () => {
 
     it('successfully constructs', () => {
 
-      const TriggerTrackingController = global.SixCRM.routes.include('workers', 'statemachine/triggerTracking.js');
+      const TriggerTrackingController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerTracking.js');
       let triggerTrackingController = new TriggerTrackingController();
 
       expect(objectutilities.getClassName(triggerTrackingController)).to.equal('TriggerTrackingController');
@@ -62,7 +62,7 @@ describe('controllers/workers/statemachine/triggerTracking.js', () => {
         }
       });
 
-      const TriggerTrackingController = global.SixCRM.routes.include('workers', 'statemachine/triggerTracking.js');
+      const TriggerTrackingController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerTracking.js');
       let triggerTrackingController = new TriggerTrackingController();
 
       let result = await triggerTrackingController.execute(parameters);
