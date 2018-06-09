@@ -408,7 +408,7 @@ class TransactionController extends entityController {
 					});
 
 					let transaction_promises = arrayutilities.map(rebill_ids, (rebill) => {
-						return this.executeAssociatedEntityFunction('transactionController', 'listBySecondaryIndex', {field: 'rebill', index_value: rebill, index_name: 'rebill-index', pagination: pagination});
+						return this.executeAssociatedEntityFunction('transactionController', 'queryBySecondaryIndex', {field: 'rebill', index_value: rebill, index_name: 'rebill-index', pagination: pagination});
 					});
 
 					return Promise.all(transaction_promises).then(transaction_responses => {

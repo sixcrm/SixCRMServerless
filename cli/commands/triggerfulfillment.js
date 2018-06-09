@@ -1,6 +1,7 @@
-require('../../SixCRM.js');
+require('../../SixCRM.js')
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
+
+const StepFunctionTriggerController = global.SixCRM.routes.include('workers','statemachine/components/stepFunctionTrigger.js');
 
 module.exports.command = 'triggerfulfillment';
 module.exports.describe = 'Trigger fulfillment of a Rebill by UUID in the SixCRM State Machine.';
@@ -41,16 +42,14 @@ async function _handler(argv) {
 
 	const rebill_uuid =  argv.rebillUUID;
 
-	const restart = argv.restart;
-
-	const stateMachineHelperController = new StateMachineHelperController();
+	//const restart = argv.restart;
 
 	const parameters = {
 		stateMachineName: 'Fulfillment',
-		input: JSON.stringify({guid: rebill_uuid})
+		input: {guid: rebill_uuid}
 	};
 
-	let result  = await stateMachineHelperController.startExecution(parameters, restart);
+	let result = await new StepFunctionTriggerController().execute(parameters);
 
 	du.info(result);
 

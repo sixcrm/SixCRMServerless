@@ -1,21 +1,24 @@
 const StepFunctionHandler = require('./stepfunction-handler');
 
 const GetTrackingInformationController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getTrackingInformation.js');
-const SendDeliveryNotificationController = global.SixCRM.routes.include('controllers', 'workers/statemachine/sendDeliveryNotification.js');
-const GetTrackingNumberController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getTrackingNumber.js');
-const TriggerTrackingController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerTracking.js');
-const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('controllers', 'workers/statemachine/notifyFulfillmentProviders.js');
-const TriggerPostFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerPostFulfillment.js');
-const TriggerFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerFulfillment.js');
-const TriggerPreFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerPreFulfillment.js');
-const TriggerRecoveryController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggerRecovery.js');
-const GetFulfillmentRequiredController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getFulfillmentRequired.js');
-const CleanupDeclineController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupDecline.js');
-const GetRecoverDateController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getRecoverDate.js');
-const BillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/bill.js');
 const GetSessionClosedController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionClosed.js');
+const GetTrackingNumberController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getTrackingNumber.js');
+const GetFulfillmentRequiredController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getFulfillmentRequired.js');
+const GetRecoverDateController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getRecoverDate.js');
+
+const CleanupDeclineController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupDecline.js');
+const BillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/bill.js');
+const ReportController = global.SixCRM.routes.include('controllers', 'workers/statemachine/report.js');
+const SendDeliveryNotificationController = global.SixCRM.routes.include('controllers', 'workers/statemachine/sendDeliveryNotification.js');
+const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('controllers', 'workers/statemachine/notifyFulfillmentProviders.js');
 const CloseSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/closeSession.js');
 const CleanupSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupSession.js');
+
+const TriggerTrackingController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerTracking.js');
+const TriggerPostFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerPostFulfillment.js');
+const TriggerFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerFulfillment.js');
+const TriggerPreFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerPreFulfillment.js');
+const TriggerRecoveryController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerRecovery.js');
 
 module.exports = {
 	gettrackinginformation: handleStepFunction((event) => new GetTrackingInformationController().execute(event)),
@@ -34,6 +37,7 @@ module.exports = {
 	getsessionclosed: handleStepFunction((event) => new GetSessionClosedController().execute(event)),
 	closesession: handleStepFunction((event) => new CloseSessionController().execute(event)),
 	cleanupsession: handleStepFunction((event) => new CleanupSessionController().execute(event)),
+	report: handleStepFunction((event) => new ReportController().execute(event)),
 };
 
 function handleStepFunction(delegate) {

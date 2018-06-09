@@ -2,6 +2,7 @@ const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 describe('controllers/workers/statemachine/components/stepFunctionWorker.js', () => {

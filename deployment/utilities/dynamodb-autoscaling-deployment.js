@@ -1,5 +1,5 @@
 
-
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -48,13 +48,13 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 
 	}
 
-	autoscaleTables(){
+	autoscaleTables(table = null){
 
 		du.debug('Autoscale Tables');
 
 		return this.getAutoscalingRole()
 			.then(() => this.getTableDefinitionFilenames())
-			.then(() => this.setAutoscalingForTables());
+			.then(() => this.setAutoscalingForTables(table));
 
 	}
 
@@ -104,11 +104,17 @@ module.exports = class DynamoDBAutoscalingDeployment extends AWSDeploymentUtilit
 
 	}
 
-	setAutoscalingForTables(){
+	setAutoscalingForTables(table = null){
 
 		du.debug('Set Autoscaling For Tables');
 
-		let tablenames = this.parameters.get('tablenames');
+		let tablenames;
+
+		if(!_.isNull(table)){
+			tablenames = [table];
+		}else{
+			tablenames = this.parameters.get('tablenames');
+		}
 
 		let table_autoscaling_promises = arrayutilities.map(tablenames, (table_name) => {
 			return () => this.autoscaleTable({table_name: table_name});
