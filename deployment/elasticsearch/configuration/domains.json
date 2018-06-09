@@ -19,26 +19,5 @@
         }
       ]
     }
-  },
-  {
-    "DomainName": "sixcrm-dynamoaudit",
-		"ElasticsearchVersion": "6.2",
-    "ElasticsearchClusterConfig": {
-      "InstanceCount": 1,
-      "InstanceType": "m3.large.elasticsearch"
-    },
-    "AccessPolicies":{
-      "Version": "2012-10-17",
-      "Statement": [
-        {
-          "Effect": "Allow",
-          "Principal": {
-            "AWS": "*"
-          },
-          "Action": "es:*",
-          "Resource": "arn:aws:es:{{aws_account_region}}:{{aws_account_id}}:domain/{{domain_name}}/*"
-        }
-      ]
-    }
   }
 ]

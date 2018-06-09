@@ -33,6 +33,32 @@ describe('controllers/workers/statemachine/components/stepFunctionReporter.js', 
 
   });
 
+  describe('consolidateEvent', () => {
+    it('successfullt consolidates the event', () => {
+
+      let event = {
+        "guid": "564c59b0-978c-4f39-accd-906edf13bd21",
+        "stateMachineName": "Billing",
+        "executionid": "4a86b6c8c0c1b2f4b721a6f99a4595853142c16f",
+        "status": "NOSHIP",
+        "reporting": {
+          "state": "Prefulfillment",
+          "step": "No Fulfillment Required",
+          "message": "No Fulfillment Required."
+        }
+      };
+
+      const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
+      let stepFunctionReporterController = new StepFunctionReporterController();
+
+      stepFunctionReporterController.consolidateEvent(event);
+      expect(event).to.have.property('state');
+      expect(event).to.have.property('step');
+      expect(event).to.have.property('message');
+
+    })
+  });
+
   xdescribe('report', async () => {
 
     it('successfully reports', async () => {

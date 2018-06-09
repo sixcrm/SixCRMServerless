@@ -21,10 +21,9 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 
 		this.validateEvent(event);
 
-		let additional_parameters = this.getAdditionalParameters(event);
+		//let additional_parameters = this.getAdditionalParameters(event);
 
-		du.info(additional_parameters);
-		//await this.report(input, additional_parameters);
+		await this.report(event);
 
 		return 'SUCCESS';
 
@@ -35,7 +34,9 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 		du.debug('Consolidate Event');
 
 		if(_.has(event, 'reporting') && _.isObject(event.reporting)){
-			event  = objectutilities.merge(event, event.reporting);
+			objectutilities.map(event.reporting, key => {
+				event[key] = event.reporting[key];
+			});
 		}
 
 	}
@@ -99,6 +100,10 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 
 		if(_.has(this, 'state_name')){
 			return this.state_name
+		}
+
+		if(_.has(event, 'stateMachineName')){
+			return event.stateMachineName;
 		}
 
 		return null;
