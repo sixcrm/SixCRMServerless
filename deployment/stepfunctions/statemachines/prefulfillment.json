@@ -6,7 +6,6 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getfulfillmentrequired",
       "Next": "Is Fulfillment Required?",
-      "InputPath": "$.guid",
       "ResultPath": "$.status",
       "Retry" : [
           {
@@ -32,7 +31,6 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerfulfillment",
       "End": true,
-      "InputPath": "$.guid",
       "ResultPath": "$.status",
       "Retry" : [
           {

@@ -4,6 +4,7 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 
 const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
+
 const StepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class TriggerController extends StepFunctionWorkerController {
@@ -21,14 +22,27 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 		this.validateInput(input);
 
 		const parameters = {
-			stateMachineName: this.next_state,
-			input:JSON.stringify(input)
+			stateMachineName: this.getStateMachineName(input),
+			input: input
 		};
 
-		let stateMachineHelperController = new StateMachineHelperController();
-		let result = await stateMachineHelperController.startExecution(parameters);
+		return new StateMachineHelperController().startExecution(parameters);
 
-		return result;
+	}
+
+	getStateMachineName(input){
+
+		du.debug('Get State Machine Name');
+
+		if(_.has(input, 'stateMachineName')){
+			return input.stateMachineName;
+		}
+
+		if(_.has(this, 'next_state')){
+			return this.next_state;
+		}
+
+		throw eu.getError('server', 'Unable to acquire stateMachineName');
 
 	}
 

@@ -1,10 +1,9 @@
-
 const _ = require('lodash');
-
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-//const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+
+const StateMachineHelperController = global.SixCRM.routes.include('helpers', 'statemachine/StateMachine.js');
 
 const WorkerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
@@ -34,75 +33,35 @@ module.exports = class StepFunctionWorkerController extends WorkerController {
 
 	}
 
-	async getShippingReceipt(id, fatal = true){
+	getShippingReceipt(id, fatal = true){
 
 		du.debug('Get Shipping Receipt');
 
-		if(!_.has(this, 'shippingReceiptController')){
-			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
-			this.shippingReceiptController = new ShippingReceiptController();
-		}
-
-		let shipping_receipt = await this.shippingReceiptController.get({id: id});
-
-		if(_.isNull(shipping_receipt)){
-			if(fatal){
-				throw eu.getError('server', 'Unable to acquire a shipping receipt that matches '+id);
-			}
-
-			du.warning('Unable to acquire a shipping receipt that matches '+id);
-
-		}
-
-		return shipping_receipt;
+		return new StateMachineHelperController().getShippingReceipt(id, fatal);
 
 	}
 
-	async getRebill(id, fatal = true){
+	getRebill(id, fatal = true){
 
 		du.debug('Get Rebill');
 
-		if(!_.has(this, 'rebillController')){
-			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
-			this.rebillController = new RebillController();
-		}
-
-		let rebill = await this.rebillController.get({id: id});
-
-		if(_.isNull(rebill)){
-			if(fatal){
-				throw eu.getError('server', 'Unable to acquire a rebill that matches '+id);
-			}
-
-			du.warning('Unable to acquire a rebill that matches '+id);
-
-		}
-
-		return rebill;
+		return new StateMachineHelperController().getRebill(id, fatal);
 
 	}
 
-	async getSession(id, fatal = true){
+	getSession(id, fatal = true){
 
-		du.debug('Get Session');
+		du.debug('Get Rebill');
 
-		if(!_.has(this, 'sessionController')){
-			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-			this.sessionController = new SessionController();
-		}
+		return new StateMachineHelperController().getSession(id, fatal);
 
-		let session = await this.sessionController.get({id: id});
+	}
 
-		if(_.isNull(session)){
-			if(fatal){
-				throw eu.getError('server', 'Unable to acquire a session that matches '+id);
-			}
+	getAccount(event){
 
-			du.warning('Unable to acquire a session that matches '+id);
+		du.debug('Get Account');
 
-		}
-
-		return session;
+		return new StateMachineHelperController().getAccount(event);
 
 	}
 

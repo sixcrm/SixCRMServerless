@@ -1,6 +1,7 @@
-require('../../SixCRM.js');
+require('../../SixCRM.js')
 const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
+
+const StepFunctionTriggerController = global.SixCRM.routes.include('workers','statemachine/components/stepFunctionTrigger.js');
 
 module.exports.command = 'triggerpostfulfillment';
 module.exports.describe = 'Trigger post-fulfillment of a Shipping Receipt by UUID in the SixCRM State Machine.';
@@ -41,16 +42,14 @@ async function _handler(argv) {
 
 	const shipping_receipt_uuid =  argv.shippingReceiptUUID;
 
-	const restart = argv.restart;
-
-	const stateMachineHelperController = new StateMachineHelperController();
+	//const restart = argv.restart;
 
 	const parameters = {
 		stateMachineName: 'Postfulfillment',
-		input:JSON.stringify({guid: shipping_receipt_uuid})
+		input:{guid: shipping_receipt_uuid}
 	};
 
-	let result  = await stateMachineHelperController.startExecution(parameters, restart);
+	let result = await new StepFunctionTriggerController().execute(parameters);
 
 	du.info(result);
 
