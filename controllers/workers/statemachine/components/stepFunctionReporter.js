@@ -50,7 +50,7 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 
 	}
 
-	async report(event, additional_parameters = {}){
+	async report(event){
 
 		du.debug('Report');
 
@@ -66,13 +66,25 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 			execution: execution
 		};
 
+		if(_.has(event, 'message')){
+			parameters.message = event.message;
+		}
+
+		if(_.has(event, 'step')){
+			parameters.step = event.step;
+		}
+
+		if(_.has(event, 'executionid')){
+			parameters.execution = event.executionid;
+		}
+
+		du.info(parameters);
+
 		objectutilities.map(parameters, key => {
 			if(_.isNull(parameters[key])){
 				delete parameters[key];
 			}
 		});
-
-		parameters = objectutilities.merge(parameters, additional_parameters);
 
 		return (new StateHelperController()).report(parameters);
 
