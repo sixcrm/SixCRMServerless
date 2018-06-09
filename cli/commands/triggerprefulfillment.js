@@ -46,7 +46,9 @@ async function _handler(argv) {
 
 	const parameters = {
 		stateMachineName: 'Prefulfillment',
-		input:{guid: rebill_uuid}
+		input:{
+			guid: rebill_uuid
+		}
 	};
 
 	let result = await new StepFunctionTriggerController().execute(parameters);

@@ -34,12 +34,12 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 		du.debug('Get State Machine Name');
 
-		if(_.has(input, 'stateMachineName')){
-			return input.stateMachineName;
-		}
-
 		if(_.has(this, 'next_state')){
 			return this.next_state;
+		}
+
+		if(_.has(input, 'stateMachineName')){
+			return input.stateMachineName;
 		}
 
 		throw eu.getError('server', 'Unable to acquire stateMachineName');
