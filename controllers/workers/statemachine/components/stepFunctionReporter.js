@@ -17,13 +17,26 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 
 		du.debug('execute');
 
+		this.consolidateEvent(event);
+
 		this.validateEvent(event);
 
 		let additional_parameters = this.getAdditionalParameters(event);
+
 		du.info(additional_parameters);
 		//await this.report(input, additional_parameters);
 
 		return 'SUCCESS';
+
+	}
+
+	consolidateEvent(event){
+
+		du.debug('Consolidate Event');
+
+		if(_.has(event, 'reporting') && _.isObject(event.reporting)){
+			event  = objectutilities.merge(event, event.reporting);
+		}
 
 	}
 
