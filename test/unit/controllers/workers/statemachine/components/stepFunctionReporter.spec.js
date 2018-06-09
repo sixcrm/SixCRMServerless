@@ -59,6 +59,68 @@ describe('controllers/workers/statemachine/components/stepFunctionReporter.js', 
     })
   });
 
+  describe('execute', async () => {
+
+    it('successfully executes', async () => {
+
+      let rebill = MockEntities.getValidRebill();
+      rebill.id = "564c59b0-978c-4f39-accd-906edf13bd21";
+
+      let event = {
+        guid: "564c59b0-978c-4f39-accd-906edf13bd21",
+        stateMachineName: "Prefulfillment",
+        executionid: "d2751be3710675acb1137fa8814ce0df46d12414",
+        status: "NOSHIP",
+        reporting: {
+          state: "Prefulfillment",
+          step: "No Fulfillment Required",
+          message: "No Fulfillment Required."
+        }
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'State.js'), class {
+        constructor(){}
+        create({entity}){
+          expect(entity).to.be.a('object');
+          return Promise.resolve(entity);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
+        constructor(){}
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(null);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        constructor(){}
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(null);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+        constructor(){}
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(rebill);
+        }
+      });
+
+      const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
+      let stepFunctionReporterController = new StepFunctionReporterController();
+
+      let result = await stepFunctionReporterController.execute(event);
+      expect(result).to.equal('SUCCESS');
+
+    });
+
+  });
+
+
   xdescribe('report', async () => {
 
     it('successfully reports', async () => {

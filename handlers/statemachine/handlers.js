@@ -26,11 +26,6 @@ module.exports = {
 	gettrackingnumber: handleStepFunction((event) => new GetTrackingNumberController().execute(event)),
 	notifyfulfillmentproviders: handleStepFunction((event) => new NotifyFulfillmentProvidersController().execute(event)),
 	getfulfillmentrequired: handleStepFunction((event) => new GetFulfillmentRequiredController().execute(event)),
-	triggerpostfulfillment: handleStepFunction((event) => new TriggerPostFulfillmentController().execute(event)),
-	triggerfulfillment: handleStepFunction((event) => new TriggerFulfillmentController().execute(event)),
-	triggerprefulfillment: handleStepFunction((event) => new TriggerPreFulfillmentController().execute(event)),
-	triggertracking: handleStepFunction((event) => new TriggerTrackingController().execute(event)),
-	triggerrecovery: handleStepFunction((event) => new TriggerRecoveryController().execute(event)),
 	cleanupdecline: handleStepFunction((event) => new CleanupDeclineController().execute(event)),
 	getrecoverdate: handleStepFunction((event) => new GetRecoverDateController().execute(event)),
 	bill: handleStepFunction((event) => new BillController().execute(event)),
@@ -38,6 +33,11 @@ module.exports = {
 	closesession: handleStepFunction((event) => new CloseSessionController().execute(event)),
 	cleanupsession: handleStepFunction((event) => new CleanupSessionController().execute(event)),
 	report: handleStepFunction((event) => new ReportController().execute(event)),
+	triggerpostfulfillment: handleStepFunction((event) => new TriggerPostFulfillmentController().execute(event)),
+	triggerfulfillment: handleStepFunction((event) => new TriggerFulfillmentController().execute(event)),
+	triggerprefulfillment: handleStepFunction((event) => new TriggerPreFulfillmentController().execute(event)),
+	triggertracking: handleStepFunction((event) => new TriggerTrackingController().execute(event)),
+	triggerrecovery: handleStepFunction((event) => new TriggerRecoveryController().execute(event)),
 };
 
 function handleStepFunction(delegate) {

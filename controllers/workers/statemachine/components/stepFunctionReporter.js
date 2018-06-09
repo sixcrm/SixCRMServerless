@@ -78,8 +78,6 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 			parameters.execution = event.executionid;
 		}
 
-		du.info(parameters);
-
 		objectutilities.map(parameters, key => {
 			if(_.isNull(parameters[key])){
 				delete parameters[key];
