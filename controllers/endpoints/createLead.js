@@ -101,12 +101,13 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 		const parameters = {
 			stateMachineName: 'Closesession',
-			input:JSON.stringify({guid: session.id})
-		}
+			input:{
+				guid: session.id
+			},
+			account: session.account
+		};
 
-		let stateMachineHelperController = new StateMachineHelperController();
-
-		let result = await stateMachineHelperController.startExecution(parameters);
+		let result = await new StateMachineHelperController().startExecution(parameters);
 
 		return result;
 

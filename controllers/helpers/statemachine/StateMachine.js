@@ -1,10 +1,14 @@
 const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-//const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
 const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const StepFunctionProvider = global.SixCRM.routes.include('providers', 'stepfunction-provider.js');
+
+const StateHelperController = global.SixCRM.routes.include('helpers','entities/state/State.js');
 
 module.exports = class StateMachineHelperController {
 
@@ -14,53 +18,246 @@ module.exports = class StateMachineHelperController {
 
 	}
 
-	async startExecution(parameters, /*restart = false*/) {
+	async startExecution(parameters, fatal = true) {
 
 		du.debug('Start Execution');
 
 		let identifier = this.getIdentifier();
 
-		parameters.name = identifier;
-
+		this.addName(parameters, identifier);
 		this.addExecutionID(parameters, identifier);
+		this.addStateMachineArn(parameters);
+		await this.addAccount(parameters);
 
 		this.normalizeInput(parameters);
 
-		//du.info('Restart: '+restart);
-		/*
-		Note:  Refactor to use Dynamo Table
-
-		const executionArn = this.stepfunctionprovider.createExecutionARN(parameters.stateMachineName, parameters.name);
-
-		let description = await this.stepfunctionprovider.describeExecution({
-			executionArn: executionArn
+		let result = await new StateHelperController().report({
+			account: parameters.account,
+			entity: JSON.parse(parameters.input).guid,
+			name: parameters.stateMachineName,
+			step: 'Start',
+			execution: parameters.name
 		});
 
-		if (_.has(description, 'status')) {
+		if(!_.isObject(result) || !_.has(result, 'id')){
+			throw eu.getError('server', 'Unable to create state machine record "Start"');
+		}
 
-			if (restart === true || restart == 'true') {
+		try {
 
-				await this.stepfunctionprovider.stopExecution({
-					executionArn: executionArn
-				});
+			return await this.stepfunctionprovider.startExecution(parameters);
 
-				du.warning('Execution stopped: '+executionArn);
+		}catch(error){
 
-			}else{
+			let result = await new StateHelperController().report({
+				account: parameters.account,
+				entity: JSON.parse(parameters.input).guid,
+				name: parameters.stateMachineName,
+				step: 'Start Failed',
+				execution: parameters.name,
+				message: error.message
+			});
 
-				du.warning('Execution already exists, restart configured off.');
+			if(!_.isObject(result) || !_.has(result, 'id')){
+				throw eu.getError('server', 'Unable to create state machine record: "Start Failed"');
+			}
 
-				return null;
+			if(fatal == true){
+				throw error;
+			}
 
+			du.error(error);
+
+			return error;
+
+		}
+
+	}
+
+	async addAccount(parameters){
+
+		du.debug('Add Account');
+
+		let account = await this.getAccount(parameters);
+
+		if(!_.isNull(account)){
+			parameters.account = account;
+			return;
+		}
+
+		throw eu.getError('server', 'Unable to acquire account.');
+
+	}
+
+	async getAccount(parameters){
+
+		du.debug('Get Account');
+
+		if(_.has(parameters, 'account')){
+			return parameters.account;
+		}
+
+		if(_.has(parameters, 'input') && _.has(parameters.input, 'guid') && _.has(parameters,  'stateMachineName')){
+
+			let entity_type = this.getEntityType(parameters);
+
+			//du.info(entity_type); process.exit();
+
+			let entity = await {
+				rebill:() => this.getRebill(parameters.input.guid),
+				session:() => this.getSession(parameters.input.guid),
+				shipping_receipt:() => this.getShippingReceipt(parameters.input.guid)
+			}[_.toLower(entity_type)]();
+
+			if(!_.isNull(entity) && _.has(entity, 'account')){
+				return entity.account;
+			}
+
+		}else if(_.has(parameters, 'input') && _.has(parameters.input, 'guid')){
+
+			let results = await Promise.all([
+				this.getRebill(parameters.input.guid, false),
+				this.getSession(parameters.input.guid, false),
+				this.getShippingReceipt(parameters.input.guid, false)
+			]);
+
+			let found = arrayutilities.find(results, result => {
+				return (_.has(result, 'account'));
+			});
+
+			if(_.has(found, 'account')){
+				return found.account;
 			}
 
 		}
-		*/
+
+		return null;
+
+	}
+
+	getEntityType(parameters){
+
+		du.debug('Get Entity Type');
+
+		if(_.has(parameters, 'entity_type')){
+			return parameters.entity_type;
+		}
+
+		if(_.has(parameters, 'stateMachineName')){
+			return this.getEntityInputTypeFromStateMachineName(parameters.stateMachineName);
+		}
+
+		return null;
+
+	}
+
+	getEntityInputTypeFromStateMachineName(state_machine_name){
+
+		du.debug('Get Entity Input Type From State Machine');
+
+		let translation = {
+			rebill: ['Billing', 'Recover', 'Prefulfillment', 'Fulfillment', 'Postfulfillment'],
+			shipping_receipt:['Tracking'],
+			session:['Closesession', 'Createrebill']
+		};
+
+		let entity_input_type = null;
+
+		objectutilities.map(translation, key => {
+			if(_.isNull(entity_input_type) && _.includes(translation[key], state_machine_name)){
+				entity_input_type = key;
+			}
+		});
+
+		return entity_input_type;
+
+	}
+
+	async getShippingReceipt(id, fatal = true){
+
+		du.debug('Get Shipping Receipt');
+
+		if(!_.has(this, 'shippingReceiptController')){
+			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+			this.shippingReceiptController = new ShippingReceiptController();
+		}
+
+		let shipping_receipt = await this.shippingReceiptController.get({id: id});
+
+		if(_.isNull(shipping_receipt)){
+			if(fatal){
+				throw eu.getError('server', 'Unable to acquire a shipping receipt that matches '+id);
+			}
+
+			du.warning('Unable to acquire a shipping receipt that matches '+id);
+
+		}
+
+		return shipping_receipt;
+
+	}
+
+	async getRebill(id, fatal = true){
+
+		du.debug('Get Rebill');
+
+		if(!_.has(this, 'rebillController')){
+			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
+		}
+
+		let rebill = await this.rebillController.get({id: id});
+
+		if(_.isNull(rebill)){
+			if(fatal){
+				throw eu.getError('server', 'Unable to acquire a rebill that matches '+id);
+			}
+
+			du.warning('Unable to acquire a rebill that matches '+id);
+
+		}
+
+		return rebill;
+
+	}
+
+	async getSession(id, fatal = true){
+
+		du.debug('Get Session');
+
+		if(!_.has(this, 'sessionController')){
+			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
+		}
+
+		let session = await this.sessionController.get({id: id});
+
+		if(_.isNull(session)){
+			if(fatal){
+				throw eu.getError('server', 'Unable to acquire a session that matches '+id);
+			}
+
+			du.warning('Unable to acquire a session that matches '+id);
+
+		}
+
+		return session;
+
+	}
+
+	addName(parameters, identifier){
+
+		du.debug('Add Name');
+
+		parameters.name = identifier;
+
+	}
+
+	addStateMachineArn(parameters){
+
+		du.debug('Add State Machine Arn');
 
 		parameters.stateMachineArn = this.stepfunctionprovider.createStateMachineARN(parameters.stateMachineName);
-
-		let start = await this.stepfunctionprovider.startExecution(parameters);
-		return start;
 
 	}
 
@@ -90,7 +287,7 @@ module.exports = class StateMachineHelperController {
 
 		du.debug('Get Identifier');
 
-		return hashutilities.toSHA1(random.getRandomString(20)+timestamp.now());
+		return hashutilities.toSHA1(random.createRandomString(20)+timestamp.now());
 
 	}
 

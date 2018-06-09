@@ -34,7 +34,7 @@ describe('controllers/workers/statemachine/triggerTracking.js', () => {
 
   });
 
-  describe('execute', async () => {
+  xdescribe('execute', async () => {
 
     it('successfully executes', async () => {
 

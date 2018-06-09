@@ -34,7 +34,7 @@ describe('controllers/workers/statemachine/triggerPreFulfillment.js', () => {
 
   });
 
-  describe('execute', async () => {
+  xdescribe('execute', async () => {
 
     it('successfully executes', async () => {
 

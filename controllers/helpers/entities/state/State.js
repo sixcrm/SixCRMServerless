@@ -10,9 +10,17 @@ module.exports = class StateHelperController {
 
 		du.debug('Report');
 
-		let params = objectutilities.transcribe({account: 'account', entity: 'entity', name: 'name'}, parameters, {}, true);
+		let params = objectutilities.transcribe({
+			account: 'account',
+			entity: 'entity',
+			name: 'name'
+		}, parameters, {}, true);
 
-		params = objectutilities.transcribe({execution: 'execution', state: 'state', message: 'message'}, parameters, params, false);
+		params = objectutilities.transcribe({
+			execution: 'execution',
+			step: 'step',
+			message: 'message'
+		}, parameters, params, false);
 
 		return new StateController().create({entity: params});
 
