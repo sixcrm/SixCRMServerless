@@ -1,13 +1,7 @@
 {
   "Comment": "The Pre-Fulfillment State Machine",
-  "StartAt": "Overmap State Machine Name",
+  "StartAt": "Get Fulfillment Required",
   "States": {
-    "Overmap State Machine Name":{
-      "Type":"Pass",
-      "Result":"Prefulfillment",
-      "ResultPath":"$.stateMachineName",
-      "Next":"Get Fulfillment Required"
-    },
     "Get Fulfillment Required":{
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getfulfillmentrequired",
