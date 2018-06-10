@@ -117,7 +117,7 @@ describe('confirmOrder', function () {
 
 		mockery.registerMock(global.SixCRM.routes.path('helpers', 'statemachine/StateMachine.js'), class {
 			constructor(){}
-			startExecution(parameters){
+			startExecution({parameters}){
 				expect(parameters).to.be.a('object');
 				expect(parameters).to.have.property('stateMachineName');
 				expect(parameters).to.have.property('input');
@@ -126,7 +126,7 @@ describe('confirmOrder', function () {
 				return Promise.resolve(true);
 			}
 		});
-		
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {

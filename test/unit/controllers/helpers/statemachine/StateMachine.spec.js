@@ -33,7 +33,7 @@ describe('controllers/workers/helpers/statemachine/StateMachine.js', () => {
 
   });
 
-  describe.only('getRunningExecutions', async () => {
+  describe('getRunningExecutions', async () => {
 
     it('gets running executions', async () => {
 
