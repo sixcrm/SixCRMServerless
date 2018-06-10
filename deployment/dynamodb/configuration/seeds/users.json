@@ -182,30 +182,6 @@
 	  "updated_at":"2017-04-06T18:41:12.521Z"
 	},
 	{
-	  "name":"NathanBrenner",
-	  "first_name": "Nathan",
-	  "last_name": "Brenner",
-	  "auth0_id":"abc123",
-	  "id":"nathan.brenner@crmblackbox.com",
-	  "active":true,
-	  "termsandconditions":"0.1",
-	  "alias":"c56c9010d00b16e85287f40e066258fdf28fbe7c",
-	  "created_at":"2017-10-19T12:30:41.405Z",
-	  "updated_at":"2017-10-19T12:31:12.521Z"
-	},
-	{
-	  "name":"MychaelWalton",
-	  "first_name": "Mychael",
-	  "last_name": "Walton",
-	  "auth0_id":"abc123",
-	  "id":"mychael.walton@crmblackbox.com",
-	  "active":true,
-	  "termsandconditions":"0.1",
-	  "alias":"b950a7dcd7a07bac335f0ea659a9973bf36e73c2",
-	  "created_at":"2017-10-19T12:30:41.405Z",
-	  "updated_at":"2017-10-19T12:31:12.521Z"
-	},
-	{
 	  "name":"CarlosCaesarez",
 	  "first_name": "Carlos",
 	  "last_name": "Caesarez",
@@ -238,18 +214,6 @@
 	  "active":true,
 	  "termsandconditions":"0.1",
 	  "alias":"7fa64d11c6a853ddc3618806f756c90db9cd8d75",
-	  "created_at":"2017-10-19T12:30:41.405Z",
-	  "updated_at":"2017-10-19T12:31:12.521Z"
-	},
-	{
-	  "name":"EvanOxfeld",
-	  "first_name": "Evan",
-	  "last_name": "Oxfeld",
-	  "auth0_id":"abc123",
-	  "id":"evan@adexchangegrp.com",
-	  "active":true,
-	  "termsandconditions":"0.1",
-	  "alias":"a67a603d95b31d49e90b0523d8b5f01166dc3a36",
 	  "created_at":"2017-10-19T12:30:41.405Z",
 	  "updated_at":"2017-10-19T12:31:12.521Z"
 	}

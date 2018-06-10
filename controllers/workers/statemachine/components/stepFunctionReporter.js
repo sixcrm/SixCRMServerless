@@ -17,13 +17,27 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 
 		du.debug('execute');
 
+		this.consolidateEvent(event);
+
 		this.validateEvent(event);
 
-		let additional_parameters = this.getAdditionalParameters(event);
-		du.info(additional_parameters);
-		//await this.report(input, additional_parameters);
+		//let additional_parameters = this.getAdditionalParameters(event);
+
+		await this.report(event);
 
 		return 'SUCCESS';
+
+	}
+
+	consolidateEvent(event){
+
+		du.debug('Consolidate Event');
+
+		if(_.has(event, 'reporting') && _.isObject(event.reporting)){
+			objectutilities.map(event.reporting, key => {
+				event[key] = event.reporting[key];
+			});
+		}
 
 	}
 
@@ -36,7 +50,7 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 
 	}
 
-	async report(event, additional_parameters = {}){
+	async report(event){
 
 		du.debug('Report');
 
@@ -52,13 +66,23 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 			execution: execution
 		};
 
+		if(_.has(event, 'message')){
+			parameters.message = event.message;
+		}
+
+		if(_.has(event, 'step')){
+			parameters.step = event.step;
+		}
+
+		if(_.has(event, 'executionid')){
+			parameters.execution = event.executionid;
+		}
+
 		objectutilities.map(parameters, key => {
 			if(_.isNull(parameters[key])){
 				delete parameters[key];
 			}
 		});
-
-		parameters = objectutilities.merge(parameters, additional_parameters);
 
 		return (new StateHelperController()).report(parameters);
 
@@ -86,6 +110,10 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 
 		if(_.has(this, 'state_name')){
 			return this.state_name
+		}
+
+		if(_.has(event, 'stateMachineName')){
+			return event.stateMachineName;
 		}
 
 		return null;

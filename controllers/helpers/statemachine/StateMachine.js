@@ -27,6 +27,7 @@ module.exports = class StateMachineHelperController {
 		this.addName(parameters, identifier);
 		this.addExecutionID(parameters, identifier);
 		this.addStateMachineArn(parameters);
+		this.rectifyStateMachineNames(parameters);
 		await this.addAccount(parameters);
 
 		this.normalizeInput(parameters);
@@ -89,49 +90,71 @@ module.exports = class StateMachineHelperController {
 
 	}
 
-	async getAccount(parameters){
+	async getAccount(parameters /*, fatal = true*/) {
 
 		du.debug('Get Account');
 
-		if(_.has(parameters, 'account')){
+		if (_.has(parameters, 'account')) {
 			return parameters.account;
 		}
 
-		if(_.has(parameters, 'input') && _.has(parameters.input, 'guid') && _.has(parameters,  'stateMachineName')){
+		let guid = this.getGUID(parameters);
 
-			let entity_type = this.getEntityType(parameters);
+		let entity_type = this.getEntityType(parameters);
 
-			//du.info(entity_type); process.exit();
+		if(_.isNull(entity_type)){
 
 			let entity = await {
-				rebill:() => this.getRebill(parameters.input.guid),
-				session:() => this.getSession(parameters.input.guid),
-				shipping_receipt:() => this.getShippingReceipt(parameters.input.guid)
+				rebill: () => this.getRebill(guid),
+				session: () => this.getSession(guid),
+				shipping_receipt: () => this.getShippingReceipt(guid)
 			}[_.toLower(entity_type)]();
 
-			if(!_.isNull(entity) && _.has(entity, 'account')){
+			if (!_.isNull(entity) && _.has(entity, 'account')) {
 				return entity.account;
 			}
 
-		}else if(_.has(parameters, 'input') && _.has(parameters.input, 'guid')){
+		}else{
 
 			let results = await Promise.all([
-				this.getRebill(parameters.input.guid, false),
-				this.getSession(parameters.input.guid, false),
-				this.getShippingReceipt(parameters.input.guid, false)
+				this.getRebill(guid, false),
+				this.getSession(guid, false),
+				this.getShippingReceipt(guid, false)
 			]);
 
 			let found = arrayutilities.find(results, result => {
 				return (_.has(result, 'account'));
 			});
 
-			if(_.has(found, 'account')){
+			if (_.has(found, 'account')) {
 				return found.account;
 			}
 
 		}
 
 		return null;
+
+	}
+
+	getGUID(parameters, fatal = true){
+
+		du.debug('Get GUID');
+
+		let guid = null;
+
+		if (_.has(parameters, 'input') && _.has(parameters.input, 'guid')) {
+			guid = parameters.input.guid;
+		} else if (_.has(parameters, 'guid')) {
+			guid = parameters.guid;
+		}
+
+		if(_.isNull(guid) && fatal == true){
+			throw eu.getError('server', 'Unable to acquire guid property');
+		}
+
+		du.warning('Unable to acquire guid property');
+
+		return guid;
 
 	}
 
@@ -273,12 +296,34 @@ module.exports = class StateMachineHelperController {
 
 	}
 
+	rectifyStateMachineNames(parameters){
+
+		du.debug('Rectify State Machine Names');
+
+		if(_.has(parameters, 'input')){
+
+			if(_.has(parameters, 'stateMachineName') && _.has(parameters.input, 'stateMachineName')){
+
+				if(parameters.stateMachineName !== parameters.input.stateMachineName){
+					parameters.input.stateMachineName = parameters.stateMachineName;
+				}
+
+			}
+
+		}
+
+	}
+
 	normalizeInput(parameters){
 
 		du.debug('Normalize Input');
 
-		if(_.has(parameters, 'input') && !_.isString(parameters.input)){
-			parameters.input = JSON.stringify(parameters.input);
+		if(_.has(parameters, 'input')){
+
+			if(!_.isString(parameters.input)){
+				parameters.input = JSON.stringify(parameters.input);
+			}
+
 		}
 
 	}

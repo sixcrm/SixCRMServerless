@@ -73,8 +73,25 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 				throw eu.getError('server', 'Unexpected result when retrieving transaction products: '+JSON.stringify(product_promise));
 			}
 			arrayutilities.map(product_promise, product => {
-				if(_.isObject(product) && _.has(product, 'id')){
-					products.push(product);
+
+				if(_.isObject(product)){
+
+					if(_.has(product, 'id')){
+
+						//Technical Debt:  This structure may be incorrect.  Veryify.
+						products.push(product);
+
+					}else if(_.has(product, 'product') && _.has(product.product, 'id')){
+
+						//Technical Debt:  This structure may be incorrect.  Veryify.
+						products.push(product.product);
+
+					}else{
+
+						throw eu.getError('server', 'Unexpected result in array when retrieving transaction products: '+JSON.stringify(product));
+
+					}
+
 				}else{
 					throw eu.getError('server', 'Unexpected result in array when retrieving transaction products: '+JSON.stringify(product));
 				}

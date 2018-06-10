@@ -22,7 +22,7 @@
         {
           "Variable": "$.status",
           "StringEquals": "NOSHIP",
-          "Next": "No Fulfillment Required"
+          "Next": "Report No Fulfillment"
         }
       ],
       "Default": "Trigger Fulfillment"
@@ -40,6 +40,21 @@
             "BackoffRate": 5
           }
       ]
+    },
+    "Report No Fulfillment":{
+      "Type":"Pass",
+      "Result":{
+        "state":"Prefulfillment",
+        "step":"No Fulfillment Required",
+        "message":"No Fulfillment Required."
+      },
+      "ResultPath":"$.reporting",
+      "Next":"Report"
+    },
+    "Report":{
+      "Type":"Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-report",
+      "Next":"No Fulfillment Required"
     },
     "No Fulfillment Required":{
       "Type":"Succeed"

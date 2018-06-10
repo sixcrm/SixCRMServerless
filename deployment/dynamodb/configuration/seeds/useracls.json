@@ -48,14 +48,6 @@
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
 	},
-	{
-		"id":"ef484bc5-5ffd-4ccd-aa00-759dc722447f",
-		"account":"*",
-		"user":"mychael.walton@crmblackbox.com",
-		"role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
-		"created_at":"2017-04-06T18:40:41.405Z",
-		"updated_at":"2017-04-06T18:41:12.521Z"
-	},
   {
       "id":"67cbbc70-e0b6-423d-9490-33ac713ab923",
       "account":"*",
@@ -239,14 +231,6 @@
     "created_at":"2017-04-06T18:40:41.405Z",
     "updated_at":"2017-04-06T18:41:12.521Z"
 	},
-  {
-    "id":"41ff558c-13de-4d3e-b485-0373fa01f1b8",
-    "account":"*",
-    "user":"evan@adexchangegrp.com",
-    "role":"e09ac44b-6cde-4572-8162-609f6f0aeca8",
-    "created_at":"2017-04-24T18:40:41.405Z",
-    "updated_at":"2017-04-24T18:41:12.521Z"
-  },
 	{
 		"id":"c7480698-8ef7-4598-855c-bfa16a1381a2",
 		"account":"5db7ed46-75b1-4ecd-b489-e61ef5d1107a",
