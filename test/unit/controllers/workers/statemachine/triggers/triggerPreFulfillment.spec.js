@@ -34,14 +34,15 @@ describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', (
 
   });
 
-  xdescribe('execute', async () => {
+  describe('execute', async () => {
 
     it('successfully executes', async () => {
 
       let shipping_receipt = MockEntities.getValidShippingReceipt();
 
       const parameters = {
-        guid: shipping_receipt.id
+        guid: shipping_receipt.id,
+        stateMachineName: 'Billing'
       };
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'statemachine/StateMachine.js'), class {
@@ -51,10 +52,10 @@ describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', (
           expect(parameters).to.have.property('stateMachineName');
           expect(parameters.stateMachineName).to.equal('Prefulfillment');
           expect(parameters).to.have.property('input');
-          expect(parameters.input).to.be.a('string');
-          expect(JSON.parse(parameters.input)).to.have.property('guid');
-          expect(JSON.parse(parameters.input).guid).to.be.a('string');
-          expect(stringutilities.isUUID(JSON.parse(parameters.input).guid)).to.equal(true);
+          expect(parameters.input).to.be.a('object');
+          expect(parameters.input).to.have.property('guid');
+          expect(parameters.input.guid).to.be.a('string');
+          expect(stringutilities.isUUID(parameters.input.guid)).to.equal(true);
           return Promise.resolve({
             executionArn: 'arn:aws:states:us-east-1:068070110666:execution:Closesession:053b54ce-6cd1-4952-8e3e-3eb137cd5a30@1528304510000',
             startDate: '2018-06-06T17:01:51.593Z'
@@ -66,6 +67,7 @@ describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', (
       let triggerPreFulfillmentController = new TriggerPreFulfillmentController();
 
       let result = await triggerPreFulfillmentController.execute(parameters);
+
       expect(result).to.be.a('object')
       expect(result).to.have.property('executionArn');
       expect(result).to.have.property('startDate');

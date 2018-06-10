@@ -27,6 +27,7 @@ module.exports = class StateMachineHelperController {
 		this.addName(parameters, identifier);
 		this.addExecutionID(parameters, identifier);
 		this.addStateMachineArn(parameters);
+		this.rectifyStateMachineNames(parameters);
 		await this.addAccount(parameters);
 
 		this.normalizeInput(parameters);
@@ -38,6 +39,8 @@ module.exports = class StateMachineHelperController {
 			step: 'Start',
 			execution: parameters.name
 		});
+
+		du.info(result);  process.exit();
 
 		if(!_.isObject(result) || !_.has(result, 'id')){
 			throw eu.getError('server', 'Unable to create state machine record "Start"');
@@ -295,12 +298,34 @@ module.exports = class StateMachineHelperController {
 
 	}
 
+	rectifyStateMachineNames(parameters){
+
+		du.debug('Rectify State Machine Names');
+
+		if(_.has(parameters, 'input')){
+
+			if(_.has(parameters, 'stateMachineName') && _.has(parameters.input, 'stateMachineName')){
+
+				if(parameters.stateMachineName !== parameters.input.stateMachineName){
+					parameters.input.stateMachineName = parameters.stateMachineName;
+				}
+
+			}
+
+		}
+
+	}
+
 	normalizeInput(parameters){
 
 		du.debug('Normalize Input');
 
-		if(_.has(parameters, 'input') && !_.isString(parameters.input)){
-			parameters.input = JSON.stringify(parameters.input);
+		if(_.has(parameters, 'input')){
+
+			if(!_.isString(parameters.input)){
+				parameters.input = JSON.stringify(parameters.input);
+			}
+
 		}
 
 	}
