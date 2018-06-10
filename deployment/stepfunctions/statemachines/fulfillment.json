@@ -1,13 +1,7 @@
 {
   "Comment": "The Fulfillment State Machine.  Note that this State Machine operates against a Rebill.",
-  "StartAt": "Overmap State Machine Name",
+  "StartAt": "Notify Fulfillment Providers",
   "States": {
-    "Overmap State Machine Name":{
-      "Type":"Pass",
-      "Result":"Fulfillment",
-      "ResultPath":"$.stateMachineName",
-      "Next":"Notify Fulfillment Providers"
-    },
     "Notify Fulfillment Providers": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-notifyfulfillmentproviders",
