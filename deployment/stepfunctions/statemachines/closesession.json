@@ -40,6 +40,7 @@
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-closesession",
       "Next": "Get Session Closed",
       "InputPath": "$",
+      "ResultPath": "$.status",
       "Retry": [
         {
           "ErrorEquals": [
@@ -56,6 +57,7 @@
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupsession",
       "End": true,
       "InputPath": "$",
+      "ResultPath": "$.status",
       "Retry": [
         {
           "ErrorEquals": [
