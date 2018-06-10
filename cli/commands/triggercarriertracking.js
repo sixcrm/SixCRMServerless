@@ -49,7 +49,7 @@ async function _handler(argv) {
 		guid: shipping_receipt_uuid
 	};
 
-	let result = await new StepFunctionTriggerController().execute(parameters);
+	let result = await new StepFunctionTriggerController().execute({parameters: parameters});
 
 	du.info(result);
 

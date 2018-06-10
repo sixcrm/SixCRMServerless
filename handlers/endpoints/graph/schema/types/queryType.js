@@ -105,9 +105,6 @@ let shippingReceiptListType = require('./shippingreceipt/shippingReceiptListType
 let trackerType = require('./tracker/trackerType');
 let trackerListType = require('./tracker/trackerListType');
 
-let billType = require('./bill/billType');
-let billListType = require('./bill/billListType');
-
 let tokenListType = require('./token/tokenListType');
 
 let tagType = require('./tag/tagType');
@@ -137,7 +134,6 @@ let get_fatal = true;
 // Entity Controllers
 
 const BinController = global.SixCRM.routes.include('controllers', 'entities/Bin.js');
-const BillController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
 const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
@@ -1186,26 +1182,6 @@ const fields = Object.assign({}, {
 			});
 		}
 	},
-	billlist: {
-		type: billListType.graphObj,
-		args: {
-			pagination: {
-				type: paginationInputType.graphObj
-			},
-			search: {
-				type: entitySearchInputType.graphObj
-			}
-		},
-		resolve: function(root, bill) {
-			const billController = new BillController();
-
-			return billController.listByAccount({
-				pagination: bill.pagination,
-				fatal: list_fatal,
-				search: bill.search
-			});
-		}
-	},
 	creditcardlist: {
 		type: creditCardListType.graphObj,
 		args: {
@@ -1745,23 +1721,6 @@ const fields = Object.assign({}, {
 
 			return trackerController.get({
 				id: tracker.id,
-				fatal: get_fatal
-			});
-		}
-	},
-	bill: {
-		type: billType.graphObj,
-		args: {
-			id: {
-				description: 'id of the bill',
-				type: new GraphQLNonNull(GraphQLString)
-			}
-		},
-		resolve: function(root, bill) {
-			const billController = new BillController();
-
-			return billController.get({
-				id: bill.id,
 				fatal: get_fatal
 			});
 		}

@@ -18,9 +18,31 @@ module.exports = class StateMachineHelperController {
 
 	}
 
-	async startExecution(parameters, fatal = true) {
+	async getRunningExecutions({id, state}){
+
+		du.debug('Get Running Executions');
+
+		du.info(id, state);
+
+		return null;
+
+	}
+
+	async stopExecutions(executions){
+
+		du.debug('Stop Executions');
+
+		du.info(executions);
+
+		return true;
+
+	}
+
+	async startExecution({parameters, fatal = true}) {
 
 		du.debug('Start Execution');
+
+		du.info(parameters);  process.exit();
 
 		let identifier = this.getIdentifier();
 

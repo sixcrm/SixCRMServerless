@@ -41,15 +41,14 @@ module.exports.handler = (argv) => {
 async function _handler(argv) {
 
 	const session_uuid =  argv.sessionUUID;
-
-	//const restart = argv.restart;
+	const restart = argv.restart;
 
 	const parameters = {
 		stateMachineName: 'Closesession',
 		guid: session_uuid
 	};
 
-	let result = await new StepFunctionTriggerController().execute(parameters);
+	let result = await new StepFunctionTriggerController().execute({parameters: parameters, restart: restart});
 
 	du.info(result);
 

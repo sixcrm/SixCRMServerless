@@ -2,6 +2,7 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 
 const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
 
@@ -15,18 +16,65 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 	}
 
-	async execute(input) {
+	async execute({parameters, restart = false, fatal = false}){
 
 		du.debug('execute');
 
-		this.validateInput(input);
+		this.validateInput(parameters);
 
-		const parameters = {
-			stateMachineName: this.getStateMachineName(input),
-			input: input
+		const to_state = this.getStateMachineName(parameters);
+
+		//Note:  This is a bit confusing -  it means that there are two fields named "stateMachineName", one at the root and one in input, when the stateMachineName is provided in the parameters object
+		const params = {
+			stateMachineName: to_state,
+			input: parameters
 		};
 
-		return new StateMachineHelperController().startExecution(parameters);
+		const stateMachineHelperController = new StateMachineHelperController();
+
+		const running_executions = await stateMachineHelperController.getRunningExecutions({guid: parameters.guid, state: to_state});
+
+		if(_.isNull(running_executions)){
+
+			return stateMachineHelperController.startExecution({parameters: params});
+
+		}else{
+
+			if(!_.isArray(running_executions) || !arrayutilities.nonEmpty(running_executions)){
+				throw eu.getError('server', 'Unexpected response format: '+JSON.stringify(running_executions));
+			}
+
+			if(restart == true){
+
+				try{
+
+					let execution_ids = arrayutilities.map(running_executions, running_execution => running_execution.execution);
+					await stateMachineHelperController.stopExecutions(execution_ids);
+
+				}catch(error){
+
+					if(fatal == true){
+						throw error;
+					}
+
+					du.warning(error.message);
+					return null;
+
+				}
+
+				return stateMachineHelperController.startExecution({parameters: params});
+
+			}
+
+		}
+
+		if(fatal == true){
+			throw eu.getError('bad_request', 'There is already another execution running for guid: "'+parameters.guid+'" and state "'+to_state+'".');
+		}
+
+		du.warning('There is already another execution running for guid: "'+parameters.guid+'" and state "'+to_state+'".  If you would like to trigger this execution anyhow, set the `restart` argument to true.');
+		return null;
+
 
 	}
 
