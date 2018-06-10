@@ -223,12 +223,12 @@ functions:
 # Event Workers
 ########################
 
-  selectrebills:
-    handler: handlers/workers/handlers.selectrebills
-    events:
-      - schedule:
-          rate: rate(10 minutes)
-          enabled: true
+#  selectrebills:
+#    handler: handlers/workers/handlers.selectrebills
+#    events:
+#      - schedule:
+#          rate: rate(10 minutes)
+#          enabled: true
 
   analyticseventhandler:
     handler: handlers/workers/handlers.analyticseventhandler
@@ -237,12 +237,12 @@ functions:
           rate: rate(1 minute)
           enabled: true
 
-  reindex:
-    handler: handlers/workers/handlers.reindex
-    events:
-      - schedule:
-          rate: rate(60 minutes)
-          enabled: true
+#  reindex:
+#    handler: handlers/workers/handlers.reindex
+#    events:
+#      - schedule:
+#          rate: rate(60 minutes)
+#          enabled: true
 
 ########################
 # Transaction Endpoints  (initial customer entrypoint)
