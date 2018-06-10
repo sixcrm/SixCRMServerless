@@ -28,8 +28,7 @@ module.exports = class ReIndexingHelperController {
 
 		du.debug('Reindexing');
 
-		if(fix == 'true' || fix === true){
-			fix = true;
+		if(fix == true){
 			du.warning('Fix: On');
 		}
 

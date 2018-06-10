@@ -42,14 +42,14 @@ async function _handler(argv) {
 
 	const rebill_uuid =  argv.rebillUUID;
 
-	//const restart = argv.restart;
+	const restart = (argv.restart == 'true' || argv.restart == true)?true:argv.restart;
 
 	const parameters = {
 		stateMachineName: 'Prefulfillment',
 		guid: rebill_uuid
 	};
 
-	let result = await new StepFunctionTriggerController().execute({parameters: parameters});
+	let result = await new StepFunctionTriggerController().execute({parameters: parameters, restart: restart});
 
 	du.info(result);
 

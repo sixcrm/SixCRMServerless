@@ -27,7 +27,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			}
 		},
 		account: {
-			type: new GraphQLNonNull(accountType.graphObj),
+			type: accountType.graphObj,
 			description: 'The account related to user ACL object',
 			resolve: (user_acl) => {
 				return userACLController.getAccount(user_acl);

@@ -42,14 +42,14 @@ async function _handler(argv) {
 
 	const session_uuid =  argv.sessionUUID;
 
-	//const restart = argv.restart;
+	const restart = (argv.restart == 'true' || argv.restart == true)?true:argv.restart;
 
 	const parameters = {
 		stateMachineName: 'Createrebill',
 		guid: session_uuid
 	};
 
-	let result = await new StepFunctionTriggerController().execute({parameters: parameters});
+	let result = await new StepFunctionTriggerController().execute({parameters: parameters, restart: restart});
 
 	du.info(result);
 
