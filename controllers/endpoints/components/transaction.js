@@ -3,7 +3,9 @@ const uuid = require('uuid');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
 const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
 
 module.exports = class transactionEndpointController extends authenticatedController {
@@ -175,6 +177,28 @@ module.exports = class transactionEndpointController extends authenticatedContro
 				user: global.user
 			})
 		});
+
+	}
+
+	async triggerSessionCloseStateMachine(session, restart = false){
+
+		du.debug('Trigger Session Close State Machine')
+
+		if(_.isNull(session) || !_.has(session, 'id') || !stringutilities.isUUID(session.id)){
+			throw eu.getError('server', 'Inappropriate Session ID presented to State Machine Helper');
+		}
+
+		const parameters = {
+			stateMachineName: 'Closesession',
+			input:{
+				guid: session.id
+			},
+			account: session.account
+		};
+
+		let result = await new StateMachineHelperController().startExecution({parameters: parameters, restart: restart});
+
+		return result;
 
 	}
 

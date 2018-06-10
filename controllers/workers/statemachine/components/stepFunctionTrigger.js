@@ -32,7 +32,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 		const stateMachineHelperController = new StateMachineHelperController();
 
-		const running_executions = await stateMachineHelperController.getRunningExecutions({guid: parameters.guid, state: to_state});
+		const running_executions = await stateMachineHelperController.getRunningExecutions({id: parameters.guid, state: to_state});
 
 		if(_.isNull(running_executions)){
 
@@ -48,8 +48,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 				try{
 
-					let execution_ids = arrayutilities.map(running_executions, running_execution => running_execution.execution);
-					await stateMachineHelperController.stopExecutions(execution_ids);
+					await stateMachineHelperController.stopExecutions(running_executions);
 
 				}catch(error){
 
@@ -57,6 +56,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 						throw error;
 					}
 
+					du.error(error);
 					du.warning(error.message);
 					return null;
 

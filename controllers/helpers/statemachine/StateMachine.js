@@ -6,8 +6,9 @@ const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js')
 const random = global.SixCRM.routes.include('lib', 'random.js');
 const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const StepFunctionProvider = global.SixCRM.routes.include('providers', 'stepfunction-provider.js');
 
+const StepFunctionProvider = global.SixCRM.routes.include('providers', 'stepfunction-provider.js');
+const StateController = global.SixCRM.routes.include('entities', 'State.js');
 const StateHelperController = global.SixCRM.routes.include('helpers','entities/state/State.js');
 
 module.exports = class StateMachineHelperController {
@@ -22,27 +23,93 @@ module.exports = class StateMachineHelperController {
 
 		du.debug('Get Running Executions');
 
-		du.info(id, state);
+		let running_executions = await this.getExecutions({id: id, state: state, status: 'RUNNING'});
+
+		if(_.isArray(running_executions) && arrayutilities.nonEmpty(running_executions)){
+			return running_executions;
+		}
 
 		return null;
 
 	}
 
-	async stopExecutions(executions){
+	async getExecutions({id, state, status = null}){
+
+		du.debug('Get Executions');
+
+		let known_executions = await (new StateController()).listByEntityAndState({entity: id, state: state});
+
+		if(!_.has(known_executions, 'states') || !_.isArray(known_executions.states) || !arrayutilities.nonEmpty(known_executions.states)){
+			return null;
+		}
+
+		if(!_.isNull(status)){
+			return this.filterExecutionsByStatus({executions: known_executions.states, status: status});
+		}
+
+		return known_executions;
+
+	}
+
+	async filterExecutionsByStatus({executions, status}){
+
+		du.debug('Filter Executions By Status');
+
+		if(!_.includes(["RUNNING", "SUCCEEDED", "FAILED", "TIMED_OUT", "ABORTED"], status)){
+			throw eu.getError('server', 'Unknown execution status: '+status);
+		}
+
+		const stateHelperController = new StateHelperController();
+
+		//Note:  There may be AWS throttling here...
+		let status_promises = arrayutilities.map(executions, execution => {
+			let execution_arn = stateHelperController.buildExecutionArn(execution);
+			return this.stepfunctionprovider.describeExecution({
+				executionArn: execution_arn
+			});
+		});
+
+		let stati = await Promise.all(status_promises);
+
+		let status_relevant_executions = arrayutilities.filter(stati, stati_result => {
+			return (_.has(stati_result, 'status') && stati_result.status == status);
+		});
+
+		if(_.isArray(status_relevant_executions) && arrayutilities.nonEmpty(status_relevant_executions)){
+			return arrayutilities.map(status_relevant_executions, status_relevant_execution => {
+				return arrayutilities.find(executions, execution => {
+					return (execution.execution == status_relevant_execution.name);
+				});
+			});
+		}
+
+		return null;
+
+	}
+
+	async stopExecutions(executions = null){
 
 		du.debug('Stop Executions');
 
-		du.info(executions);
+		if(!_.isArray(executions) || !arrayutilities.nonEmpty(executions)){
+			throw eu.getError('server', 'stopExecutions() assumes executions parameters is a non-empty array.');
+		}
 
-		return true;
+		const stateHelperController = new StateHelperController();
+
+		let stop_promises = arrayutilities.map(executions, (execution_id) => {
+			return this.stepfunctionprovider.stopExecution({
+				executionArn: stateHelperController.buildExecutionArn(execution_id)
+			});
+		});
+
+		return Promise.all(stop_promises);
 
 	}
 
 	async startExecution({parameters, fatal = true}) {
 
 		du.debug('Start Execution');
-
-		du.info(parameters);  process.exit();
 
 		let identifier = this.getIdentifier();
 

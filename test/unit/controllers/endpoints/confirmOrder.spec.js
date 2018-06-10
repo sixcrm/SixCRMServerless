@@ -114,6 +114,19 @@ describe('confirmOrder', function () {
 	});
 
 	beforeEach(() => {
+
+		mockery.registerMock(global.SixCRM.routes.path('helpers', 'statemachine/StateMachine.js'), class {
+			constructor(){}
+			startExecution({parameters}){
+				expect(parameters).to.be.a('object');
+				expect(parameters).to.have.property('stateMachineName');
+				expect(parameters).to.have.property('input');
+				expect(parameters).to.have.property('account');
+				expect(parameters.stateMachineName).to.equal('Closesession');
+				return Promise.resolve(true);
+			}
+		});
+
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {

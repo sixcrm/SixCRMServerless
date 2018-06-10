@@ -8,10 +8,42 @@ const creditCardType = require('credit-card-type');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
 class MockEntities {
+
+	static getValidStates({ids, entity, state_name}){
+
+		ids = (_.isUndefined(ids) || _.isNull(ids))?this.arrayOfIds():ids;
+
+		return arrayutilities.map(ids, id => {
+			return this.getValidState({id: id, entity: entity, state_name: state_name});
+		});
+
+	}
+
+	static getValidState({id, entity = null, state_name = null}){
+
+		entity = (_.isNull(entity))?this.getValidId(id):entity;
+		state_name = (_.isNull(state_name))?randomutilities.selectRandomFromArray(['Closesession','Createrebill','Billing','Recovery','Prefulfillment','Fulfillment','Postfulfillment','Tracking']):state_name;
+		let step = 'Start';
+		let execution = hashutilities.toSHA1(randomutilities.createRandomString(20));
+		let a_iso8601 = timestamp.getISO8601();
+
+		return {
+		  account: this.getTestAccountID(),
+		  created_at: a_iso8601,
+		  entity: entity,
+		  execution: execution,
+		  id: this.getValidId(id),
+		  name: state_name,
+		  step: step,
+		  updated_at: a_iso8601
+		};
+
+	}
 
 	static getValidFeatureFlag() {
 

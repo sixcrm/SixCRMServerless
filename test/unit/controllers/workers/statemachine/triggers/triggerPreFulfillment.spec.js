@@ -61,8 +61,8 @@ describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', (
             startDate: '2018-06-06T17:01:51.593Z'
           });
         }
-        getRunningExecutions({guid, state}){
-          expect(guid).to.be.a('string');
+        getRunningExecutions({id, state}){
+          expect(id).to.be.a('string');
           return Promise.resolve(null);
         }
       });
