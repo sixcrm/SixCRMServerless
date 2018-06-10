@@ -6,7 +6,6 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getsessionclosed",
       "Next": "Is Closed?",
-      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry": [
         {
@@ -39,7 +38,6 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-closesession",
       "Next": "Get Session Closed",
-      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry": [
         {
@@ -55,9 +53,24 @@
     "Clean-up Session": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupsession",
-      "End": true,
-      "InputPath": "$",
+      "Next":"Trigger Create Rebill",
       "ResultPath": "$.status",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ]
+    },
+    "Trigger Create Rebill": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggercreaterebill",
+      "ResultPath": "$.status",
+      "End":true,
       "Retry": [
         {
           "ErrorEquals": [
