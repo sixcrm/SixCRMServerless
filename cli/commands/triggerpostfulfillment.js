@@ -46,7 +46,7 @@ async function _handler(argv) {
 
 	const parameters = {
 		stateMachineName: 'Postfulfillment',
-		input:{guid: shipping_receipt_uuid}
+		guid: shipping_receipt_uuid
 	};
 
 	let result = await new StepFunctionTriggerController().execute(parameters);

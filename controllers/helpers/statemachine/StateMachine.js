@@ -179,7 +179,7 @@ module.exports = class StateMachineHelperController {
 		du.debug('Get Entity Input Type From State Machine');
 
 		let translation = {
-			rebill: ['Billing', 'Recover', 'Prefulfillment', 'Fulfillment', 'Postfulfillment'],
+			rebill: ['Billing', 'Recovery', 'Prefulfillment', 'Fulfillment', 'Postfulfillment'],
 			shipping_receipt:['Tracking'],
 			session:['Closesession', 'Createrebill']
 		};

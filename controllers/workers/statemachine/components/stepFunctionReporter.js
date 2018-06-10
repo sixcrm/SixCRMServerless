@@ -21,8 +21,6 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 
 		this.validateEvent(event);
 
-		//let additional_parameters = this.getAdditionalParameters(event);
-
 		await this.report(event);
 
 		return 'SUCCESS';
@@ -38,15 +36,6 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 				event[key] = event.reporting[key];
 			});
 		}
-
-	}
-
-	getAdditionalParameters(event){
-
-		du.debug('Get Additional Parameters');
-
-		du.info(event);
-		return {};
 
 	}
 
@@ -120,7 +109,7 @@ module.exports = class StepFunctionReporterController extends StepFunctionWorker
 
 	}
 
-	async getEntity(event){
+	getEntity(event){
 
 		du.debug('Get Entity');
 

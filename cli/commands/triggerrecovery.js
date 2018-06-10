@@ -45,8 +45,8 @@ async function _handler(argv) {
 	//const restart = argv.restart;
 
 	const parameters = {
-		stateMachineName: 'Recovery',
-		input:{guid: rebill_uuid}
+		guid: rebill_uuid,
+		stateMachineName: 'Recovery'
 	};
 
 	let result = await new StepFunctionTriggerController().execute(parameters);

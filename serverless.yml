@@ -134,41 +134,43 @@ functions:
   report:
     handler: handlers/statemachine/handlers.report
 
+#Create Rebill
+  getsessioncomplete:
+    handler: handlers/statemachine/handlers.getsessioncomplete
+  createrebill:
+    handler: handlers/statemachine/handlers.createrebill
+  completesession:
+    handler: handlers/statemachine/handlers.completesession
+
 #Close Session
   getsessionclosed:
     handler: handlers/statemachine/handlers.getsessionclosed
-
   closesession:
     handler: handlers/statemachine/handlers.closesession
-
   cleanupsession:
     handler: handlers/statemachine/handlers.cleanupsession
 
 # Carrier
   gettrackinginformation:
     handler: handlers/statemachine/handlers.gettrackinginformation
-
   senddeliverynotification:
     handler: handlers/statemachine/handlers.senddeliverynotification
 
 # Post fulfillment
   gettrackingnumber:
     handler: handlers/statemachine/handlers.gettrackingnumber
-
   triggertracking:
     handler: handlers/statemachine/handlers.triggertracking
 
 # Fulfillment
   notifyfulfillmentproviders:
     handler: handlers/statemachine/handlers.notifyfulfillmentproviders
-
   triggerpostfulfillment:
     handler: handlers/statemachine/handlers.triggerpostfulfillment
 
   # Pre-Fulfillment
   getfulfillmentrequired:
     handler: handlers/statemachine/handlers.getfulfillmentrequired
-
   triggerfulfillment:
     handler: handlers/statemachine/handlers.triggerfulfillment
 

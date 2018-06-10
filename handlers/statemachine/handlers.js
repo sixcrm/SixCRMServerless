@@ -2,6 +2,7 @@ const StepFunctionHandler = require('./stepfunction-handler');
 
 const GetTrackingInformationController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getTrackingInformation.js');
 const GetSessionClosedController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionClosed.js');
+const GetSessionCompleteController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionComplete.js');
 const GetTrackingNumberController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getTrackingNumber.js');
 const GetFulfillmentRequiredController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getFulfillmentRequired.js');
 const GetRecoverDateController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getRecoverDate.js');
@@ -12,8 +13,11 @@ const ReportController = global.SixCRM.routes.include('controllers', 'workers/st
 const SendDeliveryNotificationController = global.SixCRM.routes.include('controllers', 'workers/statemachine/sendDeliveryNotification.js');
 const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('controllers', 'workers/statemachine/notifyFulfillmentProviders.js');
 const CloseSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/closeSession.js');
+const CreateRebillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/createRebill.js');
+const CompleteSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/completeSession.js');
 const CleanupSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupSession.js');
 
+const TriggerCreateRebillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerCreateRebill.js');
 const TriggerTrackingController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerTracking.js');
 const TriggerPostFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerPostFulfillment.js');
 const TriggerFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerFulfillment.js');
@@ -32,12 +36,16 @@ module.exports = {
 	getsessionclosed: handleStepFunction((event) => new GetSessionClosedController().execute(event)),
 	closesession: handleStepFunction((event) => new CloseSessionController().execute(event)),
 	cleanupsession: handleStepFunction((event) => new CleanupSessionController().execute(event)),
+	completesession: handleStepFunction((event) => new CompleteSessionController().execute(event)),
+	getsessioncomplete: handleStepFunction((event) => new GetSessionCompleteController().execute(event)),
+	createrebill: handleStepFunction((event) => new CreateRebillController().execute(event)),
 	report: handleStepFunction((event) => new ReportController().execute(event)),
 	triggerpostfulfillment: handleStepFunction((event) => new TriggerPostFulfillmentController().execute(event)),
 	triggerfulfillment: handleStepFunction((event) => new TriggerFulfillmentController().execute(event)),
 	triggerprefulfillment: handleStepFunction((event) => new TriggerPreFulfillmentController().execute(event)),
 	triggertracking: handleStepFunction((event) => new TriggerTrackingController().execute(event)),
 	triggerrecovery: handleStepFunction((event) => new TriggerRecoveryController().execute(event)),
+	triggercreaterebill: handleStepFunction((event) => new TriggerCreateRebillController().execute(event)),
 };
 
 function handleStepFunction(delegate) {
