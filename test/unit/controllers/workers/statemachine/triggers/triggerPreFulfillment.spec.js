@@ -47,7 +47,7 @@ describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', (
 
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'statemachine/StateMachine.js'), class {
         constructor(){}
-        startExecution(parameters){
+        startExecution({parameters}){
           expect(parameters).to.be.a('object');
           expect(parameters).to.have.property('stateMachineName');
           expect(parameters.stateMachineName).to.equal('Prefulfillment');
@@ -61,12 +61,16 @@ describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', (
             startDate: '2018-06-06T17:01:51.593Z'
           });
         }
+        getRunningExecutions({guid, state}){
+          expect(guid).to.be.a('string');
+          return Promise.resolve(null);
+        }
       });
 
       const TriggerPreFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPreFulfillment.js');
       let triggerPreFulfillmentController = new TriggerPreFulfillmentController();
 
-      let result = await triggerPreFulfillmentController.execute(parameters);
+      let result = await triggerPreFulfillmentController.execute({parameters: parameters});
 
       expect(result).to.be.a('object')
       expect(result).to.have.property('executionArn');

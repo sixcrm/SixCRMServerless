@@ -69,9 +69,6 @@ let rebillType = require('./rebill/rebillType');
 let returnInputType = require('./return/returnInputType');
 let returnType = require('./return/returnType');
 
-let billInputType = require('./bill/billInputType');
-let billType = require('./bill/billType');
-
 let roleInputType = require('./role/roleInputType');
 let roleType = require('./role/roleType');
 
@@ -124,7 +121,6 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
 // Entity Controllers
-const BillController = global.SixCRM.routes.include('controllers', 'entities/Bill.js');
 const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
@@ -1407,79 +1403,6 @@ module.exports.graphObj = new GraphQLObjectType({
 
 				return productScheduleController.delete({
 					id: id
-				});
-			}
-		},
-		createbill: {
-			type: billType.graphObj,
-			description: 'Adds a new bill.',
-			args: {
-				bill: {
-					type: billInputType.graphObj
-				}
-			},
-			resolve: (value, bill) => {
-				const billController = new BillController();
-
-				return billController.create({
-					entity: bill.bill
-				});
-			}
-		},
-		updatebill: {
-			type: billType.graphObj,
-			description: 'Updates a bill.',
-			args: {
-				bill: {
-					type: billInputType.graphObj
-				}
-			},
-			resolve: (value, bill) => {
-				const billController = new BillController();
-
-				return billController.update({
-					entity: bill.bill
-				});
-			}
-		},
-		deletebill: {
-			type: deleteOutputType.graphObj,
-			description: 'Deletes a bill.',
-			args: {
-				id: {
-					description: 'id of the bill',
-					type: new GraphQLNonNull(GraphQLString)
-				}
-			},
-			resolve: (value, bill) => {
-				var id = bill.id;
-				const billController = new BillController();
-
-				return billController.delete({
-					id: id
-				});
-			}
-		},
-		updatebillwithpaymenttoken: {
-			type: billType.graphObj,
-			description: 'Updates a bill with a payment token.',
-			args: {
-				id: {
-					description: 'id of the bill',
-					type: new GraphQLNonNull(GraphQLString)
-				},
-				token: {
-					description: 'The payment token.',
-					type: new GraphQLNonNull(GraphQLString)
-				}
-			},
-			resolve: (value, bill) => {
-				const BillHelperController = global.SixCRM.routes.include('helpers', 'entities/bill/Bill.js');
-				let billHelperController = new BillHelperController();
-
-				return billHelperController.setPayment({
-					id: bill.id,
-					token: bill.token
 				});
 			}
 		},
