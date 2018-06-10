@@ -24,7 +24,7 @@
     },
     "Recover": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-recover",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-bill",
       "Next": "Is Success?",
       "InputPath": "$",
       "ResultPath": "$.status",

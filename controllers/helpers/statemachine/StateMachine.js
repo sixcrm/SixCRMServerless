@@ -40,8 +40,6 @@ module.exports = class StateMachineHelperController {
 			execution: parameters.name
 		});
 
-		du.info(result);  process.exit();
-
 		if(!_.isObject(result) || !_.has(result, 'id')){
 			throw eu.getError('server', 'Unable to create state machine record "Start"');
 		}
