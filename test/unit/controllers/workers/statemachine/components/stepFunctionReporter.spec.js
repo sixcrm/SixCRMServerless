@@ -34,17 +34,17 @@ describe('controllers/workers/statemachine/components/stepFunctionReporter.js', 
   });
 
   describe('consolidateEvent', () => {
-    it('successfullt consolidates the event', () => {
+    it('successfully consolidates the event', () => {
 
       let event = {
-        "guid": "564c59b0-978c-4f39-accd-906edf13bd21",
-        "stateMachineName": "Billing",
-        "executionid": "4a86b6c8c0c1b2f4b721a6f99a4595853142c16f",
-        "status": "NOSHIP",
-        "reporting": {
-          "state": "Prefulfillment",
-          "step": "No Fulfillment Required",
-          "message": "No Fulfillment Required."
+        guid: "564c59b0-978c-4f39-accd-906edf13bd21",
+        stateMachineName: "Billing",
+        executionid: "4a86b6c8c0c1b2f4b721a6f99a4595853142c16f",
+        status: "NOSHIP",
+        reporting: {
+          state: "Prefulfillment",
+          step: "No Fulfillment Required",
+          message: "No Fulfillment Required."
         }
       };
 
@@ -120,8 +120,109 @@ describe('controllers/workers/statemachine/components/stepFunctionReporter.js', 
 
   });
 
+  describe('getExecution', async () => {
+    it('successfully aquires the execution', async () => {
 
-  xdescribe('report', async () => {
+      let event = {
+        executionid: 'someexecutionid'
+      };
+
+      const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
+      let stepFunctionReporterController = new StepFunctionReporterController();
+
+      let result = stepFunctionReporterController.getExecution(event);
+      expect(result).to.equal('someexecutionid');
+
+    });
+
+    it('returns null', async () => {
+
+      let event = {};
+
+      const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
+      let stepFunctionReporterController = new StepFunctionReporterController();
+
+      let result = stepFunctionReporterController.getExecution(event);
+      expect(result).to.equal(null);
+
+    });
+  });
+
+  describe('getName', async () => {
+    it('successfully aquires the name', async () => {
+
+      const event = {state: 'somestate'};
+
+      const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
+      let stepFunctionReporterController = new StepFunctionReporterController();
+
+      let result = stepFunctionReporterController.getName(event);
+      expect(result).to.equal('somestate');
+
+    });
+
+    it('successfully aquires the name from the class', async () => {
+
+      const event = {};
+      const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
+      let stepFunctionReporterController = new StepFunctionReporterController();
+      stepFunctionReporterController.state_name = 'somestate';
+
+      let result = stepFunctionReporterController.getName(event);
+      expect(result).to.equal('somestate');
+
+    });
+
+    it('successfully aquires the name from the class', async () => {
+
+      const event = {
+        stateMachineName: 'somestate'
+      };
+
+      const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
+      let stepFunctionReporterController = new StepFunctionReporterController();
+      stepFunctionReporterController.state_name = 'somestate';
+
+      let result = stepFunctionReporterController.getName(event);
+      expect(result).to.equal('somestate');
+
+    });
+
+  });
+
+  describe('getEntity', () => {
+
+    it('successfully aquires the guid', () => {
+
+      const rebill = MockEntities.getValidRebill();
+
+      const event = {
+        guid: rebill.id
+      };
+
+      const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
+      let stepFunctionReporterController = new StepFunctionReporterController();
+
+      let result = stepFunctionReporterController.getEntity(event);
+      expect(result).to.equal(rebill.id);
+
+    });
+
+    it('returns null', () => {
+
+      const event = {};
+
+      const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
+      let stepFunctionReporterController = new StepFunctionReporterController();
+
+      let result = stepFunctionReporterController.getEntity(event);
+      expect(result).to.equal(null);
+
+    });
+
+  });
+
+  describe('report', async () => {
 
     it('successfully reports', async () => {
 
@@ -144,7 +245,8 @@ describe('controllers/workers/statemachine/components/stepFunctionReporter.js', 
           expect(entity).to.have.property('execution');
           return Promise.resolve(entity);
         }
-      })
+      });
+
       const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
       let stepFunctionReporterController = new StepFunctionReporterController();
       stepFunctionReporterController.state_name = 'Testing';
@@ -166,13 +268,11 @@ describe('controllers/workers/statemachine/components/stepFunctionReporter.js', 
 
       const event = {
         guid: shipping_receipt.id,
-        executionid: executionid
-      };
-
-      const additional_parameters = {
         account: shipping_receipt.account,
-        message: 'This is a message',
-        state:'Some State!'
+        state:'Somestate',
+        message: 'somemessage',
+  			step: 'somestep',
+  			executionid: executionid
       };
 
       mockery.registerMock(global.SixCRM.routes.path('entities', 'State.js'), class {
@@ -183,23 +283,21 @@ describe('controllers/workers/statemachine/components/stepFunctionReporter.js', 
           expect(entity).to.have.property('entity');
           expect(entity).to.have.property('execution');
           expect(entity).to.have.property('message');
-          expect(entity).to.have.property('state');
+          expect(entity).to.have.property('step');
           return Promise.resolve(entity);
         }
       });
 
       const StepFunctionReporterController = global.SixCRM.routes.include('workers', 'statemachine/components/stepFunctionReporter.js');
       let stepFunctionReporterController = new StepFunctionReporterController();
-      stepFunctionReporterController.state_name = 'Testing';
-      stepFunctionReporterController.step_name = 'Start';
 
-      let result = await stepFunctionReporterController.report(event, additional_parameters);
+      let result = await stepFunctionReporterController.report(event);
       expect(result.entity).to.equal(shipping_receipt.id);
       expect(result.account).to.equal(shipping_receipt.account);
-      expect(result.name).to.equal('Testing');
+      expect(result.name).to.equal('Somestate');
       expect(result.execution).to.equal(executionid);
-      expect(result.message).to.equal(additional_parameters.message);
-      expect(result.state).to.equal(additional_parameters.state);
+      expect(result.message).to.equal('somemessage');
+      expect(result.name).to.equal('Somestate');
 
     });
 

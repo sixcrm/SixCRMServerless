@@ -20,9 +20,9 @@
     "Wait For Recovery Date": {
       "Type": "Wait",
       "TimestampPath": "$.recoverdate",
-      "Next": "Recover"
+      "Next": "Bill"
     },
-    "Recover": {
+    "Bill": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-bill",
       "Next": "Is Success?",
@@ -51,52 +51,21 @@
           "Next": "To Hard Decline"
         }
       ],
-      "Default":"To Fulfillment"
+      "Default":"Trigger Pre-Fulfillment"
     },
-    "To Fulfillment":{
-      "Type":"Parallel",
-      "End":true,
-      "Branches":[
-        {
-          "StartAt":"Report Pass",
-          "States":{
-            "Report Pass":{
-              "Type":"Pass",
-              "Result":{
-                "state":"Recovery",
-                "step":"Recover",
-                "message":"Recover Successful"
-              },
-              "ResultPath":"$.reporting",
-              "Next":"Report"
-            },
-            "Report":{
-              "Type":"Task",
-              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-report",
-              "End":true
-            }
+    "Trigger Pre-Fulfillment": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerprefullfillment",
+      "End": true,
+      "InputPath": "$",
+      "ResultPath": "$.status",
+      "Retry" : [
+          {
+            "ErrorEquals": [ "State.ALL" ],
+            "IntervalSeconds": 3,
+            "MaxAttempts": 5,
+            "BackoffRate": 5
           }
-        },
-        {
-          "StartAt":"Trigger Pre-Fulfillment",
-          "States":{
-            "Trigger Pre-Fulfillment": {
-              "Type": "Task",
-              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerprefullfillment",
-              "End": true,
-              "InputPath": "$",
-              "ResultPath": "$.status",
-              "Retry" : [
-                  {
-                    "ErrorEquals": [ "State.ALL" ],
-                    "IntervalSeconds": 3,
-                    "MaxAttempts": 5,
-                    "BackoffRate": 5
-                  }
-              ]
-            }
-          }
-        }
       ]
     },
     "To Hard Decline":{

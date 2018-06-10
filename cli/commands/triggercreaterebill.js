@@ -46,7 +46,7 @@ async function _handler(argv) {
 
 	const parameters = {
 		stateMachineName: 'Createrebill',
-		input:{guid: session_uuid}
+		guid: session_uuid
 	};
 
 	let result = await new StepFunctionTriggerController().execute(parameters);

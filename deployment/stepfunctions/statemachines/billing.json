@@ -28,7 +28,7 @@
         {
           "Variable": "$.status",
           "StringEquals": "HARDDECLINE",
-          "Next": "Hard Declined"
+          "Next": "To Hard Declined"
         }
       ],
       "Default":"Trigger Pre-Fulfillment"
@@ -50,35 +50,65 @@
     },
     "Trigger Recovery": {
       "Type": "Task",
-      "Next": "Recovery Triggered",
+      "Next":"Recovery Triggered",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerrecovery",
       "InputPath": "$",
       "ResultPath": "$.status",
       "Retry" : [
-          {
-            "ErrorEquals": [ "State.ALL" ],
-            "IntervalSeconds": 3,
-            "MaxAttempts": 5,
-            "BackoffRate": 5
-          }
+        {
+          "ErrorEquals": [ "State.ALL" ],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 5,
+          "BackoffRate": 5
+        }
       ]
     },
     "Recovery Triggered": {
       "Type":"Succeed"
     },
-    "Hard Declined": {
-      "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
-      "InputPath": "$",
-      "ResultPath": "$.status",
+    "To Hard Declined":{
+      "Type":"Parallel",
       "Next":"Hard Decline Failure",
-      "Retry" : [
-          {
-            "ErrorEquals": [ "State.ALL" ],
-            "IntervalSeconds": 3,
-            "MaxAttempts": 5,
-            "BackoffRate": 5
+      "Branches":[
+        {
+          "StartAt":"Report Hard Decline Pass",
+          "States":{
+            "Report Hard Decline Pass":{
+              "Type":"Pass",
+              "Result":{
+                "state":"Billing",
+                "step":"Hard Decline",
+                "message":"Billing Hard Declined"
+              },
+              "ResultPath":"$.reporting",
+              "Next":"Report Hard Decline"
+            },
+            "Report Hard Decline":{
+              "Type":"Task",
+              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-report",
+              "End":true
+            }
           }
+        },
+        {
+          "StartAt":"Hard Declined",
+          "States":{
+            "Hard Declined": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
+              "ResultPath": "$.status",
+              "End":true,
+              "Retry" : [
+                  {
+                    "ErrorEquals": [ "State.ALL" ],
+                    "IntervalSeconds": 3,
+                    "MaxAttempts": 5,
+                    "BackoffRate": 5
+                  }
+              ]
+            }
+          }
+        }
       ]
     },
     "Hard Decline Failure": {
