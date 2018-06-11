@@ -16,7 +16,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 	}
 
-	async execute({parameters, restart = false, fatal = false}){
+	async execute(parameters, restart = false, fatal = false){
 
 		du.debug('execute');
 

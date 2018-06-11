@@ -49,7 +49,7 @@ async function _handler(argv) {
 		stateMachineName: 'Billing'
 	};
 
-	let result = await new StepFunctionTriggerController().execute({parameters: parameters, restart: restart});
+	let result = await new StepFunctionTriggerController().execute(parameters, restart);
 
 	du.info(result);
 

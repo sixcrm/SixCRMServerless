@@ -49,7 +49,7 @@ async function _handler(argv) {
 		guid: session_uuid
 	};
 
-	let result = await new StepFunctionTriggerController().execute({parameters: parameters, restart: restart});
+	let result = await new StepFunctionTriggerController().execute(parameters, restart);
 
 	du.info(result);
 
