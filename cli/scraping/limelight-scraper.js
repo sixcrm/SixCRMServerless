@@ -103,7 +103,7 @@ module.exports = class LimelightScraper {
 
 	async _getGatewayIds(cookie) {
 
-		const url = `${this._url}/ajax_min.php?draw=1&columns%5B0%5D%5Bdata%5D=ID&columns%5B0%5D%5Bname%5D=&columns%5B0%5D%5Bsearchable%5D=false&columns%5B0%5D%5Borderable%5D=false&columns%5B0%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B0%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B1%5D%5Bdata%5D=LOGO_IMG&columns%5B1%5D%5Bname%5D=LOGO_IMG&columns%5B1%5D%5Bsearchable%5D=true&columns%5B1%5D%5Borderable%5D=false&columns%5B1%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B1%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B2%5D%5Bdata%5D=ACCOUNT_NAME&columns%5B2%5D%5Bname%5D=&columns%5B2%5D%5Bsearchable%5D=true&columns%5B2%5D%5Borderable%5D=true&columns%5B2%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B2%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B3%5D%5Bdata%5D=PROVIDER_TYPE_FORMATTED&columns%5B3%5D%5Bname%5D=PROVIDER_TYPE_FORMATTED&columns%5B3%5D%5Bsearchable%5D=true&columns%5B3%5D%5Borderable%5D=true&columns%5B3%5D%5Bsearch%5D%5Bvalue%5D=payment&columns%5B3%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B4%5D%5Bdata%5D=ALIAS_NAME&columns%5B4%5D%5Bname%5D=ALIAS_NAME&columns%5B4%5D%5Bsearchable%5D=true&columns%5B4%5D%5Borderable%5D=true&columns%5B4%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B4%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B5%5D%5Bdata%5D=GLOBAL_CAP&columns%5B5%5D%5Bname%5D=GLOBAL_CAP&columns%5B5%5D%5Bsearchable%5D=true&columns%5B5%5D%5Borderable%5D=true&columns%5B5%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B5%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B6%5D%5Bdata%5D=CURRENCY&columns%5B6%5D%5Bname%5D=&columns%5B6%5D%5Bsearchable%5D=true&columns%5B6%5D%5Borderable%5D=false&columns%5B6%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B6%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B7%5D%5Bdata%5D=MID_GROUP&columns%5B7%5D%5Bname%5D=MID_GROUP&columns%5B7%5D%5Bsearchable%5D=true&columns%5B7%5D%5Borderable%5D=true&columns%5B7%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B7%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B8%5D%5Bdata%5D=CVV_TYPE&columns%5B8%5D%5Bname%5D=CVV_TYPE&columns%5B8%5D%5Bsearchable%5D=true&columns%5B8%5D%5Borderable%5D=true&columns%5B8%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B8%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B9%5D%5Bdata%5D=CREATE_DATE_FORMATTED&columns%5B9%5D%5Bname%5D=CREATE_DATE_FORMATTED&columns%5B9%5D%5Bsearchable%5D=true&columns%5B9%5D%5Borderable%5D=true&columns%5B9%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B9%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B10%5D%5Bdata%5D=STATUS_FORMATTED&columns%5B10%5D%5Bname%5D=STATUS_FORMATTED&columns%5B10%5D%5Bsearchable%5D=true&columns%5B10%5D%5Borderable%5D=true&columns%5B10%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B10%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B11%5D%5Bdata%5D=PROVIDER_TYPE_ID&columns%5B11%5D%5Bname%5D=&columns%5B11%5D%5Bsearchable%5D=true&columns%5B11%5D%5Borderable%5D=false&columns%5B11%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B11%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B12%5D%5Bdata%5D=ROW_ACTIONS&columns%5B12%5D%5Bname%5D=&columns%5B12%5D%5Bsearchable%5D=true&columns%5B12%5D%5Borderable%5D=false&columns%5B12%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B12%5D%5Bsearch%5D%5Bregex%5D=false&start=0&length=10&search%5Bvalue%5D=&search%5Bregex%5D=false&list_id=my_providers&action=ll_my_providers_ajax&method=draw_list&_=1528382510049`;
+		const url = `${this._url}/ajax_min.php?draw=1&columns%5B0%5D%5Bdata%5D=ID&columns%5B0%5D%5Bname%5D=&columns%5B0%5D%5Bsearchable%5D=false&columns%5B0%5D%5Borderable%5D=false&columns%5B0%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B0%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B1%5D%5Bdata%5D=LOGO_IMG&columns%5B1%5D%5Bname%5D=LOGO_IMG&columns%5B1%5D%5Bsearchable%5D=true&columns%5B1%5D%5Borderable%5D=false&columns%5B1%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B1%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B2%5D%5Bdata%5D=ACCOUNT_NAME&columns%5B2%5D%5Bname%5D=&columns%5B2%5D%5Bsearchable%5D=true&columns%5B2%5D%5Borderable%5D=true&columns%5B2%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B2%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B3%5D%5Bdata%5D=PROVIDER_TYPE_FORMATTED&columns%5B3%5D%5Bname%5D=PROVIDER_TYPE_FORMATTED&columns%5B3%5D%5Bsearchable%5D=true&columns%5B3%5D%5Borderable%5D=true&columns%5B3%5D%5Bsearch%5D%5Bvalue%5D=payment&columns%5B3%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B4%5D%5Bdata%5D=ALIAS_NAME&columns%5B4%5D%5Bname%5D=ALIAS_NAME&columns%5B4%5D%5Bsearchable%5D=true&columns%5B4%5D%5Borderable%5D=true&columns%5B4%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B4%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B5%5D%5Bdata%5D=GLOBAL_CAP&columns%5B5%5D%5Bname%5D=GLOBAL_CAP&columns%5B5%5D%5Bsearchable%5D=true&columns%5B5%5D%5Borderable%5D=true&columns%5B5%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B5%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B6%5D%5Bdata%5D=CURRENCY&columns%5B6%5D%5Bname%5D=&columns%5B6%5D%5Bsearchable%5D=true&columns%5B6%5D%5Borderable%5D=false&columns%5B6%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B6%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B7%5D%5Bdata%5D=MID_GROUP&columns%5B7%5D%5Bname%5D=MID_GROUP&columns%5B7%5D%5Bsearchable%5D=true&columns%5B7%5D%5Borderable%5D=true&columns%5B7%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B7%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B8%5D%5Bdata%5D=CVV_TYPE&columns%5B8%5D%5Bname%5D=CVV_TYPE&columns%5B8%5D%5Bsearchable%5D=true&columns%5B8%5D%5Borderable%5D=true&columns%5B8%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B8%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B9%5D%5Bdata%5D=CREATE_DATE_FORMATTED&columns%5B9%5D%5Bname%5D=CREATE_DATE_FORMATTED&columns%5B9%5D%5Bsearchable%5D=true&columns%5B9%5D%5Borderable%5D=true&columns%5B9%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B9%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B10%5D%5Bdata%5D=STATUS_FORMATTED&columns%5B10%5D%5Bname%5D=STATUS_FORMATTED&columns%5B10%5D%5Bsearchable%5D=true&columns%5B10%5D%5Borderable%5D=true&columns%5B10%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B10%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B11%5D%5Bdata%5D=PROVIDER_TYPE_ID&columns%5B11%5D%5Bname%5D=&columns%5B11%5D%5Bsearchable%5D=true&columns%5B11%5D%5Borderable%5D=false&columns%5B11%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B11%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B12%5D%5Bdata%5D=ROW_ACTIONS&columns%5B12%5D%5Bname%5D=&columns%5B12%5D%5Bsearchable%5D=true&columns%5B12%5D%5Borderable%5D=false&columns%5B12%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B12%5D%5Bsearch%5D%5Bregex%5D=false&start=0&length=1000&search%5Bvalue%5D=&search%5Bregex%5D=false&list_id=my_providers&action=ll_my_providers_ajax&method=draw_list&_=1528382510049`;
 
 		const res = await request.get({
 			url,
@@ -272,9 +272,195 @@ module.exports = class LimelightScraper {
 
 	}
 
+	async getPaymentRoutes(cookie) {
+
+		const ids = await this._getPaymentRouteConfigurations(cookie);
+
+		const gateways = await BBPromise.reduce(ids, async (memo, id) => {
+
+			memo.push(await this._getPaymentRouteDetail(cookie, id));
+			return memo;
+
+		}, []);
+
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-payment-routes.json'), gateways);
+
+	}
+
+	async _getPaymentRouteConfigurations(cookie) {
+
+		const url = `${this._url}/load_balancer/index.php?SQL_HASH=fc43f8cc89911c44fb4b3a07942faf0f&PAGE_ID=index.php&LIST_NAME=load_balance_list&BUTTON_VALUE=listJump&LIST_FILTER_ALL=&list_jump=1&LIST_COL_SORT=&LIST_COL_SORT_ORDER=ASC&ROW_LIMIT=1000&LIST_SEQUENCE=1`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': '*/*',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			}
+		});
+
+		const content = JSON.parse(res.body).list;
+		const $ = cheerio.load(content);
+		const table = $('table tbody');
+
+		const ids = _.reduce(table.children(), (memo, row, i) => {
+
+			if (i === 0) {
+
+				return memo;
+
+			}
+
+			memo.push($(row.children[1]).html());
+			return memo;
+
+		}, []);
+
+		if (ids.length > 0) {
+
+			ids.splice(-1, 1);
+
+		}
+
+		return ids;
+
+	}
+
+	async _getPaymentRouteDetail(cookie, id) {
+
+		const url = `${this._url}/load_balancer/profile.php`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			},
+			qs: {
+				id
+			}
+		});
+
+		const $ = cheerio.load(res.body);
+
+		const name = $('input[id="name"]');
+		const desc = $('#desc');
+		const dailyWeightReset = $('input[id="daily_weight_reset_idOn"]');
+		const dailyInitialSubscriptionReset = $('input[id="daily_init_subscr_resetOn"]');
+		const reserveForecastPercent = $('input[id="reserve_forecast_pct_idOn"]');
+		const reserveForecastPercentCycle1 = $('input[name="first_rebill_pct"]');
+		const reserveForecastPercentCycle2 = $('input[name="second_rebill_pct"]');
+		const reserveForecastPercentCycle3 = $('input[name="third_rebill_pct"]');
+		const reserveForecastPercentCycle4 = $('input[name="fourth_rebill_pct"]');
+		const reserveForecastPercentCycle5 = $('input[name="fifth_rebill_pct"]');
+		const gatewayDeclinesLimit = $('input[id="declines_limit_dummy"]');
+		const gatewayDeclinesLimitAmt = $('input[id="declines_limit"]');
+		const allowReserveGateways = $('input[id="allow_reserveOn"]');
+		const threeDVerifyRouting = $('input[id="token_routing_flagOn"]');
+		const strictPreservation = $('input[id="strictPreservation"]');
+		const paymentRoutingProcess = $('select[id="lbc_process_type"] option:selected').text();
+		const midGroupRouting = $('select[id="mid_group_setting_id"] option:selected').text();
+		const currency = $('#currency');
+		const totalGateways = $('#total_gateways');
+		const totalCampaigns = $('#total_campaigns');
+		const processingAmt = $('#processing_amount');
+		const amtRemaining = $('#remaining_amount');
+		const amtUsed = $('#amount_used');
+		const monthlyForecast = $('#monthly_forecast');
+		const remainingForecastedRevenue = $('#remaining_forecasted_revenue');
+
+		const gatewaysTable = $('#gateway_list table tbody');
+
+		const gateways = _.reduce(gatewaysTable.children(), (memo, row, i) => {
+
+			if (i < 2 || i === gatewaysTable.children().length - 1) {
+
+				return memo;
+
+			}
+
+			const active = this._cleanseOutput($(row.children[1]).text());
+			const id = this._cleanseOutput($(row.children[5]).text().split('(')[1]).replace(/\)/, '');
+			const alias = this._cleanseOutput($(row.children[5]).text().split('(')[0]);
+			const initialOrderLimit = this._cleanseOutput($($(row).find($(`#initial_limit input[id=initial_${id}_input]`))[0]).val());
+			const rebillOrderLimit = this._cleanseOutput($($(row).find($(`#rebill_limit input[id=initial_${id}_input]`))[0]).val());
+			const monthlyCap = this._cleanseOutput($(`input[id=${id}_input]`).val());
+			const preserveBilling = this._cleanseOutput($(`input[id=${id}_preserve_gateway]`).val());
+			const reserveGateway = $($(row).find($(`.is_reserve`))[0]).attr('checked') !== undefined;
+			const globalCapRemaining = this._cleanseOutput($(`input[id=${id}_balance]`).val());
+			const globalMonthlyRemaining = this._cleanseOutput($($(row).find($('.global-monthly-remaining-percentage'))[0]).text());
+			const reserveForecastedRevenue = this._cleanseOutput($(row.children[15]).text());
+			const currentMonthlyCharges = this._cleanseOutput($(row.children[17]).text());
+			const remainingBalance = this._cleanseOutput($(row.children[19]).text());
+			const currentWeight = this._cleanseOutput($(row.children[21]).text());
+
+			memo.push({
+				id,
+				alias,
+				active,
+				initialOrderLimit,
+				rebillOrderLimit,
+				monthlyCap,
+				preserveBilling,
+				reserveGateway,
+				globalCapRemaining,
+				globalMonthlyRemaining,
+				reserveForecastedRevenue,
+				currentMonthlyCharges,
+				remainingBalance,
+				currentWeight
+			});
+
+			return memo;
+
+		}, []);
+
+		console.log(gateways);
+
+		return {
+			name: this._cleanseOutput(name.val()),
+			desc: this._cleanseOutput(desc.val()),
+			dailyWeightReset: this._cleanseOutput(dailyWeightReset.val()),
+			dailyInitialSubscriptionReset: this._cleanseOutput(dailyInitialSubscriptionReset.val()),
+			reserveForecastPercent: this._cleanseOutput(reserveForecastPercent.val()),
+			reserveForecastPercentCycle1: this._cleanseOutput(reserveForecastPercentCycle1.val()),
+			reserveForecastPercentCycle2: this._cleanseOutput(reserveForecastPercentCycle2.val()),
+			reserveForecastPercentCycle3: this._cleanseOutput(reserveForecastPercentCycle3.val()),
+			reserveForecastPercentCycle4: this._cleanseOutput(reserveForecastPercentCycle4.val()),
+			reserveForecastPercentCycle5: this._cleanseOutput(reserveForecastPercentCycle5.val()),
+			gatewayDeclinesLimit: this._cleanseOutput(gatewayDeclinesLimit.val()),
+			gatewayDeclinesLimitAmt: this._cleanseOutput(gatewayDeclinesLimitAmt.val()),
+			allowReserveGateways: this._cleanseOutput(allowReserveGateways.val()),
+			threeDVerifyRouting: this._cleanseOutput(threeDVerifyRouting.val()),
+			strictPreservation: this._cleanseOutput(strictPreservation.val()),
+			paymentRoutingProcess,
+			midGroupRouting,
+			currency: currency.text(),
+			totalGateways: totalGateways.text(),
+			totalCampaigns: totalCampaigns.text(),
+			processingAmt: processingAmt.text(),
+			amtRemaining: amtRemaining.text(),
+			amtUsed: amtUsed.text(),
+			monthlyForecast: monthlyForecast.text(),
+			remainingForecastedRevenue: remainingForecastedRevenue.text(),
+			gateways
+		}
+
+	}
+
 	_cleanseOutput(val) {
 
-		if (_.isUndefined(val)) {
+		if (!_.isString(val)) {
 
 			return val;
 
