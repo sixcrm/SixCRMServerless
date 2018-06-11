@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const random = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
@@ -106,6 +107,42 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		return Promise.resolve(true);
 
 	}
+
+	async getMostRecentRebill({session, on_or_before = timestamp.getISO8601()}){
+
+		du.debug('Get Most Recent Rebill');
+
+		if(!_.has(this, 'rebillController')){
+			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
+		}
+
+		const query_parameters = {
+			filter_expression: '#bill_atk <= :bill_atv AND #processingk <> :processingv',
+			expression_attribute_names: {
+				'#bill_atk': 'bill_at',
+				'#processingk': 'processing'
+			},
+			expression_attribute_values:{
+				':bill_atv': on_or_before,
+				':processingv': true
+			}
+		};
+
+		let result = await this.rebillController.queryBySecondaryIndex({query_parameters: query_parameters, field:'parentsession', index_name: 'parentsession-index', index_value: session.id, });
+
+		if(!_.has(result, 'rebills')){
+			throw eu.getError('server', 'Unexpected response.');
+		}
+
+		if(!_.isArray(result.rebills) || !arrayutilities.nonEmpty(result.rebills)){
+			return null;
+		}
+
+		return arrayutilities.sort(result.rebills, (a,b) => {return (b.bill_at - a.bill_at)})[0];
+
+	}
+
 
 	updateRebillProcessing() {
 

@@ -865,6 +865,16 @@ class MockEntities {
 
 	}
 
+	static getValidRebills(ids) {
+
+		ids = (_.isUndefined(ids) || _.isNull(ids))?this.arrayOfIds():ids;
+
+		return arrayutilities.map(ids, id => {
+			return this.getValidRebill(id);
+		});
+
+	}
+
 	static getValidRebill(id) {
 
 		return {

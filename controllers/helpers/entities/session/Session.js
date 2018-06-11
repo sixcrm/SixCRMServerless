@@ -132,6 +132,7 @@ module.exports = class SessionHelperController {
 		);
 
 	}
+
 	/*
 	async getPendingRebills(session){
 
