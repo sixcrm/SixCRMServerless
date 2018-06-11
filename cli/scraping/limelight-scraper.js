@@ -78,7 +78,9 @@ module.exports = class LimelightScraper {
 
 		}, []);
 
-		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-gateways.json'), gateways);
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-gateways.json'), gateways, {
+			spaces: 4
+		});
 
 	}
 
@@ -208,6 +210,7 @@ module.exports = class LimelightScraper {
 		const reserveCap = $('input[name="reserve cap"]');
 
 		return {
+			id,
 			credentials: {
 				user: this._cleanseOutput(usernameElement.val()),
 				password: this._cleanseOutput(passwordElement.val()),
@@ -283,7 +286,9 @@ module.exports = class LimelightScraper {
 
 		}, []);
 
-		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-payment-routes.json'), gateways);
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-payment-routes.json'), gateways, {
+			spaces: 4
+		});
 
 	}
 
@@ -426,6 +431,7 @@ module.exports = class LimelightScraper {
 		}, []);
 
 		return {
+			id,
 			name: this._cleanseOutput(name.val()),
 			desc: this._cleanseOutput(desc.val()),
 			dailyWeightReset: this._cleanseOutput(dailyWeightReset.val()),
@@ -452,6 +458,82 @@ module.exports = class LimelightScraper {
 			monthlyForecast: monthlyForecast.text(),
 			remainingForecastedRevenue: remainingForecastedRevenue.text(),
 			gateways
+		}
+
+	}
+
+	async getCampaigns(cookie, ids) {
+
+		const campaigns = await BBPromise.reduce(ids, async (memo, id) => {
+
+			memo.push(await this._getCampaignDetail(cookie, id));
+			return memo;
+
+		}, []);
+
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-campaigns.json'), campaigns, {
+			spaces: 4
+		});
+
+	}
+
+	async _getCampaignDetail(cookie, id) {
+
+		const url = `${this._url}/campaign/profile.php`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			},
+			qs: {
+				id
+			}
+		});
+
+		const $ = cheerio.load(res.body);
+
+		const currency = this._cleanseOutput($('#campaign_currency').text());
+		const name = this._cleanseOutput($('#input_campaign_name_id').val());
+		const desc = this._cleanseOutput($('#campaign_description').text());
+		const ccGateway = $('select[id="gateway_id"] option:selected').text();
+		const paymentRouting = $('select[id="gateway_lbc_id"] option:selected').text();
+
+		const productsTable = $('.product-table-row tbody');
+
+		const products = _.reduce(productsTable.children(), (memo, row, i) => {
+
+			if (i === productsTable.length - 1) {
+
+				return memo;
+
+			}
+
+			const cell = $(row.children[1]);
+			const id = this._cleanseOutput($(cell.find($('input[id="products_main_id"]'))[0]).val());
+
+			memo.push({
+				id
+			});
+
+			return memo;
+
+		}, []);
+
+		return {
+			id,
+			name,
+			desc,
+			currency,
+			ccGateway,
+			paymentRouting,
+			products
 		}
 
 	}
