@@ -49,7 +49,7 @@ async function _handler(argv) {
 		stateMachineName: 'Recovery'
 	};
 
-	let result = await new StepFunctionTriggerController().execute({parameters: parameters, restart: restart});
+	let result = await new StepFunctionTriggerController().execute(parameters, restart);
 
 	du.info(result);
 

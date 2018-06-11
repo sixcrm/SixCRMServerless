@@ -70,7 +70,7 @@ describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', (
       const TriggerPreFulfillmentController = global.SixCRM.routes.include('workers', 'statemachine/triggers/triggerPreFulfillment.js');
       let triggerPreFulfillmentController = new TriggerPreFulfillmentController();
 
-      let result = await triggerPreFulfillmentController.execute({parameters: parameters});
+      let result = await triggerPreFulfillmentController.execute(parameters);
 
       expect(result).to.be.a('object')
       expect(result).to.have.property('executionArn');
