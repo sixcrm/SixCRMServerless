@@ -20,6 +20,14 @@ module.exports = class GetSessionRebillController extends stepFunctionWorkerCont
 
 		this.validateEvent(event);
 
+		if(_.has(event, 'rebill')){
+
+			let rebill = await this.getRebill(event.rebill);
+
+			return this.respond(rebill);
+
+		}
+
 		let session = await this.getSession(event.guid);
 
 		let rebill = await this.getMostRecentRebill(session);
