@@ -28,7 +28,7 @@
         {
           "Variable": "$.status",
           "StringEquals": "HARDDECLINE",
-          "Next": "To Hard Declined"
+          "Next": "Hard Declined"
         }
       ],
       "Default":"Trigger Pre-Fulfillment"
@@ -66,48 +66,17 @@
     "Recovery Triggered": {
       "Type":"Succeed"
     },
-    "To Hard Declined":{
-      "Type":"Parallel",
+    "Hard Declined": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
+      "ResultPath": "$.status",
       "Next":"Hard Decline Failure",
-      "Branches":[
+      "Retry" : [
         {
-          "StartAt":"Report Hard Decline Pass",
-          "States":{
-            "Report Hard Decline Pass":{
-              "Type":"Pass",
-              "Result":{
-                "state":"Billing",
-                "step":"Hard Decline",
-                "message":"Billing Hard Declined"
-              },
-              "ResultPath":"$.reporting",
-              "Next":"Report Hard Decline"
-            },
-            "Report Hard Decline":{
-              "Type":"Task",
-              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-report",
-              "End":true
-            }
-          }
-        },
-        {
-          "StartAt":"Hard Declined",
-          "States":{
-            "Hard Declined": {
-              "Type": "Task",
-              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
-              "ResultPath": "$.status",
-              "End":true,
-              "Retry" : [
-                  {
-                    "ErrorEquals": [ "State.ALL" ],
-                    "IntervalSeconds": 3,
-                    "MaxAttempts": 5,
-                    "BackoffRate": 5
-                  }
-              ]
-            }
-          }
+          "ErrorEquals": [ "State.ALL" ],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 5,
+          "BackoffRate": 5
         }
       ]
     },
