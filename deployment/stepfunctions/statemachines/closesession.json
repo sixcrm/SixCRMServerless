@@ -53,8 +53,8 @@
     "Clean-up Session": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupsession",
-      "Next":"Trigger Substates",
-      "ResultPath": "$.status",
+      "Next":"Has Rebill?",
+      "ResultPath": "$.rebill",
       "Retry": [
         {
           "ErrorEquals": [
@@ -66,14 +66,28 @@
         }
       ]
     },
+    "Has Rebill?":{
+      "Type":"Choice",
+      "Choices": [
+        {
+          "Variable": "$.rebill",
+          "StringEquals": "NOREBILL",
+          "Next": "No Rebill Session Closed"
+        }
+      ],
+      "Default": "Trigger Substates"
+    },
+    "No Rebill Session Closed":{
+      "Type":"Succeed"
+    },
     "Trigger Substates":{
       "Type":"Parallel",
       "End":true,
       "Branches":[
         {
-          "StartAt":"Trigger Create Rebill",
+          "StartAt":"Trigger Create Next Rebill",
           "States":{
-            "Trigger Create Rebill": {
+            "Trigger Create Next Rebill": {
               "Type": "Task",
               "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggercreaterebill",
               "ResultPath": "$.status",

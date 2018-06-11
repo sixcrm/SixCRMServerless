@@ -327,7 +327,7 @@ class MockEntities {
 
 		max = (_.isUndefined(max) || _.isNull(max)) ? 10 : max;
 
-		let arraycount = randomutilities.randomInt(1, max);
+		let arraycount = randomutilities.randomInt(2, max);
 
 		let return_array = [];
 

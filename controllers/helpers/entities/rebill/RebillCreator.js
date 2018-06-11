@@ -6,6 +6,9 @@ const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const currencyutilities = global.SixCRM.routes.include('lib', 'currency-utilities.js');
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
@@ -555,17 +558,13 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		}
 
-		let rebill_prototype = {
-			account: this.parameters.get('session').account,
-			parentsession: this.parameters.get('session').id,
-			products: this.parameters.get('transactionproducts'),
+		let rebill_prototype = this.createRebillPrototype({
+			session: this.parameters.get('session'),
+			transaction_products: this.parameters.get('transactionproducts'),
 			bill_at: this.parameters.get('billdate'),
-			amount: this.parameters.get('amount')
-		};
-
-		if(!_.isNull(product_schedules)){
-			rebill_prototype.product_schedules = product_schedules;
-		}
+			amount: this.parameters.get('amount'),
+			product_schedules: product_schedules
+		});
 
 		if(this.parameters.get('nextproductschedulebilldaynumber') == 0){
 			rebill_prototype.processing = true;
@@ -599,6 +598,42 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		du.debug('Return Rebill');
 
 		return Promise.resolve(this.parameters.get('rebill'));
+
+	}
+
+	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), amount = 0.00, product_schedules = null}){
+
+		du.debug('Create Rebill Prototype');
+
+		if(!_.has(session, 'account')){
+			throw eu.getError('server', 'Session missing "account" property.');
+		}
+
+		if(!_.has(session, 'id')){
+			throw eu.getError('server', 'Session missing "id" property.');
+		}
+
+		if(!stringutilities.isISO8601(bill_at)){
+			throw eu.getError('server', '"bill_at" property is assumed to be a iso-8601 string.');
+		}
+
+		if(!currencyutilities.isCurrency(amount)){
+			throw eu.getError('server', '"amount" property is assumed to be currency.');
+		}
+
+		let rebill_prototype = {
+			account: session.account,
+			parentsession: session.id,
+			products: transaction_products,
+			bill_at: bill_at,
+			amount: amount
+		};
+
+		if(!_.isNull(product_schedules)){
+			rebill_prototype.product_schedules = product_schedules;
+		}
+
+		return rebill_prototype
 
 	}
 
