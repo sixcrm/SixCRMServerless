@@ -6,6 +6,7 @@ const GetSessionCompleteController = global.SixCRM.routes.include('controllers',
 const GetTrackingNumberController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getTrackingNumber.js');
 const GetFulfillmentRequiredController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getFulfillmentRequired.js');
 const GetRecoverDateController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getRecoverDate.js');
+const GetSessionRebillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionRebill.js');
 
 const CleanupDeclineController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupDecline.js');
 const BillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/bill.js');
@@ -34,6 +35,7 @@ module.exports = {
 	getrecoverdate: handleStepFunction((event) => new GetRecoverDateController().execute(event)),
 	bill: handleStepFunction((event) => new BillController().execute(event)),
 	getsessionclosed: handleStepFunction((event) => new GetSessionClosedController().execute(event)),
+	getsessionrebill: handleStepFunction((event) => new GetSessionRebillController().execute(event)),
 	closesession: handleStepFunction((event) => new CloseSessionController().execute(event)),
 	cleanupsession: handleStepFunction((event) => new CleanupSessionController().execute(event)),
 	completesession: handleStepFunction((event) => new CompleteSessionController().execute(event)),

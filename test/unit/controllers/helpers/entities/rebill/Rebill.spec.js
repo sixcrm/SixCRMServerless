@@ -5,6 +5,7 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const random = global.SixCRM.routes.include('lib', 'random.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
@@ -133,7 +134,7 @@ describe('/helpers/entities/Rebill.js', () => {
 	});
 
 	beforeEach(() => {
-		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+		//mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {
@@ -174,6 +175,77 @@ describe('/helpers/entities/Rebill.js', () => {
 		});
 
 	});
+
+	describe('getMostRecentRebill', async () => {
+
+		it('successfully gets the most recent rebill', async () => {
+
+			const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+			let session = MockEntities.getValidSession();
+			let rebills = MockEntities.getValidRebills();
+			rebills = arrayutilities.map(rebills, (rebill, index) => {
+				rebill.parentsession = session.id;
+				rebill.account = session.account;
+				rebill.processing = false;
+				if(index == 0){
+					rebill.bill_at = timestamp.getISO8601();
+				}else{
+					rebill.bill_at = timestamp.subtractDays(random.randomInt(1,10));
+				}
+				return rebill;
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				constructor(){}
+				queryBySecondaryIndex({query_parameters, field, index_name, index_value}){
+					expect(field).to.equal('parentsession');
+					expect(index_name).to.equal('parentsession-index');
+					expect(index_value).to.equal(session.id);
+					return Promise.resolve({rebills:rebills});
+				}
+			});
+
+			const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+			let rebillHelperController = new RebillHelperController();
+
+			let result = await rebillHelperController.getMostRecentRebill({session: session});
+			expect(result).to.have.property('id');
+			expect(result.parentsession).to.equal(session.id);
+			expect(result.account).to.equal(session.account);
+			expect(result.id).to.equal(rebills[0].id);
+
+		});
+
+	});
+
+	/*
+		async getMostRecentRebill({session, on_or_before = timestamp.getISO8601()}){
+
+			du.debug('Get Most Recent Rebill');
+
+			if(!_.has(this, 'rebillController')){
+				const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+				this.rebillController = new RebillController();
+			}
+
+			const query_parameters = {
+				filter_expression = '#bill_atk > :bill_atv AND #processingk != :processingv',
+				expression_attribute_names: {
+					'#bill_atk': 'bill_at',
+					'#processingk': 'processing'
+				},
+				expression_attribute_values:{
+					':bill_atv': on_or_before,
+					':processingv': true
+				}
+			};
+
+			let rebills = await this.sessionController.listByAccount({query_parameters, account: session.account});
+
+		}
+		*/
 
 	describe('setParameters', () => {
 

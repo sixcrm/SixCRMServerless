@@ -53,7 +53,7 @@
     "Clean-up Session": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupsession",
-      "Next":"Trigger Create Rebill",
+      "Next":"Trigger Substates",
       "ResultPath": "$.status",
       "Retry": [
         {
@@ -66,19 +66,67 @@
         }
       ]
     },
-    "Trigger Create Rebill": {
-      "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggercreaterebill",
-      "ResultPath": "$.status",
+    "Trigger Substates":{
+      "Type":"Parallel",
       "End":true,
-      "Retry": [
+      "Branches":[
         {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "IntervalSeconds": 1,
-          "MaxAttempts": 3,
-          "BackoffRate": 2
+          "StartAt":"Trigger Create Rebill",
+          "States":{
+            "Trigger Create Rebill": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggercreaterebill",
+              "ResultPath": "$.status",
+              "End":true,
+              "Retry": [
+                {
+                  "ErrorEquals": [
+                    "States.ALL"
+                  ],
+                  "IntervalSeconds": 1,
+                  "MaxAttempts": 3,
+                  "BackoffRate": 2
+                }
+              ]
+            }
+          }
+        },
+        {
+          "StartAt":"GetSessionRebill",
+          "States":{
+            "GetSessionRebill":{
+              "Type":"Task",
+              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getsessionrebill",
+              "Next":"Trigger Pre-Fulfillment",
+              "ResultPath":"$.guid",
+              "Retry" : [
+                {
+                  "ErrorEquals": [
+                    "State.ALL"
+                  ],
+                  "IntervalSeconds": 1,
+                  "MaxAttempts": 3,
+                  "BackoffRate": 2
+                }
+              ]
+            },
+            "Trigger Pre-Fulfillment": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerprefulfillment",
+              "End": true,
+              "ResultPath": "$.status",
+              "Retry" : [
+                {
+                  "ErrorEquals": [
+                    "State.ALL"
+                  ],
+                  "IntervalSeconds": 1,
+                  "MaxAttempts": 3,
+                  "BackoffRate": 2
+                }
+              ]
+            }
+          }
         }
       ]
     }

@@ -149,6 +149,8 @@ functions:
     handler: handlers/statemachine/handlers.cleanupsession
   triggercreaterebill:
     handler: handlers/statemachine/handlers.triggercreaterebill
+  getsessionrebill:
+    handler: handlers/statemachine/handlers.getsessionrebill
 
 # Carrier
   gettrackinginformation:
