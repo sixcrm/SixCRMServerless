@@ -118,14 +118,12 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		}
 
 		const query_parameters = {
-			filter_expression: '#bill_atk <= :bill_atv AND #processingk <> :processingv',
+			filter_expression: '#bill_atk <= :bill_atv',
 			expression_attribute_names: {
-				'#bill_atk': 'bill_at',
-				'#processingk': 'processing'
+				'#bill_atk': 'bill_at'
 			},
 			expression_attribute_values:{
-				':bill_atv': on_or_before,
-				':processingv': true
+				':bill_atv': on_or_before
 			}
 		};
 
