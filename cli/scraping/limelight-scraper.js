@@ -368,7 +368,7 @@ module.exports = class LimelightScraper {
 		const allowReserveGateways = $('input[id="allow_reserveOn"]');
 		const threeDVerifyRouting = $('input[id="token_routing_flagOn"]');
 		const strictPreservation = $('input[id="strictPreservation"]');
-		const paymentRoutingProcess =  $('select[id="lbc_process_type"] option:selected').text();
+		const paymentRoutingProcess = $('select[id="lbc_process_type"] option:selected').text();
 		const midGroupRouting = $('select[id="mid_group_setting_id"] option:selected').text();
 		const currency = $('#currency');
 		const totalGateways = $('#total_gateways');
@@ -378,6 +378,54 @@ module.exports = class LimelightScraper {
 		const amtUsed = $('#amount_used');
 		const monthlyForecast = $('#monthly_forecast');
 		const remainingForecastedRevenue = $('#remaining_forecasted_revenue');
+
+		const gatewaysTable = $('#gateway_list table tbody');
+
+		const gateways = _.reduce(gatewaysTable.children(), (memo, row, i) => {
+
+			if (i < 2 || i === gatewaysTable.children().length - 1) {
+
+				return memo;
+
+			}
+
+			const active = this._cleanseOutput($(row.children[1]).text());
+			const id = this._cleanseOutput($(row.children[5]).text().split('(')[1]).replace(/\)/, '');
+			const alias = this._cleanseOutput($(row.children[5]).text().split('(')[0]);
+			const initialOrderLimit = this._cleanseOutput($($(row).find($(`#initial_limit input[id=initial_${id}_input]`))[0]).val());
+			const rebillOrderLimit = this._cleanseOutput($($(row).find($(`#rebill_limit input[id=initial_${id}_input]`))[0]).val());
+			const monthlyCap = this._cleanseOutput($(`input[id=${id}_input]`).val());
+			const preserveBilling = this._cleanseOutput($(`input[id=${id}_preserve_gateway]`).val());
+			const reserveGateway = $($(row).find($(`.is_reserve`))[0]).attr('checked') !== undefined;
+			const globalCapRemaining = this._cleanseOutput($(`input[id=${id}_balance]`).val());
+			const globalMonthlyRemaining = this._cleanseOutput($($(row).find($('.global-monthly-remaining-percentage'))[0]).text());
+			const reserveForecastedRevenue = this._cleanseOutput($(row.children[15]).text());
+			const currentMonthlyCharges = this._cleanseOutput($(row.children[17]).text());
+			const remainingBalance = this._cleanseOutput($(row.children[19]).text());
+			const currentWeight = this._cleanseOutput($(row.children[21]).text());
+
+			memo.push({
+				id,
+				alias,
+				active,
+				initialOrderLimit,
+				rebillOrderLimit,
+				monthlyCap,
+				preserveBilling,
+				reserveGateway,
+				globalCapRemaining,
+				globalMonthlyRemaining,
+				reserveForecastedRevenue,
+				currentMonthlyCharges,
+				remainingBalance,
+				currentWeight
+			});
+
+			return memo;
+
+		}, []);
+
+		console.log(gateways);
 
 		return {
 			name: this._cleanseOutput(name.val()),
@@ -404,14 +452,15 @@ module.exports = class LimelightScraper {
 			amtRemaining: amtRemaining.text(),
 			amtUsed: amtUsed.text(),
 			monthlyForecast: monthlyForecast.text(),
-			remainingForecastedRevenue: remainingForecastedRevenue.text()
+			remainingForecastedRevenue: remainingForecastedRevenue.text(),
+			gateways
 		}
 
 	}
 
 	_cleanseOutput(val) {
 
-		if (_.isUndefined(val)) {
+		if (!_.isString(val)) {
 
 			return val;
 
