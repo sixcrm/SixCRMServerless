@@ -1,7 +1,7 @@
-
 const _ = require('lodash');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
@@ -180,6 +180,88 @@ module.exports = class CustomerHelperController {
 
 		return null;
 
+	}
+
+	async getPastRebills({customer, pagination}){
+		du.debug('Get Past Rebills');
+
+		if (!_.has(this, 'rebillController')){
+			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
+		}
+
+		if (!_.has(this, 'sessionController')){
+			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
+		}
+
+		const sessions = await this.sessionController.getSessionByCustomer(customer);
+
+		if (_.isNull(sessions)) {
+			return {
+				pagination: {
+					count: 0,
+					end_cursor: '',
+					has_next_page: 'false',
+					last_evaluated: ''
+				},
+				rebills: null
+			};
+		}
+
+		const session_ids = arrayutilities.map(sessions, session => session.id);
+
+		let query_parameters = this.rebillController.createINQueryParameters({
+			field: 'parentsession',
+			list_array: session_ids
+		});
+
+		query_parameters = this.rebillController.appendFilterExpression(query_parameters, '#bill_at <= :bill_at');
+		query_parameters = this.rebillController.appendExpressionAttributeNames(query_parameters, '#bill_at', 'bill_at');
+		query_parameters = this.rebillController.appendExpressionAttributeValues(query_parameters, ':bill_at', timestamp.getISO8601());
+
+		return this.rebillController.listByAccount({query_parameters, pagination});
+	}
+
+	async getPendingRebills({customer, pagination}){
+		du.debug('Get Pending Rebills');
+
+		if (!_.has(this, 'rebillController')){
+			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
+		}
+
+		if (!_.has(this, 'sessionController')){
+			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
+		}
+
+		const sessions = await this.sessionController.getSessionByCustomer(customer);
+
+		if (_.isNull(sessions)) {
+			return {
+				pagination: {
+					count: 0,
+					end_cursor: '',
+					has_next_page: 'false',
+					last_evaluated: ''
+				},
+				rebills: null
+			};
+		}
+
+		const session_ids = arrayutilities.map(sessions, session => session.id);
+
+		let query_parameters = this.rebillController.createINQueryParameters({
+			field: 'parentsession',
+			list_array: session_ids
+		});
+
+		query_parameters = this.rebillController.appendFilterExpression(query_parameters, '#bill_at > :bill_at');
+		query_parameters = this.rebillController.appendExpressionAttributeNames(query_parameters, '#bill_at', 'bill_at');
+		query_parameters = this.rebillController.appendExpressionAttributeValues(query_parameters, ':bill_at', timestamp.getISO8601());
+
+		return this.rebillController.listByAccount({query_parameters, pagination});
 	}
 
 }

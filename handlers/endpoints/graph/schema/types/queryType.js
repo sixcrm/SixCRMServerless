@@ -459,6 +459,44 @@ const fields = Object.assign({}, {
 			});
 		}
 	},
+	pastrebillsforcustomer: {
+		type: rebillListType.graphObj,
+		args: {
+			customer: {
+				description: 'The customer identifier',
+				type: new GraphQLNonNull(GraphQLString)
+			},
+			pagination: {
+				type: paginationInputType.graphObj
+			}
+		},
+		resolve: function(root, rebill) {
+			const customerHelper = new CustomerHelperController();
+			return customerHelper.getPastRebills({
+				customer: rebill.customer,
+				pagination: rebill.pagination
+			});
+		}
+	},
+	pendingrebillsforcustomer: {
+		type: rebillListType.graphObj,
+		args: {
+			customer: {
+				description: 'The customer identifier',
+				type: new GraphQLNonNull(GraphQLString)
+			},
+			pagination: {
+				type: paginationInputType.graphObj
+			}
+		},
+		resolve: function(root, rebill) {
+			const customerHelper = new CustomerHelperController();
+			return customerHelper.getPendingRebills({
+				customer: rebill.customer,
+				pagination: rebill.pagination
+			});
+		}
+	},
 	rebilllistbystate: {
 		type: rebillListType.graphObj,
 		args: {
