@@ -6,7 +6,6 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getsessioncomplete",
       "Next": "Is Complete?",
-      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry": [
         {
@@ -25,7 +24,7 @@
         {
           "Variable": "$.status",
           "StringEquals": "COMPLETE",
-          "Next": "Session Completed"
+          "Next": "Session Complete"
         }
       ],
       "Default": "Create Rebill"
@@ -34,7 +33,6 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-createrebill",
       "Next": "Was Rebill Created?",
-      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry": [
         {
@@ -64,8 +62,7 @@
     "Complete Session": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-completesession",
-      "Next": "Session Completed",
-      "InputPath": "$",
+      "Next":"Session Complete",
       "Retry": [
         {
           "ErrorEquals": [
@@ -77,8 +74,8 @@
         }
       ]
     },
-    "Session Completed": {
-      "Type": "Succeed"
+    "Session Complete":{
+      "Type":"Succeed"
     }
   }
 }
