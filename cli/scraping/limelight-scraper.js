@@ -425,8 +425,6 @@ module.exports = class LimelightScraper {
 
 		}, []);
 
-		console.log(gateways);
-
 		return {
 			name: this._cleanseOutput(name.val()),
 			desc: this._cleanseOutput(desc.val()),
