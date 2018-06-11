@@ -43,12 +43,12 @@
         {
           "Variable": "$.status",
           "StringEquals": "DECLINE",
-          "Next": "To Recover Decline"
+          "Next": "Recover Declined"
         },
         {
           "Variable": "$.status",
           "StringEquals": "HARDDECLINE",
-          "Next": "To Hard Decline"
+          "Next": "Hard Declined"
         }
       ],
       "Default":"Trigger Pre-Fulfillment"
@@ -68,48 +68,17 @@
           }
       ]
     },
-    "To Hard Decline":{
-      "Type":"Parallel",
+    "Hard Declined": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
+      "ResultPath": "$.status",
       "Next":"Hard Decline Failure",
-      "Branches":[
+      "Retry" : [
         {
-          "StartAt":"Report Hard Decline Pass",
-          "States":{
-            "Report Hard Decline Pass":{
-              "Type":"Pass",
-              "Result":{
-                "state":"Recovery",
-                "step":"Hard Decline",
-                "message":"Recover Hard Declined"
-              },
-              "ResultPath":"$.reporting",
-              "Next":"Report Hard Decline"
-            },
-            "Report Hard Decline":{
-              "Type":"Task",
-              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-report",
-              "End":true
-            }
-          }
-        },
-        {
-          "StartAt":"Hard Declined",
-          "States":{
-            "Hard Declined": {
-              "Type": "Task",
-              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
-              "ResultPath": "$.status",
-              "End":true,
-              "Retry" : [
-                  {
-                    "ErrorEquals": [ "State.ALL" ],
-                    "IntervalSeconds": 3,
-                    "MaxAttempts": 5,
-                    "BackoffRate": 5
-                  }
-              ]
-            }
-          }
+          "ErrorEquals": [ "State.ALL" ],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 5,
+          "BackoffRate": 5
         }
       ]
     },
@@ -118,49 +87,18 @@
       "Cause": "Hard decline issued by the recover task",
       "Error": "Recovery returned Hard Decline"
     },
-    "To Recover Decline":{
-      "Type":"Parallel",
+    "Recover Declined": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
+      "ResultPath": "$.status",
       "Next":"Decline Failure",
-      "Branches":[
-        {
-          "StartAt":"Report Recover Decline Pass",
-          "States":{
-            "Report Recover Decline Pass":{
-              "Type":"Pass",
-              "Result":{
-                "state":"Recovery",
-                "step":"Recover Decline",
-                "message":"Recover Declined"
-              },
-              "ResultPath":"$.reporting",
-              "Next":"Report Recover Decline"
-            },
-            "Report Recover Decline":{
-              "Type":"Task",
-              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-report",
-              "End":true
-            }
+      "Retry" : [
+          {
+            "ErrorEquals": [ "State.ALL" ],
+            "IntervalSeconds": 3,
+            "MaxAttempts": 5,
+            "BackoffRate": 5
           }
-        },
-        {
-          "StartAt":"Recover Declined",
-          "States":{
-            "Recover Declined": {
-              "Type": "Task",
-              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
-              "ResultPath": "$.status",
-              "End":true,
-              "Retry" : [
-                  {
-                    "ErrorEquals": [ "State.ALL" ],
-                    "IntervalSeconds": 3,
-                    "MaxAttempts": 5,
-                    "BackoffRate": 5
-                  }
-              ]
-            }
-          }
-        }
       ]
     },
     "Decline Failure": {

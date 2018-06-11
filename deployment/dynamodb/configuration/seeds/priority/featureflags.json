@@ -95,7 +95,7 @@
 		"graphdocs-2.0": {
 			"name": "Graph Docs 2.0",
 			"description": "New designs for GraphQL documentation",
-			"default": false
+			"default": true
 		}
   }
 }]

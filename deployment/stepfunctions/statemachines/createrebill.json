@@ -62,7 +62,7 @@
     "Complete Session": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-completesession",
-      "Next":"Session Complete",
+      "End":true,
       "Retry": [
         {
           "ErrorEquals": [
