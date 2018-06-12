@@ -195,7 +195,7 @@ module.exports = class LimelightScraper {
 
 		const visa = $('input[name="visa"]');
 		const mastercard = $('input[name="mastercard"]');
-		const discover = $('input[name="Discover"]');
+		const discover = $('input[name="discover"]');
 		const americanExpress = $('input[name="american express"]');
 		const other = $('input[name="other"]');
 		const cvv = $('select[id="cvv"] option:selected').text();
@@ -397,12 +397,12 @@ module.exports = class LimelightScraper {
 			const active = this._cleanseOutput($(row.children[1]).text());
 			const id = this._cleanseOutput($(row.children[5]).text().split('(')[1]).replace(/\)/, '');
 			const alias = this._cleanseOutput($(row.children[5]).text().split('(')[0]);
-			const initialOrderLimit = this._cleanseOutput($($(row).find($(`#initial_limit input[id=initial_${id}_input]`))[0]).val());
-			const rebillOrderLimit = this._cleanseOutput($($(row).find($(`#rebill_limit input[id=initial_${id}_input]`))[0]).val());
-			const monthlyCap = this._cleanseOutput($(`input[id=${id}_input]`).val());
-			const preserveBilling = this._cleanseOutput($(`input[id=${id}_preserve_gateway]`).val());
+			const initialOrderLimit = this._cleanseOutput($($(row).find($(`#initial_limit input[id="initial_${id}_input"]`))[0]).val());
+			const rebillOrderLimit = this._cleanseOutput($($(row).find($(`#rebill_limit input[id="initial_${id}_input"]`))[0]).val());
+			const monthlyCap = this._cleanseOutput($(`input[id="${id}_input"]`).val());
+			const preserveBilling = this._cleanseOutput($(`input[id="${id}_preserve_gateway"]`).val());
 			const reserveGateway = $($(row).find($(`.is_reserve`))[0]).attr('checked') !== undefined;
-			const globalCapRemaining = this._cleanseOutput($(`input[id=${id}_balance]`).val());
+			const globalCapRemaining = this._cleanseOutput($(`input[id="${id}_balance"]`).val());
 			const globalMonthlyRemaining = this._cleanseOutput($($(row).find($('.global-monthly-remaining-percentage'))[0]).text());
 			const reserveForecastedRevenue = this._cleanseOutput($(row.children[15]).text());
 			const currentMonthlyCharges = this._cleanseOutput($(row.children[17]).text());
