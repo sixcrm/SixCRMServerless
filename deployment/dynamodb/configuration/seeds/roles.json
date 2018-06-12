@@ -67,7 +67,10 @@
 		"allow":[
 			"customer/*",
 			"customernote/*",
-			"campaign/read",
+			"creditcard/read",
+			"creditcard/create",
+			"creditcard/update",
+			"customer/*",
 			"productschedule/*",
 			"product/*",
 			"role/read",
