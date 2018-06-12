@@ -45,6 +45,10 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 		const cookie = await this._scraper.signOn();
 		await this._scraper.getGateways(cookie);
 		await this._scraper.getPaymentRoutes(cookie);
+		const campaigns = await fs.readJSON(path.join(this._artifactsDirectory, 'campaigns.json'));
+		await this._scraper.getCampaigns(cookie, campaigns.map(c => c.id));
+		const products = await fs.readJSON(path.join(this._artifactsDirectory, 'products.json'));
+		await this._scraper.getProducts(cookie, products.map(p => p.id));
 
 	}
 
@@ -85,7 +89,9 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 	async _extractCampaigns() {
 
 		const campaigns = await this._api.findActiveCampaignsExpanded();
-		await fs.writeJson(path.join(this._artifactsDirectory, 'campaigns.json'), campaigns);
+		await fs.writeJson(path.join(this._artifactsDirectory, 'campaigns.json'), campaigns, {
+			spaces: 4
+		});
 		return campaigns;
 
 	}
@@ -99,7 +105,9 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 		}
 
 		const gateways = await this._api.getGateways(gatewayIds);
-		await fs.writeJson(path.join(this._artifactsDirectory, 'gateways.json'), gateways);
+		await fs.writeJson(path.join(this._artifactsDirectory, 'gateways.json'), gateways, {
+			spaces: 4
+		});
 
 	}
 

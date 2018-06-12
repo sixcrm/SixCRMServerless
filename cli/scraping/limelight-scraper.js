@@ -78,7 +78,9 @@ module.exports = class LimelightScraper {
 
 		}, []);
 
-		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-gateways.json'), gateways);
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-gateways.json'), gateways, {
+			spaces: 4
+		});
 
 	}
 
@@ -208,6 +210,7 @@ module.exports = class LimelightScraper {
 		const reserveCap = $('input[name="reserve cap"]');
 
 		return {
+			id,
 			credentials: {
 				user: this._cleanseOutput(usernameElement.val()),
 				password: this._cleanseOutput(passwordElement.val()),
@@ -283,7 +286,9 @@ module.exports = class LimelightScraper {
 
 		}, []);
 
-		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-payment-routes.json'), gateways);
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-payment-routes.json'), gateways, {
+			spaces: 4
+		});
 
 	}
 
@@ -426,6 +431,7 @@ module.exports = class LimelightScraper {
 		}, []);
 
 		return {
+			id,
 			name: this._cleanseOutput(name.val()),
 			desc: this._cleanseOutput(desc.val()),
 			dailyWeightReset: this._cleanseOutput(dailyWeightReset.val()),
@@ -452,6 +458,157 @@ module.exports = class LimelightScraper {
 			monthlyForecast: monthlyForecast.text(),
 			remainingForecastedRevenue: remainingForecastedRevenue.text(),
 			gateways
+		}
+
+	}
+
+	async getCampaigns(cookie, ids) {
+
+		const campaigns = await BBPromise.reduce(ids, async (memo, id) => {
+
+			memo.push(await this._getCampaignDetail(cookie, id));
+			return memo;
+
+		}, []);
+
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-campaigns.json'), campaigns, {
+			spaces: 4
+		});
+
+	}
+
+	async _getCampaignDetail(cookie, id) {
+
+		const url = `${this._url}/campaign/profile.php`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			},
+			qs: {
+				id
+			}
+		});
+
+		const $ = cheerio.load(res.body);
+
+		const currency = this._cleanseOutput($('#campaign_currency').text());
+		const name = this._cleanseOutput($('#input_campaign_name_id').val());
+		const desc = this._cleanseOutput($('#campaign_description').text());
+		const ccGateway = $('select[id="gateway_id"] option:selected').text();
+		const paymentRouting = $('select[id="gateway_lbc_id"] option:selected').text();
+
+		const productsTable = $('.product-table-row tbody');
+
+		const products = _.reduce(productsTable.children(), (memo, row, i) => {
+
+			if (i === productsTable.length - 1) {
+
+				return memo;
+
+			}
+
+			const cell = $(row.children[1]);
+			const id = this._cleanseOutput($(cell.find($('input[id="products_main_id"]'))[0]).val());
+
+			memo.push({
+				id
+			});
+
+			return memo;
+
+		}, []);
+
+		return {
+			id,
+			name,
+			desc,
+			currency,
+			ccGateway,
+			paymentRouting,
+			products
+		}
+
+	}
+
+	async getProducts(cookie, ids) {
+
+		const products = await BBPromise.reduce(ids, async (memo, id) => {
+
+			memo.push(await this._getProductDetail(cookie, id));
+			return memo;
+
+		}, []);
+
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-products.json'), products, {
+			spaces: 4
+		});
+
+	}
+
+	async _getProductDetail(cookie, id) {
+
+		const url = `${this._url}/products/products.php`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			},
+			qs: {
+				product_id: id,
+				use_new: 1
+			}
+		});
+
+		const $ = cheerio.load(res.body);
+
+		const name = this._cleanseOutput($('#product_name').val());
+		const sku = this._cleanseOutput($('#product_sku').val());
+		const vertical = this._cleanseOutput($('select[id="product_vertical"] option:selected').text());
+		const category = this._cleanseOutput($('select[id="product_category"] option:selected').text());
+		const price = this._cleanseOutput($('#product_price').val());
+		const costOfGoods = this._cleanseOutput($('#product_cost_price').val());
+		const restockFee = this._cleanseOutput($('#product_restocking_fee').val());
+		const maxQty =  this._cleanseOutput($('#product_max_qty').val());
+		const desc = this._cleanseOutput($('#product_description').text());
+		const shippable = $('#product_shippable').attr('checked') === 'checked';
+		const nextRecurringProduct = this._cleanseOutput($('select[name="recurring_next_product"] option:selected').text());
+		const subscriptionType = this._cleanseOutput($('select[id="subscription_type"] option:selected').text());
+		const daysToNextBilling = this._cleanseOutput($('#recurring_days').val());
+		const maxDiscount = this._cleanseOutput(this._cleanseOutput($('#recurring_discount_max').val()));
+		const preserveQuantity = $('#preserve_quantity').attr('checked') === 'checked';
+
+		return {
+			id,
+			name,
+			sku,
+			vertical,
+			category,
+			price,
+			costOfGoods,
+			restockFee,
+			maxQty,
+			desc,
+			shippable,
+			nextRecurringProduct,
+			subscriptionType,
+			daysToNextBilling,
+			maxDiscount,
+			preserveQuantity
 		}
 
 	}
