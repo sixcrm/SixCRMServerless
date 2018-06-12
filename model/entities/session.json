@@ -124,6 +124,9 @@
 		},
 		"completed": {
 			"type": "boolean"
+		},
+		"concluded": {
+			"type": "boolean"
 		}
 	},
 	"required": [

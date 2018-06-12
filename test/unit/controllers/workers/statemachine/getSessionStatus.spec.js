@@ -1,0 +1,136 @@
+const chai = require("chai");
+//const uuidV4 = require('uuid/v4');
+const expect = chai.expect;
+const mockery = require('mockery');
+
+const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+
+describe('controllers/workers/statemachine/getSessionStatus.js', () => {
+
+  before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+	});
+
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
+
+  describe('constructor', () => {
+
+    it('successfully constructs', () => {
+
+      const GetSessionStatusController = global.SixCRM.routes.include('workers', 'statemachine/getSessionStatus.js');
+      let getSessionStatusController = new GetSessionStatusController();
+
+      expect(objectutilities.getClassName(getSessionStatusController)).to.equal('GetSessionStatusController');
+
+    });
+
+  });
+
+  describe('execute', async () => {
+
+    it('successfully executes (ACTIVE)', async () => {
+
+      let session = MockEntities.getValidSession();
+      session.completed = true;
+      delete session.concluded;
+      delete session.cancelled;
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        constructor(){}
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(session);
+        }
+      });
+
+      const GetSessionStatusController = global.SixCRM.routes.include('workers', 'statemachine/getSessionStatus.js');
+      let getSessionStatusController = new GetSessionStatusController();
+
+      let result = await getSessionStatusController.execute({guid: session.id});
+      expect(result).to.equal('ACTIVE');
+
+    });
+
+    it('successfully executes (OPEN)', async () => {
+
+      let session = MockEntities.getValidSession();
+      session.completed = false;
+      delete session.concluded;
+      delete session.cancelled;
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        constructor(){}
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(session);
+        }
+      });
+
+      const GetSessionStatusController = global.SixCRM.routes.include('workers', 'statemachine/getSessionStatus.js');
+      let getSessionStatusController = new GetSessionStatusController();
+
+      let result = await getSessionStatusController.execute({guid: session.id});
+      expect(result).to.equal('ACTIVE');
+
+    });
+
+    it('successfully executes (CANCELLED)', async () => {
+
+      let session = MockEntities.getValidSession();
+      session.completed = true;
+      session.cancelled = {cancelled: true};
+      delete session.concluded;
+
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        constructor(){}
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(session);
+        }
+      });
+
+      const GetSessionStatusController = global.SixCRM.routes.include('workers', 'statemachine/getSessionStatus.js');
+      let getSessionStatusController = new GetSessionStatusController();
+
+      let result = await getSessionStatusController.execute({guid: session.id});
+      expect(result).to.equal('CANCELLED');
+
+    });
+
+    it('successfully executes (CONCLUDED)', async () => {
+
+      let session = MockEntities.getValidSession();
+      session.completed = true;
+      delete session.cancelled;
+      session.concluded = true;
+
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        constructor(){}
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(session);
+        }
+      });
+
+      const GetSessionStatusController = global.SixCRM.routes.include('workers', 'statemachine/getSessionStatus.js');
+      let getSessionStatusController = new GetSessionStatusController();
+
+      let result = await getSessionStatusController.execute({guid: session.id});
+      expect(result).to.equal('CONCLUDED');
+
+    });
+
+  });
+
+});

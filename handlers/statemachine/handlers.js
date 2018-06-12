@@ -1,22 +1,24 @@
 const StepFunctionHandler = require('./stepfunction-handler');
 
 const GetTrackingInformationController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getTrackingInformation.js');
+const GetSessionStatusController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionStatus.js');
 const GetSessionClosedController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionClosed.js');
-const GetSessionCompleteController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionComplete.js');
+//const GetSessionCompleteController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionComplete.js');
 const GetTrackingNumberController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getTrackingNumber.js');
 const GetFulfillmentRequiredController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getFulfillmentRequired.js');
 const GetRecoverDateController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getRecoverDate.js');
 const GetSessionRebillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionRebill.js');
+
+const CloseSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/closeSession.js');
+const ConcludeSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/concludeSession.js');
+const CleanupSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupSession.js');
 
 const CleanupDeclineController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupDecline.js');
 const BillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/bill.js');
 const ReportController = global.SixCRM.routes.include('controllers', 'workers/statemachine/report.js');
 const SendDeliveryNotificationController = global.SixCRM.routes.include('controllers', 'workers/statemachine/sendDeliveryNotification.js');
 const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('controllers', 'workers/statemachine/notifyFulfillmentProviders.js');
-const CloseSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/closeSession.js');
 const CreateRebillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/createRebill.js');
-const CompleteSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/completeSession.js');
-const CleanupSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupSession.js');
 
 const TriggerCreateRebillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerCreateRebill.js');
 const TriggerTrackingController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerTracking.js');
@@ -34,12 +36,14 @@ module.exports = {
 	cleanupdecline: handleStepFunction((event) => new CleanupDeclineController().execute(event)),
 	getrecoverdate: handleStepFunction((event) => new GetRecoverDateController().execute(event)),
 	bill: handleStepFunction((event) => new BillController().execute(event)),
-	getsessionclosed: handleStepFunction((event) => new GetSessionClosedController().execute(event)),
-	getsessionrebill: handleStepFunction((event) => new GetSessionRebillController().execute(event)),
+
 	closesession: handleStepFunction((event) => new CloseSessionController().execute(event)),
 	cleanupsession: handleStepFunction((event) => new CleanupSessionController().execute(event)),
-	completesession: handleStepFunction((event) => new CompleteSessionController().execute(event)),
-	getsessioncomplete: handleStepFunction((event) => new GetSessionCompleteController().execute(event)),
+	concludesession: handleStepFunction((event) => new ConcludeSessionController().execute(event)),
+	getsessionstatus: handleStepFunction((event) => new GetSessionStatusController().execute(event)),
+	getsessionclosed: handleStepFunction((event) => new GetSessionClosedController().execute(event)),
+	getsessionrebill: handleStepFunction((event) => new GetSessionRebillController().execute(event)),
+
 	createrebill: handleStepFunction((event) => new CreateRebillController().execute(event)),
 	report: handleStepFunction((event) => new ReportController().execute(event)),
 	triggerpostfulfillment: handleStepFunction((event) => new TriggerPostFulfillmentController().execute(event)),

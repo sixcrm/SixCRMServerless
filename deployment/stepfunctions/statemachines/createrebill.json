@@ -1,11 +1,11 @@
 {
   "Comment": "The Create Rebill state machine creates the next rebill for a session UUID",
-  "StartAt": "Get Session Complete",
+  "StartAt": "Get Session Status",
   "States": {
-    "Get Session Complete":{
+    "Get Session Status":{
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getsessioncomplete",
-      "Next": "Is Complete?",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getsessionstatus",
+      "Next": "Is Available?",
       "ResultPath": "$.status",
       "Retry": [
         {
@@ -18,16 +18,32 @@
         }
       ]
     },
-    "Is Complete?": {
+    "Is Available?": {
       "Type": "Choice",
       "Choices": [
         {
           "Variable": "$.status",
-          "StringEquals": "COMPLETE",
-          "Next": "Session Complete"
+          "StringEquals": "CONCLUDED",
+          "Next": "Session Concluded"
+        },
+        {
+          "Variable": "$.status",
+          "StringEquals": "OPEN",
+          "Next": "Session Open"
+        },
+        {
+          "Variable": "$.status",
+          "StringEquals": "CANCELLED",
+          "Next": "Session Cancelled"
         }
       ],
       "Default": "Create Rebill"
+    },
+    "Session Open":{
+      "Type":"Succeed"
+    },
+    "Session Cancelled":{
+      "Type":"Succeed"
     },
     "Create Rebill": {
       "Type": "Task",
@@ -50,8 +66,8 @@
       "Choices": [
         {
           "Variable": "$.status",
-          "StringEquals": "COMPLETE",
-          "Next": "Complete Session"
+          "StringEquals": "CONCLUDED",
+          "Next": "Conclude Session"
         }
       ],
       "Default": "Rebill Created"
@@ -59,9 +75,9 @@
     "Rebill Created":{
       "Type":"Succeed"
     },
-    "Complete Session": {
+    "Conclude Session": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-completesession",
+      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-concludesession",
       "End":true,
       "Retry": [
         {
@@ -74,7 +90,7 @@
         }
       ]
     },
-    "Session Complete":{
+    "Session Concluded":{
       "Type":"Succeed"
     }
   }
