@@ -538,6 +538,81 @@ module.exports = class LimelightScraper {
 
 	}
 
+	async getProducts(cookie, ids) {
+
+		const products = await BBPromise.reduce(ids, async (memo, id) => {
+
+			memo.push(await this._getProductDetail(cookie, id));
+			return memo;
+
+		}, []);
+
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-products.json'), products, {
+			spaces: 4
+		});
+
+	}
+
+	async _getProductDetail(cookie, id) {
+
+		const url = `${this._url}/products/products.php`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			},
+			qs: {
+				product_id: id,
+				use_new: 1
+			}
+		});
+
+		const $ = cheerio.load(res.body);
+
+		const name = this._cleanseOutput($('#product_name').val());
+		const sku = this._cleanseOutput($('#product_sku').val());
+		const vertical = this._cleanseOutput($('select[id="product_vertical"] option:selected').text());
+		const category = this._cleanseOutput($('select[id="product_category"] option:selected').text());
+		const price = this._cleanseOutput($('#product_price').val());
+		const costOfGoods = this._cleanseOutput($('#product_cost_price').val());
+		const restockFee = this._cleanseOutput($('#product_restocking_fee').val());
+		const maxQty =  this._cleanseOutput($('#product_max_qty').val());
+		const desc = this._cleanseOutput($('#product_description').text());
+		const shippable = $('#product_shippable').attr('checked') === 'checked';
+		const nextRecurringProduct = this._cleanseOutput($('select[name="recurring_next_product"] option:selected').text());
+		const subscriptionType = this._cleanseOutput($('select[id="subscription_type"] option:selected').text());
+		const daysToNextBilling = this._cleanseOutput($('#recurring_days').val());
+		const maxDiscount = this._cleanseOutput(this._cleanseOutput($('#recurring_discount_max').val()));
+		const preserveQuantity = $('#preserve_quantity').attr('checked') === 'checked';
+
+		return {
+			id,
+			name,
+			sku,
+			vertical,
+			category,
+			price,
+			costOfGoods,
+			restockFee,
+			maxQty,
+			desc,
+			shippable,
+			nextRecurringProduct,
+			subscriptionType,
+			daysToNextBilling,
+			maxDiscount,
+			preserveQuantity
+		}
+
+	}
+
 	_cleanseOutput(val) {
 
 		if (!_.isString(val)) {
