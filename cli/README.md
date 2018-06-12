@@ -1,0 +1,138 @@
+#extract command
+
+EXAMPLE:
+
+NODE_CONFIG_DIR=config/local NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js extract --crm limelight --client elyfe.limelightcrm.com --web-user Nguyen --web-password "Agility*12" --api-user pushinnovation--api-password  6XtkVUXV8mArnP
+
+##scraped-products.json
+
+id
+name
+sku
+vertical
+category
+price
+costOfGoods
+restockFee
+maxQty
+desc
+shippable
+nextRecurringProduct
+subscriptionType
+daysToNextBilling
+maxDiscount
+preserveQuantity
+
+##scraped-payment-routes.json
+
+id
+name
+desc
+dailyWeightReset
+dailyInitialSubscriptionReset
+reserveForecastPercent
+reserveForecastPercentCycle1
+reserveForecastPercentCycle2
+reserveForecastPercentCycle3
+reserveForecastPercentCycle4
+reserveForecastPercentCycle5
+gatewayDeclinesLimit
+gatewayDeclinesLimitAmt
+allowReserveGateways
+threeDVerifyRouting
+paymentRoutingProcess
+midGroupRouting
+currency
+totalGateways
+totalCampaigns
+processingAmt
+amtRemaining
+amtUsed
+monthlyForecast
+remainingForecastedRevenue
+gateways
+	id
+	alias
+	active
+	initialOrderLimit
+	rebillOrderLimit
+	monthlyCap
+	preserveBilling
+	reserveGateway
+	globalMonthlyRemaining
+	reserveForecastedRevenue
+	currentMonthlyCharges
+	remainingBalance
+	currentWeight
+
+##scraped-gateways.json
+
+id
+credentials
+user
+password
+status
+alias
+currency
+postProcessorId
+captureOnShipment
+preAuthFilter
+postProductDesc
+mdf1
+mdf2
+mdf3
+mdf4
+mdf5
+mdf6
+mdf7
+mdf8
+mdf9
+mdf10
+mdf11
+mdf12
+mdf13
+mdf14
+mdf15
+mdf16
+mdf17
+mdf18
+mdf19
+mdf20
+test
+postPhone
+requiredSSN
+useDeclineSalvage
+merchantAccountDetails
+	merchantDesc
+	merchantId
+	customerServiceNumber
+	midGroup
+	processor
+	vertical
+limitsAndFees
+	visa
+	mastercard
+	discover
+	americanExpress
+	other
+	cvv
+	globalMonthlyCap
+	monthlyFee
+	batchFee
+	transactionFee
+	chargebackFee
+	reservePercent
+	reserveTerm
+	reserveTermDays
+	reserveCap
+
+##scraped-campaigns.json
+
+ id
+ name
+ desc
+ currency
+ ccGateway
+ paymentRouting
+ products
+	id
