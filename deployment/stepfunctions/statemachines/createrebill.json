@@ -68,9 +68,17 @@
           "Variable": "$.status",
           "StringEquals": "CONCLUDED",
           "Next": "Conclude Session"
+        },
+        {
+          "Variable": "$.status",
+          "StringEquals": "REBILLCREATED",
+          "Next": "Rebill Created"
         }
       ],
-      "Default": "Rebill Created"
+      "Default": "Rebill Creation Failed"
+    },
+    "Rebill Creation Failed":{
+      "Type":"Fail"
     },
     "Rebill Created":{
       "Type":"Succeed"

@@ -1,4 +1,6 @@
+const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
@@ -18,30 +20,56 @@ module.exports = class CreateRebillController extends stepFunctionWorkerControll
 
 		let session = await this.getSession(event.guid);
 
-		await this.cleanupSession(session);
+		let rebill = await this.createRebill(session);
 
-		return this.respond();
-
-	}
-
-	async cleanupSession(session){
-
-		du.debug('Cleanup Session');
-
-		du.info(session);
-
-		//consolidate rebills
-		//mark rebill as ready to process
-
-		return true;
+		return this.respond(rebill);
 
 	}
 
-	respond(){
+	async createRebill(session, fatal = false){
+
+		du.debug('Create Rebill');
+
+		let rebill = null;
+
+		try {
+
+			const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+			rebill = (new RebillCreatorHelperController()).createRebill({session: session});
+
+		}catch(error){
+
+			du.warning(error.message);
+
+			if(fatal == true){
+				throw error;
+			}
+
+			rebill = error;
+
+		}
+
+		return rebill;
+
+	}
+
+	respond(rebill){
 
 		du.debug('Respond');
 
-		return true;
+		if(_.isObject(rebill) && _.has(rebill, 'id')){
+			return 'REBILLCREATED';
+		}
+
+		if(rebill === true){
+			return 'CONCLUDED';
+		}
+
+		if(_.isNull(rebill) || _.isError(rebill)){
+			return 'FAILED';
+		}
+
+		throw eu.getError('server', 'Unknown rebill state');
 
 	}
 
