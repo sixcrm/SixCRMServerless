@@ -133,12 +133,12 @@ functions:
     handler: handlers/statemachine/handlers.report
 
 #Create Rebill
-  getsessioncomplete:
-    handler: handlers/statemachine/handlers.getsessioncomplete
+  getsessionstatus:
+    handler: handlers/statemachine/handlers.getsessionstatus
   createrebill:
     handler: handlers/statemachine/handlers.createrebill
-  completesession:
-    handler: handlers/statemachine/handlers.completesession
+  concludesession:
+    handler: handlers/statemachine/handlers.concludesession
 
 #Close Session
   getsessionclosed:

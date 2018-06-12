@@ -30,7 +30,7 @@ module.exports = class GetSessionCompleteController extends stepFunctionWorkerCo
 
 		du.debug('Is Closed');
 
-		if(_.has(session, 'completed') && session.completed == true){
+		if(_.has(session, 'complete') && session.complete == true){
 			return true;
 		}
 
@@ -43,10 +43,10 @@ module.exports = class GetSessionCompleteController extends stepFunctionWorkerCo
 		du.debug('Respond');
 
 		if(complete == true){
-			return 'COMPLETE';
+			return 'COMPLETED';
 		}
 
-		return 'NOTCOMPLETE';
+		return 'NOTCOMPLETED';
 
 	}
 
