@@ -59,43 +59,43 @@
 			"name": "Advanced Session Model",
 			"description": "Advanced UI For Session and Customer",
 			"default": false
-		}
-	},
-  "user-settings-languages":{
-    "name": "User Settings Languages",
-    "description": "Language setting for users on the user settings page",
-    "default": true,
-    "features": {
-      "english": {
-        "name": "English setting",
-        "description": "The English language setting",
-        "default": true
-      },
-      "chinese": {
-        "name": "Chinese setting",
-        "description": "The Chinese language setting",
-        "default": false
-      },
-      "armenian": {
-        "name": "Armenian setting",
-        "description": "The Armenian language setting",
-        "default": false
-      },
-      "german": {
-        "name": "German setting",
-        "description": "The German language setting",
-        "default": false
-      },
-      "hindi": {
-        "name": "Hindi setting",
-        "description": "The Hindi language setting",
-        "default": false
-      }
-    },
+		},
+		"user-settings-languages":{
+	    "name": "User Settings Languages",
+	    "description": "Language setting for users on the user settings page",
+	    "default": true,
+	    "features": {
+	      "english": {
+	        "name": "English setting",
+	        "description": "The English language setting",
+	        "default": true
+	      },
+	      "chinese": {
+	        "name": "Chinese setting",
+	        "description": "The Chinese language setting",
+	        "default": false
+	      },
+	      "armenian": {
+	        "name": "Armenian setting",
+	        "description": "The Armenian language setting",
+	        "default": false
+	      },
+	      "german": {
+	        "name": "German setting",
+	        "description": "The German language setting",
+	        "default": false
+	      },
+	      "hindi": {
+	        "name": "Hindi setting",
+	        "description": "The Hindi language setting",
+	        "default": false
+	      }
+	    }
+	  },
 		"graphdocs-2.0": {
 			"name": "Graph Docs 2.0",
 			"description": "New designs for GraphQL documentation",
 			"default": true
 		}
-  }
+	}
 }]
