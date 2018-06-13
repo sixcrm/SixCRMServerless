@@ -49,6 +49,7 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 		await this._scraper.getCampaigns(cookie, campaigns.map(c => c.id));
 		const products = await fs.readJSON(path.join(this._artifactsDirectory, 'products.json'));
 		await this._scraper.getProducts(cookie, products.map(p => p.id));
+		await this._scraper.getEmailTemplates(cookie);
 
 	}
 

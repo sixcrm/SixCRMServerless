@@ -1,8 +1,15 @@
+## Do we have?
+SMTP Settings?
+Email Templates?
+Fulfillment Providers?
+Affiliate?
+Tracking?
+
 #extract command
 
 EXAMPLE:
 
-NODE_CONFIG_DIR=config/local NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js extract --crm limelight --client elyfe.limelightcrm.com --web-user Nguyen --web-password "Agility*12" --api-user pushinnovation--api-password  6XtkVUXV8mArnP
+NODE_CONFIG_DIR=config/local NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js extract --crm limelight --client elyfe.limelightcrm.com --web-user Nguyen --web-password "Agility*12" --api-user pushinnovation --api-password  6XtkVUXV8mArnP
 
 ##scraped-products.json
 
@@ -21,7 +28,7 @@ nextRecurringProduct\
 subscriptionType\
 daysToNextBilling\
 maxDiscount\
-preserveQuantity\
+preserveQuantity
 
 ##scraped-payment-routes.json
 
@@ -63,7 +70,7 @@ gateways\
 &nbsp;&nbsp;reserveForecastedRevenue\
 &nbsp;&nbsp;currentMonthlyCharges\
 &nbsp;&nbsp;remainingBalance\
-&nbsp;&nbsp;currentWeight\
+&nbsp;&nbsp;currentWeight
 
 ##scraped-gateways.json
 
@@ -124,7 +131,7 @@ limitsAndFees\
 &nbsp;&nbsp;reservePercent\
 &nbsp;&nbsp;reserveTerm\
 &nbsp;&nbsp;reserveTermDays\
-&nbsp;&nbsp;reserveCap\
+&nbsp;&nbsp;reserveCap
 
 ##scraped-campaigns.json
 
