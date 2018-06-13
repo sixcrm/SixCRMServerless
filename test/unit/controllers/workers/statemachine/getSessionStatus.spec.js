@@ -60,7 +60,7 @@ describe('controllers/workers/statemachine/getSessionStatus.js', () => {
 
     });
 
-    it('successfully executes (OPEN)', async () => {
+    it('successfully executes (INCOMPLETE)', async () => {
 
       let session = MockEntities.getValidSession();
       session.completed = false;
@@ -79,7 +79,7 @@ describe('controllers/workers/statemachine/getSessionStatus.js', () => {
       let getSessionStatusController = new GetSessionStatusController();
 
       let result = await getSessionStatusController.execute({guid: session.id});
-      expect(result).to.equal('ACTIVE');
+      expect(result).to.equal('INCOMPLETE');
 
     });
 

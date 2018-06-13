@@ -8,6 +8,7 @@ const GetTrackingNumberController = global.SixCRM.routes.include('controllers', 
 const GetFulfillmentRequiredController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getFulfillmentRequired.js');
 const GetRecoverDateController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getRecoverDate.js');
 const GetSessionRebillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getSessionRebill.js');
+const GetRebillSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/getRebillSession.js');
 
 const CloseSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/closeSession.js');
 const ConcludeSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/concludeSession.js');
@@ -43,6 +44,7 @@ module.exports = {
 	getsessionstatus: handleStepFunction((event) => new GetSessionStatusController().execute(event)),
 	getsessionclosed: handleStepFunction((event) => new GetSessionClosedController().execute(event)),
 	getsessionrebill: handleStepFunction((event) => new GetSessionRebillController().execute(event)),
+	getrebillsession: handleStepFunction((event) => new GetRebillSessionController().execute(event)),
 
 	createrebill: handleStepFunction((event) => new CreateRebillController().execute(event)),
 	report: handleStepFunction((event) => new ReportController().execute(event)),

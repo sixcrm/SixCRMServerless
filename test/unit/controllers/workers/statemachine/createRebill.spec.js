@@ -52,13 +52,49 @@ describe('controllers/workers/statemachine/createRebill.js', () => {
 
     it('responds CONCLUDED', async () => {
 
-      const rebill = true;
+      const rebill = 'CONCLUDED';
 
       const CreateRebillController = global.SixCRM.routes.include('workers', 'statemachine/createRebill.js');
       let createRebillController = new CreateRebillController();
 
       let result = createRebillController.respond(rebill);
       expect(result).to.equal('CONCLUDED');
+
+    });
+
+    it('responds CONCLUDE', async () => {
+
+      const rebill = 'CONCLUDE';
+
+      const CreateRebillController = global.SixCRM.routes.include('workers', 'statemachine/createRebill.js');
+      let createRebillController = new CreateRebillController();
+
+      let result = createRebillController.respond(rebill);
+      expect(result).to.equal('CONCLUDE');
+
+    });
+
+    it('responds CANCELLED', async () => {
+
+      const rebill = 'CANCELLED';
+
+      const CreateRebillController = global.SixCRM.routes.include('workers', 'statemachine/createRebill.js');
+      let createRebillController = new CreateRebillController();
+
+      let result = createRebillController.respond(rebill);
+      expect(result).to.equal('CANCELLED');
+
+    });
+
+    it('responds INCOMPLETE', async () => {
+
+      const rebill = 'INCOMPLETE';
+
+      const CreateRebillController = global.SixCRM.routes.include('workers', 'statemachine/createRebill.js');
+      let createRebillController = new CreateRebillController();
+
+      let result = createRebillController.respond(rebill);
+      expect(result).to.equal('INCOMPLETE');
 
     });
 
@@ -169,6 +205,45 @@ describe('controllers/workers/statemachine/createRebill.js', () => {
   });
 
   describe('execute', async () => {
+
+    it('successfully captures control messages', async () => {
+
+      let session = MockEntities.getValidSession();
+      let rebill = MockEntities.getValidRebill();
+      rebill.parentsession = session.id;
+
+      let event = {
+        guid: session.id,
+        executionid: "fb2305406d206ff9c87228930a7aa56309e7f4c6",
+        status: "CLOSED",
+        rebill: "41101c98-7718-4691-ad3b-78817dc81f63"
+      };
+
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
+        constructor(){}
+        createRebill({session}){
+          expect(session).to.be.a('object');
+          expect(session).to.have.property('id');
+          expect(session.id).to.be.a('string');
+          return Promise.resolve('CONCLUDE');
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        constructor(){}
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(session);
+        }
+      });
+
+      const CreateRebillController = global.SixCRM.routes.include('workers', 'statemachine/createRebill.js');
+      let createRebillController = new CreateRebillController();
+
+      let result = await createRebillController.execute({guid: '168ee8ef-ca12-4881-9e0a-441073cf9b42'});
+      expect(result).to.equal('CONCLUDE');
+
+    });
 
     it('successfully creates the rebill', async () => {
 

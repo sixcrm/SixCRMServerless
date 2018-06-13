@@ -132,6 +132,10 @@ functions:
   report:
     handler: handlers/statemachine/handlers.report
 
+#Bill, Recover, Close Session
+  triggercreaterebill:
+    handler: handlers/statemachine/handlers.triggercreaterebill
+
 #Create Rebill
   getsessionstatus:
     handler: handlers/statemachine/handlers.getsessionstatus
@@ -147,8 +151,6 @@ functions:
     handler: handlers/statemachine/handlers.closesession
   cleanupsession:
     handler: handlers/statemachine/handlers.cleanupsession
-  triggercreaterebill:
-    handler: handlers/statemachine/handlers.triggercreaterebill
   getsessionrebill:
     handler: handlers/statemachine/handlers.getsessionrebill
 
@@ -158,7 +160,7 @@ functions:
   senddeliverynotification:
     handler: handlers/statemachine/handlers.senddeliverynotification
 
-# Post fulfillment
+# Post Fulfillment
   gettrackingnumber:
     handler: handlers/statemachine/handlers.gettrackingnumber
   triggertracking:
@@ -181,6 +183,8 @@ functions:
     handler: handlers/statemachine/handlers.bill
   triggerprefulfillment:
     handler: handlers/statemachine/handlers.triggerprefulfillment
+  getrebillsession:
+    handler: handlers/statemachine/handlers.getrebillsession
   cleanupdecline:
     handler: handlers/statemachine/handlers.cleanupdecline
 

@@ -28,8 +28,8 @@
         },
         {
           "Variable": "$.status",
-          "StringEquals": "OPEN",
-          "Next": "Session Open"
+          "StringEquals": "INCOMPLETE",
+          "Next": "Session Incomplete"
         },
         {
           "Variable": "$.status",
@@ -38,9 +38,6 @@
         }
       ],
       "Default": "Create Rebill"
-    },
-    "Session Open":{
-      "Type":"Succeed"
     },
     "Session Cancelled":{
       "Type":"Succeed"
@@ -66,13 +63,28 @@
       "Choices": [
         {
           "Variable": "$.status",
-          "StringEquals": "CONCLUDED",
+          "StringEquals": "CONCLUDE",
           "Next": "Conclude Session"
+        },
+        {
+          "Variable": "$.status",
+          "StringEquals": "CANCELLED",
+          "Next": "Session Cancelled"
+        },
+        {
+          "Variable": "$.status",
+          "StringEquals": "CONCLUDED",
+          "Next": "Session Concluded"
         },
         {
           "Variable": "$.status",
           "StringEquals": "REBILLCREATED",
           "Next": "Rebill Created"
+        },
+        {
+          "Variable": "$.status",
+          "StringEquals": "INCOMPLETE",
+          "Next": "Session Incomplete"
         }
       ],
       "Default": "Rebill Creation Failed"
@@ -86,7 +98,7 @@
     "Conclude Session": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-concludesession",
-      "End":true,
+      "Next":"Session Concluded",
       "Retry": [
         {
           "ErrorEquals": [
@@ -99,6 +111,9 @@
       ]
     },
     "Session Concluded":{
+      "Type":"Succeed"
+    },
+    "Session Incomplete":{
       "Type":"Succeed"
     }
   }

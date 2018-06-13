@@ -514,6 +514,56 @@ describe('/helpers/entities/Rebill.js', () => {
 				{
 					day:-1,
 					expect:0
+				}
+			];
+
+			return Promise.all(arrayutilities.map(test_cases, test_case => {
+
+				const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+				let rebillCreatorHelper = new RebillCreatorHelperController();
+
+				rebillCreatorHelper.parameters.set('normalizedproductschedules',[{quantity: 1, product_schedule: product_schedule}]);
+				rebillCreatorHelper.parameters.set('day', test_case.day);
+
+				return rebillCreatorHelper.getNextProductScheduleBillDayNumber().then(() => {
+					expect(rebillCreatorHelper.parameters.get('nextproductschedulebilldaynumber')).to.equal(test_case.expect);
+				});
+
+			}));
+
+		});
+
+		it('successfully acquires the next product schedule bill day number', () => {
+
+			let product_schedule = getValidProductSchedule();
+
+			product_schedule.schedule = [
+				{
+					product:getValidProduct("616cc994-9480-4640-b26c-03810a679fe3"),
+					price:4.99,
+					start:0,
+					end:14,
+					period:14
+				},
+				{
+					product:getValidProduct("be992cea-e4be-4d3e-9afa-8e020340ed16"),
+					price:34.99,
+					start:14,
+					end:28,
+					period:14
+				},
+				{
+					product:getValidProduct("be992ceb-e4be-4d3e-9afa-8e020340ed16"),
+					price:34.99,
+					start:28,
+					period:28
+				}
+			];
+
+			let test_cases = [
+				{
+					day:-1,
+					expect:0
 				},
 				{
 					day: 0,
@@ -2271,4 +2321,41 @@ describe('/helpers/entities/Rebill.js', () => {
 			});
 		});
 	});
+
+	/*
+	shouldRebill(){
+
+		du.debug('Should Rebill');
+
+		const session = this.parameters.get('session', {fatal: false});
+		const day = this.parameters.get('day', {fatal: false});
+
+		if(_.has(session, 'concluded') && session.concluded == true){
+			du.warning('Session concluded, do not rebill');
+			throw eu.getError('control', 'CONCLUDED');
+		}
+
+		if(_.has(session, 'cancelled') && _.has(session.cancelled, 'cancelled') && session.cancelled.cancelled == true){
+			du.warning('Session cancelled, do not rebill');
+			throw eu.getError('control', 'CANCELLED');
+		}
+
+		if(day < 0){
+			return;
+		}
+
+		if(!_.has(session, 'completed') || session.completed !== true){
+			du.warning('Session is not completed, do not rebill');
+			throw eu.getError('control', 'INCOMPLETE');
+		}
+
+		const product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
+
+		if(!_.isArray(product_schedules) || !arrayutilities.nonEmpty(product_schedules)){
+			du.warning('No product schedules, do not rebill');
+			throw eu.getError('control', 'CONCLUDE');
+		}
+
+	}
+	*/
 });
