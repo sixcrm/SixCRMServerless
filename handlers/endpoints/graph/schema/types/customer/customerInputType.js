@@ -10,11 +10,11 @@ module.exports.graphObj = new GraphQLInputObjectType({
 	name: 'CustomerInputType',
 	fields: () => ({
 		id:					{ type: GraphQLString },
-		firstname:			{ type: new GraphQLNonNull(GraphQLString) },
-		lastname:			{ type: new GraphQLNonNull(GraphQLString) },
+		firstname:			{ type: GraphQLString },
+		lastname:			{ type: GraphQLString },
 		email:				{ type: new GraphQLNonNull(GraphQLString) },
-		phone:				{ type: new GraphQLNonNull(GraphQLString) },
-		address:			{ type: new GraphQLNonNull(addressInputType.graphObj) },
+		phone:				{ type: GraphQLString },
+		address:			{ type: addressInputType.graphObj },
 		default_creditcard: { type: GraphQLString },
 		creditcards:		{ type: new GraphQLList(GraphQLString) },
 		updated_at:     { type: GraphQLString }

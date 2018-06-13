@@ -19,11 +19,11 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'The id of the customer.',
 		},
 		firstname: {
-			type: new GraphQLNonNull(GraphQLString),
+			type: GraphQLString,
 			description: 'The firstname of the customer.',
 		},
 		lastname: {
-			type: new GraphQLNonNull(GraphQLString),
+			type: GraphQLString,
 			description: 'The lastname of the customer.',
 		},
 		phone: {
