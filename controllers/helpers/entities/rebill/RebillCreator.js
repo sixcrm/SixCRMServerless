@@ -86,10 +86,20 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			.then(() => this.hydrateArguments())
 			.then(() => this.normalizeArguments())
 			.then(() => this.validateArguments())
+			.then(() => this.shouldRebill())
 			.then(() => this.acquireRebillProperties())
 			.then(() => this.buildRebillPrototype())
 			.then(() => this.pushRebill())
-			.then(() => this.returnRebill());
+			.then(() => this.returnRebill())
+			.catch((error) => {
+				if(_.has(error, 'code') && error.code == '520'){
+					const message_code = error.message.replace('[520] ','');
+					if(_.includes(['CONCLUDE', 'CONCLUDED', 'CANCELLED', 'INCOMPLETE'], error.message.replace('[520] ',''))){
+						return message_code;
+					}
+				}
+				throw error;
+			});
 
 	}
 
@@ -284,6 +294,41 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 	}
 
+	shouldRebill(){
+
+		du.debug('Should Rebill');
+
+		const session = this.parameters.get('session', {fatal: false});
+		const day = this.parameters.get('day', {fatal: false});
+
+		if(_.has(session, 'concluded') && session.concluded == true){
+			du.warning('Session concluded, do not rebill');
+			throw eu.getError('control', 'CONCLUDED');
+		}
+
+		if(_.has(session, 'cancelled') && _.has(session.cancelled, 'cancelled') && session.cancelled.cancelled == true){
+			du.warning('Session cancelled, do not rebill');
+			throw eu.getError('control', 'CANCELLED');
+		}
+
+		if(day < 0){
+			return;
+		}
+
+		if(!_.has(session, 'completed') || session.completed !== true){
+			du.warning('Session is not completed, do not rebill');
+			throw eu.getError('control', 'INCOMPLETE');
+		}
+
+		const product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
+
+		if(!_.isArray(product_schedules) || !arrayutilities.nonEmpty(product_schedules)){
+			du.warning('No product schedules, do not rebill');
+			throw eu.getError('control', 'CONCLUDE');
+		}
+
+	}
+
 	validateProductPricing() {
 		if(!_.has(this, 'productController')){
 			const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
@@ -321,7 +366,6 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			return true;
 		}
 
-		du.info(product_schedules);
 		const valid = arrayutilities.every(product_schedules, product_schedule => {
 			const products = product_schedule.product_schedule.schedule;
 			return arrayutilities.every(products, product_group => {
@@ -361,6 +405,9 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		let day = this.parameters.get('day');
 		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
+
+		du.info(day);
+		du.info(normalized_product_schedules); process.exit();
 
 		if(!_.isNull(normalized_product_schedules)){
 

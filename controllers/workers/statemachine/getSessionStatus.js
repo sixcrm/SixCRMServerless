@@ -29,7 +29,7 @@ module.exports = class GetSessionStatusController extends stepFunctionWorkerCont
 	getStatus(session){
 
 		if(this.isOpen(session)){
-			return 'OPEN';
+			return 'INCOMPLETE';
 		}
 
 		if(this.isCancelled(session)){
@@ -48,7 +48,7 @@ module.exports = class GetSessionStatusController extends stepFunctionWorkerCont
 
 		du.debug('Is Open');
 
-		if(!_.has(session, 'completed') && session.completed != true){
+		if(!_.has(session, 'completed') || session.completed != true){
 			return true;
 		}
 
