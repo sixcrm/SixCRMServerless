@@ -73,9 +73,10 @@
 	"updated_at":"2018-04-28T14:40:00.000Z"
 },
 {
-  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	"account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
   "affiliate_allow": [],
   "affiliate_deny": [],
+	"allow_on_order_form": true,
   "allow_prepaid": false,
   "created_at": "2018-05-01T20:43:19.772Z",
   "emailtemplates": [],
