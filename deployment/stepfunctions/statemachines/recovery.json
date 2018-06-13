@@ -6,7 +6,6 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getrecoverdate",
       "Next": "Wait For Recovery Date",
-      "InputPath": "$",
       "ResultPath": "$.recoverdate",
       "Retry" : [
           {
@@ -26,7 +25,6 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-bill",
       "Next": "Is Success?",
-      "InputPath": "$",
       "ResultPath": "$.status",
       "Retry" : [
           {
@@ -51,21 +49,64 @@
           "Next": "Hard Declined"
         }
       ],
-      "Default":"Trigger Pre-Fulfillment"
+      "Default":"Successfully Billed"
     },
-    "Trigger Pre-Fulfillment": {
-      "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerprefullfillment",
-      "End": true,
-      "InputPath": "$",
-      "ResultPath": "$.status",
-      "Retry" : [
-          {
-            "ErrorEquals": [ "State.ALL" ],
-            "IntervalSeconds": 3,
-            "MaxAttempts": 5,
-            "BackoffRate": 5
+    "Successfully Billed":{
+      "Type":"Parallel",
+      "End":true,
+      "Branches":[
+        {
+          "StartAt":"Trigger Pre-Fulfillment",
+          "States":{
+            "Trigger Pre-Fulfillment": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerprefulfillment",
+              "End": true,
+              "ResultPath": "$.status",
+              "Retry" : [
+                  {
+                    "ErrorEquals": [ "State.ALL" ],
+                    "IntervalSeconds": 3,
+                    "MaxAttempts": 5,
+                    "BackoffRate": 5
+                  }
+              ]
+            }
           }
+        },
+        {
+          "StartAt":"Get Rebill Session",
+          "States":{
+            "Get Rebill Session":{
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-getrebillsession",
+              "Next": "Trigger Create Rebill",
+              "ResultPath": "$.guid",
+              "Retry" : [
+                  {
+                    "ErrorEquals": [ "State.ALL" ],
+                    "IntervalSeconds": 3,
+                    "MaxAttempts": 5,
+                    "BackoffRate": 5
+                  }
+              ]
+            },
+            "Trigger Create Rebill": {
+              "Type": "Task",
+              "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggercreaterebill",
+              "End": true,
+              "ResultPath": "$.status",
+              "Retry" : [
+                  {
+                    "ErrorEquals": [ "State.ALL" ],
+                    "IntervalSeconds": 3,
+                    "MaxAttempts": 5,
+                    "BackoffRate": 5
+                  }
+              ]
+            }
+          }
+        }
       ]
     },
     "Hard Declined": {

@@ -406,9 +406,6 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		let day = this.parameters.get('day');
 		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
 
-		du.info(day);
-		du.info(normalized_product_schedules); process.exit();
-
 		if(!_.isNull(normalized_product_schedules)){
 
 			let start_day_numbers = arrayutilities.map(normalized_product_schedules, product_schedule_group => {
