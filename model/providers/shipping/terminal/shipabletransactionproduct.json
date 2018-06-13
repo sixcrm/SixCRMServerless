@@ -27,11 +27,6 @@
 							true
 						]
 					}
-				},
-				"shipping_receipt": {
-					"not": {
-						"$ref": "../../../definitions/uuidv4.json"
-					}
 				}
 			}
 		}

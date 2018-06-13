@@ -26,9 +26,19 @@
           "Variable": "$.status",
           "StringEquals": "SUCCESS",
           "Next": "Trigger Post-Fulfillment"
+        },
+        {
+          "Variable": "$.status",
+          "StringEquals": "NOACTION",
+          "Next": "Notify Fulfillment Providers No-Action"
         }
       ],
       "Default": "Notify Fulfillment Providers Failure"
+    },
+    "Notify Fulfillment Providers No-Action": {
+      "Type": "Succeed",
+      "Cause": "The Terminal Controller returned 'NOACTION'.  This should be rectified with the Pre-Fulfillment state machine processes.",
+      "Error": "Terminal Controller returned a non-success, non-error response code."
     },
     "Notify Fulfillment Providers Failure": {
       "Type": "Fail",

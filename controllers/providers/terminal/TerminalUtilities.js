@@ -204,19 +204,16 @@ module.exports = class TerminalUtilitiesController extends PermissionedControlle
 
 	}
 
-	createShipableTransactionProductGroup(){
+	createShipableTransactionProductGroup(reship = true){
 
 		du.debug('Create Shipable Transaction Product Group');
 
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 		let shipable_product_ids = this.parameters.get('shipableproductids');
 
-
 		let shipable_transaction_product_group = arrayutilities.filter(augmented_transaction_products, augmented_transaction_product => {
 
-			du.info(augmented_transaction_product);
-
-			if(_.has(augmented_transaction_product, 'shipping_receipt')){
+			if(_.has(augmented_transaction_product, 'shipping_receipt') && reship == false){
 				return false;
 			}
 

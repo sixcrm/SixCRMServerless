@@ -550,6 +550,30 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
 		});
 
+		it('successfully creates a shipable transaction product group (subset - shipping_receipt, no re-ship)', () => {
+
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
+				return augmented_transaction_product.product.id;
+			});
+
+			augmented_transaction_products[0].shipping_receipt = uuidV4();
+			augmented_transaction_products[2].shipping_receipt = uuidV4();
+			augmented_transaction_products[3].shipping_receipt = uuidV4();
+
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
+
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			terminalController.parameters.set('shipableproductids', shipable_product_ids);
+
+			let result = terminalController.createShipableTransactionProductGroup(false);
+
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[1]]);
+
+		});
+
 		it('successfully creates a shipable transaction product group (subset - shipping_receipt)', () => {
 
 			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
@@ -570,7 +594,7 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 			let result = terminalController.createShipableTransactionProductGroup();
 
 			expect(result).to.equal(true);
-			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([augmented_transaction_products[1]]);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal(augmented_transaction_products);
 
 		});
 
@@ -593,6 +617,31 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 			terminalController.parameters.set('shipableproductids', shipable_product_ids);
 
 			let result = terminalController.createShipableTransactionProductGroup();
+
+			expect(result).to.equal(true);
+			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal(augmented_transaction_products);
+
+		});
+
+		it('successfully creates a shipable transaction product group (subset2 - shipping_receipt, no re-ship)', () => {
+
+			let augmented_transaction_products = getValidAugmentedTransactionProducts(null, true);
+			let shipable_product_ids = arrayutilities.map(augmented_transaction_products, augmented_transaction_product => {
+				return augmented_transaction_product.product.id;
+			});
+
+			augmented_transaction_products[0].shipping_receipt = uuidV4();
+			augmented_transaction_products[1].shipping_receipt = uuidV4();
+			augmented_transaction_products[2].shipping_receipt = uuidV4();
+			augmented_transaction_products[3].shipping_receipt = uuidV4();
+
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
+
+			terminalController.parameters.set('augmentedtransactionproducts', augmented_transaction_products);
+			terminalController.parameters.set('shipableproductids', shipable_product_ids);
+
+			let result = terminalController.createShipableTransactionProductGroup(false);
 
 			expect(result).to.equal(true);
 			expect(terminalController.parameters.store['shipabletransactionproductgroup']).to.deep.equal([]);
@@ -1026,6 +1075,102 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 
 	});
 
+	xdescribe('fulfill (LIVE)', () => {
+
+		const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
+		PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+
+		it('successfully ships a rebill', () => {
+
+			let rebill = {
+			  "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			  "alias": "RMM8LFJ2XE",
+			  "amount": 25.98,
+			  "bill_at": "2018-06-13T17:19:44.000Z",
+			  "created_at": "2018-06-13T17:19:45.300Z",
+			  "history": [
+			    {
+			      "entered_at": "2018-06-13T17:19:47.415Z",
+			      "state": "hold"
+			    }
+			  ],
+			  "id": "f5948baf-549a-46af-b8bd-859b7a6f44f6",
+			  "parentsession": "ac9d41fd-3a94-404a-85a1-6bc4e619fa84",
+			  "processing": true,
+			  "products": [
+			    {
+			      "amount": 12.99,
+			      "product": {
+			        "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+			        "attributes": {
+			          "dimensions": {
+			            "height": {
+			              "unitofmeasurement": "inches",
+			              "units": 4.78
+			            },
+			            "length": {
+			              "unitofmeasurement": "inches",
+			              "units": 33
+			            },
+			            "width": {
+			              "unitofmeasurement": "inches",
+			              "units": 3.2
+			            }
+			          },
+			          "images": [
+			            {
+			              "description": "This is a test image",
+			              "dimensions": {
+			                "height": 300,
+			                "width": 400
+			              },
+			              "format": "jpeg",
+			              "name": "testimage",
+			              "path": "somepath"
+			            }
+			          ],
+			          "weight": {
+			            "unitofmeasurement": "pounds",
+			            "units": 2.5
+			          }
+			        },
+			        "created_at": "2018-04-12T19:28:16.765Z",
+			        "default_price": 12.99,
+			        "description": "This is a test description",
+			        "dynamic_pricing": {
+			          "max": 14.99,
+			          "min": 9.99
+			        },
+			        "fulfillment_provider": "1bd805d0-0062-499b-ae28-00c5d1b827ba",
+			        "id": "668ad918-0d09-4116-a6fe-0e7a9eda36f8",
+			        "name": "Test Product",
+			        "ship": true,
+			        "shipping_delay": 3600,
+			        "sku": "123",
+			        "updated_at": "2018-06-13T17:18:16.170Z"
+			      },
+			      "quantity": 2
+			    }
+			  ],
+			  "state": "hold",
+			  "state_changed_at": "2018-06-13T17:19:47.415Z",
+			  "updated_at": "2018-06-13T17:19:47.429Z"
+			};
+
+			const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
+			let terminalController = new TerminalController();
+
+			return terminalController.fulfill({
+				rebill: rebill
+			}).then(result => {
+				expect(result.getCode()).to.equal('success');
+				expect(objectutilities.getClassName(result)).to.equal('TerminalResponse');
+			});
+
+		});
+
+	});
+
 	describe('fulfill', () => {
 
 		it('successfully ships a rebill', () => {
@@ -1158,6 +1303,8 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 		});
 
 	});
+
+
 
 	describe('executeFulfill', () => {
 
