@@ -944,7 +944,7 @@ class MockEntities {
 			campaign: uuidV4(),
 			product_schedules: arrayutilities.map(product_schedules, (product_schedule) => product_schedule.id),
 			watermark: this.getValidWatermark(product_schedules),
-			completed: randomutilities.randomBoolean(),
+			completed: true,
 			created_at: timestamp.getISO8601(),
 			updated_at: timestamp.getISO8601(),
 			affiliate: uuidV4(),
