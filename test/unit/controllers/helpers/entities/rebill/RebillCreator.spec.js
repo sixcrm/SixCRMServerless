@@ -2322,40 +2322,114 @@ describe('/helpers/entities/Rebill.js', () => {
 		});
 	});
 
-	/*
-	shouldRebill(){
+	describe('shouldRebill', () => {
 
-		du.debug('Should Rebill');
+		it('returns error "CONCLUDED"', () => {
 
-		const session = this.parameters.get('session', {fatal: false});
-		const day = this.parameters.get('day', {fatal: false});
+			let session = MockEntities.getValidSession();
+			session.completed = true;
+			session.concluded = true;
 
-		if(_.has(session, 'concluded') && session.concluded == true){
-			du.warning('Session concluded, do not rebill');
-			throw eu.getError('control', 'CONCLUDED');
-		}
+			const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+			let rebillCreatorHelper = new RebillCreatorHelperController();
+			rebillCreatorHelper.parameters.store['session'] = session;
+			rebillCreatorHelper.parameters.store['day'] = 0;
 
-		if(_.has(session, 'cancelled') && _.has(session.cancelled, 'cancelled') && session.cancelled.cancelled == true){
-			du.warning('Session cancelled, do not rebill');
-			throw eu.getError('control', 'CANCELLED');
-		}
+			try{
+				rebillCreatorHelper.shouldRebill();
+			}catch(error){
+				expect(error.code).to.equal(520);
+				expect(error.message).to.equal('[520] CONCLUDED');
+			}
 
-		if(day < 0){
-			return;
-		}
+		});
 
-		if(!_.has(session, 'completed') || session.completed !== true){
-			du.warning('Session is not completed, do not rebill');
-			throw eu.getError('control', 'INCOMPLETE');
-		}
+		it('returns error "CANCELLED"', () => {
 
-		const product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
+			let session = MockEntities.getValidSession();
+			session.completed = true;
+			delete session.concluded;
+			session.cancelled = {
+				cancelled: true
+			};
 
-		if(!_.isArray(product_schedules) || !arrayutilities.nonEmpty(product_schedules)){
-			du.warning('No product schedules, do not rebill');
-			throw eu.getError('control', 'CONCLUDE');
-		}
+			const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+			let rebillCreatorHelper = new RebillCreatorHelperController();
+			rebillCreatorHelper.parameters.store['session'] = session;
+			rebillCreatorHelper.parameters.store['day'] = 0;
 
-	}
-	*/
+			try{
+				rebillCreatorHelper.shouldRebill();
+			}catch(error){
+				expect(error.code).to.equal(520);
+				expect(error.message).to.equal('[520] CANCELLED');
+			}
+
+		});
+
+		it('returns error "INCOMPLETE" (undefined)', () => {
+
+			let session = MockEntities.getValidSession();
+			delete session.completed;
+			delete session.concluded;
+			delete session.cancelled;
+
+			const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+			let rebillCreatorHelper = new RebillCreatorHelperController();
+			rebillCreatorHelper.parameters.store['session'] = session;
+			rebillCreatorHelper.parameters.store['day'] = 0;
+
+			try{
+				rebillCreatorHelper.shouldRebill();
+			}catch(error){
+				expect(error.code).to.equal(520);
+				expect(error.message).to.equal('[520] INCOMPLETE');
+			}
+
+		});
+
+		it('returns error "INCOMPLETE" (false)', () => {
+
+			let session = MockEntities.getValidSession();
+			session.completed = false;
+			delete session.concluded;
+			delete session.cancelled;
+
+			const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+			let rebillCreatorHelper = new RebillCreatorHelperController();
+			rebillCreatorHelper.parameters.store['session'] = session;
+			rebillCreatorHelper.parameters.store['day'] = 0;
+
+			try{
+				rebillCreatorHelper.shouldRebill();
+			}catch(error){
+				expect(error.code).to.equal(520);
+				expect(error.message).to.equal('[520] INCOMPLETE');
+			}
+
+		});
+
+		it('returns error "CONCLUDE"', () => {
+
+			let session = MockEntities.getValidSession();
+			session.completed = true;
+			delete session.concluded;
+			delete session.cancelled;
+
+			const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+			let rebillCreatorHelper = new RebillCreatorHelperController();
+			rebillCreatorHelper.parameters.store['session'] = session;
+			rebillCreatorHelper.parameters.store['day'] = 0;
+
+			try{
+				rebillCreatorHelper.shouldRebill();
+			}catch(error){
+				expect(error.code).to.equal(520);
+				expect(error.message).to.equal('[520] CONCLUDE');
+			}
+
+		});
+
+	});
+
 });

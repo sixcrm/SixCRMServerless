@@ -129,8 +129,8 @@ functions:
 ########################
 
 #All
-  report:
-    handler: handlers/statemachine/handlers.report
+#  report:
+#    handler: handlers/statemachine/handlers.report
 
 #Bill, Recover, Close Session
   triggercreaterebill:
