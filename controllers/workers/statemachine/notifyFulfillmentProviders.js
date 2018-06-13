@@ -25,7 +25,7 @@ module.exports = class NotifyFulfillmentProvidersController extends stepFunction
 
 		await this.triggerNotifications({rebill: rebill, fulfillment_request_result: fulfillment_request_result});
 
-		return fulfillment_request_result.toUpperCase();
+		return this.respond(fulfillment_request_result.toUpperCase());
 
 	}
 
@@ -66,6 +66,14 @@ module.exports = class NotifyFulfillmentProvidersController extends stepFunction
 				rebill: rebill
 			}
 		});
+
+	}
+
+	respond(response){
+
+		du.debug('Respond');
+
+		return response;
 
 	}
 

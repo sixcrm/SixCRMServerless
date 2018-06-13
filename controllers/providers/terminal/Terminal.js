@@ -116,8 +116,6 @@ module.exports = class TerminalController extends TerminalUtilities  {
 
 		let response = 'fail';
 
-		du.debug(compound_fulfillment_responses);
-
 		let is_success = arrayutilities.every(compound_fulfillment_responses, compound_fulfillment_response => {
 			return (compound_fulfillment_response.vendor_response_class.getCode() == 'success');
 		});
