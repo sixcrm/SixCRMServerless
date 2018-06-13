@@ -42,6 +42,10 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		threepl_facility_id: {
 			type: GraphQLInt,
 			description: 'The ThreePL Facility ID.',
+		},
+		store_id: {
+			type: GraphQLInt,
+			description: 'ShipStation Store ID',
 		}
 	})
 });

@@ -1,6 +1,7 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLInt = require('graphql').GrahQLInt;
 
 let ProviderInterfaceType = require('./providerType');
 
@@ -20,6 +21,10 @@ module.exports.graphObj = new GraphQLObjectType({
 		api_secret: {
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'ShipStation API Secret',
+		},
+		store_id: {
+			type: GraphQLInt,
+			description: 'ShipStation Store ID',
 		}
 	})
 });
