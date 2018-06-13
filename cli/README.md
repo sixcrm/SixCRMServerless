@@ -1,6 +1,4 @@
 ## Do we have?
-SMTP Settings?
-Email Templates?
 Fulfillment Providers?
 Affiliate?
 Tracking?

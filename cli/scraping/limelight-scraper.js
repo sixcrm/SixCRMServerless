@@ -712,6 +712,114 @@ module.exports = class LimelightScraper {
 
 	}
 
+	async getSMTPProviders(cookie) {
+
+		const ids = await this._getSMTPProviderIds(cookie);
+
+		const smtpProviders = await BBPromise.reduce(ids, async (memo, id) => {
+
+			memo.push(await this._getSMTPProviderDetail(cookie, id));
+			return memo;
+
+		}, []);
+
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-smtp-providers.json'), smtpProviders, {
+			spaces: 4
+		});
+
+	}
+
+	async _getSMTPProviderIds(cookie) {
+
+		const url = `${this._url}/smtp/smtp.php?SQL_HASH=36fcd15087e8715059fa1adfc0abc5e6&PAGE_ID=smtp.php&LIST_NAME=smtpList&BUTTON_VALUE=smtpListJump&LIST_FILTER_ALL=&list_jump=1&LIST_COL_SORT=&LIST_COL_SORT_ORDER=ASC&ROW_LIMIT=1000&LIST_SEQUENCE=1`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			}
+		});
+
+		const json = JSON.parse(res.body);
+
+		const $ = cheerio.load(json.list);
+
+		const table = $('.list tbody');
+
+		const ids = _.reduce(table.children(), (memo, row, i) => {
+
+			if (i < 1 || i === table.children().length - 1) {
+
+				return memo;
+
+			}
+
+			const cell = $(row.children[1]);
+			const id = this._cleanseOutput(cell.text());
+
+			memo.push(id);
+			return memo;
+
+		}, []);
+
+		return ids;
+
+	}
+
+	async _getSMTPProviderDetail(cookie, id) {
+
+		const url = `${this._url}/smtp/smtp_edit.php`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			},
+			qs: {
+				smtpId: id
+			}
+		});
+
+		const $ = cheerio.load(res.body);
+
+		const name = this._cleanseOutput($('#smtpName').val());
+		const host = this._cleanseOutput($('#smtpHost').val());
+		const domain = this._cleanseOutput($('#smtpDomain').val());
+		const port = this._cleanseOutput($('#smtpPort').val());
+		const email = this._cleanseOutput($('#smtpEmail').val());
+		const mailFrom = this._cleanseOutput($('#smtpMailFrom').val());
+		const username = this._cleanseOutput($('#smtpUsername').val());
+		const password = this._cleanseOutput($('#smtpPassword').val());
+		const useAuth = $('input[name=smtpUseAuth]').val();
+		const publish = $('input[name=active]').val();
+
+		return {
+			name,
+			host,
+			domain,
+			port,
+			email,
+			mailFrom,
+			username,
+			password,
+			useAuth,
+			publish
+		}
+
+	}
+
 	_cleanseOutput(val) {
 
 		if (!_.isString(val)) {
