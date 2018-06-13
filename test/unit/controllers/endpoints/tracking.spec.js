@@ -100,6 +100,7 @@ function getValidCampaign(){
 		id:uuidV4(),
 		account:"d3fa3bf3-7824-49f4-8261-87674482bf1c",
 		name: randomutilities.createRandomString(15),
+		allow_on_order_form: randomutilities.randomBoolean(),
 		allow_prepaid: false,
 		show_prepaid: false,
 		productschedules: [uuidV4(), uuidV4()],

@@ -1381,6 +1381,7 @@ class MockEntities {
 		return {
 			id: this.getValidId(id),
 			account: this.getTestAccountID(),
+			allow_on_order_form: randomutilities.randomBoolean(),
 			allow_prepaid: randomutilities.randomBoolean(),
 			show_prepaid: randomutilities.randomBoolean(),
 			name: spoofer.createRandomName('full'),

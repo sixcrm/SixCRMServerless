@@ -76,7 +76,7 @@
 	"required": [
 		"account",
 		"name",
-		"allow_in_order_creation",
+		"allow_on_order_form",
 		"show_prepaid",
 		"allow_prepaid",
 		"created_at",
