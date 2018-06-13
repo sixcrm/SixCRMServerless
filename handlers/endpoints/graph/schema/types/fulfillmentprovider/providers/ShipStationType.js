@@ -1,7 +1,7 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
-const GraphQLInt = require('graphql').GrahQLInt;
+const GraphQLInt = require('graphql').GraphQLInt;
 
 let ProviderInterfaceType = require('./providerType');
 
