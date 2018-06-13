@@ -17,6 +17,9 @@
 		"api_secret": {
 			"type": "string",
 			"minLength": 1
+		},
+		"store_id": {
+			"type": "number"
 		}
 	},
 	"required": [

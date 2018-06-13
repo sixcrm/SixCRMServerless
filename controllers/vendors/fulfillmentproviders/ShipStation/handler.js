@@ -239,6 +239,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
 		du.debug('Get List Orders Request Parameters');
 
+		let {store_id} = this.parameters.get('fulfillmentprovider').provider;
 		let reference_number = this.parameters.get('referencenumber', {fatal: false});
 
 		let request_parameters = {
@@ -250,6 +251,10 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 			request_parameters.orderNumber = reference_number;
 		}
 
+		if (!_.isUndefined(store_id)) {
+			request_parameters.storeId = store_id;
+		}
+
 		return request_parameters;
 
 	}
@@ -258,6 +263,7 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 
 		du.debug('Get CreateOrder Request Parameters');
 
+		let {store_id} = this.parameters.get('fulfillmentprovider').provider;
 		let customer = this.parameters.get('customer');
 		let products = this.parameters.get('products');
 
@@ -273,6 +279,12 @@ module.exports = class ShipStationController extends FulfillmentProviderControll
 			billTo: this.createBillTo(customer),
 			shipTo: this.createShipTo(customer),
 			items: this.createItems(products)
+		}
+
+		if (!_.isUndefined(store_id)) {
+			parameters.advancedOptions = {
+				storeId: store_id
+			};
 		}
 
 		return parameters;
