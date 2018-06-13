@@ -401,7 +401,7 @@ module.exports = class LimelightScraper {
 			const rebillOrderLimit = this._cleanseOutput($($(row).find($(`#rebill_limit input[id="initial_${id}_input"]`))[0]).val());
 			const monthlyCap = this._cleanseOutput($(`input[id="${id}_input"]`).val());
 			const preserveBilling = this._cleanseOutput($(`input[id="${id}_preserve_gateway"]`).val());
-			const reserveGateway = $($(row).find($(`.is_reserve`))[0]).attr('checked') !== undefined;
+			const reserveGateway = $($(row).find($(`.is_reserve`))[0]).val();
 			const globalCapRemaining = this._cleanseOutput($(`input[id="${id}_balance"]`).val());
 			const globalMonthlyRemaining = this._cleanseOutput($($(row).find($('.global-monthly-remaining-percentage'))[0]).text());
 			const reserveForecastedRevenue = this._cleanseOutput($(row.children[15]).text());
@@ -583,14 +583,14 @@ module.exports = class LimelightScraper {
 		const price = this._cleanseOutput($('#product_price').val());
 		const costOfGoods = this._cleanseOutput($('#product_cost_price').val());
 		const restockFee = this._cleanseOutput($('#product_restocking_fee').val());
-		const maxQty =  this._cleanseOutput($('#product_max_qty').val());
+		const maxQty = this._cleanseOutput($('#product_max_qty').val());
 		const desc = this._cleanseOutput($('#product_description').text());
-		const shippable = $('#product_shippable').attr('checked') === 'checked';
+		const shippable = $('#product_shippable').val();
 		const nextRecurringProduct = this._cleanseOutput($('select[name="recurring_next_product"] option:selected').text());
 		const subscriptionType = this._cleanseOutput($('select[id="subscription_type"] option:selected').text());
 		const daysToNextBilling = this._cleanseOutput($('#recurring_days').val());
 		const maxDiscount = this._cleanseOutput(this._cleanseOutput($('#recurring_discount_max').val()));
-		const preserveQuantity = $('#preserve_quantity').attr('checked') === 'checked';
+		const preserveQuantity = $('#preserve_quantity').val();
 
 		return {
 			id,
@@ -609,6 +609,213 @@ module.exports = class LimelightScraper {
 			daysToNextBilling,
 			maxDiscount,
 			preserveQuantity
+		}
+
+	}
+
+	async getEmailTemplates(cookie) {
+
+		const ids = await this._getEmailTemplateIds(cookie);
+		const templates = await BBPromise.reduce(ids, async (memo, id) => {
+
+			memo.push(await this._getEmailTemplate(cookie, id));
+			return memo;
+
+		}, []);
+
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-email-templates.json'), templates, {
+			spaces: 4
+		});
+
+	}
+
+	async _getEmailTemplateIds(cookie) {
+
+		const url = `${this._url}/notifications/notifications.php?SQL_HASH=fbff594eb8408332f4acf749b6224d20&PAGE_ID=notifications.php&LIST_NAME=templates&BUTTON_VALUE=templateListJump&LIST_FILTER_ALL=&list_jump=1&LIST_COL_SORT=&LIST_COL_SORT_ORDER=ASC&ROW_LIMIT=1000&LIST_SEQUENCE=1`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			}
+		});
+
+		const json = JSON.parse(res.body);
+
+		const $ = cheerio.load(json.list);
+
+		const table = $('.list tbody');
+
+		const ids = _.reduce(table.children(), (memo, row, i) => {
+
+			if (i < 1 || i === table.children().length - 1) {
+
+				return memo;
+
+			}
+
+			const cell = $(row.children[1]);
+			const id = this._cleanseOutput(cell.text());
+
+			memo.push(id);
+			return memo;
+
+		}, []);
+
+		return ids;
+
+	}
+
+	async _getEmailTemplate(cookie, id) {
+
+		const url = `${this._url}/notifications/notification_edit.php`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			},
+			qs: {
+				templateId: id
+			}
+		});
+
+		const $ = cheerio.load(res.body);
+
+		const subject = this._cleanseOutput($('#templateSubject').val());
+		const name = this._cleanseOutput($('#templateName').val());
+		const description = this._cleanseOutput($('#templateDesc').text());
+		const active = $('#active').val();
+		const plainText = this._cleanseOutput($('#templatePlainT').text());
+		const html = $('textarea[name=templateHTML]').text();
+
+		return {
+			subject,
+			name,
+			description,
+			active,
+			plainText,
+			html
+		}
+
+	}
+
+	async getSMTPProviders(cookie) {
+
+		const ids = await this._getSMTPProviderIds(cookie);
+
+		const smtpProviders = await BBPromise.reduce(ids, async (memo, id) => {
+
+			memo.push(await this._getSMTPProviderDetail(cookie, id));
+			return memo;
+
+		}, []);
+
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-smtp-providers.json'), smtpProviders, {
+			spaces: 4
+		});
+
+	}
+
+	async _getSMTPProviderIds(cookie) {
+
+		const url = `${this._url}/smtp/smtp.php?SQL_HASH=36fcd15087e8715059fa1adfc0abc5e6&PAGE_ID=smtp.php&LIST_NAME=smtpList&BUTTON_VALUE=smtpListJump&LIST_FILTER_ALL=&list_jump=1&LIST_COL_SORT=&LIST_COL_SORT_ORDER=ASC&ROW_LIMIT=1000&LIST_SEQUENCE=1`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			}
+		});
+
+		const json = JSON.parse(res.body);
+
+		const $ = cheerio.load(json.list);
+
+		const table = $('.list tbody');
+
+		const ids = _.reduce(table.children(), (memo, row, i) => {
+
+			if (i < 1 || i === table.children().length - 1) {
+
+				return memo;
+
+			}
+
+			const cell = $(row.children[1]);
+			const id = this._cleanseOutput(cell.text());
+
+			memo.push(id);
+			return memo;
+
+		}, []);
+
+		return ids;
+
+	}
+
+	async _getSMTPProviderDetail(cookie, id) {
+
+		const url = `${this._url}/smtp/smtp_edit.php`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			},
+			qs: {
+				smtpId: id
+			}
+		});
+
+		const $ = cheerio.load(res.body);
+
+		const name = this._cleanseOutput($('#smtpName').val());
+		const host = this._cleanseOutput($('#smtpHost').val());
+		const domain = this._cleanseOutput($('#smtpDomain').val());
+		const port = this._cleanseOutput($('#smtpPort').val());
+		const email = this._cleanseOutput($('#smtpEmail').val());
+		const mailFrom = this._cleanseOutput($('#smtpMailFrom').val());
+		const username = this._cleanseOutput($('#smtpUsername').val());
+		const password = this._cleanseOutput($('#smtpPassword').val());
+		const useAuth = $('input[name=smtpUseAuth]').val();
+		const publish = $('input[name=active]').val();
+
+		return {
+			name,
+			host,
+			domain,
+			port,
+			email,
+			mailFrom,
+			username,
+			password,
+			useAuth,
+			publish
 		}
 
 	}
