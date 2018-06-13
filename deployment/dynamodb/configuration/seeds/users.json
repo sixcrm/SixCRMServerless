@@ -72,6 +72,18 @@
 		"updated_at":"2017-04-06T18:41:12.521Z"
 	},
 	{
+		"name":"NickAcker",
+		"first_name": "Nick",
+		"last_name": "Acker",
+		"auth0_id":"abc123",
+		"id":"acker2@icloud.com",
+		"active":true,
+		"termsandconditions":"0.1",
+		"alias":"ea6abbc018a1c5e678271aaf7f6200e0aac789af",
+		"created_at":"2018-06-13T18:40:41.405Z",
+		"updated_at":"2018-06-13T18:41:12.521Z"
+	},
+	{
 	  "name":"E2ETestAdmin",
 	  "first_name": "E2ETest",
 	  "last_name": "Admin",

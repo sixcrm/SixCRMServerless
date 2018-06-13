@@ -74,6 +74,15 @@
       "updated_at":"2017-04-06T18:41:12.521Z"
   },
   {
+      "id":"adc07a7d-7a2b-4d90-9776-50b69f038db2",
+      "account":"*",
+      "user":"acker2@icloud.com",
+      "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
+      "termsandconditions": "0.1",
+      "created_at":"2018-06-13T18:40:41.405Z",
+      "updated_at":"2018-06-13T18:41:12.521Z"
+  },
+  {
       "id":"2e947415-abae-46e9-af8a-17c57bd01998",
       "account":"d3fa3bf3-7111-49f4-8261-87674482bf1c",
       "user":"e2e-test-admin@sixcrm.com",
