@@ -826,9 +826,9 @@ module.exports = class LimelightScraper {
 
 		const ids = await this._getFulfillmentProviderIds(cookie);
 
-		const fulfillmentProviders = await BBPromise.reduce(ids, async (memo, id) => {
+		const fulfillmentProviders = await BBPromise.reduce(ids, async (memo, p) => {
 
-			memo.push(await this._getFulfillmentProviderDetail(cookie, id));
+			memo.push(await this._getFulfillmentProviderDetail(cookie, p.id, p.name));
 			return memo;
 
 		}, []);
@@ -871,11 +871,21 @@ module.exports = class LimelightScraper {
 
 		const json = JSON.parse(res.body);
 
-		return json.data.map(d => d.ID);
+		return json.data.map(d => {
+
+			const id = d.ID;
+			const $ = cheerio.load(d.ACCOUNT_NAME);
+			const name = $('.crud-column__header').text();
+
+			return {
+				id,
+				name
+			}
+		});
 
 	}
 
-	async _getFulfillmentProviderDetail(cookie, id) {
+	async _getFulfillmentProviderDetail(cookie, id, name) {
 
 		const url = `${this._url}/ajax_min.php`;
 
@@ -891,8 +901,8 @@ module.exports = class LimelightScraper {
 				Cookie: cookie.split(';')[0]
 			},
 			form: {
-				action:'ll_ajax_crud',
-				mode:'view',
+				action: 'll_ajax_crud',
+				mode: 'view',
 				profile_id: 1,
 				provider_type_id: 2
 			}
@@ -905,8 +915,8 @@ module.exports = class LimelightScraper {
 		// this is going to be different per provider....
 
 		const alias = this._cleanseOutput($('#profile_alias').val());
-		const active =  this._cleanseOutput($('input[name=profile_status]').val());
-		const billingCode =  this._cleanseOutput($('select[id="Billing Code"] option:selected').text());
+		const active = this._cleanseOutput($('input[name=profile_status]').val());
+		const billingCode = this._cleanseOutput($('select[id="Billing Code"] option:selected').text());
 		const combineSimilarAddresses = this._cleanseOutput($('select[id="Combine Similar Addresses"] option:selected').text());
 		const customerID = this._cleanseOutput($('input[id="Customer ID"]').val());
 		const delayHours = this._cleanseOutput($('input[id="Delay Hours"]').val());
@@ -919,6 +929,7 @@ module.exports = class LimelightScraper {
 
 		return {
 			id,
+			name,
 			alias,
 			active,
 			billingCode,
