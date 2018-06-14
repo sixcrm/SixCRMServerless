@@ -702,6 +702,7 @@ module.exports = class LimelightScraper {
 		const html = $('textarea[name=templateHTML]').text();
 
 		return {
+			id,
 			subject,
 			name,
 			description,
@@ -806,6 +807,7 @@ module.exports = class LimelightScraper {
 		const publish = $('input[name=active]').val();
 
 		return {
+			id,
 			name,
 			host,
 			domain,
@@ -816,6 +818,119 @@ module.exports = class LimelightScraper {
 			password,
 			useAuth,
 			publish
+		}
+
+	}
+
+	async getFulfillmentProviders(cookie) {
+
+		const ids = await this._getFulfillmentProviderIds(cookie);
+
+		const fulfillmentProviders = await BBPromise.reduce(ids, async (memo, id) => {
+
+			memo.push(await this._getFulfillmentProviderDetail(cookie, id));
+			return memo;
+
+		}, []);
+
+		await fs.writeJson(path.join(this._artifactsDirectory, 'scraped-fulfillment-providers.json'), fulfillmentProviders, {
+			spaces: 4
+		});
+
+	}
+
+	async _getFulfillmentProviderIds(cookie) {
+
+		await request.get({
+			url: `${this._url}/my_providers/index.php`,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			}
+		});
+
+		const url = `${this._url}/ajax_min.php?draw=6&columns%5B0%5D%5Bdata%5D=ID&columns%5B0%5D%5Bname%5D=&columns%5B0%5D%5Bsearchable%5D=false&columns%5B0%5D%5Borderable%5D=false&columns%5B0%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B0%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B1%5D%5Bdata%5D=LOGO_IMG&columns%5B1%5D%5Bname%5D=LOGO_IMG&columns%5B1%5D%5Bsearchable%5D=true&columns%5B1%5D%5Borderable%5D=false&columns%5B1%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B1%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B2%5D%5Bdata%5D=ACCOUNT_NAME&columns%5B2%5D%5Bname%5D=&columns%5B2%5D%5Bsearchable%5D=true&columns%5B2%5D%5Borderable%5D=true&columns%5B2%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B2%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B3%5D%5Bdata%5D=PROVIDER_TYPE_FORMATTED&columns%5B3%5D%5Bname%5D=PROVIDER_TYPE_FORMATTED&columns%5B3%5D%5Bsearchable%5D=true&columns%5B3%5D%5Borderable%5D=true&columns%5B3%5D%5Bsearch%5D%5Bvalue%5D=Fulfillment&columns%5B3%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B4%5D%5Bdata%5D=ALIAS_NAME&columns%5B4%5D%5Bname%5D=ALIAS_NAME&columns%5B4%5D%5Bsearchable%5D=true&columns%5B4%5D%5Borderable%5D=true&columns%5B4%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B4%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B5%5D%5Bdata%5D=GLOBAL_CAP&columns%5B5%5D%5Bname%5D=GLOBAL_CAP&columns%5B5%5D%5Bsearchable%5D=true&columns%5B5%5D%5Borderable%5D=true&columns%5B5%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B5%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B6%5D%5Bdata%5D=CURRENCY&columns%5B6%5D%5Bname%5D=&columns%5B6%5D%5Bsearchable%5D=true&columns%5B6%5D%5Borderable%5D=false&columns%5B6%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B6%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B7%5D%5Bdata%5D=MID_GROUP&columns%5B7%5D%5Bname%5D=MID_GROUP&columns%5B7%5D%5Bsearchable%5D=true&columns%5B7%5D%5Borderable%5D=true&columns%5B7%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B7%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B8%5D%5Bdata%5D=CVV_TYPE&columns%5B8%5D%5Bname%5D=CVV_TYPE&columns%5B8%5D%5Bsearchable%5D=true&columns%5B8%5D%5Borderable%5D=true&columns%5B8%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B8%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B9%5D%5Bdata%5D=CREATE_DATE_FORMATTED&columns%5B9%5D%5Bname%5D=CREATE_DATE_FORMATTED&columns%5B9%5D%5Bsearchable%5D=true&columns%5B9%5D%5Borderable%5D=true&columns%5B9%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B9%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B10%5D%5Bdata%5D=STATUS_FORMATTED&columns%5B10%5D%5Bname%5D=STATUS_FORMATTED&columns%5B10%5D%5Bsearchable%5D=true&columns%5B10%5D%5Borderable%5D=true&columns%5B10%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B10%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B11%5D%5Bdata%5D=PROVIDER_TYPE_ID&columns%5B11%5D%5Bname%5D=&columns%5B11%5D%5Bsearchable%5D=true&columns%5B11%5D%5Borderable%5D=false&columns%5B11%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B11%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B12%5D%5Bdata%5D=ROW_ACTIONS&columns%5B12%5D%5Bname%5D=&columns%5B12%5D%5Bsearchable%5D=true&columns%5B12%5D%5Borderable%5D=false&columns%5B12%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B12%5D%5Bsearch%5D%5Bregex%5D=false&start=0&length=1000&search%5Bvalue%5D=&search%5Bregex%5D=false&list_id=my_providers&action=ll_my_providers_ajax&method=draw_list&_=1528976763051`;
+
+		const res = await request.get({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			}
+		});
+
+		const json = JSON.parse(res.body);
+
+		return json.data.map(d => d.ID);
+
+	}
+
+	async _getFulfillmentProviderDetail(cookie, id) {
+
+		const url = `${this._url}/ajax_min.php`;
+
+		const res = await request.post({
+			url,
+			followRedirect: true,
+			simple: false,
+			resolveWithFullResponse: true,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'Accept': 'application/json',
+				'User-Agent': 'Restler for node.js',
+				Cookie: cookie.split(';')[0]
+			},
+			form: {
+				action:'ll_ajax_crud',
+				mode:'view',
+				profile_id: 1,
+				provider_type_id: 2
+			}
+		});
+
+		const json = JSON.parse(res.body);
+
+		const $ = cheerio.load(json.content);
+
+		// this is going to be different per provider....
+
+		const alias = this._cleanseOutput($('#profile_alias').val());
+		const active =  this._cleanseOutput($('input[name=profile_status]').val());
+		const billingCode =  this._cleanseOutput($('select[id="Billing Code"] option:selected').text());
+		const combineSimilarAddresses = this._cleanseOutput($('select[id="Combine Similar Addresses"] option:selected').text());
+		const customerID = this._cleanseOutput($('input[id="Customer ID"]').val());
+		const delayHours = this._cleanseOutput($('input[id="Delay Hours"]').val());
+		const password = this._cleanseOutput($('input[id="Password"]').val());
+		const recieveTrackingNumber = this._cleanseOutput($('select[id="Receive Tracking #"] option:selected').text());
+		const username = this._cleanseOutput($('input[id="Username"]').val());
+		const warehouseId = this._cleanseOutput($('input[id="Warehouse ID"]').val());
+		const worldEasyId = this._cleanseOutput($('input[id="World Easy ID"]').val());
+		const worldEasyKey = this._cleanseOutput($('input[id="World Easy Key"]').val());
+
+		return {
+			id,
+			alias,
+			active,
+			billingCode,
+			combineSimilarAddresses,
+			customerID,
+			delayHours,
+			password,
+			recieveTrackingNumber,
+			username,
+			warehouseId,
+			worldEasyId,
+			worldEasyKey
 		}
 
 	}
