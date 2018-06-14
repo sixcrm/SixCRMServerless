@@ -1,0 +1,29 @@
+[{
+	"id":"0b8fa48d-5384-4e24-bf8d-8cabeed4434e",
+	"name": "Inactive Test Account",
+	"billing":{
+		"plan":"free"
+	},
+	"active":false,
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+	"id":"7a4ed1f7-1e57-4582-9f60-a7878be49039",
+	"name": "Billing Disabled Test Account",
+	"billing":{
+		"plan":"free",
+		"disable": "2017-04-06T18:40:41.405Z"
+	},
+	"active":true,
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
+},
+{
+	"id":"5177aa1e-82fe-4ab2-90fe-bef563cd6017",
+	"name": "No Billing Test Account",
+	"billing": null,
+	"active":true,
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
+}]

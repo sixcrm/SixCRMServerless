@@ -1,0 +1,38 @@
+[
+	{
+		"name":"Inactive Account Owner",
+		"first_name": "Inactive Account",
+		"last_name": "Owner",
+		"auth0_id":"abc123",
+		"id":"inactive-account-owner@sixcrm.com",
+		"active":true,
+		"termsandconditions":"0.1",
+		"alias":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37601",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"name":"Billing Disable Account Owner",
+		"first_name": "Billing Disable Account",
+		"last_name": "Owner",
+		"auth0_id":"abc123",
+		"id":"billing-disable-account-owner@sixcrm.com",
+		"active":true,
+		"termsandconditions":"0.1",
+		"alias":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37602",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"name":"No Billing Account Owner",
+		"first_name": "No Billing Account",
+		"last_name": "Owner",
+		"auth0_id":"abc123",
+		"id":"no-billing-account-owner@sixcrm.com",
+		"active":true,
+		"termsandconditions":"0.1",
+		"alias":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37603",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	}
+]

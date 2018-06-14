@@ -1,0 +1,29 @@
+[
+  {
+		"id":"f34a8b95-39c4-4a96-9a2b-ef74397fc115",
+		"account":"0b8fa48d-5384-4e24-bf8d-8cabeed4434e",
+		"user":"inactive-account-owner@sixcrm.com",
+		"role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
+		"termsandconditions": "0.1",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+  },
+	{
+		"id":"cb7335da-857a-4ba9-a013-a32237b5769c",
+		"account":"7a4ed1f7-1e57-4582-9f60-a7878be49039",
+		"user":"billing-disable-account-owner@sixcrm.com",
+		"role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
+		"termsandconditions": "0.1",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	},
+	{
+		"id":"a7028206-cd4d-4edd-ba60-7648f9ce0a07",
+		"account":"5177aa1e-82fe-4ab2-90fe-bef563cd6017",
+		"user":"no-billing-account-owner@sixcrm.com",
+		"role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
+		"termsandconditions": "0.1",
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	}
+]
