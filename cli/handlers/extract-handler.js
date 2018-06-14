@@ -1,5 +1,7 @@
 const eu = require('../../lib/error-utilities');
 const fs = require('fs-extra');
+const path = require('path');
+const moment = require('moment-timezone');
 
 module.exports = class ExtractHandler {
 
@@ -9,7 +11,7 @@ module.exports = class ExtractHandler {
 		this._client = client;
 		this._user = user;
 		this._password = password;
-		this._artifactsDirectory = artifactsDirectory;
+		this._artifactsDirectory = path.join(artifactsDirectory, moment().toISOString().replace(/:/g, '-'));
 
 	}
 
