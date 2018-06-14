@@ -75,4 +75,17 @@ module.exports = class OrderHelperController {
 		const rebill = await rebillController.getByAlias({alias: id});
 		return this.createOrder({rebill});
 	}
+
+	async listBySession({session_id, pagination}) {
+		const sessionController = new SessionController();
+		const rebillController = new RebillController();
+		const session = await sessionController.get({id: session_id});
+		const customer = await sessionController.getCustomer(session);
+		const result = await rebillController.listBySession({session, pagination});
+		const orders = Promise.all(arrayutilities.map(result.rebills, rebill => this.createOrder({ rebill, session, customer })));
+		return {
+			orders,
+			pagination: result.pagination
+		}
+	}
 }

@@ -2224,6 +2224,23 @@ const fields = Object.assign({}, {
 			return orderHelperController.getOrder(order);
 		}
 	},
+	orderbysessionlist: {
+		type: orderListType.graphObj,
+		args: {
+			session: {
+				type: new GraphQLNonNull(GraphQLString),
+				description: 'The session id.'
+			},
+			pagination: {
+				type: paginationInputType.graphObj
+			}
+		},
+		resolve: (root, order) => {
+			const {session, pagination} = order;
+			const orderHelperController = new OrderHelperController();
+			return orderHelperController.listBySession({session_id: session, pagination});
+		}
+	},
 	ipcheck: {
 		type: ipCheckType.graphObj,
 		args: {},
