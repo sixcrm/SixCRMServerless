@@ -70,4 +70,9 @@ module.exports = class OrderHelperController {
 
 	}
 
+	async getOrder({id}) {
+		const rebillController = new RebillController();
+		const rebill = await rebillController.getByAlias({alias: id});
+		return this.createOrder({rebill});
+	}
 }

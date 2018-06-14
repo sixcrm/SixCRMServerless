@@ -58,6 +58,9 @@ let notificationType = require('./notification/notificationType');
 let notificationSettingType = require('./notificationsetting/notificationSettingType');
 let notificationSettingDefaultType = require('./notificationsetting/notificationSettingDefaultType');
 
+let orderType = require('./order/orderType');
+let orderListType = require('./order/orderType');
+
 let userType = require('./user/userType');
 let userListType = require('./user/userListType');
 
@@ -170,6 +173,7 @@ const TrackerController = global.SixCRM.routes.include('controllers', 'entities/
 
 // Helpers Controllers
 
+const OrderHelperController = global.SixCRM.routes.include('helpers', 'order/Order.js');
 const TokenHelperController = global.SixCRM.routes.include('helpers', 'token/Token.js');
 
 // Providers Controllers
@@ -2205,6 +2209,19 @@ const fields = Object.assign({}, {
 				pagination,
 				search
 			});
+		}
+	},
+	order: {
+		type: orderType.graphObj,
+		args: {
+			id: {
+				type: new GraphQLNonNull(GraphQLString),
+				description: 'The order id.'
+			}
+		},
+		resolve: (root, order) => {
+			const orderHelperController = new OrderHelperController();
+			return orderHelperController.getOrder(order);
 		}
 	},
 	ipcheck: {

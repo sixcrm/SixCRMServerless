@@ -63,7 +63,8 @@ module.exports = class RebillController extends entityController {
 	}
 
 	listBySession({
-		session
+		session,
+		pagination
 	}) {
 
 		du.debug('List By Session');
@@ -71,7 +72,8 @@ module.exports = class RebillController extends entityController {
 		return this.queryBySecondaryIndex({
 			field: 'parentsession',
 			index_value: this.getID(session),
-			index_name: 'parentsession-index'
+			index_name: 'parentsession-index',
+			pagination
 		});
 
 	}
