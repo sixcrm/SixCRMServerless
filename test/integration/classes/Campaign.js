@@ -38,7 +38,7 @@ module.exports = class CampaignTest extends IntegrationTest {
 
 		du.info('Create Campaign');
 
-		let campaign_create_query = `mutation { createcampaign ( campaign: { id: "`+campaign_id+`", name: "Testing Campaign", allow_prepaid: false, show_prepaid: false, productschedules:[], emailtemplates:[], affiliate_allow:[], affiliate_deny:[] } ) { id  } }`;
+		let campaign_create_query = `mutation { createcampaign ( campaign: { id: "`+campaign_id+`", name: "Testing Campaign", allow_on_order_form: true, allow_prepaid: false, show_prepaid: false, productschedules:[], emailtemplates:[], affiliate_allow:[], affiliate_deny:[] } ) { id  } }`;
 
 		return this.executeQuery(campaign_create_query);
 
