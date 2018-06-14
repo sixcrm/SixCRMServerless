@@ -4,6 +4,7 @@ const _ = require('lodash');
 const BBPromise = require('bluebird');
 const fs = require('fs-extra');
 const path = require('path');
+const du = require('../../lib/debug-utilities');
 
 module.exports = class LimelightScraper {
 
@@ -912,36 +913,21 @@ module.exports = class LimelightScraper {
 
 		const $ = cheerio.load(json.content);
 
-		// this is going to be different per provider....
+		switch (name) {
 
-		const alias = this._cleanseOutput($('#profile_alias').val());
-		const active = this._cleanseOutput($('input[name=profile_status]').val());
-		const billingCode = this._cleanseOutput($('select[id="Billing Code"] option:selected').text());
-		const combineSimilarAddresses = this._cleanseOutput($('select[id="Combine Similar Addresses"] option:selected').text());
-		const customerID = this._cleanseOutput($('input[id="Customer ID"]').val());
-		const delayHours = this._cleanseOutput($('input[id="Delay Hours"]').val());
-		const password = this._cleanseOutput($('input[id="Password"]').val());
-		const recieveTrackingNumber = this._cleanseOutput($('select[id="Receive Tracking #"] option:selected').text());
-		const username = this._cleanseOutput($('input[id="Username"]').val());
-		const warehouseId = this._cleanseOutput($('input[id="Warehouse ID"]').val());
-		const worldEasyId = this._cleanseOutput($('input[id="World Easy ID"]').val());
-		const worldEasyKey = this._cleanseOutput($('input[id="World Easy Key"]').val());
+			case 'World Easy':
+			{
+				const transform = require('./fulfillment-providers/world-easy');
+				return transform($, id, name, this._cleanseOutput);
+			}
+			default:
+			{
+				du.warning('Could not resolve fulfillment provider', {
+					name
+				});
+				return {};
+			}
 
-		return {
-			id,
-			name,
-			alias,
-			active,
-			billingCode,
-			combineSimilarAddresses,
-			customerID,
-			delayHours,
-			password,
-			recieveTrackingNumber,
-			username,
-			warehouseId,
-			worldEasyId,
-			worldEasyKey
 		}
 
 	}
