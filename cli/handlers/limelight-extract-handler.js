@@ -51,6 +51,7 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 		await this._scraper.getProducts(cookie, products.map(p => p.id));
 		await this._scraper.getEmailTemplates(cookie);
 		await this._scraper.getSMTPProviders(cookie);
+		await this._scraper.getFulfillmentProviders(cookie);
 
 	}
 
