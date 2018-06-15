@@ -1,6 +1,5 @@
-
-
 const _ = require('lodash');
+const moment = require('moment');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
@@ -123,7 +122,7 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 
 				let next_billing_day_number = productScheduleHelper.calculateNextBillingInSchedule({schedule_element: test_case.schedule_element, day: test_case.day});
 				let first_billing_dom = timestamp.getDayNumber(timestamp.subtractDays((test_case.day - test_case.schedule_element.start)));
-				let next_billing_date = timestamp.addDays(next_billing_day_number, timestamp.subtractDays(test_case.day));
+				let next_billing_date = timestamp.addDays(next_billing_day_number, moment(timestamp.subtractDays(test_case.day)));
 				let next_billing_dom = timestamp.getDayNumber(next_billing_date);
 
 				if(first_billing_dom > timestamp.daysInMonth(next_billing_date)){
