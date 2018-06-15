@@ -229,12 +229,12 @@ functions:
 # Event Workers
 ########################
 
-#  selectrebills:
-#    handler: handlers/workers/handlers.selectrebills
-#    events:
-#      - schedule:
-#          rate: rate(10 minutes)
-#          enabled: true
+  selectrebills:
+    handler: handlers/workers/handlers.selectrebills
+    events:
+      - schedule:
+          rate: rate(10 minutes)
+          enabled: true
 
   analyticseventhandler:
     handler: handlers/workers/handlers.analyticseventhandler

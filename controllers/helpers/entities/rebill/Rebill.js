@@ -752,4 +752,95 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 	}
 
+	getYearMonth(bill_at){
+
+		du.debug('Get Year Month');
+
+		return bill_at.substring(0,7).replace('-', '');
+
+	}
+
+	async getAvailableRebills(now = timestamp.getISO8601(), last_evaluated_key = null){
+
+		du.debug('Get Available Rebills');
+
+		if(!_.has(this, 'rebillController')){
+			const RebillController = global.SixCRM.routes.include('entities','Rebill.js');
+			this.rebillController = new RebillController();
+		}
+
+		let query_parameters = {
+			key_condition_expression: '#bill_atk < :bill_atv',
+			filter_expression: '#processingk <> :processingv',
+			expression_attribute_names: {
+				'#bill_atk': 'bill_at',
+				'#processingk':'processing'
+			},
+			expression_attribute_values: {
+				":bill_atv": now,
+				':processingv': 'true'
+			},
+			projection_expression: 'id'
+		};
+
+		if(!_.isNull(last_evaluated_key)){
+			query_parameters.exclusive_start_key = last_evaluated_key;
+		}
+
+		let results = await this.rebillController.queryBySecondaryIndex({query_parameters: query_parameters, field: 'year_month', index_name: 'year_month_bill_at-index', index_value: this.getYearMonth(now)});
+
+		let return_array = [];
+
+		if(!_.has(results, 'rebills')){
+			throw eu.getError('server', 'Unknown response structure: '+JSON.stringify(results));
+		}
+
+		if(!_.isNull(results.rebills) || _.isArray(results.rebills)){
+			throw eu.getError('server', 'Unknown response structure: '+JSON.stringify(results.rebills));
+		}
+
+		if(_.isArray(results.rebills) && arrayutilities.nonEmpty(results.rebills)){
+			arrayutilities.map(results.rebills, rebill => {
+
+				if(!_.has(rebill, 'id')){
+					throw eu.getError('server', 'Bad structure: '+JSON.stringify(rebill));
+				}
+
+				return_array.push(rebill.id);
+
+			});
+		}
+
+		if(!_.has(results, 'pagination')){
+			throw eu.getError('server', 'Bad structure: '+JSON.stringify(results));
+		}
+
+		if(!_.has(results.pagination, 'has_next_page')){
+			throw eu.getError('server', 'Bad structure, no "has_next_page" property: '+JSON.stringify(results));
+		}
+
+		if(results.pagination.has_next_page == 'true'){
+
+			if(!_.has(results.pagination, 'last_evaluated')){
+				throw eu.getError('server', 'Bad structure, no "last_evaluated" property: '+JSON.stringify(results));
+			}
+
+			const last_evaluated = JSON.parse(results.pagination.last_evaluated);
+
+			if(!_.has(last_evaluated, 'id')){
+				throw eu.getError('server', 'Bad structure, no "id" property: '+JSON.stringify(last_evaluated));
+			}
+
+			let additional_results = await this.getAvailableRebills(now, last_evaluated.id);
+
+			if(arrayutilities.nonEmpty(additional_results)){
+				return_array = arrayutilities.merge(return_array, additional_results);
+			}
+
+		}
+
+		return return_array;
+
+	}
+
 };

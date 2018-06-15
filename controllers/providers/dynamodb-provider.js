@@ -337,7 +337,9 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 			'ExclusiveStartKey':'ExclusiveStartKey',
 			'exclusive_start_key':'ExclusiveStartKey',
 			'Select': 'Select',
-			'select': 'Select'
+			'select': 'Select',
+			'index_name':'IndexName',
+			'projection_expression':'ProjectionExpression'
 		}
 
 		objectutilities.map(parameter_map, key => {
