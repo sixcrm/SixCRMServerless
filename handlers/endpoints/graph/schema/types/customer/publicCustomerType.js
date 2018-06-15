@@ -5,7 +5,6 @@ const GraphQLString = require('graphql').GraphQLString;
 const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 const customerController = new CustomerController();
 
-let customerInterface = require('./customerInterface');
 let addressType = require('../address/addressType');
 
 module.exports.graphObj = new GraphQLObjectType({

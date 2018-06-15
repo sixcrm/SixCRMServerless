@@ -1,8 +1,8 @@
 require('@sixcrm/sixcrmcore');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
-const LambdaContext = require('@sixcrm/sixcrmcore/lambda-context');
-const ServerlessRuntime = require('@sixcrm/sixcrmcore/ServerlessRuntime');
+const LambdaContext = require('@sixcrm/sixcrmcore/lambda-context').default;
+const ServerlessRuntime = require('@sixcrm/sixcrmcore/ServerlessRuntime').default;
 
 module.exports = class LambdaHandler
 {
