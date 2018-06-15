@@ -327,12 +327,6 @@ describe('createOrder', function () {
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
 				constructor(){}
-				addRebillToQueue(){
-					return Promise.resolve(true);
-				}
-				updateRebillState(){
-					return Promise.resolve(true);
-				}
 				updateRebillUpsell() {
 					return Promise.resolve(true);
 				}
@@ -512,12 +506,6 @@ describe('createOrder', function () {
 					rebill.parentsession = session.id
 					return Promise.resolve(rebill);
 				}
-				addRebillToQueue(){
-					return Promise.resolve(true);
-				}
-				updateRebillState(){
-					return Promise.resolve(true);
-				}
 				updateRebillUpsell(){
 					return Promise.resolve(true);
 				}
@@ -695,12 +683,6 @@ describe('createOrder', function () {
 					rebill.product_schedules = product_schedules;
 					rebill.parentsession = session.id
 					return Promise.resolve(rebill);
-				}
-				addRebillToQueue(){
-					return Promise.resolve(true);
-				}
-				updateRebillState(){
-					return Promise.resolve(true);
 				}
 				updateRebillUpsell(){
 					return Promise.resolve(true);
@@ -976,12 +958,6 @@ describe('createOrder', function () {
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
 				constructor(){}
-				addRebillToQueue(){
-					return Promise.resolve(true);
-				}
-				updateRebillState(){
-					return Promise.resolve(true);
-				}
 				updateRebillUpsell(){
 					return Promise.resolve(true);
 				}
@@ -1028,7 +1004,6 @@ describe('createOrder', function () {
 				createOrderController.reversePreviousRebill(rebill),
 				createOrderController.incrementMerchantProviderSummary(transactions),
 				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups),
-				createOrderController.addRebillToStateMachine('success', rebill)
 			]);
 		});
 
@@ -1045,12 +1020,6 @@ describe('createOrder', function () {
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
 				constructor(){}
-				addRebillToQueue(){
-					return Promise.resolve(true);
-				}
-				updateRebillState(){
-					return Promise.resolve(true);
-				}
 				updateRebillUpsell(){
 					return Promise.resolve(true);
 				}
@@ -1096,8 +1065,7 @@ describe('createOrder', function () {
 			return Promise.all([
 				createOrderController.reversePreviousRebill(rebill),
 				createOrderController.incrementMerchantProviderSummary(transactions),
-				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups),
-				createOrderController.addRebillToStateMachine('success', rebill)
+				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups)
 			]);
 		});
 
@@ -1114,12 +1082,6 @@ describe('createOrder', function () {
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
 				constructor(){}
-				addRebillToQueue(){
-					return Promise.resolve(true);
-				}
-				updateRebillState(){
-					return Promise.resolve(true);
-				}
 				updateRebillUpsell(){
 					return Promise.resolve(true);
 				}
@@ -1165,8 +1127,7 @@ describe('createOrder', function () {
 			return Promise.all([
 				createOrderController.reversePreviousRebill(rebill),
 				createOrderController.incrementMerchantProviderSummary(transactions),
-				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups),
-				createOrderController.addRebillToStateMachine('success', rebill)
+				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups)
 			]);
 
 		});
@@ -1228,39 +1189,10 @@ describe('createOrder', function () {
 				createOrderController.reversePreviousRebill(rebill),
 				createOrderController.incrementMerchantProviderSummary(transactions),
 				createOrderController.updateSessionWithWatermark(session, product_schedules, product_groups),
-				createOrderController.addRebillToStateMachine('decline', rebill)
+				createOrderController.markNonSuccessfulRebill('decline', rebill),
 			]);
 
 			expect(rebill.no_process).to.be.true;
-
-		});
-
-	});
-
-	describe('addRebillToQueue', () => {
-
-		it('successfully adds the rebill to the appropriate queue', () => {
-
-			let rebill = getValidRebill();
-
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
-				constructor(){}
-				createRebill({session, product_schedules}){
-					rebill.product_schedules = product_schedules;
-					rebill.parentsession = session.id
-					return Promise.resolve(rebill);
-				}
-				addRebillToQueue(){
-					return Promise.resolve(true);
-				}
-			});
-
-			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
-			const createOrderController = new CreateOrderController();
-
-			return createOrderController.addRebillToQueue(rebill).then(result => {
-				expect(result).to.equal(true);
-			});
 
 		});
 
@@ -1639,12 +1571,6 @@ describe('createOrder', function () {
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class {
 				constructor(){}
-				addRebillToQueue(){
-					return Promise.resolve(true);
-				}
-				updateRebillState(){
-					return Promise.resolve(true);
-				}
 				updateRebillUpsell() {
 					return Promise.resolve(true);
 				}

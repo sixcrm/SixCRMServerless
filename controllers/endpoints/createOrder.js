@@ -145,7 +145,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.reversePreviousRebill(rebill, previous_rebill),
 			this.incrementMerchantProviderSummary(processed_rebill.transactions),
 			this.updateSessionWithWatermark(session, event.product_schedules, event.products),
-			this.addRebillToStateMachine(processed_rebill.result, rebill),
+			this.markNonSuccessfulRebill(processed_rebill.result, rebill),
 			AnalyticsEvent.push('order', {
 				session,
 				campaign
@@ -417,50 +417,17 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	addRebillToStateMachine(result, rebill) {
+	markNonSuccessfulRebill(result, rebill) {
 
-		du.debug('Add Rebill To State Machine');
+		du.debug('Mark Non-Successful Rebill');
 
-		if (result == 'success') {
-
-
-			return this.updateRebillState(rebill);
-			//.then(() => this.addRebillToQueue(rebill))
-
-		} else {
+		if (result != 'success') {
 
 			rebill.no_process = true;
 
 			return this.rebillController.update({ entity: rebill });
 
 		}
-
-	}
-
-	updateRebillState(rebill) {
-
-		du.debug('Update Rebill State');
-
-		return this.rebillHelperController.updateRebillState({
-			rebill,
-			new_state: 'hold'
-		});
-
-	}
-
-	addRebillToQueue(rebill) {
-
-		du.debug('Add Rebill To Queue');
-		du.debug(rebill);
-
-		//Technical Debt:  Eliminate
-		return Promise.resolve(true);
-		/*
-		return this.rebillHelperController.addRebillToQueue({
-			rebill,
-			queue_name: 'hold'
-		});
-		*/
 
 	}
 
