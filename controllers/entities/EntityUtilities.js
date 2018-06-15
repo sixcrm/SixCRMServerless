@@ -75,7 +75,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 			}
 
-			eu.throw(error);
+			throw error;
 
 		}
 

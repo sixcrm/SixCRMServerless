@@ -474,7 +474,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 					return Promise.resolve(true);
 				}
 
-				eu.throwError('server', 'Max attempts reached.');
+				throw eu.getError('server', 'Max attempts reached.');
 			}
 
 			return this.describeDomains([domainname]).then((status) => {

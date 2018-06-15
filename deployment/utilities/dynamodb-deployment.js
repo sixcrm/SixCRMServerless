@@ -511,7 +511,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
 		}
 
-		//throw eu.throwError('server', 'Unexpected seed directory.');
+		//throw eu.getError('server', 'Unexpected seed directory.');
 
 	}
 

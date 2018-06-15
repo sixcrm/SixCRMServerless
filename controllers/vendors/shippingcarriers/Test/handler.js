@@ -1,7 +1,4 @@
-
-
 const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
 const httpprovider = new HttpProvider();
 
@@ -97,7 +94,7 @@ module.exports = class TestController extends ShippingCarrierController {
 		return httpprovider.postJSON(parameters).then(response => {
 
 			if(response.error){
-				eu.throw(response.error);
+				throw response.error;
 			}
 
 			this.parameters.set('vendorresponse', response.response);

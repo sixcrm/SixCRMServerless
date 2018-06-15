@@ -2,7 +2,6 @@
 var request = require('request');
 
 const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
 const ShippingCarrierController = global.SixCRM.routes.include('controllers', 'vendors/shippingcarriers/components/ShippingCarrier.js');
 
@@ -129,7 +128,7 @@ module.exports = class USPSController extends ShippingCarrierController {
 			request(request_uri, (error, response) => {
 
 				if(error){
-					eu.throw(error);
+					throw error;
 				}
 
 				this.parameters.set('vendorresponse', response);
