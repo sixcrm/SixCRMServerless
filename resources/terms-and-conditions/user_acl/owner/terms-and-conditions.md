@@ -165,7 +165,7 @@ SIXCRM&#39;s blocking of data communications or other Service in accordance with
 
 **Support Terms**
 
-SIXCRM will provide Technical Support to Subscriber via both telephone and electronic mail on weekdays during the hours of 9:00 a.m. through 5:00 p.m. Pacific Time, with the exclusion of Federal Holidays (&quot; **Support Hours**&quot;).
+SIXCRM will provide Technical Support to Subscriber via both telephone and electronic mail on weekdays during the hours of 9:00 a.m. through 5:00 p.m. Pacific Time, with the exclusion of Federal Holidays (&quot; **Support Hours** &quot;).
 
 Subscriber may initiate a helpdesk ticket during Support Hours by calling [**888-897-6276**] or any time by emailing [**get-help@sixcrm.com**].
 
