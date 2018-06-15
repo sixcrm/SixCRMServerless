@@ -34,9 +34,11 @@ describe('controllers/Transaction.js', () => {
 
 			let random_string = 'a_random_string';
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'random.js'), {
-				createRandomString: () => {
-					return random_string;
+			mockery.registerMock('@sixcrm/sixcrmcore/util/random', {
+				default: {
+					createRandomString: () => {
+						return random_string;
+					}
 				}
 			});
 

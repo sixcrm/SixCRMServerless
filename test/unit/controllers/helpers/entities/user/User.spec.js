@@ -58,9 +58,11 @@ describe('controllers/helpers/entities/user/User.js', () => {
 			delete user.alias;
 			user.id = 'first.last@example.com'; //any email type id
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'random.js'), {
-				createRandomString: () => {
-					return 'a_random_string';
+			mockery.registerMock('@sixcrm/sixcrmcore/util/munge-utilities', {
+				default: {
+					munge: () => {
+						return 'a_munge_string';
+					}
 				}
 			});
 
@@ -69,7 +71,7 @@ describe('controllers/helpers/entities/user/User.js', () => {
 
 			let result = userHelperController.appendAlias(user);
 
-			expect(result.alias).to.equal('628243ee9c74e8b56e9026e3c26a7f53e5283037');
+			expect(result.alias).to.equal('a_munge_string');
 		});
 
 	});
@@ -396,7 +398,7 @@ describe('controllers/helpers/entities/user/User.js', () => {
 		it('returns a user model for a email argument', () => {
 
 			let account = MockEntities.getValidAccount();
-			
+
 			const user = MockEntities.getValidUser();
 			user.acl = [MockEntities.getValidUserACL(),MockEntities.getValidUserACL()];
 			user.acl[0].role = MockEntities.getValidRole();
