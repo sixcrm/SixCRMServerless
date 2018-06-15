@@ -3,9 +3,11 @@ const _ = require('lodash');
 const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
 const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
 
 const StepFunctionTriggerController = global.SixCRM.routes.include('workers','statemachine/components/stepFunctionTrigger.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 
@@ -21,31 +23,82 @@ module.exports = class SelectRebillsController extends workerController {
 
 		du.debug('Execute');
 
-		let rebills = await this.getAvailableRebills();
+		let results = null;
 
-		let result = null;
+		let rebills = await this.getAvailableRebillsOverPeriod();
 
 		if(_.isArray(rebills) && arrayutilities.nonEmpty(rebills)){
-			result = await this.pushRebillsIntoStateMachine(rebills);
+
+			results = await this.pushRebillsIntoStateMachine(rebills);
+
 		}else{
+
 			du.info('No available rebills');
+			return this.respond(null);
+
 		}
 
-		this.respond(result);
+		if(!_.isArray(results) && !arrayutilities.nonEmpty(results)){
+
+			du.warning('Unexpected results: '+JSON.stringify(results));
+			return this.respond(false);
+
+		}
+
+		let response = this.transformResponse(results);
+
+		return this.respond(response);
 
 	}
 
-	async getAvailableRebills(){
+	transformResponse(results, fatal = true){
+
+		du.debug('Transform Response');
+
+		if(!_.isArray(results)){
+			if(fatal == true){
+				throw eu.getError('server', 'Non-array results argument');
+			}
+			du.warning('Non-array results argument');
+			return false;
+		}
+
+		let result = arrayutilities.serial(results, (current, next) => { return current && next; }, true);
+
+		if(result == true){
+			return true;
+		}
+
+		if(fatal == true){
+			throw eu.getError('server', 'Results array contained one or more failures: '+JSON.stringify(results));
+		}
+
+		du.warning('Results array contained one or more failures: '+JSON.stringify(results));
+
+		return false;
+
+	}
+
+	async getAvailableRebillsOverPeriod(){
+
+		du.debug('Get Available Rebills Over Period');
+
+		let rebill_promises = await Promise.all([
+			this.getAvailableRebills(),
+			this.getAvailableRebills(timestamp.getPreviousMonthEnd())
+		]);
+
+		let rebills = arrayutilities.merge(rebill_promises[0], rebill_promises[1]);
+
+		return arrayutilities.unique(rebills);
+
+	}
+
+	async getAvailableRebills(now = timestamp.getISO8601()){
 
 		du.debug('Get Available Rebills');
 
-		let rebills = await (new RebillHelperController()).getAvailableRebills();
-
-		if(!_.isNull(rebills) && _.isArray(rebills) && arrayutilities.nonEmpty(rebills)){
-			return rebills;
-		}
-
-		return [];
+		return (new RebillHelperController()).getAvailableRebills(now);
 
 	}
 
@@ -104,7 +157,7 @@ module.exports = class SelectRebillsController extends workerController {
 		du.debug('Push To Billing');
 
 		const parameters = {
-			guid: rebill.id,
+			guid: rebill,
 			stateMachineName: 'Billing'
 		};
 
@@ -134,7 +187,7 @@ module.exports = class SelectRebillsController extends workerController {
 			throw eu.getError('server', 'Unable to push rebill to the billing state machine.');
 		}
 
-		du.warning('Unable to push rebill to the billing state machine: '+rebill.id);
+		du.warning('Unable to push rebill to the billing state machine: '+rebill);
 
 		return false;
 
@@ -146,9 +199,19 @@ module.exports = class SelectRebillsController extends workerController {
 
 		let result = null;
 
+		rebill = await (new RebillController()).get({id: rebill});
+
+		if(_.isNull(rebill)){
+			if(fatal == true){
+				throw eu.getError('server', 'Unable to acquire rebill.');
+			}
+			du.warning('Unable to acquire rebill.');
+			return false;
+		}
+
 		try{
 
-			result = await this.rebillHelperController.updateRebillProcessing({rebill: rebill, processing: true});
+			result = await (new RebillHelperController()).updateRebillProcessing({rebill: rebill, processing: true});
 
 		}catch(error){
 

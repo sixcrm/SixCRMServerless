@@ -90,7 +90,7 @@
     ]
   },
   {
-    "ResourceId":"table/{tablename}/index/bill_at-index",
+    "ResourceId":"table/{tablename}/index/year_month_bill_at-index",
     "scalable_targets":[
       {
         "MaxCapacity": 4000,

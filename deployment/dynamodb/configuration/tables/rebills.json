@@ -1,103 +1,100 @@
 {
-  "Table":{
-    "TableName":"rebills",
-    "KeySchema":[
+	"Table": {
+		"TableName": "rebills",
+		"KeySchema": [{
+			"AttributeName": "id",
+			"KeyType": "HASH"
+		}],
+		"AttributeDefinitions": [{
+				"AttributeName": "id",
+				"AttributeType": "S"
+			},
+			{
+				"AttributeName": "alias",
+				"AttributeType": "S"
+			},
+			{
+				"AttributeName": "parentsession",
+				"AttributeType": "S"
+			},
+			{
+				"AttributeName": "bill_at",
+				"AttributeType": "S"
+			},
       {
-        "AttributeName":"id",
-        "KeyType":"HASH"
-      }
-    ],
-    "AttributeDefinitions":[
-      {
-        "AttributeName":"id",
-        "AttributeType":"S"
-      },
-      {
-        "AttributeName":"alias",
-        "AttributeType":"S"
-      },
-      {
-        "AttributeName":"parentsession",
-        "AttributeType":"S"
-      },
-      {
-        "AttributeName":"bill_at",
-        "AttributeType":"S"
-      },
-      {
-        "AttributeName":"account",
-        "AttributeType":"S"
-      }
-    ],
-    "GlobalSecondaryIndexes":[
-      {
-        "IndexName":"alias-index",
-        "KeySchema":[
-          {
-            "AttributeName":"alias",
-            "KeyType":"HASH"
-          }
-        ],
-        "Projection":{
-          "ProjectionType":"ALL"
-        },
-        "ProvisionedThroughput":{
-          "ReadCapacityUnits":3,
-          "WriteCapacityUnits":3
-        }
-      },
-      {
-        "IndexName":"parentsession-index",
-        "KeySchema":[
-          {
-            "AttributeName":"parentsession",
-            "KeyType":"HASH"
-          }
-        ],
-        "Projection":{
-          "ProjectionType":"ALL"
-        },
-        "ProvisionedThroughput":{
-          "ReadCapacityUnits":3,
-          "WriteCapacityUnits":3
-        }
-      },
-      {
-        "IndexName":"bill_at-index",
-        "KeySchema":[
-          {
-            "AttributeName":"bill_at",
-            "KeyType":"HASH"
-          }
-        ],
-        "Projection":{
-          "ProjectionType":"ALL"
-        },
-        "ProvisionedThroughput":{
-          "ReadCapacityUnits":3,
-          "WriteCapacityUnits":3
-        }
-      },
-      {
-        "IndexName":"account-index",
-        "KeySchema":[
-          {
-            "AttributeName":"account",
-            "KeyType":"HASH"
-          }
-        ],
-        "Projection":{
-          "ProjectionType":"ALL"
-        },
-        "ProvisionedThroughput":{
-          "ReadCapacityUnits":3,
-          "WriteCapacityUnits":3
-        }
-      }
-    ],
-    "ProvisionedThroughput":{
-      "ReadCapacityUnits":6,
-      "WriteCapacityUnits":3
-    }
-  }
+				"AttributeName": "year_month",
+				"AttributeType": "S"
+			},
+			{
+				"AttributeName": "account",
+				"AttributeType": "S"
+			}
+		],
+		"GlobalSecondaryIndexes": [{
+				"IndexName": "alias-index",
+				"KeySchema": [{
+					"AttributeName": "alias",
+					"KeyType": "HASH"
+				}],
+				"Projection": {
+					"ProjectionType": "ALL"
+				},
+				"ProvisionedThroughput": {
+					"ReadCapacityUnits": 3,
+					"WriteCapacityUnits": 3
+				}
+			},
+			{
+				"IndexName": "parentsession-index",
+				"KeySchema": [{
+					"AttributeName": "parentsession",
+					"KeyType": "HASH"
+				}],
+				"Projection": {
+					"ProjectionType": "ALL"
+				},
+				"ProvisionedThroughput": {
+					"ReadCapacityUnits": 3,
+					"WriteCapacityUnits": 3
+				}
+			},
+			{
+				"IndexName": "year_month_bill_at-index",
+				"KeySchema": [{
+						"AttributeName": "year_month",
+						"KeyType": "HASH"
+					},
+					{
+						"AttributeName": "bill_at",
+						"KeyType": "RANGE"
+					}
+				],
+				"Projection": {
+					"ProjectionType": "ALL"
+				},
+				"ProvisionedThroughput": {
+					"ReadCapacityUnits": 3,
+					"WriteCapacityUnits": 3
+				}
+			},
+			{
+				"IndexName": "account-index",
+				"KeySchema": [{
+					"AttributeName": "account",
+					"KeyType": "HASH"
+				}],
+				"Projection": {
+					"ProjectionType": "ALL"
+				},
+				"ProvisionedThroughput": {
+					"ReadCapacityUnits": 3,
+					"WriteCapacityUnits": 3
+				}
+			}
+		],
+		"ProvisionedThroughput": {
+			"ReadCapacityUnits": 6,
+			"WriteCapacityUnits": 3
+		}
+	}
 }

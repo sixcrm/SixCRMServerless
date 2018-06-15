@@ -1,6 +1,5 @@
 const _ = require('lodash');
 
-//Technical Debt:  We shouldn't need the AWS utility classes here...
 const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
 const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
 const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
@@ -29,7 +28,23 @@ module.exports = class RebillController extends entityController {
 			entity.alias = this.rebillHelperController.createAlias();
 		}
 
+		if(!_.has(entity, 'year_month')){
+			entity.year_month = this.rebillHelperController.getYearMonth(entity.bill_at);
+		}
+
 		return super.create({entity: entity});
+
+	}
+
+	update({entity, ignore_updated_at}){
+
+		du.debug('Rebill.update()');
+
+		if(!_.has(entity, 'year_month')){
+			entity.year_month = this.rebillHelperController.getYearMonth(entity.bill_at);
+		}
+
+		return super.update({entity: entity, ignore_updated_at: ignore_updated_at});
 
 	}
 

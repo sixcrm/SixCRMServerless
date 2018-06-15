@@ -1864,4 +1864,28 @@ describe('/helpers/entities/Rebill.js', () => {
 		});
 	});
 
+	describe('getYearMonth', () => {
+		it('returns the year and the month of the timestamp', () => {
+
+			const scenarios = [
+				{
+					timestamp: "2017-04-06T18:40:41.405Z",
+					result:"201704"
+				},
+				{
+					timestamp: "2018-12-06T18:40:41.405Z",
+					result:"201812"
+				}
+			];
+
+			const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+			let rebillHelperController = new RebillHelperController();
+
+			arrayutilities.map(scenarios, scenario => {
+				expect(rebillHelperController.getYearMonth(scenario.timestamp)).to.equal(scenario.result);
+			});
+
+		});
+	});
+
 });
