@@ -1,9 +1,9 @@
 
-require('../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 const _ = require('lodash');
 
-const random = global.SixCRM.routes.include('lib', 'random');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const random = require('@sixcrm/sixcrmcore/util/random').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 process.env.SIX_VERBOSE = 2;
 

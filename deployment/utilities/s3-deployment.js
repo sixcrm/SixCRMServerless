@@ -1,9 +1,9 @@
 
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
+const parserutilities = require('@sixcrm/sixcrmcore/util/parser-utilities').default;
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
 const IAMProvider = global.SixCRM.routes.include('controllers', 'providers/iam-provider.js');

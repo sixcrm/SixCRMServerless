@@ -1,9 +1,9 @@
 
 const _ = require('lodash');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
 /*

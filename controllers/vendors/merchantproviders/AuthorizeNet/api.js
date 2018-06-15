@@ -3,8 +3,8 @@ const {
 	APIControllers,
 	Constants
 } = require('authorizenet');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 module.exports = class AuthorizeNet {
 	constructor({api_key, transaction_key}) {

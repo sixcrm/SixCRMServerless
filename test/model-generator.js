@@ -2,8 +2,8 @@
 
 const jsf = require('json-schema-faker');
 const uuidV4 = require('uuid/v4');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 
 class ModelGenerator {

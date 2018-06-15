@@ -3,12 +3,12 @@ const _ = require('lodash');
 const j2csv = require('json2csv');
 var XLSX = require('xlsx');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
+const randomutilities = require('@sixcrm/sixcrmcore/util/random').default;
 const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 module.exports = class DownloadController {
 

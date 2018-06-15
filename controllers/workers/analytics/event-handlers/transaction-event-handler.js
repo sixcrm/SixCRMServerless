@@ -1,4 +1,4 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const WriteTransactionRecords = require('../batch-inserts/write-transaction-records');
 const WriteTransactionProductRecords = require('../batch-inserts/write-transaction-product-records');
 const WriteTransactionProductScheduleRecords = require('../batch-inserts/write-transaction-product-schedule-records');

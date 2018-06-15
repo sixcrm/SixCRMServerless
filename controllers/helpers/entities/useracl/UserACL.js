@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-//const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+//const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 const RoleHelperController = global.SixCRM.routes.include('helpers', 'entities/role/Role.js');
 
 module.exports = class UserACLHelperController {

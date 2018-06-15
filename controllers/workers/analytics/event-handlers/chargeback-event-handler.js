@@ -1,4 +1,4 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const WriteChargebackRecords = require('../batch-inserts/write-chargeback-records');
 
 module.exports = class ChargebackEventHandler {

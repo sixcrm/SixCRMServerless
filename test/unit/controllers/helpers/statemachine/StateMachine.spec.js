@@ -1,8 +1,8 @@
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const hashutilities = require('@sixcrm/sixcrmcore/util/hash-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 describe('controllers/workers/helpers/statemachine/StateMachine.js', () => {

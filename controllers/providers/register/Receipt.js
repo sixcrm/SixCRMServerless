@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const TransactionController = global.SixCRM.routes.include('controllers', 'entities/Transaction.js');

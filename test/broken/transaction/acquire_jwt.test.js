@@ -6,7 +6,7 @@ const assert = require('chai').assert;
 const fs = require('fs');
 const crypto = require('crypto');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 const du =  require('../../../lib/debug-utilities.js');
 const tu =  require('../../../lib/test-utilities.js');
 const signature = require('../../../lib/signature.js');

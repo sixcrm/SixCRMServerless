@@ -1,7 +1,7 @@
 //const _ = require('lodash')
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const MerchantProviderResponse = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 
 module.exports = class AuthorizeNetResponse extends MerchantProviderResponse {

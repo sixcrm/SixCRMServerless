@@ -1,6 +1,6 @@
-require('../../SixCRM.js')
+require('@sixcrm/sixcrmcore')
 
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 module.exports.command = 'syncronizeindexes';
 module.exports.describe = 'Synchronizes the indexes between the SixCRM document data store (DynamoDB) and the SixCRM search cluster (CloudSearch)';

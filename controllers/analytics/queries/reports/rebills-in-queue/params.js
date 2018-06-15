@@ -1,4 +1,4 @@
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
 module.exports = async (parameters, pagination) => {
 

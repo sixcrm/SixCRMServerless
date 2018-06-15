@@ -2,7 +2,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 const expect = chai.expect;
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 describe('controllers/helpers/entities/user/User.js', () => {
 

@@ -1,5 +1,5 @@
-require('../../SixCRM.js')
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+require('@sixcrm/sixcrmcore')
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 const StepFunctionTriggerController = global.SixCRM.routes.include('workers','statemachine/components/stepFunctionTrigger.js');
 

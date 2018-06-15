@@ -3,7 +3,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 const uuidV4 = require('uuid/v4');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 function getValidAbridgedEntity(){
 

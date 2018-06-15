@@ -4,8 +4,8 @@ let chai = require('chai');
 const querystring = require('querystring');
 
 const expect = chai.expect;
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 const EndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/endpoint.js');
 

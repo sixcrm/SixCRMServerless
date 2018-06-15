@@ -1,6 +1,6 @@
 
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const DownloadController = global.SixCRM.routes.include('providers', 'Download');
 
 module.exports = class ResolveController {

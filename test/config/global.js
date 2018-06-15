@@ -1,4 +1,4 @@
-require('../../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 
 global.integration_test_config = global.SixCRM.routes.include('test', 'integration/config/'+process.env.stage+'.yml');
 

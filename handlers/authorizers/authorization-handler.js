@@ -1,7 +1,7 @@
 const LambdaHandler = require('../lambda-handler');
-const policy_response = global.SixCRM.routes.include('lib', 'policy_response.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const policy_response = require('@sixcrm/sixcrmcore/util/policy_response').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
 module.exports = class AuthorizationHandler extends LambdaHandler {
 

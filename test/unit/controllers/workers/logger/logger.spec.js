@@ -1,9 +1,9 @@
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 function getValidLogInput() {
 

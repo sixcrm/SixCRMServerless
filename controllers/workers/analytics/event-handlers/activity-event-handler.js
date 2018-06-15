@@ -1,4 +1,4 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const WriteActivityRecords = require('../batch-inserts/write-activity-records');
 
 module.exports = class ActivityEventHandler {

@@ -3,7 +3,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 describe('/config/controllers/configuration_acquisition.js', () => {
 

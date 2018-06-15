@@ -1,10 +1,10 @@
 const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const random = global.SixCRM.routes.include('lib', 'random.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const random = require('@sixcrm/sixcrmcore/util/random').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');

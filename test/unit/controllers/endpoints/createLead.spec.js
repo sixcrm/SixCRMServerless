@@ -3,8 +3,8 @@ let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 
 const expect = chai.expect;
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const randomutilities = require('@sixcrm/sixcrmcore/util/random').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');

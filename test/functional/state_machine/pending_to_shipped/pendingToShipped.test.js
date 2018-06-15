@@ -4,14 +4,14 @@ const SqSTestUtils = require('../../sqs-test-utils');
 const StateMachine = require('../state-machine-test-utils.js');
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 const sqsDeployment = new SQSDeployment();
-const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+const permissionutilities = require('@sixcrm/sixcrmcore/util/permission-utilities').default;
 const DynamoDbDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
 const dynamoDbDeployment = new DynamoDbDeployment();
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const rebillController = new RebillController();
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 describe('pendingToShipped', () => {
 

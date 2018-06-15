@@ -5,8 +5,8 @@ let expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 const WorkerResponse = global.SixCRM.routes.include('workers', 'components/WorkerResponse.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 

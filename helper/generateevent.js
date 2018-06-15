@@ -1,10 +1,10 @@
 
-require('../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 
-//const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+//const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
 
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 

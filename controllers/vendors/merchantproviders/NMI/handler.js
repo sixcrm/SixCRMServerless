@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const querystring = require('querystring');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
 

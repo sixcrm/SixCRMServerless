@@ -3,13 +3,13 @@ const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 let anyItem = { property: 'value' };
 let anyTableName = 'tableName';
 let serverError = '[500] Server Error: [500] An error occurred.';
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
 describe('controllers/providers/dynamodb-provider', () => {
 

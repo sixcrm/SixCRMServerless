@@ -1,6 +1,6 @@
 
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 

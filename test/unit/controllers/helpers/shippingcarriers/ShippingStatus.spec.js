@@ -5,10 +5,10 @@ const uuidV4 = require('uuid/v4');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-let randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-let timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+let du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+let randomutilities = require('@sixcrm/sixcrmcore/util/random').default;
+let timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
