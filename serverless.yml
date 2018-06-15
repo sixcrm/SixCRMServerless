@@ -47,6 +47,7 @@ plugins:
   - serverless-dynamodb-local
   - serverless-prune-plugin
   - serverless-plugin-warmup
+  - serverless-plugin-split-stacks
 
 custom:
   prune:
@@ -54,6 +55,9 @@ custom:
     number: 3
   warmup:
     prewarm: true
+  splitStacks:
+    perFunction: false
+    perType: true
 
 
 functions:
