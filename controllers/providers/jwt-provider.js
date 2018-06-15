@@ -1,12 +1,12 @@
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const mungeutilities = global.SixCRM.routes.include('lib', 'munge-utilities.js');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const mungeutilities = require('@sixcrm/sixcrmcore/util/munge-utilities').default;
 
 //Technical Debt: Refactor
 module.exports = class JWTProvider {

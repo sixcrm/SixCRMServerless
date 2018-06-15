@@ -208,9 +208,11 @@ describe('controllers/providers/jwt-provider', () => {
 
 		it('returns user alias based on user id', () => {
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'munge-utilities.js'), {
-				munge: () => {
-					return 'a_munge_string'
+			mockery.registerMock('@sixcrm/sixcrmcore/util/munge-utilities', {
+				default: {
+					munge: () => {
+						return 'a_munge_string'
+					}
 				}
 			});
 
@@ -224,9 +226,11 @@ describe('controllers/providers/jwt-provider', () => {
 
 		it('returns user alias based on user email', () => {
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'munge-utilities.js'), {
-				munge: () => {
-					return 'a_munge_string'
+			mockery.registerMock('@sixcrm/sixcrmcore/util/munge-utilities', {
+				default: {
+					munge: () => {
+						return 'a_munge_string'
+					}
 				}
 			});
 

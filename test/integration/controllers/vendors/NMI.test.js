@@ -3,8 +3,8 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+let du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 function executeReverse(transaction_object){
 

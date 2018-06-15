@@ -1,13 +1,11 @@
-
-const _ = require('lodash');
 const anyAction = 'someAction';
 const anyEntity = 'someEntity';
 const anyPermission = `${anyEntity}/${anyAction}`;
 const anotherPermission = `${anyEntity}1/${anyAction}1`;
 
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
-class PermissionTestGenerators {
+module.exports = class PermissionTestGenerators {
 
 	static anyAction() {
 		return anyAction;
@@ -25,11 +23,9 @@ class PermissionTestGenerators {
 		return anotherPermission;
 	}
 
-	static givenAnyUser(account) {
+	static givenAnyUser(account = '770cf6af-42c4-4ffd-ba7f-9ee4fcb1084b') {
 
-		account = (_.isUndefined(account))?'770cf6af-42c4-4ffd-ba7f-9ee4fcb1084b':account;
-
-		let user = {
+		const user = {
 			id: 'super.user@test.com',
 			acl: [{
 				account: {
@@ -52,11 +48,9 @@ class PermissionTestGenerators {
 		global.account = user.acl[0].account.id;
 	}
 
-	static givenUserWithNoPermissions(account) {
+	static givenUserWithNoPermissions(account = 'd26c1887-7ad4-4a44-be0b-e80dbce22774') {
 
-		account = (_.isUndefined(account))?'d26c1887-7ad4-4a44-be0b-e80dbce22774':account;
-
-		let user = {
+		const user = {
 			acl: [{
 				account: {
 					id: account
@@ -77,7 +71,7 @@ class PermissionTestGenerators {
 	}
 
 	static givenUserWithDenied(action, entity, account) {
-		let user = PermissionTestGenerators.givenUserWithNoPermissions(account);
+		const user = PermissionTestGenerators.givenUserWithNoPermissions(account);
 
 		user.acl[0].role.permissions.deny.push(`${entity}/${action}`);
 		PermissionTestGenerators.setGlobalUser(user);
@@ -87,7 +81,7 @@ class PermissionTestGenerators {
 
 	static givenUserWithAllowed(action, entity, account) {
 
-		let user = PermissionTestGenerators.givenUserWithNoPermissions(account);
+		const user = PermissionTestGenerators.givenUserWithNoPermissions(account);
 
 		user.acl[0].role.permissions.allow.push(`${entity}/${action}`);
 
@@ -99,11 +93,11 @@ class PermissionTestGenerators {
 
 	static givenUserWithPermissionArray(permission_objects, account) {
 
-		let user = PermissionTestGenerators.givenUserWithNoPermissions(account);
+		const user = PermissionTestGenerators.givenUserWithNoPermissions(account);
 
-		arrayutilities.map(permission_objects, permission_object => {
+		arrayutilities.map(permission_objects, (permission_object) => {
 
-			user.acl[0].role.permissions.allow.push(permission_object.object+'/'+permission_object.action);
+			user.acl[0].role.permissions.allow.push(permission_object.object + '/' + permission_object.action);
 
 		});
 
@@ -112,5 +106,3 @@ class PermissionTestGenerators {
 		return user;
 	}
 }
-
-module.exports = PermissionTestGenerators;

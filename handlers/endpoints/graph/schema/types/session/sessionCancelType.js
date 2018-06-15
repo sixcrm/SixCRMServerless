@@ -4,7 +4,7 @@ const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 let userType = require('../user/userType');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 let sessionController = new SessionController();

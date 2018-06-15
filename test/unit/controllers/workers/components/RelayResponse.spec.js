@@ -1,6 +1,6 @@
 const chai = require("chai");
 const expect = chai.expect;
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 describe('controllers/workers/components/RelayResponse.js', function () {
 

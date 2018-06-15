@@ -1,8 +1,8 @@
 
-require('../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 const fs = require('fs');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 du.info('Deploying stage \'' + process.env.stage + '\'.');
 

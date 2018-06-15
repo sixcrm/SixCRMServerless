@@ -5,11 +5,11 @@ const checksum = require('checksum');
 const creditcardgenerator = require('creditcard-generator');
 const creditCardType = require('credit-card-type');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const randomutilities = require('@sixcrm/sixcrmcore/util/random').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const hashutilities = require('@sixcrm/sixcrmcore/util/hash-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 
 class MockEntities {

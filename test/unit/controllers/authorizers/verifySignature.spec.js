@@ -279,12 +279,14 @@ describe('controllers/authorizers/verifySignature.js', () => {
 				authorizationToken: access_key.id + ':' + timestamp + ':' + a_signature
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('lib', 'signature.js'), {
-				validateSignature: (secret, signing_string, signature) => {
-					expect(secret).to.equal(access_key.secret_key);
-					expect(signature).to.equal(a_signature);
-					expect(signing_string).to.equal(timestamp.toString());
-					return Promise.resolve(true)
+			mockery.registerMock('@sixcrm/sixcrmcore/util/signature', {
+				default: {
+					validateSignature: (secret, signing_string, signature) => {
+						expect(secret).to.equal(access_key.secret_key);
+						expect(signature).to.equal(a_signature);
+						expect(signing_string).to.equal(timestamp.toString());
+						return Promise.resolve(true)
+					}
 				}
 			});
 

@@ -3,8 +3,8 @@ const chai = require('chai');
 const expect = require('chai').expect;
 const fs = require('fs');
 
-const tu = global.SixCRM.routes.include('lib','test-utilities.js');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const tu = require('@sixcrm/sixcrmcore/util/test-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 const minute = 60 * 1000;
 

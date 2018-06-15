@@ -3,7 +3,7 @@
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
-let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 function createValidEmailParameters(){
 

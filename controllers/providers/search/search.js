@@ -1,9 +1,9 @@
 
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const CloudsearchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudsearch-provider.js');
 const cloudsearchprovider = new CloudsearchProvider();
-const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+const permissionutilities = require('@sixcrm/sixcrmcore/util/permission-utilities').default;
 
 module.exports = class SearchController {
 

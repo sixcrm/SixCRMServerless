@@ -1,7 +1,7 @@
 const request = require('supertest');
 const chai = require('chai');
 
-const tu = global.SixCRM.routes.include('lib','test-utilities.js');
+const tu = require('@sixcrm/sixcrmcore/util/test-utilities').default;
 
 
 chai.use(require('chai-json-schema'));

@@ -1,5 +1,5 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const math = global.SixCRM.routes.include('lib', 'math-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const math = require('@sixcrm/sixcrmcore/util/math-utilities').default;
 
 module.exports = async (results) => {
 

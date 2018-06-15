@@ -3,9 +3,9 @@ const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 

@@ -1,5 +1,5 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayUtilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const arrayUtilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 const sqsprovider = new SQSProvider();
 const BBPromise = require('bluebird');

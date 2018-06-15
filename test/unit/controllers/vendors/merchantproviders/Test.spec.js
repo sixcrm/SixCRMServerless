@@ -4,7 +4,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 let querystring = require('querystring');
-let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidMerchantProvider(id){

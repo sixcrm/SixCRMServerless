@@ -1,5 +1,5 @@
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 const InfoController = global.SixCRM.routes.include('helpers', 'shippingcarriers/Info.js');
 const TrackerUtilities = global.SixCRM.routes.include('providers', 'tracker/TrackerUtilities.js');

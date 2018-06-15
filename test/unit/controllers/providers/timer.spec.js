@@ -1,6 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 
 describe('controllers/providers/timer', () => {
 

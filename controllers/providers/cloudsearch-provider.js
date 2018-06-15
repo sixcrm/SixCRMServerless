@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const numberutilities = require('@sixcrm/sixcrmcore/util/number-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
 module.exports = class CloudSearchProvider extends AWSProvider {
@@ -474,7 +474,7 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 					return Promise.resolve(true);
 				}
 
-				eu.throwError('server', 'Max attempts reached.');
+				throw eu.getError('server', 'Max attempts reached.');
 			}
 
 			return this.describeDomains([domainname]).then((status) => {

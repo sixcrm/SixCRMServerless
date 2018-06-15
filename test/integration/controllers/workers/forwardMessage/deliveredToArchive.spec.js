@@ -4,10 +4,10 @@ const chai = require("chai");
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
 
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');

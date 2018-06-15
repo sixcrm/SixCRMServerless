@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
 

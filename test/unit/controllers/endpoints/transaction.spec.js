@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const mockery = require('mockery');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
 
 describe('controllers/endpoints/transaction', () => {
 

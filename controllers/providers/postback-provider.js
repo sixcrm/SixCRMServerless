@@ -1,8 +1,8 @@
 
 const request = require('request');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const parserutilities = require('@sixcrm/sixcrmcore/util/parser-utilities').default;
 
 module.exports = class PostbackProvider {
 

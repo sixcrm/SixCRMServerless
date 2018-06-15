@@ -251,7 +251,7 @@ describe('controllers/EntityUtilities.js', () => {
 
 		it('returns true when model and path to model are valid', () => {
 
-			let path_to_model = './model/entities/notificationsetting.json'; //valid path
+			let path_to_model = '../../../model/entities/notificationsetting.json'; //valid path
 
 			const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
 			let entityUtilitiesController = new EUC();

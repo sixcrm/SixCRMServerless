@@ -1,9 +1,9 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 const HTTPProvider = global.SixCRM.routes.include('providers', 'http-provider.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js')
-const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js')
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default
+const numberutilities = require('@sixcrm/sixcrmcore/util/number-utilities').default
 
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
