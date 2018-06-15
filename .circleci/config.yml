@@ -17,12 +17,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install npm
           command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm install
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
   lint:
@@ -30,7 +30,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: 'Lint'
           command: npm run lint
@@ -39,7 +39,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: 'Unit Tests'
           command: stage=circle  npm run test-unit-circle || echo "Tests failed"
@@ -48,7 +48,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install Docker Compose
           command: |
@@ -81,7 +81,7 @@ jobs:
       steps:
         - checkout
         - restore_cache:
-            key: dependency-cache-{{ checksum "package.json" }}
+            key: dependency-cache-{{ checksum "package-lock.json" }}
         - run:
             name: Install Docker Compose
             command: |
@@ -111,7 +111,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: debugging
           command: printenv
@@ -138,7 +138,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -152,7 +152,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -166,7 +166,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -180,7 +180,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -194,7 +194,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -208,7 +208,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -222,7 +222,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -236,7 +236,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -250,7 +250,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -264,7 +264,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -278,7 +278,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -292,7 +292,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -306,7 +306,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -323,7 +323,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -337,7 +337,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -354,7 +354,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -371,7 +371,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -385,7 +385,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -402,7 +402,7 @@ jobs:
   #   steps:
   #     - checkout
   #     - restore_cache:
-  #         key: dependency-cache-{{ checksum "package.json" }}
+  #         key: dependency-cache-{{ checksum "package-lock.json" }}
   #     - restore_cache:
   #         key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
   #     - run:
@@ -419,7 +419,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -451,7 +451,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -465,7 +465,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -479,7 +479,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -496,7 +496,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -510,7 +510,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -533,7 +533,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -551,7 +551,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Entity Integration Tests
           command: SIX_VERBOSE=2 npm run test-environment
@@ -560,7 +560,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -583,7 +583,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -597,7 +597,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -611,7 +611,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Deleteblock Integration Tests
           command: npm run test-deleteblocks
@@ -620,7 +620,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Entity Integration Tests
           command: npm run test-entities
@@ -629,7 +629,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Analytics Integration Tests
           command: SIX_VERBOSE=2 npm run test-integration-analytics
@@ -638,7 +638,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Transactional Integration Tests
           command: export SIX_VERBOSE=2; npm run test-transactions
@@ -647,7 +647,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - restore_cache:
           key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
@@ -661,7 +661,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Merge To Upper
           command: |
