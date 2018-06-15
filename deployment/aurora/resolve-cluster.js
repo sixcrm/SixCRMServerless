@@ -1,6 +1,6 @@
-require('../../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const configuration = require('../../config/controllers/configuration_acquisition');
 const fs = require('fs');
 const util = require('util');

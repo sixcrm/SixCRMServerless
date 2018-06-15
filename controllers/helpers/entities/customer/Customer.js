@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
 module.exports = class CustomerHelperController {
 

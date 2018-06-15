@@ -7,7 +7,7 @@ const ReIndexingHelperController = global.SixCRM.routes.include('helpers', 'inde
 module.exports = {
 	analyticseventhandler: handleAnalytics(),
 	selectrebills: handleEvent((event) => new SelectRebillsController().execute(event)),
-	reindex: handleEvent(() => new ReIndexingHelperController().execute(true))
+	reindex: handleEvent(() => new ReIndexingHelperController().execute())
 };
 
 function handleAnalytics() {

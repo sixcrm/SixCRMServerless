@@ -1,7 +1,7 @@
 
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const randomutilities = require('@sixcrm/sixcrmcore/util/random').default;
 
 module.exports = class UserSigningStringHelperController{
 

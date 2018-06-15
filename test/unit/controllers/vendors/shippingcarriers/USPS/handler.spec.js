@@ -5,9 +5,9 @@ const _ = require('lodash');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-let du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-let randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-let objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+let du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+let randomutilities = require('@sixcrm/sixcrmcore/util/random').default;
+let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 function getValidParsedAPIResponseBody(tracking_number){
 

@@ -4,11 +4,11 @@ const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const random = global.SixCRM.routes.include('lib', 'random.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const random = require('@sixcrm/sixcrmcore/util/random').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
@@ -1861,6 +1861,30 @@ describe('/helpers/entities/Rebill.js', () => {
 				expect(rebillHelperController.parameters.store['processing']).to.equal(processing);
 				return expect(result).to.equal(true);
 			});
+		});
+	});
+
+	describe('getYearMonth', () => {
+		it('returns the year and the month of the timestamp', () => {
+
+			const scenarios = [
+				{
+					timestamp: "2017-04-06T18:40:41.405Z",
+					result:"201704"
+				},
+				{
+					timestamp: "2018-12-06T18:40:41.405Z",
+					result:"201812"
+				}
+			];
+
+			const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+			let rebillHelperController = new RebillHelperController();
+
+			arrayutilities.map(scenarios, scenario => {
+				expect(rebillHelperController.getYearMonth(scenario.timestamp)).to.equal(scenario.result);
+			});
+
 		});
 	});
 

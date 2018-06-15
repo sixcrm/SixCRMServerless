@@ -1,7 +1,7 @@
 
-require('../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 const qs = require('querystring');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 let input_string = process.argv[2];
 

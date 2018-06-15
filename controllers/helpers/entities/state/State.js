@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const parserutilities = global.SixCRM.routes.include('lib','parser-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const parserutilities = require('@sixcrm/sixcrmcore/util/parser-utilities').default;
 const StateController = global.SixCRM.routes.include('entities', 'State.js');
 
 module.exports = class StateHelperController {

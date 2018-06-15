@@ -1,6 +1,6 @@
-require('../../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const ElasticacheDeployment = global.SixCRM.routes.include('deployment', 'utilities/elasticache-deployment.js');
 
 let elasticacheDeployment = new ElasticacheDeployment();

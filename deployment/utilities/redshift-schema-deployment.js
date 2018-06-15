@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 const RedshiftDeployment = global.SixCRM.routes.include('deployment', 'utilities/redshift-deployment.js');
-const redshiftContext = global.SixCRM.routes.include('lib', 'analytics/redshift-context.js');
+const redshiftContext = require('@sixcrm/sixcrmcore/util/analytics/redshift-context').default;
 
 module.exports = class RedshiftSchemaDeployment extends RedshiftDeployment {
 

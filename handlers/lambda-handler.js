@@ -1,4 +1,4 @@
-require('../SixCRM');
+require('@sixcrm/sixcrmcore');
 const du = require('../lib/debug-utilities');
 
 const LambdaContext = require('./lambda-context');

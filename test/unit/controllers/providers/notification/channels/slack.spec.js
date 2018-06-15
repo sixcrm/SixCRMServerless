@@ -1,7 +1,7 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 describe('controllers/providers/notification/channels/slack.js', () => {
 

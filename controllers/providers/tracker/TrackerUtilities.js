@@ -1,7 +1,7 @@
 
 var _ =  require('lodash');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const PermissionedController = global.SixCRM.routes.include('helpers', 'permission/Permissioned.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const TrackerResponse = global.SixCRM.routes.include('providers', 'tracker/Response.js');

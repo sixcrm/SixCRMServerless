@@ -1,9 +1,9 @@
-require('../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 
 const config = global.SixCRM.routes.include('test', 'integration/config/development.yml');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const signatureutilities = require('@sixcrm/sixcrmcore/util/signature').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
 
 const httpprovider = new HttpProvider();

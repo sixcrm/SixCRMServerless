@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const ResponseController = global.SixCRM.routes.include('providers', 'Response.js');
 
 module.exports = class ShippingCarrierResponse extends ResponseController {

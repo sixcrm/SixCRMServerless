@@ -1,9 +1,9 @@
 const _ = require('lodash');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const signature = global.SixCRM.routes.include('lib', 'signature.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const signature = require('@sixcrm/sixcrmcore/util/signature').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 const AccessKeyController = global.SixCRM.routes.include('controllers', 'entities/AccessKey.js');
 
 module.exports = class verifySignatureController {

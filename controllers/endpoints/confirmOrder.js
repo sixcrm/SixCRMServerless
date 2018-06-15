@@ -1,6 +1,6 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');

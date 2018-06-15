@@ -1,12 +1,12 @@
 const _ = require('lodash');
 const path = require('path');
 const BBPromise = require('bluebird');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const parserutilities = require('@sixcrm/sixcrmcore/util/parser-utilities').default;
 const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 

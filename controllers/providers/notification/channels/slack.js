@@ -1,8 +1,8 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
 const httpprovider = new HttpProvider();
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
 
 const ChannelNotification = global.SixCRM.routes.include('providers', 'notification/components/ChannelNotification.js');
 

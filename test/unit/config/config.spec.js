@@ -1,6 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 global.SixCRM.validator.addSchema(require(global.SixCRM.routes.path('test', 'unit/config/serverless.json')));
 

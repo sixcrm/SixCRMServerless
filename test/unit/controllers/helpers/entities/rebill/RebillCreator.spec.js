@@ -5,13 +5,13 @@ const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const numberutilities = global.SixCRM.routes.include('lib', 'number-utilities.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const numberutilities = require('@sixcrm/sixcrmcore/util/number-utilities').default;
+const randomutilities = require('@sixcrm/sixcrmcore/util/random').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
@@ -1444,6 +1444,7 @@ describe('/helpers/entities/Rebill.js', () => {
 				account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 				amount: product_schedules[0].product_schedule.schedule[1].price,
 				bill_at: "2017-04-20T18:40:41.000Z",
+				year_month: "201704",
 				entity_type: "rebill",
 				parentsession: session.id,
 				product_schedules: [product_schedules[0].product_schedule.id],
@@ -1487,6 +1488,7 @@ describe('/helpers/entities/Rebill.js', () => {
 				account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 				amount: product_schedules[0].product_schedule.schedule[2].price,
 				bill_at: "2017-05-04T18:40:41.000Z",
+				year_month: "201705",
 				entity_type: "rebill",
 				parentsession: session.id,
 				product_schedules: [product_schedules[0].product_schedule.id],
@@ -1528,6 +1530,7 @@ describe('/helpers/entities/Rebill.js', () => {
 				account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 				amount: product_schedules[0].product_schedule.schedule[2].price,
 				bill_at: "2017-06-01T18:40:41.000Z",
+				year_month: "201706",
 				entity_type: "rebill",
 				parentsession: session.id,
 				product_schedules: [product_schedules[0].product_schedule.id],
@@ -1569,6 +1572,7 @@ describe('/helpers/entities/Rebill.js', () => {
 				account: "d3fa3bf3-7824-49f4-8261-87674482bf1c",
 				amount: product_schedules[0].product_schedule.schedule[2].price,
 				bill_at: "2017-06-01T18:40:41.000Z",
+				year_month: "201706",
 				entity_type: "rebill",
 				parentsession: session.id,
 				product_schedules: [product_schedules[0].product_schedule.id],

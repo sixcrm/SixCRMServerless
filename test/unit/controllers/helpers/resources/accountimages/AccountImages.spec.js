@@ -4,9 +4,9 @@ let chai = require('chai');
 let expect = chai.expect;
 
 const mockery = require('mockery');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const random = global.SixCRM.routes.include('lib','random.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
+const random = require('@sixcrm/sixcrmcore/util/random').default;
 
 describe('controllers/helpers/resources/accountimages/AccountImages.js', () => {
 

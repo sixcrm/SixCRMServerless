@@ -1,6 +1,6 @@
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 module.exports = class BinController extends entityController {
 

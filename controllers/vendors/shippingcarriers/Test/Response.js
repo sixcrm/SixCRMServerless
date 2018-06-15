@@ -1,6 +1,6 @@
 
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 const ShippingCarrierVendorResponse = global.SixCRM.routes.include('vendors', 'shippingcarriers/components/Response.js');
 

@@ -1,6 +1,6 @@
 
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const RedshiftProvider = global.SixCRM.routes.include('controllers', 'providers/redshift-provider.js');

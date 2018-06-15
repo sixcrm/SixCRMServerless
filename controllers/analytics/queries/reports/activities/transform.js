@@ -1,4 +1,4 @@
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const ActivityStatement = require('../../../activity-statement');
 const BBPromise = require('bluebird');
 

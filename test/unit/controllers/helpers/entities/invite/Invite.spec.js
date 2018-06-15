@@ -2,11 +2,11 @@ const _ = require('lodash')
 const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
-const eu = global.SixCRM.routes.include('lib','error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib','timestamp.js');
-const random = global.SixCRM.routes.include('lib','random.js');
-const signatureutilities = global.SixCRM.routes.include('lib','signature.js');
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const random = require('@sixcrm/sixcrmcore/util/random').default;
+const signatureutilities = require('@sixcrm/sixcrmcore/util/signature').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 

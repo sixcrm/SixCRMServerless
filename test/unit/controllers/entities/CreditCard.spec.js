@@ -5,8 +5,8 @@ const mockery = require('mockery');
 
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const random = global.SixCRM.routes.include('lib', 'random.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const random = require('@sixcrm/sixcrmcore/util/random').default;
 
 function getValidCreditCard() {
 	return MockEntities.getValidCreditCard();

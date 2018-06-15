@@ -2,9 +2,9 @@
 const uuidV4 = require('uuid/v4');
 const _ = require('lodash');
 
-require('../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 process.env.SIX_VERBOSE = 2;
 

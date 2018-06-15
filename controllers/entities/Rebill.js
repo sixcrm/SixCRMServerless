@@ -1,10 +1,9 @@
 const _ = require('lodash');
 
-//Technical Debt:  We shouldn't need the AWS utility classes here...
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
@@ -29,7 +28,23 @@ module.exports = class RebillController extends entityController {
 			entity.alias = this.rebillHelperController.createAlias();
 		}
 
+		if(!_.has(entity, 'year_month')){
+			entity.year_month = this.rebillHelperController.getYearMonth(entity.bill_at);
+		}
+
 		return super.create({entity: entity});
+
+	}
+
+	update({entity, ignore_updated_at}){
+
+		du.debug('Rebill.update()');
+
+		if(!_.has(entity, 'year_month')){
+			entity.year_month = this.rebillHelperController.getYearMonth(entity.bill_at);
+		}
+
+		return super.update({entity: entity, ignore_updated_at: ignore_updated_at});
 
 	}
 
@@ -48,7 +63,8 @@ module.exports = class RebillController extends entityController {
 	}
 
 	listBySession({
-		session
+		session,
+		pagination
 	}) {
 
 		du.debug('List By Session');
@@ -56,7 +72,8 @@ module.exports = class RebillController extends entityController {
 		return this.queryBySecondaryIndex({
 			field: 'parentsession',
 			index_value: this.getID(session),
-			index_name: 'parentsession-index'
+			index_name: 'parentsession-index',
+			pagination
 		});
 
 	}

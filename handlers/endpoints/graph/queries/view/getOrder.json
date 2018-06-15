@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"query {order (id: \"R6A41692AE\") { id, amount, session { id }, customer { firstname, lastname, address { line1, line2, city, state, zip } }, products { amount, quantity, product { id } }, date } }"
+}

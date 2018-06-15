@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 const AuthenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
 
 module.exports = class CustomerAuthenticatedController extends AuthenticatedController {

@@ -1,8 +1,8 @@
 
-require('../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const mungeutilities = global.SixCRM.routes.include('lib','munge-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const mungeutilities = require('@sixcrm/sixcrmcore/util/munge-utilities').default;
 
 let email = process.argv[2];
 

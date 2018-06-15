@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const EntityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class ActivityStatement {

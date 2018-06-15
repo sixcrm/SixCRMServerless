@@ -1,7 +1,7 @@
 
-require('../../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 const SNSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sns-deployment.js');
 const snsDeployment = new SNSDeployment();

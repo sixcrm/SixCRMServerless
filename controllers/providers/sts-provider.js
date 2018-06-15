@@ -1,10 +1,10 @@
 
 const _ = require('lodash');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
-const random = global.SixCRM.routes.include('lib', 'random.js');
+const random = require('@sixcrm/sixcrmcore/util/random').default;
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js')
 
 module.exports = class STSProvider extends AWSProvider {

@@ -2,7 +2,7 @@
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test','mock-entities.js');
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 

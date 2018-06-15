@@ -1,14 +1,14 @@
 
 const _ = require('lodash');
 
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const hashutilities = global.SixCRM.routes.include('lib', 'hash-utilities.js');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const hashutilities = require('@sixcrm/sixcrmcore/util/hash-utilities').default;
 const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
 const httpprovider = new HttpProvider();
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 const FulfillmentProviderController = global.SixCRM.routes.include('vendors', 'fulfillmentproviders/FulfillmentProvider.js');
 

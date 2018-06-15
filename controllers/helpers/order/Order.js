@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
@@ -70,4 +70,22 @@ module.exports = class OrderHelperController {
 
 	}
 
+	async getOrder({id}) {
+		const rebillController = new RebillController();
+		const rebill = await rebillController.getByAlias({alias: id});
+		return this.createOrder({rebill});
+	}
+
+	async listBySession({session_id, pagination}) {
+		const sessionController = new SessionController();
+		const rebillController = new RebillController();
+		const session = await sessionController.get({id: session_id});
+		const customer = await sessionController.getCustomer(session);
+		const result = await rebillController.listBySession({session, pagination});
+		const orders = Promise.all(arrayutilities.map(result.rebills, rebill => this.createOrder({ rebill, session, customer })));
+		return {
+			orders,
+			pagination: result.pagination
+		}
+	}
 }

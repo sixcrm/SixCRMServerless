@@ -1,13 +1,13 @@
 
 const _ = require('lodash');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const permissionutilities = require('@sixcrm/sixcrmcore/util/permission-utilities').default;
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
 const IAMProvider = global.SixCRM.routes.include('controllers', 'providers/iam-provider.js');
@@ -511,7 +511,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
 		}
 
-		//throw eu.throwError('server', 'Unexpected seed directory.');
+		//throw eu.getError('server', 'Unexpected seed directory.');
 
 	}
 

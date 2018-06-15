@@ -1,8 +1,8 @@
 
 const _ =  require('lodash');
 const request = require('request');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
 module.exports = class SlackProvider {
 

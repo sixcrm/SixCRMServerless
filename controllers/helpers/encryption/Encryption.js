@@ -1,9 +1,9 @@
 
 
 const _ = require('lodash');
-const encryptionutilities = global.SixCRM.routes.include('lib', 'encryption-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const encryptionutilities = require('@sixcrm/sixcrmcore/util/encryption-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 class EncryptionHelper {
 	constructor(entity_ref) {

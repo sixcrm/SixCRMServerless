@@ -1,14 +1,14 @@
 
 const _ = require('lodash');
 
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
 module.exports = class PermissionedController {
 
 	constructor(){
 
-		this.permissionutilities = global.SixCRM.routes.include('lib', 'permission-utilities.js');
+		this.permissionutilities = require('@sixcrm/sixcrmcore/util/permission-utilities').default;
 
 	}
 

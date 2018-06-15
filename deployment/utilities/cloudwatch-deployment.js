@@ -1,11 +1,11 @@
 const BBPromise = require('bluebird');
 //const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-//const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities.js');
-const random = global.SixCRM.routes.include('lib', 'random.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+//const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const parserutilities = require('@sixcrm/sixcrmcore/util/parser-utilities').default;
+const random = require('@sixcrm/sixcrmcore/util/random').default;
 const CloudwatchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudwatch-provider.js');
 const LambdaProvider = global.SixCRM.routes.include('controllers', 'providers/lambda-provider.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');

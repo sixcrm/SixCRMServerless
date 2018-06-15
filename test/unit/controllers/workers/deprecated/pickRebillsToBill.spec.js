@@ -5,7 +5,7 @@ let expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
 
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 
 function getValidMessages(){
 	return [

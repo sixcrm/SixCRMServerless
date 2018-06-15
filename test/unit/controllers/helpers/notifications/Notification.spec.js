@@ -2,8 +2,8 @@
 //const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
-const objectutilities = global.SixCRM.routes.include('lib','object-utilities.js');
-//const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+//const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 describe('/helpers/notifications/Notification.js', () => {
 	describe('constructor', () => {

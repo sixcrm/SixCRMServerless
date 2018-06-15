@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const random = global.SixCRM.routes.include('lib', 'random.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const random = require('@sixcrm/sixcrmcore/util/random').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 module.exports = class ReturnHelper {
 

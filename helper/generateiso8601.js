@@ -1,7 +1,7 @@
 
-require('../SixCRM.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+require('@sixcrm/sixcrmcore');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 process.env.SIX_VERBOSE = 2;
 du.info(timestamp.getISO8601());

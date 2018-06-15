@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const elasticsearch = require('elasticsearch');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const compressionutilities = global.SixCRM.routes.include('lib', 'compression-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const compressionutilities = require('@sixcrm/sixcrmcore/util/compression-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 module.exports = class LoggerController {
 

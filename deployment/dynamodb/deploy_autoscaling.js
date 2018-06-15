@@ -1,7 +1,7 @@
 
-require('../../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const DynamoDBAutoscalingDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-autoscaling-deployment.js');
 const dynamoDBAutoscalingDeployment = new DynamoDBAutoscalingDeployment();
 

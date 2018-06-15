@@ -2,10 +2,10 @@
 const request = require('supertest');
 const _ = require('lodash');
 
-const tu = global.SixCRM.routes.include('lib','test-utilities.js');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib','error-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
+const tu = require('@sixcrm/sixcrmcore/util/test-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 module.exports = class IntegrationTest {
 

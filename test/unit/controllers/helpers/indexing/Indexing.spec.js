@@ -4,12 +4,12 @@ let chai = require('chai');
 let expect = chai.expect;
 const uuidV4 = require('uuid/v4');
 
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const randomutilities = global.SixCRM.routes.include('lib', 'random.js');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const randomutilities = require('@sixcrm/sixcrmcore/util/random').default;
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 const IndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/Indexing.js');
 

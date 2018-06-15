@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities');
-const fileutilities = global.SixCRM.routes.include('lib', 'file-utilities');
-const parserutilities = global.SixCRM.routes.include('lib', 'parser-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
+const parserutilities = require('@sixcrm/sixcrmcore/util/parser-utilities').default;
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 const DMSProvider = global.SixCRM.routes.include('controllers', 'providers/dms-provider.js');
 const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');

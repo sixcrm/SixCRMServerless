@@ -3,7 +3,7 @@ let expect = chai.expect;
 const mockery = require('mockery');
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const arrayutilities = global.SixCRM.routes.include('lib','array-utilities.js');
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
 function getValidMerchantProviderGroup() {
 	return MockEntities.getValidMerchantProviderGroup();

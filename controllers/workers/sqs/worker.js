@@ -1,10 +1,10 @@
 
 const _ = require('lodash');
 
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const eu = global.SixCRM.routes.include('lib', 'error-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
 
 module.exports = class workerController {
 
@@ -20,7 +20,7 @@ module.exports = class workerController {
 		//Technical Debt:  This is pretty gross, we should set the user to "system@sixcrm.com"
 		du.debug('Set Permissions');
 
-		this.permissionutilities = global.SixCRM.routes.include('lib','permission-utilities.js');
+		this.permissionutilities = require('@sixcrm/sixcrmcore/util/permission-utilities').default;
 		this.permissionutilities.setPermissions('*',['*/*'],[])
 
 	}

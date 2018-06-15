@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const AnalyticsTransfrom = require('../analytics-transform');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 

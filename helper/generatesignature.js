@@ -1,11 +1,11 @@
 
 const _ = require('lodash');
 
-require('../SixCRM.js');
+require('@sixcrm/sixcrmcore');
 
-var timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
-const signatureutilities = global.SixCRM.routes.include('lib', 'signature.js');
+var timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const signatureutilities = require('@sixcrm/sixcrmcore/util/signature').default;
 
 process.env.SIX_VERBOSE = 2;
 

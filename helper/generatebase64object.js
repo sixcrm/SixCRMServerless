@@ -1,7 +1,7 @@
 
-require('../SixCRM.js');
-const encode = global.SixCRM.routes.include('lib', 'encode');
-const du = global.SixCRM.routes.include('lib','debug-utilities.js');
+require('@sixcrm/sixcrmcore');
+const encode = require('@sixcrm/sixcrmcore/util/encode').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 process.env.SIX_VERBOSE = 2;
 let object = {

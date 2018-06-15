@@ -3,10 +3,10 @@ let expect = chai.expect;
 const _ = require('lodash');
 const uuidV4 = require('uuid/v4');
 const mockery = require('mockery');
-const timestamp = global.SixCRM.routes.include('lib', 'timestamp.js');
-const arrayutilities = global.SixCRM.routes.include('lib', 'array-utilities.js');
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const du = global.SixCRM.routes.include('lib', 'debug-utilities.js');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 function getUserACLsFromAccount(){
 

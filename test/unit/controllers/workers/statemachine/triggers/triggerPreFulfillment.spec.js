@@ -2,8 +2,8 @@ const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
 
-const objectutilities = global.SixCRM.routes.include('lib', 'object-utilities.js');
-const stringutilities = global.SixCRM.routes.include('lib', 'string-utilities.js');
+const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', () => {
