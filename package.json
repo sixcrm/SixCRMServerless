@@ -9,7 +9,7 @@
   "dependencies": {
     "@adexchange/aeg-redis": "0.0.196",
     "@adexchange/aeg-redshift": "0.0.84",
-    "@sixcrm/sixcrmcore": "0.0.26",
+    "@sixcrm/sixcrmcore": "0.0.29",
     "ajv": "^6.5.1",
     "apn": "^2.2.0",
     "authorizenet": "^1.0.5",
