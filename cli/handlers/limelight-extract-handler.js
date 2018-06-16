@@ -1,4 +1,4 @@
-const du = require('../../lib/debug-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const ExtractHandler = require('./extract-handler');
 const LimelightApi = require('@adexchange/aeg-limelight-api').Api;
 const fs = require('fs-extra');

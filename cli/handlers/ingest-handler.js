@@ -1,4 +1,4 @@
-const du = require('../../lib/debug-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 module.exports = class IngestHandler {
 
