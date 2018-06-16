@@ -7,9 +7,9 @@ const fs = require('fs');
 const crypto = require('crypto');
 
 const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
-const du =  require('../../../lib/debug-utilities.js');
-const tu =  require('../../../lib/test-utilities.js');
-const signature = require('../../../lib/signature.js');
+const du =  require('@sixcrm/sixcrmcore/util/debug-utilities.js').default;
+const tu =  require('@sixcrm/sixcrmcore/util/test-utilities.js').default;
+const signature = require('@sixcrm/sixcrmcore/util/signature.js').default;
 
 try {
 	var config = global.SixCRM.configuration.site_config;
