@@ -1,5 +1,5 @@
 const path = require('path');
-const du = require('../../lib/debug-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 module.exports.command = 'extract';
 

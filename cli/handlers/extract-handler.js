@@ -1,4 +1,4 @@
-const eu = require('../../lib/error-utilities');
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 const fs = require('fs-extra');
 const path = require('path');
 const moment = require('moment-timezone');

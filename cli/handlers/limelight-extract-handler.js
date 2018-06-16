@@ -1,4 +1,4 @@
-const du = require('../../lib/debug-utilities');
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const ExtractHandler = require('./extract-handler');
 const LimelightApi = require('@adexchange/aeg-limelight-api').Api;
 const fs = require('fs-extra');
@@ -13,7 +13,7 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 		super('limelight', client, apiUser, apiPassword, artifactsDirectory);
 
-		this._scraper = new LimelightScraping(client, webUser, webPassword, artifactsDirectory);
+		this._scraper = new LimelightScraping(client, webUser, webPassword, this._artifactsDirectory);
 
 		this._api = new LimelightApi(apiUser, apiPassword, client)
 			.on('info', (data) => {
@@ -122,8 +122,10 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 		}
 
-		const gateways = await this._api.getProducts(productIds);
-		await fs.writeJson(path.join(this._artifactsDirectory, 'products.json'), gateways);
+		const products = await this._api.getProducts(productIds);
+		await fs.writeJson(path.join(this._artifactsDirectory, 'products.json'), products, {
+			spaces: 4
+		});
 
 	}
 
