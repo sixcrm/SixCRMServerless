@@ -59,7 +59,7 @@ let notificationSettingType = require('./notificationsetting/notificationSetting
 let notificationSettingDefaultType = require('./notificationsetting/notificationSettingDefaultType');
 
 let orderType = require('./order/orderType');
-let orderListType = require('./order/orderType');
+let orderListType = require('./order/orderListType');
 
 let userType = require('./user/userType');
 let userListType = require('./user/userListType');
@@ -2239,6 +2239,23 @@ const fields = Object.assign({}, {
 			const {session, pagination} = order;
 			const orderHelperController = new OrderHelperController();
 			return orderHelperController.listBySession({session_id: session, pagination});
+		}
+	},
+	orderbycustomerlist: {
+		type: orderListType.graphObj,
+		args: {
+			customer: {
+				type: new GraphQLNonNull(GraphQLString),
+				description: 'The customer id.'
+			},
+			pagination: {
+				type: paginationInputType.graphObj
+			}
+		},
+		resolve: (root, order) => {
+			const {customer, pagination} = order;
+			const orderHelperController = new OrderHelperController();
+			return orderHelperController.listByCustomer({customer_id: customer, pagination});
 		}
 	},
 	ipcheck: {

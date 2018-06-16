@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"query {orderbycustomerlist (customer: \"24f7c851-29d4-4af9-87c5-0298fa74c689\") { orders { id, amount, session { id }, customer { firstname, lastname, address { line1, line2, city, state, zip } }, products { amount, quantity, product { id } }, date }, pagination { count, end_cursor, has_next_page } } }"
+}

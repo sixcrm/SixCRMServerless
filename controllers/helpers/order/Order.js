@@ -2,6 +2,7 @@ const _ = require('lodash');
 const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 
+const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 
@@ -81,11 +82,45 @@ module.exports = class OrderHelperController {
 		const rebillController = new RebillController();
 		const session = await sessionController.get({id: session_id});
 		const customer = await sessionController.getCustomer(session);
-		const result = await rebillController.listBySession({session, pagination});
-		const orders = Promise.all(arrayutilities.map(result.rebills, rebill => this.createOrder({ rebill, session, customer })));
+		const rebill_result = await rebillController.listBySession({session, pagination});
+		const orders = await Promise.all(arrayutilities.map(rebill_result.rebills, rebill => this.createOrder({ rebill, session, customer })));
 		return {
 			orders,
-			pagination: result.pagination
-		}
+			pagination: rebill_result.pagination
+		};
+	}
+
+	async listByCustomer({customer_id, pagination}) {
+		const customerController = new CustomerController();
+		const rebillController = new RebillController();
+		const sessionController = new SessionController();
+		const customer = await customerController.get({id: customer_id});
+		const {sessions} = await sessionController.listByCustomer({customer});
+
+		let rebill_query_parameters = rebillController.createINQueryParameters({
+			field: 'parentsession',
+			list_array: arrayutilities.map(sessions, session => session.id)
+		});
+
+		const rebill_result = await rebillController.listByAccount({
+			query_parameters: rebill_query_parameters,
+			pagination
+		});
+
+		const indexed_sessions = arrayutilities.reduce(sessions, (index, session) => {
+			index[session.id] = session;
+			return index;
+		}, {});
+
+		const rebill_pairs = arrayutilities.map(rebill_result.rebills, rebill => ({
+			rebill,
+			session: indexed_sessions[rebill.parentsession]
+		}));
+
+		const orders = await Promise.all(arrayutilities.map(rebill_pairs, ({rebill, session}) => this.createOrder({ rebill, session, customer })));
+		return {
+			orders,
+			pagination: rebill_result.pagination
+		};
 	}
 }
