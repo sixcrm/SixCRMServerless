@@ -122,8 +122,10 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 		}
 
-		const gateways = await this._api.getProducts(productIds);
-		await fs.writeJson(path.join(this._artifactsDirectory, 'products.json'), gateways);
+		const products = await this._api.getProducts(productIds);
+		await fs.writeJson(path.join(this._artifactsDirectory, 'products.json'), products, {
+			spaces: 4
+		});
 
 	}
 
