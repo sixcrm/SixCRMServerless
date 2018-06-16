@@ -13,7 +13,7 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 		super('limelight', client, apiUser, apiPassword, artifactsDirectory);
 
-		this._scraper = new LimelightScraping(client, webUser, webPassword, artifactsDirectory);
+		this._scraper = new LimelightScraping(client, webUser, webPassword, this._artifactsDirectory);
 
 		this._api = new LimelightApi(apiUser, apiPassword, client)
 			.on('info', (data) => {
