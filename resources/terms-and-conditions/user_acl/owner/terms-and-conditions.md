@@ -146,14 +146,19 @@ The Services shall be available for processing transactions 99.9% of the time, m
 
 Subscriber&#39;s sole and exclusive remedy, and SIXCRM&#39;s entire liability, in connection with the Services availability for processing transactions shall be the following Service Level Credits:
 
-| Total Service Unavailability Time in a Month (&quot;Downtime&quot;) | Downtime Credit |
-| --- | --- |
-| 99.9% - 100.0% | 0% |
-| 99.5% - 99.8% | 2% of monthly fees |
-| 99.0% - 99.4% | 5% of monthly fees |
-| 98.5% - 98.9% | 10% of monthly fees |
-| 98.0$ - 98.4% | 15% of monthly fees |
-| Less than 98.0% | 20% of monthly fees |
+**Total Service Unavailability Time in a Month (&quot;Downtime&quot;) and Downtime Credit**
+
+**99.9% - 100.0%:** 0%
+
+**99.5% - 99.8%:** 2% of monthly fees
+
+**99.0% - 99.4%:** 5% of monthly fees
+
+**98.5% - 98.9%:** 10% of monthly fees
+
+**98.0$ - 98.4%:** 15% of monthly fees
+
+**Less than 98.0%:** 20% of monthly fees
 
 Downtime shall begin to accrue as soon as Subscriber (with notice to SIXCRM) recognizes that downtime for the processing of transactions is taking place, and continues until the availability of the Services to process transactions is restored. In order to receive a Downtime Credit, Subscriber must notify SIXCRM in writing as soon as practicable following its becoming aware of the Downtime, but in no event longer than twenty-four (24) hours from the start of Downtime, and failure to provide such notice will forfeit the right to receive a Downtime Credit.  Such credits may not be redeemed for cash.
 
