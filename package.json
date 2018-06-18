@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@adexchange/aeg-limelight-api": "0.0.224",
-    "aws-sdk": "^2.258.1",
+    "aws-sdk": "^2.259.1",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "chai-json-schema": "^1.4.0",

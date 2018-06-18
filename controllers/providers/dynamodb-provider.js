@@ -44,6 +44,14 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 	}
 
+	unmarshall(data, options){
+
+		du.debug('Unmarshall');
+
+		return this.AWS.DynamoDB.Converter.unmarshall(data, options);
+
+	}
+
 	get(table, key){
 
 		du.debug('Get');

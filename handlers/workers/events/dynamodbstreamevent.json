@@ -1,0 +1,77 @@
+{
+	"Records": [{
+		"eventID": "736d4a57e8331716650c51a70af91239",
+		"eventName": "INSERT",
+		"eventVersion": "1.1",
+		"eventSource": "aws:dynamodb",
+		"awsRegion": "us-east-1",
+		"dynamodb": {
+			"ApproximateCreationDateTime": 1529287860,
+			"Keys": {
+				"id": {
+					"S": "b5803b28-c584-4bb3-8fac-3315b91686b3"
+				}
+			},
+			"NewImage": {
+				"default_creditcard": {
+					"S": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72"
+				},
+				"firstname": {
+					"S": "Test_b5803b28-c584-4bb3-8fac-3315b91686b3"
+				},
+				"address": {
+					"M": {
+						"zip": {
+							"S": "97213"
+						},
+						"country": {
+							"S": "US"
+						},
+						"city": {
+							"S": "Portland"
+						},
+						"state": {
+							"S": "OR"
+						},
+						"line2": {
+							"S": "Apartment 3"
+						},
+						"line1": {
+							"S": "123 Test St."
+						}
+					}
+				},
+				"updated_at": {
+					"S": "2018-06-18T02:11:54.609Z"
+				},
+				"phone": {
+					"S": "1234567890"
+				},
+				"creditcards": {
+					"L": [{
+						"S": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72"
+					}]
+				},
+				"created_at": {
+					"S": "2018-06-18T02:11:54.609Z"
+				},
+				"id": {
+					"S": "b5803b28-c584-4bb3-8fac-3315b91686b3"
+				},
+				"account": {
+					"S": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+				},
+				"email": {
+					"S": "test@test.com"
+				},
+				"lastname": {
+					"S": "Test"
+				}
+			},
+			"SequenceNumber": "290287400000000002661880813",
+			"SizeBytes": 472,
+			"StreamViewType": "NEW_AND_OLD_IMAGES"
+		},
+		"eventSourceARN": "arn:aws:dynamodb:us-east-1:068070110666:table/customers/stream/2018-06-17T00:56:35.300"
+	}]
+}

@@ -204,14 +204,8 @@ functions:
 # SQS handlers
 ########################
 
-  indextoarchive:
-    handler: handlers/workers/forwardmessage/handlers.indextoarchive
-    events:
-      - schedule:
-          rate: rate(1 minute)
-          enabled: true
-    environment:
-      archivefilter: 'all'
+  indexdynamorecords:
+    handler: handlers/workers/handlers.indexdynamorecords
 
 ########################
 # SNS Workers

@@ -221,29 +221,20 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 
 	}
 
-	uploadDocuments(structured_documents) {
+	async uploadDocuments(structured_documents) {
 
 		du.debug('Uploading documents to Cloudsearch', structured_documents);
 
-		return new Promise((resolve, reject) => {
+		let params = {
+			contentType: 'application/json',
+			documents: structured_documents
+		};
 
-			let params = {
-				contentType: 'application/json',
-				documents: structured_documents
-			};
+		if(!_.has(this, 'csd')){
+			await this.setCloudsearchDomainEndpoint();
+		}
 
-			du.debug('Cloudsearch Parameters', params);
-
-			return this.csd.uploadDocuments(params, (error, data) => {
-				if (error) {
-					//du.warning('Cloudsearch error: ', error);
-					return reject(error);
-				}
-				//du.debug('Successful Indexing:', data);
-				return resolve(data);
-			});
-
-		});
+		return this.csd.uploadDocuments(params).promise();
 
 	}
 
