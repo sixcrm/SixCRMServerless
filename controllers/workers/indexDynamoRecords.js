@@ -116,7 +116,12 @@ module.exports = class IndexDynamoRecordsController extends workerController {
 
 		du.debug('Convert Dynamo JSON');
 
-		return this.dynamodbprovider.unmarshall(record.dynamodb.NewImage);
+		if(_.has(record.dynamodb, 'NewImage')){
+			return this.dynamodbprovider.unmarshall(record.dynamodb.NewImage);
+		}else if(_.has(record.dynamodb, 'OldImage')){
+			return this.dynamodbprovider.unmarshall(record.dynamodb.OldImage);
+		}
+
 
 	}
 
