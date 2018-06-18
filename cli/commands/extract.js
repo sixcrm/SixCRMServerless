@@ -37,17 +37,7 @@ module.exports.builder = {
 		demand: true,
 		description: 'Web password',
 		nargs: 1
-	},
-	// startDate: {
-	// 	alias: 'startDate',
-	// 	demand: false,
-	// 	description: 'Start date to extract MM/DD/YYYY'
-	// },
-	// endDate: {
-	// 	alias: 'endDate',
-	// 	demand: false,
-	// 	description: 'End date to extract MM/DD/YYYY'
-	// }
+	}
 };
 
 module.exports.handler = (argv) => {
@@ -91,19 +81,7 @@ async function _handler(argv) {
 
 	du.info('extract#handler: environment', args);
 
-	// if (argv.startDate) {
-
-	// 	options.startDate = argv.startDate;
-
-	// }
-
-	// if (argv.endDate) {
-
-	// 	options.endDate = argv.endDate;
-
-	// }
-
-	const ExtractHandler = require(`../handlers/${crm}-extract-handler`);
+	const ExtractHandler = require(`../handlers/${crm}/${crm}-extract-handler`);
 	const handler = new ExtractHandler(args.client, args.apiUser, args.apiPassword, args.webUser, args.webPassword, args.artifactsDirectory);
 	await handler.extract();
 
