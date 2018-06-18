@@ -407,65 +407,6 @@ describe('controllers/EntityUtilities.js', () => {
 		});
 	});
 
-	describe('removeFromSearchIndex', () => {
-
-		it('removes from search index', () => {
-
-			let mock_preindexing_helper = class {
-				constructor(){
-
-				}
-				removeFromSearchIndex(entity){
-					expect(entity).to.have.property('id');
-					expect(entity.id).to.equal('dummy_id');
-					expect(entity).to.have.property('entity_type');
-					expect(entity.entity_type).to.equal('an_entity_type');
-					return Promise.resolve(true);
-				}
-			};
-
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
-
-			const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
-			let entityUtilitiesController = new EUC();
-
-			return entityUtilitiesController.removeFromSearchIndex('dummy_id', 'an_entity_type').then((result) => {
-				expect(result).to.be.true;
-			});
-		});
-	});
-
-	describe('addToSearchIndex', () => {
-
-		it('adds to search index', () => {
-
-			let an_entity = {
-				id: 'dummy_id'
-			};
-
-			let mock_preindexing_helper = class {
-				constructor(){}
-
-				addToSearchIndex(entity){
-					expect(entity).to.have.property('id');
-					expect(entity.id).to.equal(an_entity.id);
-					expect(entity).to.have.property('entity_type');
-					expect(entity.entity_type).to.equal('an_entity_type');
-					return Promise.resolve(true);
-				}
-			};
-
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
-
-			const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');
-			let entityUtilitiesController = new EUC();
-
-			return entityUtilitiesController.addToSearchIndex(an_entity, 'an_entity_type').then((result) => {
-				expect(result).to.be.true;
-			});
-		});
-	});
-
 	describe('setCreatedAt', () => {
 
 		it('sets "created at" and "updated at" for specified entity', () => {

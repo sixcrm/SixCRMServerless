@@ -245,12 +245,6 @@ describe('controllers/providers/register/Receipt.js', () => {
 				constructor(){
 
 				}
-				addToSearchIndex(){
-					return Promise.resolve(true);
-				}
-				removeFromSearchIndex(){
-					return Promise.resolve(true);
-				}
 			}
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
@@ -301,12 +295,6 @@ describe('controllers/providers/register/Receipt.js', () => {
 			let mock_preindexing_helper = class {
 				constructor(){
 
-				}
-				addToSearchIndex(){
-					return Promise.resolve(true);
-				}
-				removeFromSearchIndex(){
-					return Promise.resolve(true);
 				}
 			}
 

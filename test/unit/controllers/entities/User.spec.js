@@ -530,10 +530,8 @@ describe('controllers/entities/User.js', () => {
 			return userController.assureUser(user.id).then((result) => {
 				expect(result.active).to.equal(false);
 				expect(result.alias).to.equal(alias);
-				expect(result.entity_type).to.equal('user');
 				expect(result.id).to.equal(user.id);
 				expect(result.name).to.equal(user.id);
-				expect(result.index_action).to.equal('add');
 				expect(result.first_name).to.equal(user.id);
 				expect(result.last_name).to.equal(user.id);
 			});
@@ -593,10 +591,8 @@ describe('controllers/entities/User.js', () => {
 			return userController.assureUser(user.id).then((result) => {
 				expect(result.active).to.equal(false);
 				expect(result.alias).to.equal(alias);
-				expect(result.entity_type).to.equal('user');
 				expect(result.id).to.equal(user.id);
 				expect(result.name).to.equal(user.id);
-				expect(result.index_action).to.equal('add');
 				expect(result.first_name).to.equal(user.id);
 				expect(result.last_name).to.equal(user.id);
 			});

@@ -301,12 +301,6 @@ describe('controllers/entities/UserACL.js', () => {
 				constructor(){
 
 				}
-				addToSearchIndex(){
-					return Promise.resolve(true);
-				}
-				removeFromSearchIndex(){
-					return Promise.resolve(true);
-				}
 			};
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
@@ -327,7 +321,6 @@ describe('controllers/entities/UserACL.js', () => {
 			const userACLController = new UserACLController();
 
 			return userACLController.create(params).then((result) => {
-				expect(result.entity_type).to.equal('useracl');
 				expect(result.role).to.equal(params.entity.role);
 				expect(result.user).to.equal(params.entity.user);
 				expect(result.created_at).to.equal(result.updated_at);
@@ -366,12 +359,6 @@ describe('controllers/entities/UserACL.js', () => {
 				constructor(){
 
 				}
-				addToSearchIndex(){
-					return Promise.resolve(true);
-				}
-				removeFromSearchIndex(){
-					return Promise.resolve(true);
-				}
 			};
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
@@ -392,7 +379,6 @@ describe('controllers/entities/UserACL.js', () => {
 			const userACLController = new UserACLController();
 
 			return userACLController.update(params).then((result) => {
-				expect(result.entity_type).to.equal('useracl');
 				expect(result.id).to.equal(params.entity.id);
 				expect(result.role).to.equal(params.entity.role);
 				expect(result.user).to.equal(params.entity.user);

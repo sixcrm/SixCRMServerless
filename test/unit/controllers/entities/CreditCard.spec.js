@@ -532,9 +532,6 @@ describe('controllers/entities/CreditCard.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), class {
 				constructor() {}
-				addToSearchIndex() {
-					return Promise.resolve(true);
-				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'token/Token.js'), class {

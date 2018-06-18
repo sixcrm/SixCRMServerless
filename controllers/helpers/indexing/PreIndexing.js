@@ -72,32 +72,6 @@ module.exports = class PreIndexingHelperController {
 
 	}
 
-	//Entrypoint
-	removeFromSearchIndex(entity){
-
-		du.debug('Remove From Search Index');
-
-		entity.index_action = 'delete';
-
-		this.parameters.set('preindexingentity', entity);
-
-		return this.executePreIndexing();
-
-	}
-
-	//Entrypoint
-	addToSearchIndex(entity){
-
-		du.debug('Add To Search Index')
-
-		entity.index_action = 'add';
-
-		this.parameters.set('preindexingentity', entity);
-
-		return this.executePreIndexing();
-
-	}
-
 	executePreIndexing(){
 
 		du.debug('execute');

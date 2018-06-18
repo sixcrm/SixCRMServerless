@@ -1161,12 +1161,6 @@ describe('/helpers/entities/Rebill.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), class {
 				constructor(){}
-				addToSearchIndex(){
-					return Promise.resolve(true);
-				}
-				removeFromSearchIndex(){
-					return Promise.resolve(true);
-				}
 			});
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
@@ -1380,12 +1374,6 @@ describe('/helpers/entities/Rebill.js', () => {
 				constructor(){
 
 				}
-				addToSearchIndex(){
-					return Promise.resolve(true);
-				}
-				removeFromSearchIndex(){
-					return Promise.resolve(true);
-				}
 			}
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), mock_preindexing_helper);
@@ -1445,7 +1433,6 @@ describe('/helpers/entities/Rebill.js', () => {
 				amount: product_schedules[0].product_schedule.schedule[1].price,
 				bill_at: "2017-04-20T18:40:41.000Z",
 				year_month: "201704",
-				entity_type: "rebill",
 				parentsession: session.id,
 				product_schedules: [product_schedules[0].product_schedule.id],
 				products: [
@@ -1489,7 +1476,6 @@ describe('/helpers/entities/Rebill.js', () => {
 				amount: product_schedules[0].product_schedule.schedule[2].price,
 				bill_at: "2017-05-04T18:40:41.000Z",
 				year_month: "201705",
-				entity_type: "rebill",
 				parentsession: session.id,
 				product_schedules: [product_schedules[0].product_schedule.id],
 				products: [
@@ -1531,7 +1517,6 @@ describe('/helpers/entities/Rebill.js', () => {
 				amount: product_schedules[0].product_schedule.schedule[2].price,
 				bill_at: "2017-06-01T18:40:41.000Z",
 				year_month: "201706",
-				entity_type: "rebill",
 				parentsession: session.id,
 				product_schedules: [product_schedules[0].product_schedule.id],
 				products: [
@@ -1573,7 +1558,6 @@ describe('/helpers/entities/Rebill.js', () => {
 				amount: product_schedules[0].product_schedule.schedule[2].price,
 				bill_at: "2017-06-01T18:40:41.000Z",
 				year_month: "201706",
-				entity_type: "rebill",
 				parentsession: session.id,
 				product_schedules: [product_schedules[0].product_schedule.id],
 				products: [
@@ -1745,12 +1729,6 @@ describe('/helpers/entities/Rebill.js', () => {
         constructor(){
 
         }
-        addToSearchIndex(){
-          return Promise.resolve(true);
-        }
-        removeFromSearchIndex(){
-          return Promise.resolve(true);
-        }
       });
       */
 
@@ -1862,12 +1840,6 @@ describe('/helpers/entities/Rebill.js', () => {
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), class {
 				constructor(){
 
-				}
-				addToSearchIndex(){
-					return Promise.resolve(true);
-				}
-				removeFromSearchIndex(){
-					return Promise.resolve(true);
 				}
 			});
 
@@ -2070,12 +2042,6 @@ describe('/helpers/entities/Rebill.js', () => {
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), class {
 				constructor(){
 
-				}
-				addToSearchIndex(){
-					return Promise.resolve(true);
-				}
-				removeFromSearchIndex(){
-					return Promise.resolve(true);
 				}
 			});
 

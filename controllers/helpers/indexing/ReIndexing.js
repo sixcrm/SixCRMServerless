@@ -143,6 +143,7 @@ module.exports = class ReIndexingHelperController {
 
 		if (fix === true) {
 
+			/*
 			missing_in_index.map(m => {
 				operations.push(() => preIndexingHelperController.addToSearchIndex(m));
 			});
@@ -150,6 +151,7 @@ module.exports = class ReIndexingHelperController {
 			missing_in_dynamo.map(m => {
 				operations.push(() => preIndexingHelperController.removeFromSearchIndex(m));
 			});
+			*/
 
 			return arrayutilities.serial(operations);
 

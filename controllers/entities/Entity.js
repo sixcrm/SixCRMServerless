@@ -562,7 +562,6 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then(() => {
 
 				this.createAnalyticsActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
-				this.addToSearchIndex(entity, this.descriptive_name);
 
 				return entity;
 
@@ -621,8 +620,6 @@ module.exports = class entityController extends entityUtilitiesController {
 			}).then((existing_entity) => {
 
 				this.createAnalyticsActivityRecord(null, 'updated', {entity: existing_entity, type: this.descriptive_name}, null);
-
-				this.addToSearchIndex(existing_entity, this.descriptive_name);
 
 				return existing_entity;
 
@@ -699,8 +696,6 @@ module.exports = class entityController extends entityUtilitiesController {
 			.then(() => {
 
 				this.createAnalyticsActivityRecord(null, 'updated', {entity: entity, type: this.descriptive_name}, null);
-
-				this.addToSearchIndex(entity, this.descriptive_name);
 
 				return entity;
 
@@ -789,8 +784,6 @@ module.exports = class entityController extends entityUtilitiesController {
 			})
 			.then(() => this.dynamodbprovider.deleteRecord(this.table_name, delete_parameters, null, null))
 			.then(() => {
-
-				this.removeFromSearchIndex(id, this.descriptive_name);
 
 				return delete_parameters;
 

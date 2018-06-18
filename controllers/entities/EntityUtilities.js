@@ -184,26 +184,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	}
 
-	removeFromSearchIndex(id, entity_type){
-
-		du.debug('Remove From Search Index');
-
-		let entity = {id:id, entity_type: entity_type};
-
-		return this.preIndexingHelperController.removeFromSearchIndex(entity);
-
-	}
-
-	addToSearchIndex(entity, entity_type){
-
-		du.debug('Add To Search Index');
-
-		entity.entity_type = entity_type;
-
-		return this.preIndexingHelperController.addToSearchIndex(entity);
-
-	}
-
 	setCreatedAt(entity, created_at){
 
 		du.debug('Set Created At');
@@ -1022,8 +1002,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 		//Technical Debt:  This is inappropriate here...  These belong in helpers
 		this.createAnalyticsActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
-
-		this.addToSearchIndex(entity, this.descriptive_name);
 
 	}
 

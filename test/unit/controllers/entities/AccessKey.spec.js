@@ -57,9 +57,6 @@ describe('controllers/AccessKey.js', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'indexing/PreIndexing.js'), class {
 				constructor(){}
-				addToSearchIndex(){
-					return Promise.resolve(true);
-				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'analytics/Activity.js'), class {

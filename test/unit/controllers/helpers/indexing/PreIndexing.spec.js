@@ -229,67 +229,6 @@ describe('controllers/helpers/indexing/PreIndexing.js', () => {
 		});
 	});
 
-	describe('addToSearchIndex', () => {
-
-		it('successfully adds a entity to the search index (add)', () => {
-
-			let abridged_entity = getValidAbridgedEntity();
-			let random_fields = {abc:"123", isnt:{this:'hierarchicalstructuregreat'}, 'somethingelse':'isjustthat'};
-			let preindexing_entity = objectutilities.merge(abridged_entity, random_fields);
-
-			delete preindexing_entity.index_action;
-
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-				sendMessage() {
-					return Promise.resolve(true);
-				}
-			});
-
-			const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
-			let preIndexingHelperController = new PreIndexingHelperController();
-
-			return preIndexingHelperController.addToSearchIndex(preindexing_entity).then(result => {
-				expect(result).to.equal(true);
-				let processed_preindexing_entity = preIndexingHelperController.parameters.store['preindexingentity'];
-
-				expect(processed_preindexing_entity.index_action).to.equal('add');
-			});
-
-		});
-
-	});
-
-	describe('removeFromSearchIndex', () => {
-
-		it('successfully adds a entity to the search index (delete)', () => {
-
-			let abridged_entity = getValidAbridgedEntity();
-			let random_fields = {abc:"123", isnt:{this:'hierarchicalstructuregreat'}, 'somethingelse':'isjustthat'};
-			let preindexing_entity = objectutilities.merge(abridged_entity, random_fields);
-
-			delete preindexing_entity.index_action;
-
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-				sendMessage() {
-					return Promise.resolve(true);
-				}
-			});
-
-			const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
-			let preIndexingHelperController = new PreIndexingHelperController();
-
-			return preIndexingHelperController.removeFromSearchIndex(preindexing_entity).then(result => {
-				expect(result).to.equal(true);
-				let processed_preindexing_entity = preIndexingHelperController.parameters.store['preindexingentity'];
-
-				expect(processed_preindexing_entity.index_action).to.equal('delete');
-			});
-
-		});
-
-	});
-
-
 	describe('setAbridgedEntityMap', () => {
 
 		it('successfully sets abridged entity map property', () => {
