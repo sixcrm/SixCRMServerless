@@ -224,6 +224,7 @@ module.exports = class CustomerHelperController {
 	}
 
 	async getPendingRebills({customer, pagination}){
+
 		du.debug('Get Pending Rebills');
 
 		if (!_.has(this, 'rebillController')){
@@ -262,6 +263,7 @@ module.exports = class CustomerHelperController {
 		query_parameters = this.rebillController.appendExpressionAttributeValues(query_parameters, ':bill_at', timestamp.getISO8601());
 
 		return this.rebillController.listByAccount({query_parameters, pagination});
+
 	}
 
 }

@@ -140,7 +140,7 @@ module.exports = class IndexDynamoRecordsController extends workerController {
 
 		}
 
-		if(!_.includes(['INSERT','UPDATE','REMOVE'], record.eventName)){
+		if(!_.includes(['INSERT','MODIFY','REMOVE'], record.eventName)){
 
 			if(fatal){
 				throw eu.getError('server', 'Unknown record eventName: '+record.eventName);
@@ -151,7 +151,7 @@ module.exports = class IndexDynamoRecordsController extends workerController {
 
 		}
 
-		if(_.includes(['INSERT','UPDATE'], record.eventName)){
+		if(_.includes(['INSERT','MODIFY'], record.eventName)){
 			return 'add';
 		}
 
@@ -159,12 +159,42 @@ module.exports = class IndexDynamoRecordsController extends workerController {
 
 	}
 
-	getEntityType(record){
+	getEntityType(record, fatal = false){
 
 		du.debug('Get Entity Type');
-		du.debug(record);
 
-		return 'customer';
+		if(!_.has(record, 'eventSourceARN')){
+			if(fatal){
+				throw eu.getError('server', 'Unknown event source: '+JSON.stringify(record));
+			}
+			du.warning('Unknown event source: '+JSON.stringify(record));
+			return null;
+		}
+
+		//Example: "arn:aws:dynamodb:us-east-1:068070110666:table/customers/stream/2018-06-17T00:56:35.300"
+		/* eslint-disable-next-line no-useless-escape */
+		const re = /^arn:aws:dynamodb:[^:]+:[^:]+:table\/([^\/]*)\/stream\/.*$/
+		let matches = re.exec(record.eventSourceARN);
+
+		if(_.isNull(matches)){
+			if(fatal){
+				throw eu.getError('server', 'Unknown event source ARN structure: '+record.eventSourceARN);
+			}
+			du.warning('Unknown event source ARN structure: '+record.eventSourceARN);
+			return null;
+		}
+
+		if(_.isArray(matches) && _.isString(matches[1])){
+
+			return matches[1].replace(/s$/,'');
+
+		}
+
+		if(fatal){
+			throw eu.getError('server', 'Something unexpected happened.');
+		}
+		du.warning('Something unexpected happened.');
+		return null;
 
 	}
 

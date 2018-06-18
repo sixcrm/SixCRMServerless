@@ -3,6 +3,7 @@ let chai = require('chai');
 const expect = chai.expect;
 const mockery = require('mockery');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
+const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 
 function getValidCustomer() {
 	return MockEntities.getValidCustomer()
@@ -258,6 +259,7 @@ describe('controllers/helpers/entities/customer/Customer.js', () => {
 			const customer = getValidCustomer();
 			const session = getValidSession();
 			const rebill = getValidRebill();
+			rebill.bill_at  = timestamp.nextMonth();
 			const pagination = {};
 			const query_parameters = {};
 
@@ -310,6 +312,7 @@ describe('controllers/helpers/entities/customer/Customer.js', () => {
 
 			const result = await customerHelperController.getPendingRebills({customer, pagination});
 			expect(result.rebills).to.deep.equal([rebill]);
+			expect(result.rebills[0].bill_at > timestamp.getISO8601()).to.equal(true);
 			expect(result.pagination).to.deep.equal({
 				count: 1,
 				end_cursor: '',
