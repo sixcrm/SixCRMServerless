@@ -960,6 +960,11 @@ module.exports = class LimelightScraper {
 				const transform = require('./fulfillment-providers/shipstation');
 				return Object.assign({}, result, transform($, id, name, this._cleanseOutput));
 			}
+			case '#Fulfillment':
+			{
+				const transform = require('./fulfillment-providers/hash-tag-fulfillment');
+				return Object.assign({}, result, transform($, id, name, this._cleanseOutput));
+			}
 			default:
 			{
 				du.warning('Could not resolve fulfillment provider', {
