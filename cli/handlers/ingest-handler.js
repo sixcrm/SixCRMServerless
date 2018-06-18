@@ -1,18 +1,22 @@
 const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 module.exports = class IngestHandler {
 
-	constructor(crm, client, artifactsDirectory) {
+	constructor(crm, client, account, artifactsDirectory) {
 
 		this._crm = crm;
 		this._client = client;
+		this._account = account;
 		this._artifactsDirectory = artifactsDirectory;
 
 	}
 
 	async ingest() {
 
-		return this._ingest();
+		await this._ingest();
+
+		du.info('IngestHandler#ingest(): done');
 
 	}
 

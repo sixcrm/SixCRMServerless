@@ -1,24 +1,13 @@
 const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const IngestHandler = require('../handlers/ingest-handler');
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports.command = 'ingest';
 
 module.exports.describe = 'Ingest exported CRM files to SixCRM';
 
 module.exports.builder = {
-	crm: {
-		demand: true,
-		description: 'CRM to process \'l\' for Limelight',
-		nargs: 1,
-		choices: ['limelight'],
-		default: 'limelight'
-	},
-	client: {
-		demand: false,
-		description: 'Client to extract, defaults to all',
-		nargs: 1
-	},
-	extractDirectory: {
+	'extract-directory': {
 		demand: true,
 		description: 'Location of the exported CRM files',
 		nargs: 1
@@ -50,7 +39,7 @@ module.exports.handler = (argv) => {
 
 async function _handler(argv) {
 
-	const extractDirectory = argv.extractDirectory;
+	const extractDirectory = argv['extract-directory'];
 	const account =  argv.account;
 
 	const args = {
@@ -60,9 +49,27 @@ async function _handler(argv) {
 
 	du.info('ingest#handler: environment', args);
 
-	const ingestHandler = new IngestHandler(account, extractDirectory);
-	await ingestHandler.ingest();
+	if (!await fs.pathExists(path.join(process.cwd(), extractDirectory))) {
 
-	du.info('ingest#handler: done', args);
+		throw new Error('Extract directory does not exist');
+
+	}
+
+	if (!await fs.pathExists(path.join(process.cwd(), extractDirectory, 'manifest.json'))) {
+
+		throw new Error('Extract manifest does not exist');
+
+	}
+
+	const manifest = await fs.readJson(path.join(extractDirectory, 'manifest.json'));
+
+	du.info('IngestHandler#ingest(): export manifest found', manifest);
+
+	const crm = manifest.crm;
+	const client = manifest.client;
+
+	const IngestHandler = require(`../handlers/${crm}/${crm}-ingest-handler`);
+	const ingestHandler = new IngestHandler(crm, client, account, extractDirectory);
+	await ingestHandler.ingest();
 
 }
