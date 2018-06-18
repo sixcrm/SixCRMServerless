@@ -1,7 +1,7 @@
 module.exports = ($, id, name, cleanseOutput) => {
 
-	const providerId = cleanseOutput($('API Key').val());
-	const providerKey = cleanseOutput($('API Secret').val());
+	const providerId = cleanseOutput($('input[id="API Key"]').val());
+	const providerKey = cleanseOutput($('input[id="API Secret"]').val());
 
 	return {
 		providerId,

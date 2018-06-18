@@ -1,11 +1,11 @@
 module.exports = ($, id, name, cleanseOutput) => {
 
-	const worldEasyId = cleanseOutput($('input[id="World Easy ID"]').val());
-	const worldEasyKey = cleanseOutput($('input[id="World Easy Key"]').val());
+	const providerId = cleanseOutput($('input[id="World Easy ID"]').val());
+	const providerKey = cleanseOutput($('input[id="World Easy Key"]').val());
 
 	return {
-		worldEasyId,
-		worldEasyKey
+		providerId,
+		providerKey
 	}
 
 }
