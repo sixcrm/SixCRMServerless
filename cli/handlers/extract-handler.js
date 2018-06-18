@@ -24,7 +24,7 @@ module.exports = class ExtractHandler {
 
 	async _extract() {
 
-		throw eu.getError('server', 'extract not implemented');
+		throw eu.getError('server', '_extract not implemented');
 
 	}
 

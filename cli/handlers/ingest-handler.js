@@ -1,17 +1,24 @@
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
 module.exports = class IngestHandler {
 
-	constructor(account, extractDirectory) {
+	constructor(crm, client, artifactsDirectory) {
 
-		this._account = account;
-		this._extractDirectory = extractDirectory;
+		this._crm = crm;
+		this._client = client;
+		this._artifactsDirectory = artifactsDirectory;
 
 	}
 
 	async ingest() {
 
-		du.debug('IngestHandler#ingest()');
+		return this._ingest();
+
+	}
+
+	async _ingest() {
+
+		throw eu.getError('server', '_ingest not implemented');
 
 	}
 
