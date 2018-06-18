@@ -39,7 +39,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 			this.instantiateAWS();
 		}
 
-		this.dynamodb = new this.AWS.DynamoDB.DocumentClient(Object.assign({convertEmptyValues: true}, parameters));
+		this.dynamodb = new this.AWS.DynamoDB.DocumentClient(parameters);
 		this.dynamoraw = new this.AWS.DynamoDB(parameters);
 
 	}
@@ -216,7 +216,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 		du.debug('Save Record');
 
-		item = JSON.parse(JSON.stringify(item));
+		item = JSON.parse(JSON.stringify(this.removeEmptyValues(item)));
 
 		var parameters = {
 			TableName:table,
@@ -581,5 +581,17 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 		}).catch(error => {
 			return {status: 'ERROR', message: error.message};
 		})
+	}
+
+	removeEmptyValues(data) {
+		for(let prop in data) {
+			if (typeof data[prop] === 'string' && data[prop].length === 0) {
+				delete data[prop];
+			} else if (typeof data[prop] === 'object') {
+				this.removeEmptyValues(data[prop]);
+			}
+		}
+
+		return data;
 	}
 }
