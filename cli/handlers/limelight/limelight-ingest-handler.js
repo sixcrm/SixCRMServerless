@@ -3,12 +3,6 @@ const IngestHandler = require('../ingest-handler');
 
 module.exports = class LimelightIngestHandler extends IngestHandler {
 
-	constructor(crm, client, artifactsDirectory) {
-
-		super(crm, client, artifactsDirectory);
-
-	}
-
 	async _ingest() {
 
 		await this._ingestProducts();
