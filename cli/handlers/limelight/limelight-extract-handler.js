@@ -1,11 +1,11 @@
 const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const ExtractHandler = require('./extract-handler');
+const ExtractHandler = require('../extract-handler');
 const LimelightApi = require('@adexchange/aeg-limelight-api').Api;
 const fs = require('fs-extra');
 const path = require('path');
 const BBPromise = require('bluebird');
 const _ = require('lodash');
-const LimelightScraping = require('../scraping/limelight-scraper');
+const LimelightScraping = require('./scraping/limelight-scraper');
 
 module.exports = class LimelightExtractHandler extends ExtractHandler {
 
@@ -42,6 +42,8 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 	async _webExtract() {
 
+		du.info('LimelightExtractHandler#_webExtract()');
+
 		const cookie = await this._scraper.signOn();
 		await this._scraper.getGateways(cookie);
 		await this._scraper.getPaymentRoutes(cookie);
@@ -57,11 +59,9 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 	async _apiExtract() {
 
-		du.debug('LimelightExtractHandler#_extract(): campaigns');
+		du.info('LimelightExtractHandler#_apiExtract()');
 
-		const campaigns = await this._extractCampaigns();
-
-		du.debug('LimelightExtractHandler#_extract(): gateways');
+		const campaigns = await this._extractApiCampaigns();
 
 		const gatewaysIds = await BBPromise.reduce(campaigns, async (memo, campaign) => {
 
@@ -72,9 +72,7 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 		const distinctGatewayIds = _.uniq(gatewaysIds);
 
-		await this._extractGateways(distinctGatewayIds);
-
-		du.debug('LimelightExtractHandler#_extract(): products');
+		await this._extractApiGateways(distinctGatewayIds);
 
 		const productIds = await BBPromise.reduce(campaigns, async (memo, campaign) => {
 
@@ -85,11 +83,13 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 		const distinctProductIds = _.uniq(productIds);
 
-		await this._extractProducts(distinctProductIds);
+		await this._extractApiProducts(distinctProductIds);
 
 	}
 
-	async _extractCampaigns() {
+	async _extractApiCampaigns() {
+
+		du.info('LimelightExtractHandler#_extractApiCampaigns()');
 
 		const campaigns = await this._api.findActiveCampaignsExpanded();
 		await fs.writeJson(path.join(this._artifactsDirectory, 'campaigns.json'), campaigns, {
@@ -99,7 +99,9 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 	}
 
-	async _extractGateways(gatewayIds) {
+	async _extractApiGateways(gatewayIds) {
+
+		du.info('LimelightExtractHandler#_extractApiGateways()');
 
 		if (gatewayIds.length === 0) {
 
@@ -114,7 +116,9 @@ module.exports = class LimelightExtractHandler extends ExtractHandler {
 
 	}
 
-	async _extractProducts(productIds) {
+	async _extractApiProducts(productIds) {
+
+		du.info('LimelightExtractHandler#_extractApiProducts()');
 
 		if (productIds.length === 0) {
 

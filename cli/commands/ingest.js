@@ -6,6 +6,18 @@ module.exports.command = 'ingest';
 module.exports.describe = 'Ingest exported CRM files to SixCRM';
 
 module.exports.builder = {
+	crm: {
+		demand: true,
+		description: 'CRM to process \'l\' for Limelight',
+		nargs: 1,
+		choices: ['limelight'],
+		default: 'limelight'
+	},
+	client: {
+		demand: false,
+		description: 'Client to extract, defaults to all',
+		nargs: 1
+	},
 	extractDirectory: {
 		demand: true,
 		description: 'Location of the exported CRM files',
@@ -48,19 +60,9 @@ async function _handler(argv) {
 
 	du.info('ingest#handler: environment', args);
 
-	// if (argv.startDate) {
-
-	// 	options.startDate = argv.startDate;
-
-	// }
-
-	// if (argv.endDate) {
-
-	// 	options.endDate = argv.endDate;
-
-	// }
-
 	const ingestHandler = new IngestHandler(account, extractDirectory);
 	await ingestHandler.ingest();
+
+	du.info('ingest#handler: done', args);
 
 }

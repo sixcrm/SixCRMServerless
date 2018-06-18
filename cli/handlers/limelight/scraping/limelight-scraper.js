@@ -19,6 +19,8 @@ module.exports = class LimelightScraper {
 
 	async signOn() {
 
+		du.info('LimelightScraper#signOn()');
+
 		const res = await request.post({
 			url: `${this._url}/login.php`,
 			followRedirect: true,
@@ -67,6 +69,8 @@ module.exports = class LimelightScraper {
 	}
 
 	async getGateways(cookie) {
+
+		du.info('LimelightScraper#getGateways()');
 
 		await this._initializeGateways(cookie);
 
@@ -128,6 +132,8 @@ module.exports = class LimelightScraper {
 	}
 
 	async _getGatewayDetails(cookie, id) {
+
+		du.info('LimelightScraper#_getGatewayDetails()', { id });
 
 		const url = `${this._url}/ajax_min.php`;
 
@@ -278,6 +284,8 @@ module.exports = class LimelightScraper {
 
 	async getPaymentRoutes(cookie) {
 
+		du.info('LimelightScraper#getPaymentRoutes()');
+
 		const ids = await this._getPaymentRouteConfigurations(cookie);
 
 		const gateways = await BBPromise.reduce(ids, async (memo, id) => {
@@ -338,6 +346,8 @@ module.exports = class LimelightScraper {
 	}
 
 	async _getPaymentRouteDetail(cookie, id) {
+
+		du.info('LimelightScraper#_getPaymentRouteDetail()', { id });
 
 		const url = `${this._url}/load_balancer/profile.php`;
 
@@ -465,6 +475,8 @@ module.exports = class LimelightScraper {
 
 	async getCampaigns(cookie, ids) {
 
+		du.info('LimelightScraper#getCampaigns()');
+
 		const campaigns = await BBPromise.reduce(ids, async (memo, id) => {
 
 			memo.push(await this._getCampaignDetail(cookie, id));
@@ -479,6 +491,8 @@ module.exports = class LimelightScraper {
 	}
 
 	async _getCampaignDetail(cookie, id) {
+
+		du.info('LimelightScraper#_getCampaignDetail()', { id });
 
 		const url = `${this._url}/campaign/profile.php`;
 
@@ -541,6 +555,8 @@ module.exports = class LimelightScraper {
 
 	async getProducts(cookie, ids) {
 
+		du.info('LimelightScraper#getProducts()');
+
 		const products = await BBPromise.reduce(ids, async (memo, id) => {
 
 			memo.push(await this._getProductDetail(cookie, id));
@@ -555,6 +571,8 @@ module.exports = class LimelightScraper {
 	}
 
 	async _getProductDetail(cookie, id) {
+
+		du.info('LimelightScraper#_getProductDetail()', { id });
 
 		const url = `${this._url}/products/products.php`;
 
@@ -616,10 +634,12 @@ module.exports = class LimelightScraper {
 
 	async getEmailTemplates(cookie) {
 
+		du.info('LimelightScraper#getEmailTemplates()');
+
 		const ids = await this._getEmailTemplateIds(cookie);
 		const templates = await BBPromise.reduce(ids, async (memo, id) => {
 
-			memo.push(await this._getEmailTemplate(cookie, id));
+			memo.push(await this._getEmailTemplateDetail(cookie, id));
 			return memo;
 
 		}, []);
@@ -673,7 +693,9 @@ module.exports = class LimelightScraper {
 
 	}
 
-	async _getEmailTemplate(cookie, id) {
+	async _getEmailTemplateDetail(cookie, id) {
+
+		du.info('LimelightScraper#_getEmailTemplateDetail()', { id });
 
 		const url = `${this._url}/notifications/notification_edit.php`;
 
@@ -715,6 +737,8 @@ module.exports = class LimelightScraper {
 	}
 
 	async getSMTPProviders(cookie) {
+
+		du.info('LimelightScraper#getSMTPProviders()');
 
 		const ids = await this._getSMTPProviderIds(cookie);
 
@@ -776,6 +800,8 @@ module.exports = class LimelightScraper {
 
 	async _getSMTPProviderDetail(cookie, id) {
 
+		du.info('LimelightScraper#_getSMTPProviderDetail()', { id });
+
 		const url = `${this._url}/smtp/smtp_edit.php`;
 
 		const res = await request.get({
@@ -824,6 +850,8 @@ module.exports = class LimelightScraper {
 	}
 
 	async getFulfillmentProviders(cookie) {
+
+		du.info('LimelightScraper#getFulfillmentProviders()');
 
 		const ids = await this._getFulfillmentProviderIds(cookie);
 
@@ -887,6 +915,8 @@ module.exports = class LimelightScraper {
 	}
 
 	async _getFulfillmentProviderDetail(cookie, id, name) {
+
+		du.info('LimelightScraper#_getFulfillmentProviderDetail()', { id });
 
 		const url = `${this._url}/ajax_min.php`;
 
