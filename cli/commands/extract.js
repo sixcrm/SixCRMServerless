@@ -85,4 +85,6 @@ async function _handler(argv) {
 	const handler = new ExtractHandler(args.client, args.apiUser, args.apiPassword, args.webUser, args.webPassword, args.artifactsDirectory);
 	await handler.extract();
 
+	du.info('extract#handler: done', args);
+
 }
