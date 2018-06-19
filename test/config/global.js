@@ -40,4 +40,4 @@ let test_accounts = [
 global.test_users = test_users;
 global.test_accounts = test_accounts;
 
-process.env.TEST_MODE = 'true';
+//process.env.TEST_MODE = 'true';

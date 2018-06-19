@@ -9,7 +9,7 @@
   "dependencies": {
     "@adexchange/aeg-redis": "0.0.196",
     "@adexchange/aeg-redshift": "0.0.84",
-    "@sixcrm/sixcrmcore": "0.0.33",
+    "@sixcrm/sixcrmcore": "^0.0.42",
     "ajv": "^6.5.1",
     "apn": "^2.2.0",
     "authorizenet": "^1.0.5",
@@ -35,7 +35,7 @@
     "luhn": "^2.3.0",
     "mime": "^1.6.0",
     "moment": "^2.22.2",
-    "moment-timezone": "^0.5.17",
+    "moment-timezone": "^0.5.20",
     "nodemailer": "^4.6.7",
     "pg": "^6.4.1",
     "pg-format": "^1.0.4",

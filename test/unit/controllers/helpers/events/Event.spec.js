@@ -3,6 +3,7 @@ let chai = require('chai');
 
 let expect = chai.expect;
 let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+let random = require('@sixcrm/sixcrmcore/util/random').default;
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 
@@ -17,11 +18,6 @@ describe('helpers/events/Event.spec.js', () => {
 	});
 
 	beforeEach(() => {
-		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
-			sendMessage() {
-				return Promise.resolve(true);
-			}
-		});
 
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
 			publish() {
@@ -31,6 +27,7 @@ describe('helpers/events/Event.spec.js', () => {
 				return 'us-east-1';
 			}
 		});
+
 	});
 
 	afterEach(() => {
@@ -236,6 +233,164 @@ describe('helpers/events/Event.spec.js', () => {
 			let eventHelperController = new EventHelperController();
 
 			expect(eventHelperController.addMessageAttributes(params)).to.equal(undefined);
+		});
+
+	});
+
+	describe('handleContext', async () => {
+
+		it('returns a context string', async () => {
+
+			const context = {
+				this:'is',
+				a:{},
+				context_object:['ya', 'heard']
+			};
+
+			const event_type = 'some_event_type';
+
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
+
+			let result = await eventHelperController.handleContext({context: context, event_type: event_type});
+			expect(result).to.equal(JSON.stringify(context));
+
+		});
+
+		it('throws an error if missing context object', async () => {
+
+			const event_type = 'some_event_type';
+
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
+
+			try{
+				await eventHelperController.handleContext({event_type: event_type});
+				expect(true).to.equal(false);
+			}catch(error){
+				expect(error.message).to.equal('[500] StringUtilities.isString thing argument is not an string.');
+			}
+
+		});
+
+		it('throws an error if missing context object', async () => {
+
+			const context = { large_context_object: random.createRandomString(300000)};
+			const event_type = 'some_event_type';
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 's3-provider.js'), class{
+				putObject({Key, Body, Bucket}){
+					expect(Key).to.be.a('string');
+					expect(Body).to.be.a('string');
+					expect(Bucket).to.be.a('string');
+					return Promise.resolve(true);
+				}
+			});
+
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
+
+			let result = await eventHelperController.handleContext({context: context, event_type: event_type});
+			expect(JSON.parse(result)).to.have.property('s3_reference');
+
+		});
+
+	});
+
+	describe('pushContextToS3', async () => {
+
+		it.only('returns a context id', async () => {
+
+			let event = {
+				event_type: 'someventtype',
+				context: {some: 'context'}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 's3-provider.js'), class{
+				putObject({Key, Body, Bucket}){
+					expect(Key).to.be.a('string');
+					expect(Body).to.be.a('string');
+					expect(Bucket).to.be.a('string');
+					return Promise.resolve(true);
+				}
+			});
+
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
+
+			let result = await eventHelperController.pushContextToS3(event);
+			expect(result).to.be.a('string');
+			expect(result).to.have.string(event.event_type+'-');
+
+		});
+
+	});
+
+	/*
+	async pushContextToS3({event_type, context}){
+
+		du.debug('Push Context to S3');
+
+		let context_id = event_type+'-'+hashutilities.toSHA1(timestamp.now()+random.createRandomString(20));
+
+		let body = (_.isString(context))?context:JSON.stringify(context);
+
+		await new S3Provider().putObject({
+			Bucket: 'sixcrm-'+global.SixCRM.configuration.stage+'-sns-context-objects',
+			Key: context_id,
+			Body: body
+		});
+
+		return context_id;
+
+	}
+	*/
+	/*
+	async handleContext({context, event_type}){
+
+		du.debug('Handle Context');
+
+		context = (_.isString(context))?context:JSON.stringify(context);
+
+		const context_size = stringutilities.getBytes(context);
+
+		if(context_size >= 256){
+
+			du.info('Large Context Object, pushing to S3...');
+			let context_id = await this.pushContextToS3({event_type: event_type, context: context});
+			context = JSON.stringify({s3_reference: context_id});
+
+		}
+
+		return context;
+
+	}
+	*/
+
+	xdescribe('pushEvent (LIVE)', async () => {
+
+		it('successfully pushes a event to a SNS topic', async () => {
+
+			mockery.deregisterAll();
+
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
+
+			let input_object = {
+				event_type: 'test',
+				context: {
+					something: 'This is a context object!'
+				}
+			};
+
+			let result = await eventHelperController.pushEvent(input_object);
+
+			console.log(result);
+
+			expect(result).to.have.property('MessageId');
+			expect(result).to.have.property('ResponseMetadata');
+			expect(result.ResponseMetadata).to.have.property('RequestId');
+
 		});
 
 	});
