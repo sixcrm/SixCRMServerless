@@ -531,8 +531,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 		du.debug('Create');
 
-		console.log(this.table_name);
-
 		return this.can({action: 'create', object: this.descriptive_name, fatal: true})
 			.then(() => {
 
