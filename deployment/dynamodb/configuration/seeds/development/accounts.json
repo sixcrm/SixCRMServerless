@@ -22,7 +22,6 @@
 {
 	"id":"5177aa1e-82fe-4ab2-90fe-bef563cd6017",
 	"name": "No Billing Test Account",
-	"billing": null,
 	"active":true,
 	"created_at":"2017-04-06T18:40:41.405Z",
 	"updated_at":"2017-04-06T18:41:12.521Z"
