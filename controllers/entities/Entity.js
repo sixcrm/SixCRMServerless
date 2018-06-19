@@ -499,7 +499,7 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 
-	async batchGet({ids, parameters}) {
+	async batchGet({ids, parameters = {}}) {
 
 		du.debug('Batch Get');
 
@@ -527,9 +527,11 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	//Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account
-	create({entity}){
+	create({entity, parameters = { index: true }}){
 
 		du.debug('Create');
+
+		console.log(this.table_name);
 
 		return this.can({action: 'create', object: this.descriptive_name, fatal: true})
 			.then(() => {
@@ -561,7 +563,11 @@ module.exports = class entityController extends entityUtilitiesController {
 			})
 			.then(() => {
 
-				this.createAnalyticsActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+				if (parameters.index) {
+
+					this.createAnalyticsActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+
+				}
 
 				return entity;
 

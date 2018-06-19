@@ -69,7 +69,7 @@ async function _handler(argv) {
 	const client = manifest.client;
 
 	const IngestHandler = require(`../handlers/${crm}/${crm}-ingest-handler`);
-	const ingestHandler = new IngestHandler(crm, client, account, extractDirectory);
+	const ingestHandler = new IngestHandler(crm, client, account, extractDirectory, path.basename(extractDirectory));
 	await ingestHandler.ingest();
 
 }

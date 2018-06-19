@@ -5,7 +5,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const BBPromise = require('bluebird');
 const uuid = require('uuid');
-const CampaignController = require('../../../controllers/entities/Campaign');
+const CampaignEntity = require('../../../controllers/entities/Campaign');
+const CrmImportTrackingEntity = require('../../../controllers/entities/CrmImportTracking');
 
 module.exports = class LimelightIngestHandler extends IngestHandler {
 
@@ -13,8 +14,10 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 
 		super(crm, client, account, artifactsDirectory);
 
-		this._campaignController = new CampaignController();
-		this._campaignController.disableACLs();
+		this._crmImportTrackingEntity = new CrmImportTrackingEntity();
+		this._crmImportTrackingEntity.disableACLs();
+		this._campaignEntity = new CampaignEntity();
+		this._campaignEntity.disableACLs();
 
 	}
 
@@ -40,7 +43,7 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 		const campaigns = await fs.readJSON(path.join(this._artifactsDirectory, 'scraped-campaigns.json'));
 		await BBPromise.each(campaigns, async (llCampaign) => {
 
-			const campaign = await this._campaignController.create({
+			const campaign = await this._campaignEntity.create({
 				entity: {
 					id: uuid.v4(),
 					account: this._account,
@@ -53,7 +56,7 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 				}
 			});
 
-			console.log(campaign);
+			await this._crmImportTrackingEntity.createBySource(this._account, 'limelight', String(llCampaign.id), 'campaign', this._batch, campaign.id);
 
 		});
 
