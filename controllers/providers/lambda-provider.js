@@ -59,6 +59,22 @@ module.exports = class LambdaProvider extends AWSProvider{
 
 	}
 
+	listEventSourceMappings(parameters){
+
+		du.debug('List Event Source Mappings');
+
+		return this.lambda.listEventSourceMappings(parameters).promise();
+
+	}
+
+	createEventSourceMapping(parameters){
+
+		du.debug('List Event Source Mappings');
+
+		return this.lambda.createEventSourceMapping(parameters).promise();
+
+	}
+
 	buildHandlerFunctionName(longname) {
 		du.debug('Build Handler Function Name');
 

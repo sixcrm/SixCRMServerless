@@ -505,6 +505,20 @@ jobs:
       - run:
           name: Cloudwatch Log Subscriptions
           command: export SIX_VERBOSE=2 && node ./deployment/cloudwatch/deploy_subscription_filters.js
+  deploy_lambda_eventsourcemappings:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - restore_cache:
+          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Lambda Event Source Mappings
+          command: export SIX_VERBOSE=2 && node ./deployment/lambda/deploy_eventsourcemappings.js
   deploy_dms:
     <<: *job-defaults
     steps:
@@ -829,6 +843,12 @@ workflows:
             - deploy_iam
             - deploy_s3
             - deploy_dynamodb
+      - deploy_lambda_eventsourcemappings:
+          requires:
+            - deploy_ec2_servers
+            - deploy_iam
+            - deploy_s3
+            - deploy_dynamodb
       # - deploy_redshift:
       #     requires:
       #       - deploy_security_groups
@@ -840,6 +860,7 @@ workflows:
             - deploy_sqs
             - deploy_iam
             - deploy_dynamodb
+            - deploy_lambda_eventsourcemappings
             # - deploy_redshift
             - deploy_sns
             - deploy_stepfunctions

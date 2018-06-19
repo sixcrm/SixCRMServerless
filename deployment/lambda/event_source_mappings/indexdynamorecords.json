@@ -1,0 +1,62 @@
+[
+  {
+    "TableName":"customers",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
+  },
+  {
+    "TableName":"sessions",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
+  },
+  {
+    "TableName":"rebills",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
+  },
+  {
+    "TableName":"returns",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
+  },
+  {
+    "TableName":"shippingreceipts",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
+  },
+  {
+    "TableName":"products",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
+  },
+  {
+    "TableName":"productschedules",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
+  },
+  {
+    "TableName":"creditcards",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
+  },
+  {
+    "TableName":"campaigns",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
+  },
+  {
+    "TableName":"transactions",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
+  }
+]

@@ -38,6 +38,10 @@
     "ProvisionedThroughput":{
       "ReadCapacityUnits":21,
       "WriteCapacityUnits":3
+    },
+    "StreamSpecification":{
+      "StreamEnabled":true,
+      "StreamViewType":"NEW_AND_OLD_IMAGES"
     }
   }
 }

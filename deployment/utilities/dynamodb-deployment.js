@@ -47,7 +47,8 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 
 				//Technical Debt:  Complete this!
 				//return this.dynamodbprovider.updateTable(table_definition.Table);
-				return true
+				return true;
+
 			}
 
 		});
