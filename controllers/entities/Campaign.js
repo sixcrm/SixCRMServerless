@@ -3,8 +3,7 @@ const _ = require('lodash');
 
 const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
-
-var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const entityController = require('./Entity');
 
 module.exports = class CampaignController extends entityController {
 

@@ -527,7 +527,7 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	//Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account
-	create({entity}){
+	create({entity, parameters = { index: true }}){
 
 		du.debug('Create');
 
@@ -561,7 +561,11 @@ module.exports = class entityController extends entityUtilitiesController {
 			})
 			.then(() => {
 
-				this.createAnalyticsActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+				if (parameters.index) {
+
+					this.createAnalyticsActivityRecord(null, 'created', {entity: entity, type: this.descriptive_name}, null);
+
+				}
 
 				return entity;
 
