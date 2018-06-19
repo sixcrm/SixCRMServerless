@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
@@ -74,6 +75,10 @@ module.exports = class OrderHelperController {
 	async getOrder({id}) {
 		const rebillController = new RebillController();
 		const rebill = await rebillController.getByAlias({alias: id});
+		if (rebill === null) {
+			throw eu.getError('not_found', 'Order not found.');
+		}
+
 		return this.createOrder({rebill});
 	}
 
@@ -81,8 +86,24 @@ module.exports = class OrderHelperController {
 		const sessionController = new SessionController();
 		const rebillController = new RebillController();
 		const session = await sessionController.get({id: session_id});
+		if (session === null) {
+			throw eu.getError('not_found', 'Session not found.');
+		}
+
 		const customer = await sessionController.getCustomer(session);
 		const rebill_result = await rebillController.listBySession({session, pagination});
+		if (customer === null || rebill_result.rebills === null) {
+			return {
+				orders: null,
+				pagination: {
+					count: 0,
+					end_cursor: '',
+					has_next_page: 'false',
+					last_evaluated: ''
+				}
+			}
+		}
+
 		const orders = await Promise.all(arrayutilities.map(rebill_result.rebills, rebill => this.createOrder({ rebill, session, customer })));
 		return {
 			orders,
@@ -95,7 +116,17 @@ module.exports = class OrderHelperController {
 		const rebillController = new RebillController();
 		const sessionController = new SessionController();
 		const customer = await customerController.get({id: customer_id});
+		if (customer === null) {
+			throw eu.getError('not_found', 'Customer not found.');
+		}
+
 		const {sessions} = await sessionController.listByCustomer({customer});
+		if (sessions === null) {
+			return {
+				orders: null,
+				pagination: rebill_result.pagination
+			}
+		}
 
 		let rebill_query_parameters = rebillController.createINQueryParameters({
 			field: 'parentsession',
@@ -106,6 +137,12 @@ module.exports = class OrderHelperController {
 			query_parameters: rebill_query_parameters,
 			pagination
 		});
+		if (rebill_result.rebills === null) {
+			return {
+				orders: null,
+				pagination: rebill_result.pagination
+			}
+		}
 
 		const indexed_sessions = arrayutilities.reduce(sessions, (index, session) => {
 			index[session.id] = session;
