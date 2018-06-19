@@ -499,7 +499,7 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 
-	async batchGet({ids, parameters = {}}) {
+	async batchGet({ids, parameters}) {
 
 		du.debug('Batch Get');
 
