@@ -1,4 +1,5 @@
 const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const fs = require('fs-extra');
 const path = require('path');
 const moment = require('moment-timezone');
@@ -18,7 +19,10 @@ module.exports = class ExtractHandler {
 	async extract() {
 
 		await fs.ensureDir(this._artifactsDirectory);
-		return this._extract();
+		await fs.writeJson(path.join(this._artifactsDirectory, 'manifest.json'), { crm: this._crm, client: this._client });
+		await this._extract();
+
+		du.info('ExtractHandler#extract(): done');
 
 	}
 

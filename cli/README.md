@@ -9,6 +9,12 @@ EXAMPLE:
 
 NODE_CONFIG_DIR=config/local NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js extract --crm limelight --client elyfe.limelightcrm.com --web-user Nguyen --web-password "Agility*12" --api-user pushinnovation --api-password  6XtkVUXV8mArnP
 
+npm run test-cli-extract -- --web-user Nguyen --web-password "Agility*12" --api-user pushinnovation --api-password  6XtkVUXV8mArnP
+
+NODE_CONFIG_DIR=config/local NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js ingest --acount 1234 --extract-directory extract/limelight/elyfe.limelightcrm.com/2018-06-18T18-21-04.453Z
+
+npm run test-cli-ingest -- --extract-directory extract/limelight/elyfe.limelightcrm.com/2018-06-18T18-21-04.453Z
+
 ##scraped-products.json
 
 id\

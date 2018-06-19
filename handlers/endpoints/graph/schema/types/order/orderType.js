@@ -3,11 +3,14 @@ const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 
+const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const SessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+const rebillController = new RebillController();
 const sessionController = new SessionController();
 
 const publicCustomerType = require('../customer/publicCustomerType');
 const transactionProductType = require('../transactionproduct/transactionProductType');
+const rebillType = require('../rebill/rebillType');
 const sessionType = require('../session/sessionType');
 
 module.exports.graphObj = new GraphQLObjectType({
@@ -38,6 +41,11 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: sessionType.graphObj,
 			description: 'The session associated with the order.',
 			resolve: order => sessionController.get({id: order.session})
+		},
+		rebill: {
+			type: rebillType.graphObj,
+			description: 'The rebill associated with the order.',
+			resolve: order => rebillController.getByAlias({alias: order.id})
 		}
 	}),
 	interfaces: []
