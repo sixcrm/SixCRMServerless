@@ -879,6 +879,7 @@ workflows:
               only:
                 - production
                 - priority
+                - development
       - entity_integration_tests:
           requires:
             - seed
