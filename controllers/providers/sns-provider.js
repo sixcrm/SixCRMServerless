@@ -224,4 +224,3 @@ module.exports = class SNSProvider extends AWSProvider{
 	}
 
 }
-
