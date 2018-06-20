@@ -43,6 +43,15 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 		const campaigns = await fs.readJSON(path.join(this._artifactsDirectory, 'scraped-campaigns.json'));
 		await BBPromise.each(campaigns, async (llCampaign) => {
 
+			const exists = await this._crmImportTrackingEntity.bySource(this._account, 'limelight', String(llCampaign.id), 'campaign');
+
+			if (exists) {
+
+				du.info('campaign already imported', { id: String(llCampaign.id) });
+				return;
+
+			}
+
 			const campaign = await this._campaignEntity.create({
 				entity: {
 					id: uuid.v4(),
