@@ -1,12 +1,27 @@
-
-//const mockery = require('mockery');
+const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
 const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
-//const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
 describe('/helpers/notifications/Notification.js', () => {
+
+	before(() => {
+		mockery.enable({
+			useCleanCache: true,
+			warnOnReplace: false,
+			warnOnUnregistered: false
+		});
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
+
+	afterEach(() => {
+		mockery.resetCache();
+		mockery.deregisterAll();
+	});
+
 	describe('constructor', () => {
+
 		it('successfully constructs', () => {
 
 			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
@@ -15,7 +30,63 @@ describe('/helpers/notifications/Notification.js', () => {
 			expect(objectutilities.getClassName(notificationHelperClass)).to.equal('NotificationHelperClass');
 
 		});
+
 	});
+
+	describe('executeNotifications', async () => {
+
+		it('returns true', async () => {
+
+			let context = {a:'1', user: 'some.user@sixcrm.com'};
+			let transformed_context = {b: 1};
+
+			let argumentation = {
+				event_type: 'test',
+				context: context
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'notifications/notificationtypes/test.js'), class {
+				constructor(){}
+				transformContext(a_context){
+					expect(a_context).to.be.a('object');
+					expect(a_context).to.deep.equal(context);
+					return transformed_context;
+				}
+				triggerNotifications(a_transformed_context){
+					expect(a_transformed_context).to.deep.equal(transformed_context);
+					return true;
+				}
+			});
+
+			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
+			let notificationHelperClass = new NotificationHelperClass();
+
+			let result = await notificationHelperClass.executeNotifications(argumentation);
+			expect(result).to.equal(true);
+
+		});
+
+	});
+
+	/*
+	async executeNotifications({event_type, context}){
+
+		du.debug('Execute Notifications');
+
+		this.validateNotification(event_type, context);
+
+		if(!this.isNotificationEventType()){
+			return true;
+		}
+
+		let notification_class = await this.instantiateNotificationClass(event_type)
+		let transformed_context = this.transformContext(notification_class, context);
+
+		await this.executeNotificationActions(notification_class, transformed_context);
+
+		return true;
+
+	}*/
 
 	describe('isNotificationEventType', () => {
 
@@ -25,95 +96,136 @@ describe('/helpers/notifications/Notification.js', () => {
 			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
 			let notificationHelperClass = new NotificationHelperClass();
 
-			notificationHelperClass.parameters.set('eventtype', event_type);
-
-			expect(notificationHelperClass.isNotificationEventType()).to.equal(true);
+			expect(notificationHelperClass.isNotificationEventType(event_type)).to.equal(true);
 
 		});
 
-		it('throws a 404 error when notification type is not recognized', () => {
+		it('returns false for invalid notification types', () => {
 
 			let event_type = 'unrecognized_event_type';
 			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
 			let notificationHelperClass = new NotificationHelperClass();
 
-			notificationHelperClass.parameters.set('eventtype', event_type);
+			expect(notificationHelperClass.isNotificationEventType(event_type)).to.equal(false);
 
-			try {
-				notificationHelperClass.isNotificationEventType();
+		});
+
+	});
+
+	describe('validateNotification', () => {
+
+		it('returns an error when event_type is null', () => {
+
+			let event_type = null;
+			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
+			let notificationHelperClass = new NotificationHelperClass();
+
+			try{
+				notificationHelperClass.validateNotification(event_type, {});
+				expect(false).to.equal(true, 'Method should not have executed.');
 			}catch(error){
-				expect(error.message).to.equal("[404] Not a notification event type: " + event_type);
+				expect(error.message).to.equal('[500] Expected "event_type" property to be set.')
+			}
+
+		});
+
+		it('returns an error when event_type is undefined', () => {
+
+			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
+			let notificationHelperClass = new NotificationHelperClass();
+
+			try{
+				notificationHelperClass.validateNotification(undefined, {});
+				expect(false).to.equal(true, 'Method should not have executed.');
+			}catch(error){
+				expect(error.message).to.equal('[500] Expected "event_type" property to be set.')
+			}
+
+		});
+
+		it('returns an error when context is null', () => {
+
+			let event_type = 'someeventtype';
+			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
+			let notificationHelperClass = new NotificationHelperClass();
+
+			try{
+				notificationHelperClass.validateNotification(event_type, null);
+				expect(false).to.equal(true, 'Method should not have executed.');
+			}catch(error){
+				expect(error.message).to.equal('[500] Expected "context" property to be set.')
+			}
+
+		});
+
+		it('returns an error when context is undefined', () => {
+
+			let event_type = 'someeventtype';
+			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
+			let notificationHelperClass = new NotificationHelperClass();
+
+			try{
+				notificationHelperClass.validateNotification(event_type, undefined);
+				expect(false).to.equal(true, 'Method should not have executed.');
+			}catch(error){
+				expect(error.message).to.equal('[500] Expected "context" property to be set.')
 			}
 
 		});
 
 	});
 
-	describe('instantiateNotificationClass', () => {
+	describe('instantiateNotificationClass', async () => {
 
-		it('successfully instantiates the default notification class', () => {
+		it('returns a notification class', async () => {
 
 			let event_type = 'default';
+
 			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
 			let notificationHelperClass = new NotificationHelperClass();
 
-			notificationHelperClass.parameters.set('eventtype', event_type);
+			let result = await notificationHelperClass.instantiateNotificationClass(event_type);
 
-			return notificationHelperClass.instantiateNotificationClass().then(result => {
-				expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('DefaultNotification');
-				expect(result).to.equal(true);
-			});
+			expect(objectutilities.getClassName(result)).to.equal('DefaultNotification');
 
 		});
 
-		it('successfully instantiates the test notification class', () => {
+		it('successfully instantiates the test notification class', async () => {
 
 			let event_type = 'test';
+
 			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
 			let notificationHelperClass = new NotificationHelperClass();
 
-			notificationHelperClass.parameters.set('eventtype', event_type);
+			let result = await notificationHelperClass.instantiateNotificationClass(event_type);
 
-			return notificationHelperClass.instantiateNotificationClass().then(result => {
-
-				expect(result).to.equal(true);
-				expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('TestNotification');
-
-			});
+			expect(objectutilities.getClassName(result)).to.equal('TestNotification');
 
 		});
 
-		it('successfully instantiates the test notification class using a regular expression', () => {
+		it('successfully instantiates the test notification class using a regular expression', async () => {
 
 			let event_type = 'tes[t]+';
+
 			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
 			let notificationHelperClass = new NotificationHelperClass();
 
-			notificationHelperClass.parameters.set('eventtype', event_type);
+			let result = await notificationHelperClass.instantiateNotificationClass(event_type);
 
-			return notificationHelperClass.instantiateNotificationClass().then(result => {
-
-				expect(result).to.equal(true);
-				expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('TestNotification');
-
-			});
+			expect(objectutilities.getClassName(result)).to.equal('TestNotification');
 
 		});
 
-		it('instantiates default notification class when there is no matching notification file for event type', () => {
+		it('instantiates default notification class when there is no matching notification file for event type', async () => {
 
 			let event_type = 'unrecognized_event_type';
+
 			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
 			let notificationHelperClass = new NotificationHelperClass();
 
-			notificationHelperClass.parameters.set('eventtype', event_type);
+			let result = await notificationHelperClass.instantiateNotificationClass(event_type);
 
-			return notificationHelperClass.instantiateNotificationClass().then((result) => {
-
-				expect(result).to.equal(true);
-				expect(objectutilities.getClassName(notificationHelperClass.parameters.get('notificationclass'))).to.equal('DefaultNotification');
-
-			});
+			expect(objectutilities.getClassName(result)).to.equal('DefaultNotification');
 
 		});
 
@@ -136,22 +248,16 @@ describe('/helpers/notifications/Notification.js', () => {
 			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
 			let notificationHelperClass = new NotificationHelperClass();
 
-			notificationHelperClass.parameters.set('context', context);
-			notificationHelperClass.parameters.set('notificationclass', notificationclass);
-
-			let result = notificationHelperClass.transformContext();
-
-			expect(result).to.equal(true);
-			expect(notificationHelperClass.parameters.store).to.have.property('transformedcontext');
-			expect(notificationHelperClass.parameters.store['transformedcontext']).to.deep.equal(transformed_context);
+			let result = notificationHelperClass.transformContext(notificationclass, context);
+			expect(result).to.deep.equal(transformed_context);
 
 		});
 
 	});
 
-	describe('executeNotificationActions', () => {
+	describe('executeNotificationActions', async () => {
 
-		it('successfully executes notification actions', () => {
+		it('successfully executes notification actions', async () => {
 
 			let transformed_context = {b: 1};
 
@@ -165,12 +271,8 @@ describe('/helpers/notifications/Notification.js', () => {
 			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
 			let notificationHelperClass = new NotificationHelperClass();
 
-			notificationHelperClass.parameters.set('transformedcontext', transformed_context);
-			notificationHelperClass.parameters.set('notificationclass', notificationclass);
-
-			return notificationHelperClass.executeNotificationActions().then(result => {
-				expect(result).to.equal(true);
-			});
+			let result = await notificationHelperClass.executeNotificationActions(notificationclass, transformed_context);
+			expect(result).to.equal(true);
 
 		});
 

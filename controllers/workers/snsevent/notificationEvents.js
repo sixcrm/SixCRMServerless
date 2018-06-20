@@ -14,6 +14,8 @@ module.exports = class NotificationEventsController{
 
 		du.debug('Execute');
 
+		du.info(records);
+
 		await this.handleEventRecords(records);
 
 	}

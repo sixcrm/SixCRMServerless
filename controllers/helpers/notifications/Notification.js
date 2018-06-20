@@ -1,5 +1,4 @@
-
-
+const _ = require('lodash');
 const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
@@ -8,53 +7,49 @@ const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').defa
 
 module.exports = class NotificationHelperClass {
 
-	constructor(){
+	constructor(){}
 
-		//Technical Debt:  Need to add validation schemas here...
-		this.parameter_validation = {};
-
-		this.parameter_definition = {
-			executeNotifications:{
-				required:{
-					eventtype: 'event_type',
-					context: 'context'
-				},
-				optional:{}
-			}
-		};
-
-		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
-
-	}
-
-	executeNotifications(){
+	async executeNotifications({event_type, context}){
 
 		du.debug('Execute Notifications');
 
-		this.parameters.store = {};
+		this.validateNotification(event_type, context);
 
-		return Promise.resolve()
-			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'executeNotifications'}))
-			.then(() => this.isNotificationEventType())
-			.then(() => this.instantiateNotificationClass())
-			.then(() => this.transformContext())
-			.then(() => this.executeNotificationActions())
-			.catch((error) => {
-				if(error.statusCode == 404){
-					return Promise.resolve(true);
-				}
-				du.error(error);
-				return Promise.reject(error);
-			});
+		if(!this.isNotificationEventType(event_type)){
+			return true;
+		}
+
+		let notification_class = await this.instantiateNotificationClass(event_type)
+		let transformed_context = this.transformContext(notification_class, context);
+
+		try{
+			await this.executeNotificationActions(notification_class, transformed_context);
+		}catch(error){
+			du.error(error);
+			return false;
+		}
+
+		return true;
 
 	}
 
-	isNotificationEventType(){
+	validateNotification(event_type, context){
+
+		du.debug('Validate Notification');
+
+		if(_.isUndefined(event_type) || _.isNull(event_type)){
+			throw eu.getError('server','Expected "event_type" property to be set.');
+		}
+
+		if(_.isUndefined(context) || _.isNull(context)){
+			throw eu.getError('server','Expected "context" property to be set.');
+		}
+
+	}
+
+	isNotificationEventType(event_type){
 
 		du.debug('Is Notification Event Type');
-
-		let event_type = this.parameters.get('eventtype');
 
 		//Note:  These are a subset of event types which are notification events
 		let valid_event_type = global.SixCRM.validate(event_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationevent.json'), false);
@@ -63,68 +58,45 @@ module.exports = class NotificationHelperClass {
 			return true;
 		}
 
-		throw eu.getError('not_found','Not a notification event type: '+event_type);
+		return false;
 
 	}
 
-	instantiateNotificationClass(){
+	async instantiateNotificationClass(event_type){
 
 		du.debug('Instantiate Notification Class');
 
-		let event_type = this.parameters.get('eventtype');
+		let directory_files = await fileutilities.getDirectoryFiles(global.SixCRM.routes.path('helpers','notifications/notificationtypes/'));
 
-		let NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/default.js');
-		let notification_class = new NotificationType();
-		this.parameters.set('notificationclass', notification_class);
+		let matching_notification_file = arrayutilities.find(directory_files, directory_file => {
+			return stringutilities.isMatch(directory_file.replace('.json',''), new RegExp(event_type, "g"));
+		});
 
-		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('helpers','notifications/notificationtypes/'))
-			.then(directory_files => {
+		if(matching_notification_file){
 
-				let matching_notification_file = arrayutilities.find(directory_files, directory_file => {
-					return stringutilities.isMatch(directory_file.replace('.json',''), new RegExp(event_type, "g"));
-				});
+			du.warning('Matching notification file for event_type ('+event_type+') '+matching_notification_file);
 
-				if(matching_notification_file){
+			const NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+matching_notification_file);
+			return new NotificationType();
 
-					du.warning('Matching notification file for event_type ('+event_type+') '+matching_notification_file);
+		}
 
-					NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+matching_notification_file);
-					let notification_class = new NotificationType();
-					this.parameters.set('notificationclass', notification_class);
-
-				}else{
-
-					du.warning('No matching notification file for event type: '+event_type);
-
-				}
-
-				return true;
-
-			});
+		const NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/default.js');
+		return new NotificationType();
 
 	}
 
-	transformContext(){
+	transformContext(notification_class, context){
 
 		du.debug('Transform Context');
 
-		let context = this.parameters.get('context');
-		let notification_class = this.parameters.get('notificationclass');
-
-		let transformed_context = notification_class.transformContext(context);
-
-		this.parameters.set('transformedcontext', transformed_context);
-
-		return true;
+		return notification_class.transformContext(context);
 
 	}
 
-	executeNotificationActions(){
+	executeNotificationActions(notification_class, transformed_context){
 
 		du.debug('Execute Notification Actions');
-
-		let transformed_context = this.parameters.get('transformedcontext');
-		let notification_class = this.parameters.get('notificationclass');
 
 		return notification_class.triggerNotifications(transformed_context);
 
