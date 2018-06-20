@@ -605,6 +605,7 @@ module.exports = class LimelightScraper {
 		const maxQty = this._cleanseOutput($('#product_max_qty').val());
 		const desc = this._cleanseOutput($('#product_description').text());
 		const shippable = $('#product_shippable').val();
+		const weight = this._cleanseOutput($('product_weight').val());
 		const nextRecurringProduct = this._cleanseOutput($('select[name="recurring_next_product"] option:selected').text());
 		const subscriptionType = this._cleanseOutput($('select[id="subscription_type"] option:selected').text());
 		const daysToNextBilling = this._cleanseOutput($('#recurring_days').val());
@@ -623,6 +624,7 @@ module.exports = class LimelightScraper {
 			maxQty,
 			desc,
 			shippable,
+			weight,
 			nextRecurringProduct,
 			subscriptionType,
 			daysToNextBilling,
