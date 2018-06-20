@@ -161,6 +161,7 @@ module.exports = class SNSProvider extends AWSProvider{
 
 		du.debug('Publish');
 
+		du.info(parameters);  process.exit();
 		let params = objectutilities.transcribe(
 			{
 				Message:'Message'
