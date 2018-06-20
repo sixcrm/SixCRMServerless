@@ -47,7 +47,7 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 
 			if (exists) {
 
-				du.info('campaign already imported', { id: String(llCampaign.id) });
+				du.info('campaign already imported', { id: llCampaign.id });
 				return;
 
 			}
