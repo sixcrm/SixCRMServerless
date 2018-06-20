@@ -6,6 +6,7 @@ const path = require('path');
 const BBPromise = require('bluebird');
 const uuid = require('uuid');
 const CampaignEntity = require('../../../controllers/entities/Campaign');
+const ProductEntity = require('../../../controllers/entities/Product');
 const CrmImportTrackingEntity = require('../../../controllers/entities/CrmImportTracking');
 
 module.exports = class LimelightIngestHandler extends IngestHandler {
@@ -16,6 +17,8 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 
 		this._crmImportTrackingEntity = new CrmImportTrackingEntity();
 		this._crmImportTrackingEntity.disableACLs();
+		this._productEntity = new ProductEntity();
+		this._productEntity.disableACLs();
 		this._campaignEntity = new CampaignEntity();
 		this._campaignEntity.disableACLs();
 
@@ -34,6 +37,59 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 
 		du.info('LimelightIngestHandler#_ingestProducts');
 
+		const products = await fs.readJSON(path.join(this._artifactsDirectory, 'scraped-products.json'));
+		await BBPromise.each(products, async (llProduct) => {
+
+			const exists = await this._crmImportTrackingEntity.bySource(this._account, 'limelight', String(llProduct.id), 'product');
+
+			if (exists) {
+
+				du.info('product already imported', {
+					id: llProduct.id
+				});
+				return;
+
+			}
+
+			// todo-tim: what about these comments?
+			const entity = {
+				id: uuid.v4(),
+				name: llProduct.name,
+				description: llProduct.desc,
+				sku: llProduct.sku,
+				ship: llProduct.shippable === true || llProduct.shippable === 1 || llProduct.shippable === '1',
+				// shipping_delay: undefined,
+				// merchantprovidergroup: undefined,
+				// fulfillment_provider: undefined,
+				default_price: llProduct.price,
+				// dynamic_pricing: undefined,
+				// attributes: undefined,
+				account: this._account
+			};
+
+			if (entity.ship) {
+
+				if (llProduct.weight) {
+
+					entity.attributes = {
+						weight: {
+							unitofmeasururement: 'pounds',
+							units: 16 / llProduct.weight
+						}
+					}
+
+				}
+
+			}
+
+			const product = await this._productEntity.create({
+				entity
+			});
+
+			await this._crmImportTrackingEntity.createBySource(this._account, 'limelight', String(llProduct.id), 'product', this._batch, product.id);
+
+		});
+
 	}
 
 	async _ingestCampaigns() {
@@ -47,7 +103,9 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 
 			if (exists) {
 
-				du.info('campaign already imported', { id: llCampaign.id });
+				du.info('campaign already imported', {
+					id: llCampaign.id
+				});
 				return;
 
 			}
