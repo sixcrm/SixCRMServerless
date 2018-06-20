@@ -68,26 +68,6 @@ describe('/helpers/notifications/Notification.js', () => {
 
 	});
 
-	/*
-	async executeNotifications({event_type, context}){
-
-		du.debug('Execute Notifications');
-
-		this.validateNotification(event_type, context);
-
-		if(!this.isNotificationEventType()){
-			return true;
-		}
-
-		let notification_class = await this.instantiateNotificationClass(event_type)
-		let transformed_context = this.transformContext(notification_class, context);
-
-		await this.executeNotificationActions(notification_class, transformed_context);
-
-		return true;
-
-	}*/
-
 	describe('isNotificationEventType', () => {
 
 		it('returns true for valid notification types', () => {

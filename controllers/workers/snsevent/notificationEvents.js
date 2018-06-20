@@ -6,7 +6,7 @@ const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
 const NotificationsHelperController = global.SixCRM.routes.include('helpers', 'notifications/Notification.js');
 
-module.exports = class NotificationEventsController{
+module.exports = class NotificationEventsController {
 
 	constructor(){}
 
