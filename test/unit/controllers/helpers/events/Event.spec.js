@@ -90,7 +90,7 @@ describe('helpers/events/Event.spec.js', () => {
 				context: input_object.context
 			};
 
-			let parameters = eventHelperController.createPublishParameters(input_object);
+			let parameters = eventHelperController.createPublishParameters(input_object, input_object.context);
 
 			expect(parameters).to.have.property('Message');
 			expect(parameters).to.have.property('TopicArn');
@@ -299,11 +299,36 @@ describe('helpers/events/Event.spec.js', () => {
 
 	describe('pushContextToS3', async () => {
 
-		it.only('returns a context id', async () => {
+		it('returns a context id', async () => {
 
 			let event = {
 				event_type: 'someventtype',
 				context: {some: 'context'}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('providers', 's3-provider.js'), class{
+				putObject({Key, Body, Bucket}){
+					expect(Key).to.be.a('string');
+					expect(Body).to.be.a('string');
+					expect(Bucket).to.be.a('string');
+					return Promise.resolve(true);
+				}
+			});
+
+			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventHelperController();
+
+			let result = await eventHelperController.pushContextToS3(event);
+			expect(result).to.be.a('string');
+			expect(result).to.have.string(event.event_type+'-');
+
+		});
+
+		it('returns a context id (string context)', async () => {
+
+			let event = {
+				event_type: 'someventtype',
+				context: JSON.stringify({some: 'context'})
 			};
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 's3-provider.js'), class{

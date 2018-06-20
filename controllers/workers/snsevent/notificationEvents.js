@@ -1,45 +1,149 @@
-
+const _ = require('lodash');
 
 const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 
-const SNSEventController = global.SixCRM.routes.include('controllers', 'workers/components/SNSEvent.js');
+const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
+const NotificationsHelperController = global.SixCRM.routes.include('helpers', 'notifications/Notification.js');
 
-module.exports = class NotificationEventsController extends SNSEventController {
+module.exports = class NotificationEventsController{
 
-	constructor(){
+	constructor(){}
 
-		super();
+	async execute(records) {
 
-		this.event_record_handler = 'triggerNotification';
+		du.debug('Execute');
+
+		await this.handleEventRecords(records);
 
 	}
 
-	triggerNotification(){
+	handleEventRecords(input) {
+
+		du.debug('Handle Events');
+
+		if(!_.has(input, 'Records')){
+			return null;
+		}
+
+		let records_promises = input.Records.map((record) => {
+			try{
+				return this.handleEventRecord(record);
+			}catch(error){
+				du.warning(error);
+			}
+			return null;
+		});
+
+		return Promise.all(records_promises);
+
+	}
+
+	handleEventRecord(record) {
+
+		du.debug('Handle Event Record');
+
+		//this.isCompliantEventType();
+
+		global.SixCRM.validate(record, global.SixCRM.routes.path('model','workers/snsEvents/snsrecord.json'), true);
+
+		let message = this.getMessage(record)
+
+		return this.triggerNotification(message);
+
+	}
+
+	//Move to SNS Controller
+	getMessage(record) {
+
+		du.debug('Get Message');
+
+		const message = JSON.parse(record.Sns.Message);
+
+		return message;
+
+	}
+
+	async triggerNotification(message){
 
 		du.debug('Trigger Notifications');
 
-		return Promise.resolve()
-		//Note:  Because compliant_event_types is not defined in this class, all events pass the checks here.
-			.then(() => this.isCompliantEventType())
-			.then(() => this.executeNotification())
-			.catch(error => {
-				du.error(error);
-				return true;
-			});
+		let context = await this.getContext(message);
+		let event_type = this.getEventType(message);
+
+		return new NotificationsHelperController().executeNotifications({
+			event_type: event_type,
+			context: context
+		});
 
 	}
 
-	executeNotification(){
+	async getContext(message, fatal = false){
 
-		du.debug('Execute Notification');
+		du.debug('Handle Context');
 
-		let event_type = this.parameters.get('message').event_type;
-		let context = this.parameters.get('message').context;
+		let return_object = null;
 
-		const NotificationsHelperController = global.SixCRM.routes.include('helpers', 'notifications/Notification.js');
-		let notificationsHelperController = new NotificationsHelperController();
+		if(_.has(message, 'context')){
 
-		return notificationsHelperController.executeNotifications({event_type: event_type, context: context});
+			if(_.has(message.context, 's3_reference')){
+
+				try{
+
+					return_object = await new S3Provider().getObject(
+						'sixcrm-'+global.SixCRM.configuration.stage+'-sns-context-objects',
+						message.context.s3_reference
+					);
+
+					try{
+						return_object = JSON.parse(return_object);
+					}catch(error){
+						du.info('Context not a stringified object.');
+					}
+
+				}catch(error){
+
+					if(fatal){
+						throw error;
+					}
+
+					du.warning(error.message);
+
+				}
+
+			}else{
+				return_object = message.context;
+			}
+
+		}else{
+
+			if(fatal){
+				throw eu.getError('server', 'Message missing "context" property.');
+			}
+
+			du.warning('Message missing "context" property.');
+
+		}
+
+		return return_object;
+
+	}
+
+	getEventType(message, fatal = true){
+
+		du.debug('Get Event Type');
+
+		if(!_.has(message, 'event_type')){
+
+			if(fatal){
+				throw eu.getError('server', 'Message missing event type');
+			}
+
+			du.warning('Message missing event type');
+
+		}
+
+		return message.event_type;
 
 	}
 

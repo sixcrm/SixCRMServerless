@@ -4,7 +4,9 @@ const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
 const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+
+const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
+const Parameters = global.SixCRM.routes.include('controllers', 'providers/Parameters.js');
 const PermissionUtilities = require('@sixcrm/sixcrmcore/util/permission-utilities').default;
 
 module.exports = class SNSEventController {
@@ -148,6 +150,69 @@ module.exports = class SNSEventController {
 			}
 
 		}
+
+	}
+
+	getEventType(message, fatal = true){
+
+		du.debug('Get Event Type');
+
+		if(!_.has(message, 'event_type')){
+
+			if(fatal){
+				throw eu.getError('server', 'Message missing event type');
+			}
+
+			du.warning('Message missing event type');
+
+		}
+
+		return message.event_type;
+
+	}
+
+	async handleContext(message, fatal = false){
+
+		du.debug('Handle Context');
+
+		let return_object = null;
+
+		if(_.has(message, 'context')){
+
+			if(_.has(message.context, 's3_reference')){
+
+				try{
+
+					return_object = new S3Provider().getObject(
+						'sixcrm-'+global.SixCRM.configuration.stage+'-sns-context-objects',
+						message.context.s3_reference
+					);
+
+				}catch(error){
+
+					if(fatal){
+						throw error;
+					}
+
+					du.warning(error.message);
+
+				}
+
+			}else{
+				return_object = message.context;
+			}
+
+		}else{
+
+			if(fatal){
+				throw eu.getError('server', 'Message missing "context" property.');
+			}
+
+			du.warning('Message missing "context" property.');
+
+		}
+
+		return return_object;
 
 	}
 
