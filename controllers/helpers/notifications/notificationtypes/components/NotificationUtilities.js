@@ -6,11 +6,12 @@ const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 const parserutilities = require('@sixcrm/sixcrmcore/util/parser-utilities').default;
 
+const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
+
 module.exports = class NotificationUtilities {
 
 	constructor(){
 
-		const ContextHelperController = global.SixCRM.routes.include('helpers', 'context/Context.js');
 		this.contextHelperController = new ContextHelperController();
 
 	}
@@ -114,8 +115,6 @@ module.exports = class NotificationUtilities {
 		}
 
 		let replaced = parserutilities.parse(this[field], replace_object, true);
-
-		du.info(replaced);
 
 		return replaced;
 

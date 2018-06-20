@@ -22,30 +22,6 @@ module.exports = class NotificationProvider {
 		this.immutable_types = ['alert', 'persistent'];
 		this.channel_providers = {};
 
-		this.parameter_validation = {
-			action: global.SixCRM.routes.path('model', 'providers/notifications/action.json'),
-			//Technical Debt:  Type should not be required...
-			notificationprototype: global.SixCRM.routes.path('model', 'providers/notifications/notificationprototype.json')
-		};
-
-		this.parameter_definition = {
-			createNotificationForAccountAndUser:{
-				required:{
-					notificationprototype:'notification_prototype',
-				},
-				optional: {}
-			},
-			createNotificationsForAccount:{
-				required:{
-					notificationprototype:'notification_prototype',
-				},
-				optional: {}
-			}
-		};
-
-		const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
-
 		this.userACLController = new UserACLController();
 		this.notificationController = new NotificationController();
 		this.notificationSettingController = new NotificationSettingController();
@@ -53,51 +29,35 @@ module.exports = class NotificationProvider {
 
 	}
 
-	createNotificationsForAccount() {
+	async createNotificationsForAccount({notification_prototype}) {
 
 		du.debug('Create Notifications For Account');
 
-		this.parameters.store = {};
+		this.validateNotificationPrototype(notification_prototype);
 
-		let action = 'createNotificationsForAccount';
-		this.parameters.set('action', action);
+		let receipt_users = await this.setReceiptUsers(notification_prototype);
 
-		return Promise.resolve()
-			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: action}))
-			.then(() => this.validateNotificationPrototype())
-			.then(() => this.setReceiptUsers())
-			.then(() => this.sendNotificationToUsers());
+		return this.sendNotificationToUsers(receipt_users, notification_prototype);
 
 	}
 
-	createNotificationForAccountAndUser() {
+	async createNotificationForAccountAndUser({notification_prototype}) {
 
 		du.debug('Create Notifications For Account and User');
 
-		this.parameters.store = {};
+		this.validateNotificationPrototype(notification_prototype, true);
 
-		let action = 'createNotificationForAccountAndUser';
-		this.parameters.set('action', action);
+		let receipt_users = await this.setReceiptUsers(notification_prototype, false);
 
-		return Promise.resolve()
-			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: action}))
-			.then(() => this.validateNotificationPrototype())
-			.then(() => this.setReceiptUsers())
-			.then(() => this.sendNotificationToUsers());
+		return this.sendNotificationToUsers(receipt_users, notification_prototype);
 
 	}
 
-	validateNotificationPrototype() {
+	validateNotificationPrototype(notification_prototype, user_required = false) {
 
 		du.debug('Validate Notification Prototype');
 
-		let action = this.parameters.get('action');
-		let notification_prototype = this.parameters.get('notificationprototype');
-
-		let user_required = false;
-		if(action == 'createNotificationsForAccountAndUser'){
-			user_required = true;
-		}
+		global.SixCRM.validate(notification_prototype, global.SixCRM.routes.path('model', 'providers/notifications/notificationprototype.json'));
 
 		if (user_required && !_.has(notification_prototype, 'user')) {
 			throw eu.getError('server', 'User is mandatory in notification prototypes when using the createNotificationsForAccountAndUser method.');
@@ -107,69 +67,59 @@ module.exports = class NotificationProvider {
 
 	}
 
-	setReceiptUsers(){
+	setReceiptUsers(notification_prototype, from_account = true){
 
 		du.debug('Set Receipt Users');
 
-		let action = this.parameters.get('action');
-
-		if(action == 'createNotificationsForAccount'){
-
-			return this.setReceiptUsersFromAccount();
-
+		if(from_account){
+			return this.setReceiptUsersFromAccount(notification_prototype);
 		}
 
-		return this.setReceiptUsersFromNotificationPrototype();
+		return this.setReceiptUsersFromNotificationPrototype(notification_prototype);
 
 	}
 
-	setReceiptUsersFromNotificationPrototype(){
+	setReceiptUsersFromNotificationPrototype(notification_prototype){
 
 		du.debug('Set Receipt Users From Notification Prototype');
-
-		let notification_prototype = this.parameters.get('notificationprototype');
 
 		if(!_.has(notification_prototype, 'user')){
 			throw eu.getError('server', 'Unable to identify receipt user in notification prototype');
 		}
 
-		this.parameters.push('receiptusers', notification_prototype.user);
-
-		return true;
+		return [notification_prototype.user];
 
 	}
 
-	setReceiptUsersFromAccount(){
+	async setReceiptUsersFromAccount(notification_prototype){
 
 		du.debug('Set Receipt Users From Account');
 
-		let notification_prototype = this.parameters.get('notificationprototype');
+		if(!_.has(notification_prototype, 'account')){
+			throw eu.getError('server', 'Notification Prototype is missing the "account" property.');
+		}
 
-		return this.userACLController.getACLByAccount({account: notification_prototype.account})
-			.then((results) => {
+		let results = await this.userACLController.getACLByAccount({account: notification_prototype.account});
 
-				if(!arrayutilities.nonEmpty(results)){
-					throw eu.getError('server', 'Empty useracls element in account user_acl response');
-				}
+		if(!arrayutilities.nonEmpty(results)){
+			throw eu.getError('server', 'Empty useracls element in account user_acl response');
+		}
 
-				arrayutilities.map(results, (user_acl_element) => {
-					if(!_.has(user_acl_element, 'pending')){
-						this.parameters.push('receiptusers', user_acl_element.user);
-					}
-				});
+		let receipt_users = [];
 
-				return true;
+		arrayutilities.map(results, (user_acl_element) => {
+			if(!_.has(user_acl_element, 'pending')){
+				receipt_users.push(user_acl_element.user);
+			}
+		});
 
-			});
+		return receipt_users;
 
 	}
 
-	sendNotificationToUsers(){
+	sendNotificationToUsers(receipt_users, notification_prototype){
 
 		du.debug('Send Notification To Users');
-
-		let receipt_users = this.parameters.get('receiptusers');
-		let notification_prototype = this.parameters.get('notificationprototype');
 
 		return arrayutilities.reduce(receipt_users, (current, receipt_user) => {
 			return this.saveAndSendNotification({notification_prototype: notification_prototype, account: notification_prototype.account, user: receipt_user})
@@ -362,14 +312,18 @@ module.exports = class NotificationProvider {
 				return (notification_group.key == notification_prototype.category)
 			});
 
-			if(!_.isNull(notification_group) && arrayutilities.nonEmpty(notification_group.notifications)){
+			if(!_.isNull(notification_group) && !_.isUndefined(notification_group)){
 
-				let notification = arrayutilities.find(notification_group.notifications, notification => {
-					return notification.key == notification_prototype.name;
-				});
+				if(_.has(notification_group, 'notifications') && arrayutilities.nonEmpty(notification_group.notifications)){
 
-				if(!_.isNull(notification) && _.has(notification, 'active')){
-					return (notification.active == true);
+					let notification = arrayutilities.find(notification_group.notifications, notification => {
+						return notification.key == notification_prototype.name;
+					});
+
+					if(!_.isNull(notification) && _.has(notification, 'active')){
+						return (notification.active == true);
+					}
+
 				}
 
 			}

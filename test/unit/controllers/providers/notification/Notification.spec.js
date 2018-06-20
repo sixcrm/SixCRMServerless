@@ -482,7 +482,7 @@ describe('controllers/providers/notification/Notification', () => {
 	});
 
 	beforeEach(() => {
-		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
+		//mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {});
 
 		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
 			sendMessage() {
@@ -528,11 +528,9 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
-			notification_provider.parameters.set('action', 'createNotificationForAccountAndUser');
-			notification_provider.parameters.set('notificationprototype', notification_prototype);
 
 			try{
-				notification_provider.validateNotificationPrototype();
+				notification_provider.validateNotificationPrototype(notification_prototype);
 			}catch(error){
 				expect(error.message).to.have.string('[500] One or more validation errors occurred:');
 			}
@@ -549,11 +547,9 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
-			notification_provider.parameters.set('action', 'createNotificationForAccountAndUser');
-			notification_provider.parameters.set('notificationprototype', notification_prototype);
 
 			try{
-				notification_provider.validateNotificationPrototype();
+				notification_provider.validateNotificationPrototype(notification_prototype);
 			}catch(error){
 				expect(error.message).to.equal('[500] User is mandatory in notification prototypes when using the createNotificationsForAccountAndUser method.');
 			}
@@ -567,11 +563,9 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
-			notification_provider.parameters.set('notificationprototype', notification_prototype);
 
-			let result = notification_provider.setReceiptUsersFromNotificationPrototype();
-			expect(result).to.equal(true);
-			expect(notification_provider.parameters.store['receiptusers']).to.deep.equal([notification_prototype.user]);
+			let result = notification_provider.setReceiptUsersFromNotificationPrototype(notification_prototype);
+			expect(result).to.deep.equal([notification_prototype.user]);
 		});
 
 		it('throws an error when user is not set', () => {
@@ -582,10 +576,9 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
-			notification_provider.parameters.set('notificationprototype', notification_prototype);
 
 			try{
-				notification_provider.setReceiptUsersFromNotificationPrototype();
+				notification_provider.setReceiptUsersFromNotificationPrototype(notification_prototype);
 			}catch(error){
 				expect(error.message).to.equal('[500] Unable to identify receipt user in notification prototype');
 			}
@@ -593,7 +586,7 @@ describe('controllers/providers/notification/Notification', () => {
 		});
 	});
 
-	describe('setReceiptUsers', () => {
+	describe('setReceiptUsers', async () => {
 
 		it('successfully sets the user from the notification prototype', () => {
 
@@ -601,16 +594,13 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
-			notification_provider.parameters.set('notificationprototype', notification_prototype);
-			notification_provider.parameters.set('action', 'createNotificationForAccountAndUser');
 
-			let result = notification_provider.setReceiptUsers();
-			expect(result).to.equal(true);
-			expect(notification_provider.parameters.store['receiptusers']).to.deep.equal([notification_prototype.user]);
+			let result = notification_provider.setReceiptUsers(notification_prototype, false);
+			expect(result).to.deep.equal([notification_prototype.user]);
 
 		});
 
-		it('successfully sets the users from account acls', () => {
+		it('successfully sets the users from account acls', async () => {
 
 			let acls = getUserACLsFromAccount();
 
@@ -634,21 +624,17 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
-			notification_provider.parameters.set('notificationprototype', notification_prototype);
-			notification_provider.parameters.set('action', 'createNotificationsForAccount');
 
-			return notification_provider.setReceiptUsers().then((result) => {
-				expect(result).to.equal(true);
-				expect(notification_provider.parameters.store['receiptusers']).to.deep.equal(users);
-			});
+			let result = await notification_provider.setReceiptUsers(notification_prototype);
+			expect(result).to.deep.equal(users);
 
 		});
 
 	});
 
-	describe('setReceiptUsersFromAccount', () => {
+	describe('setReceiptUsersFromAccount', async () => {
 
-		it('successfully throws an error (empty acls)', () => {
+		it('successfully throws an error (empty acls)', async () => {
 
 			let acls = [];
 			let notification_prototype = {account:'ad58ea78-504f-4a7e-ad45-128b6e76dc57'};
@@ -661,15 +647,17 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
-			notification_provider.parameters.set('notificationprototype', notification_prototype);
 
-			return notification_provider.setReceiptUsersFromAccount().catch(error => {
+			try {
+				await notification_provider.setReceiptUsersFromAccount(notification_prototype);
+				expect(false).to.equal(true, 'Method should not have executed');
+			}catch(error){
 				expect(error.message).to.equal('[500] Empty useracls element in account user_acl response');
-			});
+			}
 
 		});
 
-		it('successfully throws an error (empty acls)', () => {
+		it('successfully throws an error (empty acls)', async () => {
 
 			let acls = getUserACLsFromAccount();
 
@@ -691,12 +679,9 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
-			notification_provider.parameters.set('notificationprototype', notification_prototype);
 
-			return notification_provider.setReceiptUsersFromAccount().then(result => {
-				expect(result).to.equal(true);
-				expect(notification_provider.parameters.store['receiptusers']).to.deep.equal(users);
-			})
+			let result = await notification_provider.setReceiptUsersFromAccount(notification_prototype);
+			expect(result).to.deep.equal(users);
 
 		});
 
@@ -930,6 +915,7 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
+
 			return notification_provider.createNotificationForAccountAndUser({notification_prototype: a_notification_prototype}).then(result => {
 				expect(result).to.equal(true);
 			});
@@ -2103,8 +2089,8 @@ describe('controllers/providers/notification/Notification', () => {
     */
 
 
-	xdescribe('(LIVE) createNotificationForAccountAndUser (LIVE)', () => {
-		it('creates notifications for a account user', () => {
+	xdescribe('(LIVE) createNotificationForAccountAndUser (LIVE)', async () => {
+		it('creates notifications for a account user', async () => {
 
 			let user = 'timothy.dalbey@sixcrm.com';
 			let account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
@@ -2122,14 +2108,15 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
-			return notification_provider.createNotificationForAccountAndUser({notification_prototype: a_notification_prototype}).then(result => {
-				expect(result).to.equal(true);
-			});
+
+			let result = await notification_provider.createNotificationForAccountAndUser({notification_prototype: a_notification_prototype});
+			expect(result).to.equal(true);
+
 		});
 	});
 
-	xdescribe('(LIVE) createNotificationsForAccount (LIVE)', () => {
-		it('creates notifications for all account users', () => {
+	xdescribe('(LIVE) createNotificationsForAccount (LIVE)', async () => {
+		it('creates notifications for all account users', async () => {
 
 			let user = 'timothy.dalbey@sixcrm.com';
 			let account = 'd3fa3bf3-7824-49f4-8261-87674482bf1c';
@@ -2147,9 +2134,10 @@ describe('controllers/providers/notification/Notification', () => {
 
 			let NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			const notification_provider = new NotificationProvider();
-			return notification_provider.createNotificationsForAccount({notification_prototype: a_notification_prototype}).then(result => {
-				expect(result).to.equal(true);
-			});
+
+			let result = await notification_provider.createNotificationsForAccount({notification_prototype: a_notification_prototype});
+			expect(result).to.equal(true);
+
 		});
 	});
 
