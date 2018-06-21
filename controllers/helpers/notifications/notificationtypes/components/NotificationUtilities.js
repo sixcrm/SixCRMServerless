@@ -60,6 +60,8 @@ module.exports = class NotificationUtilities {
 
 		du.debug('Get User From Context');
 
+		du.info(context);
+
 		let resolved_user = null;
 
 		resolved_user = this.contextHelperController.getFromContext(context, 'user.id', 'id');
@@ -77,6 +79,8 @@ module.exports = class NotificationUtilities {
 	getAccountFromContext(context){
 
 		du.debug('Get User From Context');
+
+		du.info(context);
 
 		let resolved_account = null;
 

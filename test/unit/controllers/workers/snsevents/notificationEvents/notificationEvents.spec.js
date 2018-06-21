@@ -63,6 +63,26 @@ describe('controllers/workers/snsevents/notificationEvents.js', () => {
 
 	});
 
+	describe('getContext', async () => {
+
+		it('successfully retrieves context from the message', async () => {
+
+			let record = getValidEvent().Records[0];
+			let message = JSON.parse(record.Sns.Message);
+
+
+			const NotificationEventsController = global.SixCRM.routes.include('controllers', 'workers/snsevent/notificationEvents.js');
+			let notificationEventsController = new NotificationEventsController();
+
+			let result = await notificationEventsController.getContext(message);
+			expect(result).to.have.property('id');
+			expect(result).to.have.property('user');
+			expect(result).to.have.property('account');
+
+		});
+
+	});
+
 	describe('execute', () => {
 
 		it('successfully executes against valid event',  () => {

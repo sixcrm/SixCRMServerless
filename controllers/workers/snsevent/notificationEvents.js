@@ -74,7 +74,25 @@ module.exports = class NotificationEventsController {
 
 		du.debug('Get Message');
 
-		const message = JSON.parse(record.Sns.Message);
+		let message = null;
+
+		if(!_.has(record, 'Sns')){
+			throw eu.getError('server', 'record missing "Sns" property.');
+		}
+
+		if(!_.has(record.Sns, 'Message')){
+			throw eu.getError('server', 'record.Sns missing "Message" property.');
+		}
+
+		try{
+
+			message = JSON.parse(record.Sns.Message);
+
+		}catch(error){
+
+			du.error(error);
+
+		}
 
 		return message;
 
@@ -100,44 +118,59 @@ module.exports = class NotificationEventsController {
 
 		let return_object = null;
 
-		if(_.has(message, 'context')){
-
-			if(_.has(message.context, 's3_reference')){
-
-				try{
-
-					return_object = await new S3Provider().getObject(
-						'sixcrm-'+global.SixCRM.configuration.stage+'-sns-context-objects',
-						message.context.s3_reference
-					);
-
-					try{
-						return_object = JSON.parse(return_object);
-					}catch(error){
-						du.info('Context not a stringified object.');
-					}
-
-				}catch(error){
-
-					if(fatal){
-						throw error;
-					}
-
-					du.warning(error.message);
-
-				}
-
-			}else{
-				return_object = message.context;
-			}
-
-		}else{
+		if(!_.isObject(message) || !_.has(message, 'context')){
 
 			if(fatal){
 				throw eu.getError('server', 'Message missing "context" property.');
 			}
-
 			du.warning('Message missing "context" property.');
+
+			return return_object;
+
+		}
+
+		if(!_.isObject(message.context)){
+
+			try{
+				message.context = JSON.parse(message.context);
+			}catch(error){
+				du.info('message.context not a stringified object.');
+			}
+
+		}
+
+		if(_.isObject(message.context) && _.has(message.context, 's3_reference')){
+
+			try{
+
+				return_object = await new S3Provider().getObject(
+					'sixcrm-'+global.SixCRM.configuration.stage+'-sns-context-objects',
+					message.context.s3_reference
+				);
+
+			}catch(error){
+
+				if(fatal){
+					throw error;
+				}
+
+				du.warning(error.message);
+
+			}
+
+		}else{
+
+			return_object = message.context;
+
+		}
+
+		if(!_.isObject(return_object)){
+
+			try{
+				return_object = JSON.parse(return_object);
+			}catch(error){
+				du.info('Context not a stringified object.');
+			}
 
 		}
 
