@@ -253,6 +253,11 @@ module.exports = class ShippingReceiptHelperController {
 	}
 
 	async listByCustomer({customer, pagination}) {
+
+		du.debug('List By Customer');
+
+		du.info('Technical Debt: not referenced - '+JSON.stringify(pagination));
+
 		if (!_.has(this, 'sessionController')){
 			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 			this.sessionController = new SessionController();
