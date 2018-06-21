@@ -167,6 +167,7 @@ const ReturnController = global.SixCRM.routes.include('controllers', 'entities/R
 const RoleController = global.SixCRM.routes.include('controllers', 'entities/Role.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
@@ -761,6 +762,27 @@ const fields = Object.assign({}, {
 
 			return shippingReceiptController.get({
 				id: shippingreceipt.id,
+				fatal: get_fatal
+			});
+		}
+	},
+	shippingreceiptbycustomerlist: {
+		type: shippingReceiptListType.graphObj,
+		args: {
+			customer: {
+				description: 'id of the customer',
+				type: new GraphQLNonNull(GraphQLString)
+			},
+			pagination: {
+				type: paginationInputType.graphObj
+			}
+		},
+		resolve: function(root, shippingreceipt) {
+			const shippingReceiptHelper = new ShippingReceiptHelperController();
+
+			return shippingReceiptHelper.listByCustomer({
+				customer: shippingreceipt.customer,
+				pagination: shippingreceipt.pagination,
 				fatal: get_fatal
 			});
 		}

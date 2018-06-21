@@ -31,6 +31,11 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'The amount of the rebill.',
 		},
+		resolved_amount: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'The resolved amount of the rebill, taking into account voids, refunds and chargebacks.',
+			resolve: rebill => rebillController.getResolvedAmount(rebill)
+		},
 		parentsession: {
 			type: sessionType.graphObj,
 			description: 'The session associated with the transaction.',
