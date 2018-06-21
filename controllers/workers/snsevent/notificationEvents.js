@@ -10,25 +10,39 @@ module.exports = class NotificationEventsController {
 
 	constructor(){}
 
-	async execute(records) {
+	async execute(input) {
 
 		du.debug('Execute');
 
-		du.info(records);
+		let records = this.getRecords(input);
 
 		await this.handleEventRecords(records);
 
 	}
 
-	handleEventRecords(input) {
+	getRecords(input){
+
+		du.debug('Get Records');
+
+		du.info(input);
+
+		if(!_.has(input, 'Records')){
+			throw eu.getError('server', 'Unexpected Input, missing "Records" property.');
+		}
+
+		if(!_.isArray(input.Records)){
+			throw eu.getError('server', 'Unexpected Input, "Records" property is not a array.');
+		}
+
+		return input.Records;
+
+	}
+
+	handleEventRecords(records) {
 
 		du.debug('Handle Events');
 
-		if(!_.has(input, 'Records')){
-			return null;
-		}
-
-		let records_promises = input.Records.map((record) => {
+		let records_promises = records.map((record) => {
 			try{
 				return this.handleEventRecord(record);
 			}catch(error){

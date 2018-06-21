@@ -2,6 +2,7 @@ const mockery = require('mockery');
 const chai = require('chai');
 const expect = chai.expect;
 const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 describe('/helpers/notifications/Notification.js', () => {
 
@@ -34,6 +35,25 @@ describe('/helpers/notifications/Notification.js', () => {
 	});
 
 	describe('executeNotifications', async () => {
+
+		xit('returns true against real data', async () => {
+
+			PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+
+			let context = {"id":"d8beed76-bbe2-4a28-a626-658bfb33d7d1","testing":"This is a test","account":"d3fa3bf3-7824-49f4-8261-87674482bf1c","user":{"id":"timothy.dalbey@sixcrm.com"}}
+			let event_type = 'test';
+			let argumentation = {
+				event_type: event_type,
+				context: context
+			};
+
+			const NotificationHelperClass = global.SixCRM.routes.include('helpers','notifications/Notification.js');
+			let notificationHelperClass = new NotificationHelperClass();
+
+			let result = await notificationHelperClass.executeNotifications(argumentation);
+			expect(result).to.equal(true);
+
+		});
 
 		it('returns true', async () => {
 
