@@ -176,7 +176,7 @@ describe('helpers/events/Event.spec.js', () => {
 
 	});
 
-	describe.only('pushEvent (LIVE)', async () => {
+	xdescribe('pushEvent (LIVE)', async () => {
 
 		it('successfully pushes a event', async () => {
 
