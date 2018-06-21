@@ -176,9 +176,9 @@ describe('helpers/events/Event.spec.js', () => {
 
 	});
 
-	describe('pushEvent (LIVE)', async () => {
+	xdescribe('pushEvent (LIVE)', async () => {
 
-		it.only('successfully pushes a event', async () => {
+		it('successfully pushes a event', async () => {
 
 			mockery.deregisterAll();
 
