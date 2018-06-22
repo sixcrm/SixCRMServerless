@@ -7,6 +7,7 @@ const BBPromise = require('bluebird');
 const uuid = require('uuid');
 const CampaignEntity = require('../../../controllers/entities/Campaign');
 const ProductEntity = require('../../../controllers/entities/Product');
+const MerchantProviderEntity = require('../../../controllers/entities/MerchantProvider');
 const CrmImportTrackingEntity = require('../../../controllers/entities/CrmImportTracking');
 
 module.exports = class LimelightIngestHandler extends IngestHandler {
@@ -21,6 +22,8 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 		this._productEntity.disableACLs();
 		this._campaignEntity = new CampaignEntity();
 		this._campaignEntity.disableACLs();
+		this._merchantProviderEntity = new MerchantProviderEntity();
+		this._merchantProviderEntity.disableACLs();
 
 	}
 
@@ -132,6 +135,99 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 	async _ingestMerchantProviders() {
 
 		du.info('LimelightIngestHandler#_ingestMerchantProviders');
+
+		const gateways = await fs.readJSON(path.join(this._artifactsDirectory, 'scraped-gateways.json'));
+		await BBPromise.each(gateways, async (llGateway) => {
+
+			const exists = await this._crmImportTrackingEntity.bySource(this._account, 'limelight', String(llGateway.id), 'merchantProvider');
+
+			if (exists) {
+
+				du.info('merchant proivder already imported', {
+					id: llGateway.id
+				});
+				return;
+
+			}
+
+			const entity = {
+				id: uuid.v4(),
+				account: this._account,
+				name: llGateway.credentials.alias,
+				gateway: {},
+				allow_prepaid: true,
+				enabled: true,
+				accepted_payment_methods:[
+					'Visa',
+					'Mastercard',
+					'American Express',
+					'Discover'
+				],
+				processing: {
+					monthly_cap: llGateway.limitsAndFees.globalMonthlyCap,
+					discount_rate: 0,
+					transaction_fee: llGateway.limitsAndFees.transactionFee,
+					reserve_rate: Number(llGateway.limitsAndFees.reservePercent) / 100,
+					maximum_chargeback_ratio: 0,
+					transaction_counts: {
+						daily: null,
+						weekly: null,
+						monthly: null
+					}
+				}
+			};
+
+			switch (llGateway.type) {
+
+				case 'Network Merchant Inc':
+				{
+					entity.processor = { name: 'NMA' };
+					entity.gateway.name = 'NMI';
+					entity.gateway.type = 'NMI';
+					entity.gateway.username = llGateway.credentials.user;
+					entity.gateway.password = llGateway.credentials.password;
+					break;
+				}
+				case 'Stripe':
+				{
+					entity.processor = { name: 'Stripe' };
+					entity.gateway.name = 'Stripe';
+					entity.gateway.type = 'Stripe';
+					entity.gateway.api_key = llGateway.credentials.apiKey;
+					break;
+				}
+				case 'Authorize.net':
+				{
+					entity.processor = { name: 'AuthorizeNet'};
+					entity.gateway.name = 'AuthorizeNet';
+					entity.gateway.type = 'AuthorizeNet';
+					entity.gateway.api_key = llGateway.credentials.apiKey;
+					entity.gateway.transaction_key = llGateway.credentials.transactionKey;
+					break;
+				}
+				case 'Argus Payment (Inovio)':
+				{
+					entity.processor = { name: 'Humbolt'};
+					entity.gateway.name = 'Innovio';
+					entity.gateway.type = 'Innovio';
+					entity.gateway.username = llGateway.credentials.user;
+					entity.gateway.password = llGateway.credentials.password;
+					break;
+				}
+				default:
+					du.info('gateway type not implemented', {
+						type: llGateway.type
+					});
+					return;
+			}
+
+			const gateway = await this._merchantProviderEntity.create({
+				entity
+			});
+
+			await this._crmImportTrackingEntity.createBySource(this._account, 'limelight', String(llGateway.id), 'merchantProvider', this._batch, gateway.id);
+
+		});
 
 	}
 
