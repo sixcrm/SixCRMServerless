@@ -213,14 +213,16 @@ functions:
 
   customeremail:
     handler: handlers/workers/sns/handlers.customeremail
-
+    events:
+      - sns: events
   trackingevents:
     handler: handlers/workers/sns/handlers.trackingevents
-
+    events:
+      - sns: events
   notificationevents:
     handler: handlers/workers/sns/handlers.notificationevents
     events:
-      - sns: arn:aws:sns:${self:provider.account}:${self:provider.account}:events
+      - sns: events
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 
