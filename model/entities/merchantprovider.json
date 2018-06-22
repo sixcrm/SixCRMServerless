@@ -21,7 +21,7 @@
 				"name": {
 					"type": "string",
 					"enum": [
-						"NMA",
+						"NMI",
 						"Humbolt",
 						"GMA",
 						"Group ISO",

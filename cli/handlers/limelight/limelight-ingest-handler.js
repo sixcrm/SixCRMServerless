@@ -162,7 +162,19 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 					'Mastercard',
 					'American Express',
 					'Discover'
-				]
+				],
+				processing: {
+					monthly_cap: llGateway.limitsAndFees.globalMonthlyCap,
+					discount_rate: 0,
+					transaction_fee: llGateway.limitsAndFees.transactionFee,
+					reserve_rate: Number(llGateway.limitsAndFees.reservePercent) / 100,
+					maximum_chargeback_ratio: 0,
+					transaction_counts: {
+						daily: 0,
+						weekly: 0,
+						monthly: 0
+					}
+				}
 			};
 
 			switch (llGateway.type) {
