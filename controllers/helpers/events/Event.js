@@ -38,6 +38,8 @@ module.exports = class EventHelperController {
 
 		let publish_parameters = this.createPublishParameters(event, context);
 
+		du.info(publish_parameters);
+
 		let result = await this.snsprovider.publish(publish_parameters);
 
 		return result;
@@ -89,6 +91,12 @@ module.exports = class EventHelperController {
 			TopicArn: this.parseTopicARN()
 		};
 
+		if(!_.isObject(message_attributes)){
+			message_attributes = {};
+		}
+
+		message_attributes["event_type"] = {"DataType":"String", "StringValue":event_type};
+
 		return_object = this.addMessageAttributes({return_object: return_object, message_attributes: message_attributes});
 
 		return return_object;
@@ -122,6 +130,10 @@ module.exports = class EventHelperController {
 			return return_object
 
 		}else if(_.isObject(message_attributes)){
+
+			if(Object.keys(message_attributes).length < 1){
+				return return_object;
+			}
 
 			objectutilities.map(message_attributes, (key) => {
 
