@@ -427,6 +427,9 @@ describe('checkout', function () {
 				update({entity}) {
 					return Promise.resolve(entity);
 				}
+				getPaidStatus() {
+					return Promise.resolve('full');
+				}
 			});
 
 			let mock_credit_card = class {
@@ -880,6 +883,9 @@ describe('checkout', function () {
 				listTransactions(rebill){
 					expect(rebill).to.be.defined;
 					return Promise.resolve({transactions});
+				}
+				getPaidStatus() {
+					return Promise.resolve('full');
 				}
 			});
 

@@ -291,11 +291,14 @@ module.exports = class RebillController extends entityController {
 
 	}
 
-	async getResolvedAmount(rebill) {
-		const {transactions} = await this.listTransactions(rebill);
+	async getResolvedAmount(rebill, transactions = null) {
 		if (transactions === null) {
-			return 0;
+			transactions = (await this.listTransactions(rebill)).transactions;
+			if (transactions === null) {
+				return 0;
+			}
 		}
+
 
 		const successful_transactions = arrayutilities.filter(transactions, transaction => transaction.result === 'success');
 		const resolved_amount = arrayutilities.reduce(successful_transactions, (resolved_amount, transaction) => {
@@ -312,6 +315,26 @@ module.exports = class RebillController extends entityController {
 		}, 0);
 
 		return currencyutilities.toCurrency(resolved_amount);
+	}
+
+	async getPaidStatus(rebill, transactions = null) {
+		if (transactions === null) {
+			transactions = (await this.listTransactions(rebill)).transactions;
+			if (transactions === null) {
+				return 0;
+			}
+		}
+
+		const amount = parseFloat(rebill.amount)
+		const resolved_amount = parseFloat(await this.getResolvedAmount(rebill, transactions));
+
+		if (resolved_amount >= amount) {
+			return 'full';
+		} else if (resolved_amount > 0) {
+			return 'partial';
+		} else {
+			return 'none';
+		}
 	}
 
 }

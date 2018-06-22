@@ -281,6 +281,9 @@ describe('createOrder', function () {
 				getResult() {
 					return Promise.resolve(transactions);
 				}
+				getPaidStatus() {
+					return Promise.resolve('full');
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), class {
@@ -454,6 +457,9 @@ describe('createOrder', function () {
 				}
 				getResult() {
 					return Promise.resolve(transactions);
+				}
+				getPaidStatus() {
+					return Promise.resolve('full');
 				}
 			});
 
@@ -635,6 +641,9 @@ describe('createOrder', function () {
 				}
 				getResult() {
 					return Promise.resolve(transactions);
+				}
+				getPaidStatus() {
+					return Promise.resolve('full');
 				}
 			});
 
@@ -1476,6 +1485,32 @@ describe('createOrder', function () {
 		});
 	});
 
+	describe('updateRebillPaidStatus', () => {
+		it('updates rebill paid attribute', () => {
+			const rebill = getValidRebill();
+			const transactions = getValidTransactions();
+
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				async getPaidStatus(_rebill, _transactions) {
+					expect(_rebill).to.equal(rebill);
+					expect(_transactions).to.deep.equal(transactions);
+					return 'paid';
+				}
+				async update({entity}) {
+					expect(entity.paid.detail).to.equal('paid');
+					expect(entity.paid).to.have.property('updated_at');
+					return;
+				}
+			});
+
+			const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
+			const createOrderController = new CreateOrderController();
+
+			return createOrderController.updateRebillPaidStatus(rebill, transactions);
+		});
+	});
+
 	describe('createOrder', () => {
 		it('successfully creates a order', () => {
 
@@ -1524,6 +1559,9 @@ describe('createOrder', function () {
 				}
 				getResult() {
 					return Promise.resolve(transactions);
+				}
+				getPaidStatus() {
+					return Promise.resolve('full');
 				}
 			});
 
