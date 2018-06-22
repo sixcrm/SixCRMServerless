@@ -170,9 +170,9 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 					reserve_rate: Number(llGateway.limitsAndFees.reservePercent) / 100,
 					maximum_chargeback_ratio: 0,
 					transaction_counts: {
-						daily: 0,
-						weekly: 0,
-						monthly: 0
+						daily: null,
+						weekly: null,
+						monthly: null
 					}
 				}
 			};
@@ -181,7 +181,7 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 
 				case 'Network Merchant Inc':
 				{
-					entity.processor = { name: 'NMI' };
+					entity.processor = { name: 'NMA' };
 					entity.gateway.name = 'NMI';
 					entity.gateway.type = 'NMI';
 					entity.gateway.username = llGateway.credentials.user;
