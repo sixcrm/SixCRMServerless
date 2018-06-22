@@ -155,12 +155,11 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 				account: this._account,
 				name: llGateway.credentials.alias,
 				gateway: {},
-				allow_prepaid: true,
+				allow_prepaid: false,
 				enabled: true,
 				accepted_payment_methods:[
 					'Visa',
 					'Mastercard',
-					'American Express',
 					'Discover'
 				],
 				processing: {
