@@ -219,7 +219,8 @@ functions:
 
   notificationevents:
     handler: handlers/workers/sns/handlers.notificationevents
-
+    events:
+      - sns: arn:aws:sns:${self:provider.account}:${self:provider.account}:events
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 

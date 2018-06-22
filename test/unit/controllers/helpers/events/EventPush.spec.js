@@ -183,7 +183,7 @@ describe('helpers/events/Event.spec.js', () => {
 			mockery.deregisterAll();
 
 			global.user = {
-				id: 'tmdalbey@gmail.com'
+				id: 'timothy.dalbey@sixcrm.com'
 			};
 
 			let context = {testing: 'This is a test', account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'}
@@ -207,7 +207,7 @@ describe('helpers/events/Event.spec.js', () => {
 			const EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
 			let eventPushHelperController = new EventPushHelperController();
 
-			let result = await eventPushHelperController.pushEvent({event_type: 'test', context: context});
+			let result = await eventPushHelperController.pushEvent({event_type: 'testalert', context: context});
 			//expect(result).to.have.property('MessageId');
 			console.log(result);
 
