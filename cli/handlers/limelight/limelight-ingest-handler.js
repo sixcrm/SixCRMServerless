@@ -152,36 +152,54 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 
 			const entity = {
 				id: uuid.v4(),
-				account: this._account
+				account: this._account,
+				name: llGateway.credentials.alias,
+				gateway: {},
+				allow_prepaid: true,
+				enabled: true,
+				accepted_payment_methods:[
+					'Visa',
+					'Mastercard',
+					'American Express',
+					'Discover'
+				]
 			};
 
 			switch (llGateway.type) {
 
 				case 'Network Merchant Inc':
 				{
-					entity.name = 'NMI';
-					entity.username = llGateway.credentials.user;
-					entity.password = llGateway.credentials.password;
+					entity.processor = { name: 'NMI' };
+					entity.gateway.name = 'NMI';
+					entity.gateway.type = 'NMI';
+					entity.gateway.username = llGateway.credentials.user;
+					entity.gateway.password = llGateway.credentials.password;
 					break;
 				}
 				case 'Stripe':
 				{
-					entity.name = 'Stripe';
-					entity.api_key = llGateway.credentials.apiKey;
+					entity.processor = { name: 'Stripe' };
+					entity.gateway.name = 'Stripe';
+					entity.gateway.type = 'Stripe';
+					entity.gateway.api_key = llGateway.credentials.apiKey;
 					break;
 				}
 				case 'Authorize.net':
 				{
-					entity.name = 'AuthorizeNet';
-					entity.api_key = llGateway.credentials.apiKey;
-					entity.transaction_key = llGateway.credentials.transactionKey;
+					entity.processor = { name: 'AuthorizeNet'};
+					entity.gateway.name = 'AuthorizeNet';
+					entity.gateway.type = 'AuthorizeNet';
+					entity.gateway.api_key = llGateway.credentials.apiKey;
+					entity.gateway.transaction_key = llGateway.credentials.transactionKey;
 					break;
 				}
 				case 'Argus Payment (Inovio)':
 				{
-					entity.name = 'Innovio';
-					entity.username = llGateway.credentials.user;
-					entity.password = llGateway.credentials.password;
+					entity.processor = { name: 'Humbolt'};
+					entity.gateway.name = 'Innovio';
+					entity.gateway.type = 'Innovio';
+					entity.gateway.username = llGateway.credentials.user;
+					entity.gateway.password = llGateway.credentials.password;
 					break;
 				}
 				default:
