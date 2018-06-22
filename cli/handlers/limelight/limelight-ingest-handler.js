@@ -7,6 +7,7 @@ const BBPromise = require('bluebird');
 const uuid = require('uuid');
 const CampaignEntity = require('../../../controllers/entities/Campaign');
 const ProductEntity = require('../../../controllers/entities/Product');
+const MerchantProviderEntity = require('../../../controllers/entities/MerchantProvider');
 const CrmImportTrackingEntity = require('../../../controllers/entities/CrmImportTracking');
 
 module.exports = class LimelightIngestHandler extends IngestHandler {
@@ -21,6 +22,8 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 		this._productEntity.disableACLs();
 		this._campaignEntity = new CampaignEntity();
 		this._campaignEntity.disableACLs();
+		this._merchantProviderEntity = new MerchantProviderEntity();
+		this._merchantProviderEntity.disableACLs();
 
 	}
 
@@ -132,6 +135,69 @@ module.exports = class LimelightIngestHandler extends IngestHandler {
 	async _ingestMerchantProviders() {
 
 		du.info('LimelightIngestHandler#_ingestMerchantProviders');
+
+		const gateways = await fs.readJSON(path.join(this._artifactsDirectory, 'scraped-gateways.json'));
+		await BBPromise.each(gateways, async (llGateway) => {
+
+			const exists = await this._crmImportTrackingEntity.bySource(this._account, 'limelight', String(llGateway.id), 'merchantProvider');
+
+			if (exists) {
+
+				du.info('merchant proivder already imported', {
+					id: llGateway.id
+				});
+				return;
+
+			}
+
+			const entity = {
+				id: uuid.v4(),
+				account: this._account
+			};
+
+			switch (llGateway.type) {
+
+				case 'Network Merchant Inc':
+				{
+					entity.name = 'NMI';
+					entity.username = llGateway.credentials.user;
+					entity.password = llGateway.credentials.password;
+					break;
+				}
+				case 'Stripe':
+				{
+					entity.name = 'Stripe';
+					entity.api_key = llGateway.credentials.apiKey;
+					break;
+				}
+				case 'Authorize.net':
+				{
+					entity.name = 'AuthorizeNet';
+					entity.api_key = llGateway.credentials.apiKey;
+					entity.transaction_key = llGateway.credentials.transactionKey;
+					break;
+				}
+				case 'Argus Payment (Inovio)':
+				{
+					entity.name = 'Innovio';
+					entity.username = llGateway.credentials.user;
+					entity.password = llGateway.credentials.password;
+					break;
+				}
+				default:
+					du.info('gateway type not implemented', {
+						type: llGateway.type
+					});
+					return;
+			}
+
+			const gateway = await this._merchantProviderEntity.create({
+				entity
+			});
+
+			await this._crmImportTrackingEntity.createBySource(this._account, 'limelight', String(llGateway.id), 'merchantProvider', this._batch, gateway.id);
+
+		});
 
 	}
 
