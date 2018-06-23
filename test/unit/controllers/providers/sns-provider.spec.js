@@ -205,9 +205,13 @@ describe('controllers/providers/sns-provider', () => {
 			const snsprovider = new SNSProvider();
 
 			snsprovider.sns = {
-				publish: (params, callback) => {
-					expect(params).to.have.property('Message');
-					callback(null, 'success');
+				publish: (params) => {
+					expect(params).to.have.property('Message')
+					return {
+						promise: () => {
+							return Promise.resolve('success')
+						}
+					}
 				}
 			};
 
@@ -226,9 +230,13 @@ describe('controllers/providers/sns-provider', () => {
 			const snsprovider = new SNSProvider();
 
 			snsprovider.sns = {
-				publish: (params, callback) => {
-					expect(params).to.have.property('Message');
-					callback(new Error('Publish failed'), null);
+				publish: (params) => {
+					expect(params).to.have.property('Message')
+					return {
+						promise: () => {
+							return Promise.resolve('Publish failed')
+						}
+					}
 				}
 			};
 

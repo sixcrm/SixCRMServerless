@@ -401,4 +401,192 @@ describe('controllers/Rebill.js', () => {
 			return rebillController.getPendingRebills({pagination: {}, fatal: false, search: {}});
 		});
 	});
+
+	describe('getResolvedAmount', () => {
+		it('sums sale amounts', async () => {
+			const rebill = getValidRebill();
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+				listTransactionsByRebillID(_rebill) {
+					expect(_rebill.id).to.equal(rebill.id);
+					return {
+						transactions: [{
+							type: 'sale',
+							result: 'success',
+							amount: '4.99'
+						}, {
+							type: 'sale',
+							result: 'success',
+							amount: '4.99'
+						}]
+					};
+				}
+			});
+
+			const RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+			const rebillController = new RebillController();
+
+			const resolvedAmount = await rebillController.getResolvedAmount(rebill);
+			expect(resolvedAmount).to.equal('9.98')
+		});
+
+		it('subtracts refund and reverse amounts', async () => {
+			const rebill = getValidRebill();
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+				listTransactionsByRebillID(_rebill) {
+					expect(_rebill.id).to.equal(rebill.id);
+					return {
+						transactions: [{
+							type: 'sale',
+							result: 'success',
+							amount: '9.99'
+						}, {
+							type: 'refund',
+							result: 'success',
+							amount: '1.99'
+						}, {
+							type: 'reverse',
+							result: 'success',
+							amount: '1.99'
+						}]
+					};
+				}
+			});
+
+			const RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+			const rebillController = new RebillController();
+
+			const resolvedAmount = await rebillController.getResolvedAmount(rebill);
+			expect(resolvedAmount).to.equal('6.01')
+		});
+
+		it('ignores decline/error transactions', async () => {
+			const rebill = getValidRebill();
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+				listTransactionsByRebillID(_rebill) {
+					expect(_rebill.id).to.equal(rebill.id);
+					return {
+						transactions: [{
+							type: 'sale',
+							result: 'success',
+							amount: '9.99'
+						}, {
+							type: 'sale',
+							result: 'decline',
+							amount: '4.99'
+						}, {
+							type: 'refund',
+							result: 'decline',
+							amount: '1.99'
+						}, {
+							type: 'reverse',
+							result: 'error',
+							amount: '1.99'
+						}]
+					};
+				}
+			});
+
+			const RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+			const rebillController = new RebillController();
+
+			const resolvedAmount = await rebillController.getResolvedAmount(rebill);
+			expect(resolvedAmount).to.equal('9.99');
+		});
+	});
+
+	describe('getPaidStatus', () => {
+		it('returns none if no transactions succeeded', async () => {
+			const rebill = getValidRebill();
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+				listTransactionsByRebillID(_rebill) {
+					expect(_rebill.id).to.equal(rebill.id);
+					return {
+						transactions: [{
+							type: 'sale',
+							result: 'decline',
+							amount: '4.99'
+						}, {
+							type: 'sale',
+							result: 'decline',
+							amount: '13.99'
+						}, {
+							type: 'sale',
+							result: 'error',
+							amount: '1.99'
+						}]
+					};
+				}
+			});
+
+			const RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+			const rebillController = new RebillController();
+
+			const status = await rebillController.getPaidStatus(rebill);
+			expect(status).to.equal('none');
+		});
+
+		it('returns full if paid amount equals rebill total', async () => {
+			const rebill = getValidRebill();
+			rebill.amount = '4.99'
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+				listTransactionsByRebillID(_rebill) {
+					expect(_rebill.id).to.equal(rebill.id);
+					return {
+						transactions: [{
+							type: 'sale',
+							result: 'success',
+							amount: '1.99'
+						}, {
+							type: 'sale',
+							result: 'decline',
+							amount: '3.00'
+						}, {
+							type: 'sale',
+							result: 'success',
+							amount: '3.00'
+						}, ]
+					};
+				}
+			});
+
+			const RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+			const rebillController = new RebillController();
+
+			const status = await rebillController.getPaidStatus(rebill);
+			expect(status).to.equal('full');
+		});
+
+		it('returns partial if an amount was paid that is less than rebill total', async () => {
+			const rebill = getValidRebill();
+			rebill.amount = '4.99'
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Transaction.js'), class {
+				listTransactionsByRebillID(_rebill) {
+					expect(_rebill.id).to.equal(rebill.id);
+					return {
+						transactions: [{
+							type: 'sale',
+							result: 'success',
+							amount: '1.99'
+						}, {
+							type: 'sale',
+							result: 'decline',
+							amount: '3.00'
+						}]
+					};
+				}
+			});
+
+			const RebillController = global.SixCRM.routes.include('controllers','entities/Rebill.js');
+			const rebillController = new RebillController();
+
+			const status = await rebillController.getPaidStatus(rebill);
+			expect(status).to.equal('partial');
+		});
+	});
 });

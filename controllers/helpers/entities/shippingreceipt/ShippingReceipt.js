@@ -252,4 +252,67 @@ module.exports = class ShippingReceiptHelperController {
 
 	}
 
+	async listByCustomer({customer, pagination}) {
+
+		du.debug('List By Customer');
+
+		du.info('Technical Debt: not referenced - '+JSON.stringify(pagination));
+
+		if (!_.has(this, 'sessionController')){
+			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
+		}
+
+		if (!_.has(this, 'rebillController')){
+			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+			this.rebillController = new RebillController();
+		}
+
+		if (!_.has(this, 'transactionController')){
+			const TransactionController = global.SixCRM.routes.include('entities', 'Transaction.js');
+			this.transactionController = new TransactionController();
+		}
+
+		if (!_.has(this, 'shippingReceiptController')){
+			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
+			this.shippingReceiptController = new ShippingReceiptController();
+		}
+
+		const sessions = await this.sessionController.getSessionByCustomer(customer);
+
+		const session_rebills = await Promise.all(arrayutilities.map(sessions, async session => {
+			const result = await this.rebillController.queryBySecondaryIndex({
+				index_name: 'parentsession-index',
+				field: 'parentsession',
+				index_value: session.id
+			});
+			return result.rebills;
+		}));
+		const rebills = arrayutilities.filter(arrayutilities.flatten(session_rebills), rebill => !_.isNull(rebill));
+
+
+		const rebill_transactions = await Promise.all(arrayutilities.map(rebills, async rebill => {
+			const result = await this.transactionController.queryBySecondaryIndex({
+				index_name: 'rebill-index',
+				field: 'rebill',
+				index_value: rebill.id
+			});
+			return result.transactions;
+		}));
+		const transactions = arrayutilities.filter(arrayutilities.flatten(rebill_transactions), transaction => !_.isNull(transaction));
+
+		const transaction_products = arrayutilities.flatten(arrayutilities.map(transactions, transaction => transaction.products));
+		const product_shipping_receipts = arrayutilities.flatten(arrayutilities.map(transaction_products, product => product.shipping_receipt));
+		const shipping_receipt_ids = arrayutilities.unique(arrayutilities.filter(product_shipping_receipts, receipt => !_.isUndefined(receipt)));
+		const shipping_receipts = await this.shippingReceiptController.batchGet({ids: shipping_receipt_ids});
+		return {
+			shippingreceipts: shipping_receipts,
+			pagination: {
+				count: shipping_receipts.length,
+				end_cursor: '',
+				has_next_page: 'false',
+				last_evaluated: ''
+			}
+		};
+	}
 }

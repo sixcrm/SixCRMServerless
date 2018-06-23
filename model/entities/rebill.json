@@ -70,6 +70,21 @@
 		},
 		"upsell": {
 			"$ref": "../definitions/uuidv4.json"
+		},
+		"paid": {
+			"type": "object",
+			"properties": {
+				"detail": {
+					"type": "string",
+					"enum": [
+						"full",
+						"partial"
+					]
+				},
+				"updated_at": {
+					"$ref": "../definitions/iso8601.json"
+				}
+			}
 		}
 	},
 	"required": [

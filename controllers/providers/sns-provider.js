@@ -184,15 +184,7 @@ module.exports = class SNSProvider extends AWSProvider{
 			false
 		);
 
-		return new Promise((resolve, reject) => {
-			this.sns.publish(params, function(error, data) {
-				if (error){
-					du.error(error);
-					return reject(error);
-				}
-				return resolve(data);
-			});
-		});
+		return this.sns.publish(params).promise();
 
 	}
 
@@ -224,4 +216,3 @@ module.exports = class SNSProvider extends AWSProvider{
 	}
 
 }
-

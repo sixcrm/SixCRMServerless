@@ -213,13 +213,10 @@ functions:
 
   customeremail:
     handler: handlers/workers/sns/handlers.customeremail
-
   trackingevents:
     handler: handlers/workers/sns/handlers.trackingevents
-
   notificationevents:
     handler: handlers/workers/sns/handlers.notificationevents
-
 #  eventhooks:
 #    handler: handlers/workers/eventhooks/handler.eventhooks
 

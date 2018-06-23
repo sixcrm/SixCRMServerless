@@ -13,5 +13,8 @@
 	},
 	{
     "Bucket": "data-pipeline"
-	}
+	},
+  {
+    "Bucket":"sns-context-objects"
+  }
 ]

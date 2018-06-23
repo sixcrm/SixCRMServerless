@@ -139,10 +139,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 	}
 
-	pushEvent({
-		event_type = undefined,
-		context = undefined
-	} = {}) {
+	pushEvent({event_type = null, context = null} = {}) {
 
 		du.debug('Push Event');
 
@@ -164,6 +161,10 @@ module.exports = class transactionEndpointController extends authenticatedContro
 			}
 		}
 
+		if(!_.has(global, 'user')){
+			throw eu.getError('server', 'Global missing "user" property.');
+		}
+
 		if (!_.has(this, 'eventHelperController')) {
 			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 			this.eventHelperController = new EventHelperController();
@@ -171,11 +172,15 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 		return this.eventHelperController.pushEvent({
 			event_type: event_type,
-			context: Object.assign({
-				id: uuid.v4()
-			}, context, {
-				user: global.user
-			})
+			context: Object.assign(
+				{
+					id: uuid.v4()
+				},
+				context,
+				{
+					user: global.user
+				}
+			)
 		});
 
 	}

@@ -159,8 +159,11 @@ module.exports = class LimelightScraper {
 		const content = JSON.parse(res.body).content;
 
 		const $ = cheerio.load(content);
+		const typeElement = $('#my_providers_form h3').text();
 		const usernameElement = $('input[name="Username"]');
 		const passwordElement = $('input[id="Password"]');
+		const apiKeyElement = $('input[id="API Key"]');
+		const transactionKeyElement = $('input[id="Trans Key"]');
 		const statusElement = $('input[name="profile_status"]');
 		const aliasElement = $('input[name="profile_alias"]');
 		const currency = $('select[id="Currency"] option:selected').text();
@@ -218,9 +221,12 @@ module.exports = class LimelightScraper {
 
 		return {
 			id,
+			type: this._cleanseOutput(typeElement),
 			credentials: {
 				user: this._cleanseOutput(usernameElement.val()),
 				password: this._cleanseOutput(passwordElement.val()),
+				apiKey: this._cleanseOutput(apiKeyElement.val()),
+				transactionKey: this._cleanseOutput(transactionKeyElement.val()),
 				status: this._cleanseOutput(statusElement.val()),
 				alias: this._cleanseOutput(aliasElement.val()),
 				currency: this._cleanseOutput(currency),
@@ -605,6 +611,7 @@ module.exports = class LimelightScraper {
 		const maxQty = this._cleanseOutput($('#product_max_qty').val());
 		const desc = this._cleanseOutput($('#product_description').text());
 		const shippable = $('#product_shippable').val();
+		const weight = this._cleanseOutput($('product_weight').val());
 		const nextRecurringProduct = this._cleanseOutput($('select[name="recurring_next_product"] option:selected').text());
 		const subscriptionType = this._cleanseOutput($('select[id="subscription_type"] option:selected').text());
 		const daysToNextBilling = this._cleanseOutput($('#recurring_days').val());
@@ -623,6 +630,7 @@ module.exports = class LimelightScraper {
 			maxQty,
 			desc,
 			shippable,
+			weight,
 			nextRecurringProduct,
 			subscriptionType,
 			daysToNextBilling,

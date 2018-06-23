@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const currencyutilities = require('@sixcrm/sixcrmcore/util/currency-utilities').default;
 const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
 const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
 
@@ -288,6 +289,52 @@ module.exports = class RebillController extends entityController {
 			pagination: pagination
 		});
 
+	}
+
+	async getResolvedAmount(rebill, transactions = null) {
+		if (transactions === null) {
+			transactions = (await this.listTransactions(rebill)).transactions;
+			if (transactions === null) {
+				return 0;
+			}
+		}
+
+
+		const successful_transactions = arrayutilities.filter(transactions, transaction => transaction.result === 'success');
+		const resolved_amount = arrayutilities.reduce(successful_transactions, (resolved_amount, transaction) => {
+			const amount = parseFloat(transaction.amount);
+			if (transaction.type === 'sale') {
+				resolved_amount += amount;
+			} else if (transaction.type === 'refund') {
+				resolved_amount -= amount;
+			} else if (transaction.type === 'reverse') {
+				resolved_amount -= amount;
+			}
+
+			return resolved_amount;
+		}, 0);
+
+		return currencyutilities.toCurrency(resolved_amount);
+	}
+
+	async getPaidStatus(rebill, transactions = null) {
+		if (transactions === null) {
+			transactions = (await this.listTransactions(rebill)).transactions;
+			if (transactions === null) {
+				return 0;
+			}
+		}
+
+		const amount = parseFloat(rebill.amount)
+		const resolved_amount = parseFloat(await this.getResolvedAmount(rebill, transactions));
+
+		if (resolved_amount >= amount) {
+			return 'full';
+		} else if (resolved_amount > 0) {
+			return 'partial';
+		} else {
+			return 'none';
+		}
 	}
 
 }
