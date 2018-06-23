@@ -178,7 +178,34 @@ describe('helpers/events/Event.spec.js', () => {
 
 	xdescribe('pushEvent (LIVE)', async () => {
 
-		it('successfully pushes a event', async () => {
+		it('successfully pushes a event (lead)', async () => {
+
+			mockery.deregisterAll();
+
+			global.user = {
+				id: 'timothy.dalbey@sixcrm.com'
+			};
+
+			let event_type = 'lead';
+			let context = {
+				campaign:{
+					name: 'Testing Campaign'
+				},
+				customer:{
+					id: '24f7c851-29d4-4af9-87c5-0298fa74c689'
+				},
+				account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'
+			}
+
+			const EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
+			let eventPushHelperController = new EventPushHelperController();
+
+			let result = await eventPushHelperController.pushEvent({event_type: event_type, context: context});
+			console.log(result);
+
+		});
+
+		it('successfully pushes a event (test)', async () => {
 
 			mockery.deregisterAll();
 
@@ -188,29 +215,11 @@ describe('helpers/events/Event.spec.js', () => {
 
 			let context = {testing: 'This is a test', account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'}
 
-			/*
-			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
-				constructor(){}
-				pushEvent({event_type, context}){
-					expect(event_type).to.equal('test');
-					expect(context).to.have.property('hi');
-					expect(context.hi).to.equal('there');
-					expect(context).to.have.property('id');
-					expect(context).to.have.property('user');
-					expect(context.user).to.have.property('id');
-					expect(context.user.id).to.equal('some.user@example.com');
-					return Promise.resolve({MessageId:'somemessageid'});
-				}
-			});
-			*/
-
 			const EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
 			let eventPushHelperController = new EventPushHelperController();
 
 			let result = await eventPushHelperController.pushEvent({event_type: 'testalert', context: context});
-			//expect(result).to.have.property('MessageId');
 			console.log(result);
-
 
 		});
 
