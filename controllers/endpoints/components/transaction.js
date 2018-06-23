@@ -139,14 +139,20 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 	}
 
-	pushEvent() {
+	pushEvent({event_type = null, context = null} = {}) {
 
 		du.debug('Push Event');
 
-		du.info(this.parameters);
+		if(event_type === null && _.has(this.event_type)){
+			event_type = this.event_type;
+		}
+
+		if(context === null && _.has(this.parameters)){
+			context = this.parameters.store;
+		}
 
 		let EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
-		new EventPushHelperController().pushEvent({event_type: this.event_type, context: this.parameters.store});
+		new EventPushHelperController().pushEvent({event_type: event_type, context: context});
 
 	}
 

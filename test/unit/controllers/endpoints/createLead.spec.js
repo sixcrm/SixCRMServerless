@@ -740,4 +740,127 @@ describe('createLead', function () {
 
 	});
 
+	xdescribe('execute (LIVE)', () => {
+
+		let global_user;
+
+		beforeEach(() => {
+			global_user = global.user;
+		});
+
+		afterEach(() => {
+			global.user = global_user;
+		});
+
+		it('successfully executes', () => {
+
+			mockery.resetCache();
+			mockery.deregisterAll();
+
+			let event = getValidEvent();
+			let customer = getValidCustomer();
+			let affiliates = getValidAffiliates();
+			let campaign = getValidCampaign();
+			let session = getValidSession();
+			let user = MockEntities.getValidUser();
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'User.js'), class {
+				get() {
+					return Promise.resolve(session)
+				}
+				isEmail() {
+					return true;
+				}
+				getUserStrict() {
+					return Promise.resolve({});
+				}
+				getUserByAlias(){
+					return Promise.resolve(user);
+				}
+				setGlobalUser(user){
+					global.user = user;
+				}
+			});
+
+			let mock_customer = class {
+				constructor(){}
+
+				getCustomerByEmail() {
+					return Promise.resolve(null);
+				}
+				create() {
+					return Promise.resolve(customer);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Customer.js'), mock_customer);
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/affiliate/Affiliate.js'), class {
+				constructor(){}
+				handleAffiliateInformation(a_event){
+					let cloned_event = objectutilities.clone(a_event);
+
+					cloned_event.affiliates = affiliates;
+					return Promise.resolve(cloned_event);
+				}
+				transcribeAffiliates(){
+					return {};
+				}
+			});
+
+			let mock_campaign = class {
+				constructor(){}
+
+				get () {
+					return Promise.resolve(campaign);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+				assureSession() {
+					return Promise.resolve(session);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
+				constructor(){}
+				validateAccount(){
+					return Promise.resolve(true);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers','statemachine/StateMachine.js'), class{
+				constructor(){}
+				startExecution({parameters, restart}){
+					expect(parameters).to.be.a('object');
+					expect(restart).to.equal(false);
+					return Promise.resolve(true);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+				constructor(){}
+				sendMessage({message_body, queue, messageGroupId}){
+					expect(message_body).to.be.a('string');
+					expect(queue).to.be.a('string');
+					expect(messageGroupId).to.be.a('string');
+					return Promise.resolve(true);
+				}
+			});
+
+			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
+			const createLeadController = new CreateLeadController();
+
+			return createLeadController.execute(event).then(result => {
+				expect(global.SixCRM.validate(result, global.SixCRM.routes.path('model', 'endpoints/createLead/response.json'))).to.equal(true);
+			});
+
+		});
+
+	});
+
 });

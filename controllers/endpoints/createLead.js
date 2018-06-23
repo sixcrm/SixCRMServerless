@@ -61,8 +61,6 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 		this.initialize();
 
-		this.event_type = 'lead';
-
 	}
 
 	execute(event) {
@@ -82,7 +80,7 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 		let session_prototype = this.createSessionPrototype(customer, campaign, affiliates);
 		let session = await this.assureSession(session_prototype);
 		await this.triggerSessionCloseStateMachine(session);
-		await this.postProcessing(session, campaign, affiliates);
+		await this.postProcessing(session, campaign, affiliates, customer);
 
 		return this.sessionHelperController.getPublicFields(session);
 
@@ -165,13 +163,16 @@ module.exports = class CreateLeadController extends transactionEndpointControlle
 
 	}
 
-	postProcessing(session, campaign, affiliates) {
+	postProcessing(session, campaign, affiliates, customer) {
 
 		du.debug('Post Processing');
 
 		return Promise.all(
 			[
-				this.pushEvent(),
+				this.pushEvent({event_type: 'lead', context: {
+					customer: customer,
+					campaign: campaign
+				}}),
 				AnalyticsEvent.push('lead', {
 					session,
 					campaign,

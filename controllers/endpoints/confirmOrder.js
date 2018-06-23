@@ -58,8 +58,6 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 		this.initialize();
 
-		this.event_type = 'confirm';
-
 	}
 
 	execute(event) {
@@ -161,7 +159,10 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		du.debug('Post Processing');
 
 		return Promise.all([
-			this.pushEvent(),
+			this.pushEvent({event_type: 'confirm', context:{
+				campaign: campaign,
+				session: session
+			}}),
 			AnalyticsEvent.push('confirm', {
 				session,
 				campaign
