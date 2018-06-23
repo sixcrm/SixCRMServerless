@@ -143,6 +143,8 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 		du.debug('Push Event');
 
+		du.info(this.parameters);
+
 		let EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
 		new EventPushHelperController().pushEvent({event_type: this.event_type, context: this.parameters.store});
 
