@@ -792,11 +792,11 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		let return_array = [];
 
 		if(!_.has(results, 'rebills')){
-			throw eu.getError('server', 'Unknown response structure: '+JSON.stringify(results));
+			throw eu.getError('server', 'Unknown response structure - missing property "rebills" on results object: '+JSON.stringify(results));
 		}
 
-		if(!_.isNull(results.rebills) || _.isArray(results.rebills)){
-			throw eu.getError('server', 'Unknown response structure: '+JSON.stringify(results.rebills));
+		if(_.isNull(results.rebills) || !_.isArray(results.rebills)){
+			throw eu.getError('server', 'Unknown response structure - results.rebills is assumed to be a non-null array: '+JSON.stringify(results.rebills));
 		}
 
 		if(_.isArray(results.rebills) && arrayutilities.nonEmpty(results.rebills)){
