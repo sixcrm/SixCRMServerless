@@ -771,14 +771,14 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 		let query_parameters = {
 			key_condition_expression: '#bill_atk < :bill_atv',
-			filter_expression: '#processingk <> :processingv',
+			filter_expression: 'attribute_not_exists(#processingk) OR #processingk <> :processingv',
 			expression_attribute_names: {
 				'#bill_atk': 'bill_at',
 				'#processingk':'processing'
 			},
 			expression_attribute_values: {
 				":bill_atv": now,
-				':processingv': 'true'
+				":processingv": true
 			},
 			projection_expression: 'id'
 		};
@@ -795,7 +795,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 			throw eu.getError('server', 'Unknown response structure - missing property "rebills" on results object: '+JSON.stringify(results));
 		}
 
-		if(_.isNull(results.rebills) || !_.isArray(results.rebills)){
+		if(!_.isNull(results.rebills) && !_.isArray(results.rebills)){
 			throw eu.getError('server', 'Unknown response structure - results.rebills is assumed to be a non-null array: '+JSON.stringify(results.rebills));
 		}
 

@@ -523,4 +523,57 @@ describe('controllers/workers/selectRebills.js', () => {
 		});
 	});
 
+	xdescribe('execute (LIVE)', async () => {
+		it('returns "SUCCESS"', async () => {
+
+			/*
+			let rebills = MockEntities.getValidRebills();
+			let ids = arrayutilities.map(rebills, rebill => rebill.id);
+
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/Rebill.js'), class{
+				constructor(){}
+				getAvailableRebills(now){
+					expect(now).to.be.a('string');
+					return Promise.resolve(ids);
+				}
+				updateRebillProcessing({rebill, processing}){
+					expect(rebill).to.be.a('object');
+					expect(processing).to.equal(true);
+					rebill.processing = true;
+					return Promise.resolve(rebill);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('workers','statemachine/components/stepFunctionTrigger.js'), class{
+				constructor(){}
+				execute(event){
+					expect(event).to.have.property('guid');
+					expect(event.guid).to.be.a('string');
+					expect(event).to.have.property('stateMachineName');
+					expect(event.stateMachineName).to.equal('Billing');
+					return Promise.resolve({
+						executionArn: 'somearn'
+					});
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities','Rebill.js'), class{
+				constructor(){}
+				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(arrayutilities.find(rebills, rebill => { return rebill.id == id }));
+				}
+			});
+			*/
+
+			const SelectRebillsController = global.SixCRM.routes.include('controllers', 'workers/selectRebills.js');
+			let selectRebillsController = new SelectRebillsController();
+
+			let result = await selectRebillsController.execute();
+			expect(result).to.equal('SUCCESS');
+
+		});
+
+	});
+
 });
