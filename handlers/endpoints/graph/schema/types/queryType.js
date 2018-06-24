@@ -605,29 +605,16 @@ const fields = Object.assign({}, {
 		type: notificationTestType.graphObj,
 		resolve: function() {
 
-			const EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-			let eventsHelperController = new EventsHelperController();
-
 			let context = {
 				user: global.user,
 				account: global.account
 			};
-			let message_attributes = {
-				'event_type': {
-					DataType: 'String',
-					StringValue: 'test'
-				}
-			};
 
-			return eventsHelperController.pushEvent({
+			let EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
+			return new EventPushHelperController().pushEvent({
 				event_type: 'test',
-				context: context,
-				message_attributes: message_attributes
-			}).then(() => {
-				return {
-					result: 'OK'
-				};
-			});
+				context: context
+			}).then(() => { return {result: 'OK'} });
 
 		}
 	},
@@ -635,28 +622,16 @@ const fields = Object.assign({}, {
 		type: alertTestType.graphObj,
 		resolve: function() {
 
-			const EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-			let eventsHelperController = new EventsHelperController();
 			let context = {
 				user: global.user,
 				account: global.account
 			};
-			let message_attributes = {
-				'event_type': {
-					DataType: 'String',
-					StringValue: 'testalert'
-				}
-			};
 
-			return eventsHelperController.pushEvent({
+			let EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
+			return new EventPushHelperController().pushEvent({
 				event_type: 'testalert',
-				context: context,
-				message_attributes: message_attributes
-			}).then(() => {
-				return {
-					result: 'OK'
-				};
-			});
+				context: context
+			}).then(() => { return {result: 'OK'} });
 
 		}
 	},

@@ -660,7 +660,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Account.js'), class {
 				constructor(){}
 				get({id}){
-					expect(id).to.equal(account.id);
+					expect(id).to.be.a('string');
 					return Promise.resolve(account)
 				}
 			});
@@ -668,11 +668,11 @@ describe('/helpers/entities/invite/Invite.js', () => {
 			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/Role.js'), class {
 				constructor(){}
 				get({id}){
-					expect(id).to.equal(role.id);
+					expect(id).to.be.a('string');
 					return Promise.resolve(role)
 				}
 				getShared({id}){
-					expect(id).to.equal(role.id);
+					expect(id).to.be.a('string');
 					return Promise.resolve(role)
 				}
 			});
@@ -780,6 +780,10 @@ describe('/helpers/entities/invite/Invite.js', () => {
 					expect(id).to.be.a('string');
 					return Promise.resolve(user);
 				}
+				assureUser(id) {
+					expect(id).to.be.a('string');
+					return Promise.resolve(user);
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
@@ -860,6 +864,10 @@ describe('/helpers/entities/invite/Invite.js', () => {
 					return true;
 				}
 				get({id}){
+					expect(id).to.be.a('string');
+					return Promise.resolve(user);
+				}
+				assureUser(id) {
 					expect(id).to.be.a('string');
 					return Promise.resolve(user);
 				}

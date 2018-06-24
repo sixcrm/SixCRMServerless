@@ -6,8 +6,6 @@ const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').defa
 const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
 const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
 
-const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-
 let configuration = {
 	environment: 'development',
 	account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
@@ -39,9 +37,8 @@ objectutilities.map(cli_parameters, key => {
 
 });
 
-let eventHelperController = new EventHelperController();
-
-eventHelperController.pushEvent({
-	context: configuration.context,
-	event_type: configuration.event_type
+let EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
+new EventPushHelperController().pushEvent({
+	event_type: configuration.event_type,
+	context: configuration.context
 });

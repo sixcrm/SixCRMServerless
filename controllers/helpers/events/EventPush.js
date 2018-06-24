@@ -10,7 +10,7 @@ module.exports = class EventPushHelperController {
 
 	constructor() {}
 
-	pushEvent({event_type = null, context = null} = {}) {
+	pushEvent({event_type = null, context = null, message_attributes = null} = {}) {
 
 		du.debug('EventPushHelperController.pushEvent()');
 
@@ -23,7 +23,7 @@ module.exports = class EventPushHelperController {
 		}
 
 		if ((context === undefined) || (context === null)) {
-			throw eu.getError('server', 'Unset context.');
+			context = {};
 		}
 
 		if(!_.has(global, 'user')){
@@ -40,7 +40,8 @@ module.exports = class EventPushHelperController {
 				{
 					user: global.user
 				}
-			)
+			),
+			message_attributes: message_attributes
 		});
 
 	}

@@ -111,11 +111,13 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		this.parameters.set('invite', invite)
 
+		this._hydrateInviteProperties(invite);
+
 		await this._updatePendingACL(invite.acl);
 		const user = await this._assureUser(invite);
 
 		await this._removeInvite(invite);
-		await this._postAccept();
+		await this._postAccept(invite, user);
 
 		return user;
 
@@ -186,11 +188,13 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	_hydrateInviteProperties(){
+	_hydrateInviteProperties(user_invite = null){
 
 		du.debug('Hydrate Invite Properties');
 
-		let user_invite = this.parameters.get('userinvite');
+		if(user_invite === null){
+			user_invite = this.parameters.get('userinvite');
+		}
 
 		let properties = [];
 
@@ -326,7 +330,11 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Post Invite');
 
-		return this.pushEvent({event_type: 'user_invited'});
+		let account = this.parameters.get('account');
+		let role = this.parameters.get('role');
+		let user = this.parameters.get('user');
+
+		return this.pushEvent({event_type: 'user_invited', context: {user: user, role: role, account: account}});
 
 	}
 
@@ -334,7 +342,11 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Post Invite Resend');
 
-		return this.pushEvent({event_type: 'user_invite_resent'});
+		let account = this.parameters.get('account');
+		let role = this.parameters.get('role');
+		let user = this.parameters.get('user');
+
+		return this.pushEvent({event_type: 'user_invite_resent', context: {user: user, role: role, account: account}});
 
 	}
 
@@ -342,7 +354,11 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Post Accept');
 
-		return this.pushEvent({event_type: 'user_invite_accepted'});
+		let account = this.parameters.get('account');
+		let role = this.parameters.get('role');
+		let user = this.parameters.get('user');
+
+		return this.pushEvent({event_type: 'user_invite_accepted', context: {user: user, role: role, account: account}});
 
 	}
 

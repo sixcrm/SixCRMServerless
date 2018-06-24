@@ -66,20 +66,6 @@ describe('helpers/events/Event.spec.js', () => {
 
 		});
 
-		it('throws a error (missing context)', () => {
-
-			const EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
-			let eventPushHelperController = new EventPushHelperController();
-
-			try{
-				eventPushHelperController.pushEvent({event_type: 'some_event'});
-				expect(false).to.equal(true, 'Method should not have executed');
-			}catch(error){
-				expect(error.message).to.equal('[500] Unset context.');
-			}
-
-		});
-
 		it('throws a error (missing user)', () => {
 
 			const global_user = global.user;

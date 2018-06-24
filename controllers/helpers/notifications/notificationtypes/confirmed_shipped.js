@@ -16,4 +16,3 @@ module.exports = class ConfirmedShippedNotification extends BaseNotification {
 	}
 
 }
-
