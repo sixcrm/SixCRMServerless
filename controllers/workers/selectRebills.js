@@ -34,6 +34,7 @@ module.exports = class SelectRebillsController extends workerController {
 		}else{
 
 			du.info('No available rebills');
+
 			return this.respond(null);
 
 		}

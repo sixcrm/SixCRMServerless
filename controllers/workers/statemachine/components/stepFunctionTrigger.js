@@ -16,6 +16,36 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 	}
 
+	async executeBulk(parameters, restart = false, fatal = false){
+
+		du.debug('Execute Bulk');
+
+		if(!_.has(parameters, 'guids')){
+			throw eu.getError('server', 'parameters is assumed to have  property "guids": '+JSON.stringify(parameters));
+		}
+
+		if(!_.isArray(parameters.guids)){
+			throw eu.getError('server', 'parameters.guids is assumed to be a array: '+JSON.stringify(parameters));
+		}
+
+		if(!arrayutilities.nonEmpty(parameters.guids)){
+			throw eu.getError('server', 'parameters.guids is assumed to be a array: '+JSON.stringify(parameters));
+		}
+
+		let bulk_promises = arrayutilities.map(parameters.guids, (guid) => {
+			return () => {
+				try{
+					return this.execute({guid: guid, stateMachineName: parameters.stateMachineName}, restart, fatal);
+				}catch(error){
+					return error;
+				}
+			}
+		});
+
+		return arrayutilities.serial(bulk_promises);
+
+	}
+
 	async execute(parameters, restart = false, fatal = false){
 
 		du.debug('execute');

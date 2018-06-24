@@ -213,29 +213,37 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	deployRoles(){
+	async deployRoles(){
 
 		du.debug('Deploy Roles');
 
-		return this.getRoleDefinitionFilenames().then((role_file_names) => {
+		let role_file_names = await this.getRoleDefinitionFilenames();
 
-			let deploy_role_file_promises = arrayutilities.map(role_file_names, (role_file_name) => {
+		let deploy_role_file_promises = arrayutilities.map(role_file_names, (role_file_name) => {
 
-				let role_definitions = this.acquireRoleFile(role_file_name);
-
-				let deploy_role_promises = arrayutilities.map(role_definitions, (role_definition) => {
-					return this.deployRole(role_definition);
-				});
-
-				return Promise.all(deploy_role_promises);
-
-			});
-
-			return Promise.all(deploy_role_file_promises).then(() => {
-				return 'Complete';
-			});
+			return () => this.deployRoleFile(role_file_name);
 
 		});
+
+		await arrayutilities.serial(deploy_role_file_promises);
+
+		return 'Complete';
+
+	}
+
+	async deployRoleFile(role_file_name){
+
+		du.debug('Deploy Role File');
+
+		let role_definitions = this.acquireRoleFile(role_file_name);
+
+		let deploy_role_promises = arrayutilities.map(role_definitions, (role_definition) => {
+			return () => this.deployRole(role_definition);
+		});
+
+		let result = await arrayutilities.serial(deploy_role_promises);
+
+		return result;
 
 	}
 
@@ -281,11 +289,14 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
 	}
 
-	updateRole(role_definition){
+	async updateRole(role_definition){
 
 		du.debug('Update Role');
 
-		return this.removePoliciesAndPermissions(role_definition).then(this.addPoliciesAndPermissions(role_definition));
+		await this.removePoliciesAndPermissions(role_definition);
+		await this.addPoliciesAndPermissions(role_definition);
+
+		return true;
 
 	}
 
@@ -466,4 +477,3 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 }
-

@@ -95,7 +95,10 @@ module.exports = class EventHelperController {
 			message_attributes = {};
 		}
 
-		message_attributes["event_type"] = {"DataType":"String", "StringValue":event_type};
+		message_attributes['event_type'] = {
+			DataType: 'String',
+			StringValue: event_type
+		};
 
 		return_object = this.addMessageAttributes({return_object: return_object, message_attributes: message_attributes});
 

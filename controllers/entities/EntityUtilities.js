@@ -1005,46 +1005,22 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	}
 
-	pushEvent({event_type, context, message_attributes}){
+	pushEvent({event_type = null, context = null, message_attributes = null} = {}) {
 
 		du.debug('Push Event');
 
-		if(_.isUndefined(event_type) || _.isNull(event_type)){
-			if(_.has(this, 'event_type')){
-				event_type = this.event_type;
-			}else if (!_.isUndefined(context) && !_.isNull(context) && _.has(context, 'event_type') && _.isString(context.event_type)){
-				event_type = context.event_type;
-			}else{
-				throw eu.getError('server', 'Unable to identify event_type.');
-			}
+		if(event_type === null && _.has(this.event_type)){
+			event_type = this.event_type;
 		}
 
-		if(_.isUndefined(context) || _.isNull(context)){
-			if(objectutilities.hasRecursive(this, 'parameters.store')){
-				context = this.parameters.store;
-			}else{
-				throw eu.getError('server', 'Unset context.');
-			}
+		if(context === null && _.has(this.parameters)){
+			context = this.parameters.store;
 		}
 
-		if(_.isUndefined(message_attributes) || _.isNull(message_attributes)){
-			message_attributes = {
-				'event_type': {
-					DataType:'String',
-					StringValue: event_type
-				}
-			};
-		}
-
-		if(!_.has(this, 'eventHelperController')){
-			const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-			this.eventHelperController = new EventHelperController();
-		}
-
-		return this.eventHelperController.pushEvent({event_type: event_type, context: context, message_attributes: message_attributes});
+		let EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
+		return new EventPushHelperController().pushEvent({event_type: event_type, context: context, message_attributes: message_attributes});
 
 	}
-
 
 	createAnalyticsActivityRecord(actor, action, acted_upon, associated_with){
 
