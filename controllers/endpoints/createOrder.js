@@ -92,8 +92,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		this.initialize();
 
-		this.event_type = 'order';
-
 	}
 
 	execute(event) {
@@ -117,6 +115,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.getCampaign(session),
 			this.getPreviousRebill(event)
 		]);
+
+		let transaction_subtype = this.getTransactionSubtype(event);
 
 		if (!_.isUndefined(creditcard)) {
 			[customer, creditcard] = await this.customerController.addCreditCard(customer.id, creditcard);
@@ -142,6 +142,13 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			products: event.products
 		});
 
+		let order = await this.orderHelperController.createOrder({
+			rebill,
+			transactions: processed_rebill.transactions,
+			session,
+			customer
+		});
+
 		await Promise.all([
 			this.updateRebillPaidStatus(rebill, processed_rebill.transactions),
 			this.reversePreviousRebill(rebill, previous_rebill),
@@ -151,24 +158,34 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			AnalyticsEvent.push('order', {
 				session,
 				campaign
-			})
+			}),
+			this.pushEvent({event_type: 'order', context: {
+				campaign: campaign,
+				session: session,
+				order: order,
+				transactionsubtype: transaction_subtype,
+				result: processed_rebill.result
+			}})
 		]);
-
-		let order = await this.orderHelperController.createOrder({
-			rebill,
-			transactions: processed_rebill.transactions,
-			session,
-			customer
-		});
-
-		this.parameters.set('order', order);
-
-		await this.pushEvent();
 
 		return {
 			result: processed_rebill.result,
 			order: order
 		};
+
+	}
+
+	getTransactionSubtype(event){
+
+		du.debug('Set Transaction Subtype');
+
+		let return_value = 'main';
+
+		if(_.has(event, 'transaction_subtype')){
+			return_value = event.transaction_subtype;
+		}
+
+		return return_value;
 
 	}
 
@@ -317,7 +334,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		let argumentation = {
 			rebill,
-			transactionsubtype: event.transaction_subtype || 'main'
+			transactionsubtype: this.getTransactionSubType(event)
 		};
 
 		if (!_.isUndefined(rawcreditcard)) {

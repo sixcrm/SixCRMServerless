@@ -46,7 +46,7 @@ describe('controllers/endpoints/transaction', () => {
 
 	});
 
-	describe('pushEvent', async () => {
+	xdescribe('pushEvent', async () => {
 		it('throws an error', () => {
 
 			const TransactionController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');

@@ -217,27 +217,17 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 		let index_objects = this.getIndexConfigurations();
 
-		let index_promises = index_objects.map((index_object) => { return () => this.createCloudsearchIndex(index_object); });
+		let index_promises = arrayutilities.map(index_objects, (index_object) => {
+			return () => this.createCloudsearchIndex(index_object).then(async () => {
+				await new Promise(resolve => {
+					du.info('Pausing 5s...');
+					return setTimeout(resolve, 5000);
+				});
+				return true;
+			});
+		});
 
-		return arrayutilities.reduce(
-			index_promises,
-			(current, next) => {
-				if(_.isUndefined(current)){
-					return next;
-				}
-				return current.then(next);
-			},
-			Promise.resolve()
-		);
-
-		/*
-      return index_promises.reduce(function(current, next) {
-          if(_.isUndefined(current)){
-            return next;
-          }
-          return current.then(next);
-      }, Promise.resolve());
-      */
+		return arrayutilities.serial(index_promises);
 
 	}
 

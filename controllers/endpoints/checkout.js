@@ -53,8 +53,6 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		this.createOrderController = new CreateOrderController();
 		this.confirmOrderController = new ConfirmOrderController();
 
-		this.event_type = 'checkout';
-
 		this.initialize();
 
 	}
