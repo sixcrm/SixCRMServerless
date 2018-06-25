@@ -140,7 +140,7 @@ module.exports = class ProductScheduleHelper {
 		const today_dom = timestamp.getDayNumber();
 		du.info('Now Day Of Month: '+today_dom);
 
-		if(today_dom > this_month_bill_dom){
+		if(today_dom >= this_month_bill_dom){
 
 			//1-31
 			let next_month_days_in_month = timestamp.daysInMonth(timestamp.nextMonth());
