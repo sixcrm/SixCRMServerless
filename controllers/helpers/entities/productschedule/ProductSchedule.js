@@ -98,6 +98,7 @@ module.exports = class ProductScheduleHelper {
 		if(!_.has(schedule_element, 'samedayofmonth') || schedule_element.samedayofmonth !== true){
 			return this.calculateNextStandardRecurringBillingInSchedule({schedule_element: schedule_element, day: day});
 		}else{
+			du.i
 			return this.calculateNextMonthlyBillingInSchedule({schedule_element: schedule_element, day: day});
 		}
 
@@ -140,7 +141,7 @@ module.exports = class ProductScheduleHelper {
 		const today_dom = timestamp.getDayNumber();
 		du.info('Now Day Of Month: '+today_dom);
 
-		if(today_dom > this_month_bill_dom){
+		if(today_dom >= this_month_bill_dom){
 
 			//1-31
 			let next_month_days_in_month = timestamp.daysInMonth(timestamp.nextMonth());
