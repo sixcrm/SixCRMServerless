@@ -96,6 +96,11 @@
 			"name": "Graph Docs 2.0",
 			"description": "New designs for GraphQL documentation",
 			"default": true
+		},
+		"advanced-index-tables":{
+			"name": "Index Tables version 2.0",
+			"description": "New designs for Index Tables",
+			"default": false
 		}
 	}
 },
@@ -197,6 +202,11 @@
 			"name": "Graph Docs 2.0",
 			"description": "New designs for GraphQL documentation",
 			"default": true
+		},
+		"advanced-index-tables":{
+			"name": "Index Tables version 2.0",
+			"description": "New designs for Index Tables",
+			"default": false
 		}
 	}
 },
@@ -298,6 +308,11 @@
 			"name": "Graph Docs 2.0",
 			"description": "New designs for GraphQL documentation",
 			"default": true
+		},
+		"advanced-index-tables":{
+			"name": "Index Tables version 2.0",
+			"description": "New designs for Index Tables",
+			"default": false
 		}
 	}
 }]
