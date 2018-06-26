@@ -113,6 +113,13 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 						samedayofmonth: true
 					},
 					day: -1
+				},
+				{
+					schedule_element: {
+						start: 0,
+						samedayofmonth: true
+					},
+					day: 31
 				}
 			];
 
@@ -124,6 +131,14 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 				let first_billing_dom = timestamp.getDayNumber(timestamp.subtractDays((test_case.day - test_case.schedule_element.start)));
 				let next_billing_date = timestamp.addDays(next_billing_day_number, moment(timestamp.subtractDays(test_case.day)));
 				let next_billing_dom = timestamp.getDayNumber(next_billing_date);
+
+				const this_month_bill_dom = Math.min(timestamp.daysInMonth(), first_billing_dom);
+				const today_dom = timestamp.getDayNumber();
+
+				const days_difference = timestamp.daysDifference(next_billing_date);
+				expect(days_difference).to.be.above(0);
+
+				expect(this_month_bill_dom).to.not.equal(today_dom);
 
 				if(first_billing_dom > timestamp.daysInMonth(next_billing_date)){
 					expect(next_billing_dom).to.equal(timestamp.daysInMonth(next_billing_date)+'');

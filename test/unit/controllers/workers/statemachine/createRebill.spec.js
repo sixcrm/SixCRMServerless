@@ -311,4 +311,44 @@ describe('controllers/workers/statemachine/createRebill.js', () => {
 
   });
 
+  xdescribe('Execute (LIVE)', async () => {
+
+    it('creates a rebill', async () => {
+
+      const session_id = 'c00d6d9a-0d5e-464f-ab89-ebe34ee14a79';
+      //const session = MockEntities.getValidSession();
+      let rebill = MockEntities.getValidRebill();
+      rebill.parentsession = session.id;
+
+      /*
+      mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/rebill/RebillCreator.js'), class {
+        constructor(){}
+        createRebill({session}){
+          expect(session).to.be.a('object');
+          expect(session).to.have.property('id');
+          expect(session.id).to.be.a('string');
+          expect(session.id).to.equal(session_id);
+          return Promise.resolve(rebill);
+        }
+      });
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        constructor(){}
+        get({id}){
+          expect(id).to.be.a('string');
+          return Promise.resolve(session);
+        }
+      });
+      */
+
+      const CreateRebillController = global.SixCRM.routes.include('workers', 'statemachine/createRebill.js');
+      let createRebillController = new CreateRebillController();
+
+      let result = await createRebillController.execute({guid: session_id});
+      expect(result).to.equal('REBILLCREATED');
+
+    });
+
+  });
+
 });

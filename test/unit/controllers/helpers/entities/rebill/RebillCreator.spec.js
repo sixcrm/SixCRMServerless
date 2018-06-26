@@ -1273,6 +1273,67 @@ describe('/helpers/entities/Rebill.js', () => {
 
 	});
 
+	xdescribe('createRebill (LIVE)', async () => {
+
+		xit('creates a rebill', async () => {
+
+			let session = {
+			  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			  "alias": "S2PE2JKZ2X",
+			  "campaign": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+			  "completed": true,
+			  "created_at": "2018-05-24T16:06:05.033Z",
+			  "customer": "e5425022-31a9-4958-91fd-cdce08c24b5d",
+			  "id": "c00d6d9a-0d5e-464f-ab89-ebe34ee14a79",
+			  "updated_at": "2018-05-24T16:06:12.230Z",
+			  "watermark": {
+			    "product_schedules": [
+			      {
+			        "product_schedule": {
+			          "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			          "created_at": "2018-05-05T00:51:37.438Z",
+			          "id": "37cbb0aa-a1e9-4ad0-afe3-38f1dce31d5b",
+			          "name": "Basic Subscription",
+			          "schedule": [
+			            {
+			              "period": 30,
+			              "price": 30,
+			              "product": {
+			                "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			                "attributes": {
+			                  "images": []
+			                },
+			                "created_at": "2018-05-05T00:51:35.427Z",
+			                "default_price": 30,
+			                "description": "$30 per month, unlimited transactions at $0.06 per transaction, one campaign",
+			                "id": "3ac1a59a-6e41-4074-9712-3c80ef3f3e95",
+			                "name": "Basic",
+			                "ship": false,
+			                "shipping_delay": 0,
+			                "sku": "basic",
+			                "updated_at": "2018-05-22T04:52:03.326Z"
+			              },
+			              "samedayofmonth": true,
+			              "start": 0
+			            }
+			          ],
+			          "updated_at": "2018-05-22T04:52:03.521Z"
+			        },
+			        "quantity": 1
+			      }
+			    ],
+			    "products": []
+			  }
+			};
+
+			const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
+			let rebillCreatorHelper = new RebillCreatorHelperController();
+
+			let result = await rebillCreatorHelper.createRebill({session: session});
+
+		})
+	});
+
 	describe('createRebill', () => {
 
 		let product_schedules = [{quantity: 1, product_schedule: getValidProductSchedule()}];
