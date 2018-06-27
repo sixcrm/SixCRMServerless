@@ -2,8 +2,8 @@
 
 let chai = require('chai');
 let expect = chai.expect;
-let du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+let du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+let objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 function getValidMerchantProviderConfiguation(){
 	return {

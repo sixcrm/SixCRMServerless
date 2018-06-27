@@ -1,4 +1,4 @@
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 module.exports = async (parameters = {}) => {
 

@@ -1,9 +1,9 @@
 const _ = require('lodash');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
-const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
 const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');

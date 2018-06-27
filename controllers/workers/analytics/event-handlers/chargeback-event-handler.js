@@ -1,4 +1,4 @@
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const WriteChargebackRecords = require('../batch-inserts/write-chargeback-records');
 
 module.exports = class ChargebackEventHandler {

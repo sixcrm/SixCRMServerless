@@ -1,9 +1,9 @@
 //const _ = require('lodash');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-//const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
-//const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
-//const parserutilities = require('@sixcrm/sixcrmcore/util/parser-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+//const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+//const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+//const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
 const APIGatewayProvider = global.SixCRM.routes.include('controllers', 'providers/apigateway-provider.js');
 const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utilities/aws-deployment-utilities.js');
 

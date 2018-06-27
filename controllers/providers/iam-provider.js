@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js')
 
 module.exports = class IAMProvider extends AWSProvider {

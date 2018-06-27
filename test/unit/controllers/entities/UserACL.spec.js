@@ -2,7 +2,7 @@ let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
-let timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+let timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 

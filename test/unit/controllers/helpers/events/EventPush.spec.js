@@ -2,10 +2,10 @@ const mockery = require('mockery');
 let chai = require('chai');
 
 let expect = chai.expect;
-let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
-let random = require('@sixcrm/sixcrmcore/util/random').default;
+let objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+let random = require('@6crm/sixcrmcore/util/random').default;
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
 describe('helpers/events/Event.spec.js', () => {
 

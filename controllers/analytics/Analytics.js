@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const path = require('path');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const CacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
 module.exports = class AnalyticsController {
@@ -8,7 +8,7 @@ module.exports = class AnalyticsController {
 	constructor() {
 
 		this.cacheController = new CacheController();
-		this.permissionutilities = require('@sixcrm/sixcrmcore/util/permission-utilities').default;
+		this.permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
 
 	}
 

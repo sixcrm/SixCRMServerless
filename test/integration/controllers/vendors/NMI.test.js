@@ -3,8 +3,8 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-let du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+let du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+let objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 function executeReverse(transaction_object){
 

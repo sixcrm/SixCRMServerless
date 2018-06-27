@@ -3,8 +3,8 @@ const chai = require('chai');
 const expect = require('chai').expect;
 const fs = require('fs');
 
-const tu = require('@sixcrm/sixcrmcore/util/test-utilities').default;
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const tu = require('@6crm/sixcrmcore/util/test-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 const minute = 60 * 1000;
 

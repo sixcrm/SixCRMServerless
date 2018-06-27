@@ -1,7 +1,7 @@
 //Technical Debt:  This needs to be a implementation of timestamp
 const moment = require('moment-timezone');
 const uuid = require('uuid');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 
 module.exports = class AnalyticsEvent {

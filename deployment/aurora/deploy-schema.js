@@ -1,6 +1,6 @@
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
 const configurationAcquistion = global.SixCRM.routes.include('config', 'controllers/configuration_acquisition.js');

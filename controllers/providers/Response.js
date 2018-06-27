@@ -1,6 +1,6 @@
 
 const _ = require('lodash');
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 
 module.exports = class Response {

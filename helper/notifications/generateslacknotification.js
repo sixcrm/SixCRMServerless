@@ -1,9 +1,9 @@
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 
 const SlackNotificationProvider = global.SixCRM.routes.include('controllers','providers/notification/channels/slack.js');
-const PermissionUtilities = require('@sixcrm/sixcrmcore/util/permission-utilities').default;
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const PermissionUtilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
 PermissionUtilities.disableACLs();
 
