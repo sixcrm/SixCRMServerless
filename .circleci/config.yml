@@ -133,7 +133,7 @@ jobs:
       - run:
           name: Debugging 2
           command: printenv
-  deploy_vpc:
+  deploy_network:
     <<: *job-defaults
     steps:
       - checkout
@@ -147,87 +147,24 @@ jobs:
       - run:
           name: Deploy VPC
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_vpcs.js
-  deploy_subnets:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+          name: EC2 Security Groups
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_security_groups.js
       - run:
           name: Deploy Subnets
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_subnets.js
-  deploy_eips:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Elastic IP Addresses
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_eips.js
-  deploy_internet_gateways:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Internet Gateways
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_internet_gateways.js
-  deploy_nats:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy NATs
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_nats.js
-  deploy_route_tables:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Route Tables
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_route_tables.js
-  deploy_vpc_endpoints:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy VPC Endpoints
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_endpoints.js
@@ -273,20 +210,6 @@ jobs:
       - run:
           name: Serveless Deploy
           command: SLS_DEBUG=* node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
-  deploy_security_groups:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: EC2 Security Groups
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_security_groups.js
   deploy_elasticsearch:
     <<: *job-defaults
     steps:
@@ -751,7 +674,7 @@ workflows:
                 - staging
                 - production
                 - priority
-      - deploy_vpc:
+      - deploy_network:
           requires:
             - pre_deploy
             - backup_datastore
@@ -762,80 +685,9 @@ workflows:
                 - staging
                 - production
                 - priority
-      - deploy_security_groups:
-          requires:
-            - deploy_vpc
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_subnets:
-          requires:
-            - deploy_security_groups
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_eips:
-          requires:
-            - deploy_subnets
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_internet_gateways:
-          requires:
-            - deploy_subnets
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_nats:
-          requires:
-            - deploy_internet_gateways
-            - deploy_eips
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_route_tables:
-          requires:
-            - deploy_nats
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_vpc_endpoints:
-          requires:
-            - deploy_route_tables
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
       - deploy_ec2_servers:
           requires:
-            - deploy_route_tables
+            - deploy_network
           filters:
             branches:
               only:
@@ -845,7 +697,7 @@ workflows:
                 - priority
       - deploy_elasticsearch:
           requires:
-            - deploy_route_tables
+            - deploy_network
           filters:
             branches:
               only:
@@ -855,7 +707,7 @@ workflows:
                 - priority
       - deploy_cloudsearch:
           requires:
-            - deploy_route_tables
+            - deploy_network
           filters:
             branches:
               only:
@@ -875,8 +727,6 @@ workflows:
                 - priority
       - deploy_aurora:
           requires:
-            - deploy_security_groups
-            - deploy_route_tables
             - deploy_ec2_servers
           filters:
             branches:
@@ -887,7 +737,7 @@ workflows:
                 - priority
       - deploy_elasticache:
           requires:
-            - deploy_route_tables
+            - deploy_network
           filters:
             branches:
               only:
@@ -900,10 +750,6 @@ workflows:
             - deploy_elasticache
             - deploy_aurora
             - deploy_elasticsearch
-            - deploy_route_tables
-            - lint
-            - unit_tests
-            - backup_datastore
           filters:
             branches:
               only:
@@ -916,10 +762,6 @@ workflows:
             - deploy_elasticache
             - deploy_aurora
             - deploy_elasticsearch
-            - deploy_route_tables
-            - lint
-            - unit_tests
-            - backup_datastore
           filters:
             branches:
               only:
@@ -929,14 +771,7 @@ workflows:
                 - priority
       - deploy_serverless:
           requires:
-            - deploy_elasticache
-            - deploy_aurora
-            - deploy_elasticsearch
             - deploy_cloudsearch
-            - deploy_route_tables
-            - lint
-            - unit_tests
-            - backup_datastore
             - deploy_iam
           filters:
             branches:
@@ -948,7 +783,6 @@ workflows:
       - deploy_stepfunctions:
           requires:
             - deploy_serverless
-            - deploy_iam
           filters:
             branches:
               only:
@@ -960,7 +794,6 @@ workflows:
           requires:
             - deploy_sqs
             - deploy_serverless
-            - deploy_iam
           filters:
             branches:
               only:
@@ -971,7 +804,6 @@ workflows:
       - deploy_logsubscription:
           requires:
             - deploy_serverless
-            - deploy_iam
           filters:
             branches:
               only:
@@ -1001,8 +833,6 @@ workflows:
                 - priority
       - deploy_dms:
           requires:
-            - deploy_ec2_servers
-            - deploy_iam
             - deploy_s3
             - deploy_dynamodb
           filters:
@@ -1014,8 +844,6 @@ workflows:
                 - priority
       - deploy_lambda_eventsourcemappings:
           requires:
-            - deploy_ec2_servers
-            - deploy_iam
             - deploy_s3
             - deploy_dynamodb
           filters:
@@ -1038,14 +866,10 @@ workflows:
           #       - priority
       - post_deployment:
           requires:
-            - deploy_serverless
-            - deploy_s3
-            - deploy_sqs
-            - deploy_iam
-            - deploy_dynamodb
             - deploy_lambda_eventsourcemappings
             # - deploy_redshift
             - deploy_sns
+            - deploy_dms
             - deploy_stepfunctions
             - deploy_logsubscription
           filters:
