@@ -530,12 +530,12 @@ jobs:
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Git LFS (Large File Storage)
-          command: |
-            curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-            sudo apt-get install -y git-lfs
-            git lfs pull
+      # - run:
+      #     name: Git LFS (Large File Storage)
+      #     command: |
+      #       curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+      #       sudo apt-get install -y git-lfs
+      #       git lfs pull
       - run:
           name: Deploy DMS Tasks
           command: SIX_VERBOSE=2 node ./deployment/dms/deploy_tasks.js
