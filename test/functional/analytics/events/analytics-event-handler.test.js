@@ -8,10 +8,10 @@ const BBPromise = require('bluebird');
 const SQSTestUtils = require('../../sqs-test-utils');
 const AnalyticsEventHandler = require('../../../../controllers/workers/analytics/analytics-event-handler');
 
-const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
+const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
 const SQSDeployment = global.SixCRM.routes.include('deployment', 'utilities/sqs-deployment.js');
 const sqsDeployment = new SQSDeployment();
-const auroraContext = require('@sixcrm/sixcrmcore/util/analytics/aurora-context').default;
+const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
 

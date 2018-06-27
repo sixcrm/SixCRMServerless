@@ -1,7 +1,7 @@
 
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 const qs = require('querystring');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 let input_string = process.argv[2];
 

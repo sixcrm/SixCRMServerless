@@ -1,4 +1,4 @@
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const WriteEventRecords = require('../batch-inserts/write-event-records');
 const WriteSessionRecords = require('../batch-inserts/write-session-records');
 

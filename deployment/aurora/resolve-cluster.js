@@ -1,6 +1,6 @@
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const configuration = require('../../config/controllers/configuration_acquisition');
 const fs = require('fs');
 const util = require('util');

@@ -6,7 +6,7 @@ const VerifyCustomerJWTController = global.SixCRM.routes.include('controllers', 
 const VerifyTransactionJWTController = global.SixCRM.routes.include('controllers', 'authorizers/verifyTransactionJWT.js');
 
 const _ = require('lodash');
-const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 
 function handleAuthorization(delegate, field_name = 'user'){
 	return (event, context, callback) => new AuthorizationHandler().handle(event, context, callback, delegate, field_name);

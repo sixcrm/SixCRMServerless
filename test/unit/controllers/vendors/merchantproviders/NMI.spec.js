@@ -3,7 +3,7 @@ const _ = require('lodash');
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+let objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getValidMerchantProvider(id) {

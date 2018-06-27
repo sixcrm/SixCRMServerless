@@ -1,7 +1,7 @@
 const chai = require("chai");
 const expect = chai.expect;
 const mockery = require('mockery');
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 //const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{

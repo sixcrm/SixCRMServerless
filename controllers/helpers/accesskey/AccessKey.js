@@ -1,8 +1,8 @@
 
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const hashutilities = require('@sixcrm/sixcrmcore/util/hash-utilities').default;
-const randomutilities = require('@sixcrm/sixcrmcore/util/random').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const hashutilities = require('@6crm/sixcrmcore/util/hash-utilities').default;
+const randomutilities = require('@6crm/sixcrmcore/util/random').default;
 
 module.exports = class AccessKey{
 

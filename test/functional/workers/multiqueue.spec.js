@@ -5,8 +5,8 @@ const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
 const mockery = require('mockery');
 
-const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
-const randomutilities = require('@sixcrm/sixcrmcore/util/random').default;
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const randomutilities = require('@6crm/sixcrmcore/util/random').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;

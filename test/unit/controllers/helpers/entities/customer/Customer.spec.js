@@ -3,7 +3,7 @@ let chai = require('chai');
 const expect = chai.expect;
 const mockery = require('mockery');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
 function getValidCustomer() {
 	return MockEntities.getValidCustomer()

@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const _ = require('lodash');
-const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 
 describe('controllers/providers/sqs-provider', () => {
 

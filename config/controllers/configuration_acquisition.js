@@ -1,5 +1,5 @@
-require('@sixcrm/sixcrmcore');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+require('@6crm/sixcrmcore');
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 module.exports.getVPCConfiguration = () => {
 
@@ -12,8 +12,8 @@ module.exports.getVPCConfiguration = () => {
 
 module.exports.getLambdaSubnets = () => {
 
-	require('@sixcrm/sixcrmcore');
-	const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+	require('@6crm/sixcrmcore');
+	const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 
@@ -35,7 +35,7 @@ module.exports.getLambdaSubnets = () => {
 
 module.exports.getLambdaSecurityGroup = () => {
 
-	require('@sixcrm/sixcrmcore');
+	require('@6crm/sixcrmcore');
 
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
@@ -51,7 +51,7 @@ module.exports.getLambdaSecurityGroup = () => {
 
 module.exports.getCloudsearchSearchEndpoint = () => {
 
-	require('@sixcrm/sixcrmcore');
+	require('@6crm/sixcrmcore');
 
 	if (global.SixCRM.configuration.isLocal()) {
 
@@ -73,7 +73,7 @@ module.exports.getCloudsearchSearchEndpoint = () => {
 
 module.exports.getAuroraClusterEndpoint = (force) => {
 
-	require('@sixcrm/sixcrmcore');
+	require('@6crm/sixcrmcore');
 
 	if (global.SixCRM.configuration.isLocal()) {
 
@@ -109,7 +109,7 @@ module.exports.getAuroraClusterEndpoint = (force) => {
 
 module.exports.getElasticSearchEndpoint = () => {
 
-	require('@sixcrm/sixcrmcore');
+	require('@6crm/sixcrmcore');
 
 	// probably need to add this to docker compose???
 	if (global.SixCRM.configuration.isLocal()) {
@@ -134,7 +134,7 @@ module.exports.getElasticSearchEndpoint = () => {
 
 module.exports.getProxyEndpoint = async () => {
 
-	require('@sixcrm/sixcrmcore');
+	require('@6crm/sixcrmcore');
 
 	if (global.SixCRM.configuration.isLocal()) {
 
@@ -154,14 +154,14 @@ module.exports.getProxyEndpoint = async () => {
 
 module.exports.getElastiCacheEndpoint = async () => {
 
-	require('@sixcrm/sixcrmcore');
+	require('@6crm/sixcrmcore');
 
 	if (global.SixCRM.configuration.isLocal()) {
 		return Promise.resolve(global.SixCRM.configuration.site_config.elasticache.endpoint);
 	}
 
-	const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
-	const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+	const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+	const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 	const ElastiCacheUtilities = global.SixCRM.routes.include('deployment', 'utilities/elasticache-deployment.js');
 	let elasticacheutilities = new ElastiCacheUtilities();
 
@@ -181,13 +181,13 @@ module.exports.getElastiCacheEndpoint = async () => {
 
 module.exports.getSubnet1 = async () => {
 
-	require('@sixcrm/sixcrmcore');
+	require('@6crm/sixcrmcore');
 
 	if (global.SixCRM.configuration.isLocal()) {
 		return '';
 	}
 
-	const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+	const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 
@@ -200,13 +200,13 @@ module.exports.getSubnet1 = async () => {
 
 module.exports.getSubnet2 = async () => {
 
-	require('@sixcrm/sixcrmcore');
+	require('@6crm/sixcrmcore');
 
 	if (global.SixCRM.configuration.isLocal()) {
 		return '';
 	}
 
-	const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+	const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 
@@ -219,13 +219,13 @@ module.exports.getSubnet2 = async () => {
 
 module.exports.getSubnet3 = async () => {
 
-	require('@sixcrm/sixcrmcore');
+	require('@6crm/sixcrmcore');
 
 	if (global.SixCRM.configuration.isLocal()) {
 		return '';
 	}
 
-	const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+	const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 
@@ -238,13 +238,13 @@ module.exports.getSubnet3 = async () => {
 
 module.exports.getSecurityGroup = async () => {
 
-	require('@sixcrm/sixcrmcore');
+	require('@6crm/sixcrmcore');
 
 	if (global.SixCRM.configuration.isLocal()) {
 		return '';
 	}
 
-	const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+	const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 	const EC2Deployment = global.SixCRM.routes.include('deployment', 'utilities/ec2-deployment.js');
 	let ec2_deployment = new EC2Deployment();
 

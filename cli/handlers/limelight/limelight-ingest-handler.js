@@ -1,5 +1,5 @@
-require('@sixcrm/sixcrmcore');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+require('@6crm/sixcrmcore');
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const IngestHandler = require('../ingest-handler');
 const fs = require('fs-extra');
 const path = require('path');

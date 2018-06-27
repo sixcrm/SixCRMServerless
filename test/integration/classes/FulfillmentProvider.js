@@ -1,7 +1,7 @@
 
 const uuidV4 = require('uuid/v4');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 const IntegrationTest = global.SixCRM.routes.include('test', 'integration/classes/IntegrationTest');
 

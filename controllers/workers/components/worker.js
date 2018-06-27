@@ -1,4 +1,4 @@
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 
 module.exports = class WorkerController {
@@ -14,7 +14,7 @@ module.exports = class WorkerController {
 		//Technical Debt:  This is pretty gross, we should set the user to "system@sixcrm.com"
 		du.debug('Set Permissions');
 
-		this.permissionutilities = require('@sixcrm/sixcrmcore/util/permission-utilities').default;
+		this.permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
 		this.permissionutilities.setPermissions('*',['*/*'],[])
 
 	}

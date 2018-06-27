@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const SystemMailer = global.SixCRM.routes.include('helpers', 'email/SystemMailer.js');
 const ChannelNotification = global.SixCRM.routes.include('providers', 'notification/components/ChannelNotification.js');
 

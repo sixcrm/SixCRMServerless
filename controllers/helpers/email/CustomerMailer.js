@@ -1,7 +1,7 @@
 
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 const SMTPProvider = global.SixCRM.routes.include('controllers', 'providers/smtp-provider.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');

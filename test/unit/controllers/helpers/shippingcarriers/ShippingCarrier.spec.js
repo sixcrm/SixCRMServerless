@@ -4,8 +4,8 @@ const uuidV4 = require('uuid/v4');
 let expect = chai.expect;
 const mockery = require('mockery');
 
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
 describe('/controllers/helpers/shippingcarriers/ShippingCarrier.js', () => {
 

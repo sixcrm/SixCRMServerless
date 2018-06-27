@@ -1,5 +1,5 @@
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const math = require('@sixcrm/sixcrmcore/util/math-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const math = require('@6crm/sixcrmcore/util/math-utilities').default;
 
 module.exports = async (results) => {
 

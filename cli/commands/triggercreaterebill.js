@@ -1,7 +1,7 @@
-require('@sixcrm/sixcrmcore')
+require('@6crm/sixcrmcore')
 const _ = require('lodash');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
 
 const StepFunctionTriggerController = global.SixCRM.routes.include('workers','statemachine/components/stepFunctionTrigger.js');
 

@@ -1,13 +1,13 @@
 const _ = require('lodash');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
-const parserutilities = require('@sixcrm/sixcrmcore/util/parser-utilities').default;
-const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
-const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
-const random = require('@sixcrm/sixcrmcore/util/random').default;
-const hashutilities = require('@sixcrm/sixcrmcore/util/hash-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const random = require('@6crm/sixcrmcore/util/random').default;
+const hashutilities = require('@6crm/sixcrmcore/util/hash-utilities').default;
 
 const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
 const SNSProvider = global.SixCRM.routes.include('controllers', 'providers/sns-provider.js');

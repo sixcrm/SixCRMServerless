@@ -1,10 +1,10 @@
 require('../../../config/global.js');
 const mockery = require('mockery');
 const path = require('path');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const auroraContext = require('@sixcrm/sixcrmcore/util/analytics/aurora-context').default;
+const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
 const DynamoDBDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');

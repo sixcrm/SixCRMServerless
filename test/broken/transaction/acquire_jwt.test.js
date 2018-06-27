@@ -6,10 +6,10 @@ const assert = require('chai').assert;
 const fs = require('fs');
 const crypto = require('crypto');
 
-const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
-const du =  require('@sixcrm/sixcrmcore/util/debug-utilities.js').default;
-const tu =  require('@sixcrm/sixcrmcore/util/test-utilities.js').default;
-const signature = require('@sixcrm/sixcrmcore/util/signature.js').default;
+const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const du =  require('@6crm/sixcrmcore/util/debug-utilities.js').default;
+const tu =  require('@6crm/sixcrmcore/util/test-utilities.js').default;
+const signature = require('@6crm/sixcrmcore/util/signature.js').default;
 
 try {
 	var config = global.SixCRM.configuration.site_config;
