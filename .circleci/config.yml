@@ -691,28 +691,25 @@ workflows:
   version: 2
   build_deploy_test_and_merge:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
+      - build
       - lint:
           requires:
             - build
           filters:
             branches:
-              only:
-                - development
+              ignore:
+                - staging
+                - production
+                - priority
       - unit_tests:
           requires:
             - build
           filters:
             branches:
-              only:
-                - development
+              ignore:
+                - staging
+                - production
+                - priority
       # - functional_tests:
       #     requires:
       #       - build
@@ -729,8 +726,10 @@ workflows:
             - lint
           filters:
             branches:
-              only:
-                - development
+              ignore:
+                - staging
+                - production
+                - priority
       - pre_deploy:
           requires:
             - build
