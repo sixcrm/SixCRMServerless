@@ -35,7 +35,7 @@ module.exports = class binImporter {
 		// Temporary workaround -- have this compare to a stored checksum or something
 		const error = new Error('No Changes');
 		error.code = "NoChanges";
-		throw error;
+		return Promise.reject(error);
 
 		// return this.getChecksum()
 		// 	.then(checksum => {
