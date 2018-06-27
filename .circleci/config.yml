@@ -735,59 +735,166 @@ workflows:
             - build
             - unit_tests
             - lint
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - backup_datastore:
           requires:
             - pre_deploy
           filters:
             branches:
-              ignore:
-                - development
+              only:
+                - staging
+                - production
+                - priority
       - deploy_vpc:
           requires:
             - pre_deploy
             - backup_datastore
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_security_groups:
           requires:
             - deploy_vpc
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_subnets:
           requires:
             - deploy_security_groups
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_eips:
           requires:
             - deploy_subnets
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_internet_gateways:
           requires:
             - deploy_subnets
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_nats:
           requires:
             - deploy_internet_gateways
             - deploy_eips
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_route_tables:
           requires:
             - deploy_nats
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_vpc_endpoints:
           requires:
             - deploy_route_tables
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_ec2_servers:
           requires:
             - deploy_route_tables
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_elasticsearch:
           requires:
             - deploy_route_tables
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_cloudsearch:
           requires:
             - deploy_route_tables
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_cloudsearch_indexes:
           requires:
             - deploy_cloudsearch
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_aurora:
           requires:
             - deploy_security_groups
             - deploy_route_tables
             - deploy_ec2_servers
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_elasticache:
           requires:
             - deploy_route_tables
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_iam:
           requires:
             - deploy_elasticache
@@ -797,6 +904,13 @@ workflows:
             - lint
             - unit_tests
             - backup_datastore
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_s3:
           requires:
             - deploy_elasticache
@@ -806,6 +920,13 @@ workflows:
             - lint
             - unit_tests
             - backup_datastore
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_serverless:
           requires:
             - deploy_elasticache
@@ -817,41 +938,104 @@ workflows:
             - unit_tests
             - backup_datastore
             - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_stepfunctions:
           requires:
             - deploy_serverless
             - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_sns:
           requires:
             - deploy_sqs
             - deploy_serverless
             - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_logsubscription:
           requires:
             - deploy_serverless
             - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_sqs:
           requires:
             - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_dynamodb:
           requires:
             - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_dms:
           requires:
             - deploy_ec2_servers
             - deploy_iam
             - deploy_s3
             - deploy_dynamodb
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_lambda_eventsourcemappings:
           requires:
             - deploy_ec2_servers
             - deploy_iam
             - deploy_s3
             - deploy_dynamodb
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       # - deploy_redshift:
       #     requires:
       #       - deploy_security_groups
       #       - deploy_iam
+          # filters:
+          #   branches:
+          #     only:
+          #       - development
+          #       - staging
+          #       - production
+          #       - priority
       - post_deployment:
           requires:
             - deploy_serverless
@@ -864,12 +1048,33 @@ workflows:
             - deploy_sns
             - deploy_stepfunctions
             - deploy_logsubscription
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - environment_test:
           requires:
             - post_deployment
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - seed:
           requires:
             - environment_test
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - live_seed:
           requires:
             - seed
@@ -883,24 +1088,59 @@ workflows:
           requires:
             - seed
             - live_seed
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deleteblock_integration_tests:
           requires:
             - seed
             - live_seed
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - analytics_integration_tests:
           requires:
             - seed
             - live_seed
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - transactional_integration_tests:
           requires:
             - seed
             - live_seed
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - synchronize_index:
           requires:
             - transactional_integration_tests
             - entity_integration_tests
             - deleteblock_integration_tests
             - analytics_integration_tests
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - hold:
           type: approval
           requires:
@@ -922,5 +1162,7 @@ workflows:
             - analytics_integration_tests
           filters:
             branches:
-              ignore:
-                - priority
+              only:
+                - development
+                - staging
+                - production
