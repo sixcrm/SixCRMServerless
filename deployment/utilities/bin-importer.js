@@ -32,29 +32,34 @@ module.exports = class binImporter {
 	}
 
 	prepareS3() {
-		return this.getChecksum()
-			.then(checksum => {
-				return this.s3.headObject({
-					Bucket: s3_bucket,
-					Key: s3_key
-				})
-					.catch(error => {
-						if (error.code === 'NotFound') {
-							return;
-						}
+		// Temporary workaround -- have this compare to a stored checksum or something
+		const error = new Error('No Changes');
+		error.code = "NoChanges";
+		throw error;
 
-						throw error;
-					})
-					.then(response => {
-						if (response && response.Metadata.checksum === checksum) {
-							const error = new Error('No Changes');
-							error.code = "NoChanges";
-							throw error;
-						}
+		// return this.getChecksum()
+		// 	.then(checksum => {
+		// 		return this.s3.headObject({
+		// 			Bucket: s3_bucket,
+		// 			Key: s3_key
+		// 		})
+		// 			.catch(error => {
+		// 				if (error.code === 'NotFound') {
+		// 					return;
+		// 				}
 
-						return this.upload(checksum);
-					});
-			});
+		// 				throw error;
+		// 			})
+		// 			.then(response => {
+		// 				if (response && response.Metadata.checksum === checksum) {
+		// 					const error = new Error('No Changes');
+		// 					error.code = "NoChanges";
+		// 					throw error;
+		// 				}
+
+		// 				return this.upload(checksum);
+		// 			});
+		// 	});
 	}
 
 	startDMSTask() {

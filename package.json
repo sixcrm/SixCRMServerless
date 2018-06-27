@@ -44,7 +44,7 @@
     "request": "^2.87.0",
     "require-yaml": "0.0.1",
     "serverless-plugin-split-stacks": "^1.5.5",
-    "sixcrm-translations": "git+ssh://git@bitbucket.org/sixcrm/crossrepositorytranslations.git",
+    "sixcrm-translations": "git+ssh://git@github.com/6crm/crossrepositorytranslations.git",
     "stripe": "^5.10.0",
     "striptags": "^3.1.1",
     "util": "^0.10.4",
