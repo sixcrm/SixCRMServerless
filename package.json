@@ -71,7 +71,6 @@
     "mocha": "^5.2.0",
     "mockery": "^2.0.0",
     "nyc": "^11.9.0",
-    "pre-commit": "^1.2.2",
     "request-promise": "^4.2.2",
     "serverless": "1.26.1",
     "serverless-dynamodb-local": "0.2.18",
@@ -91,7 +90,7 @@
     "test-deleteblocks": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/deleteblocks/*.test.js",
     "test-integration": "node ./node_modules/mocha/bin/mocha --retries 3 -- test/config/global.js test/bootstrap.test.js test/integration/graph/**/*.test.js test/integration/transaction/*.test.js",
     "test-unit": "node_modules/.bin/mocha --require test/unit/dependencies.js --recursive './test/unit/**/*.spec.js'",
-    "test-unit-circle": "nyc node_modules/.bin/mocha --bail --require test/unit/dependencies.js --recursive --max-old-space-size=4096 './test/unit/**/*.spec.js'",
+    "test-unit-circle": "nyc node_modules/.bin/mocha --require test/unit/dependencies.js --recursive --max-old-space-size=4096 './test/unit/**/*.spec.js'",
     "test-local-integration": "mocha ./test/integration/local/createOrder/createOrder.test.js",
     "test-functional": "AWS_PROFILE=six nyc node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/*.test.js'",
     "test-functional-state-machine": "AWS_PROFILE=six node ./node_modules/mocha/bin/mocha --retries 3 --require test/config/global.js ./test/functional/stateMachine.test.js",
@@ -112,10 +111,6 @@
     "test-cli-extract": "NODE_CONFIG_DIR=config/local NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js extract --crm limelight --client elyfe.limelightcrm.com",
     "test-cli-ingest": "stage=local-docker NODE_CONFIG_DIR=config/local-docker NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=2 node cli/index.js ingest --account bb399f83-a050-46dd-a14d-b8b1b444c8b8"
   },
-  "pre-commit": [
-    "lint",
-    "test-unit"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TimothyDalbey/sixcrmtransactionapi.git"
