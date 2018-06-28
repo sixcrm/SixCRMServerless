@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const mockery = require('mockery');
-const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
 
 describe('controllers/endpoints/transaction', () => {

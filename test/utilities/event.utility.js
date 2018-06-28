@@ -1,6 +1,6 @@
 
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 

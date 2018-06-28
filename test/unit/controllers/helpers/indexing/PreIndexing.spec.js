@@ -3,7 +3,7 @@ const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
 const uuidV4 = require('uuid/v4');
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 function getValidAbridgedEntity(){
 

@@ -42,7 +42,7 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: 'Unit Tests'
-          command: stage=circle  npm run test-unit-circle || echo "Tests failed"
+          command: stage=circle  npm run test-unit-circle
   functional_tests:
     <<: *functional-tests-default
     steps:
@@ -99,13 +99,13 @@ jobs:
             command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-connectivity
         - run:
             name: Deploy Local Dynamo
-            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=3 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
+            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
         - run:
             name: Execute Functional Analytics Query Tests in Docker
-            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=3 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-analytics-queries
+            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-analytics-queries
         - run:
             name: Execute Functional Analytics Event Tests in Docker
-            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=3 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-analytics-events
+            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-analytics-events
   pre_deploy:
     <<: *job-defaults
     steps:
@@ -133,7 +133,7 @@ jobs:
       - run:
           name: Debugging 2
           command: printenv
-  deploy_vpc:
+  deploy_network:
     <<: *job-defaults
     steps:
       - checkout
@@ -147,87 +147,24 @@ jobs:
       - run:
           name: Deploy VPC
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_vpcs.js
-  deploy_subnets:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+          name: EC2 Security Groups
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_security_groups.js
       - run:
           name: Deploy Subnets
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_subnets.js
-  deploy_eips:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Elastic IP Addresses
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_eips.js
-  deploy_internet_gateways:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Internet Gateways
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_internet_gateways.js
-  deploy_nats:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy NATs
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_nats.js
-  deploy_route_tables:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Route Tables
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_route_tables.js
-  deploy_vpc_endpoints:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy VPC Endpoints
           command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_endpoints.js
@@ -273,20 +210,6 @@ jobs:
       - run:
           name: Serveless Deploy
           command: SLS_DEBUG=* node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
-  deploy_security_groups:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: EC2 Security Groups
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_security_groups.js
   deploy_elasticsearch:
     <<: *job-defaults
     steps:
@@ -530,12 +453,12 @@ jobs:
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Git LFS (Large File Storage)
-          command: |
-            curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-            sudo apt-get install -y git-lfs
-            git lfs pull
+      # - run:
+      #     name: Git LFS (Large File Storage)
+      #     command: |
+      #       curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+      #       sudo apt-get install -y git-lfs
+      #       git lfs pull
       - run:
           name: Deploy DMS Tasks
           command: SIX_VERBOSE=2 node ./deployment/dms/deploy_tasks.js
@@ -691,28 +614,25 @@ workflows:
   version: 2
   build_deploy_test_and_merge:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
+      - build
       - lint:
           requires:
             - build
           filters:
             branches:
-              only:
-                - development
+              ignore:
+                - staging
+                - production
+                - priority
       - unit_tests:
           requires:
             - build
           filters:
             branches:
-              only:
-                - development
+              ignore:
+                - staging
+                - production
+                - priority
       # - functional_tests:
       #     requires:
       #       - build
@@ -729,148 +649,256 @@ workflows:
             - lint
           filters:
             branches:
-              only:
-                - development
+              ignore:
+                - staging
+                - production
+                - priority
       - pre_deploy:
           requires:
             - build
             - unit_tests
             - lint
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - backup_datastore:
           requires:
             - pre_deploy
           filters:
             branches:
-              ignore:
-                - development
-      - deploy_vpc:
+              only:
+                - staging
+                - production
+                - priority
+      - deploy_network:
           requires:
             - pre_deploy
             - backup_datastore
-      - deploy_security_groups:
-          requires:
-            - deploy_vpc
-      - deploy_subnets:
-          requires:
-            - deploy_security_groups
-      - deploy_eips:
-          requires:
-            - deploy_subnets
-      - deploy_internet_gateways:
-          requires:
-            - deploy_subnets
-      - deploy_nats:
-          requires:
-            - deploy_internet_gateways
-            - deploy_eips
-      - deploy_route_tables:
-          requires:
-            - deploy_nats
-      - deploy_vpc_endpoints:
-          requires:
-            - deploy_route_tables
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_ec2_servers:
           requires:
-            - deploy_route_tables
+            - deploy_network
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_elasticsearch:
           requires:
-            - deploy_route_tables
+            - deploy_network
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_cloudsearch:
           requires:
-            - deploy_route_tables
+            - deploy_network
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_cloudsearch_indexes:
           requires:
             - deploy_cloudsearch
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_aurora:
           requires:
-            - deploy_security_groups
-            - deploy_route_tables
             - deploy_ec2_servers
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_elasticache:
           requires:
-            - deploy_route_tables
+            - deploy_network
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_iam:
           requires:
             - deploy_elasticache
             - deploy_aurora
             - deploy_elasticsearch
-            - deploy_route_tables
-            - lint
-            - unit_tests
-            - backup_datastore
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_s3:
           requires:
             - deploy_elasticache
             - deploy_aurora
             - deploy_elasticsearch
-            - deploy_route_tables
-            - lint
-            - unit_tests
-            - backup_datastore
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_serverless:
           requires:
-            - deploy_elasticache
-            - deploy_aurora
-            - deploy_elasticsearch
             - deploy_cloudsearch
-            - deploy_route_tables
-            - lint
-            - unit_tests
-            - backup_datastore
             - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_stepfunctions:
           requires:
             - deploy_serverless
-            - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_sns:
           requires:
             - deploy_sqs
             - deploy_serverless
-            - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_logsubscription:
           requires:
             - deploy_serverless
-            - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_sqs:
           requires:
             - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_dynamodb:
           requires:
             - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_dms:
           requires:
-            - deploy_ec2_servers
-            - deploy_iam
             - deploy_s3
             - deploy_dynamodb
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deploy_lambda_eventsourcemappings:
           requires:
-            - deploy_ec2_servers
-            - deploy_iam
             - deploy_s3
             - deploy_dynamodb
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       # - deploy_redshift:
       #     requires:
       #       - deploy_security_groups
       #       - deploy_iam
+          # filters:
+          #   branches:
+          #     only:
+          #       - development
+          #       - staging
+          #       - production
+          #       - priority
       - post_deployment:
           requires:
-            - deploy_serverless
-            - deploy_s3
-            - deploy_sqs
-            - deploy_iam
-            - deploy_dynamodb
             - deploy_lambda_eventsourcemappings
             # - deploy_redshift
             - deploy_sns
+            - deploy_dms
             - deploy_stepfunctions
             - deploy_logsubscription
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - environment_test:
           requires:
             - post_deployment
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - seed:
           requires:
             - environment_test
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - live_seed:
           requires:
             - seed
@@ -884,24 +912,59 @@ workflows:
           requires:
             - seed
             - live_seed
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - deleteblock_integration_tests:
           requires:
             - seed
             - live_seed
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - analytics_integration_tests:
           requires:
             - seed
             - live_seed
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - transactional_integration_tests:
           requires:
             - seed
             - live_seed
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - synchronize_index:
           requires:
             - transactional_integration_tests
             - entity_integration_tests
             - deleteblock_integration_tests
             - analytics_integration_tests
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
       - hold:
           type: approval
           requires:
@@ -923,5 +986,7 @@ workflows:
             - analytics_integration_tests
           filters:
             branches:
-              ignore:
-                - priority
+              only:
+                - development
+                - staging
+                - production

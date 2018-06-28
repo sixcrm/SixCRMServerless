@@ -3,8 +3,8 @@ let chai = require('chai');
 const expect = chai.expect;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
-const numberutilities = require('@sixcrm/sixcrmcore/util/number-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
 const RebillHelperUtilitiesController = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 
 function getValidSession() {

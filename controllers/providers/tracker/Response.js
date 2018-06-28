@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 const Response = global.SixCRM.routes.include('providers', 'Response.js');
 

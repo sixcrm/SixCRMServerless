@@ -4,9 +4,9 @@ const _ = require('lodash');
 //Technical Debt:  need a "XML-Helper" class
 const js2xmlparser = require("js2xmlparser2");
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
 const httpprovider = new HttpProvider();
 

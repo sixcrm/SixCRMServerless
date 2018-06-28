@@ -1,6 +1,6 @@
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const APIGatewayDeployment = global.SixCRM.routes.include('deployment', 'utilities/apigateway-deployment.js');
 
 let aPIGatewayDeployment = new APIGatewayDeployment();

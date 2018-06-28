@@ -1,8 +1,8 @@
 
 const querystring = require('querystring');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
 const httpprovider = new HttpProvider();
 

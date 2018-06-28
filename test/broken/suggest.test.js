@@ -2,8 +2,8 @@ const request = require('supertest');
 const chai = require('chai');
 const assert = require('chai').assert;
 const fs = require('fs');
-const tu = require('@sixcrm/sixcrmcore/util/test-utilities.js').default;
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities.js').default;
+const tu = require('@6crm/sixcrmcore/util/test-utilities.js').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities.js').default;
 
 chai.use(require('chai-json-schema'));
 

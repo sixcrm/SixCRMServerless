@@ -1,7 +1,7 @@
 
 const _ = require('lodash');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 const MerchantProviderResponse = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 

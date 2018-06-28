@@ -1,12 +1,12 @@
 
 const _ = require('lodash');
 
-var timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
-var du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-var eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
-var arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
-var objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
-const random = require('@sixcrm/sixcrmcore/util/random').default;
+var timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+var du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+var eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+var arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+var objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const random = require('@6crm/sixcrmcore/util/random').default;
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 

@@ -1,7 +1,7 @@
 let chai = require('chai');
 let expect = chai.expect;
 const mockery = require('mockery');
-const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
 describe('controllers/providers/notification/channels/slack.js', () => {
 

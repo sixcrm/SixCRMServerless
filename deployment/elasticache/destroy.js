@@ -1,7 +1,7 @@
 
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const ElasticacheDeployment = global.SixCRM.routes.include('deployment', 'utilities/elasticache-deployment.js');
 
 let stage = process.argv[2] || 'development';

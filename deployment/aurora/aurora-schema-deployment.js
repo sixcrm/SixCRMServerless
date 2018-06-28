@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const path = require('path');
 const BBPromise = require('bluebird');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
-const auroraContext = require('@sixcrm/sixcrmcore/util/analytics/aurora-context').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
+const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 
 module.exports = class AuroraSchemaDeployment {
 

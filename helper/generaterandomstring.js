@@ -1,9 +1,9 @@
 
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 const _ = require('lodash');
 
-const random = require('@sixcrm/sixcrmcore/util/random').default;
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const random = require('@6crm/sixcrmcore/util/random').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 process.env.SIX_VERBOSE = 2;
 

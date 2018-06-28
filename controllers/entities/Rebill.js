@@ -1,10 +1,10 @@
 const _ = require('lodash');
 
-const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
-const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
-const currencyutilities = require('@sixcrm/sixcrmcore/util/currency-utilities').default;
-const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const currencyutilities = require('@6crm/sixcrmcore/util/currency-utilities').default;
+const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');

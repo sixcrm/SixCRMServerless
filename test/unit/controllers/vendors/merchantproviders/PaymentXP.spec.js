@@ -3,7 +3,7 @@ const expect = chai.expect;
 const mockery = require('mockery');
 const _ = require('lodash');
 const querystring = require('querystring');
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 
 function getSuccessResponse({transaction_id} = {}) {

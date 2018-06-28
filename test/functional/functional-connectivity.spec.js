@@ -1,10 +1,10 @@
 
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 
 const expect = require('chai').expect;
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const random = require('@sixcrm/sixcrmcore/util/random').default;
-const auroraContext = require('@sixcrm/sixcrmcore/util/analytics/aurora-context').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const random = require('@6crm/sixcrmcore/util/random').default;
+const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
 
 describe('Test connections to Docker Services', () => {
