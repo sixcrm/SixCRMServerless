@@ -109,9 +109,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Accept Invite');
 
-		this.parameters.set('invite', invite)
-
-		this._hydrateInviteProperties(invite);
+		this.parameters.set('invite', invite);
 
 		await this._updatePendingACL(invite.acl);
 		const user = await this._assureUser(invite);
@@ -354,11 +352,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Post Accept');
 
-		let account = this.parameters.get('account');
-		let role = this.parameters.get('role');
-		let user = this.parameters.get('user');
-
-		return this.pushEvent({event_type: 'user_invite_accepted', context: {user: user, role: role, account: account}});
+		return this.pushEvent({event_type: 'user_invite_accepted'});
 
 	}
 
