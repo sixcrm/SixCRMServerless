@@ -5,7 +5,7 @@ const expect = chai.expect;
 const mockery = require('mockery');
 const uuidV4 = require('uuid/v4');
 
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const WorkerResponse = global.SixCRM.routes.include('workers', 'components/WorkerResponse.js');
 
 function getValidParams(){

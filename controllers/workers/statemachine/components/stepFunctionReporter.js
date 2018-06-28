@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 const StateHelperController = global.SixCRM.routes.include('helpers', 'entities/state/State.js');
 const StepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');

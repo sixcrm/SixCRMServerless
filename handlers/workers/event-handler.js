@@ -1,4 +1,4 @@
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 const LambdaHandler = require('../lambda-handler');
 const LambdaResponse = global.SixCRM.routes.include('controllers', 'providers/lambda-response.js');
 

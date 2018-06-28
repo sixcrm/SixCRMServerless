@@ -2,10 +2,10 @@ const mockery = require('mockery');
 let chai = require('chai');
 
 let expect = chai.expect;
-let objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
-let random = require('@sixcrm/sixcrmcore/util/random').default;
+let objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+let random = require('@6crm/sixcrmcore/util/random').default;
 let PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/permission-test-generators.js');
-const timestamp = require('@sixcrm/sixcrmcore/util/timestamp').default;
+const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
 describe('helpers/events/Event.spec.js', () => {
 
@@ -66,20 +66,23 @@ describe('helpers/events/Event.spec.js', () => {
 
 		});
 
-		it('throws a error (missing user)', () => {
+		it('assumes system user', () => {
 
 			const global_user = global.user;
 			delete global.user;
 
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				constructor(){}
+				pushEvent({event_type, context}){
+					expect(context.user.id).to.equal('system@sixcrm.com');
+					return Promise.resolve({MessageId:'somemessageid'});
+				}
+			});
+
 			const EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
 			let eventPushHelperController = new EventPushHelperController();
 
-			try{
-				eventPushHelperController.pushEvent({event_type: 'some_event', context: {}});
-				expect(false).to.equal(true, 'Method should not have executed');
-			}catch(error){
-				expect(error.message).to.equal('[500] Global missing "user" property.');
-			}
+			eventPushHelperController.pushEvent({event_type: 'some_event', context: {}});
 
 			global.user = global_user;
 

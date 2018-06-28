@@ -1,12 +1,12 @@
 
 const _ = require('lodash');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
-const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
-const numberutilities = require('@sixcrm/sixcrmcore/util/number-utilities').default;
-const mathutilities = require('@sixcrm/sixcrmcore/util/math-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
+const mathutilities = require('@6crm/sixcrmcore/util/math-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers','Parameters.js');
 
 module.exports = class MerchantProviderLSSFilter {

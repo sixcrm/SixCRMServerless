@@ -1,7 +1,7 @@
 
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 const exec = require('child_process').execSync;
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
 const s3provider = new S3Provider();
 

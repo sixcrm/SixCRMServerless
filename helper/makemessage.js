@@ -1,8 +1,8 @@
 
 
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 process.env.SIX_VERBOSE = 2;
 var rebill_object = {

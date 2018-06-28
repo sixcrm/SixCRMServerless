@@ -2,12 +2,12 @@
 const _ = require('lodash');
 const graphql = require('graphql').graphql;
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 const publicController = global.SixCRM.routes.include('controllers', 'endpoints/components/public.js');
 const resolveController = global.SixCRM.routes.include('providers', 'Resolve.js');
-const auroraContext = require('@sixcrm/sixcrmcore/util/analytics/aurora-context').default;
+const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 
 module.exports = class PublicGraphController extends publicController {
 

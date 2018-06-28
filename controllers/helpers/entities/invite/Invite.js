@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
-const signatureutilities = require('@sixcrm/sixcrmcore/util/signature').default;
-const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const signatureutilities = require('@6crm/sixcrmcore/util/signature').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 
 const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
 const InviteUtilities = global.SixCRM.routes.include('helpers', 'entities/invite/InviteUtilities.js');
@@ -109,9 +109,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Accept Invite');
 
-		this.parameters.set('invite', invite)
-
-		this._hydrateInviteProperties(invite);
+		this.parameters.set('invite', invite);
 
 		await this._updatePendingACL(invite.acl);
 		const user = await this._assureUser(invite);
@@ -354,11 +352,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		du.debug('Post Accept');
 
-		let account = this.parameters.get('account');
-		let role = this.parameters.get('role');
-		let user = this.parameters.get('user');
-
-		return this.pushEvent({event_type: 'user_invite_accepted', context: {user: user, role: role, account: account}});
+		return this.pushEvent({event_type: 'user_invite_accepted'});
 
 	}
 

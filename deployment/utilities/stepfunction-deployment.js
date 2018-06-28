@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
-const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
-const parserutilities = require('@sixcrm/sixcrmcore/util/parser-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
 
 const StepFunctionProvider = global.SixCRM.routes.include('providers', 'stepfunction-provider.js');
 

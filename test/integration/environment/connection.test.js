@@ -2,9 +2,9 @@ const request = require('supertest');
 const chai = require('chai');
 const assert = require('chai').assert;
 
-const tu = require('@sixcrm/sixcrmcore/util/test-utilities').default;
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const tu = require('@6crm/sixcrmcore/util/test-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 let endpoint = global.integration_test_config.endpoint;
 

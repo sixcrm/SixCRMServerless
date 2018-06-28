@@ -3,7 +3,7 @@ const chai = require("chai");
 const expect = chai.expect;
 const querystring = require('querystring');
 const mockery = require('mockery');
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const spoofer = global.SixCRM.routes.include('test', 'spoofer.js');
 const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
 

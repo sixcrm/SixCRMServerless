@@ -9,7 +9,7 @@
   "dependencies": {
     "@adexchange/aeg-redis": "0.0.196",
     "@adexchange/aeg-redshift": "0.0.84",
-    "@sixcrm/sixcrmcore": "^0.0.42",
+    "@6crm/sixcrmcore": "0.0.18",
     "ajv": "^6.5.1",
     "apn": "^2.2.0",
     "authorizenet": "^1.0.5",
@@ -44,7 +44,7 @@
     "request": "^2.87.0",
     "require-yaml": "0.0.1",
     "serverless-plugin-split-stacks": "^1.5.5",
-    "sixcrm-translations": "git+ssh://git@bitbucket.org/sixcrm/crossrepositorytranslations.git",
+    "sixcrm-translations": "git+ssh://git@github.com/6crm/crossrepositorytranslations.git",
     "stripe": "^5.10.0",
     "striptags": "^3.1.1",
     "util": "^0.10.4",
@@ -71,7 +71,6 @@
     "mocha": "^5.2.0",
     "mockery": "^2.0.0",
     "nyc": "^11.9.0",
-    "pre-commit": "^1.2.2",
     "request-promise": "^4.2.2",
     "serverless": "1.26.1",
     "serverless-dynamodb-local": "0.2.18",
@@ -83,15 +82,15 @@
     "yargs": "^11.1.0"
   },
   "scripts": {
-    "test-environment": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/environment/*.test.js",
-    "test-miscellaneous": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/miscellaneous/*.test.js",
-    "test-entities": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/entities/*.test.js",
+    "test-environment": "node ./node_modules/mocha/bin/mocha --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/environment/*.test.js",
+    "test-miscellaneous": "node ./node_modules/mocha/bin/mocha --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/miscellaneous/*.test.js",
+    "test-entities": "node ./node_modules/mocha/bin/mocha --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/entities/*.test.js",
     "test-live-transactions": "node ./node_modules/mocha/bin/mocha --require test/config/global.js test/bootstrap.test.js test/live-transactions/*.test.js",
     "test-transactions": "node ./node_modules/mocha/bin/mocha --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/transaction/*.test.js",
-    "test-deleteblocks": "node ./node_modules/mocha/bin/mocha --bail --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/deleteblocks/*.test.js",
+    "test-deleteblocks": "node ./node_modules/mocha/bin/mocha --retries 3 --require test/config/global.js test/bootstrap.test.js test/integration/graph/deleteblocks/*.test.js",
     "test-integration": "node ./node_modules/mocha/bin/mocha --retries 3 -- test/config/global.js test/bootstrap.test.js test/integration/graph/**/*.test.js test/integration/transaction/*.test.js",
     "test-unit": "node_modules/.bin/mocha --require test/unit/dependencies.js --recursive './test/unit/**/*.spec.js'",
-    "test-unit-circle": "nyc node_modules/.bin/mocha --bail --require test/unit/dependencies.js --recursive --max-old-space-size=4096 './test/unit/**/*.spec.js'",
+    "test-unit-circle": "nyc node_modules/.bin/mocha --require test/unit/dependencies.js --recursive --max-old-space-size=4096 './test/unit/**/*.spec.js'",
     "test-local-integration": "mocha ./test/integration/local/createOrder/createOrder.test.js",
     "test-functional": "AWS_PROFILE=six nyc node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/*.test.js'",
     "test-functional-state-machine": "AWS_PROFILE=six node ./node_modules/mocha/bin/mocha --retries 3 --require test/config/global.js ./test/functional/stateMachine.test.js",
@@ -101,10 +100,10 @@
     "test-functional-analytics": "npm run test-functional-analytics-queries && npm run test-functional-analytics-events",
     "test-functional-analytics-events": "AWS_PROFILE=six nyc node_modules/.bin/_mocha --recursive test/config/global.js './test/functional/analytics/events/**/*.test.js'",
     "test-functional-analytics-queries": "AWS_PROFILE=six node test/functional/analytics/queries/aurora-queries.js",
-    "test-integration-analytics": "node ./node_modules/mocha/bin/mocha --recursive --bail--retries 3 --require test/config/global.js test/bootstrap.test.js 'test/integration/graph/analytics/**/*.test.js'",
+    "test-integration-analytics": "node ./node_modules/mocha/bin/mocha --recursive --retries 3 --require test/config/global.js test/bootstrap.test.js 'test/integration/graph/analytics/**/*.test.js'",
     "test-analytics-seed": "node ./test/functional/analytics/seeds/seed.js ",
-    "test-workers": "nyc node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js --recursive './test/unit/workers/**/*.spec.js'",
-    "test-endpoints": "nyc node_modules/.bin/_mocha  -- --require test/config/global.js test/bootstrap.test.js './test/unit/endpoints/**/*.spec.js'",
+    "test-workers": "nyc node_modules/.bin/_mocha -- --require test/config/global.js test/bootstrap.test.js --recursive './test/unit/workers/**/*.spec.js'",
+    "test-endpoints": "nyc node_modules/.bin/_mocha -- --require test/config/global.js test/bootstrap.test.js './test/unit/endpoints/**/*.spec.js'",
     "lint-eslint": "eslint --ignore-pattern 'coverage/**' --ignore-pattern '**/*test.js' --ignore-pattern '**/*spec.js' '{**/*.js,**/*.json}'",
     "lint-yml": "node_modules/yaml-lint/cli.js **/*.yml",
     "lint": "npm run lint-eslint && npm run lint-yml",
@@ -112,10 +111,6 @@
     "test-cli-extract": "NODE_CONFIG_DIR=config/local NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js extract --crm limelight --client elyfe.limelightcrm.com",
     "test-cli-ingest": "stage=local-docker NODE_CONFIG_DIR=config/local-docker NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=2 node cli/index.js ingest --account bb399f83-a050-46dd-a14d-b8b1b444c8b8"
   },
-  "pre-commit": [
-    "lint",
-    "test-unit"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TimothyDalbey/sixcrmtransactionapi.git"

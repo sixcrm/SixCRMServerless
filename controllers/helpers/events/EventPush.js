@@ -1,10 +1,12 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+
+const SystemUser = {id: 'system@sixcrm.com'};
 
 module.exports = class EventPushHelperController {
 
@@ -26,8 +28,10 @@ module.exports = class EventPushHelperController {
 			context = {};
 		}
 
-		if(!_.has(global, 'user')){
-			throw eu.getError('server', 'Global missing "user" property.');
+		let user = global.user;
+
+		if(!_.has(global, 'user')) {
+			user = SystemUser;
 		}
 
 		return new EventHelperController().pushEvent({
@@ -38,7 +42,7 @@ module.exports = class EventPushHelperController {
 				},
 				context,
 				{
-					user: global.user
+					user: user
 				}
 			),
 			message_attributes: message_attributes

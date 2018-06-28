@@ -1,8 +1,8 @@
 
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const mungeutilities = require('@sixcrm/sixcrmcore/util/munge-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const mungeutilities = require('@6crm/sixcrmcore/util/munge-utilities').default;
 
 let email = process.argv[2];
 

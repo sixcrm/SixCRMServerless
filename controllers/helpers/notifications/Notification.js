@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
-const fileutilities = require('@sixcrm/sixcrmcore/util/file-utilities').default;
-const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
-const stringutilities = require('@sixcrm/sixcrmcore/util/string-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const fileutilities = require('@6crm/sixcrmcore/util/file-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 
 module.exports = class NotificationHelperClass {
 

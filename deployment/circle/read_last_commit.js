@@ -1,5 +1,5 @@
 
-require('@sixcrm/sixcrmcore');
+require('@6crm/sixcrmcore');
 const S3Provider = global.SixCRM.routes.include('controllers', 'providers/s3-provider.js');
 const s3provider = new S3Provider();
 

@@ -1,10 +1,10 @@
 
 const _ = require('lodash');
 const BBPromise = require('bluebird');
-const du = require('@sixcrm/sixcrmcore/util/debug-utilities').default;
-const eu = require('@sixcrm/sixcrmcore/util/error-utilities').default;
-const objectutilities = require('@sixcrm/sixcrmcore/util/object-utilities').default;
-const arrayutilities = require('@sixcrm/sixcrmcore/util/array-utilities').default;
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const EC2Provider = global.SixCRM.routes.include('controllers', 'providers/ec2-provider.js');
 const ElasticacheProvider = global.SixCRM.routes.include('controllers', 'providers/elasticache-provider.js');
 const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
