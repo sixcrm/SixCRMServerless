@@ -6,6 +6,8 @@ const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 const EventHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 
+const SystemUser = {id: 'system@sixcrm.com'};
+
 module.exports = class EventPushHelperController {
 
 	constructor() {}
@@ -26,8 +28,10 @@ module.exports = class EventPushHelperController {
 			context = {};
 		}
 
-		if(!_.has(global, 'user')){
-			throw eu.getError('server', 'Global missing "user" property.');
+		let user = global.user;
+
+		if(!_.has(global, 'user')) {
+			user = SystemUser;
 		}
 
 		return new EventHelperController().pushEvent({
@@ -38,7 +42,7 @@ module.exports = class EventPushHelperController {
 				},
 				context,
 				{
-					user: global.user
+					user: user
 				}
 			),
 			message_attributes: message_attributes

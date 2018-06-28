@@ -66,20 +66,23 @@ describe('helpers/events/Event.spec.js', () => {
 
 		});
 
-		it('throws a error (missing user)', () => {
+		it('assumes system user', () => {
 
 			const global_user = global.user;
 			delete global.user;
 
+			mockery.registerMock(global.SixCRM.routes.path('helpers', 'events/Event.js'), class {
+				constructor(){}
+				pushEvent({event_type, context}){
+					expect(context.user.id).to.equal('system@sixcrm.com');
+					return Promise.resolve({MessageId:'somemessageid'});
+				}
+			});
+
 			const EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
 			let eventPushHelperController = new EventPushHelperController();
 
-			try{
-				eventPushHelperController.pushEvent({event_type: 'some_event', context: {}});
-				expect(false).to.equal(true, 'Method should not have executed');
-			}catch(error){
-				expect(error.message).to.equal('[500] Global missing "user" property.');
-			}
+			eventPushHelperController.pushEvent({event_type: 'some_event', context: {}});
 
 			global.user = global_user;
 
