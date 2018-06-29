@@ -633,10 +633,8 @@ workflows:
             - lint
           filters:
             branches:
-              ignore:
-                - staging
-                - production
-                - priority
+              only:
+                - development
       - pre_deploy:
           requires:
             - build
