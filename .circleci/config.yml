@@ -593,22 +593,6 @@ jobs:
       - run:
           name: Synchronize Search Index With DynamoDB
           command: export SIX_VERBOSE=3 && node cli/index.js syncronizeindexes --fix=true
-  merge:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - run:
-          name: Merge To Upper
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "development" ]; then
-              ./deployment/utilities/merge_branches.sh development staging
-            elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
-              ./deployment/utilities/merge_branches.sh staging production
-            elif [ "${CIRCLE_BRANCH}" == "production" ]; then
-              ./deployment/utilities/merge_branches.sh production priority
-            fi
 
 workflows:
   version: 2
@@ -965,28 +949,3 @@ workflows:
                 - staging
                 - production
                 - priority
-      - hold:
-          type: approval
-          requires:
-            - transactional_integration_tests
-            - entity_integration_tests
-            - deleteblock_integration_tests
-            - analytics_integration_tests
-          filters:
-            branches:
-              only:
-                - production
-                - staging
-      - merge:
-          requires:
-            - hold
-            - transactional_integration_tests
-            - entity_integration_tests
-            - deleteblock_integration_tests
-            - analytics_integration_tests
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
