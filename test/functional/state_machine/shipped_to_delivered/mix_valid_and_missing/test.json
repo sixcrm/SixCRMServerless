@@ -1,9 +1,0 @@
-{
-  "description": "5 rebills go from shipped to delivered and 3 rebills go to error",
-  "order": 50,
-  "lambda_filter": ["shippedtodelivered"],
-  "env": {
-    "archivefilter": "all"
-  },
-  "only": false
-}

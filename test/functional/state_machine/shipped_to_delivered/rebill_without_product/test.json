@@ -1,9 +1,0 @@
-{
-  "description": "Rebill without products moves on.",
-  "order": 80,
-  "lambda_filter": ["shippedtodelivered"],
-  "env": {
-    "archivefilter": "all"
-  },
-  "only": false
-}

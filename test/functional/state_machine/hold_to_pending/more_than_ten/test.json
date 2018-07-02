@@ -1,5 +1,0 @@
-{
-  "description": "11 rebills are sent from hold to pending",
-  "order": 30,
-  "lambda_filter": ["holdtopending"]
-}

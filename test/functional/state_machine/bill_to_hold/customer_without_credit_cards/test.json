@@ -1,4 +1,0 @@
-{
-  "description": "Rebill with customer that has no credit card goes to error",
-  "order": 80
-}
