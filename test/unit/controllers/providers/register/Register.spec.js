@@ -837,6 +837,10 @@ describe('controllers/providers/Register.js', () => {
 					expect(_rebill).to.equal(rebill);
 					return Promise.resolve(session);
 				}
+				listBySession({session: _session}) {
+					expect(_session).to.equal(session);
+					return Promise.resolve({rebills: [rebill]})
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
@@ -946,6 +950,10 @@ describe('controllers/providers/Register.js', () => {
 				getParentSession(_rebill) {
 					expect(_rebill).to.equal(rebill);
 					return Promise.resolve(session);
+				}
+				listBySession({session: _session}) {
+					expect(_session).to.equal(session);
+					return Promise.resolve({rebills: [rebill]})
 				}
 			});
 
@@ -1057,6 +1065,10 @@ describe('controllers/providers/Register.js', () => {
 					expect(_rebill).to.equal(rebill);
 					return Promise.resolve(session);
 				}
+				listBySession({session: _session}) {
+					expect(_session).to.equal(session);
+					return Promise.resolve({rebills: [rebill]})
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Receipt.js'), class {
@@ -1125,6 +1137,10 @@ describe('controllers/providers/Register.js', () => {
 	describe('processTransaction', () => {
 		it('processes transactions', () => {
 			const rebill = getValidRebill();
+			rebill.bill_at = '2018-03-01T00:00:00.000Z';
+			const rebills = [getValidRebill(), rebill, getValidRebill()];
+			rebills[0].bill_at = '2018-02-01T00:00:00.000Z';
+			rebills[2].bill_at = '2018-01-01T00:00:00.000Z';
 			const processor_response = getProcessorResponseObject();
 			const transaction_receipt = getValidTransactionObject();
 			const session = getValidParentSession();
@@ -1145,6 +1161,10 @@ describe('controllers/providers/Register.js', () => {
 				getParentSession(_rebill) {
 					expect(_rebill).to.equal(rebill);
 					return Promise.resolve(session);
+				}
+				listBySession({session: _session}) {
+					expect(_session).to.equal(session);
+					return Promise.resolve({rebills})
 				}
 			});
 
