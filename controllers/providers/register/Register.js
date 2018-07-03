@@ -149,23 +149,28 @@ module.exports = class Register extends RegisterUtilities {
 
 	}
 
-	pushTransactionEvents() {
+	async pushTransactionEvents() {
 
 		du.debug('Push Transaction Events');
 
 		const transactions = this.parameters.isSet('transactionreceipts') ? this.parameters.get('transactionreceipts') : [this.parameters.get('receipttransaction')];
+		const session = this.parameters.get('parentsession');
+		const rebill = this.parameters.get('rebill');
+
+		const {rebills} = await this.rebillController.listBySession({session});
+		const rebills_sorted = _.sortBy(rebills, rebill => new Date(rebill.bill_at));
+		const cycle = rebills_sorted.findIndex(item => item.id === rebill.id);
 
 		return BBPromise.each(transactions, (transaction) => {
-
-			return AnalyticsEvent.push('transaction_' + transaction.result,
-				{
-					datetime: moment.tz('UTC').toISOString(),
-					session: this.parameters.get('parentsession', {fatal: false}),
-					transaction,
-					rebill: this.parameters.get('rebill', {fatal: false}),
-					transactionSubType: this.parameters.get('transactionsubtype', {fatal: false}),
-					transactionType: this.parameters.get('transactiontype', {fatal: false})});
-
+			return AnalyticsEvent.push('transaction_' + transaction.result, {
+				datetime: moment.tz('UTC').toISOString(),
+				session,
+				rebill,
+				cycle,
+				transaction,
+				transactionSubType: this.parameters.get('transactionsubtype', {fatal: false}),
+				transactionType: this.parameters.get('transactiontype', {fatal: false})
+			});
 		});
 
 	}
