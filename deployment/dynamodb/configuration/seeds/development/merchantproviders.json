@@ -1,0 +1,38 @@
+[
+	{
+		"id":"7efa4acf-f64b-43fa-a822-4295e56ad116",
+		"account":"d3fa3bf3-7111-49f4-8261-87674482bf1c",
+		"name":"Test Mid Create Order",
+		"processor":{
+			"name":"Test"
+		},
+		"processing":{
+			"monthly_cap": null,
+			"discount_rate":0.9,
+			"transaction_fee":0.06,
+			"reserve_rate": 0.5,
+			"maximum_chargeback_ratio":0.17,
+			"transaction_counts":{
+				"daily":null,
+				"monthly":null,
+				"weekly":null
+			}
+		},
+		"enabled":true,
+		"gateway": {
+			"type":"Test",
+			"name":"Test",
+			"username":"demo",
+			"password":"password"
+		},
+		"allow_prepaid":true,
+		"accepted_payment_methods":["Visa", "Mastercard", "American Express","LOCAL CARD"],
+		"customer_service":{
+			"email":"customer.service@mid.com",
+			"url":"http://mid.com",
+			"description":"Some string here..."
+		},
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	}
+]

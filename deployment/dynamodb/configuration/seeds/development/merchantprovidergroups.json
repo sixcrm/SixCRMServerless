@@ -1,0 +1,13 @@
+[{
+	"id":"ad701fbb-b506-4daa-85f0-65d3d4e4b718",
+	"name": "Seed merchant provider group",
+	"account":"d3fa3bf3-7111-49f4-8261-87674482bf1c",
+	"merchantproviders":[
+		{
+			"id":"7efa4acf-f64b-43fa-a822-4295e56ad116",
+			"distribution":1
+		}
+	],
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
+}]

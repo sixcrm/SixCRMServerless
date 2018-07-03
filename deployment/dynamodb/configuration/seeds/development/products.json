@@ -1,0 +1,13 @@
+[
+	{
+		"id": "3a1135a2-867c-4634-9eeb-634b2e7d8323",
+		"account":"d3fa3bf3-7111-49f4-8261-87674482bf1c",
+		"name": "Create Order Product",
+		"description":"Product for Create Order Test",
+		"sku":"e2e-co",
+		"ship":false,
+		"default_price":1.00,
+		"created_at":"2017-04-06T18:40:41.405Z",
+		"updated_at":"2017-04-06T18:41:12.521Z"
+	}
+]
