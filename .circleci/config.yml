@@ -579,20 +579,6 @@ jobs:
       - run:
           name: Transactional Integration Tests
           command: export SIX_VERBOSE=2; npm run test-transactions
-  synchronize_index:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Synchronize Search Index With DynamoDB
-          command: export SIX_VERBOSE=3 && node cli/index.js syncronizeindexes --fix=true
 
 workflows:
   version: 2
@@ -927,19 +913,6 @@ workflows:
           requires:
             - seed
             - live_seed
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - synchronize_index:
-          requires:
-            - transactional_integration_tests
-            - entity_integration_tests
-            - deleteblock_integration_tests
-            - analytics_integration_tests
           filters:
             branches:
               only:
