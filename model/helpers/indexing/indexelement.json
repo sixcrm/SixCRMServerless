@@ -98,5 +98,5 @@
 		"index_action",
 		"entity_type"
 	],
-	"additionalProperties": false
+	"additionalProperties": true
 }
