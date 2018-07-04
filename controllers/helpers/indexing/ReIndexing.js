@@ -5,12 +5,8 @@ const dynamodbprovider = new DynamoDBProvider();
 const CloudsearchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudsearch-provider.js');
 const cloudsearchprovider = new CloudsearchProvider();
 
-const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
-let preIndexingHelperController = new PreIndexingHelperController();
-
 const IndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/Indexing.js');
 let indexingHelperController = new IndexingHelperController();
-
 
 let entities_dynamodb = [];
 let entities_index = [];
@@ -81,7 +77,7 @@ module.exports = class ReIndexingHelperController {
 
 		let promises = [];
 
-		let indexing_entities = preIndexingHelperController.indexing_entities;
+		let indexing_entities = global.SixCRM.routes.include('model', 'helpers/indexing/entitytype.json').enum;
 
 		du.info('Indexing entities: ' + indexing_entities);
 
