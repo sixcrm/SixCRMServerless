@@ -1,5 +1,3 @@
-
-
 const mockery = require('mockery');
 let chai = require('chai');
 let expect = chai.expect;
@@ -310,7 +308,6 @@ describe('controllers/Entity.js', () => {
 	describe('create', () => {
 
 		beforeEach(() => {
-			//global.SixCRM.localcache.clear('all');
 			delete global.user;
 		});
 
@@ -491,7 +488,6 @@ describe('controllers/Entity.js', () => {
 	describe('update', () => {
 
 		beforeEach(() => {
-			//global.SixCRM.localcache.clear('all');
 			delete global.user;
 		});
 
@@ -631,7 +627,6 @@ describe('controllers/Entity.js', () => {
 	describe('delete', () => {
 
 		beforeEach(() => {
-			//global.SixCRM.localcache.clear('all');
 			delete global.user;
 		});
 
@@ -797,7 +792,6 @@ describe('controllers/Entity.js', () => {
 	describe('get', () => {
 		afterEach(() => {
 			mockery.resetCache();
-			//global.SixCRM.localcache.clear('all');
 			delete global.user;
 		});
 
