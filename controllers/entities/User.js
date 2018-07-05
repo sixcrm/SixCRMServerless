@@ -199,7 +199,7 @@ module.exports = class UserController extends entityController {
 		du.debug('Get ACL');
 
 		if(_.has(user, 'acl') && _.isArray(user.acl)){
-			return user.acl;
+			return Promise.resolve(user.acl);
 		}
 
 		return this.executeAssociatedEntityFunction('userACLController', 'getACLByUser', {user: user.id})

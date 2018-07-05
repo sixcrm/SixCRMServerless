@@ -591,7 +591,6 @@ describe('controllers/helpers/entities/user/User.js', () => {
 
 			let expected_user = objectutilities.clone(user);
 			expected_user.termsandconditions_outdated = true;
-			expected_user.acl = [];
 
 			mockery.registerMock(global.SixCRM.routes.path('entities','Account.js'), class {
 				constructor(){}
