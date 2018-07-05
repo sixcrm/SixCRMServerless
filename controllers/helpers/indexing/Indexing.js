@@ -232,6 +232,10 @@ module.exports = class IndexingHelperController {
 
 		}
 
+		if (!processed_document.fields.address_line_2) {
+			processed_document.fields.address_line_2 = ' ';
+		}
+
 		return processed_document;
 
 	}

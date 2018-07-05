@@ -6,9 +6,6 @@
 	"type": "object",
 	"properties": {
 		"line1": {
-			"$ref": "./addressline1.json"
-		},
-		"line2": {
 			"type": "string"
 		},
 		"city": {
@@ -19,7 +16,7 @@
 			"$ref": "./statecode.json"
 		},
 		"zip": {
-			"$ref": "./zipcode.json"
+			"type": "string"
 		},
 		"country": {
 			"$ref": "./countrycode.json"

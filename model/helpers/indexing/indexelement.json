@@ -28,9 +28,6 @@
 		"name": {
 			"$ref": "../../definitions/name.json"
 		},
-		"phone": {
-			"$ref": "../../definitions/phone.json"
-		},
 		"sku": {
 			"$ref": "../../definitions/sku.json"
 		},
