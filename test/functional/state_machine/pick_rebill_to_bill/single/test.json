@@ -1,4 +1,0 @@
-{
-  "description": "Single billable rebill is picked from dynamo",
-  "order": 10
-}

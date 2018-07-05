@@ -22,7 +22,7 @@
 				"last_four": {
 					"$ref": "../../definitions/creditcardlastfour.json"
 				},
-				"ccv": {
+				"cvv": {
 					"$ref": "../../definitions/creditcardcvv.json"
 				},
 				"expiration": {

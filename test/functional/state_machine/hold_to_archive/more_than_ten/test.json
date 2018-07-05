@@ -1,9 +1,0 @@
-{
-  "description": "11 rebills are archived and updated",
-  "order": 40,
-  "lambda_filter": ["holdtoarchive"],
-  "env": {
-    "archivefilter": "noship"
-  },
-  "only": false
-}

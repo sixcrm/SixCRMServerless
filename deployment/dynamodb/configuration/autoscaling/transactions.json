@@ -4,13 +4,13 @@
     "scalable_targets":[
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 3,
+        "MinCapacity": 5,
         "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
         "ServiceNamespace": "dynamodb"
       },
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 5,
+        "MinCapacity": 15,
         "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
         "ServiceNamespace": "dynamodb"
       }
@@ -24,8 +24,8 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
           },
-          "ScaleInCooldown": 10,
-          "ScaleOutCooldown": 10,
+          "ScaleInCooldown": 0,
+          "ScaleOutCooldown": 0,
           "TargetValue": 50.0
         }
       },
@@ -37,8 +37,8 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
           },
-          "ScaleInCooldown": 10,
-          "ScaleOutCooldown": 10,
+          "ScaleInCooldown": 0,
+          "ScaleOutCooldown": 0,
           "TargetValue": 50.0
         }
       }
@@ -55,7 +55,7 @@
       },
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 3,
+        "MinCapacity": 10,
         "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
         "ServiceNamespace": "dynamodb"
       }
@@ -69,8 +69,8 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
           },
-          "ScaleInCooldown": 10,
-          "ScaleOutCooldown": 10,
+          "ScaleInCooldown": 0,
+          "ScaleOutCooldown": 0,
           "TargetValue": 50.0
         }
       },
@@ -82,8 +82,8 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
           },
-          "ScaleInCooldown": 10,
-          "ScaleOutCooldown": 10,
+          "ScaleInCooldown": 0,
+          "ScaleOutCooldown": 0,
           "TargetValue": 50.0
         }
       }
@@ -100,7 +100,7 @@
       },
       {
         "MaxCapacity": 4000,
-        "MinCapacity": 3,
+        "MinCapacity": 10,
         "ScalableDimension": "dynamodb:index:ReadCapacityUnits",
         "ServiceNamespace": "dynamodb"
       }
@@ -114,8 +114,8 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
           },
-          "ScaleInCooldown": 10,
-          "ScaleOutCooldown": 10,
+          "ScaleInCooldown": 0,
+          "ScaleOutCooldown": 0,
           "TargetValue": 50.0
         }
       },
@@ -127,8 +127,8 @@
           "PredefinedMetricSpecification": {
             "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
           },
-          "ScaleInCooldown": 10,
-          "ScaleOutCooldown": 10,
+          "ScaleInCooldown": 0,
+          "ScaleOutCooldown": 0,
           "TargetValue": 50.0
         }
       }

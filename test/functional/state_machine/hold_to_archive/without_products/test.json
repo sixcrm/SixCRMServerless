@@ -1,9 +1,0 @@
-{
-  "description": "Rebill without products is archived",
-  "order": 140,
-  "lambda_filter": ["holdtoarchive"],
-  "env": {
-    "archivefilter": "noship"
-  },
-  "only": false
-}

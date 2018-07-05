@@ -58,7 +58,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			}
 		},
 		type: {
-			type: new GraphQLNonNull(GraphQLString),
+			type: GraphQLString,
 			description: 'The type of transaction.'
 		},
 		result: {

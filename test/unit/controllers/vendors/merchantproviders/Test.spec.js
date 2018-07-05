@@ -183,7 +183,7 @@ describe('vendors/merchantproviders/Test.js', () => {
 			amount: 100,
 			creditcard:{
 				number: '5105105105105100',
-				ccv: '123',
+				cvv: '123',
 				exp: '12/2014',
 				address:{
 					line1: '123 Main St.',

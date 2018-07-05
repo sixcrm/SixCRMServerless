@@ -1,8 +1,0 @@
-{
-  "description": "3 rebills with second attempt are archived and 2 without second attempt remain in recover state",
-  "order": 60,
-  "lambda_filter": ["recovertoarchive"],
-  "env": {
-    "archivefilter": "twoattempts"
-  }
-}

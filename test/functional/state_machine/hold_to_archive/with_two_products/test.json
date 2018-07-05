@@ -1,8 +1,0 @@
-{
-  "description": "Rebill with two products is archived and updated",
-  "order": 20,
-  "lambda_filter": ["holdtoarchive"],
-  "env": {
-    "archivefilter": "noship"
-  }
-}

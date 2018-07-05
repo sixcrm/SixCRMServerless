@@ -1,8 +1,0 @@
-{
-  "description": "Rebill is archived and updated",
-  "order": 10,
-  "lambda_filter": ["deliveredtoarchive"],
-  "env": {
-    "archivefilter": "all"
-  }
-}

@@ -1,9 +1,0 @@
-{
-  "description": "Rebill without shipping receipt goes to error.",
-  "order": 90,
-  "lambda_filter": ["shippedtodelivered"],
-  "env": {
-    "archivefilter": "all"
-  },
-  "only": false
-}

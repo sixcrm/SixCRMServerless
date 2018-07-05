@@ -1,0 +1,11 @@
+[{
+	"id":"e9727bec-f850-4fbb-8881-e1d43e5e56b7",
+	"account":"1c9fea60-1fc6-40de-8899-a8442f11b1c1",
+	"name": "Create Order Campaign",
+	"description": "Campaign for Create Order e2e test",
+	"allow_on_order_form": true,
+	"allow_prepaid": false,
+	"show_prepaid": false,
+	"created_at":"2017-04-06T18:40:41.405Z",
+	"updated_at":"2017-04-06T18:41:12.521Z"
+}]
