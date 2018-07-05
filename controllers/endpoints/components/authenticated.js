@@ -164,25 +164,13 @@ module.exports = class AuthenticatedController extends endpointController {
 
 				let permission_array = required_permission.split('/');
 
-				let permission_utilities_state = JSON.stringify(permissionutilities.getState());
-
-				let question = permission_utilities_state+permissionutilities.buildPermissionString(permission_array[1], permission_array[0]);
-
-				let answer_function = () => {
-
-					let permission = permissionutilities.validatePermissions(permission_array[1], permission_array[0]);
-
-					return permission;
-
-				}
-
-				return global.SixCRM.localcache.resolveQuestion(question, answer_function);
+				return permissionutilities.validatePermissions(permission_array[1], permission_array[0]);
 
 			});
 
 			if(_.includes(validated_permissions, false)){
 
-				throw eu.getError('fobidden', 'Unable to execute action.  User lacks permission.');
+				throw eu.getError('forbidden', 'Unable to execute action.  User lacks permission.');
 
 			}
 

@@ -177,6 +177,7 @@ describe('controllers/entities/User.js', () => {
 
 		it('successfully retrieves user ACL by user id', () => {
 			let user_without_acl = getValidUser(); //valid user without acl
+			delete user_without_acl.acl;
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers','entities/UserACL.js'), class {
 				getACLByUser({user}) {
@@ -203,7 +204,7 @@ describe('controllers/entities/User.js', () => {
 			const UserController = global.SixCRM.routes.include('controllers', 'entities/User.js');
 			const userController = new UserController();
 
-			expect(userController.getACL(user_data)).to.deep.equal(['userACL']);
+			return userController.getACL(user_data).then((result) => expect(result).to.deep.equal(['userACL']));
 		});
 	});
 
