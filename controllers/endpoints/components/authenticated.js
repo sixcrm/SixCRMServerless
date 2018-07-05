@@ -1,3 +1,4 @@
+
 const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
@@ -169,7 +170,7 @@ module.exports = class AuthenticatedController extends endpointController {
 
 			if(_.includes(validated_permissions, false)){
 
-				throw eu.getError('fobidden', 'Unable to execute action.  User lacks permission.');
+				throw eu.getError('forbidden', 'Unable to execute action.  User lacks permission.');
 
 			}
 

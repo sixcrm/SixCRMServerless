@@ -1264,7 +1264,18 @@ class MockEntities {
 			termsandconditions: randomutilities.createRandomString(10),
 			alias: randomutilities.createRandomString(40),
 			created_at: timestamp.getISO8601(),
-			updated_at: timestamp.getISO8601()
+			updated_at: timestamp.getISO8601(),
+			acl: [{
+				account: {
+					id: 'd3fa3bf3-7824-49f4-8261-87674482bf1c'
+				},
+				role: {
+					permissions: {
+						allow: ['*/*'],
+						deny: []
+					}
+				}
+			}],
 		}
 	}
 
