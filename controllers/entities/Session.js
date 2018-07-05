@@ -1,5 +1,6 @@
 
 const _ = require('lodash');
+const moment = require("moment");
 
 var timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 var du = require('@6crm/sixcrmcore/util/debug-utilities').default;
@@ -583,6 +584,8 @@ module.exports = class SessionController extends entityController {
 			entity.cancelled_at = timestamp.getISO8601();
 			session.cancelled = entity;
 
+			session = this.trimSessionWatermark(session);
+
 			return this.update({entity: session}).then(() => this.listRebills(session)).then(rebills => {
 				if (!rebills || !rebills.length) {
 					return []
@@ -597,6 +600,27 @@ module.exports = class SessionController extends entityController {
 		});
 
 
+	}
+
+	trimSessionWatermark(session) {
+		const end = moment.utc().diff(session.created_at, 'd');
+
+		session.watermark.product_schedules.forEach((quantifiableSchedule) => {
+
+			if (!quantifiableSchedule.product_schedule.schedule) return;
+
+			quantifiableSchedule.product_schedule.schedule =
+				quantifiableSchedule.product_schedule.schedule.filter(schedule => schedule.start < end);
+
+			quantifiableSchedule.product_schedule.schedule.forEach((schedule) => {
+				if (!schedule.end || schedule.end > end) {
+					schedule.end = end;
+				}
+			})
+
+		});
+
+		return session;
 	}
 
 }
