@@ -7,7 +7,7 @@ module.exports = class IPCheck {
 
 		du.debug('Check IP');
 
-		const HTTPProvider = global.SixCRM.routes.include('providers', 'http-provider.js');
+		const HTTPProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
 		let httpprovider = new HTTPProvider();
 
 		const parameters = {

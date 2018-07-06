@@ -1,6 +1,6 @@
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
+const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
 const httpprovider = new HttpProvider();
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 

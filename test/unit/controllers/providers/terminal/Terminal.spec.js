@@ -979,13 +979,15 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 				body: response_body
 			}
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve({
-						error: null,
-						response: vendor_response,
-						body: response_body
-					});
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve({
+							error: null,
+							response: vendor_response,
+							body: response_body
+						});
+					}
 				}
 			});
 
@@ -1048,13 +1050,15 @@ describe('controllers/providers/terminal/Terminal.js', function () {
 				body: response_body
 			}
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve({
-						error: null,
-						response: vendor_response,
-						body: response_body
-					});
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve({
+							error: null,
+							response: vendor_response,
+							body: response_body
+						});
+					}
 				}
 			});
 
