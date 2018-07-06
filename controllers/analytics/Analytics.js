@@ -1,13 +1,11 @@
 const _ = require('lodash');
 const path = require('path');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const CacheController = global.SixCRM.routes.include('controllers', 'providers/Cache.js');
 
 module.exports = class AnalyticsController {
 
 	constructor() {
 
-		this.cacheController = new CacheController();
 		this.permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
 
 	}
@@ -180,13 +178,10 @@ module.exports = class AnalyticsController {
 		const query = await queryTransform(clone);
 		const auroraContext = global.SixCRM.getResource('auroraContext');
 
-		// return this.cacheController.useCache(query, async () => {
-
 		du.debug('Analytics.query()', query);
 		const results = await auroraContext.connection.query(query);
 		const resultTransform = require(path.join(__dirname, 'queries', queryRoot, 'transform'));
 		return resultTransform(results.rows);
-		// });
 
 	}
 

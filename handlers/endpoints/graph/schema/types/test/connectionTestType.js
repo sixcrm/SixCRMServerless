@@ -15,15 +15,6 @@ module.exports.graphObj = new GraphQLObjectType({
 				return elasticSearchProvider.test();
 			}
 		},
-		elasticache: {
-			type: new GraphQLNonNull(connectionTestResultType.graphObj),
-			description: 'Elasticache Connectivity Test',
-			resolve: () => {
-				const RedisProvider = global.SixCRM.routes.include('providers', 'redis-provider.js');
-				const redisProvider = new RedisProvider();
-				return redisProvider.test();
-			}
-		},
 		dynamodb: {
 			type: new GraphQLNonNull(connectionTestResultType.graphObj),
 			description: 'DynamoDB Connectivity Test',
