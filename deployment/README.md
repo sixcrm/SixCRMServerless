@@ -31,9 +31,6 @@ OK
 ```
 11. Run `deployment/sqs/deploy_queues.js`
 12. Run `deployment/dynamodb/deploy_tables.js`
-13. Run `deployment/redshift/deploy_cluster.js` (Issue: promise rejection)
-16. Run `deployment/redshift/deploy_tables.js`
-17. Run `deployment/redshift/deploy_seeds.js`
 19. Run `deployment/cloudsearch/deploy.js`
 20. Run `serverless deploy --stage {stage}`
  - Note:  This may need to occur earlier in the deployment due to the need for the roles at deployment time.

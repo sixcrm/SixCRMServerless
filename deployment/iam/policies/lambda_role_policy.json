@@ -115,16 +115,6 @@
             ]
         },
         {
-            "Sid": "stmnt{{random}}12",
-            "Effect": "Allow",
-            "Action": [
-                "redshift:*"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
             "Sid": "stmnt{{random}}14",
             "Effect": "Allow",
             "Action": [

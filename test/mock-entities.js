@@ -909,29 +909,6 @@ class MockEntities {
 
 	}
 
-	static getValidRedshiftObjectAffiliates() {
-
-		let return_object = {};
-
-		let affiliate = (randomutilities.randomBoolean()) ? uuidV4() : null;
-
-		if (!_.isNull(affiliate)) {
-			return_object.affiliate = affiliate;
-			let sub_affiliate_fields = ['subaffiliate_1', 'subaffiliate_2', 'subaffiliate_3', 'subaffiliate_4', 'subaffiliate_5', 'cid'];
-
-			arrayutilities.map(sub_affiliate_fields, sub_affiliate_field => {
-				let sub_affiliate_field_value = (randomutilities.randomBoolean()) ? uuidV4() : null;
-
-				if (!_.isNull(sub_affiliate_field_value)) {
-					return_object[sub_affiliate_field] = sub_affiliate_field_value;
-				}
-			});
-		}
-
-		return return_object;
-
-	}
-
 	static getValidSession(id) {
 
 		let product_schedules = this.getValidProductSchedules();

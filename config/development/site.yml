@@ -73,17 +73,6 @@ aurora:
   randomdata:
     interval: 300
 
-redshift:
-  default_cluster_identifier: 'sixcrm'
-  user: 'admin'
-  database: 'analytics'
-  password: 'Jagodica9'
-  port: 5439
-  max: 10
-  idle_timeout: 30000
-  randomdata:
-    interval: 300
-
 notifications:
   apn:
     token_key: ''

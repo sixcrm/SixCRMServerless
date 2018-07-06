@@ -42,17 +42,6 @@ module.exports.graphObj = new GraphQLObjectType({
 				return postgresContext.init().then(() => postgresContext.testConnection());
 			}
 		}
-		/*
-		redshift: {
-			type: new GraphQLNonNull(connectionTestResultType.graphObj),
-			description: 'Redshift Connectivity Test',
-			resolve: () => {
-				const RDSProvider = global.SixCRM.routes.include('providers', 'rds-provider.js');
-				const rDSProvider = new RDSProvider();
-				return rDSProvider.test();
-			}
-		},
-		*/
 	}),
 	interfaces: []
 });

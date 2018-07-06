@@ -86,19 +86,6 @@ aurora:
   randomdata:
     interval: 300
 
-redshift:
-  region: 'localhost'
-  default_cluster_identifier: 'sixcrm'
-  user: 'postgres'
-  database: 'postgres'
-  password: ''
-  host: 'redshift'
-  port: 5439
-  max: 10
-  idle_timeout: 3000
-  randomdata:
-    interval: 300
-
 notifications:
   apn:
     token_key: ''

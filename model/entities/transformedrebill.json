@@ -3,7 +3,7 @@
 	"$id": "model/entities/transformedrebill.json",
 	"title": "Transformed Rebill",
 	"type": "object",
-	"description": "A Rebill transformed for redshift upload",
+	"description": "A Rebill transformed for Aurora upload",
 	"properties": {
 		"id": {
 			"$ref": "../definitions/uuidv4.json"

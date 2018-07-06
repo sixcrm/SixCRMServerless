@@ -303,23 +303,6 @@ jobs:
       - run:
           name: DynamoDB Autoscale Tables
           command: export SIX_VERBOSE=2 && node ./deployment/dynamodb/deploy_autoscaling.js
-  # deploy_redshift:
-  #   <<: *job-defaults
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         key: dependency-cache-{{ checksum "package-lock.json" }}
-  #     - restore_cache:
-  #         key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
-  #     - run:
-  #         name: Set Credentials
-  #         command: cat deployment_credentials/stscredentials >> $BASH_ENV
-  #     - run:
-  #         name: Redshift Create Cluster
-  #         command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_cluster.js || echo "No changes, skipping."
-  #     - run:
-  #         name: Redshift Create Tables
-  #         command: ./tools/changesInDirectory.sh deployment/redshift && node ./deployment/redshift/deploy_tables.js && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
   deploy_aurora:
     <<: *job-defaults
     steps:
@@ -462,9 +445,6 @@ jobs:
       - run:
           name: Save Last Commit
           command: node deployment/circle/save_last_commit.js
-      # - run:
-      #     name: AWS Services Available
-      #     command: ./tools/changesInDirectory.sh deployment/redshift && echo "Pausing to allow queries to complete..." && sleep 240 || echo "No changes, skipping."
   #Eh... not very useful currently
   environment_test:
     <<: *job-defaults
@@ -789,21 +769,9 @@ workflows:
                 - staging
                 - production
                 - priority
-      # - deploy_redshift:
-      #     requires:
-      #       - deploy_security_groups
-      #       - deploy_iam
-          # filters:
-          #   branches:
-          #     only:
-          #       - development
-          #       - staging
-          #       - production
-          #       - priority
       - post_deployment:
           requires:
             - deploy_lambda_eventsourcemappings
-            # - deploy_redshift
             - deploy_sns
             - deploy_dms
             - deploy_stepfunctions

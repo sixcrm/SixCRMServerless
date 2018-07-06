@@ -6,10 +6,6 @@ services:
     image: cnadiminti/dynamodb-local
     ports:
       - 8000:8000
-  redshift:
-    image: guildeducation/docker-amazon-redshift
-    ports:
-      - 5439:5439
   sqs:
     image: vsouza/sqs-local
     ports:

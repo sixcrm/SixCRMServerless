@@ -76,19 +76,6 @@ aurora:
   randomdata:
     interval: 300
 
-#Technical Debt:  Username and Password combinations need to be encrypted...
-redshift:
-  default_cluster_identifier: 'sixcrm'
-  user: 'admin'
-  database: 'analytics'
-  password: 'Jagodica9'
-  port: 5439
-  max: 10
-  idle_timeout: 30000
-  #Technical Debt:  Remove
-  randomdata:
-    interval: 300
-
 notifications:
   apn:
     token_key: ''
