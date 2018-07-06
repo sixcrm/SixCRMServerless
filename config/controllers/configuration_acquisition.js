@@ -152,33 +152,6 @@ module.exports.getProxyEndpoint = async () => {
 
 }
 
-module.exports.getElastiCacheEndpoint = async () => {
-
-	require('@6crm/sixcrmcore');
-
-	if (global.SixCRM.configuration.isLocal()) {
-		return Promise.resolve(global.SixCRM.configuration.site_config.elasticache.endpoint);
-	}
-
-	const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
-	const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-	const ElastiCacheUtilities = global.SixCRM.routes.include('deployment', 'utilities/elasticache-deployment.js');
-	let elasticacheutilities = new ElastiCacheUtilities();
-
-	const result = await elasticacheutilities.clusterExists({
-		CacheClusterId: 'sixcrm',
-		ShowCacheNodeInfo: true
-	});
-	let node_with_endpoint = arrayutilities.find(result.CacheNodes, cache_node => {
-		return objectutilities.hasRecursive(cache_node, 'Endpoint.Address');
-	});
-	let endpoint = node_with_endpoint.Endpoint.Address;
-
-	du.debug('ElastiCache: ' + endpoint);
-	return endpoint;
-
-}
-
 module.exports.getSubnet1 = async () => {
 
 	require('@6crm/sixcrmcore');

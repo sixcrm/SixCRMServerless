@@ -5,7 +5,7 @@ The following deployment process worked in the staging environment:
 0. Run `deployment/s3/deploy_buckets.js` (Note: Configuration Utilities tries to read from configuration bucket here, that we are creating...)
 1. Run `/deployment/iam/deploy_roles.js`
 3.  Run `/deployment/ec2/deploy_security_groups.js`
-4.  Run `/deployment/elasticache/deploy.js`
+# 4.  Run `/deployment/elasticache/deploy.js`
 5.  ___Manual Step___ Step___:  Create the NAT Instance (Automate)
   - Instantiate NAT instance from EC2 Launch Console (search for AMI's in the Community section against the term `amzn-ami-vpc-nat`)
 6.  ___Manual Step___: Create a EIP
