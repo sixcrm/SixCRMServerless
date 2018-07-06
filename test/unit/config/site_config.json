@@ -32,9 +32,6 @@
     "lambda": {
       "required": ["endpoint"]
     },
-    "redshift": {
-      "required": ["user", "database", "password", "port", "max", "idle_timeout", "randomdata"]
-    },
     "notifications": {
       "properties": {
         "apn": {
@@ -53,5 +50,5 @@
       "required": ["channels"]
     }
   },
-  "required": ["aws", "ses", "jwt", "dynamodb", "sqs", "cloudsearch", "lambda", "redshift", "notifications", "cache", "logging", "slack"]
+  "required": ["aws", "ses", "jwt", "dynamodb", "sqs", "cloudsearch", "lambda", "notifications", "cache", "logging", "slack"]
 }
