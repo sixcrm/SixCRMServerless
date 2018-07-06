@@ -46,9 +46,6 @@
     "cache": {
       "required": ["usecache", "cachebuster"]
     },
-    "elasticache": {
-      "required": ["max_attempts", "retry_time", "endpoint", "port", "default_expiration"]
-    },
     "logging": {
       "required": ["loglevel"]
     },
@@ -56,5 +53,5 @@
       "required": ["channels"]
     }
   },
-  "required": ["aws", "ses", "jwt", "dynamodb", "sqs", "cloudsearch", "lambda", "redshift", "notifications", "cache", "elasticache", "logging", "slack"]
+  "required": ["aws", "ses", "jwt", "dynamodb", "sqs", "cloudsearch", "lambda", "redshift", "notifications", "cache", "logging", "slack"]
 }

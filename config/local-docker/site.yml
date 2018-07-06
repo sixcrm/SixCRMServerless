@@ -108,18 +108,6 @@ notifications:
     token_team_id: ''
     production: false
 
-#Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
-cache:
-  usecache: 1
-  cachebuster: 'somerandomthing1236901cacdda'
-
-elasticache:
-  max_attempts: 3
-  retry_time: 1800000
-  endpoint: local-docker
-  port: 6379
-  default_expiration: 300
-
 slack:
   channels:
     - channel: '#lambdas'

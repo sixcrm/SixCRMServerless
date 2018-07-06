@@ -96,20 +96,6 @@ notifications:
     token_team_id: ''
     production: false
 
-#Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
-cache:
-  #Technical Debt:  Turning this to 0 breaks everything...
-  usecache: 0
-  cachebuster: 'somerandomthing1'
-
-#note:  does the endpoint still need to be in here?
-elasticache:
-  max_attempts: 3
-  retry_time: 1800000
-  endpoint: '34.231.222.227'
-  port: 6379
-  default_expiration: 300
-
 slack:
   channels:
     - channel: '#lambdas'

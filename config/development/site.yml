@@ -91,17 +91,6 @@ notifications:
     token_team_id: ''
     production: false
 
-cache:
-  usecache: 0
-  cachebuster: 'somerandomthing12'
-
-elasticache:
-  max_attempts: 3
-  retry_time: 1800000
-  endpoint: '34.204.230.178'
-  port: 6379
-  default_expiration: 300
-
 slack:
   channels:
     - channel: '#lambdas'
