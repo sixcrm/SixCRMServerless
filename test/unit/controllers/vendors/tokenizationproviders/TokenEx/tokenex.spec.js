@@ -36,17 +36,19 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
 			let expected_value = 'someplaintextvalue';
 			let token = '9IB97FXD2ZLQLWIZF5NNYL0IVNJKMB6C49E8ET';
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				constructor(){}
-				postJSON(){
-					return Promise.resolve({
-						body: {
-							"Error":"",
-							"ReferenceNumber":"15102913382030662954",
-							"Success":true,
-							"Value":expected_value
-						}
-					});
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					constructor(){}
+					postJSON(){
+						return Promise.resolve({
+							body: {
+								"Error":"",
+								"ReferenceNumber":"15102913382030662954",
+								"Success":true,
+								"Value":expected_value
+							}
+						});
+					}
 				}
 			});
 
@@ -69,17 +71,19 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
 			let expected_value = '9IB97FXD2ZLQLWIZF5NNYL0IVNJKMB6C49E8ET';
 			let value = 'someplaintextvalue';
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				constructor(){}
-				postJSON(){
-					return Promise.resolve({
-						body: {
-							"Error":"",
-							"ReferenceNumber":"15102913382030662954",
-							"Success":true,
-							"Token":expected_value
-						}
-					});
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					constructor(){}
+					postJSON(){
+						return Promise.resolve({
+							body: {
+								"Error":"",
+								"ReferenceNumber":"15102913382030662954",
+								"Success":true,
+								"Token":expected_value
+							}
+						});
+					}
 				}
 			});
 
@@ -102,16 +106,18 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
 			let expected_value = true;
 			let token = '9IB97FXD2ZLQLWIZF5NNYL0IVNJKMB6C49E8ET';
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				constructor(){}
-				postJSON(){
-					return Promise.resolve({
-						body: {
-							"Error":"",
-							"ReferenceNumber":"15102913382030662954",
-							"Success":true
-						}
-					});
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					constructor(){}
+					postJSON(){
+						return Promise.resolve({
+							body: {
+								"Error":"",
+								"ReferenceNumber":"15102913382030662954",
+								"Success":true
+							}
+						});
+					}
 				}
 			});
 
