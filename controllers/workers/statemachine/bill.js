@@ -47,7 +47,7 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 		}catch(error){
 
-			du.error('Error from Register Controller', error);
+			du.error('Error from Register Controller', error, rebill);
 			throw eu.getError('server', 'Register Controller returned a error.');
 
 		}

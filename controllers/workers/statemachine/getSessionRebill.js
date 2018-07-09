@@ -43,7 +43,7 @@ module.exports = class GetSessionRebillController extends stepFunctionWorkerCont
 		let rebill = await (new RebillHelperController()).getMostRecentRebill({session: session});
 
 		if(_.isNull(rebill) || !_.has(rebill, 'id')){
-			throw eu.getError('server', 'Unexpected state:  Session does not have a recent rebill that does not have processing = false.');
+			throw eu.getError('server', 'Unexpected state:  Session does not have a recent rebill that does not have processing = false.', rebill);
 		}
 
 		return rebill;
