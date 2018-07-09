@@ -77,35 +77,12 @@ aurora:
   randomdata:
     interval: 300
 
-redshift:
-  default_cluster_identifier: 'sixcrm'
-  user: 'admin'
-  database: 'analytics'
-  password: 'Jagodica9'
-  port: 5439
-  max: 10
-  idle_timeout: 30000
-  randomdata:
-    interval: 300
-
 notifications:
   apn:
     token_key: ''
     token_key_id: ''
     token_team_id: ''
     production: false
-
-#Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
-cache:
-  usecache: 0
-  cachebuster: 'somerandomthing1'
-
-elasticache:
-  max_attempts: 3
-  retry_time: 1800000
-  endpoint: '52.44.119.23'
-  port: 6379
-  default_expiration: 300
 
 slack:
   channels:

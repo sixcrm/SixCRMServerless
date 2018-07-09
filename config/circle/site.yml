@@ -86,37 +86,12 @@ aurora:
   randomdata:
     interval: 300
 
-redshift:
-  region: 'localhost'
-  default_cluster_identifier: 'sixcrm'
-  user: 'postgres'
-  database: 'postgres'
-  password: ''
-  host: 'redshift'
-  port: 5439
-  max: 10
-  idle_timeout: 3000
-  randomdata:
-    interval: 300
-
 notifications:
   apn:
     token_key: ''
     token_key_id: ''
     token_team_id: ''
     production: false
-
-#Technical Debt:  Down the road, we may have numerous caching strategies and we will need to be able to configure them dynamically
-cache:
-  usecache: 1
-  cachebuster: 'somerandomthing1236901cacdda'
-
-elasticache:
-  max_attempts: 0
-  retry_time: 100
-  endpoint: 'elasticache'
-  port: 6379
-  default_expiration: 300
 
 logging:
   loglevel: 2

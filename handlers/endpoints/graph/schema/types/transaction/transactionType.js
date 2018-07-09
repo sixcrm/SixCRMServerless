@@ -62,7 +62,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'The type of transaction.'
 		},
 		result: {
-			type: new GraphQLNonNull(GraphQLString),
+			type: GraphQLString,
 			description: 'The result of the transaction.'
 		},
 		chargeback: {

@@ -316,9 +316,11 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -356,9 +358,11 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -401,9 +405,11 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -443,9 +449,11 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -489,9 +497,11 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -531,9 +541,11 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -578,9 +590,11 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -616,9 +630,11 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 

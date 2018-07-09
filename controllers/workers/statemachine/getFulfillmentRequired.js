@@ -44,7 +44,7 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 		let transactions = await this.rebillController.listTransactions(rebill);
 
 		if(_.isNull(transactions) || !_.has(transactions, 'transactions') || _.isNull(transactions.transactions) || !arrayutilities.nonEmpty(transactions.transactions)){
-			throw eu.getError('server', 'There are no transactions associated with the rebill.');
+			throw eu.getError('server', 'There are no transactions associated with the rebill.', rebill);
 		}
 
 		return transactions.transactions;
@@ -70,6 +70,7 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 
 		arrayutilities.map(product_promises, product_promise => {
 			if(!_.isArray(product_promise)){
+				du.error(product_promise, transactions);
 				throw eu.getError('server', 'Unexpected result when retrieving transaction products: '+JSON.stringify(product_promise));
 			}
 			arrayutilities.map(product_promise, product => {
@@ -87,18 +88,20 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 						products.push(product.product);
 
 					}else{
-
+						du.error(transactions);
 						throw eu.getError('server', 'Unexpected result in array when retrieving transaction products: '+JSON.stringify(product));
 
 					}
 
 				}else{
+					du.error(transactions);
 					throw eu.getError('server', 'Unexpected result in array when retrieving transaction products: '+JSON.stringify(product));
 				}
 			});
 		});
 
 		if(!arrayutilities.nonEmpty(products)){
+			du.error(transactions);
 			throw eu.getError('server', 'There are no products associated with the transactions.');
 		}
 
