@@ -15,15 +15,6 @@ module.exports.graphObj = new GraphQLObjectType({
 				return elasticSearchProvider.test();
 			}
 		},
-		elasticache: {
-			type: new GraphQLNonNull(connectionTestResultType.graphObj),
-			description: 'Elasticache Connectivity Test',
-			resolve: () => {
-				const RedisProvider = global.SixCRM.routes.include('providers', 'redis-provider.js');
-				const redisProvider = new RedisProvider();
-				return redisProvider.test();
-			}
-		},
 		dynamodb: {
 			type: new GraphQLNonNull(connectionTestResultType.graphObj),
 			description: 'DynamoDB Connectivity Test',
@@ -51,17 +42,6 @@ module.exports.graphObj = new GraphQLObjectType({
 				return postgresContext.init().then(() => postgresContext.testConnection());
 			}
 		}
-		/*
-		redshift: {
-			type: new GraphQLNonNull(connectionTestResultType.graphObj),
-			description: 'Redshift Connectivity Test',
-			resolve: () => {
-				const RDSProvider = global.SixCRM.routes.include('providers', 'rds-provider.js');
-				const rDSProvider = new RDSProvider();
-				return rDSProvider.test();
-			}
-		},
-		*/
 	}),
 	interfaces: []
 });

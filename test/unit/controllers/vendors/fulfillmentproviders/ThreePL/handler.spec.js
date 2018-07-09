@@ -131,9 +131,11 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 				body: three_pl_response.body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response_object);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response_object);
+					}
 				}
 			});
 
@@ -167,9 +169,11 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 				body: three_pl_response.body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response_object);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response_object);
+					}
 				}
 			});
 
@@ -202,9 +206,11 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 				body: three_pl_response.body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response_object);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response_object);
+					}
 				}
 			});
 
@@ -241,9 +247,11 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 				body: three_pl_response.body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response_object);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response_object);
+					}
 				}
 			});
 
@@ -282,9 +290,11 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 				body: three_pl_response.body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response_object);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response_object);
+					}
 				}
 			});
 
@@ -317,9 +327,11 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 				body: three_pl_response.body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response_object);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response_object);
+					}
 				}
 			});
 

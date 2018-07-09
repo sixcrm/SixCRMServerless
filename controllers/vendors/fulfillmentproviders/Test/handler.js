@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
+const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
 const httpprovider = new HttpProvider();
 
 const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');

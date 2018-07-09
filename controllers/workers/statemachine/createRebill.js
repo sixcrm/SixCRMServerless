@@ -69,7 +69,8 @@ module.exports = class CreateRebillController extends stepFunctionWorkerControll
 			return 'FAILED';
 		}
 
-		throw eu.getError('server', 'Unknown rebill state');
+		du.error(rebill);
+		throw eu.getError('server', 'Unknown rebill state', rebill);
 
 	}
 

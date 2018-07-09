@@ -1,5 +1,0 @@
-{
-  "description": "25 billable rebills are picked from dynamo",
-  "order": 40,
-  "lambda_filter": ["pickrebillstobill"]
-}

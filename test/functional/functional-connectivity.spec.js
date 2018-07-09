@@ -1,9 +1,7 @@
-
 require('@6crm/sixcrmcore');
 
 const expect = require('chai').expect;
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const random = require('@6crm/sixcrmcore/util/random').default;
 const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
 
@@ -59,55 +57,6 @@ describe('Test connections to Docker Services', () => {
 					});
 
 			}));
-
-		});
-
-	});
-
-	// describe('Redshift', () => {
-
-	//   it('successfully connects to the Docker Redshift Instance', () => {
-
-	//     return redshiftContext.withConnection((connection => {
-
-	//       return connection.query('SELECT 1')
-	//         .then((result) => {
-
-	//           return expect(result.rows[0]['?column?']).to.equal(1);
-
-	//         })
-	//         .catch(ex => {
-
-	//           du.error(ex);
-
-	//           throw ex;
-
-	//         });
-
-	//     }));
-
-	//   });
-
-	// });
-
-	describe('Elasticache', () => {
-
-		it('successfully connects to the Docker Elasticache Instance', async () => {
-
-			const RedisProvider = global.SixCRM.routes.include('controllers', 'providers/redis-provider.js');
-			let redisprovider = new RedisProvider();
-
-			expect(redisprovider).to.have.property('endpoint');
-			await redisprovider.withConnection(async () => {
-
-				let test_value = random.createRandomString(20);
-
-				await redisprovider.set('test', {'abc': test_value});
-
-				let result = await redisprovider.get('test');
-				expect(result.abc).to.equal(test_value);
-
-			});
 
 		});
 

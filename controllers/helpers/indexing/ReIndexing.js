@@ -5,8 +5,8 @@ const dynamodbprovider = new DynamoDBProvider();
 const CloudsearchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudsearch-provider.js');
 const cloudsearchprovider = new CloudsearchProvider();
 
-const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
-let preIndexingHelperController = new PreIndexingHelperController();
+const IndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/Indexing.js');
+let indexingHelperController = new IndexingHelperController();
 
 let entities_dynamodb = [];
 let entities_index = [];
@@ -77,7 +77,7 @@ module.exports = class ReIndexingHelperController {
 
 		let promises = [];
 
-		let indexing_entities = preIndexingHelperController.indexing_entities;
+		let indexing_entities = global.SixCRM.routes.include('model', 'helpers/indexing/entitytype.json').enum;
 
 		du.info('Indexing entities: ' + indexing_entities);
 
@@ -139,25 +139,31 @@ module.exports = class ReIndexingHelperController {
 
 	fixIndex(fix) {
 
-		let operations = [];
-
 		if (fix === true) {
 
-			/*
-			missing_in_index.map(m => {
-				operations.push(() => preIndexingHelperController.addToSearchIndex(m));
-			});
+			let promises = [];
 
-			missing_in_dynamo.map(m => {
-				operations.push(() => preIndexingHelperController.removeFromSearchIndex(m));
-			});
-			*/
+			if (missing_in_index.length) {
+				let adds = indexingHelperController.createIndexingDocument(missing_in_index.map(m => {
+					m.index_action = 'add';
+					return m;
+				})).then(document => cloudsearchprovider.uploadDocuments(document));
+				promises.push(adds);
+			}
 
-			return arrayutilities.serial(operations);
+			if (missing_in_dynamo.length) {
+				let deletes = indexingHelperController.createIndexingDocument(missing_in_dynamo.map(m => {
+					m.index_action = 'delete';
+					return m;
+				})).then(document => cloudsearchprovider.uploadDocuments(document));
+				promises.push(deletes);
+			}
+
+			return Promise.all(promises);
 
 		}
 
-		return Promise.resolve(true);
+		return true;
 
 	}
 

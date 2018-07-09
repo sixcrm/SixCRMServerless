@@ -7,9 +7,7 @@
   "description": "Backend Processing Lambda Endpoints",
   "main": "index.js",
   "dependencies": {
-    "@adexchange/aeg-redis": "0.0.196",
-    "@adexchange/aeg-redshift": "0.0.84",
-    "@6crm/sixcrmcore": "0.0.18",
+    "@6crm/sixcrmcore": "0.0.23",
     "ajv": "^6.5.1",
     "apn": "^2.2.0",
     "authorizenet": "^1.0.5",

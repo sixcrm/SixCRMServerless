@@ -29,7 +29,7 @@
 		"ccnumber": {
 			"$ref": "../../definitions/creditcardnumber.json"
 		},
-		"ccv": {
+		"cvv": {
 			"$ref": "../../definitions/creditcardcvv.json"
 		},
 		"ccexp": {

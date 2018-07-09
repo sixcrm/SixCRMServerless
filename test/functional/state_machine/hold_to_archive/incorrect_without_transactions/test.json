@@ -1,8 +1,0 @@
-{
-  "description": "Rebill without transactions goes to error",
-  "order": 130,
-  "lambda_filter": ["holdtoarchive"],
-  "env": {
-    "archivefilter": "noship"
-  }
-}

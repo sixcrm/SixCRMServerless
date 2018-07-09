@@ -1,5 +1,0 @@
-{
-  "description": "6 billable rebills are picked from dynamo, 5 in processing and 3 in future are ignored",
-  "order": 50,
-  "lambda_filter": ["pickrebillstobill"]
-}

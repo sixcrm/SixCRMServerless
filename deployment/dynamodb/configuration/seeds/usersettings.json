@@ -145,39 +145,6 @@
       "updated_at":"2017-04-06T18:41:12.521Z"
     },
     {
-      "id": "timothy.dalbey@sixcrm.com",
-      "timezone:": "America/Los_Angeles",
-      "language": "English",
-      "notifications": [
-        {
-          "name": "six",
-          "receive": true
-        },
-        {
-          "name": "email",
-          "receive": false
-        },
-        {
-          "name": "sms",
-          "receive": false
-        },
-        {
-          "name": "skype",
-          "receive": false
-        },
-        {
-          "name": "slack",
-          "receive": false
-        },
-        {
-          "name": "ios",
-          "receive": false
-        }
-      ],
-      "created_at":"2017-04-06T18:40:41.405Z",
-      "updated_at":"2017-04-06T18:41:12.521Z"
-    },
-    {
       "id": "customerservice.user@test.com",
       "timezone:": "America/Los_Angeles",
       "language": "English",

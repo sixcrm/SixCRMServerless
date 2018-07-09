@@ -55,7 +55,7 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 		const rebills = await this.rebillController.listBySession({session: session});
 
 		if(_.isNull(rebills) || !_.has(rebills, 'rebills')){
-			du.warning('Unexpected response format: '+JSON.stringify(rebills));
+			du.warning('Unexpected response format: '+JSON.stringify(rebills), session);
 			if(fatal == true){
 				throw eu.getError('server', 'Unexpected response format: '+JSON.stringify(rebills));
 			}
@@ -162,10 +162,12 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 		du.debug('Consolidate Rebill Transactions');
 
 		if(!_.has(rebill, 'id')){
+			du.error(rebill);
 			throw eu.getError('server', 'Rebill is assumed to have property "id"');
 		}
 
 		if(!_.has(consolidated_rebill, 'id')){
+			du.error(consolidated_rebill);
 			throw eu.getError('server', 'Consolidated Rebill is assumed to have property "id"');
 		}
 
@@ -177,7 +179,7 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 		let transactions = await this.transactionController.listTransactionsByRebillID({id: rebill.id});
 
 		if(_.isNull(transactions) || !_.has(transactions, 'transactions')){
-			du.warning('Unexpected response format: '+JSON.stringify(transactions));
+			du.warning('Unexpected response format: '+JSON.stringify(transactions), rebill, consolidated_rebill);
 			if(fatal == true){
 				throw eu.getError('server', 'Unexpected response format: '+JSON.stringify(transactions));
 			}

@@ -1,5 +1,6 @@
 
 const _ = require('lodash');
+const moment = require("moment");
 
 var timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 var du = require('@6crm/sixcrmcore/util/debug-utilities').default;
@@ -7,6 +8,11 @@ var eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 var arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 var objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const random = require('@6crm/sixcrmcore/util/random').default;
+const RebillHelper = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
+let rebillHelper = new RebillHelper();
+
+const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+let rebillController = new RebillController();
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -578,11 +584,43 @@ module.exports = class SessionController extends entityController {
 			entity.cancelled_at = timestamp.getISO8601();
 			session.cancelled = entity;
 
-			return this.update({entity: session});
+			session = this.trimSessionWatermark(session);
+
+			return this.update({entity: session}).then(() => this.listRebills(session)).then(rebills => {
+				if (!rebills || !rebills.length) {
+					return []
+				}
+
+				return rebills.filter(r => !rebillHelper.isAvailable({rebill: r})).filter(r => !r.processing);
+			}).then(futureRebills => {
+				return Promise.all(futureRebills.map(r => rebillController.delete({id: r.id}))).then(() => session);
+
+			});
 
 		});
 
 
+	}
+
+	trimSessionWatermark(session) {
+		const end = moment.utc().diff(session.created_at, 'd');
+
+		session.watermark.product_schedules.forEach((quantifiableSchedule) => {
+
+			if (!quantifiableSchedule.product_schedule.schedule) return;
+
+			quantifiableSchedule.product_schedule.schedule =
+				quantifiableSchedule.product_schedule.schedule.filter(schedule => schedule.start < end);
+
+			quantifiableSchedule.product_schedule.schedule.forEach((schedule) => {
+				if (!schedule.end || schedule.end > end) {
+					schedule.end = end;
+				}
+			})
+
+		});
+
+		return session;
 	}
 
 }

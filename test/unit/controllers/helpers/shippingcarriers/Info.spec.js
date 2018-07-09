@@ -78,9 +78,11 @@ describe('helpers/shippingcarriers/Info.js', () => {
 				}
 			}
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				postJSON() {
-					return Promise.resolve({error: null, response: vendor_response, body: json_response});
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					postJSON() {
+						return Promise.resolve({error: null, response: vendor_response, body: json_response});
+					}
 				}
 			});
 

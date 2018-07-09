@@ -11,7 +11,7 @@ module.exports = class CustomerController extends entityController {
 
 		super('customer');
 
-		this.search_fields = ['firstname', 'lastname'];
+		this.search_fields = ['email'];
 
 	}
 

@@ -313,12 +313,14 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 
 			let bad_response = getValidBadResponse();
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				getJSON() {
-					return Promise.resolve(bad_response);
-				}
-				createQueryString(querystring_object) {
-					return querystring.stringify(querystring_object);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					getJSON() {
+						return Promise.resolve(bad_response);
+					}
+					createQueryString(querystring_object) {
+						return querystring.stringify(querystring_object);
+					}
 				}
 			});
 
@@ -348,12 +350,14 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 
 			let good_response = getValidGoodResponse();
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				getJSON() {
-					return Promise.resolve(good_response);
-				}
-				createQueryString(querystring_object) {
-					return querystring.stringify(querystring_object);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					getJSON() {
+						return Promise.resolve(good_response);
+					}
+					createQueryString(querystring_object) {
+						return querystring.stringify(querystring_object);
+					}
 				}
 			});
 
@@ -389,12 +393,14 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 			let customer = getValidCustomer();
 			let products = getValidProducts();
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				postJSON() {
-					return Promise.resolve(good_response);
-				}
-				createQueryString(querystring_object) {
-					return querystring.stringify(querystring_object);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					postJSON() {
+						return Promise.resolve(good_response);
+					}
+					createQueryString(querystring_object) {
+						return querystring.stringify(querystring_object);
+					}
 				}
 			});
 
@@ -434,12 +440,14 @@ describe('vendors/fulfillmentproviders/ShipStation/handler.js', () => {
 
 			let good_response = getValidGoodResponse();
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				getJSON() {
-					return Promise.resolve(good_response);
-				}
-				createQueryString(querystring_object) {
-					return querystring.stringify(querystring_object);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					getJSON() {
+						return Promise.resolve(good_response);
+					}
+					createQueryString(querystring_object) {
+						return querystring.stringify(querystring_object);
+					}
 				}
 			});
 
