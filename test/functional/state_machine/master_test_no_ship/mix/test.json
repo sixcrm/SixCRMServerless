@@ -1,8 +1,0 @@
-{
-  "description": "Master test - no ship scenario, Rebill goes to archive, Rebill with shipping products remains in hold, Rebill in processing is ignored, Rebill in future is ignored, Missing rebill goes to bill error, Incorrect rebill goes to bill error, Rebill with a customer with 2 credit cards is archived, Rebill with 2 products is archived, Rebill without session goes to bill error, Rebill without product goes to bill error, Rebill with failed billing goes to recover, Rebill with second attempt goes to error, Rebill with customer that has no credit card goes to error",
-  "order": 10,
-  "lambda_filter": ["pickrebillstobill", "billtohold", "holdtoarchive"],
-  "env": {
-    "archivefilter": "noship"
-  }
-}

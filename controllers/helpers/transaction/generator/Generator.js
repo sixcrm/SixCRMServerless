@@ -4,7 +4,7 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const randomutilities = require('@6crm/sixcrmcore/util/random').default;
 const signatureutilities = require('@6crm/sixcrmcore/util/signature').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
+const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
 const httpprovider = new HttpProvider();
 
 const Parameters  = global.SixCRM.routes.include('providers', 'Parameters.js');

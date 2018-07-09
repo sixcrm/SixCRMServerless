@@ -1,8 +1,0 @@
-{
-  "description": "Invalid message goes to error",
-  "order": 90,
-  "lambda_filter": ["recovertoarchive"],
-  "env": {
-    "archivefilter": "twoattempts"
-  }
-}

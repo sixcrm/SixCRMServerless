@@ -183,7 +183,7 @@ describe('vendors/merchantproviders/Test.js', () => {
 			amount: 100,
 			creditcard:{
 				number: '5105105105105100',
-				ccv: '123',
+				cvv: '123',
 				exp: '12/2014',
 				address:{
 					line1: '123 Main St.',
@@ -241,9 +241,11 @@ describe('vendors/merchantproviders/Test.js', () => {
 			body: body
 		};
 
-		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-			postJSON() {
-				return Promise.resolve(response);
+		mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+			default: class {
+				postJSON() {
+					return Promise.resolve(response);
+				}
 			}
 		});
 

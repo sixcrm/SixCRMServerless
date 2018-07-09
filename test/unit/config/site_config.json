@@ -32,9 +32,6 @@
     "lambda": {
       "required": ["endpoint"]
     },
-    "redshift": {
-      "required": ["user", "database", "password", "port", "max", "idle_timeout", "randomdata"]
-    },
     "notifications": {
       "properties": {
         "apn": {
@@ -46,9 +43,6 @@
     "cache": {
       "required": ["usecache", "cachebuster"]
     },
-    "elasticache": {
-      "required": ["max_attempts", "retry_time", "endpoint", "port", "default_expiration"]
-    },
     "logging": {
       "required": ["loglevel"]
     },
@@ -56,5 +50,5 @@
       "required": ["channels"]
     }
   },
-  "required": ["aws", "ses", "jwt", "dynamodb", "sqs", "cloudsearch", "lambda", "redshift", "notifications", "cache", "elasticache", "logging", "slack"]
+  "required": ["aws", "ses", "jwt", "dynamodb", "sqs", "cloudsearch", "lambda", "notifications", "cache", "logging", "slack"]
 }

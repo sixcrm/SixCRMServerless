@@ -1,8 +1,0 @@
-{
-  "description": "Rebill goes from shipped to delivered, then is archived and updated",
-  "order": 10,
-  "lambda_filter": ["shippedtodelivered", "deliveredtoarchive"],
-  "env": {
-    "archivefilter": "all"
-  }
-}

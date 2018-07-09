@@ -25,9 +25,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 		this.search_fields = [];
 
-		const PreIndexingHelperController = global.SixCRM.routes.include('helpers', 'indexing/PreIndexing.js');
-		this.preIndexingHelperController = new PreIndexingHelperController();
-
 		this.encryptionhelper = new EncryptionHelper(this);
 		this.sanitization = true;
 

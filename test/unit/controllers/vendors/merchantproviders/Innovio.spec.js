@@ -125,9 +125,11 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				body: JSON.stringify(body)
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response_object)
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response_object)
+					}
 				}
 			});
 
@@ -162,9 +164,11 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response_object)
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response_object)
+					}
 				}
 			});
 
@@ -220,9 +224,11 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response_object)
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response_object)
+					}
 				}
 			});
 
@@ -263,9 +269,11 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				body: body
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -313,9 +321,11 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				body: JSON.stringify(body)
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -372,9 +382,11 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				body: JSON.stringify(body)
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -436,9 +448,11 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				body: JSON.stringify(body)
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 
@@ -486,9 +500,11 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 				body: JSON.stringify(body)
 			};
 
-			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/http-provider.js'), class {
-				post() {
-					return Promise.resolve(response);
+			mockery.registerMock('@6crm/sixcrmcore/providers/http-provider', {
+				default: class {
+					post() {
+						return Promise.resolve(response);
+					}
 				}
 			});
 

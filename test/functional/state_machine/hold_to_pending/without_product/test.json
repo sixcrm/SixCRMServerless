@@ -1,5 +1,0 @@
-{
-  "description": "Rebill without product goes to error",
-  "order": 70,
-  "lambda_filter": ["holdtopending"]
-}

@@ -37,7 +37,6 @@ provider:
     cloudsearch_domainendpoint: ${file(./config/controllers/configuration_acquisition.js):getCloudsearchSearchEndpoint}
     aurora_host: ${file(./config/controllers/configuration_acquisition.js):getAuroraClusterEndpoint}
     elasticsearch_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElasticSearchEndpoint}
-    elasticache_endpoint: ${file(./config/controllers/configuration_acquisition.js):getElastiCacheEndpoint}
     vpc_subnet1: ${file(./config/controllers/configuration_acquisition.js):getSubnet1}
     vpc_subnet2: ${file(./config/controllers/configuration_acquisition.js):getSubnet2}
     vpc_subnet3: ${file(./config/controllers/configuration_acquisition.js):getSubnet3}

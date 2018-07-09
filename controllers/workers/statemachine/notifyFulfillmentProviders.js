@@ -53,11 +53,11 @@ module.exports = class NotifyFulfillmentProvidersController extends stepFunction
 		du.debug('Trigger Fulfillment Notifications');
 
 		if(!_.has(rebill, 'id')){
-			throw eu.getError('server', 'Expected rebill to have property "id".');
+			throw eu.getError('server', 'Expected rebill to have property "id".', rebill);
 		}
 
 		if(!_.isString(fulfillment_request_result) || !stringutilities.nonEmpty(fulfillment_request_result)){
-			throw eu.getError('server', 'Expected fulfillment_request_result to be a non-empty string.');
+			throw eu.getError('server', 'Expected fulfillment_request_result to be a non-empty string.', );
 		}
 
 		return this.pushEvent({

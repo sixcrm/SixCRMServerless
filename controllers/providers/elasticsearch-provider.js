@@ -1,7 +1,7 @@
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const HTTPProvider = global.SixCRM.routes.include('providers', 'http-provider.js');
+const HTTPProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default
 const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default
 

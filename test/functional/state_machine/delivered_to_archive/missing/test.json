@@ -1,8 +1,0 @@
-{
-  "description": "Missing rebill goes to error",
-  "order": 50,
-  "lambda_filter": ["deliveredtoarchive"],
-  "env": {
-    "archivefilter": "all"
-  }
-}

@@ -1,4 +1,4 @@
-const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
+const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
 const httpprovider = new HttpProvider();
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 const signatureutilities = require('@6crm/sixcrmcore/util/signature').default;

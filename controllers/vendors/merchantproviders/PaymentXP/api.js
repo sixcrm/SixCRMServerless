@@ -1,5 +1,5 @@
 const querystring = require('querystring');
-const HttpProvider = global.SixCRM.routes.include('controllers', 'providers/http-provider.js');
+const HttpProvider = require('@6crm/sixcrmcore/providers/http-provider').default;
 const httpprovider = new HttpProvider();
 
 module.exports = class PaymentXPAPI {

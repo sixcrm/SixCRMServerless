@@ -1,5 +1,0 @@
-{
-  "description": "3 billable rebills, 1 in the future and one processing",
-  "lambda_filter": ["pickrebillstobill"],
-  "order": 60
-}

@@ -1,5 +1,0 @@
-{
-  "description": "2 rebills are sent to pending and 3 with noship products are ignored",
-  "order": 40,
-  "lambda_filter": ["holdtopending"]
-}
