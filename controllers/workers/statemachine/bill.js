@@ -29,7 +29,7 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 		await this.incrementMerchantProviderSummary(register_result);
 
-		return this.respond(register_result);
+		return this.respond(register_result, rebill);
 
 	}
 
@@ -83,13 +83,13 @@ module.exports = class BillController extends stepFunctionWorkerController {
 				});
 			}
 
-		})
+		});
 
 		return arrayutilities.serial(update_promises);
 
 	}
 
-	respond(result){
+	respond(result, rebill){
 
 		du.debug('Respond');
 
@@ -107,6 +107,7 @@ module.exports = class BillController extends stepFunctionWorkerController {
 			return 'HARDDECLINE';
 		}
 
+		du.error(result, rebill);
 		throw eu.getError('server', 'Unexpected response from Register: '+result.getCode());
 
 	}
