@@ -244,7 +244,10 @@ describe('controllers/workers/statemachine/bill.js', () => {
               return transactions;
             }
           }
-        }
+				}
+				getTransactions() {
+					return [];
+				}
         getCode(){
           return 'success'
         }
@@ -306,7 +309,10 @@ describe('controllers/workers/statemachine/bill.js', () => {
               return transactions;
             }
           }
-        }
+				}
+				getTransactions() {
+					return [];
+				}
         getCode(){
           return 'decline'
         }
@@ -368,7 +374,10 @@ describe('controllers/workers/statemachine/bill.js', () => {
               return transactions;
             }
           }
-        }
+				}
+				getTransactions() {
+					return [];
+				}
         getCode(){
           return 'harddecline'
         }
