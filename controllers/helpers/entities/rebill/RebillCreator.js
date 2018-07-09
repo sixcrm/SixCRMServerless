@@ -13,6 +13,8 @@ const currencyutilities = require('@6crm/sixcrmcore/util/currency-utilities').de
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const SessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+const sessionController = new SessionController();
 
 module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
@@ -390,6 +392,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		du.debug('Acquire Rebill Properties');
 
 		return this.getNextProductScheduleBillDayNumber()
+			.then(() => this.getMerchantProvider())
 			.then(() => this.getScheduleElementsOnBillDay())
 			.then(() => this.addScheduleElementsToTransactionProducts())
 			.then(() => this.addProductsToTransactionProducts())
@@ -460,6 +463,17 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		//Note:  Null means that we don't have any more billings available to this collection of product schedules.
 		return Promise.resolve(false);
 
+	}
+
+	async getMerchantProvider() {
+		const session = this.parameters.get('session');
+		const previous_rebills = await sessionController.listRebills(session);
+		const previous_rebills_ordered = _.orderBy(previous_rebills, [rebill => new Date(rebill.bill_at)], ['desc']);
+		const last_rebill = previous_rebills_ordered[0];
+		const merchant_provider = last_rebill.merchant_provider;
+
+		this.parameters.set('merchantprovider', merchant_provider);
+		return merchant_provider;
 	}
 
 	getScheduleElementsOnBillDay(){
@@ -604,6 +618,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		let rebill_prototype = this.createRebillPrototype({
 			session: this.parameters.get('session'),
+			merchant_provider: this.parameters.get('merchantprovider', {fatal: false}),
 			transaction_products: this.parameters.get('transactionproducts'),
 			bill_at: this.parameters.get('billdate'),
 			amount: this.parameters.get('amount'),
@@ -645,7 +660,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 	}
 
-	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), amount = 0.00, product_schedules = null}){
+	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), amount = 0.00, product_schedules = null, merchant_provider = null}){
 
 		du.debug('Create Rebill Prototype');
 
@@ -672,6 +687,10 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			bill_at: bill_at,
 			amount: amount
 		};
+
+		if(!_.isNull(merchant_provider)){
+			rebill_prototype.merchant_provider = merchant_provider;
+		}
 
 		if(!_.isNull(product_schedules)){
 			rebill_prototype.product_schedules = product_schedules;

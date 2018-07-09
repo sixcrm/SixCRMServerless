@@ -68,7 +68,7 @@ function getValidProductScheduleGroups(ids, expanded) {
 	return MockEntities.getValidProductScheduleGroups(ids, expanded)
 }
 
-describe('/helpers/entities/Rebill.js', () => {
+describe('/helpers/entities/RebillCreator.js', () => {
 	before(() => {
 		mockery.enable({
 			useCleanCache: true,
@@ -1200,6 +1200,11 @@ describe('/helpers/entities/Rebill.js', () => {
 	describe('acquireRebillProperties', () => {
 
 		it('Successfully acquires rebill properties', () => {
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+				async listRebills() {
+					return MockEntities.getValidRebills();
+				}
+			});
 
 			const RebillCreatorHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/RebillCreator.js');
 			let rebillCreatorHelper = new RebillCreatorHelperController();
@@ -1352,6 +1357,9 @@ describe('/helpers/entities/Rebill.js', () => {
 				}
 				getResult() {
 					return product_schedules;
+				}
+				async listRebills() {
+					return MockEntities.getValidRebills();
 				}
 			});
 
@@ -1826,6 +1834,9 @@ describe('/helpers/entities/Rebill.js', () => {
 				getResult() {
 					return product_schedules;
 				}
+				async listRebills() {
+					return MockEntities.getValidRebills();
+				}
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'ProductSchedule.js'), class {
@@ -2021,6 +2032,9 @@ describe('/helpers/entities/Rebill.js', () => {
 				}
 				getResult() {
 					return product_schedules;
+				}
+				async listRebills() {
+					return MockEntities.getValidRebills();
 				}
 			});
 

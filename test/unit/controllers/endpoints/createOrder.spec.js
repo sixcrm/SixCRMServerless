@@ -932,6 +932,11 @@ describe('createOrder', function () {
 				}
 			});
 
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				constructor(){}
+				async update(){}
+			});
+
 			let TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 			const transactionHelperController = new TransactionHelperController();
 

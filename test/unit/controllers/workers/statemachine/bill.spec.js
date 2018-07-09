@@ -39,6 +39,7 @@ describe('controllers/workers/statemachine/bill.js', () => {
     it('successfully response (SUCCESS)', () => {
 
       let response = {
+				getTransactions: () => [],
         getCode: () => {return 'success'}
       }
 
@@ -53,6 +54,7 @@ describe('controllers/workers/statemachine/bill.js', () => {
     it('successfully response (DECLINE)', () => {
 
       let response = {
+				getTransactions: () => [],
         getCode: () => {return 'decline'}
       }
 
@@ -67,6 +69,7 @@ describe('controllers/workers/statemachine/bill.js', () => {
     it('successfully response (HARDDECLINE)', () => {
 
       let response = {
+				getTransactions: () => [],
         getCode: () => {return 'harddecline'}
       }
 
