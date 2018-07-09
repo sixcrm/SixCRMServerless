@@ -22,6 +22,7 @@ module.exports = class ReporterController extends stepFunctionReporterController
 
 		arrayutilities.map(required, (required_field) => {
 			if(!_.has(event, required_field)){
+				du.error(event);
 				throw  eu.getError('server', 'Event missing field: '+required_field);
 			}
 		});

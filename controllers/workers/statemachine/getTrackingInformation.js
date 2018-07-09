@@ -86,11 +86,11 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 		let vendor_response = result.getVendorResponse();
 
 		if(!_.has(vendor_response, 'detail')){
-			throw eu.getError('server', 'Expected tracker response to have property "detail".');
+			throw eu.getError('server', 'Expected tracker response to have property "detail".', vendor_response);
 		}
 
 		if(!_.has(vendor_response, 'status')){
-			throw eu.getError('server', 'Expected tracker response to have property "status".');
+			throw eu.getError('server', 'Expected tracker response to have property "status".', vendor_response);
 		}
 
 		return vendor_response;
