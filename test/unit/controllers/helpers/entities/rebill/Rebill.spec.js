@@ -4,7 +4,6 @@ const mockery = require('mockery');
 let chai = require('chai');
 const uuidV4 = require('uuid/v4');
 const expect = chai.expect;
-const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 const random = require('@6crm/sixcrmcore/util/random').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
@@ -177,6 +176,8 @@ describe('/helpers/entities/Rebill.js', () => {
 	});
 
 	describe('getMostRecentRebill', async () => {
+
+		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
 		it('successfully gets the most recent rebill', async () => {
 
@@ -983,6 +984,8 @@ describe('/helpers/entities/Rebill.js', () => {
 
 	describe('getBillableRebills', () => {
 
+		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+
 		it('successfully retrieves billable rebills', () => {
 			const rebill = getValidRebill();
 
@@ -1224,6 +1227,8 @@ describe('/helpers/entities/Rebill.js', () => {
 
 	describe('getAvailableRebillsAsMessages', () => {
 
+		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+
 		it('successfully retrieves spoofed messages of billable rebills', () => {
 
 			let rebills = [
@@ -1360,6 +1365,18 @@ describe('/helpers/entities/Rebill.js', () => {
 
 	describe('createUpdatedHistoryObjectPrototype', () => {
 
+		mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			default: class {
+				getLastHourInISO8601() {
+					return '2018-07-10T05:00:00Z';
+				}
+				getISO8601() {
+					return '2018-07-10T06:49:13Z';
+				}
+			}
+		});
+		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+
 		it('adds history object with new state to rebill', () => {
 
 			let rebill = getValidRebill();
@@ -1419,6 +1436,18 @@ describe('/helpers/entities/Rebill.js', () => {
 
 	describe('createHistoryElementPrototype', () => {
 
+		mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			default: class {
+				getLastHourInISO8601() {
+					return '2018-07-10T05:00:00Z';
+				}
+				getISO8601() {
+					return '2018-07-10T06:49:13Z';
+				}
+			}
+		});
+		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+
 		it('successfully creates history element', () => {
 
 			let params = {
@@ -1475,6 +1504,18 @@ describe('/helpers/entities/Rebill.js', () => {
 	});
 
 	describe('getLastMatchingStatePrototype', () => {
+
+		mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			default: class {
+				getLastHourInISO8601() {
+					return '2018-07-10T05:00:00Z';
+				}
+				getISO8601() {
+					return '2018-07-10T06:49:13Z';
+				}
+			}
+		});
+		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
 		it('gets matching state when there is only one corresponding previous state', () => {
 
@@ -1570,6 +1611,18 @@ describe('/helpers/entities/Rebill.js', () => {
 
 	describe('updateHistoryPreviousStateWithNewExit', () => {
 
+		mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			default: class {
+				getLastHourInISO8601() {
+					return '2018-07-10T05:00:00Z';
+				}
+				getISO8601() {
+					return '2018-07-10T06:49:13Z';
+				}
+			}
+		});
+		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
+
 		it('updates previous state from history with new exit', () => {
 
 			let rebill = getValidRebill();
@@ -1620,6 +1673,18 @@ describe('/helpers/entities/Rebill.js', () => {
 	});
 
 	describe('buildUpdatedRebillPrototype', () => {
+
+		mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			default: class {
+				getLastHourInISO8601() {
+					return '2018-07-10T05:00:00Z';
+				}
+				getISO8601() {
+					return '2018-07-10T06:49:13Z';
+				}
+			}
+		});
+		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
 		it('successfully builds updated rebill prototype', () => {
 
@@ -1690,6 +1755,18 @@ describe('/helpers/entities/Rebill.js', () => {
 	});
 
 	describe('updateRebillFromUpdatedRebillPrototype', () => {
+
+		mockery.registerMock('@6crm/sixcrmcore/util/timestamp', {
+			default: class {
+				getLastHourInISO8601() {
+					return '2018-07-10T05:00:00Z';
+				}
+				getISO8601() {
+					return '2018-07-10T06:49:13Z';
+				}
+			}
+		});
+		const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
 		it('successfully updates rebill from updated rebill prototype', () => {
 
