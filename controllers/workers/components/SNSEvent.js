@@ -115,14 +115,15 @@ module.exports = class SNSEventController {
 
 		du.debug('Get Message');
 
+		const record = this.parameters.get('record');
 		try {
 
-			const message = JSON.parse(this.parameters.get('record').Sns.Message);
+			const message = JSON.parse(record.Sns.Message);
 			this.parameters.set('message', message);
 
 		} catch (error) {
 
-			du.error(error);
+			du.error("Error getting SNS message", error, record);
 			throw eu.getError(error);
 
 		}
