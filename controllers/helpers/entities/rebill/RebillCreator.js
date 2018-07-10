@@ -468,7 +468,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 	async getMerchantProvider() {
 		const session = this.parameters.get('session');
 		const previous_rebills = await sessionController.listRebills(session);
-		if (previous_rebills.length === 0) {
+		if (_.isArray(previous_rebills) && previous_rebills.length === 0) {
 			return;
 		}
 
