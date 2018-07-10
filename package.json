@@ -7,7 +7,7 @@
   "description": "Backend Processing Lambda Endpoints",
   "main": "index.js",
   "dependencies": {
-    "@6crm/sixcrmcore": "0.0.23",
+    "@6crm/sixcrmcore": "0.0.25",
     "ajv": "^6.5.1",
     "apn": "^2.2.0",
     "authorizenet": "^1.0.5",
