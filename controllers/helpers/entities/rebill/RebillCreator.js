@@ -468,6 +468,10 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 	async getMerchantProvider() {
 		const session = this.parameters.get('session');
 		const previous_rebills = await sessionController.listRebills(session);
+		if (previous_rebills.length === 0) {
+			return;
+		}
+
 		const previous_rebills_ordered = _.orderBy(previous_rebills, [rebill => new Date(rebill.bill_at)], ['desc']);
 		const last_rebill = previous_rebills_ordered[0];
 		const merchant_provider = last_rebill.merchant_provider;
