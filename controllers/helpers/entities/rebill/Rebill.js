@@ -142,7 +142,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 	}
 
 
-	updateRebillProcessing() {
+	updateRebillProcessing({rebill, processing}) {
 
 		du.debug('Mark Rebill Processing');
 
@@ -151,17 +151,19 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 				argumentation: arguments[0],
 				action: 'updateRebillProcessing'
 			}))
-			.then(() => this.acquireRebill())
-			.then(() => this.setRebillProcessing())
-			.then(() => this.updateRebill());
+			.then(() => this.acquireRebill(rebill))
+			.then((rebill) => this.setRebillProcessing(rebill, processing))
+			.then((rebill) => this.updateRebill(rebill));
 
 	}
 
-	acquireRebill() {
+	acquireRebill(rebill) {
 
 		du.debug('Acquire Rebill');
 
-		let rebill = this.parameters.get('rebill');
+		if (!rebill) {
+			rebill = this.parameters.get('rebill');
+		}
 
 		if (!_.has(this, 'rebillController')) {
 			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
@@ -172,31 +174,38 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 			id: rebill.id
 		}).then(rebill => {
 			this.parameters.set('rebill', rebill);
-			return true;
+			return rebill;
 		});
 
 	}
 
-	setRebillProcessing() {
+	setRebillProcessing(rebill, processing) {
 
 		du.debug('Set Rebill Processing');
 
-		let rebill = this.parameters.get('rebill');
-		let processing = this.parameters.get('processing');
+		if (!rebill) {
+			rebill = this.parameters.get('rebill');
+		}
+
+		if (!processing) {
+			processing = this.parameters.get('processing');
+		}
 
 		rebill.processing = processing;
 
 		this.parameters.set('rebill', rebill);
 
-		return true;
+		return rebill;
 
 	}
 
-	updateRebill() {
+	updateRebill(rebill) {
 
 		du.debug('Update Rebill');
 
-		let rebill = this.parameters.get('rebill');
+		if (!rebill) {
+			rebill = this.parameters.get('rebill');
+		}
 
 		if (!_.has(this, 'rebillController')) {
 			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
@@ -209,13 +218,13 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 
 			this.parameters.set('rebill', rebill);
 
-			return true;
+			return rebill;
 
 		});
 
 	}
 
-	updateRebillState() {
+	updateRebillState({rebill}) {
 
 		du.debug('Updating Rebill State');
 
@@ -224,7 +233,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 				argumentation: arguments[0],
 				action: 'updateRebillState'
 			}))
-			.then(() => this.acquireRebill())
+			.then(() => this.acquireRebill(rebill))
 			.then(() => this.setConditionalProperties())
 			.then(() => this.buildUpdatedRebillPrototype())
 			.then(() => this.updateRebillFromUpdatedRebillPrototype())
