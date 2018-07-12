@@ -19,7 +19,11 @@
       {
         "AttributeName":"account",
         "AttributeType":"S"
-      }
+			},
+			{
+				"AttributeName":"merchant_provider",
+				"AttributeType":"S"
+			}
     ],
     "GlobalSecondaryIndexes":[
       {
@@ -43,6 +47,22 @@
         "KeySchema":[
           {
             "AttributeName":"account",
+            "KeyType":"HASH"
+          }
+        ],
+        "Projection":{
+          "ProjectionType":"ALL"
+        },
+        "ProvisionedThroughput":{
+          "ReadCapacityUnits":3,
+          "WriteCapacityUnits":3
+        }
+      },
+      {
+        "IndexName":"merchant_provider-index",
+        "KeySchema":[
+          {
+            "AttributeName":"merchant_provider",
             "KeyType":"HASH"
           }
         ],

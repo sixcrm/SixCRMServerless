@@ -1,6 +1,6 @@
-
-
+const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const entityController = require('./Entity');
 
@@ -55,6 +55,15 @@ module.exports = class MerchantProviderController extends entityController {
 
 		});
 
+	}
+
+	async delete({id, range_key = null}) {
+		const {transactions} = await this.executeAssociatedEntityFunction('TransactionController', 'listByMerchantProviderID', { id });
+		if (transactions !== null) {
+			throw eu.getError('bad_request', 'Merchant provider cannot be deleted, as transactions have already been run against it.');
+		}
+
+		return super.delete({id, range_key});
 	}
 
 	getByIds(ids) {
