@@ -780,7 +780,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 				":bill_atv": now,
 				":processingv": true
 			},
-			projection_expression: 'id'
+			projection_expression: 'id, year_month, bill_at'
 		};
 
 		if(!_.isNull(last_evaluated_key)){
@@ -831,7 +831,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 				throw eu.getError('server', 'Bad structure, no "id" property: '+JSON.stringify(last_evaluated));
 			}
 
-			let additional_results = await this.getAvailableRebills(now, last_evaluated.id);
+			let additional_results = await this.getAvailableRebills(now, last_evaluated);
 
 			if(arrayutilities.nonEmpty(additional_results)){
 				return_array = arrayutilities.merge(return_array, additional_results);

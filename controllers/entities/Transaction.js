@@ -40,7 +40,7 @@ class TransactionController extends entityController {
 
 		du.debug('List By Merchant Provider ID');
 
-		return this.listByAssociation({field: 'merchant_provider', id: id, pagination: pagination});
+		return this.queryBySecondaryIndex({index_name: 'merchant_provider-index', field: 'merchant_provider', index_value: id, pagination});
 
 	}
 
