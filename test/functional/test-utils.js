@@ -37,10 +37,10 @@ class TestUtils {
      * Technical Debt: this should be read from serverless.yml and/or config/local/site.yml
      */
 	setEnvironmentVariables() {
-		process.env.site_jwt_secret_key = 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV';
+		process.env.site_jwt_secret_key = 'J-LR3RIOxrHIe-MH-NftFYr7VFTB8xO8W8T451s35hJ0-V55aGdUQGCl1hGZ1OG1';
 
 		process.env.stage = 'local';
-		process.env.transaction_key = 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi';
+		process.env.transaction_key = 'z85t6nusfb3hafwnpw57pmdbnr9t9z5jmhjpv';
 		process.env.stage = 'local';
 		process.env.AWS_PROFILE = 'six';
 
