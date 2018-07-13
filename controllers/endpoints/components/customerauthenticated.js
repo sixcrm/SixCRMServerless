@@ -124,7 +124,7 @@ module.exports = class CustomerAuthenticatedController extends AuthenticatedCont
 			this.roleController = new RoleController();
 		}
 
-		let role = await this.roleController.getShared({id: '3f4b642d-1eb7-4924-91d2-85db155ce943'});
+		let role = await this.roleController.getShared({id: '161dbc59-4e2a-4fb6-a360-a687ffc61c17'});
 
 		return role;
 
