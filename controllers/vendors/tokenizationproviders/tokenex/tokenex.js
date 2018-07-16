@@ -32,7 +32,6 @@ module.exports = class TokenEx {
 			body: post_body
 		};
 
-
 		return this._performRequest(argument_object).then((result) => this._parseResponse('getToken', result));
 
 	}
@@ -82,8 +81,9 @@ module.exports = class TokenEx {
 
 		if(!_.has(result.body, 'Success') || result.body.Success !== true){
 			if(request_name == 'deleteToken' && _.has(result.body, 'Error') && _.includes(result.body.Error, 'Token does not exist')){
-				du.warning('Token does not exist');
+				du.warning('Token does not exist', result.body);
 			}else{
+				du.error(result.body);
 				throw eu.getError('server','Tokenization request failed (TokenEx.com): "'+request_name+'".  ('+result.body.Error+')');
 			}
 		}
@@ -93,12 +93,14 @@ module.exports = class TokenEx {
 				if(_.has(result.body, 'Token')){
 					return { token: result.body.Token };
 				}
+				du.error(result.body);
 				throw eu.getError('server', 'Tokenization Response missing "Token" field (TokenEx.com).');
 			},
 			getToken:(result) => {
 				if(_.has(result.body, 'Value')){
 					return { value: result.body.Value };
 				}
+				du.error(result.body);
 				throw eu.getError('server', 'Tokenization Response missing "Value" field (TokenEx.com).');
 			},
 			deleteToken:() => {
@@ -110,7 +112,7 @@ module.exports = class TokenEx {
 
 	_performRequest(argumentation_object){
 
-		du.debug('Perform Request');
+		du.debug('Perform Request', argumentation_object);
 
 		if(!_.has(this, 'httputilities')){
 			const HTTPUtilities = require('@6crm/sixcrmcore/providers/http-provider').default;

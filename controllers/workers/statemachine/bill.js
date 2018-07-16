@@ -9,6 +9,9 @@ const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('he
 
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
+const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+const rebillController = new RebillController();
+
 module.exports = class BillController extends stepFunctionWorkerController {
 
 	constructor() {
@@ -26,6 +29,12 @@ module.exports = class BillController extends stepFunctionWorkerController {
 		let rebill = await this.getRebill(event.guid);
 
 		let register_result = await this.executeBilling(rebill);
+
+		const transactions = register_result.getTransactions();
+		if (transactions[0]) {
+			rebill.merchant_provider = transactions[0].merchant_provider;
+			await rebillController.update({entity: rebill});
+		}
 
 		await this.incrementMerchantProviderSummary(register_result);
 

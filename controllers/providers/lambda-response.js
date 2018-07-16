@@ -52,14 +52,19 @@ module.exports = class LambdaResponse {
 
 	issueError(error, event, callback) {
 
-		du.error(error);
-
 		let code = 500;
 
 		if (_.has(error, 'code')) {
 
 			code = error.code;
 
+		}
+
+		if (code === 400 || code === 403 || code === 404) {
+			du.warning(error);
+		}
+		else {
+			du.error(error);
 		}
 
 		let message = 'Internal Server Error.';

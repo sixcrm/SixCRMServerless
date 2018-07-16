@@ -43,14 +43,14 @@ ses:
 jwt:
   issuer: 'https://development-api.sixcrm.com'
   site:
-    secret_key: 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV'
+    secret_key: 'J-LR3RIOxrHIe-MH-NftFYr7VFTB8xO8W8T451s35hJ0-V55aGdUQGCl1hGZ1OG1'
     domain: ''
     expiration: 3600
   transaction:
-    secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
+    secret_key: 'z85t6nusfb3hafwnpw57pmdbnr9t9z5jmhjpv'
     expiration: 3600
   customer:
-    secret_key: 'a0d0wa9du8hucioj==12jr0cuvcamcq9ij1k3nfnkjIh(UH(8hjnciqihuyBGDn-LJn_80XdV'
+    secret_key: 'BRQxG$6%5TtxpCYGE&v7yY@r%Yy%FhnETSB#uVH@keTeFNu*7vY&#vTH&#Q9w!268S&EgjkKE'
     domain: ''
     expiration: 3600
 
