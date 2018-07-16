@@ -43,15 +43,15 @@ ses:
 jwt:
   issuer: 'https://api.sixcrm.com'
   site: #This is the key for all graph requests (AKA Six users)
-    secret_key: 'pO9HJmVXzTOagNP-xW9Es8-s0HGQt28hqlvAPJx6e6rHeryvnyBGDn-LJn_80XdV'
+    secret_key: 'Co6fFonIwJqGNzJlJYDsZsxVJIzXKPcVsGQxm_C63Qj5uY7kgtfeVctn7SOHWqBp'
     domain: ''
     expiration: 3600
   transaction: #This is the key for the transactional endpoint requests (AKA non-Six users...)
-    secret_key: 'ashdaiuwdaw9d0u197f02ji9ujoja90juahwi'
+    secret_key: 'z85t6nusfb3hafwnpw57pmdbnr9t9z5jmhjpv'
     expiration: 3600
     domain: ''
   customer:
-    secret_key: 'a0d0wa9du8hucioj==12jr0cuvcamcq9ij1k3nfnkjIh(UH(8hjnciqihuyBGDn-LJn_80XdV'
+    secret_key: 'BRQxG$6%5TtxpCYGE&v7yY@r%Yy%FhnETSB#uVH@keTeFNu*7vY&#vTH&#Q9w!268S&EgjkKE'
     domain: ''
     expiration: 3600
 
