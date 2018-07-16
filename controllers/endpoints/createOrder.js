@@ -343,6 +343,12 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		let register_response = await this.registerController.processTransaction(argumentation);
 
+		const transactions = register_response.getTransactions();
+		if (transactions[0]) {
+			rebill.merchant_provider = transactions[0].merchant_provider;
+			await this.rebillController.update({entity: rebill});
+		}
+
 		let amount = this.transactionHelperController.getTransactionsAmount(register_response.parameters.get('transactions'));
 
 		return {
