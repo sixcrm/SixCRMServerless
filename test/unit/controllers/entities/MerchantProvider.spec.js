@@ -7,6 +7,10 @@ function getValidMerchantProviderGroup() {
 	return MockEntities.getValidMerchantProviderGroup()
 }
 
+function getTransaction() {
+	return MockEntities.getValidTransaction()
+}
+
 describe('controllers/MerchantProvider.js', () => {
 
 	before(() => {
@@ -39,6 +43,14 @@ describe('controllers/MerchantProvider.js', () => {
 			let a_merchant_provider_id = 'dummy_id';
 
 			let merchantprovidergroup = getValidMerchantProviderGroup();
+			let transaction = getTransaction();
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				listByMerchantProviderID({id}) {
+					expect(id).to.equal(a_merchant_provider_id);
+					return Promise.resolve({transactions: [transaction]});
+				}
+			});
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), class {
 				listByMerchantProviderID({id}) {
@@ -56,6 +68,11 @@ describe('controllers/MerchantProvider.js', () => {
 						id: merchantprovidergroup.id
 					},
 					name: "Merchant Provider Group"
+				}, {
+					entity: {
+						id: transaction.id
+					},
+					name: "Transaction"
 				}]);
 			});
 		});
@@ -65,8 +82,16 @@ describe('controllers/MerchantProvider.js', () => {
 			let a_merchant_provider_id = 'dummy_id';
 
 			let merchantprovidergroup = getValidMerchantProviderGroup();
-
+			let transaction = getTransaction();
+			delete transaction.id;
 			delete merchantprovidergroup.id;
+
+			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Transaction.js'), class {
+				listByMerchantProviderID({id}) {
+					expect(id).to.equal(a_merchant_provider_id);
+					return Promise.resolve({transactions: [transaction]});
+				}
+			});
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/MerchantProviderGroup.js'), class {
 				listByMerchantProviderID({id}) {
