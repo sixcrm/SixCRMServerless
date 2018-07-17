@@ -1,5 +1,5 @@
 {
-  "name": "sixcrm-transaction-api",
+  "name": "sixcrmserverless",
   "version": "1.0.0",
   "engines": {
     "node": "8.10.0"
@@ -111,9 +111,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TimothyDalbey/sixcrmtransactionapi.git"
+    "url": "git+https://github.com/6crm/sixcrmserverless.git"
   },
-  "author": "Timothy Dalbey",
-  "license": "ISC",
-  "homepage": "https://github.com/TimothyDalbey/sixcrmtransactionapi#readme"
+  "author": "SixCRM",
+  "license": "UNLICENSED",
+  "homepage": "https://github.com/6crm/sixcrmserverless"
 }
