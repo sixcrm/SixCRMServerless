@@ -670,10 +670,9 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 			this.shippingReceiptController = new ShippingReceiptController();
 		}
 
-		return this.shippingReceiptController.getListByAccount({
+		return this.shippingReceiptController.batchGet({
 			ids: shipping_receipt_ids
 		})
-			.then((results) => this.shippingReceiptController.getResult(results))
 			.then(shipping_receipts => {
 
 				if (!_.isNull(shipping_receipts)) {
