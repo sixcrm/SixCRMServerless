@@ -43,7 +43,7 @@ ses:
 jwt:
   issuer: 'https://api.sixcrm.com'
   site: #This is the key for all graph requests (AKA Six users)
-    secret_key: 'Co6fFonIwJqGNzJlJYDsZsxVJIzXKPcVsGQxm_C63Qj5uY7kgtfeVctn7SOHWqBp'
+    secret_key: '3BH6LG7iu0_uATCPSi19ShFxif7IonGGIQEDr35kRIHpFdzMPzcD5_F2v0KlFTYd'
     domain: ''
     expiration: 3600
   transaction: #This is the key for the transactional endpoint requests (AKA non-Six users...)

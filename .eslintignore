@@ -1,2 +1,4 @@
 deployment/dynamodb/configuration/seeds/bins.json
 node_modules
+package.json
+package-lock.json
