@@ -115,5 +115,6 @@
   },
   "author": "SixCRM",
   "license": "UNLICENSED",
+  "private": true,
   "homepage": "https://github.com/6crm/sixcrmserverless"
 }
