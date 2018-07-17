@@ -151,7 +151,7 @@ module.exports = class RegisterUtilities extends PermissionedController {
 			//Note:  Merchant Provider is provided in the rebill so, we're hotwiring the SOB
 			let merchant_provider_groups = {};
 
-			merchant_provider_groups[rebill.merchant_provider] = rebill.products;
+			merchant_provider_groups[rebill.merchant_provider] = [rebill.products];
 
 			this.parameters.set('merchantprovidergroups', merchant_provider_groups);
 
