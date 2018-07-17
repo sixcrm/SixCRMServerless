@@ -28,13 +28,10 @@ module.exports = class MerchantProviderController extends entityController {
 
 		let data_acquisition_promises = [
 			this.executeAssociatedEntityFunction('MerchantProviderGroupController', 'listByMerchantProviderID', {id:id}),
-			//this.executeAssociatedEntityFunction('transactionController', 'listByMerchantProviderID', {id:id})
+			this.executeAssociatedEntityFunction('TransactionController', 'listByMerchantProviderID', {id})
 		];
 
-		return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
-
-			let merchantprovidergroups = data_acquisition_promises[0];
-			//let transactions = data_acquisition_promises[1];
+		return Promise.all(data_acquisition_promises).then(([merchantprovidergroups, transactions]) => {
 
 			if(arrayutilities.nonEmpty(merchantprovidergroups)){
 				arrayutilities.map(merchantprovidergroups, (merchantprovidergroup) => {
@@ -42,27 +39,18 @@ module.exports = class MerchantProviderController extends entityController {
 				});
 			}
 
-			/*
-        if(_.has(transactions, 'transactions') && arrayutilities.nonEmpty(transactions.transactions)){
-          arrayutilities.map(transactions.transactions, (transaction) => {
-            return_array.push(this.createAssociatedEntitiesObject({name:'Transaction', object:transaction}));
-          });
-        }
-        */
+
+			if(_.has(transactions, 'transactions') && arrayutilities.nonEmpty(transactions.transactions)){
+				arrayutilities.map(transactions.transactions, (transaction) => {
+					return_array.push(this.createAssociatedEntitiesObject({name:'Transaction', object:transaction}));
+				});
+			}
+
 
 			return return_array;
 
 		});
 
-	}
-
-	async delete({id, range_key = null}) {
-		const {transactions} = await this.executeAssociatedEntityFunction('TransactionController', 'listByMerchantProviderID', { id });
-		if (transactions !== null) {
-			throw eu.getError('bad_request', 'Merchant provider cannot be deleted, as transactions have already been run against it.');
-		}
-
-		return super.delete({id, range_key});
 	}
 
 	getByIds(ids) {
