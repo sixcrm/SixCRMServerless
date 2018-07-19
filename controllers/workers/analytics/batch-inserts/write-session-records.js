@@ -1,23 +1,30 @@
 const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const WriteRecords = require('./write-records');
 
 const ATTRIBUTES = 11;
 
-module.exports = class WriteEventRecords {
+module.exports = class WriteEventRecords extends WriteRecords {
 
 	constructor(auroraContext) {
 
-		this._auroraContext = auroraContext;
+		super(auroraContext);
 
 	}
 
-	execute(records) {
+	getRecordKey(record) {
 
-		du.debug('WriteSessionRecords.execute()');
+		return record.id;
+
+	}
+
+	write(records) {
+
+		du.debug('WriteSessionRecords.write()');
 
 		if (records.length === 0) {
 
-			du.debug('WriteSessionRecords.execute(): no records');
+			du.debug('WriteSessionRecords.write(): no records');
 
 			return;
 

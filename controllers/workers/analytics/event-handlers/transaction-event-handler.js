@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const WriteTransactionRecords = require('../batch-inserts/write-transaction-records');
 const WriteTransactionProductRecords = require('../batch-inserts/write-transaction-product-records');
@@ -22,13 +23,28 @@ module.exports = class TransactionEventHandler {
 
 		await new WriteSessionRecords(this._auroraContext).execute([record.session]);
 		await new WriteTransactionRecords(this._auroraContext).execute([record]);
-		await new WriteTransactionProductRecords(this._auroraContext).execute(record.id, record.products);
 
-		await BBPromise.each(record.products, (p => {
+		const products = _.map(record.products, product => {
 
-			return new WriteTransactionProductScheduleRecords(this._auroraContext).execute(record.id, p.id, p.productSchedules);
+			product.transactionId = record.id;
+			return product;
 
-		}));
+		});
+		await new WriteTransactionProductRecords(this._auroraContext).execute(products);
+
+		await BBPromise.each(products, product => {
+
+			const productSchedules = _.map(product.productSchedules, productSchedule => {
+
+				productSchedule.transactionId = product.transactionId;
+				productSchedule.productId = product.id;
+
+				return productSchedule;
+
+			});
+			return new WriteTransactionProductScheduleRecords(this._auroraContext).execute(productSchedules);
+
+		});
 
 	}
 
