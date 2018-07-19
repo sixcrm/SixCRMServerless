@@ -29,6 +29,20 @@
 		"merchant_provider": {
 			"$ref": "../definitions/uuidv4.json"
 		},
+		"merchant_provider_selections": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"merchant_provider": {
+						"$ref": "../definitions/uuidv4.json"
+					},
+					"product": {
+						"$ref": "../definitions/uuidv4.json"
+					}
+				}
+			}
+		},
 		"processing": {
 			"type": [
 				"string",
