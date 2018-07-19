@@ -479,7 +479,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 			session.concluded = true;
 
-			return this.rebillController.update({ entity: session });
+			return this.sessionController.update({ entity: session });
 
 		}
 
