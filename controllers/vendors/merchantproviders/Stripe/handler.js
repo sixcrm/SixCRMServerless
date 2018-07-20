@@ -59,7 +59,9 @@ class StripeController extends MerchantProvider {
 					action: 'action',
 					transaction:'transaction'
 				},
-				optional:{}
+				optional:{
+					amount: 'amount'
+				}
 			},
 			reverse:{
 				required:{
