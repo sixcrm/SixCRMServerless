@@ -409,6 +409,10 @@ module.exports = class SessionController extends entityController {
 
 				let session_found = arrayutilities.find(sessions, (session) => {
 
+					if (session.concluded) {
+						return false;
+					}
+
 					if(_.has(session, 'completed') && session.completed == false && _.has(session, 'created_at')){
 
 						let created_at_timestamp = timestamp.dateToTimestamp(session.created_at);

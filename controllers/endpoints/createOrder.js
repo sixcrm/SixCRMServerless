@@ -165,7 +165,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				order: order,
 				transactionsubtype: transaction_subtype,
 				result: processed_rebill.result
-			}})
+			}}),
+			this.markNonSuccessfulSession(processed_rebill.result, session)
 		]);
 
 		return {
@@ -460,11 +461,25 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		du.debug('Mark Non-Successful Rebill');
 
-		if (result != 'success') {
+		if (result !== 'success') {
 
 			rebill.no_process = true;
 
 			return this.rebillController.update({ entity: rebill });
+
+		}
+
+	}
+
+	markNonSuccessfulSession(result, session) {
+
+		du.debug('Mark Non-Successful Session');
+
+		if (result !== 'success') {
+
+			session.concluded = true;
+
+			return this.sessionController.update({ entity: session });
 
 		}
 

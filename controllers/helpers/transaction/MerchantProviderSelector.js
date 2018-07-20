@@ -86,113 +86,72 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 
 	}
 
-	transformMerchantProviderGroupsToMerchantProviders() {
-
+	async transformMerchantProviderGroupsToMerchantProviders() {
 		du.debug('Transform Merchant Provider Groups To Merchant Providers');
 
 		let creditcard = this.parameters.get('creditcard');
 		let sorted_married_product_groups = this.parameters.get('sortedmarriedproductgroups');
 
-		let transformed_married_product_groups_promises = objectutilities.map(sorted_married_product_groups, merchantprovidergroup => {
-
+		let transformed_married_product_groups_promises = objectutilities.map(sorted_married_product_groups, async merchantprovidergroup => {
 			let amount = this.calculateAmount(sorted_married_product_groups[merchantprovidergroup]);
 
-			return this.selectMerchantProviderFromMerchantProviderGroup({
+			const selected_merchant_provider = await this.selectMerchantProviderFromMerchantProviderGroup({
 				merchantprovidergroup_id: merchantprovidergroup,
 				amount: amount,
 				creditcard: creditcard
 			})
-				.then((selected_merchant_provider) => {
-					return {
-						merchant_provider: selected_merchant_provider.id,
-						product_group: sorted_married_product_groups[merchantprovidergroup]
-					}
-				});
 
+			return {
+				merchant_provider: selected_merchant_provider.id,
+				product_group: sorted_married_product_groups[merchantprovidergroup]
+			};
 		});
 
-		return Promise.all(transformed_married_product_groups_promises).then(results => {
+		const results = await Promise.all(transformed_married_product_groups_promises);
 
-			return arrayutilities.reduce(results, (return_object, result) => {
+		return arrayutilities.reduce(results, (return_object, result) => {
 
-				if (!_.has(return_object, result.merchant_provider)) {
-					return_object[result.merchant_provider] = [];
-				}
+			if (!_.has(return_object, result.merchant_provider)) {
+				return_object[result.merchant_provider] = [];
+			}
 
-				return_object[result.merchant_provider].push(result.product_group);
+			return_object[result.merchant_provider].push(result.product_group);
 
-				return return_object;
+			return return_object;
 
-			}, {});
-
-		});
-
-
+		}, {});
 	}
 
-	selectMerchantProviderFromMerchantProviderGroup() {
-
+	async selectMerchantProviderFromMerchantProviderGroup() {
 		du.debug('Select Merchant Provider');
 
-		return Promise.resolve()
-			.then(() => this.parameters.setParameters({
-				argumentation: arguments[0],
-				action: 'selectMerchantProviderFromMerchantProviderGroup'
-			}))
-			.then(() => this.getMerchantProviderGroup())
-			.then(() => this.getMerchantProviders())
-			.then(() => this.getMerchantProviderSummaries())
-			.then(() => this.marryMerchantProviderSummaries())
-			.then(() => this.getMerchantProviderGroupSummary())
-			.then(() => this.filterMerchantProviders())
-			.then(() => {
-
-				let merchant_provider = this.parameters.get('smp.merchantprovider');
-
-				return merchant_provider;
-
-			});
-
-	}
-
-	getMerchantProviderGroup() {
-
-		du.debug('Get Merchantprovidergroup');
-
-		let merchantprovidergroup_id = this.parameters.get('smp.merchantprovidergroupid');
-
-		return this.merchantProviderGroupController.get({
-			id: merchantprovidergroup_id
-		}).then((merchantprovidergroup) => {
-
-			this.parameters.set('smp.merchantprovidergroup', merchantprovidergroup);
-
-			return true;
-
+		this.parameters.setParameters({
+			argumentation: arguments[0],
+			action: 'selectMerchantProviderFromMerchantProviderGroup'
 		});
+		const merchant_provider_group_id = this.parameters.get('smp.merchantprovidergroupid');
+		const creditcard = this.parameters.get('smp.creditcard');
+		const amount = this.parameters.get('smp.amount');
 
+		const merchant_provider_group = await this.merchantProviderGroupController.get({ id: merchant_provider_group_id });
+		const merchant_providers = await this.merchantProviderGroupController.getMerchantProviders(merchant_provider_group);
+		const merchant_provider_summaries = await this.getMerchantProviderSummaries(merchant_providers);
+		this.marryMerchantProviderSummaries(merchant_provider_summaries, merchant_providers);
+		this.getMerchantProviderGroupSummary(merchant_provider_group, merchant_providers);
+		const merchant_provider = await this.filterMerchantProviders(merchant_provider_group, creditcard, amount, merchant_providers);
+		return merchant_provider;
 	}
 
-	getMerchantProviderGroupSummary() {
-
+	getMerchantProviderGroupSummary(merchantprovidergroup, merchant_providers) {
 		du.debug('Get Merchantprovidergroup Summary');
 
-		let merchantprovidergroup = this.parameters.get('smp.merchantprovidergroup');
-		let merchant_providers = this.parameters.get('smp.merchantproviders');
-
 		let monthly_summary = arrayutilities.serial(merchantprovidergroup.merchantproviders, (current, next) => {
-
 			let merchant_provider = arrayutilities.find(merchant_providers, merchant_provider => {
 				return (merchant_provider.id == next.id);
 			});
-
 			current = current + parseFloat(merchant_provider.summary.summary.thismonth.amount);
-
 			return current;
-
-		},
-		0.0
-		);
+		}, 0.0);
 
 		merchantprovidergroup.summary = {
 			month: {
@@ -200,82 +159,39 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 			}
 		};
 
-		this.parameters.set('merchantprovidergroup', merchantprovidergroup);
-
+		return merchantprovidergroup;
 	}
 
-	getMerchantProviders() {
-
-		du.debug('Get Merchant Providers');
-
-		let merchantprovidergroup = this.parameters.get('smp.merchantprovidergroup');
-
-		return this.merchantProviderGroupController.getMerchantProviders(merchantprovidergroup).then((merchant_providers) => {
-
-			this.parameters.set('smp.merchantproviders', merchant_providers);
-
-			return true;
-
-		});
-
-	}
-
-	getMerchantProviderSummaries() {
-
+	async getMerchantProviderSummaries(merchant_providers) {
 		du.debug('Get Merchant Provider Summaries');
-
-		let merchant_providers = this.parameters.get('smp.merchantproviders');
-
 		let merchant_provider_ids = arrayutilities.map(merchant_providers, merchant_provider => merchant_provider.id);
 
 		const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 		let merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 
-		return merchantProviderSummaryHelperController.getMerchantProviderSummaries({
+		const results = await merchantProviderSummaryHelperController.getMerchantProviderSummaries({
 			merchant_providers: merchant_provider_ids
-		}).then(results => {
-
-			this.parameters.set('smp.merchantprovidersummaries', results.merchant_providers);
-
-			return true;
-
 		});
 
+		return results.merchant_providers;
 	}
 
-	marryMerchantProviderSummaries() {
-
+	marryMerchantProviderSummaries(merchant_provider_summaries, merchant_providers) {
 		du.debug('Marry Merchant Provider Summaries');
 
-		let merchant_provider_summaries = this.parameters.get('smp.merchantprovidersummaries');
-		let merchant_providers = this.parameters.get('smp.merchantproviders');
-
 		arrayutilities.map(merchant_provider_summaries, (summary) => {
-
 			arrayutilities.filter(merchant_providers, (merchant_provider, index) => {
-
 				if (merchant_provider.id == summary.merchant_provider.id) {
 					merchant_providers[index].summary = summary;
 				}
-
 			});
-
 		});
 
-		this.parameters.set('smp.merchantproviders', merchant_providers);
-
-		return Promise.resolve(true);
-
+		return merchant_providers;
 	}
 
-	filterMerchantProviders() {
-
+	filterMerchantProviders(merchantprovidergroup, creditcard, amount, merchant_providers) {
 		du.debug('Filter Merchant Providers');
-
-		let merchant_providers = this.parameters.get('smp.merchantproviders');
-		let creditcard = this.parameters.get('smp.creditcard');
-		let amount = this.parameters.get('smp.amount');
-		let merchantprovidergroup = this.parameters.get('smp.merchantprovidergroup');
 
 		const MerchantProviderGeneralFilter = global.SixCRM.routes.include('helpers', 'transaction/filters/MerchantProviderGeneralFilter.js');
 		const merchantProviderGeneralFilter = new MerchantProviderGeneralFilter();
@@ -292,12 +208,7 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 				creditcard: creditcard,
 				amount: amount,
 				merchantprovidergroup: merchantprovidergroup
-			}))
-			.then(merchant_provider => {
-				this.parameters.set('smp.merchantprovider', merchant_provider);
-				return true;
-			});
-
+			}));
 	}
 
 	pickMerchantProvider() {

@@ -72,9 +72,9 @@ module.exports = class AnalyticsEventHandler {
 
 			});
 
-			const handerMap = this._eventTypeHandlerMap[eventKey];
+			const handlerMap = this._eventTypeHandlerMap[eventKey];
 
-			if (!handerMap) {
+			if (!handlerMap) {
 
 				du.warning('Analytics event type not mapped', message.event_type);
 
@@ -82,12 +82,14 @@ module.exports = class AnalyticsEventHandler {
 
 			}
 
-			const messageHandlerPromises = handerMap.handlers.map(async (h) => {
+			const messageHandlerPromises = handlerMap.handlers.map(async (h) => {
 
-				const Transform = require(`./transforms/${handerMap.transform}`);
+				const Transform = require(`./transforms/${handlerMap.transform}`);
 				const transformed = await new Transform().execute(message);
+
 				const Handler = require(`./event-handlers/${h}`);
 				const handler = new Handler(this._auroraContext);
+
 				return handler.execute(transformed);
 
 			});
