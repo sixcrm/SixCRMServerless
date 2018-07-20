@@ -1,23 +1,30 @@
 const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const WriteRecords = require('./write-records');
 
 const ATTRIBUTES = 4;
 
-module.exports = class WriteTransactionProductScheduleRecords {
+module.exports = class WriteTransactionProductScheduleRecords extends WriteRecords {
 
 	constructor(auroraContext) {
 
-		this._auroraContext = auroraContext;
+		super(auroraContext);
 
 	}
 
-	execute(transactionId, productId, records) {
+	getRecordKey(record) {
 
-		du.debug('WriteTransactionProductScheduleRecords.execute()');
+		return `${record.transactionId}:${record.id}:${record.productId}`;
+
+	}
+
+	write(records) {
+
+		du.debug('WriteTransactionProductScheduleRecords.write()');
 
 		if (records.length === 0) {
 
-			du.debug('WriteTransactionProductScheduleRecords.execute(): no records');
+			du.debug('WriteTransactionProductScheduleRecords.write(): no records');
 
 			return;
 
@@ -45,9 +52,9 @@ module.exports = class WriteTransactionProductScheduleRecords {
 		const queryArgs = _.flatten(records.map(r => {
 
 			return [
-				transactionId,
+				r.transactionId,
 				r.id,
-				productId,
+				r.productId,
 				r.name
 			];
 

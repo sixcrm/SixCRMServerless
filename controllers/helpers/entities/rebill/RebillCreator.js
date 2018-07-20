@@ -392,7 +392,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		du.debug('Acquire Rebill Properties');
 
 		return this.getNextProductScheduleBillDayNumber()
-			.then(() => this.getMerchantProvider())
+			.then(() => this.getMerchantProviders())
 			.then(() => this.getScheduleElementsOnBillDay())
 			.then(() => this.addScheduleElementsToTransactionProducts())
 			.then(() => this.addProductsToTransactionProducts())
@@ -465,7 +465,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 	}
 
-	async getMerchantProvider() {
+	async getMerchantProviders() {
 		const session = this.parameters.get('session');
 		const previous_rebills = await sessionController.listRebills(session);
 		if (!_.isArray(previous_rebills) || previous_rebills.length === 0) {
@@ -474,10 +474,9 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		const previous_rebills_ordered = _.orderBy(previous_rebills, [rebill => new Date(rebill.bill_at)], ['desc']);
 		const last_rebill = previous_rebills_ordered[0];
-		const merchant_provider = last_rebill.merchant_provider;
 
-		this.parameters.set('merchantprovider', merchant_provider);
-		return merchant_provider;
+		this.parameters.set('merchantprovider', last_rebill.merchant_provider);
+		this.parameters.set('merchantproviderselections', last_rebill.merchant_provider_selections);
 	}
 
 	getScheduleElementsOnBillDay(){
@@ -623,6 +622,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		let rebill_prototype = this.createRebillPrototype({
 			session: this.parameters.get('session'),
 			merchant_provider: this.parameters.get('merchantprovider', {fatal: false}),
+			merchant_provider_selections: this.parameters.get('merchantproviderselections', {fatal: false}),
 			transaction_products: this.parameters.get('transactionproducts'),
 			bill_at: this.parameters.get('billdate'),
 			amount: this.parameters.get('amount'),
