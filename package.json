@@ -1,5 +1,5 @@
 {
-  "name": "sixcrm-transaction-api",
+  "name": "sixcrmserverless",
   "version": "1.0.0",
   "engines": {
     "node": "8.10.0"
@@ -102,7 +102,7 @@
     "test-analytics-seed": "node ./test/functional/analytics/seeds/seed.js ",
     "test-workers": "nyc node_modules/.bin/_mocha -- --require test/config/global.js test/bootstrap.test.js --recursive './test/unit/workers/**/*.spec.js'",
     "test-endpoints": "nyc node_modules/.bin/_mocha -- --require test/config/global.js test/bootstrap.test.js './test/unit/endpoints/**/*.spec.js'",
-    "lint-eslint": "eslint --ignore-pattern 'coverage/**' --ignore-pattern '**/*test.js' --ignore-pattern '**/*spec.js' '{**/*.js,**/*.json}'",
+    "lint-eslint": "eslint '{**/*.js,**/*.json}'",
     "lint-yml": "node_modules/yaml-lint/cli.js **/*.yml",
     "lint": "npm run lint-eslint && npm run lint-yml",
     "lint-commit": "./tools/lintCommitEslint.sh && ./tools/lintCommitYml.sh",
@@ -111,9 +111,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TimothyDalbey/sixcrmtransactionapi.git"
+    "url": "git+https://github.com/6crm/sixcrmserverless.git"
   },
-  "author": "Timothy Dalbey",
-  "license": "ISC",
-  "homepage": "https://github.com/TimothyDalbey/sixcrmtransactionapi#readme"
+  "author": "SixCRM",
+  "license": "UNLICENSED",
+  "private": true,
+  "homepage": "https://github.com/6crm/sixcrmserverless"
 }

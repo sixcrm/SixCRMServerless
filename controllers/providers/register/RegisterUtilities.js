@@ -136,7 +136,19 @@ module.exports = class RegisterUtilities extends PermissionedController {
 			.then(() => this.selectCustomerCreditCard())
 			.then(() => this.hydrateSelectedCreditCard())
 			.then(() => this.acquireMerchantProviderGroups());
+	}
 
+	async updateRebillMerchantProviderSelections() {
+		du.debug('Update Rebill Merchant Provider Selections');
+
+		const rebill = this.parameters.get('rebill');
+		const merchant_provider_groups = this.parameters.get('merchantprovidergroups');
+		rebill.merchant_provider_selections = Object.entries(merchant_provider_groups).reduce((result, [merchant_provider, product_groups]) => {
+			const rebill_products = _.flatten(product_groups);
+			const selections = rebill_products.map(rebill_product => ({ product: rebill_product.product.id, merchant_provider }));
+			return result.concat(selections);
+		}, []);
+		return this.rebillController.update({ entity: rebill });
 	}
 
 	acquireMerchantProviderGroups(){
@@ -146,30 +158,46 @@ module.exports = class RegisterUtilities extends PermissionedController {
 		let rebill =  this.parameters.get('rebill');
 		let creditcard = this.parameters.get('selectedcreditcard');
 
-		if(_.has(rebill, 'merchant_provider')){
+		if (_.has(rebill, 'merchant_provider_selections')) {
 
-			//Note:  Merchant Provider is provided in the rebill so, we're hotwiring the SOB
+			const selections = rebill.merchant_provider_selections;
+
+			const merchant_provider_groups = selections.reduce((result, {merchant_provider, product: product_id}) => {
+				const rebill_product = rebill.products.find(rebill_product => rebill_product.product.id === product_id);
+				if (rebill_product === undefined) {
+					return result;
+				}
+				if (!_.has(result, merchant_provider)) {
+					result[merchant_provider] = [[]];
+				}
+				result[merchant_provider][0].push(rebill_product);
+				return result;
+			}, {});
+
+			this.parameters.set('merchantprovidergroups', merchant_provider_groups);
+			return Promise.resolve(true);
+
+		} else if (_.has(rebill, 'merchant_provider')){
+
 			let merchant_provider_groups = {};
 
-			merchant_provider_groups[rebill.merchant_provider] = rebill.products;
+			merchant_provider_groups[rebill.merchant_provider] = [rebill.products];
 
 			this.parameters.set('merchantprovidergroups', merchant_provider_groups);
 
 			return Promise.resolve(true);
 
-		}else{
+		} else {
 
 			const MerchantProviderSelectorHelperController = global.SixCRM.routes.include('helpers','transaction/MerchantProviderSelector.js');
 			let merchantProviderSelectorHelperController = new MerchantProviderSelectorHelperController();
 
 			return merchantProviderSelectorHelperController.buildMerchantProviderGroups({rebill: rebill, creditcard: creditcard})
 				.then((merchant_provider_groups) => {
-
 					this.parameters.set('merchantprovidergroups', merchant_provider_groups);
-
-					return true;
-
-				});
+					return this.updateRebillMerchantProviderSelections();
+				})
+				.then(() => true);
 
 		}
 

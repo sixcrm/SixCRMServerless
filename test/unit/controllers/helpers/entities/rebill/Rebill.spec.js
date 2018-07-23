@@ -685,21 +685,8 @@ describe('/helpers/entities/Rebill.js', () => {
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
-				getListByAccount() {
-					return Promise.resolve({
-						shippingreceipts: shipping_receipts
-					});
-				}
-				getResult(result, field) {
-					if (_.isUndefined(field)) {
-						field = 'shippingreceipts';
-					}
-
-					if (_.has(result, field)) {
-						return Promise.resolve(result[field]);
-					} else {
-						return Promise.resolve(null);
-					}
+				batchGet() {
+					return Promise.resolve(shipping_receipts);
 				}
 			});
 
@@ -745,7 +732,7 @@ describe('/helpers/entities/Rebill.js', () => {
 			});
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
-				getListByAccount() {
+				batchGet() {
 					return Promise.resolve(null);
 				}
 			});
@@ -886,21 +873,8 @@ describe('/helpers/entities/Rebill.js', () => {
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
-				getListByAccount() {
-					return Promise.resolve({
-						shippingreceipts: shipping_receipts
-					});
-				}
-				getResult(result, field) {
-					if (_.isUndefined(field)) {
-						field = 'shippingreceipts';
-					}
-
-					if (_.has(result, field)) {
-						return Promise.resolve(result[field]);
-					} else {
-						return Promise.resolve(null);
-					}
+				batchGet() {
+					return Promise.resolve(shipping_receipts);
 				}
 			});
 
@@ -922,21 +896,8 @@ describe('/helpers/entities/Rebill.js', () => {
 			let shipping_receipt_ids = arrayutilities.map(shipping_receipts, shipping_receipt => shipping_receipt.id);
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'ShippingReceipt.js'), class {
-				getListByAccount() {
-					return Promise.resolve({
-						shippingreceipts: null
-					});
-				}
-				getResult(result, field) {
-					if (_.isUndefined(field)) {
-						field = 'shippingreceipts';
-					}
-
-					if (_.has(result, field)) {
-						return Promise.resolve(result[field]);
-					} else {
-						return Promise.resolve(null);
-					}
+				batchGet() {
+					return Promise.resolve(shipping_receipts);
 				}
 			});
 
@@ -965,10 +926,8 @@ describe('/helpers/entities/Rebill.js', () => {
 			let rebillHelperController = new RebillHelperController();
 
 			rebillHelperController.shippingReceiptController = new ShippingReceiptController();
-			rebillHelperController.shippingReceiptController.getListByAccount = () => {
-				return Promise.resolve({
-					shippingreceipts: shipping_receipts
-				});
+			rebillHelperController.shippingReceiptController.batchGet = () => {
+				return Promise.resolve(shipping_receipts);
 			};
 
 			rebillHelperController.parameters.set('shippingreceiptids', shipping_receipt_ids);

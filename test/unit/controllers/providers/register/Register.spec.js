@@ -833,6 +833,9 @@ describe('controllers/providers/Register.js', () => {
 					expect(id).to.equal(transaction.rebill);
 					return Promise.resolve(rebill);
 				}
+				update() {
+					return Promise.resolve();
+				}
 				getParentSession(_rebill) {
 					expect(_rebill).to.equal(rebill);
 					return Promise.resolve(session);
@@ -946,6 +949,9 @@ describe('controllers/providers/Register.js', () => {
 				get({id}) {
 					expect(id).to.equal(transaction.rebill);
 					return Promise.resolve(rebill);
+				}
+				update() {
+					return Promise.resolve();
 				}
 				getParentSession(_rebill) {
 					expect(_rebill).to.equal(rebill);
@@ -1061,6 +1067,9 @@ describe('controllers/providers/Register.js', () => {
 					expect(id).to.equal(transaction.rebill);
 					return Promise.resolve(rebill);
 				}
+				update() {
+					return Promise.resolve();
+				}
 				getParentSession(_rebill) {
 					expect(_rebill).to.equal(rebill);
 					return Promise.resolve(session);
@@ -1157,6 +1166,9 @@ describe('controllers/providers/Register.js', () => {
 				get({id}) {
 					expect(id).to.equal(rebill.id);
 					return Promise.resolve(rebill);
+				}
+				update() {
+					return Promise.resolve();
 				}
 				getParentSession(_rebill) {
 					expect(_rebill).to.equal(rebill);
@@ -1366,6 +1378,9 @@ describe('controllers/providers/Register.js', () => {
 				get({id}) {
 					expect(id).to.equal(rebill.id);
 					return Promise.resolve(rebill);
+				}
+				update() {
+					return Promise.resolve();
 				}
 				getParentSession(_rebill) {
 					expect(_rebill).to.equal(rebill);
@@ -2205,6 +2220,12 @@ describe('controllers/providers/Register.js', () => {
 				get() {
 					creditcard.number = getValidCreditCardNumber();
 					return Promise.resolve(creditcard);
+				}
+			});
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Rebill.js'), class {
+				update() {
+					return Promise.resolve();
 				}
 			});
 
