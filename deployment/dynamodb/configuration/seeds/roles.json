@@ -196,7 +196,10 @@
 			"merchantprovider/read",
 			"product/read",
 			"productschedule/read",
-			"return/read"
+			"return/read",
+		  	"notification/*",
+		  	"notificationread/*",
+		  	"notificationsetting/*"
 		],
 		"deny":["*"]
 	},
@@ -211,7 +214,10 @@
 	"permissions":{
 		"allow":[
 			"session/read",
-			"customer/read"
+			"customer/read",
+		  	"notification/*",
+		  	"notificationread/*",
+		  	"notificationsetting/*"
 		],
 		"deny":["*"]
 	},
