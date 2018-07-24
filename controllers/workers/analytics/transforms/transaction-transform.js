@@ -3,6 +3,7 @@ const AnalyticsTransfrom = require('../analytics-transform');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 
 module.exports = class TransactionTransform extends AnalyticsTransfrom {
 
@@ -16,6 +17,7 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 		const result = {
 			eventType: record.event_type,
 			id: record.context.transaction.id,
+			alias: record.context.transaction.alias,
 			datetime: record.context.transaction.created_at,
 			associatedTransaction: record.context.transaction.associated_transaction,
 			merchantProvider: {
@@ -26,7 +28,9 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 			type: record.context.transaction.type,
 			subtype: record.context.transactionSubType,
 			transactionType: record.context.transactionType,
-			customer: record.context.session.customer,
+			customer: {
+				id: record.context.session.customer
+			},
 			creditcard: '',
 			campaign: {
 				id: record.context.session.campaign
@@ -40,6 +44,7 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 			subAffiliate5: record.context.session.subaffiliate_5,
 			session: {
 				id: record.context.session.id,
+				alias: record.context.session.alias,
 				datetime: record.context.session.created_at,
 				account: record.context.session.account,
 				campaign: record.context.session.campaign,
@@ -50,6 +55,10 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 				subAffiliate3: record.context.session.subaffiliate_3,
 				subAffiliate4: record.context.session.subaffiliate_4,
 				subAffiliate5: record.context.session.subaffiliate_5
+			},
+			rebill: {
+				id: record.rebill.id,
+				alias: record.rebill.alias
 			},
 			products: record.context.transaction.products.map(p => {
 
@@ -145,6 +154,22 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 
 		}
 
+		try {
+
+			const customerController = new CustomerController();
+			customerController.disableACLs();
+			const response = await customerController.get({
+				id: record.context.session.customer,
+				fatal: true
+			});
+
+			result.customer.name = response.name;
+
+		} catch (ex) {
+
+			du.warning('TransactionTransform.transform(): could not resolve customer', ex);
+
+		}
 
 		return result;
 
