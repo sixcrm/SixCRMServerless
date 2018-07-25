@@ -48,6 +48,7 @@ module.exports = class JWTProvider {
 	decodeAndValidateJWT(jwt_string, jwt_signing_string) {
 
 		du.debug('Decode and Validate JWT');
+		du.info('Decode and Validate JWT', jwt_signing_string, jwt_signing_string);
 
 		let decoded_and_validated_jwt;
 
@@ -57,7 +58,7 @@ module.exports = class JWTProvider {
 
 		} catch (error) {
 
-			du.error(error);
+			du.error('Verification error', error);
 
 			return false;
 
@@ -66,6 +67,7 @@ module.exports = class JWTProvider {
 		du.info(decoded_and_validated_jwt);
 
 		if (decoded_and_validated_jwt === false) {
+			du.info('Decoded JWT equals false');
 			return false;
 		}
 
@@ -74,10 +76,12 @@ module.exports = class JWTProvider {
 			this.validateJWTContents(decoded_and_validated_jwt);
 
 		} catch (error) {
+			du.error('Content Validation Error', error);
 			return false;
 
 		}
 
+		du.info('Decoded And Validated JWT', decoded_and_validated_jwt);
 		return decoded_and_validated_jwt;
 
 	}
