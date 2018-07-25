@@ -24,6 +24,8 @@ module.exports = class JWTProvider {
 
 	decodeJWT(jwt_string, jwt_signing_string) {
 
+		du.debug('Decode JWT', jwt_string, jwt_signing_string);
+
 		let decoded_jwt;
 
 		try {
@@ -34,8 +36,12 @@ module.exports = class JWTProvider {
 				decoded_jwt = jwt.decode(jwt_string);
 			}
 
+			du.debug('Decoded JWT', decoded_jwt);
+
 
 		} catch (error) {
+
+			du.error('Error Decoding JWT', error);
 
 			return false;
 
