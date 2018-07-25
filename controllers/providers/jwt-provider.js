@@ -48,7 +48,7 @@ module.exports = class JWTProvider {
 	decodeAndValidateJWT(jwt_string, jwt_signing_string) {
 
 		du.debug('Decode and Validate JWT');
-		du.info('Decode and Validate JWT', jwt_signing_string, jwt_signing_string);
+		du.info('Decode and Validate JWT', jwt_string, jwt_signing_string);
 
 		let decoded_and_validated_jwt;
 
