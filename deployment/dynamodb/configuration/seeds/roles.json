@@ -215,6 +215,13 @@
 		"allow":[
 			"session/read",
 			"customer/read",
+			"customer/update",
+			"rebill/read",
+			"transaction/read",
+			"creditcard/read",
+			"creditcard/create",
+			"creditcard/update",
+			"productschedule/read",
 		  	"notification/*",
 		  	"notificationread/*",
 		  	"notificationsetting/*"
