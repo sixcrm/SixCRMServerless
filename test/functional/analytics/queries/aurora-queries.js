@@ -204,4 +204,8 @@ querySuite.afterAll(() => {
 
 });
 
-mocha.run();
+mocha.run((failures) => {
+	if (failures > 0) {
+		process.exit(1);
+	}
+});
