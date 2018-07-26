@@ -1,9 +1,9 @@
 SELECT
   t.datetime,
-  CASE WHEN c.transaction_id IS NULL 'no' ELSE 'yes' AS chargeback,
+  CASE WHEN c.transaction_id IS NULL THEN 'no' ELSE 'yes' END AS chargeback,
   t.processor_result AS response,
-  CASE WHEN t.transaction_type = 'sale' t.amount ELSE 0 AS amount,
-  CASE WHEN t.transaction_type = 'refund' t.amount WHEN t.transaction_type = 'reverse' t.amount ELSE 0 AS refund,
+  CASE WHEN t.transaction_type = 'sale' THEN t.amount ELSE 0 END AS amount,
+  CASE WHEN t.transaction_type = 'refund' THEN t.amount WHEN t.transaction_type = 'reverse' THEN t.amount ELSE 0 END AS refund,
   t.merchant_provider_name,
   t.alias,
   t.rebill_alias,
@@ -12,3 +12,4 @@ SELECT
   t.customer_name
 FROM analytics.f_transaction t
 LEFT JOIN analytics.f_transaction_chargeback c ON c.transaction_id = t.id
+ORDER BY t.datetime;

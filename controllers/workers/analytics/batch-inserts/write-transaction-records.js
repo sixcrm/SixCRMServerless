@@ -33,6 +33,7 @@ module.exports = class WriteTransactionRecords extends WriteRecords {
 		let query =
 			'INSERT INTO analytics.f_transaction ( \
 				id, \
+				alias, \
 				datetime, \
 				associated_transaction, \
 				session, \
@@ -71,6 +72,7 @@ module.exports = class WriteTransactionRecords extends WriteRecords {
 
 		query += ' \
 			ON CONFLICT (id) DO UPDATE SET  \
+			alias = EXCLUDED.alias, \
 			datetime = EXCLUDED.datetime, \
 			associated_transaction = EXCLUDED.associated_transaction, \
 			session = EXCLUDED.session, \
@@ -102,6 +104,7 @@ module.exports = class WriteTransactionRecords extends WriteRecords {
 
 			return [
 				r.id,
+				r.alias,
 				r.datetime,
 				r.associatedTransaction,
 				r.session.id,
