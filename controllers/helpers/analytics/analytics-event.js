@@ -8,10 +8,18 @@ module.exports = class AnalyticsEvent {
 
 	static push(eventType, context) {
 
-		du.debug('AnalyticsEvent.push()', eventType, require('util').inspect(context, {
-			showHidden: false,
-			depth: null
-		}));
+		if (eventType === 'transaction' || eventType === 'rebill') {
+			du.warning('AnalyticsEvent.push()', eventType, require('util').inspect(context, {
+				showHidden: false,
+				depth: null
+			}));
+		}
+		else {
+			du.debug('AnalyticsEvent.push()', eventType, require('util').inspect(context, {
+				showHidden: false,
+				depth: null
+			}));
+		}
 
 		const message = {
 			event_type: eventType,

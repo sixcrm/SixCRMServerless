@@ -69,7 +69,7 @@ module.exports = class entityController extends entityUtilitiesController {
 	getShared({id, range_key = null}) {
 
 		//Nick:  Please put this in most functions so that the debug methods have robust output
-		du.debug('Get Shared');
+		du.debug('Get Shared', id);
 
 		let query_parameters = {
 			key_condition_expression: 'entity = :primary_keyv',
@@ -106,7 +106,7 @@ module.exports = class entityController extends entityUtilitiesController {
 
 			})
 			.then(data => {
-				//du.info(data);
+				du.debug(data);
 				return data;
 			})
 			.then(data => this.getItems(data))

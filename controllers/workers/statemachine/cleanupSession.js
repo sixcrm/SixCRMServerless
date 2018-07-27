@@ -23,7 +23,13 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 
 		let session = await this.getSession(event.guid);
 
+		if (session.consolidated === true) {
+			return 'CONSOLIDATED';
+		}
+
 		let consolidated_rebill = await this.cleanupSession(session);
+
+		await this.markAsConsolidated(session);
 
 		return this.respond(consolidated_rebill);
 
@@ -106,7 +112,8 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 			transaction_products: products,
 			amount: amount,
 			product_schedules: product_schedules,
-			bill_at: bill_at
+			bill_at: bill_at,
+			processing: true
 		});
 
 		if(!_.has(this, 'rebillController')){
@@ -199,6 +206,15 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 
 		return true;
 
+	}
+
+	async markAsConsolidated(session) {
+		if (!_.has(this, 'sessionController')) {
+			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+			this.sessionController = new SessionController();
+		}
+
+		return this.sessionController.updateProperties({ id: session, properties: { consolidated: true } });
 	}
 
 	respond(rebill = null){

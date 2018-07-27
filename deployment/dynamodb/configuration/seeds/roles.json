@@ -196,7 +196,10 @@
 			"merchantprovider/read",
 			"product/read",
 			"productschedule/read",
-			"return/read"
+			"return/read",
+		  	"notification/*",
+		  	"notificationread/*",
+		  	"notificationsetting/*"
 		],
 		"deny":["*"]
 	},
@@ -205,13 +208,23 @@
 },
 {
 	"id":"161dbc59-4e2a-4fb6-a360-a687ffc61c17",
-	"account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	"account": "*",
 	"name": "Customer Self-Service",
 	"active":true,
 	"permissions":{
 		"allow":[
 			"session/read",
-			"customer/read"
+			"customer/read",
+			"customer/update",
+			"rebill/read",
+			"transaction/read",
+			"creditcard/read",
+			"creditcard/create",
+			"creditcard/update",
+			"productschedule/read",
+		  	"notification/*",
+		  	"notificationread/*",
+		  	"notificationsetting/*"
 		],
 		"deny":["*"]
 	},
