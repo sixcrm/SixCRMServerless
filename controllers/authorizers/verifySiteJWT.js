@@ -137,9 +137,14 @@ module.exports = class verifySiteJWTController {
 
 		let user_signing_strings = this.parameters.get('user_signing_strings', {fatal: false});
 
+		du.debug(user_signing_strings);
+
+
 		if (!_.isNull(user_signing_strings)) {
 
 			let encoded_token = this.parameters.get('encoded_authorization_token');
+
+			du.debug(encoded_token);
 
 			user_signing_strings.find((user_signing_string) => {
 				if (this.jwtprovider.decodeJWT(encoded_token, user_signing_string.signing_string)) {
@@ -159,11 +164,19 @@ module.exports = class verifySiteJWTController {
 
 		let verified_token = this.parameters.get('verified_authorization_token', {fatal: false});
 
+		du.debug(verified_token);
+
 		if (!_.isNull(verified_token)) {
 
-			return this.parameters.get('decoded_authorization_token').email;
+			let decodedAuthorizationToken = this.parameters.get('decoded_authorization_token');
+
+			du.debug('Respond Authorized', decodedAuthorizationToken);
+
+			return decodedAuthorizationToken.email;
 
 		}
+
+		du.debug('Respond Not Authorized');
 
 		return null;
 
