@@ -73,11 +73,19 @@
           "Variable": "$.rebill",
           "StringEquals": "NOREBILL",
           "Next": "No Rebill Session Closed"
+        },
+        {
+          "Variable": "$.rebill",
+          "StringEquals": "CONSOLIDATED",
+          "Next": "Session Already Consolidated"
         }
       ],
       "Default": "Trigger Substates"
     },
     "No Rebill Session Closed":{
+      "Type":"Succeed"
+    },
+    "Session Already Consolidated":{
       "Type":"Succeed"
     },
     "Trigger Substates":{
