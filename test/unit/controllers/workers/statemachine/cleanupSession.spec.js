@@ -527,7 +527,10 @@ describe('controllers/workers/statemachine/cleanupSession.js', () => {
         get({id}){
           expect(id).to.be.a('string');
           return Promise.resolve(session);
-        }
+				}
+				updateProperties() {
+					return Promise.resolve();
+				}
       });
 
       const CleanupSessionController = global.SixCRM.routes.include('workers', 'statemachine/cleanupSession.js');

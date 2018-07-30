@@ -50,6 +50,8 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 		if(permissions == false){
 
+			du.error(action, permissions, global.user, global.account);
+
 			this.throwPermissionsError();
 
 		}

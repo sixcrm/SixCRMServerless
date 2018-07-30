@@ -22,6 +22,8 @@ module.exports = class PermissionedController {
 
 			if(permission == false && fatal == true){
 
+				du.error(action, permission, object, global.user, global.account);
+
 				this.throwPermissionsError();
 
 			}

@@ -6,7 +6,7 @@
 		"auth0_id":"google-oauth2|115021313586107803846",
 		"id":"system@sixcrm.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"60fc8ccc85d8b7e6eaae333bb20d2db51aa37693",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -18,7 +18,7 @@
 		"auth0_id":"abc123",
 		"id":"justin@adexchangegrp.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"f491d1ee55539671ae73be6ef17ac20e2158e1f4",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -30,7 +30,7 @@
 		"auth0_id":"abc1234",
 		"id":"kris@sixcrm.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"5472bd73762d82071925a9469632b3de17a98fc7",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -42,7 +42,7 @@
 		"auth0_id":"abc1234",
 		"id":"accounting@sixcrm.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"a1dc9be4a00cf5ab0847bbac8611c505685e658d",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -54,7 +54,7 @@
 		"auth0_id":"abc123",
 		"id":"nikola.bosic@toptal.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"7c5943d2134b2d8c0f767ee91f9884d710d1c536",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -66,7 +66,7 @@
 		"auth0_id":"abc123",
 		"id":"acker2@icloud.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"ea6abbc018a1c5e678271aaf7f6200e0aac789af",
 		"created_at":"2018-06-13T18:40:41.405Z",
 		"updated_at":"2018-06-13T18:41:12.521Z"
@@ -78,7 +78,7 @@
 	  "auth0_id":"e2etestadmin1234",
 	  "id":"e2e-test-admin@sixcrm.com",
 	  "active":true,
-	  "termsandconditions":"0.1",
+	  "termsandconditions":"11.1",
 	  "alias":"7c5943d2134b2d8c0f121ee91f9884d710d1c536",
 	  "created_at":"2017-04-06T18:40:41.405Z",
 	  "updated_at":"2017-04-06T18:41:12.521Z"
@@ -90,7 +90,7 @@
 	  "auth0_id":"e2etestuser1234",
 	  "id":"e2e-test-user@sixcrm.com",
 	  "active":true,
-	  "termsandconditions":"0.1",
+	  "termsandconditions":"11.1",
 	  "alias":"7c5943d2432b2d8c0f121ee91f9884d710d1c536",
 	  "created_at":"2017-04-06T18:40:41.405Z",
 	  "updated_at":"2017-04-06T18:41:12.521Z"
@@ -102,7 +102,7 @@
 		"auth0_id":"abc123",
 		"id":"ljubomir@toptal.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"f72b6563095f1240f9ac2c03f256ccf3a94fac81",
 		"created_at":"2017-04-24T18:40:41.405Z",
 		"updated_at":"2017-04-24T18:41:12.521Z"
@@ -115,7 +115,7 @@
 		"id":"customerservice.user@test.com",
 		"active":true,
 		"access_key_id":"82478014-c96f-49ef-b31c-5408e99df66e",
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"8cf20826acc1d4c05001ab9cb69a4438210634f0",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -127,7 +127,7 @@
 		"auth0_id":"google-oauth2|115021313586107803846",
 		"id":"owner.user@test.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"9a47a739432d7f12d233a27fab6d36f9a65db3a2",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -139,7 +139,7 @@
 		"auth0_id":"google-oauth2|115021313586107803846",
 		"id":"admin.user@test.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"0ae6e5e884cdd6a55896d3be2b185085757d9f9d",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -152,7 +152,7 @@
 		"access_key_id":"4b6b3ddc-a7b7-40e0-bc9b-02b425370448",
 		"id":"super.user@test.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"4ee23a8f5c8661612075a89e72a56a3c6d00df90",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -164,7 +164,7 @@
 		"auth0_id":"google-oauth2|115021313586107803846",
 		"id":"nikola.bosic@coingcs.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"4f9e50799231a85500c42851addec5f2eddee93b",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -176,7 +176,7 @@
 	  "auth0_id":"awdawdawdawdawd",
 	  "id":"logan.egbert@sixcrm.com",
 	  "active":true,
-	  "termsandconditions":"0.1",
+	  "termsandconditions":"11.1",
 	  "alias":"9c5e0b435bec73316d0852ff9d2c4c2c1807554e",
 	  "created_at":"2017-04-06T18:40:41.405Z",
 	  "updated_at":"2017-04-06T18:41:12.521Z"
@@ -188,7 +188,7 @@
 	  "auth0_id":"abcxyz123",
 	  "id":"carlitoescobar@gmail.com",
 	  "active":true,
-	  "termsandconditions":"0.1",
+	  "termsandconditions":"11.1",
 	  "alias":"c9533cbfd6e14e2e35ce1610fb7c5f302112411f",
 	  "created_at":"2017-10-19T12:30:41.405Z",
 	  "updated_at":"2017-10-19T12:31:12.521Z"
@@ -200,7 +200,7 @@
 	  "auth0_id":"abc123",
 	  "id":"graphql.documentation@sixcrm.com",
 	  "active":true,
-	  "termsandconditions":"0.1",
+	  "termsandconditions":"11.1",
 	  "alias":"67b5071bee9f1b7e4d029e094c9a296b866be2ef",
 	  "created_at":"2017-10-19T12:30:41.405Z",
 	  "updated_at":"2017-10-19T12:31:12.521Z"
@@ -212,7 +212,7 @@
 	  "auth0_id":"abc123",
 	  "id":"accounting.customer.selfservice@sixcrm.com",
 	  "active":true,
-	  "termsandconditions":"0.1",
+	  "termsandconditions":"11.1",
 	  "alias":"7fa64d11c6a853ddc3618806f756c90db9cd8d75",
 	  "created_at":"2017-10-19T12:30:41.405Z",
 	  "updated_at":"2017-10-19T12:31:12.521Z"
@@ -224,7 +224,7 @@
 		"auth0_id":"abc123",
 		"id":"evan@adexchangegrp.com",
 		"active":true,
-		"termsandconditions":"0.1",
+		"termsandconditions":"11.1",
 		"alias":"a67a603d95b31d49e90b0523d8b5f01166dc3a36",
 		"created_at":"2018-05-04T16:35:18.866Z",
 		"updated_at":"2018-06-28T01:17:09.966Z"
@@ -236,7 +236,7 @@
 		"auth0_id":"abc123",
 	  "id":"james.durham@adexchangegrp.com",
 	  "active":true,
-	  "termsandconditions":"0.1",
+	  "termsandconditions":"11.1",
 	  "alias":"242b143cb4f7b6b2e932a609de031e3f5b9aab58",
 	  "created_at":"2018-06-28T18:33:04.451Z",
 	  "updated_at":"2018-06-28T18:33:10.500Z"
@@ -248,7 +248,7 @@
 		"auth0_id":"abc123",
 	  "id":"mike@adexchangegrp.com",
 	  "active":true,
-	  "termsandconditions":"0.1",
+	  "termsandconditions":"11.1",
 	  "alias":"3ea956bba82a9908f50567afd0e9184a73eff761",
 	  "created_at":"2018-06-29T20:02:21.148Z",
 	  "updated_at":"2018-06-29T20:10:22.615Z"
