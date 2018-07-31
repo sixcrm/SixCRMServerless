@@ -12,4 +12,5 @@ SELECT
   t.customer_name
 FROM analytics.f_transaction t
 LEFT JOIN analytics.f_transaction_chargeback c ON c.transaction_id = t.id
+WHERE t.datetime BETWEEN TIMESTAMP %L::DATE + '00:00:00'::TIME AND TIMESTAMP %L::DATE + '23:59:59'::TIME %s
 ORDER BY t.datetime;
