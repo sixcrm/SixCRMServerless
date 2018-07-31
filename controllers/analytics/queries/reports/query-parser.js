@@ -52,6 +52,48 @@ module.exports = class QueryParser {
 
 		}
 
+		if (options.chargeback) {
+
+			filter = this.resolveFilterQueryValueChargeback(filter, 'chargeback', 'transaction_id', parameters);
+
+		}
+
+		if (options.response) {
+
+			filter = this.resolveFilterQueryValue(filter, 'response', 'response', parameters);
+
+		}
+
+		if (options.alias) {
+
+			filter = this.resolveFilterQueryValue(filter, 'alias', 'alias', parameters);
+
+		}
+
+		if (options.rebillAlias) {
+
+			filter = this.resolveFilterQueryValue(filter, 'rebillAlias', 'rebill_alias', parameters);
+
+		}
+
+		if (options.sessionAlias) {
+
+			filter = this.resolveFilterQueryValue(filter, 'sessionAlias', 'session_alias', parameters);
+
+		}
+
+		if (options.campaignName) {
+
+			filter = this.resolveFilterQueryValue(filter, 'campaignName', 'campaign_name', parameters);
+
+		}
+
+		if (options.customerName) {
+
+			filter = this.resolveFilterQueryValue(filter, 'customerName', 'customer_name', parameters);
+
+		}
+
 		return filter;
 	}
 
@@ -71,6 +113,33 @@ module.exports = class QueryParser {
 				return filter += equalsClause;
 
 			}
+
+		} else {
+
+			return filter;
+
+		}
+
+	}
+
+	static resolveFilterQueryValueChargeback(filter, identifier, map, parameters) {
+
+		const isClause = ` AND %s.${map} IS %s `;
+
+		if (parameters[identifier]) {
+
+			if (parameters[identifier][0] === 'yes') {
+
+				parameters[identifier][0] = 'NOT NULL';
+
+			}
+			else {
+
+				parameters[identifier][0] = 'NULL';
+
+			}
+
+			return filter += isClause;
 
 		} else {
 
