@@ -2,7 +2,7 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const WriteRecords = require('./write-records');
 
-const ATTRIBUTES = 23;
+const ATTRIBUTES = 27;
 
 module.exports = class WriteTransactionRecords extends WriteRecords {
 
@@ -33,10 +33,15 @@ module.exports = class WriteTransactionRecords extends WriteRecords {
 		let query =
 			'INSERT INTO analytics.f_transaction ( \
 				id, \
+				alias, \
 				datetime, \
 				associated_transaction, \
 				session, \
+				session_alias, \
+				rebill, \
+				rebill_alias, \
 				customer, \
+				customer_name, \
 				creditcard, \
 				merchant_provider, \
 				merchant_provider_name, \
@@ -67,10 +72,15 @@ module.exports = class WriteTransactionRecords extends WriteRecords {
 
 		query += ' \
 			ON CONFLICT (id) DO UPDATE SET  \
+			alias = EXCLUDED.alias, \
 			datetime = EXCLUDED.datetime, \
 			associated_transaction = EXCLUDED.associated_transaction, \
 			session = EXCLUDED.session, \
+			session_alias = EXCLUDED.session_alias, \
+			rebill = EXCLUDED.rebill, \
+			rebill_alias = EXCLUDED.rebill_alias, \
 			customer = EXCLUDED.customer, \
+			customer_name = EXCLUDED.customer_name, \
 			creditcard = EXCLUDED.creditcard, \
 			merchant_provider = EXCLUDED.merchant_provider, \
 			merchant_provider_name = EXCLUDED.merchant_provider_name, \
@@ -94,10 +104,15 @@ module.exports = class WriteTransactionRecords extends WriteRecords {
 
 			return [
 				r.id,
+				r.alias,
 				r.datetime,
 				r.associatedTransaction,
 				r.session.id,
-				r.customer,
+				r.session.alias,
+				r.rebill.id,
+				r.rebill.alias,
+				r.customer.id,
+				r.customer.name,
 				r.creditcard,
 				r.merchantProvider.id,
 				r.merchantProvider.name,

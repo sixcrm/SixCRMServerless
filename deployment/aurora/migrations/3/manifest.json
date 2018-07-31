@@ -1,5 +1,5 @@
 [
 	{
-		"script": "add-processor-result.sql"
+		"script": "add-transaction-details.sql"
 	}
 ]
