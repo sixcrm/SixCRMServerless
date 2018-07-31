@@ -60,14 +60,14 @@
 		"updated_at":"2017-04-06T18:41:12.521Z"
 	},
 	{
-		"name":"NickAcker",
+		"name":"Nick Acker",
 		"first_name": "Nick",
 		"last_name": "Acker",
 		"auth0_id":"abc123",
-		"id":"acker2@icloud.com",
+		"id":"nick.acker@sixcrm.com",
 		"active":true,
 		"termsandconditions":"11.1",
-		"alias":"ea6abbc018a1c5e678271aaf7f6200e0aac789af",
+		"alias":"ed9dd41c4e75d2ed5a4caf64c2119d3e396d3333",
 		"created_at":"2018-06-13T18:40:41.405Z",
 		"updated_at":"2018-06-13T18:41:12.521Z"
 	},
