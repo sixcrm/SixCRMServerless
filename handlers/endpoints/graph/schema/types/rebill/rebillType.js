@@ -22,7 +22,11 @@ module.exports.graphObj = new GraphQLObjectType({
 	fields: () => ({
 		id: {
 			type: new GraphQLNonNull(GraphQLString),
-			description: 'The id of the transaction.',
+			description: 'The id of the rebill.',
+		},
+		alias: {
+			type: new GraphQLNonNull(GraphQLString),
+			description: 'The alias of the rebill.'
 		},
 		bill_at: {
 			type: new GraphQLNonNull(GraphQLString),
@@ -81,7 +85,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		previous_state: {
 			type: GraphQLString,
-			description: 'State rebill is currently in.',
+			description: 'State rebill was previously in.',
 		},
 		state_changed_at: {
 			type: GraphQLString,
