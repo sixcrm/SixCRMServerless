@@ -2,7 +2,7 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const WriteRecords = require('./write-records');
 
-const ATTRIBUTES = 27;
+const ATTRIBUTES = 28;
 
 module.exports = class WriteTransactionRecords extends WriteRecords {
 
