@@ -60,7 +60,7 @@ module.exports = class QueryParser {
 
 		if (options.response) {
 
-			filter = this.resolveFilterQueryValue(filter, 'response', 'response', parameters);
+			filter = this.resolveFilterQueryValue(filter, 'response', 'processor_result', parameters);
 
 		}
 
@@ -91,6 +91,12 @@ module.exports = class QueryParser {
 		if (options.customerName) {
 
 			filter = this.resolveFilterQueryValue(filter, 'customerName', 'customer_name', parameters);
+
+		}
+
+		if (options.transactionType) {
+
+			filter = this.resolveFilterQueryValue(filter, 'transactionType', 'transaction_type', parameters);
 
 		}
 
