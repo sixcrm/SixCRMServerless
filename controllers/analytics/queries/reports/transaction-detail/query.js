@@ -15,10 +15,11 @@ module.exports = async (parameters = {}) => {
 	QueryParser.resolveFilterValue(local, 'c', 'chargeback', parameters);
 	QueryParser.resolveFilterValue(local, 't', 'response', parameters);
 	QueryParser.resolveFilterValue(local, 't', 'alias', parameters);
-	QueryParser.resolveFilterValue(local, 't', 'rebill_alias', parameters);
-	QueryParser.resolveFilterValue(local, 't', 'session_alias', parameters);
-	QueryParser.resolveFilterValue(local, 't', 'campaign_name', parameters);
-	QueryParser.resolveFilterValue(local, 't', 'customer_name', parameters);
+	QueryParser.resolveFilterValue(local, 't', 'rebillAlias', parameters);
+	QueryParser.resolveFilterValue(local, 't', 'sessionAlias', parameters);
+	QueryParser.resolveFilterValue(local, 't', 'campaignName', parameters);
+	QueryParser.resolveFilterValue(local, 't', 'customerName', parameters);
+	QueryParser.resolveFilterValue(local, 't', 'transactionType', parameters);
 	const filter = QueryParser.resolveFilterQuery(parameters, {
 		account: true,
 		mid: true,
@@ -28,7 +29,8 @@ module.exports = async (parameters = {}) => {
 		rebillAlias: true,
 		sessionAlias: true,
 		campaignName: true,
-		customerName: true
+		customerName: true,
+		transactionType: true
 	});
 
 	let filterQuery = '';

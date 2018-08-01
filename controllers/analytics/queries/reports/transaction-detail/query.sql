@@ -4,6 +4,7 @@ SELECT
   t.datetime,
   CASE WHEN c.transaction_id IS NULL THEN 'no' ELSE 'yes' END AS chargeback,
   t.processor_result AS response,
+  t.transaction_type,
   CASE WHEN t.transaction_type = 'sale' THEN t.amount ELSE 0 END AS amount,
   CASE WHEN t.transaction_type = 'refund' THEN t.amount WHEN t.transaction_type = 'reverse' THEN t.amount ELSE 0 END AS refund,
   t.merchant_provider,
