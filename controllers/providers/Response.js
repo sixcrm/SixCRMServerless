@@ -50,7 +50,7 @@ module.exports = class Response {
 				code: 'success'
 			},
 			fail:{
-				code: 'fail'
+				code: 'decline'
 			},
 			decline:{
 				code: 'decline'
