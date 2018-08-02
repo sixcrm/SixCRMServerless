@@ -1,92 +1,108 @@
 {
-	"properties": [
-		{
-			"name": "events",
-			"properties": [
-				{
-					"name": "click",
-					"properties": [
-						{
-							"$ref": "../entities/campaign.json"
-						}
-					]
-				},
-				{
-					"name": "lead",
-					"properties": [
-						{
-							"$ref": "../entities/session.json"
-						}
-					]
-				},
-				{
-					"name": "order",
-					"properties": [
-						{
-							"$ref": "../entities/session.json"
-						},
-						{
-							"$ref": "../entities/campaign.json"
-						},
-						{
-							"$ref": "../entities/customer.json"
-						},
-						{
-							"$ref": "../general/rebills.json"
-						},
-						{
-							"$ref": "../general/schedules_to_purchase.json"
-						},
-						{
-							"$ref": "../general/amount.json"
-						},
-						{
-							"$ref": "../entities/merchantprovider.json"
-						},
-						{
-							"$ref": "../general/transaction_products.json"
-						},
-						{
-							"$ref": "../entities/transaction.json"
-						}
-					]
-				},
-				{
-					"name": "upsell",
-					"properties": [
-						{
-							"$ref": "../entities/session.json"
-						},
-						{
-							"$ref": "../entities/campaign.json"
-						},
-						{
-							"$ref": "../entities/customer.json"
-						},
-						{
-							"$ref": "../general/rebills.json"
-						},
-						{
-							"$ref": "../general/schedules_to_purchase.json"
-						},
-						{
-							"$ref": "../general/amount.json"
-						},
-						{
-							"$ref": "../entities/merchantprovider.json"
-						},
-						{
-							"$ref": "../general/transaction_products.json"
-						},
-						{
-							"$ref": "../entities/transaction.json"
-						}
-					]
-				},
-				{
-					"name": "confirm"
-				}
-			]
-		}
+  "all": {
+	"name": "Any event",
+	"description": "Tokens available in all templates",
+	"tokens": [
+	  {
+		"description": "Customer First Name",
+		"value": "customer.firstname",
+		"example": "John"
+	  },
+	  {
+		"description": "Customer Last Name",
+		"value": "customer.lastname",
+		"example": "Doe"
+	  },
+	  {
+		"description": "Customer email address",
+		"value": "customer.email",
+		"example": "john.doe@example.com"
+	  },
+	  {
+		"description": "Customer Shipping address First Name",
+		"value": "customer.address.firstname",
+		"example": "John"
+	  },
+	  {
+		"description": "Customer Shipping address Last Name",
+		"value": "customer.address.lastname",
+		"example": "Doe"
+	  },
+	  {
+		"description": "Customer Shipping address 1",
+		"value": "customer.address.line1",
+		"example": "123 Main Street"
+	  },
+	  {
+		"description": "Customer Shipping address 2",
+		"value": "customer.address.line2",
+		"example": "Apartment 1"
+	  },
+	  {
+		"description": "Customer Shipping address city",
+		"value": "customer.address.city",
+		"example": "New York"
+	  },
+	  {
+		"description": "Customer Shipping address State",
+		"value": "customer.address.state",
+		"example": "NY"
+	  },
+	  {
+		"description": "Customer Shipping country",
+		"value": "customer.address.country",
+		"example": "US"
+	  },
+	  {
+		"description": "Customer Shippinh country",
+		"value": "customer.address.zip",
+		"example": "00196"
+	  },
+	  {
+		"description": "Customer Billing address First Name",
+		"value": "creditcard.address.firstname",
+		"example": "John"
+	  },
+	  {
+		"description": "Customer Billing address Last Name",
+		"value": "creditcard.address.lastname",
+		"example": "Doe"
+	  },
+	  {
+		"description": "Customer Billing address 1",
+		"value": "creditcard.address.line1",
+		"example": "123 Main Street"
+	  },
+	  {
+		"description": "Customer Billing address 2",
+		"value": "creditcard.address.line2",
+		"example": "Apartment 1"
+	  },
+	  {
+		"description": "Customer Billing address city",
+		"value": "creditcard.address.city",
+		"example": "New York"
+	  },
+	  {
+		"description": "Customer Billing address State",
+		"value": "creditcard.address.state",
+		"example": "NY"
+	  },
+	  {
+		"description": "Customer Billing country",
+		"value": "creditcard.address.country",
+		"example": "US"
+	  },
+	  {
+		"description": "Customer Billing country",
+		"value": "creditcard.address.zip",
+		"example": "00196"
+	  },
+	  {
+		"description": "Customer Billing country",
+		"value": "creditcard.address.zip",
+		"example": "00196"
+	  }
 	]
+  }
 }

@@ -13,7 +13,7 @@ module.exports = class Token {
 
 		du.debug('Token List');
 
-		let model = mbu.build('tokens/all.json');
+		let model = global.SixCRM.routes.include('model', 'tokens/all.json');
 
 		return {tokens: model};
 
