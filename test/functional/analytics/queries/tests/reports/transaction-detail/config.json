@@ -23,6 +23,10 @@
 			{
 				"facet": "chargeback",
 				"values": ["no"]
+			},
+			{
+				"facet": "transactionType",
+				"values": ["sale"]
 			}
 		],
 		"pagination": {

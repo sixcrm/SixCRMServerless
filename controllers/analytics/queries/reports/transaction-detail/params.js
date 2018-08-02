@@ -40,7 +40,7 @@ module.exports = async (parameters, pagination) => {
 	_resolveParamValue('sessionAlias', sessionAlias);
 	_resolveParamValue('campaignName', campaignName);
 	_resolveParamValue('customerName', customerName);
-	_resolveParamValue('customerName', transactionType);
+	_resolveParamValue('transactionType', transactionType);
 
 	if (pagination) {
 
