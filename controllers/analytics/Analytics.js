@@ -143,7 +143,7 @@ module.exports = class AnalyticsController {
 			}
 			case 'transactionDetail': {
 				const resolveParams = require('./queries/reports/transaction-detail/params');
-				return this.query('reports/transaction-detail', await resolveParams(parameters));
+				return this.query('reports/transaction-detail', await resolveParams(parameters, parameters.pagination));
 			}
 			case 'rebillSummary': {
 				const resolveParams = require('./queries/reports/rebill-summary/params');

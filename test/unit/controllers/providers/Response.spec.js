@@ -90,6 +90,9 @@ describe('controllers/providers/Response.js', () => {
 				success:{
 					code: 'success'
 				},
+				fail:{
+					code: 'decline'
+				},
 				decline:{
 					code: 'decline'
 				},
