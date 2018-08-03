@@ -122,7 +122,7 @@ module.exports = class AnalyticsController {
 
 				du.debug('Get report: eventFunnelTimeseries parameters', resolved);
 
-				if (_.intersection(['main', 'upsell'], resolved.eventType).length > 0) {
+				if (_.intersection(['main', 'upsell'], [resolved.eventType]).length > 0) {
 
 					return this.query('reports/event-funnel-timeseries-transactional', resolved);
 
@@ -140,6 +140,10 @@ module.exports = class AnalyticsController {
 			case 'transactionSummary': {
 				const resolveParams = require('./queries/reports/transaction-summary/params');
 				return this.query('reports/transaction-summary', await resolveParams(parameters));
+			}
+			case 'transactionDetail': {
+				const resolveParams = require('./queries/reports/transaction-detail/params');
+				return this.query('reports/transaction-detail', await resolveParams(parameters, parameters.pagination));
 			}
 			case 'rebillSummary': {
 				const resolveParams = require('./queries/reports/rebill-summary/params');

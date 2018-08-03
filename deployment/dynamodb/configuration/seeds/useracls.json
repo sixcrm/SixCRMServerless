@@ -58,9 +58,18 @@
       "updated_at":"2017-04-06T18:41:12.521Z"
   },
   {
-      "id":"adc07a7d-7a2b-4d90-9776-50b69f038db2",
+      "id":"b8423835-fe65-4587-880b-5d525e0b996a",
       "account":"*",
-      "user":"acker2@icloud.com",
+      "user":"nick.acker@sixcrm.com",
+      "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
+      "termsandconditions": "11.2",
+      "created_at":"2018-06-13T18:40:41.405Z",
+      "updated_at":"2018-06-13T18:41:12.521Z"
+  },
+  {
+      "id":"1f3c0bd1-6d0c-4af5-957e-16b90c77cbaa",
+      "account":"3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+      "user":"nick.acker@sixcrm.com",
       "role":"cae614de-ce8a-40b9-8137-3d3bdff78039",
       "termsandconditions": "11.2",
       "created_at":"2018-06-13T18:40:41.405Z",

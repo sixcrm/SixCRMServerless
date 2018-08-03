@@ -49,6 +49,9 @@ module.exports = class Response {
 			success:{
 				code: 'success'
 			},
+			fail:{
+				code: 'decline'
+			},
 			decline:{
 				code: 'decline'
 			},
