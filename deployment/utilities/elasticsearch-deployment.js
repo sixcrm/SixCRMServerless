@@ -123,7 +123,8 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 		parameters.AccessPolicies = parserutilities.parse(parameters.AccessPolicies, {
 			aws_account_id: global.SixCRM.configuration.site_config.aws.account,
 			aws_account_region: global.SixCRM.configuration.site_config.aws.region,
-			domain_name: parameters.DomainName
+			domain_name: parameters.DomainName,
+			cognito_kibana_auth_role: parameters.KibanaAuthRoleName
 		});
 
 	}
