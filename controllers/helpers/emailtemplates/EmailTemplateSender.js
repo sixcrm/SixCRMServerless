@@ -2,8 +2,6 @@ const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
-const MockEntities = global.SixCRM.routes.include('test', 'mock-entities.js');
-
 const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/CustomerMailer.js');
 const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 const SMTPPRoviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
@@ -25,11 +23,7 @@ module.exports = class EmailTemplateSender {
 		let template = await this.emailTemplatesController.get({id: template_id});
 		let smtp_provider = await this.smtpPRoviderController.get({id: template.smtp_provider});
 
-		let context = {};
-		context.customer = MockEntities.getValidCustomer();
-		context.creditcard = MockEntities.getValidCreditCard();
-		context.session = MockEntities.getValidSession();
-		context.campaign = MockEntities.getValidCampaign();
+		let context = require('./example_context');
 
 		let body = this.compileBody(template.body, context);
 
