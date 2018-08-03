@@ -1,6 +1,7 @@
 [
   {
 		"DomainName": "sixcrm-logs",
+                "KibanaAuthRoleName": "sixcrm_cognito_kibana_auth_role",
 		"ElasticsearchVersion": "6.2",
     "ElasticsearchClusterConfig": {
       "InstanceCount": 1,
@@ -12,9 +13,17 @@
         {
           "Effect": "Allow",
           "Principal": {
-            "AWS": "*"
+            "AWS": "arn:aws:iam::{{aws_account_id}}:root"
           },
           "Action": "es:*",
+          "Resource": "arn:aws:es:{{aws_account_region}}:{{aws_account_id}}:domain/{{domain_name}}/*"
+        },
+        {
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "arn:aws:iam::{{aws_account_id}}}:role/{{cognito_kibana_auth_role}}"
+          },
+          "Action": "es:ESHttp*",
           "Resource": "arn:aws:es:{{aws_account_region}}:{{aws_account_id}}:domain/{{domain_name}}/*"
         }
       ]

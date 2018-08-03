@@ -1,0 +1,19 @@
+{
+  "PolicyName":"SixCRMLoggerLambdaExecutionPolicy",
+  "Description":"The SixCRM Logger Lambda Execution Policy",
+  "PolicyDocument":{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "es:*"
+            ],
+            "Resource": [
+              "arn:aws:es:{{aws_account_region}}:{{aws_account_id}}:domain/{{logs_domain_name}}",
+              "arn:aws:es:{{aws_account_region}}:{{aws_account_id}}:domain/{{logs_domain_name}}/*"
+            ]
+        }
+    ]
+  }
+}

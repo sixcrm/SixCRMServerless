@@ -1,0 +1,21 @@
+[{
+  "AssumeRolePolicyDocument":{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "",
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "lambda.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  },
+  "RoleName":"sixcrm_logger_lambda_role",
+  "Description": "The role used by the SixCRM Logger Lambda.",
+  "ManagedPolicies":[
+    "arn:aws:iam::{{account}}:policy/SixCRMLambdaExecutionPolicy",
+    "arn:aws:iam::{{account}}:policy/SixCRMLoggerLambdaExecutionPolicy"
+  ]
+}]
