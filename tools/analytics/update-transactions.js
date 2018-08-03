@@ -78,6 +78,10 @@ async function updateTransaction(connection, id, index) {
 
 	du.info(`${index}\t${id}\t${transactionAlias}\t${sessionAlias}\t${rebillId}\t${rebillAlias}\t${customerName}`);
 
+	if (process.env.DRY_RUN !== 'false') {
+		return;
+	}
+
 	return connection.queryWithArgs(`
 		UPDATE analytics.f_transaction SET
 			alias = $1,
