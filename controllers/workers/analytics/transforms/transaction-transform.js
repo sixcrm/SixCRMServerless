@@ -164,7 +164,11 @@ module.exports = class TransactionTransform extends AnalyticsTransfrom {
 				fatal: true
 			});
 
-			result.customer.name = response.name;
+			if (response.firstname && response.lastname) {
+
+				result.customer.name = `${response.firstname} ${response.lastname}`;
+
+			}
 
 		} catch (ex) {
 
