@@ -57,10 +57,6 @@ suites.map((suite) => {
 
 			expect(result_value).to.not.equal(undefined, 'Response is missing "' + result_name + '" property. Response is: ' + JSON.stringify(result));
 
-			if (test.input.reportType === 'transactionDetail') {
-				du.info(JSON.stringify(result_value, undefined, 4));
-			}
-
 			return expect(result_value).to.be.eql(test.expect);
 
 		}));
