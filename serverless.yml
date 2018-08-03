@@ -353,3 +353,4 @@ functions:
 
   logger:
     handler: handlers/handlers.logger
+    role: arn:aws:iam::${self:provider.account}:role/sixcrm_logger_lambda_role

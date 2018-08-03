@@ -142,6 +142,9 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 		let stringified_policy_document = parserutilities.parse(
 			JSON.stringify(policy_definition.PolicyDocument),
 			{
+				aws_account_id: global.SixCRM.configuration.site_config.aws.account,
+				aws_account_region: global.SixCRM.configuration.site_config.aws.region,
+				logs_domain_name: global.SixCRM.configuration.site_config.elasticsearch.domain_name,
 				random: random.createRandomString(10)
 			}
 		);
