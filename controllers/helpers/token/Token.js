@@ -2,7 +2,6 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const mbu = require('@6crm/sixcrmcore/util/model-builder-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 
 const JWTProvider = global.SixCRM.routes.include('controllers', 'providers/jwt-provider.js');
@@ -13,7 +12,7 @@ module.exports = class Token {
 
 		du.debug('Token List');
 
-		let model = mbu.build('tokens/all.json');
+		let model = global.SixCRM.routes.include('model', 'tokens/all.json');
 
 		return {tokens: model};
 
