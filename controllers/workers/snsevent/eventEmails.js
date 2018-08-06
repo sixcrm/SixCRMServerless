@@ -65,6 +65,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		let message = this.parameters.get('message');
 
+		du.debug(message);
+
 		let campaign = objectutilities.recurseByDepth(message.context, (key, value) => {
 
 			if(key == 'campaign'){
@@ -81,11 +83,13 @@ module.exports = class EventEmailsController extends SNSEventController {
 		});
 
 		if(_.isUndefined(campaign) || _.isNull(campaign)){
+			du.error(message.context);
 			throw eu.getError('server', 'Unable to identify campaign');
 		}
 
 		return this.campaignController.get({id: campaign}).then(result => {
 			this.parameters.set('campaign', result);
+			du.debug(result);
 			return true;
 		});
 
@@ -113,11 +117,13 @@ module.exports = class EventEmailsController extends SNSEventController {
 		});
 
 		if(_.isUndefined(customer) || _.isNull(customer)){
+			du.error(message.context);
 			throw eu.getError('server', 'Unable to identify customer');
 		}
 
 		return this.customerController.get({id: customer}).then((result) => {
 			this.parameters.set('customer', result);
+			du.debug(result);
 			return true;
 		});
 
@@ -130,13 +136,17 @@ module.exports = class EventEmailsController extends SNSEventController {
 		let message = this.parameters.get('message');
 		let campaign = this.parameters.get('campaign');
 
+		du.debug(message, campaign);
+
 		return this.campaignController.getEmailTemplates(campaign).then(results => {
 
 			if(_.isNull(results) || !arrayutilities.nonEmpty(results)){
+				du.debug('No email templates.');
 				return true;
 			}
 
 			let email_templates = arrayutilities.filter(results, result => {
+				du.debug(`Does ${result.type} equal ${message.event_type}`);
 				return result.type == message.event_type;
 			});
 
@@ -146,9 +156,11 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 			if(!_.isNull(results) && arrayutilities.nonEmpty(results)){
 				this.parameters.set('emailtemplates', results);
+				du.debug('Found email templates');
 				return true;
 			}
 
+			du.debug(`No email temapltes for campaign ${campaign.id}`);
 			return false;
 
 		});
@@ -164,6 +176,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		if(!_.isNull(email_templates)){
 
 			let smtp_provider_promises = arrayutilities.map(email_templates, email_template => {
+				du.debug(`Getting SMTP provider for email template ${email_template.id}`);
 				return this.emailTemplatesController.getSMTPProvider(email_template);
 			});
 
@@ -173,6 +186,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 				});
 
 				this.parameters.set('smtpproviders', smtp_providers);
+				du.debug('Found SMTP provider(s)');
 				return true;
 			});
 
@@ -185,8 +199,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 	sendEmails(){
 
 		du.debug('Send Emails');
-
-
 
 		let email_templates  = this.parameters.get('emailtemplates', {fatal: false});
 
