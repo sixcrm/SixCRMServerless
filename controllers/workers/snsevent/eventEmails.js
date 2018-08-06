@@ -151,7 +151,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 			let email_templates = arrayutilities.filter(results, result => {
 				du.debug(`Does ${result.type} equal ${message.event_type}`);
-				return (result.type === message.event_type) || (this.areEventsCompatible(result.type === message.event_type));
+				return (result.type === message.event_type) || (this.areEventsCompatible(result.type, message.event_type));
 			});
 
 			return email_templates;
