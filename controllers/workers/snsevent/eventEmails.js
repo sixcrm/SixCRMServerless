@@ -30,7 +30,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		};
 
 		this.eventMap = {
-			'allevents': ['confirm']
+			'allorders': ['confirm']
 		};
 
 		this.event_record_handler = 'triggerEmails';
