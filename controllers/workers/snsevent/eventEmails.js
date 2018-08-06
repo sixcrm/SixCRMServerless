@@ -312,4 +312,4 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 	}
 
-}12
+}
