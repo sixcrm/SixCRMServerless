@@ -29,6 +29,10 @@ module.exports = class EventEmailsController extends SNSEventController {
 			'emailtemplates':global.SixCRM.routes.path('model','entities/components/emailtemplates.json')
 		};
 
+		this.eventMap = {
+			'allevents': ['confirm']
+		};
+
 		this.event_record_handler = 'triggerEmails';
 
 		this.campaignController = new CampaignController();
@@ -147,7 +151,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 			let email_templates = arrayutilities.filter(results, result => {
 				du.debug(`Does ${result.type} equal ${message.event_type}`);
-				return result.type == message.event_type;
+				return (result.type === message.event_type) || (this.areEventsCompatible(result.type === message.event_type));
 			});
 
 			return email_templates;
@@ -160,7 +164,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 				return true;
 			}
 
-			du.debug(`No email temapltes for campaign ${campaign.id}`);
+			du.debug(`No email templates for campaign ${campaign.id}`);
 			return false;
 
 		});
@@ -290,7 +294,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		let parse_object = {
 			campaign: this.parameters.get('campaign'),
 			customer: this.parameters.get('customer')
-		}
+		};
 
 		let optional_properties = {
 			rebill: null,
@@ -298,7 +302,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 			transaction: null,
 			creditcard:null,
 			session: null
-		}
+		};
 
 		let message = this.parameters.get('message');
 
@@ -310,6 +314,21 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		return objectutilities.merge(parse_object, optional_properties);
 
+	}
+
+	areEventsCompatible(template_event, system_event) {
+
+		du.debug('Are Events Compatible', template_event, system_event);
+
+		if (!this.eventMap[template_event]) {
+			du.debug('No');
+			return false;
+		}
+
+		let compatible = this.eventMap[template_event].indexOf(system_event) > -1;
+		du.debug('Are:', compatible);
+
+		return compatible;
 	}
 
 }
