@@ -8,7 +8,7 @@ const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transactio
 const TransactionController = global.SixCRM.routes.include('entities','Transaction.js');
 
 //Technical Debt:  Look at disabling and enabling ACLs here...
-module.exports = class Refund extends TransactionUtilities{
+module.exports = class Refund extends TransactionUtilities {
 
 	constructor(){
 
@@ -63,6 +63,14 @@ module.exports = class Refund extends TransactionUtilities{
 
 				return instantiated_gateway.refund(processing_parameters);
 
+			})
+			.then((refund_response) => {
+
+				this.pushEvent({event_type: 'refund', context:{
+					refund: this.parameters.get('refund')
+				}});
+
+				return refund_response;
 			});
 
 	}
@@ -150,4 +158,4 @@ module.exports = class Refund extends TransactionUtilities{
 
 	}
 
-}
+};
