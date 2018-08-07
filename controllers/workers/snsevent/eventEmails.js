@@ -149,6 +149,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 				return true;
 			}
 
+
 			let email_templates = arrayutilities.filter(results, result => {
 				du.debug(`Does ${result.type} equal ${message.event_type}`);
 				return (result.type === message.event_type) || (this.areEventsCompatible(result.type, message.event_type));
@@ -280,6 +281,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		let parse_object = this.createParseObject();
 
+		du.debug('Parse Object Is', parse_object);
+
 		return {
 			subject: parserutilities.parse(email_template.subject, parse_object),
 			body: parserutilities.parse(email_template.body, parse_object)
@@ -289,7 +292,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 	createParseObject(){
 
-		du.debug('Create Parse Object');
+		du.debug('Create Parse Object', message.context);
 
 		let parse_object = {
 			campaign: this.parameters.get('campaign'),
