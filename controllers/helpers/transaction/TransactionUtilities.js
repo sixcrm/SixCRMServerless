@@ -8,7 +8,8 @@ const HelperController = global.SixCRM.routes.include('helpers', 'Helper.js');
 
 module.exports = class TransactionUtilities extends HelperController{
 
-	constructor(){
+	constructor() {
+		super();
 
 		this.brandaliases = {
 			'amex':'americanexpress'
