@@ -292,7 +292,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 	createParseObject(){
 
-		du.debug('Create Parse Object', message.context);
+		du.debug('Create Parse Object');
 
 		let parse_object = {
 			campaign: this.parameters.get('campaign'),
@@ -308,6 +308,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		};
 
 		let message = this.parameters.get('message');
+		du.debug('Create Parse Object', message.context);
 
 		objectutilities.map(optional_properties, optional_property => {
 			optional_properties[optional_property] = objectutilities.recurseByDepth(message.context, (key) => {
@@ -334,4 +335,4 @@ module.exports = class EventEmailsController extends SNSEventController {
 		return compatible;
 	}
 
-}
+};
