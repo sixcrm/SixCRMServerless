@@ -74,6 +74,15 @@ describe('helpers/transaction/Refund.js', () => {
 				return Promise.resolve(true);
 			}
 		});
+
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+			publish() {
+				return Promise.resolve({});
+			}
+			getRegion() {
+				return 'us-east-1';
+			}
+		});
 	});
 
 	afterEach(() => {
