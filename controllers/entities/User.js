@@ -303,6 +303,8 @@ module.exports = class UserController extends entityController {
 
 		user = this.userHelperController.appendAlias(user);
 
+		user.id = user.id.toLowerCase();
+
 		return super.create({entity: user});
 
 	}
