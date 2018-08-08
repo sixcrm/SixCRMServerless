@@ -304,7 +304,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 			transactions: null,
 			transaction: null,
 			creditcard:null,
-			session: null
+			session: null,
+			refund: null
 		};
 
 		let message = this.parameters.get('message');
