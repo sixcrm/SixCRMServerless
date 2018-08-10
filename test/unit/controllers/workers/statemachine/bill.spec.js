@@ -225,6 +225,30 @@ describe('controllers/workers/statemachine/bill.js', () => {
 
   describe('execute', async () => {
 
+  	beforeEach(() => {
+
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+			publish() {
+				return Promise.resolve({});
+			}
+			getRegion() {
+				return 'us-east-1';
+			}
+		});
+
+		mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Session.js'), class {
+			get() {
+				return Promise.resolve({});
+			}
+			getCustomer() {
+				return Promise.resolve({});
+			}
+			getCampaign() {
+				return Promise.resolve({});
+			}
+		});
+	});
+
     it('successfully executes (SUCCESS)', async () => {
 
       let rebill = MockEntities.getValidRebill();
