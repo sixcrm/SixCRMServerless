@@ -2,7 +2,7 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 module.exports = async (results) => {
 
-	du.debug('Rebill summary report');
+	du.debug('Order detail report');
 
 	return {
 		meta: {
