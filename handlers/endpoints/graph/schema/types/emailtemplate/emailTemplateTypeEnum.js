@@ -26,8 +26,8 @@ module.exports.graphObj = new GraphQLEnumType({
 		RETURN: {
 			value: 'return'
 		},
-		RETURNTOMANUFACTURER: {
-			value: 'returntomanufacturer'
+		REFUND: {
+			value: 'refund'
 		},
 		DECLINE: {
 			value: 'decline'
