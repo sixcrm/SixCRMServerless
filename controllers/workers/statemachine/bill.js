@@ -12,6 +12,9 @@ const stepFunctionWorkerController = global.SixCRM.routes.include('controllers',
 const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const rebillController = new RebillController();
 
+const SessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+const sessionController = new SessionController();
+
 module.exports = class BillController extends stepFunctionWorkerController {
 
 	constructor() {
@@ -37,6 +40,8 @@ module.exports = class BillController extends stepFunctionWorkerController {
 		}
 
 		await this.incrementMerchantProviderSummary(register_result);
+
+		await this.fetchContextParameters(rebill).then((parameters) => this.pushEvent(parameters));
 
 		return this.respond(register_result, rebill);
 
@@ -96,6 +101,32 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 		return arrayutilities.serial(update_promises);
 
+	}
+
+	async fetchContextParameters(rebill) {
+		let parameters = {};
+
+		return sessionController.get({id: rebill.parentsession}).then((session) => {
+			parameters.session = session;
+			return Promise.all([
+				sessionController.getCustomer(session).then((customer) => parameters.customer = customer),
+				sessionController.getCampaign(session).then((campaign) => parameters.campaign = campaign)
+			])}).then(() => parameters);
+	}
+
+	async pushEvent(parameters) {
+		let event = {
+			event_type: 'allorders',
+			context: {
+				campaign: parameters.campaign,
+				session: parameters.session,
+				customer: parameters.customer,
+				creditcard: parameters.creditcard
+			}
+		};
+
+		let EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
+		return new EventPushHelperController().pushEvent(event);
 	}
 
 	respond(result, rebill){

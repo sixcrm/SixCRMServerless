@@ -5,32 +5,32 @@ module.exports.graphObj = new GraphQLEnumType({
 	name: 'EmailTemplateTypeEnumeration',
 	description:  'The various email template types.',
 	values:{
-		ALLORDERS: {
-			value: 'allorders',
-		},
 		INITIALORDERS: {
 			value: 'initialorders'
+		},
+		ALLORDERS: {
+			value: 'allorders',
 		},
 		INITIALFULFILLMENT: {
 			value: 'initialfulfillment'
 		},
-		RECURRINGORDER: {
-			value: 'recurringorder'
+		ALLFULFILLMENTS: {
+			value: 'allfulfillments'
 		},
-		RECURRINGFULFILLMENT: {
-			value: 'recurringfulfillment'
-		},
-		RECURRINGDECLINE: {
-			value: 'recurringdecline'
+		DELIVERY: {
+			value: 'delivery'
 		},
 		CANCELLATION: {
 			value: 'cancellation'
 		},
+		RETURN: {
+			value: 'return'
+		},
 		RETURNTOMANUFACTURER: {
 			value: 'returntomanufacturer'
 		},
-		REFUNDREVERSE: {
-			value: 'refundreverse'
+		DECLINE: {
+			value: 'decline'
 		}
 	}
 });
