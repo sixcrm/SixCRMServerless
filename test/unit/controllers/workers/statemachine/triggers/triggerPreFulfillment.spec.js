@@ -45,6 +45,15 @@ describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', (
         stateMachineName: 'Billing'
       };
 
+	  mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sns-provider.js'), class {
+		publish() {
+			return Promise.resolve({});
+		}
+		getRegion() {
+			return 'us-east-1';
+		}
+	  });
+
       mockery.registerMock(global.SixCRM.routes.path('helpers', 'statemachine/StateMachine.js'), class {
         constructor(){}
         startExecution({parameters}){

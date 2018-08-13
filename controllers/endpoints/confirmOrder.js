@@ -80,7 +80,7 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		await this.closeSession(session);
 		await this.triggerSessionCloseStateMachine(session, true);
 		const response = this.buildResponse(session, customer, rebills);
-		await this.postProcessing(session, campaign);
+		await this.postProcessing(session, campaign, customer);
 
 		return response;
 
@@ -154,14 +154,16 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 
 	}
 
-	postProcessing(session, campaign) {
+	postProcessing(session, campaign, customer) {
 
 		du.debug('Post Processing');
 
 		return Promise.all([
 			this.pushEvent({event_type: 'confirm', context:{
 				campaign: campaign,
-				session: session
+				session: session,
+				customer: customer
+
 			}}),
 			AnalyticsEvent.push('confirm', {
 				session,

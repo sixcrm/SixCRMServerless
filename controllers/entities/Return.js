@@ -34,7 +34,19 @@ module.exports = class ReturnController extends entityController {
 
 		return returnHelperController.mergeHistories(entity).then((entity) => super.create({
 			entity: entity
-		}));
+		})).then((ret) => {
+			let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+			let eventHelperController = new EventsHelperController();
+
+			let context = {
+				'return': ret
+			};
+
+			return eventHelperController.pushEvent({event_type: 'return', context: context}).then(result => {
+				du.info(result);
+				return ret;
+			});
+		});
 
 	}
 

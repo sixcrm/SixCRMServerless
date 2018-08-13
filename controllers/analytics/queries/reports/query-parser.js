@@ -100,6 +100,12 @@ module.exports = class QueryParser {
 
 		}
 
+		if (options.merchantProviderName) {
+
+			filter = this.resolveFilterQueryValue(filter, 'merchantProviderName', 'merchant_provider_name', parameters);
+
+		}
+
 		return filter;
 	}
 

@@ -17,8 +17,8 @@
 				"values": ["d26c1887-7ad4-4a44-be0b-e80dbce22774"]
 			},
 			{
-				"facet": "mid",
-				"values": ["6c40761d-8919-4ad6-884d-6a46a776cfb9"]
+				"facet": "merchantProviderName",
+				"values": ["Merchant Provider 1"]
 			},
 			{
 				"facet": "chargeback",

@@ -5,7 +5,7 @@
         "name":"Hashtag Fulfillment Provider",
         "provider":{
           "name":"Hashtag",
-          "threepl_key":"{2b8d696e-9ee1-4a7d-8655-2e7979dfc7f3}",
+          "threepl_key":"{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}",
           "threepl_customer_id":10,
           "username":"kristest",
           "password":"kristest"
@@ -19,7 +19,7 @@
         "name":"ThreePL Fulfillment Provider",
         "provider":{
           "name":"ThreePL",
-          "threepl_key":"{2b8d696e-9ee1-4a7d-8655-2e7979dfc7f3}",
+          "threepl_key":"{a240f2fb-ff00-4a62-b87b-aecf9d5123f9}",
           "threepl_customer_id":10,
           "threepl_id": 773,
           "threepl_facility_id": 2,

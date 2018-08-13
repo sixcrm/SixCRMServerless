@@ -1232,7 +1232,7 @@ class MockEntities {
 		id = (_.isUndefined(id) || _.isNull(id)) ? spoofer.createRandomEmail() : id;
 
 		return {
-			id: id,
+			id: id.toLowerCase(),
 			name: spoofer.createRandomName('full'),
 			first_name: spoofer.createRandomName('first'),
 			last_name: spoofer.createRandomName('last'),
