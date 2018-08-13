@@ -69,7 +69,18 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 			throw eu.getError('server', 'Expected Shipping Receipt ID to be a UUID.');
 		}
 
-		return super.execute({guid: shipping_receipt.id});
+		let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+		let eventHelperController = new EventsHelperController();
+
+		let context = {
+			shipping_receipt: shipping_receipt
+		};
+
+		return eventHelperController.pushEvent({event_type: 'allfulfillments', context: context}).then(result => {
+			du.info(result);
+
+			return super.execute({guid: shipping_receipt.id});
+		});
 
 	}
 
