@@ -31,7 +31,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		this.eventMap = {
 			'allorders': ['order'],
-			'initialorder': ['order']
+			'initialorders': ['order']
 		};
 
 		this.event_record_handler = 'triggerEmails';
@@ -306,7 +306,9 @@ module.exports = class EventEmailsController extends SNSEventController {
 			transaction: null,
 			creditcard:null,
 			session: null,
-			refund: null
+			refund: null,
+			return: null,
+			shipping_receipt: null
 		};
 
 		let message = this.parameters.get('message');
