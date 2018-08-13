@@ -29,6 +29,11 @@ module.exports = class EventEmailsController extends SNSEventController {
 			'emailtemplates':global.SixCRM.routes.path('model','entities/components/emailtemplates.json')
 		};
 
+		this.eventMap = {
+			'allorders': ['order'],
+			'initialorders': ['order']
+		};
+
 		this.event_record_handler = 'triggerEmails';
 
 		this.campaignController = new CampaignController();
@@ -65,6 +70,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		let message = this.parameters.get('message');
 
+		du.debug(message);
+
 		let campaign = objectutilities.recurseByDepth(message.context, (key, value) => {
 
 			if(key == 'campaign'){
@@ -81,11 +88,13 @@ module.exports = class EventEmailsController extends SNSEventController {
 		});
 
 		if(_.isUndefined(campaign) || _.isNull(campaign)){
+			du.error(message.context);
 			throw eu.getError('server', 'Unable to identify campaign');
 		}
 
 		return this.campaignController.get({id: campaign}).then(result => {
 			this.parameters.set('campaign', result);
+			du.debug(result);
 			return true;
 		});
 
@@ -113,11 +122,13 @@ module.exports = class EventEmailsController extends SNSEventController {
 		});
 
 		if(_.isUndefined(customer) || _.isNull(customer)){
+			du.error(message.context);
 			throw eu.getError('server', 'Unable to identify customer');
 		}
 
 		return this.customerController.get({id: customer}).then((result) => {
 			this.parameters.set('customer', result);
+			du.debug(result);
 			return true;
 		});
 
@@ -130,14 +141,19 @@ module.exports = class EventEmailsController extends SNSEventController {
 		let message = this.parameters.get('message');
 		let campaign = this.parameters.get('campaign');
 
+		du.debug(message, campaign);
+
 		return this.campaignController.getEmailTemplates(campaign).then(results => {
 
 			if(_.isNull(results) || !arrayutilities.nonEmpty(results)){
+				du.debug('No email templates.');
 				return true;
 			}
 
+
 			let email_templates = arrayutilities.filter(results, result => {
-				return result.type == message.event_type;
+				du.debug(`Does ${result.type} equal ${message.event_type}`);
+				return (result.type === message.event_type) || (this.areEventsCompatible(result.type, message.event_type));
 			});
 
 			return email_templates;
@@ -146,9 +162,11 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 			if(!_.isNull(results) && arrayutilities.nonEmpty(results)){
 				this.parameters.set('emailtemplates', results);
+				du.debug('Found email templates');
 				return true;
 			}
 
+			du.debug(`No email templates for campaign ${campaign.id}`);
 			return false;
 
 		});
@@ -164,6 +182,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		if(!_.isNull(email_templates)){
 
 			let smtp_provider_promises = arrayutilities.map(email_templates, email_template => {
+				du.debug(`Getting SMTP provider for email template ${email_template.id}`);
 				return this.emailTemplatesController.getSMTPProvider(email_template);
 			});
 
@@ -173,6 +192,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 				});
 
 				this.parameters.set('smtpproviders', smtp_providers);
+				du.debug('Found SMTP provider(s)');
 				return true;
 			});
 
@@ -185,8 +205,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 	sendEmails(){
 
 		du.debug('Send Emails');
-
-
 
 		let email_templates  = this.parameters.get('emailtemplates', {fatal: false});
 
@@ -264,6 +282,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		let parse_object = this.createParseObject();
 
+		du.debug('Parse Object Is', parse_object);
+
 		return {
 			subject: parserutilities.parse(email_template.subject, parse_object),
 			body: parserutilities.parse(email_template.body, parse_object)
@@ -278,17 +298,21 @@ module.exports = class EventEmailsController extends SNSEventController {
 		let parse_object = {
 			campaign: this.parameters.get('campaign'),
 			customer: this.parameters.get('customer')
-		}
+		};
 
 		let optional_properties = {
 			rebill: null,
 			transactions: null,
 			transaction: null,
 			creditcard:null,
-			session: null
-		}
+			session: null,
+			refund: null,
+			return: null,
+			shipping_receipt: null
+		};
 
 		let message = this.parameters.get('message');
+		du.debug('Create Parse Object', message.context);
 
 		objectutilities.map(optional_properties, optional_property => {
 			optional_properties[optional_property] = objectutilities.recurseByDepth(message.context, (key) => {
@@ -300,4 +324,19 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 	}
 
-}
+	areEventsCompatible(template_event, system_event) {
+
+		du.debug('Are Events Compatible', template_event, system_event);
+
+		if (!this.eventMap[template_event]) {
+			du.debug('No');
+			return false;
+		}
+
+		let compatible = this.eventMap[template_event].indexOf(system_event) > -1;
+		du.debug('Are:', compatible);
+
+		return compatible;
+	}
+
+};

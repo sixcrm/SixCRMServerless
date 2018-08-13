@@ -459,7 +459,7 @@ describe('controllers/entities/User.js', () => {
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'UserSetting.js'), class {
 				constructor(){}
 				create(){
-					return Promise.resolve
+					return Promise.resolve()
 				}
 			});
 

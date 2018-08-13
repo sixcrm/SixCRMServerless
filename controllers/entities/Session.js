@@ -598,7 +598,21 @@ module.exports = class SessionController extends entityController {
 				return rebills.filter(r => !rebillHelper.isAvailable({rebill: r})).filter(r => !r.processing);
 			}).then(futureRebills => {
 				return Promise.all(futureRebills.map(r => rebillController.delete({id: r.id}))).then(() => session);
+			}).then(() => {
 
+				let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+				let eventHelperController = new EventsHelperController();
+
+				let context = {
+					session: session,
+					campaign: session.campaign
+				};
+
+				return eventHelperController.pushEvent({event_type: 'cancellation', context: context}).then(result => {
+					du.info(result);
+
+					return session;
+				});
 			});
 
 		});

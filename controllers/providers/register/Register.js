@@ -267,7 +267,7 @@ module.exports = class Register extends RegisterUtilities {
 
 		//If the proposed amount is greater than positive balance, we have a problem
 		if(amount > balance){
-			throw eu.getError('forbidden', 'The proposed resolved transaction amount is negative.');
+			throw eu.getError('forbidden', `The proposed resolved transaction amount is negative: ${amount} > ${balance}. Transaction ID: ${transaction.id}`);
 		}
 
 		return Promise.resolve(true);

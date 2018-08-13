@@ -708,7 +708,7 @@ describe('controllers/providers/Register.js', () => {
 
 			} catch (error) {
 
-				expect(error.message).to.equal('[403] The proposed resolved transaction amount is negative.');
+				expect(error.code).to.equal(403);
 
 			}
 
@@ -735,7 +735,7 @@ describe('controllers/providers/Register.js', () => {
 
 			} catch (error) {
 
-				expect(error.message).to.equal('[403] The proposed resolved transaction amount is negative.');
+				expect(error.code).to.equal(403);
 
 			}
 

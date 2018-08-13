@@ -164,7 +164,9 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				session: session,
 				order: order,
 				transactionsubtype: transaction_subtype,
-				result: processed_rebill.result
+				result: processed_rebill.result,
+				customer: customer,
+				creditcard: creditcard
 			}}),
 			this.markNonSuccessfulSession(processed_rebill.result, session)
 		]);

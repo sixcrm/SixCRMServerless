@@ -4,10 +4,12 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
+const HelperController = global.SixCRM.routes.include('helpers', 'Helper.js');
 
-module.exports = class TransactionUtilities {
+module.exports = class TransactionUtilities extends HelperController{
 
-	constructor(){
+	constructor() {
+		super();
 
 		this.brandaliases = {
 			'amex':'americanexpress'

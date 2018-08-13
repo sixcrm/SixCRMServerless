@@ -21,7 +21,7 @@ module.exports = class SendDeliveryNotificationController extends stepFunctionWo
 		let shipping_receipt = await this.getShippingReceipt(event.guid);
 
 		await this.pushEvent({
-			event_type:'delivery_confirmation',
+			event_type:'delivery',
 			context:{
 				shipping_receipt: shipping_receipt
 			}
