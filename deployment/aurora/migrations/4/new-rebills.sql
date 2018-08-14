@@ -6,10 +6,13 @@ CREATE TABLE analytics.f_rebill (
     datetime TIMESTAMP NOT NULL,
 	amount NUMERIC(12, 2) NOT NULL,
 	item_count INT NOT NULL,
-	"type" VARCHAR(25),
-	campaign_id VARCHAR(36),
+	"type" VARCHAR(25) NOT NULL,
+	account VARCHAR(36) NOT NULL,
+	session VARCHAR(36),
+	session_alias VARCHAR(20),
+	campaign VARCHAR(36),
 	campaign_name VARCHAR(255),
-	customer_id VARCHAR(36),
+	customer VARCHAR(36),
 	customer_name VARCHAR(255),
     CONSTRAINT pk_f_rebill PRIMARY KEY (id)
 );
