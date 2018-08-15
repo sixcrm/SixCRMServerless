@@ -575,7 +575,7 @@ describe('controllers/providers/Register.js', () => {
 				registerController.validateAssociatedTransactions();
 				expect(false).to.equal(true);
 			} catch (error) {
-				expect(error.message).to.equal('[403] A transaction with pre-existing refunds or reversals can not be reversed.');
+				expect(error.message).to.equal('[400] A transaction with pre-existing refunds or reversals can not be reversed.');
 			}
 
 		});
@@ -708,7 +708,7 @@ describe('controllers/providers/Register.js', () => {
 
 			} catch (error) {
 
-				expect(error.code).to.equal(403);
+				expect(error.code).to.equal(400);
 
 			}
 
@@ -735,7 +735,7 @@ describe('controllers/providers/Register.js', () => {
 
 			} catch (error) {
 
-				expect(error.code).to.equal(403);
+				expect(error.code).to.equal(400);
 
 			}
 
