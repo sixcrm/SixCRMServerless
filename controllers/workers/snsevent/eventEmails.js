@@ -308,7 +308,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 			session: null,
 			refund: null,
 			return: null,
-			shipping_receipt: null
+			shipping_receipt: null,
+			order: null
 		};
 
 		let message = this.parameters.get('message');
