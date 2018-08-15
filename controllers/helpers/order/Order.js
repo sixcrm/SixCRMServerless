@@ -124,7 +124,12 @@ module.exports = class OrderHelperController {
 		if (sessions === null) {
 			return {
 				orders: null,
-				pagination: rebill_result.pagination
+				pagination: {
+					count: 0,
+					end_cursor: '',
+					has_next_page: 'false',
+					last_evaluated: ''
+				}
 			}
 		}
 
