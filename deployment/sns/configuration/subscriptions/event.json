@@ -11,10 +11,20 @@
           "AttributeValue":{
             "event_type": [
               "order",
+			  "initialorders",
+			  "allorders",
+			  "initialfulfillment",
+			  "allfulfillments",
               "confirm",
+			  "cancellation",
+			  "delivery",
               "shipping_confirmation",
               "delivery_confirmation",
               "rma",
+			  "return",
+			  "refund",
+			  "void",
+			  "decline",
               "transaction_success",
               "transaction_fail",
               "transaction_recovery_success",
@@ -59,7 +69,8 @@
               "user_invite_resent",
               "role_changed",
               "chargeback",
-              "rma"
+              "rma",
+			  "emailfail"
             ]
           }
         }
