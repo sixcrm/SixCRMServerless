@@ -280,6 +280,18 @@ module.exports = class ShippingReceiptHelperController {
 
 		const sessions = await this.sessionController.getSessionByCustomer(customer);
 
+		if (sessions === null) {
+			return {
+				shippingreceipts: null,
+				pagination: {
+					count: 0,
+					end_cursor: '',
+					has_next_page: 'false',
+					last_evaluated: ''
+				}
+			};
+		}
+
 		const session_rebills = await Promise.all(arrayutilities.map(sessions, async session => {
 			const result = await this.rebillController.queryBySecondaryIndex({
 				index_name: 'parentsession-index',
