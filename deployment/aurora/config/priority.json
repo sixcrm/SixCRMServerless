@@ -14,19 +14,13 @@
 	"VpcSecurityGroupIds": ["SixCRM-Aurora"],
 	"Instances": [{
 			"DBInstanceIdentifier": "sixcrm-1",
-			"DBInstanceClass": "db.r4.xlarge",
+			"DBInstanceClass": "db.r4.large",
 			"Engine": "aurora-postgresql",
 			"DBClusterIdentifier": "sixcrm"
 		},
 		{
 			"DBInstanceIdentifier": "sixcrm-2",
-			"DBInstanceClass": "db.r4.xlarge",
-			"Engine": "aurora-postgresql",
-			"DBClusterIdentifier": "sixcrm"
-		},
-		{
-			"DBInstanceIdentifier": "sixcrm-3",
-			"DBInstanceClass": "db.r4.xlarge",
+			"DBInstanceClass": "db.r4.large",
 			"Engine": "aurora-postgresql",
 			"DBClusterIdentifier": "sixcrm"
 		}
