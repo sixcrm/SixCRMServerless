@@ -8,6 +8,7 @@ const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').defaul
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const mathutilities = require('@6crm/sixcrmcore/util/math-utilities').default;
 const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
+const currencyutil = require('@6crm/sixcrmcore/util/currency-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RegisterResponse = global.SixCRM.routes.include('providers', 'register/Response.js');
 const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
@@ -200,7 +201,7 @@ module.exports = class Register extends RegisterUtilities {
 		let associated_transactions = this.parameters.get('associated_transactions', {fatal: false});
 
 		if(arrayutilities.nonEmpty(associated_transactions)){
-			throw eu.getError('forbidden', 'A transaction with pre-existing refunds or reversals can not be reversed.');
+			throw eu.getError('bad_request', 'A transaction with pre-existing refunds or reversals can not be reversed.');
 		}
 
 		return Promise.resolve(true);
@@ -267,7 +268,7 @@ module.exports = class Register extends RegisterUtilities {
 
 		//If the proposed amount is greater than positive balance, we have a problem
 		if(amount > balance){
-			throw eu.getError('forbidden', `The proposed resolved transaction amount is negative: ${amount} > ${balance}. Transaction ID: ${transaction.id}`);
+			throw eu.getError('bad_request', `Refunding the proposed amount (${currencyutil.toCurrencyString(amount)}) would cause the balance (${currencyutil.toCurrencyString(balance)}) to become negative. Transaction ID: ${transaction.id}`);
 		}
 
 		return Promise.resolve(true);

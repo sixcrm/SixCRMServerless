@@ -54,7 +54,7 @@
 		"example": "US"
 	  },
 	  {
-		"description": "Customer Shippinh country",
+		"description": "Customer Shipping zip",
 		"value": "customer.address.zip",
 		"example": "00196"
 	  },
@@ -99,9 +99,74 @@
 		"example": "00196"
 	  },
 	  {
-		"description": "Customer Billing country",
+		"description": "Customer Billing zip",
 		"value": "creditcard.address.zip",
 		"example": "00196"
+	  },
+	  {
+		"description": "Initial Order ID",
+		"value": "order.id",
+		"example": "T7R5LQ9XGC"
+	  },
+	  {
+		"description": "Initial Order Subtotal",
+		"value": "order.amount",
+		"example": "T7R5LQ9XGC"
+	  },
+	  {
+		"description": "Initial Order Date",
+		"value": "order.date",
+		"example": "2018-05-29T21:39:57.496Z"
+	  },
+	  {
+		"description": "Order ID",
+		"value": "rebill.alias",
+		"example": "T7R5LQ9XGC"
+	  },
+	  {
+		"description": "Order Subtotal",
+		"value": "rebill.amount",
+		"example": "T7R5LQ9XGC"
+	  },
+	  {
+		"description": "Order Date",
+		"value": "rebill.created_at",
+		"example": "2018-05-29T21:39:57.496Z"
+	  },
+	  {
+		"description": "Fulfillment date",
+		"value": "shipping_receipt.created_at",
+		"example": "2018-05-29T21:39:57.496Z"
+	  },
+	  {
+		"description": "Fulfillment tracking ID",
+		"value": "shipping_receipt.tracking.id",
+		"example": "TR-4512145"
+	  },
+	  {
+		"description": "Shipping provider",
+		"value": "shipping_receipt.tracking.carrier",
+		"example": "UPS"
+	  },
+	  {
+		"description": "Cancellation date",
+		"value": "session.updated_at",
+		"example": "2018-05-29T21:39:57.496Z"
+	  },
+	  {
+		"description": "Refund date",
+		"value": "refund.transaction.created_at",
+		"example": "00196"
+	  },
+	  {
+		"description": "Refund Amount",
+		"value": "refund.amount",
+		"example": "200"
+	  },
+	  {
+		"description": "Return ID",
+		"value": "return.alias",
+		"example": "RZOFD9A464"
 	  }
 	]
   }

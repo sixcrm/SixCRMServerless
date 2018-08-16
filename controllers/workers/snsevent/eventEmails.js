@@ -20,6 +20,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		super();
 
+		this.doSend = false;
+
 		this.parameter_definition = {};
 
 		this.parameter_validation = {
@@ -242,7 +244,12 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		let customerEmailer = new CustomerMailerHelper({smtp_provider: paired_smtp_provider});
 
-		return customerEmailer.sendEmail({send_options: options})
+		if (this.doSend) {
+			return customerEmailer.sendEmail({send_options: options})
+		}
+
+		return Promise.resolve();
+
 
 	}
 
@@ -308,7 +315,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 			session: null,
 			refund: null,
 			return: null,
-			shipping_receipt: null
+			shipping_receipt: null,
+			order: null
 		};
 
 		let message = this.parameters.get('message');
