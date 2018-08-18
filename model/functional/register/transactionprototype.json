@@ -22,6 +22,9 @@
 		"merchant_provider": {
 			"$ref": "../../definitions/uuidv4.json"
 		},
+		"creditcard": {
+			"$ref": "../../definitions/uuidv4.json"
+		},
 		"products": {
 			"$ref": "./transactionproducts.json"
 		},

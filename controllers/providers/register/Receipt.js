@@ -23,6 +23,7 @@ module.exports = class RegisterRecieptGenerator {
 					transactionproducts:'transaction_products'
 				},
 				optional:{
+					creditcard: 'creditcard',
 					associatedtransaction: 'associatedtransaction'
 				}
 			}
@@ -32,6 +33,7 @@ module.exports = class RegisterRecieptGenerator {
 			'rebill':global.SixCRM.routes.path('model','entities/rebill.json'),
 			'amount':global.SixCRM.routes.path('model','definitions/currency.json'),
 			'merchantprovider':global.SixCRM.routes.path('model','definitions/uuidv4.json'),
+			'creditcard':global.SixCRM.routes.path('model','definitions/uuidv4.json'),
 			'transactiontype':global.SixCRM.routes.path('model','functional/register/transactiontype.json'),
 			'processorresponse':global.SixCRM.routes.path('model','functional/register/processorresponse.json'),
 			'associatedtransaction':global.SixCRM.routes.path('model','entities/transaction.json'),
@@ -92,12 +94,16 @@ module.exports = class RegisterRecieptGenerator {
 
 			let merchant_provider = this.parameters.get('merchantprovider');
 			let transaction_products = this.parameters.get('transactionproducts');
+			let creditcard = this.parameters.get('creditcard', {fatal: false});
 
 			transaction_prototype = objectutilities.merge(transaction_prototype, {
 				merchant_provider: merchant_provider,
 				products: transaction_products
 			});
 
+			if (!_.isNull(creditcard)) {
+				transaction_prototype.creditcard = creditcard;
+			}
 		}
 
 		this.parameters.set('transactionprototype', transaction_prototype);
@@ -120,6 +126,7 @@ module.exports = class RegisterRecieptGenerator {
 			products: transaction_prototype.products,
 			alias: this.transactionController.createAlias(),
 			merchant_provider: transaction_prototype.merchant_provider,
+			creditcard: transaction_prototype.creditcard,
 			type: transaction_prototype.type,
 			result: transaction_prototype.result
 		};
