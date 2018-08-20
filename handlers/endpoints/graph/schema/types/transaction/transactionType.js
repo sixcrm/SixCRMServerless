@@ -8,11 +8,14 @@ const TransactionController = global.SixCRM.routes.include('controllers', 'entit
 const transactionController = new TransactionController();
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 const merchantProviderController = new MerchantProviderController();
+const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+const creditCardController = new CreditCardController();
 
 let transactionInterface = require('./transactionInterface');
 let transactionProductType = require('../transactionproduct/transactionProductType');
 let rebillType = require('../rebill/rebillType');
 let merchantProviderType = require('../merchantprovider/merchantProviderType');
+let creditcardType = require('../creditcard/creditCardType');
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Transaction',
@@ -56,6 +59,20 @@ module.exports.graphObj = new GraphQLObjectType({
 					return null;
 				}
 			}
+		},
+		creditcard: {
+			type: creditcardType.graphObj,
+			description: 'Creditcard associated with the transaction.',
+			resolve: transaction => {
+				if (transaction.creditcard) {
+					return creditCardController.get({
+						id: transaction.creditcard
+					});
+				} else {
+					return null;
+				}
+			}
+
 		},
 		type: {
 			type: GraphQLString,
