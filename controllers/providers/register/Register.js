@@ -399,7 +399,7 @@ module.exports = class Register extends RegisterUtilities {
 
 	}
 
-	issueProductGroupReceipt({amount, processor_result, transaction_type, merchant_provider}){
+	issueProductGroupReceipt({amount, processor_result, transaction_type, merchant_provider, creditcard}){
 
 		du.debug('Issue Product Group Receipt');
 
@@ -415,6 +415,7 @@ module.exports = class Register extends RegisterUtilities {
 			transactiontype: transaction_type,
 			processorresponse: processor_result,
 			merchant_provider: merchant_provider,
+			creditcard: creditcard.id,
 			transaction_products: transaction_products
 		};
 
@@ -485,7 +486,8 @@ module.exports = class Register extends RegisterUtilities {
 				amount: amount,
 				processor_result: processor_result,
 				transaction_type: 'sale',
-				merchant_provider: merchant_provider
+				merchant_provider: merchant_provider,
+				creditcard: creditcard
 			}).then((transaction_receipt) => {
 
 				this.parameters.push('transactionreceipts', transaction_receipt);

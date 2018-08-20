@@ -15,6 +15,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		amount:				{ type: new GraphQLNonNull(GraphQLFloat) },
 		processor_response:	{ type: new GraphQLList(GraphQLString) },
 		merchant_provider:  { type: new GraphQLNonNull(GraphQLString) },
+		creditcard:  { type: GraphQLString },
 		products:			{ type: new GraphQLList(transactionProductInputType.graphObj) },
 		updated_at: { type: GraphQLString }
 	})
