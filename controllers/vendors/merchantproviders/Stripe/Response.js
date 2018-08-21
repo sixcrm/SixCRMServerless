@@ -28,7 +28,7 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 				return 'success';
 			}
 
-			if (!_.isNull(error) && error.code === 'card_declined') {
+			if (!_.isNull(error) && error.rawType === 'card_error') {
 				return 'decline';
 			}
 
