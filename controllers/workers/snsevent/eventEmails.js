@@ -61,7 +61,17 @@ module.exports = class EventEmailsController extends SNSEventController {
 			.then(() => this.sendEmails())
 			.catch(error => {
 				du.error(error);
-				return true;
+
+				let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+				let eventHelperController = new EventsHelperController();
+
+				let context = {smtp_provider: this.parameters.get('paired_smtp_provider')};
+
+				return eventHelperController.pushEvent({event_type: 'email_fail', context: context}).then(result => {
+					du.info(result);
+					return;
+				});
+
 			});
 
 	}
@@ -266,6 +276,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 		if(_.isUndefined(paired_smtp_provider) || _.isNull(paired_smtp_provider)){
 			throw eu.getError('server', 'No SMTP provider configured for use with email template: '+email_template.id);
 		}
+
+		this.parameters.set('paired_smtp_provider', paired_smtp_provider);
 
 		return paired_smtp_provider;
 
