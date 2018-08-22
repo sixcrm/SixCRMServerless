@@ -11,7 +11,7 @@ module.exports = class NotificationHelperClass {
 
 	async executeNotifications({event_type, context}){
 
-		du.debug('Execute Notifications');
+		du.debug('Execute Notifications', event_type);
 
 		this.validateNotification(event_type, context);
 
@@ -64,7 +64,7 @@ module.exports = class NotificationHelperClass {
 
 	async instantiateNotificationClass(event_type){
 
-		du.debug('Instantiate Notification Class');
+		du.debug('Instantiate Notification Class', event_type);
 
 		let directory_files = await fileutilities.getDirectoryFiles(global.SixCRM.routes.path('helpers','notifications/notificationtypes/'));
 
