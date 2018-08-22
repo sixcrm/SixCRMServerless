@@ -60,6 +60,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 			.then(() => this.acquireSMTPProvider())
 			.then(() => this.sendEmails())
 			.catch(error => {
+				du.error('Email Sending Failed');
 				du.error(error);
 
 				let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
