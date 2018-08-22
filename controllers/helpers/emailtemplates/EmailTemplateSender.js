@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const handlebars = require('handlebars');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
@@ -25,13 +25,14 @@ module.exports = class EmailTemplateSender {
 
 		let context = require('./example_context');
 
-		let body = this.compileBody(template.body, context);
+		let compiled_template = handlebars.compile(template.body);
+		let compiled_body = compiled_template(context);
 
 		let options = {
 			sender_email: smtp_provider.from_email,
 			sender_name: smtp_provider.from_name,
 			subject: template.subject,
-			body: body,
+			body: compiled_body,
 			recepient_emails:[global.user.id],
 			recepient_name: global.user.id
 		};
@@ -41,19 +42,5 @@ module.exports = class EmailTemplateSender {
 		return customerEmailer.sendEmail({send_options: options});
 	}
 
-	compileBody(body, context) {
-		let matches = body.match(/{{.+?}}/g) || [];
-		let result = body;
-
-		let strip = function (match) {
-			return match.replace('{{', '').replace('}}', '');
-		};
-
-		matches.forEach((match) => {
-			result = result.replace(new RegExp(match,'g'), _(context).at(strip(match)));
-		});
-
-		return result;
-	}
 
 }
