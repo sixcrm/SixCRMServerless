@@ -1,11 +1,11 @@
 
 const _ = require('lodash');
+const handlebars = require('handlebars');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
 const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const CustomerHelperController = global.SixCRM.routes.include('helpers', 'entities/customer/Customer.js');
@@ -299,49 +299,30 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		du.debug('Parse Email Template');
 
-		let parse_object = this.createParseObject();
+		let context = this.createContext();
 
-		du.debug('Parse Object Is', parse_object);
+		du.debug('Context Is', context);
+
+		let compiled_template_body = handlebars.compile(email_template.body);
+		let compiled_template_subject = handlebars.compile(email_template.subject);
+		let body = compiled_template_body(context);
+		let subject = compiled_template_subject(context);
 
 		return {
-			subject: parserutilities.parse(email_template.subject, parse_object),
-			body: parserutilities.parse(email_template.body, parse_object)
+			subject, body
 		};
 
 	}
 
-	createParseObject(){
+	createContext(){
 
-		du.debug('Create Parse Object');
+		du.debug('Create Context');
 
-		let parse_object = {
-			campaign: this.parameters.get('campaign'),
-			customer: this.parameters.get('customer')
-		};
+		let context = this.parameters.get('message').context;
+		context.campaign = this.parameters.get('campaign');
+		context.customer = this.parameters.get(`customer`);
 
-		let optional_properties = {
-			rebill: null,
-			transactions: null,
-			transaction: null,
-			creditcard:null,
-			session: null,
-			refund: null,
-			return: null,
-			shipping_receipt: null,
-			order: null
-		};
-
-		let message = this.parameters.get('message');
-		du.debug('Create Parse Object', message.context);
-
-		objectutilities.map(optional_properties, optional_property => {
-			optional_properties[optional_property] = objectutilities.recurseByDepth(message.context, (key) => {
-				return (key == optional_property);
-			});
-		});
-
-		return objectutilities.merge(parse_object, optional_properties);
-
+		return context;
 	}
 
 	areEventsCompatible(template_event, system_event) {
