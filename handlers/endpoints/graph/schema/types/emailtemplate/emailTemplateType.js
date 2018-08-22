@@ -8,6 +8,7 @@ const EmailTemplateController = global.SixCRM.routes.include('controllers', 'ent
 const SMTPProviderType = require('../smtpprovider/SMTPProviderType');
 const productType = require('../product/productType');
 const productScheduleType = require('../productschedule/productScheduleType');
+const campaignType = require('../campaign/campaignType');
 //let emailTemplateTypeEnum = require('./emailTemplateTypeEnum');
 
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
@@ -15,6 +16,9 @@ const productController = new ProductController();
 
 const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const productScheduleController = new ProductScheduleController();
+
+const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
+const campaignController = new CampaignController();
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'emailtemplate',
@@ -53,7 +57,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		products: {
 			type: new GraphQLList(productType.graphObj),
-			description: 'The credit cards\'s customers.',
+			description: 'Products associated with email template',
 			resolve: (emailtemplate) => {
 				if (!emailtemplate.products) {
 					return [];
@@ -63,12 +67,22 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		product_schedules: {
 			type: new GraphQLList(productScheduleType.graphObj),
-			description: 'The credit cards\'s customers.',
+			description: 'Product schedules associated with email template.',
 			resolve: (emailtemplate) => {
 				if (!emailtemplate.product_schedules) {
 					return [];
 				}
 				return productScheduleController.batchGet({ids: emailtemplate.product_schedules});
+			}
+		},
+		campaigns: {
+			type: new GraphQLList(campaignType.graphObj),
+			description: 'Campaigns associated with email template',
+			resolve: (emailtemplate) => {
+				if (!emailtemplate.campaigns) {
+					return [];
+				}
+				return campaignController.batchGet({ids: emailtemplate.campaigns});
 			}
 		},
 		created_at: {
