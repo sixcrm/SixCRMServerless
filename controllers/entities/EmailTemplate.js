@@ -35,7 +35,7 @@ module.exports = class EmailTemplateController extends entityController {
 
 	listByCampaign(campaign) {
 		return this.listByAccount({}).then(r => {
-			if (!r.emailtemplates) return [];
+			if (!r || !r.emailtemplates) return [];
 
 			return r.emailtemplates.filter(template => {
 				if (!template.campaigns) return false;
@@ -46,7 +46,7 @@ module.exports = class EmailTemplateController extends entityController {
 
 	listByProduct(product) {
 		return this.listByAccount({}).then(r => {
-			if (!r.emailtemplates) return [];
+			if (!r || !r.emailtemplates) return [];
 
 			return r.emailtemplates.filter(template => {
 				if (!template.products) return false;
@@ -57,7 +57,7 @@ module.exports = class EmailTemplateController extends entityController {
 
 	listByProductSchedule(product_schedule) {
 		return this.listByAccount({}).then(r => {
-			if (!r.emailtemplates) return [];
+			if (!r || !r.emailtemplates) return [];
 
 			return r.emailtemplates.filter(template => {
 				if (!template.product_schedules) return false;
