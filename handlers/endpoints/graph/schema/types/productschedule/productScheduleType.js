@@ -48,13 +48,7 @@ module.exports.graphObj = new GraphQLObjectType({
 		emailtemplates: {
 			type: new GraphQLList(emailTemplateType.graphObj),
 			description: 'Email templates associated with this product schedule.',
-			resolve: (productschedule) => {
-				return emailTemplateController.listByAccount({}).then(r => r.emailtemplates.filter(template => {
-					if (!template.product_schedules) return false;
-
-					return template.product_schedules.includes(productschedule.id)
-				} ))
-			}
+			resolve: (productschedule) => emailTemplateController.listByProductSchedule(productschedule)
 		},
 		created_at: {
 			type: new GraphQLNonNull(GraphQLString),
