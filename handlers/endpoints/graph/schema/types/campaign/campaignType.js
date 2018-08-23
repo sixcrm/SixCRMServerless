@@ -57,11 +57,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLList(emailTemplateType.graphObj),
 			description: 'Email templates configured and associated with the campaign',
 			resolve: (campaign) => {
-				return emailTemplateController.listByAccount({}).then(r => r.emailtemplates.filter(template => {
-					if (!template.campaigns) return false;
-
-					return template.campaigns.includes(campaign.id)
-				} ))
+				return emailTemplateController.listByCampaign(campaign)
 			}
 		},
 		affiliate_allow: {
