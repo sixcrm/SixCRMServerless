@@ -38,6 +38,12 @@
 			"$ref": "../definitions/uuidv4.json"
 		  }
 		},
+		"campaigns": {
+		  "type": "array",
+		  "items": {
+			"$ref": "../definitions/uuidv4.json"
+		  }
+		},
 		"created_at": {
 			"$ref": "../definitions/iso8601.json"
 		},
