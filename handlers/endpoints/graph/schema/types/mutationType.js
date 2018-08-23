@@ -31,6 +31,7 @@ let customerNoteType = require('./customernote/customerNoteType');
 
 let emailTemplateInputType = require('./emailtemplate/emailTemplateInputType');
 let emailTemplateType = require('./emailtemplate/emailTemplateType');
+let emailTemplateAssociationEntityTypeEnum = require('./emailtemplate/emailTemplateAssociationEntityTypeEnum');
 
 let fulfillmentProviderInputType = require('./fulfillmentprovider/fulfillmentProviderInputType');
 let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
@@ -1083,6 +1084,56 @@ module.exports.graphObj = new GraphQLObjectType({
 
 				return emailTemplateController.delete({
 					id: id
+				});
+			}
+		},
+		addemailtemplateassociation: {
+			type: emailTemplateType.graphObj,
+			args: {
+				emailtemplateid: {
+					type: new GraphQLNonNull(GraphQLString)
+				},
+				entitytype: {
+					type: new GraphQLNonNull(emailTemplateAssociationEntityTypeEnum.graphObj)
+				},
+				entityid: {
+					type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, args) => {
+				const emailTemplateController = new EmailTemplateController();
+
+				return emailTemplateController.get({
+					id: args.emailtemplateid
+				}).then(emailtemplate => {
+					emailtemplate[args.entitytype] = [...(emailtemplate[args.entitytype] || []).filter(i => i !== args.entityid), args.entityid];
+
+					return emailTemplateController.update({entity: emailtemplate})
+				});
+			}
+		},
+		removeemailtemplateassociation: {
+			type: emailTemplateType.graphObj,
+			args: {
+				emailtemplateid: {
+					type: new GraphQLNonNull(GraphQLString)
+				},
+				entitytype: {
+					type: new GraphQLNonNull(emailTemplateAssociationEntityTypeEnum.graphObj)
+				},
+				entityid: {
+					type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, args) => {
+				const emailTemplateController = new EmailTemplateController();
+
+				return emailTemplateController.get({
+					id: args.emailtemplateid
+				}).then(emailtemplate => {
+					emailtemplate[args.entitytype] = (emailtemplate[args.entitytype] || []).filter(i => i !== args.entityid);
+
+					return emailTemplateController.update({entity: emailtemplate})
 				});
 			}
 		},

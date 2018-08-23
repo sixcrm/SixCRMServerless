@@ -1,0 +1,7 @@
+{
+
+	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
+	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
+	"body":"mutation { addemailtemplateassociation ( emailtemplateid: \"b44ce483-861c-4843-a7d6-b4c649d6bdde\", entitytype:product, entityid: \"668ad918-0d09-4116-a6fe-0e7a9eda36f8\") { id, products { id } } }"
+
+}
