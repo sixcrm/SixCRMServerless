@@ -55,6 +55,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 		du.debug('Trigger Emails');
 
 		return this.acquireCampaign()
+			.then(() => this.acquireProducts())
+			.then(() => this.acquireProductSchedules())
 			.then(() => this.acquireCustomer())
 			.then(() => this.acquireEmailTemplates())
 			.then(() => this.acquireSMTPProvider())
@@ -113,6 +115,36 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 	}
 
+	acquireProducts() {
+		du.debug('Acquire Products');
+
+		let context = this.parameters.get('message').context || {};
+		let products = [];
+
+		if (context.products) {
+			products = context.products;
+		}
+
+		if (_(context).has('order.products')) {
+			products = context.order.products.map(p => p.product);
+		}
+
+		this.parameters.set('products', products);
+	}
+
+	acquireProductSchedules() {
+		du.debug('Acquire Product Schedules');
+
+		let context = this.parameters.get('message').context || {};
+		let product_schedules = [];
+
+		if (context.product_schedules) {
+			product_schedules = context.product_schedules;
+		}
+
+		this.parameters.set('product_schedules', product_schedules);
+	}
+
 	acquireCustomer(){
 
 		du.debug('Acquire Customer');
@@ -156,7 +188,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		du.debug(message, campaign);
 
-		return this.campaignController.getEmailTemplates(campaign).then(results => {
+		return this.emailTemplatesController.listByCampaign(campaign).then(results => {
 
 			if(_.isNull(results) || !arrayutilities.nonEmpty(results)){
 				du.debug('No email templates.');
