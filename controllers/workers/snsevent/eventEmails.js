@@ -193,7 +193,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		du.debug(message, campaign, products, product_schedules);
 
-		return this.emailTemplatesController.listByAccount({}).then(results => {
+		return this.emailTemplatesController.listByAccount({account: message.context.account}).then(results => {
 
 			if(_.isNull(results) || !arrayutilities.nonEmpty(results)){
 				du.debug('No email templates for account.');
