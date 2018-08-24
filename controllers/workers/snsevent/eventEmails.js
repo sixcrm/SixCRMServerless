@@ -13,6 +13,7 @@ const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/Cust
 const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const SNSEventController = global.SixCRM.routes.include('controllers','workers/components/SNSEvent.js');
+const ActivityHelper = global.SixCRM.routes.include('helpers', 'analytics/Activity.js');
 
 module.exports = class EventEmailsController extends SNSEventController {
 
@@ -42,6 +43,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		this.customerController = new CustomerController();
 		this.smtpProviderController = new SMTPProviderController();
 		this.emailTemplatesController = new EmailTemplateController();
+		this.activityHelper = new ActivityHelper();
 
 		this.smtpProviderController.sanitize(false);
 		this.emailTemplatesController.sanitize(false);
@@ -61,6 +63,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 			.then(() => this.acquireEmailTemplates())
 			.then(() => this.acquireSMTPProvider())
 			.then(() => this.sendEmails())
+			.then(() => this.createAnalyticsActivityRecord(``))
 			.catch(error => {
 				du.error('Email Sending Failed');
 				du.error(error);
@@ -394,6 +397,14 @@ module.exports = class EventEmailsController extends SNSEventController {
 		du.debug('Are:', compatible);
 
 		return compatible;
+	}
+
+	createAnalyticsActivityRecord(){
+
+		let customer = this.parameters.get('customer');
+
+		return this.activityHelper.createActivity(null, 'sent_email', {entity: customer, type: 'customer'}, null);
+
 	}
 
 };
