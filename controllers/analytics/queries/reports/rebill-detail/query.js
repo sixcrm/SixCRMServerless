@@ -11,8 +11,16 @@ module.exports = async (parameters = {}) => {
 
 	const local = [];
 	QueryParser.resolveFilterValue(local, 'r', 'account', parameters);
+	QueryParser.resolveFilterValue(local, 'r', 'alias', parameters);
+	QueryParser.resolveFilterValue(local, 'r', 'sessionAlias', parameters);
+	QueryParser.resolveFilterValue(local, 'r', 'campaignName', parameters);
+	QueryParser.resolveFilterValue(local, 'r', 'customerName', parameters);
 	const filter = QueryParser.resolveFilterQuery(parameters, {
-		account: true
+		account: true,
+		alias: true,
+		sessionAlias: true,
+		campaignName: true,
+		customerName: true,
 	});
 
 	let filterQuery = '';
@@ -24,13 +32,13 @@ module.exports = async (parameters = {}) => {
 	}
 
 	const queryParams = [
-		parameters.queueName,
-		parameters.queueName,
+		parameters.start,
+		parameters.end,
 		filterQuery,
-		parameters.queueName,
-		parameters.direction || 'ASC',
-		parameters.limit || 100,
-		parameters.offset || 0
+		parameters.order,
+		parameters.direction,
+		parameters.limit,
+		parameters.offset
 	];
 
 	const finalQuery = format.withArray(query, queryParams);

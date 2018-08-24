@@ -12,7 +12,7 @@ module.exports = class OrderEventHandler {
 
 	async execute(record) {
 
-		du.debug('OrderEventHandler.execute()', require('util').inspect(record, {
+		du.warning('OrderEventHandler.execute()', require('util').inspect(record, {
 			showHidden: false,
 			depth: null
 		}));

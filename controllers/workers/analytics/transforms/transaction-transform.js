@@ -1,12 +1,12 @@
 const _ = require('lodash');
 const util = require('util');
-const AnalyticsTransfrom = require('../analytics-transform');
+const AnalyticsTransform = require('../analytics-transform');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 
-module.exports = class TransactionTransform extends AnalyticsTransfrom {
+module.exports = class TransactionTransform extends AnalyticsTransform {
 
 	async transform(record) {
 

@@ -157,7 +157,10 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.markNonSuccessfulRebill(processed_rebill.result, rebill),
 			AnalyticsEvent.push('order', {
 				session,
-				campaign
+				campaign,
+			}),
+			AnalyticsEvent.push('create_order_initial', {
+				rebill
 			}),
 			this.pushEvent({event_type: 'order', context: {
 				campaign: campaign,

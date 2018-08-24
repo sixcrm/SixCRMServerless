@@ -145,17 +145,9 @@ module.exports = class AnalyticsController {
 				const resolveParams = require('./queries/reports/transaction-detail/params');
 				return this.query('reports/transaction-detail', await resolveParams(parameters, parameters.pagination));
 			}
-			case 'rebillSummary': {
-				const resolveParams = require('./queries/reports/rebill-summary/params');
-				return this.query('reports/rebill-summary', await resolveParams(parameters, parameters.pagination));
-			}
-			case 'rebillsInQueue': {
-				const resolveParams = require('./queries/reports/rebills-in-queue/params');
-				return this.query('reports/rebills-in-queue', await resolveParams(parameters, parameters.pagination));
-			}
-			case 'rebillsCurrent': {
-				const resolveParams = require('./queries/reports/rebills-current/params');
-				return this.query('reports/rebills-current', await resolveParams(parameters));
+			case 'rebillDetail': {
+				const resolveParams = require('./queries/reports/rebill-detail/params');
+				return this.query('reports/rebill-detail', await resolveParams(parameters, parameters.pagination));
 			}
 			case 'productSchedulesByAmount': {
 				const resolveParams = require('./queries/reports/product-schedules-by-amount/params');
