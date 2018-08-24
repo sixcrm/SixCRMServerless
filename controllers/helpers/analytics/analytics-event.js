@@ -8,11 +8,8 @@ module.exports = class AnalyticsEvent {
 
 	static push(eventType, context) {
 
-		if (eventType.startsWith('transaction') || eventType === 'rebill') {
-			du.warning('AnalyticsEvent.push()', eventType, require('util').inspect(context, {
-				showHidden: false,
-				depth: null
-			}));
+		if (eventType === 'order_initial') {
+			du.warning('AnalyticsEvent.push()', eventType, JSON.stringify(context, null, 4));
 		}
 		else {
 			du.debug('AnalyticsEvent.push()', eventType, require('util').inspect(context, {

@@ -4,6 +4,7 @@ CREATE TABLE analytics.f_rebill (
     id VARCHAR(36) NOT NULL,
 	alias VARCHAR(20) NOT NULL,
     datetime TIMESTAMP NOT NULL,
+	status VARCHAR(20) NOT NULL,
 	amount NUMERIC(12, 2) NOT NULL,
 	item_count INT NOT NULL,
 	"type" VARCHAR(25) NOT NULL,

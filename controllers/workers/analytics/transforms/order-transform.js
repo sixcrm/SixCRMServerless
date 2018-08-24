@@ -1,7 +1,7 @@
-const AnalyticsTransfrom = require('../analytics-transform');
+const AnalyticsTransform = require('../analytics-transform');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
-module.exports = class OrderTransform extends AnalyticsTransfrom {
+module.exports = class OrderTransform extends AnalyticsTransform {
 
 	async transform(record) {
 

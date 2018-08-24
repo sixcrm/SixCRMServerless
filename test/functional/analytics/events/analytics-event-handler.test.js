@@ -14,13 +14,23 @@ const sqsDeployment = new SQSDeployment();
 const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
+const DynamoDBDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
+const permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
 
 describe('Push events to RDS', () => {
 
 	before(() => {
 
 		return Promise.resolve()
-			.then(() => sqsDeployment.deployQueues());
+			.then(() => sqsDeployment.deployQueues())
+			.then(() => {
+				permissionutilities.disableACLs();
+				permissionutilities.setPermissions('*',['*/*'],[]);
+				global.account = '99999999-999e-44aa-999e-aaa9a99a9999';
+				global.user = 'admin.user@test.com';
+				global.SixCRM.setResource('auroraContext', auroraContext);
+				return auroraContext.init();
+			});
 
 	});
 
@@ -52,6 +62,7 @@ describe('Push events to RDS', () => {
 				return Promise.resolve()
 					.then(() => seedAurora(test))
 					.then(() => seedSQS(test))
+					.then(() => seedDynamo(test))
 					.then(() => SQSTestUtils.messageCountInQueue('analytics'))
 					.then((count) => {
 
@@ -93,6 +104,12 @@ function prepareTest(dir) {
 		if (fileutilities.fileExists(path.join(dir, 'seeds', 'sqs'))) {
 
 			test.seeds.sqs = fileutilities.getDirectoryFilesSync(path.join(dir, 'seeds', 'sqs'));
+
+		}
+
+		if (fileutilities.fileExists(path.join(dir, 'seeds', 'dynamo'))) {
+
+			test.seeds.dynamo = fileutilities.getDirectoryFilesSync(path.join(dir, 'seeds', 'dynamo'));
 
 		}
 
@@ -149,6 +166,32 @@ async function seedSQS(test) {
 
 	}, []);
 
-	return Promise.all(promises);
+	return BBPromise.each(promises, async p => await p);
+
+}
+
+async function seedDynamo(test) {
+
+	if (!test.seeds || !test.seeds.dynamo) {
+
+		return Promise.resolve();
+
+	}
+
+	const db = new DynamoDBDeployment();
+	await db.initializeControllers();
+
+	return BBPromise.each(test.seeds.dynamo, (seed) => {
+
+		const seedFilePath = path.join(test.directory, 'seeds', 'dynamo', seed);
+		const dataSeeds = JSON.parse(fileutilities.getFileContentsSync(seedFilePath, 'utf8'));
+
+		return db.executeSeedViaController({
+			Table: {
+				TableName: dataSeeds.table
+			}
+		}, dataSeeds.seeds)
+
+	});
 
 }
