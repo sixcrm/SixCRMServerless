@@ -669,24 +669,6 @@ module.exports.graphObj = new GraphQLObjectType({
 				return accountHelperController.cancelDeactivation({account: args.account});
 			}
 		},
-		deleteaccount: {
-			type: deleteOutputType.graphObj,
-			description: 'Deletes a account.',
-			args: {
-				id: {
-					description: 'id of the account',
-					type: new GraphQLNonNull(GraphQLString)
-				}
-			},
-			resolve: (value, account) => {
-				var id = account.id;
-				const accountController = new AccountController();
-
-				return accountController.delete({
-					id: id
-				});
-			}
-		},
 		createrole: {
 			type: roleType.graphObj,
 			description: 'Adds a new role.',

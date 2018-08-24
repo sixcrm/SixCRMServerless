@@ -26,10 +26,6 @@ var tests = [{
 {
 	name: "update",
 	query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/update/updateAccount.json')
-},
-{
-	name: "delete",
-	query: global.SixCRM.routes.path('handlers','endpoints/graph/queries/delete/deleteAccount.json')
 }];
 
 let this_request = request(endpoint);
