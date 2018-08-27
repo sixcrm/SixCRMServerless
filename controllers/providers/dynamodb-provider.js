@@ -173,6 +173,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 	executeRecursiveScan({parameters, aggregated_results}){
 
 		du.debug('Execute Recursive Query');
+		du.debug('parameters', parameters);
 
 		if(!_.has(parameters, 'Limit')){
 			parameters.Limit = 100;
@@ -193,6 +194,8 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 		return this.executeDynamoDBMethod({method: 'scan', parameters: parameters}).then(result => {
 			let result_index = 0;
+
+			du.debug('scan results', result);
 
 			if(arrayutilities.nonEmpty(result.Items) > 0){
 				//While we haven't met the limit and there are more results in the set.
