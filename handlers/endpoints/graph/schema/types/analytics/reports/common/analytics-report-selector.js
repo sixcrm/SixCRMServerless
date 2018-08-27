@@ -45,6 +45,9 @@ module.exports = new GraphQLEnumType({
 		rebillsInQueue: {
 			value: 'rebillsInQueue'
 		},
+		rebillDetail: {
+			value: 'rebillDetail'
+		},
 		rebillsCurrent: {
 			value: 'rebillsCurrent'
 		},
