@@ -508,6 +508,8 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 		du.debug('Method: '+method);
 
+		du.debug('Parameters', parameters);
+
 		fatal = (_.isUndefined(fatal))?true:fatal;
 
 		let valid_methods = {
