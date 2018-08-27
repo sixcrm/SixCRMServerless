@@ -66,6 +66,13 @@ module.exports = class EmailTemplateController extends entityController {
 			} )})
 	}
 
+	listByAccount({account}) {
+		return super.listByAccount({account: account}).then(r => {
+			if (!r || !r.emailtemplates) return [];
+
+			return r.emailtemplates.filter(template => template.account === account)})
+	}
+
 	getSMTPProvider(emailtemplate){
 
 		du.debug('Get SMTP Provider', emailtemplate);
