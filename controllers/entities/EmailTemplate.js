@@ -66,7 +66,7 @@ module.exports = class EmailTemplateController extends entityController {
 			} )})
 	}
 
-	listByAccount({account}) {
+	templatesByAccount({account}) {
 		return super.listByAccount({account: account}).then(r => {
 			if (!r || !r.emailtemplates) return [];
 
