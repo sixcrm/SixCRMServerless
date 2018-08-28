@@ -4,18 +4,25 @@ const path = require('path');
 const body = `
 query {
     analytics (
-      reportType: transactionDetail
-      facets: [{
-      facet: "start"
-        values: ["2018-01-10T14:32:28Z"]
-      },
-      {
-        facet: "end"
-        values: ["2018-04-09T14:32:28Z"]
-      }
-    ]) {records { key value }}
-  }
-`;
+        reportType: transactionDetail
+        facets: [
+            {
+                facet: "start"
+                values: ["2018-01-10T14:32:28Z"]
+            },
+            {
+                facet: "end"
+                values: ["2018-04-09T14:32:28Z"]
+            }
+        ]
+        pagination: {
+            offset: 0,
+            limit: 100,
+            order: ["datetime"],
+            direction: "ASC"
+        }
+    ) {records { key value }}
+}`;
 
 fs.writeFileSync(path.join(__dirname, 'transaction-detail.json'), JSON.stringify({
 	requestContext: {
