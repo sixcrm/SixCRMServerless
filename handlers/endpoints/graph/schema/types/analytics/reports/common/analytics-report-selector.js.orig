@@ -39,8 +39,22 @@ module.exports = new GraphQLEnumType({
 		transactionDetail: {
 			value: 'transactionDetail'
 		},
+<<<<<<< HEAD
+		rebillSummary: {
+			value: 'rebillSummary'
+		},
+		rebillsInQueue: {
+			value: 'rebillsInQueue'
+		},
 		rebillDetail: {
 			value: 'rebillDetail'
+		},
+		rebillsCurrent: {
+			value: 'rebillsCurrent'
+=======
+		rebillDetail: {
+			value: 'rebillDetail'
+>>>>>>> add amount filter, fix report enum
 		},
 		productSchedulesByAmount: {
 			value: 'productSchedulesByAmount'
