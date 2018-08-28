@@ -4,16 +4,20 @@ const path = require('path');
 const body = `
 query {
     analytics (
-      reportType: rebillsCurrent
+      reportType: rebillDetail
       facets: [{
-        facet: "queueName"
-        values: ["hold_failed"]
-      }]
-   ) {records { key value }}
+      facet: "start"
+        values: ["2018-01-10T14:32:28Z"]
+      },
+      {
+        facet: "end"
+        values: ["2018-09-09T14:32:28Z"]
+      }
+    ]) {records { key value }}
   }
 `;
 
-fs.writeFileSync(path.join(__dirname, 'rebills-current.json'), JSON.stringify({
+fs.writeFileSync(path.join(__dirname, 'rebill-detail.json'), JSON.stringify({
 	requestContext: {
 		authorizer: {
 			user: "owner.user@test.com"

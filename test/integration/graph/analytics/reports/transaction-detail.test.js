@@ -5,9 +5,9 @@ const tu = require('@6crm/sixcrmcore/util/test-utilities').default;
 
 chai.use(require('chai-json-schema'));
 
-let test_name = 'Rebills current';
+let test_name = 'Transaction detail';
 
-let test_query = global.SixCRM.routes.include('handlers', 'endpoints/graph/queries/analytics/reports/rebills-current/rebills-current.json');
+let test_query = global.SixCRM.routes.include('handlers', 'endpoints/graph/queries/analytics/reports/transaction-detail/transaction-detail.json');
 
 //set the test user
 let test_user = {
