@@ -1,5 +1,6 @@
 
 const _ = require('lodash');
+const moment = require('moment');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
@@ -91,6 +92,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			.then(() => this.shouldRebill())
 			.then(() => this.acquireRebillProperties())
 			.then(() => this.buildRebillPrototype())
+			.then(() => this.calculateCycle())
 			.then(() => this.pushRebill())
 			.then(() => this.returnRebill())
 			.catch((error) => {
@@ -652,6 +654,35 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		return this.rebillController.create({entity: prototype_rebill}).then(rebill => {
 			this.parameters.set('rebill', rebill);
 			return true;
+		});
+
+	}
+
+	calculateCycle(){
+
+		du.debug('Calculate Cycle');
+
+		let prototype_rebill = this.parameters.get('rebillprototype');
+		let session = this.parameters.get('session');
+
+		return sessionController.listRebills(session).then(rebills => {
+
+			let cycle = null;
+
+			if (rebills) {
+				du.debug('rebills', rebills);
+				cycle = rebills.filter(r => moment(r.bill_at).isBefore(prototype_rebill.bill_at)).length + 1;
+			} else {
+				du.debug('no rebills');
+			}
+
+			prototype_rebill.cycle = cycle;
+
+			this.parameters.set('rebillprototype', prototype_rebill);
+
+			du.debug(`Cycle for new rebill in session ${session.id} is ${cycle}.`);
+
+			return cycle;
 		});
 
 	}
