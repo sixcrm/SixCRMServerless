@@ -193,9 +193,9 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		du.debug(message, campaign, products, product_schedules);
 
-		return this.emailTemplatesController.templatesByAccount({account: message.context.account}).then(results => {
+		return this.emailTemplatesController.templatesByAccount({account: message.account}).then(results => {
 
-			du.debug('account', message.context.account);
+			du.debug('account', message.account);
 			du.debug('results', results);
 
 			if(_.isNull(results) || !arrayutilities.nonEmpty(results)){
