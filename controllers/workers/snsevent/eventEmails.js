@@ -21,7 +21,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		super();
 
-		this.doSend = false;
+		this.doSend = true;
 
 		this.parameter_definition = {};
 
