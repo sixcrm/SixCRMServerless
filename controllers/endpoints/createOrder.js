@@ -163,6 +163,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				rebill
 			}),
 			this.pushEvent({event_type: 'order', context: {
+				rebill: rebill,
 				campaign: campaign,
 				session: session,
 				order: order,

@@ -145,6 +145,10 @@ module.exports = class EventEmailsController extends SNSEventController {
 			product_schedules = context.product_schedules;
 		}
 
+		if (_(context).has('rebill.product_schedules')) {
+			product_schedules = context.rebill.product_schedules;
+		}
+
 		this.parameters.set('product_schedules', product_schedules);
 	}
 
