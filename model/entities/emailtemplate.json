@@ -44,6 +44,9 @@
 			"$ref": "../definitions/uuidv4.json"
 		  }
 		},
+		"cycle": {
+		  "type": "number"
+		},
 		"created_at": {
 			"$ref": "../definitions/iso8601.json"
 		},

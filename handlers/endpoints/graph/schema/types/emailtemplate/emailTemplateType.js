@@ -2,6 +2,7 @@
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLList = require('graphql').GraphQLList;
 
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
@@ -9,7 +10,6 @@ const SMTPProviderType = require('../smtpprovider/SMTPProviderType');
 const productType = require('../product/productType');
 const productScheduleType = require('../productschedule/productScheduleType');
 const campaignType = require('../campaign/campaignType');
-//let emailTemplateTypeEnum = require('./emailTemplateTypeEnum');
 
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const productController = new ProductController();
@@ -88,6 +88,9 @@ module.exports.graphObj = new GraphQLObjectType({
 		created_at: {
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'ISO8601 datetime when the entity was created.',
+		},
+		cycle: {
+			type: GraphQLInt
 		},
 		updated_at: {
 			type: new GraphQLNonNull(GraphQLString),

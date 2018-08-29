@@ -3,6 +3,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 const GraphQLList = require('graphql').GraphQLList;
+const GraphQLInt = require('graphql').GraphQLInt;
 
 
 module.exports.graphObj = new GraphQLInputObjectType({
@@ -16,6 +17,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		smtp_provider: { type: new GraphQLNonNull(GraphQLString) },
 		products: {	type: new GraphQLList(GraphQLString)},
 		product_schedules: {type: new GraphQLList(GraphQLString)},
+		cycle: {type: GraphQLInt},
 		campaigns: {type: new GraphQLList(GraphQLString)},
 		updated_at:    { type: GraphQLString }
 	})

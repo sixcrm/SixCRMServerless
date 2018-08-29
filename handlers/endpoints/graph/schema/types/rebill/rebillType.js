@@ -3,6 +3,8 @@ const GraphQLObjectType = require('graphql').GraphQLObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLInt = require('graphql').GraphQLInt;
+
 
 let transactionType = require('../transaction/transactionType');
 let transactionProductType = require('../transactionproduct/transactionProductType');
@@ -98,6 +100,9 @@ module.exports.graphObj = new GraphQLObjectType({
 		paid: {
 			type: rebillPaid.graphObj,
 			description: 'Payment status of the rebill'
+		},
+		cycle: {
+			type: GraphQLInt
 		}
 	}),
 	interfaces: []

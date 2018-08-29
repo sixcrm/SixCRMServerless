@@ -194,6 +194,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		let campaign = this.parameters.get('campaign');
 		let products = this.parameters.get('products');
 		let product_schedules = this.parameters.get('product_schedules');
+		let cycle = _(message).has('context.rebill.cycle') ? message.context.rebill.cycle : -1;
 
 		du.debug(message, campaign, products, product_schedules);
 
@@ -227,7 +228,12 @@ module.exports = class EventEmailsController extends SNSEventController {
 						du.debug(`Adding template ${template.id} due to match with product schedule ${product_schedule.id}`);
 						associated_templates.push(template)
 					}
-				})
+				});
+
+				if (template.cycle === cycle) {
+					du.debug(`Adding template ${template.id} due to match with cycle ${cycle}`);
+					associated_templates.push(template)
+				}
 			});
 
 			return associated_templates.filter(result => {

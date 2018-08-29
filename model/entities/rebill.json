@@ -99,6 +99,9 @@
 					"$ref": "../definitions/iso8601.json"
 				}
 			}
+		},
+		"cycle": {
+			"type": "number"
 		}
 	},
 	"required": [
