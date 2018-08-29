@@ -4,6 +4,7 @@ const GraphQLString = require('graphql').GraphQLString;
 const GraphQLInputObjectType = require('graphql').GraphQLInputObjectType;
 const GraphQLList = require('graphql').GraphQLList;
 const GraphQLInt = require('graphql').GraphQLInt;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 
 module.exports.graphObj = new GraphQLInputObjectType({
@@ -18,6 +19,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 		products: {	type: new GraphQLList(GraphQLString)},
 		product_schedules: {type: new GraphQLList(GraphQLString)},
 		cycle: {type: GraphQLInt},
+		enabled: {type: GraphQLBoolean},
 		campaigns: {type: new GraphQLList(GraphQLString)},
 		updated_at:    { type: GraphQLString }
 	})

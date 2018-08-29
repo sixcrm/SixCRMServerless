@@ -4,6 +4,7 @@ const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLList = require('graphql').GraphQLList;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
 const SMTPProviderType = require('../smtpprovider/SMTPProviderType');
@@ -91,6 +92,9 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		cycle: {
 			type: GraphQLInt
+		},
+		enabled: {
+			type: GraphQLBoolean
 		},
 		updated_at: {
 			type: new GraphQLNonNull(GraphQLString),
