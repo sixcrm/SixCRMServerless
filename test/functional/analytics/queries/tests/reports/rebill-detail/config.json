@@ -36,6 +36,10 @@
 				"value": "R000000003"
 			},
 			{
+				"key": "status",
+				"value": "processed"
+			},
+			{
 				"key": "datetime",
 				"value": "2018-01-22T03:50:24.000Z"
 			},
@@ -94,6 +98,10 @@
 				"value": "R000000001"
 			},
 			{
+				"key": "status",
+				"value": "processed"
+			},
+			{
 				"key": "datetime",
 				"value": "2018-01-22T03:50:24.000Z"
 			},
@@ -150,6 +158,10 @@
 			{
 				"key": "alias",
 				"value": "R000000002"
+			},
+			{
+				"key": "status",
+				"value": "processed"
 			},
 			{
 				"key": "datetime",

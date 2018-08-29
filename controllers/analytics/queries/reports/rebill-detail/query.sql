@@ -16,6 +16,7 @@ WITH agg AS (
 SELECT
 	r.id,
 	r.alias,
+	r.status,
 	r.datetime,
 	r.amount,
 	r.item_count AS items,
