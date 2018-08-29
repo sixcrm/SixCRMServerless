@@ -120,6 +120,13 @@ module.exports = class TransactionTransform extends AnalyticsTransform {
 			})
 		};
 
+		result.amount = Math.abs(result.amount);
+		if (result.transactionType === 'refund' || result.transactionType === 'reverse') {
+
+			result.amount = -result.amount;
+
+		}
+
 		try {
 
 			const controller = new MerchantProviderController();
