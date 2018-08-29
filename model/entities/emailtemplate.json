@@ -47,7 +47,6 @@
 		"cycle": {
 		  "type": "number"
 		},
-		},
 		"enabled": {
 		  "type": "boolean"
 		},
