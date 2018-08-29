@@ -667,7 +667,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		return sessionController.listRebills(session).then(rebills => {
 
-			let cycle = null;
+			let cycle = 1;
 
 			if (rebills) {
 				du.debug('rebills', rebills);
