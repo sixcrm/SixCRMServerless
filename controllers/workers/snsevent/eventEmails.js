@@ -211,27 +211,32 @@ module.exports = class EventEmailsController extends SNSEventController {
 			let associated_templates = [];
 
 			results.forEach(template => {
+				if (template.enabled === false) {
+					du.debug(`Template ${template.id} is disabled.`);
+					return;
+				}
+
 				if (template.campaigns && template.campaigns.includes(campaign.id)) {
-					du.debug(`Adding template ${template.id} due to match with campaign ${campaign.id}`);
+					du.debug(`Adding template ${template.id} due to match with campaign ${campaign.id}.`);
 					associated_templates.push(template)
 				}
 
 				products.forEach(product => {
 					if (template.products && template.products.includes(product.id)) {
-						du.debug(`Adding template ${template.id} due to match with product ${product.id}`);
+						du.debug(`Adding template ${template.id} due to match with product ${product.id}.`);
 						associated_templates.push(template)
 					}
 				});
 
 				product_schedules.forEach(product_schedule => {
 					if (template.product_schedules && template.product_schedules.includes(product_schedule.id)) {
-						du.debug(`Adding template ${template.id} due to match with product schedule ${product_schedule.id}`);
+						du.debug(`Adding template ${template.id} due to match with product schedule ${product_schedule.id}.`);
 						associated_templates.push(template)
 					}
 				});
 
 				if (template.cycle === cycle) {
-					du.debug(`Adding template ${template.id} due to match with cycle ${cycle}`);
+					du.debug(`Adding template ${template.id} due to match with cycle ${cycle}.`);
 					associated_templates.push(template)
 				}
 			});
