@@ -4,7 +4,7 @@ class AccountDetailsController extends entityController {
 
 	constructor() {
 
-		super('accountdetails');
+		super('accountdetail');
 
 	}
 
