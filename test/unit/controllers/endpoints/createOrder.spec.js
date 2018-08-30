@@ -36,6 +36,11 @@ function getValidProcessorResponse(){
 
 }
 
+function getValidAccountDetails(){
+	return MockEntities.getValidAccountDetails();
+}
+
+
 function getValidTransactions(ids){
 	return MockEntities.getValidTransactions(ids);
 }
@@ -238,6 +243,7 @@ describe('createOrder', function () {
 			let transactions = getValidTransactions();
 			let processor_response = getValidProcessorResponse();
 			let response_type = 'success';
+			let account_details = getValidAccountDetails();
 
 			let user = MockEntities.getValidUser();
 
@@ -387,6 +393,16 @@ describe('createOrder', function () {
 					return Promise.resolve(true);
 				}
 			});
+
+			let mock_account_details = class {
+				constructor(){}
+
+				get () {
+					return Promise.resolve(account_details);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
@@ -418,6 +434,7 @@ describe('createOrder', function () {
 			let transactions = getValidTransactions();
 			let processor_response = getValidProcessorResponse();
 			let response_type = 'success';
+			let account_details = getValidAccountDetails();
 
 			let user = MockEntities.getValidUser();
 
@@ -563,6 +580,16 @@ describe('createOrder', function () {
 				}
 			});
 
+			let mock_account_details = class {
+				constructor(){}
+
+				get () {
+					return Promise.resolve(account_details);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
 				constructor(){}
@@ -602,6 +629,7 @@ describe('createOrder', function () {
 			let transactions = getValidTransactions();
 			let processor_response = getValidProcessorResponse();
 			let response_type = 'success';
+			let account_details = getValidAccountDetails();
 
 			let user = MockEntities.getValidUser();
 
@@ -752,6 +780,16 @@ describe('createOrder', function () {
 					return Promise.resolve(true);
 				}
 			});
+
+			let mock_account_details = class {
+				constructor(){}
+
+				get () {
+					return Promise.resolve(account_details);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
 
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 			const createOrderController = new CreateOrderController();
@@ -1530,6 +1568,7 @@ describe('createOrder', function () {
 			let transactions = getValidTransactions();
 			let processor_response = getValidProcessorResponse();
 			let response_type = 'success';
+			let account_details = getValidAccountDetails();
 
 			session.completed = false;
 
@@ -1664,6 +1703,16 @@ describe('createOrder', function () {
 					return 'localhost'
 				}
 			});
+
+			let mock_account_details = class {
+				constructor(){}
+
+				get () {
+					return Promise.resolve(account_details);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
 
 			PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 
