@@ -71,7 +71,11 @@ module.exports = class ProductHelperController {
 			return filtered_images[0].path;
 		}
 
-		return product.attributes.images[0].path;
+		if (product.attributes.images.length) {
+			return product.attributes.images[0].path;
+		}
+
+		return null;
 	}
 
 }
