@@ -1,4 +1,4 @@
-
+const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
@@ -53,6 +53,25 @@ module.exports = class ProductHelperController {
 			false
 		);
 
+	}
+
+	getDefaultImage(product){
+
+		du.debug('Get Default Image');
+
+		du.info(product);
+
+		if (!_(product).has('attributes.images')) {
+			return null;
+		}
+
+		let filtered_images = product.attributes.images.filter(image => image.default_image);
+
+		if (filtered_images.length) {
+			return filtered_images[0].path;
+		}
+
+		return product.attributes.images[0].path;
 	}
 
 }
