@@ -1,5 +1,5 @@
 {
   "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
   "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":"mutation {  updateaccountdetails (accountdetails: { id: \"d3fa3bf3-7824-49f4-8261-87674482bf1c\", support_link:\"http://support.com/helpme\", emailtemplatesettings: {color_primary: \"red\", custom_blocks: [\"abc\", \"def\"]}}) {id, support_link}}"
+  "body":"mutation {  updateaccountdetails (accountdetails: { id: \"d3fa3bf3-7824-49f4-8261-87674482bf1c\", support_link:\"http://support.com/helpme\", emailtemplatesettings: {color_primary: \"red\", custom_blocks: [{title:\"hello\", body:\"abc\"}]}}) {id, support_link}}"
 }
