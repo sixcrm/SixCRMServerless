@@ -1,10 +1,10 @@
-const handlebars = require('handlebars');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/CustomerMailer.js');
 const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 const SMTPPRoviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
+const handlebars = global.SixCRM.routes.include('helpers', 'emailtemplates/HandlebarsHelper.js');
 
 module.exports = class EmailTemplateSender {
 

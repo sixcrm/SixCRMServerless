@@ -1,6 +1,5 @@
 
 const _ = require('lodash');
-const handlebars = require('handlebars');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
@@ -14,6 +13,7 @@ const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailT
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const SNSEventController = global.SixCRM.routes.include('controllers','workers/components/SNSEvent.js');
 const ActivityHelper = global.SixCRM.routes.include('helpers', 'analytics/Activity.js');
+const handlebars = global.SixCRM.routes.include('helpers', 'emailtemplates/HandlebarsHelper.js');
 
 module.exports = class EventEmailsController extends SNSEventController {
 
