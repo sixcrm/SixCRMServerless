@@ -105,6 +105,9 @@ let sessionCancelInputType = require('./session/sessionCancelInputType');
 const tagInputType = require('./tag/tagInputType');
 const tagType = require('./tag/tagType');
 
+const accountDetailsInputType = require('./accountdetails/accountDetailsInputType');
+const accountDetailsType = require('./accountdetails/accountDetailsType');
+
 //Register
 let refundType = require('./register/refund/refundType');
 let refundInputType = require('./register/refund/refundInputType');
@@ -153,6 +156,7 @@ const ShippingReceiptController = global.SixCRM.routes.include('entities', 'Ship
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const AccountDetailsController = global.SixCRM.routes.include('controllers', 'entities/AccountDetails.js');
 
 const InviteHelperController = global.SixCRM.routes.include('helpers', 'entities/invite/Invite.js');
 const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
@@ -2062,6 +2066,55 @@ module.exports.graphObj = new GraphQLObjectType({
 
 				return tagController.delete({
 					id: tag.id
+				});
+			}
+		},
+		createaccountdetails: {
+			type: accountDetailsType.graphObj,
+			description: 'Creates an accoundetails.',
+			args: {
+				accountdetails: {
+					type: accountDetailsInputType.graphObj
+				}
+			},
+			resolve: (value, accoundetails) => {
+				const accountDetailsController = new AccountDetailsController();
+
+				return accountDetailsController.create({
+					entity: accoundetails.accountdetails
+				});
+			}
+		},
+		updateaccountdetails: {
+			type: accountDetailsType.graphObj,
+			description: 'Updates an accoundetails.',
+			args: {
+				accountdetails: {
+					type: accountDetailsInputType.graphObj
+				}
+			},
+			resolve: (value, accoundetails) => {
+				const accountDetailsController = new AccountDetailsController();
+
+				return accountDetailsController.update({
+					entity: accoundetails.accountdetails
+				});
+			}
+		},
+		deleteaccountdetails: {
+			type: deleteOutputType.graphObj,
+			description: 'Deletes an accoundetails.',
+			args: {
+				id: {
+					description: 'id of the accoundetails',
+					type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, accoundetails) => {
+				const accountDetailsController = new AccountDetailsController();
+
+				return accountDetailsController.delete({
+					id: accoundetails.id
 				});
 			}
 		}

@@ -114,6 +114,8 @@ let tokenListType = require('./token/tokenListType');
 let tagType = require('./tag/tagType');
 let tagListType = require('./tag/tagListType');
 
+const accountDetailsType = require('./accountdetails/accountDetailsType');
+
 let suggestInputType = require('./search/suggestInputType');
 let suggestResultsType = require('./search/suggestResultsType');
 let searchInputType = require('./search/searchInputType');
@@ -172,6 +174,8 @@ const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const AccountDetailsController = global.SixCRM.routes.include('controllers', 'entities/AccountDetails.js');
+
 
 // Helpers Controllers
 
@@ -2286,7 +2290,23 @@ const fields = Object.assign({}, {
 		resolve:() => {
 			return true;
 		}
-	}
+	},
+	accountdetails: {
+		type: accountDetailsType.graphObj,
+		args: {
+			id: {
+				description: 'id of the account',
+				type: GraphQLString
+			}
+		},
+		resolve: (root, args) => {
+			const accountDetailsController = new AccountDetailsController();
+
+			return accountDetailsController.get({
+				id: args.id
+			});
+		}
+	},
 }, analyticsQueryType)
 
 module.exports.graphObj = new GraphQLObjectType({
