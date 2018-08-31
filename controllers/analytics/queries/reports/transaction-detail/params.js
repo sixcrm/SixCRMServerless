@@ -4,7 +4,6 @@ module.exports = async (parameters, pagination) => {
 
 	const start = parameters.facets.find(f => f.facet === 'start');
 	const end = parameters.facets.find(f => f.facet === 'end');
-	const account = parameters.facets.find(f => f.facet === 'account');
 	const chargeback = parameters.facets.find(f => f.facet === 'chargeback');
 	const response = parameters.facets.find(f => f.facet === 'response');
 	const merchantProvider = parameters.facets.find(f => f.facet === 'mid');
@@ -33,7 +32,6 @@ module.exports = async (parameters, pagination) => {
 
 	_resolveParamValue('start', start);
 	_resolveParamValue('end', end);
-	_resolveParamValue('account', account);
 	_resolveParamValue('chargeback', chargeback);
 	_resolveParamValue('response', response);
 	_resolveParamValue('mid', merchantProvider);
