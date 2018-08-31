@@ -17,12 +17,14 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          keys:
+            - v1-dependency-cache-{{ checksum "package-lock.json" }}
+            - v1-dependency-cache-
       - run:
           name: Install npm
           command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm install
       - save_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
   lint:
@@ -30,7 +32,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: 'Lint'
           command: npm run lint
@@ -39,7 +41,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: 'Unit Tests'
           command: stage=circle  npm run test-unit-circle
@@ -48,7 +50,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install Docker Compose
           command: |
@@ -81,7 +83,7 @@ jobs:
       steps:
         - checkout
         - restore_cache:
-            key: dependency-cache-{{ checksum "package-lock.json" }}
+            key: v1-dependency-cache-{{ checksum "package-lock.json" }}
         - run:
             name: Install Docker Compose
             command: |
@@ -111,20 +113,18 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: debugging
           command: printenv
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
       - run:
           name: Set Access Credentials
           command: mkdir -p deployment_credentials/
       - run:
           name: Create Credentials
           command: SIX_VERBOSE=2 && node ./deployment/sts/create_role_commands.js --branch=$CIRCLE_BRANCH --output=deployment_credentials/stscredentials
-      - save_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+      - persist_to_workspace:
+          root: .
           paths:
             - deployment_credentials
       - run:
@@ -138,9 +138,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -173,9 +173,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -187,9 +187,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -201,9 +201,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -215,9 +215,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -229,9 +229,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -246,9 +246,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -260,9 +260,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -277,9 +277,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -291,9 +291,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -308,9 +308,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -340,9 +340,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -354,9 +354,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -368,9 +368,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -385,9 +385,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -399,9 +399,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -413,9 +413,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -436,9 +436,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -451,7 +451,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Entity Integration Tests
           command: SIX_VERBOSE=2 npm run test-environment
@@ -460,9 +460,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -480,9 +480,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - restore_cache:
-          key: deployment-credentials-{{ .Branch }}-{{ .Revision }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
       - run:
           name: Set Credentials
           command: cat deployment_credentials/stscredentials >> $BASH_ENV
@@ -497,7 +497,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Deleteblock Integration Tests
           command: npm run test-deleteblocks
@@ -506,7 +506,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Entity Integration Tests
           command: npm run test-entities
@@ -515,7 +515,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Analytics Integration Tests
           command: SIX_VERBOSE=2 npm run test-integration-analytics
@@ -524,7 +524,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Transactional Integration Tests
           command: export SIX_VERBOSE=2; npm run test-transactions
