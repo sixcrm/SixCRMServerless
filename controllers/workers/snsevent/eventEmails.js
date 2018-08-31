@@ -13,7 +13,7 @@ const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailT
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const SNSEventController = global.SixCRM.routes.include('controllers','workers/components/SNSEvent.js');
 const ActivityHelper = global.SixCRM.routes.include('helpers', 'analytics/Activity.js');
-const handlebars = global.SixCRM.routes.include('helpers', 'emailtemplates/HandlebarsHelper.js');
+const handlebars = global.SixCRM.routes.include('helpers', 'emailtemplates/Handlebars.js');
 
 module.exports = class EventEmailsController extends SNSEventController {
 
