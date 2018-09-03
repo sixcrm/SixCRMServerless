@@ -27,7 +27,7 @@ module.exports = class EmailTemplateSender {
 		let smtp_provider = await this.smtpPRoviderController.get({id: template.smtp_provider});
 
 		let context = require('./example_context');
-		let compiled_body = this.compileBody(template, context);
+		let compiled_body = this.compileBody(template.body, context);
 
 		let options = {
 			sender_email: smtp_provider.from_email,
@@ -44,20 +44,22 @@ module.exports = class EmailTemplateSender {
 	}
 
 
-	compileBody(template, context) {
-		let compiled_template = handlebars.compile(template.body);
+	compileBody(template_body, context) {
+		let compiled_template = handlebars.compile(template_body);
 		let compiled_body = compiled_template(context);
 
 		return compiled_body;
 	}
 
 	compileBodyWithExampleData({template}) {
+		du.debug('Compile Body With Example', template);
+
 		let context = require('./example_context');
 
 		return this.accountDetailsController.get({ id: global.account }).then((account_details) => {
 			context.accountdetails = account_details;
 
-			return this.compileBody(template, context);
+			return this.compileBody(template.body, context);
 		});
 
 	}
