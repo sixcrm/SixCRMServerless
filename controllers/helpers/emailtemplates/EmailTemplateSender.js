@@ -5,12 +5,15 @@ const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/Cust
 const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 const SMTPPRoviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const handlebars = global.SixCRM.routes.include('helpers', 'emailtemplates/Handlebars.js');
+const AccountDetailsController = global.SixCRM.routes.include('entities', 'AccountDetails.js');
+
 
 module.exports = class EmailTemplateSender {
 
 	constructor() {
 		this.emailTemplatesController = new EmailTemplateController();
 		this.smtpPRoviderController = new SMTPPRoviderController();
+		this.accountDetailsController = new AccountDetailsController();
 		this.emailTemplatesController.sanitize(false);
 		this.smtpPRoviderController.sanitize(false);
 	}
@@ -24,9 +27,7 @@ module.exports = class EmailTemplateSender {
 		let smtp_provider = await this.smtpPRoviderController.get({id: template.smtp_provider});
 
 		let context = require('./example_context');
-
-		let compiled_template = handlebars.compile(template.body);
-		let compiled_body = compiled_template(context);
+		let compiled_body = this.compileBody(template, context);
 
 		let options = {
 			sender_email: smtp_provider.from_email,
@@ -43,4 +44,21 @@ module.exports = class EmailTemplateSender {
 	}
 
 
-}
+	compileBody(template, context) {
+		let compiled_template = handlebars.compile(template.body);
+		let compiled_body = compiled_template(context);
+
+		return compiled_body;
+	}
+
+	compileBodyWithExampleData({template}) {
+		let context = require('./example_context');
+
+		return this.accountDetailsController.get({ id: global.account }).then((account_details) => {
+			context.accountdetails = account_details;
+
+			return this.compileBody(template, context);
+		});
+
+	}
+};
