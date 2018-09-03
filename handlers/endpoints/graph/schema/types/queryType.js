@@ -2308,18 +2308,10 @@ const fields = Object.assign({}, {
 	},
 	accountdetails: {
 		type: accountDetailsType.graphObj,
-		args: {
-			id: {
-				description: 'id of the account',
-				type: GraphQLString
-			}
-		},
-		resolve: (root, args) => {
+		resolve: () => {
 			const accountDetailsController = new AccountDetailsController();
 
-			return accountDetailsController.get({
-				id: args.id
-			});
+			return accountDetailsController.getOrCreate();
 		}
 	},
 }, analyticsQueryType)

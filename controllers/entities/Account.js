@@ -5,6 +5,7 @@ const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').defaul
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const AccountDetailsController = global.SixCRM.routes.include('entities', 'AccountDetails.js');
 
 //Technical Debt: Override the list method
 class AccountController extends entityController {
@@ -15,6 +16,7 @@ class AccountController extends entityController {
 
 		this.search_fields = ['name'];
 
+		this.accountDetailsController = new AccountDetailsController();
 	}
 
 	async create({entity, disable_permissions = false}){
@@ -33,6 +35,7 @@ class AccountController extends entityController {
 		}else{
 			result = await super.create({entity: entity});
 		}
+		await this.accountDetailsController.createNew({id: result.id});
 
 		return result;
 
@@ -173,7 +176,6 @@ class AccountController extends entityController {
 		return entity;
 
 	}
-
 }
 
 module.exports = AccountController;

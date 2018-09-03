@@ -51,7 +51,7 @@ module.exports = class EmailTemplateSender {
 		return compiled_body;
 	}
 
-	compileBodyWithExampleData({template) {
+	compileBodyWithExampleData({template}) {
 		let context = require('./example_context');
 
 		return this.accountDetailsController.get({ id: global.account }).then((account_details) => {
