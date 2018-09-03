@@ -932,7 +932,7 @@ const fields = Object.assign({}, {
 		resolve: function(root, body) {
 
 			let helper = global.SixCRM.routes.include('helpers', 'emailtemplates/EmailTemplateSender.js');
-			return new helper().compileBodyWithExampleData({template: body});
+			return new helper().compileBodyWithExampleData({template: body}).then(result => { return {result}});
 
 		}
 	},

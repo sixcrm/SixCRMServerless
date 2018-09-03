@@ -21,6 +21,9 @@ const productScheduleController = new ProductScheduleController();
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const campaignController = new CampaignController();
 
+const previewHelper = global.SixCRM.routes.include('helpers', 'emailtemplates/EmailTemplateSender.js');
+
+
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'emailtemplate',
 	description: 'A email template object',
@@ -84,6 +87,16 @@ module.exports.graphObj = new GraphQLObjectType({
 					return [];
 				}
 				return campaignController.batchGet({ids: emailtemplate.campaigns});
+			}
+		},
+		preview: {
+			type: GraphQLString,
+			description: 'Preview of the template with example data',
+			resolve: (emailtemplate) => {
+				if (!emailtemplate.body) {
+					return '';
+				}
+				return new previewHelper().compileBodyWithExampleData({template: emailtemplate});
 			}
 		},
 		created_at: {
