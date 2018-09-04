@@ -622,22 +622,24 @@ module.exports = class SessionController extends entityController {
 	}
 
 	trimSessionWatermark(session) {
-		const end = moment.utc().diff(session.created_at, 'd');
+		if (_.has(session.watermark, 'product_schedules')) {
+			const end = moment.utc().diff(session.created_at, 'd');
 
-		session.watermark.product_schedules.forEach((quantifiableSchedule) => {
+			session.watermark.product_schedules.forEach((quantifiableSchedule) => {
 
-			if (!quantifiableSchedule.product_schedule.schedule) return;
+				if (!quantifiableSchedule.product_schedule.schedule) return;
 
-			quantifiableSchedule.product_schedule.schedule =
-				quantifiableSchedule.product_schedule.schedule.filter(schedule => schedule.start < end);
+				quantifiableSchedule.product_schedule.schedule =
+					quantifiableSchedule.product_schedule.schedule.filter(schedule => schedule.start < end);
 
-			quantifiableSchedule.product_schedule.schedule.forEach((schedule) => {
-				if (!schedule.end || schedule.end > end) {
-					schedule.end = end;
-				}
-			})
+				quantifiableSchedule.product_schedule.schedule.forEach((schedule) => {
+					if (!schedule.end || schedule.end > end) {
+						schedule.end = end;
+					}
+				})
 
-		});
+			});
+		}
 
 		return session;
 	}

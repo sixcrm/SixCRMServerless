@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const workerController = global.SixCRM.routes.include('controllers', 'workers/components/worker.js');
 const AccountController = global.SixCRM.routes.include('entities', 'Account');
 const SessionController = global.SixCRM.routes.include('entities', 'Session');
@@ -32,6 +33,10 @@ module.exports = class DeactivateAccountController extends workerController {
 			},
 			account
 		});
+
+		if (_.isNull(sessions)) {
+			return;
+		}
 
 		await Promise.all(sessions.map(entity => sessionController.cancelSession({entity})));
 	}
