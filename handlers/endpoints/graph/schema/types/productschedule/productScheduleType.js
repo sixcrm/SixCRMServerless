@@ -7,6 +7,11 @@ let scheduleType = require('./scheduleType');
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
 let ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule');
 
+let emailTemplateType = require('../emailtemplate/emailTemplateType');
+
+const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+const emailTemplateController = new EmailTemplateController();
+
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'ProductSchedule',
 	description: 'A product schedule.',
@@ -39,6 +44,11 @@ module.exports.graphObj = new GraphQLObjectType({
 
 				return productScheduleController.getMerchantProviderGroup(productschedule);
 			}
+		},
+		emailtemplates: {
+			type: new GraphQLList(emailTemplateType.graphObj),
+			description: 'Email templates associated with this product schedule.',
+			resolve: (productschedule) => emailTemplateController.listByProductSchedule(productschedule)
 		},
 		created_at: {
 			type: new GraphQLNonNull(GraphQLString),

@@ -1,5 +1,5 @@
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const WriteRebillRecords = require('../batch-inserts/write-rebill-records')
+const UpdateRebillRecords = require('../batch-inserts/update-rebill-records')
 
 module.exports = class RebillEventHandler {
 
@@ -16,7 +16,7 @@ module.exports = class RebillEventHandler {
 			depth: null
 		}));
 
-		await new WriteRebillRecords(this._auroraContext).execute([record]);
+		await new UpdateRebillRecords(this._auroraContext).execute([record]);
 
 	}
 

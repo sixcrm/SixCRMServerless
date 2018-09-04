@@ -34,6 +34,7 @@ let customerJWTType = require('./customer/customerJWTType');
 let emailTemplateListType = require('./emailtemplate/emailTemplateListType');
 let emailTemplateType = require('./emailtemplate/emailTemplateType');
 let emailTemplateTestType = require('./emailtemplate/emailTemplateTestType');
+let emailTemplatePreviewType = require('./emailtemplate/emailTemplatePreviewType');
 
 let fulfillmentProviderListType = require('./fulfillmentprovider/fulfillmentProviderListType');
 let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
@@ -114,6 +115,8 @@ let tokenListType = require('./token/tokenListType');
 let tagType = require('./tag/tagType');
 let tagListType = require('./tag/tagListType');
 
+const accountDetailsType = require('./accountdetails/accountDetailsType');
+
 let suggestInputType = require('./search/suggestInputType');
 let suggestResultsType = require('./search/suggestResultsType');
 let searchInputType = require('./search/searchInputType');
@@ -172,6 +175,8 @@ const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const AccountDetailsController = global.SixCRM.routes.include('controllers', 'entities/AccountDetails.js');
+
 
 // Helpers Controllers
 
@@ -911,9 +916,23 @@ const fields = Object.assign({}, {
 			}
 		},
 		resolve: function(root, id) {
-
 			let helper = global.SixCRM.routes.include('helpers', 'emailtemplates/EmailTemplateSender.js');
 			return new helper().sendEmailWithTemplate({template_id: id}).then(() => { return {result: 'OK'} });
+
+		}
+	},
+	emailtemplatepreview: {
+		type: emailTemplatePreviewType.graphObj,
+		args: {
+			body: {
+				description: 'body of the email template',
+				type: GraphQLString
+			}
+		},
+		resolve: function(root, body) {
+
+			let helper = global.SixCRM.routes.include('helpers', 'emailtemplates/EmailTemplateSender.js');
+			return new helper().compileBodyWithExampleData({template: body}).then(result => { return {result}});
 
 		}
 	},
@@ -2286,7 +2305,15 @@ const fields = Object.assign({}, {
 		resolve:() => {
 			return true;
 		}
-	}
+	},
+	accountdetails: {
+		type: accountDetailsType.graphObj,
+		resolve: () => {
+			const accountDetailsController = new AccountDetailsController();
+
+			return accountDetailsController.getOrCreate();
+		}
+	},
 }, analyticsQueryType)
 
 module.exports.graphObj = new GraphQLObjectType({

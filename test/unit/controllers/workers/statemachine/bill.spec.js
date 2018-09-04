@@ -306,6 +306,12 @@ describe('controllers/workers/statemachine/bill.js', () => {
 
       });
 
+	  mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+		sendMessage() {
+			return Promise.resolve(true);
+		}
+	  });
+
       const BillController = global.SixCRM.routes.include('workers', 'statemachine/bill.js');
       let billController = new BillController();
 
@@ -371,7 +377,13 @@ describe('controllers/workers/statemachine/bill.js', () => {
 
       });
 
-      const BillController = global.SixCRM.routes.include('workers', 'statemachine/bill.js');
+	  mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+		sendMessage() {
+			return Promise.resolve(true);
+		}
+	  });
+
+	  const BillController = global.SixCRM.routes.include('workers', 'statemachine/bill.js');
       let billController = new BillController();
 
       let result = await billController.execute({guid: rebill.id});
@@ -435,6 +447,12 @@ describe('controllers/workers/statemachine/bill.js', () => {
         }
 
       });
+
+	  mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/sqs-provider.js'), class {
+		sendMessage() {
+			return Promise.resolve(true);
+		}
+	  });
 
       const BillController = global.SixCRM.routes.include('workers', 'statemachine/bill.js');
       let billController = new BillController();

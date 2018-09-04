@@ -15,6 +15,8 @@ const rebillController = new RebillController();
 const SessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 const sessionController = new SessionController();
 
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
+
 module.exports = class BillController extends stepFunctionWorkerController {
 
 	constructor() {
@@ -40,6 +42,10 @@ module.exports = class BillController extends stepFunctionWorkerController {
 		}
 
 		await this.incrementMerchantProviderSummary(register_result);
+
+		await AnalyticsEvent.push('create_order_recurring', {
+			rebill
+		});
 
 		await this.fetchContextParameters(rebill).then((parameters) => this.pushEvent(parameters));
 

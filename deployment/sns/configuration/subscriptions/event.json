@@ -70,7 +70,7 @@
               "role_changed",
               "chargeback",
               "rma",
-			  "emailfail"
+			  "email_fail"
             ]
           }
         }

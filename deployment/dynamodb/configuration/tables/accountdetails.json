@@ -1,0 +1,21 @@
+{
+  "Table":{
+    "TableName":"accountdetails",
+    "KeySchema":[
+      {
+        "AttributeName":"id",
+        "KeyType":"HASH"
+      }
+    ],
+    "AttributeDefinitions":[
+      {
+        "AttributeName":"id",
+        "AttributeType":"S"
+      }
+    ],
+    "ProvisionedThroughput":{
+      "ReadCapacityUnits":9,
+      "WriteCapacityUnits":3
+    }
+  }
+}

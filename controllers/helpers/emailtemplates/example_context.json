@@ -1021,6 +1021,24 @@
 		  "name": "Dynamic Watermark Product"
 		},
 		"quantity": 1
+	  },
+	  {
+		"amount": 39.49,
+		"merchantprovidergroupassociation": {
+		  "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c",
+		  "campaign": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+		  "created_at": "2018-06-19T19:07:18.808Z",
+		  "entity": "70a6689a-5814-438b-b9fd-dd484d0812f9",
+		  "entity_type": "campaign",
+		  "id": "98869eff-3406-4ee2-96cf-c3e771ba1303",
+		  "merchantprovidergroup": "927b4f7c-b0e9-4ddb-a05c-ba81d2d663d3",
+		  "updated_at": "2018-07-20T16:36:15.241Z"
+		},
+		"product": {
+		  "id": "aba9a683-85a4-45e7-9004-576c99a811ce",
+		  "name": "Another Product"
+		},
+		"quantity": 2
 	  }
 	]
   },

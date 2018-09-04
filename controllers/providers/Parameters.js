@@ -50,7 +50,7 @@ module.exports = class Parameters {
 
 	push(key, value, valuekey){
 
-		du.debug('Push');
+		du.debug('Push', key);
 
 		valuekey = (_.isNull(valuekey) || _.isUndefined(valuekey))?null:valuekey;
 
@@ -84,7 +84,7 @@ module.exports = class Parameters {
 
 	set(key, value){
 
-		du.debug('Set');
+		du.debug('Set', key);
 
 		if(this.validate(key, value)){
 
@@ -98,7 +98,7 @@ module.exports = class Parameters {
 
 	unset(key){
 
-		du.debug('Unset');
+		du.debug('Unset', key);
 
 		if(_.has(this.store, key)){
 
@@ -118,7 +118,7 @@ module.exports = class Parameters {
 
 	get(key, { fatal = true } = {}){
 
-		du.debug('Get');
+		du.debug('Get', key);
 
 		let return_object = null;
 
@@ -138,7 +138,7 @@ module.exports = class Parameters {
 
 	validate(key, value, fatal){
 
-		du.debug('Validate');
+		du.debug('Validate', key);
 
 		fatal = (_.isUndefined(fatal))?true:fatal;
 
@@ -186,7 +186,7 @@ module.exports = class Parameters {
 
 	isSet(key){
 
-		du.debug('Is Set');
+		du.debug('Is Set', key);
 
 		return (_.has(this.store, key));
 

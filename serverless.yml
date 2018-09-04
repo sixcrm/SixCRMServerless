@@ -199,6 +199,10 @@ functions:
   getrecoverdate:
     handler: handlers/statemachine/handlers.getrecoverdate
 
+  # Account
+  deactivateaccount:
+    handler: handlers/statemachine/handlers.deactivateaccount
+
 ########################
 # SQS handlers
 ########################

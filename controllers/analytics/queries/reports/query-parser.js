@@ -106,6 +106,12 @@ module.exports = class QueryParser {
 
 		}
 
+		if (options.amount) {
+
+			filter = this.resolveFilterQueryValue(filter, 'amount', 'amount', parameters);
+
+		}
+
 		return filter;
 	}
 
