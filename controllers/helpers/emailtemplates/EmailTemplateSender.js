@@ -26,8 +26,7 @@ module.exports = class EmailTemplateSender {
 		let template = await this.emailTemplatesController.get({id: template_id});
 		let smtp_provider = await this.smtpPRoviderController.get({id: template.smtp_provider});
 
-		let context = require('./example_context');
-		let compiled_body = this.compileBody(template.body, context);
+		let compiled_body = await this.compileBodyWithExampleData({template});
 
 		let options = {
 			sender_email: smtp_provider.from_email,
