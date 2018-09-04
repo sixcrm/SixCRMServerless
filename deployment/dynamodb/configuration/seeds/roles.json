@@ -22,6 +22,7 @@
 			"accesskey/*",
 			"affiliate/*",
 			"account/*",
+			"accountdetail/*",
 			"bill/*",
 			"campaign/*",
 			"creditcard/*",
@@ -87,6 +88,7 @@
 			"notificationsetting/*",
 			"user/read",
 			"account/read",
+			"accountdetail/*",
 			"usersetting/*",
 			"usersigningstring/*",
 			"userdevicetoken/*",
@@ -155,6 +157,7 @@
 	"permissions":{
 		"allow":[
 			"account/*",
+			"accountdetail/*",
 			"bill/*",
 			"customer/*",
 			"session/*",
