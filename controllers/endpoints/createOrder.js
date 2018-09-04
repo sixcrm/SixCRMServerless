@@ -110,13 +110,15 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		let session = await this.hydrateSession(event);
 		let customer = await this.getCustomer(event, session);
+		du.debug('session', session);
+		du.debug('global.account', global.account);
 
 		let [rawcreditcard, creditcard, campaign, previous_rebill, account_details] = await Promise.all([
 			this.getRawCreditCard(event),
 			this.getCreditCard(event, customer),
 			this.getCampaign(session),
 			this.getPreviousRebill(event),
-			this.getAccountDetails(session.account)
+			this.getAccountDetails(global.account)
 		]);
 
 		let transaction_subtype = this.getTransactionSubtype(event);
