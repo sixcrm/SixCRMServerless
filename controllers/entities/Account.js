@@ -31,11 +31,12 @@ class AccountController extends entityController {
 		if(disable_permissions == true){
 			this.disableACLs();
 			result = await super.create({entity: entity});
+			await this.accountDetailsController.createNew({id: result.id});
 			this.enableACLs();
 		}else{
 			result = await super.create({entity: entity});
+			await this.accountDetailsController.createNew({id: result.id});
 		}
-		await this.accountDetailsController.createNew({id: result.id});
 
 		return result;
 
