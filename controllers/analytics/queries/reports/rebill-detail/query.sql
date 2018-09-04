@@ -1,7 +1,7 @@
 WITH agg AS (
     SELECT
         r.id,
-        SUM(CASE WHEN t.transaction_type = 'refund' OR t.transaction_type = 'reverse' THEN 1 ELSE 0 END) AS refunds,
+        SUM(CASE WHEN t.transaction_type = 'refund' OR t.transaction_type = 'reverse' THEN t.amount ELSE 0 END) AS refunds,
         COUNT(c.transaction_id) AS chargebacks,
         SUM(t.amount) AS total
     FROM analytics.f_rebill r
