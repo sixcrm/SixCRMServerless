@@ -15,6 +15,10 @@
 			{
 				"facet": "account",
 				"values": ["d26c1887-7ad4-4a44-be0b-e80dbce22774"]
+			},
+			{
+				"facet": "amount",
+				"values": [4.99]
 			}
 		],
 		"pagination": {
