@@ -1,0 +1,11 @@
+{
+    "requestContext": {
+        "authorizer": {
+            "user": "owner.user@test.com"
+        }
+    },
+    "pathParameters": {
+        "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+    },
+    "body": "\nquery {\n    analytics (\n        reportType: rebillDetail\n        facets: [\n            {\n                facet: \"start\"\n                values: [\"2018-01-10T14:32:28Z\"]\n            },\n            {\n                facet: \"end\"\n                values: [\"2018-09-09T14:32:28Z\"]\n            }\n        ]\n        pagination: {\n            offset: 0,\n            limit: 100,\n            order: [\"datetime\"],\n            direction: \"ASC\"\n        }\n    ) {records { key value }}\n}"
+}

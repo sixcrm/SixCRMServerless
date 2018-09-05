@@ -33,6 +33,46 @@ module.exports = class EmailTemplateController extends entityController {
 
 	}
 
+	listByCampaign(campaign) {
+		return this.listByAccount({}).then(r => {
+			if (!r || !r.emailtemplates) return [];
+
+			return r.emailtemplates.filter(template => {
+				if (!template.campaigns) return false;
+
+				return template.campaigns.includes(campaign.id)
+			} )})
+	}
+
+	listByProduct(product) {
+		return this.listByAccount({}).then(r => {
+			if (!r || !r.emailtemplates) return [];
+
+			return r.emailtemplates.filter(template => {
+				if (!template.products) return false;
+
+				return template.products.includes(product.id)
+			} )})
+	}
+
+	listByProductSchedule(product_schedule) {
+		return this.listByAccount({}).then(r => {
+			if (!r || !r.emailtemplates) return [];
+
+			return r.emailtemplates.filter(template => {
+				if (!template.product_schedules) return false;
+
+				return template.product_schedules.includes(product_schedule.id)
+			} )})
+	}
+
+	templatesByAccount({account}) {
+		return super.listByAccount({account: account}).then(r => {
+			if (!r || !r.emailtemplates) return [];
+
+			return r.emailtemplates.filter(template => template.account === account)})
+	}
+
 	getSMTPProvider(emailtemplate){
 
 		du.debug('Get SMTP Provider', emailtemplate);

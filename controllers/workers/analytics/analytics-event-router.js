@@ -11,6 +11,10 @@ module.exports = {
 		transform: 'order-transform.js',
 		handlers: ['order-event-handler.js']
 	},
+	'create_order_*': {
+		transform: 'create-order-transform.js',
+		handlers: ['create-order-event-handler.js']
+	},
 	'upsell*': {
 		transform: 'upsell-transform.js',
 		handlers: ['upsell-event-handler.js']

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const WriteRecords = require('./write-records');
 
-const ATTRIBUTES = 6;
+const ATTRIBUTES = 14;
 
 module.exports = class WriteRebillRecords extends WriteRecords {
 
@@ -14,7 +14,7 @@ module.exports = class WriteRebillRecords extends WriteRecords {
 
 	getRecordKey(record) {
 
-		return `${record.id}:${record.account}:${record.datetime}`;
+		return record.id;
 
 	}
 
@@ -33,11 +33,19 @@ module.exports = class WriteRebillRecords extends WriteRecords {
 		let query =
 			'INSERT INTO analytics.f_rebill ( \
 				id, \
-				current_queuename, \
-				previous_queuename, \
-				account, \
+				alias, \
 				datetime, \
-				amount) \
+				status, \
+				amount, \
+				item_count, \
+				type, \
+				account, \
+				session, \
+				session_alias, \
+				campaign, \
+				campaign_name, \
+				customer, \
+				customer_name) \
 				VALUES ';
 
 		const values = records.map((r, i) => {
@@ -49,20 +57,38 @@ module.exports = class WriteRebillRecords extends WriteRecords {
 		query += values.join(',');
 
 		query += ' \
-			ON CONFLICT (id, account, datetime) DO UPDATE SET  \
-			current_queuename = EXCLUDED.current_queuename, \
-			previous_queuename = EXCLUDED.previous_queuename, \
-			amount = EXCLUDED.amount';
+			ON CONFLICT (id) DO UPDATE SET  \
+			alias = EXCLUDED.alias, \
+			datetime = EXCLUDED.datetime, \
+			status = EXCLUDED.status, \
+			amount = EXCLUDED.amount, \
+			item_count = EXCLUDED.item_count, \
+			type = EXCLUDED.type, \
+			account = EXCLUDED.account, \
+			session = EXCLUDED.session, \
+			session_alias = EXCLUDED.session_alias, \
+			campaign = EXCLUDED.campaign, \
+			campaign_name = EXCLUDED.campaign_name, \
+			customer = EXCLUDED.customer, \
+			customer_name = EXCLUDED.customer_name';
 
 		const queryArgs = _.flatten(records.map(r => {
 
 			return [
 				r.id,
-				r.currentQueuename,
-				r.previousQueuename,
-				r.account,
+				r.alias,
 				r.datetime,
-				r.amount
+				r.status,
+				r.amount,
+				r.item_count,
+				r.type,
+				r.account,
+				r.session,
+				r.session_alias,
+				r.campaign,
+				r.campaign_name,
+				r.customer,
+				r.customer_name
 			];
 
 		}));

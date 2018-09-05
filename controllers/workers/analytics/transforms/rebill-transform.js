@@ -1,7 +1,7 @@
-const AnalyticsTransfrom = require('../analytics-transform');
+const AnalyticsTransform = require('../analytics-transform');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
-module.exports = class RebillTransform extends AnalyticsTransfrom {
+module.exports = class RebillTransform extends AnalyticsTransform {
 
 	async transform(record) {
 
@@ -11,13 +11,8 @@ module.exports = class RebillTransform extends AnalyticsTransfrom {
 		}));
 
 		return {
-			id: record.context.transformedrebill.id,
-			datetime: record.context.transformedrebill.datetime,
-			currentQueuename: record.context.transformedrebill.current_queuename,
-			previousQueuename: record.context.transformedrebill.previous_queuename,
-			account: record.context.transformedrebill.account,
-			amount: record.context.transformedrebill.amount,
-			eventType: record.event_type
+			id: record.context.id,
+			status: record.context.status
 		};
 
 	}

@@ -101,6 +101,10 @@ function getValidCreditCard(){
 	return MockEntities.getValidPlaintextCreditCard();
 }
 
+function getValidAccountDetails(){
+	return MockEntities.getValidAccountDetails();
+}
+
 function getValidCreditCardPrototype(){
 
 	let creditcard = MockEntities.getValidTransactionCreditCard();
@@ -384,6 +388,7 @@ describe('checkout', function () {
 			let creditcard = getValidCreditCard();
 			let product_schedule_ids = arrayutilities.map(event.product_schedules, product_schedule_group => product_schedule_group.product_schedule);
 			let product_schedule = getValidProductSchedule(product_schedule_ids, true);
+			let account_details = getValidAccountDetails();
 
 			event.session = session.id;
 			customer.creditcards = [creditcard.id];
@@ -445,6 +450,16 @@ describe('checkout', function () {
 			};
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'CreditCard.js'), mock_credit_card);
+
+			let mock_account_details = class {
+				constructor(){}
+
+				get () {
+					return Promise.resolve(account_details);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
 
 			let mock_campaign = class {
 				constructor(){}
@@ -724,6 +739,7 @@ describe('checkout', function () {
 			let affiliates = getValidAffiliates();
 			let campaign = getValidCampaign();
 			let session = getValidSession();
+			let account_details = getValidAccountDetails();
 
 
 			let rebill = MockEntities.getValidRebill();
@@ -958,6 +974,16 @@ describe('checkout', function () {
 					return Promise.resolve(true);
 				}
 			});
+
+			let mock_account_details = class {
+				constructor(){}
+
+				get () {
+					return Promise.resolve(account_details);
+				}
+			};
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
 
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 

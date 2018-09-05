@@ -13,6 +13,9 @@ let affiliateAllowDenyType = require('../affiliate/affiliateAllowDenyType');
 let productScheduleType = require('../productschedule/productScheduleType');
 let merchantprovidergroupAssociationType = require('../merchantprovidergroupassociation/merchantProviderGroupAssociationType');
 
+const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+const emailTemplateController = new EmailTemplateController();
+
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'campaign',
 	description: 'A camapign.',
@@ -52,11 +55,9 @@ module.exports.graphObj = new GraphQLObjectType({
 		},
 		emailtemplates: {
 			type: new GraphQLList(emailTemplateType.graphObj),
-			descsription: 'Email templates configured and associated with the campaign',
+			description: 'Email templates configured and associated with the campaign',
 			resolve: (campaign) => {
-				const campaignController = new CampaignController();
-
-				return campaignController.getEmailTemplates(campaign);
+				return emailTemplateController.listByCampaign(campaign)
 			}
 		},
 		affiliate_allow: {

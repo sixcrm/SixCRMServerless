@@ -5,14 +5,20 @@ const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLString = require('graphql').GraphQLString;
+const GraphQLList = require('graphql').GraphQLList;
+
 
 let merchantProviderGroupType = require('../merchantprovidergroup/merchantProviderGroupType');
 let dynamicPricingType = require('./components/dynamicPricingType');
 let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
 let productAttributesType = require('./components/attributesType');
+let emailTemplateType = require('../emailtemplate/emailTemplateType');
 
 const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 const productController = new ProductController();
+
+const EmailTemplateController = global.SixCRM.routes.include('controllers', 'entities/EmailTemplate.js');
+const emailTemplateController = new EmailTemplateController();
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'Product',
@@ -63,6 +69,11 @@ module.exports.graphObj = new GraphQLObjectType({
 		attributes:{
 			type: productAttributesType.graphObj,
 			description: 'The attributes associated with the product.'
+		},
+		emailtemplates: {
+			type: new GraphQLList(emailTemplateType.graphObj),
+			description: 'Email templates associated with this product.',
+			resolve: (product) => emailTemplateController.listByProduct(product)
 		},
 		created_at: {
 			type: GraphQLString,

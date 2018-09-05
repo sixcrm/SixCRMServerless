@@ -1153,6 +1153,12 @@ class MockEntities {
 
 	}
 
+	static getValidAccountDetails() {
+		return {
+			id: this.getValidId()
+		}
+	}
+
 	static getValidCustomerNotes(id) {
 
 		return {

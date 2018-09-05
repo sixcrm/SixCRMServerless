@@ -1,13 +1,9 @@
 const expect = require('chai').expect;
 
-module.exports = (connection) => {
+module.exports = async (connection) => {
 
-	return Promise.resolve()
-		.then(() => connection.query('SELECT COUNT(1) as c FROM analytics.f_rebill'))
-		.then((result) => {
+	const result = await connection.query(`SELECT * FROM analytics.f_rebill`);
 
-			return expect(result.rows[0].c).to.be.equal((1).toString());
-
-		})
+	expect(result.rowCount).to.be.equal(2);
 
 }
