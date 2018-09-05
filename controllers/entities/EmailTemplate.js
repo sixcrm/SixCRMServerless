@@ -25,6 +25,17 @@ module.exports = class EmailTemplateController extends entityController {
 		})
 	}
 
+	delete({id, range_key = null}) {
+		return this.get({id: id}).then(original_entity => {
+			if (original_entity && original_entity.built_in && global.account !== '*') {
+				throw eu.getError('server', `Unable to delete ${this.descriptive_name} with ID ${id}. Entity is built-in.`);
+			}
+
+			return super.delete({id, range_key})
+		})
+
+	}
+
 	listBySMTPProvider({smtpprovider: smtpprovider, pagination: pagination}){
 
 		du.debug('List By SMTP Provider');
