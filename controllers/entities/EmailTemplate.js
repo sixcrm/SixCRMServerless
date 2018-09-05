@@ -25,6 +25,10 @@ module.exports = class EmailTemplateController extends entityController {
 		})
 	}
 
+	updateAssociation({entity, ignore_updated_at}) {
+		return super.update({entity, ignore_updated_at})
+	}
+
 	delete({id, range_key = null}) {
 		return this.get({id: id}).then(original_entity => {
 			if (original_entity && original_entity.built_in && global.account !== '*') {
