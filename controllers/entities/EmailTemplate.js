@@ -1,6 +1,7 @@
 
 const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -12,6 +13,16 @@ module.exports = class EmailTemplateController extends entityController {
 
 		this.search_fields = ['name'];
 
+	}
+
+	update({entity, ignore_updated_at}) {
+		return this.get({id: entity.id}).then(original_entity => {
+			if (original_entity && original_entity.built_in && global.account !== '*') {
+				throw eu.getError('server', `Unable to update ${this.descriptive_name} with ID ${entity.id}. Entity is built-in.`);
+			}
+
+			return super.update({entity, ignore_updated_at})
+		})
 	}
 
 	listBySMTPProvider({smtpprovider: smtpprovider, pagination: pagination}){

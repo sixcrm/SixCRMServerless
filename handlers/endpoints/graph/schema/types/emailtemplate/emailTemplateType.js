@@ -109,6 +109,9 @@ module.exports.graphObj = new GraphQLObjectType({
 		enabled: {
 			type: GraphQLBoolean
 		},
+		built_in: {
+			type: GraphQLBoolean
+		},
 		updated_at: {
 			type: new GraphQLNonNull(GraphQLString),
 			description: 'ISO8601 datetime when the entity was updated.',
