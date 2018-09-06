@@ -25,6 +25,16 @@ module.exports = class EmailTemplateController extends entityController {
 		})
 	}
 
+	updateBuiltIn({entity, ignore_updated_at}) {
+		return this.get({id: entity.id, fatal: true}).then(original_entity => {
+			['subject', 'smtp_provider', 'enabled'].forEach(key => {
+				original_entity[key] = entity[key];
+			});
+
+			return super.update({original_entity, ignore_updated_at})
+		})
+	}
+
 	updateAssociation({entity, ignore_updated_at}) {
 		return super.update({entity, ignore_updated_at})
 	}
