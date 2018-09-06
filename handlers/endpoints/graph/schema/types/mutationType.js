@@ -1055,6 +1055,22 @@ module.exports.graphObj = new GraphQLObjectType({
 				});
 			}
 		},
+		updatebuiltinemailtemplate: {
+			type: emailTemplateType.graphObj,
+			description: 'Updates a Email Template.',
+			args: {
+				emailtemplate: {
+					type: emailTemplateInputType.graphObj
+				}
+			},
+			resolve: (value, emailtemplate) => {
+				const emailTemplateController = new EmailTemplateController();
+
+				return emailTemplateController.updateBuiltIn({
+					entity: emailtemplate.emailtemplate
+				});
+			}
+		},
 		deleteemailtemplate: {
 			type: deleteOutputType.graphObj,
 			description: 'Deletes a Email Template.',
