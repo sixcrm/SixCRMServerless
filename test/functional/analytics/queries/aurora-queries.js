@@ -43,7 +43,8 @@ suites.map((suite) => {
 
 		subSuite.addTest(new Mocha.Test(test.test_case, async () => {
 
-			PermissionTestGenerators.givenUserWithAllowed('*', '*', '*');
+			const account = test.account || '*';
+			PermissionTestGenerators.givenUserWithAllowed('*', '*', account);
 
 			await prepareDatabase();
 

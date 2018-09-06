@@ -21,6 +21,7 @@ module.exports = async (parameters = {}) => {
 	QueryParser.resolveFilterValue(local, 't', 'customerName', parameters);
 	QueryParser.resolveFilterValue(local, 't', 'transactionType', parameters);
 	QueryParser.resolveFilterValue(local, 't', 'merchantProviderName', parameters);
+	QueryParser.resolveFilterValue(local, 't', 'amount', parameters);
 	const filter = QueryParser.resolveFilterQuery(parameters, {
 		account: true,
 		mid: true,
@@ -32,7 +33,8 @@ module.exports = async (parameters = {}) => {
 		campaignName: true,
 		customerName: true,
 		transactionType: true,
-		merchantProviderName: true
+		merchantProviderName: true,
+		amount: true
 	});
 
 	let filterQuery = '';

@@ -75,8 +75,7 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 		parameters = this.translateParameters(additional_parameters, parameters);
 
-		return this.executeDynamoDBMethod({method: 'scan', parameters: parameters});
-
+		return this.executeRecursiveScan({parameters});
 	}
 
 	queryRecords(table, additional_parameters, index){
@@ -169,6 +168,66 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 		});
 
+	}
+
+	executeRecursiveScan({parameters, aggregated_results}){
+
+		du.debug('Execute Recursive Query');
+		du.debug('parameters', parameters);
+
+		if(!_.has(parameters, 'Limit')){
+			parameters.Limit = 100;
+		}
+
+		let limit = parameters.Limit;
+
+		if(_.isUndefined(aggregated_results)){
+			aggregated_results = {
+				Items:[],
+				ScannedCount:0
+			};
+		}
+
+		if(_.has(aggregated_results, 'LastEvaluatedKey')){
+			parameters.ExclusiveStartKey = aggregated_results.LastEvaluatedKey;
+		}
+
+		return this.executeDynamoDBMethod({method: 'scan', parameters: parameters}).then(result => {
+			let result_index = 0;
+
+			du.debug('scan results', result);
+
+			if(arrayutilities.nonEmpty(result.Items) > 0){
+				//While we haven't met the limit and there are more results in the set.
+				while(aggregated_results.Items.length < limit && result_index < result.Items.length){
+					aggregated_results.Items.push(result.Items[result_index]);
+					result_index++;
+				}
+			}
+
+			aggregated_results.ScannedCount += result.ScannedCount;
+
+			if(!_.has(result, 'LastEvaluatedKey')){
+				if(_.has(aggregated_results, 'LastEvaluatedKey')){
+					delete aggregated_results.LastEvaluatedKey;
+				}
+				aggregated_results.Count = aggregated_results.Items.length;
+
+				return aggregated_results;
+			}
+
+			//there are more results
+			if(aggregated_results.Items.length === limit){
+				aggregated_results.ScannedCount += ((-1 * result.ScannedCount)+ result_index);
+				aggregated_results.LastEvaluatedKey = this.determineLastEvaluatedKey(result, (result_index - 1));
+				aggregated_results.Count = aggregated_results.Items.length;
+				return aggregated_results;
+			}else{
+				aggregated_results.LastEvaluatedKey = result.LastEvaluatedKey;
+			}
+
+			return this.executeRecursiveScan({parameters: parameters, aggregated_results: aggregated_results});
+		});
 	}
 
 	determineLastEvaluatedKey(result, result_index){
@@ -451,6 +510,8 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 		du.debug('Execute Dynamo DB Method');
 
 		du.debug('Method: '+method);
+
+		du.debug('Parameters', parameters);
 
 		fatal = (_.isUndefined(fatal))?true:fatal;
 

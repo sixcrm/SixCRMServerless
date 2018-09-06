@@ -31,6 +31,7 @@ let customerNoteType = require('./customernote/customerNoteType');
 
 let emailTemplateInputType = require('./emailtemplate/emailTemplateInputType');
 let emailTemplateType = require('./emailtemplate/emailTemplateType');
+let emailTemplateAssociationEntityTypeEnum = require('./emailtemplate/emailTemplateAssociationEntityTypeEnum');
 
 let fulfillmentProviderInputType = require('./fulfillmentprovider/fulfillmentProviderInputType');
 let fulfillmentProviderType = require('./fulfillmentprovider/fulfillmentProviderType');
@@ -104,6 +105,9 @@ let sessionCancelInputType = require('./session/sessionCancelInputType');
 const tagInputType = require('./tag/tagInputType');
 const tagType = require('./tag/tagType');
 
+const accountDetailsInputType = require('./accountdetails/accountDetailsInputType');
+const accountDetailsType = require('./accountdetails/accountDetailsType');
+
 //Register
 let refundType = require('./register/refund/refundType');
 let refundInputType = require('./register/refund/refundInputType');
@@ -152,6 +156,7 @@ const ShippingReceiptController = global.SixCRM.routes.include('entities', 'Ship
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const TagController = global.SixCRM.routes.include('controllers', 'entities/Tag.js');
 const TrackerController = global.SixCRM.routes.include('controllers', 'entities/Tracker.js');
+const AccountDetailsController = global.SixCRM.routes.include('controllers', 'entities/AccountDetails.js');
 
 const InviteHelperController = global.SixCRM.routes.include('helpers', 'entities/invite/Invite.js');
 const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
@@ -668,24 +673,6 @@ module.exports.graphObj = new GraphQLObjectType({
 				return accountHelperController.cancelDeactivation({account: args.account});
 			}
 		},
-		deleteaccount: {
-			type: deleteOutputType.graphObj,
-			description: 'Deletes a account.',
-			args: {
-				id: {
-					description: 'id of the account',
-					type: new GraphQLNonNull(GraphQLString)
-				}
-			},
-			resolve: (value, account) => {
-				var id = account.id;
-				const accountController = new AccountController();
-
-				return accountController.delete({
-					id: id
-				});
-			}
-		},
 		createrole: {
 			type: roleType.graphObj,
 			description: 'Adds a new role.',
@@ -1083,6 +1070,56 @@ module.exports.graphObj = new GraphQLObjectType({
 
 				return emailTemplateController.delete({
 					id: id
+				});
+			}
+		},
+		addemailtemplateassociation: {
+			type: emailTemplateType.graphObj,
+			args: {
+				emailtemplateid: {
+					type: new GraphQLNonNull(GraphQLString)
+				},
+				entitytype: {
+					type: new GraphQLNonNull(emailTemplateAssociationEntityTypeEnum.graphObj)
+				},
+				entityid: {
+					type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, args) => {
+				const emailTemplateController = new EmailTemplateController();
+
+				return emailTemplateController.get({
+					id: args.emailtemplateid
+				}).then(emailtemplate => {
+					emailtemplate[args.entitytype] = [...(emailtemplate[args.entitytype] || []).filter(i => i !== args.entityid), args.entityid];
+
+					return emailTemplateController.update({entity: emailtemplate})
+				});
+			}
+		},
+		removeemailtemplateassociation: {
+			type: emailTemplateType.graphObj,
+			args: {
+				emailtemplateid: {
+					type: new GraphQLNonNull(GraphQLString)
+				},
+				entitytype: {
+					type: new GraphQLNonNull(emailTemplateAssociationEntityTypeEnum.graphObj)
+				},
+				entityid: {
+					type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, args) => {
+				const emailTemplateController = new EmailTemplateController();
+
+				return emailTemplateController.get({
+					id: args.emailtemplateid
+				}).then(emailtemplate => {
+					emailtemplate[args.entitytype] = (emailtemplate[args.entitytype] || []).filter(i => i !== args.entityid);
+
+					return emailTemplateController.update({entity: emailtemplate})
 				});
 			}
 		},
@@ -2029,6 +2066,56 @@ module.exports.graphObj = new GraphQLObjectType({
 
 				return tagController.delete({
 					id: tag.id
+				});
+			}
+		},
+		createaccountdetails: {
+			type: accountDetailsType.graphObj,
+			description: 'Creates an accoundetails.',
+			args: {
+				accountdetails: {
+					type: accountDetailsInputType.graphObj
+				}
+			},
+			resolve: (value, accoundetails) => {
+				const accountDetailsController = new AccountDetailsController();
+
+				return accountDetailsController.create({
+					entity: accoundetails.accountdetails
+				});
+			}
+		},
+		updateaccountdetails: {
+			type: accountDetailsType.graphObj,
+			description: 'Updates an accoundetails.',
+			args: {
+				accountdetails: {
+					type: accountDetailsInputType.graphObj
+				}
+			},
+			resolve: (value, accoundetails) => {
+				const accountDetailsController = new AccountDetailsController();
+
+				return accountDetailsController.update({
+					entity: accoundetails.accountdetails,
+					ignore_updated_at: true
+				});
+			}
+		},
+		deleteaccountdetails: {
+			type: deleteOutputType.graphObj,
+			description: 'Deletes an accoundetails.',
+			args: {
+				id: {
+					description: 'id of the accoundetails',
+					type: new GraphQLNonNull(GraphQLString)
+				}
+			},
+			resolve: (value, accoundetails) => {
+				const accountDetailsController = new AccountDetailsController();
+
+				return accountDetailsController.delete({
+					id: accoundetails.id
 				});
 			}
 		}

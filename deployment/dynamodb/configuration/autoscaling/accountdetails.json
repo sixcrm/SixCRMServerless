@@ -1,0 +1,47 @@
+[
+  {
+    "ResourceId":"table/{tablename}",
+    "scalable_targets":[
+      {
+        "MaxCapacity": 4000,
+        "MinCapacity": 10,
+        "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
+        "ServiceNamespace": "dynamodb"
+      },
+      {
+        "MaxCapacity": 4000,
+        "MinCapacity": 10,
+        "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
+        "ServiceNamespace": "dynamodb"
+      }
+    ],
+    "scaling_policies":[
+      {
+        "PolicyType": "TargetTrackingScaling",
+        "ScalableDimension": "dynamodb:table:WriteCapacityUnits",
+        "ServiceNamespace": "dynamodb",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBWriteCapacityUtilization"
+          },
+          "ScaleInCooldown": 10,
+          "ScaleOutCooldown": 10,
+          "TargetValue": 50.0
+        }
+      },
+      {
+        "PolicyType": "TargetTrackingScaling",
+        "ScalableDimension": "dynamodb:table:ReadCapacityUnits",
+        "ServiceNamespace": "dynamodb",
+        "TargetTrackingScalingPolicyConfiguration": {
+          "PredefinedMetricSpecification": {
+            "PredefinedMetricType": "DynamoDBReadCapacityUtilization"
+          },
+          "ScaleInCooldown": 10,
+          "ScaleOutCooldown": 10,
+          "TargetValue": 50.0
+        }
+      }
+    ]
+  }
+]

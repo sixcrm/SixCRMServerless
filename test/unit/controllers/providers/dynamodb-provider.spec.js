@@ -99,7 +99,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 		it('should scan records', () => {
 			// given
 			let aTableName = anyTableName;
-			let anyResults = { Items: [{ a: 'b' }, { c: 'd' }]};
+			let anyResults = { Count: 2, Items: [{ a: 'b' }, { c: 'd' }], ScannedCount: 100 };
 			let anyParams = {};
 
 			let DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
@@ -119,7 +119,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 		it('should return empty results when no records', () => {
 			// given
 			let aTableName = anyTableName;
-			let anyResults = { Items: [] };
+			let anyResults = { Count: 0, Items: [], ScannedCount: 100 };
 			let anyParams = {};
 
 			let DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
@@ -139,7 +139,8 @@ describe('controllers/providers/dynamodb-provider', () => {
 		it('should retain limits when scanning records', () => {
 			// given
 			let aTableName = anyTableName;
-			let anyResults = { Items: [{ a: 'b' }, { c: 'd' }]};
+			let items = [{ a: 'b' }, { c: 'd' }];
+			let anyResults = { Count: 2, Items: items, ScannedCount: 100 };
 			let paramsWithLimit = { limit: 1 };
 
 			let DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
@@ -153,7 +154,11 @@ describe('controllers/providers/dynamodb-provider', () => {
 			};
 
 			return dynamodbprovider.scanRecords(aTableName, paramsWithLimit).then((result) => {
-				expect(result).to.deep.equal(anyResults);
+				expect(result).to.deep.equal({
+					Count: 1,
+					Items: [items[0]],
+					ScannedCount: 100
+				});
 			});
 		});
 

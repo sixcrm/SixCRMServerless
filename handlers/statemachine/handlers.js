@@ -28,6 +28,8 @@ const TriggerFulfillmentController = global.SixCRM.routes.include('controllers',
 const TriggerPreFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerPreFulfillment.js');
 const TriggerRecoveryController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerRecovery.js');
 
+const DeactivateAccountController = global.SixCRM.routes.include('controllers', 'workers/statemachine/deactivateAccount.js');
+
 module.exports = {
 	gettrackinginformation: handleStepFunction((event) => new GetTrackingInformationController().execute(event)),
 	senddeliverynotification: handleStepFunction((event) => new SendDeliveryNotificationController().execute(event)),
@@ -54,6 +56,8 @@ module.exports = {
 	triggertracking: handleStepFunction((event) => new TriggerTrackingController().execute(event)),
 	triggerrecovery: handleStepFunction((event) => new TriggerRecoveryController().execute(event)),
 	triggercreaterebill: handleStepFunction((event) => new TriggerCreateRebillController().execute(event)),
+
+	deactivateaccount: handleStepFunction((event) => new DeactivateAccountController().execute(event)),
 };
 
 function handleStepFunction(delegate) {

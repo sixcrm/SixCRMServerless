@@ -1,0 +1,5 @@
+{
+	"requestContext":{"authorizer":{ "user": "ljubomir+frontend@toptal.com" }},
+	"pathParameters": { "account": "21999ed0-c052-4ea1-821a-ad42377db492" },
+	"body":"query {emailtemplatepreview (body: \"test {{customer.name}}\") {result}}"
+}

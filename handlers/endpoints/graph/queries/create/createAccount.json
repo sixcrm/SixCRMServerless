@@ -1,5 +1,5 @@
 {
   "requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
   "pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-  "body":"mutation {createaccount (account: { id: \"14821fc6-9d18-4ced-a5cd-d968d2e630ff\", name: \"testingaccount\", active: true}) {id, name, active, billing { plan, session, disable }, created_at, updated_at}}"
+  "body":"mutation {createaccount (account: { id: \"14821fc6-9d18-4ced-a5cd-d968d2e630fd\", name: \"testingaccount88d\", active: true}) {id, name, active, billing { plan, session, disable }, created_at, updated_at}}"
 }

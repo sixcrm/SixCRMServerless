@@ -5,7 +5,6 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const parserutilities = require('@6crm/sixcrmcore/util/parser-utilities').default;
 const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const CustomerHelperController = global.SixCRM.routes.include('helpers', 'entities/customer/Customer.js');
@@ -13,6 +12,8 @@ const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/Cust
 const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
 const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
 const SNSEventController = global.SixCRM.routes.include('controllers','workers/components/SNSEvent.js');
+const ActivityHelper = global.SixCRM.routes.include('helpers', 'analytics/Activity.js');
+const handlebars = global.SixCRM.routes.include('helpers', 'emailtemplates/Handlebars.js');
 
 module.exports = class EventEmailsController extends SNSEventController {
 
@@ -20,7 +21,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		super();
 
-		this.doSend = false;
+		this.doSend = true;
 
 		this.parameter_definition = {};
 
@@ -42,6 +43,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		this.customerController = new CustomerController();
 		this.smtpProviderController = new SMTPProviderController();
 		this.emailTemplatesController = new EmailTemplateController();
+		this.activityHelper = new ActivityHelper();
 
 		this.smtpProviderController.sanitize(false);
 		this.emailTemplatesController.sanitize(false);
@@ -55,13 +57,27 @@ module.exports = class EventEmailsController extends SNSEventController {
 		du.debug('Trigger Emails');
 
 		return this.acquireCampaign()
+			.then(() => this.acquireProducts())
+			.then(() => this.acquireProductSchedules())
 			.then(() => this.acquireCustomer())
 			.then(() => this.acquireEmailTemplates())
 			.then(() => this.acquireSMTPProvider())
 			.then(() => this.sendEmails())
+			.then(() => this.createAnalyticsActivityRecord(``))
 			.catch(error => {
+				du.error('Email Sending Failed');
 				du.error(error);
-				return true;
+
+				let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+				let eventHelperController = new EventsHelperController();
+
+				let context = {smtp_provider: this.parameters.get('paired_smtp_provider')};
+
+				return eventHelperController.pushEvent({event_type: 'email_fail', context: context}).then(result => {
+					du.info(result);
+					return;
+				});
+
 			});
 
 	}
@@ -100,6 +116,40 @@ module.exports = class EventEmailsController extends SNSEventController {
 			return true;
 		});
 
+	}
+
+	acquireProducts() {
+		du.debug('Acquire Products');
+
+		let context = this.parameters.get('message').context || {};
+		let products = [];
+
+		if (context.products) {
+			products = context.products;
+		}
+
+		if (_(context).has('order.products')) {
+			products = context.order.products.map(p => p.product);
+		}
+
+		this.parameters.set('products', products);
+	}
+
+	acquireProductSchedules() {
+		du.debug('Acquire Product Schedules');
+
+		let context = this.parameters.get('message').context || {};
+		let product_schedules = [];
+
+		if (context.product_schedules) {
+			product_schedules = context.product_schedules;
+		}
+
+		if (_(context).has('rebill.product_schedules')) {
+			product_schedules = context.rebill.product_schedules;
+		}
+
+		this.parameters.set('product_schedules', product_schedules);
 	}
 
 	acquireCustomer(){
@@ -142,33 +192,70 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		let message = this.parameters.get('message');
 		let campaign = this.parameters.get('campaign');
+		let products = this.parameters.get('products');
+		let product_schedules = this.parameters.get('product_schedules');
+		let cycle = _(message).has('context.rebill.cycle') ? message.context.rebill.cycle : -1;
 
-		du.debug(message, campaign);
+		du.debug(message, campaign, products, product_schedules);
 
-		return this.campaignController.getEmailTemplates(campaign).then(results => {
+		return this.emailTemplatesController.templatesByAccount({account: message.account}).then(results => {
+
+			du.debug('account', message.account);
+			du.debug('results', results);
 
 			if(_.isNull(results) || !arrayutilities.nonEmpty(results)){
-				du.debug('No email templates.');
-				return true;
+				du.debug('No email templates for account.');
+				return [];
 			}
 
+			let associated_templates = [];
 
-			let email_templates = arrayutilities.filter(results, result => {
-				du.debug(`Does ${result.type} equal ${message.event_type}`);
-				return (result.type === message.event_type) || (this.areEventsCompatible(result.type, message.event_type));
+			results.forEach(template => {
+				if (template.enabled === false) {
+					du.debug(`Template ${template.id} is disabled.`);
+					return;
+				}
+
+				if (template.campaigns && template.campaigns.includes(campaign.id)) {
+					du.debug(`Adding template ${template.id} due to match with campaign ${campaign.id}.`);
+					associated_templates.push(template)
+				}
+
+				products.forEach(product => {
+					if (template.products && template.products.includes(product.id)) {
+						du.debug(`Adding template ${template.id} due to match with product ${product.id}.`);
+						associated_templates.push(template)
+					}
+				});
+
+				product_schedules.forEach(product_schedule => {
+					if (template.product_schedules && template.product_schedules.includes(product_schedule.id)) {
+						du.debug(`Adding template ${template.id} due to match with product schedule ${product_schedule.id}.`);
+						associated_templates.push(template)
+					}
+				});
+
+				if (template.cycle === cycle) {
+					du.debug(`Adding template ${template.id} due to match with cycle ${cycle}.`);
+					associated_templates.push(template)
+				}
 			});
 
-			return email_templates;
+			return associated_templates.filter(result => {
+				du.debug(`Does ${result.type} equal ${message.event_type}?`);
+				return (result.type === message.event_type) || (this.areEventsCompatible(result.type, message.event_type));
+			});
 
 		}).then(results => {
 
 			if(!_.isNull(results) && arrayutilities.nonEmpty(results)){
-				this.parameters.set('emailtemplates', results);
-				du.debug('Found email templates');
+				du.debug('Found email templates.');
+				this.parameters.set('emailtemplates', [...new Set(results)]);
+
 				return true;
 			}
 
-			du.debug(`No email templates for campaign ${campaign.id}`);
+			du.debug(`No email templates.`);
 			return false;
 
 		});
@@ -267,6 +354,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 			throw eu.getError('server', 'No SMTP provider configured for use with email template: '+email_template.id);
 		}
 
+		this.parameters.set('paired_smtp_provider', paired_smtp_provider);
+
 		return paired_smtp_provider;
 
 	}
@@ -287,49 +376,30 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		du.debug('Parse Email Template');
 
-		let parse_object = this.createParseObject();
+		let context = this.createContext();
 
-		du.debug('Parse Object Is', parse_object);
+		du.debug('Context Is', context);
+
+		let compiled_template_body = handlebars.compile(email_template.body);
+		let compiled_template_subject = handlebars.compile(email_template.subject);
+		let body = compiled_template_body(context);
+		let subject = compiled_template_subject(context);
 
 		return {
-			subject: parserutilities.parse(email_template.subject, parse_object),
-			body: parserutilities.parse(email_template.body, parse_object)
+			subject, body
 		};
 
 	}
 
-	createParseObject(){
+	createContext(){
 
-		du.debug('Create Parse Object');
+		du.debug('Create Context');
 
-		let parse_object = {
-			campaign: this.parameters.get('campaign'),
-			customer: this.parameters.get('customer')
-		};
+		let context = this.parameters.get('message').context;
+		context.campaign = this.parameters.get('campaign');
+		context.customer = this.parameters.get(`customer`);
 
-		let optional_properties = {
-			rebill: null,
-			transactions: null,
-			transaction: null,
-			creditcard:null,
-			session: null,
-			refund: null,
-			return: null,
-			shipping_receipt: null,
-			order: null
-		};
-
-		let message = this.parameters.get('message');
-		du.debug('Create Parse Object', message.context);
-
-		objectutilities.map(optional_properties, optional_property => {
-			optional_properties[optional_property] = objectutilities.recurseByDepth(message.context, (key) => {
-				return (key == optional_property);
-			});
-		});
-
-		return objectutilities.merge(parse_object, optional_properties);
-
+		return context;
 	}
 
 	areEventsCompatible(template_event, system_event) {
@@ -347,4 +417,14 @@ module.exports = class EventEmailsController extends SNSEventController {
 		return compatible;
 	}
 
+	createAnalyticsActivityRecord(){
+
+		let customer = this.parameters.get('customer');
+
+		return this.activityHelper.createActivity(null, 'sent_email', {entity: customer, type: 'customer'}, null);
+
+	}
+
 };
+
+
