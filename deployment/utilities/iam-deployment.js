@@ -105,8 +105,9 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
 			if(role == false){
 				return this.createPolicy(policy_definition);
-			}else{
-				return this.deletePolicy(policy_definition).then(() => this.createPolicy(policy_definition));
+			} else {
+				du.info('Skip policy deployment. Policy exists.');
+				return Promise.resolve();
 			}
 		});
 
@@ -274,9 +275,10 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
 			if(role == false){
 				return this.createRole(role_definition);
+			} else {
+				du.info('Skip role deployment. Role exists:', role_definition);
+				return Promise.resolve();
 			}
-
-			return this.updateRole(role_definition);
 
 		});
 
