@@ -13,15 +13,7 @@
 			]
 		},
 		{
-			"type": "string",
-			"enum": [
-				"click",
-				"lead",
-				"order",
-				"confirm",
-				"rebill",
-				"transaction"
-			]
+			"type": "string"
 		},
 		{
 			"type": "string",
