@@ -21,6 +21,8 @@ const now = moment();
 const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
 
+// This is somewhat more complicated than the transaction update.  We're basically going to process all existing rebills.
+// If this needs to be run in the future, might need to add more values here beyond 2019-09.
 Promise.all(_.map(['201804', '201805', '201806', '201807', '201808', '201809'], value => rebillController.queryBySecondaryIndex({
 	field: 'year_month',
 	index_value: value,
@@ -70,6 +72,7 @@ Promise.all(_.map(['201804', '201805', '201806', '201807', '201808', '201809'], 
 
 	});
 
+	// Now we just have to look up the campaigns and customers.
 	const campaignIds = _.uniq(_.map(sessions, session => session.campaign));
 	const campaigns = await campaignController.batchGet({ ids: campaignIds });
 	const campaignNames = new Map(_.map(campaigns, campaign => [campaign.id, campaign.name]));
@@ -80,6 +83,7 @@ Promise.all(_.map(['201804', '201805', '201806', '201807', '201808', '201809'], 
 	const customerNames = new Map(_.map(customers, customer => [customer.id, `${customer.firstname} ${customer.lastname}`]));
 	du.info(customers.length.toString() + " customers");
 
+	// We process all the data into arrays, which we will use to build a single INSERT query with all of the rows.
 	const rebillRows = _.map(rebills, rebill => {
 
 		const session = sessionMap.get(rebill.parentsession);

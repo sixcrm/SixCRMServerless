@@ -112,6 +112,12 @@ module.exports = class QueryParser {
 
 		}
 
+		if (options.type) {
+
+			filter = this.resolveFilterQueryValue(filter, 'type', 'type', parameters);
+
+		}
+
 		return filter;
 	}
 

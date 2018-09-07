@@ -6,6 +6,7 @@ module.exports = async (parameters, pagination) => {
 	const end = parameters.facets.find(f => f.facet === 'end');
 	const alias = parameters.facets.find(f => f.facet === 'alias');
 	const amount = parameters.facets.find(f => f.facet === 'amount');
+	const type = parameters.facets.find(f => f.facet === 'type');
 	const sessionAlias = parameters.facets.find(f => f.facet === 'sessionAlias');
 	const campaignName = parameters.facets.find(f => f.facet === 'campaignName');
 	const customerName = parameters.facets.find(f => f.facet === 'customerName');
@@ -28,6 +29,7 @@ module.exports = async (parameters, pagination) => {
 	_resolveParamValue('end', end);
 	_resolveParamValue('alias', alias);
 	_resolveParamValue('amount', amount);
+	_resolveParamValue('type', type);
 	_resolveParamValue('sessionAlias', sessionAlias);
 	_resolveParamValue('campaignName', campaignName);
 	_resolveParamValue('customerName', customerName);
