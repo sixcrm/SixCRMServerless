@@ -175,9 +175,10 @@ describe('helpers/transaction/Refund.js', () => {
 
 		});
 
+
 	});
 
-	describe('createProcessingParameters', () => {
+	xdescribe('createProcessingParameters', () => {
 
 		//fails when transaction isn't set
 		//fails when transaction isn't the right thing...
@@ -203,7 +204,7 @@ describe('helpers/transaction/Refund.js', () => {
 
 	});
 
-	describe('refund', () => {
+	xdescribe('refund', () => {
 
 		it('successfully refunds a transaction', () => {
 
@@ -249,7 +250,7 @@ describe('helpers/transaction/Refund.js', () => {
 
 	});
 
-	describe('refundTransaction', () => {
+	xdescribe('refundTransaction', () => {
 
 		it('refunds a transaction', () => {
 
