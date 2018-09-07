@@ -10,7 +10,7 @@
 			},
 			{
 				"facet": "end",
-				"values": ["2018-01-22T23:59:59"]
+				"values": ["2018-03-22T23:59:59"]
 			},
 			{
 				"facet": "account",
@@ -19,6 +19,10 @@
 			{
 				"facet": "amount",
 				"values": [4.99]
+			},
+			{
+				"facet": "type",
+				"values": ["initial"]
 			}
 		],
 		"pagination": {
