@@ -111,7 +111,7 @@ module.exports = class Refund extends TransactionUtilities {
 		}
 
 		let refund = parameters;
-		let rebill = await this.rebillController.get({id: refund.rebill});
+		let rebill = await this.rebillController.get({id: refund.transaction.rebill});
 		let session = await this.sessionController.get({id: rebill.parentsession});
 		let customer = await this.customerController.get({id: session.customer});
 		let campaign = await this.campaignController.get({id: session.campaign});
