@@ -8,6 +8,6 @@ For scripts that use the SQL database, you'll need to set up your ssh tunnel and
 
 Example: `DRY_RUN=true AWS_PROFILE=development stage=development AURORA_PROXY=18.205.227.100 node tools/analytics/update-transactions.js`
 
-`update-transactions.js` -- This updates the existing transaction rows in the analytics schema with new columns.
-`import-orders.js` -- This imports from the rebills in DynamoDB to new tables created for the Orders report.
+`update-transactions.js` -- This updates the existing transaction rows in the analytics schema with new columns.  
+`import-orders.js` -- This imports from the rebills in DynamoDB to new tables created for the Orders report.  
 `add-cycle-count.js` -- This adds a cycle count to rebills in DynamoDB.  The rebill creation code was updated to include this for future rebills, this adds it to past rebills for consistency and ease of use.
