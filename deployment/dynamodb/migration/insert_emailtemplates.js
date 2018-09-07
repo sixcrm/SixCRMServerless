@@ -1,3 +1,4 @@
+/* eslint-disable */
 require('@6crm/sixcrmcore');
 const _ = require('lodash');
 const fs = require('fs');
