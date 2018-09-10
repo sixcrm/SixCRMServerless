@@ -135,6 +135,10 @@ module.exports = class EventEmailsController extends SNSEventController {
 			products = context.order.products.map(p => p.product);
 		}
 
+		if (_(context).has('rebill.products')) {
+			products = context.rebill.products.map(p => p.product);
+		}
+
 		this.parameters.set('products', products);
 	}
 
