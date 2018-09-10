@@ -605,7 +605,8 @@ module.exports = class SessionController extends entityController {
 
 				let context = {
 					session: session,
-					campaign: session.campaign
+					campaign: session.campaign,
+					customer: session.customer,
 				};
 
 				return eventHelperController.pushEvent({event_type: 'cancellation', context: context}).then(result => {
