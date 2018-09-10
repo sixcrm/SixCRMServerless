@@ -164,24 +164,34 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			AnalyticsEvent.push('create_order_initial', {
 				rebill
 			}),
-			this.pushEvent({event_type: 'order', context: {
-				rebill: rebill,
-				campaign: campaign,
-				session: session,
-				order: order,
-				transactionsubtype: transaction_subtype,
-				result: processed_rebill.result,
-				customer: customer,
-				creditcard: creditcard
-			}}),
 			this.markNonSuccessfulSession(processed_rebill.result, session)
 		]);
+
+		this.pushEvent({event_type: this.getEventType(processed_rebill), context: {
+			rebill: rebill,
+			campaign: campaign,
+			session: session,
+			order: order,
+			transactionsubtype: transaction_subtype,
+			result: processed_rebill.result,
+			customer: customer,
+			creditcard: creditcard
+		}});
 
 		return {
 			result: processed_rebill.result,
 			order: order
 		};
 
+	}
+
+	getEventType(processed_rebill) {
+		let event_type = 'order';
+
+		if (processed_rebill.result !== 'success') {
+			event_type = `order_${processed_rebill.result}`
+		}
+		return event_type;
 	}
 
 	getTransactionSubtype(event){
