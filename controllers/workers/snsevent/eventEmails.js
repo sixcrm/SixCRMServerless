@@ -14,6 +14,7 @@ const SMTPProviderController = global.SixCRM.routes.include('entities', 'SMTPPro
 const SNSEventController = global.SixCRM.routes.include('controllers','workers/components/SNSEvent.js');
 const ActivityHelper = global.SixCRM.routes.include('helpers', 'analytics/Activity.js');
 const handlebars = global.SixCRM.routes.include('helpers', 'emailtemplates/Handlebars.js');
+const AccountDetailsController = global.SixCRM.routes.include('entities', 'AccountDetails.js');
 
 module.exports = class EventEmailsController extends SNSEventController {
 
@@ -44,6 +45,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		this.smtpProviderController = new SMTPProviderController();
 		this.emailTemplatesController = new EmailTemplateController();
 		this.activityHelper = new ActivityHelper();
+		this.accountDetailsController = new AccountDetailsController();
 
 		this.smtpProviderController.sanitize(false);
 		this.emailTemplatesController.sanitize(false);
@@ -62,6 +64,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 			.then(() => this.acquireCustomer())
 			.then(() => this.acquireEmailTemplates())
 			.then(() => this.acquireSMTPProvider())
+			.then(() => this.acquireAccountDetails())
 			.then(() => this.sendEmails())
 			.then(() => this.createAnalyticsActivityRecord(``))
 			.catch(error => {
@@ -291,6 +294,20 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 	}
 
+	async acquireAccountDetails() {
+
+		let message = this.parameters.get('message');
+
+		du.debug('Get Account Details', message.account);
+
+		const accountdetails = await this.accountDetailsController.get({ id: message.account });
+
+		this.parameters.set('accountdetails', accountdetails);
+
+		return Promise.resolve(accountdetails);
+
+	}
+
 	sendEmails(){
 
 		du.debug('Send Emails');
@@ -398,6 +415,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		let context = this.parameters.get('message').context;
 		context.campaign = this.parameters.get('campaign');
 		context.customer = this.parameters.get(`customer`);
+		context.accountdetails = this.parameters.get('accountdetails');
 
 		return context;
 	}

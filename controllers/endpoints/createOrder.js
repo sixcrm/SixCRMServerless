@@ -6,7 +6,6 @@ const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').defaul
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-const AccountDetailsController = global.SixCRM.routes.include('entities', 'AccountDetails.js');
 const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
@@ -90,7 +89,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		this.transactionHelperController = new TransactionHelperController();
 		this.merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 		this.orderHelperController = new OrderHelperController();
-		this.accountDetailsController = new AccountDetailsController();
 
 		this.initialize();
 
@@ -113,12 +111,11 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		du.debug('session', session);
 		du.debug('global.account', global.account);
 
-		let [rawcreditcard, creditcard, campaign, previous_rebill, account_details] = await Promise.all([
+		let [rawcreditcard, creditcard, campaign, previous_rebill] = await Promise.all([
 			this.getRawCreditCard(event),
 			this.getCreditCard(event, customer),
 			this.getCampaign(session),
-			this.getPreviousRebill(event),
-			this.getAccountDetails(global.account)
+			this.getPreviousRebill(event)
 		]);
 
 		let transaction_subtype = this.getTransactionSubtype(event);
@@ -175,8 +172,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				transactionsubtype: transaction_subtype,
 				result: processed_rebill.result,
 				customer: customer,
-				creditcard: creditcard,
-				accountdetails: account_details
+				creditcard: creditcard
 			}}),
 			this.markNonSuccessfulSession(processed_rebill.result, session)
 		]);
@@ -274,14 +270,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		du.debug('Get Campaign');
 
 		return this.campaignController.get({ id: session.campaign });
-
-	}
-
-	getAccountDetails(account) {
-
-		du.debug('Get Account Details', account);
-
-		return this.accountDetailsController.get({ id: account });
 
 	}
 
