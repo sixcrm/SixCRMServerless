@@ -19,7 +19,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependency-cache-{{ checksum "package-lock.json" }}
-            - v1-dependency-cache-
       - run:
           name: Install npm
           command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm install

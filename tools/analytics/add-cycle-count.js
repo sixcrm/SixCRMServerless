@@ -60,12 +60,14 @@ Promise.all(_.map(['201804', '201805', '201806', '201807', '201808', '201809'], 
 		for (let i = 0; i < session.rebills.length; i++) {
 
 			const rebill = session.rebills[i];
-			if (rebill.cycle !== undefined) {
-				if (rebill.cycle !== i) {
-					du.warning(`Existing rebill ${rebill.id} with cycle ${rebill.cycle} should be ${i}`);
-				}
+			if (rebill.cycle === i) {
+				return;
 			}
 			else {
+				if (rebill.cycle !== undefined) {
+					du.warning(`Existing rebill ${rebill.id} with cycle ${rebill.cycle} should be ${i}`);
+				}
+
 				if (process.env.DRY_RUN === 'false') {
 					rebill.cycle = i;
 					return rebillController.update({entity: rebill});
