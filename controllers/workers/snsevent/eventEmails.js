@@ -35,7 +35,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		this.eventMap = {
 			'allorders': ['order'],
-			'initialorders': ['order']
+			'initialorders': ['order'],
+			'decline': ['order_decline']
 		};
 
 		this.event_record_handler = 'triggerEmails';
@@ -133,6 +134,10 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		if (_(context).has('order.products')) {
 			products = context.order.products.map(p => p.product);
+		}
+
+		if (_(context).has('rebill.products')) {
+			products = context.rebill.products.map(p => p.product);
 		}
 
 		this.parameters.set('products', products);
