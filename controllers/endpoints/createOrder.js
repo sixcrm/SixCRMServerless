@@ -189,8 +189,11 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		let event_type = 'order';
 
 		if (processed_rebill.result !== 'success') {
+			du.debug('Create Order result is not success:', processed_rebill.result);
 			event_type = `order_${processed_rebill.result}`
 		}
+
+		du.debug('createOrder.getEventType', event_type, processed_rebill.result);
 		return event_type;
 	}
 
