@@ -21,7 +21,7 @@
 	"expect": [
 		[{
 			"key": "datetime",
-			"value": "2018-01-22T00:00:00.000Z"
+			"value": "2018-01-22 00:00:00"
 		}, {
 			"key": "processorResults",
 			"value": [{
@@ -46,7 +46,7 @@
 		}],
 		[{
 			"key": "datetime",
-			"value": "2018-01-23T00:00:00.000Z"
+			"value": "2018-01-23 00:00:00"
 		}, {
 			"key": "processorResults",
 			"value": [{

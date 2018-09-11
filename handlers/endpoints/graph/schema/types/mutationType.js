@@ -1055,6 +1055,22 @@ module.exports.graphObj = new GraphQLObjectType({
 				});
 			}
 		},
+		updatebuiltinemailtemplate: {
+			type: emailTemplateType.graphObj,
+			description: 'Updates a Email Template.',
+			args: {
+				emailtemplate: {
+					type: emailTemplateInputType.graphObj
+				}
+			},
+			resolve: (value, emailtemplate) => {
+				const emailTemplateController = new EmailTemplateController();
+
+				return emailTemplateController.updateBuiltIn({
+					entity: emailtemplate.emailtemplate
+				});
+			}
+		},
 		deleteemailtemplate: {
 			type: deleteOutputType.graphObj,
 			description: 'Deletes a Email Template.',
@@ -1090,11 +1106,18 @@ module.exports.graphObj = new GraphQLObjectType({
 				const emailTemplateController = new EmailTemplateController();
 
 				return emailTemplateController.get({
-					id: args.emailtemplateid
+					id: args.emailtemplateid, fatal: true
 				}).then(emailtemplate => {
+					if (emailtemplate.built_in && global.account !== '*') {
+						const disallowedTypes = ['products', 'product_schedules'];
+						if (disallowedTypes.includes(args.entitytype)) {
+							throw new Error('This association is not allowed for built-in template.');
+						}
+					}
+
 					emailtemplate[args.entitytype] = [...(emailtemplate[args.entitytype] || []).filter(i => i !== args.entityid), args.entityid];
 
-					return emailTemplateController.update({entity: emailtemplate})
+					return emailTemplateController.updateAssociation({entity: emailtemplate})
 				});
 			}
 		},
@@ -1119,7 +1142,7 @@ module.exports.graphObj = new GraphQLObjectType({
 				}).then(emailtemplate => {
 					emailtemplate[args.entitytype] = (emailtemplate[args.entitytype] || []).filter(i => i !== args.entityid);
 
-					return emailTemplateController.update({entity: emailtemplate})
+					return emailTemplateController.updateAssociation({entity: emailtemplate})
 				});
 			}
 		},

@@ -666,7 +666,7 @@ module.exports = class entityController extends entityUtilitiesController {
 				if(_.isUndefined(ignore_updated_at) || ignore_updated_at !== true){
 
 					if(entity.updated_at !== existing_entity.updated_at){
-						throw eu.getError('bad_request', 'Mismatched updated_at timestamps - can not update.');
+						throw eu.getError('bad_request', `Mismatched updated_at timestamps - can not update ${this.descriptive_name}.`);
 					}
 
 				}

@@ -8,6 +8,8 @@ let merchantprovidergroupType = require('../merchantprovidergroup/merchantProvid
 const MerchantProviderGroupAssociationController = global.SixCRM.routes.include('controllers', 'entities/MerchantProviderGroupAssociation.js');
 const merchantProviderGroupAssociationController = new MerchantProviderGroupAssociationController();
 
+const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'MerchantProviderGroupAssociation',
 	description: 'A merchantprovidergroup association.',
@@ -35,7 +37,14 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: new GraphQLNonNull(campaignType.graphObj),
 			description: 'The campaign.',
 			resolve: (merchantprovidergroupassociation) => {
-				return merchantProviderGroupAssociationController.getCampaign(merchantprovidergroupassociation);
+				return merchantProviderGroupAssociationController.getCampaign(merchantprovidergroupassociation).then(campaign => {
+					du.debug('MerchantProviderGroupAssociation.campaign');
+					if (!campaign) {
+						du.error('MerchantProviderGroupAssociation.campaign is missing', merchantprovidergroupassociation);
+					}
+
+					return campaign;
+				})
 			}
 		},
 		created_at: {
