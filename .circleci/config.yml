@@ -19,7 +19,6 @@ jobs:
       - restore_cache:
           keys:
             - v1-dependency-cache-{{ checksum "package-lock.json" }}
-            - v1-dependency-cache-
       - run:
           name: Install npm
           command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm install
@@ -271,7 +270,7 @@ jobs:
           command: export SIX_VERBOSE=2 && node ./deployment/iam/deploy_policies.js
       - run:
           name: IAM Deploy Roles
-          command: export SIX_VERBOSE=2 && node ./deployment/iam/destroy_roles.js && node ./deployment/iam/deploy_roles.js
+          command: export SIX_VERBOSE=2 && node ./deployment/iam/deploy_roles.js
   deploy_stepfunctions:
     <<: *job-defaults
     steps:

@@ -46,6 +46,8 @@ configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
 
 });
 
+// This should be fairly straightforward, we're just looking up the missing information from Dynamo for each record.
+// We have to hit rebill first to get the session, then the session has the customer.
 async function updateTransaction(connection, id, index) {
 
 	let
