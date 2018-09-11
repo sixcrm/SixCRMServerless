@@ -155,7 +155,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.updateRebillPaidStatus(rebill, processed_rebill.transactions),
 			this.reversePreviousRebill(rebill, previous_rebill),
 			this.incrementMerchantProviderSummary(processed_rebill.transactions),
-			this.updateSessionWithWatermark(session, event.product_schedules, event.products),
+			this.updateSessionWithWatermark(session, event.product_schedules, event.products)
+				.then(() => this.markNonSuccessfulSession(processed_rebill.result, session)),
 			this.markNonSuccessfulRebill(processed_rebill.result, rebill),
 			AnalyticsEvent.push('order', {
 				session,
@@ -163,8 +164,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			}),
 			AnalyticsEvent.push('create_order_initial', {
 				rebill
-			}),
-			this.markNonSuccessfulSession(processed_rebill.result, session)
+			})
 		]);
 
 		this.pushEvent({event_type: this.getEventType(processed_rebill), context: {
