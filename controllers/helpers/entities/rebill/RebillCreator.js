@@ -667,11 +667,11 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		return sessionController.listRebills(session).then(rebills => {
 
-			let cycle = 1;
+			let cycle = 0;
 
 			if (rebills) {
 				du.debug('rebills', rebills);
-				cycle = rebills.filter(r => moment(r.bill_at).isBefore(prototype_rebill.bill_at)).length + 1;
+				cycle = rebills.filter(r => moment(r.bill_at).isBefore(prototype_rebill.bill_at)).length;
 			} else {
 				du.debug('no rebills');
 			}

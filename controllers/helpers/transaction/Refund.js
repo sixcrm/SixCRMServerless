@@ -4,6 +4,11 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
 const TransactionController = global.SixCRM.routes.include('entities','Transaction.js');
+const RebillController = global.SixCRM.routes.include('entities','Rebill.js');
+const SessionController = global.SixCRM.routes.include('entities','Session.js');
+const CustomerController = global.SixCRM.routes.include('entities','Customer.js');
+const CampaignController = global.SixCRM.routes.include('entities','Campaign.js');
+const CreditCardController = global.SixCRM.routes.include('entities','CreditCard.js');
 
 //Technical Debt:  Look at disabling and enabling ACLs here...
 module.exports = class Refund extends TransactionUtilities {
@@ -30,6 +35,11 @@ module.exports = class Refund extends TransactionUtilities {
 		};
 
 		this.transactionController = new TransactionController();
+		this.rebillController = new RebillController();
+		this.sessionController = new SessionController();
+		this.customerController = new CustomerController();
+		this.campaignController = new CampaignController();
+		this.creditCardController = new CreditCardController();
 
 		this.instantiateParameters();
 
@@ -63,7 +73,13 @@ module.exports = class Refund extends TransactionUtilities {
 			.then((refund_response) => {
 
 				this.pushEvent({event_type: 'refund', context:{
-					refund: this.parameters.get('refund')
+					refund: this.parameters.get('refund'),
+					transaction: this.parameters.get('transaction'),
+					rebill: this.parameters.get('rebill'),
+					session: this.parameters.get('session'),
+					customer: this.parameters.get('customer'),
+					campaign: this.parameters.get('campaign'),
+					creditcard: this.parameters.get('creditcard')
 				}});
 
 				return refund_response;
@@ -71,7 +87,7 @@ module.exports = class Refund extends TransactionUtilities {
 
 	}
 
-	createProcessingParameters(){
+	async createProcessingParameters(){
 
 		du.debug('Create Processing Parameters');
 
@@ -97,9 +113,21 @@ module.exports = class Refund extends TransactionUtilities {
 			parameters.amount = amount;
 		}
 
-		this.parameters.set('refund', parameters);
+		let refund = parameters;
+		let rebill = await this.rebillController.get({id: refund.transaction.rebill});
+		let session = await this.sessionController.get({id: rebill.parentsession});
+		let customer = await this.customerController.get({id: session.customer});
+		let campaign = await this.campaignController.get({id: session.campaign});
+		let creditcard = await this.creditCardController.get({id: refund.transaction.creditcard});
 
-		return Promise.resolve(parameters);
+		this.parameters.set('refund', parameters);
+		this.parameters.set('rebill', rebill);
+		this.parameters.set('session', session);
+		this.parameters.set('customer', customer);
+		this.parameters.set('campaign', campaign);
+		this.parameters.set('creditcard', creditcard);
+
+		return Promise.resolve(refund);
 
 	}
 

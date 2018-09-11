@@ -3,6 +3,12 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const RebillController = global.SixCRM.routes.include('entities','Rebill.js');
+const SessionController = global.SixCRM.routes.include('entities','Session.js');
+const CustomerController = global.SixCRM.routes.include('entities','Customer.js');
+const CampaignController = global.SixCRM.routes.include('entities','Campaign.js');
+const CreditCardController = global.SixCRM.routes.include('entities','CreditCard.js');
+const TransactionController = global.SixCRM.routes.include('entities','Transaction.js');
 
 module.exports = class ReturnController extends entityController {
 
@@ -11,6 +17,13 @@ module.exports = class ReturnController extends entityController {
 		super('return');
 
 		this.search_fields = ['alias'];
+
+		this.transactionController = new TransactionController();
+		this.rebillController = new RebillController();
+		this.sessionController = new SessionController();
+		this.customerController = new CustomerController();
+		this.campaignController = new CampaignController();
+		this.creditCardController = new CreditCardController();
 
 	}
 
@@ -34,12 +47,26 @@ module.exports = class ReturnController extends entityController {
 
 		return returnHelperController.mergeHistories(entity).then((entity) => super.create({
 			entity: entity
-		})).then((ret) => {
+		})).then(async (ret) => {
 			let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 			let eventHelperController = new EventsHelperController();
 
+			let transaction_id = _(ret).at('transactions[0].transaction');
+			let transaction = await this.transactionController.get({id: transaction_id});
+			let rebill = await this.rebillController.get({id: transaction.rebill});
+			let session = await this.sessionController.get({id: rebill.parentsession});
+			let customer = await this.customerController.get({id: session.customer});
+			let campaign = await this.campaignController.get({id: session.campaign});
+			let creditcard = await this.creditCardController.get({id: transaction.creditcard});
+
 			let context = {
-				'return': ret
+				'return': ret,
+				rebill: rebill,
+				transaction: transaction,
+				session: session,
+				customer: customer,
+				campaign: campaign,
+				creditcard: creditcard
 			};
 
 			return eventHelperController.pushEvent({event_type: 'return', context: context}).then(result => {

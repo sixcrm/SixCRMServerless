@@ -6,7 +6,6 @@ const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').defaul
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
-const AccountDetailsController = global.SixCRM.routes.include('entities', 'AccountDetails.js');
 const SessionHelperController = global.SixCRM.routes.include('helpers', 'entities/session/Session.js');
 const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
 const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
@@ -90,7 +89,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		this.transactionHelperController = new TransactionHelperController();
 		this.merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 		this.orderHelperController = new OrderHelperController();
-		this.accountDetailsController = new AccountDetailsController();
 
 		this.initialize();
 
@@ -113,12 +111,11 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		du.debug('session', session);
 		du.debug('global.account', global.account);
 
-		let [rawcreditcard, creditcard, campaign, previous_rebill, account_details] = await Promise.all([
+		let [rawcreditcard, creditcard, campaign, previous_rebill] = await Promise.all([
 			this.getRawCreditCard(event),
 			this.getCreditCard(event, customer),
 			this.getCampaign(session),
-			this.getPreviousRebill(event),
-			this.getAccountDetails(global.account)
+			this.getPreviousRebill(event)
 		]);
 
 		let transaction_subtype = this.getTransactionSubtype(event);
@@ -158,7 +155,8 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			this.updateRebillPaidStatus(rebill, processed_rebill.transactions),
 			this.reversePreviousRebill(rebill, previous_rebill),
 			this.incrementMerchantProviderSummary(processed_rebill.transactions),
-			this.updateSessionWithWatermark(session, event.product_schedules, event.products),
+			this.updateSessionWithWatermark(session, event.product_schedules, event.products)
+				.then(() => this.markNonSuccessfulSession(processed_rebill.result, session)),
 			this.markNonSuccessfulRebill(processed_rebill.result, rebill),
 			AnalyticsEvent.push('order', {
 				session,
@@ -166,26 +164,37 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			}),
 			AnalyticsEvent.push('create_order_initial', {
 				rebill
-			}),
-			this.pushEvent({event_type: 'order', context: {
-				rebill: rebill,
-				campaign: campaign,
-				session: session,
-				order: order,
-				transactionsubtype: transaction_subtype,
-				result: processed_rebill.result,
-				customer: customer,
-				creditcard: creditcard,
-				accountdetails: account_details
-			}}),
-			this.markNonSuccessfulSession(processed_rebill.result, session)
+			})
 		]);
+
+		this.pushEvent({event_type: this.getEventType(processed_rebill), context: {
+			rebill: rebill,
+			campaign: campaign,
+			session: session,
+			order: order,
+			transactionsubtype: transaction_subtype,
+			result: processed_rebill.result,
+			customer: customer,
+			creditcard: creditcard
+		}});
 
 		return {
 			result: processed_rebill.result,
 			order: order
 		};
 
+	}
+
+	getEventType(processed_rebill) {
+		let event_type = 'order';
+
+		if (processed_rebill.result !== 'success') {
+			du.debug('Create Order result is not success:', processed_rebill.result);
+			event_type = `order_${processed_rebill.result}`
+		}
+
+		du.debug('createOrder.getEventType', event_type, processed_rebill.result);
+		return event_type;
 	}
 
 	getTransactionSubtype(event){
@@ -274,14 +283,6 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		du.debug('Get Campaign');
 
 		return this.campaignController.get({ id: session.campaign });
-
-	}
-
-	getAccountDetails(account) {
-
-		du.debug('Get Account Details', account);
-
-		return this.accountDetailsController.get({ id: account });
 
 	}
 

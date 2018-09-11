@@ -114,6 +114,7 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 		return sessionController.get({id: rebill.parentsession}).then((session) => {
 			parameters.session = session;
+			parameters.rebill = rebill;
 			return Promise.all([
 				sessionController.getCustomer(session).then((customer) => parameters.customer = customer),
 				sessionController.getCampaign(session).then((campaign) => parameters.campaign = campaign)
@@ -127,7 +128,8 @@ module.exports = class BillController extends stepFunctionWorkerController {
 				campaign: parameters.campaign,
 				session: parameters.session,
 				customer: parameters.customer,
-				creditcard: parameters.creditcard
+				creditcard: parameters.creditcard,
+				rebill: parameters.rebill
 			}
 		};
 
