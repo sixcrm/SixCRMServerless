@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
@@ -75,6 +76,7 @@ module.exports = class ReIndexingHelperController {
 
 	getDynamoItems() {
 
+		const limit = 100000;
 		let promises = [];
 
 		let indexing_entities = global.SixCRM.routes.include('model', 'helpers/indexing/entitytype.json').enum;
@@ -82,15 +84,17 @@ module.exports = class ReIndexingHelperController {
 		du.info('Indexing entities: ' + indexing_entities);
 
 		indexing_entities.map(entity => {
-			promises.push(() => dynamodbprovider.scanRecords(entity + 's').then(r => {
-				return r.Items.map(c => {
+			promises.push(async () => {
+				du.info(`Scanning ${entity}s...`);
+				const result = await dynamodbprovider.scanRecords(entity + 's', {limit});
+				return result.Items.map(c => {
 					entities_dynamodb.push({
 						id: c.id,
 						entity_type: entity,
 						entity: c
 					});
 				});
-			}));
+			});
 		});
 
 		return arrayutilities.serial(promises);
@@ -128,8 +132,46 @@ module.exports = class ReIndexingHelperController {
 
 	printStatistics() {
 
+		const printDynamoTypeStatistics = () => {
+			const types = entities_dynamodb.map(e => e.entity_type);
+			const typeMap = types.reduce(
+				(results, t) => {
+					results.has(t) ? results.set(t, results.get(t) + 1) : results.set(t, 1);
+					return results;
+				},
+				new Map()
+			);
+			typeMap.forEach((value, key) => {
+				du.info(`Total ${key}s in dynamodb: ${value}`);
+			});
+		};
+
+		const reduceIndexTypes = () => {
+			const types = entities_index.map(e => e.fields.entity_type && e.fields.entity_type[0]);
+			return types.reduce(
+				(results, t) => {
+					results.has(t) ? results.set(t, results.get(t) + 1) : results.set(t, 1);
+					return results;
+				},
+				new Map()
+			);
+		};
+
+		const printIndexTypeStatistics = () => {
+			const numTypes = reduceIndexTypes();
+			numTypes.forEach((value, key) => {
+				if (key) {
+					du.info(`Total ${key}s in index: ${value}`);
+				} else {
+					du.info(`Total missing entity type in index: ${value}`);
+				}
+			});
+		};
+
 		du.info('Total in dynamodb: ' + entities_dynamodb.length);
+		printDynamoTypeStatistics();
 		du.info('Total in index: ' + entities_index.length);
+		printIndexTypeStatistics();
 		du.info('Missing in index: ' + missing_in_index.length);
 		du.debug(index_details);
 		du.info('Missing in dynamodb: ' + missing_in_dynamo.length);
@@ -137,34 +179,45 @@ module.exports = class ReIndexingHelperController {
 
 	}
 
-	fixIndex(fix) {
+	async fixIndex(fix) {
 
 		if (fix === true) {
 
-			let promises = [];
+			let uploadGroups = [];
+			const uploadLimit = 1000;
 
 			if (missing_in_index.length) {
-				let adds = indexingHelperController.createIndexingDocument(missing_in_index.map(m => {
-					m.index_action = 'add';
-					return m;
-				})).then(document => cloudsearchprovider.uploadDocuments(document));
-				promises.push(adds);
+				uploadGroups = uploadGroups.concat(
+					_.chunk(
+						missing_in_index.map(entity => ({ index_action: 'add', ...entity })),
+						uploadLimit
+					)
+				);
 			}
 
 			if (missing_in_dynamo.length) {
-				let deletes = indexingHelperController.createIndexingDocument(missing_in_dynamo.map(m => {
-					m.index_action = 'delete';
-					return m;
-				})).then(document => cloudsearchprovider.uploadDocuments(document));
-				promises.push(deletes);
+				uploadGroups = uploadGroups.concat(
+					_.chunk(
+						missing_in_dynamo.map(entity => ({ index_action: 'delete', ...entity })),
+						uploadLimit
+					)
+				);
 			}
 
-			return Promise.all(promises);
+			if (uploadGroups.length) {
+				du.info('Repairing cloudsearch index...');
 
+				for (const group of uploadGroups) {
+					const document = await indexingHelperController.createIndexingDocument(group);
+					du.info(`Repairing ${group.length} documents...`);
+					try {
+						await cloudsearchprovider.uploadDocuments(document);
+					} catch (err) {
+						du.error('Error uploading document:', err);
+					}
+				}
+			}
 		}
-
-		return true;
-
 	}
 
 };
