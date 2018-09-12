@@ -25,7 +25,7 @@ module.exports = class ReIndexingHelperController {
 	}
 
 	//Entrypoint
-	execute(fix = false){
+	async execute(fix = false){
 
 		du.debug('Reindexing');
 
@@ -33,14 +33,12 @@ module.exports = class ReIndexingHelperController {
 			du.warning('Fix: On');
 		}
 
-		return this.getCloudsearchItemsRecursive()
-			.then(() => this.getDynamoItems())
-			.then(() => this.determineDifferences())
-			.then(() => this.printStatistics())
-			.then(() => this.fixIndex(fix))
-			.then(() => {
-				return du.info('Finished');
-			});
+		await this.getCloudsearchItemsRecursive();
+		await this.getDynamoItems();
+		this.determineDifferences();
+		this.printStatistics();
+		await this.fixIndex(fix);
+		return du.info('Finished');
 	}
 
 	getCloudsearchItemsRecursive(cursor, all_items) {
@@ -119,7 +117,7 @@ module.exports = class ReIndexingHelperController {
 
 		entities_index.filter(i => i.fields.entity_type).map(i => {
 			if (!(entities_dynamodb.map(d => d.id).includes(i.id))) {
-				missing_in_dynamo.push({id: i.id, entity_type: i.fields.entity_type[0]});
+				missing_in_dynamo.push({id: i.id, entity_type: i.fields.entity_type[0], fields: i.fields});
 
 				if (!db_details[i.fields.entity_type]) {
 					db_details[i.fields.entity_type] = 0;
@@ -176,7 +174,9 @@ module.exports = class ReIndexingHelperController {
 		du.debug(index_details);
 		du.info('Missing in dynamodb: ' + missing_in_dynamo.length);
 		du.debug(db_details);
-
+		for (let document of missing_in_dynamo) {
+			du.debug(document);
+		}
 	}
 
 	async fixIndex(fix) {
