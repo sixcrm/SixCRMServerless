@@ -117,7 +117,7 @@ module.exports = class ReIndexingHelperController {
 			}
 		});
 
-		entities_index.filter(i => i.entity_type).map(i => {
+		entities_index.filter(i => i.fields.entity_type).map(i => {
 			if (!(entities_dynamodb.map(d => d.id).includes(i.id))) {
 				missing_in_dynamo.push({id: i.id, entity_type: i.fields.entity_type[0]});
 
