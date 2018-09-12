@@ -59,14 +59,9 @@
 		"example": "00196"
 	  },
 	  {
-		"description": "Customer Billing address First Name",
-		"value": "creditcard.address.firstname",
-		"example": "John"
-	  },
-	  {
-		"description": "Customer Billing address Last Name",
-		"value": "creditcard.address.lastname",
-		"example": "Doe"
+		"description": "Customer Billing Name",
+		"value": "creditcard.name",
+		"example": "John Doe"
 	  },
 	  {
 		"description": "Customer Billing address 1",
@@ -102,6 +97,16 @@
 		"description": "Customer Billing zip",
 		"value": "creditcard.address.zip",
 		"example": "00196"
+	  },
+	  {
+		"description": "Credit Card Last Four",
+		"value": "creditcard.last_four",
+		"example": "5390"
+	  },
+	  {
+		"description": "Credit Card Type",
+		"value": "creditcard.type",
+		"example": "American Express"
 	  },
 	  {
 		"description": "Initial Order ID",

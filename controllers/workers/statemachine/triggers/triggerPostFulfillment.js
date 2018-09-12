@@ -29,7 +29,7 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 		if(_.isArray(shipping_receipts) && arrayutilities.nonEmpty(shipping_receipts)){
 
 			let trigger_promises = arrayutilities.map(shipping_receipts, shipping_receipt => {
-				return this.triggerPostFulfillment(shipping_receipt);
+				return this.triggerPostFulfillment(shipping_receipt, rebill);
 			});
 
 			let result = await Promise.all(trigger_promises);
@@ -57,9 +57,9 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 
 	}
 
-	triggerPostFulfillment(shipping_receipt){
+	async triggerPostFulfillment(shipping_receipt, rebill){
 
-		du.debug('Trigger Post Fulfillment');
+		du.debug('Trigger Post Fulfillment', shipping_receipt, rebill);
 
 		if(!_.has(shipping_receipt, 'id')){
 			throw eu.getError('server', 'Expected Shipping Receipt to have property "id".');
@@ -69,11 +69,22 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 			throw eu.getError('server', 'Expected Shipping Receipt ID to be a UUID.');
 		}
 
-		let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-		let eventHelperController = new EventsHelperController();
+		const EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+		const SessionController = global.SixCRM.routes.include('entities','Session.js');
+		const CustomerController = global.SixCRM.routes.include('entities','Customer.js');
+		const CampaignController = global.SixCRM.routes.include('entities','Campaign.js');
+
+		const eventHelperController = new EventsHelperController();
+		const sessionController = new SessionController();
+		const customerController = new CustomerController();
+		const campaignController = new CampaignController();
+
+		let session = await sessionController.get({id: rebill.parentsession});
+		let customer = await customerController.get({id: session.customer});
+		let campaign = await campaignController.get({id: session.campaign});
 
 		let context = {
-			shipping_receipt: shipping_receipt
+			shipping_receipt, rebill, session, customer, campaign
 		};
 
 		return eventHelperController.pushEvent({event_type: 'allfulfillments', context: context}).then(result => {

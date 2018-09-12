@@ -58,7 +58,9 @@ module.exports = class OrderHelperController {
 				product: productHelperController.getPublicFields(product_group.product),
 				quantity: product_group.quantity,
 				amount: product_group.amount,
-				image: productHelperController.getDefaultImage(product_group.product)
+				image: productHelperController.getDefaultImage(product_group.product),
+				shippingreceipt: product_group.shipping_receipt,
+				returns: product_group.returns
 			}
 		});
 
