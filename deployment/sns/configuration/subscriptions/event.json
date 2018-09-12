@@ -11,7 +11,6 @@
           "AttributeValue":{
             "event_type": [
               "order",
-              "order_decline",
 			  "initialorders",
 			  "allorders",
 			  "initialfulfillment",
@@ -50,7 +49,6 @@
           "AttributeValue":{
             "event_type": [
               "order",
-              "order_decline",
               "lead",
               "confirm",
               "test",
