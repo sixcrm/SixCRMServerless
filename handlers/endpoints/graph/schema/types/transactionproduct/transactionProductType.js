@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
