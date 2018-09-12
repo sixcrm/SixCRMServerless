@@ -164,19 +164,9 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			}),
 			AnalyticsEvent.push('create_order_initial', {
 				rebill
-			})
+			}),
+			this.publishEvent({processed_rebill, rebill, campaign, session, order, transaction_subtype, customer, creditcard})
 		]);
-
-		this.pushEvent({event_type: this.getEventType(processed_rebill), context: {
-			rebill: rebill,
-			campaign: campaign,
-			session: session,
-			order: order,
-			transactionsubtype: transaction_subtype,
-			result: processed_rebill.result,
-			customer: customer,
-			creditcard: creditcard
-		}});
 
 		return {
 			result: processed_rebill.result,
@@ -185,16 +175,21 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	getEventType(processed_rebill) {
-		let event_type = 'order';
-
-		if (processed_rebill.result !== 'success') {
-			du.debug('Create Order result is not success:', processed_rebill.result);
-			event_type = `order_${processed_rebill.result}`
+	publishEvent({processed_rebill, rebill, campaign, session, order, transaction_subtype, customer, creditcard}) {
+		if (processed_rebill.result === 'success') {
+			this.pushEvent({
+				event_type: 'order', context: {
+					rebill: rebill,
+					campaign: campaign,
+					session: session,
+					order: order,
+					transactionsubtype: transaction_subtype,
+					result: processed_rebill.result,
+					customer: customer,
+					creditcard: creditcard
+				}
+			});
 		}
-
-		du.debug('createOrder.getEventType', event_type, processed_rebill.result);
-		return event_type;
 	}
 
 	getTransactionSubtype(event){

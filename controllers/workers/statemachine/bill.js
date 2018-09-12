@@ -47,7 +47,9 @@ module.exports = class BillController extends stepFunctionWorkerController {
 			rebill
 		});
 
-		await this.fetchContextParameters(rebill).then((parameters) => this.pushEvent(parameters));
+		let result = register_result.parameters.get('response_type');
+
+		await this.fetchContextParameters(rebill, result).then((parameters) => this.pushEvent(parameters));
 
 		return this.respond(register_result, rebill);
 
@@ -109,12 +111,13 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 	}
 
-	async fetchContextParameters(rebill) {
+	async fetchContextParameters(rebill, processor_result) {
 		let parameters = {};
 
 		return sessionController.get({id: rebill.parentsession}).then((session) => {
 			parameters.session = session;
 			parameters.rebill = rebill;
+			parameters.processor_result = processor_result;
 			return Promise.all([
 				sessionController.getCustomer(session).then((customer) => parameters.customer = customer),
 				sessionController.getCampaign(session).then((campaign) => parameters.campaign = campaign)
@@ -123,7 +126,7 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 	async pushEvent(parameters) {
 		let event = {
-			event_type: 'allorders',
+			event_type: this.getEventType(parameters.processor_result),
 			context: {
 				campaign: parameters.campaign,
 				session: parameters.session,
@@ -133,8 +136,22 @@ module.exports = class BillController extends stepFunctionWorkerController {
 			}
 		};
 
+		du.debug(`bill.js.pushEvent`, event);
 		let EventPushHelperController = global.SixCRM.routes.include('helpers', 'events/EventPush.js');
 		return new EventPushHelperController().pushEvent(event);
+	}
+
+
+	getEventType(result) {
+		let event_type = 'allorders';
+
+		if (result !== 'success') {
+			du.debug('bill.js rebill result is not success:', result);
+			event_type = 'decline';
+		}
+
+		du.debug('bill.js getEventType', event_type, result);
+		return event_type;
 	}
 
 	respond(result, rebill){
