@@ -1110,7 +1110,7 @@ describe('controllers/EntityUtilities.js', () => {
 			try {
 				entityUtilitiesController.getID({any_primary_key: 'an_id'})
 			}catch (error){
-				expect(error.message).to.equal('[400] Could not determine identifier for undefined for ID [object Object]..');
+				expect(error.message).to.equal('[400] Could not determine identifier for undefined for ID [object Object].');
 			}
 		});
 
