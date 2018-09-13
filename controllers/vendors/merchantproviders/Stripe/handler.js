@@ -542,7 +542,7 @@ class StripeController extends MerchantProvider {
 		}
 
 		if(!_.isNull(amount) && action !== 'reverse'){
-			parameters_object.amount = amount * 100;
+			parameters_object.amount = Math.round(amount * 100);
 		}
 
 		return parameters_object;
@@ -559,7 +559,7 @@ class StripeController extends MerchantProvider {
 		let charge_description = this.parameters.get('chargedescription', {fatal: false});
 		let shipping_object = this.parameters.get('shippingobject', {fatal: false});
 
-		amount = amount * 100;
+		amount = Math.round(amount * 100);
 
 		let parameters = {
 			amount: amount,
