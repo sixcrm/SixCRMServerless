@@ -71,6 +71,7 @@ module.exports = class Refund extends TransactionUtilities {
 
 			})
 			.then((refund_response) => {
+				du.debug('Refund.refundTransaction()', refund_response);
 
 				this.pushEvent({event_type: 'refund', context:{
 					refund: this.parameters.get('refund'),
@@ -79,7 +80,8 @@ module.exports = class Refund extends TransactionUtilities {
 					session: this.parameters.get('session'),
 					customer: this.parameters.get('customer'),
 					campaign: this.parameters.get('campaign'),
-					creditcard: this.parameters.get('creditcard')
+					creditcard: this.parameters.get('creditcard'),
+					refund_response: refund_response
 				}});
 
 				return refund_response;
