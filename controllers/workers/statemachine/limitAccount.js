@@ -7,7 +7,7 @@ const accountController = new AccountController();
 const sessionController = new SessionController();
 const eventPushHelperController = new EventPushHelperController();
 
-module.exports = class DeactivateAccountController extends workerController {
+module.exports = class LimitAccountController extends workerController {
 	constructor() {
 		super();
 		this.permissionutilities.setGlobalAccount('3f4abaf6-52ac-40c6-b155-d04caeb0391f');
@@ -15,10 +15,11 @@ module.exports = class DeactivateAccountController extends workerController {
 
 	async execute(account_id) {
 		const account = await accountController.get({ id: account_id });
-		await Promise.all([
-			this.deactivateAccount(account),
-			this.cancelSessions(account)
-		]);
+		account.billing.limited = true;
+		await accountController.update({
+			entity: account,
+			allow_billing_overwrite: true
+		});
 
 		const session = await sessionController.get({ id: account.billing.session });
 
@@ -29,32 +30,5 @@ module.exports = class DeactivateAccountController extends workerController {
 				campaign: session.campaign
 			}
 		});
-	}
-
-	async deactivateAccount(account) {
-		account.billing.deactivated = true;
-		await accountController.update({
-			entity: account,
-			allow_billing_overwrite: true
-		});
-	}
-
-	async cancelSessions(account) {
-		const {sessions} = await sessionController.listByAccount({
-			query_parameters: {
-				FilterExpression: 'not_exists(#cancelled) AND not_exists(#concluded)',
-				ExpressionAttributeNames: {
-					'#cancelled': 'cancelled',
-					'#concluded': 'concluded'
-				}
-			},
-			account
-		});
-
-		if (sessions === null) {
-			return;
-		}
-
-		await Promise.all(sessions.map(entity => sessionController.cancelSession({entity})));
 	}
 }

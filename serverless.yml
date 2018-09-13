@@ -200,8 +200,16 @@ functions:
     handler: handlers/statemachine/handlers.getrecoverdate
 
   # Account
+  sendbillingfailed:
+    handler: handlers/statemachine/handlers.sendbillingfailed
+  sendbillingreminder:
+    handler: handlers/statemachine/handlers.sendbillingreminder
+  sendbillingfinalwarning:
+    handler: handlers/statemachine/handlers.sendbillingfinalwarning
   deactivateaccount:
     handler: handlers/statemachine/handlers.deactivateaccount
+  limitaccount:
+    handler: handlers/statemachine/handlers.limitaccount
 
 ########################
 # SQS handlers

@@ -28,7 +28,11 @@ const TriggerFulfillmentController = global.SixCRM.routes.include('controllers',
 const TriggerPreFulfillmentController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerPreFulfillment.js');
 const TriggerRecoveryController = global.SixCRM.routes.include('controllers', 'workers/statemachine/triggers/triggerRecovery.js');
 
+const SendBillingFailedController = global.SixCRM.routes.include('controllers', 'workers/statemachine/sendBillingFailed.js');
+const SendBillingReminderController = global.SixCRM.routes.include('controllers', 'workers/statemachine/sendBillingReminder.js');
+const SendBillingFinalWarningController = global.SixCRM.routes.include('controllers', 'workers/statemachine/sendBillingFinalWarning.js');
 const DeactivateAccountController = global.SixCRM.routes.include('controllers', 'workers/statemachine/deactivateAccount.js');
+const LimitAccountController = global.SixCRM.routes.include('controllers', 'workers/statemachine/limitAccount.js');
 
 module.exports = {
 	gettrackinginformation: handleStepFunction((event) => new GetTrackingInformationController().execute(event)),
@@ -57,7 +61,11 @@ module.exports = {
 	triggerrecovery: handleStepFunction((event) => new TriggerRecoveryController().execute(event)),
 	triggercreaterebill: handleStepFunction((event) => new TriggerCreateRebillController().execute(event)),
 
+	sendbillingfailed: handleStepFunction((event) => new SendBillingFailedController().execute(event)),
+	sendbillingreminder: handleStepFunction((event) => new SendBillingReminderController().execute(event)),
+	sendbillingfinalwarning: handleStepFunction((event) => new SendBillingFinalWarningController().execute(event)),
 	deactivateaccount: handleStepFunction((event) => new DeactivateAccountController().execute(event)),
+	limitaccount: handleStepFunction((event) => new LimitAccountController().execute(event)),
 };
 
 function handleStepFunction(delegate) {

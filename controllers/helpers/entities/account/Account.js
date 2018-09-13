@@ -267,6 +267,56 @@ module.exports = class AccountHelperController {
 
 	}
 
+	async getAccountForCustomer(customer) {
+		if (!_.has(this, 'sessionController')) {
+			this.sessionController = new SessionController();
+		}
+
+		if (!_.has(this, 'accountController')) {
+			this.accountController = new AccountController();
+		}
+
+		const {session} = await this.sessionController.getBySecondaryIndex({
+			field: 'customer',
+			index_name: 'customer-index',
+			index_value: customer.id,
+			query_parameters: {
+				filter_expression: '#account = :billingaccount AND not_exists(#cancelled) AND not_exists(#concluded)',
+				expression_attribute_names: {
+					'#account': 'account',
+					'#cancelled': 'cancelled',
+					'#concluded': 'concluded'
+				},
+				expression_attribute_values: {
+					':billingaccount': '3f4abaf6-52ac-40c6-b155-d04caeb0391f'
+				}
+			}
+		});
+
+		if (_.isNull(session)) {
+			throw eu.getError('server', 'Could not find billing session for customer');
+		}
+
+		const {accounts} = await this.accountController.list({
+			query_parameters: {
+				filter_expression: '#billing.#session = :session',
+				expression_attribute_names: {
+					'#billing': 'billing',
+					'#session': 'session'
+				},
+				expression_attribute_values: {
+					':session': session.id
+				}
+			}
+		});
+
+		if (_.isNull(accounts)) {
+			throw eu.getError('server', 'Could not find account for billing session');
+		}
+
+		return accounts[0];
+	}
+
 	async _billNewPlan({account, plan}){
 
 		du.debug('Bill New Plan');
@@ -505,7 +555,7 @@ module.exports = class AccountHelperController {
 		this.sessionController.enableACLs();
 
 		this.accountController.disableACLs();
-		let account_owner = await this._getAccountOwner({account: account});
+		let account_owner = await this.getAccountOwner({account: account});
 		this.accountController.enableACLs();
 
 		if(account_owner !== customer.email){
@@ -516,7 +566,7 @@ module.exports = class AccountHelperController {
 
 	}
 
-	async _getAccountOwner({account}){
+	async getAccountOwner({account}){
 
 		du.debug('Get Account Owner');
 
