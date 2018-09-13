@@ -113,13 +113,12 @@ class AccountController extends entityController {
 
 	//Technical Debt:  This needs to be adjusted.  Master users should see all accounts but non-master users should see all accounts that they have ACLs on.
 	list({
+		query_parameters = {},
 		pagination,
 		fatal
 	}) {
 
 		du.debug("List");
-
-		let query_parameters = {};
 
 		if (global.account !== '*') {
 
