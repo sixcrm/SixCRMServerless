@@ -1,5 +1,5 @@
-
 const _ = require('lodash');
+const moment = require('moment');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const TransactionUtilities = global.SixCRM.routes.include('helpers', 'transaction/TransactionUtilities.js');
@@ -71,6 +71,7 @@ module.exports = class Refund extends TransactionUtilities {
 
 			})
 			.then((refund_response) => {
+				du.debug('Refund.refundTransaction()', refund_response);
 
 				this.pushEvent({event_type: 'refund', context:{
 					refund: this.parameters.get('refund'),
@@ -79,7 +80,8 @@ module.exports = class Refund extends TransactionUtilities {
 					session: this.parameters.get('session'),
 					customer: this.parameters.get('customer'),
 					campaign: this.parameters.get('campaign'),
-					creditcard: this.parameters.get('creditcard')
+					creditcard: this.parameters.get('creditcard'),
+					refund_response: refund_response
 				}});
 
 				return refund_response;
@@ -114,6 +116,7 @@ module.exports = class Refund extends TransactionUtilities {
 		}
 
 		let refund = parameters;
+		refund.created_at = moment();
 		let rebill = await this.rebillController.get({id: refund.transaction.rebill});
 		let session = await this.sessionController.get({id: rebill.parentsession});
 		let customer = await this.customerController.get({id: session.customer});
