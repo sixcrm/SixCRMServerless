@@ -51,28 +51,29 @@ module.exports = class ReturnController extends entityController {
 			let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 			let eventHelperController = new EventsHelperController();
 
-			let transaction_id = _(ret).at('transactions[0].transaction');
+			du.debug('Return.create()->mergeHistories->super.create', ret);
+
+			let transaction_id = _(ret).at('transactions[0].transaction').toString();
 			let transaction = await this.transactionController.get({id: transaction_id});
 			let rebill = await this.rebillController.get({id: transaction.rebill});
 			let session = await this.sessionController.get({id: rebill.parentsession});
 			let customer = await this.customerController.get({id: session.customer});
 			let campaign = await this.campaignController.get({id: session.campaign});
-			let creditcard = await this.creditCardController.get({id: transaction.creditcard});
 
 			let context = {
 				'return': ret,
-				rebill: rebill,
-				transaction: transaction,
-				session: session,
-				customer: customer,
-				campaign: campaign,
-				creditcard: creditcard
+				rebill,
+				transaction,
+				session,
+				customer,
+				campaign
 			};
 
-			return eventHelperController.pushEvent({event_type: 'return', context: context}).then(result => {
-				du.info(result);
-				return ret;
-			});
+			if (transaction.creditcard) {
+				context.creditcard = await this.creditCardController.get({id: transaction.creditcard});
+			}
+
+			return eventHelperController.pushEvent({event_type: 'return', context: context}).then(() => ret);
 		});
 
 	}
