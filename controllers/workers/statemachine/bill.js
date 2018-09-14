@@ -49,7 +49,11 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 		await this.fetchContextParameters(rebill, result).then((parameters) => this.pushEvent(parameters));
 
-		await this.incrementMerchantProviderSummary(register_result);
+		try {
+			await this.incrementMerchantProviderSummary(register_result);
+		} catch(error) {
+			du.warning(`Failed to increment summary for rebill ${rebill.id}`, error);
+		}
 
 		return this.respond(register_result, rebill);
 
