@@ -62,6 +62,8 @@
 		"body": "Billing Failed TEST",
 		"smtp_provider": "f3ba1ee9-0d03-464d-ad6e-e2faafe660ce",
 		"type": "billing_failed",
+		"enabled": true,
+		"campaigns": ["8b60000e-6a6b-4807-94d1-f737da089ee5"],
 		"created_at": "2017-09-11T11:30:41.324Z",
 		"updated_at": "2017-09-11T11:30:41.324Z"
 	},
@@ -73,6 +75,8 @@
 		"body": "Billing Reminder TEST",
 		"smtp_provider": "f3ba1ee9-0d03-464d-ad6e-e2faafe660ce",
 		"type": "billing_reminder",
+		"enabled": true,
+		"campaigns": ["8b60000e-6a6b-4807-94d1-f737da089ee5"],
 		"created_at": "2017-09-11T11:30:41.324Z",
 		"updated_at": "2017-09-11T11:30:41.324Z"
 	},
@@ -84,6 +88,8 @@
 		"body": "Billing Final Warning TEST",
 		"smtp_provider": "f3ba1ee9-0d03-464d-ad6e-e2faafe660ce",
 		"type": "billing_final_warning",
+		"enabled": true,
+		"campaigns": ["8b60000e-6a6b-4807-94d1-f737da089ee5"],
 		"created_at": "2017-09-11T11:30:41.324Z",
 		"updated_at": "2017-09-11T11:30:41.324Z"
 	},
@@ -95,6 +101,8 @@
 		"body": "Account Limited TEST",
 		"smtp_provider": "f3ba1ee9-0d03-464d-ad6e-e2faafe660ce",
 		"type": "account_limited",
+		"enabled": true,
+		"campaigns": ["8b60000e-6a6b-4807-94d1-f737da089ee5"],
 		"created_at": "2017-09-11T11:30:41.324Z",
 		"updated_at": "2017-09-11T11:30:41.324Z"
 	},
@@ -106,6 +114,8 @@
 		"body": "Account Deactivated TEST",
 		"smtp_provider": "f3ba1ee9-0d03-464d-ad6e-e2faafe660ce",
 		"type": "account_deactivated",
+		"enabled": true,
+		"campaigns": ["8b60000e-6a6b-4807-94d1-f737da089ee5"],
 		"created_at": "2017-09-11T11:30:41.324Z",
 		"updated_at": "2017-09-11T11:30:41.324Z"
 	}
