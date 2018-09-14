@@ -78,7 +78,7 @@ aurora:
   release: 4
   region: 'localhost'
   default_cluster_identifier: 'sixcrm'
-  user: 'root'
+  user: 'postgres'
   database: 'postgres'
   password: ''
   host: local-docker
