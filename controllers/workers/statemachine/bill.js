@@ -15,6 +15,9 @@ const rebillController = new RebillController();
 const SessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 const sessionController = new SessionController();
 
+const CreditCardController = global.SixCRM.routes.include('controllers', 'entities/CreditCard.js');
+const creditCardController = new CreditCardController();
+
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
 module.exports = class BillController extends stepFunctionWorkerController {
@@ -47,7 +50,7 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 		let result = register_result.parameters.get('response_type');
 
-		await this.fetchContextParameters(rebill, result).then((parameters) => this.pushEvent(parameters));
+		await this.fetchContextParameters(rebill, result, transactions[0]).then((parameters) => this.pushEvent(parameters));
 
 		try {
 			await this.incrementMerchantProviderSummary(register_result);
@@ -115,17 +118,22 @@ module.exports = class BillController extends stepFunctionWorkerController {
 
 	}
 
-	async fetchContextParameters(rebill, processor_result) {
-		let parameters = {};
+	async fetchContextParameters(rebill, processor_result, transaction) {
+		let session = await sessionController.get({id: rebill.parentsession});
+		let parameters = {
+			session,
+			rebill,
+			transaction,
+			processor_result,
+			customer: await sessionController.getCustomer(session),
+			campaign: await sessionController.getCampaign(session)
+		};
 
-		return sessionController.get({id: rebill.parentsession}).then((session) => {
-			parameters.session = session;
-			parameters.rebill = rebill;
-			parameters.processor_result = processor_result;
-			return Promise.all([
-				sessionController.getCustomer(session).then((customer) => parameters.customer = customer),
-				sessionController.getCampaign(session).then((campaign) => parameters.campaign = campaign)
-			])}).then(() => parameters);
+		if (transaction && transaction.creditcard) {
+			parameters.creditcard = await this.creditCardController.get({id: transaction.creditcard});
+		}
+
+		return parameters;
 	}
 
 	async pushEvent(parameters) {
