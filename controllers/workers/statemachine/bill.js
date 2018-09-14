@@ -130,7 +130,7 @@ module.exports = class BillController extends stepFunctionWorkerController {
 		};
 
 		if (transaction && transaction.creditcard) {
-			parameters.creditcard = await this.creditCardController.get({id: transaction.creditcard});
+			parameters.creditcard = await creditCardController.get({id: transaction.creditcard});
 		}
 
 		return parameters;
