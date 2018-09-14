@@ -41,8 +41,6 @@ module.exports = class BillController extends stepFunctionWorkerController {
 			await rebillController.update({entity: rebill});
 		}
 
-		await this.incrementMerchantProviderSummary(register_result);
-
 		await AnalyticsEvent.push('create_order_recurring', {
 			rebill
 		});
@@ -50,6 +48,12 @@ module.exports = class BillController extends stepFunctionWorkerController {
 		let result = register_result.parameters.get('response_type');
 
 		await this.fetchContextParameters(rebill, result).then((parameters) => this.pushEvent(parameters));
+
+		try {
+			await this.incrementMerchantProviderSummary(register_result);
+		} catch(error) {
+			du.warning(`Failed to increment summary for rebill ${rebill.id}`, error);
+		}
 
 		return this.respond(register_result, rebill);
 
