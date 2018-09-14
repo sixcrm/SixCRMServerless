@@ -301,11 +301,11 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 	async acquireAccountDetails() {
 
-		let message = this.parameters.get('message');
+		let campaign = this.parameters.get('campaign');
 
-		du.debug('Get Account Details', message.account);
+		du.debug('Get Account Details', campaign.account);
 
-		const accountdetails = await this.accountDetailsController.get({ id: message.account });
+		const accountdetails = await this.accountDetailsController.get({ id: campaign.account });
 
 		this.parameters.set('accountdetails', accountdetails);
 

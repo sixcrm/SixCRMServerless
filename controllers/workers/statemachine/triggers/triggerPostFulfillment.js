@@ -87,7 +87,7 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 			shipping_receipt, rebill, session, customer, campaign
 		};
 
-		return eventHelperController.pushEvent({event_type: 'allfulfillments', context: context}).then(result => {
+		return eventHelperController.pushEvent({event_type: 'initialfulfillment', context: context}).then(result => {
 			du.info(result);
 
 			return super.execute({guid: shipping_receipt.id});
