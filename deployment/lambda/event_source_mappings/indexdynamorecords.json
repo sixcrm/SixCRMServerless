@@ -58,5 +58,11 @@
     "StartingPosition":"TRIM_HORIZON",
     "BatchSize": 100,
     "Enabled": true
+  },
+  {
+    "TableName":"affiliates",
+    "StartingPosition":"TRIM_HORIZON",
+    "BatchSize": 100,
+    "Enabled": true
   }
 ]
