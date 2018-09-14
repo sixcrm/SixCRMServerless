@@ -59,7 +59,7 @@ module.exports = class DeactivateAccountController extends workerController {
 			entity: {
 				id: session.id,
 				cancelled: true,
-				cancelled_by: '3f4abaf6-52ac-40c6-b155-d04caeb0391f'
+				cancelled_by: 'accounting@sixcrm.com'
 			}
 		})));
 	}
