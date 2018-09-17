@@ -10,6 +10,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 	fields: () => ({
 		id:					{ type: new GraphQLNonNull(GraphQLString) },
 		fulfillment_provider: { type: new GraphQLNonNull(GraphQLString) },
+		rebill: { type: GraphQLString },
 		tracking: {
 			type: shippingReceiptTrackingInputType.graphObj,
 			description: "Shipping receipt tracking input type"
