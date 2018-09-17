@@ -641,24 +641,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 	}
 
-	pushRebill(){
-
-		du.debug('Push Rebill');
-
-		if(!_.has(this, 'rebillController')){
-			this.rebillController = new RebillController();
-		}
-
-		let prototype_rebill = this.parameters.get('rebillprototype');
-
-		return this.rebillController.create({entity: prototype_rebill}).then(rebill => {
-			this.parameters.set('rebill', rebill);
-			return true;
-		});
-
-	}
-
-	calculateCycle(){
+	calculateCycle() {
 
 		du.debug('Calculate Cycle');
 
@@ -683,6 +666,23 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			du.debug(`Cycle for new rebill in session ${session.id} is ${cycle}.`);
 
 			return cycle;
+		});
+
+	}
+
+	pushRebill(){
+
+		du.debug('Push Rebill');
+
+		if(!_.has(this, 'rebillController')){
+			this.rebillController = new RebillController();
+		}
+
+		let prototype_rebill = this.parameters.get('rebillprototype');
+
+		return this.rebillController.create({entity: prototype_rebill}).then(rebill => {
+			this.parameters.set('rebill', rebill);
+			return true;
 		});
 
 	}
