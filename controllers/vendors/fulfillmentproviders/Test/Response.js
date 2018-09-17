@@ -40,7 +40,9 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 
 		return {
 			orders: [
-				response.body.response
+				{
+					shipping: response.body.response
+				}
 			]
 		};
 
