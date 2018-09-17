@@ -112,10 +112,14 @@ module.exports = class TerminalRecieptGenerator {
 		let fulfillment_provider_reference = this.parameters.get('fulfillmentproviderreference', {fatal: false});
 		let tracking_number = this.parameters.get('trackingnumber', {fatal: false});
 
+		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
+		let rebill = augmented_transaction_products[0].transaction.rebill;
+
 		let prototype = {
 			account: account,
 			fulfillment_provider: fulfillment_provider_id,
 			status: 'pending',
+			rebill,
 			history: [{
 				created_at: timestamp.getISO8601(),
 				status: 'pending',

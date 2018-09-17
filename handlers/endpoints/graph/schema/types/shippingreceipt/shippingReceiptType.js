@@ -20,6 +20,9 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'A shipping status',
 		},
+		rebill: {
+			type: GraphQLString
+		},
 		tracking: {
 			type: shippingReceiptTrackingElementType.graphObj,
 			description: 'Tracking Details for the shipping receipt.',
