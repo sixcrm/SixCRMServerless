@@ -99,12 +99,16 @@ module.exports = class ReIndexingHelperController {
 	}
 
 	determineDifferences() {
+		du.info('Calculating differences...');
 
-		entities_dynamodb.map(d => {
-			if (!(entities_index.map(i => i.id).includes(d.id))) {
-				let add = Object.assign({}, d.entity);
+		const entitiesIndexById = _.keyBy(entities_index, 'id');
+		const entitiesDynamoById = _.keyBy(entities_dynamodb, 'id');
 
-				add.entity_type = d.entity_type;
+		for (const { id, entity, entity_type} of entities_dynamodb) {
+			if (!entitiesIndexById[id]) {
+				let add = Object.assign({}, entity);
+
+				add.entity_type = entity_type;
 				missing_in_index.push(add);
 
 				if (!index_details[add.entity_type]) {
@@ -113,19 +117,19 @@ module.exports = class ReIndexingHelperController {
 
 				index_details[add.entity_type]++;
 			}
-		});
+		}
 
-		entities_index.filter(i => i.fields.entity_type).map(i => {
-			if (!(entities_dynamodb.map(d => d.id).includes(i.id))) {
-				missing_in_dynamo.push({id: i.id, entity_type: i.fields.entity_type[0], fields: i.fields});
+		for (const { id, fields } of entities_index.filter(i => i.fields.entity_type)) {
+			if (!entitiesDynamoById[id]) {
+				missing_in_dynamo.push({ id, entity_type: fields.entity_type[0], fields });
 
-				if (!db_details[i.fields.entity_type]) {
-					db_details[i.fields.entity_type] = 0;
+				if (!db_details[fields.entity_type]) {
+					db_details[fields.entity_type] = 0;
 				}
 
-				db_details[i.fields.entity_type]++;
+				db_details[fields.entity_type]++;
 			}
-		});
+		}
 	}
 
 	printStatistics() {
