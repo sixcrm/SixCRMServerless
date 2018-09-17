@@ -75,7 +75,7 @@ cloudsearch:
   domainendpoint: 'local-docker:15808'
 
 aurora:
-  release: 4
+  release: 5
   region: 'localhost'
   default_cluster_identifier: 'sixcrm'
   user: 'postgres'

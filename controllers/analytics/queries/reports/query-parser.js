@@ -118,6 +118,24 @@ module.exports = class QueryParser {
 
 		}
 
+		if (options.status) {
+
+			filter = this.resolveFilterQueryValue(filter, 'status', 'status', parameters);
+
+		}
+
+		if (options.cycle) {
+
+			filter = this.resolveFilterQueryValue(filter, 'cycle', 'cycle', parameters);
+
+		}
+
+		if (options.interval) {
+
+			filter = this.resolveFilterQueryValue(filter, 'interval', 'interval', parameters);
+
+		}
+
 		return filter;
 	}
 
