@@ -83,12 +83,13 @@ module.exports = class AccountHelperController {
 		du.info(account);
 
 		if(!_.has(account, 'billing')){
-			du.warning('Account not active:  Missing billing properties.');
+			du.warning('Account not active: Missing billing properties.');
 			return true;
 		}
 
-		if(objectutilities.hasRecursive(account, 'billing.disable') && account.billing.disable < timestamp.getISO8601()){
-			du.warning('Account not active:  Disable date has passed.');
+		const deactivated = _.get(account, 'billing.deactivated', false);
+		if(deactivated){
+			du.warning('Account not active: Deactivation date has passed.');
 			return true;
 		}
 

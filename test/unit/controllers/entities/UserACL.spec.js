@@ -134,7 +134,7 @@ describe('controllers/entities/UserACL.js', () => {
 			let disabled_role = MockEntities.getDisabledRole();
 
 			let account = getValidAccount();
-			account.billing.disable = timestamp.getPreviousMonthStart();
+			account.billing.deactivated = true;
 
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'entities/Account.js'), class {
 				get(an_account) {
