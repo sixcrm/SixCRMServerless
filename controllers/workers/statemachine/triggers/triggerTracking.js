@@ -43,7 +43,7 @@ module.exports = class TriggerTrackingController extends StepFunctionTriggerCont
 		let creditcard = null;
 
 		if (transactions.length) {
-			creditcard = await this.creditCardController.get({id: transactions[0].id})
+			creditcard = await this.creditCardController.get({id: transactions[0].creditcard})
 		}
 
 		let context = {
@@ -52,18 +52,13 @@ module.exports = class TriggerTrackingController extends StepFunctionTriggerCont
 
 		du.debug('TriggerTrackingController context', context);
 
-		await this.eventHelperController.pushEvent({event_type: this.getEventType(rebill), context: context});
+		if (!rebill.cycle) {
+			await this.eventHelperController.pushEvent({event_type: 'initialfulfillment', context: context});
+		}
+
+		await this.eventHelperController.pushEvent({event_type: 'allfulfillments', context: context});
 
 		return super.execute(event);
 	}
 
-	getEventType(rebill) {
-		du.debug('Get Event Type', rebill);
-
-		let event_type = rebill.cycle ? 'allfulfillment' : 'initialfulfillment';
-
-		du.debug(event_type);
-
-		return event_type;
-	}
 }

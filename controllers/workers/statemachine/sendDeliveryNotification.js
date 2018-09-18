@@ -45,7 +45,7 @@ module.exports = class SendDeliveryNotificationController extends stepFunctionWo
 			let transactions = await this.transactionController.listTransactionsByRebillID({id: rebill.id});
 
 			if (transactions.length) {
-				context.creditcard = await this.creditCardController.get({id: transactions[0].id})
+				context.creditcard = await this.creditCardController.get({id: transactions[0].creditcard})
 			}
 
 			context.rebill = rebill;
