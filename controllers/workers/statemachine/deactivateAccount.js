@@ -23,7 +23,7 @@ module.exports = class DeactivateAccountController extends workerController {
 		const session = await sessionController.get({ id: account.billing.session });
 
 		await eventPushHelperController.pushEvent({
-			event_type: 'account_limited',
+			event_type: 'account_deactivated',
 			context: {
 				customer: session.customer,
 				campaign: session.campaign
@@ -32,6 +32,7 @@ module.exports = class DeactivateAccountController extends workerController {
 	}
 
 	async deactivateAccount(account) {
+		account.active = false;
 		account.billing.deactivated = true;
 		await accountController.update({
 			entity: account,
