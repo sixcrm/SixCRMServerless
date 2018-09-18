@@ -23,7 +23,7 @@ module.exports = class SendDeliveryNotificationController extends stepFunctionWo
 
 	async execute(event) {
 
-		du.debug('Execute');
+		du.debug('SendDeliveryNotificationController Execute', event);
 
 		this.validateEvent(event);
 
@@ -44,6 +44,8 @@ module.exports = class SendDeliveryNotificationController extends stepFunctionWo
 			context.customer = customer;
 			context.campaign = campaign;
 		}
+
+		du.debug('SendDeliveryNotificationController context', context);
 
 		await this.pushEvent({
 			event_type:'delivery',
