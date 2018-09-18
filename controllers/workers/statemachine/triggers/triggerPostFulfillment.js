@@ -57,7 +57,7 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 
 	}
 
-	async triggerPostFulfillment(shipping_receipt, rebill){
+	async triggerPostFulfillment(shipping_receipt, rebill) {
 
 		du.debug('Trigger Post Fulfillment', shipping_receipt, rebill);
 
@@ -69,29 +69,7 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 			throw eu.getError('server', 'Expected Shipping Receipt ID to be a UUID.');
 		}
 
-		const EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-		const SessionController = global.SixCRM.routes.include('entities','Session.js');
-		const CustomerController = global.SixCRM.routes.include('entities','Customer.js');
-		const CampaignController = global.SixCRM.routes.include('entities','Campaign.js');
-
-		const eventHelperController = new EventsHelperController();
-		const sessionController = new SessionController();
-		const customerController = new CustomerController();
-		const campaignController = new CampaignController();
-
-		let session = await sessionController.get({id: rebill.parentsession});
-		let customer = await customerController.get({id: session.customer});
-		let campaign = await campaignController.get({id: session.campaign});
-
-		let context = {
-			shipping_receipt, rebill, session, customer, campaign
-		};
-
-		return eventHelperController.pushEvent({event_type: 'initialfulfillment', context: context}).then(result => {
-			du.info(result);
-
-			return super.execute({guid: shipping_receipt.id});
-		});
+		return super.execute({guid: shipping_receipt.id});
 
 	}
 
