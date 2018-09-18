@@ -33,8 +33,6 @@ module.exports = class NotificationProvider {
 
 		du.debug('Create Notifications For Account');
 
-		this.validateNotificationPrototype(notification_prototype);
-
 		let receipt_users = await this.setReceiptUsers(notification_prototype);
 
 		return this.sendNotificationToUsers(receipt_users, notification_prototype);
