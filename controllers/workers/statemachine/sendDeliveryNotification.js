@@ -44,11 +44,10 @@ module.exports = class SendDeliveryNotificationController extends stepFunctionWo
 			let campaign = await this.campaignController.get({id: session.campaign});
 			let transactions = await this.transactionController.listTransactionsByRebillID({id: rebill.id});
 
-			if (transactions.length) {
-				du.debug('SendDeliveryNotificationController transactions[0].creditcard', transactions[0].creditcard);
-				context.creditcard = await this.creditCardController.get({id: transactions[0].creditcard})
+			if (transactions && transactions.transactions && transactions.transactions.length) {
+				context.creditcard = await this.creditCardController.get({id: transactions.transactions[0].creditcard})
 			}
-			du.debug('SendDeliveryNotificationController transactions', transactions);
+
 			context.rebill = rebill;
 			context.session = session;
 			context.customer = customer;

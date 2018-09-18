@@ -42,11 +42,9 @@ module.exports = class TriggerTrackingController extends StepFunctionTriggerCont
 		let transactions = await this.transactionController.listTransactionsByRebillID({id: rebill.id});
 		let creditcard = null;
 
-		if (transactions.length) {
-			du.debug('TriggerTrackingController transactions[0].creditcard', transactions[0].creditcard);
-			creditcard = await this.creditCardController.get({id: transactions[0].creditcard})
+		if (transactions && transactions.transactions && transactions.transactions.length) {
+			creditcard = await this.creditCardController.get({id: transactions.transactions[0].creditcard})
 		}
-		du.debug('TriggerTrackingController transactions', transactions);
 
 		let context = {
 			shipping_receipt, rebill, session, customer, campaign, creditcard
