@@ -79,7 +79,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 				let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 				let eventHelperController = new EventsHelperController();
 
-				let context = {smtp_provider: this.parameters.get('paired_smtp_provider')};
+				let context = {smtpprovider: this.parameters.get('paired_smtp_provider')};
 
 				return eventHelperController.pushEvent({event_type: 'email_fail', context: context}).then(result => {
 					du.info(result);

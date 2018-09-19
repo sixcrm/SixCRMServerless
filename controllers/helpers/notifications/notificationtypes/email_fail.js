@@ -9,9 +9,9 @@ module.exports = class EmailFailNotification extends BaseNotification {
 		super();
 
 		this.name = 'email_fail';
-		this.context_required = ['smtp_provider.name', 'smtp_provider.id'];
-		this.category = 'transaction';
-
+		this.context_required = ['smtpprovider.name', 'smtpprovider.id'];
+		this.category = 'warning';
+		this.notification_type = 'alert';
 		this.account_wide = true;
 
 	}
