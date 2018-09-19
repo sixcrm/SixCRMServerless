@@ -76,6 +76,28 @@ module.exports = class AccountHelperController {
 
 	}
 
+	isAccountLimited(account){
+
+		du.debug('Is Account Limited');
+
+		du.info(account);
+
+		if(!_.has(account, 'billing')){
+			du.warning('Account not active: Missing billing properties.');
+			return true;
+		}
+
+		const limited = _.get(account, 'billing.limited', false);
+		const deactivated = _.get(account, 'billing.deactivated', false);
+		if(limited || deactivated){
+			du.warning('Account has limited access.');
+			return true;
+		}
+
+		return false;
+
+	}
+
 	isAccountDisabled(account){
 
 		du.debug('Is Account Disabled');
