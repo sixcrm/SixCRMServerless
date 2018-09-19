@@ -50,7 +50,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 	}
 
 	async validateAccount(event) {
-		super();
+		super.validateAccount();
 		if (accountHelperController.isAccountLimited()) {
 			throw eu.getError('forbidden', 'Account access has been limited and cannot perform this operation.');
 		}

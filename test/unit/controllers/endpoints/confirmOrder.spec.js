@@ -440,6 +440,9 @@ describe('confirmOrder', function () {
 				validateAccount(){
 					return Promise.resolve(true);
 				}
+				isAccountLimited(){
+					return false;
+				}
 			});
 
 			let ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');

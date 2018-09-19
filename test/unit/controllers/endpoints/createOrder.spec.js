@@ -392,6 +392,9 @@ describe('createOrder', function () {
 				validateAccount(){
 					return Promise.resolve(true);
 				}
+				isAccountLimited(){
+					return false;
+				}
 			});
 
 			let mock_account_details = class {
@@ -596,6 +599,9 @@ describe('createOrder', function () {
 				validateAccount(){
 					return Promise.resolve(true);
 				}
+				isAccountLimited(){
+					return false;
+				}
 			});
 
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
@@ -778,6 +784,9 @@ describe('createOrder', function () {
 				constructor(){}
 				validateAccount(){
 					return Promise.resolve(true);
+				}
+				isAccountLimited(){
+					return false;
 				}
 			});
 

@@ -973,6 +973,9 @@ describe('checkout', function () {
 				validateAccount(){
 					return Promise.resolve(true);
 				}
+				isAccountLimited(){
+					return false;
+				}
 			});
 
 			let mock_account_details = class {

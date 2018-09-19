@@ -294,6 +294,9 @@ describe('createLead', function () {
 				validateAccount(){
 					return Promise.resolve(true);
 				}
+				isAccountLimited(){
+					return false;
+				}
 			});
 
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
@@ -380,6 +383,9 @@ describe('createLead', function () {
 				constructor(){}
 				validateAccount(){
 					return Promise.resolve(true);
+				}
+				isAccountLimited(){
+					return false;
 				}
 			});
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
