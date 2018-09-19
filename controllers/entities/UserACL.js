@@ -15,14 +15,8 @@ class UserACLController extends entityController {
 
 		du.debug('Get Partially Hydrated ACL Object');
 
-		const UserACLHelperController = global.SixCRM.routes.include('helpers', 'entities/useracl/UserACL.js');
-		let userACLHelperController = new UserACLHelperController();
-
-		const account = await this.getAccount(useracl);
-		const role = await this.getRole(useracl);
-
-		useracl.account = account;
-		useracl.role = await userACLHelperController.setAccountPermissions({role: role, account: account});
+		useracl.account = await this.getAccount(useracl);
+		useracl.role = await this.getRole(useracl);
 
 		return useracl;
 

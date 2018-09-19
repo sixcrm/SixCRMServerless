@@ -50,28 +50,4 @@ module.exports = class UserACLHelperController {
 		return user_acl;
 
 	}
-
-	async setAccountPermissions({role, account}){
-
-		du.debug('Set Account Permissions');
-
-		const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
-		let accountHelperController = new AccountHelperController();
-
-		if(accountHelperController.isAccountDisabled(account)){
-
-			let roleHelperController = new RoleHelperController();
-
-			const disabled_role = await roleHelperController.getDisabledRole();
-
-			let intersectional_role = roleHelperController.roleIntersection(role, disabled_role);
-
-			return intersectional_role;
-
-		}
-
-		return role;
-
-	}
-
 }
