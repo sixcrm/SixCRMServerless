@@ -11,7 +11,7 @@ module.exports = class CreateOrderEventHandler {
 
 	async execute(record) {
 
-		du.warning('CreateOrderEventHandler.execute()', require('util').inspect(record, {
+		du.debug('CreateOrderEventHandler.execute()', require('util').inspect(record, {
 			showHidden: false,
 			depth: null
 		}));

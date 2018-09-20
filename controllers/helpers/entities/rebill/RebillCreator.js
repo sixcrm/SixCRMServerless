@@ -1,4 +1,3 @@
-
 const _ = require('lodash');
 const moment = require('moment');
 
@@ -16,6 +15,8 @@ const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
 const SessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 const sessionController = new SessionController();
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
+
 
 module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
@@ -94,6 +95,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			.then(() => this.buildRebillPrototype())
 			.then(() => this.calculateCycle())
 			.then(() => this.pushRebill())
+			.then(() => this.sendAnalyticsEvent())
 			.then(() => this.returnRebill())
 			.catch((error) => {
 				if(_.has(error, 'code') && error.code == '520'){
@@ -684,6 +686,36 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			this.parameters.set('rebill', rebill);
 			return true;
 		});
+
+	}
+
+	sendAnalyticsEvent() {
+
+		du.debug('Send Analytics Event');
+
+		const rebill = this.parameters.get('rebill');
+		const session = this.parameters.get('session');
+
+		if (rebill.cycle > 0) {
+
+			return AnalyticsEvent.push('subscription', {
+
+				id: rebill.id,
+				alias: rebill.alias,
+				datetime: rebill.bill_at,
+				amount: rebill.amount,
+				item_count: _.sumBy(rebill.products, product => product.quantity),
+				cycle: rebill.cycle,
+				interval: rebill.product_schedules[0].period,
+				account: session.account,
+				session: session.id,
+				session_alias: session.alias,
+				campaign: session.campaign,
+				customer: session.customer
+
+			});
+
+		}
 
 	}
 
