@@ -387,6 +387,12 @@ describe('createOrder', function () {
 				}
 			});
 
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Account'), class {
+				get() {
+					return Promise.resolve()
+				}
+			});
+
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
 				constructor(){}
 				validateAccount(){
@@ -593,6 +599,12 @@ describe('createOrder', function () {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'AccountDetails.js'), mock_account_details);
 
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Account'), class {
+				get() {
+					return Promise.resolve()
+				}
+			});
+
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
 				constructor(){}
@@ -779,6 +791,12 @@ describe('createOrder', function () {
 			});
 
 			//PermissionTestGenerators.givenUserWithAllowed('*', '*', 'd3fa3bf3-7824-49f4-8261-87674482bf1c');
+
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Account'), class {
+				get() {
+					return Promise.resolve()
+				}
+			});
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
 				constructor(){}
