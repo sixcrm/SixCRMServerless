@@ -183,6 +183,16 @@
 		"example": ""
 	  },
 	  {
+		"description": "Support Email",
+		"value": "accountdetails.support_email",
+		"example": ""
+	  },
+	  {
+		"description": "Support Phone",
+		"value": "accountdetails.support_phone",
+		"example": ""
+	  },
+	  {
 		"description": "Company Logo",
 		"value": "accountdetails.company_logo",
 		"example": ""
@@ -190,6 +200,16 @@
 	  {
 		"description": "Primary Color",
 		"value": "accountdetails.emailtemplatesettings.color_primary",
+		"example": ""
+	  },
+	  {
+		"description": "Secondary Color",
+		"value": "accountdetails.emailtemplatesettings.color_primary",
+		"example": ""
+	  },
+	  {
+		"description": "Tertiary Color",
+		"value": "accountdetails.emailtemplatesettings.color_tertiary",
 		"example": ""
 	  }
 	]
