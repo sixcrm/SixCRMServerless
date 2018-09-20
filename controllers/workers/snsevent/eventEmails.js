@@ -73,7 +73,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 			.then(() => this.acquireSMTPProvider())
 			.then(() => this.acquireAccountDetails())
 			.then(() => this.sendEmails())
-			.then(() => this.createAnalyticsActivityRecord())
 
 	}
 
@@ -370,6 +369,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 					return this.eventHelperController.pushEvent({event_type: 'email_fail', context: context})
 
 				})
+				.then(() => this.createAnalyticsActivityRecord(customer, email_template.type, parsed_email_template.subject))
 		}
 
 		return Promise.resolve();
@@ -455,13 +455,14 @@ module.exports = class EventEmailsController extends SNSEventController {
 		return compatible;
 	}
 
-	createAnalyticsActivityRecord() {
+	createAnalyticsActivityRecord(customer, email_type, subject) {
 
-		let customer = this.parameters.get('customer');
+		du.debug('Create Email Activity', customer, email_type, subject);
 
-		du.debug('Create Email Activity', customer);
-
-		return this.activityHelper.createActivity(null, 'sent_email', {entity: customer, type: 'customer'}, null);
+		return this.activityHelper.createActivity(null, 'sent_email', {
+			entity: customer,
+			type: 'customer'
+		}, {email: {type: email_type, subject}});
 
 	}
 
