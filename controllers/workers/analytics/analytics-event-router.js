@@ -31,6 +31,10 @@ module.exports = {
 		transform: 'rebill-transform.js',
 		handlers: ['rebill-event-handler.js']
 	},
+	subscription: {
+		transform: 'subscription-transform.js',
+		handlers: ['subscription-event-handler.js']
+	},
 	'transaction_*': {
 		transform: 'transaction-transform.js',
 		handlers: ['transaction-event-handler.js']
