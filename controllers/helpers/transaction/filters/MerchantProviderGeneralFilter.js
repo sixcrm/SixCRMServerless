@@ -146,7 +146,7 @@ module.exports = class MerchantProviderGeneralFilter {
 				let proposed_total = (parseFloat(merchant_provider.summary.summary.thismonth.amount) + parseFloat(amount));
 				let cap = parseFloat(merchant_provider.processing.monthly_cap);
 
-				if((proposed_total >= cap)){
+				if((proposed_total > cap)){
 					du.warning('CAP Shortage')
 					return false;
 				}
