@@ -53,7 +53,7 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 	async validateAccount(event) {
 		super.validateAccount();
-		const account = accountController.get({ id: global.account });
+		const account = await accountController.get({ id: global.account });
 		if (accountHelperController.isAccountLimited(account)) {
 			throw eu.getError('forbidden', 'Account access has been limited and cannot perform this operation.');
 		}
