@@ -133,6 +133,29 @@ function seedAurora(test) {
 
 }
 
+async function seedDynamo(test) {
+
+	if (!test.seeds || !test.seeds.dynamo) {
+
+		return Promise.resolve();
+
+	}
+
+	return BBPromise.each(test.seeds.dynamo, (seed) => {
+
+		const seedFilePath = path.join(test.directory, 'seeds', 'dynamo', seed);
+		const dataSeeds = JSON.parse(fileutilities.getFileContentsSync(seedFilePath, 'utf8'));
+
+		return dynamoDBDeployment.executeSeedViaController({
+			Table: {
+				TableName: dataSeeds.table
+			}
+		}, dataSeeds.seeds)
+
+	});
+
+}
+
 function executeTest(test, handler) {
 
 	if (!test.seeds || !test.seeds.sqs) {
@@ -152,29 +175,6 @@ function executeTest(test, handler) {
 		}));
 
 		await handler.execute();
-
-	});
-
-}
-
-async function seedDynamo(test) {
-
-	if (!test.seeds || !test.seeds.dynamo) {
-
-		return Promise.resolve();
-
-	}
-
-	return BBPromise.each(test.seeds.dynamo, (seed) => {
-
-		const seedFilePath = path.join(test.directory, 'seeds', 'dynamo', seed);
-		const dataSeeds = JSON.parse(fileutilities.getFileContentsSync(seedFilePath, 'utf8'));
-
-		return dynamoDBDeployment.executeSeedViaController({
-			Table: {
-				TableName: dataSeeds.table
-			}
-		}, dataSeeds.seeds)
 
 	});
 
