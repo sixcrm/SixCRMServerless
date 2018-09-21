@@ -494,6 +494,8 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 			body: soap_parameters
 		};
 
+		du.debug('Fulfillment request parameters:', options);
+
 		return httpprovider.post(options).then((result) => {
 
 			this.parameters.set('vendorresponse', result);
