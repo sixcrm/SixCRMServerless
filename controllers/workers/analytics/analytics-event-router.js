@@ -35,6 +35,10 @@ module.exports = {
 		transform: 'subscription-transform.js',
 		handlers: ['subscription-event-handler.js']
 	},
+	cancelSession: {
+		transform: 'cancel-session-transform.js',
+		handlers: ['cancel-session-event-handler.js']
+	},
 	'transaction_*': {
 		transform: 'transaction-transform.js',
 		handlers: ['transaction-event-handler.js']
