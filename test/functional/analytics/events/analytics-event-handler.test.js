@@ -15,6 +15,7 @@ const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
 const DynamoDBDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
+const dynamoDBDeployment = new DynamoDBDeployment();
 const permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
 
 describe('Push events to RDS', () => {
@@ -30,7 +31,8 @@ describe('Push events to RDS', () => {
 				global.user = 'admin.user@test.com';
 				global.SixCRM.setResource('auroraContext', auroraContext);
 				return auroraContext.init();
-			});
+			})
+			.then(() => dynamoDBDeployment.initializeControllers());
 
 	});
 
@@ -55,28 +57,17 @@ describe('Push events to RDS', () => {
 
 		it(test.name, () => {
 
-			return auroraContext.withConnection((connection) => {
+			return auroraContext.withConnection(async (connection) => {
 
-				const aeh = new AnalyticsEventHandler(auroraContext);
+				const handler = new AnalyticsEventHandler(auroraContext);
 
-				return Promise.resolve()
-					.then(() => seedAurora(test))
-					.then(() => seedSQS(test))
-					.then(() => seedDynamo(test))
-					.then(() => SQSTestUtils.messageCountInQueue('analytics'))
-					.then((count) => {
+				await seedAurora(test);
+				await seedDynamo(test);
+				await executeTest(test, handler);
+				await test.validate(connection);
 
-						return expect(count === test.count);
-
-					})
-					.then(() => aeh.execute())
-					.then(() => test.validate(connection))
-					.then(() => SQSTestUtils.messageCountInQueue('analytics'))
-					.then((count) => {
-
-						return expect(count === 0);
-
-					});
+				const count = await SQSTestUtils.messageCountInQueue('analytics');
+				return expect(count === 0);
 
 			});
 
@@ -142,34 +133,6 @@ function seedAurora(test) {
 
 }
 
-async function seedSQS(test) {
-
-	if (!test.seeds || !test.seeds.sqs) {
-
-		return Promise.resolve();
-
-	}
-
-	const promises = _.reduce(test.seeds.sqs, (memo, seed) => {
-
-		const seedFilePath = path.join(test.directory, 'seeds', 'sqs', seed);
-		const seedContent = require(seedFilePath);
-		test.count = seedContent.messages.count;
-
-		memo.push(...seedContent.messages.map(message => {
-
-			return SQSTestUtils.sendMessageToQueue('analytics', JSON.stringify(message), 1);
-
-		}));
-
-		return memo;
-
-	}, []);
-
-	return BBPromise.each(promises, async p => await p);
-
-}
-
 async function seedDynamo(test) {
 
 	if (!test.seeds || !test.seeds.dynamo) {
@@ -178,19 +141,40 @@ async function seedDynamo(test) {
 
 	}
 
-	const db = new DynamoDBDeployment();
-	await db.initializeControllers();
-
 	return BBPromise.each(test.seeds.dynamo, (seed) => {
 
 		const seedFilePath = path.join(test.directory, 'seeds', 'dynamo', seed);
 		const dataSeeds = JSON.parse(fileutilities.getFileContentsSync(seedFilePath, 'utf8'));
 
-		return db.executeSeedViaController({
+		return dynamoDBDeployment.executeSeedViaController({
 			Table: {
 				TableName: dataSeeds.table
 			}
 		}, dataSeeds.seeds)
+
+	});
+
+}
+
+function executeTest(test, handler) {
+
+	if (!test.seeds || !test.seeds.sqs) {
+		return;
+	}
+
+	return BBPromise.each(test.seeds.sqs, async seed => {
+
+		const seedFilePath = path.join(test.directory, 'seeds', 'sqs', seed);
+		const seedContent = require(seedFilePath);
+		test.count = seedContent.messages.count;
+
+		await Promise.all(seedContent.messages.map(message => {
+
+			return SQSTestUtils.sendMessageToQueue('analytics', JSON.stringify(message), 1);
+
+		}));
+
+		await handler.execute();
 
 	});
 

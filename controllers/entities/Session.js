@@ -16,6 +16,8 @@ let rebillController = new RebillController();
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
+
 module.exports = class SessionController extends entityController {
 
 	constructor(){
@@ -614,6 +616,10 @@ module.exports = class SessionController extends entityController {
 
 					return session;
 				});
+			}).then(() => {
+
+				return AnalyticsEvent.push('cancelSession', { id: session.id });
+
 			});
 
 		});
