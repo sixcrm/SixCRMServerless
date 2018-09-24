@@ -7,6 +7,7 @@ const GraphQLList = require('graphql').GraphQLList;
 let shippingReceiptHistoryElementType = require('./elements/historyElementType');
 let fulfillmentProviderType = require('../fulfillmentprovider/fulfillmentProviderType');
 let shippingReceiptTrackingElementType = require('./elements/trackingElementType');
+let rebillType = require('../rebill/rebillType');
 
 module.exports.graphObj = new GraphQLObjectType({
 	name: 'shippingreceipt',
@@ -21,7 +22,15 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'A shipping status',
 		},
 		rebill: {
-			type: GraphQLString
+			type: rebillType.graphObj,
+			resolve: (shipping_receipt) => {
+				if (!shipping_receipt.rebill) return null;
+
+				const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
+				let rebillController = new RebillController();
+
+				return rebillController.get({id: shipping_receipt.rebill});
+			}
 		},
 		tracking: {
 			type: shippingReceiptTrackingElementType.graphObj,
