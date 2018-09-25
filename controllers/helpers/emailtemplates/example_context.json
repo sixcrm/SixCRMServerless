@@ -1057,5 +1057,232 @@
 	"id": "091c8b6e-4844-479e-9871-a700302f8850",
 	"status": "pending",
 	"updated_at": "2018-08-10T17:30:15.533Z"
+  },
+  "transaction": {
+	"account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	"alias": "TSLBCM8HVN",
+	"amount": 300,
+	"created_at": "2018-07-03T23:29:37.303Z",
+	"id": "00ba7534-0eaf-42a5-ac42-aaa129d806d5",
+	"merchant_provider": "8d8f56ef-424f-4db9-9e38-36e1ad78812d",
+	"processor_response": "{\"code\":\"success\",\"message\":\"Success\",\"result\":{\"code\":\"success\",\"response\":{\"statusCode\":200,\"statusMessage\":\"OK\",\"body\":{\"id\":\"ch_1CjxwC2eZvKYlo2C0EcFRRaE\",\"object\":\"charge\",\"amount\":30000,\"amount_refunded\":0,\"application\":null,\"application_fee\":null,\"balance_transaction\":\"txn_1CjxwC2eZvKYlo2CEExPnUAt\",\"captured\":true,\"created\":1530660576,\"currency\":\"usd\",\"customer\":\"cus_DAAjumE61Uh2ga\",\"description\":null,\"destination\":null,\"dispute\":null,\"failure_code\":null,\"failure_message\":null,\"fraud_details\":{},\"invoice\":null,\"livemode\":false,\"metadata\":{},\"on_behalf_of\":null,\"order\":null,\"outcome\":{\"network_status\":\"approved_by_network\",\"reason\":null,\"risk_level\":\"normal\",\"seller_message\":\"Payment complete.\",\"type\":\"authorized\"},\"paid\":true,\"receipt_email\":null,\"receipt_number\":null,\"refunded\":false,\"refunds\":{\"object\":\"list\",\"data\":[],\"has_more\":false,\"total_count\":0,\"url\":\"/v1/charges/ch_1CjxwC2eZvKYlo2C0EcFRRaE/refunds\"},\"review\":null,\"shipping\":null,\"source\":{\"id\":\"src_1CjqO02eZvKYlo2CNx5aRggD\",\"object\":\"source\",\"amount\":null,\"card\":{\"exp_month\":7,\"exp_year\":2022,\"brand\":\"Visa\",\"card_automatically_updated\":false,\"country\":\"US\",\"fingerprint\":\"Xt5EWLLDS7FJjR1c\",\"funding\":\"credit\",\"last4\":\"4242\",\"three_d_secure\":\"optional\",\"cvc_check\":null,\"address_line1_check\":null,\"address_zip_check\":null,\"tokenization_method\":null,\"dynamic_last4\":null},\"client_secret\":\"src_client_secret_DAAj0H6OtLQGUD3peDdwFaBa\",\"created\":1530660576,\"currency\":\"usd\",\"customer\":\"cus_DAAjumE61Uh2ga\",\"flow\":\"none\",\"livemode\":false,\"metadata\":{},\"owner\":{\"address\":null,\"email\":null,\"name\":\"Card Name\",\"phone\":null,\"verified_address\":null,\"verified_email\":null,\"verified_name\":null,\"verified_phone\":null},\"statement_descriptor\":null,\"status\":\"chargeable\",\"type\":\"card\",\"usage\":\"reusable\"},\"source_transfer\":null,\"statement_descriptor\":null,\"status\":\"succeeded\",\"transfer_group\":null}},\"message\":\"Success\"},\"merchant_provider\":\"8d8f56ef-424f-4db9-9e38-36e1ad78812d\",\"creditcard\":\"1aa1baa5-7bb6-40fe-a715-a5be4d5da2e6\"}",
+	"products": [
+	  {
+		"amount": 150,
+		"merchantprovidergroupassociation": {
+		  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+		  "campaign": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+		  "created_at": "2018-06-19T19:07:18.847Z",
+		  "entity": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+		  "entity_type": "campaign",
+		  "id": "5b7fe7b1-f30c-47c3-9426-433b1e460aab",
+		  "merchantprovidergroup": "8a9b88d3-a2e5-49cf-a38f-63468312ceae",
+		  "updated_at": "2018-07-03T23:28:50.468Z"
+		},
+		"product": {
+		  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+		  "attributes": {
+			"images": []
+		  },
+		  "created_at": "2018-05-01T20:23:13.636Z",
+		  "default_price": 150,
+		  "description": "$150 per month, $0.06 per transaction, unlimited campaigns",
+		  "id": "89c38a3b-dbee-4429-8627-cfe300f3c519",
+		  "name": "Professional",
+		  "ship": false,
+		  "shipping_delay": 0,
+		  "sku": "professional",
+		  "updated_at": "2018-07-02T15:03:09.690Z"
+		},
+		"quantity": 1
+	  },
+	  {
+		"amount": 150,
+		"merchantprovidergroupassociation": {
+		  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+		  "campaign": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+		  "created_at": "2018-06-19T19:07:18.847Z",
+		  "entity": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+		  "entity_type": "campaign",
+		  "id": "5b7fe7b1-f30c-47c3-9426-433b1e460aab",
+		  "merchantprovidergroup": "8a9b88d3-a2e5-49cf-a38f-63468312ceae",
+		  "updated_at": "2018-07-03T23:28:50.468Z"
+		},
+		"product": {
+		  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+		  "attributes": {
+			"images": []
+		  },
+		  "created_at": "2018-05-01T20:23:13.636Z",
+		  "default_price": 150,
+		  "description": "$150 per month, $0.06 per transaction, unlimited campaigns",
+		  "id": "89c38a3b-dbee-4429-8627-cfe300f3c519",
+		  "name": "Professional",
+		  "ship": false,
+		  "shipping_delay": 0,
+		  "sku": "professional",
+		  "updated_at": "2018-07-02T15:03:09.690Z"
+		},
+		"quantity": 1
+	  }
+	],
+	"rebill": "6030232d-9bf2-4284-b63a-eda2f280157c",
+	"result": "success",
+	"type": "sale",
+	"updated_at": "2018-07-03T23:29:37.303Z"
+  },
+  "refund": {
+	"transaction": {
+	  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	  "alias": "TSLBCM8HVN",
+	  "amount": 300,
+	  "created_at": "2018-07-03T23:29:37.303Z",
+	  "id": "00ba7534-0eaf-42a5-ac42-aaa129d806d5",
+	  "merchant_provider": "8d8f56ef-424f-4db9-9e38-36e1ad78812d",
+	  "processor_response": "{\"code\":\"success\",\"message\":\"Success\",\"result\":{\"code\":\"success\",\"response\":{\"statusCode\":200,\"statusMessage\":\"OK\",\"body\":{\"id\":\"ch_1CjxwC2eZvKYlo2C0EcFRRaE\",\"object\":\"charge\",\"amount\":30000,\"amount_refunded\":0,\"application\":null,\"application_fee\":null,\"balance_transaction\":\"txn_1CjxwC2eZvKYlo2CEExPnUAt\",\"captured\":true,\"created\":1530660576,\"currency\":\"usd\",\"customer\":\"cus_DAAjumE61Uh2ga\",\"description\":null,\"destination\":null,\"dispute\":null,\"failure_code\":null,\"failure_message\":null,\"fraud_details\":{},\"invoice\":null,\"livemode\":false,\"metadata\":{},\"on_behalf_of\":null,\"order\":null,\"outcome\":{\"network_status\":\"approved_by_network\",\"reason\":null,\"risk_level\":\"normal\",\"seller_message\":\"Payment complete.\",\"type\":\"authorized\"},\"paid\":true,\"receipt_email\":null,\"receipt_number\":null,\"refunded\":false,\"refunds\":{\"object\":\"list\",\"data\":[],\"has_more\":false,\"total_count\":0,\"url\":\"/v1/charges/ch_1CjxwC2eZvKYlo2C0EcFRRaE/refunds\"},\"review\":null,\"shipping\":null,\"source\":{\"id\":\"src_1CjqO02eZvKYlo2CNx5aRggD\",\"object\":\"source\",\"amount\":null,\"card\":{\"exp_month\":7,\"exp_year\":2022,\"brand\":\"Visa\",\"card_automatically_updated\":false,\"country\":\"US\",\"fingerprint\":\"Xt5EWLLDS7FJjR1c\",\"funding\":\"credit\",\"last4\":\"4242\",\"three_d_secure\":\"optional\",\"cvc_check\":null,\"address_line1_check\":null,\"address_zip_check\":null,\"tokenization_method\":null,\"dynamic_last4\":null},\"client_secret\":\"src_client_secret_DAAj0H6OtLQGUD3peDdwFaBa\",\"created\":1530660576,\"currency\":\"usd\",\"customer\":\"cus_DAAjumE61Uh2ga\",\"flow\":\"none\",\"livemode\":false,\"metadata\":{},\"owner\":{\"address\":null,\"email\":null,\"name\":\"Card Name\",\"phone\":null,\"verified_address\":null,\"verified_email\":null,\"verified_name\":null,\"verified_phone\":null},\"statement_descriptor\":null,\"status\":\"chargeable\",\"type\":\"card\",\"usage\":\"reusable\"},\"source_transfer\":null,\"statement_descriptor\":null,\"status\":\"succeeded\",\"transfer_group\":null}},\"message\":\"Success\"},\"merchant_provider\":\"8d8f56ef-424f-4db9-9e38-36e1ad78812d\",\"creditcard\":\"1aa1baa5-7bb6-40fe-a715-a5be4d5da2e6\"}",
+	  "products": [
+		{
+		  "amount": 150,
+		  "merchantprovidergroupassociation": {
+			"account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			"campaign": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+			"created_at": "2018-06-19T19:07:18.847Z",
+			"entity": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+			"entity_type": "campaign",
+			"id": "5b7fe7b1-f30c-47c3-9426-433b1e460aab",
+			"merchantprovidergroup": "8a9b88d3-a2e5-49cf-a38f-63468312ceae",
+			"updated_at": "2018-07-03T23:28:50.468Z"
+		  },
+		  "product": {
+			"account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			"attributes": {
+			  "images": []
+			},
+			"created_at": "2018-05-01T20:23:13.636Z",
+			"default_price": 150,
+			"description": "$150 per month, $0.06 per transaction, unlimited campaigns",
+			"id": "89c38a3b-dbee-4429-8627-cfe300f3c519",
+			"name": "Professional",
+			"ship": false,
+			"shipping_delay": 0,
+			"sku": "professional",
+			"updated_at": "2018-07-02T15:03:09.690Z"
+		  },
+		  "quantity": 1
+		},
+		{
+		  "amount": 150,
+		  "merchantprovidergroupassociation": {
+			"account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			"campaign": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+			"created_at": "2018-06-19T19:07:18.847Z",
+			"entity": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+			"entity_type": "campaign",
+			"id": "5b7fe7b1-f30c-47c3-9426-433b1e460aab",
+			"merchantprovidergroup": "8a9b88d3-a2e5-49cf-a38f-63468312ceae",
+			"updated_at": "2018-07-03T23:28:50.468Z"
+		  },
+		  "product": {
+			"account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			"attributes": {
+			  "images": []
+			},
+			"created_at": "2018-05-01T20:23:13.636Z",
+			"default_price": 150,
+			"description": "$150 per month, $0.06 per transaction, unlimited campaigns",
+			"id": "89c38a3b-dbee-4429-8627-cfe300f3c519",
+			"name": "Professional",
+			"ship": false,
+			"shipping_delay": 0,
+			"sku": "professional",
+			"updated_at": "2018-07-02T15:03:09.690Z"
+		  },
+		  "quantity": 1
+		}
+	  ],
+	  "rebill": "6030232d-9bf2-4284-b63a-eda2f280157c",
+	  "result": "success",
+	  "type": "sale",
+	  "updated_at": "2018-07-03T23:29:37.303Z"
+	},
+	"amount": 200
+  },
+  "return": {
+	"account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+	"alias": "RWTPBZCEX5",
+	"created_at": "2018-09-12T15:29:36.869Z",
+	"history": [
+	  {
+		"created_at": "2018-09-12T15:29:36.834Z",
+		"state": "created"
+	  }
+	],
+	"id": "01e07d8a-5add-4459-8f37-788e2e8ba1a2",
+	"transactions": [
+	  {
+		"products": [
+		  {
+			"amount": 150,
+			"merchantprovidergroupassociation": {
+			  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			  "campaign": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+			  "created_at": "2018-06-19T19:07:18.847Z",
+			  "entity": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+			  "entity_type": "campaign",
+			  "id": "5b7fe7b1-f30c-47c3-9426-433b1e460aab",
+			  "merchantprovidergroup": "8a9b88d3-a2e5-49cf-a38f-63468312ceae",
+			  "updated_at": "2018-07-03T23:28:50.468Z"
+			},
+			"product": {
+			  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			  "attributes": {
+				"images": []
+			  },
+			  "created_at": "2018-05-01T20:23:13.636Z",
+			  "default_price": 150,
+			  "description": "$150 per month, $0.06 per transaction, unlimited campaigns",
+			  "id": "89c38a3b-dbee-4429-8627-cfe300f3c519",
+			  "name": "Professional",
+			  "ship": false,
+			  "shipping_delay": 0,
+			  "sku": "professional",
+			  "updated_at": "2018-07-02T15:03:09.690Z"
+			},
+			"quantity": 1
+		  },
+		  {
+			"amount": 150,
+			"merchantprovidergroupassociation": {
+			  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			  "campaign": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+			  "created_at": "2018-06-19T19:07:18.847Z",
+			  "entity": "8b60000e-6a6b-4807-94d1-f737da089ee5",
+			  "entity_type": "campaign",
+			  "id": "5b7fe7b1-f30c-47c3-9426-433b1e460aab",
+			  "merchantprovidergroup": "8a9b88d3-a2e5-49cf-a38f-63468312ceae",
+			  "updated_at": "2018-07-03T23:28:50.468Z"
+			},
+			"product": {
+			  "account": "3f4abaf6-52ac-40c6-b155-d04caeb0391f",
+			  "attributes": {
+				"images": []
+			  },
+			  "created_at": "2018-05-01T20:23:13.636Z",
+			  "default_price": 150,
+			  "description": "$150 per month, $0.06 per transaction, unlimited campaigns",
+			  "id": "89c38a3b-dbee-4429-8627-cfe300f3c519",
+			  "name": "Professional",
+			  "ship": false,
+			  "shipping_delay": 0,
+			  "sku": "professional",
+			  "updated_at": "2018-07-02T15:03:09.690Z"
+			},
+			"quantity": 1
+		  }
+		],
+		"transaction": "1a808680-ea06-450e-a6f9-bdd1d7aa2ecc"
+	  }
+	],
+	"updated_at": "2018-09-12T15:29:36.869Z"
   }
 }
