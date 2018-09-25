@@ -1,6 +1,7 @@
 
 const GraphQLFloat = require('graphql').GraphQLFloat;
 const GraphQLInt = require('graphql').GraphQLInt;
+const GraphQLBoolean = require('graphql').GraphQLBoolean;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
 
@@ -29,6 +30,9 @@ module.exports.graphObj = new GraphQLObjectType({
 		product: {
 			type: transactionalProductType.graphObj,
 			description:  'The product.'
+		},
+		samedayofmonth: {
+			type: GraphQLBoolean
 		}
 	}),
 	interfaces: []
