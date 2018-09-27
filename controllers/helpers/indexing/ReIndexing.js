@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
@@ -24,7 +25,7 @@ module.exports = class ReIndexingHelperController {
 	}
 
 	//Entrypoint
-	execute(fix = false){
+	async execute(fix = false){
 
 		du.debug('Reindexing');
 
@@ -32,14 +33,12 @@ module.exports = class ReIndexingHelperController {
 			du.warning('Fix: On');
 		}
 
-		return this.getCloudsearchItemsRecursive()
-			.then(() => this.getDynamoItems())
-			.then(() => this.determineDifferences())
-			.then(() => this.printStatistics())
-			.then(() => this.fixIndex(fix))
-			.then(() => {
-				return du.info('Finished');
-			});
+		await this.getCloudsearchItemsRecursive();
+		await this.getDynamoItems();
+		this.determineDifferences();
+		this.printStatistics();
+		await this.fixIndex(fix);
+		return du.info('Finished');
 	}
 
 	getCloudsearchItemsRecursive(cursor, all_items) {
@@ -75,6 +74,7 @@ module.exports = class ReIndexingHelperController {
 
 	getDynamoItems() {
 
+		const limit = 100000;
 		let promises = [];
 
 		let indexing_entities = global.SixCRM.routes.include('model', 'helpers/indexing/entitytype.json').enum;
@@ -82,27 +82,33 @@ module.exports = class ReIndexingHelperController {
 		du.info('Indexing entities: ' + indexing_entities);
 
 		indexing_entities.map(entity => {
-			promises.push(() => dynamodbprovider.scanRecords(entity + 's').then(r => {
-				return r.Items.map(c => {
+			promises.push(async () => {
+				du.info(`Scanning ${entity}s...`);
+				const result = await dynamodbprovider.scanRecords(entity + 's', {limit});
+				return result.Items.map(c => {
 					entities_dynamodb.push({
 						id: c.id,
 						entity_type: entity,
 						entity: c
 					});
 				});
-			}));
+			});
 		});
 
 		return arrayutilities.serial(promises);
 	}
 
 	determineDifferences() {
+		du.info('Calculating differences...');
 
-		entities_dynamodb.map(d => {
-			if (!(entities_index.map(i => i.id).includes(d.id))) {
-				let add = Object.assign({}, d.entity);
+		const entitiesIndexById = _.keyBy(entities_index, 'id');
+		const entitiesDynamoById = _.keyBy(entities_dynamodb, 'id');
 
-				add.entity_type = d.entity_type;
+		for (const { id, entity, entity_type} of entities_dynamodb) {
+			if (!entitiesIndexById[id]) {
+				let add = Object.assign({}, entity);
+
+				add.entity_type = entity_type;
 				missing_in_index.push(add);
 
 				if (!index_details[add.entity_type]) {
@@ -111,60 +117,111 @@ module.exports = class ReIndexingHelperController {
 
 				index_details[add.entity_type]++;
 			}
-		});
+		}
 
-		entities_index.filter(i => i.entity_type).map(i => {
-			if (!(entities_dynamodb.map(d => d.id).includes(i.id))) {
-				missing_in_dynamo.push({id: i.id, entity_type: i.fields.entity_type[0]});
+		for (const { id, fields } of entities_index.filter(i => i.fields.entity_type)) {
+			if (!entitiesDynamoById[id]) {
+				missing_in_dynamo.push({ id, entity_type: fields.entity_type[0], fields });
 
-				if (!db_details[i.fields.entity_type]) {
-					db_details[i.fields.entity_type] = 0;
+				if (!db_details[fields.entity_type]) {
+					db_details[fields.entity_type] = 0;
 				}
 
-				db_details[i.fields.entity_type]++;
+				db_details[fields.entity_type]++;
 			}
-		});
+		}
 	}
 
 	printStatistics() {
 
+		const printDynamoTypeStatistics = () => {
+			const types = entities_dynamodb.map(e => e.entity_type);
+			const typeMap = types.reduce(
+				(results, t) => {
+					results.has(t) ? results.set(t, results.get(t) + 1) : results.set(t, 1);
+					return results;
+				},
+				new Map()
+			);
+			typeMap.forEach((value, key) => {
+				du.info(`Total ${key}s in dynamodb: ${value}`);
+			});
+		};
+
+		const reduceIndexTypes = () => {
+			const types = entities_index.map(e => e.fields.entity_type && e.fields.entity_type[0]);
+			return types.reduce(
+				(results, t) => {
+					results.has(t) ? results.set(t, results.get(t) + 1) : results.set(t, 1);
+					return results;
+				},
+				new Map()
+			);
+		};
+
+		const printIndexTypeStatistics = () => {
+			const numTypes = reduceIndexTypes();
+			numTypes.forEach((value, key) => {
+				if (key) {
+					du.info(`Total ${key}s in index: ${value}`);
+				} else {
+					du.info(`Total missing entity type in index: ${value}`);
+				}
+			});
+		};
+
 		du.info('Total in dynamodb: ' + entities_dynamodb.length);
+		printDynamoTypeStatistics();
 		du.info('Total in index: ' + entities_index.length);
+		printIndexTypeStatistics();
 		du.info('Missing in index: ' + missing_in_index.length);
 		du.debug(index_details);
 		du.info('Missing in dynamodb: ' + missing_in_dynamo.length);
 		du.debug(db_details);
-
+		for (let document of missing_in_dynamo) {
+			du.debug(document);
+		}
 	}
 
-	fixIndex(fix) {
+	async fixIndex(fix) {
 
 		if (fix === true) {
 
-			let promises = [];
+			let uploadGroups = [];
+			const uploadLimit = 1000;
 
 			if (missing_in_index.length) {
-				let adds = indexingHelperController.createIndexingDocument(missing_in_index.map(m => {
-					m.index_action = 'add';
-					return m;
-				})).then(document => cloudsearchprovider.uploadDocuments(document));
-				promises.push(adds);
+				uploadGroups = uploadGroups.concat(
+					_.chunk(
+						missing_in_index.map(entity => ({ index_action: 'add', ...entity })),
+						uploadLimit
+					)
+				);
 			}
 
 			if (missing_in_dynamo.length) {
-				let deletes = indexingHelperController.createIndexingDocument(missing_in_dynamo.map(m => {
-					m.index_action = 'delete';
-					return m;
-				})).then(document => cloudsearchprovider.uploadDocuments(document));
-				promises.push(deletes);
+				uploadGroups = uploadGroups.concat(
+					_.chunk(
+						missing_in_dynamo.map(entity => ({ index_action: 'delete', ...entity })),
+						uploadLimit
+					)
+				);
 			}
 
-			return Promise.all(promises);
+			if (uploadGroups.length) {
+				du.info('Repairing cloudsearch index...');
 
+				for (const group of uploadGroups) {
+					const document = await indexingHelperController.createIndexingDocument(group);
+					du.info(`Repairing ${group.length} documents...`);
+					try {
+						await cloudsearchprovider.uploadDocuments(document);
+					} catch (err) {
+						du.error('Error uploading document:', err);
+					}
+				}
+			}
 		}
-
-		return true;
-
 	}
 
 };

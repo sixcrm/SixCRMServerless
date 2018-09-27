@@ -9,7 +9,8 @@
 			"type": "string",
 			"enum": [
 				"test",
-				"testalert"
+				"testalert",
+			  	"email_fail"
 			]
 		},
 		{

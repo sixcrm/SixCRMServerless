@@ -1,0 +1,96 @@
+{
+	"method": "getReport",
+	"test_case": "getReport subscription detail",
+	"input": {
+		"reportType": "subscriptionDetail",
+		"facets": [
+			{
+				"facet": "start",
+				"values": ["2018-01-22T00:00:00Z"]
+			},
+			{
+				"facet": "end",
+				"values": ["2018-03-22T23:59:59"]
+			},
+			{
+				"facet": "account",
+				"values": ["d26c1887-7ad4-4a44-be0b-e80dbce22774"]
+			},
+			{
+				"facet": "amount",
+				"values": [4.99]
+			},
+			{
+				"facet": "interval",
+				"values": [30]
+			},
+			{
+				"facet": "cycle",
+				"values": [2]
+			},
+			{
+				"facet": "status",
+				"values": ["active"]
+			}
+		],
+		"pagination": {
+			"offset": 0,
+			"limit": 100,
+			"order": ["datetime"],
+			"direction": "ASC"
+		}
+	},
+	"result_name": "records",
+	"expect": [
+        [
+            {
+                "key": "id",
+                "value": "11111111-1111-1111-1111-111111111002"
+            },
+            {
+                "key": "alias",
+                "value": "R000000002"
+            },
+            {
+                "key": "status",
+                "value": "active"
+            },
+            {
+                "key": "cycle",
+                "value": 2
+            },
+            {
+                "key": "interval",
+                "value": 30
+            },
+            {
+                "key": "datetime",
+                "value": "2018-02-21 03:50:24"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "items",
+                "value": 1
+            },
+            {
+                "key": "campaign",
+                "value": "70a6689a-5814-438b-b9fd-dd484d0812f9"
+            },
+            {
+                "key": "campaign_name",
+                "value": "Example Campaign"
+            },
+            {
+                "key": "customer",
+                "value": "cc3d5c51-32f3-4417-917a-94bc37f74514"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 1"
+            }
+        ]
+    ]
+}

@@ -24,7 +24,7 @@ module.exports = class EventHelperController {
 
 	async pushEvent(event) {
 
-		du.debug('Push Event');
+		du.debug('Event.js Push Event', event);
 
 		if(!_.has(event, 'context')){
 			throw eu.getError('server', 'No context property present');

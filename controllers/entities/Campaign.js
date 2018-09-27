@@ -23,13 +23,15 @@ module.exports = class CampaignController extends entityController {
 
 		let data_acquisition_promises = [
 			this.executeAssociatedEntityFunction('SessionController', 'listByCampaign', {campaign:id}).then(sessions => this.getResult(sessions, 'sessions')),
-			this.executeAssociatedEntityFunction('TrackerController', 'listByCampaign', {campaign:id}).then(trackers => this.getResult(trackers, 'trackers'))
+			this.executeAssociatedEntityFunction('TrackerController', 'listByCampaign', {campaign:id}).then(trackers => this.getResult(trackers, 'trackers')),
+			this.executeAssociatedEntityFunction('MerchantProviderGroupAssociationController', 'listByCampaign', {campaign:id}).then(merchantprovidergroupassociations => this.getResult(merchantprovidergroupassociations, 'merchantprovidergroupassociations'))
 		];
 
 		return Promise.all(data_acquisition_promises).then(data_acquisition_promises => {
 
 			let sessions = data_acquisition_promises[0];
 			let trackers = data_acquisition_promises[1];
+			let merchantprovidergroupassociations = data_acquisition_promises[2];
 
 			if(arrayutilities.nonEmpty(sessions)){
 				arrayutilities.map(sessions, (session) => {
@@ -40,6 +42,12 @@ module.exports = class CampaignController extends entityController {
 			if(arrayutilities.nonEmpty(trackers)){
 				arrayutilities.map(trackers, (tracker) => {
 					return_array.push(this.createAssociatedEntitiesObject({name:'Tracker', object:tracker}));
+				});
+			}
+
+			if(arrayutilities.nonEmpty(merchantprovidergroupassociations)){
+				arrayutilities.map(merchantprovidergroupassociations, (merchantprovidergroupassociation) => {
+					return_array.push(this.createAssociatedEntitiesObject({name:'MerchantProviderGroupAssociation', object:merchantprovidergroupassociation}));
 				});
 			}
 

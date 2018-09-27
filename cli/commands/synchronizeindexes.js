@@ -2,7 +2,7 @@ require('@6crm/sixcrmcore')
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
-module.exports.command = 'syncronizeindexes';
+module.exports.command = 'synchronizeindexes';
 module.exports.describe = 'Synchronizes the indexes between the SixCRM document data store (DynamoDB) and the SixCRM search cluster (CloudSearch)';
 
 module.exports.builder = {

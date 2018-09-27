@@ -6,7 +6,12 @@ const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
+const AccountController = global.SixCRM.routes.include('entities', 'Account');
+const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
 const authenticatedController = global.SixCRM.routes.include('controllers', 'endpoints/components/authenticated.js');
+
+const accountController = new AccountController();
+const accountHelperController = new AccountHelperController();
 
 module.exports = class transactionEndpointController extends authenticatedController {
 
@@ -44,6 +49,16 @@ module.exports = class transactionEndpointController extends authenticatedContro
 				});
 			});
 
+	}
+
+	async validateAccount(event) {
+		super.validateAccount();
+		const account = await accountController.get({ id: global.account });
+		if (accountHelperController.isAccountLimited(account)) {
+			throw eu.getError('forbidden', 'Account access has been limited and cannot perform this operation.');
+		}
+
+		return event;
 	}
 
 	validateInput(event, validation_function) {

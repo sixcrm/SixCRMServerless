@@ -9,6 +9,8 @@ const CustomerController = global.SixCRM.routes.include('entities','Customer.js'
 const CampaignController = global.SixCRM.routes.include('entities','Campaign.js');
 const CreditCardController = global.SixCRM.routes.include('entities','CreditCard.js');
 const TransactionController = global.SixCRM.routes.include('entities','Transaction.js');
+const ProductController = global.SixCRM.routes.include('entities','Product.js');
+const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');
 
 module.exports = class ReturnController extends entityController {
 
@@ -24,6 +26,8 @@ module.exports = class ReturnController extends entityController {
 		this.customerController = new CustomerController();
 		this.campaignController = new CampaignController();
 		this.creditCardController = new CreditCardController();
+		this.productontroller = new ProductController();
+		this.productHelperController = new ProductHelperController();
 
 	}
 
@@ -51,28 +55,36 @@ module.exports = class ReturnController extends entityController {
 			let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
 			let eventHelperController = new EventsHelperController();
 
-			let transaction_id = _(ret).at('transactions[0].transaction');
+			du.debug('Return.create()->mergeHistories->super.create', ret);
+
+			let transaction_id = _(ret).at('transactions[0].transaction').toString();
 			let transaction = await this.transactionController.get({id: transaction_id});
 			let rebill = await this.rebillController.get({id: transaction.rebill});
 			let session = await this.sessionController.get({id: rebill.parentsession});
 			let customer = await this.customerController.get({id: session.customer});
 			let campaign = await this.campaignController.get({id: session.campaign});
-			let creditcard = await this.creditCardController.get({id: transaction.creditcard});
+
+			for (let transaction of ret.transactions) {
+				for (let product of transaction.products) {
+					product.product = await this.productontroller.get({id: product.product});
+					product.image = this.productHelperController.getDefaultImage(product.product);
+				}
+			}
 
 			let context = {
 				'return': ret,
-				rebill: rebill,
-				transaction: transaction,
-				session: session,
-				customer: customer,
-				campaign: campaign,
-				creditcard: creditcard
+				rebill,
+				transaction,
+				session,
+				customer,
+				campaign
 			};
 
-			return eventHelperController.pushEvent({event_type: 'return', context: context}).then(result => {
-				du.info(result);
-				return ret;
-			});
+			if (transaction.creditcard) {
+				context.creditcard = await this.creditCardController.get({id: transaction.creditcard});
+			}
+
+			return eventHelperController.pushEvent({event_type: 'return', context: context}).then(() => ret);
 		});
 
 	}

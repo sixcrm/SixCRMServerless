@@ -240,20 +240,13 @@ module.exports = class entityController extends entityUtilitiesController {
 	//Technical Debt:  This does not necessarily return results of size "limit".  Next page can be true...
 	//Technical Debt:  This needs to iterate until pagination specs are satisfied...
 	//NOTE: Expensive!
-	list({query_parameters, pagination, reverse_order, account, fatal, search}){
+	list({query_parameters = {}, pagination, reverse_order, account, fatal, search}){
 
 		du.debug('List');
 
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
-
-				let default_query_parameters = {
-					filter_expression: null,
-					expression_attribute_values: null
-				};
-
-				query_parameters = this.marryQueryParameters(query_parameters, default_query_parameters);
 				query_parameters = this.appendPagination({query_parameters: query_parameters, pagination: pagination});
 				query_parameters = this.appendAccountFilter({query_parameters: query_parameters, account: account});
 
@@ -402,19 +395,16 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	}
 
-	getBySecondaryIndex({field, index_value, index_name, fatal}){
+	getBySecondaryIndex({query_parameters = {}, field, index_value, index_name, fatal}){
 
 		du.debug('Get By Secondary Index');
 
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
-
-				let query_parameters = {
-					key_condition_expression: '#field = :index_valuev',
-					expression_attribute_values: {':index_valuev': index_value},
-					expression_attribute_names: {'#field': field}
-				}
+				query_parameters = this.appendKeyConditionExpression(query_parameters, '#'+field+' = :index_valuev');
+				query_parameters = this.appendExpressionAttributeNames(query_parameters, '#'+field, field);
+				query_parameters = this.appendExpressionAttributeValues(query_parameters, ':index_valuev', index_value);
 
 				return this.appendAccountFilter({query_parameters: query_parameters});
 

@@ -17,6 +17,7 @@ module.exports = class MerchantProviderGeneralFilter {
 			'creditcard':global.SixCRM.routes.path('model','entities/creditcard.json'),
 			'merchantproviders':global.SixCRM.routes.path('model','entities/components/merchantproviders.json'),
 			'amount':global.SixCRM.routes.path('model','definitions/currency.json'),
+			'merchantprovidergroup':global.SixCRM.routes.path('model','entities/merchantprovidergroup.json')
 		};
 
 		this.parameter_definition = {
@@ -24,7 +25,8 @@ module.exports = class MerchantProviderGeneralFilter {
 				required:{
 					merchantproviders:'merchant_providers',
 					creditcard: 'creditcard',
-					amount: 'amount'
+					amount: 'amount',
+					merchantprovidergroup: 'merchantprovidergroup'
 				},
 				optional:{}
 			}
@@ -56,6 +58,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
 		return this.filterInvalidMerchantProviders({merchant_providers: merchant_providers})
 			.then((result) => this.filterDisabledMerchantProviders({merchant_providers: result}))
+			.then((result) => this.filterZeroDistributionMerchantProviders({merchant_providers: result}))
 			.then((result) => this.filterTypeMismatchedMerchantProviders({merchant_providers: result}))
 			.then((result) => this.filterCAPShortageMerchantProviders({merchant_providers: result}))
 			.then((result) => this.filterCountShortageMerchantProviders({merchant_providers: result}));
@@ -91,6 +94,28 @@ module.exports = class MerchantProviderGeneralFilter {
 		let return_array = arrayutilities.filter(merchant_providers, (merchant_provider) => {
 			return (merchant_provider.enabled == true);
 		});
+
+		return Promise.resolve(return_array);
+
+	}
+
+	filterZeroDistributionMerchantProviders({merchant_providers}){
+
+		du.debug('Filter Zero Distribution Merchant Providers');
+
+		const merchantprovidergroup = this.parameters.get('merchantprovidergroup');
+
+		if(!arrayutilities.nonEmpty(merchant_providers)){
+			throw eu.getError('server', 'No merchant providers to select from.');
+		}
+
+		let zero_distributions = [];
+
+		if (merchantprovidergroup.merchantproviders) {
+			zero_distributions = merchantprovidergroup.merchantproviders.filter(mp => !mp.distribution).map(mp => mp.id);
+		}
+
+		const return_array = merchant_providers.filter(mp => !zero_distributions.includes(mp.id));
 
 		return Promise.resolve(return_array);
 
@@ -146,7 +171,7 @@ module.exports = class MerchantProviderGeneralFilter {
 				let proposed_total = (parseFloat(merchant_provider.summary.summary.thismonth.amount) + parseFloat(amount));
 				let cap = parseFloat(merchant_provider.processing.monthly_cap);
 
-				if((proposed_total >= cap)){
+				if((proposed_total > cap)){
 					du.warning('CAP Shortage')
 					return false;
 				}
@@ -176,7 +201,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.daily') && !_.isNull(merchant_provider.processing.transaction_counts.daily)){
 
-				if(parseInt(merchant_provider.summary.summary.today.count) >= parseInt(merchant_provider.processing.transaction_counts.daily)){
+				if(parseInt(merchant_provider.summary.summary.today.count) > parseInt(merchant_provider.processing.transaction_counts.daily)){
 					du.warning('Daily Count Shortage');
 					return_value = false;
 				}
@@ -185,7 +210,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.weekly') && !_.isNull(merchant_provider.processing.transaction_counts.weekly)){
 
-				if(parseInt(merchant_provider.summary.summary.thisweek.count) >= parseInt(merchant_provider.processing.transaction_counts.weekly)){
+				if(parseInt(merchant_provider.summary.summary.thisweek.count) > parseInt(merchant_provider.processing.transaction_counts.weekly)){
 					du.warning('Weekly Count Shortage');
 					return_value = false;
 				}
@@ -194,7 +219,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.monthly') && !_.isNull(merchant_provider.processing.transaction_counts.monthly)){
 
-				if(parseInt(merchant_provider.summary.summary.thismonth.count) >= parseInt(merchant_provider.processing.transaction_counts.monthly)){
+				if(parseInt(merchant_provider.summary.summary.thismonth.count) > parseInt(merchant_provider.processing.transaction_counts.monthly)){
 					du.warning('Monthly Count Shortage');
 					return_value = false;
 				}

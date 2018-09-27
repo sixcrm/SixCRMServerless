@@ -915,7 +915,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 		}
 
-		throw eu.getError('bad_request','Could not determine identifier.');
+		throw eu.getError('bad_request',`Could not determine identifier for ${this.descriptive_name} for ID ${object}.`);
 
 	}
 

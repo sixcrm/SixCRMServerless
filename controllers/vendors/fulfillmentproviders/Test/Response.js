@@ -40,7 +40,10 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 
 		return {
 			orders: [
-				response.body.response
+				{
+					reference_number: response.body.response.reference_number,
+					shipping: response.body.response
+				}
 			]
 		};
 

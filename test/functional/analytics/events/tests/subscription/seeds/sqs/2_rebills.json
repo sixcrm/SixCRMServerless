@@ -1,0 +1,21 @@
+{
+	"messages": [
+		{
+			"event_type": "subscription",
+			"context": {
+				"id": "16b7787a-fb6a-4392-996e-238a338b3b6f",
+				"alias": "R123456791",
+				"datetime": "2018-09-23 01:13:23",
+				"amount": 49.95,
+				"item_count": 1,
+				"cycle": 2,
+				"interval": 30,
+				"account": "d26c1887-7ad4-4a44-be0b-e80dbce22774",
+				"session": "034087fc-73a1-4594-86de-8490c4db2025",
+				"session_alias": "S123456789",
+				"campaign": "11111111-1111-1111-1111-111111111001",
+				"customer": "11111111-1111-1111-1111-111111111001"
+			}
+		}
+	]
+}

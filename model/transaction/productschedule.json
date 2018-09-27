@@ -41,6 +41,9 @@
 							"period": {
 								"type": "integer",
 								"minimum": 0
+							},
+							"samedayofmonth": {
+								"type": "boolean"
 							}
 						},
 						"required": [
