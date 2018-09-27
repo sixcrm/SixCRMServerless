@@ -21,7 +21,7 @@ module.exports = class UserACLHelperController {
 
 	}
 
-	async createNewUserACL({account, user, role}){
+	async createNewUserACL({account, user, role, owner_user = false}){
 
 		du.debug('Create New User ACL');
 
@@ -43,7 +43,7 @@ module.exports = class UserACLHelperController {
 		const userACLController = new UserACLController();
 
 		userACLController.disableACLs();
-		let user_acl = await userACLController.create({entity: user_acl_prototype});
+		let user_acl = await userACLController.create({entity: user_acl_prototype, owner_user});
 		userACLController.enableACLs();
 
 		return user_acl;
