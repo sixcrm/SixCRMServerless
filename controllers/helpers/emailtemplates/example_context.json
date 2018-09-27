@@ -1054,6 +1054,10 @@
 		"status": "pending"
 	  }
 	],
+	"tracking":{
+	  "carrier":"UPS",
+	  "id":"09812304981039480219358"
+	},
 	"id": "091c8b6e-4844-479e-9871-a700302f8850",
 	"status": "pending",
 	"updated_at": "2018-08-10T17:30:15.533Z"
