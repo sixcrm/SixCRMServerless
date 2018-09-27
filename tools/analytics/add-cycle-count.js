@@ -13,11 +13,9 @@ const sessionController = new SessionController();
 
 rebillController.disableACLs();
 
-const now = moment();
-
 // Process all existing rebills.
 // If this needs to be run in the future, might need to add more values here beyond 2019-09.
-Promise.all(_.map(['201804', '201805', '201806', '201807', '201808', '201809'], value => rebillController.queryBySecondaryIndex({
+Promise.all(_.map(['201804', '201805', '201806', '201807', '201808', '201809', '201810', '201811', '201812'], value => rebillController.queryBySecondaryIndex({
 	field: 'year_month',
 	index_value: value,
 	index_name: 'year_month_bill_at-index'
@@ -27,8 +25,7 @@ Promise.all(_.map(['201804', '201805', '201806', '201807', '201808', '201809'], 
 	_.remove(rebills, rebill =>
 		!rebill ||
 		rebill.parentsession === null ||
-		rebill.parentsession === undefined ||
-		moment(rebill.bill_at).isAfter(now));
+		rebill.parentsession === undefined);
 	du.info(rebills.length.toString() + " rebills");
 
 	const sessionIds = _.uniq(_.map(rebills, rebill => rebill.parentsession));
@@ -54,23 +51,21 @@ Promise.all(_.map(['201804', '201805', '201806', '201807', '201808', '201809'], 
 
 	});
 
-	return Bluebird.each(sessions, session => {
+	return Bluebird.each(sessions, async session => {
 
 		session.rebills = _.sortBy(session.rebills, rebill => moment(rebill.bill_at).valueOf());
 		for (let i = 0; i < session.rebills.length; i++) {
 
 			const rebill = session.rebills[i];
 			if (rebill.cycle === i) {
-				return;
+				continue;
 			}
 			else {
-				if (rebill.cycle !== undefined) {
-					du.warning(`Existing rebill ${rebill.id} with cycle ${rebill.cycle} should be ${i}`);
-				}
+				du.warning(`Existing rebill ${rebill.id} with cycle ${rebill.cycle} should be ${i}`);
 
 				if (process.env.DRY_RUN === 'false') {
 					rebill.cycle = i;
-					return rebillController.update({entity: rebill});
+					await rebillController.update({entity: rebill});
 				}
 			}
 
