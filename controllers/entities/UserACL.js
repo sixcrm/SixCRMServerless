@@ -33,15 +33,15 @@ class UserACLController extends entityController {
 
 	}
 
-	create({entity, primary_key}) {
+	create({entity, owner_user = false}) {
 
 		du.debug('UserACLController Create');
 
-		if (entity.role === OWNER_ROLE_ID) {
+		if (entity.role === OWNER_ROLE_ID && !owner_user) {
 			throw eu.getError('server', 'You cannot create an ACL with role Owner');
 		}
 
-		return super.create({entity, primary_key: primary_key});
+		return super.create({entity});
 	}
 
 	update({entity, primary_key, ignore_updated_at}) {

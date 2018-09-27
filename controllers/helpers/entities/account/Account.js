@@ -70,7 +70,7 @@ module.exports = class AccountHelperController {
 		let role = {id: this._getOwnerRoleId()};
 
 		const userACLHelperController = new UserACLHelperController();
-		await userACLHelperController.createNewUserACL({account: account, user: user, role: role});
+		await userACLHelperController.createNewUserACL({account: account, user: user, role: role, owner_user: true});
 
 		return account;
 
