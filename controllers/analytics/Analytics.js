@@ -149,6 +149,10 @@ module.exports = class AnalyticsController {
 				const resolveParams = require('./queries/reports/rebill-detail/params');
 				return this.query('reports/rebill-detail', await resolveParams(parameters, parameters.pagination));
 			}
+			case 'subscriptionDetail': {
+				const resolveParams = require('./queries/reports/subscription-detail/params');
+				return this.query('reports/subscription-detail', await resolveParams(parameters, parameters.pagination));
+			}
 			case 'productSchedulesByAmount': {
 				const resolveParams = require('./queries/reports/product-schedules-by-amount/params');
 				return this.query('reports/product-schedules-by-amount', await resolveParams(parameters, parameters.pagination));

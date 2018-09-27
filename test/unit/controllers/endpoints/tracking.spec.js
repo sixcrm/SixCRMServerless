@@ -250,10 +250,19 @@ describe('tracking', () => {
 
 			mockery.registerMock(global.SixCRM.routes.path('entities', 'Campaign.js'), mock_campaign);
 
+			mockery.registerMock(global.SixCRM.routes.path('entities', 'Account'), class {
+				get() {
+					return Promise.resolve()
+				}
+			});
+
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'entities/account/Account.js'), class {
 				constructor(){}
 				validateAccount(){
 					return Promise.resolve(true);
+				}
+				isAccountLimited(){
+					return false;
 				}
 			});
 

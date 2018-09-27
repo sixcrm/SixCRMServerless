@@ -201,7 +201,8 @@ module.exports = class MerchantProviderSelector extends TransactionUtilities {
 		return merchantProviderGeneralFilter.filter({
 			merchant_providers: merchant_providers,
 			creditcard: creditcard,
-			amount: amount
+			amount: amount,
+			merchantprovidergroup: merchantprovidergroup
 		})
 			.then((merchant_providers) => merchantProviderLSSFilter.filter({
 				merchant_providers: merchant_providers,

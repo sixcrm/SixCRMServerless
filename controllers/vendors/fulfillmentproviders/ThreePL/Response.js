@@ -196,7 +196,7 @@ module.exports = class ThreePLResponse extends FulfillmentProviderVendorResponse
 		};
 
 		if(stringutilities.nonEmpty(order.ShipToAddress2[0])){
-			customer.address.line2 = order.ShipToAddress2[0];
+			customer.address = {line2: order.ShipToAddress2[0]};
 		}
 
 		return customer;

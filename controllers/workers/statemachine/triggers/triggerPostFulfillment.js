@@ -29,7 +29,7 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 		if(_.isArray(shipping_receipts) && arrayutilities.nonEmpty(shipping_receipts)){
 
 			let trigger_promises = arrayutilities.map(shipping_receipts, shipping_receipt => {
-				return this.triggerPostFulfillment(shipping_receipt);
+				return this.triggerPostFulfillment(shipping_receipt, rebill);
 			});
 
 			let result = await Promise.all(trigger_promises);
@@ -57,9 +57,9 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 
 	}
 
-	triggerPostFulfillment(shipping_receipt){
+	async triggerPostFulfillment(shipping_receipt, rebill) {
 
-		du.debug('Trigger Post Fulfillment');
+		du.debug('Trigger Post Fulfillment', shipping_receipt, rebill);
 
 		if(!_.has(shipping_receipt, 'id')){
 			throw eu.getError('server', 'Expected Shipping Receipt to have property "id".');
@@ -69,18 +69,7 @@ module.exports = class TriggerPostFulfillmentController extends StepFunctionTrig
 			throw eu.getError('server', 'Expected Shipping Receipt ID to be a UUID.');
 		}
 
-		let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-		let eventHelperController = new EventsHelperController();
-
-		let context = {
-			shipping_receipt: shipping_receipt
-		};
-
-		return eventHelperController.pushEvent({event_type: 'allfulfillments', context: context}).then(result => {
-			du.info(result);
-
-			return super.execute({guid: shipping_receipt.id});
-		});
+		return super.execute({guid: shipping_receipt.id});
 
 	}
 

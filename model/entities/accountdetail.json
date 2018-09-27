@@ -17,6 +17,14 @@
 		  "type": "string",
 		  "minLength": 3
 		},
+	  	"support_email": {
+		  "type": "string",
+		  "minLength": 3
+		},
+	  	"support_phone": {
+		  "type": "string",
+		  "minLength": 3
+		},
 		"emailtemplatesettings": {
 			"type": "object",
 			"properties": {
@@ -27,6 +35,9 @@
 					"type": "string"
 				},
 				"color_secondary": {
+				  "type": "string"
+				},
+				"color_tertiary": {
 				  "type": "string"
 				}
 			}

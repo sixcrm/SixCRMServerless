@@ -41,6 +41,9 @@
 		"status": {
 			"type": "string"
 		},
+		"rebill": {
+		  "$ref": "../definitions/uuidv4.json"
+		},
 		"created_at": {
 			"$ref": "../definitions/iso8601.json"
 		},
