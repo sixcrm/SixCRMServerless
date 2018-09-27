@@ -41,7 +41,7 @@ class UserACLController extends entityController {
 			throw eu.getError('server', 'You cannot create an ACL with role Owner');
 		}
 
-		return super.create({entity: entity, primary_key: primary_key});
+		return super.create({entity, primary_key: primary_key});
 	}
 
 	update({entity, primary_key, ignore_updated_at}) {
@@ -57,7 +57,7 @@ class UserACLController extends entityController {
 				throw eu.getError('server', 'You cannot downgrade an Owner');
 			}
 
-			return super.update({entity: acl, primary_key: primary_key, ignore_updated_at: ignore_updated_at});
+			return super.update({entity, primary_key: primary_key, ignore_updated_at: ignore_updated_at});
 		});
 
 	}
