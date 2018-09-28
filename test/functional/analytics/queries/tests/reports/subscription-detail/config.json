@@ -22,7 +22,7 @@
 			},
 			{
 				"facet": "interval",
-				"values": [30]
+				"values": "30 days"
 			},
 			{
 				"facet": "cycle",
@@ -61,7 +61,7 @@
             },
             {
                 "key": "interval",
-                "value": 30
+                "value": "30 days"
             },
             {
                 "key": "datetime",
