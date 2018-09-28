@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const moment = require('moment');
 
 require('@6crm/sixcrmcore');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
@@ -15,8 +14,6 @@ const customerController = new CustomerController();
 const campaignController = new CampaignController();
 
 rebillController.disableACLs();
-
-const now = moment();
 
 const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
