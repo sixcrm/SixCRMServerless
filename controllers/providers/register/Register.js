@@ -163,6 +163,12 @@ module.exports = class Register extends RegisterUtilities {
 		const cycle = rebills_sorted.findIndex(item => item.id === rebill.id);
 
 		return BBPromise.each(transactions, (transaction) => {
+			let response = {};
+
+			try {
+				response = JSON.parse(transaction.processor_response);
+			} catch (e) {}
+
 			return AnalyticsEvent.push('transaction_' + transaction.result, {
 				datetime: moment.tz('UTC').toISOString(),
 				session,
@@ -170,7 +176,9 @@ module.exports = class Register extends RegisterUtilities {
 				cycle,
 				transaction,
 				transactionSubType: this.parameters.get('transactionsubtype', {fatal: false}),
-				transactionType: this.parameters.get('transactiontype', {fatal: false})
+				transactionType: this.parameters.get('transactiontype', {fatal: false}),
+				merchantCode: response.merchant_code,
+				merchantMessage: response.merchant_message
 			});
 		});
 
