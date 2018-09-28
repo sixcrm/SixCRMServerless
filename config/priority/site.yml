@@ -64,7 +64,7 @@ cloudsearch:
 
 #Technical Debt:  Username and Password combinations need to be encrypted...
 aurora:
-  release: 5
+  release: 6
   default_cluster_identifier: 'sixcrm'
   user: 'root'
   database: 'postgres'
