@@ -698,6 +698,9 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		if (rebill.cycle > 0) {
 
+			const schedule = rebill.product_schedules[0].product_schedule.schedule;
+			const interval = schedule[0].samedayofmonth ? '1 month' : schedule[0].period + ' days';
+
 			return AnalyticsEvent.push('subscription', {
 
 				id: rebill.id,
@@ -706,7 +709,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 				amount: rebill.amount,
 				item_count: _.sumBy(rebill.products, product => product.quantity),
 				cycle: rebill.cycle,
-				interval: rebill.product_schedules[0].period,
+				interval,
 				account: session.account,
 				session: session.id,
 				session_alias: session.alias,
