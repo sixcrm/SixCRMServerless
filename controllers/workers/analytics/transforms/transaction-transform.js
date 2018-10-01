@@ -24,6 +24,8 @@ module.exports = class TransactionTransform extends AnalyticsTransform {
 			merchantProvider: {
 				id: record.context.transaction.merchant_provider
 			},
+			merchantCode: record.context.merchantCode,
+			merchantMessage: record.context.merchantMessage,
 			processorResult: record.context.transaction.result,
 			amount: record.context.transaction.amount,
 			type: record.context.transaction.type,
