@@ -2,7 +2,6 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 //const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const RoleHelperController = global.SixCRM.routes.include('helpers', 'entities/role/Role.js');
 
 module.exports = class UserACLHelperController {
 
@@ -22,7 +21,7 @@ module.exports = class UserACLHelperController {
 
 	}
 
-	async createNewUserACL({account, user, role}){
+	async createNewUserACL({account, user, role, owner_user = false}){
 
 		du.debug('Create New User ACL');
 
@@ -44,34 +43,10 @@ module.exports = class UserACLHelperController {
 		const userACLController = new UserACLController();
 
 		userACLController.disableACLs();
-		let user_acl = await userACLController.create({entity: user_acl_prototype});
+		let user_acl = await userACLController.create({entity: user_acl_prototype, owner_user});
 		userACLController.enableACLs();
 
 		return user_acl;
 
 	}
-
-	async setAccountPermissions({role, account}){
-
-		du.debug('Set Account Permissions');
-
-		const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
-		let accountHelperController = new AccountHelperController();
-
-		if(accountHelperController.isAccountDisabled(account)){
-
-			let roleHelperController = new RoleHelperController();
-
-			const disabled_role = await roleHelperController.getDisabledRole();
-
-			let intersectional_role = roleHelperController.roleIntersection(role, disabled_role);
-
-			return intersectional_role;
-
-		}
-
-		return role;
-
-	}
-
 }

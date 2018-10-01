@@ -14,7 +14,7 @@ module.exports = class EventPushHelperController {
 
 	pushEvent({event_type = null, context = null, message_attributes = null} = {}) {
 
-		du.debug('EventPushHelperController.pushEvent()');
+		du.debug('EventPushHelperController.pushEvent()', event_type, context);
 
 		if (event_type === undefined || event_type === null) {
 			if ((context !== undefined) && (context !== null) && _.has(context, 'event_type') && _.isString(context.event_type)) {

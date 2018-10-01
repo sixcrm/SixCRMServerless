@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const GraphQLInt = require('graphql').GraphQLInt;
 const GraphQLString = require('graphql').GraphQLString;
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
@@ -36,7 +35,7 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: shippingReceiptType.graphObj,
 			description: 'A shipping receipt associated with the transaction product.',
 			resolve: function (transactionproduct) {
-				if (!_.has(transactionproduct, "shippingreceipt")) {
+				if (!transactionproduct.shippingreceipt) {
 					return null;
 				}
 				const shippingReceiptController = new ShippingReceiptController();

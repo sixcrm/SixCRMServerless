@@ -53,7 +53,7 @@ module.exports = class TransactionHelperController {
 		let transaction_products = [];
 
 		arrayutilities.map(transactions, transaction => {
-			if (_.has(transaction, 'products')) {
+			if (_.has(transaction, 'products') && transaction.type === 'sale') {
 				arrayutilities.map(transaction.products, transaction_product => {
 					transaction_products.push(transaction_product);
 				});

@@ -264,8 +264,8 @@ describe('controllers/workers/statemachine/bill.js', () => {
         constructor(){
           this.parameters = {
             get: (key) => {
-              expect(key).to.equal('transactions');
-              return transactions;
+				if (key === 'transactions') return transactions;
+				if (key === 'response_type') return 'success';
             }
           }
 				}
@@ -335,8 +335,8 @@ describe('controllers/workers/statemachine/bill.js', () => {
         constructor(){
           this.parameters = {
             get: (key) => {
-              expect(key).to.equal('transactions');
-              return transactions;
+            	if (key === 'transactions') return transactions;
+            	if (key === 'response_type') return 'decline';
             }
           }
 				}
@@ -406,8 +406,8 @@ describe('controllers/workers/statemachine/bill.js', () => {
         constructor(){
           this.parameters = {
             get: (key) => {
-              expect(key).to.equal('transactions');
-              return transactions;
+				if (key === 'transactions') return transactions;
+				if (key === 'response_type') return 'harddecline';
             }
           }
 				}

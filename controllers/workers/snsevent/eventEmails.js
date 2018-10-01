@@ -15,6 +15,9 @@ const SNSEventController = global.SixCRM.routes.include('controllers','workers/c
 const ActivityHelper = global.SixCRM.routes.include('helpers', 'analytics/Activity.js');
 const handlebars = global.SixCRM.routes.include('helpers', 'emailtemplates/Handlebars.js');
 const AccountDetailsController = global.SixCRM.routes.include('entities', 'AccountDetails.js');
+const ProductHelperController = global.SixCRM.routes.include('helpers', 'entities/product/Product.js');
+const EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
+
 
 module.exports = class EventEmailsController extends SNSEventController {
 
@@ -47,6 +50,8 @@ module.exports = class EventEmailsController extends SNSEventController {
 		this.emailTemplatesController = new EmailTemplateController();
 		this.activityHelper = new ActivityHelper();
 		this.accountDetailsController = new AccountDetailsController();
+		this.productHelperController = new ProductHelperController();
+		this.eventHelperController = new EventsHelperController();
 
 		this.smtpProviderController.sanitize(false);
 		this.emailTemplatesController.sanitize(false);
@@ -60,6 +65,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 		du.debug('Trigger Emails');
 
 		return this.acquireCampaign()
+			.then(() => this.hydrateContext())
 			.then(() => this.acquireProducts())
 			.then(() => this.acquireProductSchedules())
 			.then(() => this.acquireCustomer())
@@ -67,22 +73,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 			.then(() => this.acquireSMTPProvider())
 			.then(() => this.acquireAccountDetails())
 			.then(() => this.sendEmails())
-			.then(() => this.createAnalyticsActivityRecord(``))
-			.catch(error => {
-				du.error('Email Sending Failed');
-				du.error(error);
-
-				let EventsHelperController = global.SixCRM.routes.include('helpers', 'events/Event.js');
-				let eventHelperController = new EventsHelperController();
-
-				let context = {smtp_provider: this.parameters.get('paired_smtp_provider')};
-
-				return eventHelperController.pushEvent({event_type: 'email_fail', context: context}).then(result => {
-					du.info(result);
-					return;
-				});
-
-			});
 
 	}
 
@@ -194,6 +184,22 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 	}
 
+	async hydrateContext() {
+		du.debug('Hydrate Context');
+
+		let context = this.parameters.get('message').context || {};
+
+		if (_(context).has('rebill.products')) {
+			for (let product of context.rebill.products) {
+				if (!product.image) {
+					product.image = this.productHelperController.getDefaultImage(product.product);
+				}
+			}
+		}
+
+		return Promise.resolve();
+	}
+
 	acquireEmailTemplates(){
 
 		du.debug('Acquire Email Templates');
@@ -206,7 +212,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		du.debug(message, campaign, products, product_schedules);
 
-		return this.emailTemplatesController.templatesByAccount({account: message.account}).then(results => {
+		return this.emailTemplatesController.templatesByAccount({account: campaign.account}).then(results => {
 
 			du.debug('account', message.account);
 			du.debug('results', results);
@@ -301,11 +307,11 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 	async acquireAccountDetails() {
 
-		let message = this.parameters.get('message');
+		let campaign = this.parameters.get('campaign');
 
-		du.debug('Get Account Details', message.account);
+		du.debug('Get Account Details', campaign.account);
 
-		const accountdetails = await this.accountDetailsController.get({ id: message.account });
+		const accountdetails = await this.accountDetailsController.get({ id: campaign.account });
 
 		this.parameters.set('accountdetails', accountdetails);
 
@@ -355,6 +361,15 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		if (this.doSend) {
 			return customerEmailer.sendEmail({send_options: options})
+				.catch(error => {
+					du.error('Email Sending Failed', error);
+
+					let context = {smtpprovider: paired_smtp_provider};
+
+					return this.eventHelperController.pushEvent({event_type: 'email_fail', context: context})
+
+				})
+				.then(() => this.createAnalyticsActivityRecord(customer, email_template.type, parsed_email_template.subject))
 		}
 
 		return Promise.resolve();
@@ -440,11 +455,14 @@ module.exports = class EventEmailsController extends SNSEventController {
 		return compatible;
 	}
 
-	createAnalyticsActivityRecord(){
+	createAnalyticsActivityRecord(customer, email_type, subject) {
 
-		let customer = this.parameters.get('customer');
+		du.debug('Create Email Activity', customer, email_type, subject);
 
-		return this.activityHelper.createActivity(null, 'sent_email', {entity: customer, type: 'customer'}, null);
+		return this.activityHelper.createActivity(null, 'sent_email', {
+			entity: customer,
+			type: 'customer'
+		}, {email: {type: email_type, subject}});
 
 	}
 

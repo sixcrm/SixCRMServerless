@@ -1,82 +1,90 @@
 {
-  "Name":"events",
-  "Subscriptions":[
-    {
-      "Protocol":"lambda",
-      "TopicArn":"arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
-      "Endpoint":"arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-customeremail",
-      "Attributes":[
-        {
-          "AttributeName":"FilterPolicy",
-          "AttributeValue":{
-            "event_type": [
-              "order",
-              "order_decline",
-			  "initialorders",
-			  "allorders",
-			  "initialfulfillment",
-			  "allfulfillments",
-              "confirm",
-			  "cancellation",
-			  "delivery",
-              "shipping_confirmation",
-              "delivery_confirmation",
-              "rma",
-			  "return",
-			  "refund",
-			  "void",
-			  "decline",
-              "transaction_success",
-              "transaction_fail",
-              "transaction_recovery_success",
-              "transaction_recovery_fail"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "Protocol":"lambda",
-      "TopicArn":"arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
-      "Endpoint":"arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-trackingevents"
-    },
-    {
-      "Protocol":"lambda",
-      "TopicArn":"arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
-      "Endpoint":"arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-notificationevents",
-      "Attributes":[
-        {
-          "AttributeName":"FilterPolicy",
-          "AttributeValue":{
-            "event_type": [
-              "order",
-              "order_decline",
-              "lead",
-              "confirm",
-              "test",
-              "testalert",
-              "fulfillment_triggered_success",
-              "fulfillment_triggered_fail",
-              "fulfillment_triggered_error",
-              "transaction_recovery_success",
-              "transaction_recovery_fail",
-              "transaction_recovery_error",
-              "transaction_success",
-              "transaction_fail",
-              "transaction_error",
-              "shipping_confirmation",
-              "delivery_confirmation",
-              "user_invited",
-              "user_invite_accepted",
-              "user_invite_resent",
-              "role_changed",
-              "chargeback",
-              "rma",
-			  "email_fail"
-            ]
-          }
-        }
-      ]
-    }
-  ]
+	"Name": "events",
+	"Subscriptions": [
+		{
+			"Protocol": "lambda",
+			"TopicArn": "arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
+			"Endpoint": "arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-customeremail",
+			"Attributes": [
+				{
+					"AttributeName": "FilterPolicy",
+					"AttributeValue": {
+						"event_type": [
+							"billing_failed",
+							"billing_reminder",
+							"billing_final_warning",
+							"account_limited",
+							"account_deactivated",
+							"order",
+							"initialorders",
+							"allorders",
+							"initialfulfillment",
+							"allfulfillments",
+							"confirm",
+							"cancellation",
+							"delivery",
+							"shipping_confirmation",
+							"delivery_confirmation",
+							"rma",
+							"return",
+							"refund",
+							"void",
+							"decline",
+							"transaction_success",
+							"transaction_fail",
+							"transaction_recovery_success",
+							"transaction_recovery_fail"
+						]
+					}
+				}
+			]
+		},
+		{
+			"Protocol": "lambda",
+			"TopicArn": "arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
+			"Endpoint": "arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-trackingevents"
+		},
+		{
+			"Protocol": "lambda",
+			"TopicArn": "arn:aws:sns:{{region}}:{{account}}:{{topic_name}}",
+			"Endpoint": "arn:aws:lambda:{{region}}:{{account}}:function:sixcrm-{{stage}}-notificationevents",
+			"Attributes": [
+				{
+					"AttributeName": "FilterPolicy",
+					"AttributeValue": {
+						"event_type": [
+							"billing_failed",
+							"billing_reminder",
+							"billing_last_warning",
+							"account_limited",
+							"account_deactivated",
+							"order",
+							"lead",
+							"confirm",
+							"test",
+							"testalert",
+							"fulfillment_triggered_success",
+							"fulfillment_triggered_fail",
+							"fulfillment_triggered_error",
+							"transaction_recovery_success",
+							"transaction_recovery_fail",
+							"transaction_recovery_error",
+							"transaction_success",
+							"transaction_fail",
+							"transaction_error",
+							"shipping_confirmation",
+							"delivery_confirmation",
+							"user_invited",
+							"user_invite_accepted",
+							"user_invite_resent",
+							"role_changed",
+							"chargeback",
+							"rma",
+							"email_fail"
+						]
+					}
+				}
+			]
+		}
+	]
 }

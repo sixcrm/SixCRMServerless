@@ -75,8 +75,10 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 
 		let vendor_response = tracking_information.getVendorResponse();
 
+		du.debug('Received Fulfillment Provider Response:', vendor_response);
+
 		//Technical Debt:  Tracking can respond with several orders, and this logic only attains the first record
-		if(objectutilities.hasRecursive(vendor_response, 'orders.0.shipping.tracking_number')){
+		if(objectutilities.hasRecursive(vendor_response, 'orders.0.shipping.tracking_number') && !!vendor_response.orders[0].shipping.tracking_number){
 			let return_object = {};
 			return_object.id = vendor_response.orders[0].shipping.tracking_number;
 			if(objectutilities.hasRecursive(vendor_response, 'orders.0.shipping.carrier') && !_.isNull(vendor_response.orders[0].shipping.carrier)){

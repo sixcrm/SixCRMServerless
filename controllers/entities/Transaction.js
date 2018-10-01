@@ -124,8 +124,8 @@ class TransactionController extends entityController {
 					"product": transactionproduct.product
 				};
 
-				if(_.has(transactionproduct, "shippingreceipt")){
-					base_product['shippingreceipt'] = transactionproduct.shippingreceipt;
+				if(_.has(transactionproduct, "shipping_receipt")){
+					base_product['shippingreceipt'] = transactionproduct.shipping_receipt;
 				}
 
 				return_array.push(base_product);

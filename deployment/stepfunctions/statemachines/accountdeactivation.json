@@ -1,0 +1,61 @@
+{
+  "Comment": "A state machine to handle account deactivations",
+  "StartAt": "Billing failed",
+  "States": {
+		"Billing failed": {
+			"Type": "Task",
+			"Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sendbillingfailed",
+			"InputPath": "$.account",
+			"ResultPath": null,
+			"Next": "Wait until 1 week has passed"
+		},
+		"Wait until 1 week has passed": {
+			"Type": "Wait",
+			"Seconds": 604800,
+			"Next": "Reminder"
+		},
+		"Reminder": {
+			"Type": "Task",
+			"Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sendbillingreminder",
+			"InputPath": "$.account",
+			"ResultPath": null,
+			"Next": "Wait until 2 weeks have passed"
+		},
+		"Wait until 2 weeks have passed": {
+			"Type": "Wait",
+			"Seconds": 604800,
+			"Next": "Limit account"
+		},
+		"Limit account": {
+			"Type": "Task",
+			"Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-limitaccount",
+			"InputPath": "$.account",
+			"ResultPath": null,
+			"Next": "Wait until 25 days have passed"
+		},
+		"Wait until 25 days have passed": {
+			"Type": "Wait",
+			"Seconds": 950400,
+			"Next": "Final Warning"
+		},
+		"Final Warning": {
+			"Type": "Task",
+			"Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-sendbillingfinalwarning",
+			"InputPath": "$.account",
+			"ResultPath": null,
+			"Next": "Wait until 30 days have passed"
+		},
+		"Wait until 30 days have passed": {
+			"Type": "Wait",
+			"Seconds": 432000,
+			"Next": "Deactivate account"
+		},
+		"Deactivate account": {
+			"Type": "Task",
+			"Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-deactivateaccount",
+			"InputPath": "$.account",
+			"ResultPath": null,
+			"End": true
+		}
+	}
+}

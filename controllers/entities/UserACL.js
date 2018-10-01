@@ -2,8 +2,11 @@
 const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+
+const OWNER_ROLE_ID = 'cae614de-ce8a-40b9-8137-3d3bdff78039';
 
 class UserACLController extends entityController {
 
@@ -15,14 +18,8 @@ class UserACLController extends entityController {
 
 		du.debug('Get Partially Hydrated ACL Object');
 
-		const UserACLHelperController = global.SixCRM.routes.include('helpers', 'entities/useracl/UserACL.js');
-		let userACLHelperController = new UserACLHelperController();
-
-		const account = await this.getAccount(useracl);
-		const role = await this.getRole(useracl);
-
-		useracl.account = account;
-		useracl.role = await userACLHelperController.setAccountPermissions({role: role, account: account});
+		useracl.account = await this.getAccount(useracl);
+		useracl.role = await this.getRole(useracl);
 
 		return useracl;
 
@@ -36,18 +33,33 @@ class UserACLController extends entityController {
 
 	}
 
-	create({entity, primary_key}) {
+	create({entity, owner_user = false}) {
 
 		du.debug('UserACLController Create');
 
-		return super.create({entity: entity, primary_key: primary_key});
+		if (entity.role === OWNER_ROLE_ID && !owner_user) {
+			throw eu.getError('server', 'You cannot create an ACL with role Owner');
+		}
+
+		return super.create({entity});
 	}
 
 	update({entity, primary_key, ignore_updated_at}) {
 
 		du.debug('UserACLController Update');
 
-		return super.update({entity: entity, primary_key: primary_key, ignore_updated_at: ignore_updated_at});
+		if (entity.role === OWNER_ROLE_ID) {
+			throw eu.getError('server', 'You cannot set role to Owner');
+		}
+
+		return this.get({id: entity.id, fatal: true}).then((acl) => {
+			if (acl.role === OWNER_ROLE_ID) {
+				throw eu.getError('server', 'You cannot downgrade an Owner');
+			}
+
+			return super.update({entity, primary_key: primary_key, ignore_updated_at: ignore_updated_at});
+		});
+
 	}
 
 	updateTermsAndConditions(useracl_terms_and_conditions) {
@@ -64,13 +76,12 @@ class UserACLController extends entityController {
 
 	delete({id, primary_key}) {
 
-		return super.delete({id: id, primary_key: primary_key}).then((acl) => {
+		return this.get({id, fatal: true}).then((acl) => {
+			if (acl.role === OWNER_ROLE_ID) {
+				throw eu.getError('server', 'You cannot delete an Owner');
+			}
 
-			//Technical Debt:  Broken
-			//this.createNotification(acl, 'deleted', 'You have been removed from account.');
-
-			return acl;
-
+			return super.delete({id: id, primary_key: primary_key})
 		});
 
 	}

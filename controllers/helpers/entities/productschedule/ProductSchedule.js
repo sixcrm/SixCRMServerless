@@ -322,6 +322,7 @@ module.exports = class ProductScheduleHelper {
 			price: schedule_element.price,
 			start: schedule_element.start,
 			period: schedule_element.period,
+			samedayofmonth: schedule_element.samedayofmonth,
 			//Techincal Debt: accounting for legacy deta, remove at earliest convenience
 			product: _.has(schedule_element, 'product') ? schedule_element.product : schedule_element.product_id
 		};
