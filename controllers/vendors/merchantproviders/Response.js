@@ -96,7 +96,8 @@ module.exports = class MerchantProviderResponse extends Response{
 
 				this.setCode(result_code);
 				this.setMessage(result_message);
-
+				this.setMerchantCode(this.determineMerchantCode(vendor_response));
+				this.setMerchantMessage(this.determineMerchantMessage(vendor_response));
 			}
 
 		}
@@ -155,6 +156,43 @@ module.exports = class MerchantProviderResponse extends Response{
 		du.debug('Determine Result Message');
 
 		return this.result_messages[result_code];
+
+	}
+
+	determineMerchantCode(vendor_response) {
+
+		du.debug('Determine Merchant Code');
+
+		let result = vendor_response;
+
+		result = _(vendor_response).get('statusCode', result);
+		result = _(vendor_response).get('response.statusCode', result);
+
+		du.debug(result);
+
+		if (typeof result !== 'string') {
+			result = JSON.stringify(result)
+		}
+
+		return result;
+	}
+
+	determineMerchantMessage(vendor_response) {
+
+		du.debug('Determine Merchant Message');
+
+		let result = vendor_response;
+
+		result = _(vendor_response).get('body', result);
+		result = _(vendor_response).get('response.body', result);
+
+		du.debug(result);
+
+		if (typeof result !== 'string') {
+			result = JSON.stringify(result)
+		}
+
+		return result;
 
 	}
 
@@ -231,6 +269,21 @@ module.exports = class MerchantProviderResponse extends Response{
 
 		return true;
 
+	}
+
+	setMerchantMessage(message){
+
+		du.debug('Set Merchant Message', message);
+
+		this.parameters.set('merchant_message', message)
+
+	}
+
+	setMerchantCode(code){
+
+		du.debug('Set Merchant Code');
+
+		this.parameters.set('merchant_code', code);
 	}
 
 	getCode(){
