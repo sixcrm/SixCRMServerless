@@ -70,6 +70,18 @@ module.exports = class QueryParser {
 
 		}
 
+		if (options.merchantCode) {
+
+			filter = this.resolveFilterQueryValue(filter, 'merchantCode', 'merchant_code', parameters);
+
+		}
+
+		if (options.merchantMessage) {
+
+			filter = this.resolveFilterQueryValue(filter, 'merchantMessage', 'merchant_message', parameters);
+
+		}
+
 		if (options.alias) {
 
 			filter = this.resolveFilterQueryValue(filter, 'alias', 'alias', parameters);
