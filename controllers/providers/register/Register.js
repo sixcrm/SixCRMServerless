@@ -167,7 +167,9 @@ module.exports = class Register extends RegisterUtilities {
 
 			try {
 				response = JSON.parse(transaction.processor_response);
-			} catch (e) {}
+			} catch (e) {
+				// nop
+			}
 
 			return AnalyticsEvent.push('transaction_' + transaction.result, {
 				datetime: moment.tz('UTC').toISOString(),

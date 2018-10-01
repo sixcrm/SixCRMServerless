@@ -289,7 +289,7 @@ module.exports = class MerchantProviderResponse extends Response{
 	getCode(){
 
 		du.debug('Get Code');
-``
+
 		let code = this.parameters.get('code', {fatal: false});
 
 		if(_.isNull(code)){
