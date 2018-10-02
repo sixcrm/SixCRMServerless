@@ -701,9 +701,9 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		if (rebill.cycle > 0) {
 
-			const schedule_id = rebill.product_schedules[0].product_schedule.schedule;
+			const schedule_id = rebill.product_schedules[0];
 			const schedule = await this.productScheduleController.get({id: schedule_id});
-			const interval = schedule[0].samedayofmonth ? '1 month' : schedule[0].period + ' days';
+			const interval = schedule.schedule[0].samedayofmonth ? '1 month' : schedule[0].period + ' days';
 
 			return AnalyticsEvent.push('subscription', {
 
