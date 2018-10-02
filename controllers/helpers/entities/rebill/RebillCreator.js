@@ -13,6 +13,7 @@ const currencyutilities = require('@6crm/sixcrmcore/util/currency-utilities').de
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 const SessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 const sessionController = new SessionController();
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
@@ -70,6 +71,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		const ProductScheduleHelperController = global.SixCRM.routes.include('helpers','entities/productschedule/ProductSchedule.js');
 
 		this.productScheduleHelperController = new ProductScheduleHelperController();
+		this.productScheduleController = new ProductScheduleController();
 
 	}
 
@@ -689,7 +691,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 	}
 
-	sendAnalyticsEvent() {
+	async sendAnalyticsEvent() {
 
 		du.debug('Send Analytics Event');
 
@@ -699,7 +701,8 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		if (rebill.cycle > 0) {
 
-			const schedule = rebill.product_schedules[0].product_schedule.schedule;
+			const schedule_id = rebill.product_schedules[0].product_schedule.schedule;
+			const schedule = await this.productScheduleController.get({id: schedule_id});
 			const interval = schedule[0].samedayofmonth ? '1 month' : schedule[0].period + ' days';
 
 			return AnalyticsEvent.push('subscription', {
