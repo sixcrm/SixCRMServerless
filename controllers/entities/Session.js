@@ -618,7 +618,7 @@ module.exports = class SessionController extends entityController {
 				});
 			}).then(() => {
 
-				return AnalyticsEvent.push('cancelSession', { id: session.id });
+				return AnalyticsEvent.push('cancelSession', { id: session.id }).then(() => session);
 
 			});
 
