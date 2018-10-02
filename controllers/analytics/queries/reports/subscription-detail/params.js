@@ -10,6 +10,7 @@ module.exports = async (parameters, pagination) => {
 	const cycle = parameters.facets.find(f => f.facet === 'cycle');
 	const interval = parameters.facets.find(f => f.facet === 'interval');
 	const sessionAlias = parameters.facets.find(f => f.facet === 'sessionAlias');
+	const session = parameters.facets.find(f => f.facet === 'session');
 	const campaignName = parameters.facets.find(f => f.facet === 'campaignName');
 	const customerName = parameters.facets.find(f => f.facet === 'customerName');
 
@@ -35,6 +36,7 @@ module.exports = async (parameters, pagination) => {
 	_resolveParamValue('cycle', cycle);
 	_resolveParamValue('interval', interval);
 	_resolveParamValue('sessionAlias', sessionAlias);
+	_resolveParamValue('session', session);
 	_resolveParamValue('campaignName', campaignName);
 	_resolveParamValue('customerName', customerName);
 

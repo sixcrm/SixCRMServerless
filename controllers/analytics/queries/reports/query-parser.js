@@ -82,6 +82,12 @@ module.exports = class QueryParser {
 
 		}
 
+		if (options.session) {
+
+			filter = this.resolveFilterQueryValue(filter, 'session', 'session', parameters);
+
+		}
+
 		if (options.campaignName) {
 
 			filter = this.resolveFilterQueryValue(filter, 'campaignName', 'campaign_name', parameters);
