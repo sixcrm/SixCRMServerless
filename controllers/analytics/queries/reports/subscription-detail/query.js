@@ -17,6 +17,7 @@ module.exports = async (parameters = {}) => {
 	QueryParser.resolveFilterValue(local, 's', 'cycle', parameters);
 	QueryParser.resolveFilterValue(local, 's', 'interval', parameters);
 	QueryParser.resolveFilterValue(local, 's', 'sessionAlias', parameters);
+	QueryParser.resolveFilterValue(local, 's', 'session', parameters);
 	QueryParser.resolveFilterValue(local, 's', 'campaignName', parameters);
 	QueryParser.resolveFilterValue(local, 's', 'customerName', parameters);
 	const filter = QueryParser.resolveFilterQuery(parameters, {
