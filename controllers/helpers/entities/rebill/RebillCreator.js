@@ -695,6 +695,7 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 		const rebill = this.parameters.get('rebill');
 		const session = this.parameters.get('session');
+		du.debug('Rebill for analytics', rebill, rebill.cycle);
 
 		if (rebill.cycle > 0) {
 
