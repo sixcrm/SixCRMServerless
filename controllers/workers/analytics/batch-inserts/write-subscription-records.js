@@ -55,7 +55,11 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 				campaign, \
 				campaign_name, \
 				customer, \
-				customer_name) \
+				customer_name,\
+				product_schedule_name,\
+				product_schedule,\
+				merchant_provider_name,\
+				merchant_provider) \
 				VALUES ';
 
 		const values = records.map((r, i) => {
@@ -81,7 +85,11 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 			campaign = EXCLUDED.campaign, \
 			campaign_name = EXCLUDED.campaign_name, \
 			customer = EXCLUDED.customer, \
-			customer_name = EXCLUDED.customer_name';
+			customer_name = EXCLUDED.customer_name, \
+			product_schedule_name = EXCLUDED.product_schedule_name, \
+			product_schedule = EXCLUDED.product_schedule, \
+			merchant_provider_name = EXCLUDED.merchant_provider_name, \
+			merchant_provider = EXCLUDED.merchant_provider';
 
 		const queryArgs = _.flatten(records.map(r => {
 
@@ -100,7 +108,11 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 				r.campaign,
 				r.campaign_name,
 				r.customer,
-				r.customer_name
+				r.customer_name,
+				r.product_schedule_name,
+				r.product_schedule,
+				r.merchant_provider_name,
+				r.merchant_provider
 			];
 
 		}));
