@@ -726,9 +726,9 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 				campaign: session.campaign,
 				customer: session.customer,
 				product_schedule_name,
-				product_schedule_id,
+				product_schedule: product_schedule_id,
 				merchant_provider_name: merchant_provider.name,
-				merchant_provider_id: merchant_provider.id
+				merchant_provider: merchant_provider.id
 			});
 
 		}
