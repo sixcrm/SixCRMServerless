@@ -5,6 +5,7 @@ SELECT
 	s.cycle,
 	s.interval,
 	s.session_alias,
+	s.session,
 	s.datetime,
 	s.amount,
 	s.item_count AS items,
