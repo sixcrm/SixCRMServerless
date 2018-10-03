@@ -97,19 +97,19 @@
             },
             {
                 "key": "product_schedule_name",
-                "value": [null]
+                "value": null
             },
             {
                 "key": "product_schedule",
-                "value": [null]
+                "value": null
             },
             {
                 "key": "merchant_provider_name",
-                "value": [null]
+                "value": null
             },
             {
                 "key": "merchant_provider",
-                "value": [null]
+                "value": null
             }
         ]
     ]
