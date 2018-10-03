@@ -64,6 +64,10 @@
                 "value": "30 days"
             },
             {
+                "key": "session_alias",
+                "value": "S000000001"
+            },
+            {
                 "key": "datetime",
                 "value": "2018-02-21 03:50:24"
             },
@@ -90,6 +94,22 @@
             {
                 "key": "customer_name",
                 "value": "Example Customer 1"
+            },
+            {
+                "key": "product_schedule_name",
+                "value": [null]
+            },
+            {
+                "key": "product_schedule",
+                "value": [null]
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": [null]
+            },
+            {
+                "key": "merchant_provider",
+                "value": [null]
             }
         ]
     ]
