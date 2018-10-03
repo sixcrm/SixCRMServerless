@@ -14,7 +14,11 @@
 				"session": "034087fc-73a1-4594-86de-8490c4db2025",
 				"session_alias": "S123456789",
 				"campaign": "11111111-1111-1111-1111-111111111001",
-				"customer": "11111111-1111-1111-1111-111111111001"
+				"customer": "11111111-1111-1111-1111-111111111001",
+				"product_schedule_name": "Test Product Schedule",
+				"product_schedule": "12529a17-ac32-4e46-b05b-83862843055d",
+				"merchant_provider_name": "Test Merchant Provider",
+				"merchant_provider": "8d8f56ef-424f-4db9-9e38-36e1ad78812d"
 			}
 		},
 		{
@@ -31,7 +35,11 @@
 				"session": "034087fc-73a1-4594-86de-8490c4db2026",
 				"session_alias": "S123456790",
 				"campaign": "11111111-1111-1111-1111-111111111001",
-				"customer": "11111111-1111-1111-1111-111111111001"
+				"customer": "11111111-1111-1111-1111-111111111001",
+				"product_schedule_name": "Test Product Schedule",
+				"product_schedule": "12529a17-ac32-4e46-b05b-83862843055d",
+				"merchant_provider_name": "Test Merchant Provider",
+				"merchant_provider": "8d8f56ef-424f-4db9-9e38-36e1ad78812d"
 			}
 		}
 	]
