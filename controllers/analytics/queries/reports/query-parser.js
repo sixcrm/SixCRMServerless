@@ -34,6 +34,12 @@ module.exports = class QueryParser {
 
 		}
 
+		if (options.productScheduleName) {
+
+			filter = this.resolveFilterQueryValue(filter, 'productScheduleName', 'product_schedule_name', parameters);
+
+		}
+
 		if (options.affiliate) {
 
 			filter = this.resolveFilterQueryValue(filter, 'affiliate', 'affiliate', parameters);
@@ -109,6 +115,12 @@ module.exports = class QueryParser {
 		if (options.merchantProviderName) {
 
 			filter = this.resolveFilterQueryValue(filter, 'merchantProviderName', 'merchant_provider_name', parameters);
+
+		}
+
+		if (options.merchantProvider) {
+
+			filter = this.resolveFilterQueryValue(filter, 'merchantProvider', 'merchant_provider', parameters);
 
 		}
 
