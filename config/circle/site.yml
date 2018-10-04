@@ -73,7 +73,7 @@ cloudsearch:
   domainendpoint: 'cloudsearch'
 
 aurora:
-  release: 7
+  release: 8
   region: 'localhost'
   default_cluster_identifier: 'sixcrm'
   user: 'postgres'

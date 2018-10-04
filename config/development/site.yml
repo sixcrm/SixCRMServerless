@@ -62,7 +62,7 @@ cloudsearch:
   domainname: 'sixcrm'
 
 aurora:
-  release: 7
+  release: 8
   default_cluster_identifier: 'sixcrm'
   user: 'root'
   database: 'postgres'

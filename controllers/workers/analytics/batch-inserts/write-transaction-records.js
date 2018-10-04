@@ -2,7 +2,7 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const WriteRecords = require('./write-records');
 
-const ATTRIBUTES = 28;
+const ATTRIBUTES = 30;
 
 module.exports = class WriteTransactionRecords extends WriteRecords {
 
@@ -51,6 +51,8 @@ module.exports = class WriteTransactionRecords extends WriteRecords {
 				affiliate, \
 				amount, \
 				processor_result, \
+				merchant_code,\
+				merchant_message,\
 				account, \
 				type, \
 				subtype, \
@@ -90,6 +92,8 @@ module.exports = class WriteTransactionRecords extends WriteRecords {
 			affiliate = EXCLUDED.affiliate, \
 			amount = EXCLUDED.amount, \
 			processor_result = EXCLUDED.processor_result, \
+			merchant_code = EXCLUDED.merchant_code, \
+			merchant_message = EXCLUDED.merchant_message, \
 			account = EXCLUDED.account, \
 			type = EXCLUDED.type, \
 			subtype = EXCLUDED.subtype, \
@@ -122,6 +126,8 @@ module.exports = class WriteTransactionRecords extends WriteRecords {
 				r.affiliate,
 				r.amount,
 				r.processorResult,
+				r.merchantCode,
+				r.merchantMessage,
 				r.account,
 				r.type,
 				r.subtype || 'main',

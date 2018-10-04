@@ -14,6 +14,8 @@ module.exports = async (parameters = {}) => {
 	QueryParser.resolveFilterValue(local, 't', 'mid', parameters);
 	QueryParser.resolveFilterValue(local, 'c', 'chargeback', parameters);
 	QueryParser.resolveFilterValue(local, 't', 'response', parameters);
+	QueryParser.resolveFilterValue(local, 't', 'merchantCode', parameters);
+	QueryParser.resolveFilterValue(local, 't', 'merchantMessage', parameters);
 	QueryParser.resolveFilterValue(local, 't', 'alias', parameters);
 	QueryParser.resolveFilterValue(local, 't', 'rebillAlias', parameters);
 	QueryParser.resolveFilterValue(local, 't', 'sessionAlias', parameters);
@@ -27,6 +29,8 @@ module.exports = async (parameters = {}) => {
 		mid: true,
 		chargeback: true,
 		response: true,
+		merchantCode: true,
+		merchantMessage: true,
 		alias: true,
 		rebillAlias: true,
 		sessionAlias: true,

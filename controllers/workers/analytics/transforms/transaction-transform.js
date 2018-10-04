@@ -24,6 +24,8 @@ module.exports = class TransactionTransform extends AnalyticsTransform {
 			merchantProvider: {
 				id: record.context.transaction.merchant_provider
 			},
+			merchantCode: record.context.merchantCode,
+			merchantMessage: record.context.merchantMessage`s`,
 			processorResult: record.context.transaction.result,
 			amount: record.context.transaction.amount,
 			type: record.context.transaction.type,
@@ -119,6 +121,10 @@ module.exports = class TransactionTransform extends AnalyticsTransform {
 				}
 			})
 		};
+
+		if (result.merchantMessage) {
+			result.merchantMessage = result.merchantMessage.substring(0, 255)
+		}
 
 		result.amount = Math.abs(result.amount);
 		if (result.transactionType === 'refund' || result.transactionType === 'reverse') {
