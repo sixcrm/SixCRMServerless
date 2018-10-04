@@ -61,6 +61,14 @@
 				"value": "success"
 			},
 			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
+			},
+			{
 				"key": "transaction_type",
 				"value": "sale"
 			},
@@ -129,6 +137,14 @@
 			{
 				"key": "response",
 				"value": "success"
+			},
+			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
 			},
 			{
 				"key": "transaction_type",
@@ -201,6 +217,14 @@
 				"value": "success"
 			},
 			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
+			},
+			{
 				"key": "transaction_type",
 				"value": "sale"
 			},
@@ -271,6 +295,14 @@
 				"value": "success"
 			},
 			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
+		    },
+			{
 				"key": "transaction_type",
 				"value": "sale"
 			},
@@ -339,6 +371,14 @@
 			{
 				"key": "response",
 				"value": "success"
+			},
+			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
 			},
 			{
 				"key": "transaction_type",
@@ -411,6 +451,14 @@
 				"value": "success"
 			},
 			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
+			},
+			{
 				"key": "transaction_type",
 				"value": "sale"
 			},
@@ -479,6 +527,14 @@
 			{
 				"key": "response",
 				"value": "success"
+			},
+			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
 			},
 			{
 				"key": "transaction_type",
@@ -551,6 +607,14 @@
 				"value": "success"
 			},
 			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
+			},
+			{
 				"key": "transaction_type",
 				"value": "sale"
 			},
@@ -619,6 +683,14 @@
 			{
 				"key": "response",
 				"value": "success"
+			},
+			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
 			},
 			{
 				"key": "transaction_type",
@@ -691,6 +763,14 @@
 				"value": "success"
 			},
 			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
+			},
+			{
 				"key": "transaction_type",
 				"value": "sale"
 			},
@@ -759,6 +839,14 @@
 			{
 				"key": "response",
 				"value": "success"
+			},
+			{
+				"key": "merchant_code",
+				"value": null
+			},
+			{
+				"key": "merchant_message",
+				"value": null
 			},
 			{
 				"key": "transaction_type",
