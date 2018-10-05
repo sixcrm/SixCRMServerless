@@ -515,13 +515,14 @@ module.exports = class Register extends RegisterUtilities {
 		let processController = new ProcessController();
 
 		return processController.process(arguments[0]).then((result) => {
-			this.parameters.set('processorresponse', this.extractProcessorResponse(result));
 			return {
 				code: result.getCode(),
 				message: result.getMessage(),
 				result: result.getResult(),
 				merchant_provider: result.merchant_provider,
-				creditcard: result.creditcard
+				creditcard: result.creditcard,
+				merchant_code: result.getMerchantCode(),
+				merchant_message: result.getMerchantMessage(),
 			};
 
 		}).then((result) => {
