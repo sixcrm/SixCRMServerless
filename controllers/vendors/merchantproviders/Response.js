@@ -264,6 +264,30 @@ module.exports = class MerchantProviderResponse extends Response{
 
 	}
 
+	getMerchantMessage(){
+
+		du.debug('Get Merchant Message');
+
+		const merchantMessage = this.parameters.get('merchant_message');
+
+		du.debug(merchantMessage);
+
+		return merchantMessage
+
+	}
+
+	getMerchantCode(){
+
+		du.debug('Get Merchant Code');
+
+		const merchantCode = this.parameters.get('merchant_code');
+
+		du.debug(merchantCode);
+
+		return merchantCode
+
+	}
+
 	setCode(code){
 
 		du.debug('Set Code');
@@ -284,7 +308,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
 	setMerchantCode(code){
 
-		du.debug('Set Merchant Code');
+		du.debug('Set Merchant Code', code);
 
 		this.parameters.set('merchant_code', code);
 	}
