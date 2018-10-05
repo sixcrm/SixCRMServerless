@@ -225,8 +225,17 @@ describe('controllers/Product.js', () => {
 			expect(productController.validateDynamicPrice(product, price)).to.be.true;
 		});
 
-		it('returns true if product has no dynamic pricing', () => {
+		it('returns false if product has no dynamic pricing', () => {
 			const product = getValidProduct();
+			const price = 9.00;
+			const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
+			const productController = new ProductController();
+			expect(productController.validateDynamicPrice(product, price)).to.be.false;
+		});
+
+		it('returns true if price matches default_price', () => {
+			const product = getValidProduct();
+			product.default_price = 9.00;
 			const price = 9.00;
 			const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
 			const productController = new ProductController();
