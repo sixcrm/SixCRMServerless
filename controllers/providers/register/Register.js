@@ -491,7 +491,6 @@ module.exports = class Register extends RegisterUtilities {
 			merchant_provider: merchant_provider,
 			amount: amount
 		}).then((processor_result) => {
-			this.parameters.set('processorresponse', this.extractProcessorResponse(processor_result));
 			return this.issueProductGroupReceipt({
 				amount: amount,
 				processor_result: processor_result,
@@ -516,6 +515,7 @@ module.exports = class Register extends RegisterUtilities {
 		let processController = new ProcessController();
 
 		return processController.process(arguments[0]).then((result) => {
+			this.parameters.set('processorresponse', this.extractProcessorResponse(result));
 			return {
 				code: result.getCode(),
 				message: result.getMessage(),
