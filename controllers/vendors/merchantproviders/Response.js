@@ -76,6 +76,9 @@ module.exports = class MerchantProviderResponse extends Response{
 				let response = vendor_response.response;
 				let body = vendor_response.body;
 
+				du.debug('Attempting to determine response code and message.', vendor_response);
+				du.debug('Parameters are.', this.parameters.store);
+
 				this.parameters.set('response', response);
 				this.parameters.set('body', body);
 

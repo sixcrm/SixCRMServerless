@@ -168,7 +168,7 @@ module.exports = class Register extends RegisterUtilities {
 			try {
 				response = JSON.parse(transaction.processor_response);
 			} catch (e) {
-				// nop
+				du.warning(`Cannot parse processor response for transaction ${transaction.id}`, transaction.processor_response)
 			}
 
 			return AnalyticsEvent.push('transaction_' + transaction.result, {
