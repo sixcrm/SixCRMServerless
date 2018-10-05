@@ -491,7 +491,7 @@ module.exports = class Register extends RegisterUtilities {
 			merchant_provider: merchant_provider,
 			amount: amount
 		}).then((processor_result) => {
-
+			this.parameters.set('processorresponse', this.extractProcessorResponse(processor_result));
 			return this.issueProductGroupReceipt({
 				amount: amount,
 				processor_result: processor_result,
@@ -592,7 +592,7 @@ module.exports = class Register extends RegisterUtilities {
 
 	extractProcessorResponse(response) {
 
-		du.debug('Extract Processor Response');
+		du.debug('Extract Processor Response', response);
 
 		if (objectutilities.hasRecursive(response, 'parameters.store')) {
 			return objectutilities.clone(response.parameters.store);
