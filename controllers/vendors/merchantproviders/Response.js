@@ -164,7 +164,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
 	determineMerchantCode(vendor_response) {
 
-		du.debug('Determine Merchant Code');
+		du.debug('Determine Merchant Code', vendor_response);
 
 		let result = vendor_response;
 
@@ -177,12 +177,14 @@ module.exports = class MerchantProviderResponse extends Response{
 			result = JSON.stringify(result)
 		}
 
+		du.debug('Determined Merchant Code', vendor_response);
+
 		return result;
 	}
 
 	determineMerchantMessage(vendor_response) {
 
-		du.debug('Determine Merchant Message');
+		du.debug('Determine Merchant Message', vendor_response);
 
 		let result = vendor_response;
 
@@ -194,6 +196,8 @@ module.exports = class MerchantProviderResponse extends Response{
 		if (typeof result !== 'string') {
 			result = JSON.stringify(result)
 		}
+
+		du.debug('Determined Merchant Message', result);
 
 		return result;
 
