@@ -8,6 +8,9 @@ const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').defaul
 
 const Response = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 
+const code_regexp = /response_code=([0-9]+)/;
+const message_regexp = /(?<=responsetext=)(.*?)((?=&)|(?=$))/;
+
 module.exports = class NMIResponse extends Response {
 
 	constructor(){
@@ -102,6 +105,39 @@ module.exports = class NMIResponse extends Response {
 		}
 
 		throw eu.getError('server', 'Unable to identify the Transaction ID');
+
+	}
+
+	determineMerchantCode(vendor_response) {
+
+		du.debug('Determine Merchant Code (NMI)', vendor_response);
+
+		let result = vendor_response;
+
+		const match = code_regexp.exec(result);
+		if (match && match[1]) {
+			result = match[1]
+		}
+
+		du.debug('Determined Merchant Code (NMI)', result);
+
+		return result;
+	}
+
+	determineMerchantMessage(vendor_response) {
+
+		du.debug('Determine Merchant Message (NMI)', vendor_response);
+
+		let result = vendor_response;
+
+		const match = message_regexp.exec(result);
+		if (match && match[1]) {
+			result = match[1]
+		}
+
+		du.debug('Determined Merchant Message (NMI)', result);
+
+		return result;
 
 	}
 
