@@ -114,9 +114,11 @@ module.exports = class NMIResponse extends Response {
 
 		let result = vendor_response;
 
-		const match = code_regexp.exec(result);
+		const match = code_regexp.exec(JSON.stringify(result));
 		if (match && match[1]) {
 			result = match[1]
+		} else {
+			result = super.determineMerchantCode(vendor_response);
 		}
 
 		du.debug('Determined Merchant Code (NMI)', result);
@@ -130,9 +132,11 @@ module.exports = class NMIResponse extends Response {
 
 		let result = vendor_response;
 
-		const match = message_regexp.exec(result);
+		const match = message_regexp.exec(JSON.stringify(result));
 		if (match && match[1]) {
 			result = match[1]
+		} else {
+			result = super.determineMerchantMessage(vendor_response);
 		}
 
 		du.debug('Determined Merchant Message (NMI)', result);
