@@ -171,13 +171,11 @@ module.exports = class MerchantProviderResponse extends Response{
 		result = _(vendor_response).get('statusCode', result);
 		result = _(vendor_response).get('response.statusCode', result);
 
-		du.debug(result);
+		du.debug('Determined Merchant Code', result);
 
 		if (typeof result !== 'string') {
 			result = JSON.stringify(result)
 		}
-
-		du.debug('Determined Merchant Code', vendor_response);
 
 		return result;
 	}
@@ -191,13 +189,11 @@ module.exports = class MerchantProviderResponse extends Response{
 		result = _(vendor_response).get('body', result);
 		result = _(vendor_response).get('response.body', result);
 
-		du.debug(result);
+		du.debug('Determined Merchant Message', result);
 
 		if (typeof result !== 'string') {
 			result = JSON.stringify(result)
 		}
-
-		du.debug('Determined Merchant Message', result);
 
 		return result;
 

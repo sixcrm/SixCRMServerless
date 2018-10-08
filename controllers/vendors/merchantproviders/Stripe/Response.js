@@ -84,13 +84,11 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 		result = _(vendor_response).get('body.message', result);
 		result = _(vendor_response).get('response.body.message', result);
 
-		du.debug(result);
+		du.debug('Determined Merchant Message (Stripe)', result);
 
 		if (typeof result !== 'string') {
 			result = JSON.stringify(result)
 		}
-
-		du.debug('Determined Merchant Message (Stripe)', result);
 
 		return result;
 
