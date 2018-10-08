@@ -16,7 +16,7 @@ module.exports = class DynamoClient {
 			parameters.endpoint = dynamoConfig.endpoint;
 		}
 
-		this.client = new aws.DynamoDB(parameters);
+		this.client = new aws.DynamoDB.DocumentClient(parameters);
 
 	}
 
