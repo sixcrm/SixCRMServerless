@@ -22,7 +22,10 @@ module.exports = class DynamoClient {
 
 	get(table, key) {
 
-		return this.client.getItem({ TableName: table, Key: key }).promise;
+		return this.client.getItem({
+			TableName: table,
+			Key: { id: { S: key } }
+		}).promise();
 
 	}
 
