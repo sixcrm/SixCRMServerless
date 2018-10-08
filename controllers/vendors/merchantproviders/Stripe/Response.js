@@ -71,8 +71,16 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 
 		result = _(vendor_response).get('body', result);
 		result = _(vendor_response).get('response.body', result);
+
+		result = _(vendor_response).get('body.outcome.seller_message', result);
+		result = _(vendor_response).get('response.body.outcome.seller_message', result);
+
+		result = _(vendor_response).get('body.outcome.network_status', result);
+		result = _(vendor_response).get('response.body.outcome.network_status', result);
+
 		result = _(vendor_response).get('body.reason', result);
 		result = _(vendor_response).get('response.body.reason', result);
+
 		result = _(vendor_response).get('body.message', result);
 		result = _(vendor_response).get('response.body.message', result);
 
