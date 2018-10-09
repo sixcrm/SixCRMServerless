@@ -184,7 +184,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
 		du.debug('Determine Merchant Message', vendor_response);
 
-		return 'Unexpected response';
+		return 'Unexpected response for ' + this.getCode();
 
 	}
 

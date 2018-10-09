@@ -96,7 +96,7 @@ module.exports = class TestResponse extends Response {
 		du.debug('Determine Merchant Message (Test)', vendor_response);
 
 		if (this.getCode() === 'success') {
-			return 'test_success';
+			return 'Test success';
 		} else {
 			return super.determineMerchantMessage(vendor_response);
 		}
