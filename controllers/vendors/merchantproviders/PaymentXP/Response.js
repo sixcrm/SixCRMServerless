@@ -68,13 +68,19 @@ module.exports = class PaymentXPResponse extends MerchantProviderResponse {
 			return 'Success';
 		}
 
-		let result = vendor_response;
+		let result = '';
 
 		const parsed_body = querystring.parse(vendor_response.body);
 
 		if (parsed_body.StatusID) {
-			result = messageMap[parsed_body.StatusID]
-		} else {
+			result = messageMap[parsed_body.StatusID];
+		}
+
+		if (parsed_body.ResponseMessage) {
+			result = parsed_body.ResponseMessage;
+		}
+
+		if (!result) {
 			result = super.determineMerchantMessage(vendor_response);
 		}
 
