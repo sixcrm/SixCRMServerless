@@ -131,7 +131,7 @@ module.exports = class NMIResponse extends Response {
 		du.debug('Determine Merchant Message (NMI)', vendor_response);
 
 		if (this.getCode() === 'success') {
-			return '';
+			return 'Success';
 		}
 
 		let result = vendor_response;

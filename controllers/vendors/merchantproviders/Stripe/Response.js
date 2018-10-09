@@ -68,7 +68,7 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 		du.debug('Determine Merchant Message (Stripe)', vendor_response);
 
 		if (this.getCode() === 'success') {
-			return '';
+			return 'Success';
 		}
 
 		let result = '';
