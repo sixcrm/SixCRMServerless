@@ -73,6 +73,9 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 
 		let result = '';
 
+		result = _(vendor_response).get('body', result);
+		result = _(vendor_response).get('response.body', result);
+
 		result = _(vendor_response).get('body.outcome.seller_message', result);
 		result = _(vendor_response).get('response.body.outcome.seller_message', result);
 
@@ -85,15 +88,11 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 		result = _(vendor_response).get('body.message', result);
 		result = _(vendor_response).get('response.body.message', result);
 
-		if (result === '') {
+		if (result === '' || typeof result !== 'string') {
 			result = super.determineMerchantMessage(vendor_response);
 		}
 
 		du.debug('Determined Merchant Message (Stripe)', result);
-
-		if (typeof result !== 'string') {
-			result = JSON.stringify(result)
-		}
 
 		return result;
 
