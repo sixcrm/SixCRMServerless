@@ -8,9 +8,6 @@ const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').defaul
 
 const Response = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 
-const code_regexp = /response_code=([0-9]+)/;
-const message_regexp = /(?<=responsetext=)(.*?)((?=&)|(?=$))/;
-
 module.exports = class NMIResponse extends Response {
 
 	constructor(){
@@ -114,9 +111,10 @@ module.exports = class NMIResponse extends Response {
 
 		let result = vendor_response;
 
-		const match = code_regexp.exec(JSON.stringify(result));
-		if (match && match[1]) {
-			result = match[1]
+		const parsed_body = querystring.parse(vendor_response.body);
+
+		if (parsed_body.response_code) {
+			result = parsed_body.response_code
 		} else {
 			result = super.determineMerchantCode(vendor_response);
 		}
@@ -136,9 +134,10 @@ module.exports = class NMIResponse extends Response {
 
 		let result = vendor_response;
 
-		const match = message_regexp.exec(JSON.stringify(result));
-		if (match && match[1]) {
-			result = match[1]
+		const parsed_body = querystring.parse(vendor_response.body);
+
+		if (parsed_body.responsetext) {
+			result = parsed_body.responsetext
 		} else {
 			result = super.determineMerchantMessage(vendor_response);
 		}
