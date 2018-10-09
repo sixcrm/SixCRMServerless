@@ -95,18 +95,11 @@ module.exports = class TestResponse extends Response {
 
 		du.debug('Determine Merchant Message (Test)', vendor_response);
 
-		let result = vendor_response;
-
-		result = _(vendor_response).get('response', result);
-		result = _(vendor_response).get('response.response', result);
-
-		du.debug('Determined Merchant Message (Test)', result);
-
-		if (typeof result !== 'string') {
-			result = JSON.stringify(result)
+		if (this.getCode() === 'success') {
+			return 'test_success';
+		} else {
+			return super.determineMerchantMessage(vendor_response);
 		}
-
-		return result;
 
 	}
 

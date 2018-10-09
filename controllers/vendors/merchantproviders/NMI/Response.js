@@ -130,6 +130,10 @@ module.exports = class NMIResponse extends Response {
 
 		du.debug('Determine Merchant Message (NMI)', vendor_response);
 
+		if (this.getCode() === 'success') {
+			return '';
+		}
+
 		let result = vendor_response;
 
 		const match = message_regexp.exec(JSON.stringify(result));

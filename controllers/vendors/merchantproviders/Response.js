@@ -184,18 +184,7 @@ module.exports = class MerchantProviderResponse extends Response{
 
 		du.debug('Determine Merchant Message', vendor_response);
 
-		let result = vendor_response;
-
-		result = _(vendor_response).get('body', result);
-		result = _(vendor_response).get('response.body', result);
-
-		du.debug('Determined Merchant Message', result);
-
-		if (typeof result !== 'string') {
-			result = JSON.stringify(result)
-		}
-
-		return result;
+		return 'Unexpected response';
 
 	}
 
