@@ -4,6 +4,7 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
 
 module.exports = class CustomerController extends entityController {
 
@@ -15,7 +16,7 @@ module.exports = class CustomerController extends entityController {
 
 	}
 
-	create({entity}){
+	async create({entity}){
 
 		du.debug('Customer.create()');
 
@@ -25,12 +26,14 @@ module.exports = class CustomerController extends entityController {
 			}
 		}
 
-		return super.create({entity: entity});
+		await super.create({entity: entity});
+
+		await AnalyticsEvent.push('customer', entity);
 
 	}
 
 	//Technical Debt:  If a default creditcard exists, you shouldn't be able to remove it, only update it
-	update({entity, ignore_updated_at}){
+	async update({entity, ignore_updated_at}){
 
 		du.debug('Customer.update()');
 
@@ -40,7 +43,9 @@ module.exports = class CustomerController extends entityController {
 			}
 		}
 
-		return super.update({entity: entity, ignore_updated_at: ignore_updated_at});
+		await super.update({entity: entity, ignore_updated_at: ignore_updated_at});
+
+		await AnalyticsEvent.push('customer', entity);
 
 	}
 
