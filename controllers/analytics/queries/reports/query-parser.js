@@ -166,6 +166,54 @@ module.exports = class QueryParser {
 
 		}
 
+		if (options.customerStatus) {
+
+			filter = this.resolveFilterQueryValueCustomerStatus(filter, 'customerStatus', 'status', parameters);
+
+		}
+
+		if (options.firstname) {
+
+			filter = this.resolveFilterQueryValue(filter, 'firstname', 'firstname', parameters);
+
+		}
+
+		if (options.lastname) {
+
+			filter = this.resolveFilterQueryValue(filter, 'lastname', 'lastname', parameters);
+
+		}
+
+		if (options.email) {
+
+			filter = this.resolveFilterQueryValue(filter, 'email', 'email', parameters);
+
+		}
+
+		if (options.phone) {
+
+			filter = this.resolveFilterQueryValue(filter, 'phone', 'phone', parameters);
+
+		}
+
+		if (options.city) {
+
+			filter = this.resolveFilterQueryValue(filter, 'city', 'city', parameters);
+
+		}
+
+		if (options.state) {
+
+			filter = this.resolveFilterQueryValue(filter, 'state', 'state', parameters);
+
+		}
+
+		if (options.zip) {
+
+			filter = this.resolveFilterQueryValue(filter, 'zip', 'zip', parameters);
+
+		}
+
 		return filter;
 	}
 
@@ -201,6 +249,33 @@ module.exports = class QueryParser {
 		if (parameters[identifier]) {
 
 			if (parameters[identifier][0] === 'yes') {
+
+				parameters[identifier][0] = 'NOT NULL';
+
+			}
+			else {
+
+				parameters[identifier][0] = 'NULL';
+
+			}
+
+			return filter += isClause;
+
+		} else {
+
+			return filter;
+
+		}
+
+	}
+
+	static resolveFilterQueryValueCustomerStatus(filter, identifier, map, parameters) {
+
+		const isClause = ` AND %s.${map} IS %s `;
+
+		if (parameters[identifier]) {
+
+			if (parameters[identifier][0] === 'active') {
 
 				parameters[identifier][0] = 'NOT NULL';
 

@@ -1,5 +1,6 @@
-CREATE TABLE analytics.f_customer (
+CREATE TABLE analytics.d_customer (
 	id VARCHAR(36) NOT NULL,
+	account VARCHAR(36) NOT NULL,
 	firstname VARCHAR(100),
 	lastname VARCHAR(100),
 	email VARCHAR(255),
