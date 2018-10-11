@@ -1,0 +1,163 @@
+{
+	"method": "getReport",
+	"test_case": "getReport customer detail",
+	"account": "d26c1887-7ad4-4a44-be0b-e80dbce22774",
+	"input": {
+		"reportType": "customerDetail",
+		"facets": [
+			{
+				"facet": "start",
+				"values": ["2018-01-01T00:00:00Z"]
+			},
+			{
+				"facet": "end",
+				"values": ["2018-12-31T23:59:59"]
+			},
+			{
+				"facet": "firstname",
+				"values": ["Example"]
+			},
+			{
+				"facet": "state",
+				"values": ["NY"]
+			},
+			{
+				"facet": "zip",
+				"values": ["12309"]
+			}
+		],
+		"pagination": {
+			"offset": 0,
+			"limit": 100,
+			"order": ["created_at"],
+			"direction": "ASC"
+		}
+	},
+	"result_name": "records",
+	"expect": [
+        [
+            {
+                "key": "status",
+                "value": "partial"
+            },
+            {
+                "key": "firstname",
+                "value": "Example"
+            },
+            {
+                "key": "lastname",
+                "value": "Customer 5"
+            },
+            {
+                "key": "email",
+                "value": "example5@sixcrm.com"
+            },
+            {
+                "key": "phone",
+                "value": "804-555-5309"
+            },
+            {
+                "key": "city",
+                "value": "Schenectady"
+            },
+            {
+                "key": "state",
+                "value": "NY"
+            },
+            {
+                "key": "zip",
+                "value": "12309"
+            },
+            {
+                "key": "created_at",
+                "value": "2018-10-10 21:29:00"
+            },
+            {
+                "key": "updated_at",
+                "value": "2018-10-10 21:29:00"
+            },
+            {
+                "key": "orders",
+                "value": "0"
+            },
+            {
+                "key": "total_sale_amount",
+                "value": "0"
+            },
+            {
+                "key": "returns",
+                "value": "0"
+            },
+            {
+                "key": "refunds",
+                "value": "0"
+            },
+            {
+                "key": "refund_amount",
+                "value": "0"
+            }
+        ],
+        [
+            {
+                "key": "status",
+                "value": "partial"
+            },
+            {
+                "key": "firstname",
+                "value": "Example"
+            },
+            {
+                "key": "lastname",
+                "value": "Customer 6"
+            },
+            {
+                "key": "email",
+                "value": "example6@sixcrm.com"
+            },
+            {
+                "key": "phone",
+                "value": "804-555-5309"
+            },
+            {
+                "key": "city",
+                "value": "Schenectady"
+            },
+            {
+                "key": "state",
+                "value": "NY"
+            },
+            {
+                "key": "zip",
+                "value": "12309"
+            },
+            {
+                "key": "created_at",
+                "value": "2018-10-10 21:29:00"
+            },
+            {
+                "key": "updated_at",
+                "value": "2018-10-10 21:29:00"
+            },
+            {
+                "key": "orders",
+                "value": "0"
+            },
+            {
+                "key": "total_sale_amount",
+                "value": "0"
+            },
+            {
+                "key": "returns",
+                "value": "0"
+            },
+            {
+                "key": "refunds",
+                "value": "0"
+            },
+            {
+                "key": "refund_amount",
+                "value": "0"
+            }
+        ]
+    ]
+}

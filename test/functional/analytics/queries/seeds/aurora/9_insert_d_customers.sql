@@ -1,0 +1,7 @@
+INSERT INTO analytics.d_customer (id, account, firstname, lastname, email, phone, city, state, zip, created_at, updated_at) VALUES
+('cc3d5c51-32f3-4417-917a-94bc37f74514', 'd26c1887-7ad4-4a44-be0b-e80dbce22774', 'Example', 'Customer 1', 'example1@sixcrm.com', '804-555-5309', 'Sterling', 'VA', '20164', '2018-10-10 21:29:00', '2018-10-10 21:29:00'),
+('6e56d5be-d808-4f1e-8dcd-6353692a1227', 'd26c1887-7ad4-4a44-be0b-e80dbce22774', 'Example', 'Customer 2', 'example2@sixcrm.com', '804-555-5309', 'Sterling', 'VA', '20164', '2018-10-10 21:29:00', '2018-10-10 21:29:00'),
+('00a40dc9-c025-432b-9683-d6ea9f265930', 'd26c1887-7ad4-4a44-be0b-e80dbce22774', 'Example', 'Customer 3', 'example3@sixcrm.com', '804-555-5309', 'Chantilly', 'VA', '20152', '2018-10-10 21:29:00', '2018-10-10 21:29:00'),
+('f6fc5765-1b89-48e5-b54e-ea014fd7e485', 'd26c1887-7ad4-4a44-be0b-e80dbce22774', 'Example', 'Customer 4', 'example4@sixcrm.com', '804-555-5309', 'Chantilly', 'VA', '20152', '2018-10-10 21:29:00', '2018-10-10 21:29:00'),
+('5b6cff8c-828a-496a-812e-189b7e97d54a', 'd26c1887-7ad4-4a44-be0b-e80dbce22774', 'Example', 'Customer 5', 'example5@sixcrm.com', '804-555-5309', 'Schenectady', 'NY', '12309', '2018-10-10 21:29:00', '2018-10-10 21:29:00'),
+('c0e5f58d-f8eb-4a33-b401-a4d76fe7c8a5', 'd26c1887-7ad4-4a44-be0b-e80dbce22774', 'Example', 'Customer 6', 'example6@sixcrm.com', '804-555-5309', 'Schenectady', 'NY', '12309', '2018-10-10 21:29:00', '2018-10-10 21:29:00');
