@@ -1,5 +1,5 @@
 {
-  "Comment": "The Close Session state machine waits 8 hours to close a session and triggers any necessary cleanup and consolidation of the session by the session UUID.",
+  "Comment": "The Close Session state machine waits 2 hours to close a session and triggers any necessary cleanup and consolidation of the session by the session UUID.",
   "StartAt": "Get Session Closed",
   "States": {
     "Get Session Closed": {
@@ -27,11 +27,11 @@
           "Next": "Clean-up Session"
         }
       ],
-      "Default": "Wait 8 Hours"
+      "Default": "Wait 2 Hours"
     },
-    "Wait 8 Hours": {
+    "Wait 2 Hours": {
       "Type": "Wait",
-      "Seconds": 28800,
+      "Seconds": 7200,
       "Next": "Close Session"
     },
     "Close Session": {
