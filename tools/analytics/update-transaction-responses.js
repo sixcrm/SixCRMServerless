@@ -12,6 +12,9 @@ transactionController.disableACLs();
 
 const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 const configurationAcquistion = require('../../config/controllers/configuration_acquisition');
+
+const batchSize = 25;
+
 configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
 
 	process.env.aurora_host = endpoint;
@@ -26,7 +29,20 @@ configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
 
 		du.info(`${ids.length} transaction records found`);
 
-		await Bluebird.each(ids, (id, index) => updateTransaction(connection, id, index));
+		let batch = [];
+
+		await Bluebird.each(ids, async (id, index) => {
+			batch.push(updateTransaction(connection, id, index));
+
+			if (batch.length === batchSize) {
+				await Promise.all(batch);
+				batch = [];
+			}
+		});
+
+		if (batch.length) {
+			await Promise.all(batch);
+		}
 
 	});
 
@@ -40,7 +56,7 @@ configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
 
 });
 
-async function updateTransaction(connection, id, index) {``
+async function updateTransaction(connection, id, index) {
 
 	let
 		merchantCode = null,
