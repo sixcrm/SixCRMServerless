@@ -63,7 +63,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 	describe('invite', () => {
 
-		it('successfully invites user to account (with first and last name, new user)', () => {
+		it('`successfully invites user to account (with first and last name, new user)', () => {
 
 			//Note:  Required because of references to the global object
 			PermissionTestGenerators.givenUserWithAllowed('*','*');
@@ -166,6 +166,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
+			inviteHelperClass._validateRequest = async () => Promise.resolve(true);
 
 			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
@@ -271,6 +272,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
+			inviteHelperClass._validateRequest = async () => Promise.resolve(true);
 
 			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
@@ -372,6 +374,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
+			inviteHelperClass._validateRequest = async () => Promise.resolve(true);
 
 			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
@@ -475,6 +478,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
+			inviteHelperClass._validateRequest = async () => Promise.resolve(true);
 
 			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
@@ -709,6 +713,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
+			inviteHelperClass._validateRequest = async () => Promise.resolve(true);
 
 			let user_invite = {
 				acl:acl.id
