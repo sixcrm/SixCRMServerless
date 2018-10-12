@@ -8,6 +8,7 @@ const AWSDeploymentUtilities = global.SixCRM.routes.include('deployment', 'utili
 const DynamoDBProvider = global.SixCRM.routes.include('controllers', 'providers/dynamodb-provider.js');
 
 const scan_limit = 25000;
+const batch_size = 10;
 
 function sleep(ms){
 	return new Promise(resolve=>{
@@ -24,8 +25,10 @@ class EmailTemplateMigration extends AWSDeploymentUtilities {
 		this.dynamodbprovider = new DynamoDBProvider();
 	}
 
-	execute() {
-		return this.dynamodbprovider.scanRecords('transactions', {limit: scan_limit}).then(async records => {
+	async execute() {
+		let batch = [];
+
+		await this.dynamodbprovider.scanRecords('transactions', {limit: scan_limit}).then(async records => {
 			let count = 0;
 			for (let transaction of records.Items) {
 				const response = JSON.parse(transaction.processor_response);
@@ -83,17 +86,31 @@ class EmailTemplateMigration extends AWSDeploymentUtilities {
 				merchant_code = merchant_code || '0';
 				merchant_message = merchant_message || '';
 
+				if (merchant_message.length >= 255) {
+					merchant_message = 'Unexpected response'
+				}
+
 				console.log(`${++count}/${records.Items.length}: ${merchant_code} - ${merchant_message}`);
+
+				// Persist to DynamoDB
 
 				response.merchant_code = merchant_code;
 				response.merchant_message = merchant_message;
 
 				transaction.processor_response = JSON.stringify(response);
 
-				await this.dynamodbprovider.saveRecord('transactions', transaction);
-				// await sleep(1);
+				batch.push(this.dynamodbprovider.saveRecord('transactions', transaction));
+
+				if (batch.length === batch_size) {
+					await Promise.all(batch);
+					batch = [];
+				}
 			}
-		})
+		});
+
+		if (batch.length) {
+			await Promise.all(batch);
+		}
 	}
 
 
