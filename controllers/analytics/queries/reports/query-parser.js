@@ -168,7 +168,7 @@ module.exports = class QueryParser {
 
 		if (options.customerStatus) {
 
-			filter = this.resolveFilterQueryValueCustomerStatus(filter, 'customerStatus', 'status', parameters);
+			filter = this.resolveFilterQueryValueCustomerStatus(filter, 'customerStatus', 'orders', parameters);
 
 		}
 
