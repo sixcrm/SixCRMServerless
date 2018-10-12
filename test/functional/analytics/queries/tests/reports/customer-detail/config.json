@@ -24,6 +24,10 @@
 			{
 				"facet": "zip",
 				"values": ["12309"]
+			},
+			{
+				"facet": "customerStatus",
+				"values": ["partial"]
 			}
 		],
 		"pagination": {

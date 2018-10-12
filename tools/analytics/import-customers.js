@@ -30,7 +30,7 @@ dynamoClient.scan('customers').then(async result => {
 	process.env.aurora_host = await configurationAcquistion.getAuroraClusterEndpoint();
 	await auroraContext.init();
 
-	let query = `INSERT INTO analytics.f_customer (id, account, firstname, lastname, email, phone, city, state, zip, created_at, updated_at) VALUES `;
+	let query = `INSERT INTO analytics.d_customer (id, account, firstname, lastname, email, phone, city, state, zip, created_at, updated_at) VALUES `;
 	const values = customerRows.map((r, i) => {
 
 		return (`(${Array.from(r, (val, index) => (i * r.length) + index + 1).map(n => `$${n}`).join(',')})`);
