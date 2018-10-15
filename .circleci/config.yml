@@ -526,7 +526,7 @@ jobs:
           key: v1-dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Transactional Integration Tests
-          command: export SIX_VERBOSE=2; npm run test-transactions
+          command: SIX_VERBOSE=6 npm run test-transactions
 
 workflows:
   version: 2
