@@ -3,6 +3,8 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const entityController = require('./Entity');
 
+const ENCRYPTED_VALUE = '****';
+
 module.exports = class MerchantProviderController extends entityController {
 
 	constructor(){
@@ -57,6 +59,19 @@ module.exports = class MerchantProviderController extends entityController {
 
 		return this.batchGet({ids});
 
+	}
+
+	async update({entity, ignore_updated_at}) {
+		const original = await this.get({id: entity.id, fatal: true});
+		const decrypted = this.decryptAttributes(original);
+
+		for (const encrypted_path of this.encrypted_attribute_paths) {
+			if (entity[encrypted_path] === ENCRYPTED_VALUE) {
+				entity[encrypted_path] = decrypted[encrypted_path];
+			}
+		}
+
+		return super.update({entity, ignore_updated_at});
 	}
 
 }
