@@ -45,6 +45,9 @@ module.exports = new GraphQLEnumType({
 		subscriptionDetail: {
 			value: 'subscriptionDetail'
 		},
+		customerDetail: {
+			value: 'customerDetail'
+		},
 		productSchedulesByAmount: {
 			value: 'productSchedulesByAmount'
 		}

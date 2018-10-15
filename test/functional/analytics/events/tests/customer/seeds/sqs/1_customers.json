@@ -1,0 +1,40 @@
+{
+	"messages": [
+		{
+			"event_type": "customer",
+			"context": {
+				"id": "cc3d5c51-32f3-4417-917a-94bc37f74514",
+				"account": "d26c1887-7ad4-4a44-be0b-e80dbce22774",
+				"firstname": "Michael",
+				"lastname": "Bennett",
+				"email": "mike@adexchangegrp.com",
+				"phone": "804-555-1234",
+				"address": {
+					"city": "Sterling",
+					"state": "VA",
+					"zip": "20164"
+				},
+				"created_at": "2018-10-11T16:44:00.000Z",
+				"updated_at": "2018-10-11T16:44:00.000Z"
+			}
+		},
+		{
+			"event_type": "customer",
+			"context": {
+				"id": "6e56d5be-d808-4f1e-8dcd-6353692a1227",
+				"account": "d26c1887-7ad4-4a44-be0b-e80dbce22774",
+				"firstname": "Evan",
+				"lastname": "Oxfeld",
+				"email": "evan@adexchangegrp.com",
+				"phone": "804-555-5678",
+				"address": {
+					"city": "McLean",
+					"state": "VA",
+					"zip": "22102"
+				},
+				"created_at": "2018-10-11T16:45:00.000Z",
+				"updated_at": "2018-10-11T16:45:00.000Z"
+			}
+		}
+	]
+}

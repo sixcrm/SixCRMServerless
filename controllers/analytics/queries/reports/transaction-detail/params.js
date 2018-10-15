@@ -6,6 +6,8 @@ module.exports = async (parameters, pagination) => {
 	const end = parameters.facets.find(f => f.facet === 'end');
 	const chargeback = parameters.facets.find(f => f.facet === 'chargeback');
 	const response = parameters.facets.find(f => f.facet === 'response');
+	const merchantCode = parameters.facets.find(f => f.facet === 'merchantCode');
+	const merchantMessage = parameters.facets.find(f => f.facet === 'merchantMessage');
 	const merchantProvider = parameters.facets.find(f => f.facet === 'mid');
 	const alias = parameters.facets.find(f => f.facet === 'alias');
 	const rebillAlias = parameters.facets.find(f => f.facet === 'rebillAlias');
@@ -34,6 +36,8 @@ module.exports = async (parameters, pagination) => {
 	_resolveParamValue('end', end);
 	_resolveParamValue('chargeback', chargeback);
 	_resolveParamValue('response', response);
+	_resolveParamValue('merchantCode', merchantCode);
+	_resolveParamValue('merchantMessage', merchantMessage);
 	_resolveParamValue('mid', merchantProvider);
 	_resolveParamValue('alias', alias);
 	_resolveParamValue('rebillAlias', rebillAlias);

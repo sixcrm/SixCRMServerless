@@ -63,4 +63,39 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 
 	}
 
+	determineMerchantMessage(vendor_response) {
+
+		du.debug('Determine Merchant Message (Stripe)', vendor_response);
+
+		if (this.getCode() === 'success') {
+			return 'Success';
+		}
+
+		let result = '';
+
+		result = _(vendor_response).get('body', result);
+		result = _(vendor_response).get('response.body', result);
+
+		result = _(vendor_response).get('body.outcome.seller_message', result);
+		result = _(vendor_response).get('response.body.outcome.seller_message', result);
+
+		result = _(vendor_response).get('body.outcome.network_status', result);
+		result = _(vendor_response).get('response.body.outcome.network_status', result);
+
+		result = _(vendor_response).get('body.reason', result);
+		result = _(vendor_response).get('response.body.reason', result);
+
+		result = _(vendor_response).get('body.message', result);
+		result = _(vendor_response).get('response.body.message', result);
+
+		if (result === '' || typeof result !== 'string') {
+			result = super.determineMerchantMessage(vendor_response);
+		}
+
+		du.debug('Determined Merchant Message (Stripe)', result);
+
+		return result;
+
+	}
+
 }

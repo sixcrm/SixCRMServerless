@@ -1498,6 +1498,8 @@ class MockEntities {
 					response_code: "100"
 				}
 			},
+			merchant_code: "200",
+			merchant_message: "OK",
 			message: 'Some message'
 		}
 	}

@@ -118,6 +118,8 @@ module.exports = class RegisterRecieptGenerator {
 
 		let transaction_prototype = this.parameters.get('transactionprototype');
 
+		du.debug('Transaction Prototype Is', transaction_prototype);
+
 		var transformed_transaction_prototype = {
 			account: transaction_prototype.rebill.account,
 			rebill: transaction_prototype.rebill.id,
