@@ -278,6 +278,9 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 		for (let acl of useracls_for_account) {
 			let role = await this.roleController.get({id: acl.role});
+			if (!role) {
+				role = await this.roleController.getShared({id: acl.role});
+			}
 
 			if (! role || !role.permissions) {
 				continue;
