@@ -255,16 +255,45 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 
 	}
 
-	_validateRequest(){
+	async _validateRequest(){
 
 		du.debug('Validate Request');
 
-		//Technical Debt:  Finish...
-		//Make sure that the global user has the ability to invite users on the account,
-		//has the ability to invite with role,
-		//user not already on the account...
+		let account = this.parameters.get('account');
+		let useracls = await this.userACLController.getACLByUser({user: global.user});
+		const account_error = eu.getError('server', `Can't invite. You are not a member of account ${account.name}`);
+		const acl_error = eu.getError('server', `Can't invite. You do not have permissions to update ACLs on account ${account.name}`);
 
-		return true;
+		if (!useracls || !useracls.useracls) {
+			throw account_error
+		}
+
+		let useracls_for_account = useracls.useracls.filter(acl => acl.account === account.id);
+
+		if (!useracls_for_account || !useracls_for_account.length) {
+			throw account_error
+		}
+
+		let has_invite_privilege = false;
+
+		for (let acl of useracls_for_account) {
+			let role = await this.roleController.get({id: acl.role});
+
+			if (!role.permissions) {
+				continue;
+			}
+			for (let allow of role.permissions.allow) {
+				if (['*', 'useracl/*', 'useracl/update'].includes(allow)) {
+					has_invite_privilege = true;
+				}
+			}
+		}
+
+		if (!has_invite_privilege) {
+			throw acl_error;
+		}
+
+		return Promise.resolve(has_invite_privilege)`s`;
 
 	}
 
