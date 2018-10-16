@@ -293,7 +293,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 			throw acl_error;
 		}
 
-		return Promise.resolve(has_invite_privilege)`s`;
+		return Promise.resolve(has_invite_privilege);
 
 	}
 
