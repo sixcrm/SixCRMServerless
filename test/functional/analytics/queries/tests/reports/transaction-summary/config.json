@@ -33,8 +33,8 @@
 			}, {
 				"key": "error",
 				"value": {
-					"count": 0,
-					"total": 0
+					"count": 1,
+					"total": 4.99
 				}
 			}, {
 				"key": "success",

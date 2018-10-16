@@ -1,29 +1,30 @@
 WITH agg AS (
     SELECT
         r.id,
-        SUM(CASE WHEN t.transaction_type = 'refund' OR t.transaction_type = 'reverse' THEN t.amount ELSE 0 END) AS refunds,
+        SUM(CASE WHEN t.processor_result = 'success' AND (t.transaction_type = 'refund' OR t.transaction_type = 'reverse') THEN t.amount ELSE 0 END) AS refunds,
         COUNT(c.transaction_id) AS chargebacks,
-        SUM(t.amount) AS total
+		SUM(CASE WHEN t.processor_result = 'success' THEN 0 ELSE 1 END) AS errors,
+        SUM(CASE WHEN t.processor_result = 'success' THEN t.amount ELSE 0 END) AS total
     FROM analytics.f_rebill r
     LEFT JOIN analytics.f_transaction t ON r.id = t.rebill
     LEFT JOIN analytics.f_transaction_chargeback c ON t.id = c.transaction_id
     GROUP BY r.id
 ), rr AS (
-	SELECT rebill_id, SUM(item_count) as returns
+	SELECT rebill_id, SUM(item_count) AS returns
 	FROM analytics.f_rebill_return
 	GROUP BY rebill_id
 )
 SELECT
 	r.id,
 	r.alias,
-	r.status,
+	CASE WHEN agg.errors > 0 THEN 'error' ELSE r.status END AS status,
 	r.datetime,
 	r.amount,
 	r.item_count AS items,
-    COALESCE(rr.returns, 0) as returns,
-	COALESCE(agg.refunds, 0) as refunds,
-	COALESCE(agg.chargebacks, 0) as chargebacks,
-	COALESCE(agg.total, 0) as total,
+    COALESCE(rr.returns, 0) AS returns,
+	COALESCE(agg.refunds, 0) AS refunds,
+	COALESCE(agg.chargebacks, 0) AS chargebacks,
+	COALESCE(agg.total, 0) AS total,
 	r.campaign,
 	r.campaign_name,
 	r.type,
