@@ -70,7 +70,8 @@ module.exports = class OrderHelperController {
 			products: public_products,
 			amount: amount,
 			date: rebill.created_at,
-			session: session.id
+			session: session.id,
+			transactions
 		};
 
 	}
