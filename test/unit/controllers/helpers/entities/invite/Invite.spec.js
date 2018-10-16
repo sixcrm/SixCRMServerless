@@ -934,7 +934,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 					expect(email.subject).to.be.a('string');
 					expect(email.subject).not.to.have.string('}}');
 					expect(email.subject).not.to.have.string('{{');
-					expect(email.subject).to.have.string('You\'ve been invited to join a account on ');
+					expect(email.subject).to.have.string('You\'ve been invited to join an account on ');
 					expect(email.body).to.be.a('string');
 					expect(email.body).not.to.have.string('}}');
 					expect(email.body).not.to.have.string('{{');
@@ -979,7 +979,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 					expect(email.subject).to.be.a('string');
 					expect(email.subject).not.to.have.string('}}');
 					expect(email.subject).not.to.have.string('{{');
-					expect(email.subject).to.have.string('You\'ve been invited to join a account on ');
+					expect(email.subject).to.have.string('You\'ve been invited to join an account on ');
 					expect(email.body).to.be.a('string');
 					expect(email.body).not.to.have.string('}}');
 					expect(email.body).not.to.have.string('{{');
