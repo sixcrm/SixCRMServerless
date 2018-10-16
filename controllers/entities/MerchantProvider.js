@@ -62,9 +62,10 @@ module.exports = class MerchantProviderController extends entityController {
 	}
 
 	async update({entity}) {
+		const sanitization = this.sanitization;
 		this.sanitization = false;
 		const original = await this.get({id: entity.id, fatal: true});
-		this.sanitization = true;
+		this.sanitization = sanitization;
 
 		for (const encrypted_path of this.encrypted_attribute_paths) {
 			if (entity[encrypted_path] === ENCRYPTED_VALUE) {
