@@ -17,7 +17,6 @@ WITH o AS (
     GROUP BY customer
 )
 SELECT
-	id,
 	CASE WHEN o.orders IS NULL THEN 'partial' ELSE 'active' END AS status,
     firstname,
     lastname,

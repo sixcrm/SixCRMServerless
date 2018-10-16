@@ -24,10 +24,6 @@
 			{
 				"facet": "zip",
 				"values": ["12309"]
-			},
-			{
-				"facet": "customerStatus",
-				"values": ["partial"]
 			}
 		],
 		"pagination": {
@@ -40,10 +36,6 @@
 	"result_name": "records",
 	"expect": [
         [
-            {
-                "key": "id",
-                "value": "5b6cff8c-828a-496a-812e-189b7e97d54a"
-            },
             {
                 "key": "status",
                 "value": "partial"
@@ -106,10 +98,6 @@
             }
         ],
         [
-            {
-                "key": "id",
-                "value": "c0e5f58d-f8eb-4a33-b401-a4d76fe7c8a5"
-            },
             {
                 "key": "status",
                 "value": "partial"
