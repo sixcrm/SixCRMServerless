@@ -506,6 +506,7 @@ describe('controllers/providers/notification/Notification', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('constructor', () => {

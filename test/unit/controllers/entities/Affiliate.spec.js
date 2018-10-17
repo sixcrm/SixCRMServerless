@@ -22,6 +22,10 @@ describe('controllers/Affiliate.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getByAffiliateID', () => {
 
 		it('successfully retrieves affiliate', () => {

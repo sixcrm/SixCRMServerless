@@ -28,6 +28,10 @@ describe('controllers/Campaign.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getAffiliateAllowDenyList', () => {
 
 		it('returns affiliate allow/deny list', () => {

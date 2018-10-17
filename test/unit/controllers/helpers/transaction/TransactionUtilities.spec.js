@@ -52,6 +52,10 @@ describe('helpers/transaction/TransactionUtilities.spec.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('makeGeneralBrandString', () => {
 
 		it('Fails for invalid arguments generates a brand string',  () => {

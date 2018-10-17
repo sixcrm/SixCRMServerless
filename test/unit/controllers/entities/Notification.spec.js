@@ -31,6 +31,10 @@ describe('controllers/Notification.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('numberOfUnseenNotifications', () => {
 
 		it('returns number of unseen notifications', () => {

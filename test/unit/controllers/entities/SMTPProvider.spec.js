@@ -26,6 +26,10 @@ describe('controllers/SMTPProvider.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('validateSMTPProvider', () => {
 
 		let default_sender_email = global.SixCRM.configuration.site_config.ses.default_sender_email;

@@ -21,6 +21,10 @@ describe('controllers/workers/statemachine/triggers/triggerPreFulfillment.js', (
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
   describe('constructor', () => {
 
     it('successfully constructs', () => {

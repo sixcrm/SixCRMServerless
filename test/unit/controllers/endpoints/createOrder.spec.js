@@ -211,6 +211,10 @@ describe('createOrder', function () {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 			let CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');

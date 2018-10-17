@@ -18,6 +18,10 @@ describe('controllers/ActivityToEnglishUtilities.js', async () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('setEnglishTemplate', () => {
 
 		it('successfully gets english template with "actor_only"', () => {

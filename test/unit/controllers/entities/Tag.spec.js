@@ -17,6 +17,10 @@ describe('controllers/entities/Tag.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('listByKey', () => {
 		it('returns list of tags matching key', () => {
 			const entities = [{

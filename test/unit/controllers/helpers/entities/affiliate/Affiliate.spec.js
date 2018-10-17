@@ -37,6 +37,10 @@ describe('controllers/helpers/entities/affiliate/Affiliate.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('Validate Assured Affiliates', () => {
 
 		let AffiliateHelperController = global.SixCRM.routes.include('helpers', 'entities/affiliate/Affiliate.js');

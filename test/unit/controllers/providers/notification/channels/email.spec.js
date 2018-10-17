@@ -19,6 +19,7 @@ describe('controllers/providers/notification/channels/email.js', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('sendNotification', () => {

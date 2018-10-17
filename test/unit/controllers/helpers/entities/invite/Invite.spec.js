@@ -46,6 +46,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('constructor', () => {

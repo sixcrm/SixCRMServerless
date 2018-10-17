@@ -43,6 +43,10 @@ describe('controllers/entities/UserACL.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getAccount', () => {
 
 		it('retrieves an account based on user ACL id', () => {

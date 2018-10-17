@@ -22,6 +22,10 @@ describe('controllers/workers/statemachine/concludeSession.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
   describe('constructor', () => {
 
     it('successfully constructs', () => {

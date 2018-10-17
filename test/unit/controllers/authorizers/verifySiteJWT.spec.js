@@ -104,6 +104,10 @@ describe('controllers/authorizers/verifySiteJWT.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully executes the constructor', () => {

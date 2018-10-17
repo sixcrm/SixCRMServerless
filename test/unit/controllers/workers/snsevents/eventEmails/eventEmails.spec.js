@@ -30,6 +30,10 @@ describe('controllers/workers/eventEmails', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('instantiates the eventEmailsController class', () => {

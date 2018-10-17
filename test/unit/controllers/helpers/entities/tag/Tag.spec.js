@@ -28,6 +28,10 @@ describe('/helpers/entities/tag/Tag.js', async () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully calls the constructor', () => {
@@ -181,7 +185,7 @@ describe('/helpers/entities/tag/Tag.js', async () => {
       expect(result.entity).to.equal(creditcard.id);
       expect(result.key).to.equal(key);
       expect(result.value).to.equal(value);
-      
+
     });
   });
 

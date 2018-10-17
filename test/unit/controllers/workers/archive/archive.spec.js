@@ -60,6 +60,7 @@ describe('controllers/workers/archive', function () {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('confirmSecondAttempt', () => {

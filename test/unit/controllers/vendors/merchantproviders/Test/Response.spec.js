@@ -36,6 +36,10 @@ describe('vendors/merchantproviders/Test/Response.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getTransactionID', () => {
 
 		it('throws error when transaction id is not identified', () => {

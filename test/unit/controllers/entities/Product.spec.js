@@ -37,6 +37,10 @@ describe('controllers/Product.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('listByFulfillmentProvider', () => {
 
 		it('lists products by fulfillment provider', () => {

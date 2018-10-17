@@ -27,6 +27,10 @@ describe('controllers/Role.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getPermissions', () => {
 
 		it('returns role permission', () => {

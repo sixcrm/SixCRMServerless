@@ -112,6 +112,7 @@ describe('controllers/workers/indexEntities', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('constructor', () => {

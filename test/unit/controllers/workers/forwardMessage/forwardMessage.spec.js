@@ -92,6 +92,10 @@ describe('workers/forwardMessage', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('validateEnvironment', () => {
 
 		it('fails when params are not set.', () => {
