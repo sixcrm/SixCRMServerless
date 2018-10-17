@@ -1,8 +1,7 @@
 const util = require('util');
 const AnalyticsTransform = require('../analytics-transform');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
-const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+const DynamoClient = require('./entities/dynamo');
 
 module.exports = class SubscriptionTransform extends AnalyticsTransform {
 
@@ -17,16 +16,11 @@ module.exports = class SubscriptionTransform extends AnalyticsTransform {
 			status: 'active'
 		}, record.context);
 
+		const dynamoClient = new DynamoClient();
 		try {
 
-			const campaignController = new CampaignController();
-			campaignController.disableACLs();
-			const response = await campaignController.get({
-				id: result.campaign,
-				fatal: true
-			});
-
-			result.campaign_name = response.name;
+			const campaign = await dynamoClient.get('campaigns', result.campaign);
+			result.campaign_name = campaign.name;
 
 		} catch (ex) {
 
@@ -36,16 +30,10 @@ module.exports = class SubscriptionTransform extends AnalyticsTransform {
 
 		try {
 
-			const customerController = new CustomerController();
-			customerController.disableACLs();
-			const response = await customerController.get({
-				id: result.customer,
-				fatal: true
-			});
+			const customer = await dynamoClient.get('customers', result.customer);
+			if (customer.firstname && customer.lastname) {
 
-			if (response.firstname && response.lastname) {
-
-				result.customer_name = `${response.firstname} ${response.lastname}`;
+				result.customer_name = `${customer.firstname} ${customer.lastname}`;
 
 			}
 

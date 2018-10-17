@@ -163,6 +163,14 @@ module.exports = class Register extends RegisterUtilities {
 		const cycle = rebills_sorted.findIndex(item => item.id === rebill.id);
 
 		return BBPromise.each(transactions, (transaction) => {
+			let response = {};
+
+			try {
+				response = JSON.parse(transaction.processor_response);
+			} catch (e) {
+				du.warning(`Cannot parse processor response for transaction ${transaction.id}`, transaction.processor_response)
+			}
+
 			return AnalyticsEvent.push('transaction_' + transaction.result, {
 				datetime: moment.tz('UTC').toISOString(),
 				session,
@@ -170,7 +178,9 @@ module.exports = class Register extends RegisterUtilities {
 				cycle,
 				transaction,
 				transactionSubType: this.parameters.get('transactionsubtype', {fatal: false}),
-				transactionType: this.parameters.get('transactiontype', {fatal: false})
+				transactionType: this.parameters.get('transactiontype', {fatal: false}),
+				merchantCode: response.merchant_code,
+				merchantMessage: response.merchant_message
 			});
 		});
 
@@ -481,7 +491,6 @@ module.exports = class Register extends RegisterUtilities {
 			merchant_provider: merchant_provider,
 			amount: amount
 		}).then((processor_result) => {
-
 			return this.issueProductGroupReceipt({
 				amount: amount,
 				processor_result: processor_result,
@@ -511,7 +520,9 @@ module.exports = class Register extends RegisterUtilities {
 				message: result.getMessage(),
 				result: result.getResult(),
 				merchant_provider: result.merchant_provider,
-				creditcard: result.creditcard
+				creditcard: result.creditcard,
+				merchant_code: result.getMerchantCode(),
+				merchant_message: result.getMerchantMessage(),
 			};
 
 		}).then((result) => {
@@ -582,7 +593,7 @@ module.exports = class Register extends RegisterUtilities {
 
 	extractProcessorResponse(response) {
 
-		du.debug('Extract Processor Response');
+		du.debug('Extract Processor Response', response);
 
 		if (objectutilities.hasRecursive(response, 'parameters.store')) {
 			return objectutilities.clone(response.parameters.store);

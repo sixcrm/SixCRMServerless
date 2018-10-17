@@ -13,6 +13,8 @@ const currencyutilities = require('@6crm/sixcrmcore/util/currency-utilities').de
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
 const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
 const SessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
 const sessionController = new SessionController();
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
@@ -70,6 +72,8 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		const ProductScheduleHelperController = global.SixCRM.routes.include('helpers','entities/productschedule/ProductSchedule.js');
 
 		this.productScheduleHelperController = new ProductScheduleHelperController();
+		this.productScheduleController = new ProductScheduleController();
+		this.merchantProviderController = new MerchantProviderController();
 
 	}
 
@@ -689,14 +693,23 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 
 	}
 
-	sendAnalyticsEvent() {
+	async sendAnalyticsEvent() {
 
 		du.debug('Send Analytics Event');
 
 		const rebill = this.parameters.get('rebill');
 		const session = this.parameters.get('session');
+		du.debug('Rebill for analytics', rebill, rebill.cycle);
 
 		if (rebill.cycle > 0) {
+
+			const schedule_id = rebill.product_schedules[0];
+			const schedule = await this.productScheduleController.get({id: schedule_id});
+			const interval = schedule.schedule[0].samedayofmonth ? '1 month' : schedule[0].period + ' days';
+			const product_schedule_name = schedule.name;
+			const product_schedule_id = schedule.id;
+			const merchant_provider_id = rebill.merchant_provider;
+			const merchant_provider = await this.merchantProviderController.get({id: merchant_provider_id});
 
 			return AnalyticsEvent.push('subscription', {
 
@@ -706,13 +719,16 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 				amount: rebill.amount,
 				item_count: _.sumBy(rebill.products, product => product.quantity),
 				cycle: rebill.cycle,
-				interval: rebill.product_schedules[0].period,
+				interval,
 				account: session.account,
 				session: session.id,
 				session_alias: session.alias,
 				campaign: session.campaign,
-				customer: session.customer
-
+				customer: session.customer,
+				product_schedule_name,
+				product_schedule: product_schedule_id,
+				merchant_provider_name: merchant_provider.name,
+				merchant_provider: merchant_provider.id
 			});
 
 		}

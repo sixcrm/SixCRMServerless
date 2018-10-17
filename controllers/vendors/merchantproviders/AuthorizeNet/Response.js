@@ -21,4 +21,44 @@ module.exports = class AuthorizeNetResponse extends MerchantProviderResponse {
 
 		return 'error';
 	}
+
+	determineMerchantCode(vendor_response) {
+
+		du.debug('Determine Merchant Code (AuthorizeNet)', vendor_response);
+
+		let result = '';
+
+		result = _(vendor_response).get('body.transactionResponse.responseCode', result);
+
+		if (result === '' || typeof result !== 'string') {
+			result = super.determineMerchantMessage(vendor_response);
+		}
+
+		du.debug('Determined Merchant Code (AuthorizeNet)', result);
+
+		return result;
+
+	}
+
+	determineMerchantMessage(vendor_response) {
+
+		du.debug('Determine Merchant Message (AuthorizeNet)', vendor_response);
+
+		if (this.getCode() === 'success') {
+			return 'Success';
+		}
+
+		let result = '';
+
+		result = _(vendor_response).get('body.transactionResponse.messages[0].description', result);
+
+		if (result === '' || typeof result !== 'string') {
+			result = super.determineMerchantMessage(vendor_response);
+		}
+
+		du.debug('Determined Merchant Message (AuthorizeNet)', result);
+
+		return result;
+
+	}
 }

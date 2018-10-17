@@ -50,5 +50,9 @@ module.exports = {
 	'chargeback': {
 		transform: 'chargeback-transform.js',
 		handlers: ['chargeback-event-handler.js']
+	},
+	'customer': {
+		transform: 'customer-transform.js',
+		handlers: ['customer-event-handler.js']
 	}
 }

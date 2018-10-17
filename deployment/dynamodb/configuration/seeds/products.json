@@ -67,6 +67,7 @@
 		"sku":"asd",
 		"ship":true,
 		"shipping_delay":3600,
+		"default_price":4.99,
 		"fulfillment_provider":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -89,6 +90,7 @@
 		"sku":"qwerty",
 		"ship":true,
 		"shipping_delay":3600,
+		"default_price":34.99,
 		"fulfillment_provider":"1bd805d0-0062-499b-ae28-00c5d1b827ba",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -122,6 +124,7 @@
 		"sku":"2098298739485739485",
 		"ship":true,
 		"shipping_delay":3600,
+		"default_price":79.99,
 		"fulfillment_provider":"2344f424-7571-4b40-aea0-e39615fa0338",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"
@@ -133,6 +136,7 @@
 		"sku":"235624572545345",
 		"ship":true,
 		"shipping_delay":3600,
+		"default_price": 19.99,
 		"fulfillment_provider":"5d18d0fa-5812-4c37-b98c-7b1debdcb435",
 		"created_at":"2017-04-06T18:40:41.405Z",
 		"updated_at":"2017-04-06T18:41:12.521Z"

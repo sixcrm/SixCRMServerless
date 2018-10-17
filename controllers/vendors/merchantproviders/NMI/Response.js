@@ -105,4 +105,47 @@ module.exports = class NMIResponse extends Response {
 
 	}
 
+	determineMerchantCode(vendor_response) {
+
+		du.debug('Determine Merchant Code (NMI)', vendor_response);
+
+		let result = vendor_response;
+
+		const parsed_body = querystring.parse(vendor_response.body);
+
+		if (parsed_body.response_code) {
+			result = parsed_body.response_code
+		} else {
+			result = super.determineMerchantCode(vendor_response);
+		}
+
+		du.debug('Determined Merchant Code (NMI)', result);
+
+		return result;
+	}
+
+	determineMerchantMessage(vendor_response) {
+
+		du.debug('Determine Merchant Message (NMI)', vendor_response);
+
+		if (this.getCode() === 'success') {
+			return 'Success';
+		}
+
+		let result = vendor_response;
+
+		const parsed_body = querystring.parse(vendor_response.body);
+
+		if (parsed_body.responsetext) {
+			result = parsed_body.responsetext
+		} else {
+			result = super.determineMerchantMessage(vendor_response);
+		}
+
+		du.debug('Determined Merchant Message (NMI)', result);
+
+		return result;
+
+	}
+
 }
