@@ -119,7 +119,7 @@ module.exports = class RebillCreatorHelper {
 		}
 
 		return rebill_prototype;
-}
+	}
 
 	async normalizeProductSchedules(product_schedules) {
 		let normalized_product_schedules = arrayutilities.map(product_schedules, async product_schedule_group => {
