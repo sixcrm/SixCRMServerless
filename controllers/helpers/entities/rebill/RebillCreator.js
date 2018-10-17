@@ -1,41 +1,29 @@
 const _ = require('lodash');
 const moment = require('moment');
-
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
-const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
-const currencyutilities = require('@6crm/sixcrmcore/util/currency-utilities').default;
+const Parameters = require('../../../providers/Parameters');
+const AnalyticsEvent = require('../../analytics/analytics-event');
+const MerchantProviderController = require('../../../entities/MerchantProvider');
+const ProductController = require('../../../entities/Product');
+const ProductScheduleController = require('../../../entities/ProductSchedule');
+const ProductScheduleHelperController = require('../../entities/productschedule/ProductSchedule');
+const RebillController = require('../../../entities/Rebill');
+const SessionController = require('../../../entities/Session');
 
-const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
-const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
-const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
-const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
-const SessionController = global.SixCRM.routes.include('controllers', 'entities/Session.js');
+const merchantProviderController = new MerchantProviderController();
+const productController = new ProductController();
+const productScheduleController = new ProductScheduleController();
+const productScheduleHelperController = new ProductScheduleHelperController();
+const rebillController = new RebillController();
 const sessionController = new SessionController();
-const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
-
-module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
-
-	//Need cases:  Transactional Endpoint:
-	/*
-    It's the first moment after someone has agreed to a session productschedule and I'm trying to bill them
-    but I need a rebill in the database first
-     - createRebill(session, 0)
-     --note that this creates all rebills for the session, optionally add a product_schedule?
-    The session has come through the createRebillQueue and I need to create the next rebills for the session
-     - createRebill(session)
-  */
-
-	constructor(){
-
-		super();
-
+module.exports = class RebillCreatorHelper {
+	constructor() {
 		this.parameter_definition = {
 			createRebill: {
 				required:{
@@ -43,7 +31,6 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 				},
 				optional:{
 					day:'day',
-					//Technical Debt:  Why are these here?
 					productschedules: 'product_schedules',
 					products: 'products'
 				}
@@ -53,309 +40,181 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		this.parameter_validation = {
 			'session': global.SixCRM.routes.path('model','entities/session.json'),
 			'day': global.SixCRM.routes.path('model','helpers/rebill/day.json'),
-			'billdate':global.SixCRM.routes.path('model', 'definitions/iso8601.json'),
-			'nextproductschedulebilldaynumber': global.SixCRM.routes.path('model','helpers/rebill/day.json'),
 			'productschedules': global.SixCRM.routes.path('model','helpers/rebill/productschedules.json'),
-			'products': global.SixCRM.routes.path('model','helpers/rebill/products.json'),
-			'normalizedproductschedules':global.SixCRM.routes.path('model','helpers/rebill/normalizedproductschedules.json'),
-			'normalizedproducts':global.SixCRM.routes.path('model','helpers/rebill/normalizedproducts.json'),
-			'scheduleelementsonbillday':global.SixCRM.routes.path('model', 'helpers/rebill/scheduledproducts.json'),
-			'transactionproducts': global.SixCRM.routes.path('model', 'helpers/rebill/transactionproducts.json'),
-			'transactionproduct': global.SixCRM.routes.path('model', 'entities/components/transactionproduct.json'),
-			'amount': global.SixCRM.routes.path('model','definitions/currency.json'),
-			'rebillprototype': global.SixCRM.routes.path('model', 'helpers/rebill/rebillprototype.json'),
-			'rebill': global.SixCRM.routes.path('model', 'entities/rebill.json')
+			'products': global.SixCRM.routes.path('model','helpers/rebill/products.json')
 		};
 
 		this.parameters = new Parameters({validation: this.parameter_validation, definition: this.parameter_definition});
-
-		const ProductScheduleHelperController = global.SixCRM.routes.include('helpers','entities/productschedule/ProductSchedule.js');
-
-		this.productScheduleHelperController = new ProductScheduleHelperController();
-		this.productScheduleController = new ProductScheduleController();
-		this.merchantProviderController = new MerchantProviderController();
-
 	}
 
-	/* Note:  Really, the name of this function should be "createUpcomingRebill"
-  If day is -1, the first (initial) element of the product schedule is returned.
-  If day is 0, the second element of the product schedule is returned
-  In general, this method always returns the next available rebill object from the date that is specified.
-  */
-
-	//Technical Debt:  Test this!
-	createRebill(){
-
+	async createRebill(argumentation) {
 		du.debug('Create Rebill');
-
 		this.parameters.store = {};
+		this.parameters.setParameters({argumentation, action: 'createRebill'});
+		let {session, day, products, product_schedules} = argumentation;
+		let normalized_products, normalized_product_schedules;
 
-		return this.setParameters({argumentation: arguments[0], action: 'createRebill'})
-			.then(() => this.hydrateArguments())
-			.then(() => this.normalizeArguments())
-			.then(() => this.validateArguments())
-			.then(() => this.shouldRebill())
-			.then(() => this.acquireRebillProperties())
-			.then(() => this.buildRebillPrototype())
-			.then(() => this.calculateCycle())
-			.then(() => this.pushRebill())
-			.then(() => this.sendAnalyticsEvent())
-			.then(() => this.returnRebill())
-			.catch((error) => {
-				if(_.has(error, 'code') && error.code == '520'){
-					const message_code = error.message.replace('[520] ','');
-					if(_.includes(['CONCLUDE', 'CONCLUDED', 'CANCELLED', 'INCOMPLETE'], error.message.replace('[520] ',''))){
-						return message_code;
-					}
-				}
-				throw error;
-			});
-
-	}
-
-	setParameters({argumentation, action}){
-
-		du.debug('Set Parameters');
-
-		this.parameters.setParameters({argumentation: argumentation, action: action});
-
-		return Promise.resolve(true);
-
-	}
-
-	hydrateArguments(){
-
-		du.debug('Hydrate Arguments');
-
-		let session = this.parameters.get('session');
-		let day = this.parameters.get('day', {fatal: false});
-		let products = this.parameters.get('products', {fatal: false});
-		let product_schedules = this.parameters.get('productschedules', {fatal: false});
-
-		if(_.isNull(day)){
-			this.calculateDayInCycle(session.created_at);
-			day = this.parameters.get('day', {fatal: false});
+		if (day === undefined) {
+			day = timestamp.getDaysDifference(session.created_at);
 		}
 
-		if(_.isNull(product_schedules)){
-			if(day >= 0){
-				//we only do this for state-machine billing
-				product_schedules = (objectutilities.hasRecursive(session, 'watermark.product_schedules'))?session.watermark.product_schedules:null;
-			}
+		if (product_schedules === undefined && day >= 0) {
+			product_schedules = _.get(session, 'watermark.product_schedules');
 		}
 
-		if(!_.isNull(product_schedules)){
-			this.parameters.set('productschedules', product_schedules);
-		}
-
-		//Technical Debt:  Double Check this.  It's intended to distinguish between rebills in state machine and rebills for the transactional endpoint
-		if(day < 0 && !_.isNull(products)){
-			this.parameters.set('products', products);
-		}
-
-		if(_.isNull(products) && _.isNull(product_schedules)){
+		if (products === undefined && product_schedules === undefined) {
 			throw eu.getError('server', 'Nothing to add to the rebill.');
 		}
 
-		return true;
+		if (products !== undefined) {
+			normalized_products = await this.normalizeProducts(products);
+		}
 
+		if (product_schedules !== undefined) {
+			normalized_product_schedules = await this.normalizeProductSchedules(product_schedules);
+		}
+
+		this.validateArguments({normalized_products, normalized_product_schedules});
+
+		try {
+			this.shouldRebill({session, day, normalized_product_schedules});
+		} catch(error) {
+			if (_.has(error, 'code') && error.code == '520') {
+				const message_code = error.message.replace('[520] ','');
+				if (_.includes(['CONCLUDE', 'CONCLUDED', 'CANCELLED', 'INCOMPLETE'], message_code)) {
+					return message_code;
+				}
+			}
+			throw error;
+		}
+
+		const prototype_rebill = await this.buildRebillPrototype({session, day, normalized_products, normalized_product_schedules});
+		const rebill = await rebillController.create({entity: prototype_rebill});
+		await this.sendAnalyticsEvent({session, rebill});
+		return rebill;
 	}
 
-	normalizeArguments(){
+	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), cycle = 0, amount = 0.00, product_schedules = null, merchant_provider = null, merchant_provider_selections = null}){
+		du.debug('Create Rebill Prototype');
 
-		du.debug('Normalize Arguments');
+		const rebill_prototype = {
+			account: session.account,
+			parentsession: session.id,
+			products: transaction_products,
+			bill_at,
+			amount,
+			cycle
+		};
 
-		let promises = [
-			this.normalizeProductSchedules(),
-			this.normalizeProducts()
-		];
+		if (!_.isNull(merchant_provider)) {
+			rebill_prototype.merchant_provider = merchant_provider;
+		}
 
-		return Promise.all(promises).then(() => {
-			return true;
+		if (!_.isNull(merchant_provider_selections)) {
+			rebill_prototype.merchant_provider_selections = merchant_provider_selections;
+		}
+
+		if (!_.isNull(product_schedules)) {
+			rebill_prototype.product_schedules = product_schedules;
+		}
+
+		return rebill_prototype;
+}
+
+	async normalizeProductSchedules(product_schedules) {
+		let normalized_product_schedules = arrayutilities.map(product_schedules, async product_schedule_group => {
+			if (_.isString(product_schedule_group.product_schedule)) {
+				return productScheduleHelperController.getHydrated({id: product_schedule_group.product_schedule}).then(result => {
+					product_schedule_group.product_schedule = result;
+					return product_schedule_group;
+				});
+			} else if (_.isObject(product_schedule_group.product_schedule)) {
+				return product_schedule_group;
+			}
 		});
 
+		return Promise.all(normalized_product_schedules);
 	}
 
-	normalizeProductSchedules(){
-
-		du.debug('Normalize Product Schedules');
-
-		let product_schedules = this.parameters.get('productschedules', {fatal: false});
-
-		if(!_.isNull(product_schedules)){
-
-			let normalized_product_schedules = arrayutilities.map(product_schedules, product_schedule_group => {
-
-				if(_.isString(product_schedule_group.product_schedule)){
-
-					return this.productScheduleHelperController.getHydrated({id: product_schedule_group.product_schedule}).then(result => {
-
-						product_schedule_group.product_schedule = result;
-						return product_schedule_group;
-
-					});
-
-				}else if(_.isObject(product_schedule_group.product_schedule)){
-
-					return Promise.resolve(product_schedule_group);
-
-				}
-
-			});
-
-			return Promise.all(normalized_product_schedules).then(result => {
-
-				this.parameters.set('normalizedproductschedules', result);
-				return true;
-			});
-
-		}
-
-		return Promise.resolve(true);
-
-	}
-
-	normalizeProducts(){
-
-		du.debug('Normalize Products');
-
-		let products = this.parameters.get('products', {fatal: false});
-
-		if(!_.isNull(products)){
-
-			if(!_.has(this, 'productController')){
-				const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-				this.productController = new ProductController();
+	async normalizeProducts(products) {
+		let normalized_products = arrayutilities.map(products, async product_group => {
+			if (productController.isUUID(product_group.product)) {
+				return productController.get({id: product_group.product}).then(result => {
+					if (_.isNull(result)) {
+						throw eu.getError('not_found', 'Product does not exist: '+product_group.product);
+					}
+					product_group.product = result;
+					return product_group;
+				});
+			} else if (_.isObject(product_group.product)) {
+				return product_group;
 			}
+		});
 
-			let normalized_products = arrayutilities.map(products, product_group => {
-
-				if(this.productController.isUUID(product_group.product)){
-
-					return this.productController.get({id: product_group.product}).then(result => {
-						if(_.isNull(result)){
-							throw eu.getError('not_found', 'Product does not exist: '+product_group.product);
-						}
-						product_group.product = result;
-						return product_group;
-					});
-
-				}else if(_.isObject(product_group.product)){
-
-					//Watermark/On-Demand Product
-					return Promise.resolve(product_group);
-
-				}
-
-			});
-
-			return Promise.all(normalized_products).then(result => {
-				this.parameters.set('normalizedproducts', result);
-				return true;
-			});
-
-		}
-
-		return Promise.resolve(true);
-
+		return Promise.all(normalized_products);
 	}
 
 	//Technical Debt:  Review...
-	validateArguments(){
-
+	validateArguments({normalized_products, normalized_product_schedules}) {
 		du.debug('Validate Arguments');
-
-		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
-
-		if(arrayutilities.nonEmpty(normalized_product_schedules)){
+		if (arrayutilities.nonEmpty(normalized_product_schedules)) {
 			arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
-				if(!objectutilities.hasRecursive(normalized_product_schedule, 'product_schedule.schedule')){
+				if (!objectutilities.hasRecursive(normalized_product_schedule, 'product_schedule.schedule')) {
 					throw eu.getError('bad_request','Normalized product schedule is missing product_schedule.schedule element');
 				}
 				arrayutilities.map(normalized_product_schedule.product_schedule.schedule, schedule_element => {
-					if(_.has(schedule_element, 'end') && schedule_element.end <= schedule_element.start){
+					if (_.has(schedule_element, 'end') && schedule_element.end <= schedule_element.start) {
 						throw eu.getError('bad_request','A schedule element end can not be less than or equal to a schedule element start.');
 					}
 				})
 			});
 		}
-		// let normalized_products = this.parameters.get('normalizedproducts', {fatal: false});
-		// let session = this.parameters.get('session');
-		// let day = this.parameters.get('day');
 
-		/*
-    if(day < 0){
-      //In other words, these product schedules may already be in the session?
-      du.warning('Creating a rebill object without validating the presence of the product_schedules in the session.');
-    }else{
-      //Technical Debt:  But, but, but, didn't we get the product schedules from the session?
-      arrayutilities.map(product_schedules, (product_schedule) => {
-        if(!_.includes(session.product_schedules, product_schedule.id)){
-          throw eu.getError('server', 'The specified product schedule is not contained in the session object: '+product_schedule.id);
-        }
-      });
-    }
-    */
+		if (normalized_products) {
+			this.validateProductPricing(normalized_products);
+		}
 
-		this.validateProductPricing();
-		this.validateProductSchedulePricing();
+		if (normalized_product_schedules) {
+			this.validateProductSchedulePricing(normalized_product_schedules);
+		}
 
-		return Promise.resolve(true);
-
+		return true;
 	}
 
-	shouldRebill(){
-
+	shouldRebill({session, day, normalized_product_schedules}) {
 		du.debug('Should Rebill');
 
-		const session = this.parameters.get('session', {fatal: false});
-		const day = this.parameters.get('day', {fatal: false});
-
-		if(_.has(session, 'concluded') && session.concluded == true){
+		if (_.has(session, 'concluded') && session.concluded == true) {
 			du.warning('Session concluded, do not rebill');
 			throw eu.getError('control', 'CONCLUDED');
 		}
 
-		if(_.has(session, 'cancelled') && _.has(session.cancelled, 'cancelled') && session.cancelled.cancelled == true){
+		if (_.has(session, 'cancelled') && _.has(session.cancelled, 'cancelled') && session.cancelled.cancelled == true) {
 			du.warning('Session cancelled, do not rebill');
 			throw eu.getError('control', 'CANCELLED');
 		}
 
-		if(day < 0){
+		if (day < 0) {
 			return;
 		}
 
-		if(!_.has(session, 'completed') || session.completed !== true){
+		if (!_.has(session, 'completed') || session.completed !== true) {
 			du.warning('Session is not completed, do not rebill');
 			throw eu.getError('control', 'INCOMPLETE');
 		}
 
-		const product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
-
-		if(!_.isArray(product_schedules) || !arrayutilities.nonEmpty(product_schedules)){
+		if (!_.isArray(normalized_product_schedules) || !arrayutilities.nonEmpty(normalized_product_schedules)) {
 			du.warning('No product schedules, do not rebill');
 			throw eu.getError('control', 'CONCLUDE');
 		}
-
 	}
 
-	validateProductPricing() {
-		if(!_.has(this, 'productController')){
-			const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-			this.productController = new ProductController();
-		}
-
-		const product_groups = this.parameters.get('normalizedproducts', {fatal: false});
-		if (_.isNull(product_groups)) {
-			return true;
-		}
-
+	validateProductPricing(product_groups) {
 		const valid = arrayutilities.every(product_groups, product_group => {
 			if (!_.has(product_group, 'price')) {
 				return true;
 			}
-
-			return this.productController.validateDynamicPrice(product_group.product, product_group.price);
+			return productController.validateDynamicPrice(product_group.product, product_group.price);
 		});
 
 		if (!valid) {
@@ -365,25 +224,14 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		return valid;
 	}
 
-	validateProductSchedulePricing() {
-		if(!_.has(this, 'productController')){
-			const ProductController = global.SixCRM.routes.include('controllers', 'entities/Product.js');
-			this.productController = new ProductController();
-		}
-
-		const product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
-		if (_.isNull(product_schedules)) {
-			return true;
-		}
-
+	validateProductSchedulePricing(product_schedules) {
 		const valid = arrayutilities.every(product_schedules, product_schedule => {
 			const products = product_schedule.product_schedule.schedule;
 			return arrayutilities.every(products, product_group => {
 				if (!_.has(product_group, 'price')) {
 					return true;
 				}
-
-				return this.productController.validateDynamicPrice(product_group.product, product_group.price);
+				return productController.validateDynamicPrice(product_group.product, product_group.price);
 			});
 		});
 
@@ -394,33 +242,19 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 		return valid;
 	}
 
-	//Technical Debt:  Test this!
-	acquireRebillProperties(){
-
-		du.debug('Acquire Rebill Properties');
-
-		return this.getNextProductScheduleBillDayNumber()
-			.then(() => this.getMerchantProviders())
-			.then(() => this.getScheduleElementsOnBillDay())
-			.then(() => this.addScheduleElementsToTransactionProducts())
-			.then(() => this.addProductsToTransactionProducts())
-			.then(() => this.calculateAmount())
-			.then(() => this.calculateBillAt());
-
+	getTransactionProducts({bill_day, normalized_product_schedules, normalized_products}) {
+		const transaction_products = [];
+		const schedule_elements = this.getScheduleElementsOnBillDay({bill_day, normalized_product_schedules});
+		this.addScheduleElementsToTransactionProducts(schedule_elements, transaction_products);
+		this.addProductsToTransactionProducts(normalized_products, transaction_products);
+		return transaction_products;
 	}
 
-	//Technical Debt:  For the sale of products, need to account for the case where there are no product schedules...
-	getNextProductScheduleBillDayNumber(){
-
+	getNextProductScheduleBillDayNumber({day, normalized_product_schedules}) {
 		du.debug('Get Next Product Schedule Schedule Element Start Day Number');
-
-		let day = this.parameters.get('day');
-		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
-
-		if(!_.isNull(normalized_product_schedules)){
-
+		if (normalized_product_schedules !== undefined) {
 			let start_day_numbers = arrayutilities.map(normalized_product_schedules, product_schedule_group => {
-				return this.productScheduleHelperController.getNextScheduleElementStartDayNumber({day: day, product_schedule: product_schedule_group.product_schedule});
+				return productScheduleHelperController.getNextScheduleElementStartDayNumber({day: day, product_schedule: product_schedule_group.product_schedule});
 			});
 
 			start_day_numbers =  arrayutilities.filter(start_day_numbers, start_day_number => {
@@ -428,291 +262,191 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 			});
 
 			let next_schedule_element_start_day_number = arrayutilities.reduce(start_day_numbers, (min, value) => {
-
-				if(!numberutilities.isInteger(min)){
+				if (!numberutilities.isInteger(min)) {
 					return value;
 				}
 
-				if(value < min){
+				if (value < min) {
 					return value;
 				}
 
 				return min;
-
 			}, null);
 
-			if(!_.isNull(next_schedule_element_start_day_number)){
-
-				this.parameters.set('nextproductschedulebilldaynumber', next_schedule_element_start_day_number);
-
-				return Promise.resolve(true);
-
+			if (!_.isNull(next_schedule_element_start_day_number)) {
+				return next_schedule_element_start_day_number;
 			}
-
-		}else{
-
-			//In the case where there are no product schedules, we can assume that this is a straight sale of products.
-			//Therefore the day must be -1 and thus we can set the nex product schedule bill day number to 0
-			if(day < 0){
-
-				//Technical Debt:  Should we just omit this?
-				this.parameters.set('nextproductschedulebilldaynumber', 0);
-
-				return Promise.resolve(true);
-
-			}else{
-
+		} else {
+			if (day < 0) {
+				return 0;
+			} else {
 				throw eu.getError('server', 'Unrecognized case: day is greater than or equal to 0 but there are no normalized product schedules.');
-
 			}
-
 		}
-
-		//Note:  Null means that we don't have any more billings available to this collection of product schedules.
-		return Promise.resolve(false);
-
 	}
 
-	async getMerchantProviders() {
-		const session = this.parameters.get('session');
+	async getMerchantProviders(session) {
 		const previous_rebills = await sessionController.listRebills(session);
 		if (!_.isArray(previous_rebills) || previous_rebills.length === 0) {
-			return;
+			return {};
 		}
 
 		const previous_rebills_ordered = _.orderBy(previous_rebills, [rebill => new Date(rebill.bill_at)], ['desc']);
 		const last_rebill = previous_rebills_ordered[0];
 
-		this.parameters.set('merchantprovider', last_rebill.merchant_provider);
-		this.parameters.set('merchantproviderselections', last_rebill.merchant_provider_selections);
+		return {
+			merchant_provider: last_rebill.merchant_provider,
+			merchant_provider_selections: last_rebill.merchant_provider_selections
+		};
 	}
 
-	getScheduleElementsOnBillDay(){
-
+	getScheduleElementsOnBillDay({bill_day, normalized_product_schedules}) {
 		du.debug('Get Schedule Elements On Bill Day');
-
-		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
-		let bill_day = this.parameters.get('nextproductschedulebilldaynumber');
-
-		if(_.isNull(normalized_product_schedules)){ return Promise.resolve(true); }
-
 		let schedule_elements = [];
 
+		if (normalized_product_schedules === undefined) {
+			return;
+		}
+
 		arrayutilities.map(normalized_product_schedules, normalized_product_schedule => {
-
-			let sub_elements = this.productScheduleHelperController.getScheduleElementsOnDayInSchedule({day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
-
-			if(!_.isNull(sub_elements) && arrayutilities.nonEmpty(sub_elements)){
-
+			let sub_elements = productScheduleHelperController.getScheduleElementsOnDayInSchedule({day: bill_day, product_schedule: normalized_product_schedule.product_schedule})
+			if (!_.isNull(sub_elements) && arrayutilities.nonEmpty(sub_elements)) {
 				arrayutilities.map(sub_elements, sub_element => {
 					schedule_elements.push({
 						quantity: normalized_product_schedule.quantity,
 						schedule_element:sub_element
 					});
 				});
-
 			}
-
 		});
 
 		schedule_elements = arrayutilities.filter(schedule_elements, (schedule_element) => {
 			return objectutilities.isObject(schedule_element.schedule_element);
 		});
 
-		if(arrayutilities.nonEmpty(schedule_elements)){
-
-			this.parameters.set('scheduleelementsonbillday', schedule_elements);
-
-			return Promise.resolve(true);
-
+		if (arrayutilities.nonEmpty(schedule_elements)) {
+			return schedule_elements;
 		}
-
-		return Promise.resolve(false);
-
 	}
 
-	addScheduleElementsToTransactionProducts(){
-
-		du.debug('Get Schedule Elements Products');
-
-		let schedule_elements = this.parameters.get('scheduleelementsonbillday', {fatal: false});
-
-		if(arrayutilities.nonEmpty(schedule_elements)){
-
-			arrayutilities.map(schedule_elements, schedule_element => {
-
-				let transaction_product = {
-					product: schedule_element.schedule_element.product,
-					amount: schedule_element.schedule_element.price,
-					quantity: schedule_element.quantity
-				};
-
-				this.parameters.push('transactionproducts', transaction_product, 'transactionproduct');
-
-			});
-
-			return Promise.resolve(true);
-
+	addScheduleElementsToTransactionProducts(schedule_elements, transaction_products) {
+		du.debug('Add Schedule Elements To Transaction Products');
+		if (schedule_elements === undefined) {
+			return;
 		}
-
-		return Promise.resolve(false);
-
+		arrayutilities.map(schedule_elements, schedule_element => {
+			let transaction_product = {
+				product: schedule_element.schedule_element.product,
+				amount: schedule_element.schedule_element.price,
+				quantity: schedule_element.quantity
+			};
+			transaction_products.push(transaction_product);
+		});
 	}
 
-	addProductsToTransactionProducts(){
-
+	addProductsToTransactionProducts(normalized_products, transaction_products) {
 		du.debug('Add Products To Transaction Products');
-
-		let normalized_products = this.parameters.get('normalizedproducts', {fatal: false});
-
-		if(arrayutilities.nonEmpty(normalized_products)){
-
-			arrayutilities.map(normalized_products, product_group => {
-
-				let transaction_product = {
-					product: product_group.product,
-					amount: this.getPriceFromProductGroup(product_group),
-					quantity: product_group.quantity
-				};
-
-				this.parameters.push('transactionproducts', transaction_product, 'transactionproduct');
-
-			});
-
-			return Promise.resolve(true);
-
+		if (normalized_products === undefined) {
+			return;
 		}
-
-		return Promise.resolve(false);
-
+		arrayutilities.map(normalized_products, product_group => {
+			let transaction_product = {
+				product: product_group.product,
+				amount: this.getPriceFromProductGroup(product_group),
+				quantity: product_group.quantity
+			};
+			transaction_products.push(transaction_product);
+		});
 	}
 
-	getPriceFromProductGroup(product_group){
-
+	getPriceFromProductGroup(product_group) {
 		//Technical Debt:  Need to check that the product allows overrides
-		if(_.has(product_group, 'price')){
+		if (_.has(product_group, 'price')) {
 			return product_group.price;
 		}
 
-		if(objectutilities.hasRecursive(product_group, 'product.default_price')){
+		if (objectutilities.hasRecursive(product_group, 'product.default_price')) {
 			return product_group.product.default_price;
 		}
 
 		throw eu.getError('server', 'Unable to identify price for product: '+product_group.product.id);
-
 	}
 
-	buildRebillPrototype(){
+	async buildRebillPrototype({session, day, normalized_products, normalized_product_schedules}) {
+		du.debug('Build Rebill');
+		const product_schedules = this.getGroupedProductSchedules(normalized_product_schedules);
+		const bill_day = this.getNextProductScheduleBillDayNumber({day, normalized_product_schedules});
+		const {merchant_provider, merchant_provider_selections} = await this.getMerchantProviders(session);
+		const transaction_products = this.getTransactionProducts({bill_day, normalized_product_schedules, normalized_products});
+		const amount = this.calculateAmount(transaction_products);
+		const bill_at = this.calculateBillAt(session, bill_day);
+		const cycle = await this.calculateCycle(session, bill_at);
 
-		du.debug('Build Rebill Prototype');
+		const rebill_prototype = this.createRebillPrototype({
+			session,
+			transaction_products,
+			product_schedules,
+			merchant_provider,
+			merchant_provider_selections,
+			bill_at,
+			amount,
+			cycle
+		});
 
-		let normalized_product_schedules = this.parameters.get('normalizedproductschedules', {fatal: false});
+		if (bill_day == 0) {
+			rebill_prototype.processing = true;
+		}
 
-		let product_schedules = null;
+		return rebill_prototype;
+	}
 
-		if(!_.isNull(normalized_product_schedules)){
+	getGroupedProductSchedules(normalized_product_schedules) {
+		let product_schedules;
 
+		if (normalized_product_schedules !== undefined) {
 			let grouped_normalized_product_schedules = arrayutilities.group(normalized_product_schedules, normalized_product_schedule_group => {
-				if(objectutilities.hasRecursive(normalized_product_schedule_group, 'product_schedule.id')){
+				if (objectutilities.hasRecursive(normalized_product_schedule_group, 'product_schedule.id')) {
 					return 'product_schedule';
 				}
 				return 'watermark_product_schedule';
 			});
 
-			if(arrayutilities.nonEmpty(grouped_normalized_product_schedules['product_schedule'])){
+			if (arrayutilities.nonEmpty(grouped_normalized_product_schedules['product_schedule'])) {
 				product_schedules = arrayutilities.map(grouped_normalized_product_schedules['product_schedule'], product_schedule_group => {
 					return product_schedule_group.product_schedule.id;
 				});
 			}
-
 		}
 
-		let rebill_prototype = this.createRebillPrototype({
-			session: this.parameters.get('session'),
-			merchant_provider: this.parameters.get('merchantprovider', {fatal: false}),
-			merchant_provider_selections: this.parameters.get('merchantproviderselections', {fatal: false}),
-			transaction_products: this.parameters.get('transactionproducts'),
-			bill_at: this.parameters.get('billdate'),
-			amount: this.parameters.get('amount'),
-			product_schedules: product_schedules
-		});
-
-		if(this.parameters.get('nextproductschedulebilldaynumber') == 0){
-			rebill_prototype.processing = true;
-		}
-
-		this.parameters.set('rebillprototype', rebill_prototype);
-
-		return Promise.resolve(true);
-
+		return product_schedules;
 	}
 
-	calculateCycle() {
-
+	async calculateCycle(session, bill_at) {
 		du.debug('Calculate Cycle');
+		const rebills = await sessionController.listRebills(session);
+		let cycle = 0;
 
-		let prototype_rebill = this.parameters.get('rebillprototype');
-		let session = this.parameters.get('session');
-
-		return sessionController.listRebills(session).then(rebills => {
-
-			let cycle = 0;
-
-			if (rebills) {
-				du.debug('rebills', rebills);
-				cycle = rebills.filter(r => moment(r.bill_at).isBefore(prototype_rebill.bill_at)).length;
-			} else {
-				du.debug('no rebills');
-			}
-
-			prototype_rebill.cycle = cycle;
-
-			this.parameters.set('rebillprototype', prototype_rebill);
-
-			du.debug(`Cycle for new rebill in session ${session.id} is ${cycle}.`);
-
-			return cycle;
-		});
-
-	}
-
-	pushRebill(){
-
-		du.debug('Push Rebill');
-
-		if(!_.has(this, 'rebillController')){
-			this.rebillController = new RebillController();
+		if (rebills) {
+			du.debug('rebills', rebills);
+			cycle = rebills.filter(r => moment(r.bill_at).isBefore(bill_at)).length;
+		} else {
+			du.debug('no rebills');
 		}
 
-		let prototype_rebill = this.parameters.get('rebillprototype');
-
-		return this.rebillController.create({entity: prototype_rebill}).then(rebill => {
-			this.parameters.set('rebill', rebill);
-			return true;
-		});
-
+		du.debug(`Cycle for new rebill in session ${session.id} is ${cycle}.`);
+		return cycle;
 	}
 
-	async sendAnalyticsEvent() {
-
+	async sendAnalyticsEvent({session, rebill}) {
 		du.debug('Send Analytics Event');
-
-		const rebill = this.parameters.get('rebill');
-		const session = this.parameters.get('session');
 		du.debug('Rebill for analytics', rebill, rebill.cycle);
 
 		if (rebill.cycle > 0) {
-
-			const schedule_id = rebill.product_schedules[0];
-			const schedule = await this.productScheduleController.get({id: schedule_id});
-			const interval = schedule.schedule[0].samedayofmonth ? '1 month' : schedule[0].period + ' days';
-			const product_schedule_name = schedule.name;
-			const product_schedule_id = schedule.id;
-			const merchant_provider_id = rebill.merchant_provider;
-			const merchant_provider = await this.merchantProviderController.get({id: merchant_provider_id});
+			const product_schedule = await productScheduleController.get({id: rebill.product_schedules[0]});
+			const interval = product_schedule.schedule[0].samedayofmonth ? '1 month' : product_schedule.schedule[0].period + ' days';
+			const merchant_provider = await merchantProviderController.get({id: rebill.merchant_provider});
 
 			return AnalyticsEvent.push('subscription', {
-
 				id: rebill.id,
 				alias: rebill.alias,
 				datetime: rebill.bill_at,
@@ -725,62 +459,33 @@ module.exports = class RebillCreatorHelper extends RebillHelperUtilities {
 				session_alias: session.alias,
 				campaign: session.campaign,
 				customer: session.customer,
-				product_schedule_name,
-				product_schedule: product_schedule_id,
+				product_schedule_name: product_schedule.name,
+				product_schedule: product_schedule.id,
 				merchant_provider_name: merchant_provider.name,
 				merchant_provider: merchant_provider.id
 			});
-
 		}
-
 	}
 
-	returnRebill(){
+	calculateAmount(products) {
+		du.debug('Calculate Amount');
+		let amount = 0.0;
 
-		du.debug('Return Rebill');
+		if (!_.isNull(products) && arrayutilities.nonEmpty(products)) {
+			amount = arrayutilities.reduce(products, (sum, object) => {
+				return sum + numberutilities.formatFloat((object.amount * object.quantity), 2);
+			}, amount);
+		}
 
-		return Promise.resolve(this.parameters.get('rebill'));
-
+		return numberutilities.formatFloat(amount, 2);
 	}
 
-	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), amount = 0.00, product_schedules = null, merchant_provider = null}){
-
-		du.debug('Create Rebill Prototype');
-
-		if(!_.has(session, 'account')){
-			throw eu.getError('server', 'Session missing "account" property.');
-		}
-
-		if(!_.has(session, 'id')){
-			throw eu.getError('server', 'Session missing "id" property.');
-		}
-
-		if(!stringutilities.isISO8601(bill_at)){
-			throw eu.getError('server', '"bill_at" property is assumed to be a iso-8601 string.');
-		}
-
-		if(!currencyutilities.isCurrency(amount)){
-			throw eu.getError('server', '"amount" property is assumed to be currency.');
-		}
-
-		let rebill_prototype = {
-			account: session.account,
-			parentsession: session.id,
-			products: transaction_products,
-			bill_at: bill_at,
-			amount: amount
-		};
-
-		if(!_.isNull(merchant_provider)){
-			rebill_prototype.merchant_provider = merchant_provider;
-		}
-
-		if(!_.isNull(product_schedules)){
-			rebill_prototype.product_schedules = product_schedules;
-		}
-
-		return rebill_prototype
-
+	calculateBillAt(session, bill_day) {
+		du.debug('Calculate Bill At');
+		let session_start = parseInt(timestamp.dateToTimestamp(session.created_at));
+		let additional_seconds = timestamp.getDayInSeconds() * bill_day;
+		let bill_date = timestamp.toISO8601(session_start + additional_seconds);
+		du.warning(session.created_at+' plus '+bill_day+' days should equal '+bill_date);
+		return bill_date;
 	}
-
 };
