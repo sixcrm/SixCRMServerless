@@ -20,12 +20,14 @@ module.exports = class DynamoClient {
 
 	}
 
-	get(table, key) {
+	async get(table, key) {
 
-		return this.client.getItem({
+		const response = await this.client.get({
 			TableName: table,
-			Key: { id: { S: key } }
+			Key: { id: key }
 		}).promise();
+
+		return response.Item;
 
 	}
 
