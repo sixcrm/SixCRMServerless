@@ -76,6 +76,9 @@ module.exports = class MerchantProviderResponse extends Response{
 				let response = vendor_response.response;
 				let body = vendor_response.body;
 
+				du.debug('Attempting to determine response code and message.', vendor_response);
+				du.debug('Parameters are.', this.parameters.store);
+
 				this.parameters.set('response', response);
 				this.parameters.set('body', body);
 
@@ -96,7 +99,8 @@ module.exports = class MerchantProviderResponse extends Response{
 
 				this.setCode(result_code);
 				this.setMessage(result_message);
-
+				this.setMerchantCode(this.determineMerchantCode(vendor_response));
+				this.setMerchantMessage(this.determineMerchantMessage(vendor_response));
 			}
 
 		}
@@ -155,6 +159,32 @@ module.exports = class MerchantProviderResponse extends Response{
 		du.debug('Determine Result Message');
 
 		return this.result_messages[result_code];
+
+	}
+
+	determineMerchantCode(vendor_response) {
+
+		du.debug('Determine Merchant Code', vendor_response);
+
+		let result = vendor_response;
+
+		result = _(vendor_response).get('statusCode', result);
+		result = _(vendor_response).get('response.statusCode', result);
+
+		du.debug('Determined Merchant Code', result);
+
+		if (typeof result !== 'string') {
+			result = JSON.stringify(result)
+		}
+
+		return result;
+	}
+
+	determineMerchantMessage(vendor_response) {
+
+		du.debug('Determine Merchant Message', vendor_response);
+
+		return 'Unexpected response for ' + this.getCode();
 
 	}
 
@@ -223,6 +253,30 @@ module.exports = class MerchantProviderResponse extends Response{
 
 	}
 
+	getMerchantMessage(){
+
+		du.debug('Get Merchant Message');
+
+		const merchantMessage = this.parameters.get('merchant_message');
+
+		du.debug(merchantMessage);
+
+		return merchantMessage
+
+	}
+
+	getMerchantCode(){
+
+		du.debug('Get Merchant Code');
+
+		const merchantCode = this.parameters.get('merchant_code');
+
+		du.debug(merchantCode);
+
+		return merchantCode
+
+	}
+
 	setCode(code){
 
 		du.debug('Set Code');
@@ -231,6 +285,21 @@ module.exports = class MerchantProviderResponse extends Response{
 
 		return true;
 
+	}
+
+	setMerchantMessage(message){
+
+		du.debug('Set Merchant Message', message);
+
+		this.parameters.set('merchant_message', message)
+
+	}
+
+	setMerchantCode(code){
+
+		du.debug('Set Merchant Code', code);
+
+		this.parameters.set('merchant_code', code);
 	}
 
 	getCode(){

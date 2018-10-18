@@ -125,7 +125,7 @@ module.exports = class ProductController extends entityController {
 			return price >= min && price <= max;
 		}
 
-		return true;
+		return product.default_price === price;
 	}
 
 }

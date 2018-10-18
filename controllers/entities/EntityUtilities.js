@@ -284,6 +284,7 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 				return null;
 			}
 
+			du.error('Non-singular result set', results);
 			throw eu.getError('server', 'Non-specific '+this.descriptive_name+' entity results.');
 
 		}

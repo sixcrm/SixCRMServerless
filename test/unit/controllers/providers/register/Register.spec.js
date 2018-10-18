@@ -1219,6 +1219,12 @@ describe('controllers/providers/Register.js', () => {
 				getMessage() {
 					return processor_response.message;
 				}
+				getMerchantCode() {
+					return processor_response.merchant_code;
+				}
+				getMerchantMessage() {
+					return processor_response.merchant_message;
+				}
 				getResult() {
 					return processor_response.result;
 				}
@@ -1239,9 +1245,12 @@ describe('controllers/providers/Register.js', () => {
 			mockery.registerMock(global.SixCRM.routes.path('providers', 'register/Response.js'), class {
 				constructor({transactions, processor_responses, response_type, creditcard}) {
 					expect(transactions).to.include(transaction_receipt);
+
 					expect(processor_responses).to.include({
 						code: processor_response.code,
 						message: processor_response.message,
+						merchant_code: processor_response.merchant_code,
+						merchant_message: processor_response.merchant_message,
 						result: processor_response.result,
 						creditcard: creditcard.id,
 						merchant_provider: group_id
@@ -1327,6 +1336,12 @@ describe('controllers/providers/Register.js', () => {
 				getResult() {
 					return processor_response.result;
 				}
+				getMerchantCode() {
+					return processor_response.merchant_code;
+				}
+				getMerchantMessage() {
+					return processor_response.merchant_message;
+				}
 			}
 
 			mockery.registerMock(global.SixCRM.routes.path('helpers', 'transaction/Process.js'), class {
@@ -1353,6 +1368,8 @@ describe('controllers/providers/Register.js', () => {
 				expect(processor_responses).to.include({
 					code: processor_response.code,
 					message: processor_response.message,
+					merchant_code: processor_response.merchant_code,
+					merchant_message: processor_response.merchant_message,
 					result: processor_response.result,
 					creditcard: creditcard.id,
 					merchant_provider: group_id
@@ -1619,6 +1636,12 @@ describe('controllers/providers/Register.js', () => {
 								type: 'refund',
 								response_code: '300'
 							};
+						},
+						getMerchantCode() {
+							return '400';
+						},
+						getMerchantMessage() {
+							return 'Refund amount may not exceed the transaction balance REFID:3220888806';
 						},
 						merchant_provider: merchant_provider.id,
 						creditcard: creditcard.id,

@@ -10,8 +10,13 @@ module.exports = async (parameters, pagination) => {
 	const cycle = parameters.facets.find(f => f.facet === 'cycle');
 	const interval = parameters.facets.find(f => f.facet === 'interval');
 	const sessionAlias = parameters.facets.find(f => f.facet === 'sessionAlias');
+	const session = parameters.facets.find(f => f.facet === 'session');
 	const campaignName = parameters.facets.find(f => f.facet === 'campaignName');
 	const customerName = parameters.facets.find(f => f.facet === 'customerName');
+	const productScheduleName = parameters.facets.find(f => f.facet === 'productScheduleName');
+	const productSchedule = parameters.facets.find(f => f.facet === 'productSchedule');
+	const merchantProviderName = parameters.facets.find(f => f.facet === 'merchantProviderName');
+	const merchantProvider = parameters.facets.find(f => f.facet === 'merchantProvider');
 
 	if (start.length > 1) {
 
@@ -35,8 +40,13 @@ module.exports = async (parameters, pagination) => {
 	_resolveParamValue('cycle', cycle);
 	_resolveParamValue('interval', interval);
 	_resolveParamValue('sessionAlias', sessionAlias);
+	_resolveParamValue('session', session);
 	_resolveParamValue('campaignName', campaignName);
 	_resolveParamValue('customerName', customerName);
+	_resolveParamValue('productScheduleName', productScheduleName);
+	_resolveParamValue('productSchedule', productSchedule);
+	_resolveParamValue('merchantProviderName', merchantProviderName);
+	_resolveParamValue('merchantProvider', merchantProvider);
 
 	if (pagination) {
 

@@ -73,4 +73,49 @@ module.exports = class InnovioResponse extends Response {
 
 	}
 
+
+	determineMerchantCode(vendor_response) {
+
+		du.debug('Determine Merchant Code (Innovio)', vendor_response);
+
+		const body = this.parseBody(vendor_response.body);
+
+		let result = '';
+
+		result = _(body).get('API_RESPONSE', result);
+
+		if (result === '' || typeof result !== 'string') {
+			result = super.determineMerchantMessage(vendor_response);
+		}
+
+		du.debug('Determined Merchant Code (Innovio)', result);
+
+		return result;
+
+	}
+
+	determineMerchantMessage(vendor_response) {
+
+		du.debug('Determine Merchant Message (Innovio)', vendor_response);
+
+		if (this.getCode() === 'success') {
+			return 'Success';
+		}
+
+		const body = this.parseBody(vendor_response.body);
+
+		let result = '';
+
+		result = _(body).get('API_ADVICE', result);
+
+		if (result === '' || typeof result !== 'string') {
+			result = super.determineMerchantMessage(vendor_response);
+		}
+
+		du.debug('Determined Merchant Message (Innovio)', result);
+
+		return result;
+
+	}
+
 }

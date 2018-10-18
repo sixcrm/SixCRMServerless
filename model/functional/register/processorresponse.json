@@ -15,6 +15,12 @@
 		},
 		"message": {
 			"type": "string"
+		},
+		"merchant_message": {
+			"type": "string"
+		},
+		"merchant_code": {
+			"type": "string"
 		}
 	},
 	"oneOf": [

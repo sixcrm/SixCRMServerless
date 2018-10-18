@@ -78,7 +78,6 @@ module.exports = class ConfirmOrderController extends transactionEndpointControl
 		let [customer, campaign, rebills] = await this.hydrateSessionProperties(session);
 
 		await this.closeSession(session);
-		await this.triggerSessionCloseStateMachine(session, true);
 		const response = this.buildResponse(session, customer, rebills);
 		await this.postProcessing(session, campaign, customer);
 
