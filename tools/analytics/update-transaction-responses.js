@@ -81,10 +81,10 @@ async function updateTransaction(connection, id, index) {
 			merchant_code	 = $1,
 			merchant_message = $2
 		WHERE id = $3`,
-		[
-			merchantCode,
-			merchantMessage,
-			id
-		]);
+	[
+		merchantCode,
+		merchantMessage,
+		id
+	]);
 
 }
