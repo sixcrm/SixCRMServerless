@@ -2,9 +2,7 @@ const _ = require('lodash');
 const util = require('util');
 const AnalyticsTransform = require('../analytics-transform');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const MerchantProviderController = global.SixCRM.routes.include('controllers', 'entities/MerchantProvider.js');
-const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
-const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
+const DynamoClient = require('./entities/dynamo');
 
 module.exports = class TransactionTransform extends AnalyticsTransform {
 
@@ -133,14 +131,11 @@ module.exports = class TransactionTransform extends AnalyticsTransform {
 
 		}
 
+		const dynamoClient = new DynamoClient();
+
 		try {
 
-			const controller = new MerchantProviderController();
-			controller.disableACLs();
-			const response = await controller.get({
-				id: record.context.transaction.merchant_provider,
-				fatal: true
-			});
+			const response = await dynamoClient.get('merchantproviders', record.context.transaction.merchant_provider);
 
 			result.merchantProvider.name = response.name;
 			result.merchantProvider.monthlyCap = response.processing.monthly_cap;
@@ -153,12 +148,7 @@ module.exports = class TransactionTransform extends AnalyticsTransform {
 
 		try {
 
-			const campaignController = new CampaignController();
-			campaignController.disableACLs();
-			const response = await campaignController.get({
-				id: record.context.session.campaign,
-				fatal: true
-			});
+			const response = await dynamoClient.get('campaigns', record.context.session.campaign);
 
 			result.campaign.name = response.name;
 
@@ -170,12 +160,7 @@ module.exports = class TransactionTransform extends AnalyticsTransform {
 
 		try {
 
-			const customerController = new CustomerController();
-			customerController.disableACLs();
-			const response = await customerController.get({
-				id: record.context.session.customer,
-				fatal: true
-			});
+			const response = await dynamoClient.get('customers', record.context.session.customer);
 
 			if (response.firstname && response.lastname) {
 
