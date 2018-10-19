@@ -49,6 +49,10 @@ describe('controllers/entities/User.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('can', () => {
 
 		it('returns true when action is allowed for specified user', () => {

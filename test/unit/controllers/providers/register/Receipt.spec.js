@@ -82,6 +82,10 @@ describe('controllers/providers/register/Receipt.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 			const ReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');

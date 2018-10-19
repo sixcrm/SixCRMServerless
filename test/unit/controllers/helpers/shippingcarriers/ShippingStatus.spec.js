@@ -51,6 +51,10 @@ describe('/controllers/helpers/shippingcarriers/ShippingStatus.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 			const ShippingStatusController = global.SixCRM.routes.include('helpers', 'shippingcarriers/ShippingStatus.js');

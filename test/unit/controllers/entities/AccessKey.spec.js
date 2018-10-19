@@ -23,6 +23,10 @@ describe('controllers/AccessKey.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('update', () => {
 
 		it('successfully updates access key', () => {

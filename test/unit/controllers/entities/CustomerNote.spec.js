@@ -28,6 +28,10 @@ describe('controllers/CustomerNote.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getCustomer', () => {
 
 		it('successfully retrieves customer with specified id', () => {

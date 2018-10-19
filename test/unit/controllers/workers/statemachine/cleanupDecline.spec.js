@@ -22,6 +22,10 @@ describe('controllers/workers/statemachine/cleanupDecline.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
   describe('constructor', () => {
 
     it('successfully constructs', () => {
@@ -46,7 +50,7 @@ describe('controllers/workers/statemachine/cleanupDecline.js', () => {
 
       let result = await cleanupDeclineController.execute({guid: rebill.id});
       expect(result).to.equal(true);
-      
+
     });
 
   });

@@ -40,6 +40,10 @@ describe('workers/forwardRebillMessage', () => {
 			mockery.deregisterAll();
 		});
 
+		after(() => {
+			mockery.disable();
+		});
+
 		it('updates rebill after forwarding success message.', () => {
 
 			let rebill = getValidRebill();

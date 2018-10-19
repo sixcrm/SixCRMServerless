@@ -19,6 +19,7 @@ describe('controllers/providers/notification/channels/slack.js', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	let valid_notification_object = {

@@ -22,12 +22,8 @@
 				"values": ["no"]
 			},
 			{
-				"facet": "transactionType",
-				"values": ["sale"]
-			},
-			{
 				"facet": "amount",
-				"values": [4.99]
+				"values": [4.99, -4.99]
 			}
 		],
 		"pagination": {
@@ -39,92 +35,194 @@
 	},
 	"result_name": "records",
 	"expect": [
+        [
+            {
+                "key": "id",
+                "value": "ec5204be-5589-4f52-94e3-37bf2bca9c44"
+            },
+            {
+                "key": "alias",
+                "value": "T000000019"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 03:50:36"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111019"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000019"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111019"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000019"
+            },
+            {
+                "key": "creditcard",
+                "value": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72"
+            },
+            {
+                "key": "customer",
+                "value": "f6fc5765-1b89-48e5-b54e-ea014fd7e485"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 4"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "e0c99424-a5a7-4d79-ab99-000b2e7ee455"
+            },
+            {
+                "key": "alias",
+                "value": "T000000002"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 03:50:42"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111002"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000002"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111002"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000002"
+            },
+            {
+                "key": "creditcard",
+                "value": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72"
+            },
+            {
+                "key": "customer",
+                "value": "cc3d5c51-32f3-4417-917a-94bc37f74514"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 1"
+            }
+        ],
 		[
 			{
 				"key": "id",
-				"value": "ec5204be-5589-4f52-94e3-37bf2bca9c44"
+				"value": "e0c99424-0000-4d79-ab99-000b2e7ee455"
 			},
 			{
 				"key": "alias",
-				"value": "T000000019"
-			},
-			{
-				"key": "datetime",
-				"value": "2018-01-22 03:50:36"
-			},
-			{
-				"key": "chargeback",
-				"value": "no"
-			},
-			{
-				"key": "response",
-				"value": "success"
-			},
-			{
-				"key": "merchant_code",
-				"value": null
-			},
-			{
-				"key": "merchant_message",
-				"value": null
-			},
-			{
-				"key": "transaction_type",
-				"value": "sale"
-			},
-			{
-				"key": "amount",
-				"value": "4.99"
-			},
-			{
-				"key": "refund",
-				"value": "0"
-			},
-			{
-				"key": "merchant_provider",
-				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
-			},
-			{
-				"key": "merchant_provider_name",
-				"value": "Merchant Provider 1"
-			},
-			{
-				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111019"
-			},
-			{
-				"key": "rebill_alias",
-				"value": "R000000019"
-			},
-			{
-				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111019"
-			},
-			{
-				"key": "session_alias",
-				"value": "S000000019"
-			},
-			{
-				"key": "creditcard",
-				"value": "df84f7bb-06bd-4daa-b1a3-6a2c113edd72"
-			},
-			{
-				"key": "customer",
-				"value": "f6fc5765-1b89-48e5-b54e-ea014fd7e485"
-			},
-			{
-				"key": "customer_name",
-				"value": "Example Customer 4"
-			}
-		],
-		[
-			{
-				"key": "id",
-				"value": "e0c99424-a5a7-4d79-ab99-000b2e7ee455"
-			},
-			{
-				"key": "alias",
-				"value": "T000000002"
+				"value": "T000001002"
 			},
 			{
 				"key": "datetime",
@@ -136,7 +234,7 @@
 			},
 			{
 				"key": "response",
-				"value": "success"
+				"value": "error"
 			},
 			{
 				"key": "merchant_code",
@@ -159,6 +257,18 @@
 				"value": "0"
 			},
 			{
+				"key": "associated_transaction",
+				"value": null
+			},
+			{
+				"key": "associated_transaction_alias",
+				"value": null
+			},
+			{
+				"key": "associated_transaction_amount",
+				"value": "0"
+			},
+			{
 				"key": "merchant_provider",
 				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
 			},
@@ -168,19 +278,19 @@
 			},
 			{
 				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111002"
+				"value": "11111111-1111-1111-1111-111111112002"
 			},
 			{
 				"key": "rebill_alias",
-				"value": "R000000002"
+				"value": "R000001002"
 			},
 			{
 				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111002"
+				"value": "11111111-1111-1111-1111-111111112002"
 			},
 			{
 				"key": "session_alias",
-				"value": "S000000002"
+				"value": "S000001002"
 			},
 			{
 				"key": "creditcard",
@@ -196,706 +306,994 @@
 			}
 		],
 		[
-			{
-				"key": "id",
-				"value": "19f976f2-daf0-425e-8116-97e7d5cf2e98"
-			},
-			{
-				"key": "alias",
-				"value": "T000000006"
-			},
-			{
-				"key": "datetime",
-				"value": "2018-01-22 16:51:13"
-			},
-			{
-				"key": "chargeback",
-				"value": "no"
-			},
-			{
-				"key": "response",
-				"value": "success"
-			},
-			{
-				"key": "merchant_code",
-				"value": null
-			},
-			{
-				"key": "merchant_message",
-				"value": null
-			},
-			{
-				"key": "transaction_type",
-				"value": "sale"
-			},
-			{
-				"key": "amount",
-				"value": "4.99"
-			},
-			{
-				"key": "refund",
-				"value": "0"
-			},
-			{
-				"key": "merchant_provider",
-				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
-			},
-			{
-				"key": "merchant_provider_name",
-				"value": "Merchant Provider 1"
-			},
-			{
-				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111006"
-			},
-			{
-				"key": "rebill_alias",
-				"value": "R000000006"
-			},
-			{
-				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111006"
-			},
-			{
-				"key": "session_alias",
-				"value": "S000000006"
-			},
-			{
-				"key": "creditcard",
-				"value": "ac4d1ada-a515-4a93-9513-6688f149d32a"
-			},
-			{
-				"key": "customer",
-				"value": "6e56d5be-d808-4f1e-8dcd-6353692a1227"
-			},
-			{
-				"key": "customer_name",
-				"value": "Example Customer 2"
-			}
-		],
-		[
-			{
-				"key": "id",
-				"value": "a8d3a418-fe80-4d44-89ea-1587f62c5866"
-			},
-			{
-				"key": "alias",
-				"value": "T000000007"
-			},
-			{
-				"key": "datetime",
-				"value": "2018-01-22 16:51:24"
-			},
-			{
-				"key": "chargeback",
-				"value": "no"
-			},
-			{
-				"key": "response",
-				"value": "success"
-			},
-			{
-				"key": "merchant_code",
-				"value": null
-			},
-			{
-				"key": "merchant_message",
-				"value": null
-		    },
-			{
-				"key": "transaction_type",
-				"value": "sale"
-			},
-			{
-				"key": "amount",
-				"value": "4.99"
-			},
-			{
-				"key": "refund",
-				"value": "0"
-			},
-			{
-				"key": "merchant_provider",
-				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
-			},
-			{
-				"key": "merchant_provider_name",
-				"value": "Merchant Provider 1"
-			},
-			{
-				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111007"
-			},
-			{
-				"key": "rebill_alias",
-				"value": "R000000007"
-			},
-			{
-				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111007"
-			},
-			{
-				"key": "session_alias",
-				"value": "S000000007"
-			},
-			{
-				"key": "creditcard",
-				"value": "3c149b24-75d0-4693-a187-7687c408df82"
-			},
-			{
-				"key": "customer",
-				"value": "6e56d5be-d808-4f1e-8dcd-6353692a1227"
-			},
-			{
-				"key": "customer_name",
-				"value": "Example Customer 2"
-			}
-		],
-		[
-			{
-				"key": "id",
-				"value": "69946328-41c5-49ac-806b-12410b5beb3e"
-			},
-			{
-				"key": "alias",
-				"value": "T000000008"
-			},
-			{
-				"key": "datetime",
-				"value": "2018-01-22 16:51:29"
-			},
-			{
-				"key": "chargeback",
-				"value": "no"
-			},
-			{
-				"key": "response",
-				"value": "success"
-			},
-			{
-				"key": "merchant_code",
-				"value": null
-			},
-			{
-				"key": "merchant_message",
-				"value": null
-			},
-			{
-				"key": "transaction_type",
-				"value": "sale"
-			},
-			{
-				"key": "amount",
-				"value": "4.99"
-			},
-			{
-				"key": "refund",
-				"value": "0"
-			},
-			{
-				"key": "merchant_provider",
-				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
-			},
-			{
-				"key": "merchant_provider_name",
-				"value": "Merchant Provider 1"
-			},
-			{
-				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111008"
-			},
-			{
-				"key": "rebill_alias",
-				"value": "R000000008"
-			},
-			{
-				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111008"
-			},
-			{
-				"key": "session_alias",
-				"value": "S000000008"
-			},
-			{
-				"key": "creditcard",
-				"value": "3c149b24-75d0-4693-a187-7687c408df82"
-			},
-			{
-				"key": "customer",
-				"value": "6e56d5be-d808-4f1e-8dcd-6353692a1227"
-			},
-			{
-				"key": "customer_name",
-				"value": "Example Customer 2"
-			}
-		],
-		[
-			{
-				"key": "id",
-				"value": "ea395421-c710-49af-9ea3-384c47463326"
-			},
-			{
-				"key": "alias",
-				"value": "T000000020"
-			},
-			{
-				"key": "datetime",
-				"value": "2018-01-22 17:19:43"
-			},
-			{
-				"key": "chargeback",
-				"value": "no"
-			},
-			{
-				"key": "response",
-				"value": "success"
-			},
-			{
-				"key": "merchant_code",
-				"value": null
-			},
-			{
-				"key": "merchant_message",
-				"value": null
-			},
-			{
-				"key": "transaction_type",
-				"value": "sale"
-			},
-			{
-				"key": "amount",
-				"value": "4.99"
-			},
-			{
-				"key": "refund",
-				"value": "0"
-			},
-			{
-				"key": "merchant_provider",
-				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
-			},
-			{
-				"key": "merchant_provider_name",
-				"value": "Merchant Provider 1"
-			},
-			{
-				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111020"
-			},
-			{
-				"key": "rebill_alias",
-				"value": "R000000020"
-			},
-			{
-				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111020"
-			},
-			{
-				"key": "session_alias",
-				"value": "S000000020"
-			},
-			{
-				"key": "creditcard",
-				"value": "ac4d1ada-a515-4a93-9513-6688f149d32a"
-			},
-			{
-				"key": "customer",
-				"value": "f6fc5765-1b89-48e5-b54e-ea014fd7e485"
-			},
-			{
-				"key": "customer_name",
-				"value": "Example Customer 4"
-			}
-		],
-		[
-			{
-				"key": "id",
-				"value": "1cd954a1-210d-46ec-9017-e41054875f33"
-			},
-			{
-				"key": "alias",
-				"value": "T000000021"
-			},
-			{
-				"key": "datetime",
-				"value": "2018-01-22 17:29:52"
-			},
-			{
-				"key": "chargeback",
-				"value": "no"
-			},
-			{
-				"key": "response",
-				"value": "success"
-			},
-			{
-				"key": "merchant_code",
-				"value": null
-			},
-			{
-				"key": "merchant_message",
-				"value": null
-			},
-			{
-				"key": "transaction_type",
-				"value": "sale"
-			},
-			{
-				"key": "amount",
-				"value": "4.99"
-			},
-			{
-				"key": "refund",
-				"value": "0"
-			},
-			{
-				"key": "merchant_provider",
-				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
-			},
-			{
-				"key": "merchant_provider_name",
-				"value": "Merchant Provider 1"
-			},
-			{
-				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111021"
-			},
-			{
-				"key": "rebill_alias",
-				"value": "R000000021"
-			},
-			{
-				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111021"
-			},
-			{
-				"key": "session_alias",
-				"value": "S000000021"
-			},
-			{
-				"key": "creditcard",
-				"value": "3c149b24-75d0-4693-a187-7687c408df82"
-			},
-			{
-				"key": "customer",
-				"value": "f6fc5765-1b89-48e5-b54e-ea014fd7e485"
-			},
-			{
-				"key": "customer_name",
-				"value": "Example Customer 4"
-			}
-		],
-		[
-			{
-				"key": "id",
-				"value": "992037a9-9edb-4e0c-b70b-f664a8545098"
-			},
-			{
-				"key": "alias",
-				"value": "T000000009"
-			},
-			{
-				"key": "datetime",
-				"value": "2018-01-22 17:29:57"
-			},
-			{
-				"key": "chargeback",
-				"value": "no"
-			},
-			{
-				"key": "response",
-				"value": "success"
-			},
-			{
-				"key": "merchant_code",
-				"value": null
-			},
-			{
-				"key": "merchant_message",
-				"value": null
-			},
-			{
-				"key": "transaction_type",
-				"value": "sale"
-			},
-			{
-				"key": "amount",
-				"value": "4.99"
-			},
-			{
-				"key": "refund",
-				"value": "0"
-			},
-			{
-				"key": "merchant_provider",
-				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
-			},
-			{
-				"key": "merchant_provider_name",
-				"value": "Merchant Provider 1"
-			},
-			{
-				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111009"
-			},
-			{
-				"key": "rebill_alias",
-				"value": "R000000009"
-			},
-			{
-				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111009"
-			},
-			{
-				"key": "session_alias",
-				"value": "S000000009"
-			},
-			{
-				"key": "creditcard",
-				"value": "3c149b24-75d0-4693-a187-7687c408df82"
-			},
-			{
-				"key": "customer",
-				"value": "6e56d5be-d808-4f1e-8dcd-6353692a1227"
-			},
-			{
-				"key": "customer_name",
-				"value": "Example Customer 2"
-			}
-		],
-		[
-			{
-				"key": "id",
-				"value": "6d5ee0b1-b0fb-4e91-869e-8c2b08ab6510"
-			},
-			{
-				"key": "alias",
-				"value": "T000000011"
-			},
-			{
-				"key": "datetime",
-				"value": "2018-01-22 18:47:38"
-			},
-			{
-				"key": "chargeback",
-				"value": "no"
-			},
-			{
-				"key": "response",
-				"value": "success"
-			},
-			{
-				"key": "merchant_code",
-				"value": null
-			},
-			{
-				"key": "merchant_message",
-				"value": null
-			},
-			{
-				"key": "transaction_type",
-				"value": "sale"
-			},
-			{
-				"key": "amount",
-				"value": "4.99"
-			},
-			{
-				"key": "refund",
-				"value": "0"
-			},
-			{
-				"key": "merchant_provider",
-				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
-			},
-			{
-				"key": "merchant_provider_name",
-				"value": "Merchant Provider 1"
-			},
-			{
-				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111011"
-			},
-			{
-				"key": "rebill_alias",
-				"value": "R000000011"
-			},
-			{
-				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111011"
-			},
-			{
-				"key": "session_alias",
-				"value": "S000000011"
-			},
-			{
-				"key": "creditcard",
-				"value": "ac4d1ada-a515-4a93-9513-6688f149d32a"
-			},
-			{
-				"key": "customer",
-				"value": "00a40dc9-c025-432b-9683-d6ea9f265930"
-			},
-			{
-				"key": "customer_name",
-				"value": "Example Customer 3"
-			}
-		],
-		[
-			{
-				"key": "id",
-				"value": "eeca4094-d619-4b8d-b3c5-8b5fc55f0453"
-			},
-			{
-				"key": "alias",
-				"value": "T000000012"
-			},
-			{
-				"key": "datetime",
-				"value": "2018-01-22 18:47:48"
-			},
-			{
-				"key": "chargeback",
-				"value": "no"
-			},
-			{
-				"key": "response",
-				"value": "success"
-			},
-			{
-				"key": "merchant_code",
-				"value": null
-			},
-			{
-				"key": "merchant_message",
-				"value": null
-			},
-			{
-				"key": "transaction_type",
-				"value": "sale"
-			},
-			{
-				"key": "amount",
-				"value": "4.99"
-			},
-			{
-				"key": "refund",
-				"value": "0"
-			},
-			{
-				"key": "merchant_provider",
-				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
-			},
-			{
-				"key": "merchant_provider_name",
-				"value": "Merchant Provider 1"
-			},
-			{
-				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111012"
-			},
-			{
-				"key": "rebill_alias",
-				"value": "R000000012"
-			},
-			{
-				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111012"
-			},
-			{
-				"key": "session_alias",
-				"value": "S000000012"
-			},
-			{
-				"key": "creditcard",
-				"value": "3c149b24-75d0-4693-a187-7687c408df82"
-			},
-			{
-				"key": "customer",
-				"value": "00a40dc9-c025-432b-9683-d6ea9f265930"
-			},
-			{
-				"key": "customer_name",
-				"value": "Example Customer 3"
-			}
-		],
-		[
-			{
-				"key": "id",
-				"value": "ee0323c4-0a19-4bc9-9438-552c9fa22f8a"
-			},
-			{
-				"key": "alias",
-				"value": "T000000013"
-			},
-			{
-				"key": "datetime",
-				"value": "2018-01-22 18:47:53"
-			},
-			{
-				"key": "chargeback",
-				"value": "no"
-			},
-			{
-				"key": "response",
-				"value": "success"
-			},
-			{
-				"key": "merchant_code",
-				"value": null
-			},
-			{
-				"key": "merchant_message",
-				"value": null
-			},
-			{
-				"key": "transaction_type",
-				"value": "sale"
-			},
-			{
-				"key": "amount",
-				"value": "4.99"
-			},
-			{
-				"key": "refund",
-				"value": "0"
-			},
-			{
-				"key": "merchant_provider",
-				"value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
-			},
-			{
-				"key": "merchant_provider_name",
-				"value": "Merchant Provider 1"
-			},
-			{
-				"key": "rebill",
-				"value": "11111111-1111-1111-1111-111111111013"
-			},
-			{
-				"key": "rebill_alias",
-				"value": "R000000013"
-			},
-			{
-				"key": "session",
-				"value": "11111111-1111-1111-1111-111111111013"
-			},
-			{
-				"key": "session_alias",
-				"value": "S000000013"
-			},
-			{
-				"key": "creditcard",
-				"value": "3c149b24-75d0-4693-a187-7687c408df82"
-			},
-			{
-				"key": "customer",
-				"value": "00a40dc9-c025-432b-9683-d6ea9f265930"
-			},
-			{
-				"key": "customer_name",
-				"value": "Example Customer 3"
-			}
+            {
+                "key": "id",
+                "value": "e1b4f9c7-2367-4d66-8052-cf1c84a3c6cf"
+            },
+            {
+                "key": "alias",
+                "value": "T000000003"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 15:23:20"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111003"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000003"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111003"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000003"
+            },
+            {
+                "key": "creditcard",
+                "value": "3c149b24-75d0-4693-a187-7687c408df82"
+            },
+            {
+                "key": "customer",
+                "value": "cc3d5c51-32f3-4417-917a-94bc37f74514"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 1"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "e1b4f9c7-0000-4d66-8052-cf1c84a3c6cf"
+            },
+            {
+                "key": "alias",
+                "value": "T000001003"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 15:23:21"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "refund"
+            },
+            {
+                "key": "amount",
+                "value": "0"
+            },
+            {
+                "key": "refund",
+                "value": "-4.99"
+            },
+            {
+                "key": "associated_transaction",
+                "value": "e1b4f9c7-2367-4d66-8052-cf1c84a3c6cf"
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": "T000000003"
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "4.99"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111003"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000003"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111003"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000003"
+            },
+            {
+                "key": "creditcard",
+                "value": "3c149b24-75d0-4693-a187-7687c408df82"
+            },
+            {
+                "key": "customer",
+                "value": "cc3d5c51-32f3-4417-917a-94bc37f74514"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 1"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "19f976f2-daf0-425e-8116-97e7d5cf2e98"
+            },
+            {
+                "key": "alias",
+                "value": "T000000006"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 16:51:13"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111006"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000006"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111006"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000006"
+            },
+            {
+                "key": "creditcard",
+                "value": "ac4d1ada-a515-4a93-9513-6688f149d32a"
+            },
+            {
+                "key": "customer",
+                "value": "6e56d5be-d808-4f1e-8dcd-6353692a1227"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 2"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "a8d3a418-fe80-4d44-89ea-1587f62c5866"
+            },
+            {
+                "key": "alias",
+                "value": "T000000007"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 16:51:24"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111007"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000007"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111007"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000007"
+            },
+            {
+                "key": "creditcard",
+                "value": "3c149b24-75d0-4693-a187-7687c408df82"
+            },
+            {
+                "key": "customer",
+                "value": "6e56d5be-d808-4f1e-8dcd-6353692a1227"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 2"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "69946328-41c5-49ac-806b-12410b5beb3e"
+            },
+            {
+                "key": "alias",
+                "value": "T000000008"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 16:51:29"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111008"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000008"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111008"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000008"
+            },
+            {
+                "key": "creditcard",
+                "value": "3c149b24-75d0-4693-a187-7687c408df82"
+            },
+            {
+                "key": "customer",
+                "value": "6e56d5be-d808-4f1e-8dcd-6353692a1227"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 2"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "ea395421-c710-49af-9ea3-384c47463326"
+            },
+            {
+                "key": "alias",
+                "value": "T000000020"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 17:19:43"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111020"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000020"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111020"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000020"
+            },
+            {
+                "key": "creditcard",
+                "value": "ac4d1ada-a515-4a93-9513-6688f149d32a"
+            },
+            {
+                "key": "customer",
+                "value": "f6fc5765-1b89-48e5-b54e-ea014fd7e485"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 4"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "1cd954a1-210d-46ec-9017-e41054875f33"
+            },
+            {
+                "key": "alias",
+                "value": "T000000021"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 17:29:52"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111021"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000021"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111021"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000021"
+            },
+            {
+                "key": "creditcard",
+                "value": "3c149b24-75d0-4693-a187-7687c408df82"
+            },
+            {
+                "key": "customer",
+                "value": "f6fc5765-1b89-48e5-b54e-ea014fd7e485"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 4"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "992037a9-9edb-4e0c-b70b-f664a8545098"
+            },
+            {
+                "key": "alias",
+                "value": "T000000009"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 17:29:57"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111009"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000009"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111009"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000009"
+            },
+            {
+                "key": "creditcard",
+                "value": "3c149b24-75d0-4693-a187-7687c408df82"
+            },
+            {
+                "key": "customer",
+                "value": "6e56d5be-d808-4f1e-8dcd-6353692a1227"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 2"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "6d5ee0b1-b0fb-4e91-869e-8c2b08ab6510"
+            },
+            {
+                "key": "alias",
+                "value": "T000000011"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 18:47:38"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111011"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000011"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111011"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000011"
+            },
+            {
+                "key": "creditcard",
+                "value": "ac4d1ada-a515-4a93-9513-6688f149d32a"
+            },
+            {
+                "key": "customer",
+                "value": "00a40dc9-c025-432b-9683-d6ea9f265930"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 3"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "eeca4094-d619-4b8d-b3c5-8b5fc55f0453"
+            },
+            {
+                "key": "alias",
+                "value": "T000000012"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 18:47:48"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111012"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000012"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111012"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000012"
+            },
+            {
+                "key": "creditcard",
+                "value": "3c149b24-75d0-4693-a187-7687c408df82"
+            },
+            {
+                "key": "customer",
+                "value": "00a40dc9-c025-432b-9683-d6ea9f265930"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 3"
+            }
+        ],
+        [
+            {
+                "key": "id",
+                "value": "ee0323c4-0a19-4bc9-9438-552c9fa22f8a"
+            },
+            {
+                "key": "alias",
+                "value": "T000000013"
+            },
+            {
+                "key": "datetime",
+                "value": "2018-01-22 18:47:53"
+            },
+            {
+                "key": "chargeback",
+                "value": "no"
+            },
+            {
+                "key": "response",
+                "value": "success"
+            },
+            {
+                "key": "merchant_code",
+                "value": null
+            },
+            {
+                "key": "merchant_message",
+                "value": null
+            },
+            {
+                "key": "transaction_type",
+                "value": "sale"
+            },
+            {
+                "key": "amount",
+                "value": "4.99"
+            },
+            {
+                "key": "refund",
+                "value": "0"
+            },
+            {
+                "key": "associated_transaction",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_alias",
+                "value": null
+            },
+            {
+                "key": "associated_transaction_amount",
+                "value": "0"
+            },
+            {
+                "key": "merchant_provider",
+                "value": "6c40761d-8919-4ad6-884d-6a46a776cfb9"
+            },
+            {
+                "key": "merchant_provider_name",
+                "value": "Merchant Provider 1"
+            },
+            {
+                "key": "rebill",
+                "value": "11111111-1111-1111-1111-111111111013"
+            },
+            {
+                "key": "rebill_alias",
+                "value": "R000000013"
+            },
+            {
+                "key": "session",
+                "value": "11111111-1111-1111-1111-111111111013"
+            },
+            {
+                "key": "session_alias",
+                "value": "S000000013"
+            },
+            {
+                "key": "creditcard",
+                "value": "3c149b24-75d0-4693-a187-7687c408df82"
+            },
+            {
+                "key": "customer",
+                "value": "00a40dc9-c025-432b-9683-d6ea9f265930"
+            },
+            {
+                "key": "customer_name",
+                "value": "Example Customer 3"
+            }
 		]
 	]
 }

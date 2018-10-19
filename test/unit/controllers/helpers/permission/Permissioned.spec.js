@@ -28,6 +28,10 @@ describe('controllers/helpers/permission/Permissioned.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('can', () => {
 
 		afterEach(() => {

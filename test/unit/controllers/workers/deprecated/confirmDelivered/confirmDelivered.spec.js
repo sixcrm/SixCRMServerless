@@ -72,6 +72,10 @@ xdescribe('controllers/workers/confirmDelivered', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('instantiates the confirmDeliveredController class', () => {

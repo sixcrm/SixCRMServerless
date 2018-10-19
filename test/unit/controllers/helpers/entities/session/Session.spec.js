@@ -49,6 +49,10 @@ describe('/helpers/entities/session/Session.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully calls the constructor', () => {

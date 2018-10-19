@@ -18,6 +18,10 @@ describe('vendors/merchantproviders/AuthorizeNet/handler.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 			const merchant_provider = MockEntities.getValidMerchantProvider(null, 'AuthorizeNet');

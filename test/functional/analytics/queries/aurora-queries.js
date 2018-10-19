@@ -14,7 +14,8 @@ const PermissionTestGenerators = global.SixCRM.routes.include('test', 'unit/lib/
 const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
-const DynamoDBDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
+const DynamoClient = require('../../../../controllers/workers/analytics/transforms/entities/dynamo');
+const dynamoClient = new DynamoClient();
 
 const mocha = new Mocha({
 
@@ -113,18 +114,11 @@ async function seedDynamo() {
 	const seedPaths = path.join(__dirname, 'seeds', 'dynamo');
 	const seeds = fileutilities.getDirectoryFilesSync(seedPaths);
 
-	const db = new DynamoDBDeployment();
-	await db.initializeControllers();
-
 	for (const seed of seeds) {
 
-		const dataSeeds = JSON.parse(fileutilities.getFileContentsSync(path.join(seedPaths, seed)));
+		const seedData = JSON.parse(fileutilities.getFileContentsSync(path.join(seedPaths, seed)));
 
-		await db.executeSeedViaController({
-			Table: {
-				TableName: dataSeeds.table
-			}
-		}, dataSeeds.seeds)
+		await dynamoClient.putBatch(seedData.table, seedData.seeds);
 
 	}
 

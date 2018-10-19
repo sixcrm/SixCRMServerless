@@ -32,4 +32,8 @@ describe('controllers/workers/worker', function () {
 		});
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 });

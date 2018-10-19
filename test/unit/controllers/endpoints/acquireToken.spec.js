@@ -156,6 +156,10 @@ describe('acquireToken', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 			let AcquireTokenController = global.SixCRM.routes.include('controllers', 'endpoints/acquireToken.js');

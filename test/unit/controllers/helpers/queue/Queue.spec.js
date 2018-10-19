@@ -20,6 +20,10 @@ describe('controllers/helpers/queue/Queue.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('listMessages', () => {
 
 		it('returns empty array of messages when sqs utilities returns null', () => {

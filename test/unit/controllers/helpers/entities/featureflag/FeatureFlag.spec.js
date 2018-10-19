@@ -19,6 +19,10 @@ describe('/helpers/entities/featureflag/FeatureFlag.js', () => {
     mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
   describe('constructor', () => {
 
     it('successfully constructs', () => {

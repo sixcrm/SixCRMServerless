@@ -6,16 +6,12 @@ const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 const random = require('@6crm/sixcrmcore/util/random').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
-const RebillHelperUtilities = global.SixCRM.routes.include('helpers', 'entities/rebill/components/RebillHelperUtilities.js');
 const SQSProvider = global.SixCRM.routes.include('controllers', 'providers/sqs-provider.js');
 const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
 
-module.exports = class RebillHelper extends RebillHelperUtilities {
+module.exports = class RebillHelper {
 
 	constructor() {
-
-		super();
-
 		this.parameter_definition = {
 			updateRebillState: {
 				required: {
@@ -164,7 +160,7 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this, 'rebillController')) {
-			const RebillController = global.SixCRM.routes.include('controllers', 'entities/Rebill.js');
+			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 			this.rebillController = new RebillController();
 		}
 
@@ -839,6 +835,38 @@ module.exports = class RebillHelper extends RebillHelperUtilities {
 		}
 
 		return return_array;
+
+	}
+
+	calculateDayInCycle(created_at){
+
+		du.debug('Calculate Day In Cycle');
+
+		if(_.isUndefined(created_at) || _.isNull(created_at)){
+
+			created_at = null;
+
+			let session = this.parameters.get('session', {fatal: false});
+
+			if(!_.isNull(session)){
+
+				created_at = session.created_at;
+
+			}
+
+		}
+
+		if(timestamp.isISO8601(created_at)){
+
+			let day = timestamp.getDaysDifference(created_at);
+
+			this.parameters.set('day', day);
+
+			return day;
+
+		}
+
+		throw eu.getError('server', 'created_at is not a proper ISO-8601');
 
 	}
 

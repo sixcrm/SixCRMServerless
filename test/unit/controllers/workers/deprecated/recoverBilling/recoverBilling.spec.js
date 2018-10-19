@@ -98,6 +98,10 @@ xdescribe('controllers/workers/recoverBilling', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('instantiates the recoverBillingController class', () => {

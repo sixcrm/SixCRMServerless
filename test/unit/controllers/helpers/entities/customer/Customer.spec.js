@@ -32,6 +32,10 @@ describe('controllers/helpers/entities/customer/Customer.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getFullName', () => {
 
 		it('successfully retrieves customer\'s full name', () => {

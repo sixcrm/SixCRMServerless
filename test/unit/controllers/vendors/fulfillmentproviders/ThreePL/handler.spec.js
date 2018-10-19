@@ -103,6 +103,10 @@ describe('vendors/fulfillmentproviders/ThreePL/handler.js', () =>{
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs', () => {

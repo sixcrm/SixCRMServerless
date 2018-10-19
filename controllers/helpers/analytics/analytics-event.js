@@ -23,6 +23,10 @@ module.exports = class AnalyticsEvent {
 			})
 		};
 
+		if (!context.account) {
+			du.error('Context has no account', context, eventType);
+		}
+
 		return (new SQSProvider()).sendMessage({
 			message_body: JSON.stringify(message),
 			queue: global.SixCRM.configuration.isLocal() ? 'analytics' : 'analytics.fifo',

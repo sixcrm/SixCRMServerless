@@ -82,6 +82,10 @@ describe('helpers/transaction/Reverse.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs a reverse class', () => {

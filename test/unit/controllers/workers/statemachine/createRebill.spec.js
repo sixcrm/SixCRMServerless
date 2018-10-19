@@ -23,6 +23,10 @@ describe('controllers/workers/statemachine/createRebill.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
   describe('constructor', () => {
 
     it('successfully constructs', () => {

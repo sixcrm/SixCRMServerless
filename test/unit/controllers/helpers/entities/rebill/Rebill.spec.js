@@ -164,6 +164,10 @@ describe('/helpers/entities/Rebill.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully calls the constructor', () => {

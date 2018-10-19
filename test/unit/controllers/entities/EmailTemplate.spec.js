@@ -36,6 +36,10 @@ describe('controllers/EmailTemplate.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('listBySMTPProvider', () => {
 
 		it('lists email templates by SMTP provider', () => {

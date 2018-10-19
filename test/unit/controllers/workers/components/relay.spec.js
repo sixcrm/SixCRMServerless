@@ -65,6 +65,10 @@ describe('controllers/workers/components/relay.js', function () {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 
 	describe('constructor', () => {
 

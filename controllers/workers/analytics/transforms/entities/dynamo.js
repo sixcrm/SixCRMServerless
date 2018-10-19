@@ -20,12 +20,32 @@ module.exports = class DynamoClient {
 
 	}
 
-	get(table, key) {
+	async get(table, key) {
 
-		return this.client.getItem({
+		const response = await this.client.get({
 			TableName: table,
-			Key: { id: { S: key } }
+			Key: { id: key }
 		}).promise();
+
+		return response.Item;
+
+	}
+
+	put(table, item) {
+
+		return this.client.put({
+			TableName: table,
+			Item: item
+		}).promise();
+
+	}
+
+	putBatch(table, items) {
+
+		let RequestItems = {};
+		RequestItems[table] = items.map(item => ({ PutRequest: { Item: item } }));
+
+		return this.client.batchWrite({	RequestItems }).promise();
 
 	}
 

@@ -24,6 +24,7 @@ describe('controllers/providers/jwt-provider', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('createJWTContents', () => {

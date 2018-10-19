@@ -24,6 +24,7 @@ describe('helpers/transaction/CustomerMailer.spec.js', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('constructor', () => {

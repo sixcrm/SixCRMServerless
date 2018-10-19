@@ -28,6 +28,10 @@ describe('controllers/Transaction.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('createAlias', () => {
 
 		it('successfully creates alias', () => {

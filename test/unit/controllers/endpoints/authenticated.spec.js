@@ -80,6 +80,7 @@ describe('controllers/endpoints/authenticated', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('isUserIntrospection', () => {

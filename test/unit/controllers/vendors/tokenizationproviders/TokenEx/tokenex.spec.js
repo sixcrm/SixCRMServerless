@@ -21,6 +21,10 @@ describe('vendors/tokenizationproviders/tokenex/tokenex.js', () =>{
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 			const TokenExController = global.SixCRM.routes.include('vendors','tokenizationproviders/tokenex/tokenex.js');

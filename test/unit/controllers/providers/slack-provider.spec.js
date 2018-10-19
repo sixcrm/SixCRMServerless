@@ -18,6 +18,7 @@ describe('controllers/providers/slack-provider', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('sendMessageToWebhook', () => {

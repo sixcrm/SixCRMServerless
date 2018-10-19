@@ -26,6 +26,10 @@ describe('controllers/providers/dynamodb-provider', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('saveRecord', () => {
 
 		it('should save a record', () => {

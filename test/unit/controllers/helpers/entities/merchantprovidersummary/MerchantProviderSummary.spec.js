@@ -49,6 +49,10 @@ describe('/helpers/entities/merchantprovidersummary/MerchantProviderSummary.json
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs', () => {

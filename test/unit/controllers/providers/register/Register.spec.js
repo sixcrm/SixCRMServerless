@@ -189,6 +189,10 @@ describe('controllers/providers/Register.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('hydrateSelectedCreditCard', () => {
 
 		it('fails because the creditcard has neither a token nor a number', () => {

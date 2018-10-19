@@ -34,6 +34,7 @@ describe('helpers/transaction/SystemMailer.spec.js', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	it('instantiates the System Mailer', () => {

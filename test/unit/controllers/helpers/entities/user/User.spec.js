@@ -38,6 +38,10 @@ describe('controllers/helpers/entities/user/User.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('appendAlias', () => {
 
 		it('returns user itself when user alias exists', () => {

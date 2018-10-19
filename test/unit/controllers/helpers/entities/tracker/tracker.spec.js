@@ -41,6 +41,7 @@ describe('controllers/helpers/entities/tracker/Tracker.js', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('executeAffiliatesTracking', () => {

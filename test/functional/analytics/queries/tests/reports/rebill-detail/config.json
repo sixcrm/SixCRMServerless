@@ -23,6 +23,10 @@
 			{
 				"facet": "type",
 				"values": ["initial"]
+			},
+			{
+				"facet": "orderStatus",
+				"values": ["processed"]
 			}
 		],
 		"pagination": {
