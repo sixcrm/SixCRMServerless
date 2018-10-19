@@ -31,4 +31,22 @@ module.exports = class DynamoClient {
 
 	}
 
+	put(table, item) {
+
+		return this.client.put({
+			TableName: table,
+			Item: item
+		}).promise();
+
+	}
+
+	putBatch(table, items) {
+
+		let RequestItems = {};
+		RequestItems[table] = items.map(item => ({ PutRequest: { Item: item } }));
+
+		return this.client.batchWrite({	RequestItems }).promise();
+
+	}
+
 }
