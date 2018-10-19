@@ -148,6 +148,7 @@ module.exports = class RegisterRecieptGenerator {
 		let transformed_transaction_prototype = this.parameters.get('transformed_transaction_prototype');
 
 		return this.transactionController.create({entity: transformed_transaction_prototype}).then(transaction => {
+			this.parameters.set('receipttransaction', transaction);
 			return this.parameters.set('receipt_transaction', transaction);
 		});
 
