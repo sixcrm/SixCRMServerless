@@ -26,9 +26,11 @@ module.exports = class CustomerController extends entityController {
 			}
 		}
 
-		await AnalyticsEvent.push('customer', entity);
+		const created = await super.create({entity: entity});
 
-		return super.create({entity: entity});
+		await AnalyticsEvent.push('customer', created);
+
+		return created;
 
 	}
 
@@ -43,9 +45,11 @@ module.exports = class CustomerController extends entityController {
 			}
 		}
 
-		await AnalyticsEvent.push('customer', entity);
+		const updated = await super.update({entity: entity, ignore_updated_at: ignore_updated_at});
 
-		return super.update({entity: entity, ignore_updated_at: ignore_updated_at});
+		await AnalyticsEvent.push('customer', updated);
+
+		return updated;
 
 	}
 
