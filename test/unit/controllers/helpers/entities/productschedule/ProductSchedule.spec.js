@@ -313,26 +313,32 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 
 		it('successfully returns schedule elements by day', () => {
 
-			let product_schedule = getValidProductSchedule();
+			let product_schedule = _.cloneDeep(getValidProductSchedule());
+			product_schedule.schedule.push({
+				product:uuidV4(),
+				price:59.99,
+				start:0,
+				period:28
+			});
 
 			let productScheduleHelper = new ProductScheduleHelperController();
 
 			let cases = [
 				{
-					day: 0,
-					expect: [product_schedule.schedule[0]]
-				},
-				{
-					day: 1,
-					expect: [product_schedule.schedule[0]]
-				},
-				{
 					day: -1,
 					expect: []
 				},
 				{
+					day: 0,
+					expect: [product_schedule.schedule[0], product_schedule.schedule[3]]
+				},
+				{
+					day: 1,
+					expect: []
+				},
+				{
 					day: 13,
-					expect: [product_schedule.schedule[0]]
+					expect: []
 				},
 				{
 					day: 14,
@@ -340,15 +346,27 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 				},
 				{
 					day: 15,
-					expect: [product_schedule.schedule[1]]
+					expect: []
+				},
+				{
+					day: 27,
+					expect: []
 				},
 				{
 					day: 28,
-					expect: [product_schedule.schedule[2]]
+					expect: [product_schedule.schedule[2], product_schedule.schedule[3]]
 				},
 				{
-					day: 3000,
-					expect: [product_schedule.schedule[2]]
+					day: 2799,
+					expect: []
+				},
+				{
+					day: 2800,
+					expect: [product_schedule.schedule[2], product_schedule.schedule[3]]
+				},
+				{
+					day: 2801,
+					expect: []
 				}
 			];
 
