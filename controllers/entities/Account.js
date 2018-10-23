@@ -176,6 +176,10 @@ class AccountController extends entityController {
 		return entity;
 
 	}
+
+	async delete() {
+		throw eu.getError('server', 'Deleting an account is not supported.')
+	}
 }
 
 module.exports = AccountController;
