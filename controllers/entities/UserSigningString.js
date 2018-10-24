@@ -46,7 +46,7 @@ class UserSigningStringController extends entityController {
 		const existing = await this.get({id, fatal: true});
 
 		if ((global.user.id !== existing.user) && (global.account !== '*')) {
-			throw eu.getError('server', `You are not allowed to delete the entity. ${global.user.id} ${global.account}`)
+			throw eu.getError('server', `You are not allowed to delete the entitywith id ${id}. It belongs to ${existing.user} ${global.user.id} ${global.account}`)
 		}
 
 		return super.delete({id, range_key})
