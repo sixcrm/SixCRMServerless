@@ -88,6 +88,8 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 		let amount = 0.00;
 		let product_schedules = [];
 		let bill_at = timestamp.getISO8601();
+		let merchant_provider;
+		let merchant_provider_selections = [];
 
 		arrayutilities.map(rebills, (rebill) => {
 
@@ -103,16 +105,28 @@ module.exports = class CleanupSessionController extends stepFunctionWorkerContro
 				product_schedules = arrayutilities.merge(product_schedules, rebill.product_schedules);
 			}
 
+			if(_.has(rebill, 'merchant_provider') && merchant_provider === undefined){
+				merchant_provider = rebill.merchant_provider;
+			}
+
+			if(_.has(rebill, 'merchant_provider_selections')){
+				merchant_provider_selections = arrayutilities.merge(merchant_provider_selections, rebill.merchant_provider_selections);
+			}
+
 			amount = (amount + (rebill.amount * 1));
 
 		});
 
+		merchant_provider_selections = _.uniqWith(merchant_provider_selections, _.isEqual);
+
 		let entity = new RebillCreatorHelperController().createRebillPrototype({
-			session: session,
+			session,
 			transaction_products: products,
-			amount: amount,
-			product_schedules: product_schedules,
-			bill_at: bill_at,
+			amount,
+			product_schedules,
+			merchant_provider,
+			merchant_provider_selections,
+			bill_at,
 			processing: true
 		});
 
