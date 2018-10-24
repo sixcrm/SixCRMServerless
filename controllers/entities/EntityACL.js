@@ -21,7 +21,7 @@ module.exports = class EntityACLController extends entityController {
 
 	delete({id, range_key = null}) {
 		if (global.account !== '*') {
-			throw eu.getError('server', 'You are not allowed to delete the entity.')
+			throw eu.getError('server', `Account ${global.account} is not allowed to delete the entity.`)
 		}
 
 		return super.delete({id, range_key})
