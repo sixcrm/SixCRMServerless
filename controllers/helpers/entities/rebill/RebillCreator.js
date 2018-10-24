@@ -285,19 +285,21 @@ module.exports = class RebillCreatorHelper {
 		}
 	}
 
-	async getMerchantProviders(session) {
-		const previous_rebills = await sessionController.listRebills(session);
-		if (!_.isArray(previous_rebills) || previous_rebills.length === 0) {
-			return {};
+	async getMerchantProviderSelections(session, day) {
+		let merchant_provider, merchant_provider_selections;
+		if (day >= 0) {
+			const previous_rebills = await sessionController.listRebills(session);
+			if (!_.isArray(previous_rebills) || previous_rebills.length === 0) {
+				return {};
+			}
+
+			const previous_rebills_ordered = _.orderBy(previous_rebills, [rebill => new Date(rebill.bill_at)], ['desc']);
+			const last_rebill = previous_rebills_ordered[0];
+			merchant_provider = last_rebill.rebill.merchant_provider;
+			merchant_provider_selections = last_rebill.rebill.merchant_provider_selections;
 		}
 
-		const previous_rebills_ordered = _.orderBy(previous_rebills, [rebill => new Date(rebill.bill_at)], ['desc']);
-		const last_rebill = previous_rebills_ordered[0];
-
-		return {
-			merchant_provider: last_rebill.merchant_provider,
-			merchant_provider_selections: last_rebill.merchant_provider_selections
-		};
+		return {merchant_provider, merchant_provider_selections};
 	}
 
 	getScheduleElementsOnBillDay({bill_day, normalized_product_schedules}) {
@@ -376,7 +378,7 @@ module.exports = class RebillCreatorHelper {
 		du.debug('Build Rebill');
 		const product_schedules = this.getGroupedProductSchedules(normalized_product_schedules);
 		const bill_day = this.getNextProductScheduleBillDayNumber({day, normalized_product_schedules});
-		const {merchant_provider, merchant_provider_selections} = await this.getMerchantProviders(session);
+		const {merchant_provider, merchant_provider_selections} = await this.getMerchantProviderSelections(session, day);
 		const transaction_products = this.getTransactionProducts({bill_day, normalized_product_schedules, normalized_products});
 		const amount = this.calculateAmount(transaction_products);
 		const bill_at = this.calculateBillAt(session, bill_day);
