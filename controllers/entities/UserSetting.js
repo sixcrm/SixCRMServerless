@@ -13,7 +13,7 @@ class UserSettingController extends entityController {
 
 	delete({id, range_key = null}) {
 		if ((global.user.id !== id) && (global.account !== '*')) {
-			throw eu.getError('server', 'You are not allowed to delete the entity.')
+			throw eu.getError('server', `You are not allowed to delete the entity. ${global.user.id} ${global.account}`)
 		}
 
 		return super.delete({id, range_key})
