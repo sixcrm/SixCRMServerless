@@ -295,8 +295,8 @@ module.exports = class RebillCreatorHelper {
 
 			const previous_rebills_ordered = _.orderBy(previous_rebills, [rebill => new Date(rebill.bill_at)], ['desc']);
 			const last_rebill = previous_rebills_ordered[0];
-			merchant_provider = last_rebill.rebill.merchant_provider;
-			merchant_provider_selections = last_rebill.rebill.merchant_provider_selections;
+			merchant_provider = last_rebill.merchant_provider;
+			merchant_provider_selections = last_rebill.merchant_provider_selections;
 		}
 
 		return {merchant_provider, merchant_provider_selections};
