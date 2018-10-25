@@ -384,8 +384,8 @@ describe('vendors/merchantproviders/NMI.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('decline');
-				expect(result.getResult().message).to.equal('Declined');
+				expect(result.getResult().code).to.equal('soft');
+				expect(result.getResult().message).to.equal('Soft decline');
 
 			});
 

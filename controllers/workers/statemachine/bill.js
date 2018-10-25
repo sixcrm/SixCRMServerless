@@ -180,6 +180,10 @@ module.exports = class BillController extends stepFunctionWorkerController {
 			return 'DECLINE';
 		}
 
+		if(_.toLower(result_code) == 'soft'){
+			return 'DECLINE';
+		}
+
 		if(_.toLower(result_code) == 'harddecline'){
 			return 'HARDDECLINE';
 		}

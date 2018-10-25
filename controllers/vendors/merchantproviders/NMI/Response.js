@@ -8,6 +8,8 @@ const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').defaul
 
 const Response = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 
+const SOFT_DECLINES = [200, 201, 202, 203, 240, 260, 264, 300, 400, 420, 421];
+
 module.exports = class NMIResponse extends Response {
 
 	constructor(){
@@ -30,6 +32,10 @@ module.exports = class NMIResponse extends Response {
 			}
 
 			if(_.has(body, 'response') && body.response === '2') {
+				if (SOFT_DECLINES.includes(response.statusCode)) {
+					return 'soft';
+				}
+
 				return 'decline';
 			}
 
