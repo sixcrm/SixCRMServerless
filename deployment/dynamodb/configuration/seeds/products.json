@@ -261,7 +261,11 @@
 	    "images": []
 	  },
 	  "created_at": "2018-05-01T20:21:55.566Z",
-	  "default_price": 30,
+		"default_price": 30,
+		"dynamic_pricing": {
+			"min": 10,
+			"max": 40
+		},
 	  "description": "$30 per month, unlimited transactions at $0.06 per transaction, one campaign",
 	  "id": "aba9a683-85a4-45e7-9004-576c99a811ce",
 	  "name": "Dynamic Watermark Product",
