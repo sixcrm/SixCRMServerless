@@ -6,6 +6,7 @@
 	"enum": [
 		"success",
 		"decline",
+		"soft",
 		"error"
 	]
 }
