@@ -38,6 +38,9 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 			}
 
 			if (!_.isNull(error) && error.rawType === 'card_error') {
+
+				du.debug('Detecting Soft Decline Stripe', error.decline_code, error, SOFT_DECLINES);
+
 				if (SOFT_DECLINES.includes(error.decline_code)) {
 					return 'soft';
 				}
