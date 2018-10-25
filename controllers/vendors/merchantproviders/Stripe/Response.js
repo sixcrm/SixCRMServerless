@@ -7,14 +7,6 @@ const MerchantProviderResponse = global.SixCRM.routes.include('vendors', 'mercha
 
 const SOFT_DECLINES = [
 	'approve_with_id',
-	'incorrect_number',
-	'incorrect_cvc',
-	'incorrect_pin',
-	'incorrect_zip',
-	'invalid_cvc',
-	'invalid_expiry_year',
-	'invalid_number',
-	'invalid_pin',
 	'issuer_not_available',
 	'processing_error',
 	'reenter_transaction',
@@ -46,6 +38,9 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 			}
 
 			if (!_.isNull(error) && error.rawType === 'card_error') {
+
+				du.debug('Detecting Soft Decline Stripe', error.decline_code, error, SOFT_DECLINES);
+
 				if (SOFT_DECLINES.includes(error.decline_code)) {
 					return 'soft';
 				}
