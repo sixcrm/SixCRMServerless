@@ -278,7 +278,7 @@ describe('controllers/ProductSchedule.js', () => {
 			mockery.registerMock(global.SixCRM.routes.path('controllers', 'providers/dynamodb-provider.js'), class {
 				createINQueryParameters(field, list_array) {
 					expect(field).to.equal('id');
-					expect(list_array[0]).to.deep.equal(product_schedule.schedule[0].product);
+					expect(list_array[0]).to.deep.equal(product_schedule.schedule[0].product.id);
 					return Promise.resolve({
 						filter_expression: 'a_filter',
 						expression_attribute_values: 'an_expression_values'

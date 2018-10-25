@@ -123,11 +123,18 @@ module.exports = class RebillCreatorHelper {
 
 	async normalizeProductSchedules(product_schedules) {
 		let normalized_product_schedules = arrayutilities.map(product_schedules, async product_schedule_group => {
-			if (_.isString(product_schedule_group.product_schedule)) {
-				const result = await productScheduleHelperController.getHydrated({id: product_schedule_group.product_schedule});
+			const {product_schedule} = product_schedule_group;
+			if (_.isString(product_schedule)) {
+				const result = await productScheduleHelperController.getHydrated({id: product_schedule});
 				product_schedule_group.product_schedule = result;
 				return product_schedule_group;
-			} else if (_.isObject(product_schedule_group.product_schedule)) {
+			} else if (_.isObject(product_schedule)) {
+				const {products} = await productScheduleController.getProducts(product_schedule);
+				if (_.isNull(products)) {
+					throw eu.getError('not_found', 'Watermark product in schedule could not be found.');
+				}
+				const result = productScheduleHelperController.marryProductsToSchedule({product_schedule, products});
+				product_schedule_group.product_schedule = result;
 				return product_schedule_group;
 			}
 		});

@@ -47,7 +47,7 @@ module.exports = class ProductScheduleHelper {
 
 						// Technical Debt: accounting for legacy data ('product_id' exists in legacy data, switched to 'product')
 						// Remove at earliest convenience
-						return (product.id == schedule_element.product || product.id == schedule_element.product_id);
+						return product.id === schedule_element.product || product.id === schedule_element.product_id || product.id === _.get(schedule_element, 'product.id');
 
 					});
 
