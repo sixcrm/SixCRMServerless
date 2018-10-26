@@ -4,6 +4,13 @@ const AnalyticsTransform = require('../analytics-transform');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const DynamoClient = require('./entities/dynamo');
 
+const RESULT_MAP = {
+	success: 'success',
+	error: 'error',
+	decline: 'hard decline',
+	softdecline: 'soft decline'
+};
+
 module.exports = class TransactionTransform extends AnalyticsTransform {
 
 	async transform(record) {
@@ -24,7 +31,7 @@ module.exports = class TransactionTransform extends AnalyticsTransform {
 			},
 			merchantCode: record.context.merchantCode,
 			merchantMessage: record.context.merchantMessage,
-			processorResult: record.context.transaction.result,
+			processorResult: this.translateProcessorResult(record.context.transaction.result),
 			amount: record.context.transaction.amount,
 			type: record.context.transaction.type,
 			subtype: record.context.transactionSubType,
@@ -176,6 +183,10 @@ module.exports = class TransactionTransform extends AnalyticsTransform {
 
 		return result;
 
+	}
+
+	translateProcessorResult(result) {
+		return RESULT_MAP[result] || result;
 	}
 
 }
