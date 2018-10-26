@@ -35,7 +35,7 @@ module.exports = class NMIResponse extends Response {
 				du.debug('Detecting Soft Decline NMI', response.statusCode, response, SOFT_DECLINES);
 
 				if (SOFT_DECLINES.includes(response.statusCode)) {
-					return 'soft';
+					return 'softdecline';
 				}
 
 				return 'decline';
