@@ -124,20 +124,12 @@ jobs:
       - run:
           name: Serveless Deploy
           command: SLS_DEBUG=* node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
-  deploy_stepfunctions:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Step Function State Machines
           command: export SIX_VERBOSE=2 && node ./deployment/stepfunctions/deploy_state_machines.js
+      - run:
+          name: Cloudwatch Log Subscriptions
+          command: export SIX_VERBOSE=2 && node ./deployment/cloudwatch/deploy_subscription_filters.js
   deploy_aurora:
     <<: *job-defaults
     steps:
@@ -170,34 +162,6 @@ jobs:
       - run:
           name: Aurora Create Tables
           command: SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
-  deploy_logsubscription:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Cloudwatch Log Subscriptions
-          command: export SIX_VERBOSE=2 && node ./deployment/cloudwatch/deploy_subscription_filters.js
-  post_deployment:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Save Last Commit
-          command: node deployment/circle/save_last_commit.js
   #Eh... not very useful currently
   environment_test:
     <<: *job-defaults
@@ -336,40 +300,9 @@ workflows:
                 - staging
                 - production
                 - priority
-      - deploy_stepfunctions:
-          requires:
-            - deploy_serverless
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_logsubscription:
-          requires:
-            - deploy_serverless
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - post_deployment:
-          requires:
-            - deploy_stepfunctions
-            - deploy_logsubscription
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
       - environment_test:
           requires:
-            - post_deployment
+            - deploy_serverless
           filters:
             branches:
               only:
