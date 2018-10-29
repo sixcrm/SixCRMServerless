@@ -15,6 +15,13 @@ const configurationAcquistion = require('../../config/controllers/configuration_
 
 const batchSize = 25;
 
+const RESULT_MAP = {
+	success: 'success',
+	error: 'error',
+	decline: 'hard decline',
+	softdecline: 'soft decline'
+};
+
 configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
 
 	process.env.aurora_host = endpoint;
@@ -24,7 +31,12 @@ configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {
 
 		du.info("Connection established");
 
-		const idsResult = await connection.query(`SELECT id from analytics.f_transaction t where t.processor_result = 'decline' or t.processor_result = 'softdecline'`);
+		const idsResult = await connection.query(`
+			SELECT id from analytics.f_transaction t where 
+				t.processor_result != 'success' and 
+				t.processor_result != 'error' and 
+				t.processor_result != 'fail'
+			`);
 		const ids = _.map(idsResult.rows, row => row.id);
 
 		du.info(`${ids.length} transaction records found`);
@@ -64,7 +76,7 @@ async function updateTransaction(connection, id, index) {
 	const transaction = await transactionController.get({id});
 	if (transaction && transaction.result) {
 
-		result = transaction.result;
+		result = RESULT_MAP[transaction.result] || transaction.result;
 	}
 
 	du.info(`${index}\t${id}\t${result}`);
