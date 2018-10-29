@@ -35,6 +35,7 @@ describe('controllers/providers/notification/channels/sms.js', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('sendNotification', () => {

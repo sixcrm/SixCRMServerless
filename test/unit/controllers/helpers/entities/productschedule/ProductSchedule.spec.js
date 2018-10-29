@@ -682,6 +682,10 @@ describe('controllers/helpers/entities/productschedule/ProductSchedule.js', () =
 			mockery.deregisterAll();
 		});
 
+		after(() => {
+			mockery.disable();
+		});
+
 		it('successfully hydrates product schedules', () => {
 
 			let products = [];

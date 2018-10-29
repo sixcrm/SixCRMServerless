@@ -94,6 +94,10 @@ describe('controllers/providers/tracker/Tracker.js', function () {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs', () => {

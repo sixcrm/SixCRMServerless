@@ -166,6 +166,12 @@ module.exports = class QueryParser {
 
 		}
 
+		if (options.orderStatus) {
+
+			filter = this.resolveFilterQueryValueOrderStatus(filter, 'orderStatus', 'status', parameters);
+
+		}
+
 		if (options.customerStatus) {
 
 			filter = this.resolveFilterQueryValueCustomerStatus(filter, 'customerStatus', 'orders', parameters);
@@ -260,6 +266,31 @@ module.exports = class QueryParser {
 			}
 
 			return filter += isClause;
+
+		} else {
+
+			return filter;
+
+		}
+
+	}
+
+	static resolveFilterQueryValueOrderStatus(filter, identifier, map, parameters) {
+
+		const inClause = ` AND (CASE WHEN agg.errors > 0 THEN 'error' ELSE %s.${map} END) IN (%L) `;
+		const equalsClause = ` AND (CASE WHEN agg.errors > 0 THEN 'error' ELSE %s.${map} END) = %L `;
+
+		if (parameters[identifier]) {
+
+			if (parameters[identifier].length > 1) {
+
+				return filter += inClause;
+
+			} else {
+
+				return filter += equalsClause;
+
+			}
 
 		} else {
 

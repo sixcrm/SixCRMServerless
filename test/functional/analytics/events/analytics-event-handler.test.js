@@ -14,8 +14,8 @@ const sqsDeployment = new SQSDeployment();
 const auroraContext = require('@6crm/sixcrmcore/util/analytics/aurora-context').default;
 const AuroraSchemaDeployment = global.SixCRM.routes.include('deployment', 'aurora/aurora-schema-deployment.js');
 const auroraSchemaDeployment = new AuroraSchemaDeployment();
-const DynamoDBDeployment = global.SixCRM.routes.include('deployment', 'utilities/dynamodb-deployment.js');
-const dynamoDBDeployment = new DynamoDBDeployment();
+const DynamoClient = require('../../../../controllers/workers/analytics/transforms/entities/dynamo');
+const dynamoClient = new DynamoClient();
 const permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
 
 describe('Push events to RDS', () => {
@@ -31,8 +31,7 @@ describe('Push events to RDS', () => {
 				global.user = 'admin.user@test.com';
 				global.SixCRM.setResource('auroraContext', auroraContext);
 				return auroraContext.init();
-			})
-			.then(() => dynamoDBDeployment.initializeControllers());
+			});
 
 	});
 
@@ -144,13 +143,9 @@ async function seedDynamo(test) {
 	return BBPromise.each(test.seeds.dynamo, (seed) => {
 
 		const seedFilePath = path.join(test.directory, 'seeds', 'dynamo', seed);
-		const dataSeeds = JSON.parse(fileutilities.getFileContentsSync(seedFilePath, 'utf8'));
+		const seedData = JSON.parse(fileutilities.getFileContentsSync(seedFilePath, 'utf8'));
 
-		return dynamoDBDeployment.executeSeedViaController({
-			Table: {
-				TableName: dataSeeds.table
-			}
-		}, dataSeeds.seeds)
+		return dynamoClient.putBatch(seedData.table, seedData.seeds);
 
 	});
 

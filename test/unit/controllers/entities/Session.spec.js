@@ -46,6 +46,10 @@ describe('controllers/Session.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getAffiliateIDs', () => {
 
 		it('successfully retrieves affiliate IDs', () => {

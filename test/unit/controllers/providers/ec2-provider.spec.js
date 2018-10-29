@@ -19,6 +19,7 @@ xdescribe('controllers/providers/ec2-provider', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	xdescribe('describeSecurityGroups', () => {

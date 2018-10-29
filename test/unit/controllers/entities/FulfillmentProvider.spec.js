@@ -32,6 +32,10 @@ describe('controllers/FulfillmentProvider.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('', () => {
 
 		it('creates associated entities object', () => {

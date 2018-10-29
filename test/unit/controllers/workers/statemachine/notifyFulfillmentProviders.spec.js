@@ -21,6 +21,10 @@ describe('controllers/workers/statemachine/notifyFulfillmentProviders.js', async
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
   describe('constructor', () => {
 
     it('successfully constructs', () => {

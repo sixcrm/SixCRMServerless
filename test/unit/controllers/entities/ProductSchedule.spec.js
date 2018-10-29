@@ -33,6 +33,10 @@ describe('controllers/ProductSchedule.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('listByProduct', () => {
 
 		it('lists product schedules by product', () => {

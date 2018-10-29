@@ -199,6 +199,10 @@ describe('createLead', function () {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 			const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');

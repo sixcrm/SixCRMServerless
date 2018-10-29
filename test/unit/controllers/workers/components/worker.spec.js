@@ -23,6 +23,10 @@ describe('controllers/workers/components/worker.js', function () {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs', () => {

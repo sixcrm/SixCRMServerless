@@ -34,6 +34,10 @@ describe('controllers/MerchantProviderGroup.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('listByMerchantProviderID', () => {
 
 		it('lists merchant provider group by merchant provider', () => {

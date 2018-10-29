@@ -78,6 +78,7 @@ describe('vendors/merchantproviders/Innovio.js', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('constructor', () => {

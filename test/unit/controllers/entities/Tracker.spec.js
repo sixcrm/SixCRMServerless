@@ -41,6 +41,10 @@ describe('controllers/Tracker.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getAffiliates', () => {
 
 		it('successfully retrieves affiliates', () => {

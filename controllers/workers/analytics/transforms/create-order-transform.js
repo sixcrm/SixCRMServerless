@@ -2,9 +2,7 @@ const _ = require('lodash');
 const util = require('util');
 const AnalyticsTransform = require('../analytics-transform');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-const CampaignController = global.SixCRM.routes.include('entities', 'Campaign.js');
-const CustomerController = global.SixCRM.routes.include('entities', 'Customer.js');
-const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
+const DynamoClient = require('./entities/dynamo');
 
 module.exports = class CreateOrderTransform extends AnalyticsTransform {
 
@@ -28,14 +26,11 @@ module.exports = class CreateOrderTransform extends AnalyticsTransform {
 			session: rebill.parentsession
 		};
 
+		const dynamoClient = new DynamoClient();
+
 		try {
 
-			const sessionController = new SessionController();
-			sessionController.disableACLs();
-			const response = await sessionController.get({
-				id: result.session,
-				fatal: true
-			});
+			const response = await dynamoClient.get('sessions', result.session);
 
 			result.session_alias = response.alias;
 			result.account = response.account;
@@ -50,12 +45,7 @@ module.exports = class CreateOrderTransform extends AnalyticsTransform {
 
 		try {
 
-			const campaignController = new CampaignController();
-			campaignController.disableACLs();
-			const response = await campaignController.get({
-				id: result.campaign,
-				fatal: true
-			});
+			const response = await dynamoClient.get('campaigns', result.campaign);
 
 			result.campaign_name = response.name;
 
@@ -67,12 +57,7 @@ module.exports = class CreateOrderTransform extends AnalyticsTransform {
 
 		try {
 
-			const customerController = new CustomerController();
-			customerController.disableACLs();
-			const response = await customerController.get({
-				id: result.customer,
-				fatal: true
-			});
+			const response = await dynamoClient.get('customers', result.customer);
 
 			if (response.firstname && response.lastname) {
 

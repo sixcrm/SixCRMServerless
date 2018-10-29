@@ -18,6 +18,7 @@ describe('controllers/providers/postback-provider', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('executeRequest', () => {

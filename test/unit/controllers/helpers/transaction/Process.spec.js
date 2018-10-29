@@ -61,6 +61,10 @@ describe('helpers/transaction/Process.spec.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	it('fails when required parameters are not presented', () => {
 
 		const processHelperController = global.SixCRM.routes.include('helpers', 'transaction/Process.js');

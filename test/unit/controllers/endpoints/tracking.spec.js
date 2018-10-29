@@ -169,6 +169,10 @@ describe('tracking', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 

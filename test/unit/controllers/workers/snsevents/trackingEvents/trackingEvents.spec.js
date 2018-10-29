@@ -23,6 +23,10 @@ describe('controllers/workers/snsevents/trackingEvents', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('instantiates the trackingEventsController class', () => {

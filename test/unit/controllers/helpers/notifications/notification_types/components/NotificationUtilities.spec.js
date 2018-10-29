@@ -21,6 +21,10 @@ describe('/helpers/notifications/notificationtypes/components/NotificationUtilit
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getName', () => {
 
 		it('successfully gets notification name', () => {

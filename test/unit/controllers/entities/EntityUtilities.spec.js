@@ -33,6 +33,10 @@ describe('controllers/EntityUtilities.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('sanitization', () => {
 		it('has a sanitize property', () => {
 			const EUC = global.SixCRM.routes.include('controllers','entities/EntityUtilities.js');

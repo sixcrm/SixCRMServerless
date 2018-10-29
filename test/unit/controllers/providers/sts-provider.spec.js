@@ -21,6 +21,10 @@ describe('controllers/providers/sts-provider', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs', () => {

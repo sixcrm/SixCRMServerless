@@ -37,6 +37,10 @@ describe('controllers/providers/cloudsearch-provider', () => {
 		process.env = process_env;
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 			const CloudsearchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudsearch-provider.js');

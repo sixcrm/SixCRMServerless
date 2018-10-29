@@ -81,6 +81,10 @@ describe('vendors/fulfillmentproviders/Test/handler.js', () =>{
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs', () => {

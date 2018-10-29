@@ -27,6 +27,10 @@ describe('controllers/ShippingReceipt.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getFulfillmentProvider', () => {
 
 		it('returns a fulfillment provider', () => {

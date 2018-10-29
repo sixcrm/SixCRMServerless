@@ -23,6 +23,10 @@ describe('controllers/UserSigningString.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('create', () => {
 
 		it('creates user signing string', () => {

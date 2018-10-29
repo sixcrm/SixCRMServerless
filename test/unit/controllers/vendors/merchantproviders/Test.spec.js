@@ -89,6 +89,10 @@ describe('vendors/merchantproviders/Test.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	it('Should fail due to missing properties', () => {
 
 		const TestController = global.SixCRM.routes.include('vendors', 'merchantproviders/Test/handler.js');

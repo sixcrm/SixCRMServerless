@@ -29,6 +29,10 @@ describe('/helpers/notifications/notification_types/'+notification_name+'.js', (
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 			let NotificationType = global.SixCRM.routes.include('helpers', 'notifications/notificationtypes/'+notification_name+'.js');

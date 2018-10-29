@@ -20,6 +20,7 @@ describe('controllers/Notification.js', () => {
 
 		after(() => {
 			mockery.deregisterAll();
+			mockery.disable();
 			global.disableactionchecks = false;
 		});
 

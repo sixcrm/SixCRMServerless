@@ -19,6 +19,10 @@ describe('controllers/helpers/terms-and-conditions/TermsAndConditions.js', () =>
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getLatestTermsAndConditions', () => {
 
 		it('successfully returns the Terms and Conditions document (null input - user)', () => {

@@ -49,6 +49,10 @@ describe('controllers/entities/Customer.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('listCustomerSessions', () => {
 
 		it('returns session list by customer', () => {

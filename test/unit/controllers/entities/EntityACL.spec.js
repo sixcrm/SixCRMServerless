@@ -18,6 +18,10 @@ describe('controllers/entities/EntityACL.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('listByType', () => {
 		it('retrieves a list of entityacls by type', () => {
 			const acls = [{

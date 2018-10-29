@@ -46,6 +46,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('constructor', () => {
@@ -63,7 +64,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 	describe('invite', () => {
 
-		it('successfully invites user to account (with first and last name, new user)', () => {
+		it('`successfully invites user to account (with first and last name, new user)', () => {
 
 			//Note:  Required because of references to the global object
 			PermissionTestGenerators.givenUserWithAllowed('*','*');
@@ -166,6 +167,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
+			inviteHelperClass._validateRequest = async () => Promise.resolve(true);
 
 			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
@@ -271,6 +273,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
+			inviteHelperClass._validateRequest = async () => Promise.resolve(true);
 
 			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
@@ -372,6 +375,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
+			inviteHelperClass._validateRequest = async () => Promise.resolve(true);
 
 			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
@@ -475,6 +479,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
+			inviteHelperClass._validateRequest = async () => Promise.resolve(true);
 
 			return inviteHelperClass.invite({user_invite: user_invite}).then((result) => {
 				expect(result).to.have.property('link');
@@ -709,6 +714,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 
 			const InviteHelperClass = global.SixCRM.routes.include('helpers','entities/invite/Invite.js');
 			let inviteHelperClass = new InviteHelperClass();
+			inviteHelperClass._validateRequest = async () => Promise.resolve(true);
 
 			let user_invite = {
 				acl:acl.id
@@ -929,7 +935,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 					expect(email.subject).to.be.a('string');
 					expect(email.subject).not.to.have.string('}}');
 					expect(email.subject).not.to.have.string('{{');
-					expect(email.subject).to.have.string('You\'ve been invited to join a account on ');
+					expect(email.subject).to.have.string('You\'ve been invited to join an account on ');
 					expect(email.body).to.be.a('string');
 					expect(email.body).not.to.have.string('}}');
 					expect(email.body).not.to.have.string('{{');
@@ -974,7 +980,7 @@ describe('/helpers/entities/invite/Invite.js', () => {
 					expect(email.subject).to.be.a('string');
 					expect(email.subject).not.to.have.string('}}');
 					expect(email.subject).not.to.have.string('{{');
-					expect(email.subject).to.have.string('You\'ve been invited to join a account on ');
+					expect(email.subject).to.have.string('You\'ve been invited to join an account on ');
 					expect(email.body).to.be.a('string');
 					expect(email.body).not.to.have.string('}}');
 					expect(email.body).not.to.have.string('{{');

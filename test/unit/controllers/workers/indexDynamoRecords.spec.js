@@ -106,6 +106,10 @@ describe('controllers/workers/indexDynamoRecords.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully executes the constructor', () => {
 

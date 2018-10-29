@@ -50,6 +50,10 @@ describe('controllers/entities/CreditCard.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('get', () => {
 
 		it('successfully returns a non-hydrated token when hydrate_token argument is not set', () => {

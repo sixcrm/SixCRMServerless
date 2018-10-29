@@ -124,6 +124,10 @@ describe('vendors/merchantproviders/NMI.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('warmups', () => {
 
 		it('Should fail due to missing properties', () => {
