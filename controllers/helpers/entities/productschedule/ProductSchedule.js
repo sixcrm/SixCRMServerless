@@ -98,6 +98,7 @@ module.exports = class ProductScheduleHelper {
 		if(!_.has(schedule_element, 'samedayofmonth') || schedule_element.samedayofmonth !== true){
 			return this.calculateNextStandardRecurringBillingInSchedule({schedule_element: schedule_element, day: day});
 		}else{
+			du.i
 			return this.calculateNextMonthlyBillingInSchedule({schedule_element: schedule_element, day: day});
 		}
 
