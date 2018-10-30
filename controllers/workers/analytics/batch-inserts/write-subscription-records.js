@@ -2,7 +2,7 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const WriteRecords = require('./write-records');
 
-const ATTRIBUTES = 21;
+const ATTRIBUTES = 19;
 
 module.exports = class WriteSubscriptionRecords extends WriteRecords {
 
@@ -33,8 +33,8 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 		let inactiveQuery = records.map((r, i) => `
 			UPDATE analytics.f_subscription
 			SET status = 'inactive'
-			WHERE status = 'active' AND product_schedule_id = ${2*i + 1} AND session = ${2*i + 2}`).join(';');
-		const inactiveQueryArgs = _.flatten(records.map(r => [r.product_schedule, r.session]));
+			WHERE status = 'active' AND product_schedule_id = $${2*i + 1} AND session = $${2*i + 2}`).join(';');
+		const inactiveQueryArgs = _.flatten(records.map(r => [r.product_schedule_id, r.session]));
 
 		let query =
 			'INSERT INTO analytics.f_subscription ( \
@@ -53,8 +53,6 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 				session_alias, \
 				campaign, \
 				campaign_name, \
-				product_schedule_name,\
-				product_schedule,\
 				merchant_provider_name,\
 				merchant_provider, \
 				customer, \
@@ -71,7 +69,7 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 
 		query += ' \
 			ON CONFLICT (rebill_id, product_schedule_id) DO UPDATE SET  \
-			rebill_alias = EXCLUDED.alias, \
+			rebill_alias = EXCLUDED.rebill_alias, \
 			product_schedule_name = EXCLUDED.product_schedule_name, \
 			datetime = EXCLUDED.datetime, \
 			status = EXCLUDED.status, \
@@ -84,8 +82,6 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 			session_alias = EXCLUDED.session_alias, \
 			campaign = EXCLUDED.campaign, \
 			campaign_name = EXCLUDED.campaign_name, \
-			product_schedule_name = EXCLUDED.product_schedule_name, \
-			product_schedule = EXCLUDED.product_schedule, \
 			merchant_provider_name = EXCLUDED.merchant_provider_name, \
 			merchant_provider = EXCLUDED.merchant_provider, \
 			customer = EXCLUDED.customer, \
@@ -109,8 +105,6 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 				r.session_alias,
 				r.campaign,
 				r.campaign_name,
-				r.product_schedule_name,
-				r.product_schedule,
 				r.merchant_provider_name,
 				r.merchant_provider,
 				r.customer,
