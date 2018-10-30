@@ -109,9 +109,17 @@ module.exports = class ProductScheduleController extends entityController {
 		if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
 			let product_ids = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
+				let id;
 
-				//Techincal Debt: accounting for legacy deta, remove at earliest convenience
-				return _.has(product_schedule, 'product') ? product_schedule.product : product_schedule.product_id;
+				if (_.isString(product_schedule.product)) {
+					id = product_schedule.product;
+				} else if (_.isObject(product_schedule.product)) {
+					id = product_schedule.product.id;
+				} else if (_.isString(product_schedule.product_id)) { //Techincal Debt: accounting for legacy deta, remove at earliest convenience
+					id = product_schedule.product_id
+				}
+
+				return id;
 
 			});
 

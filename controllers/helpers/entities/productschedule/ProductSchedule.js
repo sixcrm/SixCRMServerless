@@ -47,7 +47,7 @@ module.exports = class ProductScheduleHelper {
 
 						// Technical Debt: accounting for legacy data ('product_id' exists in legacy data, switched to 'product')
 						// Remove at earliest convenience
-						return (product.id == schedule_element.product || product.id == schedule_element.product_id);
+						return product.id === schedule_element.product || product.id === schedule_element.product_id || product.id === _.get(schedule_element, 'product.id');
 
 					});
 
@@ -67,27 +67,12 @@ module.exports = class ProductScheduleHelper {
 
 	//Tested
 	getScheduleElementsOnDayInSchedule({product_schedule, day}){
-
 		du.debug('Get Schedule Element By Day In Schedule');
-
-		let scheduled_elements = arrayutilities.filter(product_schedule.schedule, (scheduled_product) => {
-
-			if(parseInt(day) >= parseInt(scheduled_product.start)){
-
-				if(!_.has(scheduled_product, "end") || (parseInt(day) < parseInt(scheduled_product.end))){
-
-					return true;
-
-				}
-
-			}
-
-			return false;
-
+		return arrayutilities.filter(product_schedule.schedule, ({start, end, period}) => {
+			const product_is_active = day >= start && (!end || day < end);
+			const day_is_start_of_new_period = Number.isInteger(day / period);
+			return product_is_active && day_is_start_of_new_period;
 		});
-
-		return (_.isUndefined(scheduled_elements) || _.isNull(scheduled_elements))?null:scheduled_elements;
-
 	}
 
 	//Tested

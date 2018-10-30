@@ -1,4 +1,5 @@
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 module.exports = class FeatureFlagController extends entityController {
@@ -23,6 +24,14 @@ module.exports = class FeatureFlagController extends entityController {
 
 		return result;
 
+	}
+
+	delete({id, range_key = null}) {
+		if (global.account !== '*') {
+			throw eu.getError('server', 'You are not allowed to delete the entity.')
+		}
+
+		return super.delete({id, range_key})
 	}
 
 }

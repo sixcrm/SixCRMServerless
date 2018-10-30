@@ -5,6 +5,16 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 const MerchantProviderResponse = global.SixCRM.routes.include('vendors', 'merchantproviders/Response.js');
 
+const SOFT_DECLINES = [
+	'approve_with_id',
+	'issuer_not_available',
+	'processing_error',
+	'reenter_transaction',
+	'try_again_later',
+	'insufficient_funds'
+];
+
+
 module.exports = class StripeResponse extends MerchantProviderResponse {
 
 	constructor(){
@@ -29,7 +39,15 @@ module.exports = class StripeResponse extends MerchantProviderResponse {
 			}
 
 			if (!_.isNull(error) && error.rawType === 'card_error') {
-				return 'decline';
+
+				du.debug('Detecting Soft Decline Stripe', error.code, error, SOFT_DECLINES);
+
+				if (SOFT_DECLINES.includes(error.code)) {
+					return 'decline';
+				}
+
+
+				return 'harddecline';
 			}
 
 		}else if(action == 'test'){
