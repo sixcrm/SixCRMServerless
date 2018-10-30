@@ -11,9 +11,9 @@ const configurationAcquistion = require('../../config/controllers/configuration_
 
 dynamoClient.scan('customers').then(async result => {
 
-	du.info(`${result.Items.length} customers`);
+	du.info(`${result.length} customers`);
 
-	const customerRows = result.Items.map(customer => [
+	const customerRows = result.map(customer => [
 		customer.id,
 		customer.account,
 		customer.firstname,

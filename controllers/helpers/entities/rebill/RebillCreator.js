@@ -454,8 +454,10 @@ module.exports = class RebillCreatorHelper {
 			const merchant_provider = await merchantProviderController.get({id: rebill.merchant_provider});
 
 			return AnalyticsEvent.push('subscription', {
-				id: rebill.id,
-				alias: rebill.alias,
+				rebill_id: rebill.id,
+				product_schedule_id: product_schedule.id,
+				rebill_alias: rebill.alias,
+				product_schedule_name: product_schedule.name,
 				datetime: rebill.bill_at,
 				amount: rebill.amount,
 				item_count: _.sumBy(rebill.products, product => product.quantity),
@@ -465,11 +467,9 @@ module.exports = class RebillCreatorHelper {
 				session: session.id,
 				session_alias: session.alias,
 				campaign: session.campaign,
-				customer: session.customer,
-				product_schedule_name: product_schedule.name,
-				product_schedule: product_schedule.id,
 				merchant_provider_name: merchant_provider.name,
-				merchant_provider: merchant_provider.id
+				merchant_provider: merchant_provider.id,
+				customer: session.customer
 			});
 		}
 	}

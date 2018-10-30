@@ -2,7 +2,7 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const WriteRecords = require('./write-records');
 
-const ATTRIBUTES = 19;
+const ATTRIBUTES = 21;
 
 module.exports = class WriteSubscriptionRecords extends WriteRecords {
 
@@ -30,19 +30,18 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 
 		}
 
-		let inactiveQuery = `
+		let inactiveQuery = records.map((r, i) => `
 			UPDATE analytics.f_subscription
 			SET status = 'inactive'
-			WHERE status = 'active' AND session IN `;
-
-		const inClause = records.map((r, i) => `$${i + 1}`).join(',');
-		inactiveQuery += `(${inClause});`;
-		const inactiveQueryArgs = records.map(r => r.session);
+			WHERE status = 'active' AND product_schedule_id = ${2*i + 1} AND session = ${2*i + 2}`).join(';');
+		const inactiveQueryArgs = _.flatten(records.map(r => [r.product_schedule, r.session]));
 
 		let query =
 			'INSERT INTO analytics.f_subscription ( \
-				id, \
-				alias, \
+				rebill_id, \
+				product_schedule_id, \
+				rebill_alias, \
+				product_schedule_name, \
 				datetime, \
 				status, \
 				amount, \
@@ -54,12 +53,12 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 				session_alias, \
 				campaign, \
 				campaign_name, \
-				customer, \
-				customer_name,\
 				product_schedule_name,\
 				product_schedule,\
 				merchant_provider_name,\
-				merchant_provider) \
+				merchant_provider, \
+				customer, \
+				customer_name) \
 				VALUES ';
 
 		const values = records.map((r, i) => {
@@ -71,8 +70,9 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 		query += values.join(',');
 
 		query += ' \
-			ON CONFLICT (id) DO UPDATE SET  \
-			alias = EXCLUDED.alias, \
+			ON CONFLICT (rebill_id, product_schedule_id) DO UPDATE SET  \
+			rebill_alias = EXCLUDED.alias, \
+			product_schedule_name = EXCLUDED.product_schedule_name, \
 			datetime = EXCLUDED.datetime, \
 			status = EXCLUDED.status, \
 			amount = EXCLUDED.amount, \
@@ -84,18 +84,20 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 			session_alias = EXCLUDED.session_alias, \
 			campaign = EXCLUDED.campaign, \
 			campaign_name = EXCLUDED.campaign_name, \
-			customer = EXCLUDED.customer, \
-			customer_name = EXCLUDED.customer_name, \
 			product_schedule_name = EXCLUDED.product_schedule_name, \
 			product_schedule = EXCLUDED.product_schedule, \
 			merchant_provider_name = EXCLUDED.merchant_provider_name, \
-			merchant_provider = EXCLUDED.merchant_provider';
+			merchant_provider = EXCLUDED.merchant_provider, \
+			customer = EXCLUDED.customer, \
+			customer_name = EXCLUDED.customer_name';
 
 		const queryArgs = _.flatten(records.map(r => {
 
 			return [
-				r.id,
-				r.alias,
+				r.rebill_id,
+				r.product_schedule_id,
+				r.rebill_alias,
+				r.product_schedule_name,
 				r.datetime,
 				r.status,
 				r.amount,
@@ -107,12 +109,12 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 				r.session_alias,
 				r.campaign,
 				r.campaign_name,
-				r.customer,
-				r.customer_name,
 				r.product_schedule_name,
 				r.product_schedule,
 				r.merchant_provider_name,
-				r.merchant_provider
+				r.merchant_provider,
+				r.customer,
+				r.customer_name
 			];
 
 		}));

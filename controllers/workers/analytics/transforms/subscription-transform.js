@@ -24,7 +24,7 @@ module.exports = class SubscriptionTransform extends AnalyticsTransform {
 
 		} catch (ex) {
 
-			du.warning('CreateOrderTransform.transform(): could not resolve campaign', ex);
+			du.warning('SubscriptionTransform.transform(): could not resolve campaign', ex);
 
 		}
 
@@ -39,7 +39,7 @@ module.exports = class SubscriptionTransform extends AnalyticsTransform {
 
 		} catch (ex) {
 
-			du.warning('CreateOrderTransform.transform(): could not resolve customer', ex);
+			du.warning('SubscriptionTransform.transform(): could not resolve customer', ex);
 
 		}
 

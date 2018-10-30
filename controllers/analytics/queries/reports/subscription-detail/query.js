@@ -11,7 +11,9 @@ module.exports = async (parameters = {}) => {
 
 	const local = [];
 	QueryParser.resolveFilterValue(local, 's', 'account', parameters);
-	QueryParser.resolveFilterValue(local, 's', 'alias', parameters);
+	QueryParser.resolveFilterValue(local, 's', 'productSchedule', parameters);
+	QueryParser.resolveFilterValue(local, 's', 'rebillAlias', parameters);
+	QueryParser.resolveFilterValue(local, 's', 'productScheduleName', parameters);
 	QueryParser.resolveFilterValue(local, 's', 'amount', parameters);
 	QueryParser.resolveFilterValue(local, 's', 'status', parameters);
 	QueryParser.resolveFilterValue(local, 's', 'cycle', parameters);
@@ -19,14 +21,13 @@ module.exports = async (parameters = {}) => {
 	QueryParser.resolveFilterValue(local, 's', 'sessionAlias', parameters);
 	QueryParser.resolveFilterValue(local, 's', 'session', parameters);
 	QueryParser.resolveFilterValue(local, 's', 'campaignName', parameters);
-	QueryParser.resolveFilterValue(local, 's', 'customerName', parameters);
-	QueryParser.resolveFilterValue(local, 's', 'productScheduleName', parameters);
-	QueryParser.resolveFilterValue(local, 's', 'productSchedule', parameters);
 	QueryParser.resolveFilterValue(local, 's', 'merchantProviderName', parameters);
-	QueryParser.resolveFilterValue(local, 's', 'merchantProvider', parameters);
+	QueryParser.resolveFilterValue(local, 's', 'customerName', parameters);
 	const filter = QueryParser.resolveFilterQuery(parameters, {
 		account: true,
-		alias: true,
+		productSchedule: true,
+		rebillAlias: true,
+		productScheduleName: true,
 		amount: true,
 		status: true,
 		cycle: true,
@@ -35,10 +36,7 @@ module.exports = async (parameters = {}) => {
 		session: true,
 		campaignName: true,
 		customerName: true,
-		productScheduleName: true,
-		productSchedule: true,
 		merchantProviderName: true,
-		merchantProvider: true
 	});
 
 	let filterQuery = '';

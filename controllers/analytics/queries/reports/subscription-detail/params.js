@@ -4,7 +4,9 @@ module.exports = async (parameters, pagination) => {
 
 	const start = parameters.facets.find(f => f.facet === 'start');
 	const end = parameters.facets.find(f => f.facet === 'end');
-	const alias = parameters.facets.find(f => f.facet === 'alias');
+	const productSchedule = parameters.facets.find(f => f.facet === 'productSchedule');
+	const rebillAlias = parameters.facets.find(f => f.facet === 'rebillAlias');
+	const productScheduleName = parameters.facets.find(f => f.facet === 'productScheduleName');
 	const amount = parameters.facets.find(f => f.facet === 'amount');
 	const status = parameters.facets.find(f => f.facet === 'status');
 	const cycle = parameters.facets.find(f => f.facet === 'cycle');
@@ -12,11 +14,8 @@ module.exports = async (parameters, pagination) => {
 	const sessionAlias = parameters.facets.find(f => f.facet === 'sessionAlias');
 	const session = parameters.facets.find(f => f.facet === 'session');
 	const campaignName = parameters.facets.find(f => f.facet === 'campaignName');
-	const customerName = parameters.facets.find(f => f.facet === 'customerName');
-	const productScheduleName = parameters.facets.find(f => f.facet === 'productScheduleName');
-	const productSchedule = parameters.facets.find(f => f.facet === 'productSchedule');
 	const merchantProviderName = parameters.facets.find(f => f.facet === 'merchantProviderName');
-	const merchantProvider = parameters.facets.find(f => f.facet === 'merchantProvider');
+	const customerName = parameters.facets.find(f => f.facet === 'customerName');
 
 	if (start.length > 1) {
 
@@ -34,7 +33,9 @@ module.exports = async (parameters, pagination) => {
 
 	_resolveParamValue('start', start);
 	_resolveParamValue('end', end);
-	_resolveParamValue('alias', alias);
+	_resolveParamValue('productSchedule', productSchedule);
+	_resolveParamValue('rebillAlias', rebillAlias);
+	_resolveParamValue('productScheduleName', productScheduleName);
 	_resolveParamValue('amount', amount);
 	_resolveParamValue('status', status);
 	_resolveParamValue('cycle', cycle);
@@ -42,11 +43,8 @@ module.exports = async (parameters, pagination) => {
 	_resolveParamValue('sessionAlias', sessionAlias);
 	_resolveParamValue('session', session);
 	_resolveParamValue('campaignName', campaignName);
-	_resolveParamValue('customerName', customerName);
-	_resolveParamValue('productScheduleName', productScheduleName);
-	_resolveParamValue('productSchedule', productSchedule);
 	_resolveParamValue('merchantProviderName', merchantProviderName);
-	_resolveParamValue('merchantProvider', merchantProvider);
+	_resolveParamValue('customerName', customerName);
 
 	if (pagination) {
 
