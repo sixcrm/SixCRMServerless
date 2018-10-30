@@ -1,5 +1,6 @@
 
 const imagetype = require('image-type');
+const isSvg = require('is-svg');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
@@ -22,6 +23,19 @@ module.exports = class ImageProvider {
 		}catch(error){
 			du.error(error);
 			throw eu.getError('server', 'Unable to identify image metadata.');
+		}
+
+		if (!image_metadata) {
+			if (isSvg(image_data)) {
+				return {
+					ext: 'svg',
+					mime: 'image/svg+xml'
+				}
+			}
+
+			const message = 'Unsupported file type.';
+			du.warning(message);
+			throw eu.getError('server', message);
 		}
 
 		return image_metadata;

@@ -26,6 +26,10 @@ describe('controllers/authorizers/verifySignature.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('parseEventSignature', () => {
 
 		it('parses event signature with valid authorization token', () => {

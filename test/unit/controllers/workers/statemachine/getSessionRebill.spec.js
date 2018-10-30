@@ -22,6 +22,10 @@ describe('controllers/workers/statemachine/getSessionRebill.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
   describe('constructor', () => {
 
     it('successfully constructs', () => {

@@ -42,6 +42,10 @@ describe('controllers/Entity.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getShared', () => {
 		it('returns the entity if shared', () => {
 			let entity = MockEntities.getValidAccessKey('82478014-c96f-49ef-b31c-5408e99df66e');

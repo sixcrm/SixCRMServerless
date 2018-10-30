@@ -20,6 +20,7 @@ xdescribe('controllers/providers/lambda-provider', () => {
 	});
 
 	after(() => {
+		mockery.disable();
 		process.env.require_local = require_local_copy;
 	});
 

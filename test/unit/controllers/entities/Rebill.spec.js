@@ -44,6 +44,10 @@ describe('controllers/Rebill.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('listTransactions', () => {
 
 		it('lists transactions by rebill', () => {

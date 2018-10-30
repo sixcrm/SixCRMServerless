@@ -17,6 +17,10 @@ describe('controllers/providers/SMTP.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully sets required and optional options', () => {

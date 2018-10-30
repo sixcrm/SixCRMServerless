@@ -67,6 +67,10 @@ describe('helpers/entities/transaction/Transaction.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('getTransactionProducts', () => {
 
 		it('returns transaction products from transaction records', () => {

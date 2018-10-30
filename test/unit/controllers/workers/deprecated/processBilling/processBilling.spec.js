@@ -85,6 +85,10 @@ xdescribe('controllers/workers/processBilling', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('instantiates the processBillingController class', () => {

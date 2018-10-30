@@ -36,6 +36,7 @@ describe('helpers/events/Event.spec.js', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('constructor', () => {

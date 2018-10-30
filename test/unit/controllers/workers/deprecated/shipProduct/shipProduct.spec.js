@@ -54,6 +54,10 @@ xdescribe('controllers/workers/shipProduct', function () {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs', () => {

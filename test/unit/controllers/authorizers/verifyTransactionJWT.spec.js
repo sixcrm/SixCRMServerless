@@ -61,6 +61,10 @@ describe('controllers/authorizers/verifyTransactionJWT.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully executes the constructor', () => {

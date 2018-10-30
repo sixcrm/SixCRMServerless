@@ -20,6 +20,10 @@ describe('controllers/workers/statemachine/components/stepFunctionReporter.js', 
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
   describe('constructor', () => {
 
     it('successfully constructs', () => {

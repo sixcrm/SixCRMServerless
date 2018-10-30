@@ -21,6 +21,10 @@ describe('controllers/workers/statemachine/triggers/triggerTracking.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
   describe('constructor', () => {
 
     it('successfully constructs', () => {

@@ -90,6 +90,10 @@ describe('helpers/transaction/Refund.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs a refund class', () => {

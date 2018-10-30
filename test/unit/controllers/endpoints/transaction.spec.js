@@ -20,6 +20,7 @@ describe('controllers/endpoints/transaction', () => {
 
 	after(() => {
 		mockery.deregisterAll();
+		mockery.disable();
 	});
 
 	describe('initialize', () => {

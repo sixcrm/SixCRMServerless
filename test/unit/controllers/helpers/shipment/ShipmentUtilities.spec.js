@@ -113,6 +113,10 @@ describe('helpers/shipment/ShipmentUtilities.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('hydrateFulfillmentProviders', () => {
 
 		it('successfully hydrates fulfillment providers', () => {

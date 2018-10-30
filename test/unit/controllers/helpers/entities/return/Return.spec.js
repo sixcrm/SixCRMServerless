@@ -21,11 +21,13 @@ describe('/helpers/entities/return/Return.js', () => {
 		});
 	});
 
-	beforeEach(() => {});
-
 	afterEach(() => {
 		mockery.resetCache();
 		mockery.deregisterAll();
+	});
+
+	after(() => {
+		mockery.disable();
 	});
 
 	describe('constructor', () => {

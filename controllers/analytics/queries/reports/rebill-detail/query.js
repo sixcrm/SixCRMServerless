@@ -17,6 +17,7 @@ module.exports = async (parameters = {}) => {
 	QueryParser.resolveFilterValue(local, 'r', 'sessionAlias', parameters);
 	QueryParser.resolveFilterValue(local, 'r', 'campaignName', parameters);
 	QueryParser.resolveFilterValue(local, 'r', 'customerName', parameters);
+	QueryParser.resolveFilterValue(local, 'r', 'orderStatus', parameters);
 	const filter = QueryParser.resolveFilterQuery(parameters, {
 		account: true,
 		alias: true,
@@ -25,6 +26,7 @@ module.exports = async (parameters = {}) => {
 		sessionAlias: true,
 		campaignName: true,
 		customerName: true,
+		orderStatus: true
 	});
 
 	let filterQuery = '';

@@ -36,6 +36,10 @@ describe('controllers/MerchantProvider.js', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('associatedEntitiesCheck', () => {
 
 		it('creates associated entities object', () => {

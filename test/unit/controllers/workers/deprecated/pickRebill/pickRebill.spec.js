@@ -40,6 +40,10 @@ xdescribe('controllers/workers/pickRebills.js', function () {
 		});
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('execute', function () {
 
 		afterEach(() => {

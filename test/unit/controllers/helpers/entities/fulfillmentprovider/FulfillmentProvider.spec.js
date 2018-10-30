@@ -119,6 +119,10 @@ describe('/helpers/entities/fulfillmentprovider/FulfillmentProvider.json', () =>
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('successfully constructs', () => {

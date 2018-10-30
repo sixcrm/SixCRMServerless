@@ -563,6 +563,10 @@ describe('controllers/workers/logger', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 		it('successfully constructs', () => {
 

@@ -65,13 +65,13 @@ module.exports = class InviteUtilities extends HelperController{
 		let email = {
 			recepient_emails: [invite_object.email],
 			recepient_name: 'Welcome to {{site.name}}',
-			subject: 'You\'ve been invited to join a account on {{site.name}}',
+			subject: 'You\'ve been invited to join an account on {{site.name}}',
 			body: 'Please accept this invite using the link below: {{link}}'
 		};
 
 		if(_.has(invite_object, 'fullname') && stringutilities.nonEmpty(invite_object.fullname)){
 			email.recepient_name = invite_object.fullname;
-			email.body = 'Hello {{invite_object.fullname}}, \n\n You\'ve been invited to a account on {{site.name}}. Please accept this invite using the link below: {{link}}'
+			email.body = 'Hello {{invite_object.fullname}}, \n\n You\'ve been invited to an account on {{site.name}}. Please accept this invite using the link below: {{link}}'
 		}
 
 		let data = {

@@ -22,6 +22,10 @@ describe('/helpers/notifications/notificationtypes/components/BaseNotification.j
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('transformContext', () => {
 
 		it('successfully transforms context', () => {

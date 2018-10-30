@@ -41,6 +41,10 @@ xdescribe('controllers/workers/getRebills', () => {
 		mockery.deregisterAll();
 	});
 
+	after(() => {
+		mockery.disable();
+	});
+
 	describe('constructor', () => {
 
 		it('instantiates the createRebillsController class', () => {
