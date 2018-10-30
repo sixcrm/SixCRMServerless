@@ -5,8 +5,8 @@
 	"type": "string",
 	"enum": [
 		"success",
+		"harddecline",
 		"decline",
-		"softdecline",
 		"error"
 	]
 }

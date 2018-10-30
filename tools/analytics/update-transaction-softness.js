@@ -18,8 +18,8 @@ const batchSize = 25;
 const RESULT_MAP = {
 	success: 'success',
 	error: 'error',
-	decline: 'hard decline',
-	softdecline: 'soft decline'
+	decline: 'soft decline',
+	harddecline: 'hard decline'
 };
 
 configurationAcquistion.getAuroraClusterEndpoint().then(async (endpoint) => {

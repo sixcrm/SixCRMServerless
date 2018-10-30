@@ -7,8 +7,8 @@ const DynamoClient = require('./entities/dynamo');
 const RESULT_MAP = {
 	success: 'success',
 	error: 'error',
-	decline: 'hard decline',
-	softdecline: 'soft decline'
+	decline: 'soft decline',
+	harddecline: 'hard decline'
 };
 
 module.exports = class TransactionTransform extends AnalyticsTransform {
