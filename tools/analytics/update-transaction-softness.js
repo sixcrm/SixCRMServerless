@@ -19,6 +19,7 @@ const RESULT_MAP = {
 	success: 'success',
 	error: 'error',
 	decline: 'soft decline',
+	soft: 'soft decline',
 	harddecline: 'hard decline'
 };
 

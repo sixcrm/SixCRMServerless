@@ -40,7 +40,7 @@ class EmailTemplateMigration extends AWSDeploymentUtilities {
 				const response = JSON.parse(transaction.processor_response);
 				const result = transaction.result;
 
-				if (!['decline', 'softdecline', 'harddecline'].includes(result)) {
+				if (!['decline', 'softdecline', 'harddecline', 'soft'].includes(result)) {
 					// console.log(`${count}/${records.Items.length}:\tSKIPPING ${transaction.id} ${result}`);
 					continue;
 				}
