@@ -37,7 +37,7 @@ module.exports = class MerchantProviderResponse extends Response{
 		this.result_messages = {
 			'success':'Success',
 			'decline': 'Declined',
-			'softdecline': 'Soft decline',
+			'harddecline': 'Hard decline',
 			'error': 'Error'
 		};
 

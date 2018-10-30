@@ -31,6 +31,8 @@ class EmailTemplateMigration extends AWSDeploymentUtilities {
 	async execute() {
 		let batch = [];
 
+		console.log('Performing scan...');
+
 		await this.dynamodbprovider.scanRecords('transactions', {limit: scan_limit}).then(async records => {
 			let count = 0;
 			for (let transaction of records.Items) {
@@ -38,8 +40,8 @@ class EmailTemplateMigration extends AWSDeploymentUtilities {
 				const response = JSON.parse(transaction.processor_response);
 				const result = transaction.result;
 
-				if (!['decline', 'softdecline'].includes(result)) {
-					console.log(`${count}/${records.Items.length}:\tSKIPPING ${transaction.id} ${result}`);
+				if (!['decline', 'softdecline', 'harddecline', 'soft'].includes(result)) {
+					// console.log(`${count}/${records.Items.length}:\tSKIPPING ${transaction.id} ${result}`);
 					continue;
 				}
 				let provider = '';
@@ -50,7 +52,11 @@ class EmailTemplateMigration extends AWSDeploymentUtilities {
 					})).get('Items[0].gateway.name');
 				}
 
-				let newresult = result;
+				if (!provider) {
+					continue;
+				}
+
+				let newresult = 'harddecline';
 
 				let code, message;
 
@@ -60,7 +66,7 @@ class EmailTemplateMigration extends AWSDeploymentUtilities {
 
 					STRIPE_SOFT_DECLINE_KEYWORDS.forEach(term => {
 						if (message.toLowerCase().includes(term)) {
-							newresult = 'softdecline';
+							newresult = 'decline';
 						}
 					})
 				}
@@ -69,12 +75,8 @@ class EmailTemplateMigration extends AWSDeploymentUtilities {
 					code = _(response).get('merchant_code');
 					message = _(response).get('merchant_message');
 					if (NMI_SOFT_DECLINE_CODES.includes(code)) {
-						newresult = 'softdecline';
+						newresult = 'decline';
 					}
-				}
-
-				if (result === newresult) {
-					continue;
 				}
 
 				console.log(`${count}/${records.Items.length}\t(${provider}):\t${result} > ${newresult}\t(${code}) - ${message}`);

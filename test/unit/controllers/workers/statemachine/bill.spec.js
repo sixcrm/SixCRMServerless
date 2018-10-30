@@ -59,7 +59,7 @@ describe('controllers/workers/statemachine/bill.js', () => {
 
       let response = {
 				getTransactions: () => [],
-        getCode: () => {return 'softdecline'}
+        getCode: () => {return 'decline'}
       }
 
       const BillController = global.SixCRM.routes.include('workers', 'statemachine/bill.js');
@@ -331,7 +331,7 @@ describe('controllers/workers/statemachine/bill.js', () => {
       let transactions = MockEntities.getValidTransactions();
       transactions = transactions.map(transaction => {
         transaction.type = 'sale';
-        transaction.result = 'softdecline';
+        transaction.result = 'decline';
         return transaction;
       });
 
@@ -340,7 +340,7 @@ describe('controllers/workers/statemachine/bill.js', () => {
           this.parameters = {
             get: (key) => {
             	if (key === 'transactions') return transactions;
-            	if (key === 'response_type') return 'softdecline';
+            	if (key === 'response_type') return 'decline';
             }
           }
 				}
@@ -348,7 +348,7 @@ describe('controllers/workers/statemachine/bill.js', () => {
 					return [];
 				}
         getCode(){
-          return 'softdecline'
+          return 'decline'
         }
       };
 
