@@ -10,7 +10,8 @@ const SOFT_DECLINES = [
 	'issuer_not_available',
 	'processing_error',
 	'reenter_transaction',
-	'try_again_later'
+	'try_again_later',
+	'insufficient_funds'
 ];
 
 
