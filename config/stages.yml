@@ -1,6 +1,8 @@
 development:
   aws_account_id: '068070110666'
   branch_name: 'development'
+sandbox:
+  aws_account_id: '909647584680'
 staging:
   aws_account_id: '821071795213'
   branch_name: 'staging'
