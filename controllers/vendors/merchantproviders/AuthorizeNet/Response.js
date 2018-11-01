@@ -16,7 +16,7 @@ module.exports = class AuthorizeNetResponse extends MerchantProviderResponse {
 		}
 
 		if (_.has(body, 'transactionResponse') && body.transactionResponse.responseCode === '2') {
-			return 'decline';
+			return 'harddecline';
 		}
 
 		return 'error';

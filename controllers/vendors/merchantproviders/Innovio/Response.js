@@ -26,7 +26,7 @@ module.exports = class InnovioResponse extends Response {
 			}
 
 			if(_.has(body, 'TRANS_STATUS_NAME') && body.TRANS_STATUS_NAME === 'DECLINED'){
-				return 'decline';
+				return 'harddecline';
 			}
 
 		}else if(_.includes(['reverse','refund'], action)){
@@ -36,7 +36,7 @@ module.exports = class InnovioResponse extends Response {
 			}
 
 			if(_.has(body, 'TRANS_STATUS_NAME') && body.TRANS_STATUS_NAME == 'DECLINED'){
-				return 'decline';
+				return 'harddecline';
 			}
 
 		}else if( action == 'test'){
