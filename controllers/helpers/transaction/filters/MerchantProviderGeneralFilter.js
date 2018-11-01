@@ -201,7 +201,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.daily') && !_.isNull(merchant_provider.processing.transaction_counts.daily)){
 
-				if(parseInt(merchant_provider.summary.summary.today.count) > parseInt(merchant_provider.processing.transaction_counts.daily)){
+				if(parseInt(merchant_provider.summary.summary.today.count) >= parseInt(merchant_provider.processing.transaction_counts.daily)){
 					du.warning('Daily Count Shortage');
 					return_value = false;
 				}
@@ -210,7 +210,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.weekly') && !_.isNull(merchant_provider.processing.transaction_counts.weekly)){
 
-				if(parseInt(merchant_provider.summary.summary.thisweek.count) > parseInt(merchant_provider.processing.transaction_counts.weekly)){
+				if(parseInt(merchant_provider.summary.summary.thisweek.count) >= parseInt(merchant_provider.processing.transaction_counts.weekly)){
 					du.warning('Weekly Count Shortage');
 					return_value = false;
 				}
@@ -219,7 +219,7 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.monthly') && !_.isNull(merchant_provider.processing.transaction_counts.monthly)){
 
-				if(parseInt(merchant_provider.summary.summary.thismonth.count) > parseInt(merchant_provider.processing.transaction_counts.monthly)){
+				if(parseInt(merchant_provider.summary.summary.thismonth.count) >= parseInt(merchant_provider.processing.transaction_counts.monthly)){
 					du.warning('Monthly Count Shortage');
 					return_value = false;
 				}
