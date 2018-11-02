@@ -26,8 +26,11 @@
 						}
 					]
 				},
-				"disable": {
-					"type": "string"
+				"limited_at": {
+					"$ref": "../definitions/iso8601.json"
+				},
+				"deactivated_at": {
+					"$ref": "../definitions/iso8601.json"
 				},
 				"session": {
 					"anyOf": [
