@@ -1,6 +1,7 @@
 
 const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
@@ -39,6 +40,16 @@ class UserSigningStringController extends entityController {
 
 		});
 
+	}
+
+	async delete({id, range_key = null}) {
+		const existing = await this.get({id, fatal: true});
+
+		if ((global.user.id !== existing.user) && (global.account !== '*')) {
+			throw eu.getError('server', `You are not allowed to delete the entitywith id ${id}. It belongs to ${existing.user} ${global.user.id} ${global.account}`)
+		}
+
+		return super.delete({id, range_key})
 	}
 
 }

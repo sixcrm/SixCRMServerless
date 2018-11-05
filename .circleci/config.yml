@@ -1,9 +1,6 @@
 #Todo:
 # Eliminate writes to S3 for the last successful build.  Use cache instead
 
-functional_tests_default: &functional-tests-default
-  machine: true
-
 defaults: &job-defaults
   docker:
     - image: circleci/node:8.10
@@ -44,8 +41,8 @@ jobs:
       - run:
           name: 'Unit Tests'
           command: stage=circle  npm run test-unit-circle
-  functional_tests:
-    <<: *functional-tests-default
+  query_tests:
+    machine: true
     steps:
       - checkout
       - restore_cache:
@@ -61,52 +58,19 @@ jobs:
           command: |
             set -x
             docker-compose --file tools/docker/docker-compose.yml up -d
-      - run: echo "Pausing to allow Docker to catch up..." && sleep 15
+      - run: echo "Pausing to allow docker to catch up..." && sleep 15
       - run:
           name: Execute Functional Connectivity Test
           command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-connectivity
       - run:
-          name: Execute Functional Redis-Provider Test
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-redis-provider
-      - run:
           name: Deploy Local Dynamo
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=2 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node /sixcrmserverless/deployment/dynamodb/deploy_tables.js
+          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
       - run:
-          name: Deploy Local SQS
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e SIX_VERBOSE=2 -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node /sixcrmserverless/deployment/sqs/deploy_queues.js
+          name: Execute Functional Analytics Query Tests in Docker
+          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-analytics-queries
       - run:
-          name: Execute State Machine Tests In Docker
-          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-state-machine-docker
-  query_tests:
-      <<: *functional-tests-default
-      steps:
-        - checkout
-        - restore_cache:
-            key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-        - run:
-            name: Install Docker Compose
-            command: |
-              curl -L https://github.com/docker/compose/releases/download/1.15.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-              chmod +x ~/docker-compose
-              sudo mv ~/docker-compose /usr/local/bin/docker-compose
-        - run:
-            name: Start Docker Cluster
-            command: |
-              set -x
-              docker-compose --file tools/docker/docker-compose.yml up -d
-        - run: echo "Pausing to allow docker to catch up..." && sleep 15
-        - run:
-            name: Execute Functional Connectivity Test
-            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-connectivity
-        - run:
-            name: Deploy Local Dynamo
-            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node node deployment/dynamodb/deploy_tables.js
-        - run:
-            name: Execute Functional Analytics Query Tests in Docker
-            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-analytics-queries
-        - run:
-            name: Execute Functional Analytics Event Tests in Docker
-            command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-analytics-events
+          name: Execute Functional Analytics Event Tests in Docker
+          command: docker-compose --file tools/docker/docker-compose.yml run -e stage=circle -e AWS_ACCESS_KEY_ID=X -e AWS_SECRET_ACCESS_KEY=X -v /home/circleci/project:/sixcrmserverless -w /sixcrmserverless node npm run test-functional-analytics-events
   pre_deploy:
     <<: *job-defaults
     steps:
@@ -132,55 +96,6 @@ jobs:
       - run:
           name: Debugging 2
           command: printenv
-  deploy_network:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Deploy VPC
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_vpcs.js
-      - run:
-          name: EC2 Security Groups
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_security_groups.js
-      - run:
-          name: Deploy Subnets
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_subnets.js
-      - run:
-          name: Deploy Elastic IP Addresses
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_eips.js
-      - run:
-          name: Deploy Internet Gateways
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_internet_gateways.js
-      - run:
-          name: Deploy NATs
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_nats.js
-      - run:
-          name: Deploy Route Tables
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_route_tables.js
-      - run:
-          name: Deploy VPC Endpoints
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_endpoints.js
-  deploy_ec2_servers:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Deploy EC2 Servers
-          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_servers.js
   backup_datastore:
     <<: *job-defaults
     steps:
@@ -209,99 +124,12 @@ jobs:
       - run:
           name: Serveless Deploy
           command: SLS_DEBUG=* node ./node_modules/serverless/bin/serverless deploy --stage $CIRCLE_BRANCH
-  deploy_elasticsearch:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: ElasticSearch Deployment
-          command: export SIX_VERBOSE=2 && node ./deployment/elasticsearch/deploy_domains.js
-  deploy_s3:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: S3 Buckets
-          command: export SIX_VERBOSE=2 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
-      - run:
-          name: S3 Backups
-          command: export SIX_VERBOSE=2 && node ./deployment/s3/deploy_backups.js || echo "No changes, skipping."
-  deploy_sqs:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: SQS
-          command: export SIX_VERBOSE=2 && ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js || echo "No changes, skipping."
-  deploy_iam:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: IAM Deploy Policies
-          command: export SIX_VERBOSE=2 && node ./deployment/iam/deploy_policies.js
-      - run:
-          name: IAM Deploy Roles
-          command: export SIX_VERBOSE=2 && node ./deployment/iam/deploy_roles.js
-  deploy_stepfunctions:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
       - run:
           name: Deploy Step Function State Machines
           command: export SIX_VERBOSE=2 && node ./deployment/stepfunctions/deploy_state_machines.js
-  deploy_dynamodb:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
       - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: DynamoDB Deploy Tables
-          command: export SIX_VERBOSE=2 && node ./deployment/dynamodb/deploy_tables.js
-      - run:
-          name: DynamoDB Autoscale Tables
-          command: export SIX_VERBOSE=2 && node ./deployment/dynamodb/deploy_autoscaling.js
+          name: Cloudwatch Log Subscriptions
+          command: export SIX_VERBOSE=2 && node ./deployment/cloudwatch/deploy_subscription_filters.js
   deploy_aurora:
     <<: *job-defaults
     steps:
@@ -334,116 +162,6 @@ jobs:
       - run:
           name: Aurora Create Tables
           command: SIX_VERBOSE=2 AURORA_PROXY=true  node ./deployment/aurora/deploy-schema.js
-  deploy_cloudsearch:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Deploy Clousearch
-          command: SIX_VERBOSE=2 node ./deployment/cloudsearch/deploy_domains.js
-  deploy_cloudsearch_indexes:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Deploy Clousearch Indexes
-          command: SIX_VERBOSE=2 node ./deployment/cloudsearch/deploy_indexes.js
-  deploy_sns:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: SNS Topics
-          command: export SIX_VERBOSE=2 && node ./deployment/sns/deploy_topics.js
-      - run:
-          name: SNS Subscriptions
-          command: export SIX_VERBOSE=2 && node ./deployment/sns/deploy_subscriptions.js
-  deploy_logsubscription:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Cloudwatch Log Subscriptions
-          command: export SIX_VERBOSE=2 && node ./deployment/cloudwatch/deploy_subscription_filters.js
-  deploy_lambda_eventsourcemappings:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Lambda Event Source Mappings
-          command: export SIX_VERBOSE=2 && node ./deployment/lambda/deploy_eventsourcemappings.js
-  deploy_dms:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      # - run:
-      #     name: Git LFS (Large File Storage)
-      #     command: |
-      #       curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-      #       sudo apt-get install -y git-lfs
-      #       git lfs pull
-      - run:
-          name: Deploy DMS Tasks
-          command: SIX_VERBOSE=2 node ./deployment/dms/deploy_tasks.js
-      - run:
-          name: Import BINs
-          command: SIX_VERBOSE=2 node ./deployment/dms/import_bins.js
-  post_deployment:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: Save Last Commit
-          command: node deployment/circle/save_last_commit.js
   #Eh... not very useful currently
   environment_test:
     <<: *job-defaults
@@ -454,26 +172,6 @@ jobs:
       - run:
           name: Entity Integration Tests
           command: SIX_VERBOSE=2 npm run test-environment
-  purge:
-    <<: *job-defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
-      - attach_workspace:
-          at: .
-      - run:
-          name: Set Credentials
-          command: cat deployment_credentials/stscredentials >> $BASH_ENV
-      - run:
-          name: SQS Purge
-          command: node ./deployment/sqs/purge_queues.js
-#      - run:
-#          name: Cloudsearch Purge
-#          command: node ./deployment/cloudsearch/purge.js
-#     - run:
-#         name: DynamoDB Purge
-#         command: node ./deployment/dynamodb/purge_tables.js
   seed:
     <<: *job-defaults
     steps:
@@ -530,7 +228,7 @@ jobs:
 
 workflows:
   version: 2
-  build_deploy_test_and_merge:
+  build_deploy_test:
     jobs:
       - build
       - lint:
@@ -551,15 +249,6 @@ workflows:
                 - staging
                 - production
                 - priority
-      # - functional_tests:
-      #     requires:
-      #       - build
-      #       - unit_tests
-      #       - lint
-      #     filters:
-      #       branches:
-      #         only:
-      #           - development
       - query_tests:
           requires:
             - build
@@ -590,7 +279,7 @@ workflows:
                 - staging
                 - production
                 - priority
-      - deploy_network:
+      - deploy_aurora:
           requires:
             - pre_deploy
             - backup_datastore
@@ -601,169 +290,9 @@ workflows:
                 - staging
                 - production
                 - priority
-      - deploy_ec2_servers:
-          requires:
-            - deploy_network
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_elasticsearch:
-          requires:
-            - deploy_network
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_cloudsearch:
-          requires:
-            - deploy_network
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_cloudsearch_indexes:
-          requires:
-            - deploy_cloudsearch
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_aurora:
-          requires:
-            - deploy_ec2_servers
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_iam:
-          requires:
-            - deploy_aurora
-            - deploy_elasticsearch
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_s3:
-          requires:
-            - deploy_aurora
-            - deploy_elasticsearch
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
       - deploy_serverless:
           requires:
-            - deploy_cloudsearch
-            - deploy_iam
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_stepfunctions:
-          requires:
-            - deploy_serverless
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_sns:
-          requires:
-            - deploy_sqs
-            - deploy_serverless
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_logsubscription:
-          requires:
-            - deploy_serverless
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_sqs:
-          requires:
-            - deploy_iam
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_dynamodb:
-          requires:
-            - deploy_iam
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_dms:
-          requires:
-            - deploy_s3
-            - deploy_dynamodb
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - deploy_lambda_eventsourcemappings:
-          requires:
-            - deploy_s3
-            - deploy_dynamodb
-          filters:
-            branches:
-              only:
-                - development
-                - staging
-                - production
-                - priority
-      - post_deployment:
-          requires:
-            - deploy_lambda_eventsourcemappings
-            - deploy_sns
-            - deploy_dms
-            - deploy_stepfunctions
-            - deploy_logsubscription
+            - deploy_aurora
           filters:
             branches:
               only:
@@ -773,7 +302,7 @@ workflows:
                 - priority
       - environment_test:
           requires:
-            - post_deployment
+            - deploy_serverless
           filters:
             branches:
               only:

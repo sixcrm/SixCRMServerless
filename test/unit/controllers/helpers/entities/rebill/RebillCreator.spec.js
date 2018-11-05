@@ -188,6 +188,8 @@ describe('RebillCreator', () => {
 				};
 
 				td.when(ProductController.prototype.validateDynamicPrice(schedule.product, schedule.price)).thenReturn(true);
+				td.when(ProductScheduleController.prototype.getProducts(td.matchers.anything())).thenResolve({products: []});
+				td.when(ProductScheduleHelperController.prototype.marryProductsToSchedule({product_schedule: td.matchers.anything(), products: []})).thenDo(({product_schedule}) => product_schedule);
 				td.when(ProductScheduleHelperController.prototype.getNextScheduleElementStartDayNumber({day: -1, product_schedule})).thenReturn(0);
 				td.when(ProductScheduleHelperController.prototype.getNextScheduleElementStartDayNumber({day: 0, product_schedule})).thenReturn(30);
 				td.when(ProductScheduleHelperController.prototype.getScheduleElementsOnDayInSchedule({day: td.matchers.isA(Number), product_schedule})).thenReturn(product_schedule.schedule);

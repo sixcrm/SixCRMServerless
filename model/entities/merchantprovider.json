@@ -28,7 +28,9 @@
 						"Test",
 						"Stripe",
 						"AuthorizeNet",
-						"PaymentXP"
+						"PaymentXP",
+						"NMI",
+						"Innovio"
 					]
 				},
 				"id": {
