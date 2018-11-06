@@ -1,0 +1,18 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema",
+	"$id": "model/endpoints/restoreAccount/response.json",
+	"title": "Restore Account Response",
+	"type": "object",
+	"properties": {
+		"result": {
+			"$ref": "../../general/response/responsetype.json"
+		},
+		"order": {
+			"$ref": "../../entities/meta/order.json"
+		}
+	},
+	"required": [
+		"result",
+		"order"
+	]
+}

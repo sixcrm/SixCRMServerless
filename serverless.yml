@@ -359,6 +359,34 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
+  reattemptrebill:
+    handler: handlers/endpoints/handlers.reattemptrebill
+    warmup: true
+    timeout: 29
+    events:
+      - http:
+         path: rebill/reattempt
+         method: post
+         cors: true
+         authorizer:
+           name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
+  restoreaccount:
+    handler: handlers/endpoints/handlers.restoreaccount
+    warmup: true
+    timeout: 29
+    events:
+      - http:
+         path: account/restore
+         method: post
+         cors: true
+         authorizer:
+           name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
 ########################
 # Utility
 ########################

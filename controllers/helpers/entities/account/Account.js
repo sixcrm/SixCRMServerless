@@ -365,6 +365,36 @@ module.exports = class AccountHelperController {
 
 	}
 
+	async restoreAccount({account}){
+		du.debug('Restore Account');
+
+		account = await this._getAccount(account);
+
+		if(!_.has(account, 'billing')){
+			throw eu.getError('server', 'Account does not have a billing property.');
+		}
+
+		if(!_.has(account.billing, 'deactivated_at')){
+			throw eu.getError('bad_request', 'Account is not deactivated.');
+		}
+
+		delete account.billing.limited_at;
+		delete account.billing.deactivated_at;
+		delete account.billing.deactivation_id;
+
+		if(!_.has(this, 'accountController')){
+			this.accountController = new AccountController();
+		}
+
+		this.accountController.disableACLs();
+		account = await this.accountController.update({entity:account, allow_billing_overwrite: true});
+		this.accountController.enableACLs();
+
+		return {
+			message: "Account Restored"
+		};
+	}
+
 	async upgradeAccount({account, plan}){
 
 		du.debug('Upgrade Account');
