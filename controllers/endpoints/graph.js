@@ -49,7 +49,7 @@ module.exports = class graphController extends userAuthenticatedController {
 
 		du.debug('GraphController.epilogue()');
 
-		if (!!auroraContext._connection) {
+		if (auroraContext._connection) {
 			return auroraContext.dispose();
 		}
 
