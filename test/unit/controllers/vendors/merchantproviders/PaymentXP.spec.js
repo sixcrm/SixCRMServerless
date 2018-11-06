@@ -215,8 +215,8 @@ describe('vendors/merchantproviders/PaymentXP/handler.js', () => {
 			const paymentXPController = new PaymentXPController({merchant_provider});
 
 			const result = await paymentXPController.process({customer, creditcard, amount});
-			expect(result.getResult().code).to.equal('decline');
-			expect(result.getResult().message).to.equal('Declined');
+			expect(result.getResult().code).to.equal('harddecline');
+			expect(result.getResult().message).to.equal('Hard decline');
 		});
 	});
 
