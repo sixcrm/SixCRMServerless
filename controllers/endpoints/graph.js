@@ -49,11 +49,8 @@ module.exports = class graphController extends userAuthenticatedController {
 
 		du.debug('GraphController.epilogue()');
 
-		if (auroraContext._connection) {
-			return auroraContext.dispose();
-		}
-
-		return Promise.resolve();
+		global.SixCRM.getResource('auroraContext');
+		return auroraContext.dispose();
 
 	}
 
