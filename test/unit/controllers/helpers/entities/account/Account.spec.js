@@ -79,7 +79,7 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
 
   describe('cancelDeactivation', () => {
 
-    xit('successfully cancels a scheduled deactivation', () => {
+    it('successfully cancels a scheduled deactivation', () => {
 
       let account = MockEntities.getValidAccount();
       let session = MockEntities.getValidSession();
@@ -123,7 +123,7 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
   });
 
   describe('deactivateAccount', () => {
-    xit('successfully schedules a account for deactivation', () => {
+    it('successfully schedules a account for deactivation', () => {
 
       let account = MockEntities.getValidAccount();
       let session = MockEntities.getValidSession();
