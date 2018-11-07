@@ -370,7 +370,7 @@ functions:
          method: post
          cors: true
          authorizer:
-           name: verifytransactionjwt
+           name: verifysitejwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
@@ -384,7 +384,7 @@ functions:
          method: post
          cors: true
          authorizer:
-           name: verifytransactionjwt
+           name: verifysitejwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
