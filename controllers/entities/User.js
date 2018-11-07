@@ -123,12 +123,6 @@ module.exports = class UserController extends entityController {
 
 			}).then((user) => {
 
-				this.setGlobalUser(user);
-
-				return user;
-
-			}).then((user) => {
-
 				this.disableACLs();
 
 				return this.getACLPartiallyHydrated(user)
