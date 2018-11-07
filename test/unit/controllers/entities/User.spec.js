@@ -869,7 +869,7 @@ describe('controllers/entities/User.js', () => {
 			});
 		});
 
-		it('successfully retrieves user strict and sets global user and user acl', () => {
+		it('successfully retrieves user strict', () => {
 
 			let user = getValidUser();
 
@@ -912,8 +912,6 @@ describe('controllers/entities/User.js', () => {
 			const userController = new UserController();
 
 			return userController.getUserStrict(email).then((result) => {
-				expect(global.user).to.deep.equal(user);
-				expect(global.user.acl).to.deep.equal([partially_hydrated_userACL]);
 				expect(result).to.equal(user);
 			});
 		});

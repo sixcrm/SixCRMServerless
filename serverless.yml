@@ -47,6 +47,7 @@ plugins:
   - serverless-prune-plugin
   - serverless-plugin-warmup
   - serverless-plugin-split-stacks
+  - serverless-offline
 
 custom:
   prune:
