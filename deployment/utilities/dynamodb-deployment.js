@@ -370,7 +370,7 @@ module.exports = class DynamoDBDeployment extends AWSDeploymentUtilities {
 		let controller = this.getController(entity_name);
 
 		let seed_promises = arrayutilities.map(seed_definitions, (seed_definition) => {
-
+			process.env.forceAclCreate = true;
 			return controller.store({entity: seed_definition, ignore_updated_at: true}).then(() => {
 				return true;
 			}).catch(error => {
