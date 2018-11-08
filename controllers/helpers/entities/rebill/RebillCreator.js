@@ -7,15 +7,12 @@ const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').defaul
 const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 const Parameters = require('../../../providers/Parameters');
-const AnalyticsEvent = require('../../analytics/analytics-event');
-const MerchantProviderController = require('../../../entities/MerchantProvider');
 const ProductController = require('../../../entities/Product');
 const ProductScheduleController = require('../../../entities/ProductSchedule');
 const ProductScheduleHelperController = require('../../entities/productschedule/ProductSchedule');
 const RebillController = require('../../../entities/Rebill');
 const SessionController = require('../../../entities/Session');
 
-const merchantProviderController = new MerchantProviderController();
 const productController = new ProductController();
 const productScheduleController = new ProductScheduleController();
 const productScheduleHelperController = new ProductScheduleHelperController();
@@ -89,9 +86,7 @@ module.exports = class RebillCreatorHelper {
 		}
 
 		const prototype_rebill = await this.buildRebillPrototype({session, day, normalized_products, normalized_product_schedules});
-		const rebill = await rebillController.create({entity: prototype_rebill});
-		await this.sendAnalyticsEvent({session, rebill});
-		return rebill;
+		return rebillController.create({entity: prototype_rebill});
 	}
 
 	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), cycle = 0, amount = 0.00, product_schedules = null, merchant_provider = null, merchant_provider_selections = null}){
@@ -442,36 +437,6 @@ module.exports = class RebillCreatorHelper {
 
 		du.debug(`Cycle for new rebill in session ${session.id} is ${cycle}.`);
 		return cycle;
-	}
-
-	async sendAnalyticsEvent({session, rebill}) {
-		du.debug('Send Analytics Event');
-		du.debug('Rebill for analytics', rebill, rebill.cycle);
-
-		if (rebill.cycle > 0) {
-			const product_schedule = await productScheduleController.get({id: rebill.product_schedules[0]});
-			const interval = product_schedule.schedule[0].samedayofmonth ? '1 month' : product_schedule.schedule[0].period + ' days';
-			const merchant_provider = await merchantProviderController.get({id: rebill.merchant_provider});
-
-			return AnalyticsEvent.push('subscription', {
-				rebill_id: rebill.id,
-				product_schedule_id: product_schedule.id,
-				rebill_alias: rebill.alias,
-				product_schedule_name: product_schedule.name,
-				datetime: rebill.bill_at,
-				amount: rebill.amount,
-				item_count: _.sumBy(rebill.products, product => product.quantity),
-				cycle: rebill.cycle,
-				interval,
-				account: session.account,
-				session: session.id,
-				session_alias: session.alias,
-				campaign: session.campaign,
-				merchant_provider_name: merchant_provider.name,
-				merchant_provider: merchant_provider.id,
-				customer: session.customer
-			});
-		}
 	}
 
 	calculateAmount(products) {
