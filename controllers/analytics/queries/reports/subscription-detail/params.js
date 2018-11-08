@@ -5,7 +5,6 @@ module.exports = async (parameters, pagination) => {
 	const start = parameters.facets.find(f => f.facet === 'start');
 	const end = parameters.facets.find(f => f.facet === 'end');
 	const productSchedule = parameters.facets.find(f => f.facet === 'productSchedule');
-	const rebillAlias = parameters.facets.find(f => f.facet === 'rebillAlias');
 	const productScheduleName = parameters.facets.find(f => f.facet === 'productScheduleName');
 	const amount = parameters.facets.find(f => f.facet === 'amount');
 	const status = parameters.facets.find(f => f.facet === 'status');
@@ -34,7 +33,6 @@ module.exports = async (parameters, pagination) => {
 	_resolveParamValue('start', start);
 	_resolveParamValue('end', end);
 	_resolveParamValue('productSchedule', productSchedule);
-	_resolveParamValue('rebillAlias', rebillAlias);
 	_resolveParamValue('productScheduleName', productScheduleName);
 	_resolveParamValue('amount', amount);
 	_resolveParamValue('status', status);
