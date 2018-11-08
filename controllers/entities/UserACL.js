@@ -37,7 +37,7 @@ class UserACLController extends entityController {
 
 		du.debug('UserACLController Create');
 
-		if (entity.role === OWNER_ROLE_ID && !owner_user) {
+		if (entity.role === OWNER_ROLE_ID && !owner_user && !process.env.forceAclCreate) {
 			throw eu.getError('server', 'You cannot create an ACL with role Owner');
 		}
 
@@ -48,12 +48,12 @@ class UserACLController extends entityController {
 
 		du.debug('UserACLController Update');
 
-		if (entity.role === OWNER_ROLE_ID) {
+		if (entity.role === OWNER_ROLE_ID && !process.env.forceAclCreate) {
 			throw eu.getError('server', 'You cannot set role to Owner');
 		}
 
 		return this.get({id: entity.id, fatal: true}).then((acl) => {
-			if (acl.role === OWNER_ROLE_ID) {
+			if (acl.role === OWNER_ROLE_ID && !process.env.forceAclCreate) {
 				throw eu.getError('server', 'You cannot downgrade an Owner');
 			}
 
