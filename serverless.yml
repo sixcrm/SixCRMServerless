@@ -47,6 +47,7 @@ plugins:
   - serverless-prune-plugin
   - serverless-plugin-warmup
   - serverless-plugin-split-stacks
+  - serverless-offline
 
 custom:
   prune:
@@ -356,6 +357,34 @@ functions:
          cors: true
          authorizer:
            name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
+  reattemptrebill:
+    handler: handlers/endpoints/handlers.reattemptrebill
+    warmup: true
+    timeout: 29
+    events:
+      - http:
+         path: rebill/reattempt
+         method: post
+         cors: true
+         authorizer:
+           name: verifysitejwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
+  restoreaccount:
+    handler: handlers/endpoints/handlers.restoreaccount
+    warmup: true
+    timeout: 29
+    events:
+      - http:
+         path: account/restore
+         method: post
+         cors: true
+         authorizer:
+           name: verifysitejwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 

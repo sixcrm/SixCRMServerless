@@ -21,6 +21,8 @@ const messageMap = {
 	'99': 'Unknown'
 };
 
+const SOFT_DECLINES = ['5', '10', '20'];
+
 module.exports = class PaymentXPResponse extends MerchantProviderResponse {
 	constructor(){
 		super(arguments[0]);
@@ -34,11 +36,11 @@ module.exports = class PaymentXPResponse extends MerchantProviderResponse {
 			return 'success';
 		}
 
-		if (body.StatusID === '19') {
+		if (SOFT_DECLINES.includes(body.StatusID)) {
 			return 'decline';
 		}
 
-		return 'error';
+		return 'harddecline';
 	}
 
 	determineMerchantCode(vendor_response) {

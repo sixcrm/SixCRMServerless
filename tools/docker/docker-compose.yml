@@ -3,9 +3,10 @@ services:
   node:
     image: node:8.10
   dynamodb:
-    image: cnadiminti/dynamodb-local
+    image: amazon/dynamodb-local
     ports:
       - 8000:8000
+    command: ["-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb"]
   sqs:
     image: vsouza/sqs-local
     ports:
