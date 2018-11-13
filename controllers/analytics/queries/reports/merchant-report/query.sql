@@ -40,7 +40,7 @@ SELECT
 	CAST(ROUND(COALESCE(partial_refunds.refunds_expense, 0), 2) AS DOUBLE PRECISION) AS partial_refund_expense,
 	COALESCE(CAST(COALESCE(partial_refunds.refunds, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS partial_refund_percentage,
 	CAST(ROUND(COALESCE(full_refunds.refunds_expense, 0) + COALESCE(partial_refunds.refunds_expense, 0), 2) AS DOUBLE PRECISION) AS total_refund_expenses,
-	CAST(ROUND(COALESCE(sales.renveue, 0) - (COALESCE(full_refunds.refunds_expense, 0) + COALESCE(partial_refunds.refunds_expense, 0)), 2) AS DOUBLE PRECISION) AS adjusted_sales_revenue
+	CAST(ROUND(COALESCE(sales.renveue, 0) + COALESCE(full_refunds.refunds_expense, 0) + COALESCE(partial_refunds.refunds_expense, 0), 2) AS DOUBLE PRECISION) AS adjusted_sales_revenue
 
 FROM
 
