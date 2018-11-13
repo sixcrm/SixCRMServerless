@@ -2,7 +2,7 @@ const _ = require('lodash');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const WriteRecords = require('./write-records');
 
-const ATTRIBUTES = 17;
+const ATTRIBUTES = 19;
 
 module.exports = class WriteSubscriptionRecords extends WriteRecords {
 
@@ -32,17 +32,19 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 
 		let updateQuery = records.map((r, i) => `
 			UPDATE analytics.f_subscription SET
-				status = $${4*i + 1},
-				cycle = $${4*i + 2}
-			WHERE session_id = $${4*i + 3} AND product_schedule_id = $${4*i + 4}`).join(';');
-		const updateQueryArgs = _.flatten(records.map(r => [r.status, r.cycle, r.session, r.product_schedule_id]));
+				status = $${5*i + 1},
+				cycle = $${5*i + 2}
+			WHERE session_id = $${5*i + 3} AND product_schedule_id = $${5*i + 4} AND product_id = $${5*i + 5}`).join(';');
+		const updateQueryArgs = _.flatten(records.map(r => [r.status, r.cycle, r.session_id, r.product_schedule_id, r.product_id]));
 
 		let query =
 			'INSERT INTO analytics.f_subscription ( \
 				session_id, \
 				product_schedule_id, \
+				product_id, \
 				session_alias, \
 				product_schedule_name, \
+				product_name, \
 				datetime, \
 				status, \
 				amount, \
@@ -66,15 +68,17 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 
 		query += values.join(',');
 
-		query += ' ON CONFLICT (session_id, product_schedule_id) DO NOTHING';
+		query += ' ON CONFLICT (session_id, product_schedule_id, product_id) DO NOTHING';
 
 		const queryArgs = _.flatten(records.map(r => {
 
 			return [
-				r.session,
+				r.session_id,
 				r.product_schedule_id,
+				r.product_id,
 				r.session_alias,
 				r.product_schedule_name,
+				r.product_name,
 				r.datetime,
 				r.status,
 				r.amount,

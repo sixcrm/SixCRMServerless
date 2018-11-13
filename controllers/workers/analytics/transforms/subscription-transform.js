@@ -30,6 +30,17 @@ module.exports = class SubscriptionTransform extends AnalyticsTransform {
 
 		try {
 
+			const merchant_provider = await dynamoClient.get('merchantproviders', result.merchant_provider);
+			result.merchant_provider_name = merchant_provider.name;
+
+		} catch (ex) {
+
+			du.warning('SubscriptionTransform.transform(): could not resolve customer', ex);
+
+		}
+
+		try {
+
 			const customer = await dynamoClient.get('customers', result.customer);
 			if (customer.firstname && customer.lastname) {
 

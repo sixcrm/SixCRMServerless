@@ -3,8 +3,10 @@ DROP TABLE IF EXISTS analytics.f_subscription;
 CREATE TABLE analytics.f_subscription (
 	session_id VARCHAR(36) NOT NULL,
 	product_schedule_id VARCHAR(36) NOT NULL,
+	product_id VARCHAR(36) NOT NULL,
 	session_alias VARCHAR(20) NOT NULL,
 	product_schedule_name VARCHAR(255),
+	product_name VARCHAR(255),
 	datetime TIMESTAMP NOT NULL,
 	status VARCHAR(20) NOT NULL,
 	amount NUMERIC(12, 2) NOT NULL,
@@ -18,5 +20,5 @@ CREATE TABLE analytics.f_subscription (
 	merchant_provider_name VARCHAR(255),
 	customer VARCHAR(36),
 	customer_name VARCHAR(255),
-	CONSTRAINT pk_f_subscription PRIMARY KEY (session_id, product_schedule_id)
+	CONSTRAINT pk_f_subscription PRIMARY KEY (session_id, product_schedule_id, product_id)
 );

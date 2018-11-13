@@ -1,8 +1,10 @@
 SELECT
 	s.session_id,
 	s.product_schedule_id,
+	s.product_id,
 	s.session_alias,
 	s.product_schedule_name,
+	s.product_name,
 	s.status,
 	s.cycle,
 	s.interval,
