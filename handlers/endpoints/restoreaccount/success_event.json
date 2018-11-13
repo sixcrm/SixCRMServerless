@@ -1,0 +1,27 @@
+{
+	"requestContext":{
+		"authorizer":{
+			"user":"4ee23a8f5c8661612075a89e72a56a3c6d00df90"
+		}
+	},
+	"pathParameters": {
+		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
+	},
+	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNDk2MTY0Mzg3LCJleHAiOjE0OTYxNjc5ODcsInVzZXJfYWxpYXMiOiI0ZWUyM2E4ZjVjODY2MTYxMjA3NWE4OWU3MmE1NmEzYzZkMDBkZjkwIn0.GNl4N85mzShUMH-9eTTTOHIVJuce_-ETMvfntryLRbw",
+	"body": {
+		"creditcard":{
+			"number": "4111111111111111",
+			"expiration": "1025",
+			"cvv": "999",
+			"name": "Rama Damunaste",
+			"address": {
+				"line1": "10 Skid Rw.",
+				"line2": "Suite 100",
+				"city": "Portland",
+				"state": "OR",
+				"zip": "97213",
+				"country": "US"
+			}
+		}
+	}
+}

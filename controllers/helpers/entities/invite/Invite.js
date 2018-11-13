@@ -268,7 +268,7 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 			throw account_error
 		}
 
-		let useracls_for_account = useracls.useracls.filter(acl => acl.account === account.id);
+		let useracls_for_account = useracls.useracls.filter(acl => acl.account === account.id || acl.account === '*');
 
 		if (!useracls_for_account || !useracls_for_account.length) {
 			throw account_error
