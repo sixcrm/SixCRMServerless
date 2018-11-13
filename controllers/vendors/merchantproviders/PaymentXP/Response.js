@@ -21,7 +21,7 @@ const messageMap = {
 	'99': 'Unknown'
 };
 
-const SOFT_DECLINES = ['5', '10', '20'];
+const SOFT_DECLINES = ['10', '20'];
 
 module.exports = class PaymentXPResponse extends MerchantProviderResponse {
 	constructor(){
