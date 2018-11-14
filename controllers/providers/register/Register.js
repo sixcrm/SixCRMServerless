@@ -172,7 +172,7 @@ module.exports = class Register extends RegisterUtilities {
 				du.warning(`Cannot parse processor response for transaction ${transaction.id}`, transaction.processor_response)
 			}
 
-			return AnalyticsEvent.push('transaction_' + transaction.result, {
+			return AnalyticsEvent.push('transaction', {
 				datetime: moment.tz('UTC').toISOString(),
 				session,
 				rebill,

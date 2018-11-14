@@ -178,7 +178,10 @@ module.exports = class RestoreAccountController extends transactionEndpointContr
 		const creditcard = register_response.getCreditCard();
 
 		AnalyticsEvent.push('order', {session, campaign});
-		AnalyticsEvent.push('create_order_initial', {rebill});
+		AnalyticsEvent.push('create_order', {
+			rebill,
+			type: 'initial'
+		});
 		eventPushHelperController().pushEvent({
 			event_type: response_type === 'success' ? 'allorders' : 'decline',
 			context: {
