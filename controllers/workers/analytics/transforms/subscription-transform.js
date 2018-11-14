@@ -24,7 +24,18 @@ module.exports = class SubscriptionTransform extends AnalyticsTransform {
 
 		} catch (ex) {
 
-			du.warning('CreateOrderTransform.transform(): could not resolve campaign', ex);
+			du.warning('SubscriptionTransform.transform(): could not resolve campaign', ex);
+
+		}
+
+		try {
+
+			const merchant_provider = await dynamoClient.get('merchantproviders', result.merchant_provider);
+			result.merchant_provider_name = merchant_provider.name;
+
+		} catch (ex) {
+
+			du.warning('SubscriptionTransform.transform(): could not resolve customer', ex);
 
 		}
 
@@ -39,7 +50,7 @@ module.exports = class SubscriptionTransform extends AnalyticsTransform {
 
 		} catch (ex) {
 
-			du.warning('CreateOrderTransform.transform(): could not resolve customer', ex);
+			du.warning('SubscriptionTransform.transform(): could not resolve customer', ex);
 
 		}
 
