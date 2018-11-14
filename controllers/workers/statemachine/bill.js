@@ -44,8 +44,9 @@ module.exports = class BillController extends stepFunctionWorkerController {
 			await rebillController.update({entity: rebill});
 		}
 
-		await AnalyticsEvent.push('create_order_recurring', {
-			rebill
+		await AnalyticsEvent.push('create_order', {
+			rebill,
+			type: 'recurring'
 		});
 
 		let result = register_result.parameters.get('response_type');

@@ -162,8 +162,9 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 				session,
 				campaign,
 			}),
-			AnalyticsEvent.push('create_order_initial', {
-				rebill
+			AnalyticsEvent.push('create_order', {
+				rebill,
+				type: 'initial'
 			}),
 			this.publishEvent({processed_rebill, rebill, campaign, session, order, transaction_subtype, customer, creditcard})
 		]);

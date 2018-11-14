@@ -1,8 +1,9 @@
 {
 	"messages": [
 		{
-			"event_type": "create_order_initial",
+			"event_type": "create_order",
 			"context": {
+				"type": "initial",
 				"rebill": {
 					"id": "16b7787a-fb6a-4392-996e-238a338b3b6d",
 					"alias": "R123456789",
@@ -17,8 +18,9 @@
 			}
 		},
 		{
-			"event_type": "create_order_recurring",
+			"event_type": "create_order",
 			"context": {
+				"type": "recurring",
 				"rebill": {
 					"id": "16b7787a-fb6a-4392-996e-238a338b3b6e",
 					"alias": "R123456790",
