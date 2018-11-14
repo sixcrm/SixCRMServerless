@@ -365,7 +365,7 @@ module.exports = class AccountHelperController {
 
 	}
 
-	async restoreAccount({account}){
+	async restoreAccount(account, new_session){
 		du.debug('Restore Account');
 
 		account = await this._getAccount(account);
@@ -381,6 +381,7 @@ module.exports = class AccountHelperController {
 		delete account.billing.limited_at;
 		delete account.billing.deactivated_at;
 		delete account.billing.deactivation_id;
+		account.billing.session = new_session.id;
 
 		if(!_.has(this, 'accountController')){
 			this.accountController = new AccountController();
@@ -428,7 +429,7 @@ module.exports = class AccountHelperController {
 
 	}
 
-	async getAccountForCustomer(customer) {
+	async getAccountForCustomer(customer_id) {
 		if (!_.has(this, 'sessionController')) {
 			this.sessionController = new SessionController();
 		}
@@ -440,7 +441,7 @@ module.exports = class AccountHelperController {
 		const {session} = await this.sessionController.getBySecondaryIndex({
 			field: 'customer',
 			index_name: 'customer-index',
-			index_value: customer.id,
+			index_value: customer_id,
 			query_parameters: {
 				filter_expression: '#account = :billingaccount AND not_exists(#cancelled) AND not_exists(#concluded)',
 				expression_attribute_names: {

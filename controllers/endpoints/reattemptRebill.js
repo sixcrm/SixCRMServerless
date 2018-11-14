@@ -8,6 +8,7 @@ const AccountHelperController = require('../helpers/entities/account/Account');
 const CreditCardController = require('../entities/CreditCard');
 const CustomerController = require('../entities/Customer');
 const EventPushHelperController = require('../helpers/events/EventPush');
+const MerchantProviderSummaryHelperController = require('../helpers/entities/merchantprovidersummary/MerchantProviderSummary');
 const OrderHelperController = require('../helpers/order/Order');
 const RebillController = require('../entities/Rebill');
 const RegisterController = require('../providers/register/Register');
@@ -19,6 +20,7 @@ const accountHelperController = new AccountHelperController();
 const creditCardController = new CreditCardController();
 const customerController = new CustomerController();
 const eventPushHelperController = new EventPushHelperController();
+const merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 const orderHelperController = new OrderHelperController();
 const rebillController = new RebillController();
 const registerController = new RegisterController();
@@ -69,6 +71,12 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 		this.initialize();
 	}
 
+	async validateAccount(event) {
+		du.debug('Validate Account');
+		await accountHelperController.validateAccount();
+		return event;
+	}
+
 	async execute(event) {
 		await this.preamble(event)
 		const {rebill: rebill_id, creditcard: raw_creditcard} = this.parameters.get('event');
@@ -76,11 +84,10 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 		const account = await accountController.get({id: global.account});
 		const rebill = await rebillController.get({id: rebill_id});
 		const session = await sessionController.get({id: rebill.parentsession});
-		let creditcard;
 		if (raw_creditcard) {
-			creditcard = await this.persistCreditCard(raw_creditcard, session.customer);
+			await this.persistCreditCard(raw_creditcard, session.customer);
 		}
-		const register_response = await this.executeBilling(rebill, creditcard);
+		const register_response = await this.executeBilling(rebill, raw_creditcard);
 		const transactions = register_response.parameters.get('transactions');
 		await this.checkAccountStanding({account, session});
 		await this.incrementMerchantProviderSummary(transactions);
@@ -99,7 +106,7 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 	}
 
 	async persistCreditCard(creditcard_attrs, customer) {
-		const creditcard = await creditCardController.assureCreditCard(creditcard_attrs, {hydrate_token: true});
+		const creditcard = await creditCardController.assureCreditCard(Object.assign({}, creditcard_attrs), {hydrate_token: true});
 		await customerController.addCreditCard(customer, creditcard);
 		return creditcard;
 	}
@@ -139,7 +146,7 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 				return;
 			}
 
-			return this.merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
+			return merchantProviderSummaryHelperController.incrementMerchantProviderSummary({
 				merchant_provider: transaction.merchant_provider,
 				day: transaction.created_at,
 				total: transaction.amount,
@@ -154,7 +161,7 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 		const response_type = register_response.parameters.get('response_type');
 		const creditcard = register_response.getCreditCard();
 
-		await eventPushHelperController().pushEvent({
+		await eventPushHelperController.pushEvent({
 			event_type: response_type === 'success' ? 'allorders' : 'decline',
 			context: {
 				campaign,

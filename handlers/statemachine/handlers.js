@@ -14,7 +14,7 @@ const CloseSessionController = global.SixCRM.routes.include('controllers', 'work
 const ConcludeSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/concludeSession.js');
 const CleanupSessionController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupSession.js');
 
-const CleanupDeclineController = global.SixCRM.routes.include('controllers', 'workers/statemachine/cleanupDecline.js');
+const BillingFailureController = global.SixCRM.routes.include('controllers', 'workers/statemachine/billingFailure.js');
 const BillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/bill.js');
 const ReportController = global.SixCRM.routes.include('controllers', 'workers/statemachine/report.js');
 const SendDeliveryNotificationController = global.SixCRM.routes.include('controllers', 'workers/statemachine/sendDeliveryNotification.js');
@@ -40,7 +40,7 @@ module.exports = {
 	gettrackingnumber: handleStepFunction((event) => new GetTrackingNumberController().execute(event)),
 	notifyfulfillmentproviders: handleStepFunction((event) => new NotifyFulfillmentProvidersController().execute(event)),
 	getfulfillmentrequired: handleStepFunction((event) => new GetFulfillmentRequiredController().execute(event)),
-	cleanupdecline: handleStepFunction((event) => new CleanupDeclineController().execute(event)),
+	billingfailuredecline: handleStepFunction((event) => new BillingFailureController().execute(event)),
 	getrecoverdate: handleStepFunction((event) => new GetRecoverDateController().execute(event)),
 	bill: handleStepFunction((event) => new BillController().execute(event)),
 
