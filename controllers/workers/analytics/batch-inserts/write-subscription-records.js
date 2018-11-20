@@ -32,13 +32,14 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 
 		let updateQuery = records.map((r, i) => `
 			UPDATE analytics.f_subscription SET
-				status = $${7*i + 1},
-				cycle = $${7*i + 2},
-				merchant_provider = $${7*i + 3},
-				merchant_provider_name = $${7*i + 4}
-			WHERE session_id = $${7*i + 5} AND product_schedule_id = $${7*i + 6} AND product_id = $${7*i + 7}`).join(';');
+				datetime = $${8*i + 1},
+				status = $${8*i + 2},
+				cycle = $${8*i + 3},
+				merchant_provider = $${8*i + 4},
+				merchant_provider_name = $${8*i + 5}
+			WHERE session_id = $${8*i + 6} AND product_schedule_id = $${8*i + 7} AND product_id = $${8*i + 8}`).join(';');
 		const updateQueryArgs = _.flatten(records.map(r =>
-			[r.status, r.cycle, r.merchant_provider, r.merchant_provider_name, r.session_id, r.product_schedule_id, r.product_id]));
+			[r.datetime, r.status, r.cycle, r.merchant_provider, r.merchant_provider_name, r.session_id, r.product_schedule_id, r.product_id]));
 
 		let query =
 			'INSERT INTO analytics.f_subscription ( \
