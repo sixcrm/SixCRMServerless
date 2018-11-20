@@ -55,7 +55,18 @@ module.exports = class ProductHelperController {
 
 	}
 
-	getDefaultImage(product){
+	getDefaultImage(product) {
+
+		const image = this.getProductImage(product);
+
+		if (!image) {
+			return this.getPublicMissingImagePath();
+		}
+
+		return image;
+	}
+
+	getProductImage(product) {
 
 		du.debug('Get Default Image');
 
@@ -76,6 +87,10 @@ module.exports = class ProductHelperController {
 		}
 
 		return null;
+	}
+
+	getPublicMissingImagePath() {
+		return `https://s3.amazonaws.com/sixcrm-${global.SixCRM.configuration.stage}-account-resources/global/product-default-image.svg`
 	}
 
 }
