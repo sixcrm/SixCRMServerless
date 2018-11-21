@@ -13,7 +13,7 @@
 				"amount": 49.95,
 				"item_count": 1,
 				"cycle": 2,
-				"interval": 30,
+				"interval": "30 days",
 				"account": "d26c1887-7ad4-4a44-be0b-e80dbce22774",
 				"campaign": "11111111-1111-1111-1111-111111111001",
 				"merchant_provider_name": "Test Merchant Provider",
