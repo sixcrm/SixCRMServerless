@@ -216,7 +216,7 @@ module.exports = class Register extends RegisterUtilities {
 				const product_id = scheduleItem.product.id;
 				if (_.includes(product_ids, product_id)) {
 
-					const cycle = this.computeCycle();
+					const cycle = this.computeCycle(session.created_at, rebill.bill_at, scheduleItem);
 					await AnalyticsEvent.push('subscription', {
 						session_id: session.id,
 						product_schedule_id: product_schedule.id,
