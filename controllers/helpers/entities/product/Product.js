@@ -90,7 +90,7 @@ module.exports = class ProductHelperController {
 	}
 
 	getPublicMissingImagePath() {
-		return `https://s3.amazonaws.com/sixcrm-${global.SixCRM.configuration.stage}-account-resources/global/product-default-image.svg`
+		return `https://s3.amazonaws.com/sixcrm-${global.SixCRM.configuration.stage}-account-resources/global/product-default-image.png`
 	}
 
 }
