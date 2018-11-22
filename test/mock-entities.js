@@ -1179,7 +1179,7 @@ class MockEntities {
 
     return arrayutilities.map(ids, id => {
       return {
-        id: uuidV4(),
+        id: id,
         distribution: randomutilities.randomDouble(0.0, 1.0)
       };
     });
