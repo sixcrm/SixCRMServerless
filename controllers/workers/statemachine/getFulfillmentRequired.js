@@ -28,7 +28,9 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 
 		let noship = this.areProductsNoShip(products);
 
-		return this.respond(noship);
+		let transactions_successful = this.areTransactionsSuccessful(transactions);
+
+		return this.respond(noship, transactions_successful);
 
 	}
 
@@ -111,6 +113,25 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 
 	}
 
+	areTransactionsSuccessful(transactions) {
+		if (!transactions || !transactions.length) {
+			du.error('No transactions passed', transactions);
+			throw eu.getError('server', 'No transactions passed ' + JSON.stringify(transactions))
+		}
+
+		let success = true;
+
+		transactions.forEach(transaction => {
+			if (transaction.result !== 'success') {
+				du.error('Transaction is not successful, should prevent fulfillment', transaction);
+
+				success = false;
+			}
+		});
+
+		return success;
+	}
+
 	areProductsNoShip(products){
 
 		du.debug('Are Products No Ship');
@@ -121,9 +142,13 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 
 	}
 
-	respond(no_ship){
+	respond(no_ship, transactions_successfull){
 
 		du.debug('Respond');
+
+		if(transactions_successfull === false) {
+			return 'ERROR';
+		}
 
 		if(no_ship){
 			return 'NOSHIP';
