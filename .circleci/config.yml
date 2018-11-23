@@ -19,6 +19,9 @@ jobs:
       - run:
           name: Install npm
           command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm install
+      - run:
+          name: Build TypeScript
+          command: npm run ts-build
       - save_cache:
           key: v1-dependency-cache-{{ checksum "package-lock.json" }}
           paths:
