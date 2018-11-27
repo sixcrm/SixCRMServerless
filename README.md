@@ -178,3 +178,23 @@ Currently deployment is (mostly) handled via CircleCI. There are a few issues:
 ## Data Spoofing 
 
 The Six deployment has random data "spoofers" -  that is scripts which attempts to emulate data in the absence of real usage or customer data.
+
+# TypeScript
+
+## Watch
+
+Run `npm run ts-watch`
+
+## Build (i.e. for Circle)
+
+Run `npm run ts-build`
+
+## Structure
+
+Old js files are where they are. New ts files go alongside existing js. Ts files are compiled to js files that
+reside in `lib` directory.
+
+## Imports
+
+When requiring old js files use `require(@root/path/to/file)`. When requiring compiled js files use `require(@lib/path/to/file)`, or `require(@root/lib/path/to/file)`.
+

@@ -1,21 +1,16 @@
+require('module-alias/register');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
-// const CustomerMailerHelper = global.SixCRM.routes.include('helpers', 'email/CustomerMailer.js');
-// const EmailTemplateController = global.SixCRM.routes.include('entities', 'EmailTemplate.js');
-// const SMTPPRoviderController = global.SixCRM.routes.include('entities', 'SMTPProvider.js');
-// const handlebars = global.SixCRM.routes.include('helpers', 'emailtemplates/Handlebars.js');
-// const AccountDetailsController = global.SixCRM.routes.include('entities', 'AccountDetails.js');
-
-const CustomMailerHelper = require('../email/CustomerMailer.js');
-const handlebars = require('./Handlebars.js');
-const EmailTemplateController = require('../../entities/EmailTemplate.js');
-const SMTPPRoviderController = require('../../entities/SMTPProvider.js');
-const AccountDetailsController = require('../../entities/AccountDetails.js');
+const CustomMailerHelper = require('@root/controllers/helpers/email/CustomerMailer.js');
+const handlebars = require('@root/controllers/helpers/emailtemplates/Handlebars.js');
+const EmailTemplateController = require('@root/controllers/entities/EmailTemplate.js');
+const SMTPPRoviderController = require('@root/controllers/entities/SMTPProvider.js');
+const AccountDetailsController = require('@root/controllers/entities/AccountDetails.js');
 
 declare const global: any;
 
-export class EmailTemplateSender {
+export default class EmailTemplateSender {
 	private emailTemplatesController: any = new EmailTemplateController();
 	private accountDetailsController: any = new AccountDetailsController();
 	private smtpProviderController: any = new SMTPPRoviderController();
@@ -60,7 +55,7 @@ export class EmailTemplateSender {
 	compileBodyWithExampleData(parameters: {template: any}) {
 		du.debug('Compile Body With Example', parameters.template);
 
-		let context = require('./example_context');
+		let context = require('@root/controllers/helpers/emailtemplates/example_context');
 
 		return this.accountDetailsController.get({ id: global.account }).then((account_details: any) => {
 			context.accountdetails = account_details;

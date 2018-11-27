@@ -1,3 +1,4 @@
+require('module-alias/register');
 const _ = require('lodash');
 
 const GraphQLObjectType = require('graphql').GraphQLObjectType;
@@ -916,7 +917,7 @@ const fields = Object.assign({}, {
 			}
 		},
 		resolve: function(root, id) {
-			let helper = global.SixCRM.routes.include('helpers', 'emailtemplates/EmailTemplateSender.js').EmailTemplateSender;
+			let helper = require('@lib/controllers/helpers/emailtemplates/EmailTemplateSender.js').default;
 			return new helper().sendEmailWithTemplate({template_id: id}).then(() => { return {result: 'OK'} });
 
 		}
@@ -931,7 +932,7 @@ const fields = Object.assign({}, {
 		},
 		resolve: function(root, body) {
 
-			let helper = global.SixCRM.routes.include('helpers', 'emailtemplates/EmailTemplateSender.js');
+			let helper = require('@lib/controllers/helpers/emailtemplates/EmailTemplateSender.js').default;
 			return new helper().compileBodyWithExampleData({template: body}).then(result => { return {result}});
 
 		}

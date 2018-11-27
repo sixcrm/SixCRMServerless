@@ -33,6 +33,7 @@
     "lodash": "^4.17.10",
     "luhn": "^2.3.0",
     "mime": "^1.6.0",
+    "module-alias": "^2.1.0",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.20",
     "nodemailer": "^4.6.7",
@@ -125,5 +126,9 @@
   "author": "SixCRM",
   "license": "UNLICENSED",
   "private": true,
-  "homepage": "https://github.com/6crm/sixcrmserverless"
+  "homepage": "https://github.com/6crm/sixcrmserverless",
+  "_moduleAliases": {
+    "@root": ".",
+    "@lib": "lib"
+  }
 }

@@ -2,7 +2,8 @@
   "compilerOptions": {
 	"module": "commonjs",
 	"target": "es6",
-	"rootDir": "./",
+	"rootDir": ".",
+	"outDir": "lib",
 	"lib": [ "es2017", "esnext.asynciterable" ],
 	"moduleResolution": "node",
 	"sourceMap": true,
@@ -10,5 +11,5 @@
 	"preserveConstEnums": true,
 	"suppressImplicitAnyIndexErrors": true
   },
-  "exclude": [ "build"]
+  "exclude": [ "lib", "node_modules"]
 }
