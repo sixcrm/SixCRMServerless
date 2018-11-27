@@ -1,4 +1,5 @@
 const util = require('util');
+const moment = require('moment-timezone');
 const AnalyticsTransform = require('../analytics-transform');
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const DynamoClient = require('./entities/dynamo');
@@ -16,6 +17,19 @@ module.exports = class SubscriptionTransform extends AnalyticsTransform {
 			status: 'active'
 		}, record.context);
 
+		const datetime = moment(result.datetime).utc();
+		if (result.interval === 'monthly') {
+
+			result.datetime = datetime.add(1, 'months').format();
+
+		}
+		else {
+
+			const days = result.interval.substring(0, result.interval.indexOf(' '));
+			result.datetime = datetime.add(days, 'days').format();
+
+		}
+
 		const dynamoClient = new DynamoClient();
 		try {
 
@@ -24,7 +38,18 @@ module.exports = class SubscriptionTransform extends AnalyticsTransform {
 
 		} catch (ex) {
 
-			du.warning('CreateOrderTransform.transform(): could not resolve campaign', ex);
+			du.warning('SubscriptionTransform.transform(): could not resolve campaign', ex);
+
+		}
+
+		try {
+
+			const merchant_provider = await dynamoClient.get('merchantproviders', result.merchant_provider);
+			result.merchant_provider_name = merchant_provider.name;
+
+		} catch (ex) {
+
+			du.warning('SubscriptionTransform.transform(): could not resolve customer', ex);
 
 		}
 
@@ -39,7 +64,7 @@ module.exports = class SubscriptionTransform extends AnalyticsTransform {
 
 		} catch (ex) {
 
-			du.warning('CreateOrderTransform.transform(): could not resolve customer', ex);
+			du.warning('SubscriptionTransform.transform(): could not resolve customer', ex);
 
 		}
 

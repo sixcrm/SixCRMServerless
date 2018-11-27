@@ -80,7 +80,7 @@ module.exports = class ActivityHelper {
 				activity['associated_with_type'] = associated_with.type;
 			}
 
-			return AnalyticsEvent.push(`activity_${action}`, activity);
+			return AnalyticsEvent.push('activity', activity);
 
 		});
 
