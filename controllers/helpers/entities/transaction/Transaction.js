@@ -46,19 +46,21 @@ module.exports = class TransactionHelperController {
 
 	}
 
-	getTransactionProducts(transactions) {
+	getTransactionProducts(transactions, ignore_failed = true) {
 
-		du.debug('Get Transaction Products');
+		du.debug('TransactionHelperController Get Transaction Products', transactions);
 
 		let transaction_products = [];
 
 		arrayutilities.map(transactions, transaction => {
-			if (_.has(transaction, 'products') && transaction.type === 'sale') {
+			if (_.has(transaction, 'products') && transaction.type === 'sale' && (transaction.result === 'success' || ignore_failed)) {
 				arrayutilities.map(transaction.products, transaction_product => {
 					transaction_products.push(transaction_product);
 				});
 			}
 		});
+
+		du.debug('TransactionHelperController getTransactionProducts result', transaction_products);
 
 		return transaction_products;
 
