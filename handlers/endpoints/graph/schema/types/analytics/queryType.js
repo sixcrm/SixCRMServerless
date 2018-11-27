@@ -1,7 +1,7 @@
 const AnalyticsReportResponse = require('../analytics/reports/report/analytics-report-response');
 const AnalyticsReportFacetsRequest = require('../analytics/reports/facets/analytics-report-facets-request');
 const AnalyticsReportFacetsResponse = require('../analytics/reports/facets/analytics-report-facets-response');
-const AnalyticsController = global.SixCRM.routes.include('controllers', 'analytics/Analytics.js');
+const AnalyticsController = require('@6crm/sixcrmanalytics/lib/queries/Analytics').default;
 const AnalyticsReportSelector = require('./reports/common/analytics-report-selector');
 const GraphQLNonNull = require('graphql').GraphQLNonNull;
 const GraphQLList = require('graphql').GraphQLList;
