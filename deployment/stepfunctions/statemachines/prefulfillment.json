@@ -23,12 +23,7 @@
           "Variable": "$.status",
           "StringEquals": "NOSHIP",
           "Next": "No Fulfillment Required"
-        },
-		{
-		  "Variable": "$.status",
-		  "StringEquals": "ERROR",
-		  "Next": "Not All Transactions Successful"
-		}
+        }
       ],
       "Default": "Trigger Fulfillment"
     },
@@ -48,9 +43,6 @@
     },
     "No Fulfillment Required":{
       "Type":"Succeed"
-    },
-	"Not All Transactions Successful":{
-      "Type":"Fail"
     }
   }
 }
