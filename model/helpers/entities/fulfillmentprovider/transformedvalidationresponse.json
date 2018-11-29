@@ -9,7 +9,8 @@
 			"enum": [
 				"success",
 				"fail",
-				"error"
+				"error",
+			  	"decline"
 			]
 		},
 		"vendor_response": {
