@@ -189,8 +189,8 @@ functions:
     handler: handlers/statemachine/handlers.triggerprefulfillment
   getrebillsession:
     handler: handlers/statemachine/handlers.getrebillsession
-  cleanupdecline:
-    handler: handlers/statemachine/handlers.cleanupdecline
+  billingfailure:
+    handler: handlers/statemachine/handlers.billingfailure
 
   #Bill
   triggerrecovery:
@@ -360,13 +360,17 @@ functions:
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 
+########################
+# Miscellaneous Endpoints
+########################
+
   reattemptrebill:
     handler: handlers/endpoints/handlers.reattemptrebill
     warmup: true
     timeout: 29
     events:
       - http:
-         path: rebill/reattempt
+         path: rebill/reattempt/{account}
          method: post
          cors: true
          authorizer:
@@ -380,7 +384,7 @@ functions:
     timeout: 29
     events:
       - http:
-         path: account/restore
+         path: account/restore/{account}
          method: post
          cors: true
          authorizer:
