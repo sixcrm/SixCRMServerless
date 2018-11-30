@@ -55,7 +55,7 @@
 						"event_type": [
 							"billing_failed",
 							"billing_reminder",
-							"billing_last_warning",
+							"billing_final_warning",
 							"account_limited",
 							"account_deactivated",
 							"order",
