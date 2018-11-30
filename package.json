@@ -8,6 +8,9 @@
   "main": "index.js",
   "dependencies": {
     "@6crm/sixcrmcore": "0.0.25",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/uuid": "^3.4.4",
     "ajv": "^6.5.1",
     "apn": "^2.2.0",
     "authorizenet": "^1.0.5",
@@ -56,6 +59,7 @@
   "devDependencies": {
     "@adexchange/aeg-limelight-api": "0.0.224",
     "@types/aws-lambda": "^8.10.15",
+    "@types/node": "^10.12.10",
     "aws-sdk": "^2.259.1",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
@@ -82,6 +86,7 @@
     "serverless-prune-plugin": "^1.3.1",
     "supertest": "^2.0.1",
     "testdouble": "^3.8.1",
+    "ts-node": "^7.0.1",
     "typescript": "^3.1.6",
     "yaml-lint": "0.0.4",
     "yargs": "^11.1.0"
@@ -117,7 +122,8 @@
     "test-cli-extract": "NODE_CONFIG_DIR=config/local NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=3 node cli/index.js extract --crm limelight --client elyfe.limelightcrm.com",
     "test-cli-ingest": "stage=local-docker NODE_CONFIG_DIR=config/local-docker NODE_CONFIG_ENV=site SIX_DEBUG_LOCAL=true SIX_VERBOSE=2 node cli/index.js ingest --account bb399f83-a050-46dd-a14d-b8b1b444c8b8",
     "ts-watch": "tsc -w",
-    "ts-build": "tsc"
+    "ts-build": "tsc",
+    "ts-test": "./node_modules/.bin/mocha -r ts-node/register **/*.spec.ts"
   },
   "repository": {
     "type": "git",
