@@ -1,7 +1,9 @@
 /**
  * Entities have identities, two entities are same if they have same identities.
  */
-export interface Entity<I> {
+import {Identity} from "./Identity";
+
+export interface Entity<I extends Identity<any>> {
 
 	readonly id: I;
 
