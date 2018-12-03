@@ -98,7 +98,6 @@
     },
     "Trigger Recovery": {
       "Type": "Task",
-      "Next":"Recovery Triggered",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerrecovery",
       "ResultPath": "$.status",
       "Retry" : [
