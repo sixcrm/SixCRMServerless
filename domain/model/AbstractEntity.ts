@@ -1,6 +1,7 @@
 import {Entity} from "./Entity";
+import {Identity} from "./Identity";
 
-export abstract class AbstractEntity<I> implements Entity<I> {
+export abstract class AbstractEntity<I extends Identity<any>> implements Entity<I> {
 
 	readonly id: I;
 
