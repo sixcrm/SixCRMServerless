@@ -35,10 +35,12 @@ module.exports = class CampaignController extends entityController {
 
 		const campaignCount = _(await this.list({pagination: {limit: 1}})).get('pagination.count', 0);
 
-		if (campaignCount < 0) {
-			throw eu.getError('forbidden', 'Your subscription level does not allow creating more campaigns.')
+
+		if (campaignCount > 0) {
+			throw eu.getError('forbidden', 'Your subscription level does not allow creating more campaigns.');
 		}
 		du.debug('Creating campaign for basic plan.');
+		super.create(argumentation);
 
 	}
 
