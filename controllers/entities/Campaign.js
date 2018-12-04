@@ -2,8 +2,10 @@
 const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const entityController = require('./Entity');
+const AccountController = require('./Account');
 
 module.exports = class CampaignController extends entityController {
 
@@ -12,6 +14,27 @@ module.exports = class CampaignController extends entityController {
 		super('campaign');
 
 		this.search_fields = ['name'];
+
+		this.accountController = new AccountController();
+	}
+
+	async create(argumentation) {
+		if (global.account === '*' || this.permissionutilities.areACLsDisabled()) {
+			return super.create(argumentation);
+		}
+
+		const account = await this.accountController.get({id: global.account});
+		const plan = _(account).get('billing.plan', null);
+
+		if (!plan || plan !== 'basic') {
+			return super.create(argumentation);
+		}
+
+		const campaignCount = _(await this.list({pagination: {limit: 1}})).get('pagination.count', 0);
+
+		if (campaignCount < 0) {
+			throw eu.getError('forbidden', 'Your subscription level does not allow creating more campaigns.')
+		}
 
 	}
 
