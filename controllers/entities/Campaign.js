@@ -19,7 +19,9 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	async create(argumentation) {
+		du.debug('Create campaign', argumentation.entity.name);
 		if (global.account === '*' || this.permissionutilities.areACLsDisabled()) {
+			du.debug('Master account or ACLs disabled.');
 			return super.create(argumentation);
 		}
 
@@ -27,6 +29,7 @@ module.exports = class CampaignController extends entityController {
 		const plan = _(account).get('billing.plan', null);
 
 		if (!plan || plan !== 'basic') {
+			du.debug('Non-basic plan');
 			return super.create(argumentation);
 		}
 
@@ -35,6 +38,7 @@ module.exports = class CampaignController extends entityController {
 		if (campaignCount < 0) {
 			throw eu.getError('forbidden', 'Your subscription level does not allow creating more campaigns.')
 		}
+		du.debug('Creating campaign for basic plan.');
 
 	}
 
