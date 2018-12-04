@@ -40,8 +40,24 @@ module.exports = class CampaignController extends entityController {
 			throw eu.getError('forbidden', 'Your subscription level does not allow creating more campaigns.');
 		}
 		du.debug('Creating campaign for basic plan.');
-		super.create(argumentation);
+		return super.create(argumentation);
 
+	}
+
+	async update({entity, ignore_updated_at}) {
+		if (!entity.affiliate_allow || !entity.affiliate_deny) {
+			return super.update({entity, ignore_updated_at})
+		}
+
+		const affiliate_intersection = entity.affiliate_allow
+			.filter(allow => entity.affiliate_deny.includes(allow))
+			.filter(affiliate => affiliate !== '*');
+
+		if (affiliate_intersection.length) {
+			throw eu.getError('bad_request', 'affiliate_allow and affiliate_deny should have different values')
+		}
+
+		return super.update({entity, ignore_updated_at});
 	}
 
 	associatedEntitiesCheck({id}){
