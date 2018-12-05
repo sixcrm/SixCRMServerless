@@ -17,7 +17,8 @@
 			"Catch": [
 				{
 					"ErrorEquals": ["States.ALL"],
-					"Next": "Billing Failed"
+					"Next": "Billing Failed",
+					"ResultPath": "$.error"
 				}
 			]
     },
