@@ -10,9 +10,8 @@
       "Retry" : [
           {
             "ErrorEquals": [ "States.ALL" ],
-            "IntervalSeconds": 300,
-            "MaxAttempts": 5,
-            "BackoffRate": 2
+            "IntervalSeconds": 120,
+            "MaxAttempts": 2
           }
 			],
 			"Catch": [
