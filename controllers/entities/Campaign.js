@@ -20,6 +20,8 @@ module.exports = class CampaignController extends entityController {
 
 	async create(argumentation) {
 		du.debug('Create campaign', argumentation.entity.name);
+		this.affiliateCheck(argumentation.entity);
+
 		if (global.account === '*' || this.permissionutilities.areACLsDisabled()) {
 			du.debug('Master account or ACLs disabled.');
 			return super.create(argumentation);
@@ -45,8 +47,14 @@ module.exports = class CampaignController extends entityController {
 	}
 
 	async update({entity, ignore_updated_at}) {
+		this.affiliateCheck(entity);
+
+		return super.update({entity, ignore_updated_at});
+	}
+
+	affiliateCheck(entity) {
 		if (!entity.affiliate_allow || !entity.affiliate_deny) {
-			return super.update({entity, ignore_updated_at})
+			return;
 		}
 
 		const affiliate_intersection = entity.affiliate_allow
@@ -56,8 +64,6 @@ module.exports = class CampaignController extends entityController {
 		if (affiliate_intersection.length) {
 			throw eu.getError('bad_request', 'affiliate_allow and affiliate_deny should have different values')
 		}
-
-		return super.update({entity, ignore_updated_at});
 	}
 
 	associatedEntitiesCheck({id}){
