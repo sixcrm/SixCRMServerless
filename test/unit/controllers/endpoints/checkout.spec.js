@@ -80,17 +80,15 @@ function getValidEvent(){
 }
 
 function getValidEventBody(ids, expanded){
-
 	return {
 		customer: getValidCustomerPrototype(),
 		affiliates: getValidAffiliatesPrototype(),
 		campaign: getValidCampaign().id,
-		product_schedules: arrayutilities.map(MockEntities.getValidProductSchedules(ids, expanded), product_schedule => {
-			return {quantity: 1, product_schedule: product_schedule};
-		}),
+		product_schedules: [{
+			quantity: 1, product_schedule: MockEntities.getProductScheduleWithOneProductAndSchedule()
+		}],
 		creditcard: getValidCreditCardPrototype()
 	};
-
 }
 
 function getValidCampaign(){
@@ -123,6 +121,13 @@ function getValidProductSchedule(id, expanded){
 
 function getValidSession(){
 	return MockEntities.getValidSession();
+}
+
+function getSessionWithoutProductSchedules(){
+	let session = MockEntities.getValidSession();
+	session.product_schedules = [];
+
+	return session;
 }
 
 function getValidCustomerPrototype(){
@@ -384,7 +389,7 @@ describe('checkout', function () {
 		it('successfully creates a order', () => {
 
 			let event = getValidEventBody(null, true);
-			let session = getValidSession();
+			let session = getSessionWithoutProductSchedules();
 
 			session.completed = false;
 			let campaign = getValidCampaign();
@@ -742,7 +747,7 @@ describe('checkout', function () {
 			let event = getValidEvent();
 			let affiliates = getValidAffiliates();
 			let campaign = getValidCampaign();
-			let session = getValidSession();
+			let session = getSessionWithoutProductSchedules();
 			let account_details = getValidAccountDetails();
 
 
