@@ -48,11 +48,7 @@ module.exports = class STSProvider extends AWSProvider {
 
 		global.SixCRM.validate(new_parameters, global.SixCRM.routes.path('model', 'deployment/sts/assumerolerequest.json'))
 
-		return new Promise((resolve) => {
-
-			this.sts.assumeRole(new_parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-		});
+		return this.sts.assumeRole(new_parameters).promise();
 
 	}
 
