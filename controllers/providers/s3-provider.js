@@ -545,20 +545,12 @@ module.exports = class S3Provider extends AWSProvider {
 		du.debug('Get Object');
 		du.debug(bucket, path);
 
-		return new Promise((resolve) => {
+		let parameters = {
+			Bucket: bucket,
+			Key: path
+		};
 
-			let parameters = {
-				Bucket: bucket,
-				Key: path
-			};
-
-			this.s3.getObject(parameters, (error, data) => {
-
-				return resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.s3.getObject(parameters).promise();
 
 	}
 

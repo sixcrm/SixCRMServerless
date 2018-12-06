@@ -74,19 +74,15 @@ describe('controllers/providers/sts-provider', () => {
 							constructor(){
 
 							}
-							assumeRole(parameters, callback){
-								return callback(null, response);
+							assumeRole(parameters){
+								return {
+									promise: () => Promise.resolve(response)
+								};
 							}
 						}
 					}
 				}
 				constructor(){}
-				AWSCallback(error, data){
-					if(error){
-						//throw eu.getError('server', error);
-					}
-					return data;
-				}
 			});
 
 			let STSProvider = global.SixCRM.routes.include('controllers','providers/sts-provider.js');

@@ -1,8 +1,7 @@
-
-
 const chai = require('chai');
 const expect = chai.expect;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const AWSTestUtils = require('./aws-test-utils');
 
 describe('controllers/providers/rds-provider', () => {
 
@@ -210,9 +209,7 @@ describe('controllers/providers/rds-provider', () => {
 			const rdsprovider = new RDSProvider();
 
 			rdsprovider.rds = {
-				createDBCluster:(parameters, callback) => {
-					callback(null, {ResponseMetadata:{}, DBCluster:[]});
-				}
+				createDBCluster: AWSTestUtils.AWSPromise({ResponseMetadata:{}, DBCluster:[]})
 			};
 
 			return rdsprovider.createCluster(parameters).then(result => {
@@ -286,9 +283,7 @@ describe('controllers/providers/rds-provider', () => {
 			const rdsprovider = new RDSProvider();
 
 			rdsprovider.rds = {
-				createDBCluster:(parameters, callback) => {
-					callback(null, {ResponseMetadata:{}, DBCluster:[]});
-				},
+				createDBCluster: AWSTestUtils.AWSPromise({ResponseMetadata:{}, DBCluster:[]}),
 				describeDBClusters:(parameters, callback) => {
 					callback(null, {ResponseMetadata:{}, DBClusters:[]});
 				}
