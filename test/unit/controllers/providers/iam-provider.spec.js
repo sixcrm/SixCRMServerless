@@ -1,5 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
+const AWSTestUtils = require('./aws-test-utils');
 
 describe('controllers/providers/iam-provider', () => {
 
@@ -11,9 +12,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				createRole: function(params, callback) {
-					callback(null, 'any_role_data')
-				}
+				createRole: AWSTestUtils.AWSPromise('any_role_data')
 			};
 
 			return iamprovider.createRole('any_params').then((result) => {
@@ -27,13 +26,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				createRole: function(params, callback) {
-					callback('fail', null)
-				}
+				createRole: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.createRole('any_params').catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});
@@ -46,9 +43,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				getRole: function(params, callback) {
-					callback(null, 'role_not_found')
-				}
+				getRole: AWSTestUtils.AWSPromise('role_not_found')
 			};
 
 			return iamprovider.roleExists('any_params').then((result) => {
@@ -62,9 +57,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				getRole: function(params, callback) {
-					callback(null, {Role: 'any_role_data'})
-				}
+				getRole: AWSTestUtils.AWSPromise({Role: 'any_role_data'})
 			};
 
 			return iamprovider.roleExists('any_params').then((result) => {
@@ -78,13 +71,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				getRole: function(params, callback) {
-					callback('fail', null)
-				}
+				getRole: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.roleExists('any_params').catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('[500] Error: fail');
 			});
 		});
 
@@ -94,9 +85,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				getRole: function(params, callback) {
-					callback({code: 'NoSuchEntity'}, null)
-				}
+				getRole: AWSTestUtils.AWSError({code: 'NoSuchEntity'})
 			};
 
 			return iamprovider.roleExists('any_params').then((result) => {
@@ -113,9 +102,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				deleteRole: function(params, callback) {
-					callback(null, 'any_role_data')
-				}
+				deleteRole: AWSTestUtils.AWSPromise('any_role_data')
 			};
 
 			return iamprovider.deleteRole('any_params').then((result) => {
@@ -129,13 +116,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				deleteRole: function(params, callback) {
-					callback('fail', null)
-				}
+				deleteRole: AWSTestUtils.AWSPromise('fail')
 			};
 
 			return iamprovider.deleteRole('any_params').catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});
@@ -148,9 +133,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				getRole: function(params, callback) {
-					callback(null, 'any_role_data')
-				}
+				getRole: AWSTestUtils.AWSPromise('any_role_data')
 			};
 
 			return iamprovider.getRole('any_params').then((result) => {
@@ -164,13 +147,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				getRole: function(params, callback) {
-					callback('fail', null)
-				}
+				getRole: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.getRole('any_params').catch((error) => {
-				expect(error).to.equal('fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});
@@ -183,9 +164,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				attachRolePolicy: function(params, callback) {
-					callback(null, 'any_role_data')
-				}
+				attachRolePolicy: AWSTestUtils.AWSPromise('any_role_data')
 			};
 
 			return iamprovider.attachRolePolicy('any_params').then((result) => {
@@ -199,13 +178,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				attachRolePolicy: function(params, callback) {
-					callback('fail', null)
-				}
+				attachRolePolicy: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.attachRolePolicy('any_params').catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});
@@ -218,9 +195,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				detachRolePolicy: function(params, callback) {
-					callback(null, 'any_role_data')
-				}
+				detachRolePolicy: AWSTestUtils.AWSPromise('any_role_data')
 			};
 
 			return iamprovider.detachRolePolicy('any_params').then((result) => {
@@ -234,13 +209,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				detachRolePolicy: function(params, callback) {
-					callback('fail', null)
-				}
+				detachRolePolicy: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.detachRolePolicy('any_params').catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});
@@ -253,9 +226,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				listAttachedRolePolicies: function(params, callback) {
-					callback(null, 'any_role_data')
-				}
+				listAttachedRolePolicies: AWSTestUtils.AWSPromise('any_role_data')
 			};
 
 			return iamprovider.listAttachedRolePolicies('any_params').then((result) => {
@@ -269,13 +240,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				listAttachedRolePolicies: function(params, callback) {
-					callback('fail', null)
-				}
+				listAttachedRolePolicies: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.listAttachedRolePolicies('any_params').catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});
@@ -290,10 +259,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				createPolicy: function(params, callback) {
-					expect(params).to.equal(params);
-					callback(null, 'any_policy_data')
-				}
+				createPolicy: AWSTestUtils.AWSPromise('any_policy_data')
 			};
 
 			return iamprovider.createPolicy(params).then((result) => {
@@ -309,14 +275,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				createPolicy: function(params, callback) {
-					expect(params).to.equal(params);
-					callback('fail', null)
-				}
+				createPolicy: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.createPolicy(params).catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});
@@ -391,10 +354,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				deletePolicy: function(params, callback) {
-					expect(params).to.equal(params);
-					callback(null, 'any_policy_data')
-				}
+				deletePolicy: AWSTestUtils.AWSPromise('any_policy_data')
 			};
 
 			return iamprovider.deletePolicy(params).then((result) => {
@@ -410,14 +370,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				deletePolicy: function(params, callback) {
-					expect(params).to.equal(params);
-					callback('fail', null)
-				}
+				deletePolicy: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.deletePolicy(params).catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});
@@ -432,10 +389,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				listEntitiesForPolicy: function(params, callback) {
-					expect(params).to.equal(params);
-					callback(null, 'any_policy_data')
-				}
+				listEntitiesForPolicy: AWSTestUtils.AWSPromise('any_policy_data')
 			};
 
 			return iamprovider.listEntitiesForPolicy(params).then((result) => {
@@ -451,14 +405,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				listEntitiesForPolicy: function(params, callback) {
-					expect(params).to.equal(params);
-					callback('fail', null)
-				}
+				listEntitiesForPolicy: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.listEntitiesForPolicy(params).catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});
@@ -473,10 +424,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				createInstanceProfile: function(params, callback) {
-					expect(params).to.equal(params);
-					callback(null, 'any_profile_data')
-				}
+				createInstanceProfile: AWSTestUtils.AWSPromise('any_profile_data')
 			};
 
 			return iamprovider.createInstanceProfile(params).then((result) => {
@@ -492,14 +440,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				createInstanceProfile: function(params, callback) {
-					expect(params).to.equal(params);
-					callback('fail', null)
-				}
+				createInstanceProfile: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.createInstanceProfile(params).catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});
@@ -514,10 +459,7 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				addRoleToInstanceProfile: function(params, callback) {
-					expect(params).to.equal(params);
-					callback(null, 'any_role_data')
-				}
+				addRoleToInstanceProfile: AWSTestUtils.AWSPromise('any_role_data')
 			};
 
 			return iamprovider.addRoleToInstanceProfile(params).then((result) => {
@@ -533,14 +475,11 @@ describe('controllers/providers/iam-provider', () => {
 			const iamprovider = new IAMProvider();
 
 			iamprovider.iam = {
-				addRoleToInstanceProfile: function(params, callback) {
-					expect(params).to.equal(params);
-					callback('fail', null)
-				}
+				addRoleToInstanceProfile: AWSTestUtils.AWSError('fail')
 			};
 
 			return iamprovider.addRoleToInstanceProfile(params).catch((error) => {
-				expect(error.message).to.equal('[500] fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 	});

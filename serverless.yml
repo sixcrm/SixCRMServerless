@@ -132,10 +132,6 @@ functions:
 # State Machine Lambdas
 ########################
 
-#All
-#  report:
-#    handler: handlers/statemachine/handlers.report
-
 #Bill, Recover, Close Session
   triggercreaterebill:
     handler: handlers/statemachine/handlers.triggercreaterebill

@@ -16,7 +16,6 @@ const CleanupSessionController = global.SixCRM.routes.include('controllers', 'wo
 
 const BillingFailureController = global.SixCRM.routes.include('controllers', 'workers/statemachine/billingFailure.js');
 const BillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/bill.js');
-const ReportController = global.SixCRM.routes.include('controllers', 'workers/statemachine/report.js');
 const SendDeliveryNotificationController = global.SixCRM.routes.include('controllers', 'workers/statemachine/sendDeliveryNotification.js');
 const NotifyFulfillmentProvidersController = global.SixCRM.routes.include('controllers', 'workers/statemachine/notifyFulfillmentProviders.js');
 const CreateRebillController = global.SixCRM.routes.include('controllers', 'workers/statemachine/createRebill.js');
@@ -53,7 +52,6 @@ module.exports = {
 	getrebillsession: handleStepFunction((event) => new GetRebillSessionController().execute(event)),
 
 	createrebill: handleStepFunction((event) => new CreateRebillController().execute(event)),
-	report: handleStepFunction((event) => new ReportController().execute(event)),
 	triggerpostfulfillment: handleStepFunction((event) => new TriggerPostFulfillmentController().execute(event)),
 	triggerfulfillment: handleStepFunction((event) => new TriggerFulfillmentController().execute(event)),
 	triggerprefulfillment: handleStepFunction((event) => new TriggerPreFulfillmentController().execute(event)),
