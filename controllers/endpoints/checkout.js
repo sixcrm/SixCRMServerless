@@ -2,10 +2,12 @@
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 const ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
+const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
 
 module.exports = class CheckoutController extends transactionEndpointController{
 
@@ -53,6 +55,7 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		this.createLeadController = new CreateLeadController();
 		this.createOrderController = new CreateOrderController();
 		this.confirmOrderController = new ConfirmOrderController();
+		this.productScheduleController = new ProductScheduleController();
 
 		this.initialize();
 
@@ -72,13 +75,32 @@ module.exports = class CheckoutController extends transactionEndpointController{
 
 	}
 
-	validateParameters() {
+	async validateParameters() {
 		const event = this.parameters.get('event');
 
 		du.debug('Checkout.js Validate Parameters', event);
 
-		if (event.product_schedules && event.product_schedules.length > 1) {
-			throw eu.getError('bad_input', 'There can only be one product schedule per request')
+		if (event.product_schedules) {
+			if (event.product_schedules.length > 1) {
+				throw eu.getError('bad_request', 'There can only be one product schedule per request')
+			}
+
+			for (const product_schedule of event.product_schedules) {
+				let hydrated_product_schedule = null;
+
+				if (stringutilities.isUUID(product_schedule.product_schedule)) {
+					const id = product_schedule.product_schedule;
+					hydrated_product_schedule = await this.productScheduleController.get({id});
+				} else {
+					hydrated_product_schedule = product_schedule.product_schedule;
+				}
+
+				if (hydrated_product_schedule.schedule && hydrated_product_schedule.schedule.length > 1) {
+					throw eu.getError('bad_request', 'Product schedule can only have one product')
+				}
+
+			}
+
 		}
 	}
 

@@ -3,6 +3,7 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
+const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
@@ -18,7 +19,9 @@ const RegisterController = global.SixCRM.routes.include('providers', 'register/R
 const TransactionHelperController = global.SixCRM.routes.include('helpers', 'entities/transaction/Transaction.js');
 const MerchantProviderSummaryHelperController = global.SixCRM.routes.include('helpers', 'entities/merchantprovidersummary/MerchantProviderSummary.js');
 const OrderHelperController = global.SixCRM.routes.include('helpers', 'order/Order.js');
-const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js')
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
+const ProductScheduleController = global.SixCRM.routes.include('controllers', 'entities/ProductSchedule.js');
+
 
 module.exports = class CreateOrderController extends transactionEndpointController {
 
@@ -89,6 +92,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		this.transactionHelperController = new TransactionHelperController();
 		this.merchantProviderSummaryHelperController = new MerchantProviderSummaryHelperController();
 		this.orderHelperController = new OrderHelperController();
+		this.productScheduleController = new ProductScheduleController();
 
 		this.initialize();
 
@@ -96,7 +100,7 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	execute(event) {
 
-		du.debug('Execute');
+		du.debug('createOrder Execute');
 
 		return this.preamble(event)
 			.then(() => this.validateParameters(this.parameters.get('event')))
@@ -104,11 +108,30 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 	}
 
-	validateParameters(event) {
-		du.debug('Checkout.js Validate Parameters', event);
+	async validateParameters(event) {
+		du.debug('createOrder.js Validate Parameters', event);
 
-		if (event.product_schedules && event.product_schedules.length > 1) {
-			throw eu.getError('bad_input', 'There can only be one product schedule per request')
+		if (event.product_schedules) {
+			if (event.product_schedules.length > 1) {
+				throw eu.getError('bad_request', 'There can only be one product schedule per request')
+			}
+
+			for (const product_schedule of event.product_schedules) {
+				let hydrated_product_schedule = null;
+
+				if (stringutilities.isUUID(product_schedule.product_schedule)) {
+					const id = product_schedule.product_schedule;
+					hydrated_product_schedule = await this.productScheduleController.get({id});
+				} else {
+					hydrated_product_schedule = product_schedule.product_schedule;
+				}
+
+				if (hydrated_product_schedule.schedule && hydrated_product_schedule.schedule.length > 1) {
+					throw eu.getError('bad_request', 'Product schedule can only have one product')
+				}
+
+			}
+
 		}
 	}
 
