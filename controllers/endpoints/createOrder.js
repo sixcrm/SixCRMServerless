@@ -98,8 +98,18 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 
 		du.debug('Execute');
 
-		return this.preamble(event).then(() => this.createOrder(this.parameters.get('event')));
+		return this.preamble(event)
+			.then(() => this.validateParameters(this.parameters.get('event')))
+			.then(() => this.createOrder(this.parameters.get('event')));
 
+	}
+
+	validateParameters(event) {
+		du.debug('Checkout.js Validate Parameters', event);
+
+		if (event.product_schedules && event.product_schedules.length > 1) {
+			throw eu.getError('bad_input', 'There can only be one product schedule per request')
+		}
 	}
 
 	async createOrder(event) {

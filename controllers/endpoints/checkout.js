@@ -1,6 +1,7 @@
 
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const CreateLeadController = global.SixCRM.routes.include('controllers', 'endpoints/createLead.js');
 const CreateOrderController = global.SixCRM.routes.include('controllers', 'endpoints/createOrder.js');
 const ConfirmOrderController = global.SixCRM.routes.include('controllers', 'endpoints/confirmOrder.js');
@@ -62,12 +63,23 @@ module.exports = class CheckoutController extends transactionEndpointController{
 		du.debug('Execute');
 
 		return this.preamble(event)
+			.then(() => this.validateParameters())
 			.then(() => this.createLead())
 			.then(() => this.setSession())
 			.then(() => this.createOrder())
 			.then(() => this.confirmOrder())
 			.then(() => this.respond());
 
+	}
+
+	validateParameters() {
+		const event = this.parameters.get('event');
+
+		du.debug('Checkout.js Validate Parameters', event);
+
+		if (event.product_schedules && event.product_schedules.length > 1) {
+			throw eu.getError('bad_input', 'There can only be one product schedule per request')
+		}
 	}
 
 	setSession(){
