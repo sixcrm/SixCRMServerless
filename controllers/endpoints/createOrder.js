@@ -140,6 +140,11 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 		du.debug('Create Order');
 
 		let session = await this.hydrateSession(event);
+
+		if (session.product_schedules && session.product_schedules.length) {
+			throw eu.getError('bad_request', 'Session already has a product schedule attached.')
+		}
+
 		let customer = await this.getCustomer(event, session);
 		du.debug('session', session);
 		du.debug('global.account', global.account);
