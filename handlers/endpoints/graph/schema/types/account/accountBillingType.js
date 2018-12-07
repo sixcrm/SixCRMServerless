@@ -15,9 +15,13 @@ module.exports.graphObj = new GraphQLObjectType({
 			type: GraphQLString,
 			description: 'The session associated with the billing plan',
 		},
-		disable: {
+		limited_at: {
 			type: GraphQLString,
-			description: "Account billing disable date"
+			description: "Account billing limit date"
+		},
+		deactivated_at: {
+			type: GraphQLString,
+			description: "Account billing deactivate date"
 		}
 	}),
 	interfaces: []
