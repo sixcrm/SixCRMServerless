@@ -8,6 +8,7 @@ module.exports.graphObj = new GraphQLInputObjectType({
 	fields: () => ({
 		plan:	{ type: new GraphQLNonNull(GraphQLString) },
 		session: { type: GraphQLString },
-		disable: { type: GraphQLString }
+		limited_at: { type: GraphQLString },
+		deactivated_at: { type: GraphQLString }
 	})
 });
