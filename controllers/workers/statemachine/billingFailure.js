@@ -14,11 +14,14 @@ module.exports = class BillingFailureController extends stepFunctionWorkerContro
 	}
 
 	async execute(rebill_id) {
-		const rebill = await rebillController.get({id: rebill_id});
-		if (rebill.account === '3f4abaf6-52ac-40c6-b155-d04caeb0391f') {
-			const session = await sessionController.get({id: rebill.parentsession});
-			const account = await accountHelperController.getAccountForCustomer(session.customer);
-			await accountHelperController.scheduleDeactivation(account);
+		// disabled until future release
+		if (false) { // eslint-disable-line
+			const rebill = await rebillController.get({id: rebill_id});
+			if (rebill.account === '3f4abaf6-52ac-40c6-b155-d04caeb0391f') {
+				const session = await sessionController.get({id: rebill.parentsession});
+				const account = await accountHelperController.getAccountForCustomer(session.customer);
+				await accountHelperController.scheduleDeactivation(account);
+			}
 		}
 	}
 }
