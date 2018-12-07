@@ -1,5 +1,5 @@
 {
 	"requestContext":{"authorizer":{ "user": "super.user@test.com" }},
 	"pathParameters": { "account": "*" },
-	"body":"mutation {updateaccount (account: { id: \"14821fc6-9d18-4ced-a5cd-d968d2e630ff\", name: \"testingaccount-updated\", billing: { plan: \"free\" }, active: true}) { id, name, active, billing { plan, session, disable}, created_at, updated_at } }"
+	"body":"mutation {updateaccount (account: { id: \"14821fc6-9d18-4ced-a5cd-d968d2e630ff\", name: \"testingaccount-updated\", billing: { plan: \"free\" }, active: true}) { id, name, active, billing { plan, session, deactivated_at, limited_at }, created_at, updated_at } }"
 }
