@@ -1,5 +1,5 @@
 {
 	"requestContext":{"authorizer":{ "user": "owner.user@test.com" }},
 	"pathParameters": { "account": "d3fa3bf3-7824-49f4-8261-87674482bf1c" },
-	"body":"query {account (id: \"d3fa3bf3-7824-49f4-8261-87674482bf1c\") { id, name, billing { deactivated_at, limited_at, session, plan }, active, created_at, updated_at } }"
+	"body":"query {account (id: \"d3fa3bf3-7824-49f4-8261-87674482bf1c\") { id, name, billing { disable, deactivated_at, limited_at, session, plan }, active, created_at, updated_at } }"
 }
