@@ -123,7 +123,11 @@ module.exports = class ReattemptRebillController extends transactionEndpointCont
 
 	async executeBilling(rebill, creditcard) {
 		try {
-			return registerController.processTransaction({rebill, creditcard});
+			const parameters = {rebill};
+			if (creditcard) {
+				parameters.creditcard = creditcard;
+			}
+			return registerController.processTransaction(parameters);
 		} catch(error) {
 			throw eu.getError('server', 'Register Controller returned a error.');
 		}
