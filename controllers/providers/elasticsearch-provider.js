@@ -37,15 +37,7 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 			true
 		);
 
-		return new Promise((resolve) => {
-
-			this.elasticsearch.describeElasticsearchDomain(parameters, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.elasticsearch.describeElasticsearchDomain(parameters).promise();
 
 	}
 
@@ -55,15 +47,7 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 
 		let parameters = domain_definition;
 
-		return new Promise((resolve) => {
-
-			this.elasticsearch.createElasticsearchDomain(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.elasticsearch.createElasticsearchDomain(parameters).promise();
 
 	}
 
@@ -73,15 +57,7 @@ module.exports = class ElasticSearchProvider extends AWSProvider {
 
 		let parameters = domain_definition;
 
-		return new Promise((resolve) => {
-
-			this.elasticsearch.updateElasticsearchDomainConfig(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.elasticsearch.updateElasticsearchDomainConfig(parameters).promise();
 
 	}
 

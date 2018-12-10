@@ -1,5 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
+const AWSTestUtils = require('./aws-test-utils');
 
 function getValidBucketObjects() {
 	return {
@@ -705,9 +706,7 @@ describe('controllers/providers/s3-provider', () => {
 			const s3provider = new S3Provider();
 
 			s3provider.s3 = {
-				getObject: (params, callback) => {
-					callback(null, 'sample object data');
-				}
+				getObject: AWSTestUtils.AWSPromise('sample object data')
 			};
 
 			return s3provider.getObject('a_bucket', 'a_key').then((result) => {
@@ -721,13 +720,11 @@ describe('controllers/providers/s3-provider', () => {
 			const s3provider = new S3Provider();
 
 			s3provider.s3 = {
-				getObject: (params, callback) => {
-					callback(new Error('fail'), null);
-				}
+				getObject: AWSTestUtils.AWSError('fail')
 			};
 
 			return s3provider.getObject('a_bucket', 'a_key').catch((error) => {
-				expect(error.message).to.equal('[500] Error: fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 

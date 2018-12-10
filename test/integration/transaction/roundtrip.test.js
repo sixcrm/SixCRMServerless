@@ -385,7 +385,7 @@ describe('Transaction Endpoints Round Trip Test',() => {
 
 			let sale_object = {
 				product_schedules:[{
-					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					product_schedule: "0e3652bf-f1d3-4325-840e-c93806289d7e",
 					quantity:2
 				}]
 			};
@@ -414,7 +414,7 @@ describe('Transaction Endpoints Round Trip Test',() => {
 					quantity:2
 				}],
 				product_schedules:[{
-					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					product_schedule: "0e3652bf-f1d3-4325-840e-c93806289d7e",
 					quantity:2
 				}]
 			};

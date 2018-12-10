@@ -7,7 +7,7 @@
 	"pathParameters": {
 		"account": "d3fa3bf3-7824-49f4-8261-87674482bf1c"
 	},
-	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FwaS5zaXhjcm0uY29tIiwic3ViIjoiIiwiYXVkIjoiIiwiaWF0IjoxNDk2MTY0Mzg3LCJleHAiOjE0OTYxNjc5ODcsInVzZXJfYWxpYXMiOiI0ZWUyM2E4ZjVjODY2MTYxMjA3NWE4OWU3MmE1NmEzYzZkMDBkZjkwIn0.GNl4N85mzShUMH-9eTTTOHIVJuce_-ETMvfntryLRbw",
+	"Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InN1cGVyLnVzZXJAdGVzdC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGljdHVyZSI6IiIsImlzcyI6Imh0dHBzOi8vZGV2ZWxvcG1lbnQtYXBpLnNpeGNybS5jb20iLCJzdWIiOiIiLCJhdWQiOiIiLCJleHAiOjE1NDIxNDk1MzMsImlhdCI6MTU0MjE0NTkzM30.i6i6p8W4AXfjGYOK36vXnZ-h3trmDp8Nlc0pV_iJeI8",
 	"body": {
 		"rebill": "55c103b4-670a-439e-98d4-5a2834bb5fc3",
 		"creditcard":{

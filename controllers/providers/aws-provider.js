@@ -27,39 +27,6 @@ module.exports = class AWSProvider {
 
 	}
 
-	AWSCallback(error, data){
-
-		du.debug('AWS Callback');
-
-		if(error){
-
-			throw eu.getError('server', error);
-
-		}
-
-		return data;
-
-	}
-
-	tolerantCallback(error, data, fatal){
-
-		du.debug('Tolerant Callback');
-
-		fatal = (_.isUndefined(fatal))?true:fatal;
-
-		if(error){
-			if(fatal){
-				throw eu.getError('server', error);
-			}
-
-			return Promise.reject(error);
-
-		}
-
-		return Promise.resolve(data);
-
-	}
-
 	hasCredentials(fatal){
 
 		du.debug('Has Credentials');

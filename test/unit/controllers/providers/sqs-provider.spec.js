@@ -2,6 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const _ = require('lodash');
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
+const AWSTestUtils = require('./aws-test-utils');
 
 describe('controllers/providers/sqs-provider', () => {
 
@@ -335,9 +336,7 @@ describe('controllers/providers/sqs-provider', () => {
 			const sqsprovider = new SQSProvider();
 
 			sqsprovider.sqs = {
-				deleteMessage: function(params, callback) {
-					callback(null, 'success');
-				}
+				deleteMessage: AWSTestUtils.AWSPromise('success')
 			};
 
 			return sqsprovider.deleteMessage(input).then((result) => {
@@ -359,9 +358,7 @@ describe('controllers/providers/sqs-provider', () => {
 			const sqsprovider = new SQSProvider();
 
 			sqsprovider.sqs = {
-				sendMessage: function(params, callback) {
-					callback(null, 'success');
-				}
+				sendMessage: AWSTestUtils.AWSPromise('success')
 			};
 
 			return sqsprovider.sendMessage(input).then((result) => {
@@ -544,9 +541,7 @@ describe('controllers/providers/sqs-provider', () => {
 			sqsprovider.existing_queues = ['test2'];
 
 			sqsprovider.sqs = {
-				createQueue: (params, callback) => {
-					callback(null, data);
-				}
+				createQueue: AWSTestUtils.AWSPromise(data)
 			};
 
 			return sqsprovider.createQueue(params).then((result) => {
@@ -567,9 +562,7 @@ describe('controllers/providers/sqs-provider', () => {
 			const sqsprovider = new SQSProvider();
 
 			sqsprovider.sqs = {
-				setQueueAttributes: (params, callback) => {
-					callback(null, data);
-				}
+				setQueueAttributes: AWSTestUtils.AWSPromise(data)
 			};
 
 			return sqsprovider.setQueueAttibutes(params).then((result) => {
@@ -692,9 +685,7 @@ describe('controllers/providers/sqs-provider', () => {
 			sqsprovider.existing_queues = ['test', 'test2'];
 
 			sqsprovider.sqs = {
-				purgeQueue: (params, callback) => {
-					callback(null, data);
-				}
+				purgeQueue: AWSTestUtils.AWSPromise(data)
 			};
 
 			return sqsprovider.purgeQueue(params).then((result) => {
