@@ -145,6 +145,10 @@ module.exports = class CreateOrderController extends transactionEndpointControll
 			throw eu.getError('bad_request', 'Session already has a product schedule attached.')
 		}
 
+		if (_(session).get('watermark.product_schedules') && session.watermark.product_schedules.length) {
+			throw eu.getError('bad_request', 'Session already has a product schedule attached.')
+		}
+
 		let customer = await this.getCustomer(event, session);
 		du.debug('session', session);
 		du.debug('global.account', global.account);
