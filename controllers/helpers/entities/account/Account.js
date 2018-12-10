@@ -331,7 +331,7 @@ module.exports = class AccountHelperController {
 
 		du.debug('Deactivate Account');
 
-		account = await this._getAccount(account);
+		account = await this._getAccount(account, true);
 
 		if(!_.has(account, 'billing')){
 			throw eu.getError('server', 'Account does not have a billing property.');
