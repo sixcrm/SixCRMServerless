@@ -126,6 +126,7 @@ function getValidSession(){
 function getSessionWithoutProductSchedules(){
 	let session = MockEntities.getValidSession();
 	session.product_schedules = [];
+	session.watermark.product_schedules = [];
 
 	return session;
 }
