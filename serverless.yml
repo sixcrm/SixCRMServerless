@@ -177,7 +177,6 @@ functions:
     handler: handlers/statemachine/handlers.getfulfillmentrequired
   triggerfulfillment:
     handler: handlers/statemachine/handlers.triggerfulfillment
-    role: arn:aws:iam::${self:provider.account}:role/sixcrm-basiclambda
 
   #Bill #Recover
   bill:
