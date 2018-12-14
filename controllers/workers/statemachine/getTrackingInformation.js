@@ -15,9 +15,6 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		let shipping_receipt = await this.getShippingReceipt(event.guid);
@@ -33,9 +30,6 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 	}
 
 	async sendShipmentConfirmedNotification({shipping_receipt, tracking}){
-
-		du.debug('Send Shipment Confirmed Notification');
-
 		if(_.includes(['delivered','intransit'], tracking.status)){
 
 			if(!_.has(shipping_receipt, 'history') || !arrayutilities.nonEmpty(shipping_receipt.history)){
@@ -73,9 +67,6 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 	}
 
 	async getTrackingInformation(shipping_receipt){
-
-		du.debug('Get Tracking Information');
-
 		const TrackerController = global.SixCRM.routes.include('providers', 'tracker/Tracker.js');
 		let trackerController = new TrackerController();
 
@@ -98,9 +89,6 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 	}
 
 	async updateShippingReceiptWithTrackingInformation({shipping_receipt, tracking}){
-
-		du.debug('updateShippingReceiptWithTrackingInformation');
-
 		if(!_.has(this, 'shippingReceiptHelperController')){
 			const ShippingReceiptHelperController = global.SixCRM.routes.include('helpers', 'entities/shippingreceipt/ShippingReceipt.js');
 			this.shippingReceiptHelperController = new ShippingReceiptHelperController();
@@ -114,9 +102,6 @@ module.exports = class GetTrackingInformationController extends stepFunctionWork
 	}
 
 	codifyTrackingInformation(tracking){
-
-		du.debug('Codify Tracking Information');
-
 		return tracking.status.toUpperCase();
 
 	}

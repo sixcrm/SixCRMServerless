@@ -23,9 +23,6 @@ module.exports = class EventHelperController {
 	}
 
 	async pushEvent(event) {
-
-		du.debug('Event.js Push Event', event);
-
 		if(!_.has(event, 'context')){
 			throw eu.getError('server', 'No context property present');
 		}
@@ -47,9 +44,6 @@ module.exports = class EventHelperController {
 	}
 
 	async handleContext({context, event_type}){
-
-		du.debug('Handle Context');
-
 		context = (_.isString(context))?context:JSON.stringify(context);
 
 		const context_size = stringutilities.getBytes(context);
@@ -67,9 +61,6 @@ module.exports = class EventHelperController {
 	}
 
 	createPublishParameters({event_type, message_attributes}, context) {
-
-		du.debug('Create Publish Parameters');
-
 		let user_email = null;
 
 		if (objectutilities.hasRecursive(global, 'user.id') && _.isString(global.user.id)) {
@@ -107,9 +98,6 @@ module.exports = class EventHelperController {
 	}
 
 	async pushContextToS3({event_type, context}){
-
-		du.debug('Push Context to S3');
-
 		let context_id = event_type+'-'+hashutilities.toSHA1(timestamp.now()+random.createRandomString(20));
 
 		let body = (_.isString(context))?context:JSON.stringify(context);
@@ -125,9 +113,6 @@ module.exports = class EventHelperController {
 	}
 
 	addMessageAttributes({return_object, message_attributes}){
-
-		du.debug('Add Message Attributes');
-
 		if(_.isUndefined(message_attributes) || _.isNull(message_attributes)){
 
 			return return_object
@@ -165,9 +150,6 @@ module.exports = class EventHelperController {
 	}
 
 	parseTopicARN() {
-
-		du.debug('Parse Topic ARN');
-
 		return parserutilities.parse(this.topic_arn, {
 			//Technical Debt:  These explicit references are a no-no
 			account: global.SixCRM.configuration.site_config.aws.account,

@@ -19,9 +19,6 @@ module.exports = class StepFunctionDeployment extends AWSDeploymentUtilities{
 	}
 
 	async deployStateMachines(){
-
-		du.debug('Deploy State Machines');
-
 		const statemachines = await this.getConfigurationJSON('statemachines');
 
 		let statemachine_promises = arrayutilities.map(statemachines, (statemachine_definition) => {
@@ -41,9 +38,6 @@ module.exports = class StepFunctionDeployment extends AWSDeploymentUtilities{
 	}
 
 	async deployStateMachine(name, statemachine_definition){
-
-		du.debug('Deploy State Machine');
-
 		du.info('Deploying "'+name+'"');
 
 		let exists = await this.stepFunctionProvider.stepFunctionExists(name);
@@ -70,9 +64,6 @@ module.exports = class StepFunctionDeployment extends AWSDeploymentUtilities{
 	}
 
 	getConfigurationJSON(directoryname) {
-
-		du.debug('Get Configuration JSON');
-
 		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'stepfunctions/'+directoryname));
 
 	}

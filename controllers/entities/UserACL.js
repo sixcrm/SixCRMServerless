@@ -15,9 +15,6 @@ class UserACLController extends entityController {
 	}
 
 	async getPartiallyHydratedACLObject(useracl){
-
-		du.debug('Get Partially Hydrated ACL Object');
-
 		useracl.account = await this.getAccount(useracl);
 		useracl.role = await this.getRole(useracl);
 
@@ -26,17 +23,11 @@ class UserACLController extends entityController {
 	}
 
 	getACLByUser({user: user}){
-
-		du.debug('Get ACL By User');
-
 		return this.listByUser({user:user});
 
 	}
 
 	create({entity, owner_user = false}) {
-
-		du.debug('UserACLController Create');
-
 		if (entity.role === OWNER_ROLE_ID && !owner_user && !process.env.forceAclCreate) {
 			throw eu.getError('server', 'You cannot create an ACL with role Owner');
 		}
@@ -45,9 +36,6 @@ class UserACLController extends entityController {
 	}
 
 	update({entity, primary_key, ignore_updated_at}) {
-
-		du.debug('UserACLController Update');
-
 		if (entity.role === OWNER_ROLE_ID && !process.env.forceAclCreate) {
 			throw eu.getError('server', 'You cannot set role to Owner');
 		}
@@ -63,9 +51,6 @@ class UserACLController extends entityController {
 	}
 
 	updateTermsAndConditions(useracl_terms_and_conditions) {
-
-		du.debug('UserACLController Terms And Conditions Update', useracl_terms_and_conditions);
-
 		return this.get({id: useracl_terms_and_conditions.useracl}).then((acl) => {
 			acl.termsandconditions = useracl_terms_and_conditions.version;
 
@@ -87,9 +72,6 @@ class UserACLController extends entityController {
 	}
 
 	getACLByAccount({account}){
-
-		du.debug('Get ACL By Account');
-
 		let index_value = this.getID(account);
 
 		global.disableaccountfilter = true;
@@ -101,9 +83,6 @@ class UserACLController extends entityController {
 	}
 
 	getUser(useracl){
-
-		du.debug('Get User');
-
 		if(_.has(useracl, 'user') && _.has(useracl.user, 'id')){
 			return useracl.user;
 		}
@@ -111,9 +90,6 @@ class UserACLController extends entityController {
 		return this.executeAssociatedEntityFunction('userController', 'get', {id: useracl.user}).then((user) => {
 			if (!user) {
 				const partial_user = {id: useracl.user, name: useracl.user};
-
-				du.debug('No User found for ACL, return partially hydrated user', partial_user);
-
 				return Promise.resolve(partial_user);
 			}
 
@@ -123,9 +99,6 @@ class UserACLController extends entityController {
 	}
 
 	getAccount(useracl){
-
-		du.debug('Get Account');
-
 		if(_.has(useracl, 'account') && _.has(useracl.account, 'id')){
 			return useracl.account;
 		}
@@ -137,9 +110,6 @@ class UserACLController extends entityController {
 	}
 
 	getRole(useracl){
-
-		du.debug('Get Role');
-
 		if(_.has(useracl, 'role') && _.has(useracl.role, 'id')){
 			return useracl.role;
 		}
@@ -149,9 +119,6 @@ class UserACLController extends entityController {
 	}
 
 	assure(useracl){
-
-		du.debug('Assure');
-
 		return new Promise((resolve, reject) => {
 
 			this.getACLByUser({user: useracl.user}).then((useracls) => {
@@ -198,9 +165,6 @@ class UserACLController extends entityController {
 	}
 
 	listByRole({pagination, fatal, role}){
-
-		du.debug('Get ACL By Role');
-
 		const query_parameters = {
 			filter_expression: '#role = :rolev',
 			expression_attribute_values: { ':rolev': this.getID(role) },

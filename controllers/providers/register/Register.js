@@ -99,9 +99,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	refundTransaction(){
-
-		du.debug('Refund Transaction');
-
 		return this.can({action: 'refund', object: 'register', fatal: true})
 			.then(() => this.setParameters({argumentation: arguments[0], action: 'refund'}))
 			.then(() => this.hydrateTransaction())
@@ -117,9 +114,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	reverseTransaction(){
-
-		du.debug('Reverse Transaction');
-
 		return this.can({action: 'reverse', object: 'register', fatal: true})
 			.then(() => this.setParameters({argumentation: arguments[0], action: 'reverse'}))
 			.then(() => this.hydrateTransaction())
@@ -136,9 +130,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	async processTransaction() {
-
-		du.debug('Process Transaction');
-
 		await this.can({action: 'process', object: 'register', fatal: true});
 		await this.setParameters({argumentation: arguments[0], action: 'process'});
 		await this.acquireRebillProperties();
@@ -156,9 +147,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	async pushTransactionEvents() {
-
-		du.debug('Push Transaction Events');
-
 		const transactions = this.parameters.isSet('transactionreceipts') ? this.parameters.get('transactionreceipts') : [this.parameters.get('receipttransaction')];
 		const session = this.parameters.get('parentsession');
 		const rebill = this.parameters.get('rebill');
@@ -187,9 +175,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	async pushSubscriptionEvents(response) {
-
-		du.debug('Push Subscription Events');
-
 		const rebill = this.parameters.get('rebill');
 		const products = rebill && rebill.products;
 
@@ -267,9 +252,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	getAssociatedTransactions(){
-
-		du.debug('Get Associated Transactions');
-
 		let associated_transaction = this.parameters.get('associatedtransaction');
 
 		return this.transactionController.listByAssociatedTransaction({id: associated_transaction, rebill: associated_transaction.rebill, types:['reverse','refund'], results: ['success']})
@@ -285,9 +267,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	validateAssociatedTransactions(){
-
-		du.debug('Validate Associated Transactions');
-
 		let associated_transactions = this.parameters.get('associated_transactions', {fatal: false});
 
 		if(arrayutilities.nonEmpty(associated_transactions)){
@@ -299,9 +278,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	setAmount(){
-
-		du.debug('Set Amount');
-
 		let amount  = this.parameters.get('amount', {fatal: false});
 
 		if(_.isNull(amount) || _.isUndefined(amount)){
@@ -318,9 +294,6 @@ module.exports = class Register extends RegisterUtilities {
 
 	//Note:  This is te (???)
 	calculateReversedAmount(associated_transactions){
-
-		du.debug('Calculate Resolved Amount');
-
 		let base = 0;
 
 		if(arrayutilities.nonEmpty(associated_transactions)){
@@ -338,9 +311,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	validateAmount(){
-
-		du.debug('Validate Amount');
-
 		//This is the original transaction with the maximum amount
 		let transaction = this.parameters.get('associatedtransaction');
 
@@ -366,9 +336,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	executeRefund(){
-
-		du.debug('Execute Refund');
-
 		const RefundController = global.SixCRM.routes.include('helpers', 'transaction/Refund.js');
 		let refundController = new RefundController();
 
@@ -383,9 +350,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	executeReverse(){
-
-		du.debug('Execute Reverse');
-
 		const ReverseController = global.SixCRM.routes.include('helpers', 'transaction/Reverse.js');
 		let reverseController = new ReverseController();
 
@@ -400,9 +364,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	issueReceipt(){
-
-		du.debug('Issue Receipt');
-
 		const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
 		let registerReceiptController = new RegisterReceiptController();
 
@@ -426,9 +387,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	transformResponse(){
-
-		du.debug('Transform Response');
-
 		let transaction_receipts = this.parameters.isSet('transactionreceipts') ? this.parameters.get('transactionreceipts') : [this.parameters.get('receipttransaction')];
 		let processor_responses = this.parameters.isSet('processorresponses') ? this.parameters.get('processorresponses') : [this.parameters.get('processorresponse')];
 		let creditcard = this.parameters.get('selectedcreditcard');
@@ -464,9 +422,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	getProcessorResponseCategory(){
-
-		du.debug('Get Processor Response Category');
-
 		let processor_responses = this.parameters.isSet('processorresponses') ? this.parameters.get('processorresponses') : [this.parameters.get('processorresponse')];
 
 		let successful = arrayutilities.find(processor_responses, processor_response => {
@@ -490,9 +445,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	issueProductGroupReceipt({amount, processor_result, transaction_type, merchant_provider, creditcard}){
-
-		du.debug('Issue Product Group Receipt');
-
 		const RegisterReceiptController = global.SixCRM.routes.include('providers', 'register/Receipt.js');
 		let registerReceiptController = new RegisterReceiptController();
 
@@ -514,9 +466,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	getTransactionProductsFromMerchantProviderGroup({merchant_provider}){
-
-		du.debug('getTransactionProductsFromMerchantProviderGroup');
-
 		let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
 
 		let return_object = [];
@@ -537,9 +486,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	executeProcesses(){
-
-		du.debug('Execute Processes');
-
 		let merchant_provider_groups = this.parameters.get('merchantprovidergroups');
 
 		let process_promises = objectutilities.map(merchant_provider_groups, merchant_provider => {
@@ -559,9 +505,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	executeProcess({merchant_provider: merchant_provider, amount: amount}){
-
-		du.debug('Execute Process');
-
 		let customer = this.parameters.get('customer');
 		let creditcard = this.parameters.get('selectedcreditcard');
 
@@ -616,9 +559,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	calculateAmountFromProductGroups(product_groups){
-
-		du.debug('Calculate Amount From Product Groups');
-
 		return arrayutilities.reduce(
 			product_groups,
 			(sum, product_group) => {
@@ -645,8 +585,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	validateProcessorResponse(){
-
-		du.debug('Validate Processor Response');
 		//Technical Debt:  Flesh me out, possible JSON schema embellishment?
 
 	}
@@ -660,9 +598,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	setParameters({argumentation, action}){
-
-		du.debug('Set Parameters');
-
 		this.parameters.setParameters({argumentation: argumentation, action: action});
 
 		this.parameters.set('transactiontype', this.action_to_transaction_type[action]);
@@ -672,8 +607,6 @@ module.exports = class Register extends RegisterUtilities {
 	}
 
 	extractProcessorResponse(response) {
-
-		du.debug('Extract Processor Response', response);
 
 		if (objectutilities.hasRecursive(response, 'parameters.store')) {
 			return objectutilities.clone(response.parameters.store);

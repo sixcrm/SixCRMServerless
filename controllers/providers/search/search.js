@@ -44,9 +44,6 @@ module.exports = class SearchController {
 			let action_filter = promises[1];
 			let complete_filter = '';
 
-			du.debug('account_filter', account_filter);
-			du.debug('action_filter', action_filter);
-
 			if(_.has(search_input, 'filterQuery')){
 				complete_filter = this.assembleFilter([account_filter, action_filter, search_input['filterQuery']]);
 			}else{
@@ -75,9 +72,6 @@ module.exports = class SearchController {
 	}
 
 	createActionFilter(){
-
-		du.debug('Append Action Filter');
-
 		let promises = [];
 
 		for(var key in this.entity_types){
@@ -98,7 +92,6 @@ module.exports = class SearchController {
 				}
 			}
 
-			du.debug(action_filters);
 
 			if(action_filters.length > 0){
 
@@ -117,9 +110,6 @@ module.exports = class SearchController {
 	}
 
 	createAccountFilter(){
-
-		du.debug('Create Account Filter.');
-
 		let account_filter = false;
 
 		if(_.has(global, 'account') && global.account !== '*'){
@@ -127,8 +117,6 @@ module.exports = class SearchController {
 			account_filter = '(term field=account \''+global.account+'\')';
 
 		}
-
-		du.debug('Account Filter:', account_filter);
 
 		if(account_filter == false){
 
@@ -187,9 +175,6 @@ module.exports = class SearchController {
 	}
 
 	flattenResults(results){
-
-		du.debug('Flattening Search Results');
-
 		if(_.has(results, 'hits') && _.has(results.hits, 'hit') && _.isArray(results.hits.hit)){
 
 			let flattened_hits = [];
@@ -220,8 +205,6 @@ module.exports = class SearchController {
 			results.hits['hit'] = flattened_hits;
 
 		}
-
-		du.debug('Flattened Results', results);
 
 		return Promise.resolve(results);
 

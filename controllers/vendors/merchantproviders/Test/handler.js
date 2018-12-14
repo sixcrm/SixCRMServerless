@@ -93,9 +93,6 @@ class TestController extends MerchantProvider {
     */
 
 	process(request_parameters){
-
-		du.debug('Process');
-
 		this.parameters.set('action', 'process');
 
 		const method_parameters = {
@@ -118,9 +115,6 @@ class TestController extends MerchantProvider {
 	}
 
 	setRequestParameters({type, request_parameters, return_parameters}){
-
-		du.debug('Set Request Parameters');
-
 		objectutilities.hasRecursive(this.transaction_parameters, type+'.required', true);
 
 		return_parameters = objectutilities.transcribe(this.transaction_parameters[type].required, request_parameters, return_parameters, true);
@@ -141,9 +135,6 @@ class TestController extends MerchantProvider {
 	}
 
 	postToProcessor({action, method_parameters, request_parameters}){
-
-		du.debug('Post To Processor');
-
 		let parameters = this.createParameterObject();
 
 		let endpoint = this.createEndpoint(method_parameters);

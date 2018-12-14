@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 
@@ -14,9 +13,6 @@ module.exports = class NotifyFulfillmentProvidersController extends stepFunction
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		let rebill = await this.getRebill(event.guid, true);
@@ -30,9 +26,6 @@ module.exports = class NotifyFulfillmentProvidersController extends stepFunction
 	}
 
 	async triggerFulfillment(rebill){
-
-		du.debug('Trigger Fulfillment');
-
 		const TerminalController = global.SixCRM.routes.include('providers', 'terminal/Terminal.js');
 		let terminalController = new TerminalController();
 
@@ -49,9 +42,6 @@ module.exports = class NotifyFulfillmentProvidersController extends stepFunction
 	}
 
 	async triggerNotifications({rebill, fulfillment_request_result}){
-
-		du.debug('Trigger Fulfillment Notifications');
-
 		if(!_.has(rebill, 'id')){
 			throw eu.getError('server', 'Expected rebill to have property "id".', rebill);
 		}
@@ -70,9 +60,6 @@ module.exports = class NotifyFulfillmentProvidersController extends stepFunction
 	}
 
 	respond(response){
-
-		du.debug('Respond');
-
 		return response;
 
 	}

@@ -26,9 +26,6 @@ module.exports = class ReIndexingHelperController {
 
 	//Entrypoint
 	async execute(fix = false){
-
-		du.debug('Reindexing');
-
 		if(fix == true){
 			du.warning('Fix: On');
 		}

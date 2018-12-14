@@ -1,6 +1,5 @@
 const _ = require('lodash');
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -17,9 +16,6 @@ module.exports = class CustomerController extends entityController {
 	}
 
 	async create({entity}){
-
-		du.debug('Customer.create()');
-
 		if(!_.has(entity, 'default_creditcard')){
 			if(_.has(entity, 'creditcards') && arrayutilities.nonEmpty(entity.creditcards)){
 				entity.default_creditcard = entity.creditcards[0];
@@ -36,9 +32,6 @@ module.exports = class CustomerController extends entityController {
 
 	//Technical Debt:  If a default creditcard exists, you shouldn't be able to remove it, only update it
 	async update({entity, ignore_updated_at}){
-
-		du.debug('Customer.update()');
-
 		if(!_.has(entity, 'default_creditcard')){
 			if(_.has(entity, 'creditcards') && arrayutilities.nonEmpty(entity.creditcards)){
 				entity.default_creditcard = entity.creditcards[0];
@@ -56,9 +49,6 @@ module.exports = class CustomerController extends entityController {
 	associatedEntitiesCheck({
 		id
 	}) {
-
-		du.debug('Associated Entities Check');
-
 		let return_array = [];
 
 		let data_acquisition_promises = [
@@ -104,9 +94,6 @@ module.exports = class CustomerController extends entityController {
 		creditcard,
 		pagination
 	}) {
-
-		du.debug('List By Credit Card')
-
 		return this.listByAssociations({
 			id: this.getID(creditcard),
 			field: 'creditcards',
@@ -116,18 +103,12 @@ module.exports = class CustomerController extends entityController {
 	}
 
 	getAddress(customer) {
-
-		du.debug('Get Address');
-
 		return Promise.resolve(customer.address);
 
 	}
 
 	//Technical Debt:  This is somewhat messy.  Maybe we need to add this to a helper
 	addCreditCard(customer, creditcard) {
-
-		du.debug('Add Credit Card');
-
 		const customerPromise = Promise.resolve().then(() => {
 			if (!_.has(customer, this.primary_key)) {
 				return this.get({
@@ -198,9 +179,6 @@ module.exports = class CustomerController extends entityController {
 	}
 
 	getCreditCards(customer) {
-
-		du.debug('Get Credit Cards');
-
 		if (_.has(customer, "creditcards") && arrayutilities.nonEmpty(customer.creditcards)) {
 
 			let creditcard_ids = arrayutilities.map(customer.creditcards, creditcard => {
@@ -219,9 +197,6 @@ module.exports = class CustomerController extends entityController {
 
 
 	getMostRecentCreditCard(customer) {
-
-		du.debug('Get Most Recent Credit Card');
-
 		return this.get({
 			id: this.getID(customer)
 		}).then((customer) => {
@@ -261,9 +236,6 @@ module.exports = class CustomerController extends entityController {
 	}
 
 	getCustomerByEmail(email) {
-
-		du.debug('Get Customer By Email');
-
 		return this.getBySecondaryIndex({
 			field: 'email',
 			index_value: email,
@@ -273,17 +245,11 @@ module.exports = class CustomerController extends entityController {
 	}
 
 	getCustomerSessions(customer) {
-
-		du.debug('Get Customer Sessions');
-
 		return this.executeAssociatedEntityFunction('SessionController', 'getSessionByCustomer', this.getID(customer));
 
 	}
 
 	getCustomerRebills(customer) {
-
-		du.debug('Get Customer Rebills');
-
 		return this.getCustomerSessions(customer).then((sessions) => {
 
 			if (arrayutilities.nonEmpty(sessions)) {
@@ -316,9 +282,6 @@ module.exports = class CustomerController extends entityController {
 		customer,
 		pagination
 	}) {
-
-		du.debug('List Customer Sessions');
-
 		return this.executeAssociatedEntityFunction('SessionController', 'listByCustomer', {
 			customer: customer,
 			pagination: pagination
@@ -331,9 +294,6 @@ module.exports = class CustomerController extends entityController {
 	listCustomerRebills({
 		customer
 	}) {
-
-		du.debug('List Customer Rebills');
-
 		return this.getCustomerSessions(customer).then((sessions) => {
 
 			if (!sessions) {

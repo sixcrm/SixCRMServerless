@@ -1,6 +1,3 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-//const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
 module.exports = class CloudwatchProvider extends AWSProvider{
@@ -19,17 +16,11 @@ module.exports = class CloudwatchProvider extends AWSProvider{
 	}
 
 	putSubscriptionFilter(parameters){
-
-		du.debug('Put Subscription Filter');
-
 		return this.cloudwatchlogs.putSubscriptionFilter(parameters).promise();
 
 	}
 
 	getSubscriptionFilters(logGroupName, filterNamePrefix) {
-
-		du.debug('Get Subscription Filters');
-
 		return this.cloudwatchlogs.describeSubscriptionFilters({
 			logGroupName,
 			filterNamePrefix

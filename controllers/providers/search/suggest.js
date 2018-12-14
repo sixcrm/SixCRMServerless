@@ -1,6 +1,5 @@
 
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const CloudsearchProvider = global.SixCRM.routes.include('controllers', 'providers/cloudsearch-provider.js');
 const cloudsearchprovider = new CloudsearchProvider();
 
@@ -20,11 +19,7 @@ module.exports = class SuggestController {
 
 		return new Promise((resolve, reject) => {
 
-			du.debug('Suggestion Parameters:', suggestion_parameters);
-
 			cloudsearchprovider.suggest(suggestion_parameters).then((results) => {
-
-				du.debug('Raw Results:', results);
 
 				return resolve(results);
 
@@ -39,9 +34,6 @@ module.exports = class SuggestController {
 	}
 
 	flattenResults(results){
-
-		du.debug('Flattening Suggestion Results');
-
 		if(_.has(results, 'suggest') && _.has(results.suggest, 'suggestions') && _.isArray(results.suggest.suggestions)){
 
 			let flattened_suggestions = [];
@@ -71,8 +63,6 @@ module.exports = class SuggestController {
 			results.suggest['suggestions'] = flattened_suggestions;
 
 		}
-
-		du.debug('Flattened Results', results);
 
 		return Promise.resolve(results);
 

@@ -20,9 +20,6 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	deployDomains() {
-
-		du.debug('Deploy Domains');
-
 		const domains = this.getConfigurationJSON('domains');
 
 		let domain_promises = arrayutilities.map(domains, (domain_definition) => {
@@ -38,9 +35,6 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	deployDomain(domain_definition) {
-
-		du.debug('Deploy Domain');
-
 		return this.domainExists(domain_definition).then(result => {
 
 			if (_.isNull(result)) {
@@ -56,9 +50,6 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	domainExists(domain_definition) {
-
-		du.debug('Domain Exists');
-
 		return this.esprovider.describeDomain(domain_definition).then(result => {
 
 			if (_.has(result, 'DomainStatus') && _.has(result.DomainStatus, 'DomainId')) {
@@ -80,9 +71,6 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	createDomain(domain_definition) {
-
-		du.debug('Create Domain');
-
 		let parameters = objectutilities.clone(domain_definition);
 
 		this.handleAccessPolicies(parameters);
@@ -98,9 +86,6 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	updateDomain(domain_definition) {
-
-		du.debug('Update Domain');
-
 		let parameters = objectutilities.clone(domain_definition);
 
 		this.handleAccessPolicies(parameters);
@@ -116,9 +101,6 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	handleAccessPolicies(parameters) {
-
-		du.debug('Handle Access Policies');
-
 		parameters.AccessPolicies = JSON.stringify(parameters.AccessPolicies);
 		parameters.AccessPolicies = parserutilities.parse(parameters.AccessPolicies, {
 			aws_account_id: global.SixCRM.configuration.site_config.aws.account,
@@ -130,9 +112,6 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	async deployIndices() {
-
-		du.debug('Deploy Indices');
-
 		const configuration = this.getConfigurationJSON('indices');
 		await BBPromise.mapSeries(configuration.domains, this.deployIndicesForDomain.bind(this));
 
@@ -164,9 +143,6 @@ module.exports = class ElasticSearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	getConfigurationJSON(filename) {
-
-		du.debug('Get Configuration JSON');
-
 		return global.SixCRM.routes.include('deployment', 'elasticsearch/configuration/' + filename + '.json');
 
 	}

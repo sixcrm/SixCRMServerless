@@ -54,9 +54,6 @@ module.exports = class verifySiteJWTController {
 	}
 
 	decodeToken() {
-
-		du.debug('Decode Token');
-
 		let token = this.parameters.get('encoded_authorization_token');
 
 		let decoded_token = this.jwtprovider.decodeJWT(token);
@@ -74,9 +71,6 @@ module.exports = class verifySiteJWTController {
 	}
 
 	verifyEncodedTokenWithSiteSecretKey() {
-
-		du.debug('Verify Encoded Token With Site Secret Key');
-
 		let encoded_token = this.parameters.get('encoded_authorization_token');
 
 		du.info(encoded_token);
@@ -91,9 +85,6 @@ module.exports = class verifySiteJWTController {
 	}
 
 	verifyEncodedTokenWithUserSigningString() {
-
-		du.debug('Verify Encoded Token With User Signing String');
-
 		let verified_token = this.parameters.get('verified_authorization_token', {fatal: false});
 
 		if (_.isNull(verified_token)) {
@@ -108,9 +99,6 @@ module.exports = class verifySiteJWTController {
 	}
 
 	getUserSigningStrings() {
-
-		du.debug('Get User Signing Strings');
-
 		let user_id = this.parameters.get('decoded_authorization_token').email;
 
 		this.userSigningStringController.disableACLs();
@@ -132,19 +120,11 @@ module.exports = class verifySiteJWTController {
 	}
 
 	verifyEncodedTokenWithUserSigningStrings() {
-
-		du.debug('Verify Encoded Token With User Signing Strings');
-
 		let user_signing_strings = this.parameters.get('user_signing_strings', {fatal: false});
-
-		du.debug(user_signing_strings);
-
 
 		if (!_.isNull(user_signing_strings)) {
 
 			let encoded_token = this.parameters.get('encoded_authorization_token');
-
-			du.debug(encoded_token);
 
 			user_signing_strings.find((user_signing_string) => {
 				if (this.jwtprovider.decodeJWT(encoded_token, user_signing_string.signing_string)) {
@@ -159,33 +139,21 @@ module.exports = class verifySiteJWTController {
 	}
 
 	respond() {
-
-		du.debug('Respond');
-
 		let verified_token = this.parameters.get('verified_authorization_token', {fatal: false});
-
-		du.debug(verified_token);
 
 		if (!_.isNull(verified_token)) {
 
 			let decodedAuthorizationToken = this.parameters.get('decoded_authorization_token');
 
-			du.debug('Respond Authorized', decodedAuthorizationToken);
-
 			return decodedAuthorizationToken.email;
 
 		}
-
-		du.debug('Respond Not Authorized');
 
 		return null;
 
 	}
 
 	setParameters(event) {
-
-		du.debug('Set Parameters');
-
 		this.parameters.setParameters({
 			argumentation: event,
 			action: 'event'

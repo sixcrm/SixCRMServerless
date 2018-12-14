@@ -12,9 +12,6 @@ module.exports = class PermissionedController {
 	}
 
 	can({ object, action, fatal}){
-
-		du.debug('Can');
-
 		fatal = (_.isUndefined(fatal))?false:fatal;
 
 		//Technical Debt:  Introduce account and ID
@@ -35,18 +32,12 @@ module.exports = class PermissionedController {
 	}
 
 	throwPermissionsError(){
-
-		du.debug('Throw Permissions Error');
-
 		//Technical Debt:  Embellish this message
 		throw eu.getError('forbidden', 'Invalid Permissions: user does not have sufficient permission to perform this action.');
 
 	}
 
 	disableACLs(){
-
-		du.debug('Disable ACLs');
-
 		this.permissionutilities.disableACLs();
 
 		return;
@@ -54,9 +45,6 @@ module.exports = class PermissionedController {
 	}
 
 	enableACLs(){
-
-		du.debug('Enable ACLs');
-
 		this.permissionutilities.enableACLs();
 
 		return;
@@ -64,9 +52,6 @@ module.exports = class PermissionedController {
 	}
 
 	setGlobalUser(user){
-
-		du.debug('Set Global User');
-
 		if(_.has(user, 'id') || this.isEmail(user)){
 
 			this.permissionutilities.setGlobalUser(user);
@@ -78,9 +63,6 @@ module.exports = class PermissionedController {
 	}
 
 	setGlobalCustomer(customer){
-
-		du.debug('Set Global Customer');
-
 		if(_.has(customer, 'id')){
 
 			this.permissionutilities.setGlobalCustomer(customer);
@@ -92,9 +74,6 @@ module.exports = class PermissionedController {
 	}
 
 	unsetGlobalUser(){
-
-		du.debug('Unset Global User');
-
 		this.permissionutilities.unsetGlobalUser();
 
 		return;
@@ -102,17 +81,11 @@ module.exports = class PermissionedController {
 	}
 
 	isMasterAccount(){
-
-		du.debug('Is Master Account');
-
 		return this.permissionutilities.isMasterAccount();
 
 	}
 
 	accountFilterDisabled(){
-
-		du.debug('Account Filter Disabled');
-
 		return this.permissionutilities.accountFilterDisabled()
 
 	}

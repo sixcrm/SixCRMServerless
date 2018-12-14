@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const Response = global.SixCRM.routes.include('providers', 'Response.js');
 
@@ -47,9 +45,6 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 	}
 
 	augmentParameters(){
-
-		du.debug('Augment Parameters');
-
 		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
 		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
@@ -58,17 +53,11 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 	}
 
 	getFulfillmentProviderName(){
-
-		du.debug('Get Fulfillment Provider Name');
-
 		return objectutilities.getClassName(this).replace('Response', '');
 
 	}
 
 	handleResponse(){
-
-		du.debug('Handle Response');
-
 		this.parameters.setParameters({argumentation: arguments[0], action: 'handleResponse'});
 
 		let error = this.parameters.get('error', {fatal: false});
@@ -113,25 +102,16 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 	}
 
 	getParsedResponse(){
-
-		du.debug('Get Parsed Response');
-
 		return this.parameters.get('parsedresponse', {fatal: false});
 
 	}
 
 	setResponse(response){
-
-		du.debug('Set Response');
-
 		this.parameters.set('response', response);
 
 	}
 
 	setAllProperties({code, message}){
-
-		du.debug('Set All Properties');
-
 		this.setCode(code);
 
 		this.setMessage(message);
@@ -141,9 +121,6 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 	}
 
 	determineResultCode({response: response}){
-
-		du.debug('Determine Result');
-
 		if(_.has(response, 'statusCode')){
 
 			if(response.statusCode == 200){
@@ -161,17 +138,11 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 	}
 
 	determineResultMessage(result_code){
-
-		du.debug('Determine Result Message');
-
 		return this.result_messages[result_code];
 
 	}
 
 	validateVendorResponse(){
-
-		du.debug('Validate Provider Response');
-
 		let fulfillment_provider_name = this.getFulfillmentProviderName();
 		let response = this.parameters.get('response');
 
@@ -182,9 +153,6 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 	}
 
 	handleError(error){
-
-		du.debug('Handle Error');
-
 		this.setCode('error');
 
 		if(_.has(error, 'message')){
@@ -196,9 +164,6 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 	}
 
 	getResult(){
-
-		du.debug('Get Result');
-
 		return {
 			code: this.getCode(),
 			response: this.getResponse(),
@@ -208,17 +173,11 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 	}
 
 	getResponse(){
-
-		du.debug('Get Response');
-
 		return this.parameters.get('response', {fatal: false});
 
 	}
 
 	setMessage(message){
-
-		du.debug('Set Message');
-
 		this.parameters.set('message', message);
 
 		return true;
@@ -226,17 +185,11 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 	}
 
 	getMessage(){
-
-		du.debug('Get Message');
-
 		return this.parameters.get('message')
 
 	}
 
 	setCode(code){
-
-		du.debug('Set Code');
-
 		this.parameters.set('code', code);
 
 		return true;
@@ -244,9 +197,6 @@ module.exports = class FulfillmentProviderVendorResponse extends Response {
 	}
 
 	getCode(){
-
-		du.debug('Get Code');
-
 		let code = this.parameters.get('code', {fatal: false});
 
 		if(_.isNull(code)){

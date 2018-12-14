@@ -1,6 +1,4 @@
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const InfoController = global.SixCRM.routes.include('helpers', 'shippingcarriers/Info.js');
 const TrackerUtilities = global.SixCRM.routes.include('providers', 'tracker/TrackerUtilities.js');
 
@@ -13,9 +11,6 @@ module.exports = class TrackerController extends TrackerUtilities {
 	}
 
 	info(){
-
-		du.debug('info');
-
 		return Promise.resolve(true)
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'info'}))
 			.then(() => this.acquireShippingReceipt())
@@ -26,9 +21,6 @@ module.exports = class TrackerController extends TrackerUtilities {
 	}
 
 	executeInfo(){
-
-		du.debug('Execute Info');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 
 		let infoController = new InfoController();
@@ -41,9 +33,6 @@ module.exports = class TrackerController extends TrackerUtilities {
 	}
 
 	transformInfoResponse(){
-
-		du.debug('Transform Info Response');
-
 		let vendor_response = this.parameters.get('vendorresponseclass');
 
 		let responsecode = 'fail';

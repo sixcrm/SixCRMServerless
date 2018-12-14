@@ -36,12 +36,10 @@ module.exports = class SESProvider extends AWSProvider{
 	}
 
 	verifyEmails(){
-		this.ses.verifyEmailIdentity({EmailAddress:'tmdalbey@gmail.com'}, function(error, data){
+		this.ses.verifyEmailIdentity({EmailAddress:'tmdalbey@gmail.com'}, function(error){
 			if(error){
 				du.warning(error);
 			}
-			du.debug(data);
-			du.debug('verification email sent');
 		});
 	}
 
@@ -49,23 +47,15 @@ module.exports = class SESProvider extends AWSProvider{
 
 		return new Promise((resolve, reject) => {
 
-			du.debug('SES Pre-formatted parameters', parameters);
-
 			return this.createParametersObject(parameters).then((ses_formatted_parameters) => {
-
-				du.debug('SES Parameters', ses_formatted_parameters);
 
 				return this.ses.sendEmail(ses_formatted_parameters, function(error, data) {
 
 					if(error){
 
-						du.debug('SES Error!', error);
-
 						return reject(error);
 
 					}else{
-
-						du.debug('SES Success:', data);
 
 						return resolve(data);
 

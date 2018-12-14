@@ -13,9 +13,6 @@ module.exports = class CreateRebillController extends stepFunctionWorkerControll
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		let session = await this.getSession(event.guid);
@@ -27,9 +24,6 @@ module.exports = class CreateRebillController extends stepFunctionWorkerControll
 	}
 
 	async createRebill(session, fatal = false){
-
-		du.debug('Create Rebill');
-
 		let rebill = null;
 
 		try {
@@ -54,9 +48,6 @@ module.exports = class CreateRebillController extends stepFunctionWorkerControll
 	}
 
 	respond(rebill){
-
-		du.debug('Respond');
-
 		if(_.isObject(rebill) && _.has(rebill, 'id')){
 			return 'REBILLCREATED';
 		}

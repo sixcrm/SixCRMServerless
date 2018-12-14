@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const permissionutilities = require('@6crm/sixcrmcore/util/permission-utilities').default;
@@ -77,7 +76,6 @@ module.exports = class RestoreAccountController extends transactionEndpointContr
 	}
 
 	async validateAccount(event) {
-		du.debug('Validate Account');
 		await accountHelperController.validateAccount();
 		return event;
 	}
@@ -188,8 +186,6 @@ module.exports = class RestoreAccountController extends transactionEndpointContr
 	}
 
 	async incrementMerchantProviderSummary(transactions) {
-		du.debug('Increment Merchant Provider Summary');
-
 		if (_.isNull(transactions) || !arrayutilities.nonEmpty(transactions)) {
 			return;
 		}

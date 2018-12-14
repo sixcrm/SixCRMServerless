@@ -1,5 +1,4 @@
 const querystring = require('querystring');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const MerchantProvider = global.SixCRM.routes.include('vendors', 'merchantproviders/MerchantProvider.js');
 const PaymentXPAPI = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/PaymentXP/api.js');
 const PaymentXPResponse = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/PaymentXP/Response.js');
@@ -42,7 +41,6 @@ class PaymentXPController extends MerchantProvider {
 	}
 
 	async process({customer, creditcard, amount}) {
-		du.debug('Process');
 		const action = 'process';
 		this.parameters.setParameters({
 			argumentation: {customer, creditcard, amount},
@@ -54,7 +52,6 @@ class PaymentXPController extends MerchantProvider {
 	}
 
 	async refund({transaction, amount}) {
-		du.debug('Refund');
 		const action = 'refund';
 		this.parameters.setParameters({
 			argumentation: {transaction, amount},
@@ -67,7 +64,6 @@ class PaymentXPController extends MerchantProvider {
 	}
 
 	async reverse({transaction}) {
-		du.debug('Reverse');
 		const action = 'reverse';
 		this.parameters.setParameters({
 			argumentation: {transaction},

@@ -19,9 +19,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async stopExecutions(executions = null){
-
-		du.debug('Stop Executions');
-
 		if(!_.isArray(executions) || !arrayutilities.nonEmpty(executions)){
 			throw eu.getError('server', 'stopExecutions() assumes executions parameters is a non-empty array.');
 		}
@@ -37,9 +34,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async startExecution({parameters, fatal = true}) {
-
-		du.debug('Start Execution');
-
 		let identifier = this.getIdentifier();
 
 		this.addName(parameters, identifier);
@@ -70,9 +64,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	buildExecutionArn(execution) {
-
-		du.debug('Build Execution ARN');
-
 		if(!_.has(execution, 'name')){
 			throw eu.getError('server', 'State requires "name" property in order to build a execution ARN');
 		}
@@ -95,9 +86,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async addAccount(parameters){
-
-		du.debug('Add Account');
-
 		let account = await this.getAccount(parameters);
 
 		if(!_.isNull(account)){
@@ -110,9 +98,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async getAccount(parameters /*, fatal = true*/) {
-
-		du.debug('Get Account');
-
 		if (_.has(parameters, 'account')) {
 			return parameters.account;
 		}
@@ -156,9 +141,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	getGUID(parameters, fatal = true){
-
-		du.debug('Get GUID');
-
 		let guid = null;
 
 		if (_.has(parameters, 'input') && _.has(parameters.input, 'guid')) {
@@ -178,9 +160,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	getEntityType(parameters){
-
-		du.debug('Get Entity Type');
-
 		if(_.has(parameters, 'entity_type')){
 			return parameters.entity_type;
 		}
@@ -194,9 +173,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	getEntityInputTypeFromStateMachineName(state_machine_name){
-
-		du.debug('Get Entity Input Type From State Machine');
-
 		let translation = {
 			rebill: ['Billing', 'Recovery', 'Prefulfillment', 'Fulfillment', 'Postfulfillment'],
 			shipping_receipt:['Tracking'],
@@ -216,9 +192,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async getShippingReceipt(id, fatal = true){
-
-		du.debug('Get Shipping Receipt');
-
 		if(!_.has(this, 'shippingReceiptController')){
 			const ShippingReceiptController = global.SixCRM.routes.include('entities', 'ShippingReceipt.js');
 			this.shippingReceiptController = new ShippingReceiptController();
@@ -240,9 +213,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async getRebill(id, fatal = true){
-
-		du.debug('Get Rebill');
-
 		if(!_.has(this, 'rebillController')){
 			const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 			this.rebillController = new RebillController();
@@ -264,9 +234,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	async getSession(id, fatal = true){
-
-		du.debug('Get Session');
-
 		if(!_.has(this, 'sessionController')){
 			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 			this.sessionController = new SessionController();
@@ -288,25 +255,16 @@ module.exports = class StateMachineHelperController {
 	}
 
 	addName(parameters, identifier){
-
-		du.debug('Add Name');
-
 		parameters.name = identifier;
 
 	}
 
 	addStateMachineArn(parameters){
-
-		du.debug('Add State Machine Arn');
-
 		parameters.stateMachineArn = this.stepfunctionprovider.createStateMachineARN(parameters.stateMachineName);
 
 	}
 
 	addExecutionID(parameters, identifier){
-
-		du.debug('Add Execution ID');
-
 		if(_.has(parameters, 'input')){
 			parameters.input.executionid = identifier;
 		}else{
@@ -316,9 +274,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	rectifyStateMachineNames(parameters){
-
-		du.debug('Rectify State Machine Names');
-
 		if(_.has(parameters, 'input')){
 
 			if(_.has(parameters, 'stateMachineName') && _.has(parameters.input, 'stateMachineName')){
@@ -334,9 +289,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	normalizeInput(parameters){
-
-		du.debug('Normalize Input');
-
 		if(_.has(parameters, 'input')){
 
 			if(!_.isString(parameters.input)){
@@ -348,9 +300,6 @@ module.exports = class StateMachineHelperController {
 	}
 
 	getIdentifier() {
-
-		du.debug('Get Identifier');
-
 		return hashutilities.toSHA1(random.createRandomString(20)+timestamp.now());
 
 	}

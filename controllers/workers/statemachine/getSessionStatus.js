@@ -1,7 +1,5 @@
 const _ = require('lodash')
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class GetSessionStatusController extends stepFunctionWorkerController {
@@ -13,9 +11,6 @@ module.exports = class GetSessionStatusController extends stepFunctionWorkerCont
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		let session = await this.getSession(event.guid);
@@ -45,9 +40,6 @@ module.exports = class GetSessionStatusController extends stepFunctionWorkerCont
 	}
 
 	isOpen(session){
-
-		du.debug('Is Open');
-
 		if(!_.has(session, 'completed') || session.completed != true){
 			return true;
 		}
@@ -57,9 +49,6 @@ module.exports = class GetSessionStatusController extends stepFunctionWorkerCont
 	}
 
 	isConcluded(session){
-
-		du.debug('Is Concluded');
-
 		if(_.has(session, 'concluded') && session.concluded == true){
 			return true;
 		}
@@ -69,9 +58,6 @@ module.exports = class GetSessionStatusController extends stepFunctionWorkerCont
 	}
 
 	isCancelled(session){
-
-		du.debug('Is Concluded');
-
 		if(_.has(session, 'cancelled') && _.has(session.cancelled, 'cancelled') && session.cancelled.cancelled == true){
 			return true;
 		}
@@ -81,9 +67,6 @@ module.exports = class GetSessionStatusController extends stepFunctionWorkerCont
 	}
 
 	respond(status){
-
-		du.debug('Respond');
-
 		return status;
 
 	}

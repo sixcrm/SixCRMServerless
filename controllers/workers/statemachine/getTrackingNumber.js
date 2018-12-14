@@ -15,9 +15,6 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		let shipping_receipt = await this.getShippingReceipt(event.guid);
@@ -29,9 +26,6 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 	}
 
 	async getTrackingNumberByShippingReceipt(shipping_receipt){
-
-		du.debug('Get Tracking Number By Shipping Receipt');
-
 		if(objectutilities.hasRecursive(shipping_receipt, 'tracking.id') && stringutilities.nonEmpty(shipping_receipt.tracking.id)){
 			return shipping_receipt.tracking.id;
 		}
@@ -61,9 +55,6 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 	}
 
 	async getTrackingInformationFromFulfillmentProvider(shipping_receipt){
-
-		du.debug('Get Tracking Information From Fulfillment Provider');
-
 		const TerminalController = global.SixCRM.routes.include('providers','terminal/Terminal.js');
 		let terminalController = new TerminalController();
 
@@ -94,9 +85,6 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 	}
 
 	async updateShippingReceiptWithTrackingNumberAndCarrier({shipping_receipt, tracking}){
-
-		du.debug('updateShippingReceiptWithTrackingNumber');
-
 		shipping_receipt.tracking = {
 			id: tracking.id,
 			carrier: tracking.carrier
@@ -114,9 +102,6 @@ module.exports = class GetTrackingNumberController extends stepFunctionWorkerCon
 	}
 
 	respond(tracking_number){
-
-		du.debug('Respond');
-
 		if(!_.isNull(tracking_number) && stringutilities.nonEmpty(tracking_number)){
 			return tracking_number;
 		}

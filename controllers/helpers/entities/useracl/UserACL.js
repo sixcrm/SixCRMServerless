@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 //const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 
@@ -8,9 +7,6 @@ module.exports = class UserACLHelperController {
 	constructor(){}
 
 	getPrototypeUserACL({user, account, role}){
-
-		du.debug('Get Prototype User ACL');
-
 		let acl_prototype = {
 			user: user,
 			account: account,
@@ -22,9 +18,6 @@ module.exports = class UserACLHelperController {
 	}
 
 	async createNewUserACL({account, user, role, owner_user = false}){
-
-		du.debug('Create New User ACL');
-
 		if(!_.has(account, 'id')){
 			throw eu.getError('server', 'Expected account to have id property.');
 		}

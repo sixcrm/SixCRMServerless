@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const signatureutilities = require('@6crm/sixcrmcore/util/signature').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
@@ -57,9 +56,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	async acknowledge(hash){
-
-		du.debug('Acknowledge');
-
 		this.inviteController.disableACLs();
 		let invite = 	await this.inviteController.getByHash(hash);
 		this.inviteController.enableACLs();
@@ -78,9 +74,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	async accept({hash, signature}){
-
-		du.debug('Accept');
-
 		this.inviteController.disableACLs();
 		let invite = 	await this.inviteController.getByHash(hash);
 		this.inviteController.enableACLs();
@@ -106,9 +99,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	async _acceptInvite(invite){
-
-		du.debug('Accept Invite');
-
 		this.parameters.set('invite', invite);
 
 		await this._updatePendingACL(invite.acl);
@@ -122,9 +112,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	async _removeInvite(invite){
-
-		du.debug('Remove Invite');
-
 		this.inviteController.disableACLs();
 		await this.inviteController.delete({id: invite.id});
 		this.inviteController.enableACLs();
@@ -134,9 +121,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	_createInviteSignature(invite){
-
-		du.debug('Create Invite Signature');
-
 		if(_.has(invite, 'hash') && _.has(invite, 'created_at')){
 			const prehash = invite.hash+invite.created_at;
 			return signatureutilities.createSignature(prehash, this.invite_salt);
@@ -147,9 +131,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	invite(){
-
-		du.debug('Invite');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'invite'}))
 			.then(() => this._hydrateInviteProperties())
@@ -168,9 +149,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	inviteResend() {
-
-		du.debug('Invite Resend');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'inviteResend'}))
 			.then(() => this._hydrateInviteACL())
@@ -187,9 +165,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	_hydrateInviteProperties(user_invite = null){
-
-		du.debug('Hydrate Invite Properties');
-
 		if(user_invite === null){
 			user_invite = this.parameters.get('userinvite');
 		}
@@ -218,9 +193,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	async _updateUserName({user = null, invite = null} = {}){
-
-		du.debug('Conditionally Update User');
-
 		if(_.isNull(invite)){
 			invite = this.parameters.get('userinvite');
 		}
@@ -230,8 +202,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 		}
 
 		let is_new = await this._isNewUser(user);
-
-		du.debug('Is new: '+is_new);
 
 		if(is_new == true){
 
@@ -256,9 +226,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	async _validateRequest(){
-
-		du.debug('Validate Request');
-
 		let account = this.parameters.get('account');
 		let useracls = await this.userACLController.getACLByUser({user: global.user});
 		const account_error = eu.getError('server', `Can't invite. You are not a member of account ${account.name}`);
@@ -301,9 +268,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	async _createInviteACL(){
-
-		du.debug('Create Invite ACL');
-
 		let user = this.parameters.get('user');
 		let account = this.parameters.get('account');
 		let role = this.parameters.get('role');
@@ -323,9 +287,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	async _sendInviteEmail(){
-
-		du.debug('Send Invite Email');
-
 		let acl = this.parameters.get('useracl');
 		let invitor = global.user.id;
 		let account = this.parameters.get('account');
@@ -357,9 +318,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	_postInvite(){
-
-		du.debug('Post Invite');
-
 		let account = this.parameters.get('account');
 		let role = this.parameters.get('role');
 		let user = this.parameters.get('user');
@@ -369,9 +327,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	_postInviteResend(){
-
-		du.debug('Post Invite Resend');
-
 		let account = this.parameters.get('account');
 		let role = this.parameters.get('role');
 		let user = this.parameters.get('user');
@@ -381,17 +336,11 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	_postAccept(){
-
-		du.debug('Post Accept');
-
 		return this.pushEvent({event_type: 'user_invite_accepted'});
 
 	}
 
 	async _assureUser(invite){
-
-		du.debug('Assure User');
-
 		this.userController.disableACLs();
 		let user = await this.userController.get({id: invite.email});
 		this.userController.enableACLs();
@@ -407,9 +356,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	async _isNewUser(user){
-
-		du.debug('Is New User');
-
 		if(_.has(user, 'auth0_id') && _.isString(user.auth0_id) && stringutilities.nonEmpty(user.auth0_id)){
 			return false;
 		}
@@ -419,9 +365,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	async _updatePendingACL(acl_id){
-
-		du.debug('Update Pending ACL');
-
 		this.userACLController.disableACLs();
 		let acl = await this.userACLController.get({id: acl_id});
 		this.userACLController.enableACLs();
@@ -445,9 +388,6 @@ module.exports = class InviteHelperClass extends InviteUtilities {
 	}
 
 	_hydrateInviteACL(){
-
-		du.debug('Hydrate Invite ACL');
-
 		let user_invite = this.parameters.get('userinvite');
 
 		return this.userACLController.get({id:user_invite.acl}).then(acl => {

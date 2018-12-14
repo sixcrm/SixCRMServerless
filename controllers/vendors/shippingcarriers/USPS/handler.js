@@ -1,8 +1,4 @@
-
 var request = require('request');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const ShippingCarrierController = global.SixCRM.routes.include('controllers', 'vendors/shippingcarriers/components/ShippingCarrier.js');
 
 module.exports = class USPSController extends ShippingCarrierController {
@@ -35,9 +31,6 @@ module.exports = class USPSController extends ShippingCarrierController {
 	}
 
 	acquireConfigurationInformation(){
-
-		du.debug('Acquire Configuration Information');
-
 		let vendor_configuration = global.SixCRM.routes.include('config', global.SixCRM.configuration.stage+'/vendors/shippingcarriers/USPS.yml');
 
 		this.parameters.set('userid', vendor_configuration.user_id);
@@ -48,9 +41,6 @@ module.exports = class USPSController extends ShippingCarrierController {
 	}
 
 	info(){
-
-		du.debug('info');
-
 		this.parameters.set('action', 'info');
 
 		return Promise.resolve()
@@ -61,9 +51,6 @@ module.exports = class USPSController extends ShippingCarrierController {
 	}
 
 	acquireAPIResult(){
-
-		du.debug('Acquire API Result');
-
 		return Promise.resolve()
 			.then(() => this.buildRequestXML())
 			.then(() => this.buildRequestURI())
@@ -72,9 +59,6 @@ module.exports = class USPSController extends ShippingCarrierController {
 	}
 
 	buildRequestXML(){
-
-		du.debug('Build Request XML');
-
 		let tracking_number = this.parameters.get('trackingnumber');
 		let user_id = this.parameters.get('userid');
 
@@ -104,9 +88,6 @@ module.exports = class USPSController extends ShippingCarrierController {
 	}
 
 	buildRequestURI(){
-
-		du.debug('Build URI');
-
 		let request_xml = this.parameters.get('requestxml');
 
 		let request_uri = 'http://production.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML='+encodeURIComponent(request_xml);
@@ -118,9 +99,6 @@ module.exports = class USPSController extends ShippingCarrierController {
 	}
 
 	executeAPIRequest(){
-
-		du.debug('Execute API Request');
-
 		let request_uri = this.parameters.get('requesturi');
 
 		return new Promise((resolve) => {

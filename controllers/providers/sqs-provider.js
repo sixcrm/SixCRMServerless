@@ -23,9 +23,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	instantiateSQS() {
-
-		du.debug('Instantiate SQS');
-
 		let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'sqs.region')) ? global.SixCRM.configuration.site_config.sqs.region : this.getRegion();
 
 		let parameters = {
@@ -43,9 +40,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	getQueueARN(queue_name) {
-
-		du.debug('Get Queue ARN');
-
 		if (_.isObject(queue_name)) {
 			if (_.has(queue_name, 'QueueName')) {
 				queue_name = queue_name.QueueName;
@@ -91,9 +85,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	getQueueParameters(queue_name) {
-
-		du.debug('Get Queue Parameters');
-
 		if (_.isNull(queue_name) || _.isUndefined(queue_name)) {
 			throw eu.getError('server', 'Unable to determine queue name.');
 		}
@@ -109,9 +100,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	receiveMessagesRecursive(parameters, options = {}) {
-
-		du.debug('Receive Messages Recursive');
-
 		const self = this;
 
 		return _receiveMessagesRecursive(parameters, 0);
@@ -167,9 +155,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	receiveMessages(parameters) {
-
-		du.debug('Receive Messages');
-
 		return new Promise((resolve, reject) => {
 
 			let params = {};
@@ -187,8 +172,6 @@ module.exports = class SQSProvider extends AWSProvider {
 			if (_.has(parameters, 'visibilityTimeout')) {
 				params['VisibilityTimeout'] = parameters['visibilityTimeout'];
 			}
-
-			du.debug('Message parameters', params);
 
 			this.assureSQS();
 
@@ -223,11 +206,8 @@ module.exports = class SQSProvider extends AWSProvider {
 
 			let entries = [];
 
-			du.debug('Messages to delete:', parameters);
-
 			if (_.has(parameters, 'messages')) {
 				parameters.messages.forEach((message) => {
-					du.debug('Message to delete:', message);
 					if (_.has(message, 'ReceiptHandle') && _.has(message, 'MessageId')) {
 						entries.push({
 							Id: message.MessageId,
@@ -247,8 +227,6 @@ module.exports = class SQSProvider extends AWSProvider {
 
 				params['QueueUrl'] = queue_url;
 
-				du.debug('Delete message parameters:', params);
-
 				this.assureSQS();
 
 				this.sqs.deleteMessageBatch(params, function (err, data) {
@@ -264,8 +242,6 @@ module.exports = class SQSProvider extends AWSProvider {
 						if (_.has(data, 'Failed') && _.isArray(data.Failed) && data.Failed.length > 0) {
 							du.warning('Failed to delete messages: ', data.Failed);
 						}
-
-						du.debug('Delete response: ', data);
 
 						return resolve(data);
 					}
@@ -285,9 +261,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	deleteMessage(parameters) {
-
-		du.debug('Delete Message');
-
 		let queue_url = this.getQueueURL(parameters);
 
 		var params = {
@@ -302,9 +275,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	sendMessage(parameters) {
-
-		du.debug('Send Message');
-
 		let queue_url = this.getQueueURL(parameters);
 
 		var params = {
@@ -324,8 +294,6 @@ module.exports = class SQSProvider extends AWSProvider {
 
 		}
 
-		du.debug('Sending message', params);
-
 		this.assureSQS();
 
 		return this.sqs.sendMessage(params).promise();
@@ -333,9 +301,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	async purgeQueue(parameters) {
-
-		du.debug('Purge Queue');
-
 		let queue_name;
 
 		if (_.isString(parameters)) {
@@ -353,9 +318,6 @@ module.exports = class SQSProvider extends AWSProvider {
 		}
 
 		if (await this.queueExists(queue_name)) {
-
-			du.debug('Queue exists, purging');
-
 			let queue_url = this.getQueueURL(parameters);
 
 			let params = {
@@ -367,9 +329,6 @@ module.exports = class SQSProvider extends AWSProvider {
 			return this.sqs.purgeQueue(params).promise();
 
 		} else {
-
-			du.debug('Queue not found, skipping');
-
 			return false;
 
 		}
@@ -377,8 +336,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	async createQueue(params) {
-
-		du.debug('Create Queue', params);
 
 		du.info(params.QueueName);
 
@@ -418,8 +375,6 @@ module.exports = class SQSProvider extends AWSProvider {
 
 	setQueueAttibutes(params) {
 
-		du.debug('Set Queue Attrbutes', params);
-
 		this.assureSQS();
 
 		return this.sqs.setQueueAttributes(params).promise();
@@ -427,9 +382,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	queueExists(shortname, refresh) {
-
-		du.debug('Queue Exists');
-
 		if (_.isUndefined(refresh)) {
 			refresh = false;
 		}
@@ -471,9 +423,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	listQueues(params) {
-
-		du.debug('List Queues');
-
 		return new Promise((resolve, reject) => {
 
 			if (_.isUndefined(params) || !_.isObject(params)) {
@@ -497,9 +446,6 @@ module.exports = class SQSProvider extends AWSProvider {
 	}
 
 	deleteQueue(shortname) {
-
-		du.debug('Delete Queue');
-
 		du.warning('Deleting queue: ' + shortname);
 
 		return this.queueExists(shortname, true).then(queue_exists => {
@@ -531,8 +477,6 @@ module.exports = class SQSProvider extends AWSProvider {
 							return reject(eu.getError('server', 'Failed to delete queue: ' + shortname));
 
 						} else {
-
-							du.debug(shortname + ' queue successfully deleted.');
 
 							return resolve(data);
 

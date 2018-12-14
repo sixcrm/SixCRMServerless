@@ -14,8 +14,6 @@ module.exports = class InnovioResponse extends Response {
 	}
 
 	determineResultCode({vendor_response, action}){
-
-		du.debug('Determine Result Code');
 		let {response, body} = vendor_response;
 		body = this.parseBody(body);
 
@@ -52,9 +50,6 @@ module.exports = class InnovioResponse extends Response {
 	}
 
 	parseBody(body){
-
-		du.debug('Parse Response');
-
 		let parsed_response = null;
 
 		try{
@@ -76,8 +71,6 @@ module.exports = class InnovioResponse extends Response {
 
 	determineMerchantCode(vendor_response) {
 
-		du.debug('Determine Merchant Code (Innovio)', vendor_response);
-
 		const body = this.parseBody(vendor_response.body);
 
 		let result = '';
@@ -88,15 +81,11 @@ module.exports = class InnovioResponse extends Response {
 			result = super.determineMerchantMessage(vendor_response);
 		}
 
-		du.debug('Determined Merchant Code (Innovio)', result);
-
 		return result;
 
 	}
 
 	determineMerchantMessage(vendor_response) {
-
-		du.debug('Determine Merchant Message (Innovio)', vendor_response);
 
 		if (this.getCode() === 'success') {
 			return 'Success';
@@ -111,8 +100,6 @@ module.exports = class InnovioResponse extends Response {
 		if (result === '' || typeof result !== 'string') {
 			result = super.determineMerchantMessage(vendor_response);
 		}
-
-		du.debug('Determined Merchant Message (Innovio)', result);
 
 		return result;
 

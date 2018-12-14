@@ -1,6 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const ShipmentUtilities = global.SixCRM.routes.include('helpers', 'shipment/ShipmentUtilities.js');
 
 module.exports = class TestController extends ShipmentUtilities {
@@ -29,9 +26,6 @@ module.exports = class TestController extends ShipmentUtilities {
 	}
 
 	execute(){
-
-		du.debug('Fulfill');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action:'execute'}))
 			.then(() => this.hydrateFulfillmentProvider())
@@ -46,9 +40,6 @@ module.exports = class TestController extends ShipmentUtilities {
 	}
 
 	executeTest(){
-
-		du.debug('Execute Fulfillment');
-
 		let instantiated_fulfillment_provider = this.parameters.get('instantiatedfulfillmentprovider');
 
 		return instantiated_fulfillment_provider.test().then(vendorresponseclass =>{

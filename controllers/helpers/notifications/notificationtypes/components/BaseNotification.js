@@ -18,9 +18,6 @@ module.exports = class BaseNotification extends NotificationUtilities {
 	}
 
 	createContext(context){
-
-		du.debug('Create Context');
-
 		let refined_context = {};
 
 		if(_.has(this, 'context_required') && arrayutilities.nonEmpty(this.context_required)){
@@ -40,11 +37,6 @@ module.exports = class BaseNotification extends NotificationUtilities {
 	}
 
 	transformContext(context){
-
-		du.debug('Transform Context');
-
-		du.debug('Context:', context);
-
 		let return_object = {
 			name: this.getName(),
 			user: this.getUserFromContext(context),
@@ -62,9 +54,6 @@ module.exports = class BaseNotification extends NotificationUtilities {
 
 	//Entrypoint
 	triggerNotifications(transformed_context){
-
-		du.debug('Trigger Notifications');
-
 		if(!_.has(this, 'notificationProvider')){
 			const NotificationProvider = global.SixCRM.routes.include('providers', 'notification/Notification.js');
 			this.notificationProvider = new NotificationProvider();

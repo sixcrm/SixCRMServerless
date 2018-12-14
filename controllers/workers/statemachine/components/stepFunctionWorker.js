@@ -16,9 +16,6 @@ module.exports = class StepFunctionWorkerController extends WorkerController {
 	}
 
 	validateEvent(event){
-
-		du.debug('Validate Event');
-
 		du.info('Input event: '+JSON.stringify(event));
 
 		if(!_.has(event, 'guid')){
@@ -34,33 +31,21 @@ module.exports = class StepFunctionWorkerController extends WorkerController {
 	}
 
 	getShippingReceipt(id, fatal = true){
-
-		du.debug('Get Shipping Receipt');
-
 		return new StateMachineHelperController().getShippingReceipt(id, fatal);
 
 	}
 
 	getRebill(id, fatal = true){
-
-		du.debug('Get Rebill');
-
 		return new StateMachineHelperController().getRebill(id, fatal);
 
 	}
 
 	getSession(id, fatal = true){
-
-		du.debug('Get Rebill');
-
 		return new StateMachineHelperController().getSession(id, fatal);
 
 	}
 
 	getAccount(event){
-
-		du.debug('Get Account');
-
 		return new StateMachineHelperController().getAccount(event);
 
 	}

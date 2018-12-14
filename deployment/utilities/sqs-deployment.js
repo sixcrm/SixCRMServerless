@@ -20,9 +20,6 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 	}
 
 	purgeQueues() {
-
-		du.debug('Purge Queues');
-
 		return this.getQueueDefinitions().then((queue_definitions) => {
 
 			let purge_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
@@ -49,9 +46,6 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 	}
 
 	deployQueues() {
-
-		du.debug('Deploy Queues');
-
 		let number_of_created_queues = 0;
 
 		return this.getQueueDefinitions().then((queue_definitions) => {
@@ -105,17 +99,11 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 	}
 
 	createQueue(queue_definition) {
-
-		du.debug('Create Queue');
-
 		return this.sqsprovider.createQueue(queue_definition);
 
 	}
 
 	destroyQueues() {
-
-		du.debug('Destroy Queues');
-
 		return this.getQueueDefinitions().then((queue_definitions) => {
 
 			let delete_queue_promises = arrayutilities.map(queue_definitions, (queue_definition) => {
@@ -147,9 +135,6 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 	}
 
 	getQueueDefinitions() {
-
-		du.debug('Get Queue Definitions');
-
 		let sqs_definitions_directory = global.SixCRM.routes.path('deployment', 'sqs/queues');
 
 		return fileutilities.getDirectoryFiles(sqs_definitions_directory).then((queue_definition_filenames) => {
@@ -165,9 +150,6 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 	}
 
 	addQueueRedrivePolicy(queue_definition) {
-
-		du.debug('Add Queue Redrive Policy')
-
 		let deadletter_queue_arn = this.sqsprovider.getQueueARN(this.resolveQueueName(queue_definition, true));
 
 		queue_definition.Attributes.RedrivePolicy = JSON.stringify({
@@ -180,9 +162,6 @@ module.exports = class SQSDeployment extends AWSDeploymentUtilities {
 	}
 
 	createDeadLetterQueueDefinition(queue_definition) {
-
-		du.debug('Create Deadletter Queue Definition');
-
 		let queue_definition_clone = objectutilities.clone(queue_definition);
 
 		if (!_.has(queue_definition, 'QueueName')) {

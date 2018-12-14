@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const querystring = require('querystring');
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 const CreditCardHelperController = global.SixCRM.routes.include('helpers', 'entities/creditcard/CreditCard.js');
 
@@ -90,9 +89,6 @@ class NMIController extends MerchantProvider {
 	}
 
 	refund(request_parameters){
-
-		du.debug('Refund');
-
 		this.parameters.set('action','refund');
 		const method_parameters = {type: 'refund'};
 
@@ -117,9 +113,6 @@ class NMIController extends MerchantProvider {
 	}
 
 	reverse(request_parameters){
-
-		du.debug('Reverse');
-
 		this.parameters.set('action','reverse');
 		const method_parameters = {type: 'void'};
 
@@ -146,9 +139,6 @@ class NMIController extends MerchantProvider {
 	}
 
 	process(request_parameters){
-
-		du.debug('Process');
-
 		this.parameters.set('action', 'process');
 		const method_parameters = {type: 'sale'};
 
@@ -174,9 +164,6 @@ class NMIController extends MerchantProvider {
 	}
 
 	test(request_parameters){
-
-		du.debug('Test');
-
 		this.parameters.set('action', 'test');
 		const method_parameters = {type: 'validate'};
 

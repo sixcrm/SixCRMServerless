@@ -41,11 +41,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	//Technical Debt:  Refactor.
 	catchPermissions(permissions, action){
-
-		du.debug('Catch Permissions');
-
-		du.debug('Permissions', permissions, 'Action', action);
-
 		action = (_.isUndefined(action))?'read':action;
 
 		if(permissions == false){
@@ -61,9 +56,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	handleErrors(error, fatal){
-
-		du.debug('Handle Errors');
-
 		fatal = (_.isUndefined(fatal))?false:fatal;
 
 		if(_.has(error, 'code')){
@@ -83,9 +75,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	prune(entity, primary_key){
-
-		du.debug('Prune');
-
 		primary_key = (_.isUndefined(primary_key))?this.primary_key:primary_key;
 
 		if(objectutilities.isObject(entity)){
@@ -112,9 +101,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	validate(object, path_to_model){
-
-		du.debug('Validate');
-
 		if(_.isUndefined(path_to_model)){
 			path_to_model = global.SixCRM.routes.path('model', 'entities/'+this.descriptive_name+'.json');
 		}
@@ -130,34 +116,22 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	getUUID(){
-
-		du.debug('Get UUID');
-
 		return stringutilities.getUUID();
 
 	}
 
 	isUUID(string, version){
-
-		du.debug('Is UUID');
-
 		return stringutilities.isUUID(string, version);
 
 	}
 
 	isEmail(string){
-
-		du.debug('Is Email');
-
 		return stringutilities.isEmail(string);
 
 	}
 
 	//Technical Debt:  This seems strange.
 	acquireGlobalUser(){
-
-		du.debug('Acquire Global User');
-
 		if(_.has(global, 'user')){
 
 			return global.user;
@@ -170,9 +144,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	//Technical Debt:  This seems strange.
 	acquireGlobalAccount(){
-
-		du.debug('Acquire Global Account');
-
 		if(_.has(global, 'account')){
 
 			return global.account;
@@ -184,9 +155,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	setCreatedAt(entity, created_at){
-
-		du.debug('Set Created At');
-
 		if(_.isUndefined(created_at)){
 
 			entity['created_at'] = timestamp.getISO8601();
@@ -204,9 +172,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	setUpdatedAt(entity){
-
-		du.debug('Set Updated At');
-
 		if(!_.has(entity, 'created_at')){
 
 			throw eu.getError('validation','Entity lacks a "created_at" property');
@@ -228,9 +193,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	persistCreatedUpdated(entity, exists){
-
-		du.debug('Persist Created Updated');
-
 		if(!_.has(exists, 'created_at')){
 			throw eu.getError('validation','Entity lacks "created_at" property.');
 		}
@@ -247,9 +209,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	marryQueryParameters(empirical_parameters, secondary_parameters){
-
-		du.debug('Marry Query Parameters');
-
 		if(_.isUndefined(empirical_parameters) || !_.isObject(empirical_parameters)){
 			return secondary_parameters;
 		}
@@ -267,9 +226,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	assureSingular(results){
-
-		du.debug('Assure Singular');
-
 		if(_.isNull(results)){
 			return null;
 		}
@@ -292,9 +248,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	assignPrimaryKey(entity){
-
-		du.debug('Assign Primary Key');
-
 		if(!_.has(entity, this.primary_key)){
 
 			if(this.primary_key == 'id'){
@@ -314,37 +267,17 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	assignAccount(entity){
-
-		du.debug('Assign Account');
-
 		if(!_.has(entity, 'account')){
-
-			du.debug('No account specified in the entity record');
-
 			//Technical Debt:  This is inappropriate here...
 			if(_.has(global, 'account')){
-
-				du.debug('Global account identified.  Appending to the entity.');
-
 				if(!_.includes(this.nonaccounts, this.descriptive_name)){
 
 					entity.account = global.account;
 
-				}else{
-
-					du.debug('Entity exists in the non-account list.');
-
 				}
-
-			}else{
-
-				du.debug('No global account value available.');
-
 			}
 
 		}else{
-
-			du.debug('Entity already bound to a account.');
 			//Technical Debt: Critical
 			//Technical Debt:  Need to validate that the user that is creating the entity has permission to assign to the account.
 
@@ -356,9 +289,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	//Technical Debt:  Why was the account condition stuff here?
 	appendUserCondition({query_parameters, user}){
-
-		du.debug('Append User Condition');
-
 		//Technical Debt:  This is inappropriate here...
 		user = (_.isUndefined(user))?global.user:user;
 
@@ -371,9 +301,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	appendSearchConditions({query_parameters, search}){
-
-		du.debug('Append Updated At Condition');
-
 		/*
       //validate...
       if(objectutilities.hasRecursive(search, 'name')){
@@ -428,9 +355,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	appendAccountCondition({query_parameters, account, literal_master}){
-
-		du.debug('Append Account Condition');
-
 		//Technical Debt:  This is inappropriate here...
 		account = (_.isUndefined(account))?global.account:account;
 
@@ -455,9 +379,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	appendAccountFilter({query_parameters, account}){
-
-		du.debug('Append Account Filter');
-
 		//Technical Debt:  This is inappropriate here...
 		account = (_.isUndefined(account))?global.account:account;
 
@@ -482,9 +403,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	appendPagination({query_parameters, pagination}){
-
-		du.debug('Append Pagination');
-
 		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
 		if(!_.isUndefined(pagination) && _.isObject(pagination)){
@@ -512,9 +430,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	appendLimit({query_parameters, limit}){
-
-		du.debug('Append Limit');
-
 		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
 		limit = (_.isUndefined(limit))?100:limit;
@@ -540,8 +455,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	appendExclusiveStartKey(query_parameters, exclusive_start_key){
-
-		du.debug('Append Exclusive Start Key', query_parameters, exclusive_start_key);
 
 		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
@@ -587,11 +500,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 
 	appendCursor(query_parameters, cursor){
-
-		du.debug('Append Cursor');
-
-		du.debug(cursor);
-
 		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
 		if(!_.isUndefined(cursor) && !_.isNull(cursor)){
@@ -643,9 +551,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	assurePresence(thing, field, default_value){
-
-		du.debug('Assure Presence');
-
 		if(_.isUndefined(default_value)){
 
 			default_value = {};
@@ -663,9 +568,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	appendExpressionAttributeNames(query_parameters, key, value){
-
-		du.debug('Append Expression Attribute Names');
-
 		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
 		query_parameters = this.assurePresence(query_parameters, 'expression_attribute_names');
@@ -677,9 +579,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	appendKeyConditionExpression(query_parameters, condition_expression, conjunction){
-
-		du.debug('Append Key Condition Expression');
-
 		conjunction = (_.isUndefined(conjunction))?'AND':conjunction;
 
 		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
@@ -697,9 +596,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	appendExpressionAttributeValues(query_parameters, key, value){
-
-		du.debug('Append Expression Attribute Values');
-
 		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
 		query_parameters = this.assurePresence(query_parameters, 'expression_attribute_values');
@@ -712,9 +608,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 
 	appendFilterExpression(query_parameters, filter_expression){
-
-		du.debug('Append Filter Expression');
-
 		query_parameters = (_.isUndefined(query_parameters))?{}:query_parameters;
 
 		if (_.has(query_parameters, 'filter_expression')){
@@ -752,9 +645,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	buildPaginationObject(data){
-
-		du.debug('Build Pagnination Object');
-
 		var pagination_object = {
 			count: '',
 			end_cursor: '',
@@ -795,9 +685,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
     */
 
 	buildResponse(data, secondary_function){
-
-		du.debug('Build Response');
-
 		objectutilities.isObject(data, true);
 
 		if(!_.has(data, "Items")){
@@ -834,10 +721,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	getItems(data){
-
-
-		du.debug('Get Items');
-
 		objectutilities.isObject(data, true);
 
 
@@ -858,9 +741,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 	//Technical Debt:  This really doesn't need to return a promise
 	getResult(result, field){
-
-		du.debug('Get Result');
-
 		if(_.isUndefined(field)){
 			field = this.descriptive_name+'s';
 		}
@@ -874,9 +754,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	getID(object){
-
-		du.debug('Get ID');
-
 		if(_.isString(object)){
 
 			//Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
@@ -921,9 +798,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	getDescriptiveName(){
-
-		du.debug('Get Descriptive Name');
-
 		if(_.has(this, 'descriptive_name')){
 			return this.descriptive_name;
 		}
@@ -933,9 +807,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	setNames(name){
-
-		du.debug('Set Names');
-
 		this.descriptive_name = name;
 
 		this.setEnvironmentTableName(name);
@@ -945,9 +816,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	setPrimaryKey(){
-
-		du.debug('Set Primary Key');
-
 		if(!_.has(this, 'primary_key')){
 
 			this.primary_key = 'id';
@@ -957,9 +825,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	setEnvironmentTableName(name){
-
-		du.debug('Set Environment Table Name');
-
 		let key = this.buildTableKey(name);
 		let value = this.buildTableName(name);
 
@@ -970,9 +835,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	setTableName(name){
-
-		du.debug('Set Table Name');
-
 		let key = this.buildTableKey(name);
 
 		this.table_name = process.env[key];
@@ -980,9 +842,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	buildTableKey(name){
-
-		du.debug('Build Table Key');
-
 		name = stringutilities.pluralize(name);
 
 		return name+'_table';
@@ -991,9 +850,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 
 
 	buildTableName(name){
-
-		du.debug('Build Table Name');
-
 		return stringutilities.pluralize(name);
 
 	}
@@ -1006,9 +862,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	pushEvent({event_type = null, context = null, message_attributes = null} = {}) {
-
-		du.debug('Push Event');
-
 		if(event_type === null && _.has(this.event_type)){
 			event_type = this.event_type;
 		}
@@ -1033,9 +886,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	transformListArray(list_array){
-
-		du.debug('Transform List Array');
-
 		if(arrayutilities.nonEmpty(list_array)){
 
 			list_array = arrayutilities.filter(list_array, (list_item) => {
@@ -1053,9 +903,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	executeAssociatedEntityFunction(controller_name, function_name, function_arguments, retry = false){
-
-		du.debug('Execute Associated Entity Function');
-
 		if(_.has(this, controller_name) && _.isFunction(this[controller_name][function_name])){
 
 			this[controller_name].sanitization = this.sanitization;
@@ -1083,18 +930,12 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	translateControllerNameToFilename(controller_name){
-
-		du.debug('Translate Controller Name To Filename');
-
 		return stringutilities.uppercaseFirst(controller_name).replace('Controller', '')+'.js';
 
 	}
 
 	//Technical Debt:  Evaluate the utility of this method.
 	createEndOfPaginationResponse(items_name, items) {
-
-		du.debug('Create End Of Pagination Response');
-
 		let pagination = {};
 
 		pagination.count = items.length;
@@ -1106,24 +947,19 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 		response[items_name] = items;
 		response['pagination'] = pagination;
 
-		du.debug('Returning', response);
-
 		return Promise.resolve(response);
 
 	}
 
 	encryptAttributes(entity) {
-		du.debug('Encrypt Attributes');
 		return this.encryptionhelper.encryptAttributes(this.encrypted_attribute_paths, entity);
 	}
 
 	decryptAttributes(entity) {
-		du.debug('Decrypt Attributes');
 		return this.encryptionhelper.decryptAttributes(this.encrypted_attribute_paths, entity);
 	}
 
 	censorEncryptedAttributes(entity, custom_censor_fn) {
-		du.debug('Censor Encrypted Attributes');
 		return this.encryptionhelper.censorEncryptedAttributes(this.encrypted_attribute_paths, entity, custom_censor_fn);
 	}
 

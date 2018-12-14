@@ -40,9 +40,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	deployUsers(){
-
-		du.debug('Deploy Users');
-
 		//Technical Debt:  Finish.
 		//Need SES SMTP Users deployed automagically
 
@@ -51,9 +48,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	destroyUsers(){
-
-		du.debug('Deploy Users');
-
 		//Technical Debt:  Finish.
 		//Need SES SMTP Users destroyed automagically
 
@@ -62,9 +56,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	deployPolicies(){
-
-		du.debug('Deploy Policies');
-
 		return this.getPolicyDefinitionFilenames().then(policy_definition_filenames => {
 
 			let policy_definition_file_promises = arrayutilities.map(policy_definition_filenames, policy_definition_filename => {
@@ -82,25 +73,16 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	getPolicyDefinitionFilenames(){
-
-		du.debug('Get Policy Definition Filenames');
-
 		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'iam/policies')).then((filenames) => { return filenames; });
 
 	}
 
 	acquirePolicyFile(policy_definition_filename){
-
-		du.debug('Acquire Policy File');
-
 		return global.SixCRM.routes.include('deployment', 'iam/policies/'+policy_definition_filename);
 
 	}
 
 	deployPolicy(policy_definition){
-
-		du.debug('Deploy Policy');
-
 		return this.policyExists(policy_definition).then((role) => {
 
 			if(role == false){
@@ -114,9 +96,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	policyExists(policy_definition){
-
-		du.debug('Policy Exists');
-
 		let policy_arn = parserutilities.parse(
 			'arn:aws:iam::{{account}}:policy/{{policy_name}}',
 			{
@@ -137,9 +116,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	createPolicy(policy_definition){
-
-		du.debug('Create Policy');
-
 		let stringified_policy_document = parserutilities.parse(
 			JSON.stringify(policy_definition.PolicyDocument),
 			{
@@ -161,9 +137,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	deletePolicy(policy_definition){
-
-		du.debug('Delete Policy');
-
 		let policy_arn = parserutilities.parse(
 			'arn:aws:iam::{{account}}:policy/{{policy_name}}',
 			{
@@ -182,9 +155,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	removeAssociatedRoles(parameters){
-
-		du.debug('Remove Associated Roles');
-
 		let parameter_clone = objectutilities.clone(parameters);
 
 		parameter_clone.EntityFilter = 'Role';
@@ -218,9 +188,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	async deployRoles(){
-
-		du.debug('Deploy Roles');
-
 		let role_file_names = await this.getRoleDefinitionFilenames();
 
 		let deploy_role_file_promises = arrayutilities.map(role_file_names, (role_file_name) => {
@@ -236,9 +203,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	async deployRoleFile(role_file_name){
-
-		du.debug('Deploy Role File');
-
 		let role_definitions = this.acquireRoleFile(role_file_name);
 
 		let deploy_role_promises = arrayutilities.map(role_definitions, (role_definition) => {
@@ -252,25 +216,16 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	getRoleDefinitionFilenames(){
-
-		du.debug('Get Role Definition Filenames');
-
 		return fileutilities.getDirectoryFiles(global.SixCRM.routes.path('deployment', 'iam/roles')).then((filenames) => { return filenames; });
 
 	}
 
 	acquireRoleFile(filename){
-
-		du.debug('Acquire Role File');
-
 		return global.SixCRM.routes.include('deployment', 'iam/roles/'+filename);
 
 	}
 
 	deployRole(role_definition){
-
-		du.debug('Deploy Roles');
-
 		return this.roleExists(role_definition).then((role) => {
 
 			if(role == false){
@@ -285,9 +240,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	roleExists(role_definition){
-
-		du.debug('Role Exists');
-
 		let exists_parameters = this.transformDefinition('role', 'exists', role_definition);
 
 		return this.iamprovider.roleExists(exists_parameters);
@@ -295,9 +247,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	async updateRole(role_definition){
-
-		du.debug('Update Role');
-
 		await this.removePoliciesAndPermissions(role_definition);
 		await this.addPoliciesAndPermissions(role_definition);
 
@@ -306,9 +255,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	createRole(role_definition){
-
-		du.debug('Create Role');
-
 		let create_parameters = this.transformDefinition('role', 'create', role_definition);
 
 		if(!_.isString(create_parameters, 'AssumeRolePolicyDocument') && _.isObject(create_parameters.AssumeRolePolicyDocument)){
@@ -326,9 +272,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	removePoliciesAndPermissions(role_definition){
-
-		du.debug('Remove Policies And Permissions');
-
 		let list_attached_role_policies_parameters = this.transformDefinition('role', 'list_attached', role_definition);
 
 		return this.iamprovider.listAttachedRolePolicies(list_attached_role_policies_parameters).then((role_policies) => {
@@ -360,9 +303,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	addPoliciesAndPermissions(role_definition){
-
-		du.debug('Add Policies And Permissions');
-
 		if(_.has(role_definition, 'ManagedPolicies')){
 
 			let role_name = role_definition.RoleName;
@@ -392,17 +332,11 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	transformDefinition(type, action, role_definition){
-
-		du.debug('Tranform Definition');
-
 		return this.createParameterGroup(type, action, role_definition);
 
 	}
 
 	destroyRoles(){
-
-		du.debug('Destroy Roles');
-
 		return this.getRoleDefinitionFilenames().then((role_file_names) => {
 
 			let deploy_role_file_promises = arrayutilities.map(role_file_names, (role_file_name) => {
@@ -431,9 +365,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	destroyRole(role_definition){
-
-		du.debug('Destroy Role');
-
 		return this.roleExists(role_definition).then((role) => {
 
 			if(role == false){
@@ -453,9 +384,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 	}
 
 	deleteRole(role_definition){
-
-		du.debug('Delete Role');
-
 		let delete_parameters = this.transformDefinition('role', 'delete', role_definition);
 
 		return this.iamprovider.deleteRole(delete_parameters);
@@ -464,9 +392,6 @@ module.exports = class IAMDeployment extends AWSDeploymentUtilities {
 
 	//Technical Debt: need place intance profile settings into a config file
 	deployInstanceProfiles(){
-
-		du.debug('Deploy Instance Profile');
-
 		let parameters = {
 			InstanceProfileName : 'DataPipelineDefaultResourceRole'
 		}

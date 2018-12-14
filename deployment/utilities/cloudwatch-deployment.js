@@ -24,9 +24,6 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	deployLoggerPermissions(){
-
-		du.debug('Deploy Logger Permissions');
-
 		const permissions = this.getParametersJSON('permissions');
 
 		let permissions_promises = arrayutilities.map(permissions, (permission) => {
@@ -40,9 +37,6 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	deployLambdaPermission(permission_definition){
-
-		du.debug('Deploy Lambda Permission');
-
 		let parameters = this.parsePermissionParameters(permission_definition);
 
 		return this.lambdaprovider.putPermission(parameters);
@@ -50,9 +44,6 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	parsePermissionParameters(permission_definition){
-
-		du.debug('Parse Permission Parameters');
-
 		let data = {
 			stage: global.SixCRM.configuration.stage,
 			random_string: random.createRandomString(10),
@@ -70,9 +61,6 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	deploySubscriptionFilters(){
-
-		du.debug('Deploy Subscription Filters');
-
 		let lambdas = this.getLambdaFunctions();
 
 		const subscription_filter_template = this.getParametersJSON('subscription_filters_template');
@@ -83,9 +71,6 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	async deploySubscriptionFilter(lambda_name, subscription_filter_template) {
-
-		du.debug('Deploy Subscription Filter');
-
 		if(lambda_name == this.logger_lambda_name){
 			du.warning('Can not log the errors of the logger (recursive.)');
 			return;
@@ -112,9 +97,6 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	parseSubscriptionFilterTemplate(lambda_name, subscription_filter_template){
-
-		du.debug('Parse Subscription Filter Template');
-
 		let data = {
 			aws_account_id: global.SixCRM.configuration.site_config.aws.account,
 			aws_account_region: global.SixCRM.configuration.site_config.aws.region,
@@ -135,9 +117,6 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	getLambdaFunctions(){
-
-		du.debug('Get Lambda Functions');
-
 		let serverless_file = global.SixCRM.routes.include('root', 'serverless.yml');
 
 		return Object.keys(serverless_file.functions)
@@ -145,9 +124,6 @@ module.exports = class CloudwatchDeployment extends AWSDeploymentUtilities{
 	}
 
 	getParametersJSON(filename){
-
-		du.debug('Get Parameters JSON');
-
 		//Technical Debt:  This needs to be expanded to support multiple definitions...
 		return global.SixCRM.routes.include('deployment', 'cloudwatch/configuration/'+filename+'.json');
 

@@ -79,9 +79,6 @@ module.exports = class AnalyticsController {
 	}
 
 	async getReport(parameters) {
-
-		du.debug('Get report', parameters.reportType);
-
 		switch (parameters.reportType) {
 
 			case 'revenueVersusOrders': {
@@ -119,8 +116,6 @@ module.exports = class AnalyticsController {
 			case 'eventFunnelTimeseries': {
 				const resolveParams = require('./queries/reports/event-funnel-timeseries/params');
 				const resolved =  await resolveParams(parameters);
-
-				du.debug('Get report: eventFunnelTimeseries parameters', resolved);
 
 				if (_.intersection(['main', 'upsell'], [resolved.eventType]).length > 0) {
 

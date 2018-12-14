@@ -1,6 +1,5 @@
 const _ = require('lodash')
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 const RebillHelperController = global.SixCRM.routes.include('helpers', 'entities/rebill/Rebill.js');
@@ -15,9 +14,6 @@ module.exports = class GetSessionRebillController extends stepFunctionWorkerCont
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		if(_.has(event, 'rebill')){
@@ -37,9 +33,6 @@ module.exports = class GetSessionRebillController extends stepFunctionWorkerCont
 	}
 
 	async getMostRecentRebill(session){
-
-		du.debug('Get Most Recent Rebill');
-
 		let rebill = await (new RebillHelperController()).getMostRecentRebill({session: session});
 
 		if(_.isNull(rebill) || !_.has(rebill, 'id')){
@@ -51,9 +44,6 @@ module.exports = class GetSessionRebillController extends stepFunctionWorkerCont
 	}
 
 	respond(rebill){
-
-		du.debug('Respond');
-
 		return rebill.id;
 
 	}
