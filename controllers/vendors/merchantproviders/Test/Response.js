@@ -77,7 +77,7 @@ module.exports = class TestResponse extends Response {
 
 		du.debug('Determine Merchant Code (Test)', vendor_response);
 
-		return super.determineMerchantMessage(vendor_response);
+		return super.determineMerchantCode(vendor_response);
 
 	}
 
