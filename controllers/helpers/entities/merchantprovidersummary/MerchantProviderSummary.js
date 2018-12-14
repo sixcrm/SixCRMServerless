@@ -130,7 +130,7 @@ module.exports = class MerchantProviderSummaryHelperController {
 		merchant_provider_summary.total = numberutilities.formatFloat((numberutilities.formatFloat(merchant_provider_summary.total) + numberutilities.formatFloat(total, 2)), 2);
 		merchant_provider_summary.count = merchant_provider_summary.count + 1;
 
-		return this.merchantProviderSummaryController.update({entity: merchant_provider_summary}).then(result => {
+		return this.merchantProviderSummaryController.update({entity: merchant_provider_summary, ignore_updated_at: true}).then(result => {
 			this.parameters.set('merchantprovidersummary', result);
 			return true;
 		});
