@@ -201,7 +201,9 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.daily') && !_.isNull(merchant_provider.processing.transaction_counts.daily)){
 
-				if(parseInt(merchant_provider.summary.summary.today.count) >= parseInt(merchant_provider.processing.transaction_counts.daily)){
+				const dailyLimit = parseInt(merchant_provider.processing.transaction_counts.daily);
+				const dailyCount = parseInt(merchant_provider.summary.summary.today.count);
+				if(dailyLimit && dailyCount >= dailyLimit){
 					du.warning('Daily Count Shortage');
 					return_value = false;
 				}
@@ -210,7 +212,9 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.weekly') && !_.isNull(merchant_provider.processing.transaction_counts.weekly)){
 
-				if(parseInt(merchant_provider.summary.summary.thisweek.count) >= parseInt(merchant_provider.processing.transaction_counts.weekly)){
+				const weeklyLimit = parseInt(merchant_provider.processing.transaction_counts.weekly);
+				const weeklyCount = parseInt(merchant_provider.summary.summary.thisweek.count);
+				if(weeklyLimit && weeklyCount >= weeklyLimit){
 					du.warning('Weekly Count Shortage');
 					return_value = false;
 				}
@@ -219,7 +223,9 @@ module.exports = class MerchantProviderGeneralFilter {
 
 			if(objectutilities.hasRecursive(merchant_provider, 'processing.transaction_counts.monthly') && !_.isNull(merchant_provider.processing.transaction_counts.monthly)){
 
-				if(parseInt(merchant_provider.summary.summary.thismonth.count) >= parseInt(merchant_provider.processing.transaction_counts.monthly)){
+				const monthlyLimit = parseInt(merchant_provider.processing.transaction_counts.monthly);
+				const monthlyCount = parseInt(merchant_provider.summary.summary.thismonth.count);
+				if(monthlyLimit && monthlyCount >= monthlyLimit){
 					du.warning('Monthly Count Shortage');
 					return_value = false;
 				}
