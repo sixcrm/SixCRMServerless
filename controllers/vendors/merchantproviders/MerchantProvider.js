@@ -291,7 +291,6 @@ module.exports = class MerchantProvider {
 
 	}
 
-	/* New Shit */
 	setMethod(method) {
 		if(_.isUndefined(method) || _.isNull(method)){
 			let action = this.parameters.get('action');

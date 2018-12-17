@@ -301,19 +301,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 	}
 
 	appendSearchConditions({query_parameters, search}){
-		/*
-      //validate...
-      if(objectutilities.hasRecursive(search, 'name')){
-
-
-      }
-
-      if(objectutilities.hasRecursive(search, 'active')){
-
-
-      }
-      */
-
 		if(objectutilities.hasRecursive(search, 'name') && search.name && arrayutilities.isArray(this.search_fields) && arrayutilities.nonEmpty(this.search_fields)){
 			let filterExpression = '';
 
@@ -759,22 +746,6 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 			//Technical Debt:  Based on the controller calling this, we should understand which ID format is appropriate to return (UUID or email)
 			return object;
 
-			/*
-            if(this.isUUID(object)){
-
-                return object;
-
-            }else if(this.isEmail(object)){
-
-                return object;
-
-            }else if(object == '*'){
-
-                return object;
-
-            }
-            */
-
 		}else if(_.isObject(object)){
 
 			if(_.has(object, this.primary_key)){
@@ -963,33 +934,4 @@ module.exports = class entityUtilitiesController extends PermissionedController 
 		return this.encryptionhelper.censorEncryptedAttributes(this.encrypted_attribute_paths, entity, custom_censor_fn);
 	}
 
-	/*
-      getFromCache(cache_object_key, data_function){
-
-          du.debug('Get From Cache');
-
-          return this.assureCacheController().then(() => {
-
-              return this.cacheController.useCache(cache_object_key, data_function).then((permission) => {
-
-                  return permission;
-
-              });
-
-          });
-
-      }
-
-      assureCacheController(){
-
-          du.debug('Assure Cache Controller');
-
-          if(!_.has(this, 'cacheController')){
-              this.cacheController = new cacheController();
-          }
-
-          return Promise.resolve(true);
-
-      }
-      */
 }

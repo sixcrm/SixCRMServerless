@@ -52,17 +52,4 @@ module.exports = class TerminalResponse extends Response {
 		return vendor_response;
 
 	}
-	/*
-  setProviderResponse(provider_response){
-
-    this.parameters.set('providerresponse', provider_response);
-
-  }
-
-  getProviderResponse(){
-
-    return this.parameters.get('providerresponse', {fatal: false});
-
-  }
-  */
 }

@@ -20,12 +20,6 @@ class TransactionController extends entityController {
 	//Technical Debt:  Finish
 	associatedEntitiesCheck(){
 		return Promise.resolve([]);
-		/*
-      if(id == '3e0fda0a-a64b-4752-bed8-152a98285be7'){
-        return Promise.resolve([]);
-      }
-      throw eu.getError('403', 'Transactions are not available for deletion via the SixCRM API.');
-      */
 	}
 
 	getReturn(entity){

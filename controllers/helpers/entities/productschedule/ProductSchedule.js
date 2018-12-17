@@ -224,27 +224,6 @@ module.exports = class ProductScheduleHelper {
 
 	}
 
-	/* Deprecated?
-  productSum({day, product_schedules}){
-
-    du.debug('Product Sum');
-
-    let return_amount = 0.0;
-
-    arrayutilities.reduce(schedules, (sum, schedule) => {
-
-      let schedule_element = this.getScheduleElementByDay({day: day, schedule: schedule.schedule});
-
-      return_amount += parseFloat(schedule_element.price);
-
-    });
-
-    return parseFloat(return_amount);
-
-  }
-  */
-
-
 	getSchedule({product_schedule}){
 		//Note:  This is a graph utility method
 

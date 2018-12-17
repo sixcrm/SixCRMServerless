@@ -65,33 +65,6 @@ class TestController extends MerchantProvider {
 
 	}
 
-	/* Currently not supported
-    refund(request_parameters){
-
-      du.debug('Refund');
-
-      const method_parameters = {type: 'refund'};
-
-      return this.postToProcessor({action: 'refund', method_parameters: method_parameters, request_parameters: request_parameters})
-      .then((response_object) => this.getResponseObject(response_object));
-
-    }
-
-    */
-
-	/* Currently not supported
-    reverse(request_parameters){
-
-      du.debug('Reverse');
-
-      const method_parameters = {type: 'void'};
-
-      return this.postToProcessor({action: 'reverse', method_parameters: method_parameters, request_parameters: request_parameters})
-      .then((response_object) => this.getResponseObject(response_object));
-
-    }
-    */
-
 	process(request_parameters){
 		this.parameters.set('action', 'process');
 

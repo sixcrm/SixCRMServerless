@@ -72,19 +72,6 @@ module.exports = class SESProvider extends AWSProvider{
 	validateParameters(parameters){
 
 		//Technical Debt: validate the parameters
-		/*
-		parameters = {
-			to: ['test@dummy.com'],
-			body: {
-				html:"",
-				text:""
-			},
-			subject: "",
-			source: "",
-			reply_to: ["someaddress@test.com"],
-		};
-		*/
-
 		return parameters;
 
 	}

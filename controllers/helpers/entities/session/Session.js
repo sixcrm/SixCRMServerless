@@ -117,14 +117,4 @@ module.exports = class SessionHelperController {
 
 	}
 
-	/*
-	async getPendingRebills(session){
-		const search = {
-
-		}
-		let rebills = await this.rebillController.getPendingRebills();
-
-	}
-	*/
-
 }

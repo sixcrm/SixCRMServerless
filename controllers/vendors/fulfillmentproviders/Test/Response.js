@@ -93,20 +93,4 @@ module.exports = class TestResponse extends FulfillmentProviderVendorResponse {
 		return null;
 
 	}
-
-	/*
-  parseGetInfoResponse(response){
-
-    du.debug('Parse Get Info Response');
-
-    return {
-      customer: this.createCustomer(order),
-      shipping: this.createShippingInformation(order),
-      reference_number: this.createReferenceNumber(order),
-      created_at: this.createCreatedAt(order)
-    };
-
-  }
-  */
-
 }

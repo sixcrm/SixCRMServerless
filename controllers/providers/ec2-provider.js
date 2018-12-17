@@ -337,51 +337,6 @@ module.exports = class EC2Provider extends AWSProvider {
 
 	}
 
-	/*
-	resolveIpPermissionsGroupNameReferences(parameters){
-		let ip_permission_promises = arrayutilities.map(parameters.IpPermissions, ip_permission => {
-
-			if(_.has(ip_permission, 'UserIdGroupPairs')){
-
-				let translation_promises = arrayutilities.map(ip_permission.UserIdGroupPairs, user_id_group_pair => {
-
-					if(!_.has(user_id_group_pair, 'GroupName')){
-						return Promise.resolve(user_id_group_pair);
-					}
-
-					return this.securityGroupExists(user_id_group_pair).then(result => {
-						if(_.isNull(result)){
-							eu.getError('Unable to identify security group: "'+user_id_group_pair.GroupName+'"');
-						}
-						user_id_group_pair.GroupId = result.GroupId;
-						delete user_id_group_pair.GroupName;
-						return user_id_group_pair;
-					});
-
-				});
-
-				du.debug(translation_promises);
-
-				return Promise.all(translation_promises).then(translation_promises => {
-					du.info(translation_promises);
-					return translation_promises;
-				});
-
-			}
-
-			return ip_permission;
-
-		});
-
-		return Promise.all(ip_permission_promises).then(ip_permsission_promises => {
-			du.info(ip_permission_promises);
-			parameters.IpPermissions = ip_permission_promises;
-			return parameters;
-		});
-
-	}
-	*/
-
 	authorizeSecurityGroupEgress(parameters) {
 		if (_.has(parameters, 'GroupName')) {
 			delete parameters.GroupName;
