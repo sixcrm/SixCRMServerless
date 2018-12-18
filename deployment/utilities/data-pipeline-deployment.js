@@ -21,9 +21,6 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 	}
 
 	execute() {
-
-		du.debug('Execute Deploy Data Pipeline');
-
 		return this.assureSeeds()
 			.then(() => this.assurePipeline())
 			.catch(error => { throw eu.getError('server', error) });
@@ -32,9 +29,6 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 	}
 
 	assurePipeline() {
-
-		du.debug('Assure Pipeline');
-
 		let create_parameters = {
 			name: 'Seed Dynamo Pipeline', /* required */
 			uniqueId: `${this.unique_id}`, /* required */
@@ -52,9 +46,6 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 	}
 
 	buildPipelineDefinitionParams({pipeline_id}) {
-
-		du.debug('Build Pipeline Definition Parameters')
-
 		let definition_path = global.SixCRM.routes.path('deployment', `datapipeline/configuration/definitions/${process.env.stage}/definition.json`);
 		let pipeline_definition = JSON.parse(fileutilities.getFileContentsSync(definition_path));
 
@@ -67,9 +58,6 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 	}
 
 	assureSeedFile(seed_file_name) {
-
-		du.debug('Assure Seed File')
-
 		let parameters = {
 			Bucket: this.data_pipeline_bucket,
 			Key: `seeds/${seed_file_name}`
@@ -107,8 +95,6 @@ module.exports = class DataPipelineDeployment extends AWSDeploymentUtilities {
 	}
 
 	assureSeeds() {
-
-		du.debug('Assure Seeds');
 		let seed_files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment', 'datapipeline/configuration/seeds'));
 		let bucket = 'data-pipeline';
 		let additional_params = { Prefix: 'seeds' }

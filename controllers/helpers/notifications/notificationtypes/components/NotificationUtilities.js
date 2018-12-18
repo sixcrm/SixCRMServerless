@@ -17,9 +17,6 @@ module.exports = class NotificationUtilities {
 	}
 
 	getName(){
-
-		du.debug('Get Name');
-
 		if(_.has(this, 'name')){
 			return this.name;
 		}
@@ -29,9 +26,6 @@ module.exports = class NotificationUtilities {
 	}
 
 	getNotificationCategory(){
-
-		du.debug('Get Notification Category');
-
 		if(_.has(this, 'category')){
 			return this.category;
 		}
@@ -41,9 +35,6 @@ module.exports = class NotificationUtilities {
 	}
 
 	getNotificationType(){
-
-		du.debug('Get Notification Type');
-
 		if(_.has(this, 'notification_type')){
 
 			global.SixCRM.validate(this.notification_type, global.SixCRM.routes.path('model', 'helpers/notifications/notificationtype.json'));
@@ -57,9 +48,6 @@ module.exports = class NotificationUtilities {
 	}
 
 	getUserFromContext(context){
-
-		du.debug('Get User From Context');
-
 		du.info(context);
 
 		let resolved_user = null;
@@ -77,9 +65,6 @@ module.exports = class NotificationUtilities {
 	}
 
 	getAccountFromContext(context){
-
-		du.debug('Get User From Context');
-
 		du.info(context);
 
 		let resolved_account = null;
@@ -97,9 +82,6 @@ module.exports = class NotificationUtilities {
 	}
 
 	replaceFromContext(context, field){
-
-		du.debug('Replace From Context');
-
 		let replace_object = {};
 
 		let tokens = parserutilities.getTokens(this[field]);

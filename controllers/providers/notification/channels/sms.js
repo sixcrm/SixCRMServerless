@@ -1,4 +1,3 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const ChannelNotification = global.SixCRM.routes.include('providers', 'notification/components/ChannelNotification.js');
@@ -15,9 +14,6 @@ module.exports = class SlackNotification extends ChannelNotification {
 	}
 
 	validateNotificationProperties(notification_properties){
-
-		du.debug('Validate Notification Properties');
-
 		if(!stringutilities.isPhone(notification_properties)){
 			throw eu.getError('server', 'notification_properties must be a valid phone number for Slack notifications');
 		}
@@ -27,9 +23,6 @@ module.exports = class SlackNotification extends ChannelNotification {
 	}
 
 	resolveNotification(notification_object, notification_properties) {
-
-		du.debug('Resolve Notification');
-
 		let sms_body = this.formatSMSBody(notification_object);
 		let sms_phone_number = this.getInternationalPhoneNumber(notification_properties);
 
@@ -38,18 +31,12 @@ module.exports = class SlackNotification extends ChannelNotification {
 	}
 
 	formatSMSBody(notification_object) {
-
-		du.debug('Format SMS Body');
-
 		return stringutilities.abbreviate(notification_object.body, 140);
 
 	}
 
 	//Technical Debt:  This function is overly terse.
 	getInternationalPhoneNumber(phone_number) {
-
-		du.debug('Get International Phone Number');
-
 		if (phone_number[0] === '+') {
 			return phone_number
 		} else {

@@ -22,9 +22,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 	}
 
 	initialize() {
-
-		du.debug('Initialize');
-
 		this.parameters = new Parameters({
 			validation: this.parameter_validation,
 			definition: this.parameter_definitions
@@ -35,9 +32,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 	}
 
 	preamble(event) {
-
-		du.debug('Preamble');
-
 		return this.preprocessing(event)
 			.then((event) => this.acquireRequestProperties(event))
 			.then((event_body) => {
@@ -62,9 +56,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 	}
 
 	validateInput(event, validation_function) {
-
-		du.debug('Validate Input');
-
 		return new Promise((resolve, reject) => {
 
 			if (!_.isFunction(validation_function)) {
@@ -102,9 +93,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 	//Deprecated!
 	getTransactionSubType() {
-
-		du.debug('Get Transaction Subtype')
-
 		var order_test = /Order/gi;
 		var upsell_test = /Upsell/gi;
 
@@ -126,9 +114,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 
 	//Technical Debt:  This needs to be in a helper...
 	createTransactionObject(info) {
-
-		du.debug('Create Transaction Object');
-
 		let transaction_object = {
 			id: info.transaction.id,
 			datetime: info.transaction.created_at,
@@ -155,9 +140,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 	}
 
 	pushEvent({event_type = null, context = null} = {}) {
-
-		du.debug('Push Event');
-
 		if(event_type === null && _.has(this.event_type)){
 			event_type = this.event_type;
 		}
@@ -172,9 +154,6 @@ module.exports = class transactionEndpointController extends authenticatedContro
 	}
 
 	async triggerSessionCloseStateMachine(session, restart = false){
-
-		du.debug('Trigger Session Close State Machine')
-
 		if(_.isNull(session) || !_.has(session, 'id') || !stringutilities.isUUID(session.id)){
 			throw eu.getError('server', 'Inappropriate Session ID presented to State Machine Helper');
 		}

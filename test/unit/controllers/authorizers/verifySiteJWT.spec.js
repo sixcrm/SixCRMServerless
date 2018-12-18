@@ -265,9 +265,6 @@ describe('controllers/authorizers/verifySiteJWT.js', () => {
 				disableACLs(){}
 				enableACLs(){}
 				getResult(result, field) {
-
-					du.debug('Get Result');
-
 					return Promise.resolve(result[field]);
 
 				}
@@ -306,9 +303,6 @@ describe('controllers/authorizers/verifySiteJWT.js', () => {
 				disableACLs(){}
 				enableACLs(){}
 				getResult(result, field) {
-
-					du.debug('Get Result');
-
 					return Promise.resolve(result[field]);
 
 				}
@@ -347,9 +341,6 @@ describe('controllers/authorizers/verifySiteJWT.js', () => {
 				disableACLs(){}
 				enableACLs(){}
 				getResult(result, field){
-
-					du.debug('Get Result');
-
 					return Promise.resolve(result[field]);
 
 				}

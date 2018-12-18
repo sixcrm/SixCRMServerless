@@ -1,9 +1,4 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 module.exports = (results) => {
-
-	du.debug('Transformation Function');
-
 	return Promise.resolve({
 		records: [
 			[{

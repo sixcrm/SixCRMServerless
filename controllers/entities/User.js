@@ -29,9 +29,6 @@ module.exports = class UserController extends entityController {
 	//notification
 	//customernote
 	associatedEntitiesCheck({id}){
-
-		du.debug('Associated Entities Check');
-
 		let return_array = [];
 
 		let data_acquisition_promises = [
@@ -55,9 +52,6 @@ module.exports = class UserController extends entityController {
 	}
 
 	getUserByAlias(user_alias){
-
-		du.debug('Get User By Alias');
-
 		//Technical Debt:  Why are the ACL's disabled here?
 		return Promise.resolve(this.disableACLs())
 			.then(() => this.getBySecondaryIndex({field:'alias', index_value: user_alias, index_name: 'alias-index'}))
@@ -97,9 +91,6 @@ module.exports = class UserController extends entityController {
 	}
 
 	getUserStrict(user_email){
-
-		du.debug('Get User Strict');
-
 		if(!stringutilities.isEmail(user_email)){
 			throw eu.getError('bad_request','A user identifier or a email is required, "'+user_email+'" provided');
 		}
@@ -148,9 +139,6 @@ module.exports = class UserController extends entityController {
 	}
 
 	validateGlobalUser(){
-
-		du.debug('Validate Global User');
-
 		if(!objectutilities.hasRecursive(global, 'user.id') || !this.isEmail(global.user.id)){
 			throw eu.getError('server', 'Unexpected argumentation');
 		}
@@ -160,9 +148,6 @@ module.exports = class UserController extends entityController {
 	}
 
 	getHydrated(id){
-
-		du.debug('Get Hydrated');
-
 		return this.get({id: id})
 			.then((user) => {
 
@@ -192,9 +177,6 @@ module.exports = class UserController extends entityController {
 	}
 
 	getACL(user){
-
-		du.debug('Get ACL');
-
 		if(_.has(user, 'acl') && _.isArray(user.acl)){
 			return Promise.resolve(user.acl);
 		}
@@ -206,14 +188,9 @@ module.exports = class UserController extends entityController {
 
 	//Necessary?
 	getACLPartiallyHydrated(user){
-
-		du.debug('Get ACL Partially Hydrated');
-
 		return this.executeAssociatedEntityFunction('userACLController','queryBySecondaryIndex', {field: 'user', index_value: user.id, index_name: 'user-index'})
 			.then((response) => this.getResult(response, 'useracls'))
 			.then((acls) => {
-				du.debug('ACLs: ', acls);
-
 				if(!arrayutilities.nonEmpty(acls)){
 					return null;
 				}
@@ -229,9 +206,6 @@ module.exports = class UserController extends entityController {
 
 	//Technical Debt: Why is this here?
 	getAccount(id){
-
-		du.debug('Get Account');
-
 		if(id == '*'){
 			return this.executeAssociatedEntityFunction('accountController', 'getMasterAccount', {});
 		}
@@ -241,25 +215,16 @@ module.exports = class UserController extends entityController {
 	}
 
 	getAccessKey(id){
-
-		du.debug('Get Access Key');
-
 		return this.executeAssociatedEntityFunction('accessKeyController', 'get', {id: id});
 
 	}
 
 	getAccessKeyByKey(id){
-
-		du.debug('Get Access Key By Key');
-
 		return this.executeAssociatedEntityFunction('accessKeyController', 'getAccessKeyByKey', {id: id});
 
 	}
 
 	createStrict(user){
-
-		du.debug('Create Strict');
-
 		if(!objectutilities.hasRecursive(global, 'user.id')){
 			throw eu.getError('server', 'Unset user in globals');
 		}
@@ -280,17 +245,11 @@ module.exports = class UserController extends entityController {
 	}
 
 	getUserByAccessKeyId(access_key_id){
-
-		du.debug('Get User By Access Key ID');
-
 		return this.getBySecondaryIndex({field: 'access_key_id', index_value: access_key_id, index_name: 'access_key_id-index'});
 
 	}
 
 	create({entity: user}){
-
-		du.debug('User.create');
-
 		if(!_.has(this, 'userHelperController')){
 
 			const UserHelperController = global.SixCRM.routes.include('helpers', 'entities/user/User.js');
@@ -307,9 +266,6 @@ module.exports = class UserController extends entityController {
 	}
 
 	assureUser(user_id){
-
-		du.debug('Assure User');
-
 		return this.get({id: user_id})
 			.then((user) => {
 
@@ -350,9 +306,6 @@ module.exports = class UserController extends entityController {
 	}
 
 	getUsersByAccount({pagination, fatal}){
-
-		du.debug('Get Users By Account');
-
 		if(this.isMasterAccount()){
 			return this.list({pagination: pagination, fatal: fatal}).then(result => {
 				return result;
@@ -375,10 +328,7 @@ module.exports = class UserController extends entityController {
 					let in_parameters = this.createINQueryParameters({field:'id', list_array: user_ids});
 
 					//Technical Debt:  Refactor, must return all users with correct pagination
-					return this.list({pagination: pagination, query_parameters: in_parameters}).then(result => {
-						du.debug(result);
-						return result;
-					});
+					return this.list({pagination: pagination, query_parameters: in_parameters});
 
 				}
 
@@ -389,9 +339,6 @@ module.exports = class UserController extends entityController {
 	}
 
 	can({account, object, action, id, fatal}){
-
-		du.debug('User.can()');
-
 		if(action === 'update' && objectutilities.hasRecursive(global, 'user.id') && global.user.id === id) {
 			return Promise.resolve(true);
 		}

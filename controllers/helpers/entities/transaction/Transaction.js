@@ -47,9 +47,6 @@ module.exports = class TransactionHelperController {
 	}
 
 	getTransactionProducts(transactions, ignore_failed = true) {
-
-		du.debug('TransactionHelperController Get Transaction Products', transactions);
-
 		let transaction_products = [];
 
 		arrayutilities.map(transactions, transaction => {
@@ -60,16 +57,11 @@ module.exports = class TransactionHelperController {
 			}
 		});
 
-		du.debug('TransactionHelperController getTransactionProducts result', transaction_products);
-
 		return transaction_products;
 
 	}
 
 	markTransactionChargeback() {
-
-		du.debug('Mark Transaction Chargeback');
-
 		return Promise.resolve(true)
 			.then(() => this.parameters.setParameters({
 				argumentation: arguments[0],
@@ -86,9 +78,6 @@ module.exports = class TransactionHelperController {
 	}
 
 	acquireTransaction() {
-
-		du.debug('Acquire Transaction');
-
 		let transaction_id = this.parameters.get('transactionid');
 
 		return this.transactionController.get({
@@ -107,9 +96,6 @@ module.exports = class TransactionHelperController {
 	}
 
 	setChargebackStatus() {
-
-		du.debug('Set Chargeback Status');
-
 		let chargeback_status = this.parameters.get('chargebackstatus');
 		let transaction = this.parameters.get('transaction');
 
@@ -122,9 +108,6 @@ module.exports = class TransactionHelperController {
 	}
 
 	updateTransaction() {
-
-		du.debug('Update Transaction');
-
 		let transaction = this.parameters.get('transaction');
 
 		return this.transactionController.update({
@@ -137,9 +120,6 @@ module.exports = class TransactionHelperController {
 	}
 
 	updateTransactionProducts() {
-
-		du.debug('Update Transaction Product');
-
 		du.info(arguments[0]);
 
 		return Promise.resolve()
@@ -157,9 +137,6 @@ module.exports = class TransactionHelperController {
 	}
 
 	updateTransactionProductsPrototype() {
-
-		du.debug('Update Transaction Product Prototype');
-
 		let transaction = this.parameters.get('transaction');
 		let updated_transaction_products = this.parameters.get('updatedtransactionproducts');
 
@@ -202,9 +179,6 @@ module.exports = class TransactionHelperController {
 	getDistributionBySKU({
 		products
 	}) {
-
-		du.debug('Get Distribution By SKU');
-
 		let grouped_products = arrayutilities.group(products, (product) => {
 			return product.sku;
 		});
@@ -218,9 +192,6 @@ module.exports = class TransactionHelperController {
 	}
 
 	getTransactionsAmount(transactions) {
-
-		du.debug('Get Transactions Amount');
-
 		return arrayutilities.reduce(transactions, (sum, transaction) => {
 			return (sum + numberutilities.toNumber(transaction.amount));
 		}, 0.0);

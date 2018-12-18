@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
 var entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -17,9 +15,6 @@ module.exports = class MerchantProviderGroupController extends entityController 
 	}
 
 	associatedEntitiesCheck({id}){
-
-		du.debug('Associated Entities Check');
-
 		let return_array = [];
 
 		let data_acquisition_promises = [
@@ -44,9 +39,6 @@ module.exports = class MerchantProviderGroupController extends entityController 
 
 
 	listByMerchantProviderID({id}){
-
-		du.debug('List By Merchant Provider ID');
-
 		return this.listByAccount({}).then(merchantprovidergroups => {
 
 			let return_array = [];
@@ -84,9 +76,6 @@ module.exports = class MerchantProviderGroupController extends entityController 
 
 	//Note:  Used in Graph schema
 	getMerchantProviderConfigurations(merchantprovidergroup){
-
-		du.debug('Get Merchant Provider Configurations');
-
 		return arrayutilities.map(merchantprovidergroup.merchantproviders, (merchantproviderconfiguration) => {
 
 			return {
@@ -100,17 +89,11 @@ module.exports = class MerchantProviderGroupController extends entityController 
 
 	//Note:  Used in Graph schema
 	getMerchantProviderConfiguration(merchantproviderconfiguration){
-
-		du.debug('Get Merchant Provider Configuration');
-
 		return this.executeAssociatedEntityFunction('MerchantProviderController', 'get', {id: merchantproviderconfiguration.merchantprovider});
 
 	}
 
 	getMerchantProviders(merchantprovidergroup){
-
-		du.debug('Get Merchant Providers');
-
 		if(arrayutilities.nonEmpty(merchantprovidergroup.merchantproviders)){
 
 			let promises = arrayutilities.map(merchantprovidergroup.merchantproviders, (merchant_provider) => {
@@ -132,9 +115,6 @@ module.exports = class MerchantProviderGroupController extends entityController 
 
 	//Note: Necessary because of the meta-object
 	getMerchantProviderGroupHydrated(id){
-
-		du.debug('Get Merchantprovidergroup Hydrated');
-
 		return this.get({id: id}).then((merchantprovidergroup) => {
 
 			return this.getMerchantProviders(merchantprovidergroup).then((merchant_providers) =>{

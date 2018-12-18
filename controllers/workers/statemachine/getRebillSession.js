@@ -1,7 +1,4 @@
 const _ = require('lodash')
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const stepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class GetRebillSessionController extends stepFunctionWorkerController {
@@ -13,9 +10,6 @@ module.exports = class GetRebillSessionController extends stepFunctionWorkerCont
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		if(_.has(event, 'session')){
@@ -35,9 +29,6 @@ module.exports = class GetRebillSessionController extends stepFunctionWorkerCont
 	}
 
 	respond(session){
-
-		du.debug('Respond');
-
 		return session.id;
 
 	}

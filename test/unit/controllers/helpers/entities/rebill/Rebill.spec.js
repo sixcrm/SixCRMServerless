@@ -227,9 +227,6 @@ describe('/helpers/entities/Rebill.js', () => {
 
 	/*
 		async getMostRecentRebill({session, on_or_before = timestamp.getISO8601()}){
-
-			du.debug('Get Most Recent Rebill');
-
 			if(!_.has(this, 'rebillController')){
 				const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 				this.rebillController = new RebillController();

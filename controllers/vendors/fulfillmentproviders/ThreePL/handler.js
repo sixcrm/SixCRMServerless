@@ -67,9 +67,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	fulfill(){
-
-		du.debug('Fulfill');
-
 		let argumentation = arguments[0];
 
 		argumentation.action = 'fulfill';
@@ -89,9 +86,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	info(){
-
-		du.debug('info');
-
 		let argumentation = arguments[0];
 
 		argumentation.action = 'info';
@@ -107,8 +101,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	test(){
-
-		du.debug('Test');
 		let argumentation = {action: 'test'};
 
 		return Promise.resolve()
@@ -121,9 +113,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	setMethod(){
-
-		du.debug('Set Method');
-
 		let action = this.parameters.get('action');
 		let method = this.methods[action];
 
@@ -134,9 +123,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	createParametersObject(){
-
-		du.debug('Create Parameters Object');
-
 		let parameters_object = objectutilities.merge({}, this.getVendorParameters());
 
 		parameters_object = objectutilities.merge(parameters_object, this.getFulfillmentProviderParameters());
@@ -153,9 +139,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getVendorParameters(){
-
-		du.debug('Get Vendor Parameters');
-
 		//Technical Debt:  Do these need to come from configuration files?
 		this.parameters.set('wsdl', 'https://secure-wms.com/webserviceexternal/contracts.asmx?wsdl');
 
@@ -164,9 +147,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getFulfillmentProviderParameters(){
-
-		du.debug('Get Fulfillment Provider Parameters');
-
 		let method = this.parameters.get('method');
 
 		if(_.isFunction(this['get'+method+'FulfillmentProviderParameters'])){
@@ -178,9 +158,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getCreateOrdersFulfillmentProviderParameters(){
-
-		du.debug('Get CreateOrders Fulfillment Provider Parameters');
-
 		let fulfillment_provider = this.parameters.get('fulfillmentprovider');
 
 		let login_data = objectutilities.transcribe({
@@ -205,9 +182,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getFacilityID(){
-
-		du.debug('Get Facility ID');
-
 		if(_.has(this, 'ThreePLFacilityID')){
 			return this.ThreePLFacilityID;
 		}
@@ -223,9 +197,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getFindOrdersFulfillmentProviderParameters(){
-
-		du.debug('Get CreateOrders Fulfillment Provider Parameters');
-
 		let fulfillment_provider = this.parameters.get('fulfillmentprovider');
 
 		let user_login_data = objectutilities.transcribe({
@@ -249,9 +220,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getThreePLID(){
-
-		du.debug('Get ThreePL ID');
-
 		if(_.has(this, 'ThreePLID')){
 			return this.ThreePLID;
 		}
@@ -267,9 +235,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getMethodParameters(){
-
-		du.debug('Get Method Parameters');
-
 		let method = this.parameters.get('method');
 
 		this.parameters.set('soapaction', 'http://www.JOI.com/schemas/ViaSub.WMS/'+method);
@@ -283,9 +248,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getRequestParameters(){
-
-		du.debug('Get Request Parameters');
-
 		let method = this.parameters.get('method');
 
 		if(_.isFunction(this['get'+method+'RequestParameters'])){
@@ -297,9 +259,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getFindOrdersRequestParameters(){
-
-		du.debug('Get FindOrders Request Parameters');
-
 		let fulfillment_provider = this.parameters.get('fulfillmentprovider');
 		let reference_number = this.parameters.get('referencenumber', {fatal: false});
 
@@ -336,9 +295,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getCreateOrdersRequestParameters(){
-
-		du.debug('Get Create Orders Method Parameters');
-
 		let reference_number = this.parameters.get('referencenumber');
 
 		let request_parameters = {
@@ -375,9 +331,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getCustomerParameters(){
-
-		du.debug('Get Customer Parameters');
-
 		let customer = this.parameters.get('customer');
 
 		let address = this.getCustomerAddress();
@@ -429,9 +382,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	getProductParameters(){
-
-		du.debug('Get Product Parameters');
-
 		let productHelperController = new ProductHelperController();
 
 		let products = this.parameters.get('products');
@@ -475,9 +425,6 @@ module.exports = class ThreePLController extends FulfillmentProviderController {
 	}
 
 	issueRequest(){
-
-		du.debug('Issue Request');
-
 		let soap_parameters = this.packageSoapXMLParameters();
 		let soap_action = this.parameters.get('soapaction');
 

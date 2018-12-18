@@ -1,9 +1,4 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 module.exports = async (results) => {
-
-	du.debug('Event funnel timeseries transactional report');
-
 	return {
 		meta: {
 			count: results.length

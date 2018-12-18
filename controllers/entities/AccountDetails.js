@@ -1,5 +1,3 @@
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
-
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
 
 class AccountDetailsController extends entityController {
@@ -11,14 +9,11 @@ class AccountDetailsController extends entityController {
 	}
 
 	create({entity, parameters}) {
-		du.debug('Create AccountDetails', entity);
-
 		return super.create({entity, parameters});
 	}
 
 	getOrCreate() {
 		const id = global.account;
-		du.debug('Get Or Create', id);
 
 		return super.get({id}).then((accountdetails) => {
 			if (!accountdetails) {
@@ -30,8 +25,6 @@ class AccountDetailsController extends entityController {
 	}
 
 	createNew({id = global.account}) {
-		du.debug('Create New', id);
-
 		return this.create(this.newAccountDetails({id}))
 	}
 

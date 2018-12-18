@@ -19,13 +19,7 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 	}
 
 	write(records) {
-
-		du.debug('WriteSubscriptionRecords.write()');
-
 		if (records.length === 0) {
-
-			du.debug('WriteSubscriptionRecords.write(): no records');
-
 			return;
 
 		}

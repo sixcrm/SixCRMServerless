@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
@@ -13,9 +12,6 @@ module.exports = class RoleHelperController {
 	}
 
 	async getDisabledRole() {
-
-		du.debug('Get Disabled Role');
-
 		if (!_.has(this, 'roleController')) {
 			const RoleController = global.SixCRM.routes.include('entities', 'Role.js');
 			this.roleController = new RoleController();
@@ -40,9 +36,6 @@ module.exports = class RoleHelperController {
 	}
 
 	roleIntersection(role1, role2) {
-
-		du.debug('Roles Intersection');
-
 		role1 = this.normalizeRole(role1);
 		role2 = this.normalizeRole(role2);
 
@@ -63,9 +56,6 @@ module.exports = class RoleHelperController {
 	}
 
 	normalizeRole(role){
-
-		du.debug('Normalize Role');
-
 		if(!objectutilities.hasRecursive(role, 'permissions.allow') || !_.isArray(role.permissions.allow)){
 			role.permissions.allow = [];
 		}
@@ -79,9 +69,6 @@ module.exports = class RoleHelperController {
 	}
 
 	mergePermissionArrays(permission_array_1, permission_array_2) {
-
-		du.debug('Merge Permission Arrays');
-
 		let merged_array = [];
 
 		if(!_.isArray(permission_array_1)){

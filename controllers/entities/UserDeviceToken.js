@@ -1,7 +1,5 @@
 
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 const entityController = global.SixCRM.routes.include('controllers', 'entities/Entity.js');
@@ -14,9 +12,6 @@ class UserDeviceTokenController extends entityController {
 	}
 
 	getUserDeviceTokensByUser(user){
-
-		du.debug('Get Device Token By User');
-
 		return new Promise((resolve, reject) => {
 
 			return this.queryBySecondaryIndex({field:'user', index_value: user, index_name: 'user-index'})

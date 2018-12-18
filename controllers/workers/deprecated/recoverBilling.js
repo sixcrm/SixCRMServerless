@@ -31,9 +31,6 @@ module.exports = class recoverBillingController extends workerController {
 	}
 
 	execute(message) {
-
-		du.debug('Execute');
-
 		return this.preamble(message)
 			.then(() => this.hydrateSession())
 			.then(() => this.process())
@@ -48,9 +45,6 @@ module.exports = class recoverBillingController extends workerController {
 	}
 
 	hydrateSession() {
-
-		du.debug('Set Session');
-
 		const rebill = this.parameters.get('rebill');
 
 		if (!_.has(this.sessionController)) {
@@ -71,9 +65,6 @@ module.exports = class recoverBillingController extends workerController {
 
 	//Technical Debt:  Merchant Provider is necessary in the context of a rebill
 	process() {
-
-		du.debug('Process');
-
 		const rebill = this.parameters.get('rebill');
 
 		const registerController = new RegisterController();
@@ -91,9 +82,6 @@ module.exports = class recoverBillingController extends workerController {
 	}
 
 	postProcessing() {
-
-		du.debug('Post Processing');
-
 		const transactions = this.parameters.get('transactions', {fatal: false});
 
 		if (_.isNull(transactions) || !au.nonEmpty(transactions)) {
@@ -120,9 +108,6 @@ module.exports = class recoverBillingController extends workerController {
 	}
 
 	markRebill() {
-
-		du.debug('Mark Rebill');
-
 		const rebill = this.parameters.get('rebill');
 		const registerResponseCode = this.parameters.get('registerresponse').getCode();
 
@@ -152,9 +137,6 @@ module.exports = class recoverBillingController extends workerController {
 	}
 
 	respond() {
-
-		du.debug('Respond');
-
 		return super.respond(this.parameters.get('registerresponse').getCode());
 
 	}

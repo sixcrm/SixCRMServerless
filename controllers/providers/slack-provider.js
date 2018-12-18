@@ -19,8 +19,6 @@ module.exports = class SlackProvider {
 
 	sendMessage(message, channel){
 
-		du.debug('Slack::sendMessage '+message+' being sent to channel '+channel);
-
 		return new Promise((resolve, reject) => {
 
 			let endpoint = this.basepath;
@@ -38,7 +36,6 @@ module.exports = class SlackProvider {
 			//Technical Debt: Use httpprovider
 			request.post(endpoint, { json: { "text": message } }, (error, response, body) => {
 				if (!error && response.statusCode == 200) {
-					du.debug(body);
 					return resolve(body);
 				}else{
 					du.debug(error);
@@ -51,9 +48,6 @@ module.exports = class SlackProvider {
 	}
 
 	formatMessage(message){
-
-		du.debug('Format Message');
-
 		if(_.isString(message)){
 			return {
 				json: {
@@ -68,9 +62,6 @@ module.exports = class SlackProvider {
 	}
 
 	sendMessageToWebhook(message, webhook) {
-
-		du.debug('Send Message to Webhook');
-
 		//let formatted_message = this.formatMessage(message);
 
 		return new Promise((resolve, reject) => {
@@ -79,7 +70,6 @@ module.exports = class SlackProvider {
 
 			request.post(webhook, { json: { "text": message } }, (error, response, body) => {
 				if (!error && response.statusCode == 200) {
-					du.debug(body);
 					return resolve(body);
 				}else{
 					du.debug(error);

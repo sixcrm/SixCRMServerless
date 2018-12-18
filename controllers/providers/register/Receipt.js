@@ -1,6 +1,5 @@
 
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -48,9 +47,6 @@ module.exports = class RegisterRecieptGenerator {
 	}
 
 	issueReceipt(){
-
-		du.debug('Issue Receipt');
-
 		return Promise.resolve()
 			.then(() => this.parameters.setParameters({argumentation: arguments[0], action: 'issueReceipt'}))
 			.then(() => this.createTransactionPrototype())
@@ -63,9 +59,6 @@ module.exports = class RegisterRecieptGenerator {
 	}
 
 	createTransactionPrototype(){
-
-		du.debug('Create Transaction Prototype');
-
 		let rebill = this.parameters.get('rebill');
 		let amount = this.parameters.get('amount');
 		let transaction_type = this.parameters.get('transactiontype');
@@ -113,12 +106,7 @@ module.exports = class RegisterRecieptGenerator {
 	}
 
 	transformTransactionPrototypeObject(){
-
-		du.debug('Transform Transaction Prototype Object');
-
 		let transaction_prototype = this.parameters.get('transactionprototype');
-
-		du.debug('Transaction Prototype Is', transaction_prototype);
 
 		var transformed_transaction_prototype = {
 			account: transaction_prototype.rebill.account,
@@ -142,9 +130,6 @@ module.exports = class RegisterRecieptGenerator {
 	}
 
 	createTransaction(){
-
-		du.debug('Create Transaction');
-
 		let transformed_transaction_prototype = this.parameters.get('transformed_transaction_prototype');
 
 		return this.transactionController.create({entity: transformed_transaction_prototype}).then(transaction => {

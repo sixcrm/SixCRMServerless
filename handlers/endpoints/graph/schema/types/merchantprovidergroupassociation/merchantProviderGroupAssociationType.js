@@ -38,7 +38,6 @@ module.exports.graphObj = new GraphQLObjectType({
 			description: 'The campaign.',
 			resolve: (merchantprovidergroupassociation) => {
 				return merchantProviderGroupAssociationController.getCampaign(merchantprovidergroupassociation).then(campaign => {
-					du.debug('MerchantProviderGroupAssociation.campaign');
 					if (!campaign) {
 						du.error('MerchantProviderGroupAssociation.campaign is missing', merchantprovidergroupassociation);
 					}

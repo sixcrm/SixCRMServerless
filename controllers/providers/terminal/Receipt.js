@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
@@ -51,9 +50,6 @@ module.exports = class TerminalRecieptGenerator {
 	}
 
 	issueReceipt() {
-
-		du.debug('Issue Receipt');
-
 		this.parameters.setParameters({
 			argumentation: arguments[0],
 			action: 'issueReceipt'
@@ -70,9 +66,6 @@ module.exports = class TerminalRecieptGenerator {
 	}
 
 	hydrateProperties() {
-
-		du.debug('Hydrate Properties');
-
 		let hydration_promises = [
 			this.getAccount()
 		];
@@ -84,9 +77,6 @@ module.exports = class TerminalRecieptGenerator {
 	}
 
 	getAccount() {
-
-		du.debug('Get Account');
-
 		let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
 
 		return this.fulfillmentProviderController.get({
@@ -104,9 +94,6 @@ module.exports = class TerminalRecieptGenerator {
 	}
 
 	createShippingReceiptPrototype() {
-
-		du.debug('Create Shipping Receipt Prototype');
-
 		let account = this.parameters.get('account');
 		let fulfillment_provider_id = this.parameters.get('fulfillmentproviderid');
 		let fulfillment_provider_reference = this.parameters.get('fulfillmentproviderreference', {fatal: false});
@@ -114,10 +101,6 @@ module.exports = class TerminalRecieptGenerator {
 
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
 		let rebill = augmented_transaction_products[0].transaction.rebill;
-
-		du.debug('Augumented Transaction Products', augmented_transaction_products);
-		du.debug('Augumented Transaction Product', augmented_transaction_products[0]);
-		du.debug('Augumented Transaction Product Transaction', augmented_transaction_products[0].transaction);
 
 		let prototype = {
 			account: account,
@@ -149,9 +132,6 @@ module.exports = class TerminalRecieptGenerator {
 	}
 
 	createShippingReceipt() {
-
-		du.debug('Create Shipping Receipt');
-
 		let shipping_receipt_prototype = this.parameters.get('shippingreceiptprototype');
 
 		return this.shippingReceiptController.create({
@@ -164,13 +144,7 @@ module.exports = class TerminalRecieptGenerator {
 	}
 
 	associateShippingReceiptWithTransactionProducts() {
-
-		du.debug('Associate Shipping Receipt With Transaction Products');
-
-		let shipping_receipt = this.parameters.get('shippingreceipt');
 		let augmented_transaction_products = this.parameters.get('augmentedtransactionproducts');
-
-		du.debug(shipping_receipt, augmented_transaction_products);
 
 		let grouped_augmented_transaction_products = this.groupAugmentedTransactionProducts(augmented_transaction_products);
 
@@ -193,9 +167,6 @@ module.exports = class TerminalRecieptGenerator {
 	}
 
 	groupAugmentedTransactionProducts(augmented_transaction_products) {
-
-		du.debug('groupAugmentedTransactionProductsByTransactionID');
-
 		return arrayutilities.group(augmented_transaction_products, (augmented_transaction_product) => {
 			return augmented_transaction_product.transaction.id;
 		});
@@ -203,9 +174,6 @@ module.exports = class TerminalRecieptGenerator {
 	}
 
 	updateTransactionProducts(augmented_transaction_products) {
-
-		du.debug('Update Transaction Products');
-
 		let shipping_receipt = this.parameters.get('shippingreceipt');
 
 		return arrayutilities.map(augmented_transaction_products, transaction_product => {

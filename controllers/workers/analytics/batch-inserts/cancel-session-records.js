@@ -16,13 +16,7 @@ module.exports = class CancelSessionRecords extends WriteRecords {
 	}
 
 	write(records) {
-
-		du.debug('CancelSessionRecords.write()');
-
 		if (records.length === 0) {
-
-			du.debug('CancelSessionRecords.write(): no records');
-
 			return;
 
 		}

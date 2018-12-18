@@ -21,9 +21,6 @@ module.exports = class LambdaProvider extends AWSProvider{
 	}
 
 	instantiateLambda(){
-
-		du.debug('Instantiate Lambda');
-
 		let region = (objectutilities.hasRecursive(global.SixCRM.configuration.site_config, 'lambda.region'))?global.SixCRM.configuration.site_config.lambda.region:this.getRegion();
 		let parameters = {
 			apiVersion: '2015-03-31',
@@ -38,9 +35,6 @@ module.exports = class LambdaProvider extends AWSProvider{
 	}
 
 	buildLambdaName(shortname){
-
-		du.debug('Build Lambda Name');
-
 		if(!objectutilities.hasRecursive(global, 'SixCRM.configuration.serverless_config.service')){
 			throw eu.getError('server', 'Unavailable service name in serverless configuration object');
 		}
@@ -60,31 +54,20 @@ module.exports = class LambdaProvider extends AWSProvider{
 	}
 
 	listEventSourceMappings(parameters){
-
-		du.debug('List Event Source Mappings');
-
 		return this.lambda.listEventSourceMappings(parameters).promise();
 
 	}
 
 	createEventSourceMapping(parameters){
-
-		du.debug('List Event Source Mappings');
-
 		return this.lambda.createEventSourceMapping(parameters).promise();
 
 	}
 
 	buildHandlerFunctionName(longname) {
-		du.debug('Build Handler Function Name');
-
 		return longname.replace(/.+-.+-/, ''); // strip out canonical part 'sixcrm-stagename-';
 	}
 
 	invokeFunction(parameters, callback){
-
-		du.debug('Invoke Function');
-
 		return new Promise((resolve, reject) => {
 
 			var params = {
@@ -122,8 +105,6 @@ module.exports = class LambdaProvider extends AWSProvider{
 	}
 
 	invokeLocal(parameters, callback) {
-		du.debug('Invoke Local');
-
 		if (!callback) {
 			callback = () => true;
 		}
@@ -140,8 +121,6 @@ module.exports = class LambdaProvider extends AWSProvider{
 			let serialized_payload = JSON.parse(parameters.Payload);
 			let context = {}; // local execution, empty context seems OK
 			let lambda_callback = (error, data) => {
-
-				du.debug('Inside lambda callback.', error, data);
 
 				if (error) {
 					return reject(callback(error));
@@ -160,8 +139,6 @@ module.exports = class LambdaProvider extends AWSProvider{
 			};
 
 			// Finally, we execute the function.
-			du.debug('Executing Lambda locally', function_name, serialized_payload);
-
 			lambda(serialized_payload, context, lambda_callback);
 		});
 	}
@@ -219,22 +196,14 @@ module.exports = class LambdaProvider extends AWSProvider{
 	}
 
 	putPermission(parameters){
-
-		du.debug('Put Permission');
-
 		let add_permission_parameters = this.buildAddPermissionParameters(parameters);
 
 		return this.hasPermission(add_permission_parameters).then(result => {
 
 			if(_.isObject(result) && _.has(result, 'Sid')){
-
-				du.debug('Lambda already has permission');
-
 				return result;
 
 			}
-
-			du.debug('Lambda does not have permission');
 
 			return this.addPermission(add_permission_parameters);
 
@@ -243,9 +212,6 @@ module.exports = class LambdaProvider extends AWSProvider{
 	}
 
 	hasPermission(parameters){
-
-		du.debug('Has Permission');
-
 		return this.getPolicy({ FunctionName: parameters.FunctionName }).then(result => {
 
 			if(_.has(result, 'Policy')){
@@ -289,9 +255,6 @@ module.exports = class LambdaProvider extends AWSProvider{
 	}
 
 	getPolicy(parameters){
-
-		du.debug('Get Policy');
-
 		let params = objectutilities.transcribe(
 			{
 				FunctionName: 'FunctionName'
@@ -327,9 +290,6 @@ module.exports = class LambdaProvider extends AWSProvider{
 	}
 
 	addPermission(parameters){
-
-		du.debug('Add Permission');
-
 		let params = {};
 
 		params = objectutilities.transcribe(

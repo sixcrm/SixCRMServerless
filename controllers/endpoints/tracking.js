@@ -1,6 +1,3 @@
-
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const CampaignController = global.SixCRM.routes.include('controllers', 'entities/Campaign.js');
 const transactionEndpointController = global.SixCRM.routes.include('controllers', 'endpoints/components/transaction.js');
 const AffiliateController = global.SixCRM.routes.include('controllers', 'entities/Affiliate.js');
@@ -40,9 +37,6 @@ module.exports = class TrackingController extends transactionEndpointController{
 	}
 
 	execute(event){
-
-		du.debug('Execute');
-
 		return this.preamble(event)
 			.then(() => this.acquireEventProperties())
 			.then(() => this.acquireTrackers())
@@ -52,9 +46,6 @@ module.exports = class TrackingController extends transactionEndpointController{
 	}
 
 	acquireEventProperties(){
-
-		du.debug('Acquire Event Properties');
-
 		let promises = [
 			this.acquireAffiliate(),
 			this.acquireCampaign()
@@ -67,9 +58,6 @@ module.exports = class TrackingController extends transactionEndpointController{
 	}
 
 	acquireAffiliate(){
-
-		du.debug('Acquire Affiliate');
-
 		let event = this.parameters.get('event');
 
 		return this.affiliateController.getByAffiliateID(event.affiliate_id).then(affiliate => {
@@ -83,9 +71,6 @@ module.exports = class TrackingController extends transactionEndpointController{
 	}
 
 	acquireCampaign(){
-
-		du.debug('Acquire Campaign');
-
 		let event = this.parameters.get('event');
 
 		return this.campaignController.get({id: event.campaign}).then(campaign => {
@@ -99,9 +84,6 @@ module.exports = class TrackingController extends transactionEndpointController{
 	}
 
 	acquireTrackers(){
-
-		du.debug('Acquire Trackers');
-
 		let campaign = this.parameters.get('campaign');
 		let affiliate = this.parameters.get('affiliate');
 
@@ -118,9 +100,6 @@ module.exports = class TrackingController extends transactionEndpointController{
 	}
 
 	respond(){
-
-		du.debug('Respond');
-
 		let trackers = this.parameters.get('trackers');
 
 		return Promise.resolve({trackers: trackers});

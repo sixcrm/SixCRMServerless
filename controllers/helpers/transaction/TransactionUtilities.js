@@ -1,6 +1,4 @@
-
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const Parameters = global.SixCRM.routes.include('providers', 'Parameters.js');
@@ -19,9 +17,6 @@ module.exports = class TransactionUtilities extends HelperController{
 
 	//Technical Debt: Broken!
 	makeGeneralBrandString(a_string){
-
-		du.debug('Make General Brand String');
-
 		stringutilities.isString(a_string, true);
 
 		let transformed_string = stringutilities.removeWhitespace(a_string).toLowerCase();
@@ -37,9 +32,6 @@ module.exports = class TransactionUtilities extends HelperController{
 	}
 
 	setParameters(parameters){
-
-		du.debug('Set Parameters');
-
 		let temporary = objectutilities.transcribe(this.parameter_definitions.required, parameters, {}, true);
 
 		temporary = objectutilities.transcribe(this.parameter_definitions.optional, parameters, temporary, false);
@@ -54,9 +46,6 @@ module.exports = class TransactionUtilities extends HelperController{
 
 	//Technical Debt:  Untested
 	instantiateParameters(){
-
-		du.debug('Instantiate Parameters');
-
 		let validation = {};
 		let definition = {};
 
@@ -73,9 +62,6 @@ module.exports = class TransactionUtilities extends HelperController{
 	}
 
 	instantiateGateway(){
-
-		du.debug('Instantiate Gateway');
-
 		let selected_merchantprovider = this.parameters.get('selected_merchantprovider', ['gateway.name']);
 
 		const GatewayController = global.SixCRM.routes.include('controllers', 'vendors/merchantproviders/'+selected_merchantprovider.gateway.name+'/handler.js');

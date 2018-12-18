@@ -18,9 +18,6 @@ module.exports = class TokenEx {
 	}
 
 	getToken(token){
-
-		du.debug('Get Token');
-
 		let post_body = {
 			"APIKey":this.api_key,
 			"TokenExID":this.id,
@@ -37,9 +34,6 @@ module.exports = class TokenEx {
 	}
 
 	setToken(data){
-
-		du.debug('Set Token');
-
 		let post_body = {
 			"APIKey":this.api_key,
 			"TokenExID":this.id,
@@ -57,9 +51,6 @@ module.exports = class TokenEx {
 	}
 
 	deleteToken(token){
-
-		du.debug('Delete Token');
-
 		let post_body = {
 			"APIKey":this.api_key,
 			"TokenExID":this.id,
@@ -76,9 +67,6 @@ module.exports = class TokenEx {
 	}
 
 	_parseResponse(request_name, result){
-
-		du.debug('Parse Response');
-
 		if(!_.has(result.body, 'Success') || result.body.Success !== true){
 			if(request_name == 'deleteToken' && _.has(result.body, 'Error') && _.includes(result.body.Error, 'Token does not exist')){
 				du.warning('Token does not exist', result.body);
@@ -112,8 +100,6 @@ module.exports = class TokenEx {
 
 	_performRequest(argumentation_object){
 
-		du.debug('Perform Request', argumentation_object);
-
 		if(!_.has(this, 'httputilities')){
 			const HTTPUtilities = require('@6crm/sixcrmcore/providers/http-provider').default;
 			this.httputilities = new HTTPUtilities();
@@ -124,9 +110,6 @@ module.exports = class TokenEx {
 	}
 
 	_createFullRequestURL(request_name){
-
-		du.debug('Create Full Request URL');
-
 		if(!_.has(this.request_paths, request_name)){
 			throw eu.getError('server', 'Unknown token request: '+request_name);
 		}
@@ -136,9 +119,6 @@ module.exports = class TokenEx {
 	}
 
 	_setConfiguration(){
-
-		du.debug('Set Configuration');
-
 		const tokenex_configuration = global.SixCRM.configuration.site_config.tokenization.tokenex;
 		objectutilities.map(tokenex_configuration, (key) => {
 			this[key] = tokenex_configuration[key];

@@ -65,37 +65,7 @@ class TestController extends MerchantProvider {
 
 	}
 
-	/* Currently not supported
-    refund(request_parameters){
-
-      du.debug('Refund');
-
-      const method_parameters = {type: 'refund'};
-
-      return this.postToProcessor({action: 'refund', method_parameters: method_parameters, request_parameters: request_parameters})
-      .then((response_object) => this.getResponseObject(response_object));
-
-    }
-
-    */
-
-	/* Currently not supported
-    reverse(request_parameters){
-
-      du.debug('Reverse');
-
-      const method_parameters = {type: 'void'};
-
-      return this.postToProcessor({action: 'reverse', method_parameters: method_parameters, request_parameters: request_parameters})
-      .then((response_object) => this.getResponseObject(response_object));
-
-    }
-    */
-
 	process(request_parameters){
-
-		du.debug('Process');
-
 		this.parameters.set('action', 'process');
 
 		const method_parameters = {
@@ -118,9 +88,6 @@ class TestController extends MerchantProvider {
 	}
 
 	setRequestParameters({type, request_parameters, return_parameters}){
-
-		du.debug('Set Request Parameters');
-
 		objectutilities.hasRecursive(this.transaction_parameters, type+'.required', true);
 
 		return_parameters = objectutilities.transcribe(this.transaction_parameters[type].required, request_parameters, return_parameters, true);
@@ -141,9 +108,6 @@ class TestController extends MerchantProvider {
 	}
 
 	postToProcessor({action, method_parameters, request_parameters}){
-
-		du.debug('Post To Processor');
-
 		let parameters = this.createParameterObject();
 
 		let endpoint = this.createEndpoint(method_parameters);

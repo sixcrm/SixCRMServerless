@@ -46,9 +46,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	listByAffiliate({affiliate, pagination}){
-
-		du.debug('List Sessions By Affiliate');
-
 		affiliate = this.getID(affiliate);
 
 		let scan_parameters = {
@@ -72,9 +69,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	create({entity}){
-
-		du.debug('Create (Session Update)');
-
 		if(!_.has(entity, 'alias')){
 			entity.alias = this.createAlias();
 		}
@@ -84,9 +78,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	update({entity, ignore_updated_at}){
-
-		du.debug('Update (Session Update)');
-
 		if(!_.has(entity, 'alias')){
 			entity.alias = this.createAlias();
 		}
@@ -96,9 +87,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	getCustomer(session){
-
-		du.debug('Get Customer');
-
 		if(!_.has(session, "customer")){ return null; }
 
 		return this.executeAssociatedEntityFunction('CustomerController', 'get', {id: session.customer});
@@ -106,9 +94,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	getCampaign(session){
-
-		du.debug('Get Campaign');
-
 		if(!_.has(session, "campaign")){ return null; }
 
 		return this.executeAssociatedEntityFunction('CampaignController', 'get', {id: session.campaign});
@@ -116,9 +101,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	getSessionCreditCard(session){
-
-		du.debug('Get Session Credit Card');
-
 		if(!_.has(session, 'customer')){ return null; }
 
 		return this.executeAssociatedEntityFunction('CustomerController', 'getMostRecentCreditCard', {id: session.customer});
@@ -126,9 +108,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	getCampaignHydrated(session){
-
-		du.debug('Get Campaign Hydrated');
-
 		var id = session;
 
 		if(_.has(session, "id")){
@@ -140,9 +119,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	getAffiliate(session, affiliate_field){
-
-		du.debug('Get Affiliate');
-
 		if(_.has(session, affiliate_field) && this.isUUID(session[affiliate_field])){
 
 			return this.executeAssociatedEntityFunction('AffiliateController', 'get', {id: session[affiliate_field]});
@@ -156,9 +132,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	getAffiliateIDs(session){
-
-		du.debug('Get Affiliate IDs');
-
 		return this.get({id: session}).then((session) => {
 
 			return arrayutilities.filter(this.affiliate_fields, (affiliate_field) => {
@@ -186,9 +159,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	getAffiliates(session){
-
-		du.debug('Get Affiliates');
-
 		return new Promise((resolve) => {
 
 			return this.get({id: session}).then((session) => {
@@ -230,9 +200,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	listTransactions(session){
-
-		du.debug('List Transactions');
-
 		return this.executeAssociatedEntityFunction('RebillController', 'listBySession', {session: session})
 			.then((session_rebills) => {
 
@@ -295,18 +262,12 @@ module.exports = class SessionController extends entityController {
 	}
 
 	listRebills(session){
-
-		du.debug('List Rebills');
-
 		return this.executeAssociatedEntityFunction('RebillController', 'listBySession', {session: session})
 			.then(rebills => this.getResult(rebills, 'rebills'));
 
 	}
 
 	listProductSchedules(session){
-
-		du.debug('List Product Schedules');
-
 		if(!arrayutilities.nonEmpty(session.product_schedules)){
 			return Promise.resolve(null);
 		}
@@ -319,9 +280,6 @@ module.exports = class SessionController extends entityController {
 
 	//Technical Debt:  This needs to go to a helper...
 	createSessionObject(parameters){
-
-		du.debug('Create Session Object');
-
 		let session = {
 			completed: false
 		};
@@ -349,9 +307,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	getSessionByCustomer(customer){
-
-		du.debug('Get Session By Customer');
-
 		return this.queryBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name: 'customer-index'})
 			.then((result) => this.getResult(result));
 
@@ -359,9 +314,6 @@ module.exports = class SessionController extends entityController {
 
 	//Note: Called by the campaign controller only...
 	listByCampaign({campaign, pagination}) {
-
-		du.debug('List By Campaign');
-
 		let query_parameters = {
 			filter_expression: '#field = :field_value',
 			expression_attribute_names: {
@@ -377,17 +329,11 @@ module.exports = class SessionController extends entityController {
 	}
 
 	listByCustomer({customer, pagination}) {
-
-		du.debug('List By Customer');
-
 		return this.queryBySecondaryIndex({field: 'customer', index_value: this.getID(customer), index_name: 'customer-index', pagination: pagination});
 
 	}
 
 	closeSession(session){
-
-		du.debug('Close Session');
-
 		session.completed = true;
 
 		return this.updateProperties({id: session, properties: {completed: true}});
@@ -400,9 +346,6 @@ module.exports = class SessionController extends entityController {
 
 	//Technical Debt:  Needs to be more testable, separate functions
 	assureSession(parameters){
-
-		du.debug('Assure Session');
-
 		//Technical Debt:  Update this shit validate
 
 		return this.getSessionByCustomer(parameters.customer).then((sessions) => {
@@ -514,9 +457,6 @@ module.exports = class SessionController extends entityController {
 
 	//Technical Debt:  This should be List Products
 	listProducts(session){
-
-		du.debug('List Products');
-
 		return this.listTransactions(session).then((session_rebill_transactions) => {
 
 			if(arrayutilities.nonEmpty(session_rebill_transactions)){
@@ -564,9 +504,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	getUser(session){
-
-		du.debug('Get User');
-
 		return this.executeAssociatedEntityFunction('userController', 'get', {id: session.cancelled_by}).then(data => {
 			du.error('cancelled_by', data)
 			return data;
@@ -575,9 +512,6 @@ module.exports = class SessionController extends entityController {
 	}
 
 	cancelSession({entity}){
-
-		du.debug('Cancel Session');
-
 		return this.executeAssociatedEntityFunction('SessionController', 'get', {id: entity.id}).then(session => {
 
 			if(!session){

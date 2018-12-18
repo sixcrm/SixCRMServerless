@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
@@ -23,9 +22,6 @@ module.exports = class OrderHelperController {
 		transactions = null,
 		customer = null
 	}) {
-
-		du.debug('Create Order');
-
 		let amount = rebill.amount;
 
 		const transactionHelperController = new TransactionHelperController();

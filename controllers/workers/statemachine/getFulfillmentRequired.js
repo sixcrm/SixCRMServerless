@@ -15,9 +15,6 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 	}
 
 	async execute(event) {
-
-		du.debug('Execute');
-
 		this.validateEvent(event);
 
 		let rebill = await this.getRebill(event.guid);
@@ -33,9 +30,6 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 	}
 
 	async getRebillTransactions(rebill){
-
-		du.debug('Get Rebill Transactions');
-
 		if(!_.has(this, 'rebillController')){
 			const RebillController = global.SixCRM.routes.include('entities','Rebill.js');
 			this.rebillController = new RebillController();
@@ -52,9 +46,6 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 	}
 
 	async getTransactionProducts(transactions){
-
-		du.debug('Get Transaction Products');
-
 		if(!_.has(this, 'transactionController')){
 			const TransactionController = global.SixCRM.routes.include('entities','Transaction.js');
 			this.transactionController = new TransactionController();
@@ -112,9 +103,6 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 	}
 
 	areProductsNoShip(products){
-
-		du.debug('Are Products No Ship');
-
 		return arrayutilities.every(products, (product) => {
 			return (product.ship == false);
 		});
@@ -122,9 +110,6 @@ module.exports = class GetFulfillmentRequiredController extends stepFunctionWork
 	}
 
 	respond(no_ship){
-
-		du.debug('Respond');
-
 		if(no_ship){
 			return 'NOSHIP';
 		}

@@ -100,18 +100,12 @@ module.exports = class LambdaResponse {
 	}
 
 	setResponseHeader(key, value) {
-
-		du.debug('Set Response Header');
-
 		this.lambda_response.headers[key] = value;
 
 	}
 
 	//Note: Entrypoint
 	setGlobalHeaders(parameter_object) {
-
-		du.debug('Set Global Header');
-
 		this.assureGlobal();
 
 		for (var k in parameter_object) {

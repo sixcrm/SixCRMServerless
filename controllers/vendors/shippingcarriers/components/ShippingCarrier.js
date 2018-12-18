@@ -1,7 +1,4 @@
-
 const _ = require('lodash');
-
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 
 module.exports = class ShippingCarrierController {
@@ -22,9 +19,6 @@ module.exports = class ShippingCarrierController {
 	}
 
 	augmentParameters(){
-
-		du.debug('Augment Parameters');
-
 		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
 		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
@@ -33,9 +27,6 @@ module.exports = class ShippingCarrierController {
 	}
 
 	setParameters(parameters_object){
-
-		du.debug('Set Parameters');
-
 		this.parameters.setParameters(parameters_object);
 
 		return Promise.resolve(true);
@@ -43,9 +34,6 @@ module.exports = class ShippingCarrierController {
 	}
 
 	respond({additional_parameters}){
-
-		du.debug('Respond');
-
 		let vendor_response = this.parameters.get('vendorresponse');
 		let action = this.parameters.get('action');
 

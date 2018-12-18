@@ -2070,9 +2070,6 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 
 	/*
 	async _getCustomer({customer, stripe_creditcard}){
-
-		du.debug('getStripeCustomerRecord');
-
 		let customerHelperController = new CustomerHelperController();
 		let customer_stripe_token = await customerHelperController.getTag(customer, 'stripe_token');
 

@@ -18,9 +18,6 @@ module.exports = class ProductHelperController {
 	}
 
 	getDistributionBySKU({products}){
-
-		du.debug('Get Distribution By SKU');
-
 		let grouped_products = arrayutilities.group(products, (product) => {
 			return product.sku;
 		});
@@ -34,9 +31,6 @@ module.exports = class ProductHelperController {
 	}
 
 	getPublicFields(product){
-
-		du.debug('Get Public Fields');
-
 		du.info(product);
 
 		return objectutilities.transcribe(
@@ -67,9 +61,6 @@ module.exports = class ProductHelperController {
 	}
 
 	getProductImage(product) {
-
-		du.debug('Get Default Image');
-
 		du.info(product);
 
 		if (!_(product).has('attributes.images')) {

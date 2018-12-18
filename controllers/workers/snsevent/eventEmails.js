@@ -61,9 +61,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	triggerEmails(){
-
-		du.debug('Trigger Emails');
-
 		return this.acquireCampaign()
 			.then(() => this.hydrateContext())
 			.then(() => this.acquireProducts())
@@ -77,12 +74,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	acquireCampaign(){
-
-		du.debug('Acquire Campaign');
-
 		let message = this.parameters.get('message');
-
-		du.debug(message);
 
 		let campaign = objectutilities.recurseByDepth(message.context, (key, value) => {
 
@@ -106,15 +98,12 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		return this.campaignController.get({id: campaign}).then(result => {
 			this.parameters.set('campaign', result);
-			du.debug(result);
 			return true;
 		});
 
 	}
 
 	acquireProducts() {
-		du.debug('Acquire Products');
-
 		let context = this.parameters.get('message').context || {};
 		let products = [];
 
@@ -134,8 +123,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	acquireProductSchedules() {
-		du.debug('Acquire Product Schedules');
-
 		let context = this.parameters.get('message').context || {};
 		let product_schedules = [];
 
@@ -151,9 +138,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	acquireCustomer(){
-
-		du.debug('Acquire Customer');
-
 		let message = this.parameters.get('message');
 
 		let customer = objectutilities.recurseByDepth(message.context, (key, value) => {
@@ -178,15 +162,12 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		return this.customerController.get({id: customer}).then((result) => {
 			this.parameters.set('customer', result);
-			du.debug(result);
 			return true;
 		});
 
 	}
 
 	async hydrateContext() {
-		du.debug('Hydrate Context');
-
 		let context = this.parameters.get('message').context || {};
 
 		if (_(context).has('rebill.products')) {
@@ -201,24 +182,15 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	acquireEmailTemplates(){
-
-		du.debug('Acquire Email Templates');
-
 		let message = this.parameters.get('message');
 		let campaign = this.parameters.get('campaign');
 		let products = this.parameters.get('products');
 		let product_schedules = this.parameters.get('product_schedules');
 		let cycle = _(message).has('context.rebill.cycle') ? message.context.rebill.cycle : -1;
 
-		du.debug(message, campaign, products, product_schedules);
-
 		return this.emailTemplatesController.templatesByAccount({account: campaign.account}).then(results => {
 
-			du.debug('account', message.account);
-			du.debug('results', results);
-
 			if(_.isNull(results) || !arrayutilities.nonEmpty(results)){
-				du.debug('No email templates for account.');
 				return [];
 			}
 
@@ -226,50 +198,42 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 			results.forEach(template => {
 				if (template.enabled === false) {
-					du.debug(`Template ${template.id} is disabled.`);
 					return;
 				}
 
 				if (template.campaigns && template.campaigns.includes(campaign.id)) {
-					du.debug(`Adding template ${template.id} due to match with campaign ${campaign.id}.`);
 					associated_templates.push(template)
 				}
 
 				products.forEach(product => {
 					if (template.products && template.products.includes(product.id)) {
-						du.debug(`Adding template ${template.id} due to match with product ${product.id}.`);
 						associated_templates.push(template)
 					}
 				});
 
 				product_schedules.forEach(product_schedule => {
 					if (template.product_schedules && template.product_schedules.includes(product_schedule.id)) {
-						du.debug(`Adding template ${template.id} due to match with product schedule ${product_schedule.id}.`);
 						associated_templates.push(template)
 					}
 				});
 
 				if (template.cycle === cycle) {
-					du.debug(`Adding template ${template.id} due to match with cycle ${cycle}.`);
 					associated_templates.push(template)
 				}
 			});
 
 			return associated_templates.filter(result => {
-				du.debug(`Does ${result.type} equal ${message.event_type}?`);
 				return (result.type === message.event_type) || (this.areEventsCompatible(result.type, message.event_type));
 			});
 
 		}).then(results => {
 
 			if(!_.isNull(results) && arrayutilities.nonEmpty(results)){
-				du.debug('Found email templates.');
 				this.parameters.set('emailtemplates', [...new Set(results)]);
 
 				return true;
 			}
 
-			du.debug(`No email templates.`);
 			return false;
 
 		});
@@ -277,15 +241,11 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	acquireSMTPProvider(){
-
-		du.debug('Acquire SMTP Provider');
-
 		let email_templates = this.parameters.get('emailtemplates', {fatal: false});
 
 		if(!_.isNull(email_templates)){
 
 			let smtp_provider_promises = arrayutilities.map(email_templates, email_template => {
-				du.debug(`Getting SMTP provider for email template ${email_template.id}`);
 				return this.emailTemplatesController.getSMTPProvider(email_template);
 			});
 
@@ -295,7 +255,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 				});
 
 				this.parameters.set('smtpproviders', smtp_providers);
-				du.debug('Found SMTP provider(s)');
 				return true;
 			});
 
@@ -309,8 +268,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		let campaign = this.parameters.get('campaign');
 
-		du.debug('Get Account Details', campaign.account);
-
 		const accountdetails = await this.accountDetailsController.get({ id: campaign.account });
 
 		this.parameters.set('accountdetails', accountdetails);
@@ -320,9 +277,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	sendEmails(){
-
-		du.debug('Send Emails');
-
 		let email_templates  = this.parameters.get('emailtemplates', {fatal: false});
 
 		if(_.isNull(email_templates) || !arrayutilities.nonEmpty(email_templates)){
@@ -341,9 +295,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	sendEmail(email_template){
-
-		du.debug('Send Email');
-
 		let customer = this.parameters.get('customer');
 		let paired_smtp_provider = this.getPairedSMTPProvider(email_template);
 		let parsed_email_template = this.parseEmailTemplate(email_template);
@@ -378,9 +329,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	getPairedSMTPProvider(email_template){
-
-		du.debug('Get Paired SMTP Provider');
-
 		let smtp_providers = this.parameters.get('smtpproviders');
 
 		let paired_smtp_provider = arrayutilities.find(smtp_providers, smtp_provider => {
@@ -398,9 +346,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	createCustomerFullName(){
-
-		du.debug('Create Customer Full Name');
-
 		let customer = this.parameters.get('customer');
 
 		let customerHelperController = new CustomerHelperController();
@@ -410,12 +355,7 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	parseEmailTemplate(email_template){
-
-		du.debug('Parse Email Template');
-
 		let context = this.createContext();
-
-		du.debug('Context Is', context);
 
 		let compiled_template_body = handlebars.compile(email_template.body);
 		let compiled_template_subject = handlebars.compile(email_template.subject);
@@ -429,9 +369,6 @@ module.exports = class EventEmailsController extends SNSEventController {
 	}
 
 	createContext(){
-
-		du.debug('Create Context');
-
 		let context = this.parameters.get('message').context;
 		context.campaign = this.parameters.get('campaign');
 		context.customer = this.parameters.get(`customer`);
@@ -442,22 +379,16 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 	areEventsCompatible(template_event, system_event) {
 
-		du.debug('Are Events Compatible', template_event, system_event);
-
 		if (!this.eventMap[template_event]) {
-			du.debug('No');
 			return false;
 		}
 
 		let compatible = this.eventMap[template_event].indexOf(system_event) > -1;
-		du.debug('Are:', compatible);
 
 		return compatible;
 	}
 
 	createAnalyticsActivityRecord(customer, email_type, subject) {
-
-		du.debug('Create Email Activity', customer, email_type, subject);
 
 		return this.activityHelper.createActivity(null, 'sent_email', {
 			entity: customer,

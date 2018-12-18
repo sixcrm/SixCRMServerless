@@ -25,8 +25,6 @@ module.exports = class S3Provider extends AWSProvider {
 
 	assureDelete(bucket_name) {
 
-		du.debug('Assure Delete');
-		du.debug(bucket_name);
 
 		return new Promise((resolve, reject) => {
 
@@ -62,8 +60,6 @@ module.exports = class S3Provider extends AWSProvider {
 
 	objectExists(parameters) {
 		/* Test if object exists */
-		du.debug('Object Exists');
-		du.debug(parameters);
 
 		if (!_.has(parameters, 'Bucket')) {
 			throw eu.getError('server', 'This operation requires a "Bucket" parameter.');
@@ -96,8 +92,6 @@ module.exports = class S3Provider extends AWSProvider {
 
 	deleteBucketObjects(bucket_name) {
 
-		du.debug('Delete Bucket Objects');
-		du.debug(bucket_name);
 
 		return this.listObjects(bucket_name, null, {
 			Prefix: bucket_name + '/'
@@ -111,8 +105,6 @@ module.exports = class S3Provider extends AWSProvider {
 
 	listObjects(bucket_name, continuation_token, additional_properties) {
 
-		du.debug('List Objects');
-		du.debug(bucket_name);
 
 		return new Promise((resolve) => {
 
@@ -174,8 +166,6 @@ module.exports = class S3Provider extends AWSProvider {
 
 	batchDeleteObjects(bucket_name, bucket_objects) {
 
-		du.debug('Batch Delete Objects');
-		du.debug(bucket_name);
 
 		return new Promise((resolve) => {
 
@@ -225,9 +215,6 @@ module.exports = class S3Provider extends AWSProvider {
 
 	deleteObjects(bucket_name, bucket_objects) {
 
-		du.debug("Delete Objects");
-		du.debug(bucket_name);
-
 		return new Promise((resolve) => {
 
 			if (!_.isArray(bucket_objects)) {
@@ -266,8 +253,6 @@ module.exports = class S3Provider extends AWSProvider {
 
 	deleteBucket(bucket_name) {
 
-		du.debug('Delete Bucket');
-		du.debug(bucket_name);
 
 		return new Promise((resolve, reject) => {
 
@@ -297,10 +282,6 @@ module.exports = class S3Provider extends AWSProvider {
 	}
 
 	assureBucket(parameters) {
-
-		du.debug('Assure Bucket');
-		du.debug(parameters.bucket_name);
-
 		return new Promise((resolve, reject) => {
 
 			let bucket_name = parameters.Bucket;
@@ -344,14 +325,11 @@ module.exports = class S3Provider extends AWSProvider {
 	}
 
 	headObject(parameters) {
-		du.debug('Head Object');
 		return this.s3.headObject(parameters).promise();
 	}
 
 	headBucket(bucket_name) {
 
-		du.debug('Head Bucket');
-		du.debug(bucket_name);
 
 		return new Promise((resolve, reject) => {
 
@@ -392,17 +370,11 @@ module.exports = class S3Provider extends AWSProvider {
 	}
 
 	upload(parameters) {
-		du.debug('Upload');
 		return this.s3.upload(parameters).promise();
 	}
 
 	putObject(parameters) {
-
-		du.debug('Put Object');
-		du.debug(parameters);
-
 		if (process.env.TEST_MODE === 'true') {
-			du.debug('Test Mode');
 			return Promise.resolve();
 		}
 
@@ -439,12 +411,7 @@ module.exports = class S3Provider extends AWSProvider {
 	}
 
 	createBucket(parameters) {
-
-		du.debug('Create Bucket');
-		du.debug(parameters.bucket_name);
-
 		if (process.env.TEST_MODE === 'true') {
-			du.debug('Test Mode');
 			return Promise.resolve();
 		}
 
@@ -468,9 +435,6 @@ module.exports = class S3Provider extends AWSProvider {
 	}
 
 	getBucketList(use_cache) {
-
-		du.debug('Get Bucket List');
-
 		if (_.isUndefined(use_cache)) {
 
 			use_cache = true;
@@ -507,9 +471,6 @@ module.exports = class S3Provider extends AWSProvider {
 	}
 
 	listBuckets() {
-
-		du.debug('List Buckets');
-
 		return new Promise((resolve) => {
 
 			this.s3.listBuckets((error, data) => {
@@ -529,8 +490,6 @@ module.exports = class S3Provider extends AWSProvider {
 
 	bucketExists(bucket_name) {
 
-		du.debug('Bucket Exists');
-		du.debug(bucket_name);
 
 		return this.getBucketList().then((bucket_list) => {
 
@@ -541,10 +500,6 @@ module.exports = class S3Provider extends AWSProvider {
 	}
 
 	getObject(bucket, path) {
-
-		du.debug('Get Object');
-		du.debug(bucket, path);
-
 		let parameters = {
 			Bucket: bucket,
 			Key: path
@@ -555,9 +510,6 @@ module.exports = class S3Provider extends AWSProvider {
 	}
 
 	putBucketVersioning(bucket) {
-
-		du.debug('Put Bucket Versioning');
-
 		du.warning('versioning bucket:' ,bucket);
 
 		return new Promise((resolve, reject) => {
@@ -588,9 +540,6 @@ module.exports = class S3Provider extends AWSProvider {
 	}
 
 	putBucketLifecycleConfiguration(bucket) {
-
-		du.debug('Put Bucket Lifecycle')
-
 		return new Promise((resolve, reject) => {
 
 			var parameters = {
@@ -635,9 +584,6 @@ module.exports = class S3Provider extends AWSProvider {
 	}
 
 	putBucketReplication({source, destination, role}) {
-
-		du.debug('Put S3 Replication');
-
 		return new Promise((resolve, reject) => {
 			var parameters = {
 				Bucket: source,

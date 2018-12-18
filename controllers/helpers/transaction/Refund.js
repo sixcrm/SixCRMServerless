@@ -46,9 +46,6 @@ module.exports = class Refund extends TransactionUtilities {
 	}
 
 	refund(parameters){
-
-		du.debug('Refund');
-
 		return this.setParameters(parameters)
 			.then(() => this.hydrateParameters())
 			.then(() => this.refundTransaction());
@@ -57,9 +54,6 @@ module.exports = class Refund extends TransactionUtilities {
 
 	//Technical Debt: Untested...
 	refundTransaction(){
-
-		du.debug('Process Transaction');
-
 		return this.instantiateGateway()
 			.then(() => this.createProcessingParameters())
 			.then(() => {
@@ -90,9 +84,6 @@ module.exports = class Refund extends TransactionUtilities {
 	}
 
 	async createProcessingParameters(){
-
-		du.debug('Create Processing Parameters');
-
 		let transaction = this.parameters.get('transaction');
 
 		if(_.has(transaction, 'processor_response')){
@@ -136,9 +127,6 @@ module.exports = class Refund extends TransactionUtilities {
 
 	//Technical Debt: Add Amount
 	hydrateParameters(){
-
-		du.debug('Hydrate Parameters');
-
 		let transaction = this.parameters.get('transaction');
 
 		return this.transactionController.get({id: transaction})

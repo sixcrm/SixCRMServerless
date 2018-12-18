@@ -1,7 +1,5 @@
-
 const _ = require('lodash');
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const ResponseController = global.SixCRM.routes.include('providers', 'Response.js');
 
 module.exports = class ShippingCarrierResponse extends ResponseController {
@@ -44,9 +42,6 @@ module.exports = class ShippingCarrierResponse extends ResponseController {
 	}
 
 	augmentParameters(){
-
-		du.debug('Augment Parameters');
-
 		this.parameters.setParameterValidation({parameter_validation: this.parameter_validation});
 		this.parameters.setParameterDefinition({parameter_definition: this.parameter_definition});
 
@@ -55,9 +50,6 @@ module.exports = class ShippingCarrierResponse extends ResponseController {
 	}
 
 	infoResponse(){
-
-		du.debug('Info Response');
-
 		let parsed_response = {
 			tracking_number: this.parameters.get('trackingnumber'),
 			status: this.parameters.get('status'),
@@ -72,9 +64,6 @@ module.exports = class ShippingCarrierResponse extends ResponseController {
 	}
 
 	determineResultMessage(response_type){
-
-		du.debug('Determine Result Message');
-
 		if(_.has(this.result_messages, response_type)){
 			return this.result_messages[response_type];
 		}
@@ -84,9 +73,6 @@ module.exports = class ShippingCarrierResponse extends ResponseController {
 	}
 
 	setParsedResponse(parsed_response){
-
-		du.debug('Set Parsed Response');
-
 		this.parameters.set('parsedresponse', parsed_response);
 
 		return true;
@@ -94,9 +80,6 @@ module.exports = class ShippingCarrierResponse extends ResponseController {
 	}
 
 	getParsedResponse(){
-
-		du.debug('Get Parsed Response');
-
 		return this.parameters.get('parsedresponse', {fatal: false});
 
 	}

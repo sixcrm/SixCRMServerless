@@ -2,7 +2,6 @@
 const _ = require('lodash');
 const graphql = require('graphql').graphql;
 
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 
 const publicController = global.SixCRM.routes.include('controllers', 'endpoints/components/public.js');
@@ -23,18 +22,12 @@ module.exports = class PublicGraphController extends publicController {
 	}
 
 	preamble() {
-
-		du.debug('GraphController.preamble()');
-
 		global.SixCRM.setResource('auroraContext', auroraContext);
 		return auroraContext.init();
 
 	}
 
 	body(event) {
-
-		du.debug('GraphController.body()');
-
 		return this.preprocessing(event)
 			.then((event) => this.parseEventQueryString(event))
 			.then((event) => this.acquireQuery(event))
@@ -46,9 +39,6 @@ module.exports = class PublicGraphController extends publicController {
 	}
 
 	epilogue() {
-
-		du.debug('GraphController.epilogue()');
-
 		global.SixCRM.getResource('auroraContext');
 		return auroraContext.dispose();
 
@@ -56,9 +46,6 @@ module.exports = class PublicGraphController extends publicController {
 
 
 	parseEventQueryString(event) {
-
-		du.debug('Parse Event Query String');
-
 		return super.parseEventQueryString(event).then(event => {
 
 			if (_.has(event, 'queryStringParameters')) {
@@ -72,9 +59,6 @@ module.exports = class PublicGraphController extends publicController {
 	}
 
 	setCacheParameters(event) {
-
-		du.debug('Set Cache Parameters');
-
 		if (_.has(this.queryString, 'use_cache')) {
 
 			this.resolveController.setCacheParameters({use_cache: this.queryString.use_cache});
@@ -86,9 +70,6 @@ module.exports = class PublicGraphController extends publicController {
 	}
 
 	acquireOutputParameters(event) {
-
-		du.debug('Acquire Output Parameters');
-
 		if (_.has(this, 'queryString') && _.has(this.queryString, 'download') && !_.isNull(this.queryString.download)) {
 
 			this.resolveController.setDownloadParameters({type: this.queryString.download});
@@ -100,9 +81,6 @@ module.exports = class PublicGraphController extends publicController {
 	}
 
 	acquireQuery(event) {
-
-		du.debug('Acquire Query');
-
 		this.query = this.sanitizeQuery(event.body);
 
 		return Promise.resolve(event);
@@ -111,17 +89,11 @@ module.exports = class PublicGraphController extends publicController {
 
 	//Technical Debt:  This is largely inadequate...
 	sanitizeQuery(query) {
-
-		du.debug('Sanitize Query');
-
 		return query.replace(/[\n\r\t]+/g, '');
 
 	}
 
 	graphQuery() {
-
-		du.debug('Graph Query');
-
 		let graph_resolver = () => {
 
 			return graphql(this.sixSchema, this.query, null, null, this.query_parameters);

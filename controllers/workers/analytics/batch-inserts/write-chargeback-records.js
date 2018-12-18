@@ -19,13 +19,7 @@ module.exports = class WriteChargebackRecords extends WriteRecords {
 	}
 
 	write(records) {
-
-		du.debug('WriteChargebackRecords.write()');
-
 		if (records.length === 0) {
-
-			du.debug('WriteChargebackRecords.write(): no records');
-
 			return;
 
 		}

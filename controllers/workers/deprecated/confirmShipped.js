@@ -44,9 +44,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	execute(message) {
-
-		du.debug('Execute');
-
 		return this.preamble(message)
 			.then(() => this.acquireTransactions())
 			.then(() => this.acquireTransactionProducts())
@@ -64,9 +61,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	acquireTransactions() {
-
-		du.debug('Acquire Transactions');
-
 		let rebill = this.parameters.get('rebill');
 
 		if (!_.has(this, 'rebillController')) {
@@ -87,9 +81,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	acquireTransactionProducts() {
-
-		du.debug('Acquire Transaction Products');
-
 		let transactions = this.parameters.get('transactions');
 
 		if (!_.has(this, 'transactionHelperController')) {
@@ -107,9 +98,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	acquireShippingReceipts() {
-
-		du.debug('Acquire Shipping Receipts');
-
 		let transaction_products = this.parameters.get('shippedtransactionproducts');
 
 		if (!_.has(this, 'shippingReceiptController')) {
@@ -134,9 +122,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	findUntrackedShippingReceipts() {
-
-		du.debug('Acquire Product Tracking');
-
 		let shipping_receipts = this.parameters.get('shippingreceipts');
 
 		let untracked_shipping_receipts = arrayutilities.filter(shipping_receipts, shipping_receipt => {
@@ -152,9 +137,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	getTrackingInformation() {
-
-		du.debug('Get Tracking Information');
-
 		let untracked_shipping_receipts = this.parameters.get('untrackedshippingreceipts', {fatal: false});
 
 		if (!_.isNull(untracked_shipping_receipts)) {
@@ -195,9 +177,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	updateShippingReceipts() {
-
-		du.debug('Update Shipping Receipts');
-
 		let compound_shipping_objects = this.parameters.get('compoundshippingobjects', {fatal: false});
 
 		if (!_.isNull(compound_shipping_objects)) {
@@ -240,9 +219,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	getStatus(terminal_response) {
-
-		du.debug('Get Status');
-
 		if (_.has(terminal_response, 'tracking_number') && _.has(terminal_response, 'carrier')) {
 			if (!_.isNull(terminal_response.tracking_number) && !_.isNull(terminal_response.carrier)) {
 				return 'intransit'
@@ -254,9 +230,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	getDetail(terminal_response) {
-
-		du.debug('Get Status');
-
 		if (_.has(terminal_response, 'tracking_number') && _.has(terminal_response, 'carrier')) {
 			if (!_.isNull(terminal_response.tracking_number) && !_.isNull(terminal_response.carrier)) {
 				return 'Received tracking number from Fulfillment Provider';
@@ -268,9 +241,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	confirmAllShipped() {
-
-		du.debug('Confirm All Shipped');
-
 		let untracked_shipping_receipts = this.parameters.get('untrackedshippingreceipts', {fatal: false});
 
 		if (!_.isNull(untracked_shipping_receipts)) {
@@ -303,9 +273,6 @@ module.exports = class confirmShippedController extends workerController {
 	}
 
 	respond() {
-
-		du.debug('Respond');
-
 		let shipped = this.parameters.get('rebillshippedstatus');
 
 		let promise = () => Promise.resolve();

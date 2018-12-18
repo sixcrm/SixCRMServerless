@@ -62,8 +62,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	process(){
-
-		du.debug('Process');
 		let argumentation = arguments[0];
 
 		argumentation.action = 'process';
@@ -78,8 +76,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	reverse(){
-
-		du.debug('Reverse');
 		let argumentation = arguments[0];
 
 		argumentation.action = 'reverse';
@@ -94,8 +90,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	refund(){
-
-		du.debug('Refund');
 		let argumentation = arguments[0];
 
 		argumentation.action = 'refund';
@@ -110,8 +104,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	test(){
-
-		du.debug('Test');
 		let argumentation = arguments[0];
 
 		argumentation.action = 'test';
@@ -131,9 +123,6 @@ class InnovioController extends MerchantProvider {
 
 
 	getCCAUTHCAPRequestParameters(){
-
-		du.debug('Get CCAUTHCAP Request Parameters');
-
 		let creditcard = this.parameters.get('creditcard');
 		let customer = this.parameters.get('customer');
 		let amount = this.parameters.get('amount');
@@ -190,9 +179,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	getCCCREDITRequestParameters(){
-
-		du.debug('Get CCCREDIT Request Parameters');
-
 		let transaction = this.parameters.get('transaction');
 		let amount = this.parameters.get('amount');
 
@@ -229,9 +215,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	getCCREVERSERequestParameters(){
-
-		du.debug('Get CCREVERSE Request Parameters');
-
 		let transaction = this.parameters.get('transaction');
 
 		let source_object = {
@@ -265,9 +248,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	issueCCAUTHCAPRequest(){
-
-		du.debug('Issue Create Charge Request');
-
 		let parameters_object = this.parameters.get('parametersobject');
 
 		let endpoint = parameters_object.endpoint;
@@ -292,9 +272,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	issueCCREVERSERequest(){
-
-		du.debug('Issue CCREVERSE Request');
-
 		let parameters_object = this.parameters.get('parametersobject');
 
 		let endpoint = parameters_object.endpoint;
@@ -319,9 +296,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	issueCCCREDITRequest(){
-
-		du.debug('Issue CCCREDIT Request');
-
 		let parameters_object = this.parameters.get('parametersobject');
 
 		let endpoint = parameters_object.endpoint;
@@ -346,9 +320,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	issueTESTAUTHRequest(){
-
-		du.debug('Issue TESTAUTH Request');
-
 		let parameters_object = this.parameters.get('parametersobject');
 
 		let endpoint = parameters_object.endpoint;
@@ -373,9 +344,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	getTESTAUTHMerchantProviderParameters(){
-
-		du.debug('GET TESTAUTH Merchant Provider Parameters');
-
 		let merchant_provider = this.parameters.get('merchantprovider');
 
 		let source_object = {
@@ -412,9 +380,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	getCCAUTHCAPMerchantProviderParameters(){
-
-		du.debug('GET CCAUTHCAP Merchant Provider Parameters');
-
 		let merchant_provider = this.parameters.get('merchantprovider');
 
 		let source_object = {
@@ -451,9 +416,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	getCCREVERSEMerchantProviderParameters(){
-
-		du.debug('GET CCREVERSE Merchant Provider Parameters');
-
 		let merchant_provider = this.parameters.get('merchantprovider');
 
 		let source_object = {
@@ -490,9 +452,6 @@ class InnovioController extends MerchantProvider {
 	}
 
 	getCCREFUNDMerchantProviderParameters(){
-
-		du.debug('GET CCRREFUND Merchant Provider Parameters');
-
 		let merchant_provider = this.parameters.get('merchantprovider');
 
 		let source_object = {
@@ -529,33 +488,21 @@ class InnovioController extends MerchantProvider {
 	}
 
 	getTESTAUTHMethodParameters(){
-
-		du.debug('Get TESTAUTH Method Parameters');
-
 		return {request_action: 'TESTAUTH'};
 
 	}
 
 	getCCAUTHCAPMethodParameters(){
-
-		du.debug('Get CCAUTHCAP Method Parameters');
-
 		return {request_action: 'CCAUTHCAP'};
 
 	}
 
 	getCCREVERSEMethodParameters(){
-
-		du.debug('Get CCREVERSE Method Parameters');
-
 		return {request_action: 'CCREVERSE'};
 
 	}
 
 	getCCCREDITMethodParameters(){
-
-		du.debug('Get CCCREDIT Method Parameters');
-
 		return {request_action: 'CCCREDIT'};
 
 	}

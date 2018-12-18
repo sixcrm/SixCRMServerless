@@ -2,7 +2,6 @@
 const _ = require('lodash');
 const chunk = require('chunk');
 const BBPromise = require('bluebird');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
@@ -50,9 +49,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	getUnsharedOrShared({id}) {
-
-		du.debug('Get Unshared Or Shared');
-
 		return this.get({id: id})
 			.then(entity => {
 				//Nick:  Let's make sure we do explicit checks.
@@ -67,10 +63,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	getShared({id, range_key = null}) {
-
-		//Nick:  Please put this in most functions so that the debug methods have robust output
-		du.debug('Get Shared', id);
-
 		let query_parameters = {
 			key_condition_expression: 'entity = :primary_keyv',
 			expression_attribute_values: {':primary_keyv': this.getID(id)}
@@ -105,19 +97,12 @@ module.exports = class entityController extends entityUtilitiesController {
 				return this.dynamodbprovider.queryRecords(this.table_name, query_parameters, null);
 
 			})
-			.then(data => {
-				du.debug(data);
-				return data;
-			})
 			.then(data => this.getItems(data))
 			.then(items => this.assureSingular(items));
 
 	}
 
 	listShared({pagination}) {
-
-		du.debug('List Shared');
-
 		let query_parameters = {
 			key_condition_expression: '#type = :type',
 			expression_attribute_values: {':type': this.descriptive_name},
@@ -155,9 +140,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	//NOTE:  We need to make a designation when it's appropriate to list by account and when it's appropriate to list by user.
 	listByAssociations({id, field, pagination, fatal}){
-
-		du.debug('List By Association');
-
 		return this.can({action:'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
@@ -184,8 +166,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	/* eslint-disable */
     listBySecondaryIndex({field, index_value, index_name, pagination, fatal}) {
 		/* eslint-enable */
-		du.debug('List By Secondary Index');
-
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
@@ -215,9 +195,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	//Technical Debt:  Deprecate!
 	//NOTE: Expensive
 	listBy({list_array, field, fatal}){
-
-		du.debug('List By');
-
 		field = (_.isUndefined(field))?this.primary_key:field;
 
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
@@ -241,9 +218,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	//Technical Debt:  This needs to iterate until pagination specs are satisfied...
 	//NOTE: Expensive!
 	list({query_parameters = {}, pagination, reverse_order, account, fatal, search}){
-
-		du.debug('List');
-
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
@@ -268,9 +242,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	listByUser({query_parameters, user, pagination, reverse_order, fatal, search, append_account_filter}){
-
-		du.debug('List By User');
-
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
@@ -301,9 +272,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	//Note:  When the query parameters have a filter expression, we need to implement a Six specific pagination...
 	listByAccount({query_parameters, account, pagination, reverse_order, fatal, search, literal_master}){
-
-		du.debug('List By Account');
-
 		if(this.isMasterAccount() && !literal_master){
 			return this.list(arguments[0]);
 		}
@@ -336,8 +304,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	/* eslint-disable */
     getListByAccount({ids, query_parameters, account, pagination, reverse_order, fatal, search}){
 		/* eslint-enable */
-		du.debug('Get List By Account');
-
 		ids = (_.isUndefined(ids))?[]:ids;
 		let list_condition = this.createINQueryParameters({field: 'id', list_array: ids});
 
@@ -356,8 +322,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	/* eslint-disable */
     getListByUser({ids, query_parameters, account, pagination, reverse_order, fatal, search}){
 		/* eslint-enable */
-		du.debug('Get List By User');
-
 		ids = (_.isUndefined(ids))?[]:ids;
 		let list_condition = this.createINQueryParameters({field: 'id', list_array: ids});
 
@@ -371,9 +335,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	//Technical Debt:  You can only paginate against the index...
 	queryBySecondaryIndex({query_parameters = {}, field, index_value, index_name, pagination, reverse_order, fatal}){
-
-		du.debug('Query By Secondary Index');
-
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
@@ -396,9 +357,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	getBySecondaryIndex({query_parameters = {}, field, index_value, index_name, fatal}){
-
-		du.debug('Get By Secondary Index');
-
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
@@ -417,9 +375,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	queryByParameters({parameters, pagination, index, fatal}){
-
-		du.debug('Query By Parameters');
-
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => this.validate(parameters, global.SixCRM.routes.path('model','general/search_parameters.json')))
@@ -458,9 +413,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	get({id, fatal, range_key = null}){
-
-		du.debug('Get');
-
 		return this.can({action: 'read', object: this.descriptive_name, fatal: fatal})
 			.then((permission) => this.catchPermissions(permission, 'read'))
 			.then(() => {
@@ -490,9 +442,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 
 	async batchGet({ids, parameters}) {
-
-		du.debug('Batch Get');
-
 		const permission = await this.can({action: 'read', object: this.descriptive_name});
 		this.catchPermissions(permission, 'read');
 
@@ -518,9 +467,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	//Technical Debt:  Could a user authenticate using his credentials and create an object under a different account (aka, account specification in the entity doesn't match the account
 	create({entity, parameters = { index: true }}){
-
-		du.debug('Create');
-
 		return this.can({action: 'create', object: this.descriptive_name, fatal: true})
 			.then(() => {
 
@@ -564,9 +510,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	updateProperties({id, properties}){
-
-		du.debug('Update Properties');
-
 		return this.can({action: 'update', object: this.descriptive_name, id: this.getID(id), fatal: true})
 			.then(() => this.exists({entity: id, return_entity: true}))
 			.then((existing_entity) => {
@@ -623,9 +566,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	//Technical Debt:  Could a user authenticate using his credentials and update an object under a different account (aka, account specification in the entity doesn't match the account)
 	update({entity, ignore_updated_at}){
-
-		du.debug('Update');
-
 		if(!_.has(entity, this.primary_key)){
 			throw eu.getError('bad_request','Unable to update '+this.descriptive_name+'. Missing property "'+this.primary_key+'"');
 		}
@@ -698,9 +638,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	touch({entity}){
-
-		du.debug('Touch');
-
 		return this.can({action: 'update', object: this.descriptive_name, fatal: true}).then(() => {
 
 			return this.exists({entity: entity}).then((exists) => {
@@ -723,9 +660,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	//Technical Debt:  Nomenclature should be "assure"
 	store({entity, ignore_updated_at}){
-
-		du.debug('Store');
-
 		ignore_updated_at = (_.isUndefined(ignore_updated_at) || _.isNull(ignore_updated_at))?false:ignore_updated_at;
 
 		if(!_.has(entity, this.primary_key)){
@@ -756,9 +690,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	//NOT ACL enabled
 	delete({id, range_key = null}){
-
-		du.debug('Delete');
-
 		let delete_parameters = {};
 
 		delete_parameters[this.primary_key] = id;
@@ -787,9 +718,6 @@ module.exports = class entityController extends entityUtilitiesController {
 
 	//Note: UTILITY Method - has no permissioning... DANGER
 	exists({entity, return_entity}){
-
-		du.debug('Exists');
-
 		let primary_key;
 
 		if(_.isObject(entity)){
@@ -856,9 +784,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	checkAssociatedEntities({id}){
-
-		du.debug('Check Associated Entities');
-
 		if(_.isFunction(this.associatedEntitiesCheck)){
 
 			return this.associatedEntitiesCheck({id: id}).then(associated_entities => {
@@ -891,9 +816,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	createAssociatedEntitiesObject({name, object}){
-
-		du.debug('Create Associated Entities Object');
-
 		//Technical Debt:  Not every entity has "ID"
 		if(!_.has(object, 'id')){
 			throw eu.getError('server', 'Create Associated Entities expects the object parameter to have field "id"');
@@ -909,9 +831,6 @@ module.exports = class entityController extends entityUtilitiesController {
 	}
 
 	createINQueryParameters({field, list_array}){
-
-		du.debug('Create IN Query Parameters');
-
 		return this.dynamodbprovider.createINQueryParameters(field, list_array);
 
 	}

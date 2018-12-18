@@ -20,9 +20,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	async deployDomains(){
-
-		du.debug('Deploy Domains');
-
 		const domains = this.getConfigurationJSON('domains');
 
 		return BBPromise.each(domains, (domain) => {
@@ -34,9 +31,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	async deployDomain(domain_definition){
-
-		du.debug('Deploy Domain');
-
 		let result = await this.domainExists(domain_definition);
 
 		if(_.isNull(result)){
@@ -53,9 +47,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	async domainExists(domain_definition){
-
-		du.debug('Cloudsearch Domain Exists');
-
 		let results = await this.cloudsearchprovider.describeDomains([domain_definition.DomainName]);
 
 		if(_.has(results, 'DomainStatusList') && _.isArray(results.DomainStatusList)){
@@ -74,9 +65,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	async createCloudsearchDomain(domain_definition) {
-
-		du.debug('Create Cloudsearch Domain');
-
 		await this.cloudsearchprovider.createDomain(domain_definition.DomainName);
 
 		return this.cloudsearchprovider.waitFor('ready', domain_definition.DomainName);
@@ -84,8 +72,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	deployIndexes(){
-
-		du.debug('Deploy Indexes');
 		return this.createCloudsearchIndexes()
 			.then(() => this.indexCloudsearchDocuments())
 			.then(() => { return 'Complete'; });
@@ -94,9 +80,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 
 	//Note:  This is a "do everything" method.  Avoid where possible.
 	deploy(){
-
-		du.debug('Deploy');
-
 		return this.createCloudsearchDomain()
 			.then(() => this.createCloudsearchIndexes())
 			.then(() => this.indexCloudsearchDocuments())
@@ -188,9 +171,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	purgeCloudsearchDocuments(purge_document){
-
-		du.debug('Purge Cloudsearch Documents');
-
 		if(purge_document == false){
 
 			du.info('No documents to purge.');
@@ -212,9 +192,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	createCloudsearchIndexes() {
-
-		du.debug('Create Cloudsearch Indexes');
-
 		let index_objects = this.getIndexConfigurations();
 
 		let index_promises = arrayutilities.map(index_objects, (index_object) => {
@@ -232,9 +209,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	getIndexConfigurations(){
-
-		du.debug('Get Index Objects');
-
 		let files = fileutilities.getDirectoryFilesSync(global.SixCRM.routes.path('deployment','cloudsearch/configuration/indexes'));
 
 		let index_objects = arrayutilities.map(files, (file) => {
@@ -252,25 +226,16 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	createCloudsearchIndex(index_object) {
-
-		du.debug('Create Cloudsearch Index');
-
 		return this.cloudsearchprovider.defineIndexField(index_object);
 
 	}
 
 	indexCloudsearchDocuments(domainname) {
-
-		du.debug('Index Cloudsearch Documents');
-
 		return this.cloudsearchprovider.indexDocuments(domainname);
 
 	}
 
 	deleteCloudsearchDomain(domainname){
-
-		du.debug('Delete Cloudsearch Domain');
-
 		return this.cloudsearchDomainExists(domainname).then((result) => {
 
 			if(_.isObject(result)){
@@ -288,9 +253,6 @@ module.exports = class CloudsearchDeployment extends AWSDeploymentUtilities {
 	}
 
 	getConfigurationJSON(filename) {
-
-		du.debug('Get Configuration JSON');
-
 		//Technical Debt:  This needs to be expanded to support multiple definitions...
 		return global.SixCRM.routes.include('deployment', 'cloudsearch/configuration/' + filename + '.json');
 

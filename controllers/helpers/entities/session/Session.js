@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
@@ -19,9 +18,6 @@ module.exports = class SessionHelperController {
 	}
 
 	isComplete({session}){
-
-		du.debug('Is Complete');
-
 		if(session.completed == true){
 			return true;
 		}
@@ -31,9 +27,6 @@ module.exports = class SessionHelperController {
 	}
 
 	isCurrent({session: session}){
-
-		du.debug('Is Current');
-
 		let session_length = global.SixCRM.configuration.site_config.jwt.transaction.expiration;
 
 		let expired = session.created_at < timestamp.toISO8601(timestamp.createTimestampSeconds() - session_length);
@@ -43,9 +36,6 @@ module.exports = class SessionHelperController {
 	}
 
 	getSessionByCustomerAndID({customer, id}){
-
-		du.debug('Get Session By Customer and ID');
-
 		if(!_.has(this, 'sessionController')){
 			const SessionController = global.SixCRM.routes.include('entities', 'Session.js');
 			this.sessionController = new SessionController();
@@ -68,9 +58,6 @@ module.exports = class SessionHelperController {
 	}
 
 	getSessionByCustomerAndAlias({customer, alias}){
-
-		du.debug('Get Session By Customer and Alias');
-
 		if(!_.has(this, 'customerController')){
 			const CustomerController = global.SixCRM.routes.include('controllers', 'entities/Customer.js');
 			this.customerController = new CustomerController();
@@ -104,9 +91,6 @@ module.exports = class SessionHelperController {
 	}
 
 	getPublicFields(session){
-
-		du.debug('Get Public Fields');
-
 		return objectutilities.transcribe(
 			{
 				"id":"id",
@@ -132,18 +116,5 @@ module.exports = class SessionHelperController {
 		);
 
 	}
-
-	/*
-	async getPendingRebills(session){
-
-		du.debug('Get Pending Rebills');
-
-		const search = {
-
-		}
-		let rebills = await this.rebillController.getPendingRebills();
-
-	}
-	*/
 
 }
