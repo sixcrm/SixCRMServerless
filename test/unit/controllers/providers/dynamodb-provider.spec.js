@@ -7,9 +7,9 @@ const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 
 let anyItem = { property: 'value' };
 let anyTableName = 'tableName';
-let serverError = '[500] Server Error: [500] An error occurred.';
 
 const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
+const AWSTestUtils = require('./aws-test-utils');
 
 describe('controllers/providers/dynamodb-provider', () => {
 
@@ -42,9 +42,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb =  {
-				put: (params, callback) => {
-					callback(null, params);
-				}
+				put: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.saveRecord(aTableName, anItem).then((result) => {
@@ -62,13 +60,11 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb = {
-				put: (params, callback) => {
-					callback(eu.getError('server','An error occurred.'), 'A stacktrace.');
-				}
+				put: AWSTestUtils.AWSError('An error occurred.')
 			};
 
 			return dynamodbprovider.saveRecord(aTableName, anItem).catch((error) => {
-				expect(error.message).to.equal(serverError);
+				expect(error.message).to.equal('An error occurred.');
 			});
 		});
 
@@ -86,9 +82,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb =  {
-				get: (params, callback) => {
-					callback(null, params);
-				}
+				get: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.get(aTableName, anyKey).then((result) => {
@@ -110,9 +104,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb = {
-				scan: (params, callback) => {
-					callback(null, anyResults);
-				}
+				scan: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.scanRecords(aTableName, anyParams).then((result) => {
@@ -130,9 +122,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb = {
-				scan: (params, callback) => {
-					callback(null, anyResults);
-				}
+				scan: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.scanRecords(aTableName, anyParams).then((result) => {
@@ -151,10 +141,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb = {
-				scan: (params, callback) => {
-					expect(params.Limit).to.equal(paramsWithLimit.limit);
-					callback(null, anyResults);
-				}
+				scan: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.scanRecords(aTableName, paramsWithLimit).then((result) => {
@@ -175,13 +162,11 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb = {
-				scan: (params, callback) => {
-					callback(eu.getError('server','An error occurred.'), 'A stacktrace.');
-				}
+				scan: AWSTestUtils.AWSError('An error occurred.')
 			};
 
 			return dynamodbprovider.scanRecords(aTableName, anItem).catch((error) => {
-				expect(error.message).to.equal(serverError);
+				expect(error.message).to.equal('An error occurred.');
 			});
 		});
 
@@ -200,9 +185,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb = {
-				query: (params, callback) => {
-					callback(null, anyResults);
-				}
+				query: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.queryRecords(aTableName, anyParams, anyIndex).then((result) => {
@@ -265,9 +248,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb = {
-				query: (params, callback) => {
-					callback(null, spoofed_results);
-				}
+				query: AWSTestUtils.AWSPromise(spoofed_results)
 			};
 
 			return dynamodbprovider.queryRecords(table_name, parameters, index).then((result) => {
@@ -291,9 +272,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb = {
-				query: (params, callback) => {
-					callback(null, anyResults);
-				}
+				query: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.countRecords(aTableName, anyParams, anyIndex).then((result) => {
@@ -322,9 +301,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb = {
-				update: (params, callback) => {
-					callback(null, params);
-				}
+				update: AWSTestUtils.AWSPromise(anyResult)
 			};
 
 			return dynamodbprovider.updateRecord(aTableName, anyKey, anyExpression, anyParams).then((result) => {
@@ -351,9 +328,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamodb = {
-				delete: (params, callback) => {
-					callback(null, params);
-				}
+				delete: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.deleteRecord(aTableName, anyKey, anyExpression, anyParams).then((result) => {
@@ -373,9 +348,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamoraw =  {
-				createTable: (params, callback) => {
-					callback(null, anyResults);
-				}
+				createTable: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.createTable(anyParams).then((result) => {
@@ -395,9 +368,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamoraw =  {
-				updateTable: (params, callback) => {
-					callback(null, anyResults);
-				}
+				updateTable: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.updateTable(anyParams).then((result) => {
@@ -417,9 +388,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamoraw =  {
-				describeTable: (params, callback) => {
-					callback(null, params);
-				}
+				describeTable: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.describeTable(aTableName).then((result) => {
@@ -441,9 +410,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamoraw =  {
-				deleteTable: (params, callback) => {
-					callback(null, params);
-				}
+				deleteTable: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.deleteTable(aTableName).then((result) => {
@@ -459,13 +426,11 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamoraw =  {
-				deleteTable: (params, callback) => {
-					callback(new Error('fail'), null);
-				}
+				deleteTable: AWSTestUtils.AWSError('fail')
 			};
 
 			return dynamodbprovider.deleteTable(aTableName).catch((error) => {
-				expect(error.message).to.deep.equal('[500] Error: fail');
+				expect(error.message).to.deep.equal('fail');
 			});
 		});
 
@@ -483,9 +448,7 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamoraw =  {
-				waitFor: (status, params, callback) => {
-					callback(null, params);
-				}
+				waitFor: AWSTestUtils.AWSPromise(anyResults)
 			};
 
 			return dynamodbprovider.waitFor(aTableName, anyStatus).then((result) => {
@@ -502,13 +465,11 @@ describe('controllers/providers/dynamodb-provider', () => {
 			const dynamodbprovider = new DynamoDBProvider();
 
 			dynamodbprovider.dynamoraw =  {
-				waitFor: (status, params, callback) => {
-					callback(new Error('fail'), null);
-				}
+				waitFor: AWSTestUtils.AWSError('fail')
 			};
 
 			return dynamodbprovider.waitFor(aTableName, anyStatus).catch((error) => {
-				expect(error.message).to.equal('[500] Error: fail');
+				expect(error.message).to.equal('fail');
 			});
 		});
 

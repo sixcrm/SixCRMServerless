@@ -220,20 +220,14 @@ class mockSQSProvider extends AWSProvider {
 
 		du.debug('Delete Message');
 
-		return new Promise((resolve) => {
+		let queue_url = this.getQueueURL(parameters);
 
-			let queue_url = this.getQueueURL(parameters);
+		var params = {
+			QueueUrl: queue_url,
+			ReceiptHandle: parameters.receipt_handle
+		};
 
-			var params = {
-				QueueUrl: queue_url,
-				ReceiptHandle: parameters.receipt_handle
-			};
-
-			this.sqs.deleteMessage(params, (error, data) => {
-				return resolve(this.AWSCallback(error, data))
-			});
-
-		});
+		return this.sqs.deleteMessage(params).promise();
 
 	}
 
@@ -241,116 +235,89 @@ class mockSQSProvider extends AWSProvider {
 
 		du.debug('Send Message');
 
-		return new Promise((resolve) => {
+		let queue_url = this.getQueueURL(parameters);
 
-			let queue_url = this.getQueueURL(parameters);
+		var params = {
+			MessageBody: this.ensureString(parameters.message_body),
+			QueueUrl: queue_url
+		};
 
-			var params = {
-				MessageBody: this.ensureString(parameters.message_body),
-				QueueUrl: queue_url
-			};
+		if (!queue_url.includes('.fifo')) {
 
-			if (!queue_url.includes('.fifo')) {
+			params.DelaySeconds = 30;
 
-				params.DelaySeconds = 30;
+		}
 
-			}
+		du.debug('Sending message', params);
 
-			du.debug('Sending message', params);
-
-			this.sqs.sendMessage(params, (error, data) => {
-				resolve(this.AWSCallback(error, data))
-			});
-
-		});
+		return this.sqs.sendMessage(params).promise();
 
 	}
 
-	purgeQueue(parameters) {
+	async purgeQueue(parameters) {
 
 		du.debug('Purge Queue');
 
-		return new Promise((resolve) => {
+		let queue_name;
 
-			let queue_name;
+		if (_.isString(parameters)) {
 
-			if (_.isString(parameters)) {
+			queue_name = parameters;
 
-				queue_name = parameters;
+		} else {
 
-			} else {
-
-				if (!_.has(parameters, 'QueueName')) {
-					throw eu.getError('server', 'Purge Queue parameters objects assumed to have QueueName property');
-				}
-
-				queue_name = parameters.QueueName;
-
+			if (!_.has(parameters, 'QueueName')) {
+				throw eu.getError('server', 'Purge Queue parameters objects assumed to have QueueName property');
 			}
 
-			return this.queueExists(queue_name).then(queue_exists => {
+			queue_name = parameters.QueueName;
 
-				if (queue_exists) {
+		}
 
-					du.debug('Queue exists, purging');
+		if (await this.queueExists()) {
 
-					let queue_url = this.getQueueURL(parameters);
+			du.debug('Queue exists, purging');
 
-					let params = {
-						QueueUrl: queue_url
-					};
+			let queue_url = this.getQueueURL(parameters);
 
-					return this.sqs.purgeQueue(params, (error, data) => {
+			let params = {
+				QueueUrl: queue_url
+			};
 
-						du.info(queue_name + ' queue purged');
+			const result = await this.sqs.purgeQueue(params).promise();
+			du.info(queue_name + ' queue purged');
 
-						return resolve(this.AWSCallback(error, data))
+			return result;
 
-					});
+		} else {
 
-				} else {
+			du.debug('Queue not found, skipping');
 
-					du.debug('Queue not found, skipping');
+			return false;
 
-					return resolve(false);
-
-				}
-
-			});
-
-		});
+		}
 
 	}
 
-	createQueue(params) {
+	async createQueue(params) {
 
 		du.debug('Create Queue', params);
 
-		return new Promise((resolve) => {
+		du.warning(params.QueueName);
 
-			du.warning(params.QueueName);
+		if (await this.queueExists()) {
 
-			return this.queueExists(params.QueueName).then(queue_exists => {
+			du.info('Queue exists, skipping');
 
-				if (queue_exists) {
+			return false;
 
-					du.info('Queue exists, skipping');
+		} else {
 
-					return resolve(false);
+			du.info('Queue not found, creating', params);
 
-				} else {
+			return this.sqs.createQueue(params).promise();
 
-					du.info('Queue not found, creating', params);
-
-					return this.sqs.createQueue(params, (error, data) => {
-						return resolve(this.AWSCallback(error, data));
-					});
-
-				}
-
-			});
-
-		});
+		}
 
 	}
 
@@ -358,11 +325,7 @@ class mockSQSProvider extends AWSProvider {
 
 		du.debug('Set Queue Attrbutes', params);
 
-		return new Promise((resolve) => {
-
-			this.sqs.setQueueAttributes(params, (error, data) => resolve(this.AWSCallback(error, data)));
-
-		});
+		return this.sqs.setQueueAttributes(params).promise();
 
 	}
 

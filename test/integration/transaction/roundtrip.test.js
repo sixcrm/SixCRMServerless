@@ -175,6 +175,36 @@ function createOrder(token, session, sale_object, customer){
 
 }
 
+function createOrderShouldFail(token, session, sale_object, customer){
+
+	du.info('Create Order');
+
+	let account = config.account;
+	let post_body = createOrderBody(session, sale_object, customer);
+
+	let argument_object = {
+		url: config.endpoint+'order/create/'+account,
+		body: post_body,
+		headers:{
+			Authorization: token
+		}
+	};
+
+	return httpprovider.postJSON(argument_object)
+		.then((result) => {
+			du.debug(result.body);
+			expect(result.response.statusCode).to.equal(400);
+			expect(result.response.statusMessage).to.not.equal('OK');
+			expect(result.body).to.have.property('success');
+			expect(result.body).to.have.property('code');
+			expect(result.body).to.have.property('response');
+			expect(result.body.success).to.equal(false);
+			expect(result.body.code).to.equal(400);
+
+			return result.body;
+		});
+
+}
 function createLead(token, campaign, customer){
 
 	du.info('Create Lead');
@@ -300,6 +330,12 @@ function createOrderBody(session, sale_object, customer){
 let config = global.SixCRM.routes.include('test', 'integration/config/'+process.env.stage+'.yml');
 let campaign = '70a6689a-5814-438b-b9fd-dd484d0812f9';
 
+function sleep(ms){
+	return new Promise(resolve=>{
+		setTimeout(resolve,ms)
+	})
+}
+
 describe('Transaction Endpoints Round Trip Test',() => {
 	describe('Straight Sale', () => {
 		it('successfully executes', () => {
@@ -385,7 +421,7 @@ describe('Transaction Endpoints Round Trip Test',() => {
 
 			let sale_object = {
 				product_schedules:[{
-					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					product_schedule: "0e3652bf-f1d3-4325-840e-c93806289d7e",
 					quantity:2
 				}]
 			};
@@ -403,6 +439,74 @@ describe('Transaction Endpoints Round Trip Test',() => {
 
 		});
 
+		it('fails when product schedule has more than one product', () => {
+
+			let sale_object = {
+				product_schedules:[{
+					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					quantity:2
+				}]
+			};
+
+			return acquireToken(campaign)
+				.then((token) => {
+
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrderShouldFail(token, session, sale_object)
+						})
+
+				});
+
+		});
+
+		it('fails when purchasing  more than one product schedule', () => {
+
+			let sale_object = {
+				product_schedules:[{
+					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					quantity:2
+				},{
+					product_schedule: "0e3652bf-f1d3-4325-840e-c93806289d7e",
+					quantity:2
+				}]
+			};
+
+			return acquireToken(campaign)
+				.then((token) => {
+
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrderShouldFail(token, session, sale_object)
+						})
+
+				});
+
+		});
+
+		it('fails when session has more than one product schedule', () => {
+
+			let sale_object = {
+				product_schedules:[{
+					product_schedule: "0e3652bf-f1d3-4325-840e-c93806289d7e",
+					quantity:2
+				}]
+			};
+
+			return acquireToken(campaign)
+				.then((token) => {
+
+					return createLead(token, campaign)
+						.then((session) => {
+							return createOrder(token, session, sale_object)
+								.then(() => sleep(1000))
+								.then(() => createOrderShouldFail(token, session, sale_object))
+						});
+
+				});
+
+		});
+
 	});
 
 	describe('Mixed Sale', () => {
@@ -414,7 +518,7 @@ describe('Transaction Endpoints Round Trip Test',() => {
 					quantity:2
 				}],
 				product_schedules:[{
-					product_schedule: "12529a17-ac32-4e46-b05b-83862843055d",
+					product_schedule: "0e3652bf-f1d3-4325-840e-c93806289d7e",
 					quantity:2
 				}]
 			};

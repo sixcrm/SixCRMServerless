@@ -130,12 +130,6 @@ module.exports = class QueryParser {
 
 		}
 
-		if (options.merchantProvider) {
-
-			filter = this.resolveFilterQueryValue(filter, 'merchantProvider', 'merchant_provider', parameters);
-
-		}
-
 		if (options.amount) {
 
 			filter = this.resolveFilterQueryValue(filter, 'amount', 'amount', parameters);

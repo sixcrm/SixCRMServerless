@@ -28,15 +28,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe VPC Endpoints');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeVpcEndpoints(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeVpcEndpoints(parameters).promise();
 
 	}
 
@@ -44,15 +36,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Create VPC Endpoint');
 
-		return new Promise((resolve) => {
-
-			this.ec2.createVpcEndpoint(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.createVpcEndpoint(parameters).promise();
 
 	}
 
@@ -60,15 +44,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Wait For');
 
-		return new Promise((resolve) => {
-
-			this.ec2.waitFor(event_name, parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.waitFor(event_name, parameters).promise();
 
 	}
 
@@ -76,15 +52,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe VPCs');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeVpcs(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeVpcs(parameters).promise();
 
 	}
 
@@ -94,15 +62,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		const params = {};
 
-		return new Promise((resolve) => {
-
-			this.ec2.createDefaultVpc(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.createDefaultVpc(params).promise();
 
 	}
 
@@ -130,15 +90,7 @@ module.exports = class EC2Provider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-
-			this.ec2.createVpc(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.createVpc(params).promise();
 
 	}
 
@@ -146,15 +98,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe Routes');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeRoutes(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeRoutes(parameters).promise();
 
 	}
 
@@ -188,15 +132,7 @@ module.exports = class EC2Provider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-
-			this.ec2.replaceRoute(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.replaceRoute(params).promise();
 
 	}
 
@@ -230,15 +166,7 @@ module.exports = class EC2Provider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-
-			this.ec2.createRoute(params, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.ec2.createRoute(params).promise();
 
 	}
 
@@ -246,15 +174,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Attach Internet Gateway');
 
-		return new Promise((resolve) => {
-
-			this.ec2.attachInternetGateway(parameters, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.ec2.attachInternetGateway(parameters).promise();
 
 	}
 
@@ -262,15 +182,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Create Internet Gateway');
 
-		return new Promise((resolve) => {
-
-			this.ec2.createInternetGateway({}, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.createInternetGateway({}).promise();
 
 	}
 
@@ -278,15 +190,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe Internet Gateways');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeInternetGateways(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeInternetGateways(parameters).promise();
 
 	}
 
@@ -296,15 +200,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug(parameters);
 
-		return new Promise((resolve) => {
-
-			this.ec2.associateRouteTable(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.associateRouteTable(parameters).promise();
 
 	}
 
@@ -312,15 +208,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Create Route Table');
 
-		return new Promise((resolve) => {
-
-			this.ec2.createRouteTable(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.createRouteTable(parameters).promise();
 
 	}
 
@@ -328,15 +216,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe Route Tables');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeRouteTables(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.describeRouteTables(parameters).promise();
 
 	}
 
@@ -344,15 +224,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Create NAT Gateway');
 
-		return new Promise((resolve) => {
-
-			this.ec2.createNatGateway(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.createNatGateway(parameters).promise();
 
 	}
 
@@ -360,15 +232,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe NAT Gateways');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeNatGateways(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.describeNatGateways(parameters).promise();
 
 	}
 
@@ -380,15 +244,7 @@ module.exports = class EC2Provider extends AWSProvider {
 			Domain: 'vpc'
 		};
 
-		return new Promise((resolve) => {
-
-			this.ec2.allocateAddress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.allocateAddress(parameters);
 
 	}
 
@@ -396,15 +252,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe Addresses');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeAddresses(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.describeAddresses(parameters).promise();
 
 	}
 
@@ -412,15 +260,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Create Tags');
 
-		return new Promise((resolve) => {
-
-			this.ec2.createTags(parameters, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false))
-
-			});
-
-		});
+		return this.ec2.createTags(parameters).promise();
 
 	}
 
@@ -449,15 +289,7 @@ module.exports = class EC2Provider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-
-			this.ec2.createSubnet(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.createSubnet(params).promise();
 
 	}
 
@@ -465,15 +297,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe VPCs');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeVpcs(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.describeVpcs(parameters).promise();
 
 	}
 
@@ -481,15 +305,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe Subnets');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeSubnets(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.describeSubnets(parameters).promise();
 
 	}
 
@@ -558,15 +374,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe Security Groups');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeSecurityGroups(parameters, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.ec2.describeSecurityGroups(parameters).promise();
 
 	}
 
@@ -593,15 +401,7 @@ module.exports = class EC2Provider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-
-			this.ec2.createSecurityGroup(params, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.ec2.createSecurityGroup(params).promise();
 
 	}
 
@@ -622,15 +422,7 @@ module.exports = class EC2Provider extends AWSProvider {
 			delete parameters.GroupName;
 		}
 
-		return new Promise((resolve) => {
-
-			this.ec2.authorizeSecurityGroupIngress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.authorizeSecurityGroupIngress(parameters).promise();
 
 	}
 
@@ -690,15 +482,7 @@ module.exports = class EC2Provider extends AWSProvider {
 			delete parameters.GroupName;
 		}
 
-		return new Promise((resolve) => {
-
-			this.ec2.authorizeSecurityGroupEgress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.ec2.authorizeSecurityGroupEgress(parameters).promise();
 
 	}
 
@@ -838,15 +622,7 @@ module.exports = class EC2Provider extends AWSProvider {
 			delete parameters.GroupName;
 		}
 
-		return new Promise((resolve) => {
-
-			this.ec2.revokeSecurityGroupIngress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.revokeSecurityGroupIngress(parameters).promise();
 
 	}
 
@@ -858,15 +634,7 @@ module.exports = class EC2Provider extends AWSProvider {
 			delete parameters.GroupName;
 		}
 
-		return new Promise((resolve) => {
-
-			this.ec2.revokeSecurityGroupEgress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.revokeSecurityGroupEgress(parameters).promise();
 
 	}
 
@@ -908,15 +676,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Describe EC2 instances');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeInstances(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeInstances(params).promise();
 
 	}
 
@@ -924,15 +684,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Create EC2 Instance');
 
-		return new Promise((resolve) => {
-
-			this.ec2.runInstances(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.runInstances(params).promise();
 
 	}
 
@@ -940,15 +692,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Associate EIP to EC2 Instance');
 
-		return new Promise((resolve) => {
-
-			this.ec2.associateAddress(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.associateAddress(parameters).promise();
 
 	}
 
@@ -956,15 +700,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Create keypair');
 
-		return new Promise((resolve) => {
-
-			this.ec2.importKeyPair(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.importKeyPair(parameters).promise();
 
 	}
 
@@ -972,15 +708,7 @@ module.exports = class EC2Provider extends AWSProvider {
 
 		du.debug('Create keypair');
 
-		return new Promise((resolve) => {
-
-			this.ec2.describeKeyPairs(parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.ec2.describeKeyPairs(parameters).promise();
 
 	}
 

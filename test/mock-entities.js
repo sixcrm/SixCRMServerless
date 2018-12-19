@@ -443,6 +443,18 @@ class MockEntities {
 
 	}
 
+	static getProductScheduleWithOneProductAndSchedule(id, expanded) {
+
+		expanded = (_.isUndefined(expanded) || _.isNull(expanded)) ? false : expanded;
+
+		id = (_.isUndefined(id) || _.isNull(id)) ? uuidV4() : id;
+
+		let ps = this.getValidProductSchedule(id, expanded);
+		ps.schedule = [ps.schedule[0]];
+
+		return ps;
+	}
+
 	static getValidProducts(ids) {
 
 		ids = (_.isUndefined(ids) || _.isNull(ids)) ? [uuidV4(), uuidV4(), uuidV4(), uuidV4()] : ids;

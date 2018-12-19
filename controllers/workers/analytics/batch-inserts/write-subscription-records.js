@@ -30,19 +30,25 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 
 		}
 
-		let inactiveQuery = `
-			UPDATE analytics.f_subscription
-			SET status = 'inactive'
-			WHERE status = 'active' AND session IN `;
-
-		const inClause = records.map((r, i) => `$${i + 1}`).join(',');
-		inactiveQuery += `(${inClause});`;
-		const inactiveQueryArgs = records.map(r => r.session);
+		let updateQuery = records.map((r, i) => `
+			UPDATE analytics.f_subscription SET
+				datetime = $${8*i + 1},
+				status = $${8*i + 2},
+				cycle = $${8*i + 3},
+				merchant_provider = $${8*i + 4},
+				merchant_provider_name = $${8*i + 5}
+			WHERE session_id = $${8*i + 6} AND product_schedule_id = $${8*i + 7} AND product_id = $${8*i + 8}`).join(';');
+		const updateQueryArgs = _.flatten(records.map(r =>
+			[r.datetime, r.status, r.cycle, r.merchant_provider, r.merchant_provider_name, r.session_id, r.product_schedule_id, r.product_id]));
 
 		let query =
 			'INSERT INTO analytics.f_subscription ( \
-				id, \
-				alias, \
+				session_id, \
+				product_schedule_id, \
+				product_id, \
+				session_alias, \
+				product_schedule_name, \
+				product_name, \
 				datetime, \
 				status, \
 				amount, \
@@ -50,16 +56,12 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 				cycle, \
 				interval, \
 				account, \
-				session, \
-				session_alias, \
 				campaign, \
 				campaign_name, \
-				customer, \
-				customer_name,\
-				product_schedule_name,\
-				product_schedule,\
 				merchant_provider_name,\
-				merchant_provider) \
+				merchant_provider, \
+				customer, \
+				customer_name) \
 				VALUES ';
 
 		const values = records.map((r, i) => {
@@ -70,32 +72,17 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 
 		query += values.join(',');
 
-		query += ' \
-			ON CONFLICT (id) DO UPDATE SET  \
-			alias = EXCLUDED.alias, \
-			datetime = EXCLUDED.datetime, \
-			status = EXCLUDED.status, \
-			amount = EXCLUDED.amount, \
-			item_count = EXCLUDED.item_count, \
-			cycle = EXCLUDED.cycle, \
-			interval = EXCLUDED.interval, \
-			account = EXCLUDED.account, \
-			session = EXCLUDED.session, \
-			session_alias = EXCLUDED.session_alias, \
-			campaign = EXCLUDED.campaign, \
-			campaign_name = EXCLUDED.campaign_name, \
-			customer = EXCLUDED.customer, \
-			customer_name = EXCLUDED.customer_name, \
-			product_schedule_name = EXCLUDED.product_schedule_name, \
-			product_schedule = EXCLUDED.product_schedule, \
-			merchant_provider_name = EXCLUDED.merchant_provider_name, \
-			merchant_provider = EXCLUDED.merchant_provider';
+		query += ' ON CONFLICT (session_id, product_schedule_id, product_id) DO NOTHING';
 
 		const queryArgs = _.flatten(records.map(r => {
 
 			return [
-				r.id,
-				r.alias,
+				r.session_id,
+				r.product_schedule_id,
+				r.product_id,
+				r.session_alias,
+				r.product_schedule_name,
+				r.product_name,
 				r.datetime,
 				r.status,
 				r.amount,
@@ -103,25 +90,21 @@ module.exports = class WriteSubscriptionRecords extends WriteRecords {
 				r.cycle,
 				r.interval,
 				r.account,
-				r.session,
-				r.session_alias,
 				r.campaign,
 				r.campaign_name,
-				r.customer,
-				r.customer_name,
-				r.product_schedule_name,
-				r.product_schedule,
 				r.merchant_provider_name,
-				r.merchant_provider
+				r.merchant_provider,
+				r.customer,
+				r.customer_name
 			];
 
 		}));
 
 		return this._auroraContext.withConnection(async (connection) => {
 
-			du.debug('WriteSubscriptionRecords: inactiveQuery', inactiveQuery, inactiveQueryArgs);
+			du.debug('WriteSubscriptionRecords: updateQuery', updateQuery, updateQueryArgs);
 
-			await connection.queryWithArgs(inactiveQuery, inactiveQueryArgs);
+			await connection.queryWithArgs(updateQuery, updateQueryArgs);
 
 			du.debug('WriteSubscriptionRecords: query', query, queryArgs);
 

@@ -505,15 +505,13 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 	}
 
-	executeDynamoDBMethod({method, parameters, status, fatal}){
+	executeDynamoDBMethod({method, parameters, status}){
 
 		du.debug('Execute Dynamo DB Method');
 
 		du.debug('Method: '+method);
 
 		du.debug('Parameters', parameters);
-
-		fatal = (_.isUndefined(fatal))?true:fatal;
 
 		let valid_methods = {
 			document_client: ['get', 'batchGet', 'scan', 'query', 'put', 'update', 'delete'],
@@ -522,86 +520,39 @@ module.exports = class DynamoDBProvider extends AWSProvider{
 
 		if(_.includes(valid_methods.document_client, method)){
 
-			return new Promise((resolve, reject) => {
+			du.debug('DynamoDB Parameters (last hop):', parameters);
 
-				du.debug('DynamoDB Parameters (last hop):', parameters);
+			if(!_.has(this, 'dynamodb')){
+				this.instantiateDynamo();
+			}
 
-				if(!_.has(this, 'dynamodb')){
-					this.instantiateDynamo();
-				}
-
-				this.dynamodb[method](parameters, (error, data) => {
-
-					if(error){
-
-						du.error(error);
-
-						if(fatal){
-							throw eu.getError('server', error);
-						}
-
-						return reject(error);
-
-					}
-
-					return resolve(data);
-
-				});
-
-			});
+			return this.dynamodb[method](parameters).promise();
 
 		}
 
 		if(_.includes(valid_methods.raw, method)){
 
-			return new Promise((resolve, reject) => {
+			if(method == 'waitFor'){
 
-				if(method == 'waitFor'){
+				du.debug('DynamoDB Parameters (last hop):', parameters);
 
-					du.debug('DynamoDB Parameters (last hop):', parameters);
-
-					if(!_.has(this, 'dynamoraw')){
-						this.instantiateDynamo();
-					}
-
-					this.dynamoraw[method](status, parameters, (error, data) => {
-
-						if(_.isError(error)){
-							if(fatal){
-								throw eu.getError('server', error);
-							}
-							return reject(error);
-						}
-
-						return resolve(data);
-
-					});
-
-				}else{
-
-					du.debug('DynamoDB Parameters (last hop):', parameters);
-
-					if(!_.has(this, 'dynamoraw')){
-						this.instantiateDynamo();
-					}
-
-					this.dynamoraw[method](parameters, (error, data) => {
-
-						du.error(error);
-						if(_.isError(error)){
-							if(fatal){
-								throw eu.getError('server', error);
-							}
-							return reject(error);
-						}
-
-						return resolve(data);
-
-					});
-
+				if(!_.has(this, 'dynamoraw')){
+					this.instantiateDynamo();
 				}
 
-			});
+				return this.dynamoraw[method](status, parameters).promise();
+
+			}else{
+
+				du.debug('DynamoDB Parameters (last hop):', parameters);
+
+				if(!_.has(this, 'dynamoraw')){
+					this.instantiateDynamo();
+				}
+
+				return this.dynamoraw[method](parameters).promise();
+
+			}
 
 		}
 

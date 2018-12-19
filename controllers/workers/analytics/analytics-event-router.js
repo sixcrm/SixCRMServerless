@@ -11,17 +11,9 @@ module.exports = {
 		transform: 'order-transform.js',
 		handlers: ['order-event-handler.js']
 	},
-	'create_order_*': {
+	create_order: {
 		transform: 'create-order-transform.js',
 		handlers: ['create-order-event-handler.js']
-	},
-	'upsell*': {
-		transform: 'upsell-transform.js',
-		handlers: ['upsell-event-handler.js']
-	},
-	'downsell*': {
-		transform: 'downsell-transform.js',
-		handlers: ['downsell-event-handler.js']
 	},
 	confirm: {
 		transform: 'confirm-transform.js',
@@ -39,19 +31,19 @@ module.exports = {
 		transform: 'cancel-session-transform.js',
 		handlers: ['cancel-session-event-handler.js']
 	},
-	'transaction_*': {
+	transaction: {
 		transform: 'transaction-transform.js',
 		handlers: ['transaction-event-handler.js']
 	},
-	'activity_*': {
+	activity: {
 		transform: 'activity-transform.js',
 		handlers: ['activity-event-handler.js']
 	},
-	'chargeback': {
+	chargeback: {
 		transform: 'chargeback-transform.js',
 		handlers: ['chargeback-event-handler.js']
 	},
-	'customer': {
+	customer: {
 		transform: 'customer-transform.js',
 		handlers: ['customer-event-handler.js']
 	}

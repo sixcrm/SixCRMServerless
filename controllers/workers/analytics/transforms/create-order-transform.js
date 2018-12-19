@@ -22,7 +22,7 @@ module.exports = class CreateOrderTransform extends AnalyticsTransform {
 			datetime: rebill.created_at,
 			amount: rebill.amount,
 			item_count: _.sumBy(rebill.products, p => p.quantity),
-			type: record.event_type === 'create_order_initial' ? 'initial' : 'recurring',
+			type: record.context.type,
 			session: rebill.parentsession
 		};
 

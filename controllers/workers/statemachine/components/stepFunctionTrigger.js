@@ -5,7 +5,6 @@ const stringutilities = require('@6crm/sixcrmcore/util/string-utilities').defaul
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
 const StateMachineHelperController = global.SixCRM.routes.include('helpers','statemachine/StateMachine.js');
-
 const StepFunctionWorkerController = global.SixCRM.routes.include('controllers', 'workers/statemachine/components/stepFunctionWorker.js');
 
 module.exports = class TriggerController extends StepFunctionWorkerController {
@@ -16,7 +15,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 	}
 
-	async executeBulk(parameters, restart = false, fatal = false){
+	async executeBulk(parameters) {
 
 		du.debug('Execute Bulk');
 
@@ -35,7 +34,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 		let bulk_promises = arrayutilities.map(parameters.guids, (guid) => {
 			return () => {
 				try{
-					return this.execute({guid: guid, stateMachineName: parameters.stateMachineName}, restart, fatal);
+					return this.execute({guid: guid, stateMachineName: parameters.stateMachineName});
 				}catch(error){
 					return error;
 				}
@@ -46,7 +45,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 
 	}
 
-	async execute(parameters, restart = false, fatal = false){
+	async execute(parameters) {
 
 		du.debug('execute');
 
@@ -61,50 +60,7 @@ module.exports = class TriggerController extends StepFunctionWorkerController {
 		};
 
 		const stateMachineHelperController = new StateMachineHelperController();
-
-		const running_executions = await stateMachineHelperController.getRunningExecutions({id: parameters.guid, state: to_state});
-
-		if(_.isNull(running_executions)){
-
-			return stateMachineHelperController.startExecution({parameters: params});
-
-		}else{
-
-			if(!_.isArray(running_executions) || !arrayutilities.nonEmpty(running_executions)){
-				throw eu.getError('server', 'Unexpected response format: '+JSON.stringify(running_executions));
-			}
-
-			if(restart == true){
-
-				try{
-
-					await stateMachineHelperController.stopExecutions(running_executions);
-
-				}catch(error){
-
-					if(fatal == true){
-						throw error;
-					}
-
-					du.error(error);
-					du.warning(error.message);
-					return null;
-
-				}
-
-				return stateMachineHelperController.startExecution({parameters: params});
-
-			}
-
-		}
-
-		if(fatal == true){
-			throw eu.getError('bad_request', 'There is already another execution running for guid: "'+parameters.guid+'" and state "'+to_state+'".');
-		}
-
-		du.warning('There is already another execution running for guid: "'+parameters.guid+'" and state "'+to_state+'".  If you would like to trigger this execution anyhow, set the `restart` argument to true.');
-		return null;
-
+		return stateMachineHelperController.startExecution({parameters: params});
 
 	}
 
