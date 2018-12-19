@@ -2,8 +2,10 @@
 const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 const entityController = require('./Entity');
+const AccountController = require('./Account');
 
 module.exports = class CampaignController extends entityController {
 
@@ -13,6 +15,55 @@ module.exports = class CampaignController extends entityController {
 
 		this.search_fields = ['name'];
 
+		this.accountController = new AccountController();
+	}
+
+	async create(argumentation) {
+		du.debug('Create campaign', argumentation.entity.name);
+		this.affiliateCheck(argumentation.entity);
+
+		if (global.account === '*' || this.permissionutilities.areACLsDisabled()) {
+			du.debug('Master account or ACLs disabled.');
+			return super.create(argumentation);
+		}
+
+		const account = await this.accountController.get({id: global.account});
+		const plan = _(account).get('billing.plan', null);
+
+		if (!plan || plan !== 'basic') {
+			du.debug('Non-basic plan');
+			return super.create(argumentation);
+		}
+
+		const campaignCount = _(await this.list({pagination: {limit: 1}})).get('pagination.count', 0);
+
+
+		if (campaignCount > 0) {
+			throw eu.getError('forbidden', 'Your subscription level does not allow creating more campaigns.');
+		}
+		du.debug('Creating campaign for basic plan.');
+		return super.create(argumentation);
+
+	}
+
+	async update({entity, ignore_updated_at}) {
+		this.affiliateCheck(entity);
+
+		return super.update({entity, ignore_updated_at});
+	}
+
+	affiliateCheck(entity) {
+		if (!entity.affiliate_allow || !entity.affiliate_deny) {
+			return;
+		}
+
+		const affiliate_intersection = entity.affiliate_allow
+			.filter(allow => entity.affiliate_deny.includes(allow))
+			.filter(affiliate => affiliate !== '*');
+
+		if (affiliate_intersection.length) {
+			throw eu.getError('bad_request', 'affiliate_allow and affiliate_deny should have different values')
+		}
 	}
 
 	associatedEntitiesCheck({id}){

@@ -1,5 +1,3 @@
-
-
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
 const AWSProvider = global.SixCRM.routes.include('controllers', 'providers/aws-provider.js');
 
@@ -23,11 +21,7 @@ module.exports = class AutoscalingProvider extends AWSProvider{
 
 		du.debug('Register Scalable Target');
 
-		return new Promise((resolve) => {
-
-			this.autoscaling.registerScalableTarget(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-		});
+		return this.autoscaling.registerScalableTarget(parameters).promise();
 
 	}
 
@@ -35,11 +29,7 @@ module.exports = class AutoscalingProvider extends AWSProvider{
 
 		du.debug('Put Scaling Policy');
 
-		return new Promise((resolve) => {
-
-			this.autoscaling.putScalingPolicy(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-		});
+		return this.autoscaling.putScalingPolicy(parameters).promise();
 
 	}
 
@@ -47,11 +37,7 @@ module.exports = class AutoscalingProvider extends AWSProvider{
 
 		du.debug('Describe Scalable Targets');
 
-		return new Promise((resolve) => {
-
-			this.autoscaling.describeScalableTargets(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-		});
+		return this.autoscaling.describeScalableTargets(parameters).promise();
 
 	}
 
@@ -59,11 +45,7 @@ module.exports = class AutoscalingProvider extends AWSProvider{
 
 		du.debug('Describe Scaling Policies');
 
-		return new Promise((resolve) => {
-
-			this.autoscaling.describeScalingPolicies(parameters, (error, data) => resolve(this.AWSCallback(error, data)));
-
-		});
+		return this.autoscaling.describeScalingPolicies(parameters).promise();
 
 	}
 

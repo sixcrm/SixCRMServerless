@@ -166,7 +166,7 @@ module.exports = class SelectRebillsController extends workerController {
 
 		try{
 
-			result = await (new StepFunctionTriggerController()).execute(parameters, true);
+			result = await (new StepFunctionTriggerController()).execute(parameters);
 
 		}catch(error){
 

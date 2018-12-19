@@ -14,6 +14,11 @@ const RebillController = global.SixCRM.routes.include('entities', 'Rebill.js');
 const UserACLController = global.SixCRM.routes.include('entities', 'UserACL.js');
 
 const UserACLHelperController = global.SixCRM.routes.include('helpers', 'entities/useracl/UserACL.js');
+const EventPushHelperController = require('../../events/EventPush');
+const StateMachineHelper = require('../../../helpers/statemachine/StateMachine');
+
+const eventPushHelperController = new EventPushHelperController();
+const stateMachineHelper = new StateMachineHelper();
 
 module.exports = class AccountHelperController {
 
@@ -87,8 +92,8 @@ module.exports = class AccountHelperController {
 			return true;
 		}
 
-		const limited = _.get(account, 'billing.limited', false);
-		const deactivated = _.get(account, 'billing.deactivated', false);
+		const limited = _.has(account, 'billing.limited_at');
+		const deactivated = _.has(account, 'billing.deactivated_at');
 		if(limited || deactivated){
 			du.warning('Account has limited access.');
 			return true;
@@ -109,7 +114,7 @@ module.exports = class AccountHelperController {
 			return true;
 		}
 
-		const deactivated = _.get(account, 'billing.deactivated', false);
+		const deactivated = _.has(account, 'billing.deactivated_at');
 		if(deactivated){
 			du.warning('Account not active: Deactivation date has passed.');
 			return true;
@@ -197,16 +202,13 @@ module.exports = class AccountHelperController {
 			throw eu.getError('server', 'Account does not have a billing property.');
 		}
 
-		if(_.has(account.billing, 'deactivate')){
-			throw eu.getError('bad_request', 'Account is already scheduled for deactivation.');
-		}
-
-		if(_.has(account.billing, 'deactivated') && account.billing.deactivated == true){
+		if(_.has(account.billing, 'deactivated_at')){
 			throw eu.getError('bad_request', 'Account is already deactivated.');
 		}
 
 		let deactivate_time = timestamp.getISO8601();
-		account.billing.deactivate = deactivate_time
+		account.active = false;
+		account.billing.deactivated_at = deactivate_time;
 
 		if(!_.has(this, 'accountController')){
 			this.accountController = new AccountController();
@@ -215,6 +217,43 @@ module.exports = class AccountHelperController {
 		this.accountController.disableACLs();
 		account = await this.accountController.update({entity:account, allow_billing_overwrite: true});
 		this.accountController.enableACLs();
+
+		if(!_.has(this, 'sessionController')){
+			this.sessionController = new SessionController();
+		}
+
+		const {sessions} = await this.sessionController.listByAccount({
+			query_parameters: {
+				FilterExpression: 'not_exists(#cancelled) AND not_exists(#concluded)',
+				ExpressionAttributeNames: {
+					'#cancelled': 'cancelled',
+					'#concluded': 'concluded'
+				}
+			},
+			account
+		});
+
+		if (sessions === null) {
+			return;
+		}
+
+		await Promise.all(sessions.map(session => this.sessionController.cancelSession({
+			entity: {
+				id: session.id,
+				cancelled: true,
+				cancelled_by: 'accounting@sixcrm.com'
+			}
+		})));
+
+		const session = await this.sessionController.get({ id: account.billing.session });
+
+		await eventPushHelperController.pushEvent({
+			event_type: 'account_deactivated',
+			context: {
+				customer: session.customer,
+				campaign: session.campaign
+			}
+		});
 
 		return {
 			deactivate: deactivate_time,
@@ -223,9 +262,9 @@ module.exports = class AccountHelperController {
 
 	}
 
-	async cancelDeactivation({account}){
+	async limitAccount({account}){
 
-		du.debug('Deactivate Account');
+		du.debug('Limit Account');
 
 		account = await this._getAccount(account);
 
@@ -233,15 +272,116 @@ module.exports = class AccountHelperController {
 			throw eu.getError('server', 'Account does not have a billing property.');
 		}
 
-		if(!_.has(account.billing, 'deactivate')){
-			throw eu.getError('bad_request', 'Account is not scheduled for deactivation');
+		if(_.has(account.billing, 'limited_at')){
+			throw eu.getError('bad_request', 'Account is already limited.');
 		}
 
-		if(_.has(account.billing, 'deactivated') && account.billing.deactivated == true){
+		let limit_time = timestamp.getISO8601();
+		account.billing.limited_at = limit_time;
+
+		if(!_.has(this, 'accountController')){
+			this.accountController = new AccountController();
+		}
+
+		this.accountController.disableACLs();
+		account = await this.accountController.update({entity:account, allow_billing_overwrite: true});
+		this.accountController.enableACLs();
+
+		if(!_.has(this, 'sessionController')){
+			this.sessionController = new SessionController();
+		}
+
+		const session = await this.sessionController.get({ id: account.billing.session });
+
+		await eventPushHelperController.pushEvent({
+			event_type: 'account_limited',
+			context: {
+				customer: session.customer,
+				campaign: session.campaign
+			}
+		});
+	}
+
+	async scheduleDeactivation(account) {
+		du.debug('Schedule Deactivation');
+
+		account = await this._getAccount(account);
+
+		if(!_.has(account, 'billing')){
+			throw eu.getError('server', 'Account does not have a billing property.');
+		}
+
+		if(_.has(account.billing, 'deactivated_at')){
 			throw eu.getError('bad_request', 'Account is already deactivated.');
 		}
 
-		delete account.billing.deactivate;
+		if (_.has(account.billing, 'deactivation_id')) {
+			throw eu.getError('bad_request', 'Account is already scheduled for deactivation.');
+		}
+
+		await stateMachineHelper.startExecution({
+			parameters: {
+				stateMachineName: 'Accountdeactivation',
+				execution: account.billing.deactivation_id
+			}
+		});
+	}
+
+	async cancelDeactivation({account}){
+
+		du.debug('Deactivate Account');
+
+		account = await this._getAccount(account, true);
+
+		if(!_.has(account, 'billing')){
+			throw eu.getError('server', 'Account does not have a billing property.');
+		}
+
+		if(_.has(account.billing, 'deactivated_at')){
+			throw eu.getError('bad_request', 'Account is already deactivated.');
+		}
+
+		await stateMachineHelper.stopExecutions([{
+			name: 'Accountdeactivation',
+			execution: account.billing.deactivation_id
+		}]);
+
+		delete account.billing.limited_at;
+		delete account.billing.deactivated_at;
+		delete account.billing.deactivation_id;
+
+		if(!_.has(this, 'accountController')){
+			this.accountController = new AccountController();
+		}
+
+		this.accountController.disableACLs();
+		account = await this.accountController.update({entity:account, allow_billing_overwrite: true});
+		this.accountController.enableACLs();
+
+
+		return {
+			message: "Deactivation Cancelled"
+		};
+
+	}
+
+	async restoreAccount(account, new_session){
+		du.debug('Restore Account');
+
+		account = await this._getAccount(account);
+
+		if(!_.has(account, 'billing')){
+			throw eu.getError('server', 'Account does not have a billing property.');
+		}
+
+		if(!_.has(account.billing, 'deactivated_at')){
+			throw eu.getError('bad_request', 'Account is not deactivated.');
+		}
+
+		delete account.billing.limited_at;
+		delete account.billing.deactivated_at;
+		delete account.billing.deactivation_id;
+		account.billing.session = new_session.id;
 
 		if(!_.has(this, 'accountController')){
 			this.accountController = new AccountController();
@@ -252,9 +392,8 @@ module.exports = class AccountHelperController {
 		this.accountController.enableACLs();
 
 		return {
-			message: "Deactivation Cancelled"
+			message: "Account Restored"
 		};
-
 	}
 
 	async upgradeAccount({account, plan}){
@@ -290,7 +429,7 @@ module.exports = class AccountHelperController {
 
 	}
 
-	async getAccountForCustomer(customer) {
+	async getAccountForCustomer(customer_id) {
 		if (!_.has(this, 'sessionController')) {
 			this.sessionController = new SessionController();
 		}
@@ -302,7 +441,7 @@ module.exports = class AccountHelperController {
 		const {session} = await this.sessionController.getBySecondaryIndex({
 			field: 'customer',
 			index_name: 'customer-index',
-			index_value: customer.id,
+			index_value: customer_id,
 			query_parameters: {
 				filter_expression: '#account = :billingaccount AND not_exists(#cancelled) AND not_exists(#concluded)',
 				expression_attribute_names: {

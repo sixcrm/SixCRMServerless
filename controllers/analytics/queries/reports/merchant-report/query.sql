@@ -27,7 +27,7 @@ SELECT
 	CAST(COALESCE(gross_orders.attempts, 0) AS INT) AS gross_orders,
 	CAST(COALESCE(sales.sales, 0) AS INT) AS sales,
 	COALESCE(CAST(COALESCE(gross_orders.attempts, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS sales_percentage,
-	CAST(ROUND(COALESCE(sales.renveue, 0), 2) AS DOUBLE PRECISION) AS sales_revenue,
+	CAST(ROUND(COALESCE(sales.revenue, 0), 2) AS DOUBLE PRECISION) AS sales_revenue,
 	CAST(COALESCE(declines.declines, 0) AS INT) AS declines,
 	COALESCE(CAST(COALESCE(declines.declines, 0) AS DOUBLE PRECISION) / CAST(gross_orders.attempts AS DOUBLE PRECISION), 0) AS decline_percentage,
 	CAST(COALESCE(chargebacks.chargebacks, 0) AS INT) AS chargebacks,
@@ -40,7 +40,7 @@ SELECT
 	CAST(ROUND(COALESCE(partial_refunds.refunds_expense, 0), 2) AS DOUBLE PRECISION) AS partial_refund_expense,
 	COALESCE(CAST(COALESCE(partial_refunds.refunds, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS partial_refund_percentage,
 	CAST(ROUND(COALESCE(full_refunds.refunds_expense, 0) + COALESCE(partial_refunds.refunds_expense, 0), 2) AS DOUBLE PRECISION) AS total_refund_expenses,
-	CAST(ROUND(COALESCE(sales.renveue, 0) - (COALESCE(full_refunds.refunds_expense, 0) + COALESCE(partial_refunds.refunds_expense, 0)), 2) AS DOUBLE PRECISION) AS adjusted_sales_revenue
+	CAST(ROUND(COALESCE(sales.revenue, 0) + COALESCE(full_refunds.refunds_expense, 0) + COALESCE(partial_refunds.refunds_expense, 0), 2) AS DOUBLE PRECISION) AS adjusted_sales_revenue
 
 FROM
 
@@ -81,7 +81,7 @@ FROM
 		SELECT
 			t.merchant_provider,
 			COUNT(DISTINCT s.id) as sales,
-			SUM(t.amount) as renveue
+			SUM(t.amount) as revenue
 		FROM analytics.f_session s
 		INNER JOIN analytics.f_transaction t ON s.id = t.session
 		-- only pull transactions with the correct products and schedules

@@ -135,18 +135,23 @@ module.exports = class Register extends RegisterUtilities {
 
 	}
 
-	processTransaction(){
+	async processTransaction() {
 
 		du.debug('Process Transaction');
 
-		return this.can({action: 'process', object: 'register', fatal: true})
-			.then(() => this.setParameters({argumentation: arguments[0], action: 'process'}))
-			.then(() => this.acquireRebillProperties())
-			.then(() => this.validateRebillForProcessing())
-			.then(() => this.acquireRebillSubProperties())
-			.then(() => this.executeProcesses())
-			.then(() => this.pushTransactionEvents())
-			.then(() => this.transformResponse());
+		await this.can({action: 'process', object: 'register', fatal: true});
+		await this.setParameters({argumentation: arguments[0], action: 'process'});
+		await this.acquireRebillProperties();
+		await this.validateRebillForProcessing();
+		await this.acquireRebillSubProperties();
+		await this.executeProcesses();
+		await this.pushTransactionEvents();
+
+		const response = await this.transformResponse();
+
+		await this.pushSubscriptionEvents(response);
+
+		return response;
 
 	}
 
@@ -158,10 +163,6 @@ module.exports = class Register extends RegisterUtilities {
 		const session = this.parameters.get('parentsession');
 		const rebill = this.parameters.get('rebill');
 
-		const {rebills} = await this.rebillController.listBySession({session});
-		const rebills_sorted = _.sortBy(rebills, rebill => new Date(rebill.bill_at));
-		const cycle = rebills_sorted.findIndex(item => item.id === rebill.id);
-
 		return BBPromise.each(transactions, (transaction) => {
 			let response = {};
 
@@ -171,11 +172,10 @@ module.exports = class Register extends RegisterUtilities {
 				du.warning(`Cannot parse processor response for transaction ${transaction.id}`, transaction.processor_response)
 			}
 
-			return AnalyticsEvent.push('transaction_' + transaction.result, {
+			return AnalyticsEvent.push('transaction', {
 				datetime: moment.tz('UTC').toISOString(),
 				session,
 				rebill,
-				cycle,
 				transaction,
 				transactionSubType: this.parameters.get('transactionsubtype', {fatal: false}),
 				transactionType: this.parameters.get('transactiontype', {fatal: false}),
@@ -183,6 +183,86 @@ module.exports = class Register extends RegisterUtilities {
 				merchantMessage: response.merchant_message
 			});
 		});
+
+	}
+
+	async pushSubscriptionEvents(response) {
+
+		du.debug('Push Subscription Events');
+
+		const rebill = this.parameters.get('rebill');
+		const products = rebill && rebill.products;
+
+		const session = this.parameters.get('parentsession');
+		const product_schedules = session && session.watermark && session.watermark.product_schedules;
+
+		// Nothing to do here if we didn't buy any subscriptions.
+		if (!(products && products.length > 0 && product_schedules && product_schedules.length > 0))
+		{
+			return;
+		}
+
+		const product_ids = products.map(product => product.id);
+		const status = response.response_type === this.processor_response_map.success ? 'active' : 'error';
+
+		for (let i = 0; i < product_schedules.length; i++) {
+
+			const product_schedule_item = product_schedules[i];
+			const product_schedule = product_schedule_item.product_schedule;
+
+			for (let j = 0; j < product_schedule.schedule.length; j++) {
+
+				const scheduleItem = product_schedule.schedule[j];
+				const product_id = scheduleItem.product.id;
+				if (_.includes(product_ids, product_id)) {
+
+					const cycle = this.computeCycle(session.created_at, rebill.bill_at, scheduleItem);
+					await AnalyticsEvent.push('subscription', {
+						session_id: session.id,
+						product_schedule_id: product_schedule.id,
+						product_id: scheduleItem.product.id,
+						session_alias: session.alias,
+						product_schedule_name: product_schedule.name,
+						product_name: scheduleItem.product.name,
+						datetime: rebill.bill_at,
+						status,
+						amount: scheduleItem.price * product_schedule_item.quantity,
+						item_count: product_schedule_item.quantity,
+						cycle,
+						interval: scheduleItem.samedayofmonth ? 'monthly' : `${scheduleItem.period} days`,
+						account: session.account,
+						campaign: session.campaign,
+						merchant_provider: rebill.merchant_provider,
+						customer: session.customer
+					});
+
+				}
+
+			}
+
+		}
+
+	}
+
+	computeCycle(session_start, bill_at, schedule) {
+
+		let cycle = 0;
+		let current = moment(session_start).startOf('day').add(schedule.start, 'days');
+		const bill_day = moment(bill_at).startOf('day');
+		while (current.isBefore(bill_day)) {
+
+			if (schedule.samedayofmonth) {
+				current.add(1, 'months');
+			}
+			else {
+				current.add(schedule.period, 'days')
+			}
+
+			cycle++;
+
+		}
+
+		return cycle;
 
 	}
 

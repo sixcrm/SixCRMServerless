@@ -124,7 +124,7 @@
               "Retry" : [
                 {
                   "ErrorEquals": [
-                    "State.ALL"
+                    "States.ALL"
                   ],
                   "IntervalSeconds": 1,
                   "MaxAttempts": 3,
@@ -140,7 +140,7 @@
               "Retry" : [
                 {
                   "ErrorEquals": [
-                    "State.ALL"
+                    "States.ALL"
                   ],
                   "IntervalSeconds": 1,
                   "MaxAttempts": 3,

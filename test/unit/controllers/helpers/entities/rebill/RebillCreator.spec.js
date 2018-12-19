@@ -188,6 +188,8 @@ describe('RebillCreator', () => {
 				};
 
 				td.when(ProductController.prototype.validateDynamicPrice(schedule.product, schedule.price)).thenReturn(true);
+				td.when(ProductScheduleController.prototype.getProducts(td.matchers.anything())).thenResolve({products: []});
+				td.when(ProductScheduleHelperController.prototype.marryProductsToSchedule({product_schedule: td.matchers.anything(), products: []})).thenDo(({product_schedule}) => product_schedule);
 				td.when(ProductScheduleHelperController.prototype.getNextScheduleElementStartDayNumber({day: -1, product_schedule})).thenReturn(0);
 				td.when(ProductScheduleHelperController.prototype.getNextScheduleElementStartDayNumber({day: 0, product_schedule})).thenReturn(30);
 				td.when(ProductScheduleHelperController.prototype.getScheduleElementsOnDayInSchedule({day: td.matchers.isA(Number), product_schedule})).thenReturn(product_schedule.schedule);
@@ -296,29 +298,6 @@ describe('RebillCreator', () => {
 					td.when(RebillController.prototype.create({entity: rebill_prototype})).thenResolve(rebill);
 					const result = await rebillCreator.createRebill({session, day: 0});
 					expect(result).to.deep.equal(rebill);
-				});
-
-				it('sends subscription analytics event', async () => {
-					td.when(RebillController.prototype.create({entity: rebill_prototype})).thenResolve(rebill);
-					await rebillCreator.createRebill({session, day: 0});
-					td.verify(AnalyticsEvent.push('subscription', {
-						id: '6b82508c-a334-4cfe-892a-fdaaec925122',
-						alias: 'R1F174PWZS',
-						datetime: '2018-01-31T00:00:01.000Z',
-						amount: 9.99,
-						item_count: 1,
-						cycle: 1,
-						interval: '30 days',
-						account: 'd3fa3bf3-7824-49f4-8261-87674482bf1c',
-						session: 'c6e9661d-9fb3-4b77-bb8e-78bbf447a599',
-						session_alias: 'SM8YQXNRSS',
-						campaign: '667e17c9-1a00-46d9-8e22-bcc04d23c1ff',
-						customer: '744ad1c4-b31f-4c8e-b66f-1c9b41035330',
-						product_schedule_name: 'KULYGVHVQHQUQW3HTHUL',
-						product_schedule: 'c3a5d4d2-10f2-44a8-adff-00ca81eb8433',
-						merchant_provider_name: 'My Merchant',
-						merchant_provider: '4e0142df-3f91-47ab-9a86-b7de1fd5ec58'
-					}));
 				});
 			});
 		});

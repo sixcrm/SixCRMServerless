@@ -7,15 +7,12 @@ const objectutilities = require('@6crm/sixcrmcore/util/object-utilities').defaul
 const numberutilities = require('@6crm/sixcrmcore/util/number-utilities').default;
 const timestamp = require('@6crm/sixcrmcore/util/timestamp').default;
 const Parameters = require('../../../providers/Parameters');
-const AnalyticsEvent = require('../../analytics/analytics-event');
-const MerchantProviderController = require('../../../entities/MerchantProvider');
 const ProductController = require('../../../entities/Product');
 const ProductScheduleController = require('../../../entities/ProductSchedule');
 const ProductScheduleHelperController = require('../../entities/productschedule/ProductSchedule');
 const RebillController = require('../../../entities/Rebill');
 const SessionController = require('../../../entities/Session');
 
-const merchantProviderController = new MerchantProviderController();
 const productController = new ProductController();
 const productScheduleController = new ProductScheduleController();
 const productScheduleHelperController = new ProductScheduleHelperController();
@@ -89,9 +86,7 @@ module.exports = class RebillCreatorHelper {
 		}
 
 		const prototype_rebill = await this.buildRebillPrototype({session, day, normalized_products, normalized_product_schedules});
-		const rebill = await rebillController.create({entity: prototype_rebill});
-		await this.sendAnalyticsEvent({session, rebill});
-		return rebill;
+		return rebillController.create({entity: prototype_rebill});
 	}
 
 	createRebillPrototype({session, transaction_products = [], bill_at = timestamp.getISO8601(), cycle = 0, amount = 0.00, product_schedules = null, merchant_provider = null, merchant_provider_selections = null}){
@@ -123,12 +118,18 @@ module.exports = class RebillCreatorHelper {
 
 	async normalizeProductSchedules(product_schedules) {
 		let normalized_product_schedules = arrayutilities.map(product_schedules, async product_schedule_group => {
-			if (_.isString(product_schedule_group.product_schedule)) {
-				return productScheduleHelperController.getHydrated({id: product_schedule_group.product_schedule}).then(result => {
-					product_schedule_group.product_schedule = result;
-					return product_schedule_group;
-				});
-			} else if (_.isObject(product_schedule_group.product_schedule)) {
+			const {product_schedule} = product_schedule_group;
+			if (_.isString(product_schedule)) {
+				const result = await productScheduleHelperController.getHydrated({id: product_schedule});
+				product_schedule_group.product_schedule = result;
+				return product_schedule_group;
+			} else if (_.isObject(product_schedule)) {
+				const {products} = await productScheduleController.getProducts(product_schedule);
+				if (_.isNull(products)) {
+					throw eu.getError('not_found', 'Watermark product in schedule could not be found.');
+				}
+				const result = productScheduleHelperController.marryProductsToSchedule({product_schedule, products});
+				product_schedule_group.product_schedule = result;
 				return product_schedule_group;
 			}
 		});
@@ -139,13 +140,12 @@ module.exports = class RebillCreatorHelper {
 	async normalizeProducts(products) {
 		let normalized_products = arrayutilities.map(products, async product_group => {
 			if (productController.isUUID(product_group.product)) {
-				return productController.get({id: product_group.product}).then(result => {
-					if (_.isNull(result)) {
-						throw eu.getError('not_found', 'Product does not exist: '+product_group.product);
-					}
-					product_group.product = result;
-					return product_group;
-				});
+				const result = await productController.get({id: product_group.product});
+				if (_.isNull(result)) {
+					throw eu.getError('not_found', 'Product does not exist: '+product_group.product);
+				}
+				product_group.product = result;
+				return product_group;
 			} else if (_.isObject(product_group.product)) {
 				return product_group;
 			}
@@ -437,36 +437,6 @@ module.exports = class RebillCreatorHelper {
 
 		du.debug(`Cycle for new rebill in session ${session.id} is ${cycle}.`);
 		return cycle;
-	}
-
-	async sendAnalyticsEvent({session, rebill}) {
-		du.debug('Send Analytics Event');
-		du.debug('Rebill for analytics', rebill, rebill.cycle);
-
-		if (rebill.cycle > 0) {
-			const product_schedule = await productScheduleController.get({id: rebill.product_schedules[0]});
-			const interval = product_schedule.schedule[0].samedayofmonth ? '1 month' : product_schedule.schedule[0].period + ' days';
-			const merchant_provider = await merchantProviderController.get({id: rebill.merchant_provider});
-
-			return AnalyticsEvent.push('subscription', {
-				id: rebill.id,
-				alias: rebill.alias,
-				datetime: rebill.bill_at,
-				amount: rebill.amount,
-				item_count: _.sumBy(rebill.products, product => product.quantity),
-				cycle: rebill.cycle,
-				interval,
-				account: session.account,
-				session: session.id,
-				session_alias: session.alias,
-				campaign: session.campaign,
-				customer: session.customer,
-				product_schedule_name: product_schedule.name,
-				product_schedule: product_schedule.id,
-				merchant_provider_name: merchant_provider.name,
-				merchant_provider: merchant_provider.id
-			});
-		}
 	}
 
 	calculateAmount(products) {

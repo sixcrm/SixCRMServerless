@@ -5,6 +5,7 @@
 	"type": "string",
 	"enum": [
 		"success",
+		"harddecline",
 		"decline",
 		"error"
 	]

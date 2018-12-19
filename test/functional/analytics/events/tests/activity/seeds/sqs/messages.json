@@ -1,6 +1,6 @@
 {
 	"messages": [{
-		"event_type": "activity_created",
+		"event_type": "activity",
 		"context": {
 			"id": "1ef02cd1-1cad-46bf-9b05-2da7b437b497",
 			"user": {

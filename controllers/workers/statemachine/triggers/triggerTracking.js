@@ -10,6 +10,7 @@ const ShippingReceiptController = global.SixCRM.routes.include('entities','Shipp
 const RebillController = global.SixCRM.routes.include('entities','Rebill.js');
 const TransactionController = global.SixCRM.routes.include('entities','Transaction.js');
 const CreditCardController = global.SixCRM.routes.include('entities','CreditCard.js');
+const AnalyticsEvent = global.SixCRM.routes.include('helpers', 'analytics/analytics-event.js');
 
 module.exports = class TriggerTrackingController extends StepFunctionTriggerController {
 
@@ -57,6 +58,11 @@ module.exports = class TriggerTrackingController extends StepFunctionTriggerCont
 		}
 
 		await this.eventHelperController.pushEvent({event_type: 'allfulfillments', context: context});
+
+		await AnalyticsEvent.push('rebill', {
+			id: rebill.id,
+			status: 'shipped'
+		});
 
 		return super.execute(event);
 	}

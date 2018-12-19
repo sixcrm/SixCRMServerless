@@ -37,6 +37,7 @@ module.exports = class MerchantProviderResponse extends Response{
 		this.result_messages = {
 			'success':'Success',
 			'decline': 'Declined',
+			'harddecline': 'Hard decline',
 			'error': 'Error'
 		};
 
@@ -168,13 +169,15 @@ module.exports = class MerchantProviderResponse extends Response{
 
 		let result = vendor_response;
 
+		result = _(vendor_response).get('body.code', result);
+		result = _(vendor_response).get('response.body.code', result);
 		result = _(vendor_response).get('statusCode', result);
 		result = _(vendor_response).get('response.statusCode', result);
 
 		du.debug('Determined Merchant Code', result);
 
 		if (typeof result !== 'string') {
-			result = JSON.stringify(result)
+			result = '';
 		}
 
 		return result;

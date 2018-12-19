@@ -652,7 +652,7 @@ module.exports = class EC2Deployment extends AWSDeploymentUtilities {
 		}).then(() => {
 
 			const argumentation = {
-				Filters: [{
+				Filter: [{
 					Name: 'tag:Name',
 					Values: [nat_definition.Name]
 				}]

@@ -266,30 +266,24 @@ module.exports = class CloudSearchProvider extends AWSProvider {
 		if (process.env.TEST_MODE === 'true') {
 			du.debug('Test Mode');
 
-			return Promise.resolve(this.AWSCallback(null, {
+			return Promise.resolve({
 				DomainStatusList: [{
 					DocService: {
 						Endpoint: 'cloudsearch.domain'
 					}
 				}]
-			}));
+			});
 		}
 
-		return new Promise((resolve) => {
+		if (_.isUndefined(domainnames)) {
+			domainnames = [this.domainname];
+		}
 
-			if (_.isUndefined(domainnames)) {
-				domainnames = [this.domainname];
-			}
+		var parameters = {
+			DomainNames: domainnames
+		};
 
-			var parameters = {
-				DomainNames: domainnames
-			};
-
-			return this.cs.describeDomains(parameters, (error, data) => {
-				return resolve(this.AWSCallback(error, data))
-			});
-
-		});
+		return this.cs.describeDomains(parameters).promise();
 
 	}
 

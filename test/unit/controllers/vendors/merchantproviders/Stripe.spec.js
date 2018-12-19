@@ -900,8 +900,8 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('decline');
-				expect(result.getResult().message).to.equal('Declined');
+				expect(result.getResult().code).to.equal('harddecline');
+				expect(result.getResult().message).to.equal('Hard decline');
 			});
 
 		});
@@ -1102,8 +1102,8 @@ describe('vendors/merchantproviders/Stripe.js', () => {
 				expect(result.getResult()).to.have.property('code');
 				expect(result.getResult()).to.have.property('message');
 				expect(result.getResult()).to.have.property('response');
-				expect(result.getResult().code).to.equal('decline');
-				expect(result.getResult().message).to.equal('Declined');
+				expect(result.getResult().code).to.equal('harddecline');
+				expect(result.getResult().message).to.equal('Hard decline');
 			});
 
 		});

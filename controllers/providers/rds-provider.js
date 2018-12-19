@@ -43,15 +43,7 @@ module.exports = class RDSProvider extends AWSProvider {
 			true
 		);
 
-		return new Promise((resolve) => {
-
-			this.rds.createDBSubnetGroup(params, (error, data) => {
-
-				resolve(this.AWSCallback(error, data))
-
-			});
-
-		});
+		return this.rds.createDBSubnetGroup(params).promise();
 
 	}
 
@@ -59,15 +51,7 @@ module.exports = class RDSProvider extends AWSProvider {
 
 		du.debug('Describe DB Subnet Groups');
 
-		return new Promise((resolve) => {
-
-			this.rds.describeDBSubnetGroups(parameters, (error, data) => {
-
-				resolve(this.tolerantCallback(error, data, false));
-
-			});
-
-		});
+		return this.rds.describeDBSubnetGroups(parameters).promise();
 
 	}
 
@@ -114,11 +98,7 @@ module.exports = class RDSProvider extends AWSProvider {
 			false
 		);
 
-		return new Promise((resolve) => {
-			this.rds.createDBCluster(params, (error, data) => {
-				resolve(this.AWSCallback(error, data))
-			});
-		});
+		return this.rds.createDBCluster(params).promise();
 
 	}
 
@@ -308,15 +288,7 @@ module.exports = class RDSProvider extends AWSProvider {
 
 		du.debug('Wait For');
 
-		return new Promise((resolve) => {
-
-			this.rds.waitFor(event_name, parameters, (error, data) => {
-
-				resolve(this.AWSCallback(error, data));
-
-			});
-
-		});
+		return this.rds.waitFor(event_name, parameters).promise();
 
 	}
 

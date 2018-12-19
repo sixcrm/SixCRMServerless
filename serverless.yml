@@ -47,6 +47,7 @@ plugins:
   - serverless-prune-plugin
   - serverless-plugin-warmup
   - serverless-plugin-split-stacks
+  - serverless-offline
 
 custom:
   prune:
@@ -131,10 +132,6 @@ functions:
 # State Machine Lambdas
 ########################
 
-#All
-#  report:
-#    handler: handlers/statemachine/handlers.report
-
 #Bill, Recover, Close Session
   triggercreaterebill:
     handler: handlers/statemachine/handlers.triggercreaterebill
@@ -188,8 +185,8 @@ functions:
     handler: handlers/statemachine/handlers.triggerprefulfillment
   getrebillsession:
     handler: handlers/statemachine/handlers.getrebillsession
-  cleanupdecline:
-    handler: handlers/statemachine/handlers.cleanupdecline
+  billingfailure:
+    handler: handlers/statemachine/handlers.billingfailure
 
   #Bill
   triggerrecovery:
@@ -356,6 +353,38 @@ functions:
          cors: true
          authorizer:
            name: verifytransactionjwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
+########################
+# Miscellaneous Endpoints
+########################
+
+  reattemptrebill:
+    handler: handlers/endpoints/handlers.reattemptrebill
+    warmup: true
+    timeout: 29
+    events:
+      - http:
+         path: rebill/reattempt/{account}
+         method: post
+         cors: true
+         authorizer:
+           name: verifysitejwt
+           resultTtlInSeconds: 0
+           identitySource: method.request.header.Authorization
+
+  restoreaccount:
+    handler: handlers/endpoints/handlers.restoreaccount
+    warmup: true
+    timeout: 29
+    events:
+      - http:
+         path: account/restore/{account}
+         method: post
+         cors: true
+         authorizer:
+           name: verifysitejwt
            resultTtlInSeconds: 0
            identitySource: method.request.header.Authorization
 

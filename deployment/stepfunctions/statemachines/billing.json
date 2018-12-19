@@ -9,12 +9,18 @@
       "ResultPath": "$.status",
       "Retry" : [
           {
-            "ErrorEquals": [ "State.ALL" ],
-            "IntervalSeconds": 300,
-            "MaxAttempts": 5,
-            "BackoffRate": 2
+            "ErrorEquals": [ "States.ALL" ],
+            "IntervalSeconds": 120,
+            "MaxAttempts": 2
           }
-      ]
+			],
+			"Catch": [
+				{
+					"ErrorEquals": ["States.ALL"],
+					"Next": "Billing Failed",
+					"ResultPath": "$.error"
+				}
+			]
     },
     "Is Success?": {
       "Type": "Choice",
@@ -27,9 +33,9 @@
         {
           "Variable": "$.status",
           "StringEquals": "HARDDECLINE",
-          "Next": "Hard Declined"
+          "Next": "Billing Failed"
         }
-      ],
+			],
       "Default":"Successfully Billed"
     },
     "Successfully Billed":{
@@ -46,7 +52,7 @@
               "ResultPath": "$.status",
               "Retry" : [
                   {
-                    "ErrorEquals": [ "State.ALL" ],
+                    "ErrorEquals": [ "States.ALL" ],
                     "IntervalSeconds": 3,
                     "MaxAttempts": 5,
                     "BackoffRate": 5
@@ -65,7 +71,7 @@
               "ResultPath": "$.guid",
               "Retry" : [
                   {
-                    "ErrorEquals": [ "State.ALL" ],
+                    "ErrorEquals": [ "States.ALL" ],
                     "IntervalSeconds": 3,
                     "MaxAttempts": 5,
                     "BackoffRate": 5
@@ -79,7 +85,7 @@
               "ResultPath": "$.status",
               "Retry" : [
                   {
-                    "ErrorEquals": [ "State.ALL" ],
+                    "ErrorEquals": [ "States.ALL" ],
                     "IntervalSeconds": 3,
                     "MaxAttempts": 5,
                     "BackoffRate": 5
@@ -92,39 +98,24 @@
     },
     "Trigger Recovery": {
       "Type": "Task",
-      "Next":"Recovery Triggered",
       "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-triggerrecovery",
       "ResultPath": "$.status",
       "Retry" : [
         {
-          "ErrorEquals": [ "State.ALL" ],
+          "ErrorEquals": [ "States.ALL" ],
           "IntervalSeconds": 3,
           "MaxAttempts": 5,
           "BackoffRate": 5
         }
-      ]
+			],
+			"End": true
     },
-    "Recovery Triggered": {
-      "Type":"Succeed"
-    },
-    "Hard Declined": {
+    "Billing Failed": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-cleanupdecline",
-      "ResultPath": "$.status",
-      "Next":"Hard Decline Failure",
-      "Retry" : [
-        {
-          "ErrorEquals": [ "State.ALL" ],
-          "IntervalSeconds": 3,
-          "MaxAttempts": 5,
-          "BackoffRate": 5
-        }
-      ]
-    },
-    "Hard Decline Failure": {
-      "Type": "Fail",
-      "Cause": "Hard decline issued by the recover task",
-      "Error": "Recovery returned Hard Decline"
+			"Resource": "arn:aws:lambda:{{aws_region}}:{{aws_account_id}}:function:sixcrm-{{stage}}-billingfailure",
+			"InputPath": "$.guid",
+      "ResultPath": null,
+      "End": true
     }
   }
 }

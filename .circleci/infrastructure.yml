@@ -1,0 +1,531 @@
+defaults: &job-defaults
+  docker:
+    - image: circleci/node:8.10
+      environment:
+        - TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+
+version: 2
+jobs:
+  build:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install npm
+          command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm install
+      - save_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+  lint:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: 'Lint'
+          command: npm run lint
+  pre_deploy:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: debugging
+          command: printenv
+      - run:
+          name: Set Access Credentials
+          command: mkdir -p deployment_credentials/
+      - run:
+          name: Create Credentials
+          command: SIX_VERBOSE=2 && node ./deployment/sts/create_role_commands.js --branch=$CIRCLE_BRANCH --output=deployment_credentials/stscredentials
+      - persist_to_workspace:
+          root: .
+          paths:
+            - deployment_credentials
+      - run:
+          name: set credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Debugging 2
+          command: printenv
+  backup_datastore:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Backup DynamoDB
+          command: export SIX_VERBOSE=2 && printenv && node ./deployment/dynamodb/backup_tables.js --branch=$CIRCLE_BRANCH --version=$CIRCLE_SHA1
+  deploy_network:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy VPC
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_vpcs.js
+      - run:
+          name: EC2 Security Groups
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_security_groups.js
+      - run:
+          name: Deploy Subnets
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_subnets.js
+      - run:
+          name: Deploy Elastic IP Addresses
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_eips.js
+      - run:
+          name: Deploy Internet Gateways
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_internet_gateways.js
+      - run:
+          name: Deploy NATs
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_nats.js
+      - run:
+          name: Deploy Route Tables
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_route_tables.js
+      - run:
+          name: Deploy VPC Endpoints
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_endpoints.js
+  deploy_ec2_servers:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy EC2 Servers
+          command: export SIX_VERBOSE=2 && node ./deployment/ec2/deploy_servers.js
+  deploy_elasticsearch:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: ElasticSearch Deployment
+          command: export SIX_VERBOSE=2 && node ./deployment/elasticsearch/deploy_domains.js
+  deploy_s3:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: S3 Buckets
+          command: export SIX_VERBOSE=2 && node ./deployment/s3/deploy_buckets.js || echo "No changes, skipping."
+      - run:
+          name: S3 Backups
+          command: export SIX_VERBOSE=2 && node ./deployment/s3/deploy_backups.js || echo "No changes, skipping."
+  deploy_lambda_eventsourcemappings:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Lambda Event Source Mappings
+          command: export SIX_VERBOSE=2 && node ./deployment/lambda/deploy_eventsourcemappings.js
+  deploy_sqs:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: SQS
+          command: export SIX_VERBOSE=2 && ./tools/changesInDirectory.sh deployment/sqs && node ./deployment/sqs/deploy_queues.js || echo "No changes, skipping."
+  deploy_iam:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: IAM Deploy Policies
+          command: export SIX_VERBOSE=2 && node ./deployment/iam/deploy_policies.js
+      - run:
+          name: IAM Deploy Roles
+          command: export SIX_VERBOSE=2 && node ./deployment/iam/deploy_roles.js
+  deploy_dynamodb:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: DynamoDB Deploy Tables
+          command: export SIX_VERBOSE=2 && node ./deployment/dynamodb/deploy_tables.js
+      - run:
+          name: DynamoDB Autoscale Tables
+          command: export SIX_VERBOSE=2 && node ./deployment/dynamodb/deploy_autoscaling.js
+  deploy_cloudsearch:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy Clousearch
+          command: SIX_VERBOSE=2 node ./deployment/cloudsearch/deploy_domains.js
+  deploy_cloudsearch_indexes:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: Deploy Clousearch Indexes
+          command: SIX_VERBOSE=2 node ./deployment/cloudsearch/deploy_indexes.js
+  deploy_sns:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: SNS Topics
+          command: export SIX_VERBOSE=2 && node ./deployment/sns/deploy_topics.js
+      - run:
+          name: SNS Subscriptions
+          command: export SIX_VERBOSE=2 && node ./deployment/sns/deploy_subscriptions.js
+  deploy_dms:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      # - run:
+      #     name: Git LFS (Large File Storage)
+      #     command: |
+      #       curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+      #       sudo apt-get install -y git-lfs
+      #       git lfs pull
+      - run:
+          name: Deploy DMS Tasks
+          command: SIX_VERBOSE=2 node ./deployment/dms/deploy_tasks.js
+      - run:
+          name: Import BINs
+          command: SIX_VERBOSE=2 node ./deployment/dms/import_bins.js
+  purge:
+    <<: *job-defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependency-cache-{{ checksum "package-lock.json" }}
+      - attach_workspace:
+          at: .
+      - run:
+          name: Set Credentials
+          command: cat deployment_credentials/stscredentials >> $BASH_ENV
+      - run:
+          name: SQS Purge
+          command: node ./deployment/sqs/purge_queues.js
+#      - run:
+#          name: Cloudsearch Purge
+#          command: node ./deployment/cloudsearch/purge.js
+#     - run:
+#         name: DynamoDB Purge
+#         command: node ./deployment/dynamodb/purge_tables.js
+
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - build
+      - lint:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore:
+                - staging
+                - production
+                - priority
+      - pre_deploy:
+          requires:
+            - build
+            - unit_tests
+            - lint
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - backup_datastore:
+          requires:
+            - pre_deploy
+          filters:
+            branches:
+              only:
+                - staging
+                - production
+                - priority
+      - deploy_network:
+          requires:
+            - pre_deploy
+            - backup_datastore
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_ec2_servers:
+          requires:
+            - deploy_network
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_elasticsearch:
+          requires:
+            - deploy_network
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_cloudsearch:
+          requires:
+            - deploy_network
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_cloudsearch_indexes:
+          requires:
+            - deploy_cloudsearch
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_iam:
+          requires:
+            - deploy_elasticsearch
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_s3:
+          requires:
+            - deploy_elasticsearch
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_sns:
+          requires:
+            - deploy_sqs
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_sqs:
+          requires:
+            - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_dynamodb:
+          requires:
+            - deploy_iam
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_dms:
+          requires:
+            - deploy_s3
+            - deploy_dynamodb
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - deploy_lambda_eventsourcemappings:
+          requires:
+            - deploy_s3
+            - deploy_dynamodb
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - post_deployment:
+          requires:
+            - deploy_lambda_eventsourcemappings
+            - deploy_sns
+            - deploy_dms
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      - environment_test:
+          requires:
+            - post_deployment
+          filters:
+            branches:
+              only:
+                - development
+                - staging
+                - production
+                - priority
+      # - seed:
+      #     requires:
+      #       - environment_test
+      #     filters:
+      #       branches:
+      #         only:
+      #           - development
+      #           - staging
+      #           - production
+      #           - priority
+      # - entity_integration_tests:
+      #     requires:
+      #       - seed
+      #     filters:
+      #       branches:
+      #         only:
+      #           - development
+      #           - staging
+      #           - production
+      #           - priority
+      # - deleteblock_integration_tests:
+      #     requires:
+      #       - seed
+      #     filters:
+      #       branches:
+      #         only:
+      #           - development
+      #           - staging
+      #           - production
+      #           - priority
+      # - analytics_integration_tests:
+      #     requires:
+      #       - seed
+      #     filters:
+      #       branches:
+      #         only:
+      #           - development
+      #           - staging
+      #           - production
+      #           - priority
+      # - transactional_integration_tests:
+      #     requires:
+      #       - seed
+      #     filters:
+      #       branches:
+      #         only:
+      #           - development
+      #           - staging
+      #           - production
+      #           - priority

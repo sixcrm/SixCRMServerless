@@ -123,19 +123,16 @@ module.exports = class UserController extends entityController {
 
 			}).then((user) => {
 
-				this.setGlobalUser(user);
-
-				return user;
-
-			}).then((user) => {
-
 				this.disableACLs();
-				return this.getACLPartiallyHydrated(user).then((acl) => {
-					this.enableACLs();
 
-					global.user.acl = acl;
-					return user;
-				});
+				return this.getACLPartiallyHydrated(user)
+					.then((acl) => {
+						this.enableACLs();
+
+						user.acl = acl;
+
+						return user;
+					});
 
 			}).catch(error => {
 
@@ -401,6 +398,14 @@ module.exports = class UserController extends entityController {
 
 		return super.can({account: account, object: object, action: action, id: id, fatal: fatal})
 
+	}
+
+	delete({id, range_key = null}) {
+		if ((global.user.id !== id) && (global.account !== '*')) {
+			throw eu.getError('server', `You are not allowed to delete the entity with id ${id}. ${global.user.id} ${global.account}`)
+		}
+
+		return super.delete({id, range_key})
 	}
 
 }

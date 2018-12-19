@@ -2,6 +2,7 @@
 const _ = require('lodash');
 
 const du = require('@6crm/sixcrmcore/util/debug-utilities').default;
+const eu = require('@6crm/sixcrmcore/util/error-utilities').default;
 const arrayutilities = require('@6crm/sixcrmcore/util/array-utilities').default;
 
 const ProductScheduleHelper = global.SixCRM.routes.include('helpers', 'entities/productschedule/ProductSchedule.js');
@@ -18,6 +19,40 @@ module.exports = class ProductScheduleController extends entityController {
 		this.search_fields = ['name'];
 
 	}
+
+	create({entity, parameters}) {
+		du.debug('Create product schedule', entity.name);
+		if (this.permissionutilities.areACLsDisabled() || !entity.schedule) {
+			du.debug('Master account or ACLs disabled.');
+			return super.create({entity, parameters});
+		}
+
+		if (entity.schedule.length > 1) {
+			du.warning('Product schedule can only have 1 product.', entity.name);
+			throw eu.getError('forbidden', 'Product schedule can only have 1 product.');
+		}
+
+		return super.create({entity, parameters});
+	}
+
+	async update({entity, ignore_updated_at}) {
+		du.debug('Update product schedule', entity.id);
+
+		if (entity.schedule.length > 1) {
+
+			const already_existing_schedule_length = _(await this.get({id: entity.id, fatal: true})).get('schedule.length', 0);
+
+			if (already_existing_schedule_length < entity.schedule.length) {
+				du.warning('Product schedule can only have 1 product.', entity.name);
+				throw eu.getError('forbidden', 'Product schedule can only have 1 product.');
+			}
+
+		}
+
+		return super.update({entity, ignore_updated_at});
+	}
+
+
 
 	//Technical Debt: Deprecated
 	getCampaigns(args){
@@ -109,9 +144,17 @@ module.exports = class ProductScheduleController extends entityController {
 		if(_.has(product_schedule, 'schedule') && arrayutilities.nonEmpty(product_schedule.schedule)){
 
 			let product_ids = arrayutilities.map(product_schedule.schedule, (product_schedule) => {
+				let id;
 
-				//Techincal Debt: accounting for legacy deta, remove at earliest convenience
-				return _.has(product_schedule, 'product') ? product_schedule.product : product_schedule.product_id;
+				if (_.isString(product_schedule.product)) {
+					id = product_schedule.product;
+				} else if (_.isObject(product_schedule.product)) {
+					id = product_schedule.product.id;
+				} else if (_.isString(product_schedule.product_id)) { //Techincal Debt: accounting for legacy deta, remove at earliest convenience
+					id = product_schedule.product_id
+				}
+
+				return id;
 
 			});
 

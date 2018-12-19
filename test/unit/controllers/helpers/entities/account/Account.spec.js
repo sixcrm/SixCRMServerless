@@ -106,6 +106,10 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
 
       });
 
+      mockery.registerMock('../../../helpers/statemachine/StateMachine', class {
+				stopExecutions() {}
+      });
+
       const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');
       let accountHelperController = new AccountHelperController();
 
@@ -143,6 +147,20 @@ describe('constrollers/helpers/entities/account/Account.js', () => {
           return Promise.resolve(account);
         }
 
+			});
+
+      mockery.registerMock(global.SixCRM.routes.path('entities', 'Session.js'), class {
+        async listByAccount(){
+          return { sessions: [] };
+        }
+				async cancelSession(){}
+				async get({id}){
+					return MockEntities.getValidSession(id);
+				}
+			});
+
+      mockery.registerMock('../../events/EventPush', class {
+        async pushEvent(){}
       });
 
       const AccountHelperController = global.SixCRM.routes.include('helpers', 'entities/account/Account.js');

@@ -25,13 +25,13 @@ SELECT
 	COALESCE(CAST(COALESCE(gross_orders.attempts, 0) AS DOUBLE PRECISION) / CAST(clicks.clicks AS DOUBLE PRECISION), 0) AS gross_order_percentage,
 	CAST(COALESCE(sales.sales, 0) AS INT) AS sales,
 	COALESCE(CAST(COALESCE(gross_orders.attempts, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS sales_percentage,
-	CAST(ROUND(COALESCE(sales.renveue, 0), 2) AS DOUBLE PRECISION) AS sales_revenue,
+	CAST(ROUND(COALESCE(sales.revenue, 0), 2) AS DOUBLE PRECISION) AS sales_revenue,
 	CAST(COALESCE(upsells.upsells, 0) AS INT) AS upsells,
 	COALESCE(CAST(COALESCE(upsells.upsells, 0) AS DOUBLE PRECISION) / CAST(sales.sales AS DOUBLE PRECISION), 0) AS upsells_percentage,
-	CAST(ROUND(COALESCE(upsells.renveue, 0), 2) AS DOUBLE PRECISION) AS upsells_revenue,
+	CAST(ROUND(COALESCE(upsells.revenue, 0), 2) AS DOUBLE PRECISION) AS upsells_revenue,
 	CAST(COALESCE(sales.sales, 0) + COALESCE(upsells.upsells, 0) AS INT) AS blended_sales,
-	CAST(ROUND(COALESCE(sales.renveue, 0) + COALESCE(upsells.renveue, 0), 2) AS DOUBLE PRECISION) AS blended_sales_revenue,
-	CAST(ROUND(COALESCE((COALESCE(sales.renveue, 0) + COALESCE(upsells.renveue, 0)) / sales.sales, 0), 2) AS DOUBLE PRECISION) AS aov,
+	CAST(ROUND(COALESCE(sales.revenue, 0) + COALESCE(upsells.revenue, 0), 2) AS DOUBLE PRECISION) AS blended_sales_revenue,
+	CAST(ROUND(COALESCE((COALESCE(sales.revenue, 0) + COALESCE(upsells.revenue, 0)) / sales.sales, 0), 2) AS DOUBLE PRECISION) AS aov,
 	CAST(COALESCE(declines.declines, 0) AS INT) AS declines,
 	COALESCE(CAST(COALESCE(declines.declines, 0) AS DOUBLE PRECISION) / CAST(gross_orders.attempts AS DOUBLE PRECISION), 0) AS declines_percentage
 FROM
@@ -127,7 +127,7 @@ LEFT OUTER JOIN
 	-- sessions with a successful transactions that is not an upsell
 	SELECT
 		COUNT(DISTINCT s.id) as sales,
-		SUM(t.amount) as renveue,
+		SUM(t.amount) as revenue,
 		s.affiliate
 	FROM analytics.f_session s
 	INNER JOIN analytics.f_transaction t ON s.id = t.session
@@ -143,7 +143,7 @@ LEFT OUTER JOIN
 	-- sessions with a successful transaction that is an upsell
 	SELECT
 		COUNT(DISTINCT s.id) as upsells,
-		SUM(t.amount) as renveue,
+		SUM(t.amount) as revenue,
 		s.affiliate
 	FROM analytics.f_session s
 	INNER JOIN analytics.f_transaction t ON s.id = t.session
