@@ -270,6 +270,10 @@ module.exports = class EventEmailsController extends SNSEventController {
 
 		const accountdetails = await this.accountDetailsController.get({ id: campaign.account });
 
+		if (!accountdetails.company_logo) {
+			accountdetails.company_logo = this.accountDetailsController.getDefaultCompanyLogoPath();
+		}
+
 		this.parameters.set('accountdetails', accountdetails);
 
 		return Promise.resolve(accountdetails);

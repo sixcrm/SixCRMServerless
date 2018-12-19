@@ -38,6 +38,10 @@ class AccountDetailsController extends entityController {
 		};
 	}
 
+	getDefaultCompanyLogoPath() {
+		return `https://s3.amazonaws.com/sixcrm-${global.SixCRM.configuration.stage}-account-resources/global/product-default-image.png`
+	}
+
 }
 
 module.exports = AccountDetailsController;
