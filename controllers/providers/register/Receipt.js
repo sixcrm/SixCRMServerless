@@ -79,7 +79,8 @@ module.exports = class RegisterRecieptGenerator {
 			transaction_prototype = objectutilities.merge(transaction_prototype, {
 				products: associated_transaction.products,
 				merchant_provider: associated_transaction.merchant_provider,
-				associated_transaction: associated_transaction.id
+				associated_transaction: associated_transaction.id,
+				creditcard: associated_transaction.creditcard
 			});
 		}
 
